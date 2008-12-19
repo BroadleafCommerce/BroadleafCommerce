@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src-web"/>
+	<classpathentry kind="src" path="src-admin"/>
+	<classpathentry kind="src" path="src-framework"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/common/commons-beanutils-1.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/common/commons-chain-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/common/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/commons-digester-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/common/commons-lang-2.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/common/commons-validator-1.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/common/spring.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
