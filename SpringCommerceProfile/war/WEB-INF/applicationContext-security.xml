@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:sec="http://www.springframework.org/schema/security"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.2.xsd">
+
+	<sec:global-method-security secured-annotations="enabled"/>
+
+    <sec:http auto-config="true">
+        <!-- Restrict URLs based on role -->
+        <sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/logoutSuccess*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/css/login.css" filters="none" />
+        <sec:intercept-url pattern="/images/signInBox.gif" filters="none" />
+        <sec:intercept-url pattern="/images/mpowerLogo.gif" filters="none" />
+        <sec:intercept-url pattern="/images/favicon.ico" filters="none" />
+        <sec:intercept-url pattern="/css/main.css" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/js/jquery.js" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/js/jquery.cookie.js" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+        <sec:intercept-url pattern="/**" access="ROLE_USER" />
+        <sec:form-login login-page="/login.jsp"
+                             login-processing-url="/loginProcess"
+                             default-target-url="/index.jsp"
+                             authentication-failure-url="/login.jsp?login_error=1" />
+        <sec:logout logout-url="/logout" logout-success-url="/login.jsp" />
+    </sec:http>
+
+    <!--
+    Usernames/Passwords are
+        rod/koala
+        dianne/emu
+        scott/wombat
+        peter/opal
+    -->
+    <sec:authentication-provider user-service-ref="userDetailsService">
+    	<sec:password-encoder hash="sha"/>
+    <!--
+        <sec:password-encoder hash="md5"/>
+        <sec:user-service>
+            <sec:user name="rod" password="a564de63c2d0da68cf47586ee05984d7" authorities="ROLE_SUPERVISOR, ROLE_USER, ROLE_TELLER" />
+	        <sec:user name="dianne" password="65d15fe9156f9c4bbffd98085992a44e" authorities="ROLE_USER,ROLE_TELLER" />
+            <sec:user name="scott" password="2b58af6dddbd072ed27ffc86725d7d3a" authorities="ROLE_USER" />
+            <sec:user name="peter" password="22b5c9accc6e1ba628cedc63a72d57f8" authorities="ROLE_USER" />
+	    </sec:user-service>
+    -->
+	</sec:authentication-provider>
+
+    <!--
+	<sec:authentication-provider>
+	    <sec:jdbc-user-service data-source-ref="dataSource" authorities-by-username-query="select username,authority from users where username=?"/>
+    </sec:authentication-provider>
+    -->
+
+</beans>
