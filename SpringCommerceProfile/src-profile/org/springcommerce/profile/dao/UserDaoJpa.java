@@ -31,4 +31,13 @@ public class UserDaoJpa implements UserDao {
         query.setParameter("userId", userId);
         return query.getResultList();
     }
+
+    public User maintainUser(User user) {
+        if (user.getId() == null) {
+            em.persist(user);
+        } else {
+            user = em.merge(user);
+        }
+        return user;
+    }
 }

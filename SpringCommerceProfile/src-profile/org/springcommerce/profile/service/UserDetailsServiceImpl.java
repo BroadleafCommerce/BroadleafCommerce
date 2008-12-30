@@ -1,10 +1,14 @@
 package org.springcommerce.profile.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.profile.dao.UserDao;
+import org.springcommerce.profile.domain.UserRole;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -25,14 +29,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        // TODO Auto-generated method stub
-
         org.springcommerce.profile.domain.User user = userDao.readUserByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("The user was not found");
         }
 
-        GrantedAuthority[] grantedAuthorities = new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") };
-        return new User(username, user.getPassword(), true, true, true, true, grantedAuthorities);
+        List<UserRole> roles = userDao.readRolesByUserId(user.getId());
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        if (roles != null) {
+            for (UserRole role : roles) {
+                authorities.add(new GrantedAuthorityImpl(role.getRoleName()));
+            }
+        }
+
+        return new User(username, user.getPassword(), true, true, true, true, authorities.toArray(new GrantedAuthority[0]));
     }
 }

@@ -10,4 +10,6 @@ public interface UserDao {
     public User readUserByUsername(String username);
 
     public List<UserRole> readRolesByUserId(Long userId);
+
+    public User maintainUser(User user);
 }
