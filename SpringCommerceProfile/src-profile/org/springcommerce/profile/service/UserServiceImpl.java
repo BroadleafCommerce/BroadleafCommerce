@@ -13,4 +13,9 @@ public class UserServiceImpl implements UserService {
     public User saveUser(User user) {
         return userDao.maintainUser(user);
     }
+
+    @Override
+    public User readUserById(Long userId) {
+        return userDao.readUserById(userId);
+    }
 }

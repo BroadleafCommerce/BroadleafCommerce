@@ -12,4 +12,6 @@ public interface UserDao {
     public List<UserRole> readRolesByUserId(Long userId);
 
     public User maintainUser(User user);
+
+    public User readUserById(Long userId);
 }

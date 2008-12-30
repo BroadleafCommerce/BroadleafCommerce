@@ -40,4 +40,8 @@ public class UserDaoJpa implements UserDao {
         }
         return user;
     }
+
+    public User readUserById(Long userId) {
+        return em.find(User.class, userId);
+    }
 }
