@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<project name="Demo" default="build" basedir="./">
+	<target name="clean">
+		<ant antfile="script/construct.xml" inheritall="true" target="clean" />
+	</target>
+
+	<target name="build">
+		<echo>----------------------------Generating ${project.name} Module----------------------</echo>
+		<ant antfile="script/construct.xml" inheritall="true" target="build-war-dev" />
+	</target>
+
+	<target name="deploy-simple">
+		<ant antfile="script/construct.xml" inheritall="true" target="deploy-simple"/>
+	</target>
+	
+	<target name="copy-simple">
+		<ant antfile="script/construct.xml" inheritall="true" target="simple-copy"/>
+	</target>
+	
+	<target name="copy-web">
+		<ant antfile="script/construct.xml" inheritall="true" target="copy-web"/>
+	</target>
+</project>
