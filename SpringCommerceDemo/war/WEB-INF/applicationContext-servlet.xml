@@ -14,8 +14,8 @@
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.PasswordChangeValidator"/>
         </property>
-        <property name="formView" value="welcome" />
-        <property name="successView" value="welcome" />
+        <property name="formView" value="passwordChange" />
+        <property name="successView" value="passwordChange" />
     </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

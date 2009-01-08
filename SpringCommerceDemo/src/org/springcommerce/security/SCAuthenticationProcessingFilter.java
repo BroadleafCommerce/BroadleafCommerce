@@ -21,7 +21,7 @@ public class SCAuthenticationProcessingFilter extends AuthenticationProcessingFi
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.readUserByUsername(auth.getName());
         if (user.isPasswordChangeRequired()) {
-            return "/passwordChange.jsp";
+            return "/passwordChange.htm";
         }
         return super.determineTargetUrl(request);
     }

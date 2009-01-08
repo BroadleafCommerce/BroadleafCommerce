@@ -14,7 +14,6 @@
 				<h1>My Account</h1>
 				<br />
 				<h4 class="formSectionHeader">Change Password</h4>
-				<jsp:include page="snippets/standardFormErrors.jsp"/>
 			<table class="formTable">
 				<tr>
 					<td style="text-align:right"><label for="j_username">Enter your <b>current password:</b></label></td>
