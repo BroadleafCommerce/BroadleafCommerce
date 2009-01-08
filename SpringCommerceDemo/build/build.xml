@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Spring Commerce Demo" basedir=".." default="8. Redeploy and Restart Tomcat">
+	<property name="internal.build.file" value="${basedir}/build/demo-build.xml" />
+	<property file="${basedir}/build/build.properties" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="build.env" value="dev"/>
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="0. Clean" description="Cleans the staging area. Does not undeploy the application(s).">
+		<ant antfile="${internal.build.file}" target="clean" />
+	</target>
+
+	<target name="1. Deploy Exploded War" description="Deploys the exploded war.">
+		<ant antfile="${internal.build.file}" target="deploy-exploded-war" />
+	</target>
+
+	<target name="2. Deploy War" description="Deploys the unexploded war.">
+		<ant antfile="${internal.build.file}" target="deploy-integrated-war" />
+	</target>
+
+	<target name="3. Undeploy War" description="Undeploys war file(s).">
+		<ant antfile="${internal.build.file}" target="undeploy-war" />
+	</target>
+
+	<target name="4. Start Tomcat - Debug Mode">
+	    <java jar="${appserver.home}/bin/bootstrap.jar" fork="true">
+	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
+	        <jvmarg value="-Xdebug"/>
+	        <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
+	    	<jvmarg value="-Xms128M" />
+	    	<jvmarg value="-Xmx512m" />
+	    	<jvmarg value="-XX:MaxPermSize=512M" />
+	    </java>
+	</target>
+
+	<target name="5. Stop Tomcat">
+	    <java jar="${appserver.home}/bin/bootstrap.jar" fork="true">
+	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
+	        <arg value="stop"/>
+	    </java>
+	</target>
+
+	<target name="6. Generate Java Docs" description="Generates Javadocs for the entire application.">
+		<ant antfile="${internal.build.file}" target="generate-javadocs" />
+	</target>
+
+	<target name="7. Deploy and Start Tomcat" depends="0. Clean, 3. Undeploy War, 2. Deploy War, 4. Start Tomcat - Debug Mode"/>
+
+	<target name="8. Redeploy and Restart Tomcat">
+		<trycatch>
+			<try>
+				<antcall target="5. Stop Tomcat"/>
+			</try>
+		</trycatch>
+		<sleep seconds="35"/>
+		<antcall target="3. Undeploy War"/>
+		<antcall target="1. Deploy Exploded War"/>
+		<antcall target="4. Start Tomcat - Debug Mode"/>
+	</target>
+
+	<target name="9. Load Data">
+	     <sql driver="${mysql.db.driver}"
+	          url="${mysql.db.url}"
+	          userid="${mysql.db.user}"
+	          password="${mysql.db.pw}"
+	          encoding="UTF-8"
+	          classpath="${mysql.db.classpath}">
+	     	<transaction src="${basedir}/db/users.sql"/>
+	     </sql>
+	</target>
+
+	<target name="app.synch" description="Syncs the XHTML, JSP, JS, CSS, and Images of the project with a running application.">
+		<ant antfile="${internal.build.file}" target="app.synch" />
+	</target>
+
+	<target name="usage">
+		<echo>This is the build file for SCDemo</echo>
+		<echo>Use "Clean" to delete the temporary build directories in the project.</echo>
+		<echo>Use "Deploy Exploded War" to deploy the application as an exploded war</echo>
+		<echo>Use "Deploy War" to deploy the war unexploded</echo>
+		<echo>Use "Start Tomcat - Debug Mode" to start Tomcat in debug mode.
+			You will need to configure remote debugging in eclipse (port 8000) to connect.</echo>
+		<echo>Use "Stop Tomcat" to shut down the running server</echo>
+		<echo>Use "Generate Java Docs" to generate javadocs from source code</echo>
+		<echo>Use "app.synch" to synchronize the JSPs, images, CSS,
+			and JS files with the server.  This can be configured to happen
+			automatically when something is saved in Eclipse.</echo>
+		<echo>Use "Load Data" to truncate and load initial data</echo>
+	</target>
+
+</project>
