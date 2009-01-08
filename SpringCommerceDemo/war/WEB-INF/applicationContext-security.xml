@@ -54,9 +54,6 @@
         </property>
     </bean>
 
-	<!-- Automatically receives AuthenticationEvent messages -->
-	<bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener"/>
-
 	<!-- My authentication entry point, can be replaced easily if we are doing custom commence of invalid auths. -->
 	<bean id="myAuthenticationEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint" >
 		<property name="loginFormUrl" value="/login.jsp"/>
