@@ -74,8 +74,6 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/scprofile.jar" />
-
 		<copy todir="${stage.dir}/war/WEB-INF/lib">
 			<fileset dir="${stage.dir}">
 				<include name="${app.name}.jar" />
@@ -177,6 +175,9 @@
 				<property name="debug.compile" value="false" />
 			</else>
 		</if>
+
+		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/scprofile.jar" />
+
 	</target>
 
 	<target name="clean">

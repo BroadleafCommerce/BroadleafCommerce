@@ -9,7 +9,7 @@
 
 	<sec:global-method-security secured-annotations="enabled"/>
 
-    <sec:http auto-config="true">
+    <sec:http entry-point-ref="myAuthenticationEntryPoint" >
         <!-- Restrict URLs based on role -->
         <sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/logoutSuccess*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -21,16 +21,55 @@
         <sec:intercept-url pattern="/js/jquery.js" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/js/jquery.cookie.js" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/**" access="ROLE_USER" />
-        <sec:form-login login-page="/login.jsp"
-                             login-processing-url="/loginProcess"
-                             default-target-url="/index.jsp"
-                             authentication-failure-url="/login.jsp?login_error=1" />
         <sec:logout logout-url="/logout" logout-success-url="/login.jsp" />
     </sec:http>
 
+	<!-- name of my authenticationManager is authenticationManager
+	<sec:authentication-manager alias="authenticationManager"/>-->
+
+    <bean id="anonymousProcessingFilter" class="org.springframework.security.providers.anonymous.AnonymousProcessingFilter">
+        <property name="key" value="anonymous"/>
+        <property name="userAttribute" value="anonymous,ROLE_ANONYMOUS"/>
+        <sec:custom-filter position="ANONYMOUS_FILTER"/>
+    </bean>
+
+	<!-- Custom login filter which replaces the default AUTHENTICATION_PROCESSING_FILTER -->
+	<bean id="scAuthenticationProcessingFilter" class="org.springcommerce.security.SCAuthenticationProcessingFilter" >
+		<sec:custom-filter position="AUTHENTICATION_PROCESSING_FILTER"/> <!-- replace the default one -->
+		<property name="defaultTargetUrl" value="/index.jsp"/> <!-- After a successful login, the user will be taken to this page -->
+		<property name="authenticationFailureUrl" value="/login.jsp?login_error=1" /> <!-- Authentication failed? take him to error page -->
+		<property name="authenticationManager" ref="authenticationManager"/> <!-- Here it is the custom authenticationManager, login magic goes here -->
+        <property name="filterProcessesUrl" value="/loginProcess"/>
+		<property name="allowSessionCreation" value="true" /> <!-- Allow the application to create sessions -->
+        <property name="userService" ref="userService"/>
+	</bean>
+
+	<!-- My custom auth manager -->
+    <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
+        <property name="providers">
+            <list>
+                <ref local="daoAuthenticationProvider"/>
+                <ref local="anonymousAuthenticationProvider"/>
+            </list>
+        </property>
+    </bean>
+
+	<!-- Automatically receives AuthenticationEvent messages -->
+	<bean id="loggerListener" class="org.springframework.security.event.authentication.LoggerListener"/>
+
+	<!-- My authentication entry point, can be replaced easily if we are doing custom commence of invalid auths. -->
+	<bean id="myAuthenticationEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint" >
+		<property name="loginFormUrl" value="/login.jsp"/>
+        <property name="forceHttps" value="false"/>
+	</bean>
+
 	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
-	<bean class="org.springframework.security.providers.dao.DaoAuthenticationProvider"
+    <bean id="anonymousAuthenticationProvider" class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
+        <property name="key" value="anonymous"/>
+    </bean>
+
+	<bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider"
 		  p:userDetailsService-ref="userDetailsService"
           p:passwordEncoder-ref="passwordEncoder">
 		<sec:custom-authentication-provider/>

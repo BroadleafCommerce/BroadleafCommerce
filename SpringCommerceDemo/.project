@@ -3,6 +3,7 @@
 	<name>SpringCommerceDemo</name>
 	<comment></comment>
 	<projects>
+		<project>SpringCommerce</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

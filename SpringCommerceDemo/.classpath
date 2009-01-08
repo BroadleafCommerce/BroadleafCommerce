@@ -3,5 +3,58 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/test/ant-contrib-1.0b3.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/spring-security-core-2.0.4.jar" sourcepath="lib/include/source/spring-security-core-2.0.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/jta.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/mysql-connector-java-5.0.8-bin.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/sqljdbc.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/activemq-all-5.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/antlr-runtime-3.0.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/asm-attrs.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/asm.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/aspectjweaver.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/cglib-2.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-beanutils-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-codec.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-digester-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-httpclient.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-io-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-lang-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-math-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-validator-1.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/drools-compiler-4.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/drools-core-4.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/dwr.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/hibernate-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/hibernate-commons-annotations.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/hibernate-entitymanager.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/jakarta-oro-2.0.8.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/javassist.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/jboss-archive-browsing.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/jstl.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/mvel-1.3.1-java1.4.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/quartz-all-1.6.1-RC1.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/slf4j-api-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/slf4j-log4j12-1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/spring-ldap-1.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/spring-modules-validation.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/spring-security-acl-2.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/spring-security-core-tiger-2.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/spring-security-taglibs-2.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/spring.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/standard.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/tiles-api-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/tiles-core-2.0.5.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/tiles-jsp-2.0.5.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SpringCommerce"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
