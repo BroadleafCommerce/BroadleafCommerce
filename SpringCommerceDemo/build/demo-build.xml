@@ -74,7 +74,7 @@
 			</fileset>
 		</copy>
 
-		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerceProfile/build/stage/scprofile.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/scprofile.jar" />
 
 		<copy todir="${stage.dir}/war/WEB-INF/lib">
 			<fileset dir="${stage.dir}">
