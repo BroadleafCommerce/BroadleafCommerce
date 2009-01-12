@@ -27,24 +27,17 @@
         <property name="userService" ref="userService"/>
         <property name="addressService" ref="addressService"/>
         <property name="formView" value="createAddress" />
-        <property name="successView" value="storeAddress" />
-    </bean>
-    
-    <bean id="storeAddress" class="org.springcommerce.controller.AddressFormController">
-        <property name="commandName" value="address"/>
-        <property name="commandClass" value="org.springcommerce.util.CreateAddress"/>
-        <property name="validator">
-            <bean class="org.springcommerce.controller.validator.AddressValidator"/>
-        </property>
-        <property name="formView" value="createAddress" />
-        <property name="successView" value="createAddress" />
+        <property name="successView" value="maintainAddress" />
     </bean>
     
     <bean id="maintainAddress" class="org.springcommerce.controller.AddressFormController">
         <property name="commandName" value="address"/>
         <property name="commandClass" value="org.springcommerce.util.CreateAddress"/>
+        <property name="validator">
+            <bean class="org.springcommerce.controller.validator.AddressValidator"/>
+        </property>
         <property name="formView" value="maintainAddress" />
-        <property name="successView" value="maintainAddress" />
+        <property name="successView" value="createAddress" />
     </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -65,10 +58,13 @@
                 <prop key="/welcome.htm">welcome</prop>
                 <prop key="/passwordChange.htm">passwordChange</prop>
                 <prop key="/createAddress.htm">createAddress</prop>
-                 <prop key="/storeAddress.htm">storeAddress</prop>
                  <prop key="/maintainAddress.htm">maintainAddress</prop>
 			</props>
 		</property>
+	</bean>
+	
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename" value="messages" />
 	</bean>
 
     <bean id="beanNameUrlMapping" class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
