@@ -16,16 +16,19 @@ public class AddressValidator implements Validator {
     @SuppressWarnings("unchecked")
     @Override
     public boolean supports(Class clazz) {
-        return CreateAddress.class.equals(clazz);
+        return clazz.equals(CreateAddress.class);
     }
 
     @Override
     public void validate(Object obj, Errors errors) {
     	CreateAddress createAddress = (CreateAddress) obj;
-    	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressName", "field.required", "Address Name Required field");
-    	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLine1", "field.required", "Address Line 1 Required field");
-    	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "city", "field.required", "City Required field");
-    	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "state", "field.required", "State Required field");
-
+    	/*if(createAddress.getAddressName().isEmpty()){
+    		errors.rejectValue("addressName", "field.required", null,"Value required.");
+    	}*/
+    	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressName", "addressName.required");
+    	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLine1", "addressLine1.required");
+    	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "city", "city.required");
+    	ValidationUtils.rejectIfEmptyOrWhitespace(errors, "state", "state.required");
+    	
     }
 }
