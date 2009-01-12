@@ -17,4 +17,7 @@ public class HumanServiceImpl implements HumanService {
 		return humanConcernsDao.readPersonById(personId);
 	}
 
+	public void savePerson(Person person) {
+		humanConcernsDao.savePerson(person);
+	}
 }

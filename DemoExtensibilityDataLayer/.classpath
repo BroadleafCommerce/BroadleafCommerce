@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src-framework-perspective"/>
 	<classpathentry kind="src" path="src-user-perspective"/>
+	<classpathentry kind="src" path="src-demo-app"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/common/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="lib/common/jdom-1.0.jar"/>
@@ -38,5 +39,7 @@
 	<classpathentry kind="lib" path="lib/common/spring-security-core-2.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/common/spring-security-core-tiger-2.0.4.jar"/>
 	<classpathentry kind="lib" path="lib/common/spring-security-taglibs-2.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/common/commons-dbcp.jar"/>
+	<classpathentry kind="lib" path="lib/common/commons-pool.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

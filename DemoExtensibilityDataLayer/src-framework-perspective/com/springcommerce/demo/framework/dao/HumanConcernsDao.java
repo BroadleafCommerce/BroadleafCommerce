@@ -6,4 +6,6 @@ public interface HumanConcernsDao {
 
     public Person readPersonById(Long personId);
   
+    public void savePerson(Person person);
+    
 }

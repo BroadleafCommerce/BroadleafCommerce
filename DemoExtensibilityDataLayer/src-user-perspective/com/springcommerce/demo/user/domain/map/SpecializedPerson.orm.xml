@@ -4,18 +4,12 @@
     xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
     version="1.0">
     <description>Data Layer Extensibility Demo</description>
-    <package>com.springcommerce.demo.framework.domain.map</package>
-    <entity class="com.springcommerce.demo.framework.domain.Person" name="Person">
-        <table name="Person"/>
+    <package>com.springcommerce.demo.user.domain.map</package>
+    <entity class="com.springcommerce.demo.user.domain.SpecializedPerson" name="SpecializedPerson">
+        <table name="SpecializedPerson"/>
         <attributes>
-            <id name="id">
-                <generated-value strategy="TABLE"/>
-            </id>
-            <basic name="name">
-                <column name="NAME" length="100"/>
-            </basic>
-            <basic name="age">
-                <column name="AGE"/>
+            <basic name="ageFactor">
+                <column name="AGE_FACTOR"/>
             </basic>
         </attributes>
     </entity>

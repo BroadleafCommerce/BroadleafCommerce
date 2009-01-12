@@ -17,5 +17,9 @@ public class HumanConcernsDaoJpa implements HumanConcernsDao {
     public Person readPersonById(Long personId) {
         return em.find(Person.class, personId);
     }
+    
+    public void savePerson(Person person) {
+    	em.persist(person);
+    }
 
 }
