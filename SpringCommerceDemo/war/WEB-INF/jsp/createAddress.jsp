@@ -11,35 +11,37 @@
 		<form:form method="post" commandName="address">
 				<br />
 				<h4 class="formSectionHeader">Create Address</h4>
+				<spring:hasBindErrors name="address">
+					  <spring:bind path="address.*">
+              			<c:forEach var="error" items="${status.errorMessages}">
+                			<tr><td><font color="red"><c:out value="${error}"/></font></td></tr><br />
+              			</c:forEach>
+              		 </spring:bind>
+            	</spring:hasBindErrors>
+				
 			<table class="formTable">
 				<tr>
-					<td style="text-align:right"><label for="addressName">Address Name:</b></label></td>
-					 <form:errors path="addressName" /><br />
-					<td><input size="30" class="addressField" type="address" name="addressName" id="addressName" value="${address.addressName}" /></td>
+						<td style="text-align:right"><label for="addressName">Address Name:</b></label></td>
+						<td><input size="30" class="addressField" name="addressName" id="addressName" value="${address.addressName}" /></td>
 	    		</tr>
 				<tr>
 					<td style="text-align:right"><label for="addressLine1">Address Line1:</b></label></td>
-					<form:errors path="addressLine1"/><br />
 					<td><input size="30" class="addressField" type="address" name="addressLine1" id="addressLine1" value="${address.addressLine1}" /></td>
 	    		</tr>
 				<tr>
 					<td style="text-align:right"><label for="addressLine2">Address Line2:</b></label></td>
-					<form:errors path="addressLine2" /><br />
 					<td><input size="30" class="addressField" type="address" name="addressLine2" id="addressLine2" value="${address.addressLine2}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="city">City:</b></label></td>
-					<form:errors path="city"/><br />
 					<td><input size="30" class="addressField" type="address" name="city" id="city" value="${address.city}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="state">State:</b></label></td>
-					<form:errors path="state"/><br />
 					<td><input size="30" class="addressField" type="address" name="state" id="state" value="${address.state}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="zipCode">Zip Code:</b></label></td>
-					<form:errors path="zipCode"/><br />
 					<td><input size="30" class="addressField" type="address" name="zipCode" id="zipCode" value="${address.zipCode}" /></td>
 	    		</tr>
     		</table>

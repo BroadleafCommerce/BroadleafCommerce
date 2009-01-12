@@ -8,7 +8,8 @@
 <div id="banner">
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<hr/>
-		<h1>Maintain Address Page</h1>
-
+				<h1>Address created</h1>
+				
+	<a href="<c:url value="/createAddress.htm"/>">Create Address
 	<a href="<c:url value="/logout"/>">Logout</a>
 </div>
