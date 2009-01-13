@@ -27,17 +27,19 @@
         <property name="userService" ref="userService"/>
         <property name="addressService" ref="addressService"/>
         <property name="formView" value="createAddress" />
-        <property name="successView" value="maintainAddress" />
+        <property name="successView" value="listAddress" />
     </bean>
     
-    <bean id="maintainAddress" class="org.springcommerce.controller.AddressFormController">
-        <property name="commandName" value="address"/>
+    <bean id="listAddress" class="org.springcommerce.controller.ListAddressFormController">
+        <property name="commandName" value="listAddress"/>
         <property name="commandClass" value="org.springcommerce.util.CreateAddress"/>
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.AddressValidator"/>
         </property>
-        <property name="formView" value="maintainAddress" />
-        <property name="successView" value="createAddress" />
+        <property name="userService" ref="userService"/>
+        <property name="addressService" ref="addressService"/>
+        <property name="formView" value="listAddress" />
+        <property name="successView" value="listAddress" />
     </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -58,7 +60,7 @@
                 <prop key="/welcome.htm">welcome</prop>
                 <prop key="/passwordChange.htm">passwordChange</prop>
                 <prop key="/createAddress.htm">createAddress</prop>
-                 <prop key="/maintainAddress.htm">maintainAddress</prop>
+                <prop key="/listAddress.htm">listAddress</prop>
 			</props>
 		</property>
 	</bean>
