@@ -38,7 +38,7 @@
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="state">State:</b></label></td>
-					<td><input size="30" class="addressField" type="address" name="state" id="state" value="${address.state}" /></td>
+					<td><input size="30" class="addressField" type="address" name="stateCode" id="stateCode" value="${address.stateCode}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="zipCode">Zip Code:</b></label></td>

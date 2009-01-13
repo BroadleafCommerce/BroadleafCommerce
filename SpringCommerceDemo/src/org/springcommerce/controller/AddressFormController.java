@@ -13,8 +13,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springcommerce.profile.domain.Address;
 import org.springcommerce.profile.domain.User;
 import org.springcommerce.profile.service.AddressService;
+import org.springcommerce.profile.service.AddressStandardizationService;
 import org.springcommerce.profile.service.UserService;
-import org.springcommerce.util.CreateAddress;
+import org.springcommerce.profile.service.addressValidation.AddressStandarizationResponse;
 
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
@@ -25,10 +26,15 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 public class AddressFormController extends SimpleFormController {
     protected final Log logger = LogFactory.getLog(getClass());
     private AddressService addressService;
+    private AddressStandardizationService addressStandardizationService;
     private UserService userService;
 
     public void setAddressService(AddressService addressService) {
         this.addressService = addressService;
+    }
+
+    public void setAddressStandardizationService(AddressStandardizationService addressStandardizationService) {
+        this.addressStandardizationService = addressStandardizationService;
     }
 
     public void setUserService(UserService userService) {
@@ -37,16 +43,14 @@ public class AddressFormController extends SimpleFormController {
 
     protected Object formBackingObject(HttpServletRequest request)
                                 throws ServletException {
-        CreateAddress createAddress = new CreateAddress();
+        Address createAddress = new Address();
 
         if (request.getParameter("addressId") != null) {
-            Address address = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
-            createAddress.setAddressName(address.getAddressName());
-            createAddress.setAddressLine1(address.getAddressLine1());
-            createAddress.setAddressLine2(address.getAddressLine2());
-            createAddress.setCity(address.getCity());
-            createAddress.setState(address.getStateCode());
-            createAddress.setZipCode(address.getZipCode());
+            createAddress = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
+
+            //TODO: Need to have a arch. discussion whether we want to access the entity directly
+            // or do we need an object at this level - Priya.
+            //createAddress.setAddress(address);
         }
 
         return createAddress;
@@ -56,29 +60,34 @@ public class AddressFormController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
                              throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Address address;
-        CreateAddress createAddress = (CreateAddress) command;
+        Address address = (Address) command;
         User user = userService.readUserByUsername(auth.getName());
 
         if (request.getParameter("addressId") != null) {
             address = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
         } else {
             List<Address> addressList = addressService.readAddressByUserId(user.getId());
+
             for (Iterator<Address> itr = addressList.iterator(); itr.hasNext();) {
-                address = (Address) itr.next();
-                if (createAddress.getAddressName().equalsIgnoreCase(address.getAddressName())) {
+                Address addressItr = (Address) itr.next();
+
+                if (address.getAddressName().equalsIgnoreCase(addressItr.getAddressName())) {
                     errors.rejectValue("addressName", "addressName.duplicate", new Object[] { new String(address.getAddressName()) }, null);
                 }
             }
-            address = new Address();
         }
 
-        address.setAddressName(createAddress.getAddressName());
-        address.setAddressLine1(createAddress.getAddressLine1());
-        address.setAddressLine2(createAddress.getAddressLine2());
-        address.setStateCode(createAddress.getState());
-        address.setZipCode(createAddress.getZipCode());
-        address.setCity(createAddress.getCity());
+        //  For USPS test server, only certain addresses would work.  Rest will throw an error. Please make sure you check addressVerification.txt file
+        AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(address);
+        if (standardizedResponse.isErrorDetected()) {
+            logger.debug("Address verification Failed. Please check the address and try again");
+            address.setStandardized(false);
+            errors.rejectValue("zipCode", "addressVerification.failed", null, null);
+        } else {
+            address.setStandardized(true);
+            address = standardizedResponse.getAddress();
+        }
+
         address.setUser(user);
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());

@@ -20,19 +20,20 @@
     
     <bean id="createAddress" class="org.springcommerce.controller.AddressFormController">
         <property name="commandName" value="address"/>
-        <property name="commandClass" value="org.springcommerce.util.CreateAddress"/>
+        <property name="commandClass" value="org.springcommerce.profile.domain.Address"/>
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.AddressValidator"/>
         </property>
         <property name="userService" ref="userService"/>
         <property name="addressService" ref="addressService"/>
+        <property name="addressStandardizationService" ref="addressStandardizationService"/>
         <property name="formView" value="createAddress" />
         <property name="successView" value="listAddress" />
     </bean>
     
     <bean id="listAddress" class="org.springcommerce.controller.ListAddressFormController">
         <property name="commandName" value="listAddress"/>
-        <property name="commandClass" value="org.springcommerce.util.CreateAddress"/>
+        <property name="commandClass" value="org.springcommerce.profile.domain.Address"/>
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.AddressValidator"/>
         </property>
