@@ -16,6 +16,17 @@
 
     <context:component-scan base-package="org.springcommerce" />
 
+	<bean id="persistenceUnitManager" class="org.springcommerce.extensibility.jpa.MergePersistenceUnitManager">
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath*:META-INF/persistence-framework.xml</value>
+				<value>classpath*:META-INF/persistence-profile.xml</value>
+				<value>classpath*:META-INF/persistence.xml</value>
+			</list>
+		</property>
+		<property name="defaultDataSource" ref="dataSource"/>
+	</bean>
+
 	<aop:aspectj-autoproxy/>
 
 	<tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
@@ -24,6 +35,7 @@
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="persistenceUnitName" value="SpringCommercePu" />
+		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
 		</property>
@@ -39,6 +51,7 @@
 			<value>java:/comp/env/jdbc/SCProfile</value>
 		</property>
 	</bean>
+
 
    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 

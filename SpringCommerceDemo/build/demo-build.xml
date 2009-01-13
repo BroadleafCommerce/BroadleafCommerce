@@ -78,6 +78,8 @@
 			<fileset dir="${stage.dir}">
 				<include name="${app.name}.jar" />
 				<include name="scprofile.jar" />
+				<include name="lonestar-framework.jar"/>
+				<include name="lonestar-extensibility.jar"/>
 			</fileset>
 		</copy>
 
@@ -177,7 +179,8 @@
 		</if>
 
 		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/scprofile.jar" />
-
+		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/lonestar-framework.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/lonestar-extensibility.jar" />
 	</target>
 
 	<target name="clean">
