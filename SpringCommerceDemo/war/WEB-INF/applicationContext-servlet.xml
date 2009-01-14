@@ -60,7 +60,7 @@
         <property name="commandClass" value="org.springcommerce.catalog.domain.CatalogItem"/>
         <property name="catalogService" ref="catalogService"/>
         <property name="formView" value="createCatalogItem" />
-        <property name="successView" value="listCatalogItem" />
+        <property name="successView" value="redirect:/listCatalogItem.htm" />
     </bean>
 
     <bean id="listCatalogItem" class="org.springcommerce.controller.ListCatalogItemFormController">
