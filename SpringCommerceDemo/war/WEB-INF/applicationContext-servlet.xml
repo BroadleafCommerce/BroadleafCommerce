@@ -17,6 +17,7 @@
         <property name="formView" value="passwordChange" />
         <property name="successView" value="passwordChange" />
     </bean>
+
     
     <bean id="createUser" class="org.springcommerce.controller.UserFormController">
         <property name="commandName" value="user"/>
@@ -41,7 +42,7 @@
         <property name="formView" value="createAddress" />
         <property name="successView" value="listAddress" />
     </bean>
-    
+
     <bean id="listAddress" class="org.springcommerce.controller.ListAddressFormController">
         <property name="commandName" value="listAddress"/>
         <property name="commandClass" value="org.springcommerce.profile.domain.Address"/>
@@ -52,6 +53,22 @@
         <property name="addressService" ref="addressService"/>
         <property name="formView" value="listAddress" />
         <property name="successView" value="listAddress" />
+    </bean>
+
+    <bean id="createCatalogItem" class="org.springcommerce.controller.CatalogItemFormController">
+        <property name="commandName" value="catalogItem"/>
+        <property name="commandClass" value="org.springcommerce.catalog.domain.CatalogItem"/>
+        <property name="catalogService" ref="catalogService"/>
+        <property name="formView" value="createCatalogItem" />
+        <property name="successView" value="listCatalogItem" />
+    </bean>
+
+    <bean id="listCatalogItem" class="org.springcommerce.controller.ListCatalogItemFormController">
+        <property name="commandName" value="listCatalogItem"/>
+        <property name="commandClass" value="org.springcommerce.catalog.domain.CatalogItem"/>
+        <property name="catalogService" ref="catalogService"/>
+        <property name="formView" value="listCatalogItem" />
+        <property name="successView" value="listCatalogItem" />
     </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -74,10 +91,12 @@
                 <prop key="/passwordChange.htm">passwordChange</prop>
                 <prop key="/createAddress.htm">createAddress</prop>
                 <prop key="/listAddress.htm">listAddress</prop>
+                <prop key="/createCatalogItem.htm">createCatalogItem</prop>
+                <prop key="/listCatalogItem.htm">listCatalogItem</prop>
 			</props>
 		</property>
 	</bean>
-	
+
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages" />
 	</bean>
