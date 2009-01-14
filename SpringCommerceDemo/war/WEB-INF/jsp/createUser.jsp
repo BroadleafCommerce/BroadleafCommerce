@@ -21,31 +21,35 @@
 			<table class="formTable">
 				<tr>
 						<td style="text-align:right"><label for="firstName">First Name:</b></label></td>
-						<td><input size="30" class="userField" name="firstName" id="firstName" value="${user.firstName}" /></td>
+						<td><input size="30" class="userField" name="firstName" id="firstName" value="${firstName}" /></td>
 	    		</tr>
 				<tr>
 					<td style="text-align:right"><label for="lastName">Last Name:</b></label></td>
-					<td><input size="30" class="userField" type="user" name="lastName" id="lastName" value="${user.lastName}" /></td>
+					<td><input size="30" class="userField" type="user" name="lastName" id="lastName" value="${lastName}" /></td>
 	    		</tr>
 				<tr>
 					<td style="text-align:right"><label for="username">User Name:</b></label></td>
-					<td><input size="30" class="userField" type="user" name="username" id="username" value="${user.username}" /></td>
+					<td><input size="30" class="userField" type="user" name="username" id="username" value="${username}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="password">Password:</b></label></td>
-					<td><input size="30" class="userField" type="password" name="password" id="password" value="${user.password}" /></td>
+					<td><input size="30" class="userField" type="password" name="password" id="password" value="${password}" /></td>
+	    		</tr>
+	    		<tr>
+					<td style="text-align:right"><label for="password">Confirm Password:</b></label></td>
+					<td><input size="30" class="userField" type="password" name="passwordConfirm" id="passwordConfirm" value="${passwordConfirm}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="emailAddress">Email Address:</b></label></td>
-					<td><input size="30" class="userField" type="emailAddress" name="emailAddress" id="emailAddress" value="${user.emailAddress}" /></td>
+					<td><input size="30" class="userField" type="emailAddress" name="emailAddress" id="emailAddress" value="${emailAddress}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="challengeQuestion">Challenge Question</b></label></td>
-					<td><input size="30" class="userField" type="challengeQuestion" name="challengeQuestion" id="challengeQuestion" value="${user.challengeQuestion}" /></td>
+					<td><input size="30" class="userField" type="challengeQuestion" name="challengeQuestion" id="challengeQuestion" value="${challengeQuestion}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="challengeAnswer">Challenge Answer</b></label></td>
-					<td><input size="30" class="userField" type="challengeAnswer" name="challengeAnswer" id="challengeAnswer" value="${user.challengeAnswer}" /></td>
+					<td><input size="30" class="userField" type="challengeAnswer" name="challengeAnswer" id="challengeAnswer" value="${challengeAnswer}" /></td>
 	    		</tr>
     		</table>
     		<div class="formButtonFooter personFormButtons">

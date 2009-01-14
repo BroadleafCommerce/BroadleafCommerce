@@ -21,7 +21,7 @@
     
     <bean id="createUser" class="org.springcommerce.controller.UserFormController">
         <property name="commandName" value="user"/>
-        <property name="commandClass" value="org.springcommerce.profile.domain.User"/>
+        <property name="commandClass" value="org.springcommerce.util.CreateUser"/>
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.UserValidator"/>
         </property>

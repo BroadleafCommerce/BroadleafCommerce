@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.profile.domain.User;
 import org.springcommerce.profile.service.UserService;
+import org.springcommerce.util.CreateUser;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -22,19 +23,19 @@ public class UserFormController extends SimpleFormController {
 
     protected Object formBackingObject(HttpServletRequest request)
                                 throws ServletException {
-        return new User();
+        return new CreateUser();
     }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
                              throws Exception {
-        User user = (User) command;
+    	CreateUser createUser = (CreateUser) command;
 
-        if (userService.readUserByUsername(user.getUsername()) != null) {
+        if (userService.readUserByUsername(createUser.getUsername()) != null) {
             errors.rejectValue("username", "username.used", null, null);
         }
 
-        userService.readUserByUsername(user.getUsername());
+        userService.readUserByUsername(createUser.getUsername());
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
 
@@ -43,6 +44,14 @@ public class UserFormController extends SimpleFormController {
 
             return showForm(request, response, errors);
         }
+        User user = new User();
+        user.setUsername(createUser.getUsername());
+        user.setFirstName(createUser.getFirstName());
+        user.setLastName(createUser.getLastName());
+        user.setPassword(createUser.getPassword());
+        user.setEmailAddress(createUser.getEmailAddress());
+        user.setChallengeQuestion(createUser.getChallengeQuestion());
+        user.setChallengeAnswer(createUser.getChallengeAnswer());
         userService.registerUser(user);
         mav.addObject("saved", true);
 
