@@ -34,5 +34,6 @@
 			</form:form>
 	<a href="<c:url value="/createAddress.htm" />">Create Address</a>
 	<a href="<c:url value="/listAddress.htm"/>">List Address</a>
+	<a href="<c:url value="/passwordChange.htm"/>">Password Change</a>
 	<a href="<c:url value="/logout"/>">Logout</a>
 </div>

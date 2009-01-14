@@ -18,6 +18,17 @@
         <property name="successView" value="passwordChange" />
     </bean>
     
+    <bean id="createUser" class="org.springcommerce.controller.UserFormController">
+        <property name="commandName" value="user"/>
+        <property name="commandClass" value="org.springcommerce.profile.domain.User"/>
+        <property name="validator">
+            <bean class="org.springcommerce.controller.validator.UserValidator"/>
+        </property>
+        <property name="userService" ref="userService"/>
+        <property name="formView" value="createUser" />
+        <property name="successView" value="welcome" />
+    </bean>
+    
     <bean id="createAddress" class="org.springcommerce.controller.AddressFormController">
         <property name="commandName" value="address"/>
         <property name="commandClass" value="org.springcommerce.profile.domain.Address"/>
@@ -59,6 +70,7 @@
 		<property name="mappings">
 		    <props>
                 <prop key="/welcome.htm">welcome</prop>
+                <prop key="/createUser.htm">createUser</prop>
                 <prop key="/passwordChange.htm">passwordChange</prop>
                 <prop key="/createAddress.htm">createAddress</prop>
                 <prop key="/listAddress.htm">listAddress</prop>

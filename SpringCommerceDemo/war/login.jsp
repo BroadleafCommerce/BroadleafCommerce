@@ -21,6 +21,7 @@
 
 <div id="side-bar">
     <a href="<c:url value="/"/>">Home</a>
+    <a href="<c:url value="/createUser.htm" />">New User</a>
 </div>
 
 </div>
@@ -93,7 +94,6 @@
     	</form>
     </div>
 </div>
-
 <div id="footer">
 
 </div>

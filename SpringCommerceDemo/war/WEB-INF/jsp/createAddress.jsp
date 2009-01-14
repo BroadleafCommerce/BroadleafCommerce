@@ -9,7 +9,7 @@
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<hr/>
 		<form:form method="post" commandName="address">
-				<br />
+		<h4>For USPS test server, only certain addresses would work.  Rest will throw an error. Please make sure you check addressVerification.txt file</h4>
 				<h4 class="formSectionHeader">Create Address</h4>
 				<spring:hasBindErrors name="address">
 					  <spring:bind path="address.*">
@@ -49,6 +49,7 @@
 				<input type="submit" class="saveButton" value="Save Changes"/>
 			</div>
 			</form:form>
-
+	<a href="<c:url value="/listAddress.htm"/>">List Address</a>
+	<a href="<c:url value="/passwordChange.htm"/>">Password Change</a>
 	<a href="<c:url value="/logout"/>">Logout</a>
 </div>

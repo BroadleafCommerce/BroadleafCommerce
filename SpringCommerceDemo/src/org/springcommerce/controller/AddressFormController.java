@@ -43,17 +43,17 @@ public class AddressFormController extends SimpleFormController {
 
     protected Object formBackingObject(HttpServletRequest request)
                                 throws ServletException {
-        Address createAddress = new Address();
+        Address address = new Address();
 
         if (request.getParameter("addressId") != null) {
-            createAddress = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
+        	address = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
 
-            //TODO: Need to have a arch. discussion whether we want to access the entity directly
-            // or do we need an object at this level - Priya.
+            //TODO: Need to have a discussion whether we want to access the entity directly
+            // or do we need an object at this level
             //createAddress.setAddress(address);
         }
 
-        return createAddress;
+        return address;
     }
 
     @Override
@@ -85,10 +85,10 @@ public class AddressFormController extends SimpleFormController {
             errors.rejectValue("zipCode", "addressVerification.failed", null, null);
         } else {
             address.setStandardized(true);
+            standardizedResponse.getAddress().setAddressName(address.getAddressName());
             address = standardizedResponse.getAddress();
+            address.setUser(user);
         }
-
-        address.setUser(user);
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
 

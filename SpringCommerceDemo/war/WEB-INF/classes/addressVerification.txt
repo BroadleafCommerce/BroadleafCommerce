@@ -1,4 +1,4 @@
-//This is just a place holder file for storing USPS test server address. Will remove it once we are
+//This is just a place holder file for storing USPS test server addresses. Will remove it once we are
 //done with testing
 
 6406 Ivy Lane

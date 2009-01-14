@@ -32,6 +32,6 @@
 	
 	</table>
 				
-	<a href="<c:url value="/createAddress.htm"/>">Create Address
+	<a href="<c:url value="/createAddress.htm"/>">Create Address</a>
 	<a href="<c:url value="/logout"/>">Logout</a>
 </div>
