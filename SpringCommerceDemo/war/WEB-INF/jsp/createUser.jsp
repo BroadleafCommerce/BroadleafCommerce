@@ -9,7 +9,7 @@
 	<hr/>
 		<form:form method="post" commandName="user">
 				<br />
-				<h4 class="formSectionHeader">Register Now!</h4>
+				<h4 class="formSectionHeader">Register Now! *required fields</h4>
 				<spring:hasBindErrors name="user">
 					  <spring:bind path="user.*">
               			<c:forEach var="error" items="${status.errorMessages}">
@@ -20,28 +20,28 @@
 				
 			<table class="formTable">
 				<tr>
-						<td style="text-align:right"><label for="firstName">First Name:</b></label></td>
-						<td><input size="30" class="userField" name="firstName" id="firstName" value="${firstName}" /></td>
+						<td style="text-align:right"><label for="firstName">First Name *</b></label></td>
+						<td><input size="30" class="userField" style="background-color: rgb(255, 255, 160);" type="user" name="firstName" id="firstName" value="${firstName}" /></td>
 	    		</tr>
 				<tr>
-					<td style="text-align:right"><label for="lastName">Last Name:</b></label></td>
-					<td><input size="30" class="userField" type="user" name="lastName" id="lastName" value="${lastName}" /></td>
+					<td style="text-align:right"><label for="lastName">Last Name *</b></label></td>
+					<td><input size="30" class="userField" style="background-color: rgb(255, 255, 160);" type="user" name="lastName" id="lastName" value="${lastName}" /></td>
 	    		</tr>
 				<tr>
-					<td style="text-align:right"><label for="username">User Name:</b></label></td>
-					<td><input size="30" class="userField" type="user" name="username" id="username" value="${username}" /></td>
+					<td style="text-align:right"><label for="username">User Name *</b></label></td>
+					<td><input size="30" class="userField" style="background-color: rgb(255, 255, 160);" type="user" name="username" id="username" value="${username}" /></td>
 	    		</tr>
 	    		<tr>
-					<td style="text-align:right"><label for="password">Password:</b></label></td>
-					<td><input size="30" class="userField" type="password" name="password" id="password" value="${password}" /></td>
+					<td style="text-align:right"><label for="password">Password *</b></label></td>
+					<td><input size="30" class="userField" style="background-color: rgb(255, 255, 160);" type="password" name="password" id="password" value="${password}" /></td>
 	    		</tr>
 	    		<tr>
-					<td style="text-align:right"><label for="password">Confirm Password:</b></label></td>
-					<td><input size="30" class="userField" type="password" name="passwordConfirm" id="passwordConfirm" value="${passwordConfirm}" /></td>
+					<td style="text-align:right"><label for="password">Confirm Password *</b></label></td>
+					<td><input size="30" class="userField" style="background-color: rgb(255, 255, 160);" type="password" name="passwordConfirm" id="passwordConfirm" value="${passwordConfirm}" /></td>
 	    		</tr>
 	    		<tr>
-					<td style="text-align:right"><label for="emailAddress">Email Address:</b></label></td>
-					<td><input size="30" class="userField" type="emailAddress" name="emailAddress" id="emailAddress" value="${emailAddress}" /></td>
+					<td style="text-align:right"><label for="emailAddress">Email Address *</b></label></td>
+					<td><input size="30" class="userField" style="background-color: rgb(255, 255, 160);" type="emailAddress" name="emailAddress" id="emailAddress" value="${emailAddress}" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="challengeQuestion">Challenge Question</b></label></td>
