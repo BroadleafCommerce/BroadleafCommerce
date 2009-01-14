@@ -29,7 +29,7 @@ public class UserValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailAddress", "emailAddress.required");
         
         if(!user.getFirstName().matches(REGEX_VALID_NAME)){
-        	errors.rejectValue("username", "username.invalid",null, null);
+        	errors.rejectValue("firstname", "firstname.invalid",null, null);
         }
         if(!user.getLastName().matches(REGEX_VALID_NAME)){
         	errors.rejectValue("lastName", "lastName.invalid", null, null);
