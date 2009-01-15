@@ -18,7 +18,7 @@
         <property name="successView" value="passwordChange" />
     </bean>
 
-    
+
     <bean id="createUser" class="org.springcommerce.controller.UserFormController">
         <property name="commandName" value="user"/>
         <property name="commandClass" value="org.springcommerce.util.CreateUser"/>
@@ -29,7 +29,7 @@
         <property name="formView" value="createUser" />
         <property name="successView" value="redirect:/login.jsp" />
     </bean>
-    
+
     <bean id="createAddress" class="org.springcommerce.controller.AddressFormController">
         <property name="commandName" value="address"/>
         <property name="commandClass" value="org.springcommerce.profile.domain.Address"/>
@@ -71,6 +71,22 @@
         <property name="successView" value="listCatalogItem" />
     </bean>
 
+    <bean id="createCategory" class="org.springcommerce.controller.CategoryFormController">
+        <property name="commandName" value="category"/>
+        <property name="commandClass" value="org.springcommerce.util.CreateCategory"/>
+        <property name="catalogService" ref="catalogService"/>
+        <property name="formView" value="createCategory" />
+        <property name="successView" value="redirect:/listCategory.htm" />
+    </bean>
+
+    <bean id="listCategory" class="org.springcommerce.controller.ListCategoryFormController">
+        <property name="commandName" value="listCategory"/>
+        <property name="commandClass" value="org.springcommerce.catalog.domain.Category"/>
+        <property name="catalogService" ref="catalogService"/>
+        <property name="formView" value="listCategory" />
+        <property name="successView" value="listCategory" />
+    </bean>
+
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
         <property name="prefix" value="/WEB-INF/jsp/"></property>
@@ -93,6 +109,8 @@
                 <prop key="/listAddress.htm">listAddress</prop>
                 <prop key="/createCatalogItem.htm">createCatalogItem</prop>
                 <prop key="/listCatalogItem.htm">listCatalogItem</prop>
+                <prop key="/createCategory.htm">createCategory</prop>
+                <prop key="/listCategory.htm">listCategory</prop>
 			</props>
 		</property>
 	</bean>
