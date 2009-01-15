@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="XMLMergeMode" default="usage" basedir="..">
+	<description>
+            XMLMergeMod Build File
+    </description>
+	<property name="stage.dir" value="${basedir}/build/stage" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property file="${basedir}/build/build.properties" />
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+	
+	<fileset id="common.lib" dir="${lib.dir}" description="common dependencies">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<target name="build-jar">
+		<mkdir dir="${stage.dir}/framework-jar" />
+
+		<path id="compile-lib">
+			<fileset refid="common.lib" />
+			<fileset file="${stage.dir}/*.jar" />
+		</path>
+
+		<echo>Compiling with debug=${debug.compile}</echo>
+		<javac destdir="${stage.dir}/framework-jar" srcdir="${src.dir}" classpathref="compile-lib"/>
+
+		<copy todir="${stage.dir}/framework-jar">
+			<fileset dir="${src.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<jar jarfile="${stage.dir}/xmlmergemod.jar" basedir="${stage.dir}/framework-jar">
+			<include name="**/*.class" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="META-INF/**" />
+		</jar>
+		<delete dir="${stage.dir}/framework-jar" />
+	</target>
+
+	<target name="build-jars" depends="build-jar"/>
+
+	<target name="clean">
+		<delete dir="${stage.dir}" />
+	</target>
+
+	<target name="usage">
+		<echo>
+			This is an internal ANT build file.
+			For development, use the targets in build.xml.
+		</echo>
+	</target>
+</project>
