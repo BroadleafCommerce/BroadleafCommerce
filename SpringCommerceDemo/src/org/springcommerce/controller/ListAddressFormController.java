@@ -35,17 +35,26 @@ public class ListAddressFormController extends SimpleFormController {
 
     protected Object formBackingObject(HttpServletRequest request)
                                 throws ServletException {
-        return new CreateAddress();
+    	CreateAddress createAddress = new CreateAddress();
+    	List<Address> addressList = getAddressListForUser();
+    	createAddress.setAddressList(addressList);
+        return createAddress;
     }
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.readUserByUsername(auth.getName());
-        List<Address> addressList = addressService.readAddressByUserId(user.getId());
+    	List<Address> addressList = getAddressListForUser();
         Map<Object, Object> model = new HashMap<Object, Object>();
         model.put("addressList", addressList);
         
         return new ModelAndView("listAddress", model);
+    }
+    
+    private List<Address> getAddressListForUser(){
+    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.readUserByUsername(auth.getName());
+        List<Address> addressList = addressService.readAddressByUserId(user.getId());
+        return addressList;
+    	
     }
 }
