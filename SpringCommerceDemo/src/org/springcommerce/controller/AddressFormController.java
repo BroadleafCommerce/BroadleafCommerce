@@ -9,14 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springcommerce.profile.domain.Address;
 import org.springcommerce.profile.domain.User;
 import org.springcommerce.profile.service.AddressService;
 import org.springcommerce.profile.service.AddressStandardizationService;
 import org.springcommerce.profile.service.UserService;
 import org.springcommerce.profile.service.addressValidation.AddressStandarizationResponse;
-
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
@@ -60,11 +58,12 @@ public class AddressFormController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
                              throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Address addressFromDB = new Address();
         Address address = (Address) command;
         User user = userService.readUserByUsername(auth.getName());
 
         if (request.getParameter("addressId") != null) {
-            address = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
+        	addressFromDB = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
         } else {
             List<Address> addressList = addressService.readAddressByUserId(user.getId());
 
@@ -85,9 +84,12 @@ public class AddressFormController extends SimpleFormController {
             errors.rejectValue("zipCode", "addressVerification.failed", null, null);
         } else {
             address.setStandardized(true);
-            standardizedResponse.getAddress().setAddressName(address.getAddressName());
-            address = standardizedResponse.getAddress();
-            address.setUser(user);
+            standardizedResponse.getAddress().setAddressName(addressFromDB.getAddressName());
+            if(addressFromDB.getId()!=null){
+            	standardizedResponse.getAddress().setId(addressFromDB.getId());
+            }
+            addressFromDB = standardizedResponse.getAddress();
+            addressFromDB.setUser(user);
         }
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
@@ -98,7 +100,7 @@ public class AddressFormController extends SimpleFormController {
             return showForm(request, response, errors);
         }
 
-        addressService.saveAddress(address);
+        addressService.saveAddress(addressFromDB);
         mav.addObject("saved", true);
 
         return mav;
