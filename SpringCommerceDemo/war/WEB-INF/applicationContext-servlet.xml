@@ -27,7 +27,7 @@
         </property>
         <property name="userService" ref="userService"/>
         <property name="formView" value="createUser" />
-        <property name="successView" value="welcome" />
+        <property name="successView" value="redirect:/login.jsp" />
     </bean>
     
     <bean id="createAddress" class="org.springcommerce.controller.AddressFormController">
@@ -40,7 +40,7 @@
         <property name="addressService" ref="addressService"/>
         <property name="addressStandardizationService" ref="addressStandardizationService"/>
         <property name="formView" value="createAddress" />
-        <property name="successView" value="listAddress" />
+        <property name="successView" value="redirect:/listAddress.htm" />
     </bean>
 
     <bean id="listAddress" class="org.springcommerce.controller.ListAddressFormController">
