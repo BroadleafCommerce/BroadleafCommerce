@@ -25,7 +25,7 @@
 	<classpathentry kind="lib" path="lib/common/javassist.jar"/>
 	<classpathentry kind="lib" path="lib/common/jta.jar"/>
 	<classpathentry kind="lib" path="lib/common/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="lib/common/lonestar-extensibility.jar"/>
+	<classpathentry kind="lib" path="lib/common/lonestar-extensibility.jar" sourcepath="/SpringCommerce"/>
 	<classpathentry kind="lib" path="lib/common/slf4j-api-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/common/slf4j-log4j12-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/common/spring-security-acl-2.0.4.jar"/>
@@ -37,6 +37,6 @@
 	<classpathentry kind="lib" path="/Java_Projects/dev/xpressdocs/Email/lib/compile/ant-contrib-1.0b3.jar"/>
 	<classpathentry kind="lib" path="/Java_Projects/dev/xpressdocs/Email/lib/compile/ant.jar"/>
 	<classpathentry kind="lib" path="/Java_Projects/dev/xpressdocs/Email/lib/compile/AntUtils.jar"/>
-	<classpathentry kind="lib" path="lib/common/xmlmergemod.jar"/>
+	<classpathentry kind="lib" path="lib/common/xmlmergemod.jar" sourcepath="/XMLMergeMod"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

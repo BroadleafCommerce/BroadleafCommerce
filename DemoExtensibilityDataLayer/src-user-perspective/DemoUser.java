@@ -1,4 +1,6 @@
-import org.springcommerce.extensibility.MergeClassPathXMLApplicationContext;
+import org.springcommerce.extensibility.context.MergeClassPathXMLApplicationContext;
+
+import com.springcommerce.demo.framework.service.CatalogService;
 import com.springcommerce.demo.framework.service.HumanService;
 
 public class DemoUser {
@@ -10,6 +12,8 @@ public class DemoUser {
 		);
 		HumanService human = (HumanService) applicationContext.getBean("humanService");
 		human.updateAge(new Long(1L));
+		CatalogService catalog = (CatalogService) applicationContext.getBean("catalogService");
+		catalog.updateCatalog(new Long(1L));
 	}
 	
 }

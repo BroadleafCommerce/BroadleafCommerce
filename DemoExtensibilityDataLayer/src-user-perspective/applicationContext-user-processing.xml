@@ -8,14 +8,42 @@
            http://www.springframework.org/schema/tx 
            http://www.springframework.org/schema/tx/spring-tx.xsd">
         
-    <bean id="persistenceUnitManager" class="org.springcommerce.extensibility.jpa.OverrideMergePersistenceUnitManager">
-		<property name="persistenceXmlPatchLocations">
+    <bean id="persistenceUnitManager" class="org.springcommerce.extensibility.jpa.MergePersistenceUnitManager">
+		<property name="persistenceXmlLocations">
 			<list>
 				<value>classpath*:META-INF/persistence-user.xml</value>
 			</list>
 		</property>
+		<property name="defaultDataSource" ref="springCommerceDS"/>
+	</bean>
+	
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
+		<property name="dataSource" ref="springCommerceDS"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<!--property name="generateDdl" value="true" /-->
+				<property name="showSql" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
+			</bean>
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.transaction.flush_before_completion" value="false" />
+				<entry key="hibernate.connection.autocommit" value="false" />
+				<entry key="hibernate.cache.use_query_cache" value="false" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="springCommerceDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+		<property name="url" value="jdbc:mysql://localhost:3306/datademo"/>
+		<property name="username" value="root"/> 
+		<property name="password" value=""/>
 	</bean>
 	   
     <bean id="personProcessor" class="com.springcommerce.demo.user.processors.SpecializedPersonProcessorImpl"/>
+    <bean id="catalogProcessor" class="com.springcommerce.demo.user.processors.ProprietaryCatalogProcessorImpl"/>
            
 </beans>

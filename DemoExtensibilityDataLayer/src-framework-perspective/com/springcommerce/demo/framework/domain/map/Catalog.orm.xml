@@ -5,20 +5,24 @@
     version="1.0">
     <description>Data Layer Extensibility Demo</description>
     <package>com.springcommerce.demo.framework.domain.map</package>
-    <mapped-superclass class="com.springcommerce.demo.framework.domain.AbstractPerson">
-    	<attributes>
+    <mapped-superclass class="">
+    <entity class="com.springcommerce.demo.framework.domain.Catalog" name="Catalog">
+        <table name="Catalog"/>
+        <inheritance strategy="TABLE_PER_CLASS"/>
+        <attributes>
             <id name="id">
                 <generated-value strategy="TABLE"/>
             </id>
-            <basic name="name">
-                <column name="NAME" length="100"/>
+            <basic name="itemNumber">
+                <column name="item_number"/>
             </basic>
-            <basic name="age">
-                <column name="AGE"/>
+            <basic name="color">
+                <column name="color"/>
+            </basic>
+            <basic name="style">
+                <column name="style"/>
             </basic>
         </attributes>
-    </mapped-superclass>
-    <entity class="com.springcommerce.demo.framework.domain.Person" name="Person">
-    	<table name="Person"/>
     </entity>
+    </mapped-superclass>
 </entity-mappings>

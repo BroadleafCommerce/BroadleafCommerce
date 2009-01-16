@@ -9,7 +9,7 @@
         <table name="SpecializedPerson"/>
         <attributes>
             <basic name="ageFactor">
-                <column name="AGE_FACTOR"/>
+                <column name="age_factor"/>
             </basic>
         </attributes>
     </entity>

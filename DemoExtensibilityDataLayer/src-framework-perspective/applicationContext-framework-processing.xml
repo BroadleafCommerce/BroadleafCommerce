@@ -9,5 +9,6 @@
            http://www.springframework.org/schema/tx/spring-tx.xsd">
            
     <bean id="personProcessor" class="com.springcommerce.demo.framework.processors.PersonProcessorImpl"/>
+    <bean id="catalogProcessor" class="com.springcommerce.demo.framework.processors.CatalogProcessorImpl"/>
            
 </beans>

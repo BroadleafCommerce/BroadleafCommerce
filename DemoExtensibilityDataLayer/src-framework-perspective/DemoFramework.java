@@ -2,6 +2,7 @@
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.springcommerce.demo.framework.service.CatalogService;
 import com.springcommerce.demo.framework.service.HumanService;
 
 public class DemoFramework {
@@ -10,6 +11,8 @@ public class DemoFramework {
 		ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(new String[]{"applicationContext-framework.xml", "applicationContext-framework-processing.xml"});
 		HumanService human = (HumanService) applicationContext.getBean("humanService");
 		human.updateAge(new Long(1L));
+		CatalogService catalog = (CatalogService) applicationContext.getBean("catalogService");
+		catalog.updateCatalog(new Long(1L));
 	}
 	
 }
