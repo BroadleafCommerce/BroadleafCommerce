@@ -63,6 +63,14 @@
         <property name="successView" value="redirect:/listCatalogItem.htm" />
     </bean>
 
+    <bean id="createSellableItem" class="org.springcommerce.controller.SellableItemFormController">
+        <property name="commandName" value="sellableItem"/>
+        <property name="commandClass" value="org.springcommerce.util.CreateSellableItem"/>
+        <property name="catalogService" ref="catalogService"/>
+        <property name="formView" value="createSellableItem" />
+        <property name="successView" value="redirect:/listCatalogItem.htm" />
+    </bean>
+
     <bean id="listCatalogItem" class="org.springcommerce.controller.ListCatalogItemFormController">
         <property name="commandName" value="listCatalogItem"/>
         <property name="commandClass" value="org.springcommerce.catalog.domain.CatalogItem"/>
@@ -111,6 +119,7 @@
                 <prop key="/listCatalogItem.htm">listCatalogItem</prop>
                 <prop key="/createCategory.htm">createCategory</prop>
                 <prop key="/listCategory.htm">listCategory</prop>
+                <prop key="/createSellableItem.htm">createSellableItem</prop>
 			</props>
 		</property>
 	</bean>
