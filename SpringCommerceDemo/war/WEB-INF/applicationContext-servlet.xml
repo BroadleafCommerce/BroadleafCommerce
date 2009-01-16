@@ -77,6 +77,7 @@
         <property name="catalogService" ref="catalogService"/>
         <property name="formView" value="listCatalogItem" />
         <property name="successView" value="listCatalogItem" />
+        <property name="ajaxView" value="listCatalogItemAjax" />
     </bean>
 
     <bean id="listSellableItem" class="org.springcommerce.controller.ListSellableItemFormController">
@@ -156,9 +157,6 @@
                 <prop key="/createCategory.htm">createCategory</prop>
                 <prop key="/listCategory.htm">listCategory</prop>
                 <prop key="/createSellableItem.htm">createSellableItem</prop>
-                <prop key="/listOrders.htm">listOrders</prop>
-                <prop key="/listBasket.htm">listBasket</prop>
-                <prop key="/addToBasket.htm">addToBasket</prop>
 			</props>
 		</property>
 	</bean>
