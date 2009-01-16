@@ -8,27 +8,20 @@
 <div id="banner">
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<hr/>
-				<h1>Manage Sellable Items</h1>
+				<h1>Your Basket </h1>
 
 	<table border="1">
 	<tr>
 		<th>Name</th>
 		<th>Description</th>
-		<th>Item Attributes</th>
-		<th>--</th>
+		<th>Quantity</th>
+		<th>Actions</th>
 	</tr>
-	<c:forEach var="item" items="${sellableItemList}" varStatus="status">
+	<c:forEach var="item" items="${listBasket}" varStatus="status">
 		<tr>
-			<td><a href="<c:url value="/createSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>"><c:out value="${item.catalogItem.name}"/></td>
-			<td><c:out value="${item.catalogItem.description}"/></td>
-			<td>
-				<c:forEach var="attribute" items="${item.itemAttributes}">
-					<c:out value="${attribute.name}"/>:<c:out value="${attribute.value}"/><br>
-				</c:forEach>
-			</td>
-			<td>
-				<a href="<c:url value="/addToBasket.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Add to Basket</td>
-			</td>
+			<td><c:out value="${item.sellableItem.catalogItem.name}"/></td>
+			<td><c:out value="${item.sellableItem.catalogItem.description}"/></td>
+			<td><c:out value="${item.quantity}"/></td>
 		</tr>
 	</c:forEach>
 

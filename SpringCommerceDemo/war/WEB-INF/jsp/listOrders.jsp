@@ -8,31 +8,23 @@
 <div id="banner">
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<hr/>
-				<h1>Manage Sellable Items</h1>
+				<h1>Manage Orders </h1>
 
 	<table border="1">
 	<tr>
 		<th>Name</th>
 		<th>Description</th>
-		<th>Item Attributes</th>
-		<th>--</th>
+		<th>Actions</th>
 	</tr>
-	<c:forEach var="item" items="${sellableItemList}" varStatus="status">
+	<c:forEach var="item" items="${orderList}" varStatus="status">
 		<tr>
-			<td><a href="<c:url value="/createSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>"><c:out value="${item.catalogItem.name}"/></td>
-			<td><c:out value="${item.catalogItem.description}"/></td>
-			<td>
-				<c:forEach var="attribute" items="${item.itemAttributes}">
-					<c:out value="${attribute.name}"/>:<c:out value="${attribute.value}"/><br>
-				</c:forEach>
-			</td>
-			<td>
-				<a href="<c:url value="/addToBasket.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Add to Basket</td>
-			</td>
+			<td><a href="<c:url value="/createOrder.htm"><c:param name="OrderId" value="${item.id}"/></c:url>"><c:out value="${item.name}"/></td>
+			<td><c:out value="${item.status}"/></td>
 		</tr>
 	</c:forEach>
 
 	</table>
 
+	<a href="<c:url value="/createOrder.htm"/>">Create New Order</a>
 	<a href="<c:url value="/logout"/>">Logout</a>
 </div>

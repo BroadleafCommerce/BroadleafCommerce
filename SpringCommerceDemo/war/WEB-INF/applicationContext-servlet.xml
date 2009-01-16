@@ -87,6 +87,33 @@
         <property name="successView" value="listSellableItem" />
     </bean>
 
+    <bean id="listOrders" class="org.springcommerce.controller.ListOrdersFormController">
+        <property name="commandName" value="listOrders"/>
+        <property name="commandClass" value="org.springcommerce.checkout.domain.SalesOrder"/>
+        <property name="salesOrderService" ref="salesOrderService"/>
+        <property name="userService" ref="userService"></property>
+        <property name="formView" value="listOrders" />
+        <property name="successView" value="listOrders" />
+    </bean>
+    
+    <bean id="listBasket" class="org.springcommerce.controller.ListBasketFormController">
+        <property name="commandName" value="listBasket"/>
+        <property name="commandClass" value="org.springcommerce.checkout.domain.SalesOrderItem"/>
+        <property name="salesOrderService" ref="salesOrderService"/>
+        <property name="userService" ref="userService"></property>
+        <property name="formView" value="listBasket" />
+        <property name="successView" value="listBasket" />
+    </bean>
+    
+    <bean id="addToBasket" class="org.springcommerce.controller.AddItemToBasketFormController">
+        <property name="commandName" value="addToBasket"/>
+        <property name="commandClass" value="org.springcommerce.checkout.domain.SalesOrderItem"/>
+        <property name="salesOrderService" ref="salesOrderService"/>
+        <property name="userService" ref="userService"></property>
+        <property name="formView" value="listBasket" />
+        <property name="successView" value="listBasket" />
+    </bean>
+
     <bean id="createCategory" class="org.springcommerce.controller.CategoryFormController">
         <property name="commandName" value="category"/>
         <property name="commandClass" value="org.springcommerce.util.CreateCategory"/>
@@ -129,6 +156,9 @@
                 <prop key="/createCategory.htm">createCategory</prop>
                 <prop key="/listCategory.htm">listCategory</prop>
                 <prop key="/createSellableItem.htm">createSellableItem</prop>
+                <prop key="/listOrders.htm">listOrders</prop>
+                <prop key="/listBasket.htm">listBasket</prop>
+                <prop key="/addToBasket.htm">addToBasket</prop>
 			</props>
 		</property>
 	</bean>
