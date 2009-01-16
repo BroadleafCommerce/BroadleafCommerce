@@ -1,6 +1,7 @@
 package org.springcommerce.controller;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -41,6 +42,17 @@ public class SellableItemFormController extends SimpleFormController {
             sellableItem.setCatalogItem(createCatalogItem);
             createSellableItem.setSellableItem(sellableItem);
         }
+        
+        if (request.getParameter("sellableItemId") != null){
+        	sellableItem = catalogService.readSellableItemById(new Long(request.getParameter("sellableItemId")));        	
+        	createSellableItem.setSellableItem(sellableItem);
+        	Set<ItemAttribute> attributes = sellableItem.getItemAttributes();
+        	for(Iterator<ItemAttribute> it = attributes.iterator(); it.hasNext();){
+        		ItemAttribute thisAttribute = (ItemAttribute)it.next();
+        		if(thisAttribute.getName().equals("price"))
+        			createSellableItem.setPrice(thisAttribute.getValue());
+        	}
+        }
 
         return createSellableItem;
     }
@@ -58,17 +70,30 @@ public class SellableItemFormController extends SimpleFormController {
             return showForm(request, response, errors);
         }
 
-        ItemAttribute itemAttribute = new ItemAttribute();
-        itemAttribute.setName("price");
-        itemAttribute.setValue(createSellableItem.getPrice());
-        
-        itemAttribute.setSellableItem(createSellableItem.getSellableItem());
         HashSet<ItemAttribute> ias = new HashSet<ItemAttribute>();
+        if(createSellableItem.getSellableItem().getId() == null){
+        	ItemAttribute itemAttribute = new ItemAttribute();
+        	itemAttribute.setName("price");
+        	itemAttribute.setValue(createSellableItem.getPrice());
+        	
+        	itemAttribute.setSellableItem(createSellableItem.getSellableItem());
+        	
+        	ias.add(itemAttribute);
+        	
+        	createSellableItem.getSellableItem().setItemAttributes(ias);        	
+        	
+        }else{
+        	Set<ItemAttribute> attributes = createSellableItem.getSellableItem().getItemAttributes();
+        	for(Iterator<ItemAttribute> it = attributes.iterator(); it.hasNext();){
+        		ItemAttribute thisAttribute = (ItemAttribute)it.next();
+        		if(thisAttribute.getName().equals("price")){
+        			thisAttribute.setValue(createSellableItem.getPrice());
+        			//ias.add(thisAttribute);
+        		}
+        			
+        	}
+        }
         
-        ias.add(itemAttribute);
-        
-        
-        createSellableItem.getSellableItem().setItemAttributes(ias);
         
         catalogService.saveSellableItem(createSellableItem.getSellableItem());
         mav.addObject("saved", true);

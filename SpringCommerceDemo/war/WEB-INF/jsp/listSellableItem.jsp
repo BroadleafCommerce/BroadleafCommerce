@@ -18,7 +18,7 @@
 	</tr>
 	<c:forEach var="item" items="${sellableItemList}" varStatus="status">
 		<tr>
-			<td><c:out value="${item.catalogItem.name}"/></td>
+			<td><a href="<c:url value="/createSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>"><c:out value="${item.catalogItem.name}"/></td>
 			<td><c:out value="${item.catalogItem.description}"/></td>
 			<td>
 				<c:forEach var="attribute" items="${item.itemAttributes}">

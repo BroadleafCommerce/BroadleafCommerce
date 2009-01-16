@@ -14,12 +14,16 @@
 	<tr>
 		<th>Name</th>
 		<th>Description</th>
+		<th>Actions</th>
 	</tr>
 	<c:forEach var="item" items="${catalogItemList}" varStatus="status">
 		<tr>
 			<td><a href="<c:url value="/createCatalogItem.htm"><c:param name="catalogItemId" value="${item.id}"/></c:url>"><c:out value="${item.name}"/></td>
 			<td><c:out value="${item.description}"/></td>
-			<td><a href="<c:url value="/createSellableItem.htm"><c:param name="catalogItemId" value="${item.id}"/></c:url>">Create Sellable Item </a></td>
+			<td>
+				<a href="<c:url value="/createSellableItem.htm"><c:param name="catalogItemId" value="${item.id}"/></c:url>">Create Sellable Item </a><br/>
+				<a href="<c:url value="/listSellableItem.htm"><c:param name="catalogItemId" value="${item.id}"/></c:url>">List Sellable Item </a>
+			</td>
 		</tr>
 	</c:forEach>
 

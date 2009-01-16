@@ -68,7 +68,7 @@
         <property name="commandClass" value="org.springcommerce.util.CreateSellableItem"/>
         <property name="catalogService" ref="catalogService"/>
         <property name="formView" value="createSellableItem" />
-        <property name="successView" value="redirect:/listCatalogItem.htm" />
+        <property name="successView" value="redirect:/listSellableItem.htm" />
     </bean>
 
     <bean id="listCatalogItem" class="org.springcommerce.controller.ListCatalogItemFormController">
