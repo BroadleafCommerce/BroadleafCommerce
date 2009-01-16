@@ -6,6 +6,6 @@ public interface HumanService {
 
 	public Person readPersonById(Long personId);
 	
-	public void savePerson(Person person);
+	public void updateAge(Long personId);
 	
 }

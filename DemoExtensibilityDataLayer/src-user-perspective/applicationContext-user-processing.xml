@@ -7,7 +7,15 @@
            http://www.springframework.org/schema/context/spring-context-2.5.xsd
            http://www.springframework.org/schema/tx 
            http://www.springframework.org/schema/tx/spring-tx.xsd">
-           
-    <bean id="personProcessor" class="com.springcommerce.demo.framework.processors.PersonProcessorImpl"/>
+        
+    <bean id="persistenceUnitManager" class="org.springcommerce.extensibility.jpa.OverrideMergePersistenceUnitManager">
+		<property name="persistenceXmlPatchLocations">
+			<list>
+				<value>classpath*:META-INF/persistence-user.xml</value>
+			</list>
+		</property>
+	</bean>
+	   
+    <bean id="personProcessor" class="com.springcommerce.demo.user.processors.SpecializedPersonProcessorImpl"/>
            
 </beans>

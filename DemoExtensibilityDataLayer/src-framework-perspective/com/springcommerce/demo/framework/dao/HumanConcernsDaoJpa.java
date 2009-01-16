@@ -19,7 +19,7 @@ public class HumanConcernsDaoJpa implements HumanConcernsDao {
     }
     
     public void savePerson(Person person) {
-    	em.persist(person);
+    	em.merge(person);
     }
 
 }

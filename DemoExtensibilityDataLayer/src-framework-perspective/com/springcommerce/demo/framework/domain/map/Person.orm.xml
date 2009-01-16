@@ -7,6 +7,7 @@
     <package>com.springcommerce.demo.framework.domain.map</package>
     <entity class="com.springcommerce.demo.framework.domain.Person" name="Person">
         <table name="Person"/>
+        <inheritance strategy="TABLE_PER_CLASS"/>
         <attributes>
             <id name="id">
                 <generated-value strategy="TABLE"/>
