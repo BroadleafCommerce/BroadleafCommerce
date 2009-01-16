@@ -80,6 +80,7 @@
 				<include name="scprofile.jar" />
 				<include name="lonestar-framework.jar"/>
 				<include name="lonestar-extensibility.jar"/>
+				<include name="lonestar-layout.jar"/>
 			</fileset>
 		</copy>
 
@@ -181,6 +182,7 @@
 		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/scprofile.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/lonestar-framework.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/lonestar-extensibility.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../SpringCommerce/build/stage/lonestar-layout.jar" />
 	</target>
 
 	<target name="clean">

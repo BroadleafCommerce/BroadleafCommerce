@@ -82,6 +82,10 @@
 			<taglib-location>/WEB-INF/tld/spring-form.tld</taglib-location>
 		</taglib>
 		<taglib>
+			<taglib-uri>/springcommerce</taglib-uri>
+			<taglib-location>/WEB-INF/lib/lonestar-layout.jar</taglib-location>
+		</taglib>
+		<taglib>
 			<taglib-uri>/scprofile</taglib-uri>
 			<taglib-location>/WEB-INF/tld/scprofile.tld</taglib-location>
 		</taglib>
