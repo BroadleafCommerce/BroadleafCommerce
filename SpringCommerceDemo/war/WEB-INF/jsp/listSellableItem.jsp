@@ -14,6 +14,7 @@
 	<tr>
 		<th>Name</th>
 		<th>Description</th>
+		<th>Price</th>
 		<th>Item Attributes</th>
 		<th>--</th>
 	</tr>
@@ -21,6 +22,7 @@
 		<tr>
 			<td><a href="<c:url value="/createSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>"><c:out value="${item.catalogItem.name}"/></td>
 			<td><c:out value="${item.catalogItem.description}"/></td>
+			<td><c:out value="${item.price}"/></td>
 			<td>
 				<c:forEach var="attribute" items="${item.itemAttributes}">
 					<c:out value="${attribute.name}"/>:<c:out value="${attribute.value}"/><br>

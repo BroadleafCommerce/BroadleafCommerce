@@ -22,7 +22,7 @@
 			<table class="formTable">
 				<tr>
 					<td style="text-align:right"><label for="catalogItemName">Name:</b></label></td>
-					<td><c:out value="${sellableItem.sellableItem.catalogItem.name}" /></td>
+					<td><c:out value="${sellableItem.catalogItem.name}" /></td>
 					<td>Price: <input type="text" size="10" class="catalogItemField" name="price" id="price" value="${sellableItem.price}"/></td>
 	    		</tr>
     		</table>

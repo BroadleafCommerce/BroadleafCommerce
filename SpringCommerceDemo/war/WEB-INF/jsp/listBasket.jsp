@@ -14,6 +14,7 @@
 	<tr>
 		<th>Name</th>
 		<th>Description</th>
+		<th>Price</th>
 		<th>Quantity</th>
 		<th>Actions</th>
 	</tr>
@@ -21,6 +22,7 @@
 		<tr>
 			<td><c:out value="${item.sellableItem.catalogItem.name}"/></td>
 			<td><c:out value="${item.sellableItem.catalogItem.description}"/></td>
+			<td><c:out value="${item.sellableItem.price}"/></td>
 			<td><c:out value="${item.quantity}"/></td>
 		</tr>
 	</c:forEach>

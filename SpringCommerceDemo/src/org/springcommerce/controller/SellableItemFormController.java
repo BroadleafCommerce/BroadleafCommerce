@@ -15,7 +15,6 @@ import org.springcommerce.catalog.domain.CatalogItem;
 import org.springcommerce.catalog.domain.ItemAttribute;
 import org.springcommerce.catalog.domain.SellableItem;
 import org.springcommerce.catalog.service.CatalogService;
-import org.springcommerce.util.CreateSellableItem;
 
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,32 +34,24 @@ public class SellableItemFormController extends SimpleFormController {
                                 throws ServletException {
         CatalogItem createCatalogItem = new CatalogItem();
         SellableItem sellableItem = new SellableItem();
-        CreateSellableItem createSellableItem = new CreateSellableItem(); 
 
         if (request.getParameter("catalogItemId") != null) {
             createCatalogItem = catalogService.readCatalogItemById(Long.valueOf(request.getParameter("catalogItemId")));
             sellableItem.setCatalogItem(createCatalogItem);
-            createSellableItem.setSellableItem(sellableItem);
         }
         
         if (request.getParameter("sellableItemId") != null){
         	sellableItem = catalogService.readSellableItemById(new Long(request.getParameter("sellableItemId")));        	
-        	createSellableItem.setSellableItem(sellableItem);
         	Set<ItemAttribute> attributes = sellableItem.getItemAttributes();
-        	for(Iterator<ItemAttribute> it = attributes.iterator(); it.hasNext();){
-        		ItemAttribute thisAttribute = (ItemAttribute)it.next();
-        		if(thisAttribute.getName().equals("price"))
-        			createSellableItem.setPrice(thisAttribute.getValue());
-        	}
         }
 
-        return createSellableItem;
+        return sellableItem;
     }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
                              throws Exception {
-        CreateSellableItem createSellableItem = (CreateSellableItem) command;
+        SellableItem sellableItem = (SellableItem) command;
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
 
@@ -70,32 +61,9 @@ public class SellableItemFormController extends SimpleFormController {
             return showForm(request, response, errors);
         }
 
-        HashSet<ItemAttribute> ias = new HashSet<ItemAttribute>();
-        if(createSellableItem.getSellableItem().getId() == null){
-        	ItemAttribute itemAttribute = new ItemAttribute();
-        	itemAttribute.setName("price");
-        	itemAttribute.setValue(createSellableItem.getPrice());
-        	
-        	itemAttribute.setSellableItem(createSellableItem.getSellableItem());
-        	
-        	ias.add(itemAttribute);
-        	
-        	createSellableItem.getSellableItem().setItemAttributes(ias);        	
-        	
-        }else{
-        	Set<ItemAttribute> attributes = createSellableItem.getSellableItem().getItemAttributes();
-        	for(Iterator<ItemAttribute> it = attributes.iterator(); it.hasNext();){
-        		ItemAttribute thisAttribute = (ItemAttribute)it.next();
-        		if(thisAttribute.getName().equals("price")){
-        			thisAttribute.setValue(createSellableItem.getPrice());
-        			//ias.add(thisAttribute);
-        		}
-        			
-        	}
-        }
         
         
-        catalogService.saveSellableItem(createSellableItem.getSellableItem());
+        catalogService.saveSellableItem(sellableItem);
         mav.addObject("saved", true);
 
         return mav;
