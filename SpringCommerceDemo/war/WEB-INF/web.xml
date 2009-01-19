@@ -56,6 +56,11 @@
         <url-pattern>/dwr/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>scprofile</servlet-name>
+        <url-pattern>/catalog/*</url-pattern>
+    </servlet-mapping>
+
 	<filter>
 		<filter-name>entityManagerInViewFilter</filter-name>
 		<filter-class>

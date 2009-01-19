@@ -96,7 +96,7 @@
         <property name="formView" value="listOrders" />
         <property name="successView" value="listOrders" />
     </bean>
-    
+
     <bean id="listBasket" class="org.springcommerce.controller.ListBasketFormController">
         <property name="commandName" value="listBasket"/>
         <property name="commandClass" value="org.springcommerce.order.domain.OrderItem"/>
@@ -105,7 +105,7 @@
         <property name="formView" value="listBasket" />
         <property name="successView" value="listBasket" />
     </bean>
-    
+
     <bean id="addToBasket" class="org.springcommerce.controller.AddItemToBasketFormController">
         <property name="commandName" value="addToBasket"/>
         <property name="commandClass" value="org.springcommerce.order.domain.OrderItem"/>
@@ -131,6 +131,16 @@
         <property name="successView" value="listCategory" />
     </bean>
 
+    <bean id="catalogDisplay" class="org.springcommerce.web.CatalogController">
+        <property name="catalogService" ref="catalogService"/>
+        <property name="defaultView" value="defaultCatalog" />
+    </bean>
+
+    <bean id="catalogDisplayInterceptor" class="org.springcommerce.web.CatalogDisplayInterceptor">
+        <property name="catalogService" ref="catalogService"/>
+        <property name="catalogPrefix" value="catalog"/>
+    </bean>
+
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
         <property name="prefix" value="/WEB-INF/jsp/"></property>
@@ -144,6 +154,11 @@
 	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
 		<property name="alwaysUseFullPath" value="true" />
+        <property name="interceptors">
+            <list>
+                <ref bean="catalogDisplayInterceptor"/>
+            </list>
+        </property>
 		<property name="mappings">
 		    <props>
                 <prop key="/welcome.htm">welcome</prop>
@@ -160,6 +175,8 @@
                 <prop key="/listOrders.htm">listOrders</prop>
                 <prop key="/listBasket.htm">listBasket</prop>
                 <prop key="/addToBasket.htm">addToBasket</prop>
+                <prop key="/catalog/*">catalogDisplay</prop>
+                <prop key="/catalog/*/*">catalogDisplay</prop>
 			</props>
 		</property>
 	</bean>

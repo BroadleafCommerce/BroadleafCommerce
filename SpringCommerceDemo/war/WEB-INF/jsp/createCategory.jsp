@@ -25,6 +25,14 @@
 					<td><input type="text" size="30" class="categoryField" name="name" id="name" value="${category.name}" /></td>
 	    		</tr>
 				<tr>
+					<td style="text-align:right"><label for="categoryUrlKey">UrlKey:</b></label></td>
+					<td><input type="text" size="30" class="categoryField" name="urlKey" id="urlKey" value="${category.urlKey}" /></td>
+	    		</tr>
+				<tr>
+					<td style="text-align:right"><label for="categoryUrl">Url:</b></label></td>
+					<td><input type="text" size="30" class="categoryField" name="url" id="url" value="${category.url}" /></td>
+	    		</tr>
+				<tr>
 					<td style="text-align:right"><label for="categoryParentId">Parent Category ID:</b></label></td>
 					<td><input size="30" class="categoryField" type="text" name="parentId" id="parentId" value="${category.parentId}" /></td>
 	    		</tr>

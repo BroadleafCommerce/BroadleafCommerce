@@ -4,6 +4,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.catalog.domain.Category;
@@ -32,8 +33,10 @@ public class CategoryFormController extends SimpleFormController {
     	CreateCategory createCategory = (CreateCategory) command;
     	Category category = new Category();
     	category.setName(createCategory.getName());
+    	category.setUrlKey(createCategory.getUrlKey());
+    	category.setUrl(createCategory.getUrl());
 
-    	if (createCategory.getParentId()!= null){
+    	if (StringUtils.isNotBlank(createCategory.getParentId())){
     		Category parentCategory = catalogService.readCategoryById(new Long(createCategory.getParentId()));
     		if (parentCategory != null){
     			category.setParentCategory(parentCategory);

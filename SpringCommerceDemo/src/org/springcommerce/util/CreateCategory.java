@@ -14,7 +14,21 @@ public class CreateCategory implements Serializable {
     private final Log logger = LogFactory.getLog(getClass());
     private String name;
     private String parentId;
+    private String urlKey;
+    private String url;
 
+	public String getUrlKey() {
+		return urlKey;
+	}
+	public void setUrlKey(String urlKey) {
+		this.urlKey = urlKey;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
 	public String getName() {
 		return name;
 	}
