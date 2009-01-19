@@ -8,7 +8,8 @@
     <mapped-superclass class="com.springcommerce.demo.framework.domain.AbstractPerson">
     	<attributes>
             <id name="id">
-                <generated-value strategy="TABLE"/>
+            	<column name="id"/>
+                <generated-value/>
             </id>
             <basic name="name">
                 <column name="NAME" length="100"/>

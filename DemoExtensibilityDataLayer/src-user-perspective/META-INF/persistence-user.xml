@@ -5,6 +5,5 @@
              version="1.0">
 	<persistence-unit name="SpringCommerceTestPu" transaction-type="RESOURCE_LOCAL">
 		<mapping-file>com/springcommerce/demo/user/domain/map/SpecializedPerson.orm.xml</mapping-file>
-		<mapping-file>com/springcommerce/demo/user/domain/map/ProprietaryCatalog.orm.xml</mapping-file>
 	</persistence-unit>
 </persistence>

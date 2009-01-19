@@ -22,7 +22,7 @@
 		<property name="dataSource" ref="springCommerceDS"/>
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<!--property name="generateDdl" value="true" /-->
+				<property name="generateDdl" value="true" />
 				<property name="showSql" value="false" />
 				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
 			</bean>
@@ -43,6 +43,8 @@
 		<property name="password" value=""/>
 	</bean>
 	   
+	<bean id="humanConcernsDao" class="com.springcommerce.demo.user.dao.MyHumanConcernsDaoJpa"/>
+	<bean id="catalogDao" class="com.springcommerce.demo.user.dao.MyCatalogDaoJpa"/>
     <bean id="personProcessor" class="com.springcommerce.demo.user.processors.SpecializedPersonProcessorImpl"/>
     <bean id="catalogProcessor" class="com.springcommerce.demo.user.processors.ProprietaryCatalogProcessorImpl"/>
            

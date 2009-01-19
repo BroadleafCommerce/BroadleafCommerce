@@ -1,2 +1,0 @@
-insert into datademo.SpecializedPerson(id, name, age, age_factor) values (1, 'Jeff', 37, 2);
-insert into datademo.ProprietaryCatalog(id, sku, item_hue, item_style, item_popularity) values (1, 123, 'green', 'cool', 'Hollywood');

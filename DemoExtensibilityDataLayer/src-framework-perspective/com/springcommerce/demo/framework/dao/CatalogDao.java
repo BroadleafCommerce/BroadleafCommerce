@@ -1,11 +1,13 @@
 package com.springcommerce.demo.framework.dao;
 
-import com.springcommerce.demo.framework.domain.Catalog;
+import com.springcommerce.demo.framework.domain.AbstractCatalog;
 
 public interface CatalogDao {
 
-    public Catalog readCatalogById(Long catalogId);
+    public AbstractCatalog readCatalogById(Long catalogId);
   
-    public void saveCatalog(Catalog catalog);
+    public void saveCatalog(AbstractCatalog catalog);
+    
+    public AbstractCatalog createNewCatalog();
     
 }

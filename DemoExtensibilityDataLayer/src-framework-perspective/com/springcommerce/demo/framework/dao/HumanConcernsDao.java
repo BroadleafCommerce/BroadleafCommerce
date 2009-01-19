@@ -1,11 +1,13 @@
 package com.springcommerce.demo.framework.dao;
 
-import com.springcommerce.demo.framework.domain.Person;
+import com.springcommerce.demo.framework.domain.AbstractPerson;
 
 public interface HumanConcernsDao {
 
-    public Person readPersonById(Long personId);
+    public AbstractPerson readPersonById(Long personId);
   
-    public void savePerson(Person person);
+    public void savePerson(AbstractPerson person);
+    
+    public AbstractPerson createNewPerson();
     
 }

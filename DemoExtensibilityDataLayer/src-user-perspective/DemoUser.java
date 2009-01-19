@@ -11,8 +11,10 @@ public class DemoUser {
 				new String[]{"applicationContext-user-processing.xml"}
 		);
 		HumanService human = (HumanService) applicationContext.getBean("humanService");
+		human.createNewPerson();
 		human.updateAge(new Long(1L));
 		CatalogService catalog = (CatalogService) applicationContext.getBean("catalogService");
+		catalog.createNewCatalog();
 		catalog.updateCatalog(new Long(1L));
 	}
 	

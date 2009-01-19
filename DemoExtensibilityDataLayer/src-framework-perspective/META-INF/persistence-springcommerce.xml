@@ -6,12 +6,10 @@
 	<persistence-unit name="SpringCommerceTestPu" transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<mapping-file>com/springcommerce/demo/framework/domain/map/Person.orm.xml</mapping-file>
-		<mapping-file>com/springcommerce/demo/framework/domain/map/Catalog.orm.xml</mapping-file>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="create-drop"/>
 			<property name="hibernate.connection.autocommit" value="false"/>
 			<property name="hibernate.show_sql" value="true"/>
-            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>-->
 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect"/>
 		</properties>
 	</persistence-unit>

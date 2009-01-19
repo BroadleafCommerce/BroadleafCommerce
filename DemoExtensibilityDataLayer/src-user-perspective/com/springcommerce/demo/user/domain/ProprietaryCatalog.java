@@ -1,9 +1,23 @@
 package com.springcommerce.demo.user.domain;
 
-import com.springcommerce.demo.framework.domain.Catalog;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-public class ProprietaryCatalog extends Catalog {
+import com.springcommerce.demo.framework.domain.AbstractCatalog;
+
+@Entity
+@Table(name = "ProprietaryCatalog")
+@AttributeOverrides({
+	@AttributeOverride(name="itemNumber", column=@Column(name="sku")),
+	@AttributeOverride(name="color", column=@Column(name="item_hue")),
+	@AttributeOverride(name="style", column=@Column(name="item_style"))
+})
+public class ProprietaryCatalog extends AbstractCatalog {
 	
+	@Column(name = "item_popularity")
 	private String popularity;
 
 	/**

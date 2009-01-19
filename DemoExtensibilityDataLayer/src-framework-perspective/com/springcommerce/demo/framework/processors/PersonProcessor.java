@@ -1,9 +1,9 @@
 package com.springcommerce.demo.framework.processors;
 
-import com.springcommerce.demo.framework.domain.Person;
+import com.springcommerce.demo.framework.domain.AbstractPerson;
 
 public interface PersonProcessor {
 
-	public void alterPerson(Person person);
+	public void alterPerson(AbstractPerson person);
 	
 }

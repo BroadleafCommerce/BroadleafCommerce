@@ -1,3 +1,0 @@
-1. Add a new table
-2. Add a new column to an existing table
-3. override the mappings for an existing table

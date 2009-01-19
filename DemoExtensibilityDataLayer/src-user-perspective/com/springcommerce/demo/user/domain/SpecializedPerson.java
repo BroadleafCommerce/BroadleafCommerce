@@ -1,10 +1,8 @@
 package com.springcommerce.demo.user.domain;
 
-import java.io.Serializable;
+import com.springcommerce.demo.framework.domain.AbstractPerson;
 
-import com.springcommerce.demo.framework.domain.Person;
-
-public class SpecializedPerson extends Person implements Serializable {
+public class SpecializedPerson extends AbstractPerson {
 
 	private int ageFactor;
 	
