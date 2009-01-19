@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springcommerce.checkout.domain.SalesOrder;
-import org.springcommerce.checkout.domain.SalesOrderItem;
-import org.springcommerce.checkout.service.SalesOrderService;
+import org.springcommerce.order.domain.Order;
+import org.springcommerce.order.domain.OrderItem;
+import org.springcommerce.order.service.OrderService;
 import org.springcommerce.profile.domain.User;
 import org.springcommerce.profile.service.UserService;
 import org.springframework.security.Authentication;
@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ListBasketFormController extends SimpleFormController {
     protected final Log logger = LogFactory.getLog(getClass());
-    private SalesOrderService orderService;
+    private OrderService orderService;
     
     private UserService userService;
 
@@ -30,21 +30,21 @@ public class ListBasketFormController extends SimpleFormController {
         this.userService = userService;
     }
 
-    public void setSalesOrderService(SalesOrderService orderService) {
+    public void setOrderService(OrderService orderService) {
 		this.orderService = orderService;
 	}
 
     protected Object formBackingObject(HttpServletRequest request)throws ServletException {
 
-    	return new SalesOrderItem();
+    	return new OrderItem();
     }
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();    	
         User user = userService.readUserByUsername(auth.getName());
-        SalesOrder basketOrder = orderService.getCurrentBasketForUserId(user.getId());
-        List<SalesOrderItem> orderItems = orderService.getItemsForOrder(basketOrder.getId());
+        Order basketOrder = orderService.getCurrentBasketForUserId(user.getId());
+        List<OrderItem> orderItems = orderService.getItemsForOrder(basketOrder.getId());
         
         Map<Object, Object> model = new HashMap<Object, Object>();
         model.put("listBasket", orderItems);

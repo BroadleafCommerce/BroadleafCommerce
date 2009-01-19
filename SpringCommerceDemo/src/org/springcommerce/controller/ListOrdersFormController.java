@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.catalog.domain.CatalogItem;
 import org.springcommerce.catalog.service.CatalogService;
-import org.springcommerce.checkout.domain.SalesOrder;
-import org.springcommerce.checkout.service.SalesOrderService;
+import org.springcommerce.order.domain.Order;
+import org.springcommerce.order.service.OrderService;
 import org.springcommerce.profile.domain.User;
 import org.springcommerce.profile.service.UserService;
 import org.springframework.security.Authentication;
@@ -23,7 +23,7 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ListOrdersFormController extends SimpleFormController {
     protected final Log logger = LogFactory.getLog(getClass());
-    private SalesOrderService orderService;
+    private OrderService orderService;
     
     private UserService userService;
 
@@ -31,19 +31,19 @@ public class ListOrdersFormController extends SimpleFormController {
         this.userService = userService;
     }
 
-    public void setSalesOrderService(SalesOrderService orderService) {
+    public void setOrderService(OrderService orderService) {
 		this.orderService = orderService;
 	}
 
     protected Object formBackingObject(HttpServletRequest request)throws ServletException {
-    	return new SalesOrder();
+    	return new Order();
     }
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();    	
         User user = userService.readUserByUsername(auth.getName());
-        List<SalesOrder> orderList = orderService.getSalesOrdersForUser(user.getId());
+        List<Order> orderList = orderService.getOrdersForUser(user.getId());
         Map<Object, Object> model = new HashMap<Object, Object>();
         model.put("orderList", orderList);
 

@@ -90,8 +90,8 @@
 
     <bean id="listOrders" class="org.springcommerce.controller.ListOrdersFormController">
         <property name="commandName" value="listOrders"/>
-        <property name="commandClass" value="org.springcommerce.checkout.domain.SalesOrder"/>
-        <property name="salesOrderService" ref="salesOrderService"/>
+        <property name="commandClass" value="org.springcommerce.order.domain.Order"/>
+        <property name="orderService" ref="orderService"/>
         <property name="userService" ref="userService"></property>
         <property name="formView" value="listOrders" />
         <property name="successView" value="listOrders" />
@@ -99,8 +99,8 @@
     
     <bean id="listBasket" class="org.springcommerce.controller.ListBasketFormController">
         <property name="commandName" value="listBasket"/>
-        <property name="commandClass" value="org.springcommerce.checkout.domain.SalesOrderItem"/>
-        <property name="salesOrderService" ref="salesOrderService"/>
+        <property name="commandClass" value="org.springcommerce.order.domain.OrderItem"/>
+        <property name="orderService" ref="orderService"/>
         <property name="userService" ref="userService"></property>
         <property name="formView" value="listBasket" />
         <property name="successView" value="listBasket" />
@@ -108,8 +108,8 @@
     
     <bean id="addToBasket" class="org.springcommerce.controller.AddItemToBasketFormController">
         <property name="commandName" value="addToBasket"/>
-        <property name="commandClass" value="org.springcommerce.checkout.domain.SalesOrderItem"/>
-        <property name="salesOrderService" ref="salesOrderService"/>
+        <property name="commandClass" value="org.springcommerce.order.domain.OrderItem"/>
+        <property name="orderService" ref="orderService"/>
         <property name="userService" ref="userService"></property>
         <property name="formView" value="listBasket" />
         <property name="successView" value="listBasket" />
