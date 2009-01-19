@@ -8,12 +8,6 @@
 	<property name="lib.dir" value="${basedir}/lib" />
 	<property file="${basedir}/build/build.properties" />
 
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
-		<classpath>
-			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
-		</classpath>
-	</taskdef>
-	
 	<fileset id="common.lib" dir="${lib.dir}" description="common dependencies">
 		<include name="**/*.jar" />
 	</fileset>
@@ -27,7 +21,7 @@
 		</path>
 
 		<echo>Compiling with debug=${debug.compile}</echo>
-		<javac destdir="${stage.dir}/framework-jar" srcdir="${src.dir}" classpathref="compile-lib"/>
+		<javac destdir="${stage.dir}/framework-jar" srcdir="${src.dir}" classpathref="compile-lib" debug="true"/>
 
 		<copy todir="${stage.dir}/framework-jar">
 			<fileset dir="${src.dir}">

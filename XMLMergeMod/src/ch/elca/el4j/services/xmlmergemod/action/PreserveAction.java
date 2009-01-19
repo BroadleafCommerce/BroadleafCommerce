@@ -16,7 +16,9 @@
  */
 package ch.elca.el4j.services.xmlmergemod.action;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import ch.elca.el4j.services.xmlmergemod.Action;
 
@@ -41,7 +43,9 @@ public class PreserveAction implements Action {
     public void perform(Element originalElement, Element patchElement,
         Element outputParentElement) {
         if (originalElement != null) {
-            outputParentElement.appendChild((Element) originalElement.cloneNode(true));
+        	Document parentDoc = outputParentElement.getOwnerDocument();
+        	Node temp = parentDoc.importNode(originalElement.cloneNode(true), true);
+            outputParentElement.appendChild(temp);
         }
     }
 

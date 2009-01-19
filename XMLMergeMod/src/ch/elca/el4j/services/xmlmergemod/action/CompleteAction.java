@@ -16,7 +16,9 @@
  */
 package ch.elca.el4j.services.xmlmergemod.action;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import ch.elca.el4j.services.xmlmergemod.Action;
 
@@ -40,11 +42,14 @@ public class CompleteAction implements Action {
      */
     public void perform(Element originalElement, Element patchElement,
         Element outputParentElement) {
+    	Document parentDoc = outputParentElement.getOwnerDocument();
         if (originalElement != null) {
-            outputParentElement.appendChild((Element) originalElement.cloneNode(true));
+        	Node temp = parentDoc.importNode(originalElement.cloneNode(true), true);
+            outputParentElement.appendChild(temp);
         } else {
             if (patchElement != null) {
-                outputParentElement.appendChild((Element) patchElement.cloneNode(true));
+            	Node temp = parentDoc.importNode(patchElement.cloneNode(true), true);
+                outputParentElement.appendChild(temp);
             }
         }
     }

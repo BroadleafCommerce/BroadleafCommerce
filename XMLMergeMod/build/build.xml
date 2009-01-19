@@ -11,7 +11,7 @@
 		<ant antfile="${internal.build.file}" target="clean" />
 	</target>
 
-	<target name="1. Build Jars" description="Builds all jars to the staging area.">
+	<target name="1. Build Jar" description="Builds the jar to the staging area.">
 		<ant antfile="${internal.build.file}" target="build-jars" />
 	</target>
 

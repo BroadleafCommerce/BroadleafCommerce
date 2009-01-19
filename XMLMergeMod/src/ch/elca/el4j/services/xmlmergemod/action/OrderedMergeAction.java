@@ -16,7 +16,6 @@
  */
 package ch.elca.el4j.services.xmlmergemod.action;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,7 +27,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
 import ch.elca.el4j.services.xmlmergemod.AbstractXmlMergeException;
@@ -73,21 +71,18 @@ public class OrderedMergeAction extends AbstractMergeAction {
 
         Mapper mapper = (Mapper) m_mapperFactory.getOperation(originalElement,
             patchElement);
-
+        Document parentDoc = outputParentElement.getOwnerDocument();
         if (originalElement == null) {
-            outputParentElement.appendChild(mapper.map(patchElement));
+        	Element temp = (Element) parentDoc.importNode(mapper.map(patchElement), true);
+            outputParentElement.appendChild(temp);
         } else if (patchElement == null) {
-            outputParentElement.appendChild((Element) originalElement.cloneNode(true));
+        	Element temp = (Element) parentDoc.importNode(originalElement.cloneNode(true), true);
+            outputParentElement.appendChild(temp);
         } else {
-
-//            Element workingElement = new Element(originalElement.getNodeName(),
-//                originalElement.getNamespacePrefix(), originalElement
-//                    .getNamespaceURI());
         	Element workingElement = (Element) originalElement.cloneNode(false);
             addAttributes(workingElement, originalElement);
 
             s_logger.debug("Adding " + workingElement);
-            Document parentDoc = outputParentElement.getOwnerDocument();
             workingElement = (Element) parentDoc.importNode(workingElement, false);
             outputParentElement.appendChild(workingElement);
 
@@ -114,7 +109,7 @@ public class OrderedMergeAction extends AbstractMergeAction {
         addAttributes(parentOut, parentIn2);
         
         List preList1 = Utility.buildListFromNodeList(parentIn1.getChildNodes());
-        List preList2 = Utility.buildListFromNodeList(parentIn1.getChildNodes());
+        List preList2 = Utility.buildListFromNodeList(parentIn2.getChildNodes());
         Node[] list1 = (Node[]) preList1.toArray(new Node[preList1.size()]);
         Node[] list2 = (Node[]) preList2.toArray(new Node[preList2.size()]);
 
@@ -250,7 +245,12 @@ public class OrderedMergeAction extends AbstractMergeAction {
      * @param in in element
      */
     private void addAttributes(Element out, Element in) {
-
+    	/*
+    	 * TODO need to review how this works. This piece
+    	 * is not complete enough to handle the proper merging
+    	 * of applicationContext files when you involve various
+    	 * schema locations with all the merge files.
+    	 */
         LinkedHashMap allAttributes = new LinkedHashMap();
 
         NamedNodeMap outAttributes = out.getAttributes();

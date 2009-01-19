@@ -18,13 +18,14 @@ public class Demo {
 			Configurer configurer = new PropertyXPathConfigurer(
 					"matcher.default=TAG\n" +
 					"action.default=MERGE\n" +
-					"xpath.2=//bean[@id='persistenceUnitManager']\n" +
+					"xpath.2=//bean[@id='persistenceUnitManager']/property[@name='persistenceXmlLocations']/list\n" +
 					//"action.1=PRESERVE\n" +
 					//"matcher.2=com.springcommerce.demo.framework.PersistenceUnitMatcher\n" +
 					//"xpath.2=//spring:bean[@id='persistenceUnitManager']/property\n" +
 					//"xpath.3=//spring:bean[@id='persistenceUnitManager']/property/list\n" +
 					//"xpath.4=//spring:bean[@id='persistenceUnitManager']/property/list/value\n" +
-					"action.2=REPLACE"
+					"action.2=REPLACE\n" + 
+					"matcher.2=SKIP"
 			);
 			InputStream in = null;
 			try {

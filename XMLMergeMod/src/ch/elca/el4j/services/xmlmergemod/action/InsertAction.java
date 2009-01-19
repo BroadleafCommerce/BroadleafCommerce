@@ -22,7 +22,9 @@ import java.util.List;
 
 import javax.swing.text.AbstractDocument.Content;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import ch.elca.el4j.services.xmlmergemod.Action;
 import ch.elca.el4j.services.xmlmergemod.Utility;
@@ -51,7 +53,9 @@ public class InsertAction implements Action {
         Element outputParentElement) {
 
         if (patchElement == null && originalElement != null) {
-            outputParentElement.appendChild((Element) originalElement.cloneNode(true));
+        	Document parentDoc = outputParentElement.getOwnerDocument();
+        	Node temp = parentDoc.importNode(originalElement.cloneNode(true), true);
+            outputParentElement.appendChild(temp);
 
         } else {
             List outputContent = Utility.buildListFromNodeList(outputParentElement.getChildNodes());
