@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="XMLMergeMode" default="usage" basedir="..">
+<project name="XMLMergeMod" default="usage" basedir="..">
 	<description>
 		XMLMergeMod Build File
     </description>
