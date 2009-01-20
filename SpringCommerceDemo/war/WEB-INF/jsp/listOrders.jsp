@@ -12,14 +12,15 @@
 
 	<table border="1">
 	<tr>
-		<th>Name</th>
-		<th>Description</th>
-		<th>Actions</th>
+		<th>ID</th>
+		<th>Status</th>
+		<th>Total</th>
 	</tr>
 	<c:forEach var="item" items="${orderList}" varStatus="status">
 		<tr>
-			<td><a href="<c:url value="/createOrder.htm"><c:param name="OrderId" value="${item.id}"/></c:url>"><c:out value="${item.name}"/></td>
-			<td><c:out value="${item.status}"/></td>
+			<td><c:out value="${item.id}"/></td>
+			<td><c:out value="${item.orderStatus}"/></td>
+			<td><c:out value="${item.orderTotal}"></c:out>
 		</tr>
 	</c:forEach>
 
