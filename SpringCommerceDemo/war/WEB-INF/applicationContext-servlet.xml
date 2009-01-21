@@ -177,6 +177,7 @@
                 <prop key="/addToBasket.htm">addToBasket</prop>
                 <prop key="/catalog/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*">catalogDisplay</prop>
+                <prop key="/catalog/*/*/*">catalogDisplay</prop>
 			</props>
 		</property>
 	</bean>
