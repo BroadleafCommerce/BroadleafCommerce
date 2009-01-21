@@ -7,6 +7,7 @@
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js">
 </script>
+<c:out value="${paginationObject.dataSource}"/>
 <div id="banner">
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<hr/>
@@ -21,10 +22,13 @@
 		width: 400px;
 		}
 </style>
+<div id="catalogListContainer">
 <jsp:include page="listCatalogItemAjax.jsp"/>
+</div>
 
 <div>
-<a href="<c:url value="/createCatalogItem.htm"/>">Create CatalogItem
+<a href="<c:url value="/createCatalogItem.htm"/>">Create CatalogItem</a>
 <br/>
+
 <a href="<c:url value="/logout"/>">Logout</a>
 </div>

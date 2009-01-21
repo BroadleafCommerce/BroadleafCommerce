@@ -25,6 +25,8 @@ public class ListCatalogItemFormController extends PaginationController {
         PaginationCommandObject object = new PaginationCommandObject();
         object.setPageNumber(0);
         object.setPageSize(25);
+        object.setDataSource(request.getRequestURI().toString());
+        object.setContainerId("listContainer");
         return object;
     }
     
@@ -34,5 +36,4 @@ public class ListCatalogItemFormController extends PaginationController {
         List<?> catalogItemList = catalogService.readCatalogItemsByName("");
         object.setFullList(catalogItemList);
     }
-
 }
