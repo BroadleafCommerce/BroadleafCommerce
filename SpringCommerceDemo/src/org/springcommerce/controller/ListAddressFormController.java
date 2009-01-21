@@ -44,7 +44,7 @@ public class ListAddressFormController extends SimpleFormController {
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
     	List<Address> addressList = getAddressListForUser();
-        Map<Object, Object> model = new HashMap<Object, Object>();
+        Map<String, List<Address>> model = new HashMap<String, List<Address>>();
         model.put("addressList", addressList);
         
         return new ModelAndView("listAddress", model);
