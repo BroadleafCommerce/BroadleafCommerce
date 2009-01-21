@@ -98,12 +98,9 @@
     </bean>
 
     <bean id="listBasket" class="org.springcommerce.controller.ListBasketFormController">
-        <property name="commandName" value="listBasket"/>
-        <property name="commandClass" value="org.springcommerce.order.domain.OrderItem"/>
+		<property name="redirectUrl" value="listBasket.htm" />
         <property name="orderService" ref="orderService"/>
         <property name="userService" ref="userService"></property>
-        <property name="formView" value="listBasket" />
-        <property name="successView" value="listBasket" />
     </bean>
 
     <bean id="addToBasket" class="org.springcommerce.controller.AddItemToBasketFormController">
@@ -173,8 +170,7 @@
                 <prop key="/listCategory.htm">listCategory</prop>
                 <prop key="/createSellableItem.htm">createSellableItem</prop>
                 <prop key="/listOrders.htm">listOrders</prop>
-                <prop key="/listBasket.htm">listBasket</prop>
-                <prop key="/addToBasket.htm">addToBasket</prop>
+                <prop key="/basket/*">listBasket</prop>
                 <prop key="/catalog/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*/*">catalogDisplay</prop>

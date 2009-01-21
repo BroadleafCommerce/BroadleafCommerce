@@ -10,6 +10,7 @@
 	<hr/>
 				<h1>Your Basket </h1>
 
+	<form:form method="post" action="updateQuantity.htm" commandName="basketItems">				
 	<table border="1">
 	<tr>
 		<th>Name</th>
@@ -17,17 +18,22 @@
 		<th>Price</th>
 		<th>Quantity</th>
 		<th>Actions</th>
-	</tr>
-	<c:forEach var="item" items="${listBasket}" varStatus="status">
+	</tr>	
+	<c:forEach var="item" items="${basketItems.items}" varStatus="myRow">
+ 		<input name="basketItems[${myRow.index}].quantity" type="text" value="${item.quantity}"/>
 		<tr>
 			<td><c:out value="${item.sellableItem.catalogItem.name}"/></td>
 			<td><c:out value="${item.sellableItem.catalogItem.description}"/></td>
 			<td><c:out value="${item.sellableItem.price}"/></td>
-			<td><c:out value="${item.quantity}"/></td>
+			<td>
+				<input type="text" size="10" class="catalogItemField" name="quantity" id="quantity" value="${item.quantity}"/>
+			</td>
+			<td><a href="<c:url value="/basket/removeItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Remove Item(s)</a></td>
 		</tr>
 	</c:forEach>
-
 	</table>
 
+		<input type="submit" class="saveButton" value="Update Quantities" />
+	</form:form>	
 	<a href="<c:url value="/logout"/>">Logout</a>
 </div>

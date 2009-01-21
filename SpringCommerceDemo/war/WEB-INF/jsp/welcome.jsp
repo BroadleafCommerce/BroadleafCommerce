@@ -14,7 +14,7 @@
 	<a href="<c:url value="/listCatalogItem.htm"/>">List CatalogItem</a>
 	<a href="<c:url value="/listSellableItem.htm"/>">List SellableItems</a>
 	<a href="<c:url value="/listOrders.htm"/>">List User Orders</a>
-	<a href="<c:url value="/listBasket.htm"/>">List Basket</a>
+	<a href="<c:url value="/basket/listBasket.htm"/>">List Basket</a>
 	<a href="<c:url value="/createCategory.htm"/>">Create Category</a>
 	<a href="<c:url value="/listCategory.htm"/>">List Category</a>
 	<a href="<c:url value="/passwordChange.htm"/>">Password Change</a>

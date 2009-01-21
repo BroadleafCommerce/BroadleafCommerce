@@ -29,7 +29,7 @@
 				</c:forEach>
 			</td>
 			<td>
-				<a href="<c:url value="/addToBasket.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Add to Basket</td>
+				<a href="<c:url value="/basket/addSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Add to Basket</td>
 			</td>
 		</tr>
 	</c:forEach>
