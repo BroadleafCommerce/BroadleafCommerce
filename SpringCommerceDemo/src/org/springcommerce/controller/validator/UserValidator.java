@@ -2,6 +2,7 @@ package org.springcommerce.controller.validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.validator.GenericValidator;
 import org.springcommerce.util.CreateUser;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -21,6 +22,7 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object obj, Errors errors) {
+    	//TODO: need to add some more validation
     	CreateUser user = (CreateUser) obj;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "firstName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "lastName.required");
@@ -41,6 +43,9 @@ public class UserValidator implements Validator {
         if(!user.getPassword().equals(user.getPasswordConfirm())){
         	errors.rejectValue("password", "passwordConfirm.invalid", null, null);
         }
-        //TODO: need to add some more validation for email address, etc..
+        
+        if(!GenericValidator.isEmail(user.getEmailAddress())){
+        	errors.rejectValue("emailAddress", "emailAddress.invalid", null, null);
+        }
     }
 }
