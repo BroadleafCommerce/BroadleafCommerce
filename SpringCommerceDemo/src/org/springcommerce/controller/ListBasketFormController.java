@@ -75,9 +75,8 @@ public class ListBasketFormController {
     
     @RequestMapping(method = RequestMethod.POST)
     public String updateQuantity(BasketItems basketItems, BindingResult result){
-    	System.out.println("Updating quantity");
     	for (OrderItem orderItem : basketItems.getItems()) {
-			System.out.println("quantity: "+orderItem.getQuantity());
+    		orderService.updateItemInOrder(orderItem.getOrder(), orderItem);
 		}
     	return "redirect:"+redirectUrl;
     }

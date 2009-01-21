@@ -20,13 +20,17 @@
 		<th>Actions</th>
 	</tr>	
 	<c:forEach var="item" items="${basketItems.items}" varStatus="myRow">
+		<input name="basketItems[${myRow.index}].id" type="text" value="${item.id}"/>
  		<input name="basketItems[${myRow.index}].quantity" type="text" value="${item.quantity}"/>
 		<tr>
 			<td><c:out value="${item.sellableItem.catalogItem.name}"/></td>
 			<td><c:out value="${item.sellableItem.catalogItem.description}"/></td>
 			<td><c:out value="${item.sellableItem.price}"/></td>
 			<td>
-				<input type="text" size="10" class="catalogItemField" name="quantity" id="quantity" value="${item.quantity}"/>
+	<spring:bind path="basketItems.items[${myRow.index}].quantity">
+      <input type="text" name="${status.expression}" value="${status.value}"/>
+    </spring:bind>
+    
 			</td>
 			<td><a href="<c:url value="/basket/removeItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Remove Item(s)</a></td>
 		</tr>
