@@ -5,9 +5,7 @@
 <%@ taglib prefix="spring" uri="/spring"%>
 <%@ taglib prefix="form" uri="/spring-form"%>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<div id="banner">
-	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
-	<hr/>
+<jsp:include page="snippets/header.jsp"/>
 		<form:form method="post" commandName="sellableItem">
 				<br />
 				<h4 class="formSectionHeader">Create SellableItem</h4>

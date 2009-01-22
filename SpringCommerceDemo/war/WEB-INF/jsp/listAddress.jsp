@@ -5,15 +5,8 @@
 <%@ taglib prefix="spring" uri="/spring"%>
 <%@ taglib prefix="form" uri="/spring-form"%>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<div id="banner">
-	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
-	<br/><br/>
-	<a href="<c:url value="/createAddress.htm" />">Create Address</a>
-	<a href="<c:url value="/createCatalogItem.htm"/>">Create CatalogItem</a>
-	<a href="<c:url value="/listCatalogItem.htm"/>">List CatalogItem</a>
-	<a href="<c:url value="/passwordChange.htm"/>">Password Change</a>
-	<a href="<c:url value="/logout"/>">Logout</a>
-	<hr/>
+<jsp:include page="snippets/header.jsp"/>
+
 	<h1>Manage address</h1>
 	<table border="1">
 	<tr>
@@ -36,4 +29,3 @@
 	</c:forEach>
 	
 	</table>
-</div>

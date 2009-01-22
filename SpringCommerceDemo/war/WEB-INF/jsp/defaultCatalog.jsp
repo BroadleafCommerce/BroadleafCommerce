@@ -7,7 +7,7 @@
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="sc" uri="/springcommerce"%>
 
-<div id="banner">
+<jsp:include page="snippets/header.jsp"/>
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<c:set var="springCommerceRequestState" value="${requestScope['org.springcommerce.web.SpringCommerceRequestState']}" />
 	<hr/>
@@ -27,5 +27,3 @@
 	</c:forEach>
 
 	</table>
-
-</div>

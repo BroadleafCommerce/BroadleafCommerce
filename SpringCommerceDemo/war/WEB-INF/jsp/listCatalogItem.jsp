@@ -7,11 +7,8 @@
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js">
 </script>
-<div id="banner">
-	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
-	<hr/>
+<jsp:include page="snippets/header.jsp"/>
 				<h1>Manage Catalog Items</h1>
-</div>
 <style>
 	.listItem { 
 		float:left;
