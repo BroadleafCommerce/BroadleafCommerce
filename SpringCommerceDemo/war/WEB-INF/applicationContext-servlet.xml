@@ -112,6 +112,21 @@
         <property name="successView" value="listBasket" />
     </bean>
 
+	<bean id="checkout" class="org.springcommerce.controller.CheckoutController">
+	    <property name="orderService" ref="orderService"/>
+	    <property name="userService" ref="userService"/>
+	    <property name="commandName" value="checkout"/>
+	    <property name="commandClass" value="org.springcommerce.util.Checkout"/>
+	    <property name="pages">
+	        <list>
+				<value>inputCheckoutContactInformation</value>
+	            <value>inputCheckoutShippingAddress</value>
+	            <value>inputCheckoutPayment</value>
+	            <value>inputCheckoutConfirmation</value>
+	        </list>
+	    </property>
+	</bean>
+
     <bean id="createCategory" class="org.springcommerce.controller.CategoryFormController">
         <property name="commandName" value="category"/>
         <property name="commandClass" value="org.springcommerce.util.CreateCategory"/>
@@ -172,6 +187,7 @@
                 <prop key="/createSellableItem.htm">createSellableItem</prop>
                 <prop key="/listOrders.htm">listOrders</prop>
                 <prop key="/basket/*">listBasket</prop>
+                <prop key="/checkout/checkout.htm">checkout</prop>
                 <prop key="/catalog/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*/*">catalogDisplay</prop>

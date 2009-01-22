@@ -40,7 +40,7 @@
 		</tr>
 		<tr>
 			<th></th>
-			<th><a href="<c:url value="/basket/inputShippingAddress.htm"/>">Continue through Checkout</a></th>
+			<th><a href="<c:url value="/checkout/checkout.htm"/>">Checkout</a></th>
 		</tr>
 	</table>
 		<input type="submit" class="saveButton" value="Update Quantities" />
