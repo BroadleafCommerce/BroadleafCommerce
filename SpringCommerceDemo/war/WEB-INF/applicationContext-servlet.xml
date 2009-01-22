@@ -131,6 +131,7 @@
     <bean id="catalogDisplay" class="org.springcommerce.web.CatalogController">
         <property name="catalogService" ref="catalogService"/>
         <property name="defaultView" value="defaultCatalog" />
+        <property name="defaultProductView" value="defaultProduct" />
     </bean>
 
     <bean id="catalogDisplayInterceptor" class="org.springcommerce.web.CatalogDisplayInterceptor">
