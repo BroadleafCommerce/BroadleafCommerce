@@ -15,6 +15,7 @@
 		<th>Description</th>
 		<th>Price</th>
 		<th>Quantity</th>
+		<th>Total Line Price</th>
 		<th>Actions</th>
 	</tr>	
 	<c:forEach var="item" items="${basketItems.items}" varStatus="myRow">
@@ -23,16 +24,21 @@
 			<td><c:out value="${item.sellableItem.catalogItem.description}"/></td>
 			<td><c:out value="${item.sellableItem.price}"/></td>
 			<td>
-	<spring:bind path="basketItems.items[${myRow.index}].quantity">
-      <input type="text" name="${status.expression}" value="${status.value}"/>
-    </spring:bind>
-    
+				<spring:bind path="basketItems.items[${myRow.index}].quantity">
+			      <input type="text" name="${status.expression}" value="${status.value}"/>
+			    </spring:bind>    
 			</td>
+			<td><c:out value="${item.finalPrice}"/></td>
 			<td><a href="<c:url value="/basket/removeItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Remove Item(s)</a></td>
 		</tr>
 	</c:forEach>
 	</table>
-
+	<table border="1">
+		<tr>
+			<th>Order Total</th>
+			<th><c:out value="${order.orderTotal}"/>
+		</tr>
+	</table>
 		<input type="submit" class="saveButton" value="Update Quantities" />
 	</form:form>	
 	<a href="<c:url value="/logout"/>">Logout</a>

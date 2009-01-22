@@ -42,7 +42,11 @@ public class ListBasketFormController {
     private BasketItems basketItems = new BasketItems();
     private OrderService orderService;    
     private UserService userService;
-    
+
+    @ModelAttribute
+    public Order getOrder(){
+    	return getUserBasket();
+    }
     
     @ModelAttribute("basketItems")
     public BasketItems getBasketItems(){
