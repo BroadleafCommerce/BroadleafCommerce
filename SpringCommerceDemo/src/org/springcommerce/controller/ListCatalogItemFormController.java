@@ -3,9 +3,6 @@ package org.springcommerce.controller;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.catalog.service.CatalogService;
@@ -20,15 +17,6 @@ public class ListCatalogItemFormController extends PaginationController {
 	public void setCatalogService(CatalogService catalogService) {
 		this.catalogService = catalogService;
 	}
-
-    protected Object formBackingObject(HttpServletRequest request)throws ServletException {
-        PaginationCommandObject object = new PaginationCommandObject();
-        object.setPageNumber(0);
-        object.setPageSize(25);
-        object.setDataSource(request.getRequestURI().toString());
-        object.setContainerId("listContainer");
-        return object;
-    }
     
     @Override
     protected void populatePaginatedList(Map<Object, Object> model,

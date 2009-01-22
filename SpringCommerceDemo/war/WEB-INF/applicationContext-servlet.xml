@@ -73,7 +73,7 @@
 
     <bean id="listCatalogItem" class="org.springcommerce.controller.ListCatalogItemFormController">
         <property name="commandName" value="listCatalogItem"/>
-        <property name="commandClass" value="org.springcommerce.catalog.domain.CatalogItem"/>
+        <property name="commandClass" value="org.springcommerce.web.PaginationCommandObject"/>
         <property name="catalogService" ref="catalogService"/>
         <property name="formView" value="listCatalogItem" />
         <property name="successView" value="listCatalogItem" />
