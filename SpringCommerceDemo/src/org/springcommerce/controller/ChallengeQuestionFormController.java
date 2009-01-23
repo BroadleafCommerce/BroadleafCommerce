@@ -6,11 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springcommerce.profile.domain.User;
 import org.springcommerce.profile.service.UserService;
-import org.springcommerce.util.PasswordChange;
-
+import org.springcommerce.profile.util.PasswordChange;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -24,8 +22,8 @@ public class ChallengeQuestionFormController extends SimpleFormController {
     }
 
     protected Object formBackingObject(HttpServletRequest request)
-                                throws ServletException {
-        String email = (String) request.getParameter("email");
+    throws ServletException {
+        String email = request.getParameter("email");
         User user = userService.readUserByEmail(email);
         PasswordChange passwordChange = new PasswordChange();
         passwordChange.setChallengeQuestion(user.getChallengeQuestion());
@@ -35,7 +33,7 @@ public class ChallengeQuestionFormController extends SimpleFormController {
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
-                             throws Exception {
+    throws Exception {
         PasswordChange passwordChange = (PasswordChange) command;
         User userFromDb = userService.readUserByEmail(request.getParameter("email"));
 

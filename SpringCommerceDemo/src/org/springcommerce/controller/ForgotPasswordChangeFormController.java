@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springcommerce.profile.domain.User;
 import org.springcommerce.profile.service.EmailService;
 import org.springcommerce.profile.service.UserService;
-import org.springcommerce.util.PasswordChange;
+import org.springcommerce.profile.util.PasswordChange;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -25,14 +25,14 @@ public class ForgotPasswordChangeFormController extends SimpleFormController {
     private EmailService emailService;
 
     public void setEmailService(EmailService emailService) {
-		this.emailService = emailService;
-	}
+        this.emailService = emailService;
+    }
 
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 
-	protected Object formBackingObject(HttpServletRequest request) throws ServletException {
+    protected Object formBackingObject(HttpServletRequest request) throws ServletException {
         return new PasswordChange();
     }
 

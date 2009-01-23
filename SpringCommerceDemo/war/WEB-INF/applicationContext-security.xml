@@ -9,8 +9,9 @@
 
 	<sec:global-method-security secured-annotations="enabled"/>
 
-    <sec:http entry-point-ref="myAuthenticationEntryPoint" >
+    <sec:http entry-point-ref="myAuthenticationEntryPoint" auto-config="false">
         <!-- Restrict URLs based on role -->
+        <sec:intercept-url pattern="/passwordChange*" access="ROLE_PASSWORD_CHANGE_REQUIRED" />
         <sec:intercept-url pattern="/images/**" filters="none" />
         <sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/logoutSuccess*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
@@ -69,9 +70,9 @@
         <property name="key" value="anonymous"/>
     </bean>
 
-	<bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider"
-		  p:userDetailsService-ref="userDetailsService"
-          p:passwordEncoder-ref="passwordEncoder">
+	<bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
+		<property name="userDetailsService" ref="userDetailsService"/>
+		<property name="passwordEncoder" ref="passwordEncoder"/>
 		<sec:custom-authentication-provider/>
  	</bean>
 

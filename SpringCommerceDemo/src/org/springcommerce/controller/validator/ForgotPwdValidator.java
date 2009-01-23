@@ -2,7 +2,7 @@ package org.springcommerce.controller.validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springcommerce.util.PasswordChange;
+import org.springcommerce.profile.util.PasswordChange;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 

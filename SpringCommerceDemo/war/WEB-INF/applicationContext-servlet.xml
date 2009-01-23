@@ -10,12 +10,13 @@
 
     <bean id="passwordChange" class="org.springcommerce.controller.PasswordChangeFormController">
         <property name="commandName" value="user"/>
-        <property name="commandClass" value="org.springcommerce.util.PasswordChange"/>
+        <property name="commandClass" value="org.springcommerce.profile.util.PasswordChange"/>
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.PasswordChangeValidator"/>
         </property>
+        <property name="userService" ref="userService"/>
         <property name="formView" value="passwordChange" />
-        <property name="successView" value="passwordChange" />
+        <property name="successView" value="redirect:/welcome.htm" />
     </bean>
 
 
@@ -30,7 +31,7 @@
         <property name="formView" value="createUser" />
         <property name="successView" value="redirect:/login.jsp" />
     </bean>
-    
+
     <bean id="forgotPwd" class="org.springcommerce.controller.ForgotPwdFormController">
         <property name="commandName" value="user"/>
         <property name="commandClass" value="org.springcommerce.profile.domain.User"/>
@@ -38,28 +39,28 @@
         <property name="formView" value="forgotPwd" />
         <property name="successView" value="redirect:/login.jsp" />
     </bean>
-    
+
     <bean id="challengeQuestion" class="org.springcommerce.controller.ChallengeQuestionFormController">
         <property name="commandName" value="passwordChange"/>
-        <property name="commandClass" value="org.springcommerce.util.PasswordChange"/>
+        <property name="commandClass" value="org.springcommerce.profile.util.PasswordChange"/>
         <property name="userService" ref="userService"/>
         <property name="formView" value="challengeQuestion" />
         <property name="successView" value="redirect:/forgotPasswordChange.htm" />
     </bean>
-    
+
     <bean id="forgotPasswordChange" class="org.springcommerce.controller.ForgotPasswordChangeFormController">
         <property name="commandName" value="passwordChange"/>
-        <property name="commandClass" value="org.springcommerce.util.PasswordChange"/>
+        <property name="commandClass" value="org.springcommerce.profile.util.PasswordChange"/>
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.ForgotPwdValidator"/>
         </property>
         <property name="userService" ref="userService"/>
-        <property name="emailService" ref="emailService"/> 
+        <property name="emailService" ref="emailService"/>
         <property name="formView" value="forgotPasswordChange" />
         <property name="successView" value="redirect:/login.jsp" />
     </bean>
-    
-    
+
+
     <bean id="createAddress" class="org.springcommerce.controller.AddressFormController">
         <property name="commandName" value="address"/>
         <property name="commandClass" value="org.springcommerce.profile.domain.Address"/>
@@ -149,7 +150,7 @@
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.CheckoutValidator"/>
         </property>
-	    
+
 	</bean>
 
     <bean id="createCategory" class="org.springcommerce.controller.CategoryFormController">
