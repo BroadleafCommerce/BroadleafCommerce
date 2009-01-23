@@ -11,12 +11,14 @@
 
     <sec:http entry-point-ref="myAuthenticationEntryPoint" >
         <!-- Restrict URLs based on role -->
+        <sec:intercept-url pattern="/images/**" filters="none" />
         <sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/logoutSuccess*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/createUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <sec:intercept-url pattern="/forgotPwd*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <sec:intercept-url pattern="/challengeQuestion*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <sec:intercept-url pattern="/forgotPasswordChange*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/css/login.css" filters="none" />
-        <sec:intercept-url pattern="/images/signInBox.gif" filters="none" />
-        <sec:intercept-url pattern="/images/mpowerLogo.gif" filters="none" />
         <sec:intercept-url pattern="/images/favicon.ico" filters="none" />
         <sec:intercept-url pattern="/css/main.css" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/js/jquery.js" access="IS_AUTHENTICATED_ANONYMOUSLY" />
