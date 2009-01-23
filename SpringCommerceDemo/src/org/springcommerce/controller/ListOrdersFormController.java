@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springcommerce.catalog.domain.CatalogItem;
-import org.springcommerce.catalog.service.CatalogService;
 import org.springcommerce.order.domain.Order;
 import org.springcommerce.order.service.OrderService;
 import org.springcommerce.profile.domain.User;
@@ -35,7 +33,8 @@ public class ListOrdersFormController extends SimpleFormController {
 		this.orderService = orderService;
 	}
 
-    protected Object formBackingObject(HttpServletRequest request)throws ServletException {
+    @Override
+	protected Object formBackingObject(HttpServletRequest request)throws ServletException {
     	return new Order();
     }
 

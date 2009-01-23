@@ -2,9 +2,7 @@ package org.springcommerce.controller.validator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springcommerce.profile.domain.Address;
-
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
@@ -21,7 +19,7 @@ public class AddressValidator implements Validator {
 
     @Override
     public void validate(Object obj, Errors errors) {
-        Address address = (Address) obj;
+        Address address = (Address) obj; 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressName", "addressName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLine1", "addressLine1.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "city", "city.required");

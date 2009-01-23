@@ -6,7 +6,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springcommerce.order.domain.Order;
 import org.springcommerce.order.domain.OrderPayment;
 import org.springcommerce.order.domain.OrderShipping;
 import org.springcommerce.order.service.OrderService;
@@ -31,6 +30,7 @@ public class CheckoutController extends AbstractWizardFormController {
         setCommandClass(Checkout.class);
     }
 
+	@Override
 	protected Object formBackingObject(HttpServletRequest request)
     throws ServletException {
 		Checkout checkout = new Checkout();
@@ -72,7 +72,8 @@ public class CheckoutController extends AbstractWizardFormController {
 
     }
 
-    protected void validatePage(Object command, Errors errors,       
+    @Override
+	protected void validatePage(Object command, Errors errors,       
                                 int page, boolean finish)
     {
     	Checkout checkout = (Checkout) command;

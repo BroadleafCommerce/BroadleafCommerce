@@ -6,10 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springcommerce.profile.domain.User;
 import org.springcommerce.util.PasswordChange;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -19,7 +16,8 @@ public class PasswordChangeFormController extends SimpleFormController {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    protected Object formBackingObject(HttpServletRequest request) throws ServletException {
+    @Override
+	protected Object formBackingObject(HttpServletRequest request) throws ServletException {
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         return new PasswordChange();
     }

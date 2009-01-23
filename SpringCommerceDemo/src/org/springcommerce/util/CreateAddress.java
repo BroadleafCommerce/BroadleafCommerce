@@ -7,12 +7,10 @@ import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springcommerce.profile.domain.Address;
 
 public class CreateAddress implements Serializable {
     private static final long serialVersionUID = 1L;
-    @SuppressWarnings("unused")
     @Transient
     private final Log logger = LogFactory.getLog(getClass());
     private Address address;

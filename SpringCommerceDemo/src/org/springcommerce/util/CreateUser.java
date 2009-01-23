@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 
 public class CreateUser implements Serializable {
     private static final long serialVersionUID = 1L;
-    @SuppressWarnings("unused")
     @Transient
     private final Log logger = LogFactory.getLog(getClass());
     private String challengeAnswer;
