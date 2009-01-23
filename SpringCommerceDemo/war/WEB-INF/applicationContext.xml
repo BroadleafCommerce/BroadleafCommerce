@@ -51,8 +51,48 @@
 			<value>java:/comp/env/jdbc/SCProfile</value>
 		</property>
 	</bean>
+	
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>WEB-INF/config/email/email.properties</value>
+				<value>WEB-INF/config/velocity/velocity.properties</value>
+			</list>
+		</property>
+	</bean>
 
 
    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    	<property name="host"><value>${mail.smtp.host}</value></property>
+    	<property name="port"><value>${mail.smtp.port}</value></property>
+    	<property name="protocol"><value>${mail.smtp.protocol}</value></property> 
+    	<property name="javaMailProperties">
+			<props> 
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.timeout">${mail.smtp.timeout}</prop>
+			
+			</props>
+		</property> 	
+	</bean>
+    
+	
+	<bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+      <property name="velocityProperties">
+         <value>
+            resource.loader=class,file
+            class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+            <!-- class.resource.loader.path=classpath:/config/velocity/templates/ -->
+            <!-- Note that jar specification for the .path configuration property conforms to the same rules for the java.net.JarUrlConnection class-->
+            <!-- jar.resource.loader.class =org.apache.velocity.runtime.resource.loader.JarResourceLoader
+			jar.resource.loader.path = jar:file:/scprofile.jar/emailTemplates-->
+			file.resource.loader.class=org.apache.velocity.runtime.resource.loader.FileResourceLoader
+			file.resource.loader.cache = false
+			file.resource.loader.path=${file.root}/WEB-INF/config/velocity/templates
+         </value>
+      </property>
+   </bean>
 
 </beans>
