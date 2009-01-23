@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.profile.domain.User;
+import org.springcommerce.profile.service.EmailService;
 import org.springcommerce.profile.service.UserService;
 import org.springcommerce.util.CreateUser;
 import org.springframework.validation.BindException;
@@ -15,9 +16,18 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class UserFormController extends SimpleFormController {
     protected final Log logger = LogFactory.getLog(getClass());
+    //TODO: Should move all these to a property file
+    private static final String TEMPLATE = "registration.vm";
+    private static final String EMAIL_FROM="SpringCommerce@credera.com";
+    private static final String EMAIL_SUBJECT="Your Registration Completed";
     private UserService userService;
+    private EmailService emailService;
 
-    public void setUserService(UserService userService) {
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
+	}
+
+	public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
@@ -30,12 +40,11 @@ public class UserFormController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
                              throws Exception {
     	CreateUser createUser = (CreateUser) command;
-
-        if (userService.readUserByUsername(createUser.getUsername()) != null) {
+    	
+    	User userFromDb = userService.readUserByUsername(createUser.getUsername());
+        if (userFromDb != null) {
             errors.rejectValue("username", "username.used", null, null);
         }
-
-        userService.readUserByUsername(createUser.getUsername());
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
 
@@ -53,8 +62,8 @@ public class UserFormController extends SimpleFormController {
         user.setChallengeQuestion(createUser.getChallengeQuestion());
         user.setChallengeAnswer(createUser.getChallengeAnswer());
         userService.registerUser(user);
+        emailService.sendEmail(user, TEMPLATE,EMAIL_FROM, EMAIL_SUBJECT);
         mav.addObject("saved", true);
-
         return mav;
     }
 }

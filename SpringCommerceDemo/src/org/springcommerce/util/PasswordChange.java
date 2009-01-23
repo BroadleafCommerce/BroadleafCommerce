@@ -20,8 +20,40 @@ public class PasswordChange implements Serializable {
     private String newPassword;
 
     private String newPasswordConfirm;
+    
+    private String challengeQuestion;
+    
+    private String challengeAnswer;
+    
+    private String email;
 
-    public String getCurrentPassword() {
+
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getChallengeQuestion() {
+		return challengeQuestion;
+	}
+
+	public void setChallengeQuestion(String challengeQuestion) {
+		this.challengeQuestion = challengeQuestion;
+	}
+
+	public String getChallengeAnswer() {
+		return challengeAnswer;
+	}
+
+	public void setChallengeAnswer(String challengeAnswer) {
+		this.challengeAnswer = challengeAnswer;
+	}
+
+	public String getCurrentPassword() {
         return currentPassword;
     }
 

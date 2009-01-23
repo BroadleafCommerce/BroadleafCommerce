@@ -22,6 +22,7 @@
 <div id="side-bar">
     <a href="<c:url value="/"/>">Home</a>
     <a href="<c:url value="/createUser.htm" />">New User</a>
+    <a href="<c:url value="/forgotPwd.htm" />">Forgot Password</a>
 </div>
 
 </div>
