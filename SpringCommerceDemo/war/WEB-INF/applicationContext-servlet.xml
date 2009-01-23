@@ -103,15 +103,6 @@
         <property name="userService" ref="userService"></property>
     </bean>
 
-    <bean id="addToBasket" class="org.springcommerce.controller.AddItemToBasketFormController">
-        <property name="commandName" value="addToBasket"/>
-        <property name="commandClass" value="org.springcommerce.order.domain.OrderItem"/>
-        <property name="orderService" ref="orderService"/>
-        <property name="userService" ref="userService"></property>
-        <property name="formView" value="listBasket" />
-        <property name="successView" value="listBasket" />
-    </bean>
-
 	<bean id="checkout" class="org.springcommerce.controller.CheckoutController">
 	    <property name="orderService" ref="orderService"/>
 	    <property name="userService" ref="userService"/>
