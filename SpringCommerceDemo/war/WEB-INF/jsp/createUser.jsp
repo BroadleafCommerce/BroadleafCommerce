@@ -5,7 +5,6 @@
 <%@ taglib prefix="spring" uri="/spring"%>
 <%@ taglib prefix="form" uri="/spring-form"%>
 
-<jsp:include page="snippets/header.jsp"/>
 		<form:form method="post" commandName="user">
 				<br />
 				<h4 class="formSectionHeader">Register Now! *required fields</h4>
