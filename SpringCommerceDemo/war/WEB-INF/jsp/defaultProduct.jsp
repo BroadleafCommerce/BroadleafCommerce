@@ -10,19 +10,34 @@
 <div id="banner">
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<hr/>
-	<h1>Default Product View For: <c:out value="${item.name}"/></h1>
+	<h1>Default Product View For: <c:out value="${product.catalogItem.name}"/></h1>
 	<sc:breadcrumb/>
 	<br/>
 	<table border="1">
-	<tr>
-		<th>Name</th>
-		<th>Description</th>
-	</tr>
-	<tr>
-		<td><c:out value="${item.name}"/></td>
-		<td><c:out value="${item.description}"/></td>
-	</tr>
+		<tr>
+			<th>Name</th>
+			<th>Description</th>
+		</tr>
+		<tr>
+			<td><c:out value="${product.catalogItem.name}"/></td>
+			<td><c:out value="${product.catalogItem.description}"/></td>
+		</tr>
 
 	</table>
 
+	<h2>Sellable Items</h2>
+
+	<table border="1">
+		<tr>
+			<th>Name</th>
+			<th>Price</th>
+		</tr>
+		<c:forEach var="item" items="${product.sellableItems}" varStatus="status">
+			<tr>
+				<td><c:out value="${item.name}"/></td>
+				<td><c:out value="${item.price}"/></td>
+			</tr>
+		</c:forEach>
+
+	</table>
 </div>

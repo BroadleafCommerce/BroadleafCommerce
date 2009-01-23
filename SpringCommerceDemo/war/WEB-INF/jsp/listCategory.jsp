@@ -5,6 +5,7 @@
 <%@ taglib prefix="spring" uri="/spring"%>
 <%@ taglib prefix="form" uri="/spring-form"%>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="sc" uri="/springcommerce"%>
 <jsp:include page="snippets/header.jsp"/>
 				<h1>Manage Categories</h1>
 
@@ -19,7 +20,7 @@
 	<c:forEach var="item" items="${categoryList}" varStatus="status">
 		<tr>
 			<td><c:out value="${item.id}"/></td>
-			<td><a href="<c:url value="/createCatalogItem.htm"><c:param name="categoryId" value="${item.id}"/></c:url>"><c:out value="${item.name}"/></td>
+			<td><sc:categoryLink category="${item}"/></td>
 			<td><c:out value="${item.urlKey}"/></td>
 			<td><c:out value="${item.url}"/></td>
 			<td>
