@@ -67,6 +67,7 @@
 		<mkdir dir="${stage.dir}/war/WEB-INF" />
 		<mkdir dir="${stage.dir}/war/WEB-INF/lib" />
 		<mkdir dir="${stage.dir}/war/WEB-INF/classes" />
+		<mkdir dir="${stage.dir}/war/WEB-INF/config" />
 
 		<copy todir="${stage.dir}/war" includeemptydirs="true">
 			<fileset dir="${war.dir}">
