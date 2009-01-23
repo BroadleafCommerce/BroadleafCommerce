@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springcommerce.controller.validator.CheckoutValidator;
 import org.springcommerce.order.domain.OrderPayment;
 import org.springcommerce.order.domain.OrderShipping;
 import org.springcommerce.order.service.OrderService;
@@ -77,10 +78,12 @@ public class CheckoutController extends AbstractWizardFormController {
                                 int page, boolean finish)
     {
     	Checkout checkout = (Checkout) command;
+    	CheckoutValidator validator = (CheckoutValidator)getValidator();
 
         switch (page)                                                
         {
         case 0:   
+			validator.validatePageContactInformation(command, errors); 
     		Authentication auth = SecurityContextHolder.getContext().getAuthentication();    	
             User user = userService.readUserByUsername(auth.getName());
             checkout.getContactInfo().setUser(user);
@@ -109,6 +112,8 @@ public class CheckoutController extends AbstractWizardFormController {
 		return null;
 	}
 
+	
+	
 	public OrderService getOrderService() {
 		return orderService;
 	}

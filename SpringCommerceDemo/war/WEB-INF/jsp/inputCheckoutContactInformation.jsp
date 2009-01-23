@@ -7,10 +7,16 @@
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <jsp:include page="snippets/header.jsp"/>
 		<form:form method="post" commandName="checkout">
-				
+				<spring:hasBindErrors name="checkout">
+					  <spring:bind path="checkout.*">
+              			<c:forEach var="error" items="${status.errorMessages}">
+                			<tr><td><font color="red"><c:out value="${error}"/></font></td></tr><br />
+              			</c:forEach>
+              		 </spring:bind>
+            	</spring:hasBindErrors>				
 			<table class="formTable">
 				<tr>
-					<td style="text-align:right"><label for="ccNumber"><b>Primary Phone Number</b></label></td>
+					<td style="text-align:right"><label for="contactInfo.primaryPhone"><b>Primary Phone Number</b></label></td>
 					<td>
 						<spring:bind path="contactInfo.primaryPhone">						
 							<input size="30" class="addressField" type="text" name="${status.expression }" value="${status.value}" />
@@ -26,7 +32,7 @@
 					</td>
 	    		</tr>
 				<tr>
-					<td style="text-align:right"><label for="addressLine2">Email Address</b></label></td>
+					<td style="text-align:right"><label for="contactInfo.email">Email Address</b></label></td>
 					<td>
 						<spring:bind path="contactInfo.email">						
 							<input size="30" class="addressField" type="text" name="${status.expression }" value="${status.value}" />
@@ -35,7 +41,7 @@
 					</td>
 	    		</tr>
 	    		<tr>
-					<td style="text-align:right"><label for="city">Fax Number</b></label></td>
+					<td style="text-align:right"><label for="contactInfo.fax">Fax Number</b></label></td>
 					<td>
 						<spring:bind path="contactInfo.fax">						
 							<input size="30" class="addressField" type="text" name="${status.expression }" value="${status.value}" />

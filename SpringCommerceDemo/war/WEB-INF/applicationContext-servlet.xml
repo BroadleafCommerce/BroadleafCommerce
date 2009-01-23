@@ -146,6 +146,10 @@
 	            <value>inputCheckoutConfirmation</value>
 	        </list>
 	    </property>
+        <property name="validator">
+            <bean class="org.springcommerce.controller.validator.CheckoutValidator"/>
+        </property>
+	    
 	</bean>
 
     <bean id="createCategory" class="org.springcommerce.controller.CategoryFormController">
@@ -197,9 +201,6 @@
 		    <props>
                 <prop key="/welcome.htm">welcome</prop>
                 <prop key="/createUser.htm">createUser</prop>
-                <prop key="/forgotPwd.htm">forgotPwd</prop>
-                <prop key="/challengeQuestion.htm">challengeQuestion</prop>
-                <prop key="/forgotPasswordChange.htm">forgotPasswordChange</prop>
                 <prop key="/passwordChange.htm">passwordChange</prop>
                 <prop key="/createAddress.htm">createAddress</prop>
                 <prop key="/listAddress.htm">listAddress</prop>
