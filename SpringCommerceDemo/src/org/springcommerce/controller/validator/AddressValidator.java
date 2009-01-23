@@ -19,7 +19,6 @@ public class AddressValidator implements Validator {
 
     @Override
     public void validate(Object obj, Errors errors) {
-        Address address = (Address) obj; 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressName", "addressName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLine1", "addressLine1.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "city", "city.required");
