@@ -3,7 +3,6 @@ package org.springcommerce.security;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.springcommerce.profile.service.UserService;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 import org.springframework.security.CredentialsExpiredException;
@@ -15,12 +14,6 @@ import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 import org.springframework.security.util.TextUtils;
 
 public class SCAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
-
-    private UserService userService;
-
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request) throws AuthenticationException {

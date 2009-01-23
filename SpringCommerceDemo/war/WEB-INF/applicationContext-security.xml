@@ -45,7 +45,6 @@
 		<property name="authenticationManager" ref="authenticationManager"/> <!-- Here it is the custom authenticationManager, login magic goes here -->
         <property name="filterProcessesUrl" value="/loginProcess"/>
 		<property name="allowSessionCreation" value="true" /> <!-- Allow the application to create sessions -->
-        <property name="userService" ref="userService"/>
 	</bean>
 
 	<!-- My custom auth manager -->
