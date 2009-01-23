@@ -56,5 +56,8 @@
 	<classpathentry kind="lib" path="lib/include/bin/tiles-core-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/include/bin/tiles-jsp-2.0.5.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SpringCommerce"/>
+	<classpathentry kind="lib" path="lib/include/bin/velocity-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/mail-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/velocity-tools-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
