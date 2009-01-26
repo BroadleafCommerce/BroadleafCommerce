@@ -13,7 +13,9 @@ import org.springcommerce.order.service.OrderService;
 import org.springcommerce.profile.domain.Address;
 import org.springcommerce.profile.domain.ContactInfo;
 import org.springcommerce.profile.domain.User;
+import org.springcommerce.profile.service.AddressStandardizationService;
 import org.springcommerce.profile.service.UserService;
+import org.springcommerce.profile.service.addressValidation.AddressStandarizationResponse;
 import org.springcommerce.util.Checkout;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
@@ -25,6 +27,7 @@ public class CheckoutController extends AbstractWizardFormController {
 	
 	UserService userService;
 	OrderService orderService;
+	AddressStandardizationService addressStandardizationService;
 	
 	public CheckoutController()
     {
@@ -90,9 +93,28 @@ public class CheckoutController extends AbstractWizardFormController {
         	orderService.addContactInfoToOrder(checkout.getOrder(),checkout.getContactInfo());
             break ;
         case 1:
+        	validator.validateShippingAddressInformation(command, errors);
+        	Address address = checkout.getOrderShipping().getAddress();
+        	if(!errors.hasErrors()){
+        		AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(address);
+        		if (standardizedResponse.isErrorDetected()) {
+        				address.setStandardized(false);
+        				errors.rejectValue("orderShipping.address.addressLine1", "addressVerification.failed", null, null);
+        		} 
+        	}
         	orderService.addShippingToOrder(checkout.getOrder(), checkout.getOrderShipping());
             break ;
         case 2:
+        	validator.validateBillingAddressInformation(command, errors);
+        	Address billingAddress = checkout.getOrderPayment().getAddress();
+        	if(!errors.hasErrors()){
+        		AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(billingAddress);
+        		if (standardizedResponse.isErrorDetected()) {
+        				logger.debug("Address verification Failed. Please check the address and try again");
+        				billingAddress.setStandardized(false);
+        				errors.rejectValue("orderPayment.address.addressLine1", "addressVerification.failed", null, null);
+        		} 
+        	}
         	orderService.addPaymentToOrder(checkout.getOrder(),checkout.getOrderPayment());
             break ;
         case 3:
@@ -128,7 +150,13 @@ public class CheckoutController extends AbstractWizardFormController {
 
 	public void setUserService(UserService userService) {
 		this.userService = userService;
-	}	
+	}
+
+	public void setAddressStandardizationService(
+			AddressStandardizationService addressStandardizationService) {
+		this.addressStandardizationService = addressStandardizationService;
+	}
+
 	
 	
 
