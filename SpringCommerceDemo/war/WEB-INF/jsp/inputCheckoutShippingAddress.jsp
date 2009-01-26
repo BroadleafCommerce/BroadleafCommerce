@@ -9,8 +9,8 @@
 		<form:form method="post" commandName="checkout">
 		<h4>For USPS test server, only certain addresses would work.  Rest will throw an error. Please make sure you check addressVerification.txt file</h4>
 				<h4 class="formSectionHeader">Enter Shipping Address</h4>
-				<spring:hasBindErrors name="checkout.orderShipping.address">
-					  <spring:bind path="address.*">
+				<spring:hasBindErrors name="checkout">
+					  <spring:bind path="checkout.*">
               			<c:forEach var="error" items="${status.errorMessages}">
                 			<tr><td><font color="red"><c:out value="${error}"/></font></td></tr><br />
               			</c:forEach>
