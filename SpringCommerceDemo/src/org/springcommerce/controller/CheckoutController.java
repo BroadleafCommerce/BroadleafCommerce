@@ -1,6 +1,7 @@
 package org.springcommerce.controller;
 
 import java.net.BindException;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +14,7 @@ import org.springcommerce.order.service.OrderService;
 import org.springcommerce.profile.domain.Address;
 import org.springcommerce.profile.domain.ContactInfo;
 import org.springcommerce.profile.domain.User;
+import org.springcommerce.profile.service.ContactInfoService;
 import org.springcommerce.profile.service.AddressStandardizationService;
 import org.springcommerce.profile.service.UserService;
 import org.springcommerce.profile.service.addressValidation.AddressStandarizationResponse;
@@ -27,6 +29,7 @@ public class CheckoutController extends AbstractWizardFormController {
 	
 	UserService userService;
 	OrderService orderService;
+	ContactInfoService contactInfoService;
 	AddressStandardizationService addressStandardizationService;
 	
 	public CheckoutController()
@@ -49,6 +52,10 @@ public class CheckoutController extends AbstractWizardFormController {
 				
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();    	
         User user = userService.readUserByUsername(auth.getName());
+        
+        List<ContactInfo> contactInfos = contactInfoService.readContactInfoByUserId(user.getId());
+        
+        checkout.setUserContactInfo(contactInfos);
         
         checkout.setOrder(orderService.getCurrentBasketForUserId(user.getId()));
         checkout.setContactInfo(contactInfo);
@@ -152,11 +159,18 @@ public class CheckoutController extends AbstractWizardFormController {
 		this.userService = userService;
 	}
 
+	public ContactInfoService getContactInfoService() {
+		return contactInfoService;
+	}
+
+	public void setContactInfoService(ContactInfoService contactInfoService) {
+		this.contactInfoService = contactInfoService;
+	}	
+	
 	public void setAddressStandardizationService(
 			AddressStandardizationService addressStandardizationService) {
 		this.addressStandardizationService = addressStandardizationService;
-	}
-
+	}	
 	
 	
 
