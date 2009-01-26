@@ -11,6 +11,7 @@ public class Checkout {
 	private Order order;
 	private List<ContactInfo> userContactInfo;
 	private ContactInfo contactInfo;
+	private String selectedContactInfoId;
 	private OrderShipping orderShipping;
 	private OrderPayment orderPayment;
 	
@@ -44,6 +45,12 @@ public class Checkout {
 	}
 	public void setUserContactInfo(List<ContactInfo> userContactInfo) {
 		this.userContactInfo = userContactInfo;
+	}
+	public String getSelectedContactInfoId() {
+		return selectedContactInfoId;
+	}
+	public void setSelectedContactInfoId(String selectedContactInfoId) {
+		this.selectedContactInfoId = selectedContactInfoId;
 	}
 	
 	

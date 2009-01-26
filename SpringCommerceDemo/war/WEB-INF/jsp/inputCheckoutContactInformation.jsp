@@ -15,13 +15,9 @@
               		 </spring:bind>
             	</spring:hasBindErrors>
 
-				<c:forEach var="item" items="${checkout.userContactInfo}" varStatus="status">
-<!-- 
-					<spring:bind path="checkout.contactInfo">
-						<input type="radio" name="contactInfo" id="contactInfo" value="${status.value}" />
-					</spring:bind>
--->
-						<form:radiobutton id="contactInfo" path="contactInfo" value="${item}" />
+				<c:forEach var="item" items="${checkout.userContactInfo}" varStatus="status2">
+ 
+						<form:radiobutton id="selecterdContactInfoId" path="selectedContactInfoId" value="${item.id}" />
 					Primary Phone:
 							<c:out value="${item.primaryPhone}"/><br/>
 					Secondary Phone: <c:out value="${item.secondaryPhone}"/><br/>
@@ -29,7 +25,6 @@
 					Fax: <c:out value="${item.fax}"/><br/>
 					<br/>
 				</c:forEach>        
-			<!--  
 			<table class="formTable">
 				<tr>
 					<td style="text-align:right"><label for="contactInfo.primaryPhone"><b>Primary Phone Number</b></label></td>
@@ -65,7 +60,7 @@
 					</td>
 	    		</tr>
     		</table> 
-    		-->
+
     		<div class="formButtonFooter personFormButtons">
           <input type="Reset">                                       
           <input type="submit" value="Cancel" name="_cancel">			

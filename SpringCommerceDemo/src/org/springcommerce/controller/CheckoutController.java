@@ -14,8 +14,8 @@ import org.springcommerce.order.service.OrderService;
 import org.springcommerce.profile.domain.Address;
 import org.springcommerce.profile.domain.ContactInfo;
 import org.springcommerce.profile.domain.User;
-import org.springcommerce.profile.service.ContactInfoService;
 import org.springcommerce.profile.service.AddressStandardizationService;
+import org.springcommerce.profile.service.ContactInfoService;
 import org.springcommerce.profile.service.UserService;
 import org.springcommerce.profile.service.addressValidation.AddressStandarizationResponse;
 import org.springcommerce.util.Checkout;
@@ -93,7 +93,12 @@ public class CheckoutController extends AbstractWizardFormController {
         switch (page)                                                
         {
         case 0:   
-			validator.validatePageContactInformation(command, errors); 
+        	String contactIndex = checkout.getSelectedContactInfoId();  
+        	if(contactIndex != null && !contactIndex.equals("")){
+        		checkout.setContactInfo(checkout.getUserContactInfo().get(Integer.parseInt(contactIndex)));
+        	}else{
+        		validator.validatePageContactInformation(command, errors);         		
+        	}
     		Authentication auth = SecurityContextHolder.getContext().getAuthentication();    	
             User user = userService.readUserByUsername(auth.getName());
             checkout.getContactInfo().setUser(user);
