@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springcommerce.controller.validator.CheckoutValidator;
+import org.springcommerce.order.domain.Order;
 import org.springcommerce.order.domain.OrderPayment;
 import org.springcommerce.order.domain.OrderShipping;
 import org.springcommerce.order.service.OrderService;
@@ -42,6 +43,8 @@ public class CheckoutController extends AbstractWizardFormController {
     throws ServletException {
 		Checkout checkout = new Checkout();
 
+		Order order;
+		
 		OrderShipping orderShipping = new OrderShipping();
 		orderShipping.setAddress(new Address());
 
@@ -50,14 +53,17 @@ public class CheckoutController extends AbstractWizardFormController {
 
 		ContactInfo contactInfo = new ContactInfo();
 				
+
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();    	
-        User user = userService.readUserByUsername(auth.getName());
-        
+        User user = userService.readUserByUsername(auth.getName());                
         List<ContactInfo> contactInfos = contactInfoService.readContactInfoByUserId(user.getId());
         
-        checkout.setUserContactInfo(contactInfos);
+        order = orderService.getCurrentBasketForUser(user);
         
+        checkout.setUserContactInfo(contactInfos);        
         checkout.setOrder(orderService.getCurrentBasketForUserId(user.getId()));
+        checkout.setOrderItems(orderService.getItemsForOrder(order.getId()));
         checkout.setContactInfo(contactInfo);
         checkout.setOrderShipping(orderShipping);
         checkout.setOrderPayment(orderPayment);        
@@ -95,7 +101,7 @@ public class CheckoutController extends AbstractWizardFormController {
         case 0:   
         	String contactIndex = checkout.getSelectedContactInfoId();  
         	if(contactIndex != null && !contactIndex.equals("")){
-        		checkout.setContactInfo(checkout.getUserContactInfo().get(Integer.parseInt(contactIndex)));
+        		checkout.setContactInfo(checkout.getUserContactInfo().get(Integer.parseInt(contactIndex)-1));
         	}else{
         		validator.validatePageContactInformation(command, errors);         		
         	}

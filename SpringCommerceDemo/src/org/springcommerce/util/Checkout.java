@@ -3,12 +3,14 @@ package org.springcommerce.util;
 import java.util.List;
 
 import org.springcommerce.order.domain.Order;
+import org.springcommerce.order.domain.OrderItem;
 import org.springcommerce.order.domain.OrderPayment;
 import org.springcommerce.order.domain.OrderShipping;
 import org.springcommerce.profile.domain.ContactInfo;
 
 public class Checkout {
 	private Order order;
+	private List<OrderItem> orderItems;
 	private List<ContactInfo> userContactInfo;
 	private ContactInfo contactInfo;
 	private String selectedContactInfoId;
@@ -52,6 +54,13 @@ public class Checkout {
 	public void setSelectedContactInfoId(String selectedContactInfoId) {
 		this.selectedContactInfoId = selectedContactInfoId;
 	}
+	public List<OrderItem> getOrderItems() {
+		return orderItems;
+	}
+	public void setOrderItems(List<OrderItem> orderItems) {
+		this.orderItems = orderItems;
+	}
+
 	
 	
 }
