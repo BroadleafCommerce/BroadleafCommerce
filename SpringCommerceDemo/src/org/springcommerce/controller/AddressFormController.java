@@ -78,21 +78,22 @@ public class AddressFormController extends SimpleFormController {
 
         //  For USPS test server, only certain addresses would work.  Rest will throw an error. Please make sure you check addressVerification.txt file
         //TODO: try standardizeAndTokenize instead of standardizeAddress
-        AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(address);
-        if (standardizedResponse.isErrorDetected()) {
-            logger.debug("Address verification Failed. Please check the address and try again");
-            address.setStandardized(false);
-            errors.rejectValue("zipCode", "addressVerification.failed", null, null);
-        } else {
-            address.setStandardized(true);
-            standardizedResponse.getAddress().setAddressName(address.getAddressName());
-            if(addressFromDB.getId()!=null){
-            	standardizedResponse.getAddress().setId(addressFromDB.getId());
-            }
-            addressFromDB = standardizedResponse.getAddress();
-            addressFromDB.setUser(user);
+        if(!errors.hasErrors()){
+        	AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(address);
+        	if (standardizedResponse.isErrorDetected()) {
+        		logger.debug("Address verification Failed. Please check the address and try again");
+        		address.setStandardized(false);
+        		errors.rejectValue("zipCode", "addressVerification.failed", null, null);
+        	} else {
+        		address.setStandardized(true);
+        		standardizedResponse.getAddress().setAddressName(address.getAddressName());
+        		if(addressFromDB.getId()!=null){
+        			standardizedResponse.getAddress().setId(addressFromDB.getId());
+        		}
+        		addressFromDB = standardizedResponse.getAddress();
+        		addressFromDB.setUser(user);
+        	}
         }
-
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
 
         if (errors.hasErrors()) {
