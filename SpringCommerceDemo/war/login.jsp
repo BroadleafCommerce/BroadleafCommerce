@@ -12,92 +12,45 @@
 <link rel="stylesheet" type="text/css" href="<c:url value="/css/main.css"/>" />
 </head>
 <body>
-<div id="header">
-    <div id="headerTitle">Simple Form with Spring Security</div>
-</div>
 <div id="menu">
-
-
-
-<div id="side-bar">
-    <a href="<c:url value="/"/>">Home</a>
-    <a href="<c:url value="/createUser.htm" />">New User</a>
-    <a href="<c:url value="/forgotPwd.htm" />">Forgot Password</a>
-</div>
-
+	<div id="side-bar">
+	    <a href="<c:url value="/"/>">Home</a>
+	    <a href="<c:url value="/createUser.htm" />">New User</a>
+	    <a href="<c:url value="/forgotPwd.htm" />">Forgot Password</a>
+	</div>
 </div>
 <div id="content">
     <h1>Login Required</h1>
 
     <div class="section">
-        <table class="search">
-            <tr><th>Username</th><th>Password</th><th>Role</th></tr>
-            <tr><td>rod</td><td>koala</td><td>ROLE_USER</td></tr>
-        </table>
-    </div>
-
-    <div class="section">
     	<c:if test="${not empty param.login_error}">
-    		<div class="errors">
-    			Your login attempt was not successful, try again.<br /><br />
-    			Reason: <%= ((AuthenticationException) session.getAttribute(AbstractProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY)).getMessage() %>
-    		</div>
+    		<p style="color:red;padding:0;margin:0;"><c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/></p>
     	</c:if>
     </div>
 
     <div class="section">
     	<form name="f" action="<c:url value="/loginProcess" />" method="post">
-    		<fieldset>
-    			<div class="field">
-    				<div class="label"><label for="j_username">User:</label></div>
-    				<div class="output">
-    					<input type="text" name="j_username" id="j_username" <c:if test="${not empty param.login_error}">value="<%= session.getAttribute(AuthenticationProcessingFilter.SPRING_SECURITY_LAST_USERNAME_KEY) %>"</c:if> />
-    					<script type="text/javascript">
-    						Spring.addDecoration(new Spring.ElementDecoration({
-    							elementId : "j_username",
-    							widgetType : "dijit.form.ValidationTextBox",
-    							widgetAttrs : { promptMessage : "Your username", required : true }}));
-    					</script>
-    				</div>
-    			</div>
-    			<div class="field">
-    				<div class="label"><label for="j_password">Password:</label></div>
-    				<div class="output">
-    					<input type="password" name="j_password" id="j_password" />
-    					<script type="text/javascript">
-    						Spring.addDecoration(new Spring.ElementDecoration({
-    							elementId : "j_password",
-    							widgetType : "dijit.form.ValidationTextBox",
-    							widgetAttrs : { promptMessage : "Your password", required : true}}));
-    					</script>
-    				</div>
-    			</div>
-    			<div class="field">
-    				<div class="label"><label for="remember_me">Don't ask for my password for two weeks:</label></div>
-    				<div class="output">
-    					<input type="checkbox" name="_spring_security_remember_me" id="remember_me" />
-    					<script type="text/javascript">
-    						Spring.addDecoration(new Spring.ElementDecoration({
-    							elementId : "remember_me",
-    							widgetType : "dijit.form.CheckBox"}));
-    					</script>
-    				</div>
-    			</div>
-                <div class="form-buttons">
-                    <div class="button">
-                        <input name="submit" id="submit" type="submit" value="Login" />
-                        <script type="text/javascript">
-                            Spring.addDecoration(new Spring.ValidateAllDecoration({event : 'onclick', elementId : 'submit'}));
-                        </script>
-                    </div>
-                </div>
-    		</fieldset>
+			<table class="loginInfo">
+				<tr>
+					<td style="text-align:right"><label for="j_username">Username:</label></td>
+					<td><input size="30" class="loginField" type="text" name="j_username" id="j_username" <c:if test="${not empty param.login_error}">value="${sessionScope["SPRING_SECURITY_LAST_USERNAME"]}"</c:if> /></td>
+	    		</tr>
+				<tr>
+					<td style="text-align:right"><label for="j_password">Password:</label></td>
+					<td><input size="30" class="loginField" type="password" name="j_password" id="j_password" /></td>
+	    		</tr>
+	    		<tr>
+		    		<td>&nbsp;</td>
+		    		<td class="loginButton"><input class="loginButton" name="submit" id="submit" type="submit" value="Sign In" /></td>
+	            </tr>
+    		</table>
     	</form>
     </div>
 </div>
-<div id="footer">
-
-</div>
-</div>
+<br />
+<br />
+<h5>Cheat Sheet</h5>
+Username/Password/Roles:<br/>
+rod/koala/ROLE_USER<br/>
 </body>
 </html>

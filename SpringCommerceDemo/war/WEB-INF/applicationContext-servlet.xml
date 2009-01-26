@@ -35,6 +35,7 @@
     <bean id="forgotPwd" class="org.springcommerce.controller.ForgotPwdFormController">
         <property name="commandName" value="user"/>
         <property name="commandClass" value="org.springcommerce.profile.domain.User"/>
+        <property name="emailService" ref="emailService"/>
         <property name="userService" ref="userService"/>
         <property name="formView" value="forgotPwd" />
         <property name="successView" value="redirect:/login.jsp" />

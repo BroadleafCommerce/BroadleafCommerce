@@ -19,8 +19,8 @@ public class ForgotPasswordChangeFormController extends SimpleFormController {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
     private static final String TEMPLATE = "forgotPassword.vm";
-    private static final String EMAIL_FROM="SpringCommerce@credera.com";
-    private static final String EMAIL_SUBJECT="Email From Spring Commerce Group";
+    private static final String EMAIL_FROM = "SpringCommerce@credera.com";
+    private static final String EMAIL_SUBJECT = "Email From Spring Commerce Group";
     private UserService userService;
     private EmailService emailService;
 
@@ -40,10 +40,10 @@ public class ForgotPasswordChangeFormController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         PasswordChange pwChange = (PasswordChange) command;
         User user = userService.readUserByEmail(request.getParameter("email"));
-        user.setPassword(pwChange.getNewPassword());
-        userService.registerUser(user);
+        user.setUnencodedPassword(pwChange.getNewPassword());
+        userService.saveUser(user);
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
-        emailService.sendEmail(user, TEMPLATE,EMAIL_FROM, EMAIL_SUBJECT);
+        emailService.sendEmail(user, TEMPLATE, EMAIL_FROM, EMAIL_SUBJECT);
         mav.addObject("saved", true);
         return mav;
     }
