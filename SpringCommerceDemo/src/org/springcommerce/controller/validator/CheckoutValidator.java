@@ -42,4 +42,17 @@ public class CheckoutValidator implements Validator {
         }
     	
     }
+    
+    public void validateShippingAddressInformation(Object obj, Errors errors){
+         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderShipping.address.addressLine1", "addressLine1.required");
+         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderShipping.address.city", "city.required");
+         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderShipping.address.stateCode", "state.required");
+    }
+    
+    public void validateBillingAddressInformation(Object obj, Errors errors){
+    	//TODO: add credit card validation
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderPayment.address.addressLine1", "addressLine1.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderPayment.address.city", "city.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "orderPayment.address.stateCode", "state.required");
+   }
 }
