@@ -6,28 +6,30 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.springcommerce.profile.domain.User;
 import org.springcommerce.profile.service.EmailService;
 import org.springcommerce.profile.service.UserService;
 import org.springcommerce.util.CreateUser;
+
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class UserFormController extends SimpleFormController {
-    protected final Log logger = LogFactory.getLog(getClass());
     //TODO: Should move all these to a property file
     private static final String TEMPLATE = "registration.vm";
-    private static final String EMAIL_FROM="SpringCommerce@credera.com";
-    private static final String EMAIL_SUBJECT="Your Registration Completed";
-    private UserService userService;
+    private static final String EMAIL_FROM = "SpringCommerce@credera.com";
+    private static final String EMAIL_SUBJECT = "Your Registration Completed";
+    protected final Log logger = LogFactory.getLog(getClass());
     private EmailService emailService;
+    private UserService userService;
 
-	public void setEmailService(EmailService emailService) {
-		this.emailService = emailService;
-	}
+    public void setEmailService(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
-	public void setUserService(UserService userService) {
+    public void setUserService(UserService userService) {
         this.userService = userService;
     }
 
@@ -39,9 +41,10 @@ public class UserFormController extends SimpleFormController {
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
                              throws Exception {
-    	CreateUser createUser = (CreateUser) command;
-    	
-    	User userFromDb = userService.readUserByUsername(createUser.getUsername());
+        CreateUser createUser = (CreateUser) command;
+
+        User userFromDb = userService.readUserByUsername(createUser.getUsername());
+
         if (userFromDb != null) {
             errors.rejectValue("username", "username.used", null, null);
         }
@@ -53,6 +56,7 @@ public class UserFormController extends SimpleFormController {
 
             return showForm(request, response, errors);
         }
+
         User user = new User();
         user.setUsername(createUser.getUsername());
         user.setFirstName(createUser.getFirstName());
@@ -62,8 +66,17 @@ public class UserFormController extends SimpleFormController {
         user.setChallengeQuestion(createUser.getChallengeQuestion());
         user.setChallengeAnswer(createUser.getChallengeAnswer());
         userService.registerUser(user);
-        emailService.sendEmail(user, TEMPLATE,EMAIL_FROM, EMAIL_SUBJECT);
+        emailService.sendEmail(user, TEMPLATE, EMAIL_FROM, EMAIL_SUBJECT);
         mav.addObject("saved", true);
+
         return mav;
+    }
+
+    @Override
+    protected ModelAndView processFormSubmission(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
+                                          throws Exception {
+        CreateUser createUser = (CreateUser) command;
+
+        return super.processFormSubmission(request, response, createUser, errors);
     }
 }
