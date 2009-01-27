@@ -154,7 +154,7 @@
         <property name="validator">
             <bean class="org.springcommerce.controller.validator.CheckoutValidator"/>
         </property>
-		<property name="successView" value="listOrders.htm"/>
+		<property name="successView" value="redirect:/listOrders.htm"/>
 	</bean>
 
     <bean id="createCategory" class="org.springcommerce.controller.CategoryFormController">

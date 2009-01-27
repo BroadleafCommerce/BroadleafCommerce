@@ -185,7 +185,7 @@ public class CheckoutController extends AbstractWizardFormController {
 			HttpServletResponse arg1, Object arg2,
 			org.springframework.validation.BindException arg3) throws Exception {
 		// TODO Auto-generated method stub
-        ModelAndView mav = new ModelAndView("redirect:/"+getSuccessView());
+        ModelAndView mav = new ModelAndView(getSuccessView());
         return mav;
 	}
 
