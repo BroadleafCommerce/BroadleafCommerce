@@ -15,9 +15,11 @@ import org.springcommerce.profile.service.AddressService;
 import org.springcommerce.profile.service.AddressStandardizationService;
 import org.springcommerce.profile.service.UserService;
 import org.springcommerce.profile.service.addressValidation.AddressStandarizationResponse;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.validation.BindException;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
@@ -39,6 +41,10 @@ public class AddressFormController extends SimpleFormController {
         this.userService = userService;
     }
 
+    protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+    
     protected Object formBackingObject(HttpServletRequest request)
                                 throws ServletException {
         Address address = new Address();
