@@ -69,6 +69,10 @@
         <property name="key" value="anonymous"/>
     </bean>
 
+	<bean id="userDetailsService" class="org.springcommerce.profile.service.UserDetailsServiceImpl">
+		<property name="forcePasswordChange" value="false"/>
+	</bean>
+
 	<bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
 		<property name="userDetailsService" ref="userDetailsService"/>
 		<property name="passwordEncoder" ref="passwordEncoder"/>
