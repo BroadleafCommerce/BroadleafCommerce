@@ -175,7 +175,6 @@ public class CheckoutController extends AbstractWizardFormController {
         }
         if (finish)                                                  
         {
-        	System.out.println("here at finish");
         	orderService.confirmOrder(checkout.getOrder());
         }
     }
