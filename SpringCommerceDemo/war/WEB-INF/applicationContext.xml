@@ -83,12 +83,12 @@
       <property name="velocityProperties">
          <value>
          	<!-- This resource loader will first look for the velocity files in the order specified. (class path, jar or file system)  -->
-            resource.loader=class,file,jar
+            resource.loader=class,file
             class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
             <!-- class.resource.loader.path=classpath:/config/velocity/templates/ -->
-            <!-- Note that jar specification for the .path configuration property conforms to the same rules for the java.net.JarUrlConnection class-->
+            <!-- Note that jar specification for the .path configuration property conforms to the same rules for the java.net.JarUrlConnection class
             jar.resource.loader.class =org.apache.velocity.runtime.resource.loader.JarResourceLoader
-			jar.resource.loader.path=jar:file:${jar.filePath}/scprofile.jar
+			jar.resource.loader.path=jar:file:${jar.filePath}/scprofile.jar-->
 			file.resource.loader.class=org.apache.velocity.runtime.resource.loader.FileResourceLoader
 			file.resource.loader.cache = false
 			file.resource.loader.path=${file.root}/WEB-INF/config/velocity/templates
