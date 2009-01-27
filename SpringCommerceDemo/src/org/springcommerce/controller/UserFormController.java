@@ -1,5 +1,8 @@
 package org.springcommerce.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -7,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.profile.domain.User;
+import org.springcommerce.profile.domain.UserRole;
 import org.springcommerce.profile.service.EmailService;
 import org.springcommerce.profile.service.UserService;
 import org.springcommerce.util.CreateUser;
@@ -65,6 +69,9 @@ public class UserFormController extends SimpleFormController {
         user.setEmailAddress(createUser.getEmailAddress());
         user.setChallengeQuestion(createUser.getChallengeQuestion());
         user.setChallengeAnswer(createUser.getChallengeAnswer());
+        Set<UserRole> roles = new HashSet<UserRole>();
+        roles.add(new UserRole(user, "ROLE_USER"));
+        user.setUserRoles(roles);
         userService.saveUser(user);
         emailService.sendEmail(user, TEMPLATE, EMAIL_FROM, EMAIL_SUBJECT);
         mav.addObject("saved", true);
