@@ -1,12 +1,14 @@
 package org.springcommerce.controller;
 
 import java.net.BindException;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.springcommerce.controller.validator.CheckoutValidator;
 import org.springcommerce.order.domain.Order;
 import org.springcommerce.order.domain.OrderPayment;
@@ -15,6 +17,7 @@ import org.springcommerce.order.service.OrderService;
 import org.springcommerce.profile.domain.Address;
 import org.springcommerce.profile.domain.ContactInfo;
 import org.springcommerce.profile.domain.User;
+import org.springcommerce.profile.service.AddressService;
 import org.springcommerce.profile.service.AddressStandardizationService;
 import org.springcommerce.profile.service.ContactInfoService;
 import org.springcommerce.profile.service.UserService;
@@ -31,6 +34,7 @@ public class CheckoutController extends AbstractWizardFormController {
 	UserService userService;
 	OrderService orderService;
 	ContactInfoService contactInfoService;
+	AddressService addressService;
 	AddressStandardizationService addressStandardizationService;
 	
 	public CheckoutController()
@@ -58,10 +62,12 @@ public class CheckoutController extends AbstractWizardFormController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();    	
         User user = userService.readUserByUsername(auth.getName());                
         List<ContactInfo> contactInfos = contactInfoService.readContactInfoByUserId(user.getId());
+        List<Address> addressList = addressService.readAddressByUserId(user.getId());
         
         order = orderService.getCurrentBasketForUser(user);
         
         checkout.setUserContactInfo(contactInfos);        
+        checkout.setAddressList(addressList);
         checkout.setOrder(orderService.getCurrentBasketForUserId(user.getId()));
         checkout.setOrderItems(orderService.getItemsForOrder(order.getId()));
         checkout.setContactInfo(contactInfo);
@@ -111,27 +117,51 @@ public class CheckoutController extends AbstractWizardFormController {
         	orderService.addContactInfoToOrder(checkout.getOrder(),checkout.getContactInfo());
             break ;
         case 1:
-        	validator.validateShippingAddressInformation(command, errors);
-        	Address address = checkout.getOrderShipping().getAddress();
-        	if(!errors.hasErrors()){
-        		AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(address);
-        		if (standardizedResponse.isErrorDetected()) {
+        	String shippingAddressId = checkout.getSelectedShippingAddressId();
+        	if(! StringUtils.isEmpty(shippingAddressId)){
+        		Iterator<Address> itr=checkout.getAddressList().iterator();
+        		while(itr.hasNext()){
+        			Address address = (Address)itr.next();
+        			if(address.getId().equals(Long.parseLong(shippingAddressId))){
+        				checkout.getOrderShipping().setAddress(address);
+        				break;
+        			}
+        		}
+        	}else{
+        		validator.validateShippingAddressInformation(command, errors);
+        		Address address = checkout.getOrderShipping().getAddress();
+        		if(!errors.hasErrors()){
+        			AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(address);
+        			if (standardizedResponse.isErrorDetected()) {
         				address.setStandardized(false);
         				errors.rejectValue("orderShipping.address.addressLine1", "addressVerification.failed", null, null);
-        		} 
+        			} 
+        		}
         	}
         	orderService.addShippingToOrder(checkout.getOrder(), checkout.getOrderShipping());
             break ;
         case 2:
-        	validator.validateBillingAddressInformation(command, errors);
-        	Address billingAddress = checkout.getOrderPayment().getAddress();
-        	if(!errors.hasErrors()){
-        		AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(billingAddress);
-        		if (standardizedResponse.isErrorDetected()) {
+        	String billingAddressId = checkout.getSelectedBillingAddressId();
+        	if(! StringUtils.isEmpty(billingAddressId)){
+        		Iterator<Address> itr=checkout.getAddressList().iterator();
+        		while(itr.hasNext()){
+        			Address address = (Address)itr.next();
+        			if(address.getId().equals(Long.parseLong(billingAddressId))){
+        				checkout.getOrderPayment().setAddress(address);
+        				break;
+        			}
+        		}
+        	}else{
+        		validator.validateBillingAddressInformation(command, errors);
+        		Address billingAddress = checkout.getOrderPayment().getAddress();
+        		if(!errors.hasErrors()){
+        			AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(billingAddress);
+        			if (standardizedResponse.isErrorDetected()) {
         				logger.debug("Address verification Failed. Please check the address and try again");
         				billingAddress.setStandardized(false);
         				errors.rejectValue("orderPayment.address.addressLine1", "addressVerification.failed", null, null);
-        		} 
+        			} 
+        		}
         	}
         	orderService.addPaymentToOrder(checkout.getOrder(),checkout.getOrderPayment());
             break ;
@@ -185,6 +215,10 @@ public class CheckoutController extends AbstractWizardFormController {
 	public void setAddressStandardizationService(
 			AddressStandardizationService addressStandardizationService) {
 		this.addressStandardizationService = addressStandardizationService;
+	}
+
+	public void setAddressService(AddressService addressService) {
+		this.addressService = addressService;
 	}	
 	
 	
