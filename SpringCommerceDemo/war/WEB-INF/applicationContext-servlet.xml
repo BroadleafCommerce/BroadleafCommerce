@@ -138,6 +138,7 @@
 	<bean id="checkout" class="org.springcommerce.controller.CheckoutController">
 	    <property name="orderService" ref="orderService"/>
 	    <property name="userService" ref="userService"/>
+	    <property name="addressService" ref="addressService"/>
 	    <property name="contactInfoService" ref="contactInfoService"/>
 		<property name="addressStandardizationService" ref="addressStandardizationService"/>
 	    <property name="commandName" value="checkout"/>
