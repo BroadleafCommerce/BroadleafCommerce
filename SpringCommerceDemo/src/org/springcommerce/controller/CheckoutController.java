@@ -37,6 +37,8 @@ public class CheckoutController extends AbstractWizardFormController {
 	AddressService addressService;
 	AddressStandardizationService addressStandardizationService;
 	
+	private String successView;
+	
 	public CheckoutController()
     {
         setCommandClass(Checkout.class);
@@ -183,7 +185,8 @@ public class CheckoutController extends AbstractWizardFormController {
 			HttpServletResponse arg1, Object arg2,
 			org.springframework.validation.BindException arg3) throws Exception {
 		// TODO Auto-generated method stub
-		return null;
+        ModelAndView mav = new ModelAndView("redirect:/"+getSuccessView());
+        return mav;
 	}
 
 	
@@ -219,6 +222,14 @@ public class CheckoutController extends AbstractWizardFormController {
 
 	public void setAddressService(AddressService addressService) {
 		this.addressService = addressService;
+	}
+
+	public String getSuccessView() {
+		return successView;
+	}
+
+	public void setSuccessView(String successView) {
+		this.successView = successView;
 	}	
 	
 	
