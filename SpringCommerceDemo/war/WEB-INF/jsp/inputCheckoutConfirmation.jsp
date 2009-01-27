@@ -53,7 +53,6 @@
 		Fax: <c:out value="${checkout.contactInfo.fax}"/><br/>
 
 	<h2>Shipping Information</h2>
-		Address:<br/>
 		<c:out value="${checkout.orderShipping.address.addressLine1}"/><br/>
 		<c:out value="${checkout.orderShipping.address.addressLine2}"/><br/>
 		<c:out value="${checkout.orderShipping.address.city}"/><br/>
@@ -61,8 +60,7 @@
 
 	<h2>Billing Information</h2>
 		CC Number: <c:out value="${checkout.orderPayment.referenceNumber}"/><br/>
-		Total Amount: <c:out value="${checkout.orderPayment.amount}" />
-		Address:<br/>
+		Total Amount: <c:out value="${checkout.orderPayment.amount}" /><br/>
 		<c:out value="${checkout.orderPayment.address.addressLine1}"/><br/>
 		<c:out value="${checkout.orderPayment.address.addressLine2 }"/><br/>
 		<c:out value="${checkout.orderPayment.address.city}"/><br/>

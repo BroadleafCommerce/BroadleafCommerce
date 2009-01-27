@@ -16,6 +16,18 @@
               			</c:forEach>
               		 </spring:bind>
             	</spring:hasBindErrors>
+            	
+            	<c:forEach var="item" items="${checkout.addressList}" varStatus="status2">
+ 
+						<form:radiobutton id="selectedShippingAddressId" path="selectedShippingAddressId" value="${item.id}" />
+					AddressLine1:
+							<c:out value="${item.addressLine1}"/><br/>
+					AddressLine2: <c:out value="${item.addressLine2}"/><br/>
+					City: <c:out value="${item.city}"/><br/>
+					State: <c:out value="${item.stateCode}"/><br/>
+					ZipCode: <c:out value="${item.zipCode}"/><br/>
+					<br/>
+				</c:forEach>     
 				
 			<table class="formTable">
 				<tr>
