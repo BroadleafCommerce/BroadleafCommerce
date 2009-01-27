@@ -6,14 +6,18 @@ import org.springcommerce.order.domain.Order;
 import org.springcommerce.order.domain.OrderItem;
 import org.springcommerce.order.domain.OrderPayment;
 import org.springcommerce.order.domain.OrderShipping;
+import org.springcommerce.profile.domain.Address;
 import org.springcommerce.profile.domain.ContactInfo;
 
 public class Checkout {
 	private Order order;
 	private List<OrderItem> orderItems;
 	private List<ContactInfo> userContactInfo;
+	private List<Address> addressList;
 	private ContactInfo contactInfo;
 	private String selectedContactInfoId;
+	private String selectedShippingAddressId;
+	private String selectedBillingAddressId;
 	private OrderShipping orderShipping;
 	private OrderPayment orderPayment;
 	
@@ -60,7 +64,23 @@ public class Checkout {
 	public void setOrderItems(List<OrderItem> orderItems) {
 		this.orderItems = orderItems;
 	}
-
-	
+	public List<Address> getAddressList() {
+		return addressList;
+	}
+	public void setAddressList(List<Address> addressList) {
+		this.addressList = addressList;
+	}
+	public String getSelectedShippingAddressId() {
+		return selectedShippingAddressId;
+	}
+	public void setSelectedShippingAddressId(String selectedShippingAddressId) {
+		this.selectedShippingAddressId = selectedShippingAddressId;
+	}
+	public String getSelectedBillingAddressId() {
+		return selectedBillingAddressId;
+	}
+	public void setSelectedBillingAddressId(String selectedBillingAddressId) {
+		this.selectedBillingAddressId = selectedBillingAddressId;
+	}
 	
 }
