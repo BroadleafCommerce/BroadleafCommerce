@@ -22,7 +22,8 @@ public class SellableItemFormController extends SimpleFormController {
     }
 
     @Override
-    protected Object formBackingObject(HttpServletRequest request) throws ServletException {
+	protected Object formBackingObject(HttpServletRequest request)
+                                throws ServletException {
         CatalogItem createCatalogItem = new CatalogItem();
         SellableItem sellableItem = new SellableItem();
 
@@ -30,17 +31,18 @@ public class SellableItemFormController extends SimpleFormController {
             createCatalogItem = catalogService.readCatalogItemById(Long.valueOf(request.getParameter("catalogItemId")));
             sellableItem.setCatalogItem(createCatalogItem);
         }
-
-        if (request.getParameter("sellableItemId") != null) {
-            sellableItem = catalogService.readSellableItemById(new Long(request.getParameter("sellableItemId")));
-            // Set<ItemAttribute> attributes = sellableItem.getItemAttributes();
+        
+        if (request.getParameter("sellableItemId") != null){
+        	sellableItem = catalogService.readSellableItemById(new Long(request.getParameter("sellableItemId")));        	
+        	sellableItem.getItemAttributes();
         }
 
         return sellableItem;
     }
 
     @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
+                             throws Exception {
         SellableItem sellableItem = (SellableItem) command;
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
@@ -50,7 +52,8 @@ public class SellableItemFormController extends SimpleFormController {
 
             return showForm(request, response, errors);
         }
-
+        
+        
         catalogService.saveSellableItem(sellableItem);
         mav.addObject("saved", true);
 
