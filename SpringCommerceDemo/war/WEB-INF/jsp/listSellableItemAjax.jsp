@@ -12,8 +12,8 @@
 			<p><c:out value="${item.catalogItem.description}"/></p>
 			<p><b>Price: <c:out value="${item.price}"/></b></p>
 			<p>
-				<c:forEach var="attribute" items="${item.itemAttributes}">
-					<c:out value="${attribute.name}"/>:<c:out value="${attribute.value}"/><br>
+				<c:forEach items="${item.itemAttributes}" var="attrib">
+					<c:out value="${attrib.key}"/>:<c:out value="${attrib.value}"/><br>
 				</c:forEach>
 			</p>
 				<a href="<c:url value="/basket/addSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Add to Basket
