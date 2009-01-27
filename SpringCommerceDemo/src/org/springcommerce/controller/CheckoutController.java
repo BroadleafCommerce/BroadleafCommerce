@@ -136,11 +136,15 @@ public class CheckoutController extends AbstractWizardFormController {
         	orderService.addPaymentToOrder(checkout.getOrder(),checkout.getOrderPayment());
             break ;
         case 3:
+        	
+        	finish = true;
         	break;
         default:
         }
         if (finish)                                                  
         {
+        	System.out.println("here at finish");
+        	orderService.confirmOrder(checkout.getOrder());
         }
     }
 
