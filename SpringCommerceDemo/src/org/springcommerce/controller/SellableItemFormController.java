@@ -1,7 +1,5 @@
 package org.springcommerce.controller;
 
-import java.util.Set;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.catalog.domain.CatalogItem;
-import org.springcommerce.catalog.domain.ItemAttribute;
 import org.springcommerce.catalog.domain.SellableItem;
 import org.springcommerce.catalog.service.CatalogService;
 import org.springframework.validation.BindException;
@@ -25,8 +22,7 @@ public class SellableItemFormController extends SimpleFormController {
     }
 
     @Override
-	protected Object formBackingObject(HttpServletRequest request)
-                                throws ServletException {
+    protected Object formBackingObject(HttpServletRequest request) throws ServletException {
         CatalogItem createCatalogItem = new CatalogItem();
         SellableItem sellableItem = new SellableItem();
 
@@ -34,18 +30,17 @@ public class SellableItemFormController extends SimpleFormController {
             createCatalogItem = catalogService.readCatalogItemById(Long.valueOf(request.getParameter("catalogItemId")));
             sellableItem.setCatalogItem(createCatalogItem);
         }
-        
-        if (request.getParameter("sellableItemId") != null){
-        	sellableItem = catalogService.readSellableItemById(new Long(request.getParameter("sellableItemId")));        	
-        	Set<ItemAttribute> attributes = sellableItem.getItemAttributes();
+
+        if (request.getParameter("sellableItemId") != null) {
+            sellableItem = catalogService.readSellableItemById(new Long(request.getParameter("sellableItemId")));
+            // Set<ItemAttribute> attributes = sellableItem.getItemAttributes();
         }
 
         return sellableItem;
     }
 
     @Override
-    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
-                             throws Exception {
+    protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         SellableItem sellableItem = (SellableItem) command;
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
@@ -56,8 +51,6 @@ public class SellableItemFormController extends SimpleFormController {
             return showForm(request, response, errors);
         }
 
-        
-        
         catalogService.saveSellableItem(sellableItem);
         mav.addObject("saved", true);
 
