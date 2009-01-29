@@ -6,6 +6,7 @@
 				objectName="item" numAcross="1" 
 				headerJsp="snippets/paginatedAjaxHeader.jsp"
 				listId="sellableItemList">
+				<!--
 			<h2><a href="<c:url value="/createSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">
 				<c:out value="${item.catalogItem.name}"/>
 			</a></h2>
@@ -18,4 +19,6 @@
 			</p>
 				<a href="<c:url value="/basket/addSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Add to Basket
 		</tr>
+		-->
+		<sc:item sellableItem="${item}" layout="productList" />
 </sc:paginated-list>

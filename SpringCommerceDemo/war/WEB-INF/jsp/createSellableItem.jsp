@@ -21,8 +21,29 @@
 				<tr>
 					<td style="text-align:right"><label for="catalogItemName">Name:</b></label></td>
 					<td><c:out value="${sellableItem.catalogItem.name}" /></td>
-					<td>Price: <input type="text" size="10" class="catalogItemField" name="price" id="price" value="${sellableItem.price}"/></td>
+				</tr>
+				<tr>
+					<td style="text-align:right">Price:</td>
+					<td><input type="text" size="10" class="catalogItemField" name="price" id="price" value="${sellableItem.price}"/></td>
 	    		</tr>
+	    		<c:forEach items="${sellableItem.itemAttributes}" var="attrib">
+	    		<tr>
+	    			<td>
+						<spring:bind path="sellableItem.itemAttributes[${attrib.key}].name">
+						  <input  name="<c:out value="${status.expression}"/>"
+						    id="<c:out value="${status.expression}"/>"
+						    value="<c:out value="${status.value}"/>" />
+						  </spring:bind>
+				  	</td>
+				  	<td>
+						<spring:bind path="sellableItem.itemAttributes[${attrib.key}].value">
+						  <input  name="<c:out value="${status.expression}"/>"
+						    id="<c:out value="${status.expression}"/>"
+						    value="<c:out value="${status.value}"/>" />
+						</spring:bind>
+				  	</td>
+				</tr>
+				</c:forEach>
     		</table>
     		<div class="formButtonFooter personFormButtons">
 				<input type="submit" class="saveButton" value="Save Changes"/>

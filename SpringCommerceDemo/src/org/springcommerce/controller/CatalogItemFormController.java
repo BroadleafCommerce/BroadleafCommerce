@@ -1,15 +1,17 @@
 package org.springcommerce.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springcommerce.catalog.domain.CatalogItem;
+import org.springcommerce.catalog.domain.ItemAttribute;
 import org.springcommerce.catalog.service.CatalogService;
-
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
@@ -29,6 +31,11 @@ public class CatalogItemFormController extends SimpleFormController {
         if (request.getParameter("catalogItemId") != null) {
             createCatalogItem = catalogService.readCatalogItemById(Long.valueOf(request.getParameter("catalogItemId")));
         }
+        Map<String, ItemAttribute> attribs = createCatalogItem.getItemAttributes();
+        if (attribs == null) {
+            attribs = new HashMap<String, ItemAttribute>();
+        }
+        attribs.put("foo", new ItemAttribute());
 
         return createCatalogItem;
     }

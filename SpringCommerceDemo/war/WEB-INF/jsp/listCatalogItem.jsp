@@ -8,16 +8,8 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js">
 </script>
 <jsp:include page="snippets/header.jsp"/>
-				<h1>Manage Catalog Items</h1>
-<style>
-	.listItem { 
-		float:left;
-		background-color:#DDDDDD;
-		margin: 5px;
-		padding: 5px;
-		width: 400px;
-		}
-</style>
+<h1>Manage Catalog Items</h1>
+
 <div id="listContainer">
 <jsp:include page="listCatalogItemAjax.jsp"/>
 </div>

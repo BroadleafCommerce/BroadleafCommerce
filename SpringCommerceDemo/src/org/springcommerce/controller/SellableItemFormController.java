@@ -1,5 +1,8 @@
 package org.springcommerce.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -7,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springcommerce.catalog.domain.CatalogItem;
+import org.springcommerce.catalog.domain.ItemAttribute;
 import org.springcommerce.catalog.domain.SellableItem;
 import org.springcommerce.catalog.service.CatalogService;
 import org.springframework.validation.BindException;
@@ -34,7 +38,11 @@ public class SellableItemFormController extends SimpleFormController {
         
         if (request.getParameter("sellableItemId") != null){
         	sellableItem = catalogService.readSellableItemById(new Long(request.getParameter("sellableItemId")));        	
-        	sellableItem.getItemAttributes();
+            Map<String, ItemAttribute> attribs = sellableItem.getItemAttributes();
+            if (attribs == null) {
+                attribs = new HashMap<String, ItemAttribute>();
+            }
+            attribs.put("", new ItemAttribute());
         }
 
         return sellableItem;

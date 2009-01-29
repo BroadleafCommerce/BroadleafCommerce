@@ -21,6 +21,7 @@ public class ListCatalogItemFormController extends PaginationController {
     @Override
     protected void populatePaginatedList(Map<Object, Object> model,
             PaginationCommandObject object) {
+        object.setPageSize(16);
         List<?> catalogItemList = catalogService.readCatalogItemsByName("");
         object.setFullList(catalogItemList);
     }
