@@ -5,6 +5,9 @@
 <%@ taglib prefix="spring" uri="/spring"%>
 <%@ taglib prefix="form" uri="/spring-form"%>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+
+<link rel="stylesheet" type="text/css" href="/scdemo/css/style.css" />
+
 <div id="banner">
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<br/><br/>
