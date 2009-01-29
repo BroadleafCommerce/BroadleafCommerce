@@ -184,6 +184,13 @@
         <property name="catalogPrefix" value="catalog"/>
     </bean>
 
+    <bean id="searchIndex" class="org.springcommerce.controller.SearchIndexController">
+        <property name="searchService" ref="searchService"/>
+        <property name="commandName" value="search"/>
+        <property name="formView" value="searchIndex" />
+        <property name="successView" value="searchIndex" />
+    </bean>
+
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
         <property name="prefix" value="/WEB-INF/jsp/"></property>
@@ -221,6 +228,7 @@
                 <prop key="/listOrders.htm">listOrders</prop>
                 <prop key="/basket/*">listBasket</prop>
                 <prop key="/checkout/checkout.htm">checkout</prop>
+                <prop key="/searchIndex.htm">searchIndex</prop>
                 <prop key="/catalog/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*/*">catalogDisplay</prop>

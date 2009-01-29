@@ -31,11 +31,13 @@
 		<tr>
 			<th>Name</th>
 			<th>Price</th>
+			<th>Add to Cart</th>
 		</tr>
 		<c:forEach var="item" items="${product.sellableItems}" varStatus="status">
 			<tr>
 				<td><c:out value="${item.name}"/></td>
 				<td><c:out value="${item.price}"/></td>
+				<td><a href="<c:url value="/basket/addSellableItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Add to Basket</td>
 			</tr>
 		</c:forEach>
 

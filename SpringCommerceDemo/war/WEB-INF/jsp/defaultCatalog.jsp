@@ -22,7 +22,7 @@
 	</tr>
 	<c:forEach var="item" items="${subCategories}" varStatus="status">
 		<tr>
-			<td><sc:categoryLink category="${item}"/></td>
+			<td><sc:categoryLink category="${item}" link="true"/></td>
 		</tr>
 	</c:forEach>
 	</table>

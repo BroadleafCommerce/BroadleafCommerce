@@ -20,7 +20,7 @@
 	<c:forEach var="item" items="${categoryList}" varStatus="status">
 		<tr>
 			<td><c:out value="${item.id}"/></td>
-			<td><sc:categoryLink category="${item}"/></td>
+			<td><sc:categoryLink category="${item}" link="true" /></td>
 			<td><c:out value="${item.urlKey}"/></td>
 			<td><c:out value="${item.url}"/></td>
 			<td>
