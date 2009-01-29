@@ -49,7 +49,7 @@ body {
 .listItem p {
   width: 110;
   padding: 0;
-  margin: 0;
+  margin: auto;
   line-height: 16px;
 }
 
