@@ -21,6 +21,8 @@
 	<a href="<c:url value="/createCategory.htm"/>">Create Category</a>
 	<a href="<c:url value="/listCategory.htm"/>">List Category</a>
 	<a href="<c:url value="/passwordChange.htm"/>">Password Change</a>
+	<a href="<c:url value="/search.htm"/>">Search</a>
+	<a href="<c:url value="/searchIndex.htm"/>">Build Search Index</a>
 	<a href="<c:url value="/logout"/>">Logout</a>
 	<hr/>
 </div>
