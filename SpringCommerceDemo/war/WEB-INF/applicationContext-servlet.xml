@@ -184,6 +184,14 @@
         <property name="catalogPrefix" value="catalog"/>
     </bean>
 
+    <bean id="search" class="org.springcommerce.controller.SearchController">
+        <property name="searchService" ref="searchService"/>
+        <property name="commandName" value="search"/>
+        <property name="commandClass" value="org.springcommerce.search.domain.SearchQuery"/>
+        <property name="formView" value="search" />
+        <property name="successView" value="search" />
+    </bean>
+
     <bean id="searchIndex" class="org.springcommerce.controller.SearchIndexController">
         <property name="searchService" ref="searchService"/>
         <property name="commandName" value="search"/>
@@ -228,6 +236,7 @@
                 <prop key="/listOrders.htm">listOrders</prop>
                 <prop key="/basket/*">listBasket</prop>
                 <prop key="/checkout/checkout.htm">checkout</prop>
+                <prop key="/search.htm">search</prop>
                 <prop key="/searchIndex.htm">searchIndex</prop>
                 <prop key="/catalog/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*">catalogDisplay</prop>
