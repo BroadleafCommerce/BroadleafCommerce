@@ -118,6 +118,7 @@
         <property name="catalogService" ref="catalogService"/>
         <property name="formView" value="listSellableItem" />
         <property name="successView" value="listSellableItem" />
+        <property name="ajaxView" value="listSellableItemAjax" />
     </bean>
 
     <bean id="listOrders" class="org.springcommerce.controller.ListOrdersFormController">
@@ -198,6 +199,15 @@
         <property name="formView" value="searchIndex" />
         <property name="successView" value="searchIndex" />
     </bean>
+    
+    <!-- Configures the Tiles layout system -->
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/tiles-scdemo.xml</value>
+			</list>
+		</property>
+	</bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>

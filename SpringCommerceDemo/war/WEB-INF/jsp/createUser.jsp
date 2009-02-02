@@ -1,9 +1,6 @@
-<%@ page trimDirectiveWhitespaces="true" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="spring" uri="/spring"%>
-<%@ taglib prefix="form" uri="/spring-form"%>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<tiles:insertDefinition name="baseNoSide">
+	<tiles:putAttribute name="mainContent" type="string">
 
 		<form:form method="post" commandName="user">
 				<br />
@@ -53,5 +50,6 @@
     		<div class="formButtonFooter personFormButtons">
 				<input type="submit" class="saveButton" value="Save Changes"/>
 			</div>
-			</form:form>
-</div>
+		</form:form>
+	</tiles:putAttribute>
+</tiles:insertDefinition>

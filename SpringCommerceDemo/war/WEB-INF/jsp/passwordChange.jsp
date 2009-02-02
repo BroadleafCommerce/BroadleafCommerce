@@ -1,10 +1,6 @@
-<%@ page trimDirectiveWhitespaces="true" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="spring" uri="/spring"%>
-<%@ taglib prefix="form" uri="/spring-form"%>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<tiles:insertDefinition name="baseNoSide">
+	<tiles:putAttribute name="mainContent" type="string">
 <div id="banner">
 	<span id="greeting">Logged in as <b><c:out value="${SPRING_SECURITY_LAST_USERNAME}"/></b></span>
 	<br/><br/>
@@ -41,3 +37,6 @@
 			</div>
 			</form:form>
 </div>
+
+	</tiles:putAttribute>
+</tiles:insertDefinition>

@@ -1,2 +1,6 @@
-<%@ page trimDirectiveWhitespaces="true" %>
-<jsp:include page="snippets/header.jsp" />
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<tiles:insertDefinition name="baseNoSide">
+	<tiles:putAttribute name="mainContent" type="string">
+	Welcome!
+	</tiles:putAttribute>
+</tiles:insertDefinition>

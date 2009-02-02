@@ -1,13 +1,6 @@
-<%@ page trimDirectiveWhitespaces="true" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="spring" uri="/spring"%>
-<%@ taglib prefix="form" uri="/spring-form"%>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib prefix="sc" uri="/springcommerce"%>
-
-<jsp:include page="snippets/header.jsp"/>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<tiles:insertDefinition name="baseNoSide">
+	<tiles:putAttribute name="mainContent" type="string">
 
 <h1>Default Product View For: <c:out value="${product.catalogItem.name}"/></h1>
 <sc:breadcrumb/>
@@ -41,3 +34,6 @@
 	</c:forEach>
 
 </table>
+
+	</tiles:putAttribute>
+</tiles:insertDefinition>

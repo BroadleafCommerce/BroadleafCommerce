@@ -1,13 +1,7 @@
-<%@ page trimDirectiveWhitespaces="true" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="spring" uri="/spring"%>
-<%@ taglib prefix="form" uri="/spring-form"%>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<%@ taglib prefix="sc" uri="/springcommerce"%>
-
-<jsp:include page="snippets/header.jsp"/>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<tiles:insertDefinition name="baseNoSide">
+	<tiles:putAttribute name="mainContent" type="string">
+	
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
 	<c:set var="springCommerceRequestState" value="${requestScope['org.springcommerce.web.SpringCommerceRequestState']}" />
 	<hr/>
@@ -32,3 +26,6 @@
 		numAcross="4" objectName="item">
 		<sc:item catalogItem="${item}" layout="productList" itemName="item" />
 	</sc:list>
+	
+	</tiles:putAttribute>
+</tiles:insertDefinition>

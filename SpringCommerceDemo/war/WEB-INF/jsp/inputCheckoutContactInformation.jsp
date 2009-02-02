@@ -1,11 +1,7 @@
-<%@ page trimDirectiveWhitespaces="true" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@ taglib prefix="spring" uri="/spring"%>
-<%@ taglib prefix="form" uri="/spring-form"%>
-<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
-<jsp:include page="snippets/header.jsp"/>
+<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<tiles:insertDefinition name="baseNoSide">
+	<tiles:putAttribute name="mainContent" type="string">
+	
 		<form:form method="post" commandName="checkout">
 				<spring:hasBindErrors name="checkout">
 					  <spring:bind path="checkout.*">
@@ -66,4 +62,7 @@
           <input type="submit" value="Cancel" name="_cancel">			
           <input type="submit" value="Next" name="_target1">     
           </div>
-			</form:form>
+	</form:form>
+	
+	</tiles:putAttribute>
+</tiles:insertDefinition>
