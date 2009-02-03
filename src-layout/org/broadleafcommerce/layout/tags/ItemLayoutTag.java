@@ -42,7 +42,7 @@ public class ItemLayoutTag extends BodyTagSupport {
 	            pageContext.setAttribute(itemName, category, PageContext.REQUEST_SCOPE);
 	            break;
             }
-	    	pageContext.include("itemLayout/" + layout + ".jsp");
+	    	pageContext.include("/WEB-INF/jsp/itemLayout/" + layout + ".jsp");
         } catch (IOException e) {
             log.error(e);
             return Tag.SKIP_PAGE;
