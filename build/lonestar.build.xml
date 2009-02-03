@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Lonestar-internal" default="usage" basedir="..">
+	<description>
+            Lonestar Build File
+    </description>
+	<property name="stage.dir" value="${basedir}/build/stage" />
+	<property name="framework.src.dir" value="${basedir}/src-framework" />
+	<property name="extensibility.src.dir" value="${basedir}/src-extensibility" />
+	<property name="profile.src.dir" value="${basedir}/src-profile" />
+	<property name="layout.src.dir" value="${basedir}/src-layout" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="config.dir" value="${basedir}/config" />
+	<property name="compile.lib.dir" value="${lib.dir}/compile/bin" />
+	<property name="common.lib.dir" value="${lib.dir}/common" />
+	<property name="spring.config.dir" value="${config.dir}/spring" />
+	<property name="jdbc.config.dir" value="${config.dir}/jdbc" />
+	<property name="test.output.dir" value="${basedir}/test-output" />
+	<property file="${basedir}/build/build.properties" />
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<fileset id="compile.lib" dir="${compile.lib.dir}" description="compile-time dependencies">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<fileset id="common.lib" dir="${common.lib.dir}" description="common dependencies">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<target name="build-framework-jar" depends="setup, build-extensibility-jar, build-profile-jar">
+		<mkdir dir="${stage.dir}/framework-jar" />
+
+		<path id="compile-lib">
+			<fileset refid="compile.lib" />
+			<fileset refid="common.lib" />
+			<fileset file="${stage.dir}/*.jar" />
+		</path>
+
+		<echo>Compiling with debug=${debug.compile}</echo>
+		<javac destdir="${stage.dir}/framework-jar" srcdir="${framework.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
+
+		<copy todir="${stage.dir}/framework-jar">
+			<fileset dir="${framework.src.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<copy tofile="${stage.dir}/framework-jar/applicationContext.xml">
+			<fileset dir="${spring.config.dir}">
+				<include name="applicationContext.xml" />
+			</fileset>
+		</copy>
+
+		<copy tofile="${stage.dir}/framework-jar/jdbc.properties">
+			<fileset dir="${jdbc.config.dir}">
+				<include name="jdbc.properties" />
+			</fileset>
+		</copy>
+
+		<jar jarfile="${stage.dir}/lonestar-framework.jar" basedir="${stage.dir}/framework-jar">
+			<include name="**/*.class" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
+		<delete dir="${stage.dir}/framework-jar" />
+	</target>
+
+	<target name="build-extensibility-jar" depends="setup">
+		<mkdir dir="${stage.dir}/extensibility-jar" />
+
+		<path id="compile-lib">
+			<fileset refid="compile.lib" />
+			<fileset refid="common.lib" />
+			<fileset file="${stage.dir}/*.jar" />
+		</path>
+
+		<echo>Compiling with debug=${debug.compile}</echo>
+		<javac destdir="${stage.dir}/extensibility-jar" srcdir="${extensibility.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
+
+		<copy todir="${stage.dir}/extensibility-jar">
+			<fileset dir="${extensibility.src.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+
+		<copy tofile="${stage.dir}/extensibility-jar/applicationContext.xml">
+			<fileset dir="${spring.config.dir}">
+				<include name="applicationContext.xml" />
+			</fileset>
+		</copy>
+
+		<copy tofile="${stage.dir}/extensibility-jar/jdbc.properties">
+			<fileset dir="${jdbc.config.dir}">
+				<include name="jdbc.properties" />
+			</fileset>
+		</copy>
+
+		<jar jarfile="${stage.dir}/lonestar-extensibility.jar" basedir="${stage.dir}/extensibility-jar">
+			<include name="**/*.class" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
+		<delete dir="${stage.dir}/extensibility-jar" />
+	</target>
+
+	<target name="generate-javadocs">
+		<mkdir dir="${stage.dir}/javadocs" />
+
+		<path id="compile-lib">
+			<fileset refid="compile.lib" />
+			<fileset refid="common.lib" />
+		</path>
+
+		<javadoc packagenames="org.broadleafcommerce.*" destdir="${stage.dir}/javadocs" classpathref="compile-lib" useexternalfile="true">
+			<fileset dir="${framework.src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="build-layout-jar" depends="setup, build-extensibility-jar, build-profile-jar, build-framework-jar">
+		<mkdir dir="${stage.dir}/layout-jar" />
+
+		<path id="compile-lib">
+			<fileset refid="compile.lib" />
+			<fileset refid="common.lib" />
+			<fileset file="${stage.dir}/*.jar" />
+		</path>
+
+		<echo>Compiling with debug=${debug.compile}</echo>
+		<javac destdir="${stage.dir}/layout-jar"
+			srcdir="${layout.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
+
+		<copy todir="${stage.dir}/layout-jar">
+			<fileset dir="${layout.src.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${config.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+
+		<jar jarfile="${stage.dir}/lonestar-layout.jar" basedir="${stage.dir}/layout-jar">
+			<include name="**/*.class" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
+		<delete dir="${stage.dir}/profile-jar" />
+	</target>
+
+	<target name="build-profile-jar" depends="setup, build-extensibility-jar">
+		<mkdir dir="${stage.dir}/profile-jar" />
+
+		<path id="compile-lib">
+			<fileset refid="compile.lib" />
+			<fileset refid="common.lib" />
+			<fileset file="${stage.dir}/lonestar-extensibility.jar" />
+		</path>
+
+		<echo>Compiling with debug=${debug.compile}</echo>
+		<javac destdir="${stage.dir}/profile-jar"
+			srcdir="${profile.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
+
+		<copy todir="${stage.dir}/profile-jar">
+			<fileset dir="${profile.src.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
+			</fileset>
+			<fileset dir="${config.dir}">
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="**/*.vm" />
+			</fileset>
+		</copy>
+
+		<jar jarfile="${stage.dir}/scprofile.jar" basedir="${stage.dir}/profile-jar">
+			<include name="**/*.class" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="**/*.vm" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
+		<delete dir="${stage.dir}/profile-jar" />
+	</target>
+
+	<target name="build-jars" depends="build-framework-jar,build-extensibility-jar,build-profile-jar,build-layout-jar"/>
+
+	<target name="clean">
+		<delete dir="${stage.dir}" />
+		<delete dir="${test.output.dir}" />
+	</target>
+
+	<target name="setup" depends="clean">
+		<echo>Setting up for environment = ${build.env}</echo>
+		<mkdir dir="${stage.dir}" />
+		<if>
+			<equals arg1="${build.env}" arg2="dev" />
+			<then>
+				<property name="debug.compile" value="true" />
+			</then>
+			<elseif>
+				<equals arg1="${build.env}" arg2="test" />
+				<then>
+					<property name="debug.compile" value="true" />
+				</then>
+			</elseif>
+			<else>
+				<property name="debug.compile" value="false" />
+			</else>
+		</if>
+	</target>
+
+	<target name="usage">
+		<echo>
+			This is an internal ANT build file.
+			For development, use the targets in build.xml.
+		</echo>
+	</target>
+</project>
