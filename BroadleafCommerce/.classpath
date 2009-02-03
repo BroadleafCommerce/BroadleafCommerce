@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src-framework"/>
+	<classpathentry kind="src" path="src-test"/>
+	<classpathentry kind="src" path="src-extensibility"/>
+	<classpathentry kind="src" path="src-layout"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src-profile"/>
+	<classpathentry kind="lib" path="lib/common/bin/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/commons-beanutils-1.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/commons-chain-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/commons-digester-1.8.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/commons-lang-2.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/commons-validator-1.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/servletapi-2.3.jar"/>
+	<classpathentry kind="lib" path="lib/test/bin/spring-test.jar"/>
+	<classpathentry kind="lib" path="lib/test/bin/testng-5.8-jdk15.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-security-core-2.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-webmvc.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/log4j-1.2.15.jar"/>
+	<classpathentry kind="lib" path="lib/common/extensibility/xmlmergemod.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/mail-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/velocity-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/lucene-core-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/lucene-analyzers.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

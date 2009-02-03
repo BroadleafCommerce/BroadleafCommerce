@@ -1,0 +1,63 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="5" skipfailedinvocationCounts="false" verbose="2" name="Failed suite [BroadleafCommerce Test Suite]" junit="false" parallel="false" annotations="JDK">
+  <test name="commerce-integrationtest(failed)" junit="false" parallel="false" annotations="JDK">
+    <classes>
+      <class name="org.broadleafcommerce.profile.test.ContactInfoTest">
+        <methods>
+          <include name="springTestContextBeforeTestMethod"/>
+          <include name="springTestContextAfterTestMethod"/>
+          <include name="setup"/>
+          <include name="springTestContextPrepareTestInstance"/>
+          <include name="createContactInfo"/>
+        </methods>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.OrderDaoTest">
+        <methods>
+          <include name="springTestContextBeforeTestMethod"/>
+          <include name="createOrder"/>
+          <include name="springTestContextAfterTestMethod"/>
+          <include name="setup"/>
+          <include name="springTestContextPrepareTestInstance"/>
+        </methods>
+      </class>
+      <class name="org.broadleafcommerce.profile.test.UserTest">
+        <methods>
+          <include name="springTestContextBeforeTestMethod"/>
+          <include name="springTestContextAfterTestMethod"/>
+          <include name="setup"/>
+          <include name="springTestContextPrepareTestInstance"/>
+          <include name="createUser"/>
+          <include name="readUsersByUsername1"/>
+        </methods>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.CatalogItemDaoTest">
+        <methods>
+          <include name="springTestContextBeforeTestMethod"/>
+          <include name="testMaintainCatalogItem"/>
+          <include name="springTestContextAfterTestMethod"/>
+          <include name="setup"/>
+          <include name="springTestContextPrepareTestInstance"/>
+        </methods>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.SellableItemDaoTest">
+        <methods>
+          <include name="springTestContextBeforeTestMethod"/>
+          <include name="springTestContextAfterTestMethod"/>
+          <include name="createSellableItem"/>
+          <include name="setup"/>
+          <include name="springTestContextPrepareTestInstance"/>
+        </methods>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.OrderServiceTest">
+        <methods>
+          <include name="springTestContextBeforeTestMethod"/>
+          <include name="springTestContextAfterTestMethod"/>
+          <include name="setup"/>
+          <include name="springTestContextPrepareTestInstance"/>
+          <include name="createOrderForUserFromObj"/>
+          <include name="addItemToOrderFromObj"/>
+        </methods>
+      </class>
+    </classes>
+  </test>
+</suite>

@@ -1,0 +1,376 @@
+<html>
+<head>
+<title>TestNG:  commerce-integrationtest</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>commerce-integrationtest</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>44/1/5</td>
+</tr><tr>
+<td>Started on:</td><td>Tue Feb 03 11:59:13 CST 2009</td>
+</tr>
+<tr><td>Total time:</td><td>6 seconds (6250 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-failed'>
+<tr><td colspan='3' align='center'><b>FAILED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td width="30%"><b>Exception</b></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrderFromObj()'>addItemToOrderFromObj</td>
+<td>0</td>
+<td><div><pre>java.lang.AssertionError
+	at org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrderFromObj(OrderServiceTest.java:79)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 27 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace17479562", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace17479562'><pre>java.lang.AssertionError
+	at org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrderFromObj(OrderServiceTest.java:79)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor10.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.TestNG.privateMain(TestNG.java:860)
+	at org.testng.TestNG.main(TestNG.java:833)
+</pre></div></td>
+</tr>
+</table><p>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='3' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td width="30%"><b>Exception</b></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrderFromId()'>addContactInfoToOrderFromId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrderFromObj()'>addContactInfoToOrderFromObj</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrderFromId()'>addItemToOrderFromId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrderFromId()'>addPaymentToOrderFromId<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.OrderPayment@1628b8d</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrderFromObj()'>addPaymentToOrderFromObj<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.OrderPayment@1983ad7</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addShippingToOrderById()'>addShippingToOrderById<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.OrderShipping@84de3c</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addShippingToOrderByObj()'>addShippingToOrderByObj<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.OrderShipping@1696452</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.UserTest.changeUserPasswords()'>changeUserPasswords</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.AddressTest.createAddress()'>createAddress<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.Address@18dfa76</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.AddressTest.createAddress()'>createAddress<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.Address@1d4f355</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.ContactInfoTest.createContactInfo()'>createContactInfo<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.ContactInfo@1f6ef01</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderDaoTest.createOrder()'>createOrder<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.Order@3a5a9c</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.createOrderForUserFromId()'>createOrderForUserFromId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.createOrderForUserFromObj()'>createOrderForUserFromObj</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderItemDaoTest.createOrderItem()'>createOrderItem<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.OrderItem@1ad5d46</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderPaymentDaoTest.createOrderPayment()'>createOrderPayment<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.OrderPayment@1e5c339</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderShippingDaoTest.createOrderShipping()'>createOrderShipping<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.OrderShipping@148bd9d</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.SellableItemDaoTest.createSellableItem()'>createSellableItem<br/><b>Parameters:</b> org.broadleafcommerce.catalog.domain.SellableItem@8a1f38</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.UserTest.createUser()'>createUser<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.User@15925c0</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.UserTest.createUser()'>createUser<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.User@2cd728</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForUserFromId()'>getOrdersForUserFromId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForUserFromObj()'>getOrdersForUserFromObj</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.AddressTest.readAddressByUserId()'>readAddressByUserId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoById()'>readContactInfoById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoByUserId()'>readContactInfoByUserId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.SellableItemDaoTest.readFirstSellableItem()'>readFirstSellableItem</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById()'>readOrderById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderItemDaoTest.readOrderItemsById()'>readOrderItemsById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderItemDaoTest.readOrderItemsForOrder()'>readOrderItemsForOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderPaymentDaoTest.readOrderPaymentById()'>readOrderPaymentById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderShippingDaoTest.readOrderShippingForOrder()'>readOrderShippingForOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderDaoTest.readOrdersForUser()'>readOrdersForUser</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderPaymentDaoTest.readSaleOrderPaymentByOrder()'>readSaleOrderPaymentByOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.SellableItemDaoTest.readSellableItemById()'>readSellableItemById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.UserTest.readUsersById()'>readUsersById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.UserTest.readUsersByUsername1()'>readUsersByUsername1</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.UserTest.readUsersByUsername2()'>readUsersByUsername2</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.ExtensibilityTest.test()'>test</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testBadAddress()'>testBadAddress</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.CatalogItemDaoTest.testMaintainCatalogItem()'>testMaintainCatalogItem<br/><b>Parameters:</b> org.broadleafcommerce.catalog.domain.CatalogItem@8201a7</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrmTest.testMappings()'>testMappings</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.CatalogItemDaoTest.testReadCatalogItemsById()'>testReadCatalogItemsById<br/><b>Parameters:</b> org.broadleafcommerce.catalog.domain.CatalogItem@132e910</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.CatalogItemDaoTest.testReadCatalogItemsByName()'>testReadCatalogItemsByName<br/><b>Parameters:</b> org.broadleafcommerce.catalog.domain.CatalogItem@164bff9</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testSuccessfulAddress()'>testSuccessfulAddress</td>
+<td>0</td>
+<td></td>
+</tr>
+</table><p>
+<table width='100%' border='1' class='invocation-skipped'>
+<tr><td colspan='3' align='center'><b>SKIPPED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td width="30%"><b>Exception</b></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.getItemsForOrderFromId()'>getItemsForOrderFromId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.getItemsForOrderFromObj()'>getItemsForOrderFromObj</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.removeItemFromOrderById()'>removeItemFromOrderById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.removeItemFromOrderByObj()'>removeItemFromOrderByObj</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.updateItemsInOrderByObj()'>updateItemsInOrderByObj</td>
+<td>0</td>
+<td></td>
+</tr>
+</table><p>
+</body>
+</html>

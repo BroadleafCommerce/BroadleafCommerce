@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites>
+  <testsuite errors="0" failures="0" id="0" name="broadleafcommerce-layout" package="" tests="3" time="0.031">
+      <properties />
+
+      <testcase classname="org.broadleafcommerce.layout.test.PaginationCommandObjectTest" name="testIndices" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.layout.test.PaginationCommandObjectTest" name="testFullList" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.layout.test.PaginationCommandObjectTest" name="testDisplayList" time="0.0" />
+
+  </testsuite>
+  <testsuite errors="0" failures="0" id="1" name="broadleafcommerce-unittest" package="" tests="0" time="0.0">
+      <properties />
+
+  </testsuite>
+  <testsuite errors="0" failures="1" id="2" name="commerce-integrationtest" package="" tests="50" time="6.25">
+      <properties />
+
+      <testcase classname="org.broadleafcommerce.profile.test.UserTest" name="createUser" time="0.047" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.UserTest" name="createUser" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.CatalogItemDaoTest" name="testMaintainCatalogItem" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.UserTest" name="readUsersByUsername1" time="0.063" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.AddressTest" name="createAddress" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.AddressTest" name="createAddress" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.UserTest" name="changeUserPasswords" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.UserTest" name="readUsersByUsername2" time="0.015" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.AddressTest" name="readAddressByUserId" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.ContactInfoTest" name="createContactInfo" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.ContactInfoTest" name="readContactInfoByUserId" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="createOrderForUserFromId" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="createOrderForUserFromObj" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="getOrdersForUserFromId" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderDaoTest" name="createOrder" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderPaymentDaoTest" name="createOrderPayment" time="0.063" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderPaymentDaoTest" name="readSaleOrderPaymentByOrder" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderShippingDaoTest" name="createOrderShipping" time="0.031" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderDaoTest" name="readOrderById" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderDaoTest" name="readOrdersForUser" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="addPaymentToOrderFromObj" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="addPaymentToOrderFromId" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderShippingDaoTest" name="readOrderShippingForOrder" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.SellableItemDaoTest" name="createSellableItem" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.ContactInfoTest" name="readContactInfoById" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.SellableItemDaoTest" name="readFirstSellableItem" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="addContactInfoToOrderFromId" time="0.015" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="addContactInfoToOrderFromObj" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="addItemToOrderFromId" time="0.015" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="addShippingToOrderById" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderPaymentDaoTest" name="readOrderPaymentById" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.SellableItemDaoTest" name="readSellableItemById" time="0.015" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderItemDaoTest" name="createOrderItem" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderItemDaoTest" name="readOrderItemsById" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderItemDaoTest" name="readOrderItemsForOrder" time="0.047" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="addShippingToOrderByObj" time="0.015" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="getOrdersForUserFromObj" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="addItemToOrderFromObj" time="0.031">
+          <failure type="java.lang.AssertionError">
+      <![CDATA[java.lang.AssertionError
+	at org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrderFromObj(OrderServiceTest.java:79)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 27 stack frames]]>
+    </failure>
+
+      </testcase>
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="getItemsForOrderFromId" time="0.0">
+          <skipped />
+
+      </testcase>
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="getItemsForOrderFromObj" time="0.0">
+          <skipped />
+
+      </testcase>
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="removeItemFromOrderById" time="0.0">
+          <skipped />
+
+      </testcase>
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="removeItemFromOrderByObj" time="0.0">
+          <skipped />
+
+      </testcase>
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrderServiceTest" name="updateItemsInOrderByObj" time="0.0">
+          <skipped />
+
+      </testcase>
+
+      <testcase classname="org.broadleafcommerce.profile.test.UserTest" name="readUsersById" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest" name="testSuccessfulAddress" time="0.328" />
+
+      <testcase classname="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest" name="testBadAddress" time="0.094" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.CatalogItemDaoTest" name="testReadCatalogItemsByName" time="0.016" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.CatalogItemDaoTest" name="testReadCatalogItemsById" time="0.0" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.ExtensibilityTest" name="test" time="0.297" />
+
+      <testcase classname="org.broadleafcommerce.test.integration.OrmTest" name="testMappings" time="0.0" />
+
+  </testsuite>
+</testsuites>
