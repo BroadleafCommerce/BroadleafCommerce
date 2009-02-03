@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${app.name}" basedir=".." default="usage">
+
+	<property name="war.dir" value="${basedir}/war" />
+	<property name="stage.dir" value="${basedir}/build/stage" />
+	<property name="src.dir" value="${basedir}/src" />
+	<property name="test.src.dir" value="${basedir}/test" />
+	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="compile.lib.dir" value="${lib.dir}/compile/bin" />
+	<property name="war.lib.dir" value="${lib.dir}/include/bin" />
+	<property file="${basedir}/build/build.properties" />
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<fileset id="compile.lib" dir="${compile.lib.dir}" description="compile-time dependencies">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<fileset id="war.lib" dir="${war.lib.dir}" description="war dependencies">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<target name="deploy-integrated-war" depends="build-integrated-war">
+		<copy todir="${deploy.path}" file="${stage.dir}/${app.name}.war" />
+	</target>
+
+	<target name="deploy-exploded-war" depends="build-exploded-war">
+		<copy todir="${deploy.path}/${app.name}">
+			<fileset dir="${stage.dir}/${app.name}.war" />
+		</copy>
+		<delete dir="${stage.dir}/${app.name}.war" quiet="true" />
+	</target>
+
+	<target name="undeploy-war">
+		<delete dir="${deploy.path}/${app.name}.war" />
+		<delete dir="${deploy.path}/${app.name}" />
+		<delete>
+			<fileset dir="${deploy.path}" includes="${app.name}.war" />
+			<fileset dir="${deploy.path}" includes="${app.name}" />
+		</delete>
+	</target>
+
+	<target name="build-integrated-war" depends="setup-war">
+		<war destfile="${stage.dir}/${app.name}.war" basedir="${stage.dir}/war">
+			<include name="**/*.*" />
+		</war>
+		<delete dir="${stage.dir}/war" />
+	</target>
+
+	<target name="build-exploded-war" depends="setup-war">
+		<mkdir dir="${stage.dir}/${app.name}.war" />
+		<copy todir="${stage.dir}/${app.name}.war">
+			<fileset dir="${stage.dir}/war">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		<delete dir="${stage.dir}/war" />
+	</target>
+
+	<target name="setup-war" depends="classes-jar">
+		<mkdir dir="${stage.dir}/war" />
+		<mkdir dir="${stage.dir}/war/META-INF" />
+		<mkdir dir="${stage.dir}/war/WEB-INF" />
+		<mkdir dir="${stage.dir}/war/WEB-INF/lib" />
+		<mkdir dir="${stage.dir}/war/WEB-INF/classes" />
+		<mkdir dir="${stage.dir}/war/WEB-INF/config" />
+
+		<copy todir="${stage.dir}/war" includeemptydirs="true">
+			<fileset dir="${war.dir}">
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${stage.dir}/war/WEB-INF/lib">
+			<fileset dir="${stage.dir}">
+				<include name="${app.name}.jar" />
+				<include name="scprofile.jar" />
+				<include name="lonestar-framework.jar"/>
+				<include name="lonestar-extensibility.jar"/>
+				<include name="lonestar-layout.jar"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${stage.dir}/war/WEB-INF/lib">
+			<fileset dir="${war.lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+		</copy>
+
+	</target>
+
+	<target name="classes-jar" depends="setup">
+		<mkdir dir="${stage.dir}/classes-jar" />
+
+		<path id="compile-lib">
+			<fileset refid="compile.lib" />
+			<fileset refid="war.lib" />
+			<fileset file="${stage.dir}/*.jar" />
+		</path>
+
+		<echo>Compiling with debug=${debug.compile}</echo>
+		<javac destdir="${stage.dir}/classes-jar"
+			srcdir="${src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
+
+		<copy todir="${stage.dir}/classes-jar">
+			<fileset dir="${src.dir}">
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
+				<exclude name="META-INF/persistence-container.xml"/>
+			</fileset>
+		</copy>
+
+		<if>
+			<equals arg1="${build.env}" arg2="dev" casesensitive="false" />
+			<then>
+				<copy tofile="${stage.dir}/classes-jar/META-INF/persistence.xml">
+					<fileset dir="${src.dir}">
+						<include name="META-INF/persistence-container.xml" />
+					</fileset>
+				</copy>
+				<replace file="${stage.dir}/classes-jar/META-INF/persistence.xml"
+					token="@@DIALECT@@" value="${mysql.db.dialect}"/>
+			</then>
+			<elseif>
+				<equals arg1="${build.env}" arg2="unit-test" casesensitive="false" />
+				<then>
+					<!-- We have a special file for unit tests -->
+					<copy todir="${stage.dir}/classes-jar">
+						<fileset dir="${test.src.dir}">
+							<include name="META-INF/persistence.xml"/>
+						</fileset>
+					</copy>
+
+				</then>
+			</elseif>
+			<else>
+				<copy tofile="${stage.dir}/classes-jar/META-INF/persistence.xml">
+					<fileset dir="${src.dir}">
+						<include name="META-INF/persistence-container.xml" />
+					</fileset>
+				</copy>
+				<replace file="${stage.dir}/classes-jar/META-INF/persistence.xml"
+					token="@@DIALECT@@" value="${sqlserver.db.dialect}"/>
+			</else>
+		</if>
+
+		<jar jarfile="${stage.dir}/${app.name}.jar" basedir="${stage.dir}/classes-jar">
+			<include name="**/*.class" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="**/*.drl" />
+			<include name="**/*.dslr" />
+			<include name="**/*.dsl" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
+		<delete dir="${stage.dir}/classes-jar" />
+	</target>
+
+	<target name="setup" depends="clean">
+		<echo>Setting up for environment = ${build.env}</echo>
+		<mkdir dir="${stage.dir}" />
+		<if>
+			<equals arg1="${build.env}" arg2="dev" />
+			<then>
+				<property name="debug.compile" value="true" />
+			</then>
+			<elseif>
+				<equals arg1="${build.env}" arg2="unit-test" />
+				<then>
+					<property name="debug.compile" value="true" />
+				</then>
+			</elseif>
+			<else>
+				<property name="debug.compile" value="false" />
+			</else>
+		</if>
+
+		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/scprofile.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/lonestar-framework.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/lonestar-extensibility.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/lonestar-layout.jar" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${stage.dir}" />
+		<delete dir="${test.output.dir}" />
+	</target>
+
+	<target name="generate-javadocs">
+		<mkdir dir="${stage.dir}/javadocs" />
+
+		<path id="compile-lib">
+			<fileset refid="compile.lib" />
+			<fileset file="war.lib" />
+		</path>
+
+		<javadoc packagenames="org.broadleafcommerce.*" destdir="${stage.dir}/javadocs" classpathref="compile-lib" useexternalfile="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="app.synch">
+		<echo>Synchronizing App</echo>
+		<sync todir="${deploy.path}/${app.name}/css">
+			<fileset dir="${war.dir}/css">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${deploy.path}/${app.name}/js">
+			<fileset dir="${war.dir}/js">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${deploy.path}/${app.name}/images">
+			<fileset dir="${war.dir}/images">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${deploy.path}/${app.name}/WEB-INF/jsp">
+			<fileset dir="${war.dir}/WEB-INF/jsp">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<copy todir="${deploy.path}/${app.name}">
+			<fileset dir="${war.dir}">
+				<include name="*.jsp"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="usage">
+		<echo>This is the internal build file for SCDemo.</echo>
+		<echo>Please use build.xml</echo>
+	</target>
+
+</project>
