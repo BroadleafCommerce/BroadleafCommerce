@@ -19,7 +19,7 @@ public class ForgotPwdFormController extends SimpleFormController {
     protected final Log logger = LogFactory.getLog(getClass());
     private static final String TEMPLATE = "forgotPasswordReset.vm";
     private static final String EMAIL_FROM = "BroadleafCommerce@credera.com";
-    private static final String EMAIL_SUBJECT = "Email From Spring Commerce Group";
+    private static final String EMAIL_SUBJECT = "Email From Broadleaf Commerce Group";
 
     private UserService userService;
 

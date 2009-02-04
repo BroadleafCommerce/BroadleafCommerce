@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Spring Commerce Demo" basedir=".." default="8. Redeploy and Restart Tomcat">
+<project name="Broadleaf Commerce Demo" basedir=".." default="8. Redeploy and Restart Tomcat">
 	<property name="internal.build.file" value="${basedir}/build/demo-build.xml" />
 	<property file="${basedir}/build/build.properties" />
 	<property name="lib.dir" value="${basedir}/lib" />

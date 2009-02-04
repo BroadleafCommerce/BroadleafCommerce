@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="profile-unittests" default="runall" basedir="..">
 	<description>
-            Spring Commerce Profile Test Execution File
+            Broadleaf Commerce Profile Test Execution File
     </description>
 
 	<property name="stage.dir" value="${basedir}/build/stage"/>
