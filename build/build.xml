@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Lonestar" default="usage" basedir="..">
+<project name="Broadleaf Commerce" default="usage" basedir="..">
 	<description>
-		Lonestar Build File
+		Broadleaf Commerce Build File
     </description>
 
 	<property name="internal.build.file" value="${basedir}/build/lonestar.build.xml" />
@@ -38,7 +38,7 @@
 
 	<target name="usage">
 		<echo>
-			This is the ANT build file for the Lonestar project.
+			This is the ANT build file for the Broadleaf Commerce project.
 		</echo>
 	</target>
 	
