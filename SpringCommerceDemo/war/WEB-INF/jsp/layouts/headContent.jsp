@@ -1,4 +1,8 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<link rel="stylesheet" type="text/css" href="/scdemo/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/cstore/css/master.css" />
+<link rel="stylesheet" type="text/css" href="/cstore/css/pages.css" />
+<link rel="stylesheet" type="text/css" href="/cstore/css/catalog.css" />
 
-<script type="text/javascript" src="/scdemo/js/jquery-1.3.1.min.js"></script>
+<link rel="shortcut icon" type="image/ico" href="/cstore/images/favicon.ico" />
+
+<script type="text/javascript" src="/cstore/js/jquery-1.3.1.min.js"></script>
