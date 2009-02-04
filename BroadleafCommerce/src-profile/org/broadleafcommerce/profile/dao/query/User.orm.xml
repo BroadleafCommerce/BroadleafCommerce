@@ -18,4 +18,9 @@
 		WHERE role.user.id = :userId</query>
 	</named-query>
 
+	<named-query name="READ_CUSTOMER_BY_USERNAME" >
+		<query>SELECT customer FROM org.broadleafcommerce.profile.domain.Customer customer
+		WHERE customer.user.username = :username</query>
+	</named-query>
+
 </entity-mappings>

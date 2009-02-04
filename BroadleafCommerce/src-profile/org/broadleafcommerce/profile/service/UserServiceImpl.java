@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.UserDao;
+import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
 import org.broadleafcommerce.profile.util.PasswordChange;
@@ -72,5 +73,10 @@ public class UserServiceImpl implements UserService {
         SecurityContextHolder.getContext().setAuthentication(authRequest);
         auth.setAuthenticated(false);
         return user;
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Customer readCustomerByUsername(String username) {
+        return userDao.readCustomerByUsername(username);
     }
 }

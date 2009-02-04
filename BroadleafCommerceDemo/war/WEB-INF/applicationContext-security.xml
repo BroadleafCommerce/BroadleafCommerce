@@ -79,4 +79,17 @@
 		<sec:custom-authentication-provider/>
  	</bean>
 
+	<bean id="customerStateStore" class="org.broadleafcommerce.security.CustomerStateStore"/>
+
+	<!-- Observer pattern -->
+	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	    <property name="targetObject" ref="scAuthenticationProcessingFilter"/>
+	    <property name="targetMethod" value="addListener"/>
+	    <property name="arguments">
+	    <list>
+	    	<ref bean="customerStateStore"/>
+	    </list>
+	    </property>
+	</bean>
+
 </beans>
