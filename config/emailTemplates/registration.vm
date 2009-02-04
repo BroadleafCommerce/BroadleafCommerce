@@ -6,9 +6,9 @@
 <hr/>
 Hello $user.firstName,
 <br/>
-Thank you for registering with Spring Commerce project. This is just a test<br/>
+Thank you for registering with the Broadleaf Commerce project. This is just a test<br/>
 Your login id: $user.username<br/>
-For security reasons, your password is not sent through this email. 
+For security reasons, your password is not sent through this email.
 <br/>
 #d()
 <br/>
