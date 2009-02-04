@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
 import org.springframework.stereotype.Repository;
@@ -25,18 +26,19 @@ public class UserDaoJpa implements UserDao {
     public User readUserByUsername(String username) {
         Query query = em.createNamedQuery("READ_USER_BY_USER_NAME");
         query.setParameter("username", username);
-        try{
+        try {
             return (User) query.getSingleResult();
-        }catch(NoResultException ne){
+        } catch (NoResultException ne) {
             return null;
         }
     }
-    public User readUserByEmail(String emailAddress){
+
+    public User readUserByEmail(String emailAddress) {
         Query query = em.createNamedQuery("READ_USER_BY_EMAIL");
         query.setParameter("email", emailAddress);
-        try{
+        try {
             return (User) query.getSingleResult();
-        }catch(NoResultException ne){
+        } catch (NoResultException ne) {
             return null;
         }
     }
@@ -59,5 +61,16 @@ public class UserDaoJpa implements UserDao {
 
     public User readUserById(Long userId) {
         return em.find(User.class, userId);
+    }
+
+    @Override
+    public Customer readCustomerByUsername(String username) {
+        Query query = em.createNamedQuery("READ_CUSTOMER_BY_USERNAME");
+        query.setParameter("username", username);
+        try {
+            return (Customer) query.getSingleResult();
+        } catch (NoResultException ne) {
+            return null;
+        }
     }
 }

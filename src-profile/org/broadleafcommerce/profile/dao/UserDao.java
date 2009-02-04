@@ -2,6 +2,7 @@ package org.broadleafcommerce.profile.dao;
 
 import java.util.List;
 
+import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
 
@@ -16,4 +17,6 @@ public interface UserDao {
     public User readUserById(Long userId);
 
     public User readUserByEmail(String emailAddress);
+
+    public Customer readCustomerByUsername(String username);
 }
