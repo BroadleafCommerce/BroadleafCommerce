@@ -19,7 +19,7 @@ import org.springframework.security.providers.UsernamePasswordAuthenticationToke
 import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 import org.springframework.security.util.TextUtils;
 
-public class SCAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
+public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 
     private final List<PostLoginObserver> postLoginListeners = new ArrayList<PostLoginObserver>();
 
