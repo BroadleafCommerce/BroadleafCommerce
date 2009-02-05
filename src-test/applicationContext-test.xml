@@ -18,13 +18,13 @@
 	</bean>
 	<bean id="broadleafCommerceDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:mem:lonestar" />
+		<property name="url" value="jdbc:hsqldb:mem:broadleaf" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 		<!--
 			<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-			<property name="url" value="jdbc:mysql://localhost:3306/lonestar"/>
-			<property name="username" value="lonestar"/> <property
+			<property name="url" value="jdbc:mysql://localhost:3306/broadleaf"/>
+			<property name="username" value="broadleaf"/> <property
 			name="password" value="password"/>
 		-->
 	</bean>
