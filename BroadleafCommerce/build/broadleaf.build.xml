@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Lonestar-internal" default="usage" basedir="..">
+<project name="Broadleaf-internal" default="usage" basedir="..">
 	<description>
             Lonestar Build File
     </description>
@@ -62,7 +62,7 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${stage.dir}/lonestar-framework.jar" basedir="${stage.dir}/framework-jar">
+		<jar jarfile="${stage.dir}/broadleaf-framework.jar" basedir="${stage.dir}/framework-jar">
 			<include name="**/*.class" />
 			<include name="**/*.properties" />
 			<include name="**/*.xml" />
@@ -103,7 +103,7 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${stage.dir}/lonestar-extensibility.jar" basedir="${stage.dir}/extensibility-jar">
+		<jar jarfile="${stage.dir}/broadleaf-extensibility.jar" basedir="${stage.dir}/extensibility-jar">
 			<include name="**/*.class" />
 			<include name="**/*.properties" />
 			<include name="**/*.xml" />
@@ -152,7 +152,7 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${stage.dir}/lonestar-layout.jar" basedir="${stage.dir}/layout-jar">
+		<jar jarfile="${stage.dir}/broadleaf-layout.jar" basedir="${stage.dir}/layout-jar">
 			<include name="**/*.class" />
 			<include name="**/*.properties" />
 			<include name="**/*.xml" />
@@ -168,7 +168,7 @@
 		<path id="compile-lib">
 			<fileset refid="compile.lib" />
 			<fileset refid="common.lib" />
-			<fileset file="${stage.dir}/lonestar-extensibility.jar" />
+			<fileset file="${stage.dir}/broadleaf-extensibility.jar" />
 		</path>
 
 		<echo>Compiling with debug=${debug.compile}</echo>
@@ -187,7 +187,7 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${stage.dir}/scprofile.jar" basedir="${stage.dir}/profile-jar">
+		<jar jarfile="${stage.dir}/broadleaf-profile.jar" basedir="${stage.dir}/profile-jar">
 			<include name="**/*.class" />
 			<include name="**/*.properties" />
 			<include name="**/*.xml" />

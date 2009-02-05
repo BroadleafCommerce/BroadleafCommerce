@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Lonstar-unittests" default="runall" basedir="..">
 	<description>
-            Lonestar Unit Test Execution File
+            Broadleaf Commerce Unit Test Execution File
     </description>
 
 	<property name="stage.dir" value="${basedir}/build/stage"/>
@@ -10,7 +10,7 @@
 	<property name="common.lib.dir" value="${lib.dir}/common" />
 	<property name="test.lib.dir" value="${lib.dir}/test/bin"/>
 	<property name="test.src.dir" value="${basedir}/src-test"/>
-    <property name="internal.build.file" value="${basedir}/build/lonestar.build.xml" />
+    <property name="internal.build.file" value="${basedir}/build/broadleaf.build.xml" />
 	<property name="build.env" value="test"/>
 
 	<fileset id="compile.lib" dir="${compile.lib.dir}"
@@ -44,8 +44,8 @@
     	<mkdir dir="${stage.dir}/test-output"/>
 
     	<testng classpathref="test-lib-path"
-    		outputdir="${stage.dir}/test-output" 
-    		dumpcommand="yes" 
+    		outputdir="${stage.dir}/test-output"
+    		dumpcommand="yes"
 			failureProperty="test.failed"
 			reporter="org.testng.reporters.XMLReporter">
     		<xmlfileset dir="${stage.dir}/test-folder" includes="**/*testng.xml"/>
@@ -92,7 +92,7 @@
 			</fileset>
 		</copy>
 
-		<jar destfile="${stage.dir}/lonestar-tests.jar" basedir="${stage.dir}/test-folder">
+		<jar destfile="${stage.dir}/broadleaf-tests.jar" basedir="${stage.dir}/test-folder">
 			<include name="**/*.*"/>
 		</jar>
 

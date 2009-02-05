@@ -4,7 +4,7 @@
 		Broadleaf Commerce Build File
     </description>
 
-	<property name="internal.build.file" value="${basedir}/build/lonestar.build.xml" />
+	<property name="internal.build.file" value="${basedir}/build/broadleaf.build.xml" />
 	<property name="test.build.file" value="${basedir}/build/unittests.build.xml" />
 	<property name="build.env" value="dev"/>
 
@@ -16,15 +16,15 @@
 		<ant antfile="${internal.build.file}" target="build-jars" />
 	</target>
 
-	<target name="2. Build Framework Jar" description="Build lonestar-framework.jar to the staging area.">
+	<target name="2. Build Framework Jar" description="Build broadleaf-framework.jar to the staging area.">
 		<ant antfile="${internal.build.file}" target="build-framework-jar" />
 	</target>
 
-	<target name="3. Build Profile Jar" description="Build lonestar-framework.jar to the staging area.">
+	<target name="3. Build Profile Jar" description="Build broadleaf-framework.jar to the staging area.">
 		<ant antfile="${internal.build.file}" target="build-framework-jar" />
 	</target>
 
-	<target name="4. Build Extensibility Jar" description="Build lonestar-extensibility.jar to the staging area.">
+	<target name="4. Build Extensibility Jar" description="Build broadleaf-extensibility.jar to the staging area.">
 		<ant antfile="${internal.build.file}" target="build-extensibility-jar" />
 	</target>
 
@@ -41,5 +41,5 @@
 			This is the ANT build file for the Broadleaf Commerce project.
 		</echo>
 	</target>
-	
+
 </project>

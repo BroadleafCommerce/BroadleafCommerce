@@ -88,11 +88,11 @@
 		</taglib>
 		<taglib>
 			<taglib-uri>/broadleafcommerce</taglib-uri>
-			<taglib-location>/WEB-INF/lib/lonestar-layout.jar</taglib-location>
+			<taglib-location>/WEB-INF/lib/broadleaf-layout.jar</taglib-location>
 		</taglib>
 		<taglib>
 			<taglib-uri>/scprofile</taglib-uri>
-			<taglib-location>/WEB-INF/tld/scprofile.tld</taglib-location>
+			<taglib-location>/WEB-INF/tld/broadleaf-profile.tld</taglib-location>
 		</taglib>
 	</jsp-config>
 
