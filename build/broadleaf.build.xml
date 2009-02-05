@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Broadleaf-internal" default="usage" basedir="..">
 	<description>
-            Lonestar Build File
+            Broadleaf Build File
     </description>
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="framework.src.dir" value="${basedir}/src-framework" />
