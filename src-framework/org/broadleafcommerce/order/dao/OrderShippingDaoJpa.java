@@ -20,31 +20,31 @@ public class OrderShippingDaoJpa implements OrderShippingDao {
 
     @PersistenceContext
     private EntityManager em;
-    	
 
-	@Override
-	public OrderShipping maintainOrderShipping(
-			OrderShipping shipping) {
-		if(shipping.getId() == null){
-			em.persist(shipping);
-		}else{
-			shipping = em.merge(shipping);
-		}
-		
-		return shipping;
-	}
 
-	@Override
-	public OrderShipping readOrderShippingById(Long shippingId) {
-		return em.find(OrderShipping.class, shippingId);
-	}
+    @Override
+    public OrderShipping maintainOrderShipping(
+            OrderShipping shipping) {
+        if(shipping.getId() == null){
+            em.persist(shipping);
+        }else{
+            shipping = em.merge(shipping);
+        }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<OrderShipping> readOrderShippingForOrder(Order order) {
-		Query query = em.createNamedQuery("READ_ORDER_SHIPPING_BY_ORDER_ID");
-		query.setParameter("orderId", order.getId());
-		return query.getResultList();
-	}
+        return shipping;
+    }
+
+    @Override
+    public OrderShipping readOrderShippingById(Long shippingId) {
+        return em.find(OrderShipping.class, shippingId);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<OrderShipping> readOrderShippingForOrder(Order order) {
+        Query query = em.createQuery("SELECT orderShipping FROM org.broadleafcommerce.order.domain.OrderShipping orderShipping WHERE orderShipping.order.id = :orderId");
+        query.setParameter("orderId", order.getId());
+        return query.getResultList();
+    }
 
 }

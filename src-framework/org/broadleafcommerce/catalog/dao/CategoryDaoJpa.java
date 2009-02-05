@@ -20,7 +20,7 @@ public class CategoryDaoJpa implements CategoryDao {
         if (category.getId() == null) {
             em.persist(category);
         } else {
-        	category = em.merge(category);
+            category = em.merge(category);
         }
         return category;
     }
@@ -33,17 +33,17 @@ public class CategoryDaoJpa implements CategoryDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<Category> readAllCategories() {
-        Query query = em.createNamedQuery("READ_ALL_CATEGORIES");
+        Query query = em.createQuery("SELECT category FROM org.broadleafcommerce.catalog.domain.Category category");
         query.setHint("org.hibernate.cacheable", true);
-        return (List<Category>) query.getResultList();
+        return query.getResultList();
     }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Category> readAllSubCategories(Category category) {
-        Query query = em.createNamedQuery("READ_ALL_SUBCATEGORIES");
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Category> readAllSubCategories(Category category) {
+        Query query = em.createQuery("SELECT category FROM org.broadleafcommerce.catalog.domain.Category category WHERE category.parentCategory = :parentCategory");
         query.setParameter("parentCategory", category);
-        return (List<Category>) query.getResultList();
-	}
+        return query.getResultList();
+    }
 
 }

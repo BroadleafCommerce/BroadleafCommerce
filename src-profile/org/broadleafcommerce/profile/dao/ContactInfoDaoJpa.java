@@ -19,27 +19,27 @@ public class ContactInfoDaoJpa implements ContactInfoDao {
 
     @PersistenceContext
     private EntityManager em;
-    
 
-	@Override
-	public ContactInfo maintainContactInfo(ContactInfo contactInfo) {
-		 if (contactInfo.getId() == null) {
-	            em.persist(contactInfo);
-	        } else {
-	        	contactInfo = em.merge(contactInfo);
-	        }
-	        return contactInfo;
-	}
 
-	@SuppressWarnings("unchecked")
-	public List<ContactInfo> readContactInfoByUserId(Long userId) {
-		Query query = em.createNamedQuery("READ_CONTACT_INFO_BY_USER_ID");
+    @Override
+    public ContactInfo maintainContactInfo(ContactInfo contactInfo) {
+        if (contactInfo.getId() == null) {
+            em.persist(contactInfo);
+        } else {
+            contactInfo = em.merge(contactInfo);
+        }
+        return contactInfo;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ContactInfo> readContactInfoByUserId(Long userId) {
+        Query query = em.createQuery("SELECT contactInfo FROM org.broadleafcommerce.profile.domain.ContactInfo contactInfo WHERE contactInfo.user.id = :userId");
         query.setParameter("userId", userId);
         return query.getResultList();
-	}
-	
-	@Override
-	public ContactInfo readContactInfoById(Long contactId){
-		return em.find(ContactInfo.class, contactId);
-	}
+    }
+
+    @Override
+    public ContactInfo readContactInfoById(Long contactId){
+        return em.find(ContactInfo.class, contactId);
+    }
 }

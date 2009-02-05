@@ -33,7 +33,7 @@ public class CatalogItemDaoJpa implements CatalogItemDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<CatalogItem> readCatalogItemsByName(String searchName) {
-        Query query = em.createNamedQuery("READ_CATALOG_ITEMS_BY_NAME");
+        Query query = em.createQuery("SELECT catalogItem FROM org.broadleafcommerce.catalog.domain.CatalogItem catalogItem WHERE catalogItem.name LIKE :name");
         query.setParameter("name", searchName + "%");
         return query.getResultList();
     }

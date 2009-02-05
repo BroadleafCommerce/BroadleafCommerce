@@ -19,32 +19,32 @@ public class AddressDaoJpa implements AddressDao {
 
     @PersistenceContext
     private EntityManager em;
-    
+
     @SuppressWarnings("unchecked")
     public List<Address> readAddressByUserId(Long userId) {
-        Query query = em.createNamedQuery("READ_ADDRESS_BY_USER_ID");
+        Query query = em.createQuery("SELECT address FROM org.broadleafcommerce.profile.domain.Address address WHERE address.user.id = :userId ORDER BY address.id");
         query.setParameter("userId", userId);
         return query.getResultList();
     }
-    
+
     public Address readAddressByUserIdAndName(Long userId, String addressName) {
-        Query query = em.createNamedQuery("READ_ADDRESS_BY_USER_ID_AND_NAME");
+        Query query = em.createQuery("SELECT address FROM org.broadleafcommerce.profile.domain.Address address WHERE address.user.id = :userId AND address.addressName = :addressName");
         query.setParameter("userId", userId);
         query.setParameter("addressName", addressName);
         return (Address)query.getSingleResult();
     }
-    
+
     public Address maintainAddress(Address address) {
         if (address.getId() == null) {
             em.persist(address);
         } else {
-        	address = em.merge(address);
+            address = em.merge(address);
         }
         return address;
     }
-    
+
     public Address readAddressById(Long addressId) {
-        Query query = em.createNamedQuery("READ_ADDRESS_BY_ID");
+        Query query = em.createQuery("SELECT address FROM org.broadleafcommerce.profile.domain.Address address WHERE address.id = :addressId");
         query.setParameter("addressId", addressId);
         return (Address)query.getSingleResult();
     }

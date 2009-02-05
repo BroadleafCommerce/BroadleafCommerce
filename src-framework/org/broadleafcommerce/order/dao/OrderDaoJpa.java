@@ -23,67 +23,67 @@ public class OrderDaoJpa implements OrderDao {
 
     @PersistenceContext
     private EntityManager em;
-    
+
     @Override
     public Order readOrderById(Long orderId){
-    	return em.find(Order.class, orderId);
+        return em.find(Order.class, orderId);
     }
-    
+
     @Override
     public Order maintianOrder(Order salesOrder){
-    	if(salesOrder.getId() == null){
-    		em.persist(salesOrder);
-    	}else{
-    		salesOrder = em.merge(salesOrder);
-    	}
-    	return salesOrder;
+        if(salesOrder.getId() == null){
+            em.persist(salesOrder);
+        }else{
+            salesOrder = em.merge(salesOrder);
+        }
+        return salesOrder;
     }
-    
+
     @Override
-	public void deleteOrderForUser(Order salesOrder) {
-		em.remove(salesOrder);		
-	}
-
-	@Override
-    public List<Order> readOrdersForUser(User user){
-    	return readOrdersForUser(user.getId());
+    public void deleteOrderForUser(Order salesOrder) {
+        em.remove(salesOrder);
     }
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<Order> readOrdersForUser(Long userId){
-    	Query query = em.createNamedQuery("READ_ORDERS_BY_USER_ID");
-    	query.setParameter("userId", userId);
-    	return query.getResultList();
-	}
 
-	@Override
-	public BasketOrder readBasketOrderForUser(User user) {
-		BasketOrder bo;
-		Query query = em.createNamedQuery("READ_ORDER_BASKET_FOR_USER_ID");
-		query.setParameter("userId", user.getId());
-		try{
-			bo = (BasketOrder)query.getSingleResult();
-			return (BasketOrder)query.getSingleResult();
-		}catch(NoResultException nre){
-			bo = new BasketOrder();
-			bo.setUser(user);
-			em.persist(bo);
-			return bo;
-		}
-	}
+    @Override
+    public List<Order> readOrdersForUser(User user){
+        return readOrdersForUser(user.getId());
+    }
 
-	@Override
-	public SubmittedOrder submitOrder(Order basketOrder) {
-		SubmittedOrder so = new SubmittedOrder();
-		so.setId(basketOrder.getId());
-		Query query = em.createNamedQuery("UPDATE_BASKET_ORER_TO_SUBMITED");
-		query.setParameter("id", basketOrder.getId());
-		query.executeUpdate();
-		return em.find(SubmittedOrder.class, so.getId());
-	}
-	
-	
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Order> readOrdersForUser(Long userId){
+        Query query = em.createQuery("SELECT order FROM org.broadleafcommerce.order.domain.Order order WHERE order.user.id = :userId");
+        query.setParameter("userId", userId);
+        return query.getResultList();
+    }
 
-    
+    @Override
+    public BasketOrder readBasketOrderForUser(User user) {
+        BasketOrder bo;
+        Query query = em.createQuery("SELECT basketOrder FROM org.broadleafcommerce.order.domain.BasketOrder basketOrder WHERE basketOrder.user.id = :userId");
+        query.setParameter("userId", user.getId());
+        try{
+            bo = (BasketOrder)query.getSingleResult();
+            return (BasketOrder)query.getSingleResult();
+        }catch(NoResultException nre){
+            bo = new BasketOrder();
+            bo.setUser(user);
+            em.persist(bo);
+            return bo;
+        }
+    }
+
+    @Override
+    public SubmittedOrder submitOrder(Order basketOrder) {
+        SubmittedOrder so = new SubmittedOrder();
+        so.setId(basketOrder.getId());
+        Query query = em.createQuery("UPDATE org.broadleafcommerce.order.domain.Order orderx SET TYPE = 'SUBMITTED' WHERE orderx.id = :id");
+        query.setParameter("id", basketOrder.getId());
+        query.executeUpdate();
+        return em.find(SubmittedOrder.class, so.getId());
+    }
+
+
+
+
 }

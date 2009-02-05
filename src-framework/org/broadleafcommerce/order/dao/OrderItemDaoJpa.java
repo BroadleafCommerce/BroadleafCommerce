@@ -20,36 +20,36 @@ public class OrderItemDaoJpa implements OrderItemDao {
 
     @PersistenceContext
     private EntityManager em;
-    	
-	@Override
-	public OrderItem maintainOrderItem(OrderItem orderItem) {
-		if(orderItem.getId() == null){
-			em.persist(orderItem);
-		}else{
-			orderItem = em.merge(orderItem);
-		}
-		return orderItem;
-	}
 
-	@Override
-	public OrderItem readOrderItemById(Long orderItemId) {
-		return em.find(OrderItem.class, orderItemId);
-	}
+    @Override
+    public OrderItem maintainOrderItem(OrderItem orderItem) {
+        if(orderItem.getId() == null){
+            em.persist(orderItem);
+        }else{
+            orderItem = em.merge(orderItem);
+        }
+        return orderItem;
+    }
 
-	@Override
-	public void deleteOrderItem(OrderItem orderItem) {
-		OrderItem deleteItem = em.getReference(OrderItem.class, orderItem.getId());
-		em.remove(deleteItem);
-	}
+    @Override
+    public OrderItem readOrderItemById(Long orderItemId) {
+        return em.find(OrderItem.class, orderItemId);
+    }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<OrderItem> readOrderItemsForOrder(Order order) {
-		Query query = em.createNamedQuery("READ_ORDER_ITEMS_BY_ORDER_ID");
-		query.setParameter("orderId", order.getId());
-		return query.getResultList();
-	}
-	
-	
+    @Override
+    public void deleteOrderItem(OrderItem orderItem) {
+        OrderItem deleteItem = em.getReference(OrderItem.class, orderItem.getId());
+        em.remove(deleteItem);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<OrderItem> readOrderItemsForOrder(Order order) {
+        Query query = em.createQuery("SELECT orderItem FROM org.broadleafcommerce.order.domain.OrderItem orderItem WHERE orderItem.order.id = :orderId");
+        query.setParameter("orderId", order.getId());
+        return query.getResultList();
+    }
+
+
 
 }
