@@ -7,7 +7,7 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class CreateUser implements Serializable {
+public class RegisterCustomer implements Serializable {
     private static final long serialVersionUID = 1L;
     @Transient
     private final Log logger = LogFactory.getLog(getClass());

@@ -15,7 +15,7 @@
         <sec:intercept-url pattern="/images/**" filters="none" />
         <sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/logoutSuccess*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/createUser*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <sec:intercept-url pattern="/registerCustomer*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/forgotPwd*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/challengeQuestion*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/forgotPasswordChange*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
@@ -38,7 +38,7 @@
     </bean>
 
 	<!-- Custom login filter which replaces the default AUTHENTICATION_PROCESSING_FILTER -->
-	<bean id="scAuthenticationProcessingFilter" class="org.broadleafcommerce.security.SCAuthenticationProcessingFilter" >
+	<bean id="bcAuthenticationProcessingFilter" class="org.broadleafcommerce.security.BCAuthenticationProcessingFilter" >
 		<sec:custom-filter position="AUTHENTICATION_PROCESSING_FILTER"/> <!-- replace the default one -->
 		<property name="defaultTargetUrl" value="/index.jsp"/> <!-- After a successful login, the user will be taken to this page -->
 		<property name="authenticationFailureUrl" value="/login.jsp?login_error=1" /> <!-- Authentication failed? take him to error page -->
@@ -83,7 +83,7 @@
 
 	<!-- Observer pattern -->
 	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-	    <property name="targetObject" ref="scAuthenticationProcessingFilter"/>
+	    <property name="targetObject" ref="bcAuthenticationProcessingFilter"/>
 	    <property name="targetMethod" value="addListener"/>
 	    <property name="arguments">
 	    <list>

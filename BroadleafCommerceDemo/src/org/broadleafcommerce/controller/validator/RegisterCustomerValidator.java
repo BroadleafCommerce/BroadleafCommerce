@@ -3,14 +3,14 @@ package org.broadleafcommerce.controller.validator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
-import org.broadleafcommerce.util.CreateUser;
+import org.broadleafcommerce.util.RegisterCustomer;
 
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-public class UserValidator implements Validator {
+public class RegisterCustomerValidator implements Validator {
     private static final String REGEX_VALID_NAME = "[A-Za-z'. ]{1,80}";
     private static final String REGEX_VALID_PASSWORD = "[0-9A-Za-z]{4,15}";
 
@@ -20,13 +20,13 @@ public class UserValidator implements Validator {
     @SuppressWarnings("unchecked")
     @Override
     public boolean supports(Class clazz) {
-        return clazz.equals(CreateUser.class);
+        return clazz.equals(RegisterCustomer.class);
     }
 
     @Override
     public void validate(Object obj, Errors errors) {
         //TODO: need to add some more validation
-        CreateUser user = (CreateUser) obj;
+        RegisterCustomer user = (RegisterCustomer) obj;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "firstName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "lastName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "username.required");

@@ -1,4 +1,4 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<link rel="stylesheet" type="text/css" href="/scdemo/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/style.css" />
 
-<script type="text/javascript" src="/scdemo/js/jquery-1.3.1.min.js"></script>
+<script type="text/javascript" src="/broadleafdemo/js/jquery-1.3.1.min.js"></script>

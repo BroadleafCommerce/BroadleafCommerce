@@ -48,7 +48,7 @@
 
 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName">
-			<value>java:/comp/env/jdbc/SCProfile</value>
+			<value>java:/comp/env/jdbc/Broadleaf</value>
 		</property>
 	</bean>
 
@@ -88,7 +88,7 @@
             <!-- class.resource.loader.path=classpath:/config/velocity/templates/ -->
             <!-- Note that jar specification for the .path configuration property conforms to the same rules for the java.net.JarUrlConnection class
             jar.resource.loader.class =org.apache.velocity.runtime.resource.loader.JarResourceLoader
-			jar.resource.loader.path=jar:file:${jar.filePath}/scprofile.jar-->
+			jar.resource.loader.path=jar:file:${jar.filePath}/broadleaf-profile.jar-->
 			file.resource.loader.class=org.apache.velocity.runtime.resource.loader.FileResourceLoader
 			file.resource.loader.cache = false
 			file.resource.loader.path=${file.root}/WEB-INF/config/velocity/templates

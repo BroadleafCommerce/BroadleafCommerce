@@ -79,7 +79,7 @@
 	</target>
 
 	<target name="usage">
-		<echo>This is the build file for SCDemo</echo>
+		<echo>This is the build file for BroadleafCommerceDemo</echo>
 		<echo>Use "Clean" to delete the temporary build directories in the project.</echo>
 		<echo>Use "Deploy Exploded War" to deploy the application as an exploded war</echo>
 		<echo>Use "Deploy War" to deploy the war unexploded</echo>

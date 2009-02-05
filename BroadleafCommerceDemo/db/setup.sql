@@ -1,3 +1,3 @@
-CREATE database scprofile;
-CREATE USER scprofile IDENTIFIED BY 'scprofile';
-GRANT ALL on scprofile.* to scprofile;
+CREATE database broadleaf;
+CREATE USER broadleaf IDENTIFIED BY 'broadleaf';
+GRANT ALL on broadleaf.* to broadleaf;

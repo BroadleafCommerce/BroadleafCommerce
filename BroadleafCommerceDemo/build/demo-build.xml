@@ -236,7 +236,7 @@
 	</target>
 
 	<target name="usage">
-		<echo>This is the internal build file for SCDemo.</echo>
+		<echo>This is the internal build file for BroadleafCommerceDemo.</echo>
 		<echo>Please use build.xml</echo>
 	</target>
 

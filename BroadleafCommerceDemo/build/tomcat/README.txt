@@ -19,13 +19,13 @@ global context:
 3. Add the following configuration inside this element:
 
 <!-- Datasource connection for the application -->
-<Resource name="jdbc/SCProfile"
+<Resource name="jdbc/Broadleaf"
   auth="Container"
   type="javax.sql.DataSource"
-  username="scprofile"
-  password="scprofile"
+  username="broadleaf"
+  password="broadleaf"
   driverClassName="com.mysql.jdbc.Driver"
-  url="jdbc:mysql://localhost:3306/SCProfile?autoReconnect=true&amp; \n
+  url="jdbc:mysql://localhost:3306/Broadleaf?autoReconnect=true&amp; \n
           useUnicode=true&amp;characterEncoding=UTF8"
   maxActive="100" maxIdle="30" maxWait="10000"/>
 
@@ -41,6 +41,6 @@ global context:
 
 <!-- DataSource link for the application -->
 <ResourceLink
-  global="jdbc/SCProfile"
-  name="jdbc/SCProfile"
+  global="jdbc/Broadleaf"
+  name="jdbc/Broadleaf"
   type="javax.sql.DataSource"/>

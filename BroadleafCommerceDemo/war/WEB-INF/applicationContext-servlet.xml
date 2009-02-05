@@ -7,6 +7,18 @@
        http://www.directwebremoting.org/schema/spring-dwr
        http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd">
 
+	<bean id="resourceBundleExtensionPoint" class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint"/>
+
+	<bean id="messageSource" class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
+		<constructor-arg>
+			<list>
+				<value>registrationMessages</value>
+				<value>messages</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg ref="resourceBundleExtensionPoint"/>
+	</bean>
+
 	<bean id="passwordChange"
 		class="org.broadleafcommerce.controller.PasswordChangeFormController">
 		<property name="commandName" value="user" />
@@ -22,15 +34,15 @@
 	</bean>
 
 
-	<bean id="createUser" class="org.broadleafcommerce.controller.UserFormController">
+	<bean id="registerCustomer" class="org.broadleafcommerce.controller.RegisterCustomerFormController">
 		<property name="commandName" value="user" />
-		<property name="commandClass" value="org.broadleafcommerce.util.CreateUser" />
+		<property name="commandClass" value="org.broadleafcommerce.util.RegisterCustomer" />
 		<property name="validator">
-			<bean class="org.broadleafcommerce.controller.validator.UserValidator" />
+			<bean class="org.broadleafcommerce.controller.validator.RegisterCustomerValidator" />
 		</property>
 		<property name="userService" ref="userService" />
 		<property name="emailService" ref="emailService" />
-		<property name="formView" value="createUser" />
+		<property name="formView" value="registerCustomer" />
 		<property name="successView" value="redirect:/login.jsp" />
 	</bean>
 
@@ -234,7 +246,7 @@
 	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
 		<property name="definitions">
 			<list>
-				<value>/WEB-INF/tiles-scdemo.xml</value>
+				<value>/WEB-INF/tiles-broadleafdemo.xml</value>
 			</list>
 		</property>
 	</bean>
@@ -262,7 +274,7 @@
 		<property name="mappings">
 		    <props>
                 <prop key="/welcome.htm">welcome</prop>
-                <prop key="/createUser.htm">createUser</prop>
+                <prop key="/registerCustomer.htm">registerCustomer</prop>
                 <prop key="/forgotPwd.htm">forgotPwd</prop>
                 <prop key="/challengeQuestion.htm">challengeQuestion</prop>
                 <prop key="/forgotPasswordChange.htm">forgotPasswordChange</prop>
@@ -287,11 +299,6 @@
                 <prop key="/createShoppingCartPromotion.htm">createShoppingCartPromotion</prop>
 			</props>
 		</property>
-	</bean>
-
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename" value="messages" />
 	</bean>
 
 	<bean id="beanNameUrlMapping"
