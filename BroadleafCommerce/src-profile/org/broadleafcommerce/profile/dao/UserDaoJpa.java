@@ -24,7 +24,7 @@ public class UserDaoJpa implements UserDao {
     private EntityManager em;
 
     public User readUserByUsername(String username) {
-        Query query = em.createNamedQuery("READ_USER_BY_USER_NAME");
+        Query query = em.createQuery("SELECT user FROM org.broadleafcommerce.profile.domain.User user WHERE user.username = :username");
         query.setParameter("username", username);
         try {
             return (User) query.getSingleResult();
@@ -34,7 +34,7 @@ public class UserDaoJpa implements UserDao {
     }
 
     public User readUserByEmail(String emailAddress) {
-        Query query = em.createNamedQuery("READ_USER_BY_EMAIL");
+        Query query = em.createQuery("SELECT user FROM org.broadleafcommerce.profile.domain.User user WHERE user.emailAddress = :email");
         query.setParameter("email", emailAddress);
         try {
             return (User) query.getSingleResult();
@@ -45,7 +45,7 @@ public class UserDaoJpa implements UserDao {
 
     @SuppressWarnings("unchecked")
     public List<UserRole> readUserRolesByUserId(Long userId) {
-        Query query = em.createNamedQuery("READ_ROLES_BY_USER_ID");
+        Query query = em.createQuery("SELECT role FROM org.broadleafcommerce.profile.domain.UserRole role WHERE role.user.id = :userId");
         query.setParameter("userId", userId);
         return query.getResultList();
     }
@@ -65,7 +65,7 @@ public class UserDaoJpa implements UserDao {
 
     @Override
     public Customer readCustomerByUsername(String username) {
-        Query query = em.createNamedQuery("READ_CUSTOMER_BY_USERNAME");
+        Query query = em.createQuery("SELECT customer FROM org.broadleafcommerce.profile.domain.Customer customer WHERE customer.user.username = :username");
         query.setParameter("username", username);
         try {
             return (Customer) query.getSingleResult();
