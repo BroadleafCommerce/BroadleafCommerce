@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import org.broadleafcommerce.catalog.domain.CatalogItem;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.order.domain.OrderItem;
 
 public class ItemLayoutTag extends BodyTagSupport {
     
@@ -19,6 +20,7 @@ public class ItemLayoutTag extends BodyTagSupport {
     private static final long serialVersionUID = 1L;
     private SellableItem sellableItem;
     private CatalogItem catalogItem;
+    private OrderItem orderItem;
     private Category category;
     private String layout;
     private String itemName = "item";
@@ -26,7 +28,8 @@ public class ItemLayoutTag extends BodyTagSupport {
     public enum ItemType {
         SELLABLE_ITEM,
         CATALOG_ITEM,
-        CATEGORY
+        CATEGORY,
+        ORDER_ITEM
     }
     @Override
     public int doStartTag() throws JspException {
@@ -40,6 +43,9 @@ public class ItemLayoutTag extends BodyTagSupport {
 	            break;
     		case CATEGORY:
 	            pageContext.setAttribute(itemName, category, PageContext.REQUEST_SCOPE);
+	            break;
+    		case ORDER_ITEM:
+	            pageContext.setAttribute(itemName, orderItem, PageContext.REQUEST_SCOPE);
 	            break;
             }
 	    	pageContext.include("/WEB-INF/jsp/itemLayout/" + layout + ".jsp");
@@ -90,5 +96,12 @@ public class ItemLayoutTag extends BodyTagSupport {
     }
     public void setItemName(String itemName) {
         this.itemName = itemName;
+    }
+    public OrderItem getOrderItem() {
+        return orderItem;
+    }
+    public void setOrderItem(OrderItem orderItem) {
+        this.setItemType(ItemType.ORDER_ITEM);
+        this.orderItem = orderItem;
     }
 }
