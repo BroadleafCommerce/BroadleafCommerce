@@ -120,7 +120,11 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<OrderItem> getItemsForOrder(Order order) {
-		return orderItemDao.readOrderItemsForOrder(order);
+		List<OrderItem> result = orderItemDao.readOrderItemsForOrder(order);
+		for (OrderItem oi : result) {
+		    oi.getSellableItem().getItemAttributes();
+		}
+		return result;
 	}
 
 	@Override
