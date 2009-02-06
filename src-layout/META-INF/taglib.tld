@@ -5,7 +5,7 @@
 <taglib>
     <tlib-version>3.0</tlib-version>
     <jsp-version>2.1</jsp-version>
-    <short-name>sc</short-name>
+    <short-name>bc</short-name>
 
     <tag>
         <name>list</name>
@@ -115,6 +115,11 @@
         <body-content>JSP</body-content>
 	    <attribute>
 	    	<name>sellableItem</name>
+        	<required>false</required>
+        	<rtexprvalue>true</rtexprvalue>
+	    </attribute>
+	    <attribute>
+	    	<name>orderItem</name>
         	<required>false</required>
         	<rtexprvalue>true</rtexprvalue>
 	    </attribute>
