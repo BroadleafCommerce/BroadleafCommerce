@@ -72,7 +72,6 @@ public class ListTag extends BodyTagSupport {
 	            pageContext.include(footerJsp);
             }
             out.write("</div><!-- end of list tag -->");
-            out.flush();
         } catch (IOException e) {
             log.error(e);
         } catch (ServletException e) {
