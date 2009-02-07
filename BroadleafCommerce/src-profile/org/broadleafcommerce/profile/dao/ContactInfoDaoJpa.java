@@ -32,9 +32,9 @@ public class ContactInfoDaoJpa implements ContactInfoDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ContactInfo> readContactInfoByUserId(Long userId) {
-        Query query = em.createQuery("SELECT contactInfo FROM org.broadleafcommerce.profile.domain.ContactInfo contactInfo WHERE contactInfo.user.id = :userId");
-        query.setParameter("userId", userId);
+    public List<ContactInfo> readContactInfoByUserId(Long customerId) {
+        Query query = em.createNamedQuery("READ_CONTACT_INFO_BY_CUSTOMER_ID");
+        query.setParameter("customerId", customerId);
         return query.getResultList();
     }
 

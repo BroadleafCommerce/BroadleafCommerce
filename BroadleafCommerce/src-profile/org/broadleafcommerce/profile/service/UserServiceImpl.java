@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.UserDao;
-import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
 import org.broadleafcommerce.profile.util.PasswordChange;
@@ -42,16 +41,6 @@ public class UserServiceImpl implements UserService {
         return userDao.maintainUser(user);
     }
 
-    @Override
-    public User readUserById(Long userId) {
-        return userDao.readUserById(userId);
-    }
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public User readUserByUsername(String username) {
-        return userDao.readUserByUsername(username);
-    }
-
     @Transactional(propagation = Propagation.REQUIRED)
     public List<UserRole> readUserRolesByUserId(Long userId) {
         return userDao.readUserRolesByUserId(userId);
@@ -76,7 +65,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public Customer readCustomerByUsername(String username) {
-        return userDao.readCustomerByUsername(username);
+    public User readUserByUsername(String username) {
+        return userDao.readUserByUsername(username);
+    }
+
+    @Override
+    public User readUserById(Long id) {
+        return userDao.readUserById(id);
     }
 }

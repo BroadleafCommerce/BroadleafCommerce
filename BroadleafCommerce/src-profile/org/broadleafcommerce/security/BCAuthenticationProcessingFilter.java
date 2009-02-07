@@ -42,6 +42,13 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
 
             username = username.trim();
 
+            //            User returnUser = null;
+            //
+            //            if (!forcePasswordChange) {
+            //                returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
+            //            } else {
+            //                returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
+            //            }
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED") });
 
             // Place the last username attempted into HttpSession for views

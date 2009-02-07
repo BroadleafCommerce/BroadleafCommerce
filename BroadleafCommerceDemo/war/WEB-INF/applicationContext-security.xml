@@ -37,12 +37,12 @@
         <sec:custom-filter position="ANONYMOUS_FILTER"/>
     </bean>
 
-	<!-- Custom login filter which replaces the default AUTHENTICATION_PROCESSING_FILTER -->
+	<!-- Custom login filter which replaces the default AUTHENTICATION_PROCESSING_FILTER-->
 	<bean id="bcAuthenticationProcessingFilter" class="org.broadleafcommerce.security.BCAuthenticationProcessingFilter" >
 		<sec:custom-filter position="AUTHENTICATION_PROCESSING_FILTER"/> <!-- replace the default one -->
 		<property name="defaultTargetUrl" value="/index.jsp"/> <!-- After a successful login, the user will be taken to this page -->
 		<property name="authenticationFailureUrl" value="/login.jsp?login_error=1" /> <!-- Authentication failed? take him to error page -->
-		<property name="authenticationManager" ref="authenticationManager"/> <!-- Here it is the custom authenticationManager, login magic goes here -->
+		<property name="authenticationManager" ref="authenticationManager"/> <!-- Here it is the custom authenticationManager, login magic goes here-->
         <property name="filterProcessesUrl" value="/loginProcess"/>
 		<property name="allowSessionCreation" value="true" /> <!-- Allow the application to create sessions -->
 	</bean>
@@ -57,7 +57,7 @@
         </property>
     </bean>
 
-	<!-- My authentication entry point, can be replaced easily if we are doing custom commence of invalid auths. -->
+	<!-- My authentication entry point, can be replaced easily if we are doing custom commence of invalid auths.-->
 	<bean id="myAuthenticationEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint" >
 		<property name="loginFormUrl" value="/login.jsp"/>
         <property name="forceHttps" value="false"/>
@@ -76,6 +76,7 @@
 	<bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
 		<property name="userDetailsService" ref="userDetailsService"/>
 		<property name="passwordEncoder" ref="passwordEncoder"/>
+		<property name="forcePrincipalAsString" value="true"/>
 		<sec:custom-authentication-provider/>
  	</bean>
 

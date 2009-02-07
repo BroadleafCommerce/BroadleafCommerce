@@ -20,12 +20,12 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
-@Table(name = "ADDRESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "USER_ID", "ADDRESS_NAME" }) })
+@Table(name = "ADDRESS", uniqueConstraints = { @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }) })
 public class Address implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     @Transient
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -34,9 +34,9 @@ public class Address implements Serializable {
     @Column(name = "ADDRESS_ID")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = BroadleafCustomer.class)
+    @JoinColumn(name = "CUSTOMER_ID")
+    private Customer customer;
 
     @Column(name = "ADDRESS_NAME")
     private String addressName;
@@ -44,112 +44,112 @@ public class Address implements Serializable {
     @Column(name = "ADDRESS_LINE1")
     private String addressLine1;
 
-    @Column(name="ADDRESS_LINE2")
+    @Column(name = "ADDRESS_LINE2")
     private String addressLine2;
 
-    @Column(name="CITY")
+    @Column(name = "CITY")
     private String city;
 
-    @Column(name="STATE_CODE")
+    @Column(name = "STATE_CODE")
     private String stateCode;
 
-    @Column(name="ZIP_CODE")
+    @Column(name = "ZIP_CODE")
     private String zipCode;
 
-    @Column(name="ZIP_FOUR")
+    @Column(name = "ZIP_FOUR")
     private String zipFour;
-    
-    @Column(name="TOKENIZEDADDRESS")
+
+    @Column(name = "TOKENIZEDADDRESS")
     private String tokenizedAddress;
 
-    @Column(name="STANDARDIZED")
+    @Column(name = "STANDARDIZED")
     private Boolean standardized = Boolean.FALSE;
-    
-	public Boolean getStandardized() {
-		return standardized;
-	}
 
-	public void setStandardized(Boolean standardized) {
-		this.standardized = standardized;
-	}
+    public Boolean getStandardized() {
+        return standardized;
+    }
 
-	public String getTokenizedAddress() {
-		return tokenizedAddress;
-	}
+    public void setStandardized(Boolean standardized) {
+        this.standardized = standardized;
+    }
 
-	public void setTokenizedAddress(String tokenizedAddress) {
-		this.tokenizedAddress = tokenizedAddress;
-	}
+    public String getTokenizedAddress() {
+        return tokenizedAddress;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setTokenizedAddress(String tokenizedAddress) {
+        this.tokenizedAddress = tokenizedAddress;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public Customer getCustomer() {
+        return customer;
+    }
 
-	public String getAddressName() {
-		return addressName;
-	}
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-	public void setAddressName(String addressName) {
-		this.addressName = addressName;
-	}
+    public String getAddressName() {
+        return addressName;
+    }
 
-	public String getAddressLine1() {
-		return addressLine1;
-	}
+    public void setAddressName(String addressName) {
+        this.addressName = addressName;
+    }
 
-	public void setAddressLine1(String addressLine1) {
-		this.addressLine1 = addressLine1;
-	}
+    public String getAddressLine1() {
+        return addressLine1;
+    }
 
-	public String getAddressLine2() {
-		return addressLine2;
-	}
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
 
-	public void setAddressLine2(String addressLine2) {
-		this.addressLine2 = addressLine2;
-	}
+    public String getAddressLine2() {
+        return addressLine2;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public void setAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public String getStateCode() {
-		return stateCode;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public void setStateCode(String stateCode) {
-		this.stateCode = stateCode;
-	}
+    public String getStateCode() {
+        return stateCode;
+    }
 
-	public String getZipCode() {
-		return zipCode;
-	}
+    public void setStateCode(String stateCode) {
+        this.stateCode = stateCode;
+    }
 
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
+    public String getZipCode() {
+        return zipCode;
+    }
 
-	public String getZipFour() {
-		return zipFour;
-	}
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
 
-	public void setZipFour(String zipFour) {
-		this.zipFour = zipFour;
-	}
+    public String getZipFour() {
+        return zipFour;
+    }
+
+    public void setZipFour(String zipFour) {
+        this.zipFour = zipFour;
+    }
 }

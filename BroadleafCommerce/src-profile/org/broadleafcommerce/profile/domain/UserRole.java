@@ -32,7 +32,7 @@ public class UserRole implements Serializable {
     @Column(name = "USER_ROLE_ID")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = BroadleafUser.class)
     @JoinColumn(name = "USER_ID")
     private User user;
 

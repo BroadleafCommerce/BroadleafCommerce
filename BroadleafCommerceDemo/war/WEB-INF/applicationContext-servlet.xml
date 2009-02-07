@@ -28,7 +28,7 @@
 			<bean
 				class="org.broadleafcommerce.controller.validator.PasswordChangeValidator" />
 		</property>
-		<property name="userService" ref="userService" />
+		<property name="customerService" ref="customerService" />
 		<property name="formView" value="passwordChange" />
 		<property name="successView" value="redirect:/welcome.htm" />
 	</bean>
@@ -40,7 +40,7 @@
 		<property name="validator">
 			<bean class="org.broadleafcommerce.controller.validator.RegisterCustomerValidator" />
 		</property>
-		<property name="userService" ref="userService" />
+		<property name="customerService" ref="customerService" />
 		<property name="emailService" ref="emailService" />
 		<property name="formView" value="registerCustomer" />
 		<property name="successView" value="redirect:/login.jsp" />
@@ -48,9 +48,9 @@
 
 	<bean id="forgotPwd" class="org.broadleafcommerce.controller.ForgotPwdFormController">
 		<property name="commandName" value="user" />
-		<property name="commandClass" value="org.broadleafcommerce.profile.domain.User" />
+		<property name="commandClass" value="org.broadleafcommerce.profile.domain.Customer" />
 		<property name="emailService" ref="emailService" />
-		<property name="userService" ref="userService" />
+		<property name="customerService" ref="customerService" />
 		<property name="formView" value="forgotPwd" />
 		<property name="successView" value="redirect:/login.jsp" />
 	</bean>
@@ -60,7 +60,7 @@
 		<property name="commandName" value="passwordChange" />
 		<property name="commandClass"
 			value="org.broadleafcommerce.profile.util.PasswordChange" />
-		<property name="userService" ref="userService" />
+		<property name="customerService" ref="customerService" />
 		<property name="formView" value="challengeQuestion" />
 		<property name="successView" value="redirect:/forgotPasswordChange.htm" />
 	</bean>
@@ -73,7 +73,7 @@
 		<property name="validator">
 			<bean class="org.broadleafcommerce.controller.validator.ForgotPwdValidator" />
 		</property>
-		<property name="userService" ref="userService" />
+		<property name="customerService" ref="customerService" />
 		<property name="emailService" ref="emailService" />
 		<property name="formView" value="forgotPasswordChange" />
 		<property name="successView" value="redirect:/login.jsp" />
@@ -86,7 +86,7 @@
 		<property name="validator">
 			<bean class="org.broadleafcommerce.controller.validator.AddressValidator" />
 		</property>
-		<property name="userService" ref="userService" />
+		<property name="customerService" ref="customerService" />
 		<property name="addressService" ref="addressService" />
 		<property name="addressStandardizationService" ref="addressStandardizationService" />
 		<property name="formView" value="createAddress" />
@@ -99,7 +99,7 @@
 		<property name="validator">
 			<bean class="org.broadleafcommerce.controller.validator.AddressValidator" />
 		</property>
-		<property name="userService" ref="userService" />
+		<property name="customerService" ref="customerService" />
 		<property name="addressService" ref="addressService" />
 		<property name="formView" value="listAddress" />
 		<property name="successView" value="listAddress" />
@@ -158,7 +158,7 @@
 		<property name="commandName" value="listOrders" />
 		<property name="commandClass" value="org.broadleafcommerce.order.domain.Order" />
 		<property name="orderService" ref="orderService" />
-		<property name="userService" ref="userService"></property>
+		<property name="customerService" ref="customerService"/>
 		<property name="formView" value="listOrders" />
 		<property name="successView" value="listOrders" />
 	</bean>
@@ -166,7 +166,7 @@
 	<bean id="listBasket" class="org.broadleafcommerce.controller.ListBasketFormController">
 		<property name="redirectUrl" value="listBasket.htm" />
 		<property name="orderService" ref="orderService" />
-		<property name="userService" ref="userService"></property>
+		<property name="customerService" ref="customerService"/>
 	</bean>
 
 	<bean id="listRuleCategory"
@@ -180,7 +180,7 @@
 
 	<bean id="checkout" class="org.broadleafcommerce.controller.CheckoutController">
 	    <property name="orderService" ref="orderService"/>
-	    <property name="userService" ref="userService"/>
+	    <property name="customerService" ref="customerService"/>
 	    <property name="addressService" ref="addressService"/>
 	    <property name="contactInfoService" ref="contactInfoService"/>
 		<property name="addressStandardizationService" ref="addressStandardizationService"/>

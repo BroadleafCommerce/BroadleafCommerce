@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+	<named-query name="READ_ALL_CATEGORIES" >
+		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category</query>
+	</named-query>
+
+	<named-query name="READ_ALL_SUBCATEGORIES" >
+		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
+		WHERE category.parentCategory = :parentCategory</query>
+	</named-query>
+
+	<named-query name="READ_CATEGORY_BY_URL_KEY" >
+		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
+		WHERE category.urlKey = :urlKey</query>
+	</named-query>
+
+</entity-mappings>

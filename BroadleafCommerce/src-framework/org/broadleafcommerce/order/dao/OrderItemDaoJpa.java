@@ -23,9 +23,9 @@ public class OrderItemDaoJpa implements OrderItemDao {
 
     @Override
     public OrderItem maintainOrderItem(OrderItem orderItem) {
-        if(orderItem.getId() == null){
+        if (orderItem.getId() == null) {
             em.persist(orderItem);
-        }else{
+        } else {
             orderItem = em.merge(orderItem);
         }
         return orderItem;
@@ -45,11 +45,8 @@ public class OrderItemDaoJpa implements OrderItemDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<OrderItem> readOrderItemsForOrder(Order order) {
-        Query query = em.createQuery("SELECT orderItem FROM org.broadleafcommerce.order.domain.OrderItem orderItem WHERE orderItem.order.id = :orderId");
+        Query query = em.createNamedQuery("READ_ORDER_ITEMS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }
-
-
-
 }

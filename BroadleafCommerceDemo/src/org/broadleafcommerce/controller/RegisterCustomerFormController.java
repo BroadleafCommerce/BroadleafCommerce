@@ -1,18 +1,15 @@
 package org.broadleafcommerce.controller;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.User;
-import org.broadleafcommerce.profile.domain.UserRole;
+import org.broadleafcommerce.profile.domain.BroadleafCustomer;
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.service.EmailService;
-import org.broadleafcommerce.profile.service.UserService;
 import org.broadleafcommerce.util.RegisterCustomer;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.validation.BindException;
@@ -26,15 +23,15 @@ public class RegisterCustomerFormController extends SimpleFormController {
     private static final String TEMPLATE = "registration.vm";
     private static final String EMAIL_FROM = "BroadleafCommerce@credera.com";
     private static final String EMAIL_SUBJECT = "Your Registration Completed";
-    private UserService userService;
+    private CustomerService customerService;
     private EmailService emailService;
 
     public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setCustomerService(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws Exception {
@@ -49,8 +46,8 @@ public class RegisterCustomerFormController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         RegisterCustomer registerCustomer = (RegisterCustomer) command;
 
-        User userFromDb = userService.readUserByUsername(registerCustomer.getUsername());
-        if (userFromDb != null) {
+        Customer customerFromDb = customerService.readCustomerByUsername(registerCustomer.getUsername());
+        if (customerFromDb != null) {
             errors.rejectValue("username", "username.used", null, null);
         }
 
@@ -61,19 +58,16 @@ public class RegisterCustomerFormController extends SimpleFormController {
 
             return showForm(request, response, errors);
         }
-        User user = new User();
-        user.setUsername(registerCustomer.getUsername());
-        user.setFirstName(registerCustomer.getFirstName());
-        user.setLastName(registerCustomer.getLastName());
-        user.setUnencodedPassword(registerCustomer.getPassword());
-        user.setEmailAddress(registerCustomer.getEmailAddress());
-        user.setChallengeQuestion(registerCustomer.getChallengeQuestion());
-        user.setChallengeAnswer(registerCustomer.getChallengeAnswer());
-        Set<UserRole> roles = new HashSet<UserRole>();
-        roles.add(new UserRole(user, "ROLE_USER"));
-        user.setUserRoles(roles);
-        userService.saveUser(user);
-        emailService.sendEmail(user, TEMPLATE, EMAIL_FROM, EMAIL_SUBJECT);
+        Customer customer = new BroadleafCustomer();
+        customer.setUsername(registerCustomer.getUsername());
+        customer.setFirstName(registerCustomer.getFirstName());
+        customer.setLastName(registerCustomer.getLastName());
+        customer.setUnencodedPassword(registerCustomer.getPassword());
+        customer.setEmailAddress(registerCustomer.getEmailAddress());
+        customer.setChallengeQuestion(registerCustomer.getChallengeQuestion());
+        customer.setChallengeAnswer(registerCustomer.getChallengeAnswer());
+        customerService.saveCustomer(customer);
+        emailService.sendEmail(customer, TEMPLATE, EMAIL_FROM, EMAIL_SUBJECT);
         mav.addObject("saved", true);
         return mav;
     }

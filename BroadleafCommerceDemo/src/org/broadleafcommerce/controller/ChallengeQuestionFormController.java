@@ -6,8 +6,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.User;
-import org.broadleafcommerce.profile.service.UserService;
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.util.PasswordChange;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,18 +15,18 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ChallengeQuestionFormController extends SimpleFormController {
     protected final Log logger = LogFactory.getLog(getClass());
-    private UserService userService;
+    private CustomerService customerService;
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setCustomerService(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     protected Object formBackingObject(HttpServletRequest request)
     throws ServletException {
         String email = request.getParameter("email");
-        User user = userService.readUserByEmail(email);
+        Customer customer = customerService.readCustomerByEmail(email);
         PasswordChange passwordChange = new PasswordChange();
-        passwordChange.setChallengeQuestion(user.getChallengeQuestion());
+        passwordChange.setChallengeQuestion(customer.getChallengeQuestion());
         passwordChange.setEmail(email);
         return passwordChange;
     }
@@ -35,7 +35,7 @@ public class ChallengeQuestionFormController extends SimpleFormController {
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
     throws Exception {
         PasswordChange passwordChange = (PasswordChange) command;
-        User userFromDb = userService.readUserByEmail(request.getParameter("email"));
+        Customer userFromDb = customerService.readCustomerByEmail(request.getParameter("email"));
 
         if (!userFromDb.getChallengeAnswer().equalsIgnoreCase(passwordChange.getChallengeAnswer())) {
             errors.rejectValue("challengeAnswer", "challengeAnswer.invalid", null, null);

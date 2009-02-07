@@ -21,13 +21,11 @@ public class OrderShippingDaoJpa implements OrderShippingDao {
     @PersistenceContext
     private EntityManager em;
 
-
     @Override
-    public OrderShipping maintainOrderShipping(
-            OrderShipping shipping) {
-        if(shipping.getId() == null){
+    public OrderShipping maintainOrderShipping(OrderShipping shipping) {
+        if (shipping.getId() == null) {
             em.persist(shipping);
-        }else{
+        } else {
             shipping = em.merge(shipping);
         }
 
@@ -42,9 +40,8 @@ public class OrderShippingDaoJpa implements OrderShippingDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<OrderShipping> readOrderShippingForOrder(Order order) {
-        Query query = em.createQuery("SELECT orderShipping FROM org.broadleafcommerce.order.domain.OrderShipping orderShipping WHERE orderShipping.order.id = :orderId");
+        Query query = em.createNamedQuery("READ_ORDER_SHIPPING_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }
-
 }

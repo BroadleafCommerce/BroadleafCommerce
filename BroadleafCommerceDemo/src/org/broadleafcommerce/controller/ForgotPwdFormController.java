@@ -6,9 +6,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.User;
+import org.broadleafcommerce.profile.domain.BroadleafCustomer;
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.service.EmailService;
-import org.broadleafcommerce.profile.service.UserService;
 import org.broadleafcommerce.profile.util.PasswordUtils;
 import org.drools.util.StringUtils;
 import org.springframework.validation.BindException;
@@ -21,10 +22,10 @@ public class ForgotPwdFormController extends SimpleFormController {
     private static final String EMAIL_FROM = "BroadleafCommerce@credera.com";
     private static final String EMAIL_SUBJECT = "Email From Broadleaf Commerce Group";
 
-    private UserService userService;
+    private CustomerService customerService;
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setCustomerService(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     private EmailService emailService;
@@ -34,27 +35,27 @@ public class ForgotPwdFormController extends SimpleFormController {
     }
 
     protected Object formBackingObject(HttpServletRequest request) throws ServletException {
-        return new User();
+        return new BroadleafCustomer();
     }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
-        User user = (User) command;
+        Customer customer = (Customer) command;
         ModelAndView mav = new ModelAndView();
 
-        User userFromDb = userService.readUserByEmail(user.getEmailAddress());
-        if (userFromDb != null) {
-            if (!StringUtils.isEmpty(userFromDb.getChallengeQuestion()) && !StringUtils.isEmpty(userFromDb.getChallengeAnswer())) {
+        Customer customerFromDb = customerService.readCustomerByEmail(customer.getEmailAddress());
+        if (customerFromDb != null) {
+            if (!StringUtils.isEmpty(customerFromDb.getChallengeQuestion()) && !StringUtils.isEmpty(customerFromDb.getChallengeAnswer())) {
                 mav = new ModelAndView("redirect:/challengeQuestion.htm", errors.getModel());
             } else {
                 String temporaryPassword = PasswordUtils.generateTemporaryPassword(8);
-                userFromDb.setUnencodedPassword(temporaryPassword);
-                userFromDb.setPasswordChangeRequired(true);
-                userService.saveUser(userFromDb);
-                emailService.sendEmail(userFromDb, TEMPLATE, EMAIL_FROM, EMAIL_SUBJECT);
+                customerFromDb.setUnencodedPassword(temporaryPassword);
+                customerFromDb.setPasswordChangeRequired(true);
+                customerService.saveCustomer(customerFromDb);
+                emailService.sendEmail(customerFromDb, TEMPLATE, EMAIL_FROM, EMAIL_SUBJECT);
                 mav = new ModelAndView(getSuccessView(), errors.getModel());
             }
-            mav.addObject("email", userFromDb.getEmailAddress());
+            mav.addObject("email", customerFromDb.getEmailAddress());
         } else {
             errors.rejectValue("emailAddress", "emailAddress.notInUse", null, null);
         }

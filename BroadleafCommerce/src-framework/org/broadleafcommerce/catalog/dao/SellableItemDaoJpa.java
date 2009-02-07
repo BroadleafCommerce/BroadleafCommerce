@@ -17,9 +17,9 @@ public class SellableItemDaoJpa implements SellableItemDao {
 
     @Override
     public SellableItem maintainSellableItem(SellableItem sellableItem) {
-        if(sellableItem.getId() == null){
+        if (sellableItem.getId() == null) {
             em.persist(sellableItem);
-        }else{
+        } else {
             sellableItem = em.merge(sellableItem);
         }
         return sellableItem;
@@ -31,22 +31,22 @@ public class SellableItemDaoJpa implements SellableItemDao {
     }
 
     @Override
-    public SellableItem readFirstSellableItem(){
-        Query query = em.createQuery("SELECT sellableItem FROM org.broadleafcommerce.catalog.domain.SellableItem sellableItem");
+    public SellableItem readFirstSellableItem() {
+        Query query = em.createNamedQuery("READ_FIRST_SELLABLE_ITEM");
         return (SellableItem) query.getSingleResult();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<SellableItem> readAllSellableItems() {
-        Query query = em.createQuery("SELECT sellableItem FROM org.broadleafcommerce.catalog.domain.SellableItem sellableItem");
+        Query query = em.createNamedQuery("READ_ALL_SELLABLE_ITEMS");
         return query.getResultList();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<SellableItem> readSellableItemsByCategoryItemId(Long catalogItemId) {
-        Query query = em.createQuery("SELECT sellableItem FROM org.broadleafcommerce.catalog.domain.SellableItem sellableItem WHERE sellableItem.catalogItem.id = :catalogItemId");
+        Query query = em.createNamedQuery("READ_SELLABLE_ITEMS_BY_CATEGORY_ID");
         query.setParameter("catalogItemId", catalogItemId);
         return query.getResultList();
     }
@@ -54,9 +54,8 @@ public class SellableItemDaoJpa implements SellableItemDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<SellableItem> readSellableItemById(List<Long> ids) {
-        Query query = em.createQuery("SELECT sellableItem FROM org.broadleafcommerce.catalog.domain.SellableItem sellableItem WHERE sellableItem.id IN (:sellableItemIds)");
+        Query query = em.createNamedQuery("READ_SELLABLE_ITEMS_BY_ID");
         query.setParameter("sellableItemIds", ids);
         return query.getResultList();
     }
-
 }

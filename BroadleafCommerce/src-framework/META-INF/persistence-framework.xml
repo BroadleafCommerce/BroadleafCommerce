@@ -4,6 +4,20 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
              version="1.0">
 	<persistence-unit name="BroadleafCommercePu" transaction-type="RESOURCE_LOCAL">
+		<mapping-file>config/bc/jpa/domain/Address.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/CatalogItem.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Category.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/ContactInfo.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/CouponCode.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Customer.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Order.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/OrderItem.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/OrderPayment.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/OrderShipping.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/RuleCategory.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/SellableItem.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/ShoppingCartPromotion.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/User.orm.xml</mapping-file>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="false"/>

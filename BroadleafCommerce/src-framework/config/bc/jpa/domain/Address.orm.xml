@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+	<named-query name="READ_ADDRESS_BY_CUSTOMER_ID" >
+		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
+		WHERE address.customer.id = :customerId
+		ORDER BY address.id</query>
+	</named-query>
+
+	<named-query name="READ_ADDRESS_BY_CUSTOMER_ID_AND_NAME" >
+		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
+		WHERE address.customer.id = :customerId
+		AND address.addressName = :addressName</query>
+	</named-query>
+
+	<named-query name="READ_ADDRESS_BY_ID" >
+		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
+		WHERE address.id = :addressId</query>
+	</named-query>
+</entity-mappings>

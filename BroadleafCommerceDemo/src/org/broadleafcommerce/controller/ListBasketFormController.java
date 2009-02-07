@@ -5,8 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.OrderService;
-import org.broadleafcommerce.profile.domain.User;
-import org.broadleafcommerce.profile.service.UserService;
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.util.Basket;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
@@ -23,79 +23,71 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 public class ListBasketFormController {
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private String redirectUrl = "";    
+    private String redirectUrl = "";
     private Basket basket = new Basket();
-    private OrderService orderService;    
-    private UserService userService;
+    private OrderService orderService;
+    private CustomerService customerService;
 
     @ModelAttribute("basket")
-    public Basket getbasket(){
-    	Order basketOrder = getUserBasket();
-    	basket.setOrder(basketOrder);
-    	basket.setItems(orderService.getItemsForOrder(basketOrder.getId()));
-    	return basket;
-//    	return basket;
+    public Basket getbasket() {
+        Order basketOrder = getCustomerBasket();
+        basket.setOrder(basketOrder);
+        basket.setItems(orderService.getItemsForOrder(basketOrder.getId()));
+        return basket;
+        // return basket;
     }
-    
-//    @ModelAttribute("basket")
-    public void setBasket(Basket basket){
-    	this.basket = basket;
+
+    // @ModelAttribute("basket")
+    public void setBasket(Basket basket) {
+        this.basket = basket;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET)
-    public String addSellableItem(@RequestParam("sellableItemId") Long sellableItemId)
-    {
-    	Order basketOrder = getUserBasket();
-    	orderService.addItemToOrder(basketOrder.getId(), sellableItemId, 1);
-    	return "redirect:" +redirectUrl;
+    public String addSellableItem(@RequestParam("sellableItemId") Long sellableItemId) {
+        Order basketOrder = getCustomerBasket();
+        orderService.addItemToOrder(basketOrder.getId(), sellableItemId, 1);
+        return "redirect:" + redirectUrl;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET)
-    public String listBasket()
-    {
-    	return "listBasket";
+    public String listBasket() {
+        return "listBasket";
     }
-    
-    
-    
+
     @RequestMapping(method = RequestMethod.POST)
-    public String updateQuantity(Basket basket, BindingResult result){
-    	for (OrderItem orderItem : basket.getItems()) {
-    		orderService.updateItemInOrder(orderItem.getOrder(), orderItem);
-		}
-    	return "redirect:"+redirectUrl;
+    public String updateQuantity(Basket basket, BindingResult result) {
+        for (OrderItem orderItem : basket.getItems()) {
+            orderService.updateItemInOrder(orderItem.getOrder(), orderItem);
+        }
+        return "redirect:" + redirectUrl;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET)
-    public String removeItem(@RequestParam("sellableItemId") Long sellableItemId)
-    {
-    	Order basketOrder = getUserBasket();
-    	orderService.removeItemFromOrder(basketOrder.getId(), sellableItemId);
-    	return "redirect:"+redirectUrl;
+    public String removeItem(@RequestParam("sellableItemId") Long sellableItemId) {
+        Order basketOrder = getCustomerBasket();
+        orderService.removeItemFromOrder(basketOrder.getId(), sellableItemId);
+        return "redirect:" + redirectUrl;
     }
-    
-    private Order getUserBasket(){
-    	Authentication auth = SecurityContextHolder.getContext().getAuthentication();    	
-        User user = userService.readUserByUsername(auth.getName());
-        return orderService.getCurrentBasketForUserId(user.getId());    	
+
+    private Order getCustomerBasket() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Customer customer = customerService.readCustomerByUsername(auth.getName());
+        return orderService.getCurrentBasketForUserId(customer.getId());
     }
-    
-    public String getRedirectUrl()
-    {
+
+    public String getRedirectUrl() {
         return redirectUrl;
     }
 
-    public void setRedirectUrl(String redirectUrl)
-    {
+    public void setRedirectUrl(String redirectUrl) {
         this.redirectUrl = redirectUrl;
     }
 
-    public void setUserService(UserService userService) {
-        this.userService = userService;
+    public void setCustomerService(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     public void setOrderService(OrderService orderService) {
-		this.orderService = orderService;
-	}
-    
+        this.orderService = orderService;
+    }
 }

@@ -9,7 +9,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.BroadleafUser;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
 import org.springframework.stereotype.Repository;
@@ -24,7 +24,7 @@ public class UserDaoJpa implements UserDao {
     private EntityManager em;
 
     public User readUserByUsername(String username) {
-        Query query = em.createQuery("SELECT user FROM org.broadleafcommerce.profile.domain.User user WHERE user.username = :username");
+        Query query = em.createNamedQuery("READ_USER_BY_USER_NAME");
         query.setParameter("username", username);
         try {
             return (User) query.getSingleResult();
@@ -34,7 +34,7 @@ public class UserDaoJpa implements UserDao {
     }
 
     public User readUserByEmail(String emailAddress) {
-        Query query = em.createQuery("SELECT user FROM org.broadleafcommerce.profile.domain.User user WHERE user.emailAddress = :email");
+        Query query = em.createNamedQuery("READ_USER_BY_EMAIL");
         query.setParameter("email", emailAddress);
         try {
             return (User) query.getSingleResult();
@@ -45,7 +45,7 @@ public class UserDaoJpa implements UserDao {
 
     @SuppressWarnings("unchecked")
     public List<UserRole> readUserRolesByUserId(Long userId) {
-        Query query = em.createQuery("SELECT role FROM org.broadleafcommerce.profile.domain.UserRole role WHERE role.user.id = :userId");
+        Query query = em.createNamedQuery("READ_ROLES_BY_USER_ID");
         query.setParameter("userId", userId);
         return query.getResultList();
     }
@@ -59,18 +59,8 @@ public class UserDaoJpa implements UserDao {
         return user;
     }
 
-    public User readUserById(Long userId) {
-        return em.find(User.class, userId);
-    }
-
     @Override
-    public Customer readCustomerByUsername(String username) {
-        Query query = em.createQuery("SELECT customer FROM org.broadleafcommerce.profile.domain.Customer customer WHERE customer.user.username = :username");
-        query.setParameter("username", username);
-        try {
-            return (Customer) query.getSingleResult();
-        } catch (NoResultException ne) {
-            return null;
-        }
+    public User readUserById(Long id) {
+        return em.find(BroadleafUser.class, id);
     }
 }

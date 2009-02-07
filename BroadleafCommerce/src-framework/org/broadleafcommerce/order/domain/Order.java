@@ -15,8 +15,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.profile.domain.BroadleafCustomer;
 import org.broadleafcommerce.profile.domain.ContactInfo;
-import org.broadleafcommerce.profile.domain.User;
+import org.broadleafcommerce.profile.domain.Customer;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -24,77 +25,76 @@ import org.broadleafcommerce.profile.domain.User;
 @Table(name = "SC_ORDER")
 public class Order implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue
-	@Column(name = "ORDER_ID")
-	private Long id;
-	
-	@Embedded
-	private Auditable auditable;
-	
-	@ManyToOne
-	@JoinColumn(name = "USER_ID", nullable = false)
-	private User user;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne
-	@JoinColumn(name = "CONTACT_INFO_ID")
-	private ContactInfo contactInfo;
-	
-	@Column(name = "ORDER_STATUS")
-	private String orderStatus;
-	
-	@Column(name = "ORDER_TOTAL")
-	private double orderTotal;
+    @Id
+    @GeneratedValue
+    @Column(name = "ORDER_ID")
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    @Embedded
+    private Auditable auditable;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @ManyToOne(targetEntity = BroadleafCustomer.class)
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    private Customer customer;
 
-	public Auditable getAuditable() {
-		return auditable;
-	}
+    @ManyToOne
+    @JoinColumn(name = "CONTACT_INFO_ID")
+    private ContactInfo contactInfo;
 
-	public void setAuditable(Auditable auditable) {
-		this.auditable = auditable;
-	}
+    @Column(name = "ORDER_STATUS")
+    private String orderStatus;
 
-	public String getOrderStatus() {
-		return orderStatus;
-	}
+    @Column(name = "ORDER_TOTAL")
+    private double orderTotal;
 
-	public void setOrderStatus(String orderStatus) {
-		this.orderStatus = orderStatus;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public double getOrderTotal() {
-		return orderTotal;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setOrderTotal(double orderTotal) {
-		this.orderTotal = orderTotal;
-	}
+    public Auditable getAuditable() {
+        return auditable;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public String getOrderStatus() {
+        return orderStatus;
+    }
 
-	public ContactInfo getContactInfo() {
-		return contactInfo;
-	}
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
 
-	public void setContactInfo(ContactInfo contactInfo) {
-		this.contactInfo = contactInfo;
-	}
-	
-	
+    public double getOrderTotal() {
+        return orderTotal;
+    }
+
+    public void setOrderTotal(double orderTotal) {
+        this.orderTotal = orderTotal;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public ContactInfo getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(ContactInfo contactInfo) {
+        this.contactInfo = contactInfo;
+    }
+
 }
