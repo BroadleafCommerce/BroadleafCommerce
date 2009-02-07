@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+	<named-query name="READ_PROMOTION_RULE_BY_ID" >
+		<query>SELECT promotionRuleCategory FROM org.broadleafcommerce.rules.domain.PromotionRuleCategory promotionRuleCategory
+		WHERE promotionRuleCategory.id = :id</query>
+	</named-query>
+
+</entity-mappings>

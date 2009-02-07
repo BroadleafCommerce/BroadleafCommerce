@@ -5,18 +5,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.UserService;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.springframework.security.Authentication;
-import org.springframework.security.userdetails.User;
 
 public class CustomerStateStore implements PostLoginObserver {
 
-    @Resource(name = "userService")
-    private UserService userService;
+    @Resource(name = "customerService")
+    private CustomerService customerService;
 
     @Override
     public void process(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
-        Customer customer = userService.readCustomerByUsername(((User) authResult.getPrincipal()).getUsername());
+        Customer customer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
         CustomerState.setCustomer(customer, request);
     }
 }

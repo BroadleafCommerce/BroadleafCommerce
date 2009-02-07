@@ -22,11 +22,10 @@ public class OrderPaymentDaoJpa implements OrderPaymentDao {
     private EntityManager em;
 
     @Override
-    public OrderPayment maintainOrderPayment(
-            OrderPayment orderPayment) {
-        if(orderPayment.getId() == null){
+    public OrderPayment maintainOrderPayment(OrderPayment orderPayment) {
+        if (orderPayment.getId() == null) {
             em.persist(orderPayment);
-        }else{
+        } else {
             orderPayment = em.merge(orderPayment);
         }
         return orderPayment;
@@ -40,9 +39,8 @@ public class OrderPaymentDaoJpa implements OrderPaymentDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<OrderPayment> readOrderPaymentsForOrder(Order order) {
-        Query query = em.createQuery("SELECT orderPayment FROM org.broadleafcommerce.order.domain.OrderPayment orderPayment WHERE orderPayment.order.id = :orderId");
+        Query query = em.createNamedQuery("READ_ORDERS_PAYMENTS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }
-
 }

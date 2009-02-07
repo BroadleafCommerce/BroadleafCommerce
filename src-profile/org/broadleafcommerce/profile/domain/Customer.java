@@ -1,52 +1,44 @@
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
+public interface Customer {
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+    public Long getId();
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+    public void setId(Long id);
 
-@Entity
-@Table(name = "CUSTOMER", uniqueConstraints = { @UniqueConstraint(columnNames = { "USER_ID" }) })
-public class Customer implements Serializable {
+    public String getUsername();
 
-    private static final long serialVersionUID = 1L;
+    public void setUsername(String username);
 
-    @SuppressWarnings("unused")
-    @Transient
-    private final Log logger = LogFactory.getLog(getClass());
+    public String getPassword();
 
-    @Id
-    @GeneratedValue
-    @Column(name = "CUSTOMER_ID")
-    private Long id;
+    public void setPassword(String password);
 
-    @OneToOne
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    public boolean isPasswordChangeRequired();
 
-    public Long getId() {
-        return id;
-    }
+    public void setPasswordChangeRequired(boolean passwordChangeRequired);
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getFirstName();
 
-    public User getUser() {
-        return user;
-    }
+    public void setFirstName(String firstName);
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+    public String getLastName();
+
+    public void setLastName(String lastName);
+
+    public String getEmailAddress();
+
+    public void setEmailAddress(String emailAddress);
+
+    public String getChallengeQuestion();
+
+    public void setChallengeQuestion(String challengeQuestion);
+
+    public String getChallengeAnswer();
+
+    public void setChallengeAnswer(String challengeAnswer);
+
+    public String getUnencodedPassword();
+
+    public void setUnencodedPassword(String unencodedPassword);
 }

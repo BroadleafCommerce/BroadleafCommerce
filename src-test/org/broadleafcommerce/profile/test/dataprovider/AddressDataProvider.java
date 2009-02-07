@@ -13,7 +13,7 @@ public class AddressDataProvider {
         address1.setCity("Dallas");
         address1.setStateCode("TX");
         address1.setZipCode("75251");
-        
+
         Address address2 = new Address();
         address2.setAddressName("HOME");
         address2.setAddressLine1("12 Testing Drive");
@@ -21,7 +21,6 @@ public class AddressDataProvider {
         address2.setStateCode("TX");
         address2.setZipCode("75251");
 
-        
-        return new Object[][] { new Object[] { address1 },  new Object[] { address2}};
+        return new Object[][] { new Object[] { address1 }, new Object[] { address2 } };
     }
 }

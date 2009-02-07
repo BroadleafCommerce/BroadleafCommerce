@@ -1,13 +1,9 @@
 package org.broadleafcommerce.profile.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.UserRole;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -23,8 +19,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource(name = "userService")
-    private UserService userService;
+    @Resource(name = "customerService")
+    private CustomerService customerService;
 
     private boolean forcePasswordChange = false;
 
@@ -34,29 +30,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        org.broadleafcommerce.profile.domain.User user = userService.readUserByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("The user was not found");
-        }
-
-        List<UserRole> roles = userService.readUserRolesByUserId(user.getId());
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-        if (roles != null) {
-            for (UserRole role : roles) {
-                authorities.add(new GrantedAuthorityImpl(role.getRoleName()));
-            }
-        }
-
-        if (user.isPasswordChangeRequired()) {
-            authorities.add(new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED"));
+        org.broadleafcommerce.profile.domain.Customer customer = customerService.readCustomerByUsername(username);
+        if (customer == null) {
+            throw new UsernameNotFoundException("The customer was not found");
         }
 
         User returnUser = null;
 
         if (!forcePasswordChange) {
-            returnUser = new User(username, user.getPassword(), true, true, true, true, authorities.toArray(new GrantedAuthority[0]));
+            returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
         } else {
-            returnUser = new User(username, user.getPassword(), true, true, !user.isPasswordChangeRequired(), true, authorities.toArray(new GrantedAuthority[0]));
+            returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
         }
         return returnUser;
     }

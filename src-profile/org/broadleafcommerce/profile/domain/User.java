@@ -1,154 +1,50 @@
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
+public interface User {
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
+    public Long getId();
 
-@Entity
-@EntityListeners(value = { TemporalTimestampListener.class })
-@Table(name = "USER", uniqueConstraints = { @UniqueConstraint(columnNames = { "USER_NAME" }) })
-public class User implements Serializable {
+    public void setId(Long id);
 
-    private static final long serialVersionUID = 1L;
+    public String getUsername();
 
-    @SuppressWarnings("unused")
-    @Transient
-    private final Log logger = LogFactory.getLog(getClass());
+    public void setUsername(String username);
 
-    @Id
-    @GeneratedValue
-    @Column(name = "USER_ID")
-    private Long id;
+    public String getPassword();
 
-    @Column(name = "USER_NAME")
-    private String username;
+    public void setPassword(String password);
 
-    @Column(name = "PASSWORD")
-    private String password;
+    public Set<UserRole> getUserRoles();
 
-    @Column(name = "FIRST_NAME")
-    private String firstName;
+    public void setUserRoles(Set<UserRole> userRoles);
 
-    @Column(name="LAST_NAME")
-    private String lastName;
+    public boolean isPasswordChangeRequired();
 
-    @Column(name="EMAIL_ADDRESS")
-    private String emailAddress;
+    public void setPasswordChangeRequired(boolean passwordChangeRequired);
 
-    @Column(name="CHALLENGE_QUESTION")
-    private String challengeQuestion;
+    public String getFirstName();
 
-    @Column(name="CHALLENGE_ANSWER")
-    private String challengeAnswer;
+    public void setFirstName(String firstName);
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<UserRole> userRoles;
+    public String getLastName();
 
-    @Column(name = "PASSWORD_CHANGE_REQUIRED")
-    private boolean passwordChangeRequired;
+    public void setLastName(String lastName);
 
-    @Transient
-    private String unencodedPassword;
+    public String getEmailAddress();
 
-    public Long getId() {
-        return id;
-    }
+    public void setEmailAddress(String emailAddress);
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getChallengeQuestion();
 
-    public String getUsername() {
-        return username;
-    }
+    public void setChallengeQuestion(String challengeQuestion);
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getChallengeAnswer();
 
-    public String getPassword() {
-        return password;
-    }
+    public void setChallengeAnswer(String challengeAnswer);
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getUnencodedPassword();
 
-    public Set<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(Set<UserRole> userRoles) {
-        this.userRoles = userRoles;
-    }
-
-    public boolean isPasswordChangeRequired() {
-        return passwordChangeRequired;
-    }
-
-    public void setPasswordChangeRequired(boolean passwordChangeRequired) {
-        this.passwordChangeRequired = passwordChangeRequired;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmailAddress() {
-        return emailAddress;
-    }
-
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
-
-    public String getChallengeQuestion() {
-        return challengeQuestion;
-    }
-
-    public void setChallengeQuestion(String challengeQuestion) {
-        this.challengeQuestion = challengeQuestion;
-    }
-
-    public String getChallengeAnswer() {
-        return challengeAnswer;
-    }
-
-    public void setChallengeAnswer(String challengeAnswer) {
-        this.challengeAnswer = challengeAnswer;
-    }
-
-    public String getUnencodedPassword() {
-        return unencodedPassword;
-    }
-
-    public void setUnencodedPassword(String unencodedPassword) {
-        this.unencodedPassword = unencodedPassword;
-    }
+    public void setUnencodedPassword(String unencodedPassword);
 }

@@ -25,7 +25,7 @@ public class RuleDaoJpa implements RuleDao {
 
     @SuppressWarnings("unchecked")
     public List<PromotionRuleCategory> readAllRuleCategories() {
-        Query query = em.createQuery("SELECT promotionRuleCategory FROM org.broadleafcommerce.rules.domain.PromotionRuleCategory promotionRuleCategory");
+        Query query = em.createNamedQuery("READ_ALL_RULE_CATEGORIES");
         List<PromotionRuleCategory> ruleCategories = query.getResultList();
         return ruleCategories;
     }
@@ -46,7 +46,7 @@ public class RuleDaoJpa implements RuleDao {
 
     @Override
     public ShoppingCartPromotion readShoppingCartPromotionById(Long id) {
-        Query query = em.createQuery("READ_PROMOTION_RULE_BY_ID");
+        Query query = em.createNamedQuery("READ_PROMOTION_RULE_BY_ID");
         query.setParameter("id", id);
         ShoppingCartPromotion shoppingCartPromotion = (ShoppingCartPromotion) query.getSingleResult();
         return shoppingCartPromotion;
@@ -55,7 +55,7 @@ public class RuleDaoJpa implements RuleDao {
     @SuppressWarnings("unchecked")
     @Override
     public List<CouponCode> readAllCouponCodes() {
-        Query query = em.createQuery("SELECT couponCode FROM org.broadleafcommerce.rules.domain.CouponCode couponCode");
+        Query query = em.createNamedQuery("READ_ALL_COUPON_CODES");
         return query.getResultList();
     }
 }

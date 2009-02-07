@@ -22,9 +22,9 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @Table(name = "CONTACT_INFO")
 public class ContactInfo implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@SuppressWarnings("unused")
+    @SuppressWarnings("unused")
     @Transient
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -33,9 +33,9 @@ public class ContactInfo implements Serializable {
     @Column(name = "CONTACT_ID")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = BroadleafCustomer.class)
+    @JoinColumn(name = "CUSTOMER_ID")
+    private Customer customer;
 
     @Column(name = "PRIMARY_PHONE")
     private String primaryPhone;
@@ -43,57 +43,57 @@ public class ContactInfo implements Serializable {
     @Column(name = "SECONDARY_PHONE")
     private String secondaryPhone;
 
-    @Column(name="EMAIL")
+    @Column(name = "EMAIL")
     private String email;
 
-    @Column(name="FAX")
+    @Column(name = "FAX")
     private String fax;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public Customer getCustomer() {
+        return customer;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-	public String getPrimaryPhone() {
-		return primaryPhone;
-	}
+    public String getPrimaryPhone() {
+        return primaryPhone;
+    }
 
-	public void setPrimaryPhone(String primaryPhone) {
-		this.primaryPhone = primaryPhone;
-	}
+    public void setPrimaryPhone(String primaryPhone) {
+        this.primaryPhone = primaryPhone;
+    }
 
-	public String getSecondaryPhone() {
-		return secondaryPhone;
-	}
+    public String getSecondaryPhone() {
+        return secondaryPhone;
+    }
 
-	public void setSecondaryPhone(String secondaryPhone) {
-		this.secondaryPhone = secondaryPhone;
-	}
+    public void setSecondaryPhone(String secondaryPhone) {
+        this.secondaryPhone = secondaryPhone;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getFax() {
-		return fax;
-	}
+    public String getFax() {
+        return fax;
+    }
 
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 }

@@ -33,7 +33,7 @@ public class CategoryDaoJpa implements CategoryDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<Category> readAllCategories() {
-        Query query = em.createQuery("SELECT category FROM org.broadleafcommerce.catalog.domain.Category category");
+        Query query = em.createNamedQuery("READ_ALL_CATEGORIES");
         query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
     }
@@ -41,9 +41,8 @@ public class CategoryDaoJpa implements CategoryDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<Category> readAllSubCategories(Category category) {
-        Query query = em.createQuery("SELECT category FROM org.broadleafcommerce.catalog.domain.Category category WHERE category.parentCategory = :parentCategory");
+        Query query = em.createNamedQuery("READ_ALL_SUBCATEGORIES");
         query.setParameter("parentCategory", category);
         return query.getResultList();
     }
-
 }
