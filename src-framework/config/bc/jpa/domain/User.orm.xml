@@ -3,6 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
+
 	<named-query name="READ_USER_BY_USER_NAME" >
 		<query>SELECT user FROM org.broadleafcommerce.profile.domain.BroadleafUser user
 		WHERE user.username = :username</query>
@@ -17,5 +18,52 @@
 		<query>SELECT role FROM org.broadleafcommerce.profile.domain.UserRole role
 		WHERE role.user.id = :userId</query>
 	</named-query>
+
+	<entity class="org.broadleafcommerce.profile.domain.BroadleafUser" name="BroadleafUser">
+        <table name="BLC_USER" >
+        	<unique-constraint>
+        		<column-name>USER_NAME</column-name>
+        	</unique-constraint>
+        </table>
+        <inheritance strategy="JOINED"/>
+        
+        <attributes>
+            <id name="id">            	
+            	<column name="USER_ID"/>
+                <generated-value/>
+                
+            </id>
+            <basic name="username">
+                <column name="USER_NAME" />
+            </basic>
+            <basic name="password">
+                <column name="PASSWORD"/>
+            </basic>
+            <basic name="firstName">
+            	<column name="FIRST_NAME"/>
+            </basic>
+            <basic name="lastName">
+            	<column name="LAST_NAME"/>
+            </basic>
+            <basic name="emailAddress">
+            	<column name="EMAIL_ADDRESS"/>
+            </basic>
+            <basic name="challengeQuestion">
+            	<column name="CHALLENGE_QUESTION"/>
+            </basic>
+            <basic name="challengeAnswer">
+            	<column name="CHALLENGE_ANSWER"/>
+            </basic>
+            <basic name="passwordChangeRequired">
+            	<column name="PASSWORD_CHANGE_REQUIRED"/>
+            </basic>
+            <one-to-many name="userRoles" mapped-by="user">
+            	<cascade><cascade-all/></cascade>
+            </one-to-many>
+			<transient name="unencodedPassword"/>
+			<transient name="logger"/>			            
+        </attributes>
+    </entity>
+
 
 </entity-mappings>
