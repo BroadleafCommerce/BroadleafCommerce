@@ -131,7 +131,13 @@
 			value="org.broadleafcommerce.rules.domain.ShoppingCartPromotion" />
 		<property name="ruleService" ref="ruleService" />
 		<property name="formView" value="createShoppingCartPromotion" />
-		<property name="successView" value="redirect:/listRuleCategory.htm" />
+	</bean>
+	
+	<bean id="createTestOrder" class="org.broadleafcommerce.controller.CreateTestOrderFormController">
+		<property name="commandName" value="couponCode" />
+		<property name="commandClass" value="org.broadleafcommerce.rules.domain.CouponCode" />
+		<property name="ruleBaseService" ref="ruleBaseService" />
+		<property name="formView" value="createTestOrder" />
 	</bean>
 
 	<bean id="listCatalogItem"
@@ -167,15 +173,6 @@
 		<property name="redirectUrl" value="listBasket.htm" />
 		<property name="orderService" ref="orderService" />
 		<property name="customerService" ref="customerService"/>
-	</bean>
-
-	<bean id="listRuleCategory"
-		class="org.broadleafcommerce.controller.ListRuleCategoryFormController">
-		<property name="commandName" value="listRuleCategory" />
-		<property name="commandClass" value="org.broadleafcommerce.rules.domain.PromotionRuleCategory" />
-		<property name="ruleService" ref="ruleService" />
-		<property name="formView" value="listRuleCategory" />
-		<property name="successView" value="listRuleCategory" />
 	</bean>
 
 	<bean id="checkout" class="org.broadleafcommerce.controller.CheckoutController">
@@ -295,8 +292,8 @@
                 <prop key="/catalog/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*">catalogDisplay</prop>
                 <prop key="/catalog/*/*/*">catalogDisplay</prop>
-                <prop key="/listRuleCategory.htm">listRuleCategory</prop>
                 <prop key="/createShoppingCartPromotion.htm">createShoppingCartPromotion</prop>
+                <prop key="/createTestOrder.htm">createTestOrder</prop>
 			</props>
 		</property>
 	</bean>

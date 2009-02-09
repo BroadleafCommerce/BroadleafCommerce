@@ -6,32 +6,28 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.rules.domain.ShoppingCartPromotion;
-import org.broadleafcommerce.rules.service.RuleService;
+import org.broadleafcommerce.rules.domain.CouponCode;
+import org.broadleafcommerce.rules.service.RuleBaseService;
+import org.drools.WorkingMemory;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
-public class ShoppingCartPromotionFormController extends SimpleFormController {
+public class CreateTestOrderFormController extends SimpleFormController {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
-	private RuleService ruleService;
+	private RuleBaseService ruleBaseService;
 
-	public void setRuleService(RuleService ruleService) {
-		this.ruleService = ruleService;
+	public void setRuleBaseService(RuleBaseService ruleBaseService){
+		this.ruleBaseService = ruleBaseService;
 	}
+
 
 	protected Object formBackingObject(HttpServletRequest request)
 			throws ServletException {
-		ShoppingCartPromotion shoppingCartPromotion = new ShoppingCartPromotion();
-
-		if (request.getParameter("promotionRuleId") != null) {
-			shoppingCartPromotion = ruleService.readShoppingCartPromotionById(Long
-					.valueOf(request.getParameter("promotionRuleId")));
-		}
-
-		return shoppingCartPromotion;
+		CouponCode couponCode = new CouponCode();
+		return couponCode;
 	}
 
 	@Override
@@ -39,10 +35,11 @@ public class ShoppingCartPromotionFormController extends SimpleFormController {
 			HttpServletResponse response, Object command, BindException errors)
 			throws Exception {
 
-		ShoppingCartPromotion shoppingCartPromotion = (ShoppingCartPromotion) command;
-
-		ruleService.saveShoppingCartPromotion(shoppingCartPromotion);
-		ruleService.writeRuleFile(shoppingCartPromotion);
+		CouponCode couponCode = (CouponCode) command;
+		System.out.println(couponCode.getCode());
+		WorkingMemory workingMemory = ruleBaseService.getRuleBase().newStatefulSession();
+		workingMemory.insert(couponCode);
+		workingMemory.fireAllRules();
 
 
 		if (errors.hasErrors()) {
@@ -55,5 +52,7 @@ public class ShoppingCartPromotionFormController extends SimpleFormController {
 		mav.addObject("saved", true);
 
 		return mav;
+
 	}
+
 }

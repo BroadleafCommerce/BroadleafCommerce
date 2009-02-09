@@ -4,7 +4,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.drools.RuleBase;
 import org.drools.RuleBaseFactory;
+import org.springframework.stereotype.Service;
 
+@Service("ruleBaseService")
 public class RuleBaseServiceImpl implements RuleBaseService {
 
 	/** Logger for this class and subclasses */
@@ -13,11 +15,12 @@ public class RuleBaseServiceImpl implements RuleBaseService {
 	private RuleBase ruleBase;
 
 	public RuleBase getRuleBase() {
+
 		if (ruleBase == null) {
-			System.out.println("creating");
 			ruleBase = RuleBaseFactory.newRuleBase();
 		}
-		System.out.println("returning from cache");
+
 		return ruleBase;
 	}
+
 }

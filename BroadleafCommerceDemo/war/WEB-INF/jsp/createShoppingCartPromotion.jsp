@@ -34,23 +34,7 @@
 			</td>
 		</tr>
 		
-		<tr>
-			<td	>
-				Description:
-			</td>
-			<td>
-				<input type="text" name="description" value="${shoppingCartPromotion.description}" />
-			</td>	
-		</tr>
-		
-		<tr>
-			<td>
-				Category:
-			</td>
-			<td>
-				<input type="text" name="category" value="${shoppingCartPromotion.category}" />
-			</td>
-		</tr>
+
 		<tr>
 			<td>
 				Coupon Code:
@@ -59,47 +43,66 @@
 				<input type="text" name="couponCode" value="${shoppingCartPromotion.couponCode}" />
 			</td>
 		</tr>
-		<tr>
-			<td>
-				Per Coupon: 
-			</td>
-			<td>
-				<input type="text" name="couponRedemptionLimit" value="${shoppingCartPromotion.couponRedemptionLimit}" />
-			</td>
-		</tr>
-		
-		<tr>
-			<td>
-				Per Customer:
-			</td>
-			<td>
-				<input type="text" name="customerRedemptionLimit" value="${shoppingCartPromotion.customerRedemptionLimit}"/>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				Activation Date:
-			</td>
-			<td>
-				<input type="text" name="activationDate" value="${shoppingCartPromotion.activationDate}" />
-			</td>
-		</tr>
-		<tr>
-			<td>
-				Expiration Date:
-			</td>
-			<td>
-				<input type="text" name="expirationDate" value="${shoppingCartPromotion.expirationDate}" />
-			</td>
-		</tr>
-		<tr>
-			<td>
-				Priority:
-			</td>
-			<td>
-				<input type="text" name="priority" value="${shoppingCartPromotion.priority}" />
-			</td>
-		</tr>
+		<!-- 
+			<tr>
+				<td	>
+					Description:
+				</td>
+				<td>
+					<input type="text" name="description" value="${shoppingCartPromotion.description}" />
+				</td>	
+			</tr> 
+			<tr>
+				<td>
+					Category:
+				</td>
+				<td>
+					<input type="text" name="category" value="${shoppingCartPromotion.category}" />
+				</td>
+			</tr>
+	
+			<tr>
+				<td>
+					Per Coupon: 
+				</td>
+				<td>
+					<input type="text" name="couponRedemptionLimit" value="${shoppingCartPromotion.couponRedemptionLimit}" />
+				</td>
+			</tr>
+			
+			<tr>
+				<td>
+					Per Customer:
+				</td>
+				<td>
+					<input type="text" name="customerRedemptionLimit" value="${shoppingCartPromotion.customerRedemptionLimit}"/>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Activation Date:
+				</td>
+				<td>
+					<input type="text" name="activationDate" value="${shoppingCartPromotion.activationDate}" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Expiration Date:
+				</td>
+				<td>
+					<input type="text" name="expirationDate" value="${shoppingCartPromotion.expirationDate}" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					Priority:
+				</td>
+				<td>
+					<input type="text" name="priority" value="${shoppingCartPromotion.priority}" />
+				</td>
+			</tr>
+		 -->
 	</table>
 	
 	<div class="formButtonFooter personFormButtons">
