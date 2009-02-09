@@ -25,5 +25,32 @@
 		</query>
 	</named-query>
 
+	<entity class="org.broadleafcommerce.catalog.domain.SellableItem" name="sellableItem">
+        <table name="BLC_SELLABLE_ITEM" >        	
+        </table>
+        <inheritance strategy="JOINED"/>
+		<discriminator-column name="TYPE"/>
+
+        <attributes>
+            <id name="id">            	
+            	<column name="SELLABLE_ITEM_ID"/>
+                <generated-value/>                
+            </id>
+            <basic name="price">
+                <column name="PRICE" nullable="false"/>
+            </basic>
+            <basic name="name">
+                <column name="NAME" />
+            </basic>
+			<many-to-one name="catalogItem" >
+				<join-column name="CATALOG_ITEM_ID" nullable="false"/>
+			</many-to-one>
+			<one-to-many name="itemAttributes" mapped-by="sellableItem">
+				<map-key name="name"/>
+				<cascade><cascade-all/></cascade>
+			</one-to-many>
+			<embedded name="auditable"/>            
+        </attributes>
+    </entity>
 
 </entity-mappings>

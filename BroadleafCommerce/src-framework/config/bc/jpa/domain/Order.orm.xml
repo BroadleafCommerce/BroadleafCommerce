@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<named-query name="READ_ORDERS_BY_CUSTOMER_ID" >
-		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
+		<query>SELECT order FROM org.broadleafcommerce.order.domain.BroadleafOrder order
 		WHERE order.customer.id = :customerId</query>
 	</named-query>
 
@@ -15,10 +15,38 @@
 	</named-query>
 
 	<named-query name="UPDATE_BASKET_ORER_TO_SUBMITED">
-		<query>UPDATE org.broadleafcommerce.order.domain.Order orderx
-		          SET TYPE = 'SUBMITTED'
-		        WHERE orderx.id = :id
+		<query>UPDATE org.broadleafcommerce.order.domain.BroadleafOrder blcOrder
+		          SET blcOrder.type = 'SUBMITTED'
+		        WHERE blcOrder.id = :id
 		</query>
 	</named-query>
+
+	<entity class="org.broadleafcommerce.order.domain.BroadleafOrder" name="order">
+        <table name="BLC_ORDER" >        	
+        </table>
+        <inheritance strategy="JOINED"/>
+		<discriminator-column name="TYPE"/>
+
+        <attributes>
+            <id name="id">            	
+            	<column name="ORDER_ID"/>
+                <generated-value/>                
+            </id>
+            <basic name="orderStatus">
+                <column name="ORDER_STATUS" />
+            </basic>
+            <basic name="orderTotal">
+                <column name="ORDER_TOTAL"/>
+            </basic>
+            <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomer">
+				<join-column name="CUSTOMER_ID" nullable="false"/>
+            </many-to-one>
+			<many-to-one name="contactInfo" >
+				<join-column name="CONTACT_INFO_ID"/>
+			</many-to-one>
+			<embedded name="auditable"></embedded>
+        </attributes>
+    </entity>
+
 
 </entity-mappings>

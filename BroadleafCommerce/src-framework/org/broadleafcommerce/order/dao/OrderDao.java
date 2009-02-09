@@ -3,23 +3,23 @@ package org.broadleafcommerce.order.dao;
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.BasketOrder;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.SubmittedOrder;
 import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OrderDao {
 
-    public Order readOrderById(Long orderId);
+    public BroadleafOrder readOrderById(Long orderId);
 
-    public Order maintianOrder(Order order);
+    public BroadleafOrder maintianOrder(BroadleafOrder order);
 
-    public List<Order> readOrdersForCustomer(Customer customer);
+    public List<BroadleafOrder> readOrdersForCustomer(Customer customer);
 
-    public List<Order> readOrdersForCustomer(Long id);
+    public List<BroadleafOrder> readOrdersForCustomer(Long id);
 
-    public void deleteOrderForCustomer(Order order);
+    public void deleteOrderForCustomer(BroadleafOrder order);
 
     public BasketOrder readBasketOrderForCustomer(Customer customer);
 
-    public SubmittedOrder submitOrder(Order basketOrder);
+    public SubmittedOrder submitOrder(BroadleafOrder basketOrder);
 }

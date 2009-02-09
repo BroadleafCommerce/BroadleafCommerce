@@ -3,54 +3,48 @@ package org.broadleafcommerce.rules.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "PROMOTION_RULE_DEFINITION")
+//@Entity
+//@Table(name = "BLC_PROMOTION_RULE_DEFINITION")
 public class ShoppingCartPromotion implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue
-	@Column(name = "SHOPPING_CART_PROMOTION_RULE_ID")
+//	@Id
+//	@GeneratedValue
+//	@Column(name = "SHOPPING_CART_PROMOTION_RULE_ID")
 	private Long id;
 
-	@Column(name = "NAME")
+//	@Column(name = "NAME")
 	private String name;
 
-	@Column(name = "DESCRIPTION")
+//	@Column(name = "DESCRIPTION")
 	private String description;
 
-	@Column(name = "CATEGORY")
+//	@Column(name = "CATEGORY")
 	private String category;
 
-	@Column(name = "ACTIVATION_DATE")
+//	@Column(name = "ACTIVATION_DATE")
 	private Date activationDate;
 
-	@Column(name = "EXPIRATION_DATE")
+//	@Column(name = "EXPIRATION_DATE")
 	private Date expirationDate;
 
-	@Column(name = "CREATED")
+//	@Column(name = "CREATED")
 	private Date created;
 
-	@Column(name = "MODIFIED")
+//	@Column(name = "MODIFIED")
 	private Date modified;
 	
-	@Column(name = "PRIORITY")
+//	@Column(name = "PRIORITY")
 	private int priority;
 	
-	@Column(name = "COUPON_CODE")
+//	@Column(name = "COUPON_CODE")
 	private String couponCode;
 	
-	@Column(name = "CUSTOMER_REDEMPTION_LIMIT")
+//	@Column(name = "CUSTOMER_REDEMPTION_LIMIT")
 	private int customerRedemptionLimit;
 	
-	@Column(name = "COUPON_REDEMPTION_LIMIT")
+//	@Column(name = "COUPON_REDEMPTION_LIMIT")
 	private int couponRedemptionLimit;
 
 	public void setId(Long id) {

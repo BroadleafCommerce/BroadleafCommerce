@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.dao.OrderDaoJpa;
 import org.broadleafcommerce.order.dao.OrderShippingDao;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderShipping;
 import org.broadleafcommerce.profile.dao.AddressDaoJpa;
 import org.broadleafcommerce.profile.domain.Address;
@@ -18,7 +18,7 @@ import org.testng.annotations.Test;
 
 public class OrderShippingDaoTest extends BaseTest {
 
-    private Order order;
+    private BroadleafOrder order;
 
     @Resource
     private OrderShippingDao orderShippingDao;
@@ -38,7 +38,7 @@ public class OrderShippingDaoTest extends BaseTest {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Address address = (addressDao.readAddressByUserId(customer.getId())).get(0);
-        Order salesOrder= (orderDao.readOrdersForCustomer(customer)).get(0);
+        BroadleafOrder salesOrder= (orderDao.readOrdersForCustomer(customer)).get(0);
 
         orderShipping.setAddress(address);
         orderShipping.setOrder(salesOrder);

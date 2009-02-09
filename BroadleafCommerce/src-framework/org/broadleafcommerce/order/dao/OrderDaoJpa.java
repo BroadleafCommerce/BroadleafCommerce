@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.BasketOrder;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.SubmittedOrder;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.springframework.stereotype.Repository;
@@ -25,12 +25,12 @@ public class OrderDaoJpa implements OrderDao {
     private EntityManager em;
 
     @Override
-    public Order readOrderById(Long orderId) {
-        return em.find(Order.class, orderId);
+    public BroadleafOrder readOrderById(Long orderId) {
+        return em.find(BroadleafOrder.class, orderId);
     }
 
     @Override
-    public Order maintianOrder(Order salesOrder) {
+    public BroadleafOrder maintianOrder(BroadleafOrder salesOrder) {
         if (salesOrder.getId() == null) {
             em.persist(salesOrder);
         } else {
@@ -40,18 +40,18 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public void deleteOrderForCustomer(Order salesOrder) {
+    public void deleteOrderForCustomer(BroadleafOrder salesOrder) {
         em.remove(salesOrder);
     }
 
     @Override
-    public List<Order> readOrdersForCustomer(Customer customer) {
+    public List<BroadleafOrder> readOrdersForCustomer(Customer customer) {
         return readOrdersForCustomer(customer.getId());
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Order> readOrdersForCustomer(Long customerId) {
+    public List<BroadleafOrder> readOrdersForCustomer(Long customerId) {
         Query query = em.createNamedQuery("READ_ORDERS_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
         return query.getResultList();
@@ -74,7 +74,7 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public SubmittedOrder submitOrder(Order basketOrder) {
+    public SubmittedOrder submitOrder(BroadleafOrder basketOrder) {
         SubmittedOrder so = new SubmittedOrder();
         so.setId(basketOrder.getId());
         Query query = em.createNamedQuery("UPDATE_BASKET_ORER_TO_SUBMITED");

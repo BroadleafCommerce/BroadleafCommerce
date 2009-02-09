@@ -7,7 +7,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.dao.OrderDaoJpa;
 import org.broadleafcommerce.order.dao.OrderPaymentDaoJpa;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderPayment;
 import org.broadleafcommerce.profile.dao.AddressDaoJpa;
 import org.broadleafcommerce.profile.domain.Address;
@@ -40,7 +40,7 @@ public class OrderPaymentDaoTest extends BaseTest {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Address address = (addressDao.readAddressByUserId(customer.getId())).get(0);
-        Order salesOrder = (orderDao.readOrdersForCustomer(customer)).get(0);
+        BroadleafOrder salesOrder = (orderDao.readOrdersForCustomer(customer)).get(0);
 
         orderPayment.setAddress(address);
         orderPayment.setOrder(salesOrder);

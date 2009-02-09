@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorColumn(name="TYPE")
 @DiscriminatorValue("BASKET")
-public class BasketOrder extends Order implements Serializable {
+public class BasketOrder extends BroadleafOrder implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

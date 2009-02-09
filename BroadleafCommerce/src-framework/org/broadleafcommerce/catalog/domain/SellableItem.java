@@ -3,51 +3,36 @@ package org.broadleafcommerce.catalog.domain;
 import java.io.Serializable;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.domain.Auditable;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "TYPE")
-@Table(name = "SELLABLE_ITEM")
+//@Entity
+//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+//@DiscriminatorColumn(name = "TYPE")
+//@Table(name = "BLC_SELLABLE_ITEM")
 public class SellableItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue
-    @Column(name = "SELLABLE_ITEM_ID")
+//    @Id
+//    @GeneratedValue
+//    @Column(name = "SELLABLE_ITEM_ID")
     private Long id;
 
-    @Column(name="PRICE", nullable = false)
+//    @Column(name="PRICE", nullable = false)
     private double price;
 
-    @Embedded
+//    @Embedded
     private Auditable auditable;
 
-    @ManyToOne
-    @JoinColumn(name = "CATALOG_ITEM_ID", nullable = false)
+//    @ManyToOne
+//    @JoinColumn(name = "CATALOG_ITEM_ID", nullable = false)
     private CatalogItem catalogItem;
 
-    @OneToMany(mappedBy = "sellableItem", cascade = CascadeType.ALL)
-    @MapKey(name="name")
+//    @OneToMany(mappedBy = "sellableItem", cascade = CascadeType.ALL)
+//    @MapKey(name="name")
     private Map<String,ItemAttribute> itemAttributes;
 
-    @Column(name = "NAME")
+//    @Column(name = "NAME")
     private String name;
 
     public Long getId() {

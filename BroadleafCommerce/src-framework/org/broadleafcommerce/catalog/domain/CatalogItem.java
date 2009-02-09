@@ -4,42 +4,33 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.domain.Auditable;
 
-@Entity
-@Table(name = "CATALOG_ITEM")
+//@Entity
+//@Table(name = "CATALOG_ITEM")
 public class CatalogItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue
-    @Column(name = "CATALOG_ITEM_ID")
+//    @Id
+//    @GeneratedValue
+//    @Column(name = "CATALOG_ITEM_ID")
     private Long id;
     
-    @Embedded
+//    @Embedded
     private Auditable auditable;
 
-    @OneToMany(mappedBy = "catalogItem")
-    @MapKey(name="name")
+//    @OneToMany(mappedBy = "catalogItem")
+//    @MapKey(name="name")
     private Map<String, ItemAttribute> itemAttributes;
 
-    @OneToMany(mappedBy = "catalogItem")
+//    @OneToMany(mappedBy = "catalogItem")
     private Set<CatalogItemListAssociation> catalogItemListAssociations;
 
-    @Column(name = "DESCRIPTION")
+//    @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "NAME")
+//    @Column(name = "NAME")
     private String name;
 
     public String getName() {

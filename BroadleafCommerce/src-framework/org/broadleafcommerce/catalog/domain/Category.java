@@ -3,54 +3,43 @@ package org.broadleafcommerce.catalog.domain;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.common.domain.Auditable;
 
-@Entity
-@Table(name = "CATEGORY")
+//@Entity
+//@Table(name = "BLC_CATEGORY")
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue
-    @Column(name = "CATEGORY_ID")
+//    @Id
+//    @GeneratedValue
+//    @Column(name = "CATEGORY_ID")
     private Long id;
 
-    @Embedded
+//    @Embedded
     private Auditable auditable;
 
-    @Column(name = "NAME")
+//    @Column(name = "NAME")
     private String name;
 
-    @Column(name = "URL")
+//    @Column(name = "URL")
     private String url;
 
-    @Column(name = "URL_KEY")
+//    @Column(name = "URL_KEY")
     private String urlKey;
 
-    @ManyToOne
-    @JoinColumn(name = "PARENT_CATEGORY_ID")
+//    @ManyToOne
+//    @JoinColumn(name = "PARENT_CATEGORY_ID")
     private Category parentCategory;
     
-    @ManyToMany
-    @JoinTable(name = "CATEGORY_ITEM_ASSOCIATIONS",
-        joinColumns=
-            @JoinColumn(name="CATEGORY_ID", referencedColumnName="CATEGORY_ID"),
-        inverseJoinColumns=
-            @JoinColumn(name="CATALOG_ITEM_ID", referencedColumnName="CATALOG_ITEM_ID")
-    
-    )
+//    @ManyToMany
+//    @JoinTable(name = "CATEGORY_ITEM_ASSOCIATIONS",
+//        joinColumns=
+//            @JoinColumn(name="CATEGORY_ID", referencedColumnName="CATEGORY_ID"),
+//        inverseJoinColumns=
+//            @JoinColumn(name="CATALOG_ITEM_ID", referencedColumnName="CATALOG_ITEM_ID")
+//    
+//    )
     private List<CatalogItem> catalogItems;
 
     public Long getId() {
