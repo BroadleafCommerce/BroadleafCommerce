@@ -8,4 +8,31 @@
 		WHERE orderShipping.order.id = :orderId</query>
 	</named-query>
 
+	<entity class="org.broadleafcommerce.order.domain.OrderShipping" name="orderShipping">
+        <table name="BLC_ORDER_SHIPPING" >        	        	
+        </table>
+        <inheritance strategy="JOINED"/>
+		<discriminator-column name="TYPE"/>
+        <attributes>
+            <id name="id">            	
+            	<column name="SHIPPING_ID"/>
+                <generated-value/>
+                
+            </id>
+            <basic name="cost">
+                <column name="COST" />
+            </basic>
+            <basic name="referenceNumber">
+                <column name="REFERENCE_NUMBER"/>
+            </basic>
+            <many-to-one name="order">
+				<join-column name="ORDER_ID"/>
+            </many-to-one>
+			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomerAddress">
+				<join-column name="ADDRESS_ID"/>
+			</many-to-one>			
+        </attributes>
+    </entity>
+
+
 </entity-mappings>
