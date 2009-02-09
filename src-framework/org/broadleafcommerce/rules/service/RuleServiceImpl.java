@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.rules.dao.RuleDao;
-import org.broadleafcommerce.rules.domain.CouponCode;
 import org.broadleafcommerce.rules.domain.PromotionRuleCategory;
 import org.broadleafcommerce.rules.domain.ShoppingCartPromotion;
 import org.springframework.stereotype.Service;
@@ -32,11 +31,6 @@ public class RuleServiceImpl implements RuleService {
 	@Override
 	public ShoppingCartPromotion readShoppingCartPromotionById(Long id) {
 		return ruleDao.readShoppingCartPromotionById(id);
-	}
-
-	@Override
-	public List<CouponCode> readAllCouponCodes() {
-		return ruleDao.readAllCouponCodes();
 	}
 
 }

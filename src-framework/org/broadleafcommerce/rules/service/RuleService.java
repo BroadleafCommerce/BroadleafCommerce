@@ -2,7 +2,6 @@ package org.broadleafcommerce.rules.service;
 
 import java.util.List;
 
-import org.broadleafcommerce.rules.domain.CouponCode;
 import org.broadleafcommerce.rules.domain.PromotionRuleCategory;
 import org.broadleafcommerce.rules.domain.ShoppingCartPromotion;
 
@@ -14,6 +13,4 @@ public interface RuleService {
 	
 	public ShoppingCartPromotion readShoppingCartPromotionById(Long id);
 	
-	public List<CouponCode> readAllCouponCodes();
-
 }
