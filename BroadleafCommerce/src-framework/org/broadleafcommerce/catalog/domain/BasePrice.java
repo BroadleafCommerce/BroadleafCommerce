@@ -4,46 +4,35 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.broadleafcommerce.common.domain.Auditable;
 
-@Entity
-@Table(name = "BASE_PRICE")
+//@Entity
+//@Table(name = "BLC_BASE_PRICE")
 public class BasePrice implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue
-    @Column(name = "BASE_PRICE_ID")
+//    @Id
+//    @GeneratedValue
+//    @Column(name = "BASE_PRICE_ID")
     private Long id;
     
-    @Embedded
+//    @Embedded
     private Auditable auditable;
 
-    @ManyToOne
-    @JoinColumn(name = "SELLABLE_ITEM_ID", nullable = false)
+//    @ManyToOne
+//    @JoinColumn(name = "SELLABLE_ITEM_ID", nullable = false)
     private SellableItem sellableItem;
 
-    @Column(name = "AMOUNT")
+//    @Column(name = "AMOUNT")
     private BigDecimal amount;
 
-    @Column(name = "START_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "START_DATE")
+//    @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
-    @Column(name = "END_DATE")
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "END_DATE")
+//    @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
     public Long getId() {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+	<entity class="org.broadleafcommerce.promotion.domain.Promotion" name="promotion">
+        <table name="BLC_PROMOTION" >        	
+        </table>
+        <inheritance strategy="JOINED"/>
+        
+        <attributes>
+            <id name="id">            	
+            	<column name="PROMOTION_ID"/>
+                <generated-value/>
+                
+            </id>
+            <basic name="type">
+                <column name="PROMOTION_TYPE" />
+            </basic>
+            <basic name="reference">
+                <column name="PROMOTION_REFERENCE"/>
+            </basic>
+            <basic name="discount">
+            	<column name="PROMOTION_DISCOUNT"/>
+            </basic>
+            <basic name="uses">
+            	<column name="PROMOTION_USES"/>
+            </basic>
+            <basic name="applied">
+            	<column name="PROMOTIONS_APPLIED"/>
+            </basic>
+        </attributes>
+    </entity>
+	
+</entity-mappings>

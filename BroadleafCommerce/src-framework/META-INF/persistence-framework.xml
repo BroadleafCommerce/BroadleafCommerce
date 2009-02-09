@@ -19,6 +19,17 @@
 		<mapping-file>config/bc/jpa/domain/ShoppingCartPromotion.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/User.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/SellableItemBundle.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Auditable.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CatalogItemList.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CatalogItemListAssociation.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/DynamicCatalogItemList.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/OrderItemAdjustment.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ItemAttribute.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/UserRole.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/BasePrice.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/OrderAdjustment.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/Promotion.orm.xml</mapping-file>
+
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="false"/>

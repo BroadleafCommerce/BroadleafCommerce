@@ -19,7 +19,7 @@
 		WHERE role.user.id = :userId</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.profile.domain.BroadleafUser" name="BroadleafUser">
+	<entity class="org.broadleafcommerce.profile.domain.BroadleafUser" name="user">
         <table name="BLC_USER" >
         	<unique-constraint>
         		<column-name>USER_NAME</column-name>

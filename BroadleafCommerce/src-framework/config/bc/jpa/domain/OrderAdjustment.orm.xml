@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+	<entity class="org.broadleafcommerce.promotion.domain.OrderAdjustment" name="orderAdjustment">
+        <table name="BLC_ORDER_ADJUSTMENTS" >        	
+        </table>
+        <inheritance strategy="JOINED"/>
+
+        <attributes>
+            <id name="id">            	
+            	<column name="ORDER_ADJUSTMENT_ID"/>
+                <generated-value/>                
+            </id>
+            <many-to-one name="order" >
+				<join-column name="ORDER_ID" />
+            </many-to-one>
+			<many-to-one name="promotion" >
+				<join-column name="PROMOTION_ID"/>
+			</many-to-one>
+        </attributes>
+    </entity>
+
+
+
+</entity-mappings>

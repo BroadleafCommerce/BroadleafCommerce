@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+	<embeddable class="org.broadleafcommerce.common.domain.Auditable">
+		<attributes>
+			<basic name="dateCreated">
+				<column name="DATE_CREATED" updatable="false"/>
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="createdBy">
+				<column name="CREATED_BY" updatable="false"/>
+			</basic>
+			<basic name="dateUpdated">
+				<column name="DATE_UPDATED" />
+				<temporal>TIMESTAMP</temporal>
+			</basic>
+			<basic name="updatedBy">
+				<column name="UPDATED_BY" />
+			</basic>
+		</attributes>
+	</embeddable>
+	
+</entity-mappings>

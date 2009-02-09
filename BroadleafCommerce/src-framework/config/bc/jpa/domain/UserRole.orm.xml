@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+
+	<entity class="org.broadleafcommerce.profile.domain.UserRole" name="userRole">
+        <table name="BLC_USER_ROLE" >
+        </table>
+        <inheritance strategy="JOINED"/>
+		<entity-listeners>
+			<entity-listener class="org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener" />
+		</entity-listeners>
+		        
+        <attributes>
+            <id name="id">            	
+            	<column name="USER_ROLE_ID"/>
+                <generated-value/>
+                
+            </id>
+            <basic name="roleName">
+                <column name="ROLE_NAME" />
+            </basic>
+			<many-to-one name="user" target-entity="org.broadleafcommerce.profile.domain.BroadleafUser">
+				<join-column name="user"/>
+			</many-to-one>
+			<transient name="logger"/>			            
+        </attributes>
+    </entity>
+
+
+</entity-mappings>

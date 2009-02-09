@@ -2,33 +2,25 @@ package org.broadleafcommerce.promotion.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.order.domain.BroadleafOrder;
 
-@Entity
-@Table(name = "ORDER_ADJUSTMENTS")
+//@Entity
+//@Table(name = "BLC_ORDER_ADJUSTMENTS")
 public class OrderAdjustment implements Serializable {
 
 	public static final long serialVersionUID = 1L;
 	
-	@Id
-	@GeneratedValue
-	@Column(name = "ORDER_ADJUSTMENT_ID")
+//	@Id
+//	@GeneratedValue
+//	@Column(name = "ORDER_ADJUSTMENT_ID")
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name = "SALES_ORDER_ID")
-	private BroadleafOrder salesOrder;
+//	@ManyToOne
+//	@JoinColumn(name = "SALES_ORDER_ID")
+	private BroadleafOrder order;
 	
-	@ManyToOne
-	@JoinColumn(name = "PROMOTIONAL_ID")
+//	@ManyToOne
+//	@JoinColumn(name = "PROMOTIONAL_ID")
 	private Promotion promotion;
 
 	public Long getId() {
@@ -40,11 +32,11 @@ public class OrderAdjustment implements Serializable {
 	}
 
 	public BroadleafOrder getSalesOrder() {
-		return salesOrder;
+		return order;
 	}
 
 	public void setSalesOrder(BroadleafOrder salesOrder) {
-		this.salesOrder = salesOrder;
+		this.order = salesOrder;
 	}
 
 	public Promotion getPromotion() {

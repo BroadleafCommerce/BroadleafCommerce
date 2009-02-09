@@ -2,37 +2,31 @@ package org.broadleafcommerce.promotion.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "PROMOTION")
+//@Entity
+//@Table(name = "BLC_PROMOTION")
 public class Promotion implements Serializable {
 
 	
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue
-	@Column(name = "PROMOTION_ID")
+//	@Id
+//	@GeneratedValue
+//	@Column(name = "PROMOTION_ID")
 	private Long id;
 	
-	@Column(name = "PROMOTION_TYPE")
+//	@Column(name = "PROMOTION_TYPE")
 	private String type;
 	
-	@Column(name = "PROMOTION_REFERENCE")
+//	@Column(name = "PROMOTION_REFERENCE")
 	private String reference;
 	
-	@Column(name = "PROMOTION_DISCOUNT")
+//	@Column(name = "PROMOTION_DISCOUNT")
 	private double discount;
 	
-	@Column(name = "PROMOTION_USES")
+//	@Column(name = "PROMOTION_USES")
 	private int uses;
 	
-	@Column(name = "PROMOTIONS_APPLIED")
+//	@Column(name = "PROMOTIONS_APPLIED")
 	private int applied;
 
 	public Long getId() {
