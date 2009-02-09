@@ -27,5 +27,7 @@
 	<classpathentry kind="lib" path="lib/common/bin/velocity-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/lucene-core-2.4.0.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/lucene-analyzers.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/drools-compiler-4.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/drools-core-4.0.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
