@@ -12,7 +12,7 @@ public class ContactInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-//    @SuppressWarnings("unused")
+    @SuppressWarnings("unused")
 //    @Transient
     private final Log logger = LogFactory.getLog(getClass());
 
