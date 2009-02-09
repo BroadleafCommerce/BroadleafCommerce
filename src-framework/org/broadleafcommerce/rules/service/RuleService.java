@@ -1,16 +1,20 @@
 package org.broadleafcommerce.rules.service;
 
-import java.util.List;
+import java.io.File;
 
-import org.broadleafcommerce.rules.domain.PromotionRuleCategory;
 import org.broadleafcommerce.rules.domain.ShoppingCartPromotion;
+import org.drools.rule.Package;
 
 public interface RuleService {
 
-	public List<PromotionRuleCategory> readAllRuleCategories();
-	
 	public ShoppingCartPromotion saveShoppingCartPromotion(ShoppingCartPromotion shoppingCartPromotion);
-	
+
 	public ShoppingCartPromotion readShoppingCartPromotionById(Long id);
-	
+
+	public Package addRuleToNewPackage(File drlFile);
+
+	public void mergePackageWithRuleBase(Package pkg);
+
+	public void writeRuleFile(ShoppingCartPromotion shoppingCartPromotion);
+
 }
