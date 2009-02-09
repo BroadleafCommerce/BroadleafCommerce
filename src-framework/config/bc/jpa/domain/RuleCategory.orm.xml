@@ -7,4 +7,20 @@
 		<query>SELECT promotionRuleCategory FROM org.broadleafcommerce.rules.domain.PromotionRuleCategory promotionRuleCategory</query>
 	</named-query>
 
+
+	<entity class="org.broadleafcommerce.rules.domain.PromotionRuleCategory" name="promotionRuleCategory">
+        <table name="BLC_PROMOTION_RULE_CATEGORY_DEFINITION" >        	
+        </table>
+        <inheritance strategy="JOINED"/>
+
+        <attributes>
+            <id name="id">            	
+            	<column name="PROMOTION_RULE_CATEGORY_ID"/>
+                <generated-value/>                
+            </id>
+            <basic name="name">
+                <column name="NAME" />
+            </basic>
+        </attributes>
+    </entity>
 </entity-mappings>

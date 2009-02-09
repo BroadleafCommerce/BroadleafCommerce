@@ -8,7 +8,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderPayment;
 import org.springframework.stereotype.Repository;
 
@@ -38,7 +38,7 @@ public class OrderPaymentDaoJpa implements OrderPaymentDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<OrderPayment> readOrderPaymentsForOrder(Order order) {
+    public List<OrderPayment> readOrderPaymentsForOrder(BroadleafOrder order) {
         Query query = em.createNamedQuery("READ_ORDERS_PAYMENTS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();

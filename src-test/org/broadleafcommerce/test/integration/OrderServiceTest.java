@@ -8,7 +8,7 @@ import org.broadleafcommerce.catalog.dao.SellableItemDaoJpa;
 import org.broadleafcommerce.catalog.domain.SellableItem;
 import org.broadleafcommerce.order.dao.OrderPaymentDaoJpa;
 import org.broadleafcommerce.order.dao.OrderShippingDaoJpa;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.OrderPayment;
 import org.broadleafcommerce.order.domain.OrderShipping;
@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
 
 public class OrderServiceTest extends BaseTest {
 
-    private Order order = null;
+    private BroadleafOrder order = null;
 
     private List<OrderItem> orderItems = null;
 
@@ -52,7 +52,7 @@ public class OrderServiceTest extends BaseTest {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
 
-        Order order = soService.createOrderForCustomer(customer);
+        BroadleafOrder order = soService.createOrderForCustomer(customer);
         assert order != null;
         assert order.getId() != null;
         this.order = order;
@@ -62,7 +62,7 @@ public class OrderServiceTest extends BaseTest {
     public void addContactInfoToOrderFromObj() {
         ContactInfo contactInfo = (contactService.readContactInfoByUserId(order.getCustomer().getId())).get(0);
         assert contactInfo.getId() != null;
-        Order order = soService.addContactInfoToOrder(this.order, contactInfo);
+        BroadleafOrder order = soService.addContactInfoToOrder(this.order, contactInfo);
         assert order != null;
         assert order.getContactInfo() != null;
         assert order.getContactInfo().getId().equals(contactInfo.getId());
@@ -111,7 +111,7 @@ public class OrderServiceTest extends BaseTest {
     public void createOrderForCustomerFromId() {
         String username = "customer1";
         Customer customer = customerService.readCustomerByUsername(username);
-        Order order = soService.createOrderForCustomer(customer.getId());
+        BroadleafOrder order = soService.createOrderForCustomer(customer.getId());
         assert order != null;
         assert order.getId() != null;
     }
@@ -120,7 +120,7 @@ public class OrderServiceTest extends BaseTest {
     public void addContactInfoToOrderFromId() {
         ContactInfo contactInfo = (contactService.readContactInfoByUserId(order.getCustomer().getId())).get(0);
         assert contactInfo.getId() != null;
-        Order order = soService.addContactInfoToOrder(this.order.getId(), contactInfo.getId());
+        BroadleafOrder order = soService.addContactInfoToOrder(this.order.getId(), contactInfo.getId());
         assert order != null;
         assert order.getContactInfo() != null;
         assert order.getContactInfo().getId().equals(contactInfo.getId());
@@ -182,7 +182,7 @@ public class OrderServiceTest extends BaseTest {
     public void getOrdersForCustomerFromObj() {
         String username = "customer1";
         Customer customer = customerService.readCustomerByUsername(username);
-        List<Order> orders = soService.getOrdersForCustomer(customer);
+        List<BroadleafOrder> orders = soService.getOrdersForCustomer(customer);
         assert orders != null;
         assert orders.size() > 0;
     }
@@ -191,7 +191,7 @@ public class OrderServiceTest extends BaseTest {
     public void getOrdersForCustomerFromId() {
         String username = "customer1";
         Customer customer = customerService.readCustomerByUsername(username);
-        List<Order> orders = soService.getOrdersForCustomer(customer.getId());
+        List<BroadleafOrder> orders = soService.getOrdersForCustomer(customer.getId());
         assert orders != null;
         assert orders.size() > 0;
     }

@@ -2,7 +2,7 @@ package org.broadleafcommerce.order.dao;
 
 import java.util.List;
 
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderPayment;
 
 public interface OrderPaymentDao {
@@ -11,7 +11,7 @@ public interface OrderPaymentDao {
 	
 	public OrderPayment maintainOrderPayment(OrderPayment orderPayment);
 	
-	public List<OrderPayment> readOrderPaymentsForOrder(Order order);
+	public List<OrderPayment> readOrderPaymentsForOrder(BroadleafOrder order);
 	
 	
 }

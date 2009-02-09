@@ -20,7 +20,7 @@ public class OrderShipping implements Serializable {
 	
 //	@ManyToOne
 //	@JoinColumn(name = "ORDER_ID")
-	private Order order;
+	private BroadleafOrder order;
 	
 //	@ManyToOne
 //	@JoinColumn(name = "ADDRESS_ID")
@@ -40,11 +40,11 @@ public class OrderShipping implements Serializable {
 		this.id = id;
 	}
 
-	public Order getOrder() {
+	public BroadleafOrder getOrder() {
 		return order;
 	}
 
-	public void setOrder(Order salesOrder) {
+	public void setOrder(BroadleafOrder salesOrder) {
 		this.order = salesOrder;
 	}
 

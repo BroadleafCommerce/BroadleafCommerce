@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 
 @Entity
 @Table(name = "ORDER_ADJUSTMENTS")
@@ -25,7 +25,7 @@ public class OrderAdjustment implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "SALES_ORDER_ID")
-	private Order salesOrder;
+	private BroadleafOrder salesOrder;
 	
 	@ManyToOne
 	@JoinColumn(name = "PROMOTIONAL_ID")
@@ -39,11 +39,11 @@ public class OrderAdjustment implements Serializable {
 		this.id = id;
 	}
 
-	public Order getSalesOrder() {
+	public BroadleafOrder getSalesOrder() {
 		return salesOrder;
 	}
 
-	public void setSalesOrder(Order salesOrder) {
+	public void setSalesOrder(BroadleafOrder salesOrder) {
 		this.salesOrder = salesOrder;
 	}
 

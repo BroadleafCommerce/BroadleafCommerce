@@ -2,39 +2,31 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import org.broadleafcommerce.catalog.domain.SellableItem;
 
-@Entity
-@Table(name = "SC_ORDER_ITEM")
+//@Entity
+//@Table(name = "SC_ORDER_ITEM")
 public class OrderItem implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue
-	@Column(name = "ORDER_ITEM_ID")
+//	@Id
+//	@GeneratedValue
+//	@Column(name = "ORDER_ITEM_ID")
 	private Long id;
 	
-	@ManyToOne
-	@JoinColumn(name = "SELLABLE_ITEM_ID", nullable=false)
+//	@ManyToOne
+//	@JoinColumn(name = "SELLABLE_ITEM_ID", nullable=false)
 	private SellableItem sellableItem;
 	
-	@ManyToOne
-	@JoinColumn(name = "SC_ORDER_ID", nullable = false)
-	private Order order;
+//	@ManyToOne
+//	@JoinColumn(name = "SC_ORDER_ID", nullable = false)
+	private BroadleafOrder order;
 	
-	@Column(name = "FINAL_PRICE")
+//	@Column(name = "FINAL_PRICE")
 	private double finalPrice;
 	
-	@Column(name = "QUANTITY")
+//	@Column(name = "QUANTITY")
 	private int quantity;
 
 	public Long getId() {
@@ -53,11 +45,11 @@ public class OrderItem implements Serializable {
 		this.sellableItem = sellableItem;
 	}
 
-	public Order getOrder() {
+	public BroadleafOrder getOrder() {
 		return order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(BroadleafOrder order) {
 		this.order = order;
 	}
 

@@ -17,4 +17,37 @@
 		WHERE category.urlKey = :urlKey</query>
 	</named-query>
 
+	<entity class="org.broadleafcommerce.catalog.domain.Category" name="category">
+        <table name="BLC_CATEGORY" >        	
+        </table>
+        <inheritance strategy="JOINED"/>
+
+        <attributes>
+            <id name="id">            	
+            	<column name="CATEGORY_ID"/>
+                <generated-value/>                
+            </id>
+            <basic name="name">
+                <column name="NAME" />
+            </basic>
+            <basic name="url">
+                <column name="URL"/>
+            </basic>
+            <basic name="urlKey">
+                <column name="URL_KEY"/>
+            </basic>
+            <many-to-one name="parentCategory" target-entity="org.broadleafcommerce.catalog.domain.Category">
+				<join-column name="PARENT_CATEGORY_ID" nullable="false"/>
+            </many-to-one>
+			<many-to-many name="catalogItems" >
+				<join-table name="CATELOG_ITEM_ASSOCIATIONS">
+					<join-column name="CATEGORY_ID" referenced-column-name="CATEGORY_ID"/>
+					<inverse-join-column name="CATALOG_ITEM_ID" referenced-column-name="CATALOG_ITEM_ID"/>
+				</join-table>
+			</many-to-many>
+			<embedded name="auditable"></embedded>
+        </attributes>
+    </entity>
+
+
 </entity-mappings>

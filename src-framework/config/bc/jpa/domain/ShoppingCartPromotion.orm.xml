@@ -8,4 +8,52 @@
 		WHERE promotionRuleCategory.id = :id</query>
 	</named-query>
 
+	<entity class="org.broadleafcommerce.rules.domain.ShoppingCartPromotion" name="shoppingCartPromotion">
+        <table name="BLC_PROMOTION_RULE_DEFINITION" >        	
+        </table>
+        <inheritance strategy="JOINED"/>
+
+        <attributes>
+            <id name="id">            	
+            	<column name="SHOPPING_CART_PROMOTION_RULE_ID"/>
+                <generated-value/>                
+            </id>
+            <basic name="name">
+                <column name="NAME" />
+            </basic>
+            <basic name="description">
+                <column name="DESCRIPTION" />
+            </basic>
+            <basic name="category">
+                <column name="CATEGORY" />
+            </basic>
+            <basic name="activationDate">
+                <column name="ACTIVATION_DATE" />
+            </basic>
+            <basic name="expirationDate">
+                <column name="EXPIRATION_DATE" />
+            </basic>
+            <basic name="created">
+                <column name="CREATED" />
+            </basic>
+            <basic name="modified">
+                <column name="MODIFIED" />
+            </basic>
+            <basic name="priority">
+                <column name="PRIORITY" />
+            </basic>
+            <basic name="couponCode">
+                <column name="COUPON_CODE" />
+            </basic>
+            <basic name="customerRedemptionLimit">
+                <column name="CUSTOMER_REDEMPTION_LIMIT" />
+            </basic>
+            <basic name="couponRedemptionLimit">
+                <column name="COUPON_REDEMPTION_LIMIT" />
+            </basic>
+            
+        </attributes>
+    </entity>
+
+
 </entity-mappings>

@@ -8,7 +8,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.springframework.stereotype.Repository;
 
@@ -44,7 +44,7 @@ public class OrderItemDaoJpa implements OrderItemDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<OrderItem> readOrderItemsForOrder(Order order) {
+    public List<OrderItem> readOrderItemsForOrder(BroadleafOrder order) {
         Query query = em.createNamedQuery("READ_ORDER_ITEMS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();

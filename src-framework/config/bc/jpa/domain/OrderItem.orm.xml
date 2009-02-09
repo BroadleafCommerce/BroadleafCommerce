@@ -8,4 +8,31 @@
 		WHERE orderItem.order.id = :orderId</query>
 	</named-query>
 
+	<entity class="org.broadleafcommerce.order.domain.OrderItem" name="orderItem">
+        <table name="BLC_ORDER_ITEM" >        	
+        </table>
+        <inheritance strategy="JOINED"/>
+
+        <attributes>
+            <id name="id">            	
+            	<column name="ORDER_ITEM_ID"/>
+                <generated-value/>                
+            </id>
+            <basic name="finalPrice">
+                <column name="FINAL_PRICE" />
+            </basic>
+            <basic name="quantity">
+                <column name="QUANTITY"/>
+            </basic>
+            <many-to-one name="sellableItem" target-entity="org.broadleafcommerce.catalog.domain.SellableItem">
+				<join-column name="SELLABLE_ITEM_ID" nullable="false"/>
+            </many-to-one>
+			<many-to-one name="order" >
+				<join-column name="ORDER_ID"/>
+			</many-to-one>
+        </attributes>
+    </entity>
+
+
+
 </entity-mappings>
