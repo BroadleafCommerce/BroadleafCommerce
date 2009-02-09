@@ -10,11 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.controller.validator.CheckoutValidator;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderPayment;
 import org.broadleafcommerce.order.domain.OrderShipping;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.BroadleafCustomerAddress;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.AddressService;
@@ -47,13 +48,13 @@ public class CheckoutController extends AbstractWizardFormController {
     protected Object formBackingObject(HttpServletRequest request) throws ServletException {
         Checkout checkout = new Checkout();
 
-        Order order;
+        BroadleafOrder order;
 
         OrderShipping orderShipping = new OrderShipping();
-        orderShipping.setAddress(new Address());
+        orderShipping.setAddress(new BroadleafCustomerAddress());
 
         OrderPayment orderPayment = new OrderPayment();
-        orderPayment.setAddress(new Address());
+        orderPayment.setAddress(new BroadleafCustomerAddress());
 
         ContactInfo contactInfo = new ContactInfo();
 

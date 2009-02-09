@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.BroadleafCustomerAddress;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.AddressService;
 import org.broadleafcommerce.profile.service.AddressStandardizationService;
@@ -46,7 +47,7 @@ public class AddressFormController extends SimpleFormController {
     }
 
     protected Object formBackingObject(HttpServletRequest request) throws ServletException {
-        Address address = new Address();
+        Address address = new BroadleafCustomerAddress();
 
         if (request.getParameter("addressId") != null) {
             address = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
@@ -62,7 +63,7 @@ public class AddressFormController extends SimpleFormController {
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Address addressFromDB = new Address();
+        Address addressFromDB = new BroadleafCustomerAddress();
         Address address = (Address) command;
         Customer customer = customerService.readCustomerByUsername(auth.getName());
 

@@ -2,7 +2,7 @@ package org.broadleafcommerce.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -30,7 +30,7 @@ public class ListBasketFormController {
 
     @ModelAttribute("basket")
     public Basket getbasket() {
-        Order basketOrder = getCustomerBasket();
+        BroadleafOrder basketOrder = getCustomerBasket();
         basket.setOrder(basketOrder);
         basket.setItems(orderService.getItemsForOrder(basketOrder.getId()));
         return basket;
@@ -44,7 +44,7 @@ public class ListBasketFormController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String addSellableItem(@RequestParam("sellableItemId") Long sellableItemId) {
-        Order basketOrder = getCustomerBasket();
+    	BroadleafOrder basketOrder = getCustomerBasket();
         orderService.addItemToOrder(basketOrder.getId(), sellableItemId, 1);
         return "redirect:" + redirectUrl;
     }
@@ -64,12 +64,12 @@ public class ListBasketFormController {
 
     @RequestMapping(method = RequestMethod.GET)
     public String removeItem(@RequestParam("sellableItemId") Long sellableItemId) {
-        Order basketOrder = getCustomerBasket();
+        BroadleafOrder basketOrder = getCustomerBasket();
         orderService.removeItemFromOrder(basketOrder.getId(), sellableItemId);
         return "redirect:" + redirectUrl;
     }
 
-    private Order getCustomerBasket() {
+    private BroadleafOrder getCustomerBasket() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Customer customer = customerService.readCustomerByUsername(auth.getName());
         return orderService.getCurrentBasketForUserId(customer.getId());

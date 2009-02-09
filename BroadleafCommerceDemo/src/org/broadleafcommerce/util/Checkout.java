@@ -2,7 +2,7 @@ package org.broadleafcommerce.util;
 
 import java.util.List;
 
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.OrderPayment;
 import org.broadleafcommerce.order.domain.OrderShipping;
@@ -10,7 +10,7 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 
 public class Checkout {
-	private Order order;
+	private BroadleafOrder order;
 	private List<OrderItem> orderItems;
 	private List<ContactInfo> userContactInfo;
 	private List<Address> addressList;
@@ -21,10 +21,10 @@ public class Checkout {
 	private OrderShipping orderShipping;
 	private OrderPayment orderPayment;
 	
-	public Order getOrder() {
+	public BroadleafOrder getOrder() {
 		return order;
 	}
-	public void setOrder(Order order) {
+	public void setOrder(BroadleafOrder order) {
 		this.order = order;
 	}
 

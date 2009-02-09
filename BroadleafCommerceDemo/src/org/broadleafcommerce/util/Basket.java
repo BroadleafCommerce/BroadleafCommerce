@@ -2,12 +2,12 @@ package org.broadleafcommerce.util;
 
 import java.util.List;
 
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderItem;
 
 public class Basket {
 
-	private Order order;
+	private BroadleafOrder order;
 	
 	private List<OrderItem> items;
 
@@ -19,11 +19,11 @@ public class Basket {
 		this.items = items;
 	}
 
-	public Order getOrder() {
+	public BroadleafOrder getOrder() {
 		return order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(BroadleafOrder order) {
 		this.order = order;
 	}
 	

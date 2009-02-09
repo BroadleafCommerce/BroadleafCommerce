@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
@@ -35,14 +35,14 @@ public class ListOrdersFormController extends SimpleFormController {
 
     @Override
     protected Object formBackingObject(HttpServletRequest request)throws ServletException {
-        return new Order();
+        return new BroadleafOrder();
     }
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Customer customer = customerService.readCustomerByUsername(auth.getName());
-        List<Order> orderList = orderService.getOrdersForCustomer(customer.getId());
+        List<BroadleafOrder> orderList = orderService.getOrdersForCustomer(customer.getId());
         Map<Object, Object> model = new HashMap<Object, Object>();
         model.put("orderList", orderList);
         return new ModelAndView("listOrders", model);
