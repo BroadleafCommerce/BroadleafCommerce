@@ -9,4 +9,19 @@
 		</query>
 	</named-query>
 
+	<entity class="org.broadleafcommerce.rules.domain.CouponCode" name="couponCode">
+		<table name="BLC_COUPON_CODE">
+		</table>
+		<attributes>
+            <id name="id">            	
+            	<column name="COUPON_ID"/>
+                <generated-value/>
+                
+            </id>		
+			<basic name="code">
+				<column name="CODE"/>
+			</basic>
+		</attributes>
+	</entity>
+
 </entity-mappings>
