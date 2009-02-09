@@ -48,5 +48,13 @@
         </attributes>
     </entity>
 
+	<entity class="org.broadleafcommerce.order.domain.BasketOrder" name="basketOrder">
+		<discriminator-value>BASKET</discriminator-value>
+		<discriminator-column name="TYPE"/>
+	</entity>
 
+	<entity class="org.broadleafcommerce.order.domain.SubmittedOrder" name="submittedOrder">
+		<discriminator-value>SUBMITTED</discriminator-value>
+		<discriminator-column name="TYPE"/>
+	</entity>
 </entity-mappings>
