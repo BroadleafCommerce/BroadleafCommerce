@@ -208,8 +208,8 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         domAddr.addElement(ADDRESS1_ELEM).setText((address.getAddressLine2() == null) ? EMPTY_STRING : address.getAddressLine2());
         domAddr.addElement(ADDRESS2_ELEM).setText((address.getAddressLine1() == null) ? EMPTY_STRING :address.getAddressLine1());
         domAddr.addElement(CITY_ELEM).setText((address.getCity() == null) ? EMPTY_STRING :address.getCity());
-        domAddr.addElement(STATE_ELEM).setText((address.getStateCode() == null) ? EMPTY_STRING :address.getStateCode());
-        domAddr.addElement(ZIP5_ELEM).setText((address.getZipCode() == null) ? EMPTY_STRING :address.getZipCode());
+        domAddr.addElement(STATE_ELEM).setText((address.getStateProvRegion() == null) ? EMPTY_STRING :address.getStateProvRegion());
+        domAddr.addElement(ZIP5_ELEM).setText((address.getPostalCode() == null) ? EMPTY_STRING :address.getPostalCode());
         domAddr.addElement(ZIP4_ELEM).setText((address.getZipFour() == null) ? EMPTY_STRING :address.getZipFour());
 
         StringWriter strWriter = new StringWriter();

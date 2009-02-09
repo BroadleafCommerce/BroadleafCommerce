@@ -4,6 +4,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.BroadleafCustomer;
+import org.broadleafcommerce.profile.domain.BroadleafCustomerAddress;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.AddressStandardizationServiceImpl;
 import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
@@ -37,12 +38,12 @@ public class USPSAddressStandardizationServiceTest extends BaseTest{
         customer.setId( new Long(7427));
         customer.setUsername("customer1");
         customer.setPassword("customer1");
-        Address addr = new Address();
+        Address addr = new BroadleafCustomerAddress();
         addr.setCustomer(customer);
         addr.setAddressName("WORK");
         addr.setAddressLine1("6406 Ivy Lane");
         addr.setCity("Greenbelt");
-        addr.setStateCode("MD");
+        addr.setStateProvRegion("MD");
 
         return addr;
     }
@@ -53,8 +54,8 @@ public class USPSAddressStandardizationServiceTest extends BaseTest{
         try {
             addressVerificationSetUp();
             Address testAddress = getValidAddress();
-            testAddress.setZipCode("70057");
-            testAddress.setStateCode("CL");
+            testAddress.setPostalCode("70057");
+            testAddress.setStateProvRegion("CL");
 
             AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
             if(standardizedResponse.isErrorDetected()){
@@ -74,7 +75,7 @@ public class USPSAddressStandardizationServiceTest extends BaseTest{
             addressVerificationSetUp();
             Address testAddress = getValidAddress();
             AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
-            logger.debug("Get ZipCode: "+standardizedResponse.getAddress().getZipCode());
+            logger.debug("Get ZipCode: "+standardizedResponse.getAddress().getPostalCode());
             if(! standardizedResponse.isErrorDetected()){
                 assert true;
             }
