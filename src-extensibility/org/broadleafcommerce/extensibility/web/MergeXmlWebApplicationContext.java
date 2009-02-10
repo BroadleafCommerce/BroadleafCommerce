@@ -1,7 +1,10 @@
 package org.broadleafcommerce.extensibility.web;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import org.broadleafcommerce.extensibility.context.MergeApplicationContextXmlConfigResource;
 import org.springframework.beans.BeansException;
@@ -59,29 +62,61 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 	 * @see #getResourcePatternResolver
 	 */
 	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
-		/*
-		 * TODO do we want to load the standard configs from our framework jar? If so, we can skip retrieval of the
-		 * config location and just load the files as input streams from the jar. However, the patch location
-		 * will still be a viable location to specify in the web.xml.
-		 */
 		String[] configLocations = getConfigLocations();
+		String[] broadleafConfigLocations = getStandardConfigLocations();
+		int totalLength = broadleafConfigLocations.length;
 		if (configLocations != null) {
-			InputStream[] sources = new InputStream[configLocations.length];
-			for (int i = 0; i < configLocations.length; i++) {
-				Resource resource = getResourceByPath(configLocations[i]);
-				sources[i] = resource.getInputStream();
-			}
-			String patchLocation = getPatchLocation();
-			String[] patchLocations = StringUtils.tokenizeToStringArray(patchLocation, CONFIG_LOCATION_DELIMITERS);
-			InputStream[] patches = new InputStream[patchLocations.length];
-			for (int i = 0; i < patchLocations.length; i++) {
-				Resource resource = getResourceByPath(patchLocations[i]);
-				patches[i] = resource.getInputStream();
-			}
-			Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
-
-			reader.loadBeanDefinitions(resources);
+			totalLength += configLocations.length;
 		}
+		String[] totalLocations = new String[totalLength];
+		System.arraycopy(broadleafConfigLocations, 0, totalLocations, 0, broadleafConfigLocations.length);
+		if (configLocations != null) {
+			System.arraycopy(configLocations,0,totalLocations,broadleafConfigLocations.length, configLocations.length);
+		}
+		
+		InputStream[] sources = new InputStream[totalLocations.length];
+		for (int i = 0; i < configLocations.length; i++) {
+			Resource resource = getResourceByPath(configLocations[i]);
+			sources[i] = resource.getInputStream();
+		}
+		String patchLocation = getPatchLocation();
+		String[] patchLocations = StringUtils.tokenizeToStringArray(patchLocation, CONFIG_LOCATION_DELIMITERS);
+		InputStream[] patches = new InputStream[patchLocations.length];
+		for (int i = 0; i < patchLocations.length; i++) {
+			Resource resource = getResourceByPath(patchLocations[i]);
+			patches[i] = resource.getInputStream();
+		}
+		Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
+
+		reader.loadBeanDefinitions(resources);
+	}
+	
+	private String[] getStandardConfigLocations() throws IOException {
+		String[] response;
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new InputStreamReader(MergeXmlWebApplicationContext.class.getResourceAsStream("BroadleafStandardConfigLocations.txt")));
+			ArrayList<String> items = new ArrayList<String>();
+			boolean eof = false;
+			while (!eof) {
+				String temp = reader.readLine();
+				if (temp == null) {
+					eof = true;
+				} else {
+					if (!temp.startsWith("#")) {
+						items.add(temp);
+					}
+				}
+			}
+			response = new String[]{};
+			response = items.toArray(response);
+		} finally {
+			if (reader != null) {
+				try{ reader.close(); } catch (Throwable e) {}
+			}
+		}
+		
+		return response;
 	}
 
 	/**

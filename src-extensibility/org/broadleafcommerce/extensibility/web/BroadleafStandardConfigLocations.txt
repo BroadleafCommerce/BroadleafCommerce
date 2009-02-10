@@ -1,0 +1,4 @@
+#specify fully qualified resource path. e.g.: /org/broadleafcommerce/extensibility/applicationContext.xml
+#separate each entry with a new line
+#comments may be added by placing a pound symbol '#' in front of the line
+/applicationContext.xml
