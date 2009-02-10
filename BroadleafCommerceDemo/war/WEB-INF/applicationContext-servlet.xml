@@ -132,7 +132,7 @@
 		<property name="ruleService" ref="ruleService" />
 		<property name="formView" value="createShoppingCartPromotion" />
 	</bean>
-	
+
 	<bean id="createTestOrder" class="org.broadleafcommerce.controller.CreateTestOrderFormController">
 		<property name="commandName" value="couponCode" />
 		<property name="commandClass" value="org.broadleafcommerce.rules.domain.CouponCode" />
@@ -259,8 +259,7 @@
 		<property name="viewName" value="welcome" />
 	</bean>
 
-
-		<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
 		<property name="alwaysUseFullPath" value="true" />
         <property name="interceptors">
@@ -302,5 +301,11 @@
 		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
 		<property name="order" value="1" />
 	</bean>
+
+	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
+
+	<!-- Entity mappings - override for extensibility -->
+	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
+	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.BroadleafCustomer"/>
 
 </beans>
