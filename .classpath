@@ -7,7 +7,7 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src-profile"/>
 	<classpathentry kind="lib" path="lib/common/bin/ejb3-persistence.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring.jar" sourcepath="lib/common/source/spring-sources.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/commons-beanutils-1.7.0.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/commons-chain-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/commons-collections-3.2.jar"/>

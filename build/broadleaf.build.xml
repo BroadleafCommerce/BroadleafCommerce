@@ -148,7 +148,12 @@
 			</fileset>
 			<fileset dir="${config.dir}">
 				<include name="**/*.properties" />
-				<include name="**/*.xml" />
+			</fileset>
+		</copy>
+
+		<copy tofile="${stage.dir}/layout-jar/applicationContext.xml">
+			<fileset dir="${spring.config.dir}">
+				<include name="applicationContext.xml" />
 			</fileset>
 		</copy>
 
@@ -182,8 +187,13 @@
 			</fileset>
 			<fileset dir="${config.dir}">
 				<include name="**/*.properties" />
-				<include name="**/*.xml" />
 				<include name="**/*.vm" />
+			</fileset>
+		</copy>
+
+		<copy tofile="${stage.dir}/profile-jar/applicationContext.xml">
+			<fileset dir="${spring.config.dir}">
+				<include name="applicationContext.xml" />
 			</fileset>
 		</copy>
 

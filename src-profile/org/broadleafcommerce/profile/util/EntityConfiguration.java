@@ -14,7 +14,7 @@ public class EntityConfiguration implements ApplicationContextAware {
     private ApplicationContext applicationcontext;
 
     @SuppressWarnings("unchecked")
-    public Class getEntityClass(String beanId) {
+    public Class lookupEntityClass(String beanId) {
         Class clazz = null;
         if (entityMap.containsKey(beanId)) {
             clazz = entityMap.get(beanId);

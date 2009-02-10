@@ -2,6 +2,7 @@ package org.broadleafcommerce.profile.dao;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -9,9 +10,9 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.BroadleafUser;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("userDao")
@@ -22,6 +23,9 @@ public class UserDaoJpa implements UserDao {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Resource(name = "entityConfiguration")
+    private EntityConfiguration entityConfiguration;
 
     public User readUserByUsername(String username) {
         Query query = em.createNamedQuery("READ_USER_BY_USER_NAME");
@@ -59,8 +63,9 @@ public class UserDaoJpa implements UserDao {
         return user;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public User readUserById(Long id) {
-        return em.find(BroadleafUser.class, id);
+        return (User) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.User"), id);
     }
 }

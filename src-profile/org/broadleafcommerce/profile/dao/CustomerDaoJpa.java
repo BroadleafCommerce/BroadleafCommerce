@@ -1,5 +1,6 @@
 package org.broadleafcommerce.profile.dao;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -7,8 +8,8 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.BroadleafCustomer;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("customerDao")
@@ -20,9 +21,13 @@ public class CustomerDaoJpa implements CustomerDao {
     @PersistenceContext
     private EntityManager em;
 
+    @Resource(name = "entityConfiguration")
+    private EntityConfiguration entityConfiguration;
+
+    @SuppressWarnings("unchecked")
     @Override
     public Customer readCustomerById(Long id) {
-        return em.find(BroadleafCustomer.class, id);
+        return (Customer) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Customer"), id);
     }
 
     public Customer readCustomerByUsername(String username) {
