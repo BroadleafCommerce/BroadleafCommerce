@@ -95,7 +95,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 		String[] response;
 		BufferedReader reader = null;
 		try {
-			reader = new BufferedReader(new InputStreamReader(MergeXmlWebApplicationContext.class.getResourceAsStream("BroadleafStandardConfigLocations.txt")));
+			reader = new BufferedReader(new InputStreamReader(MergeXmlWebApplicationContext.class.getResourceAsStream("StandardConfigLocations.txt")));
 			ArrayList<String> items = new ArrayList<String>();
 			boolean eof = false;
 			while (!eof) {
