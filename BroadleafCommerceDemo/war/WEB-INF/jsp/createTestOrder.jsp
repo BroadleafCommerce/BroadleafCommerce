@@ -41,6 +41,11 @@
 		<input type="submit" class="saveButton" value="Save Changes" />
 	</div>
 	
+	<script type="text/javascript">
+		var date = new Date();
+		document.write("<h2>" + date + "</h2>");
+	</script>
+	
 </form:form>
 
 <a href="<c:url value="/logout"/>">Logout</a>
