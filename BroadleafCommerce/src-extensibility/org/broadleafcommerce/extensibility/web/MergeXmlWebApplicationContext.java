@@ -75,8 +75,8 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 		}
 		
 		InputStream[] sources = new InputStream[totalLocations.length];
-		for (int i = 0; i < configLocations.length; i++) {
-			Resource resource = getResourceByPath(configLocations[i]);
+		for (int i = 0; i < totalLocations.length; i++) {
+			Resource resource = getResourceByPath(totalLocations[i]);
 			sources[i] = resource.getInputStream();
 		}
 		String patchLocation = getPatchLocation();
