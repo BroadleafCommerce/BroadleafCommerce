@@ -103,8 +103,8 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 				if (temp == null) {
 					eof = true;
 				} else {
-					if (!temp.startsWith("#")) {
-						items.add(temp);
+					if (!temp.startsWith("#") && temp.trim().length() > 0) {
+						items.add(temp.trim());
 					}
 				}
 			}
