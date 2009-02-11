@@ -90,4 +90,10 @@
 
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
+	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
+
+	<!-- Entity mappings - override for extensibility -->
+	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
+	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.BroadleafCustomer"/>
+
 </beans>
