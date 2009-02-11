@@ -162,7 +162,7 @@
 
 	<bean id="listOrders" class="org.broadleafcommerce.controller.ListOrdersFormController">
 		<property name="commandName" value="listOrders" />
-		<property name="commandClass" value="org.broadleafcommerce.order.domain.Order" />
+		<property name="commandClass" value="org.broadleafcommerce.order.domain.BroadleafOrder" />
 		<property name="orderService" ref="orderService" />
 		<property name="customerService" ref="customerService"/>
 		<property name="formView" value="listOrders" />
@@ -301,11 +301,5 @@
 		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
 		<property name="order" value="1" />
 	</bean>
-
-	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
-
-	<!-- Entity mappings - override for extensibility -->
-	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
-	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.BroadleafCustomer"/>
 
 </beans>

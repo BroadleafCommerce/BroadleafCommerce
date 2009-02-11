@@ -91,12 +91,6 @@
 			</fileset>
 		</copy>
 
-		<copy tofile="${stage.dir}/extensibility-jar/applicationContext.xml">
-			<fileset dir="${spring.config.dir}">
-				<include name="applicationContext.xml" />
-			</fileset>
-		</copy>
-
 		<copy tofile="${stage.dir}/extensibility-jar/jdbc.properties">
 			<fileset dir="${jdbc.config.dir}">
 				<include name="jdbc.properties" />
@@ -151,12 +145,6 @@
 			</fileset>
 		</copy>
 
-		<copy tofile="${stage.dir}/layout-jar/applicationContext.xml">
-			<fileset dir="${spring.config.dir}">
-				<include name="applicationContext.xml" />
-			</fileset>
-		</copy>
-
 		<jar jarfile="${stage.dir}/broadleaf-layout.jar" basedir="${stage.dir}/layout-jar">
 			<include name="**/*.class" />
 			<include name="**/*.properties" />
@@ -188,12 +176,6 @@
 			<fileset dir="${config.dir}">
 				<include name="**/*.properties" />
 				<include name="**/*.vm" />
-			</fileset>
-		</copy>
-
-		<copy tofile="${stage.dir}/profile-jar/applicationContext.xml">
-			<fileset dir="${spring.config.dir}">
-				<include name="applicationContext.xml" />
 			</fileset>
 		</copy>
 

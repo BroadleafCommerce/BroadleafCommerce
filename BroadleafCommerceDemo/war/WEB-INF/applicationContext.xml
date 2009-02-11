@@ -19,9 +19,9 @@
 	<bean id="persistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
-				<value>classpath*:META-INF/persistence-framework.xml</value>
-				<value>classpath*:META-INF/persistence-profile.xml</value>
-				<value>classpath*:META-INF/persistence.xml</value>
+				<value>classpath:/META-INF/persistence-framework.xml</value>
+				<value>classpath:/META-INF/persistence-profile.xml</value>
+				<value>classpath:/META-INF/persistence.xml</value>
 			</list>
 		</property>
 		<property name="defaultDataSource" ref="dataSource"/>
@@ -95,5 +95,11 @@
          </value>
       </property>
    </bean>
+
+	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
+
+	<!-- Entity mappings - override for extensibility -->
+	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
+	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.BroadleafCustomer"/>
 
 </beans>
