@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.search.domain.SearchQuery;
 import org.broadleafcommerce.search.service.SearchService;
 import org.springframework.validation.BindException;
@@ -32,11 +32,11 @@ public class SearchController extends SimpleFormController {
 
 		SearchQuery input = (SearchQuery) command;
 		System.out.println("------------------------ Searching Index;");
-		List<SellableItem> sellableItems = searchService.performSearch(input.getQueryString());
+		List<Sku> skus = searchService.performSearch(input.getQueryString());
 		System.out.println("------------------------ Finished Searching Index;");
 
         Map<Object, Object> model = new HashMap<Object, Object>();
-        model.put("sellableItems", sellableItems);
+        model.put("skus", skus);
 
 		ModelAndView mav = new ModelAndView(getSuccessView(), model);
 

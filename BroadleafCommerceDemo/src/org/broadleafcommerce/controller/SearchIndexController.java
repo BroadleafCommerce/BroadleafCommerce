@@ -31,7 +31,7 @@ public class SearchIndexController extends SimpleFormController {
 			throws Exception {
 
 		System.out.println("------------------------ Creating Index;");
-		searchService.rebuildSellableItemIndex();
+		searchService.rebuildSkuIndex();
 		System.out.println("------------------------ Finished Creating Index;");
 
 		return super.onSubmit(request, response, command, errors);

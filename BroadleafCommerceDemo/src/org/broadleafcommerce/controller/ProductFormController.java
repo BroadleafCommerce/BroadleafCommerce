@@ -9,14 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.catalog.domain.CatalogItem;
 import org.broadleafcommerce.catalog.domain.ItemAttribute;
+import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
-public class CatalogItemFormController extends SimpleFormController {
+public class ProductFormController extends SimpleFormController {
     protected final Log logger = LogFactory.getLog(getClass());
     private CatalogService catalogService;
 
@@ -26,24 +26,24 @@ public class CatalogItemFormController extends SimpleFormController {
 
     protected Object formBackingObject(HttpServletRequest request)
                                 throws ServletException {
-        CatalogItem createCatalogItem = new CatalogItem();
+        Product createProduct = new Product();
 
-        if (request.getParameter("catalogItemId") != null) {
-            createCatalogItem = catalogService.readCatalogItemById(Long.valueOf(request.getParameter("catalogItemId")));
+        if (request.getParameter("productId") != null) {
+            createProduct = catalogService.readProductById(Long.valueOf(request.getParameter("productId")));
         }
-        Map<String, ItemAttribute> attribs = createCatalogItem.getItemAttributes();
+        Map<String, ItemAttribute> attribs = createProduct.getItemAttributes();
         if (attribs == null) {
             attribs = new HashMap<String, ItemAttribute>();
         }
         attribs.put("foo", new ItemAttribute());
 
-        return createCatalogItem;
+        return createProduct;
     }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
                              throws Exception {
-        CatalogItem catalogItem = (CatalogItem) command;
+        Product product = (Product) command;
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
 
@@ -53,7 +53,7 @@ public class CatalogItemFormController extends SimpleFormController {
             return showForm(request, response, errors);
         }
 
-        catalogService.saveCatalogItem(catalogItem);
+        catalogService.saveProduct(product);
         mav.addObject("saved", true);
 
         return mav;

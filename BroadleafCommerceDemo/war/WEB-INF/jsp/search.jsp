@@ -25,7 +25,7 @@
 		<th>Name</th>
 		<th>Price</th>
 	</tr>
-	<c:forEach var="item" items="${sellableItems}" varStatus="status">
+	<c:forEach var="item" items="${skus}" varStatus="status">
 		<tr>
 			<td><c:out value="${item.id}"/></td>
 			<td><c:out value="${item.name}"/></td>

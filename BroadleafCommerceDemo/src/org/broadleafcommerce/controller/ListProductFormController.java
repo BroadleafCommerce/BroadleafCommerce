@@ -9,7 +9,7 @@ import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.web.PaginationCommandObject;
 import org.broadleafcommerce.web.PaginationController;
 
-public class ListCatalogItemFormController extends PaginationController {
+public class ListProductFormController extends PaginationController {
 
     protected final Log logger = LogFactory.getLog(getClass());
     private CatalogService catalogService;
@@ -22,7 +22,7 @@ public class ListCatalogItemFormController extends PaginationController {
     protected void populatePaginatedList(Map<Object, Object> model,
             PaginationCommandObject object) {
         object.setPageSize(16);
-        List<?> catalogItemList = catalogService.readCatalogItemsByName("");
-        object.setFullList(catalogItemList);
+        List<?> productList = catalogService.readProductsByName("");
+        object.setFullList(productList);
     }
 }

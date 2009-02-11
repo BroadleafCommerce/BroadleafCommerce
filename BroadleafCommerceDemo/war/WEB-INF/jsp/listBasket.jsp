@@ -16,16 +16,16 @@
 	</tr>	
 	<c:forEach var="item" items="${basket.items}" varStatus="myRow">
 		<tr>
-			<td><c:out value="${item.sellableItem.catalogItem.name}"/></td>
-			<td><c:out value="${item.sellableItem.catalogItem.description}"/></td>
-			<td><c:out value="${item.sellableItem.price}"/></td>
+			<td><c:out value="${item.sku.product.name}"/></td>
+			<td><c:out value="${item.sku.product.description}"/></td>
+			<td><c:out value="${item.sku.price}"/></td>
 			<td>
 				<spring:bind path="basket.items[${myRow.index}].quantity">
 			      <input type="text" name="${status.expression}" value="${status.value}"/>
 			    </spring:bind>    
 			</td>
 			<td><c:out value="${item.finalPrice}"/></td>
-			<td><a href="<c:url value="/basket/removeItem.htm"><c:param name="sellableItemId" value="${item.id}"/></c:url>">Remove Item(s)</a></td>
+			<td><a href="<c:url value="/basket/removeItem.htm"><c:param name="skuId" value="${item.id}"/></c:url>">Remove Item(s)</a></td>
 		</tr>
 	</c:forEach>
 	</table>

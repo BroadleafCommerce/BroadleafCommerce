@@ -2,13 +2,13 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 	
-	<h1>Manage Catalog Items</h1>
+	<h1>Manage Products</h1>
 
 	<div id="listContainer">
-		<jsp:include page="listCatalogItemAjax.jsp"/>
+		<jsp:include page="listProductsAjax.jsp"/>
 	</div>
 	
-	<a href="<c:url value="/createCatalogItem.htm"/>">Create CatalogItem</a>
+	<a href="<c:url value="/createProduct.htm"/>">Create Product</a>
 	<br/>
 	<a href="<c:url value="/logout"/>">Logout</a>
 

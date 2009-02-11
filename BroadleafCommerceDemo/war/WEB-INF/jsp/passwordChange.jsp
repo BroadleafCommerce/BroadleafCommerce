@@ -6,8 +6,8 @@
 	<br/><br/>
 	<a href="<c:url value="/createAddress.htm" />">Create Address</a>
 	<a href="<c:url value="/listAddress.htm"/>">List Address</a>
-	<a href="<c:url value="/createCatalogItem.htm"/>">Create CatalogItem</a>
-	<a href="<c:url value="/listCatalogItem.htm"/>">List CatalogItem</a>
+	<a href="<c:url value="/createProduct.htm"/>">Create Product</a>
+	<a href="<c:url value="/listProducts.htm"/>">List Products</a>
 	<a href="<c:url value="/createCategory.htm"/>">Create Category</a>
 	<a href="<c:url value="/listCategory.htm"/>">List Category</a>
 	<a href="<c:url value="/logout"/>">Logout</a>

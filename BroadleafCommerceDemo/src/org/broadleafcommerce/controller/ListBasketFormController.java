@@ -43,9 +43,9 @@ public class ListBasketFormController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String addSellableItem(@RequestParam("sellableItemId") Long sellableItemId) {
+    public String addSku(@RequestParam("skuId") Long skuId) {
     	BroadleafOrder basketOrder = getCustomerBasket();
-        orderService.addItemToOrder(basketOrder.getId(), sellableItemId, 1);
+        orderService.addItemToOrder(basketOrder.getId(), skuId, 1);
         return "redirect:" + redirectUrl;
     }
 
@@ -63,9 +63,9 @@ public class ListBasketFormController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String removeItem(@RequestParam("sellableItemId") Long sellableItemId) {
+    public String removeItem(@RequestParam("skuId") Long skuId) {
         BroadleafOrder basketOrder = getCustomerBasket();
-        orderService.removeItemFromOrder(basketOrder.getId(), sellableItemId);
+        orderService.removeItemFromOrder(basketOrder.getId(), skuId);
         return "redirect:" + redirectUrl;
     }
 

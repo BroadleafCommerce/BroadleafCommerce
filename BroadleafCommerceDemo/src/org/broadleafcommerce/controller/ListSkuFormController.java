@@ -8,7 +8,7 @@ import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.web.PaginationCommandObject;
 import org.broadleafcommerce.web.PaginationController;
 
-public class ListSellableItemFormController extends PaginationController {
+public class ListSkuFormController extends PaginationController {
     protected final Log logger = LogFactory.getLog(getClass());
     private CatalogService catalogService;
 
@@ -19,6 +19,6 @@ public class ListSellableItemFormController extends PaginationController {
     @Override
     protected void populatePaginatedList(Map<Object, Object> model,
             PaginationCommandObject object) {
-        object.setFullList(catalogService.readAllSellableItems());
+        object.setFullList(catalogService.readAllSkus());
     }
 }

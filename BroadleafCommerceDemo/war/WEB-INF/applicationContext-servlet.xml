@@ -105,23 +105,23 @@
 		<property name="successView" value="listAddress" />
 	</bean>
 
-	<bean id="createCatalogItem" class="org.broadleafcommerce.controller.CatalogItemFormController">
-		<property name="commandName" value="catalogItem" />
+	<bean id="createProduct" class="org.broadleafcommerce.controller.ProductFormController">
+		<property name="commandName" value="product" />
 		<property name="commandClass"
-			value="org.broadleafcommerce.catalog.domain.CatalogItem" />
+			value="org.broadleafcommerce.catalog.domain.Product" />
 		<property name="catalogService" ref="catalogService" />
-		<property name="formView" value="createCatalogItem" />
-		<property name="successView" value="redirect:/listCatalogItem.htm" />
+		<property name="formView" value="createProduct" />
+		<property name="successView" value="redirect:/listProducts.htm" />
 	</bean>
 
-	<bean id="createSellableItem"
-		class="org.broadleafcommerce.controller.SellableItemFormController">
-		<property name="commandName" value="sellableItem" />
+	<bean id="createSku"
+		class="org.broadleafcommerce.controller.SkuFormController">
+		<property name="commandName" value="sku" />
 		<property name="commandClass"
-			value="org.broadleafcommerce.catalog.domain.SellableItem" />
+			value="org.broadleafcommerce.catalog.domain.Sku" />
 		<property name="catalogService" ref="catalogService" />
-		<property name="formView" value="createSellableItem" />
-		<property name="successView" value="redirect:/listSellableItem.htm" />
+		<property name="formView" value="createSku" />
+		<property name="successView" value="redirect:/listSkus.htm" />
 	</bean>
 
 	<bean id="createShoppingCartPromotion"
@@ -140,24 +140,24 @@
 		<property name="formView" value="createTestOrder" />
 	</bean>
 
-	<bean id="listCatalogItem"
-		class="org.broadleafcommerce.controller.ListCatalogItemFormController">
-		<property name="commandName" value="listCatalogItem" />
+	<bean id="listProducts"
+		class="org.broadleafcommerce.controller.ListProductsFormController">
+		<property name="commandName" value="listProducts" />
 		<property name="commandClass"
 			value="org.broadleafcommerce.web.PaginationCommandObject" />
 		<property name="catalogService" ref="catalogService" />
-		<property name="formView" value="listCatalogItem" />
-		<property name="successView" value="listCatalogItem" />
-		<property name="ajaxView" value="listCatalogItemAjax" />
+		<property name="formView" value="listProducts" />
+		<property name="successView" value="listProducts" />
+		<property name="ajaxView" value="listProductsAjax" />
 	</bean>
 
-    <bean id="listSellableItem" class="org.broadleafcommerce.controller.ListSellableItemFormController">
-        <property name="commandName" value="listSellableItem"/>
-        <property name="commandClass" value="org.broadleafcommerce.catalog.domain.SellableItem"/>
+    <bean id="listSkus" class="org.broadleafcommerce.controller.ListSkusFormController">
+        <property name="commandName" value="listSkus"/>
+        <property name="commandClass" value="org.broadleafcommerce.catalog.domain.Sku"/>
         <property name="catalogService" ref="catalogService"/>
-        <property name="formView" value="listSellableItem" />
-        <property name="successView" value="listSellableItem" />
-        <property name="ajaxView" value="listSellableItemAjax" />
+        <property name="formView" value="listSkus" />
+        <property name="successView" value="listSkus" />
+        <property name="ajaxView" value="listSkusAjax" />
     </bean>
 
 	<bean id="listOrders" class="org.broadleafcommerce.controller.ListOrdersFormController">
@@ -277,12 +277,12 @@
                 <prop key="/passwordChange.htm">passwordChange</prop>
                 <prop key="/createAddress.htm">createAddress</prop>
                 <prop key="/listAddress.htm">listAddress</prop>
-                <prop key="/createCatalogItem.htm">createCatalogItem</prop>
-                <prop key="/listCatalogItem.htm">listCatalogItem</prop>
-                <prop key="/listSellableItem.htm">listSellableItem</prop>
+                <prop key="/createProduct.htm">createProduct</prop>
+                <prop key="/listProducts.htm">listProducts</prop>
+                <prop key="/listSkus.htm">listSkus</prop>
                 <prop key="/createCategory.htm">createCategory</prop>
                 <prop key="/listCategory.htm">listCategory</prop>
-                <prop key="/createSellableItem.htm">createSellableItem</prop>
+                <prop key="/createSku.htm">createSku</prop>
                 <prop key="/listOrders.htm">listOrders</prop>
                 <prop key="/basket/*">listBasket</prop>
                 <prop key="/checkout/checkout.htm">checkout</prop>

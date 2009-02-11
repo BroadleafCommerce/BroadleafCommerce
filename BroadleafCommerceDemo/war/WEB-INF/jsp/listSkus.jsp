@@ -2,7 +2,7 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 	
-				<h1>Manage Sellable Items</h1>
+				<h1>Manage SKUs</h1>
 
 <style>
 	.listItem { 
@@ -14,7 +14,7 @@
 		}
 </style>
 <div id="listContainer">
-<jsp:include page="listSellableItemAjax.jsp"/>
+<jsp:include page="listSkusAjax.jsp"/>
 </div>
 
 	<a href="<c:url value="/logout"/>">Logout</a>

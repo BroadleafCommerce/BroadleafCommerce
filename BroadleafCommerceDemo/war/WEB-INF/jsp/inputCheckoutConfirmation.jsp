@@ -19,9 +19,9 @@
 	</tr>	
 	<c:forEach var="item" items="${checkout.orderItems}" varStatus="myRow">
 		<tr>
-			<td><c:out value="${item.sellableItem.catalogItem.name}"/></td>
-			<td><c:out value="${item.sellableItem.catalogItem.description}"/></td>
-			<td><c:out value="${item.sellableItem.price}"/></td>
+			<td><c:out value="${item.sku.product.name}"/></td>
+			<td><c:out value="${item.sku.product.description}"/></td>
+			<td><c:out value="${item.sku.price}"/></td>
 			<td><c:out value="${item.quantity}"/></td>
 			<td><c:out value="${item.finalPrice}"/></td>
 		</tr>

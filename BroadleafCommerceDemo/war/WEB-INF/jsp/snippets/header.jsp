@@ -12,9 +12,9 @@
 
 	<a href="<c:url value="/createAddress.htm" />">Create Address</a>
 	<a href="<c:url value="/listAddress.htm"/>">List Address</a>
-	<a href="<c:url value="/createCatalogItem.htm"/>">Create CatalogItem</a>
-	<a href="<c:url value="/listCatalogItem.htm"/>">List CatalogItem</a>
-	<a href="<c:url value="/listSellableItem.htm"/>">List SellableItems</a>
+	<a href="<c:url value="/createProduct.htm"/>">Create Product</a>
+	<a href="<c:url value="/listProducts.htm"/>">List Product</a>
+	<a href="<c:url value="/listSkus.htm"/>">List SKUS</a>
 	<a href="<c:url value="/listOrders.htm"/>">List User Orders</a>
 	<a href="<c:url value="/basket/listBasket.htm"/>">List Basket</a>
 	<a href="<c:url value="/createCategory.htm"/>">Create Category</a>

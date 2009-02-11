@@ -9,15 +9,15 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.catalog.domain.CatalogItem;
 import org.broadleafcommerce.catalog.domain.ItemAttribute;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
-public class SellableItemFormController extends SimpleFormController {
+public class SkuFormController extends SimpleFormController {
     protected final Log logger = LogFactory.getLog(getClass());
     private CatalogService catalogService;
 
@@ -28,30 +28,30 @@ public class SellableItemFormController extends SimpleFormController {
     @Override
 	protected Object formBackingObject(HttpServletRequest request)
                                 throws ServletException {
-        CatalogItem createCatalogItem = new CatalogItem();
-        SellableItem sellableItem = new SellableItem();
+        Product createProduct = new Product();
+        Sku sku = new Sku();
 
-        if (request.getParameter("catalogItemId") != null) {
-            createCatalogItem = catalogService.readCatalogItemById(Long.valueOf(request.getParameter("catalogItemId")));
-            sellableItem.setCatalogItem(createCatalogItem);
+        if (request.getParameter("productId") != null) {
+            createProduct = catalogService.readProductById(Long.valueOf(request.getParameter("productId")));
+            sku.setProduct(createProduct);
         }
         
-        if (request.getParameter("sellableItemId") != null){
-        	sellableItem = catalogService.readSellableItemById(new Long(request.getParameter("sellableItemId")));        	
-            Map<String, ItemAttribute> attribs = sellableItem.getItemAttributes();
+        if (request.getParameter("skuId") != null){
+        	sku = catalogService.readSkuById(new Long(request.getParameter("skuId")));        	
+            Map<String, ItemAttribute> attribs = sku.getItemAttributes();
             if (attribs == null) {
                 attribs = new HashMap<String, ItemAttribute>();
             }
             attribs.put("", new ItemAttribute());
         }
 
-        return sellableItem;
+        return sku;
     }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
                              throws Exception {
-        SellableItem sellableItem = (SellableItem) command;
+        Sku sku = (Sku) command;
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
 
@@ -62,7 +62,7 @@ public class SellableItemFormController extends SimpleFormController {
         }
         
         
-        catalogService.saveSellableItem(sellableItem);
+        catalogService.saveSku(sku);
         mav.addObject("saved", true);
 
         return mav;

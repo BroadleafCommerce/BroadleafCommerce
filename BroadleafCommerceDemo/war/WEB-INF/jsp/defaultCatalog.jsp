@@ -22,9 +22,9 @@
 	</table>
 
 	<h2>Items in this category</h2>
-	<sc:list objectList="${category.catalogItems}"
+	<sc:list objectList="${category.products}"
 		numAcross="4" objectName="item">
-		<sc:item catalogItem="${item}" layout="productList" itemName="item" />
+		<sc:item product="${item}" layout="productList" itemName="item" />
 	</sc:list>
 
 	</tiles:putAttribute>
