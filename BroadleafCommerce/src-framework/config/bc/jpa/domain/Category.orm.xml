@@ -39,10 +39,10 @@
             <many-to-one name="parentCategory" target-entity="org.broadleafcommerce.catalog.domain.Category">
 				<join-column name="PARENT_CATEGORY_ID" nullable="false"/>
             </many-to-one>
-			<many-to-many name="catalogItems" >
-				<join-table name="CATELOG_ITEM_ASSOCIATIONS">
+			<many-to-many name="products" >
+				<join-table name="PRODUCT_ASSOCIATIONS">
 					<join-column name="CATEGORY_ID" referenced-column-name="CATEGORY_ID"/>
-					<inverse-join-column name="CATALOG_ITEM_ID" referenced-column-name="CATALOG_ITEM_ID"/>
+					<inverse-join-column name="PRODUCT_ID" referenced-column-name="PRODUCT_ID"/>
 				</join-table>
 			</many-to-many>
 			<embedded name="auditable"></embedded>

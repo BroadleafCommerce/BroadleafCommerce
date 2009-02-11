@@ -8,14 +8,14 @@ import org.broadleafcommerce.common.domain.Auditable;
 //@Entity
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 //@DiscriminatorColumn(name = "TYPE")
-//@Table(name = "BLC_SELLABLE_ITEM")
-public class SellableItem implements Serializable {
+//@Table(name = "BLC_SKU")
+public class Sku implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
 //    @Id
 //    @GeneratedValue
-//    @Column(name = "SELLABLE_ITEM_ID")
+//    @Column(name = "SKU_ID")
     private Long id;
 
 //    @Column(name="PRICE", nullable = false)
@@ -25,10 +25,10 @@ public class SellableItem implements Serializable {
     private Auditable auditable;
 
 //    @ManyToOne
-//    @JoinColumn(name = "CATALOG_ITEM_ID", nullable = false)
-    private CatalogItem catalogItem;
+//    @JoinColumn(name = "PRODUCT_ID", nullable = false)
+    private Product product;
 
-//    @OneToMany(mappedBy = "sellableItem", cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "sku", cascade = CascadeType.ALL)
 //    @MapKey(name="name")
     private Map<String,ItemAttribute> itemAttributes;
 
@@ -51,12 +51,12 @@ public class SellableItem implements Serializable {
 		this.price = price;
 	}
 
-	public CatalogItem getCatalogItem() {
-        return catalogItem;
+	public Product getProduct() {
+        return product;
     }
 
-    public void setCatalogItem(CatalogItem catalogItem) {
-        this.catalogItem = catalogItem;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
 

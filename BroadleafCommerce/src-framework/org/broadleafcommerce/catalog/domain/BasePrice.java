@@ -21,8 +21,8 @@ public class BasePrice implements Serializable {
     private Auditable auditable;
 
 //    @ManyToOne
-//    @JoinColumn(name = "SELLABLE_ITEM_ID", nullable = false)
-    private SellableItem sellableItem;
+//    @JoinColumn(name = "SKU_ID", nullable = false)
+    private Sku sku;
 
 //    @Column(name = "AMOUNT")
     private BigDecimal amount;
@@ -67,12 +67,12 @@ public class BasePrice implements Serializable {
         this.endDate = endDate;
     }
 
-    public SellableItem getSellableItem() {
-        return sellableItem;
+    public Sku getSku() {
+        return sku;
     }
 
-    public void setSellableItem(SellableItem sellableItem) {
-        this.sellableItem = sellableItem;
+    public void setSku(Sku sku) {
+        this.sku = sku;
     }
 
     public Auditable getAuditable() {

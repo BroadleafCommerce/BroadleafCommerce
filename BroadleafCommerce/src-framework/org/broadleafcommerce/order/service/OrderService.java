@@ -2,7 +2,7 @@ package org.broadleafcommerce.order.service;
 
 import java.util.List;
 
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.domain.BroadleafOrder;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.OrderPayment;
@@ -20,7 +20,7 @@ public interface OrderService {
 
     public BroadleafOrder addContactInfoToOrder(Long orderId, Long contactId);
 
-    public OrderItem addItemToOrder(BroadleafOrder order, SellableItem item, int quantity);
+    public OrderItem addItemToOrder(BroadleafOrder order, Sku item, int quantity);
 
     public OrderItem addItemToOrder(Long orderId, Long itemId, int quantity);
 

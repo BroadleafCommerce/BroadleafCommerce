@@ -7,25 +7,25 @@ import java.util.Set;
 import org.broadleafcommerce.common.domain.Auditable;
 
 //@Entity
-//@Table(name = "CATALOG_ITEM")
-public class CatalogItem implements Serializable {
+//@Table(name = "BLC_PRODUCT")
+public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
 //    @Id
 //    @GeneratedValue
-//    @Column(name = "CATALOG_ITEM_ID")
+//    @Column(name = "PRODUCT_ID")
     private Long id;
     
 //    @Embedded
     private Auditable auditable;
 
-//    @OneToMany(mappedBy = "catalogItem")
+//    @OneToMany(mappedBy = "product")
 //    @MapKey(name="name")
     private Map<String, ItemAttribute> itemAttributes;
 
-//    @OneToMany(mappedBy = "catalogItem")
-    private Set<CatalogItemListAssociation> catalogItemListAssociations;
+//    @OneToMany(mappedBy = "product")
+    private Set<ProductListAssociation> productListAssociations;
 
 //    @Column(name = "DESCRIPTION")
     private String description;
@@ -65,12 +65,12 @@ public class CatalogItem implements Serializable {
         this.itemAttributes = itemAttributes;
     }
 
-    public Set<CatalogItemListAssociation> getCatalogItemListAssociations() {
-        return catalogItemListAssociations;
+    public Set<ProductListAssociation> getProductListAssociations() {
+        return productListAssociations;
     }
 
-    public void setCatalogItemListAssociations(Set<CatalogItemListAssociation> catalogItemListAssociations) {
-        this.catalogItemListAssociations = catalogItemListAssociations;
+    public void setProductListAssociations(Set<ProductListAssociation> productListAssociations) {
+        this.productListAssociations = productListAssociations;
     }
 
     public Auditable getAuditable() {

@@ -24,8 +24,8 @@
             <basic name="quantity">
                 <column name="QUANTITY"/>
             </basic>
-            <many-to-one name="sellableItem" target-entity="org.broadleafcommerce.catalog.domain.SellableItem">
-				<join-column name="SELLABLE_ITEM_ID" nullable="false"/>
+            <many-to-one name="sku" target-entity="org.broadleafcommerce.catalog.domain.Sku">
+				<join-column name="SKU_ID" nullable="false"/>
             </many-to-one>
 			<many-to-one name="order" >
 				<join-column name="ORDER_ID"/>

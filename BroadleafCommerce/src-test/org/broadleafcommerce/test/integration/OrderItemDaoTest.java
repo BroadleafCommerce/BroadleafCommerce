@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.SellableItemDaoJpa;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.dao.SkuDaoJpa;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.dao.OrderDaoJpa;
 import org.broadleafcommerce.order.dao.OrderItemDaoJpa;
 import org.broadleafcommerce.order.domain.BroadleafOrder;
@@ -28,17 +28,17 @@ public class OrderItemDaoTest extends BaseTest {
     private OrderDaoJpa orderDao;
 
     @Resource
-    private SellableItemDaoJpa sellableItemDao;
+    private SkuDaoJpa skuDao;
 
     @Resource
     private CustomerService customerService;
 
-    @Test(groups={"createOrderItem"},dataProvider="basicOrderItem", dataProviderClass=OrderItemDataProvider.class, dependsOnGroups={"createOrder","createSellableItem"})
+    @Test(groups={"createOrderItem"},dataProvider="basicOrderItem", dataProviderClass=OrderItemDataProvider.class, dependsOnGroups={"createOrder","createSku"})
     @Rollback(false)
     public void createOrderItem(OrderItem orderItem){
         String userName = "customer1";
-        SellableItem si = sellableItemDao.readFirstSellableItem();
-        orderItem.setSellableItem(si);
+        Sku si = skuDao.readFirstSku();
+        orderItem.setSku(si);
         Customer customer = customerService.readCustomerByUsername(userName);
         BroadleafOrder so = (orderDao.readOrdersForCustomer(customer)).get(0);
         orderItem.setOrder(so);

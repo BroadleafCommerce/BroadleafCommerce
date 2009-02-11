@@ -3,7 +3,7 @@ package org.broadleafcommerce.catalog.domain;
 import java.io.Serializable;
 
 //@Entity
-//@Table(name = "ITEM_ATTRIBUTE", uniqueConstraints = { @UniqueConstraint(columnNames = { "CATALOG_ITEM_ID", "NAME" }), @UniqueConstraint(columnNames = { "SELLABLE_ITEM_ID", "NAME" }) })
+//@Table(name = "ITEM_ATTRIBUTE", uniqueConstraints = { @UniqueConstraint(columnNames = { "PRODUCT_ID", "NAME" }), @UniqueConstraint(columnNames = { "SKU_ID", "NAME" }) })
 public class ItemAttribute implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -14,12 +14,12 @@ public class ItemAttribute implements Serializable {
     private Long id;
 
 //    @ManyToOne
-//    @JoinColumn(name = "CATALOG_ITEM_ID")
-    private CatalogItem catalogItem;
+//    @JoinColumn(name = "PRODUCT_ID")
+    private Product product;
 
 //    @ManyToOne
-//    @JoinColumn(name = "SELLABLE_ITEM_ID")
-    private SellableItem sellableItem;
+//    @JoinColumn(name = "SKU_ID")
+    private Sku sku;
 
 //    @Column(name = "NAME")
     private String name;
@@ -54,20 +54,20 @@ public class ItemAttribute implements Serializable {
         this.searchable = searchable;
     }
 
-    public CatalogItem getCatalogItem() {
-        return catalogItem;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setCatalogItem(CatalogItem catalogItem) {
-        this.catalogItem = catalogItem;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
-    public SellableItem getSellableItem() {
-        return sellableItem;
+    public Sku getSku() {
+        return sku;
     }
 
-    public void setSellableItem(SellableItem sellableItem) {
-        this.sellableItem = sellableItem;
+    public void setSku(Sku sku) {
+        this.sku = sku;
     }
 
     public String getName() {
