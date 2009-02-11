@@ -8,7 +8,7 @@ import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.web.PaginationCommandObject;
 import org.broadleafcommerce.web.PaginationController;
 
-public class ListSkuFormController extends PaginationController {
+public class ListSkusFormController extends PaginationController {
     protected final Log logger = LogFactory.getLog(getClass());
     private CatalogService catalogService;
 
