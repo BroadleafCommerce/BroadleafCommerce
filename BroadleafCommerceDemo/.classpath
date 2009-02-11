@@ -55,7 +55,7 @@
 	<classpathentry kind="lib" path="lib/include/bin/tiles-api-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/include/bin/tiles-core-2.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/include/bin/tiles-jsp-2.0.5.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/BroadleafCommerce"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/BroadleafCommerce"/>
 	<classpathentry kind="lib" path="lib/include/bin/velocity-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/include/bin/mail-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/include/bin/velocity-tools-1.4.jar"/>
