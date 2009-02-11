@@ -114,7 +114,7 @@
         <tag-class>org.broadleafcommerce.layout.tags.ItemLayoutTag</tag-class>
         <body-content>JSP</body-content>
 	    <attribute>
-	    	<name>sellableItem</name>
+	    	<name>sku</name>
         	<required>false</required>
         	<rtexprvalue>true</rtexprvalue>
 	    </attribute>
@@ -124,7 +124,7 @@
         	<rtexprvalue>true</rtexprvalue>
 	    </attribute>
 	    <attribute>
-	    	<name>catalogItem</name>
+	    	<name>product</name>
         	<required>false</required>
         	<rtexprvalue>true</rtexprvalue>
 	    </attribute>

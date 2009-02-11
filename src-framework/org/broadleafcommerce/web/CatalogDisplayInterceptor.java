@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.catalog.domain.CatalogItem;
 import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.UrlPathHelper;
@@ -100,14 +100,14 @@ public class CatalogDisplayInterceptor extends HandlerInterceptorAdapter {
 	private boolean isValidProduct(String productId, Category category){
 	   try {
 		   Long id = new Long(productId);
-		   CatalogItem item = catalogService.readCatalogItemById(id);
+		   Product item = catalogService.readProductById(id);
 		   if (item == null){
 	    	   return false;
 		   }
 
-		   List<CatalogItem> catalogItems = category.getCatalogItems();
-		   if (catalogItems != null){
-			   for (Iterator<CatalogItem> itr = catalogItems.iterator();itr.hasNext();){
+		   List<Product> products = category.getProducts();
+		   if (products != null){
+			   for (Iterator<Product> itr = products.iterator();itr.hasNext();){
 				   if (id.equals(itr.next().getId())){
 					   return true;
 				   }

@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.catalog.domain.CatalogItem;
 import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -53,13 +53,13 @@ public class CatalogController extends AbstractController{
 
 			if (productId != null){
 				try {
-					CatalogItem item = catalogService.readCatalogItemById(new Long(productId));
+					Product item = catalogService.readProductById(new Long(productId));
 					if (item != null){
-						List<SellableItem> sellableItems = catalogService.readSellableItemsForCatalogItemId(item.getId());
+						List<Sku> skus = catalogService.readSkusForProductId(item.getId());
 
-						Product product = new Product(item, sellableItems);
+						ProductSkus productSkus = new ProductSkus(item, skus);
 						Map<Object, Object> model = new HashMap<Object, Object>();
-						model.put("product", product);
+						model.put("productSkus", productSkus);
 
 						return new ModelAndView(getDefaultProductView(), model);
 

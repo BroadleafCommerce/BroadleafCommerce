@@ -9,25 +9,25 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.log4j.Logger;
-import org.broadleafcommerce.catalog.domain.CatalogItem;
 import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.domain.OrderItem;
 
 public class ItemLayoutTag extends BodyTagSupport {
     
     private Logger log = Logger.getLogger(this.getClass());
     private static final long serialVersionUID = 1L;
-    private SellableItem sellableItem;
-    private CatalogItem catalogItem;
+    private Sku sku;
+    private Product product;
     private OrderItem orderItem;
     private Category category;
     private String layout;
     private String itemName = "item";
     private ItemType itemType;
     public enum ItemType {
-        SELLABLE_ITEM,
-        CATALOG_ITEM,
+        SKU,
+        PRODUCT,
         CATEGORY,
         ORDER_ITEM
     }
@@ -35,11 +35,11 @@ public class ItemLayoutTag extends BodyTagSupport {
     public int doStartTag() throws JspException {
         try {
             switch(itemType) {
-            case SELLABLE_ITEM:
-	            pageContext.setAttribute(itemName, sellableItem, PageContext.REQUEST_SCOPE);
+            case SKU:
+	            pageContext.setAttribute(itemName, sku, PageContext.REQUEST_SCOPE);
 	            break;
-    		case CATALOG_ITEM:
-	            pageContext.setAttribute(itemName, catalogItem, PageContext.REQUEST_SCOPE);
+    		case PRODUCT:
+	            pageContext.setAttribute(itemName, product, PageContext.REQUEST_SCOPE);
 	            break;
     		case CATEGORY:
 	            pageContext.setAttribute(itemName, category, PageContext.REQUEST_SCOPE);
@@ -58,19 +58,19 @@ public class ItemLayoutTag extends BodyTagSupport {
         }
         return super.doStartTag();
     }
-    public SellableItem getSellableItem() {
-        return sellableItem;
+    public Sku getSku() {
+        return sku;
     }
-    public void setSellableItem(SellableItem sellableItem) {
-        this.setItemType(ItemType.SELLABLE_ITEM);
-        this.sellableItem = sellableItem;
+    public void setSku(Sku sku) {
+        this.setItemType(ItemType.SKU);
+        this.sku = sku;
     }
-    public CatalogItem getCatalogItem() {
-        return catalogItem;
+    public Product getProduct() {
+        return product;
     }
-    public void setCatalogItem(CatalogItem catalogItem) {
-        setItemType(ItemType.CATALOG_ITEM);
-        this.catalogItem = catalogItem;
+    public void setProduct(Product product) {
+        setItemType(ItemType.PRODUCT);
+        this.product = product;
     }
     public Category getCategory() {
         return category;

@@ -3,19 +3,19 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<named-query name="READ_CATALOG_ITEMS_BY_NAME" >
-		<query>SELECT catalogItem FROM org.broadleafcommerce.catalog.domain.CatalogItem catalogItem
-		WHERE catalogItem.name LIKE :name</query>
+	<named-query name="READ_PRODUCTS_BY_NAME" >
+		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product
+		WHERE product.name LIKE :name</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.catalog.domain.CatalogItem" name="catalogItem">
-        <table name="BLC_CATALOG_ITEM" >        	
+	<entity class="org.broadleafcommerce.catalog.domain.Product" name="product">
+        <table name="BLC_PRODUCT" >        	
         </table>
         <inheritance strategy="JOINED"/>
 
         <attributes>
             <id name="id">            	
-            	<column name="CATALOG_ITEM_ID"/>
+            	<column name="PRODUCT_ID"/>
                 <generated-value/>
                 
             </id>
@@ -25,10 +25,10 @@
             <basic name="name">
                 <column name="NAME"/>
             </basic>
-            <one-to-many name="itemAttributes" mapped-by="catalogItem">
+            <one-to-many name="itemAttributes" mapped-by="product">
             	<map-key name="name"/>           
             </one-to-many>
-            <one-to-many name="catalogItemListAssociations" mapped-by="catalogItem">
+            <one-to-many name="productListAssociations" mapped-by="product">
             </one-to-many>
 			<embedded name="auditable">
 			</embedded>

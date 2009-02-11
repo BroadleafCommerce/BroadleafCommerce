@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.SellableItemDao;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.dao.SkuDao;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.dao.OrderPaymentDao;
@@ -39,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderShippingDao orderShippingDao;
 
     @Resource
-    private SellableItemDao sellableItemDao;
+    private SkuDao skuDao;
 
     @Resource
     private ContactInfoDao contactInfoDao;
@@ -122,23 +122,23 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderItem> getItemsForOrder(BroadleafOrder order) {
         List<OrderItem> result = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem oi : result) {
-            oi.getSellableItem().getItemAttributes();
+            oi.getSku().getItemAttributes();
         }
         return result;
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public OrderItem addItemToOrder(BroadleafOrder order, SellableItem item, int quantity){
+    public OrderItem addItemToOrder(BroadleafOrder order, Sku item, int quantity){
         OrderItem orderItem = null;
         List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem orderItem2 : orderItems) {
-            if(orderItem2.getSellableItem().getId().equals(item.getId()))
+            if(orderItem2.getSku().getId().equals(item.getId()))
                 orderItem = orderItem2;
         }
         if(orderItem == null)
             orderItem = new OrderItem();
-        orderItem.setSellableItem(item);
+        orderItem.setSku(item);
         orderItem.setQuantity(orderItem.getQuantity()+quantity);
         orderItem.setOrder(order);
         return maintainOrderItem(orderItem);
@@ -183,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(propagation=Propagation.REQUIRED)
     public OrderItem addItemToOrder(Long orderId, Long itemId, int quantity) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
-        SellableItem si = sellableItemDao.readSellableItemById(itemId);
+        Sku si = skuDao.readSkuById(itemId);
         return this.addItemToOrder(order, si, quantity);
     }
 
@@ -274,7 +274,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderItem maintainOrderItem(OrderItem orderItem){
-        orderItem.setFinalPrice(orderItem.getQuantity() * orderItem.getSellableItem().getPrice());
+        orderItem.setFinalPrice(orderItem.getQuantity() * orderItem.getSku().getPrice());
         OrderItem returnedOrderItem = orderItemDao.maintainOrderItem(orderItem);
         maintainOrder(orderItem.getOrder());
         return returnedOrderItem;

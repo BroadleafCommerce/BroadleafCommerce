@@ -7,12 +7,12 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.CatalogItemDao;
 import org.broadleafcommerce.catalog.dao.CategoryDao;
-import org.broadleafcommerce.catalog.dao.SellableItemDao;
-import org.broadleafcommerce.catalog.domain.CatalogItem;
+import org.broadleafcommerce.catalog.dao.ProductDao;
+import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,28 +21,28 @@ import org.springframework.transaction.annotation.Transactional;
 public class CatalogServiceImpl implements CatalogService {
 
     @Resource
-    private CatalogItemDao catalogItemDao;
+    private ProductDao productDao;
 
     @Resource
     private CategoryDao categoryDao;
 
     @Resource
-    private SellableItemDao sellableItemDao;
+    private SkuDao skuDao;
 
     @Override
-    public CatalogItem readCatalogItemById(Long catalogItemId) {
-        return catalogItemDao.readCatalogItemById(catalogItemId);
+    public Product readProductById(Long productId) {
+        return productDao.readProductById(productId);
     }
 
     @Override
     @Transactional(propagation=Propagation.REQUIRED)
-    public List<CatalogItem> readCatalogItemsByName(String searchName) {
-        return catalogItemDao.readCatalogItemsByName(searchName);
+    public List<Product> readProductsByName(String searchName) {
+        return productDao.readProductsByName(searchName);
     }
 
     @Transactional(propagation=Propagation.REQUIRED)
-    public CatalogItem saveCatalogItem(CatalogItem catalogItem) {
-        return catalogItemDao.maintainCatalogItem(catalogItem);
+    public Product saveProduct(Product product) {
+        return productDao.maintainProduct(product);
     }
 
     @Override
@@ -73,25 +73,25 @@ public class CatalogServiceImpl implements CatalogService {
 	}
 
 	@Override
-	public List<SellableItem> readAllSellableItems() {
-		return sellableItemDao.readAllSellableItems();
+	public List<Sku> readAllSkus() {
+		return skuDao.readAllSkus();
 	}
 
 	@Override
-	public SellableItem readSellableItemById(Long sellableItemId) {
-		return sellableItemDao.readSellableItemById(sellableItemId);
+	public Sku readSkuById(Long skuId) {
+		return skuDao.readSkuById(skuId);
 	}
 
 	@Override
-	public List<SellableItem> readSellableItemsForCatalogItemId(
-			Long catalogItemId) {
-		return sellableItemDao.readSellableItemsByCategoryItemId(catalogItemId);
+	public List<Sku> readSkusForProductId(
+			Long productId) {
+		return skuDao.readSkusByProductId(productId);
 	}
 
 	@Override
     @Transactional(propagation=Propagation.REQUIRED)
-	public SellableItem saveSellableItem(SellableItem sellableItem) {
-		return sellableItemDao.maintainSellableItem(sellableItem);
+	public Sku saveSku(Sku sku) {
+		return skuDao.maintainSku(sku);
 	}
 
 	private Map<String, Category> buildUrlKeyCategoryMap(){
@@ -106,8 +106,8 @@ public class CatalogServiceImpl implements CatalogService {
 	}
 
 	@Override
-	public List<SellableItem> readSellableItemsByIds(List<Long> ids) {
-		return sellableItemDao.readSellableItemById(ids);
+	public List<Sku> readSkusByIds(List<Long> ids) {
+		return skuDao.readSkusById(ids);
 	}
 
 }

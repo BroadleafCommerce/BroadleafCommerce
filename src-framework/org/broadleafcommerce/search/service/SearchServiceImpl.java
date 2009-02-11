@@ -24,7 +24,7 @@ import org.apache.lucene.search.TopDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +34,7 @@ public class SearchServiceImpl implements SearchService {
 	private CatalogService catalogService;
 
 	@Override
-	public List<SellableItem> performSearch(String queryString) {
+	public List<Sku> performSearch(String queryString) {
 		try {
 			Analyzer analyzer = new StandardAnalyzer();
 			Directory fsDir = FSDirectory.getDirectory(new File ("/temp/search/lucene" ));
@@ -52,7 +52,7 @@ public class SearchServiceImpl implements SearchService {
 			     ids.add(new Long(id));
 			}
 			if (ids.size()>0){
-				return catalogService.readSellableItemsByIds(ids);
+				return catalogService.readSkusByIds(ids);
 			}
 
 		} catch (CorruptIndexException e) {
@@ -69,11 +69,11 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public void rebuildSellableItemIndex() {
+	public void rebuildSkuIndex() {
 	    try {
 
-	    	List<SellableItem> sellableItems = catalogService.readAllSellableItems();
-			if (sellableItems != null){
+	    	List<Sku> skus = catalogService.readAllSkus();
+			if (skus != null){
 		    	// Create a new indexer to index our files.
 				File indexDir = new File ( "/temp/search/lucene" );
 				if ( !indexDir.exists() ) {
@@ -82,10 +82,10 @@ public class SearchServiceImpl implements SearchService {
 				MaxFieldLength mfl = new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
 				IndexWriter writer = new IndexWriter(indexDir, new StandardAnalyzer(), true, mfl);
 
-				for (Iterator<SellableItem> itr = sellableItems.iterator(); itr.hasNext();){
-					SellableItem item = itr.next();
+				for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();){
+					Sku item = itr.next();
 					Document doc = new Document();
-			        // set the sellable item id as a keyword -- this means that lucene won't try to
+			        // set the sku id as a keyword -- this means that lucene won't try to
 			        // manipulate this data when it is indexing this doc
 			        doc.add ( new Field( "ID" , item.getId().toString(), Field.Store.YES, Field.Index.NO ) );
 			        doc.add ( new Field( "name" , item.getName(), Field.Store.YES, Field.Index.ANALYZED ) );
@@ -111,7 +111,7 @@ public class SearchServiceImpl implements SearchService {
 
 	//---------------------- The methods below are if you are using Compass ----------
 /*	@Override
-	public void rebuildCatalogItemIndex() {
+	public void rebuildProductIndex() {
 		Compass compass = null;
 
 		EntityManagerFactory emf = null;
@@ -141,10 +141,10 @@ public class SearchServiceImpl implements SearchService {
 		}
 	}*/
 
-/*	public List<CatalogItem> performSearch(String criteria){
+/*	public List<Product> performSearch(String criteria){
 		Compass compass = null;
 		CompassSession session = null;
-		List<CatalogItem> catalogItems = new ArrayList<CatalogItem>();
+		List<Product> products = new ArrayList<Product>();
 		try {
 			CompassConfiguration config = CompassConfigurationFactory.newConfiguration();
 			config.configure("/META-INF/compass.cfg.xml");
@@ -158,8 +158,8 @@ public class SearchServiceImpl implements SearchService {
 
             while(iterator.hasNext()){
             	DefaultCompassHit defaultCompassHit = (DefaultCompassHit)iterator.next();
-            	CatalogItem item = (CatalogItem) defaultCompassHit.getData();
-            	catalogItems.add(item);
+            	Product item = (Product) defaultCompassHit.getData();
+            	products.add(item);
             }
 
 			CompassQueryBuilder builder = session.queryBuilder();
@@ -177,7 +177,7 @@ public class SearchServiceImpl implements SearchService {
 			session.close();
 		}
 
-		return catalogItems;
+		return products;
 	}*/
 
 }

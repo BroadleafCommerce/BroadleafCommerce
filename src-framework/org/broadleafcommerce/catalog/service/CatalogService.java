@@ -2,17 +2,17 @@ package org.broadleafcommerce.catalog.service;
 
 import java.util.List;
 
-import org.broadleafcommerce.catalog.domain.CatalogItem;
 import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.Sku;
 
 public interface CatalogService {
 
-    public CatalogItem saveCatalogItem(CatalogItem catalogItem);
+    public Product saveProduct(Product product);
 
-    public CatalogItem readCatalogItemById(Long catalogItemId);
+    public Product readProductById(Long productId);
 
-    public List<CatalogItem> readCatalogItemsByName(String searchName);
+    public List<Product> readProductsByName(String searchName);
 
     public Category saveCategory(Category category);
 
@@ -24,15 +24,15 @@ public interface CatalogService {
 
     public List<Category> readAllSubCategories(Category category);
 
-    public SellableItem saveSellableItem(SellableItem sellableItem);
+    public Sku saveSku(Sku sku);
 
-    public List<SellableItem> readSellableItemsForCatalogItemId(Long catalogItemId);
+    public List<Sku> readSkusForProductId(Long productId);
 
-    public List<SellableItem> readAllSellableItems();
+    public List<Sku> readAllSkus();
 
-    public List<SellableItem> readSellableItemsByIds(List<Long> ids);
+    public List<Sku> readSkusByIds(List<Long> ids);
 
-    public SellableItem readSellableItemById(Long sellableItemId);
+    public Sku readSkuById(Long skuId);
 
 
 }

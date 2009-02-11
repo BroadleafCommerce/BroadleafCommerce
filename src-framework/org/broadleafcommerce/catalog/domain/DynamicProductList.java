@@ -3,7 +3,7 @@ package org.broadleafcommerce.catalog.domain;
 import java.io.Serializable;
 
 //@Entity
-public class DynamicCatalogItemList extends CatalogItemList implements Serializable {
+public class DynamicProductList extends ProductList implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

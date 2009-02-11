@@ -4,8 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.SellableItemDaoJpa;
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.dao.SkuDaoJpa;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.dao.OrderPaymentDaoJpa;
 import org.broadleafcommerce.order.dao.OrderShippingDaoJpa;
 import org.broadleafcommerce.order.domain.BroadleafOrder;
@@ -38,7 +38,7 @@ public class OrderServiceTest extends BaseTest {
     private ContactInfoServiceImpl contactService;
 
     @Resource
-    private SellableItemDaoJpa sellableItemDao;
+    private SkuDaoJpa skuDao;
 
     @Resource
     OrderPaymentDaoJpa orderPaymentDao;
@@ -68,19 +68,19 @@ public class OrderServiceTest extends BaseTest {
         assert order.getContactInfo().getId().equals(contactInfo.getId());
     }
 
-    @Test(groups = { "addItemToOrderFromObj" }, dependsOnGroups = { "createOrderForCustomerFromObj", "createSellableItem" })
+    @Test(groups = { "addItemToOrderFromObj" }, dependsOnGroups = { "createOrderForCustomerFromObj", "createSku" })
     @Rollback(false)
     public void addItemToOrderFromObj() {
-        SellableItem sellableItem = sellableItemDao.readFirstSellableItem();
-        assert sellableItem.getId() != null;
-        OrderItem item = soService.addItemToOrder(order, sellableItem, 1);
+        Sku sku = skuDao.readFirstSku();
+        assert sku.getId() != null;
+        OrderItem item = soService.addItemToOrder(order, sku, 1);
         assert item != null;
         // TODO: fix this assert
         // assert item.getQuantity() == 1;
         assert item.getOrder() != null;
         assert item.getOrder().getId().equals(order.getId());
-        assert item.getSellableItem() != null;
-        assert item.getSellableItem().getId().equals(sellableItem.getId());
+        assert item.getSku() != null;
+        assert item.getSku().getId().equals(sku.getId());
     }
 
     @Test(groups = { "addPaymentToOrderFromObj" }, dataProvider = "basicOrderPayment", dataProviderClass = OrderPaymentDataProvider.class, dependsOnGroups = { "readCustomer1", "createOrderForCustomerFromObj", "createOrderPayment" })
@@ -126,18 +126,18 @@ public class OrderServiceTest extends BaseTest {
         assert order.getContactInfo().getId().equals(contactInfo.getId());
     }
 
-    @Test(groups = { "addItemToOrderFromId" }, dependsOnGroups = { "createOrderForCustomerFromObj", "createSellableItem" })
+    @Test(groups = { "addItemToOrderFromId" }, dependsOnGroups = { "createOrderForCustomerFromObj", "createSku" })
     public void addItemToOrderFromId() {
-        SellableItem sellableItem = sellableItemDao.readFirstSellableItem();
-        assert sellableItem.getId() != null;
+        Sku sku = skuDao.readFirstSku();
+        assert sku.getId() != null;
         assert order != null;
-        OrderItem item = soService.addItemToOrder(order.getId(), sellableItem.getId(), 1);
+        OrderItem item = soService.addItemToOrder(order.getId(), sku.getId(), 1);
         assert item != null;
         assert item.getQuantity() == 1;
         assert item.getOrder() != null;
         assert item.getOrder().getId().equals(order.getId());
-        assert item.getSellableItem() != null;
-        assert item.getSellableItem().getId().equals(sellableItem.getId());
+        assert item.getSku() != null;
+        assert item.getSku().getId().equals(sku.getId());
     }
 
     @Test(groups = { "addPaymentToOrderFromId" }, dataProvider = "basicOrderPayment", dataProviderClass = OrderPaymentDataProvider.class, dependsOnGroups = { "createOrderForCustomerFromObj", "createOrderPayment" })
@@ -205,7 +205,7 @@ public class OrderServiceTest extends BaseTest {
         OrderItem updatedItem = soService.updateItemInOrder(order, item);
         assert updatedItem != null;
         assert updatedItem.getQuantity() == 10;
-        assert updatedItem.getFinalPrice() == (updatedItem.getSellableItem().getPrice() * updatedItem.getQuantity());
+        assert updatedItem.getFinalPrice() == (updatedItem.getSku().getPrice() * updatedItem.getQuantity());
     }
 
     @Test(groups = { "removeItemFromOrderByObj" }, dependsOnGroups = { "getItemsForOrderFromObj" })

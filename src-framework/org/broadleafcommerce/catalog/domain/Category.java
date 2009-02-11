@@ -37,10 +37,10 @@ public class Category implements Serializable {
 //        joinColumns=
 //            @JoinColumn(name="CATEGORY_ID", referencedColumnName="CATEGORY_ID"),
 //        inverseJoinColumns=
-//            @JoinColumn(name="CATALOG_ITEM_ID", referencedColumnName="CATALOG_ITEM_ID")
+//            @JoinColumn(name="PRODUCT_ID", referencedColumnName="PRODUCT_ID")
 //    
 //    )
-    private List<CatalogItem> catalogItems;
+    private List<Product> products;
 
     public Long getId() {
         return id;
@@ -90,11 +90,11 @@ public class Category implements Serializable {
 		this.urlKey = urlKey;
 	}
 
-    public List<CatalogItem> getCatalogItems() {
-        return catalogItems;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setCatalogItems(List<CatalogItem> catalogItems) {
-        this.catalogItems = catalogItems;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }

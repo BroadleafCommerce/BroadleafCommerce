@@ -2,7 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.catalog.domain.SellableItem;
+import org.broadleafcommerce.catalog.domain.Sku;
 
 //@Entity
 //@Table(name = "SC_ORDER_ITEM")
@@ -16,8 +16,8 @@ public class OrderItem implements Serializable {
 	private Long id;
 	
 //	@ManyToOne
-//	@JoinColumn(name = "SELLABLE_ITEM_ID", nullable=false)
-	private SellableItem sellableItem;
+//	@JoinColumn(name = "SKU_ID", nullable=false)
+	private Sku sku;
 	
 //	@ManyToOne
 //	@JoinColumn(name = "SC_ORDER_ID", nullable = false)
@@ -37,12 +37,12 @@ public class OrderItem implements Serializable {
 		this.id = id;
 	}
 
-	public SellableItem getSellableItem() {
-		return sellableItem;
+	public Sku getSku() {
+		return sku;
 	}
 
-	public void setSellableItem(SellableItem sellableItem) {
-		this.sellableItem = sellableItem;
+	public void setSku(Sku sku) {
+		this.sku = sku;
 	}
 
 	public BroadleafOrder getOrder() {
