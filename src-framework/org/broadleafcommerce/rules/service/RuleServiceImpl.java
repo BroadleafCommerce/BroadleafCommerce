@@ -35,11 +35,6 @@ public class RuleServiceImpl implements RuleService {
 		return ruleDao.maintainShoppingCartPromotion(shoppingCartPromotion);
 	}
 
-	@Override
-	public ShoppingCartPromotion readShoppingCartPromotionById(Long id) {
-		return ruleDao.readShoppingCartPromotionById(id);
-	}
-
 	public Package addRuleToNewPackage(File drlFile){
 
 		PackageBuilder pkgBuilder = new PackageBuilder();
@@ -65,6 +60,13 @@ public class RuleServiceImpl implements RuleService {
 
 	}
 
+	public void removeRuleFromRuleBase(String pkg, Long id){
+
+		// Pass in the package name and rule name as strings to remove the rule
+		ruleBaseService.getRuleBase().removeRule(pkg, id.toString());
+
+	}
+
 	public void mergePackageWithRuleBase(Package pkg) {
 
 		try {
@@ -75,7 +77,7 @@ public class RuleServiceImpl implements RuleService {
 
 	}
 
-	public void writeRuleFile(ShoppingCartPromotion shoppingCartPromotion) {
+	public void writeRuleFile(ShoppingCartPromotion shoppingCartPromotion, String logicalOperator) {
 
 		try {
 
@@ -104,8 +106,9 @@ public class RuleServiceImpl implements RuleService {
 
 			output.write("package org.broadleafcommerce.rules;" + newLine);
 			output.write("import org.broadleafcommerce.rules.domain.CouponCode;" + newLine);
+			output.write("import org.broadleafcommerce.order.domain.BroadleafOrder;" + newLine);
 
-			output.write("rule \"" + shoppingCartPromotion.getId() + "\""
+			output.write("rule \"" + shoppingCartPromotion.getName() + "\""
 					+ newLine);
 
 			output.write("when" + newLine + tab);
@@ -113,7 +116,11 @@ public class RuleServiceImpl implements RuleService {
 			if (!shoppingCartPromotion.getCouponCode().isEmpty()) {
 				output.write("CouponCode(code == \""
 						+ shoppingCartPromotion.getCouponCode() + "\")"
-						+ newLine);
+						+ newLine + tab);
+			}
+
+			if (shoppingCartPromotion.getOrderTotal() > 0) {
+				output.write("BroadleafOrder(orderTotal " + logicalOperator + " " + shoppingCartPromotion.getOrderTotal() + ")" + newLine);
 			}
 
 			output.write("then" + newLine + tab);

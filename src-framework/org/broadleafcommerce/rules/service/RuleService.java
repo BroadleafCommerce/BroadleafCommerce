@@ -9,12 +9,12 @@ public interface RuleService {
 
 	public ShoppingCartPromotion saveShoppingCartPromotion(ShoppingCartPromotion shoppingCartPromotion);
 
-	public ShoppingCartPromotion readShoppingCartPromotionById(Long id);
-
 	public Package addRuleToNewPackage(File drlFile);
+
+	public void removeRuleFromRuleBase(String pkg, Long id);
 
 	public void mergePackageWithRuleBase(Package pkg);
 
-	public void writeRuleFile(ShoppingCartPromotion shoppingCartPromotion);
+	public void writeRuleFile(ShoppingCartPromotion shoppingCartPromotion, String logicalOperator);
 
 }
