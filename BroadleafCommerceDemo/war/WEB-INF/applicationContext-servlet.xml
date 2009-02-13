@@ -7,16 +7,18 @@
        http://www.directwebremoting.org/schema/spring-dwr
        http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd">
 
-	<bean id="resourceBundleExtensionPoint" class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint"/>
+	<bean id="resourceBundleExtensionPoint"
+		class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint" />
 
-	<bean id="messageSource" class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
+	<bean id="messageSource"
+		class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
 		<constructor-arg>
 			<list>
 				<value>registrationMessages</value>
 				<value>messages</value>
 			</list>
 		</constructor-arg>
-		<constructor-arg ref="resourceBundleExtensionPoint"/>
+		<constructor-arg ref="resourceBundleExtensionPoint" />
 	</bean>
 
 	<bean id="passwordChange"
@@ -34,11 +36,13 @@
 	</bean>
 
 
-	<bean id="registerCustomer" class="org.broadleafcommerce.controller.RegisterCustomerFormController">
+	<bean id="registerCustomer"
+		class="org.broadleafcommerce.controller.RegisterCustomerFormController">
 		<property name="commandName" value="user" />
 		<property name="commandClass" value="org.broadleafcommerce.util.RegisterCustomer" />
 		<property name="validator">
-			<bean class="org.broadleafcommerce.controller.validator.RegisterCustomerValidator" />
+			<bean
+				class="org.broadleafcommerce.controller.validator.RegisterCustomerValidator" />
 		</property>
 		<property name="customerService" ref="customerService" />
 		<property name="emailService" ref="emailService" />
@@ -46,9 +50,11 @@
 		<property name="successView" value="redirect:/login.jsp" />
 	</bean>
 
-	<bean id="forgotPwd" class="org.broadleafcommerce.controller.ForgotPwdFormController">
+	<bean id="forgotPwd"
+		class="org.broadleafcommerce.controller.ForgotPwdFormController">
 		<property name="commandName" value="user" />
-		<property name="commandClass" value="org.broadleafcommerce.profile.domain.Customer" />
+		<property name="commandClass"
+			value="org.broadleafcommerce.profile.domain.Customer" />
 		<property name="emailService" ref="emailService" />
 		<property name="customerService" ref="customerService" />
 		<property name="formView" value="forgotPwd" />
@@ -93,7 +99,8 @@
 		<property name="successView" value="redirect:/listAddress.htm" />
 	</bean>
 
-	<bean id="listAddress" class="org.broadleafcommerce.controller.ListAddressFormController">
+	<bean id="listAddress"
+		class="org.broadleafcommerce.controller.ListAddressFormController">
 		<property name="commandName" value="listAddress" />
 		<property name="commandClass" value="org.broadleafcommerce.profile.domain.Address" />
 		<property name="validator">
@@ -107,37 +114,36 @@
 
 	<bean id="createProduct" class="org.broadleafcommerce.controller.ProductFormController">
 		<property name="commandName" value="product" />
-		<property name="commandClass"
-			value="org.broadleafcommerce.catalog.domain.Product" />
+		<property name="commandClass" value="org.broadleafcommerce.catalog.domain.Product" />
 		<property name="catalogService" ref="catalogService" />
 		<property name="formView" value="createProduct" />
 		<property name="successView" value="redirect:/listProducts.htm" />
 	</bean>
 
-	<bean id="createSku"
-		class="org.broadleafcommerce.controller.SkuFormController">
+	<bean id="createSku" class="org.broadleafcommerce.controller.SkuFormController">
 		<property name="commandName" value="sku" />
-		<property name="commandClass"
-			value="org.broadleafcommerce.catalog.domain.Sku" />
+		<property name="commandClass" value="org.broadleafcommerce.catalog.domain.Sku" />
 		<property name="catalogService" ref="catalogService" />
 		<property name="formView" value="createSku" />
 		<property name="successView" value="redirect:/listSkus.htm" />
 	</bean>
 
-	<bean id="createShoppingCartPromotion"
-		class="org.broadleafcommerce.controller.ShoppingCartPromotionFormController">
+	<bean id="createShoppingCartPromotionRule"
+		class="org.broadleafcommerce.controller.ShoppingCartPromotionRuleFormController">
 		<property name="commandName" value="shoppingCartPromotion" />
 		<property name="commandClass"
 			value="org.broadleafcommerce.rules.domain.ShoppingCartPromotion" />
 		<property name="ruleService" ref="ruleService" />
-		<property name="formView" value="createShoppingCartPromotion" />
+		<property name="formView" value="createShoppingCartPromotionRule" />
 	</bean>
 
-	<bean id="createTestOrder" class="org.broadleafcommerce.controller.CreateTestOrderFormController">
+	<bean id="createShoppingCartPromotionTestOrder"
+		class="org.broadleafcommerce.controller.ShoppingCartPromotionTestOrderFormController">
 		<property name="commandName" value="couponCode" />
-		<property name="commandClass" value="org.broadleafcommerce.rules.domain.CouponCode" />
+		<property name="commandClass"
+			value="org.broadleafcommerce.rules.domain.CouponCode" />
 		<property name="ruleBaseService" ref="ruleBaseService" />
-		<property name="formView" value="createTestOrder" />
+		<property name="formView" value="createShoppingCartPromotionTestOrder" />
 	</bean>
 
 	<bean id="listProducts"
@@ -151,67 +157,74 @@
 		<property name="ajaxView" value="listProductsAjax" />
 	</bean>
 
-    <bean id="listSkus" class="org.broadleafcommerce.controller.ListSkusFormController">
-        <property name="commandName" value="listSkus"/>
-        <property name="commandClass" value="org.broadleafcommerce.catalog.domain.Sku"/>
-        <property name="catalogService" ref="catalogService"/>
-        <property name="formView" value="listSkus" />
-        <property name="successView" value="listSkus" />
-        <property name="ajaxView" value="listSkusAjax" />
-    </bean>
+	<bean id="listSkus" class="org.broadleafcommerce.controller.ListSkusFormController">
+		<property name="commandName" value="listSkus" />
+		<property name="commandClass" value="org.broadleafcommerce.catalog.domain.Sku" />
+		<property name="catalogService" ref="catalogService" />
+		<property name="formView" value="listSkus" />
+		<property name="successView" value="listSkus" />
+		<property name="ajaxView" value="listSkusAjax" />
+	</bean>
 
-	<bean id="listOrders" class="org.broadleafcommerce.controller.ListOrdersFormController">
+	<bean id="listOrders"
+		class="org.broadleafcommerce.controller.ListOrdersFormController">
 		<property name="commandName" value="listOrders" />
-		<property name="commandClass" value="org.broadleafcommerce.order.domain.BroadleafOrder" />
+		<property name="commandClass"
+			value="org.broadleafcommerce.order.domain.BroadleafOrder" />
 		<property name="orderService" ref="orderService" />
-		<property name="customerService" ref="customerService"/>
+		<property name="customerService" ref="customerService" />
 		<property name="formView" value="listOrders" />
 		<property name="successView" value="listOrders" />
 	</bean>
 
-	<bean id="listBasket" class="org.broadleafcommerce.controller.ListBasketFormController">
+	<bean id="listBasket"
+		class="org.broadleafcommerce.controller.ListBasketFormController">
 		<property name="redirectUrl" value="listBasket.htm" />
 		<property name="orderService" ref="orderService" />
-		<property name="customerService" ref="customerService"/>
+		<property name="customerService" ref="customerService" />
 	</bean>
 
 	<bean id="checkout" class="org.broadleafcommerce.controller.CheckoutController">
-	    <property name="orderService" ref="orderService"/>
-	    <property name="customerService" ref="customerService"/>
-	    <property name="addressService" ref="addressService"/>
-	    <property name="contactInfoService" ref="contactInfoService"/>
-		<property name="addressStandardizationService" ref="addressStandardizationService"/>
-	    <property name="commandName" value="checkout"/>
-	    <property name="commandClass" value="org.broadleafcommerce.util.Checkout"/>
-	    <property name="pages">
-	        <list>
-				<value>inputCheckoutContactInformation</value>
-	            <value>inputCheckoutShippingAddress</value>
-	            <value>inputCheckoutPayment</value>
-	            <value>inputCheckoutConfirmation</value>
-	        </list>
-	    </property>
-        <property name="validator">
-            <bean class="org.broadleafcommerce.controller.validator.CheckoutValidator"/>
-        </property>
-		<property name="successView" value="redirect:/listOrders.htm"/>
+		<property name="orderService" ref="orderService" />
+		<property name="customerService" ref="customerService" />
+		<property name="addressService" ref="addressService" />
+		<property name="contactInfoService" ref="contactInfoService" />
+		<property name="addressStandardizationService" ref="addressStandardizationService" />
+		<property name="commandName" value="checkout" />
+		<property name="commandClass" value="org.broadleafcommerce.util.Checkout" />
+		<property name="pages">
+			<list>
+				<value>inputCheckoutContactInformation
+				</value>
+				<value>inputCheckoutShippingAddress
+				</value>
+				<value>inputCheckoutPayment</value>
+				<value>inputCheckoutConfirmation</value>
+			</list>
+		</property>
+		<property name="validator">
+			<bean class="org.broadleafcommerce.controller.validator.CheckoutValidator" />
+		</property>
+		<property name="successView" value="redirect:/listOrders.htm" />
 	</bean>
 
-    <bean id="createCategory" class="org.broadleafcommerce.controller.CategoryFormController">
-        <property name="commandName" value="category"/>
-        <property name="commandClass" value="org.broadleafcommerce.util.CreateCategory"/>
-        <property name="catalogService" ref="catalogService"/>
-        <property name="formView" value="createCategory" />
-        <property name="successView" value="redirect:/listCategory.htm" />
-    </bean>
+	<bean id="createCategory" class="org.broadleafcommerce.controller.CategoryFormController">
+		<property name="commandName" value="category" />
+		<property name="commandClass" value="org.broadleafcommerce.util.CreateCategory" />
+		<property name="catalogService" ref="catalogService" />
+		<property name="formView" value="createCategory" />
+		<property name="successView" value="redirect:/listCategory.htm" />
+	</bean>
 
-    <bean id="listCategory" class="org.broadleafcommerce.controller.ListCategoryFormController">
-        <property name="commandName" value="listCategory"/>
-        <property name="commandClass" value="org.broadleafcommerce.catalog.domain.Category"/>
-        <property name="catalogService" ref="catalogService"/>
-        <property name="formView" value="listCategory" />
-        <property name="successView" value="listCategory" />
-    </bean>
+	<bean id="listCategory"
+		class="org.broadleafcommerce.controller.ListCategoryFormController">
+		<property name="commandName" value="listCategory" />
+		<property name="commandClass"
+			value="org.broadleafcommerce.catalog.domain.Category" />
+		<property name="catalogService" ref="catalogService" />
+		<property name="formView" value="listCategory" />
+		<property name="successView" value="listCategory" />
+	</bean>
 
 	<bean id="catalogDisplay" class="org.broadleafcommerce.web.CatalogController">
 		<property name="catalogService" ref="catalogService" />
@@ -224,75 +237,83 @@
 		<property name="catalogPrefix" value="catalog" />
 	</bean>
 
-    <bean id="search" class="org.broadleafcommerce.controller.SearchController">
-        <property name="searchService" ref="searchService"/>
-        <property name="commandName" value="search"/>
-        <property name="commandClass" value="org.broadleafcommerce.search.domain.SearchQuery"/>
-        <property name="formView" value="search" />
-        <property name="successView" value="search" />
-    </bean>
+	<bean id="search" class="org.broadleafcommerce.controller.SearchController">
+		<property name="searchService" ref="searchService" />
+		<property name="commandName" value="search" />
+		<property name="commandClass"
+			value="org.broadleafcommerce.search.domain.SearchQuery" />
+		<property name="formView" value="search" />
+		<property name="successView" value="search" />
+	</bean>
 
-    <bean id="searchIndex" class="org.broadleafcommerce.controller.SearchIndexController">
-        <property name="searchService" ref="searchService"/>
-        <property name="commandName" value="search"/>
-        <property name="formView" value="searchIndex" />
-        <property name="successView" value="searchIndex" />
-    </bean>
+	<bean id="searchIndex" class="org.broadleafcommerce.controller.SearchIndexController">
+		<property name="searchService" ref="searchService" />
+		<property name="commandName" value="search" />
+		<property name="formView" value="searchIndex" />
+		<property name="successView" value="searchIndex" />
+	</bean>
 
-    <!-- Configures the Tiles layout system -->
-	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
+	<!-- Configures the Tiles layout system -->
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
 		<property name="definitions">
 			<list>
-				<value>/WEB-INF/tiles-broadleafdemo.xml</value>
+				<value>/WEB-INF/tiles-broadleafdemo.xml
+				</value>
 			</list>
 		</property>
 	</bean>
 
-    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-    	<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"></property>
-        <property name="prefix" value="/WEB-INF/jsp/"></property>
-       	<property name="suffix" value=".jsp"></property>
-    </bean>
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView"></property>
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
 
 	<bean id="welcome"
 		class="org.springframework.web.servlet.mvc.ParameterizableViewController">
 		<property name="viewName" value="welcome" />
 	</bean>
 
-	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	<bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
 		<property name="alwaysUseFullPath" value="true" />
-        <property name="interceptors">
-            <list>
-                <ref bean="catalogDisplayInterceptor"/>
-            </list>
-        </property>
+		<property name="interceptors">
+			<list>
+				<ref bean="catalogDisplayInterceptor" />
+			</list>
+		</property>
 		<property name="mappings">
-		    <props>
-                <prop key="/welcome.htm">welcome</prop>
-                <prop key="/registerCustomer.htm">registerCustomer</prop>
-                <prop key="/forgotPwd.htm">forgotPwd</prop>
-                <prop key="/challengeQuestion.htm">challengeQuestion</prop>
-                <prop key="/forgotPasswordChange.htm">forgotPasswordChange</prop>
-                <prop key="/passwordChange.htm">passwordChange</prop>
-                <prop key="/createAddress.htm">createAddress</prop>
-                <prop key="/listAddress.htm">listAddress</prop>
-                <prop key="/createProduct.htm">createProduct</prop>
-                <prop key="/listProducts.htm">listProducts</prop>
-                <prop key="/listSkus.htm">listSkus</prop>
-                <prop key="/createCategory.htm">createCategory</prop>
-                <prop key="/listCategory.htm">listCategory</prop>
-                <prop key="/createSku.htm">createSku</prop>
-                <prop key="/listOrders.htm">listOrders</prop>
-                <prop key="/basket/*">listBasket</prop>
-                <prop key="/checkout/checkout.htm">checkout</prop>
-                <prop key="/search.htm">search</prop>
-                <prop key="/searchIndex.htm">searchIndex</prop>
-                <prop key="/catalog/*">catalogDisplay</prop>
-                <prop key="/catalog/*/*">catalogDisplay</prop>
-                <prop key="/catalog/*/*/*">catalogDisplay</prop>
-                <prop key="/createShoppingCartPromotion.htm">createShoppingCartPromotion</prop>
-                <prop key="/createTestOrder.htm">createTestOrder</prop>
+			<props>
+				<prop key="/welcome.htm">welcome</prop>
+				<prop key="/registerCustomer.htm">registerCustomer</prop>
+				<prop key="/forgotPwd.htm">forgotPwd</prop>
+				<prop key="/challengeQuestion.htm">challengeQuestion</prop>
+				<prop key="/forgotPasswordChange.htm">forgotPasswordChange</prop>
+				<prop key="/passwordChange.htm">passwordChange</prop>
+				<prop key="/createAddress.htm">createAddress</prop>
+				<prop key="/listAddress.htm">listAddress</prop>
+				<prop key="/createProduct.htm">createProduct</prop>
+				<prop key="/listProducts.htm">listProducts</prop>
+				<prop key="/listSkus.htm">listSkus</prop>
+				<prop key="/createCategory.htm">createCategory</prop>
+				<prop key="/listCategory.htm">listCategory</prop>
+				<prop key="/createSku.htm">createSku</prop>
+				<prop key="/listOrders.htm">listOrders</prop>
+				<prop key="/basket/*">listBasket</prop>
+				<prop key="/checkout/checkout.htm">checkout</prop>
+				<prop key="/search.htm">search</prop>
+				<prop key="/searchIndex.htm">searchIndex</prop>
+				<prop key="/catalog/*">catalogDisplay</prop>
+				<prop key="/catalog/*/*">catalogDisplay</prop>
+				<prop key="/catalog/*/*/*">catalogDisplay</prop>
+				<prop key="/createShoppingCartPromotionRule.htm">createShoppingCartPromotionRule
+				</prop>
+				<prop key="/createShoppingCartPromotionTestOrder.htm">createShoppingCartPromotionTestOrder
+				</prop>
 			</props>
 		</property>
 	</bean>
