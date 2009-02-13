@@ -11,7 +11,7 @@
 
 <form:form method="post" commandName="couponCode">
 	<br />
-	<h4 class="formSectionHeader">Create Test Order</h4>
+	<h4 class="formSectionHeader">Order Information</h4>
 	<spring:hasBindErrors name="couponCode">
 		<spring:bind path="couponCode.*">
 			<c:forEach var="error" items="${status.errorMessages}">
@@ -33,18 +33,18 @@
 				<input type="text" name="code" value="${couponCode.code}" />
 			</td>
 		</tr>
+		
+		<tr>
+			<td>Order Total:</td>
+			<td><input type="text" name="orderTotal" />
+		</tr>
 	
 	</table>
 
 	
 	<div class="formButtonFooter personFormButtons">
-		<input type="submit" class="saveButton" value="Save Changes" />
+		<p><input type="submit" class="saveButton" value="Save Changes" /></p>
 	</div>
-	
-	<script type="text/javascript">
-		var date = new Date();
-		document.write("<h2>" + date + "</h2>");
-	</script>
 	
 </form:form>
 
