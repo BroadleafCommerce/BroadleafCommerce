@@ -15,13 +15,15 @@
         <mapping-file>config/bc/jpa/domain/SkuBundle.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Auditable.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ProductList.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/ProductListAssociation.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/ProductListEntry.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/DynamicProductList.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/OrderItemAdjustment.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ItemAttribute.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/BasePrice.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/OrderAdjustment.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Promotion.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CategoryExtendedProperties.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/CategoryImageMap.orm.xml</mapping-file>
 
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

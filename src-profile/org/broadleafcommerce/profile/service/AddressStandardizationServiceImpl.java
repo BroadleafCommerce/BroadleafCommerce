@@ -27,12 +27,10 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
-import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
-@Service("addressStandardizationService")
 public class AddressStandardizationServiceImpl implements AddressStandardizationService, ServiceDownResponse {
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
     private static final String HTTP_PROTOCOL = "http://";
     private static final String POST_METHOD = "POST";
     private static final String API_PARAM = "API=Verify&";
@@ -50,9 +48,9 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
     private static final String ZIP4_ELEM = "Zip4";
     private static final String EMPTY_STRING = "";
     private AddressStandardAbbreviations abbreviations;
-    //TODO: Should access these from property file.
-    private String uspsCharSet="UTF-8";
-    private String uspsPassword="338MC69CR570";
+    // TODO: Should access these from property file.
+    private String uspsCharSet = "UTF-8";
+    private String uspsPassword = "338MC69CR570";
     private String uspsServerName = "testing.shippingapis.com";
     private String uspsServiceAPI = "/ShippingAPITest.dll";
     private String uspsUserName = "482CREDE3966";
@@ -92,18 +90,18 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
             ArrayList<AddressStandarizationResponse> AddressResponseList = parseUSPSResponse(response);
 
             if ((AddressResponseList != null) && !AddressResponseList.isEmpty()) {
-                addressStandarizationResponse = (AddressStandarizationResponse) AddressResponseList.get(0);
+                addressStandarizationResponse = AddressResponseList.get(0);
             }
             return addressStandarizationResponse;
         } catch (IOException e) {
             logger.error("IOException", e);
-            return (AddressStandarizationResponse)getDownResponse("standardizeAddress", new Object[]{address});
+            return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
         } catch (SAXException e) {
             logger.error("SAXException", e);
-            return (AddressStandarizationResponse)getDownResponse("standardizeAddress", new Object[]{address});
+            return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
         } catch (ParserConfigurationException e) {
-        	logger.error("ParserConfigurationException", e);
-            return (AddressStandarizationResponse)getDownResponse("standardizeAddress", new Object[]{address});
+            logger.error("ParserConfigurationException", e);
+            return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
         } finally {
             if (response != null) {
                 try {
@@ -171,9 +169,8 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         addr.setTokenizedAddress(tokenizedAddress);
     }
 
-    private InputStream callUSPSAddressStandardization(Address address)
-                                                throws IOException {
-     
+    private InputStream callUSPSAddressStandardization(Address address) throws IOException {
+
         URL contentURL = new URL(new StringBuffer(HTTP_PROTOCOL).append(uspsServerName).append(uspsServiceAPI).toString());
 
         HttpURLConnection connection = (HttpURLConnection) contentURL.openConnection();
@@ -190,15 +187,14 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         try {
             osw.close();
         } catch (IOException e) {
-            //We'll try to avoid stopping processing and just log the error if the OutputStream doesn't close
+            // We'll try to avoid stopping processing and just log the error if the OutputStream doesn't close
             logger.error("Problem closing the OuputStream to the USPS Service", e);
         }
 
         return new BufferedInputStream(connection.getInputStream());
     }
 
-    private String getAddressXMLString(Address address)
-                                throws IOException {
+    private String getAddressXMLString(Address address) throws IOException {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement(ADDRESS_VALIDATE_REQUEST_ELEM);
         root.addAttribute(USER_ID_ATTR, uspsUserName);
@@ -206,18 +202,18 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
 
         Element domAddr = root.addElement(ADDRESS_ELEM).addAttribute(ID_ATTR, EMPTY_STRING);
         domAddr.addElement(ADDRESS1_ELEM).setText((address.getAddressLine2() == null) ? EMPTY_STRING : address.getAddressLine2());
-        domAddr.addElement(ADDRESS2_ELEM).setText((address.getAddressLine1() == null) ? EMPTY_STRING :address.getAddressLine1());
-        domAddr.addElement(CITY_ELEM).setText((address.getCity() == null) ? EMPTY_STRING :address.getCity());
-        domAddr.addElement(STATE_ELEM).setText((address.getStateProvRegion() == null) ? EMPTY_STRING :address.getStateProvRegion());
-        domAddr.addElement(ZIP5_ELEM).setText((address.getPostalCode() == null) ? EMPTY_STRING :address.getPostalCode());
-        domAddr.addElement(ZIP4_ELEM).setText((address.getZipFour() == null) ? EMPTY_STRING :address.getZipFour());
+        domAddr.addElement(ADDRESS2_ELEM).setText((address.getAddressLine1() == null) ? EMPTY_STRING : address.getAddressLine1());
+        domAddr.addElement(CITY_ELEM).setText((address.getCity() == null) ? EMPTY_STRING : address.getCity());
+        domAddr.addElement(STATE_ELEM).setText((address.getStateProvRegion() == null) ? EMPTY_STRING : address.getStateProvRegion());
+        domAddr.addElement(ZIP5_ELEM).setText((address.getPostalCode() == null) ? EMPTY_STRING : address.getPostalCode());
+        domAddr.addElement(ZIP4_ELEM).setText((address.getZipFour() == null) ? EMPTY_STRING : address.getZipFour());
 
         StringWriter strWriter = new StringWriter();
         XMLWriter writer = new XMLWriter(strWriter);
 
         try {
             writer.write(document);
-            logger.debug("strWriter.toString(): "+strWriter.toString());
+            logger.debug("strWriter.toString(): " + strWriter.toString());
             return URLEncoder.encode(strWriter.toString(), uspsCharSet);
         } finally {
             document = null;
@@ -240,11 +236,10 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         }
     }
 
-    private ArrayList<AddressStandarizationResponse> parseUSPSResponse(InputStream response)
-                                 throws IOException, SAXException, ParserConfigurationException {
+    private ArrayList<AddressStandarizationResponse> parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
         USPSAddressResponseParser addrContentHelper = new USPSAddressResponseParser();
         SAXParserFactory.newInstance().newSAXParser().parse(response, addrContentHelper);
-        
+
         return addrContentHelper.getAddressResponseList();
     }
 
@@ -258,21 +253,21 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
             address = standardizationResponse.getAddress();
         }
 
-        tokenizeAddress(address, ! standardizationResponse.isErrorDetected());
+        tokenizeAddress(address, !standardizationResponse.isErrorDetected());
     }
-    
+
     public Object getDownResponse(String method, Object[] args) {
-		AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
-		addressStandarizationResponse.setErrorDetected(true);
-		
-		if ("standardizeAndTokenizeAddress".equals(method)) {
-			if (args != null && args.length > 0 && args[0] != null) {
-				addressStandarizationResponse.setAddress(((Address)args[0]));
-			}
-		} else if ("standardizeAddress".equals(method)) {
-			addressStandarizationResponse.setAddress((Address)args[0]);
-		}
-		
-		return addressStandarizationResponse;
-	}
+        AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
+        addressStandarizationResponse.setErrorDetected(true);
+
+        if ("standardizeAndTokenizeAddress".equals(method)) {
+            if (args != null && args.length > 0 && args[0] != null) {
+                addressStandarizationResponse.setAddress(((Address) args[0]));
+            }
+        } else if ("standardizeAddress".equals(method)) {
+            addressStandarizationResponse.setAddress((Address) args[0]);
+        }
+
+        return addressStandarizationResponse;
+    }
 }

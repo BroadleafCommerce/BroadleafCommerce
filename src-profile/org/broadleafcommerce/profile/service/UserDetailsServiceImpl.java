@@ -11,15 +11,13 @@ import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
-@Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource(name = "customerService")
+    @Resource
     private CustomerService customerService;
 
     private boolean forcePasswordChange = false;

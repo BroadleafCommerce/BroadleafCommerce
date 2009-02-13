@@ -5,6 +5,7 @@ import org.broadleafcommerce.profile.service.addressValidation.AddressStandariza
 import org.broadleafcommerce.profile.service.addressValidation.ServiceDownResponse;
 
 public interface AddressStandardizationService extends ServiceDownResponse {
+
     public AddressStandarizationResponse standardizeAddress(Address addr);
 
     public void standardizeAndTokenizeAddress(Address address);

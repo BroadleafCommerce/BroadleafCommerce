@@ -56,6 +56,12 @@
 			</fileset>
 		</copy>
 
+		<copy tofile="${stage.dir}/framework-jar/applicationContext-service.xml">
+			<fileset dir="${spring.config.dir}">
+				<include name="applicationContext-service.xml" />
+			</fileset>
+		</copy>
+
 		<copy tofile="${stage.dir}/framework-jar/jdbc.properties">
 			<fileset dir="${jdbc.config.dir}">
 				<include name="jdbc.properties" />

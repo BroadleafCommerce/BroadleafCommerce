@@ -1,23 +1,18 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
-import java.util.Set;
 
-//@Entity
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "TYPE")
-//@Table(name = "BLC_PRODUCT_LIST")
 public class ProductList implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-//    @Id
-//    @GeneratedValue
-//    @Column(name = "PRODUCT_LIST_ID")
     private Long id;
 
-//    @OneToMany(mappedBy = "productList")
-    private Set<ProductListAssociation> productListAssociations;
+    private String name;
+
+    private boolean dynamicFlag;
+
+    private String dynamicQuery;
 
     public Long getId() {
         return id;
@@ -27,12 +22,27 @@ public class ProductList implements Serializable {
         this.id = id;
     }
 
-    public Set<ProductListAssociation> getProductListAssociations() {
-        return productListAssociations;
+    public String getName() {
+        return name;
     }
 
-    public void setProductListAssociations(Set<ProductListAssociation> productListAssociations) {
-        this.productListAssociations = productListAssociations;
+    public void setName(String name) {
+        this.name = name;
     }
 
+    public boolean isDynamicFlag() {
+        return dynamicFlag;
+    }
+
+    public void setDynamicFlag(boolean dynamicFlag) {
+        this.dynamicFlag = dynamicFlag;
+    }
+
+    public String getDynamicQuery() {
+        return dynamicQuery;
+    }
+
+    public void setDynamicQuery(String dynamicQuery) {
+        this.dynamicQuery = dynamicQuery;
+    }
 }

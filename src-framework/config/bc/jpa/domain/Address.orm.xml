@@ -19,9 +19,9 @@
 		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
 		WHERE address.id = :addressId</query>
 	</named-query>
-	
+
 	<entity class="org.broadleafcommerce.profile.domain.BroadleafCustomerAddress" name="address">
-        <table name="BLC_CUSTOMER_ADDRESS" >        	
+        <table name="BLC_CUSTOMER_ADDRESS" >
         	<unique-constraint>
         		<column-name>CUSTOMER_ID</column-name>
         		<column-name>ADDRESS_NAME</column-name>
@@ -31,12 +31,12 @@
 		<entity-listeners>
 			<entity-listener class="org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener" />
 		</entity-listeners>
-        
+
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="ADDRESS_ID"/>
                 <generated-value/>
-                
+
             </id>
             <basic name="addressName">
                 <column name="ADDRESS_NAME" />
@@ -47,13 +47,13 @@
             <basic name="addressLine2">
             	<column name="ADDRESS_LINE2"/>
             </basic>
-            <basic name="CITY">
+            <basic name="city">
             	<column name="CITY"/>
             </basic>
             <basic name="stateProvRegion">
             	<column name="STATEPROVREGION_CODE"/>
             </basic>
-            <basic name="PostalCode">
+            <basic name="postalCode">
             	<column name="POSTAL_CODE"/>
             </basic>
             <basic name="zipFour">
@@ -72,8 +72,7 @@
             	<join-column name="CUSTOMER_ID"/>
             	<cascade><cascade-all/></cascade>
             </many-to-one>
-			<transient name="logger"/>			            
         </attributes>
     </entity>
-	
+
 </entity-mappings>

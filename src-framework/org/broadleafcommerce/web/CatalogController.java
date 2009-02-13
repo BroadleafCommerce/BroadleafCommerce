@@ -53,9 +53,9 @@ public class CatalogController extends AbstractController{
 
 			if (productId != null){
 				try {
-					Product item = catalogService.readProductById(new Long(productId));
+					Product item = catalogService.findProductById(new Long(productId));
 					if (item != null){
-						List<Sku> skus = catalogService.readSkusForProductId(item.getId());
+						List<Sku> skus = catalogService.findSkusForProductId(item.getId());
 
 						ProductSkus productSkus = new ProductSkus(item, skus);
 						Map<Object, Object> model = new HashMap<Object, Object>();
@@ -68,7 +68,7 @@ public class CatalogController extends AbstractController{
 					logger.error("Unable to parse productId: " + e.getMessage());
 				}
 			} else{
-				List<Category> subCategories = catalogService.readAllSubCategories(requestState.getCategory());
+				List<Category> subCategories = catalogService.findAllSubCategories(requestState.getCategory());
 
 				Map<Object, Object> model = new HashMap<Object, Object>();
 				model.put("subCategories", subCategories);

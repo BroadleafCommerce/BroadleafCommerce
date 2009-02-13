@@ -4,23 +4,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.drools.RuleBase;
 import org.drools.RuleBaseFactory;
-import org.springframework.stereotype.Service;
 
-@Service("ruleBaseService")
 public class RuleBaseServiceImpl implements RuleBaseService {
 
-	/** Logger for this class and subclasses */
-	protected final Log logger = LogFactory.getLog(getClass());
+    /** Logger for this class and subclasses */
+    protected final Log logger = LogFactory.getLog(getClass());
 
-	private RuleBase ruleBase;
+    private RuleBase ruleBase;
 
-	public RuleBase getRuleBase() {
+    public RuleBase getRuleBase() {
 
-		if (ruleBase == null) {
-			ruleBase = RuleBaseFactory.newRuleBase();
-		}
+        if (ruleBase == null) {
+            ruleBase = RuleBaseFactory.newRuleBase();
+        }
 
-		return ruleBase;
-	}
-
+        return ruleBase;
+    }
 }

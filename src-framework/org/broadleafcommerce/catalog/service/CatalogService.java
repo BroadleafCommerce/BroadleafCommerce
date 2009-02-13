@@ -10,29 +10,29 @@ public interface CatalogService {
 
     public Product saveProduct(Product product);
 
-    public Product readProductById(Long productId);
+    public Product findProductById(Long productId);
 
-    public List<Product> readProductsByName(String searchName);
+    public List<Product> findProductsByName(String searchName);
 
     public Category saveCategory(Category category);
 
-    public Category readCategoryById(Long categoryId);
+    public Category findCategoryById(Long categoryId);
 
-    public Category readCategoryByUrlKey(String urlKey);
+    public Category findCategoryByUrlKey(String urlKey);
 
-    public List<Category> readAllCategories();
+    public List<Category> findAllCategories();
 
-    public List<Category> readAllSubCategories(Category category);
+    public List<Category> findAllSubCategories(Category category);
+
+    public List<Product> findProductsForCategory(Category category);
 
     public Sku saveSku(Sku sku);
 
-    public List<Sku> readSkusForProductId(Long productId);
+    public List<Sku> findSkusForProductId(Long productId);
 
-    public List<Sku> readAllSkus();
+    public List<Sku> findAllSkus();
 
-    public List<Sku> readSkusByIds(List<Long> ids);
+    public List<Sku> findSkusByIds(List<Long> ids);
 
     public Sku readSkuById(Long skuId);
-
-
 }

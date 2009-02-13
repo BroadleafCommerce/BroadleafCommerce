@@ -10,8 +10,7 @@ public class BroadleafUser implements User, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final Log logger = LogFactory.getLog(getClass());
+    protected Log logger = LogFactory.getLog(getClass());
 
     private Long id;
 

@@ -3,24 +3,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<entity class="org.broadleafcommerce.catalog.domain.ProductList" name="productList">
-        <table name="BLC_PRODUCT_LIST" >
-        </table>
+	<entity class="org.broadleafcommerce.catalog.domain.Category" name="category">
+        <table name="BLC_CATEGORY_IMAGE_MAP" />
         <inheritance strategy="JOINED"/>
-		<discriminator-column name="type"/>
+
         <attributes>
             <id name="id">
-            	<column name="PRODUCT_LIST_ID"/>
+            	<column name="ID"/>
                 <generated-value/>
             </id>
             <basic name="name">
-                <column name="NAME"/>
+                <column name="NAME" />
             </basic>
-            <basic name="dynamicFlag">
-                <column name="DYNAMIC_FLAG"/>
-            </basic>
-            <basic name="dynamicQuery">
-                <column name="DYNAMIC_QUERY"/>
+            <basic name="url">
+                <column name="URL"/>
             </basic>
         </attributes>
     </entity>
