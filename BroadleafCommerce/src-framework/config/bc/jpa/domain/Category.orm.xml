@@ -18,14 +18,14 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.catalog.domain.Category" name="category">
-        <table name="BLC_CATEGORY" >        	
+        <table name="BLC_CATEGORY" >
         </table>
         <inheritance strategy="JOINED"/>
 
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="CATEGORY_ID"/>
-                <generated-value/>                
+                <generated-value/>
             </id>
             <basic name="name">
                 <column name="NAME" />
@@ -36,16 +36,30 @@
             <basic name="urlKey">
                 <column name="URL_KEY"/>
             </basic>
+            <basic name="displayOrder">
+                <column name="DISPLAY_ORDER"/>
+            </basic>
+            <basic name="description">
+                <column name="DESCRIPTION"/>
+            </basic>
+            <basic name="activeStartDate">
+                <column name="ACTIVE_START_DATE"/>
+            </basic>
+            <basic name="activeEndDate">
+                <column name="ACTIVE_END_DATE"/>
+            </basic>
+            <basic name="displayTemplate">
+                <column name="DISPLAY_TEMPLATE"/>
+            </basic>
             <many-to-one name="parentCategory" target-entity="org.broadleafcommerce.catalog.domain.Category">
 				<join-column name="PARENT_CATEGORY_ID" />
             </many-to-one>
-			<many-to-many name="products" >
-				<join-table name="PRODUCT_ASSOCIATIONS">
-					<join-column name="CATEGORY_ID" referenced-column-name="CATEGORY_ID"/>
-					<inverse-join-column name="PRODUCT_ID" referenced-column-name="PRODUCT_ID"/>
-				</join-table>
-			</many-to-many>
-			<embedded name="auditable"></embedded>
+            <one-to-many name="imageMap" mapped-by="categoryImageMap">
+            	<map-key name="name"/>
+            </one-to-many>
+            <one-to-many name="extendedPropertiesMap" mapped-by="categoryExtendedProperties">
+            	<map-key name="name"/>
+            </one-to-many>
         </attributes>
     </entity>
 
