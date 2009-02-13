@@ -29,7 +29,7 @@ public class ProductFormController extends SimpleFormController {
         Product createProduct = new Product();
 
         if (request.getParameter("productId") != null) {
-            createProduct = catalogService.readProductById(Long.valueOf(request.getParameter("productId")));
+            createProduct = catalogService.findProductById(Long.valueOf(request.getParameter("productId")));
         }
         Map<String, ItemAttribute> attribs = createProduct.getItemAttributes();
         if (attribs == null) {

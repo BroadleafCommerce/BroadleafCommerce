@@ -37,7 +37,7 @@ public class CategoryFormController extends SimpleFormController {
     	category.setUrl(createCategory.getUrl());
 
     	if (StringUtils.isNotBlank(createCategory.getParentId())){
-    		Category parentCategory = catalogService.readCategoryById(new Long(createCategory.getParentId()));
+    		Category parentCategory = catalogService.findCategoryById(new Long(createCategory.getParentId()));
     		if (parentCategory != null){
     			category.setParentCategory(parentCategory);
     		}

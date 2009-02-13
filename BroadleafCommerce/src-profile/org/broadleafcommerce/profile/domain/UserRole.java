@@ -12,20 +12,19 @@ public class UserRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-//    @Transient
-    private final Log logger = LogFactory.getLog(getClass());
+    //    @Transient
+    protected Log logger = LogFactory.getLog(getClass());
 
-//    @Id
-//    @GeneratedValue
-//    @Column(name = "USER_ROLE_ID")
+    //    @Id
+    //    @GeneratedValue
+    //    @Column(name = "USER_ROLE_ID")
     private Long id;
 
-//    @ManyToOne(targetEntity = BroadleafUser.class)
-//    @JoinColumn(name = "USER_ID")
+    //    @ManyToOne(targetEntity = BroadleafUser.class)
+    //    @JoinColumn(name = "USER_ID")
     private User user;
 
-//    @Column(name = "ROLE_NAME")
+    //    @Column(name = "ROLE_NAME")
     private String roleName;
 
     public UserRole() {

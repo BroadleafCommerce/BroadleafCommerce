@@ -29,7 +29,7 @@ public class ListCategoryFormController extends SimpleFormController {
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        List<Category> categoryList = catalogService.readAllCategories();
+        List<Category> categoryList = catalogService.findAllCategories();
         Map<Object, Object> model = new HashMap<Object, Object>();
         model.put("categoryList", categoryList);
 

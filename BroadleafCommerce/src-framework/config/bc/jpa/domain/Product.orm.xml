@@ -9,15 +9,14 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.catalog.domain.Product" name="product">
-        <table name="BLC_PRODUCT" >        	
+        <table name="BLC_PRODUCT" >
         </table>
         <inheritance strategy="JOINED"/>
 
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="PRODUCT_ID"/>
                 <generated-value/>
-                
             </id>
             <basic name="description">
                 <column name="DESCRIPTION" />
@@ -26,12 +25,10 @@
                 <column name="NAME"/>
             </basic>
             <one-to-many name="itemAttributes" mapped-by="product">
-            	<map-key name="name"/>           
+            	<map-key name="name"/>
             </one-to-many>
             <one-to-many name="productListAssociations" mapped-by="product">
             </one-to-many>
-			<embedded name="auditable">
-			</embedded>
         </attributes>
     </entity>
 

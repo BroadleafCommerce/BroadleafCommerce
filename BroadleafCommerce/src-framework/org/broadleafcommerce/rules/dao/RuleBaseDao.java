@@ -6,6 +6,5 @@ import org.drools.rule.Package;
 
 public interface RuleBaseDao {
 
-	public List<Package> getRulePackages();
-
+    public List<Package> getRulePackages();
 }

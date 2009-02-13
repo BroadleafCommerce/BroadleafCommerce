@@ -51,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
     private AddressDao addressDao;
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public BroadleafOrder createOrderForCustomer(Customer customer) {
         BroadleafOrder order = new BroadleafOrder();
         order.setCustomer(customer);
@@ -59,9 +59,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
-    public BroadleafOrder addContactInfoToOrder(BroadleafOrder order, ContactInfo contactInfo){
-        if(contactInfo.getId() == null){
+    @Transactional(propagation = Propagation.REQUIRED)
+    public BroadleafOrder addContactInfoToOrder(BroadleafOrder order, ContactInfo contactInfo) {
+        if (contactInfo.getId() == null) {
             contactInfoDao.maintainContactInfo(contactInfo);
         }
         order.setContactInfo(contactInfo);
@@ -69,36 +69,36 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderPayment addPaymentToOrder(BroadleafOrder order, OrderPayment payment) {
         payment.setOrder(order);
-        if(payment.getAddress()!= null && payment.getAddress().getId() == null){
+        if (payment.getAddress() != null && payment.getAddress().getId() == null) {
             payment.setAddress(addressDao.maintainAddress(payment.getAddress()));
         }
         return orderPaymentDao.maintainOrderPayment(payment);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderShipping addShippingToOrder(BroadleafOrder order, OrderShipping shipping) {
         shipping.setOrder(order);
-        if(shipping.getAddress() != null && shipping.getAddress().getId() == null){
+        if (shipping.getAddress() != null && shipping.getAddress().getId() == null) {
             shipping.setAddress(addressDao.maintainAddress(shipping.getAddress()));
         }
         return orderShippingDao.maintainOrderShipping(shipping);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public BroadleafOrder calculateOrderTotal(BroadleafOrder order) {
         double total = 0;
         List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
-        for(OrderItem item : orderItemList){
+        for (OrderItem item : orderItemList) {
             total += item.getFinalPrice();
         }
 
         List<OrderShipping> shippingList = orderShippingDao.readOrderShippingForOrder(order);
-        for(OrderShipping shipping : shippingList){
+        for (OrderShipping shipping : shippingList) {
             total += shipping.getCost();
         }
         order.setOrderTotal(total);
@@ -106,15 +106,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public void cancelOrder(BroadleafOrder order) {
         orderDao.deleteOrderForCustomer(order);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public BroadleafOrder confirmOrder(BroadleafOrder order) {
-        // TODO Other actions needed to complete order.  Code below is only a start.
+        // TODO Other actions needed to complete order. Code below is only a start.
         return orderDao.submitOrder(order);
     }
 
@@ -128,24 +128,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
-    public OrderItem addItemToOrder(BroadleafOrder order, Sku item, int quantity){
+    @Transactional(propagation = Propagation.REQUIRED)
+    public OrderItem addItemToOrder(BroadleafOrder order, Sku item, int quantity) {
         OrderItem orderItem = null;
         List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem orderItem2 : orderItems) {
-            if(orderItem2.getSku().getId().equals(item.getId()))
+            if (orderItem2.getSku().getId().equals(item.getId()))
                 orderItem = orderItem2;
         }
-        if(orderItem == null)
+        if (orderItem == null)
             orderItem = new OrderItem();
         orderItem.setSku(item);
-        orderItem.setQuantity(orderItem.getQuantity()+quantity);
+        orderItem.setQuantity(orderItem.getQuantity() + quantity);
         orderItem.setOrder(order);
         return maintainOrderItem(orderItem);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public BroadleafOrder removeItemFromOrder(BroadleafOrder order, OrderItem item) {
         orderItemDao.deleteOrderItem(item);
         calculateOrderTotal(order);
@@ -153,9 +153,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderItem updateItemInOrder(BroadleafOrder order, OrderItem item) {
-        // This isn't quite right.  It will need to be changed later to reflect
+        // This isn't quite right. It will need to be changed later to reflect
         // the exact requirements we want.
         // item.setQuantity(quantity);
         item.setOrder(order);
@@ -173,14 +173,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
-    public BroadleafOrder createOrderForCustomer(long customerId){
+    @Transactional(propagation = Propagation.REQUIRED)
+    public BroadleafOrder createOrderForCustomer(long customerId) {
         Customer customer = customerDao.readCustomerById(customerId);
         return createOrderForCustomer(customer);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderItem addItemToOrder(Long orderId, Long itemId, int quantity) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         Sku si = skuDao.readSkuById(itemId);
@@ -188,7 +188,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderPayment addPaymentToOrder(Long orderId, Long paymentId) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         OrderPayment sop = orderPaymentDao.readOrderPaymentById(paymentId);
@@ -196,7 +196,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderShipping addShippingToOrder(Long orderId, Long shippingId) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         OrderShipping shipping = orderShippingDao.readOrderShippingById(shippingId);
@@ -204,21 +204,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public BroadleafOrder calculateOrderTotal(Long orderId) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         return this.calculateOrderTotal(order);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public void cancelOrder(Long orderId) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         this.cancelOrder(order);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public BroadleafOrder confirmOrder(Long orderId) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         return this.confirmOrder(order);
@@ -231,7 +231,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public BroadleafOrder removeItemFromOrder(Long orderId, Long itemId) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         OrderItem item = orderItemDao.readOrderItemById(itemId);
@@ -239,7 +239,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public OrderItem updateItemInOrder(Long orderId, Long itemId, int quantity, double finalPrice) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         OrderItem item = orderItemDao.readOrderItemById(itemId);
@@ -249,8 +249,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
-    public BroadleafOrder addContactInfoToOrder(Long orderId, Long contactId){
+    @Transactional(propagation = Propagation.REQUIRED)
+    public BroadleafOrder addContactInfoToOrder(Long orderId, Long contactId) {
         BroadleafOrder order = orderDao.readOrderById(orderId);
         ContactInfo ci = contactInfoDao.readContactInfoById(contactId);
         return this.addContactInfoToOrder(order, ci);
@@ -263,21 +263,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public BroadleafOrder getCurrentBasketForUserId(Long userId) {
         return orderDao.readBasketOrderForCustomer(customerDao.readCustomerById(userId));
     }
 
-    private BroadleafOrder maintainOrder(BroadleafOrder order){
+    private BroadleafOrder maintainOrder(BroadleafOrder order) {
         calculateOrderTotal(order);
         return orderDao.maintianOrder(order);
     }
 
-    private OrderItem maintainOrderItem(OrderItem orderItem){
+    private OrderItem maintainOrderItem(OrderItem orderItem) {
         orderItem.setFinalPrice(orderItem.getQuantity() * orderItem.getSku().getPrice());
         OrderItem returnedOrderItem = orderItemDao.maintainOrderItem(orderItem);
         maintainOrder(orderItem.getOrder());
         return returnedOrderItem;
     }
-
 }

@@ -19,6 +19,6 @@ public class ListSkusFormController extends PaginationController {
     @Override
     protected void populatePaginatedList(Map<Object, Object> model,
             PaginationCommandObject object) {
-        object.setFullList(catalogService.readAllSkus());
+        object.setFullList(catalogService.findAllSkus());
     }
 }

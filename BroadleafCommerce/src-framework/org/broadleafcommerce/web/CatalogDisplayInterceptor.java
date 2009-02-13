@@ -1,7 +1,5 @@
 package org.broadleafcommerce.web;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Stack;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,108 +15,109 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.UrlPathHelper;
 
 public class CatalogDisplayInterceptor extends HandlerInterceptorAdapter {
-	protected final Log logger = LogFactory.getLog(getClass());
-	private final UrlPathHelper pathHelper = new UrlPathHelper();
-	private CatalogService catalogService;
-	private String catalogPrefix;
+    protected final Log logger = LogFactory.getLog(getClass());
+    private final UrlPathHelper pathHelper = new UrlPathHelper();
+    private CatalogService catalogService;
+    private String catalogPrefix;
 
-	public void setCatalogPrefix(String catalogPrefix) {
-		this.catalogPrefix = catalogPrefix;
-	}
+    public void setCatalogPrefix(String catalogPrefix) {
+        this.catalogPrefix = catalogPrefix;
+    }
 
-	public void setCatalogService(CatalogService catalogService) {
-		this.catalogService = catalogService;
-	}
+    public void setCatalogService(CatalogService catalogService) {
+        this.catalogService = catalogService;
+    }
 
-	@Override
-	public boolean preHandle(HttpServletRequest request,
-			HttpServletResponse response, Object handler) throws Exception {
+    @Override
+    public boolean preHandle(HttpServletRequest request,
+            HttpServletResponse response, Object handler) throws Exception {
 
-	       String path = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());
+        String path = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());
 
-	       BroadleafCommerceRequestState requestState = (BroadleafCommerceRequestState) BroadleafCommerceRequestState.getRequestState(request);
-    	   requestState.setCatalogPrefix(catalogPrefix);
-	       Category category = retrieveCategory(path);
-	       String productId = request.getParameter("productId");
+        BroadleafCommerceRequestState requestState = BroadleafCommerceRequestState.getRequestState(request);
+        requestState.setCatalogPrefix(catalogPrefix);
+        Category category = retrieveCategory(path);
+        String productId = request.getParameter("productId");
 
-	       if (category != null){
-	    	   requestState.setCategory(category);
-	    	   if (productId != null){
-	    		   if (!isValidProduct(productId, category)){
-	    			   response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-	    			   return false;
-	    		   }
-	    	   }
-	    	   if (StringUtils.isNotBlank(category.getUrl())){
-	    		   response.sendRedirect(category.getUrl());
-	    		   return false;
-	    	   }
-	       } else if(path.startsWith("/" + catalogPrefix)){
-	    	   response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-	    	   return false;
-	       }
+        if (category != null){
+            requestState.setCategory(category);
+            if (productId != null){
+                if (!isValidProduct(productId, category)){
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    return false;
+                }
+            }
+            if (StringUtils.isNotBlank(category.getUrl())){
+                response.sendRedirect(category.getUrl());
+                return false;
+            }
+        } else if(path.startsWith("/" + catalogPrefix)){
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            return false;
+        }
 
-	       return true;
-	}
+        return true;
+    }
 
-	private Category retrieveCategory(String path){
-		String[] tokens = StringUtils.split(path, "/");
-		Stack<String> catTokens = new Stack<String>();
+    private Category retrieveCategory(String path){
+        String[] tokens = StringUtils.split(path, "/");
+        Stack<String> catTokens = new Stack<String>();
 
-		for (int i=0; i<tokens.length; i++){
-			catTokens.push(tokens[i]);
-		}
+        for (int i=0; i<tokens.length; i++){
+            catTokens.push(tokens[i]);
+        }
 
-		Category category = catalogService.readCategoryByUrlKey(catTokens.peek());
-		if (isValidCategory(catTokens, category, catalogPrefix)){
-			return category;
-		}
-		return null;
+        Category category = catalogService.findCategoryByUrlKey(catTokens.peek());
+        if (isValidCategory(catTokens, category, catalogPrefix)){
+            return category;
+        }
+        return null;
 
-	}
+    }
 
-	private boolean isValidCategory(Stack<String> tokens, Category category, String ignoreToken){
-		if (tokens.isEmpty()){
-			return true;
-		}
+    private boolean isValidCategory(Stack<String> tokens, Category category, String ignoreToken){
+        if (tokens.isEmpty()){
+            return true;
+        }
 
-		String token = tokens.pop();
-		boolean check;
-		if (category != null && token.equals(category.getUrlKey())){
-			check = isValidCategory(tokens, category.getParentCategory(), ignoreToken);
-		} else {
-			if (category == null && token.equals(ignoreToken)){
-				return true;
-			} else {
-				return false;
-			}
-		}
+        String token = tokens.pop();
+        boolean check;
+        if (category != null && token.equals(category.getUrlKey())){
+            check = isValidCategory(tokens, category.getParentCategory(), ignoreToken);
+        } else {
+            if (category == null && token.equals(ignoreToken)){
+                return true;
+            } else {
+                return false;
+            }
+        }
 
-		return check;
-	}
+        return check;
+    }
 
-	private boolean isValidProduct(String productId, Category category){
-	   try {
-		   Long id = new Long(productId);
-		   Product item = catalogService.readProductById(id);
-		   if (item == null){
-	    	   return false;
-		   }
+    private boolean isValidProduct(String productId, Category category){
+        try {
+            Long id = new Long(productId);
+            Product item = catalogService.findProductById(id);
+            if (item == null){
+                return false;
+            }
 
-		   List<Product> products = category.getProducts();
-		   if (products != null){
-			   for (Iterator<Product> itr = products.iterator();itr.hasNext();){
-				   if (id.equals(itr.next().getId())){
-					   return true;
-				   }
-			   }
+            // TODO fix with new changes bradley
+            //		   List<Product> products = category.getProducts();
+            //		   if (products != null){
+            //			   for (Iterator<Product> itr = products.iterator();itr.hasNext();){
+            //				   if (id.equals(itr.next().getId())){
+            //					   return true;
+            //				   }
+            //			   }
 
-			   return false;
-		   }
-	   } catch(NumberFormatException e){
-		   logger.error("Unable to parse productId: " + e.getMessage());
-	   }
+            return false;
+            //		   }
+        } catch(NumberFormatException e){
+            logger.error("Unable to parse productId: " + e.getMessage());
+        }
 
-	   return true;
-	}
+        return true;
+    }
 }

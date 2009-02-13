@@ -4,33 +4,18 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import org.broadleafcommerce.common.domain.Auditable;
-
-//@Entity
-//@Table(name = "BLC_PRODUCT")
 public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-//    @Id
-//    @GeneratedValue
-//    @Column(name = "PRODUCT_ID")
     private Long id;
-    
-//    @Embedded
-    private Auditable auditable;
 
-//    @OneToMany(mappedBy = "product")
-//    @MapKey(name="name")
     private Map<String, ItemAttribute> itemAttributes;
 
-//    @OneToMany(mappedBy = "product")
-    private Set<ProductListAssociation> productListAssociations;
+    private Set<ProductListEntry> productListEntries;
 
-//    @Column(name = "DESCRIPTION")
     private String description;
 
-//    @Column(name = "NAME")
     private String name;
 
     public String getName() {
@@ -65,19 +50,11 @@ public class Product implements Serializable {
         this.itemAttributes = itemAttributes;
     }
 
-    public Set<ProductListAssociation> getProductListAssociations() {
-        return productListAssociations;
+    public Set<ProductListEntry> getProductListAssociations() {
+        return productListEntries;
     }
 
-    public void setProductListAssociations(Set<ProductListAssociation> productListAssociations) {
-        this.productListAssociations = productListAssociations;
-    }
-
-    public Auditable getAuditable() {
-        return auditable;
-    }
-
-    public void setAuditable(Auditable auditable) {
-        this.auditable = auditable;
+    public void setProductListAssociations(Set<ProductListEntry> productListEntries) {
+        this.productListEntries = productListEntries;
     }
 }

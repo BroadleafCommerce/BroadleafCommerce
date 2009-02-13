@@ -11,12 +11,12 @@
 		<entity-listeners>
 			<entity-listener class="org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener" />
 		</entity-listeners>
-		        
+
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="USER_ROLE_ID"/>
                 <generated-value/>
-                
+
             </id>
             <basic name="roleName">
                 <column name="ROLE_NAME" />
@@ -24,7 +24,6 @@
 			<many-to-one name="user" target-entity="org.broadleafcommerce.profile.domain.BroadleafUser">
 				<join-column name="user"/>
 			</many-to-one>
-			<transient name="logger"/>			            
         </attributes>
     </entity>
 

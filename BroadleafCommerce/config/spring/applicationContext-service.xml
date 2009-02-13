@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<!-- Framework -->
+	<!-- Catalog -->
+	<bean id="basePriceDao" class="org.broadleafcommerce.catalog.dao.BasePriceDaoJpa"/>
+
+	<bean id="catalogService" class="org.broadleafcommerce.catalog.service.CatalogServiceImpl"/>
+	<bean id="categoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoJpa"/>
+
+	<bean id="itemAttributeDao" class="org.broadleafcommerce.catalog.dao.ItemAttributeDaoJpa"/>
+
+	<bean id="productDao" class="org.broadleafcommerce.catalog.dao.ProductDaoJpa"/>
+
+	<bean id="productListAssociationDao" class="org.broadleafcommerce.catalog.dao.ProductListAssociationDaoJpa"/>
+
+	<bean id="productListDao" class="org.broadleafcommerce.catalog.dao.ProductListDaoJpa"/>
+
+	<bean id="skuDao" class="org.broadleafcommerce.catalog.dao.SkuDaoJpa"/>
+
+	<!-- Order -->
+	<bean id="orderService" class="org.broadleafcommerce.order.service.OrderServiceImpl"/>
+	<bean id="orderDao" class="org.broadleafcommerce.order.dao.OrderDaoJpa"/>
+
+	<bean id="orderItemDao" class="org.broadleafcommerce.order.dao.OrderItemDaoJpa"/>
+
+	<bean id="orderPaymentDao" class="org.broadleafcommerce.order.dao.OrderPaymentDaoJpa"/>
+
+	<bean id="orderShippingDao" class="org.broadleafcommerce.order.dao.OrderShippingDaoJpa"/>
+
+	<!-- Rules -->
+	<bean id="ruleBaseService" class="org.broadleafcommerce.rules.service.RuleBaseServiceImpl"/>
+
+	<bean id="ruleService" class="org.broadleafcommerce.rules.service.RuleServiceImpl"/>
+	<bean id="ruleDao" class="org.broadleafcommerce.rules.dao.RuleDaoJpa"/>
+
+	<!-- Search -->
+	<bean id="searchService" class="org.broadleafcommerce.search.service.SearchServiceImpl"/>
+
+
+	<!-- Profile -->
+	<!-- Profile -->
+	<bean id="addressService" class="org.broadleafcommerce.profile.service.AddressServiceImpl"/>
+	<bean id="addressDao" class="org.broadleafcommerce.profile.dao.AddressDaoJpa"/>
+
+	<bean id="addressStandardizationService" class="org.broadleafcommerce.profile.service.AddressStandardizationServiceImpl"/>
+
+	<bean id="contactInfoService" class="org.broadleafcommerce.profile.service.ContactInfoServiceImpl"/>
+	<bean id="contactInfoDao" class="org.broadleafcommerce.profile.dao.ContactInfoDaoJpa"/>
+
+	<bean id="customerService" class="org.broadleafcommerce.profile.service.CustomerServiceImpl"/>
+	<bean id="customerDao" class="org.broadleafcommerce.profile.dao.CustomerDaoJpa"/>
+
+	<bean id="emailService" class="org.broadleafcommerce.profile.service.EmailServiceImpl"/>
+
+	<bean id="userDetailsService" class="org.broadleafcommerce.profile.service.UserDetailsServiceImpl"/>
+
+	<bean id="userService" class="org.broadleafcommerce.profile.service.UserServiceImpl"/>
+	<bean id="userDao" class="org.broadleafcommerce.profile.dao.UserDaoJpa"/>
+
+</beans>

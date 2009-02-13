@@ -13,9 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
-import org.springframework.stereotype.Repository;
 
-@Repository("userDao")
 public class UserDaoJpa implements UserDao {
 
     /** Logger for this class and subclasses */

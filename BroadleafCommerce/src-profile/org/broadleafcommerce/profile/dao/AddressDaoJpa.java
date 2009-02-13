@@ -9,9 +9,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
-import org.springframework.stereotype.Repository;
 
-@Repository("addressDao")
 public class AddressDaoJpa implements AddressDao {
 
     /** Logger for this class and subclasses */
@@ -31,7 +29,7 @@ public class AddressDaoJpa implements AddressDao {
         Query query = em.createNamedQuery("READ_ADDRESS_BY_CUSTOMER_ID_AND_NAME");
         query.setParameter("customerId", customerId);
         query.setParameter("addressName", addressName);
-        return (Address)query.getSingleResult();
+        return (Address) query.getSingleResult();
     }
 
     public Address maintainAddress(Address address) {
@@ -46,6 +44,6 @@ public class AddressDaoJpa implements AddressDao {
     public Address readAddressById(Long addressId) {
         Query query = em.createNamedQuery("READ_ADDRESS_BY_ID");
         query.setParameter("addressId", addressId);
-        return (Address)query.getSingleResult();
+        return (Address) query.getSingleResult();
     }
 }

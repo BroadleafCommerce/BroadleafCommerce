@@ -32,7 +32,7 @@ public class SkuFormController extends SimpleFormController {
         Sku sku = new Sku();
 
         if (request.getParameter("productId") != null) {
-            createProduct = catalogService.readProductById(Long.valueOf(request.getParameter("productId")));
+            createProduct = catalogService.findProductById(Long.valueOf(request.getParameter("productId")));
             sku.setProduct(createProduct);
         }
         

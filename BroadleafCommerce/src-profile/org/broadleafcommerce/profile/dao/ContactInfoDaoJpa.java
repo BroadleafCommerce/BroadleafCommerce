@@ -9,9 +9,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.ContactInfo;
-import org.springframework.stereotype.Repository;
 
-@Repository("contactInfoDao")
 public class ContactInfoDaoJpa implements ContactInfoDao {
 
     /** Logger for this class and subclasses */
@@ -19,7 +17,6 @@ public class ContactInfoDaoJpa implements ContactInfoDao {
 
     @PersistenceContext
     private EntityManager em;
-
 
     @Override
     public ContactInfo maintainContactInfo(ContactInfo contactInfo) {
@@ -39,7 +36,7 @@ public class ContactInfoDaoJpa implements ContactInfoDao {
     }
 
     @Override
-    public ContactInfo readContactInfoById(Long contactId){
+    public ContactInfo readContactInfoById(Long contactId) {
         return em.find(ContactInfo.class, contactId);
     }
 }

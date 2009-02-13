@@ -21,93 +21,104 @@ import org.springframework.transaction.annotation.Transactional;
 public class CatalogServiceImpl implements CatalogService {
 
     @Resource
-    private ProductDao productDao;
+    private CategoryDao categoryDao;
 
     @Resource
-    private CategoryDao categoryDao;
+    private ProductDao productDao;
 
     @Resource
     private SkuDao skuDao;
 
     @Override
-    public Product readProductById(Long productId) {
+    public Product findProductById(Long productId) {
         return productDao.readProductById(productId);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
-    public List<Product> readProductsByName(String searchName) {
+    @Transactional(propagation = Propagation.REQUIRED)
+    public List<Product> findProductsByName(String searchName) {
         return productDao.readProductsByName(searchName);
     }
 
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public Product saveProduct(Product product) {
         return productDao.maintainProduct(product);
     }
 
     @Override
-    public Category readCategoryById(Long categoryId) {
+    public Category findCategoryById(Long categoryId) {
         return categoryDao.readCategoryById(categoryId);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public Category saveCategory(Category category) {
         return categoryDao.maintainCategory(category);
     }
 
     @Override
-    public List<Category> readAllCategories() {
+    public List<Category> findAllCategories() {
         return categoryDao.readAllCategories();
     }
 
-	@Override
-	public List<Category> readAllSubCategories(Category category) {
-		return categoryDao.readAllSubCategories(category);
-	}
+    @Override
+    public List<Category> findAllSubCategories(Category category) {
+        return categoryDao.readAllSubCategories(category);
+    }
 
-	@Override
-	public Category readCategoryByUrlKey(String urlKey) {
-		Map<String, Category> catMap = buildUrlKeyCategoryMap();
-		return catMap.get(urlKey);
-	}
+    @Override
+    public Category findCategoryByUrlKey(String urlKey) {
+        Map<String, Category> catMap = buildUrlKeyCategoryMap();
+        return catMap.get(urlKey);
+    }
 
-	@Override
-	public List<Sku> readAllSkus() {
-		return skuDao.readAllSkus();
-	}
+    @Override
+    public List<Sku> findAllSkus() {
+        return skuDao.readAllSkus();
+    }
 
-	@Override
-	public Sku readSkuById(Long skuId) {
-		return skuDao.readSkuById(skuId);
-	}
+    @Override
+    public Sku readSkuById(Long skuId) {
+        return skuDao.readSkuById(skuId);
+    }
 
-	@Override
-	public List<Sku> readSkusForProductId(
-			Long productId) {
-		return skuDao.readSkusByProductId(productId);
-	}
+    @Override
+    public List<Sku> findSkusForProductId(Long productId) {
+        return skuDao.readSkusByProductId(productId);
+    }
 
-	@Override
-    @Transactional(propagation=Propagation.REQUIRED)
-	public Sku saveSku(Sku sku) {
-		return skuDao.maintainSku(sku);
-	}
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Sku saveSku(Sku sku) {
+        return skuDao.maintainSku(sku);
+    }
 
-	private Map<String, Category> buildUrlKeyCategoryMap(){
-		Map<String, Category> catMap = new HashMap<String, Category>();
-		List<Category> categories = categoryDao.readAllCategories();
-		for (Iterator<Category> itr = categories.iterator(); itr.hasNext();){
-			Category cat = itr.next();
-			catMap.put(cat.getUrlKey(), cat);
-		}
+    private Map<String, Category> buildUrlKeyCategoryMap() {
+        Map<String, Category> catMap = new HashMap<String, Category>();
+        List<Category> categories = categoryDao.readAllCategories();
+        for (Iterator<Category> itr = categories.iterator(); itr.hasNext();) {
+            Category cat = itr.next();
+            catMap.put(cat.getUrlKey(), cat);
+        }
 
-		return catMap;
-	}
+        return catMap;
+    }
 
-	@Override
-	public List<Sku> readSkusByIds(List<Long> ids) {
-		return skuDao.readSkusById(ids);
-	}
+    @Override
+    public List<Sku> findSkusByIds(List<Long> ids) {
+        return skuDao.readSkusById(ids);
+    }
 
+    public void setProductDao(ProductDao productDao) {
+        this.productDao = productDao;
+    }
+
+    public void setSkuDao(SkuDao skuDao) {
+        this.skuDao = skuDao;
+    }
+
+    public List<Product> findProductsForCategory(Category category) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

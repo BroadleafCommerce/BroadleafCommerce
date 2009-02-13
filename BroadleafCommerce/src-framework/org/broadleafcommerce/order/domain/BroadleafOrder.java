@@ -23,7 +23,7 @@ public class BroadleafOrder implements Serializable {
     private Auditable auditable;
 
     private String type;
-    
+
 //    @ManyToOne(targetEntity = BroadleafCustomer.class)
 //    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;

@@ -22,7 +22,7 @@ public class ListProductsFormController extends PaginationController {
     protected void populatePaginatedList(Map<Object, Object> model,
             PaginationCommandObject object) {
         object.setPageSize(16);
-        List<?> productList = catalogService.readProductsByName("");
+        List<?> productList = catalogService.findProductsByName("");
         object.setFullList(productList);
     }
 }
