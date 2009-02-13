@@ -37,7 +37,7 @@
                 <column name="URL_KEY"/>
             </basic>
             <many-to-one name="parentCategory" target-entity="org.broadleafcommerce.catalog.domain.Category">
-				<join-column name="PARENT_CATEGORY_ID" nullable="false"/>
+				<join-column name="PARENT_CATEGORY_ID" />
             </many-to-one>
 			<many-to-many name="products" >
 				<join-table name="PRODUCT_ASSOCIATIONS">
