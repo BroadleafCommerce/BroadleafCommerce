@@ -1,60 +1,22 @@
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
 import java.util.Map;
-import java.util.Set;
 
-public class Product implements Serializable {
+public interface Product {
 
-    private static final long serialVersionUID = 1L;
+    public String getName();
 
-    private Long id;
+    public void setName(String name);
 
-    private Map<String, ItemAttribute> itemAttributes;
+    public String getDescription();
 
-    private Set<ProductListEntry> productListEntries;
+    public void setDescription(String description);
 
-    private String description;
+    public Long getId();
 
-    private String name;
+    public void setId(Long id);
 
-    public String getName() {
-        return name;
-    }
+    public Map<String, ItemAttribute> getItemAttributes();
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Map<String, ItemAttribute> getItemAttributes() {
-        return itemAttributes;
-    }
-
-    public void setItemAttributes(Map<String, ItemAttribute> itemAttributes) {
-        this.itemAttributes = itemAttributes;
-    }
-
-    public Set<ProductListEntry> getProductListAssociations() {
-        return productListEntries;
-    }
-
-    public void setProductListAssociations(Set<ProductListEntry> productListEntries) {
-        this.productListEntries = productListEntries;
-    }
+    public void setItemAttributes(Map<String, ItemAttribute> itemAttributes);
 }

@@ -3,16 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<entity class="org.broadleafcommerce.catalog.domain.BasePrice" name="basePrice">
-        <table name="BLC_BASE_PRICE" >        	
+	<entity class="org.broadleafcommerce.catalog.domain.BroadleafBasePrice" name="basePrice">
+        <table name="BLC_BASE_PRICE" >
         </table>
         <inheritance strategy="JOINED"/>
-        
+
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="BASE_PRICE_ID"/>
                 <generated-value/>
-                
             </id>
             <basic name="amount">
                 <column name="AMOUNT" />
@@ -25,11 +24,11 @@
             	<column name="END_DATE"/>
             	<temporal>TIMESTAMP</temporal>
             </basic>
-            <many-to-one name="sku" >
+            <many-to-one name="sku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku">
             	<join-column name="SKU_ID" nullable="false"/>
             </many-to-one>
-			<embedded name="auditable"/>			            
+			<embedded name="auditable"/>
         </attributes>
     </entity>
-	
+
 </entity-mappings>

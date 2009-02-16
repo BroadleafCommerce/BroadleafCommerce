@@ -17,7 +17,7 @@
 		WHERE category.urlKey = :urlKey</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.catalog.domain.Category" name="category">
+	<entity class="org.broadleafcommerce.catalog.domain.BroadleafCategory" name="category">
         <table name="BLC_CATEGORY" >
         </table>
         <inheritance strategy="JOINED"/>
@@ -51,13 +51,13 @@
             <basic name="displayTemplate">
                 <column name="DISPLAY_TEMPLATE"/>
             </basic>
-            <many-to-one name="parentCategory" target-entity="org.broadleafcommerce.catalog.domain.Category">
+            <many-to-one name="parentCategory" target-entity="org.broadleafcommerce.catalog.domain.BroadleafCategory">
 				<join-column name="PARENT_CATEGORY_ID" />
             </many-to-one>
             <one-to-many name="imageMap" mapped-by="categoryImageMap">
             	<map-key name="name"/>
             </one-to-many>
-            <one-to-many name="extendedPropertiesMap" mapped-by="categoryExtendedProperties">
+            <one-to-many name="extendedPropertiesMap">
             	<map-key name="name"/>
             </one-to-many>
         </attributes>

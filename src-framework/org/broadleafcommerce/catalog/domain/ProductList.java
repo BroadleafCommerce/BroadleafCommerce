@@ -1,48 +1,20 @@
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
+public interface ProductList {
 
-public class ProductList implements Serializable {
+    public Long getId();
 
-    private static final long serialVersionUID = 1L;
+    public void setId(Long id);
 
-    private Long id;
+    public String getName();
 
-    private String name;
+    public void setName(String name);
 
-    private boolean dynamicFlag;
+    public boolean isDynamicFlag();
 
-    private String dynamicQuery;
+    public void setDynamicFlag(boolean dynamicFlag);
 
-    public Long getId() {
-        return id;
-    }
+    public String getDynamicQuery();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isDynamicFlag() {
-        return dynamicFlag;
-    }
-
-    public void setDynamicFlag(boolean dynamicFlag) {
-        this.dynamicFlag = dynamicFlag;
-    }
-
-    public String getDynamicQuery() {
-        return dynamicQuery;
-    }
-
-    public void setDynamicQuery(String dynamicQuery) {
-        this.dynamicQuery = dynamicQuery;
-    }
+    public void setDynamicQuery(String dynamicQuery);
 }

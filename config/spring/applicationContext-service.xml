@@ -16,7 +16,7 @@
 
 	<bean id="productDao" class="org.broadleafcommerce.catalog.dao.ProductDaoJpa"/>
 
-	<bean id="productListAssociationDao" class="org.broadleafcommerce.catalog.dao.ProductListAssociationDaoJpa"/>
+	<bean id="productListAssociationDao" class="org.broadleafcommerce.catalog.dao.ProductListEntryDaoJpa"/>
 
 	<bean id="productListDao" class="org.broadleafcommerce.catalog.dao.ProductListDaoJpa"/>
 

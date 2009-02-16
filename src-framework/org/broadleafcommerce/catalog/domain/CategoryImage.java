@@ -1,34 +1,16 @@
 package org.broadleafcommerce.catalog.domain;
 
-public class CategoryImage {
+public interface CategoryImage {
 
-    private Long id;
+    public Long getId();
 
-    private String name;
+    public void setId(Long id);
 
-    private String value;
+    public String getName();
 
-    public Long getId() {
-        return id;
-    }
+    public void setName(String name);
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getValue();
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    public void setValue(String value);
 }
