@@ -57,7 +57,7 @@
             <one-to-many name="imageMap" mapped-by="categoryImageMap">
             	<map-key name="name"/>
             </one-to-many>
-            <one-to-many name="extendedPropertiesMap">
+            <one-to-many name="extendedPropertiesMap" mapped-by="categoryExtendedProperties" target-entity="org.broadleafcommerce.catalog.domain.BroadleafCategory">
             	<map-key name="name"/>
             </one-to-many>
         </attributes>
