@@ -27,7 +27,7 @@
             <one-to-many name="itemAttributes" mapped-by="product">
             	<map-key name="name"/>
             </one-to-many>
-            <one-to-many name="productListAssociations" mapped-by="product">
+            <one-to-many name="productListEntries" mapped-by="product">
             </one-to-many>
         </attributes>
     </entity>

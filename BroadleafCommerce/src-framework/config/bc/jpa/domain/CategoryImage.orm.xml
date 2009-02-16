@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<entity class="org.broadleafcommerce.catalog.domain.Category" name="category">
-        <table name="BLC_CATEGORY_IMAGE_MAP" />
+        <table name="BLC_CATEGORY_IMAGE" />
         <inheritance strategy="JOINED"/>
 
         <attributes>
@@ -15,8 +15,8 @@
             <basic name="name">
                 <column name="NAME" />
             </basic>
-            <basic name="url">
-                <column name="URL"/>
+            <basic name="value">
+                <column name="VALUE"/>
             </basic>
         </attributes>
     </entity>
