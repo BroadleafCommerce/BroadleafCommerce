@@ -1,135 +1,55 @@
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.validator.GenericValidator;
+public interface Category {
 
-public class Category implements Serializable {
+    public Long getId();
 
-    private static final long serialVersionUID = 1L;
+    public void setId(Long id);
 
-    private Long id;
+    public String getName();
 
-    private String name;
+    public void setName(String name);
 
-    private String url;
+    public Category getParentCategory();
 
-    private String urlKey;
+    public void setParentCategory(Category parentCategory);
 
-    private Category parentCategory;
+    public String getUrl();
 
-    private Integer displayOrder;
+    public void setUrl(String url);
 
-    private Map<String, String> imageMap;
+    public String getUrlKey();
 
-    private String description;
+    public void setUrlKey(String urlKey);
 
-    private Date activeStartDate;
+    public Integer getDisplayOrder();
 
-    private Date activeEndDate;
+    public void setDisplayOrder(Integer displayOrder);
 
-    private String displayTemplate;
+    public Map<String, String> getImageMap();
 
-    private Map<String, String> extendedPropertiesMap;
+    public void setImageMap(Map<String, String> imageMap);
 
-    public Long getId() {
-        return id;
-    }
+    public String getDescription();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setDescription(String description);
 
-    public String getName() {
-        return name;
-    }
+    public Date getActiveStartDate();
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setActiveStartDate(Date activeStartDate);
 
-    public Category getParentCategory() {
-        return parentCategory;
-    }
+    public Date getActiveEndDate();
 
-    public void setParentCategory(Category parentCategory) {
-        this.parentCategory = parentCategory;
-    }
+    public void setActiveEndDate(Date activeEndDate);
 
-    public String getUrl() {
-        return url;
-    }
+    public String getDisplayTemplate();
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+    public void setDisplayTemplate(String displayTemplate);
 
-    public String getUrlKey() {
-        if (GenericValidator.isBlankOrNull(urlKey)) {
-            return String.valueOf(getId());
-        }
-        return urlKey;
-    }
+    public Map<String, String> getExtendedPropertiesMap();
 
-    public void setUrlKey(String urlKey) {
-        this.urlKey = urlKey;
-    }
-
-    public Integer getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(Integer displayOrder) {
-        this.displayOrder = displayOrder;
-    }
-
-    public Map<String, String> getImageMap() {
-        return imageMap;
-    }
-
-    public void setImageMap(Map<String, String> imageMap) {
-        this.imageMap = imageMap;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Date getActiveStartDate() {
-        return activeStartDate;
-    }
-
-    public void setActiveStartDate(Date activeStartDate) {
-        this.activeStartDate = activeStartDate;
-    }
-
-    public Date getActiveEndDate() {
-        return activeEndDate;
-    }
-
-    public void setActiveEndDate(Date activeEndDate) {
-        this.activeEndDate = activeEndDate;
-    }
-
-    public String getDisplayTemplate() {
-        return displayTemplate;
-    }
-
-    public void setDisplayTemplate(String displayTemplate) {
-        this.displayTemplate = displayTemplate;
-    }
-
-    public Map<String, String> getExtendedPropertiesMap() {
-        return extendedPropertiesMap;
-    }
-
-    public void setExtendedPropertiesMap(Map<String, String> extendedPropertiesMap) {
-        this.extendedPropertiesMap = extendedPropertiesMap;
-    }
+    public void setExtendedPropertiesMap(Map<String, String> extendedPropertiesMap);
 }

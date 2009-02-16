@@ -1,4 +1,4 @@
-package org.broadleafcommerce.catalog.domain;
+package org.broadleafcommerce.profile.test;
 
 public interface ProductListEntry {
 

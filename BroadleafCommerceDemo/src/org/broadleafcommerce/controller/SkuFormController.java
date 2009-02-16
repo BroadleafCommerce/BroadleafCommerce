@@ -9,6 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.catalog.domain.BroadleafItemAttribute;
+import org.broadleafcommerce.catalog.domain.BroadleafProduct;
+import org.broadleafcommerce.catalog.domain.BroadleafSku;
 import org.broadleafcommerce.catalog.domain.ItemAttribute;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
@@ -26,23 +29,23 @@ public class SkuFormController extends SimpleFormController {
     }
 
     @Override
-	protected Object formBackingObject(HttpServletRequest request)
-                                throws ServletException {
-        Product createProduct = new Product();
-        Sku sku = new Sku();
+    protected Object formBackingObject(HttpServletRequest request)
+    throws ServletException {
+        Product createProduct = new BroadleafProduct();
+        Sku sku = new BroadleafSku();
 
         if (request.getParameter("productId") != null) {
             createProduct = catalogService.findProductById(Long.valueOf(request.getParameter("productId")));
             sku.setProduct(createProduct);
         }
-        
+
         if (request.getParameter("skuId") != null){
-        	sku = catalogService.readSkuById(new Long(request.getParameter("skuId")));        	
+            sku = catalogService.readSkuById(new Long(request.getParameter("skuId")));
             Map<String, ItemAttribute> attribs = sku.getItemAttributes();
             if (attribs == null) {
                 attribs = new HashMap<String, ItemAttribute>();
             }
-            attribs.put("", new ItemAttribute());
+            attribs.put("", new BroadleafItemAttribute());
         }
 
         return sku;
@@ -50,7 +53,7 @@ public class SkuFormController extends SimpleFormController {
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
-                             throws Exception {
+    throws Exception {
         Sku sku = (Sku) command;
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
@@ -60,8 +63,8 @@ public class SkuFormController extends SimpleFormController {
 
             return showForm(request, response, errors);
         }
-        
-        
+
+
         catalogService.saveSku(sku);
         mav.addObject("saved", true);
 

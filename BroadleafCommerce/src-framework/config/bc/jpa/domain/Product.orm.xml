@@ -8,7 +8,7 @@
 		WHERE product.name LIKE :name</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.catalog.domain.Product" name="product">
+	<entity class="org.broadleafcommerce.catalog.domain.BroadleafProduct" name="product">
         <table name="BLC_PRODUCT" >
         </table>
         <inheritance strategy="JOINED"/>
@@ -24,10 +24,10 @@
             <basic name="name">
                 <column name="NAME"/>
             </basic>
-            <one-to-many name="itemAttributes" mapped-by="product">
+            <one-to-many name="itemAttributes">
             	<map-key name="name"/>
             </one-to-many>
-            <one-to-many name="productListEntries" mapped-by="product">
+            <one-to-many name="productListEntries" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
             </one-to-many>
         </attributes>
     </entity>

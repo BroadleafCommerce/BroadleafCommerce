@@ -3,24 +3,24 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<entity class="org.broadleafcommerce.catalog.domain.ItemAttribute" name="itemAttribute">
+	<entity class="org.broadleafcommerce.catalog.domain.BroadleafItemAttribute" name="itemAttribute">
         <table name="BLC_ITEM_ATTRIBUTE" >
         	<unique-constraint>
         		<column-name>PRODUCT_ID</column-name>
         		<column-name>NAME</column-name>
-        	</unique-constraint> 
+        	</unique-constraint>
         	<unique-constraint>
         		<column-name>SKU_ID</column-name>
         		<column-name>NAME</column-name>
-        	</unique-constraint>      	
+        	</unique-constraint>
         </table>
         <inheritance strategy="JOINED"/>
 
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="ITEM_ATTRIBUTE_ID"/>
                 <generated-value/>
-                
+
             </id>
             <basic name="name">
                 <column name="NAME" />
@@ -31,10 +31,10 @@
             <basic name="seachable">
             	<column name="SEARCHABLE"/>
             </basic>
-			<many-to-one name="product">
+			<many-to-one name="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
 				<join-column name="PRODUCT_ID"/>
 			</many-to-one>
-			<many-to-one name="sku">
+			<many-to-one name="sku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku">
 				<join-column name="SKU_ID"/>
 			</many-to-one>
         </attributes>

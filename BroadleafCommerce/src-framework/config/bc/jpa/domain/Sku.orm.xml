@@ -4,37 +4,37 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<named-query name="READ_FIRST_SKU" >
-		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.Sku sku
+		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.BroadleafSku sku
 		</query>
 	</named-query>
 
 	<named-query name="READ_ALL_SKUS">
-		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.Sku sku
+		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.BroadleafSku sku
 		</query>
 	</named-query>
 
 	<named-query name="READ_SKUS_BY_ID">
-		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.Sku sku
+		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.BroadleafSku sku
 				WHERE sku.id IN (:skuIds)
 		</query>
 	</named-query>
 
 	<named-query name="READ_SKUS_BY_CATEGORY_ID">
-		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.Sku sku
+		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.BroadleafSku sku
 			   WHERE sku.product.id = :productId
 		</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.catalog.domain.Sku" name="sku">
-        <table name="BLC_SKU" >        	
+	<entity class="org.broadleafcommerce.catalog.domain.BroadleafSku" name="broadleafSku">
+        <table name="BLC_SKU" >
         </table>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
 
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="SKU_ID"/>
-                <generated-value/>                
+                <generated-value/>
             </id>
             <basic name="price">
                 <column name="PRICE" nullable="false"/>
@@ -42,14 +42,17 @@
             <basic name="name">
                 <column name="NAME" />
             </basic>
-			<many-to-one name="product" >
+			<many-to-one name="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
 				<join-column name="PRODUCT_ID" nullable="false"/>
 			</many-to-one>
-			<one-to-many name="itemAttributes" mapped-by="sku">
+			<one-to-many name="childSkus" mapped-by="sku">
+				<cascade><cascade-all/></cascade>
+			</one-to-many>
+			<one-to-many name="itemAttributes" mapped-by="sku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku">
 				<map-key name="name"/>
 				<cascade><cascade-all/></cascade>
 			</one-to-many>
-			<embedded name="auditable"/>            
+			<embedded name="auditable"/>
         </attributes>
     </entity>
 

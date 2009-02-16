@@ -9,14 +9,14 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.order.domain.OrderItem" name="orderItem">
-        <table name="BLC_ORDER_ITEM" >        	
+        <table name="BLC_ORDER_ITEM" >
         </table>
         <inheritance strategy="JOINED"/>
 
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="ORDER_ITEM_ID"/>
-                <generated-value/>                
+                <generated-value/>
             </id>
             <basic name="finalPrice">
                 <column name="FINAL_PRICE" />
@@ -24,7 +24,7 @@
             <basic name="quantity">
                 <column name="QUANTITY"/>
             </basic>
-            <many-to-one name="sku" target-entity="org.broadleafcommerce.catalog.domain.Sku">
+            <many-to-one name="sku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku">
 				<join-column name="SKU_ID" nullable="false"/>
             </many-to-one>
 			<many-to-one name="order" >

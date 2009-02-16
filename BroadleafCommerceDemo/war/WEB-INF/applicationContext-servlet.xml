@@ -122,7 +122,7 @@
 
 	<bean id="createSku" class="org.broadleafcommerce.controller.SkuFormController">
 		<property name="commandName" value="sku" />
-		<property name="commandClass" value="org.broadleafcommerce.catalog.domain.Sku" />
+		<property name="commandClass" value="org.broadleafcommerce.catalog.domain.BroadleafSku" />
 		<property name="catalogService" ref="catalogService" />
 		<property name="formView" value="createSku" />
 		<property name="successView" value="redirect:/listSkus.htm" />
@@ -159,7 +159,7 @@
 
 	<bean id="listSkus" class="org.broadleafcommerce.controller.ListSkusFormController">
 		<property name="commandName" value="listSkus" />
-		<property name="commandClass" value="org.broadleafcommerce.catalog.domain.Sku" />
+		<property name="commandClass" value="org.broadleafcommerce.catalog.domain.BroadleafSku" />
 		<property name="catalogService" ref="catalogService" />
 		<property name="formView" value="listSkus" />
 		<property name="successView" value="listSkus" />

@@ -1,87 +1,31 @@
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
+public interface ItemAttribute {
 
-//@Entity
-//@Table(name = "ITEM_ATTRIBUTE", uniqueConstraints = { @UniqueConstraint(columnNames = { "PRODUCT_ID", "NAME" }), @UniqueConstraint(columnNames = { "SKU_ID", "NAME" }) })
-public class ItemAttribute implements Serializable {
+    public Long getId();
 
-    private static final long serialVersionUID = 1L;
+    public void setId(Long id);
 
-//    @Id
-//    @GeneratedValue
-//    @Column(name = "ITEM_ATTRIBUTE_ID")
-    private Long id;
+    public String getValue();
 
-//    @ManyToOne
-//    @JoinColumn(name = "PRODUCT_ID")
-    private Product product;
+    public void setValue(String value);
 
-//    @ManyToOne
-//    @JoinColumn(name = "SKU_ID")
-    private Sku sku;
+    public Boolean getSearchable();
 
-//    @Column(name = "NAME")
-    private String name;
+    public void setSearchable(Boolean searchable);
 
-//    @Column(name = "VALUE")
-    private String value;
+    public Product getProduct();
 
-//    @Column(name = "SEARCHABLE")
-    private Boolean searchable;
+    public void setProduct(Product product);
 
-    public Long getId() {
-        return id;
-    }
+    public Sku getSku();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setSku(Sku sku);
 
-    public String getValue() {
-        return value;
-    }
+    public String getName();
 
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public Boolean getSearchable() {
-        return searchable;
-    }
-
-    public void setSearchable(Boolean searchable) {
-        this.searchable = searchable;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Sku getSku() {
-        return sku;
-    }
-
-    public void setSku(Sku sku) {
-        this.sku = sku;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name);
 
     @Override
-    public String toString() {
-        return value;
-    }
-    
-    
+    public String toString();
 }

@@ -12,11 +12,9 @@
 		<mapping-file>config/bc/jpa/domain/OrderShipping.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Sku.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ShoppingCartPromotion.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/SkuBundle.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/Auditable.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ProductList.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ProductListEntry.orm.xml</mapping-file>
-        <mapping-file>config/bc/jpa/domain/DynamicProductList.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/OrderItemAdjustment.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ItemAttribute.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/BasePrice.orm.xml</mapping-file>

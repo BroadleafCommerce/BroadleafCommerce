@@ -1,87 +1,37 @@
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 import org.broadleafcommerce.common.domain.Auditable;
 
-//@Entity
-//@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-//@DiscriminatorColumn(name = "TYPE")
-//@Table(name = "BLC_SKU")
-public class Sku implements Serializable {
+public interface Sku {
 
-    private static final long serialVersionUID = 1L;
+    public Long getId();
 
-//    @Id
-//    @GeneratedValue
-//    @Column(name = "SKU_ID")
-    private Long id;
+    public void setId(Long id);
 
-//    @Column(name="PRICE", nullable = false)
-    private double price;
+    public Set<Sku> getChildSkus();
 
-//    @Embedded
-    private Auditable auditable;
+    public void setChildSkus(Set<Sku> childSkus);
 
-//    @ManyToOne
-//    @JoinColumn(name = "PRODUCT_ID", nullable = false)
-    private Product product;
+    public double getPrice();
 
-//    @OneToMany(mappedBy = "sku", cascade = CascadeType.ALL)
-//    @MapKey(name="name")
-    private Map<String,ItemAttribute> itemAttributes;
+    public void setPrice(double price);
 
-//    @Column(name = "NAME")
-    private String name;
+    public Product getProduct();
 
-    public Long getId() {
-        return id;
-    }
+    public void setProduct(Product product);
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Auditable getAuditable();
 
-    public double getPrice() {
-		return price;
-	}
+    public void setAuditable(Auditable auditable);
 
-	public void setPrice(double price) {
-		this.price = price;
-	}
+    public String getName();
 
-	public Product getProduct() {
-        return product;
-    }
+    public void setName(String name);
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+    public Map<String, ItemAttribute> getItemAttributes();
 
-
-    public Auditable getAuditable() {
-        return auditable;
-    }
-
-    public void setAuditable(Auditable auditable) {
-        this.auditable = auditable;
-    }
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-    public Map<String, ItemAttribute> getItemAttributes() {
-        return itemAttributes;
-    }
-
-    public void setItemAttributes(Map<String, ItemAttribute> itemAttributes) {
-        this.itemAttributes = itemAttributes;
-    }
-
+    public void setItemAttributes(Map<String, ItemAttribute> itemAttributes);
 }

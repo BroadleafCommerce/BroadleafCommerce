@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.catalog.domain.BroadleafItemAttribute;
+import org.broadleafcommerce.catalog.domain.BroadleafProduct;
 import org.broadleafcommerce.catalog.domain.ItemAttribute;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
@@ -25,8 +27,8 @@ public class ProductFormController extends SimpleFormController {
     }
 
     protected Object formBackingObject(HttpServletRequest request)
-                                throws ServletException {
-        Product createProduct = new Product();
+    throws ServletException {
+        Product createProduct = new BroadleafProduct();
 
         if (request.getParameter("productId") != null) {
             createProduct = catalogService.findProductById(Long.valueOf(request.getParameter("productId")));
@@ -35,14 +37,14 @@ public class ProductFormController extends SimpleFormController {
         if (attribs == null) {
             attribs = new HashMap<String, ItemAttribute>();
         }
-        attribs.put("foo", new ItemAttribute());
+        attribs.put("foo", new BroadleafItemAttribute());
 
         return createProduct;
     }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
-                             throws Exception {
+    throws Exception {
         Product product = (Product) command;
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());

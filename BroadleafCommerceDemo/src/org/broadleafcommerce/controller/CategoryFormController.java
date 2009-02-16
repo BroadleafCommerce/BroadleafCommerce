@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.catalog.domain.BroadleafCategory;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.util.CreateCategory;
@@ -23,25 +24,25 @@ public class CategoryFormController extends SimpleFormController {
     }
 
     protected Object formBackingObject(HttpServletRequest request)
-                                throws ServletException {
+    throws ServletException {
         return new CreateCategory();
     }
 
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors)
-                             throws Exception {
-    	CreateCategory createCategory = (CreateCategory) command;
-    	Category category = new Category();
-    	category.setName(createCategory.getName());
-    	category.setUrlKey(createCategory.getUrlKey());
-    	category.setUrl(createCategory.getUrl());
+    throws Exception {
+        CreateCategory createCategory = (CreateCategory) command;
+        Category category = new BroadleafCategory();
+        category.setName(createCategory.getName());
+        category.setUrlKey(createCategory.getUrlKey());
+        category.setUrl(createCategory.getUrl());
 
-    	if (StringUtils.isNotBlank(createCategory.getParentId())){
-    		Category parentCategory = catalogService.findCategoryById(new Long(createCategory.getParentId()));
-    		if (parentCategory != null){
-    			category.setParentCategory(parentCategory);
-    		}
-    	}
+        if (StringUtils.isNotBlank(createCategory.getParentId())){
+            Category parentCategory = catalogService.findCategoryById(new Long(createCategory.getParentId()));
+            if (parentCategory != null){
+                category.setParentCategory(parentCategory);
+            }
+        }
 
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());
 
