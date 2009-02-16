@@ -24,7 +24,7 @@
             <basic name="name">
                 <column name="NAME"/>
             </basic>
-            <one-to-many name="itemAttributes">
+            <one-to-many name="itemAttributes" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
             	<map-key name="name"/>
             </one-to-many>
             <one-to-many name="productListEntries" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
