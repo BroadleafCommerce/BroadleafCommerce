@@ -1,12 +1,12 @@
 package org.broadleafcommerce.catalog.domain;
 
-public class CategoryImageMap {
+public class CategoryImage {
 
     private Long id;
 
     private String name;
 
-    private String url;
+    private String value;
 
     public Long getId() {
         return id;
@@ -24,11 +24,11 @@ public class CategoryImageMap {
         this.name = name;
     }
 
-    public String getUrl() {
-        return url;
+    public String getValue() {
+        return value;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setValue(String value) {
+        this.value = value;
     }
 }
