@@ -25,12 +25,11 @@
 		</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.catalog.domain.BroadleafSku" name="broadleafSku">
+	<entity class="org.broadleafcommerce.catalog.domain.BroadleafSku" name="sku">
         <table name="BLC_SKU" >
         </table>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
-
         <attributes>
             <id name="id">
             	<column name="SKU_ID"/>
@@ -43,17 +42,21 @@
                 <column name="NAME" />
             </basic>
 			<many-to-one name="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
-				<join-column name="PRODUCT_ID" nullable="false"/>
+				<join-column name="PRODUCT_ID"/>
 			</many-to-one>
-			<one-to-many name="childSkus" mapped-by="sku">
+			<many-to-one name="parentSku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku">
+				<join-column name="PARENT_SKU_ID"/>
+			</many-to-one>
+			<one-to-many name="childSkus" mapped-by="parentSku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku">
 				<cascade><cascade-all/></cascade>
 			</one-to-many>
-			<one-to-many name="itemAttributes" mapped-by="sku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku">
+			<one-to-many name="itemAttributes" mapped-by="sku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafItemAttribute">
 				<map-key name="name"/>
 				<cascade><cascade-all/></cascade>
 			</one-to-many>
+			<one-to-many name="skuImages" mapped-by="sku"/>
 			<embedded name="auditable"/>
+			<transient name="skuImageMap" />
         </attributes>
     </entity>
-
 </entity-mappings>

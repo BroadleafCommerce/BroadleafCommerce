@@ -1,6 +1,6 @@
 package org.broadleafcommerce.catalog.domain;
 
-public interface CategoryExtendedProperties {
+public interface ProductImage {
 
     public Long getId();
 
@@ -10,7 +10,11 @@ public interface CategoryExtendedProperties {
 
     public void setName(String name);
 
-    public String getValue();
+    public String getUrl();
 
-    public void setValue(String value);
+    public void setUrl(String url);
+
+    public Product getProduct();
+
+    public void setProduct(Product product);
 }

@@ -10,10 +10,10 @@ public interface Sku {
     public Long getId();
 
     public void setId(Long id);
-
-    public Set<Sku> getChildSkus();
-
-    public void setChildSkus(Set<Sku> childSkus);
+    //TODO fix
+    //    public Set<Sku> getChildSkus();
+    //
+    //    public void setChildSkus(Set<Sku> childSkus);
 
     public double getPrice();
 
@@ -34,4 +34,8 @@ public interface Sku {
     public Map<String, ItemAttribute> getItemAttributes();
 
     public void setItemAttributes(Map<String, ItemAttribute> itemAttributes);
+
+    public Set<SkuImage> getSkuImages();
+
+    public void setSkuImages(Set<SkuImage> skuImages);
 }

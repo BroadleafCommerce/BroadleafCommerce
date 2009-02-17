@@ -1,6 +1,7 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ public class BroadleafSku implements Sku, Serializable {
 
     private Long id;
 
-    private Set<Sku> childSkus;
+    //    private Set<Sku> childSkus;
 
     private double price;
 
@@ -24,6 +25,10 @@ public class BroadleafSku implements Sku, Serializable {
 
     private String name;
 
+    private Set<SkuImage> skuImages;
+
+    private Map<String, String> skuImageMap;
+
     public Long getId() {
         return id;
     }
@@ -31,14 +36,14 @@ public class BroadleafSku implements Sku, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public Set<Sku> getChildSkus() {
-        return childSkus;
-    }
-
-    public void setChildSkus(Set<Sku> childSkus) {
-        this.childSkus = childSkus;
-    }
+    // TODO fix
+    //    public Set<Sku> getChildSkus() {
+    //        return childSkus;
+    //    }
+    //
+    //    public void setChildSkus(Set<Sku> childSkus) {
+    //        this.childSkus = childSkus;
+    //    }
 
     public double getPrice() {
         return price;
@@ -78,5 +83,26 @@ public class BroadleafSku implements Sku, Serializable {
 
     public void setItemAttributes(Map<String, ItemAttribute> itemAttributes) {
         this.itemAttributes = itemAttributes;
+    }
+
+    public Set<SkuImage> getSkuImages() {
+        return skuImages;
+    }
+
+    public void setSkuImages(Set<SkuImage> skuImages) {
+        this.skuImages = skuImages;
+    }
+
+    public String getSkuImage(String key) {
+        if (skuImageMap == null) {
+            skuImageMap = new HashMap<String, String>();
+            Set<SkuImage> images = getSkuImages();
+            if (images != null) {
+                for (SkuImage s : images) {
+                    skuImageMap.put(s.getName(), s.getUrl());
+                }
+            }
+        }
+        return skuImageMap.get(key);
     }
 }

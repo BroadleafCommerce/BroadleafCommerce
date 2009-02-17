@@ -26,6 +26,5 @@ public interface ItemAttribute {
 
     public void setName(String name);
 
-    @Override
     public String toString();
 }

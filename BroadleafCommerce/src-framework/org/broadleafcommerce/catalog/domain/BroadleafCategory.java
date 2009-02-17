@@ -2,7 +2,9 @@ package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.validator.GenericValidator;
 
@@ -22,8 +24,6 @@ public class BroadleafCategory implements Category, Serializable {
 
     private Integer displayOrder;
 
-    private Map<String, String> imageMap;
-
     private String description;
 
     private Date activeStartDate;
@@ -32,7 +32,9 @@ public class BroadleafCategory implements Category, Serializable {
 
     private String displayTemplate;
 
-    private Map<String, String> extendedPropertiesMap;
+    private Set<CategoryImage> categoryImages;
+
+    private Map<String, String> categoryImageMap;
 
     public Long getId() {
         return id;
@@ -85,14 +87,6 @@ public class BroadleafCategory implements Category, Serializable {
         this.displayOrder = displayOrder;
     }
 
-    public Map<String, String> getImageMap() {
-        return imageMap;
-    }
-
-    public void setImageMap(Map<String, String> imageMap) {
-        this.imageMap = imageMap;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -125,11 +119,24 @@ public class BroadleafCategory implements Category, Serializable {
         this.displayTemplate = displayTemplate;
     }
 
-    public Map<String, String> getExtendedPropertiesMap() {
-        return extendedPropertiesMap;
+    public Set<CategoryImage> getCategoryImages() {
+        return categoryImages;
     }
 
-    public void setExtendedPropertiesMap(Map<String, String> extendedPropertiesMap) {
-        this.extendedPropertiesMap = extendedPropertiesMap;
+    public void setCategoryImages(Set<CategoryImage> categoryImages) {
+        this.categoryImages = categoryImages;
+    }
+
+    public String getCategoryImage(String key) {
+        if (categoryImageMap == null) {
+            categoryImageMap = new HashMap<String, String>();
+            Set<CategoryImage> images = getCategoryImages();
+            if (images != null) {
+                for (CategoryImage ci : images) {
+                    categoryImageMap.put(ci.getName(), ci.getUrl());
+                }
+            }
+        }
+        return categoryImageMap.get(key);
     }
 }

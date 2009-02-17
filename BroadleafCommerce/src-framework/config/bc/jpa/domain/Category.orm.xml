@@ -1,67 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
+	version="1.0">
 
-	<named-query name="READ_ALL_CATEGORIES" >
+	<named-query name="READ_ALL_CATEGORIES">
 		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category</query>
 	</named-query>
 
-	<named-query name="READ_ALL_SUBCATEGORIES" >
+	<named-query name="READ_ALL_SUBCATEGORIES">
 		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
 		WHERE category.parentCategory = :parentCategory</query>
 	</named-query>
 
-	<named-query name="READ_CATEGORY_BY_URL_KEY" >
+	<named-query name="READ_CATEGORY_BY_URL_KEY">
 		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
 		WHERE category.urlKey = :urlKey</query>
 	</named-query>
 
 	<entity class="org.broadleafcommerce.catalog.domain.BroadleafCategory" name="category">
-        <table name="BLC_CATEGORY" >
-        </table>
-        <inheritance strategy="JOINED"/>
+		<table name="BLC_CATEGORY">
+		</table>
+		<inheritance strategy="JOINED" />
 
-        <attributes>
-            <id name="id">
-            	<column name="CATEGORY_ID"/>
-                <generated-value/>
-            </id>
-            <basic name="name">
-                <column name="NAME" />
-            </basic>
-            <basic name="url">
-                <column name="URL"/>
-            </basic>
-            <basic name="urlKey">
-                <column name="URL_KEY"/>
-            </basic>
-            <basic name="displayOrder">
-                <column name="DISPLAY_ORDER"/>
-            </basic>
-            <basic name="description">
-                <column name="DESCRIPTION"/>
-            </basic>
-            <basic name="activeStartDate">
-                <column name="ACTIVE_START_DATE"/>
-            </basic>
-            <basic name="activeEndDate">
-                <column name="ACTIVE_END_DATE"/>
-            </basic>
-            <basic name="displayTemplate">
-                <column name="DISPLAY_TEMPLATE"/>
-            </basic>
-            <many-to-one name="parentCategory" target-entity="org.broadleafcommerce.catalog.domain.BroadleafCategory">
+		<attributes>
+			<id name="id">
+				<column name="CATEGORY_ID" />
+				<generated-value />
+			</id>
+			<basic name="name">
+				<column name="NAME" />
+			</basic>
+			<basic name="url">
+				<column name="URL" />
+			</basic>
+			<basic name="urlKey">
+				<column name="URL_KEY" />
+			</basic>
+			<basic name="displayOrder">
+				<column name="DISPLAY_ORDER" />
+			</basic>
+			<basic name="description">
+				<column name="DESCRIPTION" />
+			</basic>
+			<basic name="activeStartDate">
+				<column name="ACTIVE_START_DATE" />
+			</basic>
+			<basic name="activeEndDate">
+				<column name="ACTIVE_END_DATE" />
+			</basic>
+			<basic name="displayTemplate">
+				<column name="DISPLAY_TEMPLATE" />
+			</basic>
+			<many-to-one name="parentCategory" target-entity="org.broadleafcommerce.catalog.domain.BroadleafCategory">
 				<join-column name="PARENT_CATEGORY_ID" />
-            </many-to-one>
-            <one-to-many name="imageMap" mapped-by="categoryImageMap">
-            	<map-key name="name"/>
-            </one-to-many>
-            <one-to-many name="extendedPropertiesMap" mapped-by="categoryExtendedProperties" target-entity="org.broadleafcommerce.catalog.domain.BroadleafCategory">
-            	<map-key name="name"/>
-            </one-to-many>
-        </attributes>
-    </entity>
-
-
+			</many-to-one>
+			<one-to-many name="categoryImages" mapped-by="category"/>
+			<transient name="categoryImageMap" />
+		</attributes>
+	</entity>
 </entity-mappings>

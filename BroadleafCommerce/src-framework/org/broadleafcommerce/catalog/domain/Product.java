@@ -1,6 +1,8 @@
 package org.broadleafcommerce.catalog.domain;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface Product {
 
@@ -19,4 +21,18 @@ public interface Product {
     public Map<String, ItemAttribute> getItemAttributes();
 
     public void setItemAttributes(Map<String, ItemAttribute> itemAttributes);
+
+    public Set<Sku> getSkus();
+
+    public void setSkus(Set<Sku> skus);
+
+    public Set<ProductImage> getProductImages();
+
+    public void setProductImages(Set<ProductImage> productImages);
+
+    public String getProductImage(String key);
+
+    public List<ProductAuxImage> getProductAuxImages();
+
+    public void setProductAuxImages(List<ProductAuxImage> productAuxImages);
 }
