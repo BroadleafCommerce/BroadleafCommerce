@@ -54,7 +54,7 @@
 				<map-key name="name"/>
 				<cascade><cascade-all/></cascade>
 			</one-to-many>
-			<one-to-many name="skuImages" mapped-by="sku"/>
+			<one-to-many name="skuImages" mapped-by="sku" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSkuImage"/>
 			<embedded name="auditable"/>
 			<transient name="skuImageMap" />
         </attributes>

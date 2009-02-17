@@ -2,11 +2,13 @@ package org.broadleafcommerce.catalog.dao;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("productDao")
@@ -14,6 +16,9 @@ public class ProductDaoJpa implements ProductDao {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Resource(name = "entityConfiguration")
+    private EntityConfiguration entityConfiguration;
 
     @Override
     public Product maintainProduct(Product product) {
@@ -25,9 +30,10 @@ public class ProductDaoJpa implements ProductDao {
         return product;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Product readProductById(Long productId) {
-        return em.find(Product.class, productId);
+        return (Product) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Product"), productId);
     }
 
     @Override
