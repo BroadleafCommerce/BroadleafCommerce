@@ -28,8 +28,8 @@
             </one-to-many>
             <one-to-many name="skus" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku"/>
             <one-to-many name="productListEntries" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct"/>
-			<one-to-many name="productImages" mapped-by="product"/>
-			<one-to-many name="productAuxImages" mapped-by="product">
+			<one-to-many name="productImages" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProductImage"/>
+			<one-to-many name="productAuxImages" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProductAuxImage">
 				<order-by>displayOrder</order-by>
 			</one-to-many>
 			<transient name="productImageMap" />

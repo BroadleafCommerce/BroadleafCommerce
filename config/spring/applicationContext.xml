@@ -95,5 +95,7 @@
 	<!-- Entity mappings - override for extensibility -->
 	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.BroadleafCustomer"/>
+	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.BroadleafProduct"/>
+	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.BroadleafSku"/>
 
 </beans>

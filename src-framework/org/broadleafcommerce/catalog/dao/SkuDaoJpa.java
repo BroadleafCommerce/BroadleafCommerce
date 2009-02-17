@@ -2,11 +2,13 @@ package org.broadleafcommerce.catalog.dao;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("skuDao")
@@ -14,6 +16,9 @@ public class SkuDaoJpa implements SkuDao {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Resource(name = "entityConfiguration")
+    private EntityConfiguration entityConfiguration;
 
     @Override
     public Sku maintainSku(Sku sku) {
@@ -25,9 +30,10 @@ public class SkuDaoJpa implements SkuDao {
         return sku;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Sku readSkuById(Long skuId) {
-        return em.find(Sku.class, skuId);
+        return (Sku) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Sku"), skuId);
     }
 
     @Override
