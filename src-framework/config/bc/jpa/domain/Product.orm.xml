@@ -12,7 +12,6 @@
         <table name="BLC_PRODUCT" >
         </table>
         <inheritance strategy="JOINED"/>
-
         <attributes>
             <id name="id">
             	<column name="PRODUCT_ID"/>
@@ -24,13 +23,16 @@
             <basic name="name">
                 <column name="NAME"/>
             </basic>
-            <one-to-many name="itemAttributes" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
+            <one-to-many name="itemAttributes" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
             	<map-key name="name"/>
             </one-to-many>
-            <one-to-many name="productListEntries" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct">
-            </one-to-many>
+            <one-to-many name="skus" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafSku"/>
+            <one-to-many name="productListEntries" mapped-by="product" target-entity="org.broadleafcommerce.catalog.domain.BroadleafProduct"/>
+			<one-to-many name="productImages" mapped-by="product"/>
+			<one-to-many name="productAuxImages" mapped-by="product">
+				<order-by>displayOrder</order-by>
+			</one-to-many>
+			<transient name="productImageMap" />
         </attributes>
     </entity>
-
-
 </entity-mappings>

@@ -1,6 +1,6 @@
 package org.broadleafcommerce.catalog.domain;
 
-public interface CategoryImage {
+public interface SkuImage {
 
     public Long getId();
 
@@ -14,7 +14,7 @@ public interface CategoryImage {
 
     public void setUrl(String url);
 
-    public Category getCategory();
+    public Sku getSku();
 
-    public void setCategory(Category category);
+    public void setSku(Sku sku);
 }

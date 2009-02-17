@@ -2,7 +2,7 @@ package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
 
-public class BroadleafCategoryExtendedProperties implements CategoryExtendedProperties, Serializable {
+public class BroadleafSkuImage implements SkuImage, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -10,7 +10,9 @@ public class BroadleafCategoryExtendedProperties implements CategoryExtendedProp
 
     private String name;
 
-    private String value;
+    private String url;
+
+    private Sku sku;
 
     public Long getId() {
         return id;
@@ -28,11 +30,19 @@ public class BroadleafCategoryExtendedProperties implements CategoryExtendedProp
         this.name = name;
     }
 
-    public String getValue() {
-        return value;
+    public String getUrl() {
+        return url;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Sku getSku() {
+        return sku;
+    }
+
+    public void setSku(Sku sku) {
+        this.sku = sku;
     }
 }

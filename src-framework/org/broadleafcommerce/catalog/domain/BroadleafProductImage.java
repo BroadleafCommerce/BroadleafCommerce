@@ -2,7 +2,7 @@ package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
 
-public class BroadleafCategoryImage implements CategoryImage, Serializable {
+public class BroadleafProductImage implements ProductImage, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -12,7 +12,7 @@ public class BroadleafCategoryImage implements CategoryImage, Serializable {
 
     private String url;
 
-    private Category category;
+    private Product product;
 
     public Long getId() {
         return id;
@@ -38,11 +38,11 @@ public class BroadleafCategoryImage implements CategoryImage, Serializable {
         this.url = url;
     }
 
-    public Category getCategory() {
-        return category;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

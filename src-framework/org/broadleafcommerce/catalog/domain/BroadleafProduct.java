@@ -1,7 +1,10 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class BroadleafProduct implements Product, Serializable {
 
@@ -14,6 +17,14 @@ public class BroadleafProduct implements Product, Serializable {
     private String description;
 
     private String name;
+
+    private Set<Sku> skus;
+
+    private Set<ProductImage> productImages;
+
+    private List<ProductAuxImage> productAuxImages;
+
+    private Map<String, String> productImageMap;
 
     public String getName() {
         return name;
@@ -45,5 +56,42 @@ public class BroadleafProduct implements Product, Serializable {
 
     public void setItemAttributes(Map<String, ItemAttribute> itemAttributes) {
         this.itemAttributes = itemAttributes;
+    }
+
+    public Set<Sku> getSkus() {
+        return skus;
+    }
+
+    public void setSkus(Set<Sku> skus) {
+        this.skus = skus;
+    }
+
+    public Set<ProductImage> getProductImages() {
+        return productImages;
+    }
+
+    public void setProductImages(Set<ProductImage> productImages) {
+        this.productImages = productImages;
+    }
+
+    public String getProductImage(String key) {
+        if (productImageMap == null) {
+            productImageMap = new HashMap<String, String>();
+            Set<ProductImage> images = getProductImages();
+            if (images != null) {
+                for (ProductImage pi : images) {
+                    productImageMap.put(pi.getName(), pi.getUrl());
+                }
+            }
+        }
+        return productImageMap.get(key);
+    }
+
+    public List<ProductAuxImage> getProductAuxImages() {
+        return productAuxImages;
+    }
+
+    public void setProductAuxImages(List<ProductAuxImage> productAuxImages) {
+        this.productAuxImages = productAuxImages;
     }
 }

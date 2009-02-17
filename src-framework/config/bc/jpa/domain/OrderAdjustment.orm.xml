@@ -4,14 +4,14 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<entity class="org.broadleafcommerce.promotion.domain.OrderAdjustment" name="orderAdjustment">
-        <table name="BLC_ORDER_ADJUSTMENTS" >        	
+        <table name="BLC_ORDER_ADJUSTMENTS" >
         </table>
         <inheritance strategy="JOINED"/>
 
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="ORDER_ADJUSTMENT_ID"/>
-                <generated-value/>                
+                <generated-value/>
             </id>
             <many-to-one name="order" >
 				<join-column name="ORDER_ID" />
@@ -21,7 +21,4 @@
 			</many-to-one>
         </attributes>
     </entity>
-
-
-
 </entity-mappings>

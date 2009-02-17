@@ -25,7 +25,6 @@
             <id name="id">
             	<column name="CUSTOMER_ID"/>
                 <generated-value/>
-
             </id>
             <basic name="username">
                 <column name="USER_NAME" />
@@ -54,7 +53,4 @@
 			<transient name="unencodedPassword"/>
         </attributes>
     </entity>
-
-
-
 </entity-mappings>

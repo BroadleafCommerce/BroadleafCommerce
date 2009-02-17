@@ -4,15 +4,13 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<entity class="org.broadleafcommerce.promotion.domain.Promotion" name="promotion">
-        <table name="BLC_PROMOTION" >        	
+        <table name="BLC_PROMOTION" >
         </table>
         <inheritance strategy="JOINED"/>
-        
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="PROMOTION_ID"/>
                 <generated-value/>
-                
             </id>
             <basic name="type">
                 <column name="PROMOTION_TYPE" />
@@ -31,5 +29,4 @@
             </basic>
         </attributes>
     </entity>
-	
 </entity-mappings>
