@@ -1,74 +1,26 @@
 package org.broadleafcommerce.order.domain;
 
-import java.io.Serializable;
-
 import org.broadleafcommerce.catalog.domain.Sku;
 
-//@Entity
-//@Table(name = "SC_ORDER_ITEM")
-public class OrderItem implements Serializable {
+public interface OrderItem {
+	public Long getId();
 
-	private static final long serialVersionUID = 1L;
+	public void setId(Long id);
 
-//	@Id
-//	@GeneratedValue
-//	@Column(name = "ORDER_ITEM_ID")
-	private Long id;
-	
-//	@ManyToOne
-//	@JoinColumn(name = "SKU_ID", nullable=false)
-	private Sku sku;
-	
-//	@ManyToOne
-//	@JoinColumn(name = "SC_ORDER_ID", nullable = false)
-	private BroadleafOrder order;
-	
-//	@Column(name = "FINAL_PRICE")
-	private double finalPrice;
-	
-//	@Column(name = "QUANTITY")
-	private int quantity;
+	public Sku getSku();
 
-	public Long getId() {
-		return id;
-	}
+	public void setSku(Sku sku);
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	public Order getOrder();
 
-	public Sku getSku() {
-		return sku;
-	}
+	public void setOrder(Order order);
 
-	public void setSku(Sku sku) {
-		this.sku = sku;
-	}
+	public double getFinalPrice();
 
-	public BroadleafOrder getOrder() {
-		return order;
-	}
+	public void setFinalPrice(double finalPrice);
 
-	public void setOrder(BroadleafOrder order) {
-		this.order = order;
-	}
+	public int getQuantity();
 
-	public double getFinalPrice() {
-		return finalPrice;
-	}
+	public void setQuantity(int quantity);
 
-	public void setFinalPrice(double finalPrice) {
-		this.finalPrice = finalPrice;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-	
-	
-	
 }

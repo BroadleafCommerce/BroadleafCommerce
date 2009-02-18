@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.dao.OrderDaoJpa;
-import org.broadleafcommerce.order.domain.BroadleafOrder;
+import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.dao.ContactInfoDaoJpa;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -30,7 +30,7 @@ public class OrderDaoTest extends BaseTest {
 
     @Test(groups = { "createOrder" }, dataProvider = "basicOrder", dataProviderClass = OrderDataProvider.class, dependsOnGroups = { "readCustomer1", "createContactInfo" })
     @Rollback(false)
-    public void createOrder(BroadleafOrder order) {
+    public void createOrder(Order order) {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         ContactInfo ci = (contactInfoDao.readContactInfoByUserId(customer.getId())).get(0);
@@ -44,7 +44,7 @@ public class OrderDaoTest extends BaseTest {
 
     @Test(groups = { "readOrder" }, dependsOnGroups = { "createOrder" })
     public void readOrderById() {
-        BroadleafOrder result = orderDao.readOrderById(orderId);
+        Order result = orderDao.readOrderById(orderId);
         assert result != null;
     }
 
@@ -52,7 +52,18 @@ public class OrderDaoTest extends BaseTest {
     public void readOrdersForCustomer() {
         userName = "customer1";
         Customer user = customerService.readCustomerByUsername(userName);
-        List<BroadleafOrder> orders = orderDao.readOrdersForCustomer(user);
+        List<Order> orders = orderDao.readOrdersForCustomer(user);
         assert orders.size() > 0;
+    }
+    
+    @Test(groups = {"deleteOrderForCustomer"}, dependsOnGroups = {"createOrder"})
+    @Rollback(false)
+    public void deleteOrder(){
+    	Order order = orderDao.readOrderById(orderId);
+    	assert order != null;
+    	assert order.getId() != null;
+    	orderDao.deleteOrderForCustomer(order);
+    	Order shouldntexist = orderDao.readOrderById(orderId);
+    	assert shouldntexist == null;
     }
 }

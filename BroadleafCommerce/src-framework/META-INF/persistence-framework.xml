@@ -13,8 +13,9 @@
 		<mapping-file>config/bc/jpa/domain/OrderAdjustment.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/OrderItem.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/OrderItemAdjustment.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/OrderPayment.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/OrderShipping.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/PaymentInfo.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/FullfillmentGroup.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/FullfillmentGroupItem.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Product.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ProductAuxImage.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ProductImage.orm.xml</mapping-file>
