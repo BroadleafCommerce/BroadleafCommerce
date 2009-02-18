@@ -10,7 +10,7 @@ public class BroadleafFullfillmentGroup implements FullfillmentGroup {
 	private String referenceNumber;
 	private List<FullfillmentGroupItem> fullfillmentGroupItems;
 	private Address address;
-	private Object method;
+	private String method;
 	private double cost;
 	private String type;
 	
@@ -58,12 +58,12 @@ public class BroadleafFullfillmentGroup implements FullfillmentGroup {
 	}
 
 	@Override
-	public Object getMethod() {
+	public String getMethod() {
 		return method;
 	}
 
 	@Override
-	public void setMethod(Object fullfillmentMethod) {
+	public void setMethod(String fullfillmentMethod) {
 		this.method = fullfillmentMethod;
 	}
 

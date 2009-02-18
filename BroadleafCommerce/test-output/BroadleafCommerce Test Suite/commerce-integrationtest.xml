@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="commerce-integrationtest" failures="7" tests="56" time="8.062" errors="0">
+  <properties/>
+  <testcase name="testMaintainProduct" time="0.047" classname="org.broadleafcommerce.test.integration.ProductDaoTest"/>
+  <testcase name="createCustomer" time="0.0" classname="org.broadleafcommerce.profile.test.CustomerTest"/>
+  <testcase name="createCustomer" time="0.0" classname="org.broadleafcommerce.profile.test.CustomerTest"/>
+  <testcase name="readCustomersById" time="0.0" classname="org.broadleafcommerce.profile.test.CustomerTest"/>
+  <testcase name="readCustomersByUsername1" time="0.016" classname="org.broadleafcommerce.profile.test.CustomerTest"/>
+  <testcase name="getOrdersForCustomer" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="changeCustomerPasswords" time="0.016" classname="org.broadleafcommerce.profile.test.CustomerTest"/>
+  <testcase name="createContactInfo" time="0.0" classname="org.broadleafcommerce.profile.test.ContactInfoTest"/>
+  <testcase name="createOrder" time="0.032" classname="org.broadleafcommerce.test.integration.OrderDaoTest"/>
+  <testcase name="readContactInfoById" time="0.0" classname="org.broadleafcommerce.profile.test.ContactInfoTest"/>
+  <testcase name="findCurrentBasketForCustomerAfterCreation" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+  <testcase name="createSku" time="0.031" classname="org.broadleafcommerce.test.integration.SkuDaoTest"/>
+  <testcase name="addItemToOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="getItemsForOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="removeItemFromOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="addFullfillmentGroupToOrderFirst" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="removeDefaultFulFillmentGroupForOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="removeItemFromOrderAfterFulfillmentGroups" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="findFillmentGroupForOrderFirst" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="findDefaultFillmentGroupForOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="updateItemsInOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readContactInfoByUserId" time="0.0" classname="org.broadleafcommerce.profile.test.ContactInfoTest"/>
+  <testcase name="createAddress" time="0.0" classname="org.broadleafcommerce.profile.test.AddressTest"/>
+  <testcase name="createAddress" time="0.0" classname="org.broadleafcommerce.profile.test.AddressTest"/>
+  <testcase name="readAddressByUserId" time="0.016" classname="org.broadleafcommerce.profile.test.AddressTest"/>
+  <testcase name="createPaymentInfo" time="0.031" classname="org.broadleafcommerce.test.integration.PaymentInfoDaoTest">
+    <failure type="java.lang.IllegalArgumentException" message="Unknown entity: org.broadleafcommerce.order.domain.BroadleafPaymentInfo">
+      <![CDATA[java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.BroadleafPaymentInfo
+	at org.hibernate.ejb.AbstractEntityManagerImpl.persist(AbstractEntityManagerImpl.java:223)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.persist(Unknown Source)
+	at org.broadleafcommerce.order.dao.PaymentInfoDaoJpa.maintainPaymentInfo(PaymentInfoDaoJpa.java:32)
+	at org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo(PaymentInfoDaoTest.java:49)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 32 stack frames]]>
+    </failure>
+  </testcase>
+  <testcase name="addPaymentToOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readPaymentInfoByOrder" time="0.0" classname="org.broadleafcommerce.test.integration.PaymentInfoDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readPaymentInfoById" time="0.0" classname="org.broadleafcommerce.test.integration.PaymentInfoDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="deleteOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderDaoTest">
+    <failure type="java.lang.IllegalArgumentException" message="Unknown entity: org.broadleafcommerce.order.domain.Order">
+      <![CDATA[java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.find(Unknown Source)
+	at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+	at org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder(OrderDaoTest.java:62)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+Caused by: org.hibernate.MappingException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+	at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+	at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+	... 36 more
+... Removed 31 stack frames]]>
+    </failure>
+  </testcase>
+  <testcase name="readFirstSku" time="0.0" classname="org.broadleafcommerce.test.integration.SkuDaoTest"/>
+  <testcase name="removeFulFillmentGroupForOrderFirst" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readOrderById" time="0.0" classname="org.broadleafcommerce.test.integration.OrderDaoTest">
+    <failure type="java.lang.IllegalArgumentException" message="Unknown entity: org.broadleafcommerce.order.domain.Order">
+      <![CDATA[java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.find(Unknown Source)
+	at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+	at org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById(OrderDaoTest.java:47)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+Caused by: org.hibernate.MappingException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+	at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+	at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+	... 36 more
+... Removed 31 stack frames]]>
+    </failure>
+  </testcase>
+  <testcase name="readSkuById" time="0.0" classname="org.broadleafcommerce.test.integration.SkuDaoTest"/>
+  <testcase name="createDefaultFullfillmentGroup" time="0.0" classname="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest">
+    <failure type="org.springframework.beans.factory.NoSuchBeanDefinitionException" message="No bean named &apos;defaultFullfillmentGroup&apos; is defined">
+      <![CDATA[org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'defaultFullfillmentGroup' is defined
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+	at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.createDefault(FullfillmentGroupDaoJpa.java:82)
+	at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup(FullfillmentGroupDaoTest.java:46)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 27 stack frames]]>
+    </failure>
+  </testcase>
+  <testcase name="createFullfillmentGroup" time="0.016" classname="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest">
+    <failure type="org.springframework.beans.factory.NoSuchBeanDefinitionException" message="No bean named &apos;fullfillmentGroup&apos; is defined">
+      <![CDATA[org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'fullfillmentGroup' is defined
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+	at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.create(FullfillmentGroupDaoJpa.java:88)
+	at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup(FullfillmentGroupDaoTest.java:83)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 27 stack frames]]>
+    </failure>
+  </testcase>
+  <testcase name="readDefaultFullfillmentGroupForOrder" time="0.0" classname="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readFullfillmentGroupsForOrder" time="0.0" classname="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readFullfillmentGroupsForId" time="0.0" classname="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readDefaultFullfillmentGroupForId" time="0.0" classname="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="findCurrentBasketForCustomerBeforeCreation" time="0.015" classname="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+  <testcase name="addContactInfoToOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderServiceTest">
+    <failure type="java.lang.IllegalArgumentException" message="org.hibernate.QueryParameterException: could not locate named parameter [orderId]">
+      <![CDATA[java.lang.IllegalArgumentException: org.hibernate.QueryParameterException: could not locate named parameter [orderId]
+	at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:184)
+	at org.broadleafcommerce.order.dao.OrderItemDaoJpa.readOrderItemsForOrder(OrderItemDaoJpa.java:54)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.calculateOrderTotal(OrderServiceImpl.java:268)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.maintainOrder(OrderServiceImpl.java:296)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.addContactInfoToOrder(OrderServiceImpl.java:110)
+	at org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder(OrderServiceTest.java:81)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+Caused by: org.hibernate.QueryParameterException: could not locate named parameter [orderId]
+	at org.hibernate.engine.query.ParameterMetadata.getNamedParameterDescriptor(ParameterMetadata.java:75)
+	at org.hibernate.engine.query.ParameterMetadata.getNamedParameterExpectedType(ParameterMetadata.java:81)
+	at org.hibernate.impl.AbstractQueryImpl.determineType(AbstractQueryImpl.java:413)
+	at org.hibernate.impl.AbstractQueryImpl.setParameter(AbstractQueryImpl.java:383)
+	at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:179)
+	... 33 more
+... Removed 27 stack frames]]>
+    </failure>
+  </testcase>
+  <testcase name="readCustomersByUsername2" time="0.0" classname="org.broadleafcommerce.profile.test.CustomerTest"/>
+  <testcase name="readOrdersForCustomer" time="0.016" classname="org.broadleafcommerce.test.integration.OrderDaoTest"/>
+  <testcase name="createOrderItem" time="0.0" classname="org.broadleafcommerce.test.integration.OrderItemDaoTest">
+    <failure type="java.lang.IllegalArgumentException" message="argument type mismatch">
+      <![CDATA[java.lang.IllegalArgumentException: argument type mismatch
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 27 stack frames]]>
+    </failure>
+  </testcase>
+  <testcase name="createFullfillmentGroupItem" time="0.0" classname="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readOrderItemsForOrder" time="0.0" classname="org.broadleafcommerce.test.integration.OrderItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readFullfillmentGroupItemsForFullfillmentGroup" time="0.0" classname="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readFullfillmentGroupItemsById" time="0.0" classname="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readOrderItemsById" time="0.0" classname="org.broadleafcommerce.test.integration.OrderItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="testSuccessfulAddress" time="0.328" classname="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest"/>
+  <testcase name="testBadAddress" time="2.891" classname="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest"/>
+  <testcase name="test" time="0.437" classname="org.broadleafcommerce.test.integration.ExtensibilityTest"/>
+  <testcase name="testMappings" time="0.0" classname="org.broadleafcommerce.test.integration.OrmTest"/>
+  <testcase name="testReadProductsById" time="0.0" classname="org.broadleafcommerce.test.integration.ProductDaoTest"/>
+  <testcase name="testReadProductsByName" time="0.0" classname="org.broadleafcommerce.test.integration.ProductDaoTest"/>
+</testsuite>

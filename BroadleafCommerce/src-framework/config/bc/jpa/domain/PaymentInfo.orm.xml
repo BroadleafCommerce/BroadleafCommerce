@@ -25,7 +25,7 @@
             <basic name="referenceNumber">
                 <column name="REFERENCE_NUMBER"/>
             </basic>
-            <many-to-one name="order">
+            <many-to-one name="order" target-entity="org.broadleafcommerce.order.domain.BroadleafOrder">
 				<join-column name="ORDER_ID"/>
             </many-to-one>
 			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomerAddress">

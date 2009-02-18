@@ -1,0 +1,553 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>TestNG:  Unit Test</title>
+<style type="text/css">
+table caption,table.info_table,table.param,table.passed,table.failed {margin-bottom:10px;border:1px solid #000099;border-collapse:collapse;empty-cells:show;}
+table.info_table td,table.info_table th,table.param td,table.param th,table.passed td,table.passed th,table.failed td,table.failed th {
+border:1px solid #000099;padding:.25em .5em .25em .5em
+}
+table.param th {vertical-align:bottom}
+td.numi,th.numi,td.numi_attn {
+text-align:right
+}
+tr.total td {font-weight:bold}
+table caption {
+text-align:center;font-weight:bold;
+}
+table.passed tr.stripe td,table tr.passedodd td {background-color: #00AA00;}
+table.passed td,table tr.passedeven td {background-color: #33FF33;}
+table.passed tr.stripe td,table tr.skippedodd td {background-color: #cccccc;}
+table.passed td,table tr.skippedodd td {background-color: #dddddd;}
+table.failed tr.stripe td,table tr.failedodd td,table.param td.numi_attn {background-color: #FF3333;}
+table.failed td,table tr.failedeven td,table.param tr.stripe td.numi_attn {background-color: #DD0000;}
+tr.stripe td,tr.stripe th {background-color: #E6EBF9;}
+p.totop {font-size:85%;text-align:center;border-bottom:2px black solid}
+div.shootout {padding:2em;border:3px #4854A8 solid}
+</style>
+</head>
+<body>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th>Test</th><th class="numi">Methods<br/>Passed</th><th class="numi">Scenarios<br/>Passed</th><th class="numi"># skipped</th><th class="numi"># failed</th><th class="numi">Total<br/>Time</th><th class="numi">Included<br/>Groups</th><th class="numi">Excluded<br/>Groups</th></tr>
+<tr><td style="text-align:left;padding-right:2em">broadleafcommerce-layout</td><td class="numi">3</td><td class="numi">3</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0.0 seconds</td><td class="numi"></td><td class="numi"></td></tr>
+<tr class="stripe"><td style="text-align:left;padding-right:2em">broadleafcommerce-unittest</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0</td><td class="numi">0.0 seconds</td><td class="numi"></td><td class="numi"></td></tr>
+<tr><td style="text-align:left;padding-right:2em">commerce-integrationtest</td><td class="numi">24</td><td class="numi">26</td><td class="numi_attn">23</td><td class="numi_attn">7</td><td class="numi">8.1 seconds</td><td class="numi"></td><td class="numi"></td></tr>
+<tr class="total"><td>Total</td>
+<td class="numi">27</td><td class="numi">29</td><td class="numi_attn">23</td><td class="numi_attn">7</td><td class="numi">8.1 seconds</td><td colspan="2">&nbsp;</td></tr>
+</table>
+<a id="summary"></a>
+<table cellspacing=0 cellpadding=0 class="passed">
+<tr><th>Class</th><th>Method</th><th># of<br/>Scenarios</th><th>Time<br/>(Msecs)</th></tr>
+<tr><th colspan="4">broadleafcommerce-layout &#8212; passed</th></tr>
+<tr class="passedodd"><td rowspan="3">org.broadleafcommerce.layout.test.PaginationCommandObjectTest<td><a href="#m1">testDisplayList (paginationObject)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m2">testFullList (paginationObject)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m3">testIndices (paginationObject)</a></td><td class="numi">1</td><td class="numi">16</td></tr>
+<tr><th colspan="4">commerce-integrationtest &#8212; failed</th></tr>
+<tr class="failedodd"><td rowspan="2">org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest<td><a href="#m4">createDefaultFullfillmentGroup (createDefaultFullfillmentGroup)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="failedodd"><td><a href="#m5">createFullfillmentGroup (createFullfillmentGroup)</a></td><td class="numi">1</td><td class="numi">16</td></tr>
+<tr class="failedeven"><td rowspan="2">org.broadleafcommerce.test.integration.OrderDaoTest<td><a href="#m6">deleteOrder (deleteOrderForCustomer)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="failedeven"><td><a href="#m7">readOrderById (readOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="failedodd"><td rowspan="1">org.broadleafcommerce.test.integration.OrderItemDaoTest<td><a href="#m8">createOrderItem (createOrderItem)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="failedeven"><td rowspan="1">org.broadleafcommerce.test.integration.OrderServiceTest<td><a href="#m9">addContactInfoToOrder (addContactInfoToOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="failedodd"><td rowspan="1">org.broadleafcommerce.test.integration.PaymentInfoDaoTest<td><a href="#m10">createPaymentInfo (createPaymentInfo)</a></td><td class="numi">1</td><td class="numi">31</td></tr>
+<tr><th colspan="4">commerce-integrationtest &#8212; skipped</th></tr>
+<tr class="skippedodd"><td rowspan="4">org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest<td><a href="#m11">readDefaultFullfillmentGroupForId (readDefaultFullfillmentGroupForId)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m12">readDefaultFullfillmentGroupForOrder (readDefaultFullfillmentGroupForOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m13">readFullfillmentGroupsForId (readFullfillmentGroupsForId)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m14">readFullfillmentGroupsForOrder (readFullfillmentGroupsForOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="3">org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest<td><a href="#m15">createFullfillmentGroupItem (createFullfillmentGroupItem)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m16">readFullfillmentGroupItemsById (readFullfillmentGroupItemsById)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m17">readFullfillmentGroupItemsForFullfillmentGroup (readFullfillmentGroupItemsForFullfillmentGroup)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="2">org.broadleafcommerce.test.integration.OrderItemDaoTest<td><a href="#m18">readOrderItemsById (readOrderItemsById)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m19">readOrderItemsForOrder (readOrderItemsForOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedeven"><td rowspan="12">org.broadleafcommerce.test.integration.OrderServiceTest<td><a href="#m20">addFullfillmentGroupToOrderFirst (addFullfillmentGroupToOrderFirst)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m21">addItemToOrder (addItemToOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m22">addPaymentToOrder (addPaymentToOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m23">findDefaultFillmentGroupForOrder (findDefaultFulFillmentGroupForOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m24">findFillmentGroupForOrderFirst (findFulFillmentGroupForOrderFirst)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m25">getItemsForOrder (getItemsForOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m26">getOrdersForCustomer (getOrdersForCustomer)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m27">removeDefaultFulFillmentGroupForOrder (removeDefaultFulFillmentGroupForOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m28">removeFulFillmentGroupForOrderFirst (removeFulFillmentGroupForOrderFirst)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m29">removeItemFromOrder (removeItemFromOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m30">removeItemFromOrderAfterFulfillmentGroups (removeItemFromOrderAfterDefaultFulfillmentGroup)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedeven"><td><a href="#m31">updateItemsInOrder (updateItemsInOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="skippedodd"><td rowspan="2">org.broadleafcommerce.test.integration.PaymentInfoDaoTest<td><a href="#m32">readPaymentInfoById (readPaymentInfoById)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="skippedodd"><td><a href="#m33">readPaymentInfoByOrder (readPaymentInfosByOrder)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr><th colspan="4">commerce-integrationtest &#8212; passed</th></tr>
+<tr class="passedodd"><td rowspan="2">org.broadleafcommerce.profile.test.AddressTest<td><a href="#m34">createAddress (createAddress)</a></td><td class="numi">2</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m35">readAddressByUserId (readAddress)</a></td><td class="numi">1</td><td class="numi">16</td></tr>
+<tr class="passedeven"><td rowspan="3">org.broadleafcommerce.profile.test.ContactInfoTest<td><a href="#m36">createContactInfo (createContactInfo)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m37">readContactInfoById (readContactInfoById)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m38">readContactInfoByUserId (readContactInfo)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="5">org.broadleafcommerce.profile.test.CustomerTest<td><a href="#m39">changeCustomerPasswords (changeCustomerPassword)</a></td><td class="numi">1</td><td class="numi">16</td></tr><tr class="passedodd"><td><a href="#m40">createCustomer (createCustomers)</a></td><td class="numi">2</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m41">readCustomersById (readCustomer)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m42">readCustomersByUsername1 (readCustomer1)</a></td><td class="numi">1</td><td class="numi">16</td></tr><tr class="passedodd"><td><a href="#m43">readCustomersByUsername2 (readCustomer2)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="2">org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest<td><a href="#m44">testBadAddress (testBadAddress)</a></td><td class="numi">1</td><td class="numi">2891</td></tr><tr class="passedeven"><td><a href="#m45">testSuccessfulAddress (testSuccessfulAddress)</a></td><td class="numi">1</td><td class="numi">328</td></tr>
+<tr class="passedodd"><td rowspan="1">org.broadleafcommerce.test.integration.ExtensibilityTest<td><a href="#m46">test</a></td><td class="numi">1</td><td class="numi">437</td></tr>
+<tr class="passedeven"><td rowspan="2">org.broadleafcommerce.test.integration.OrderDaoTest<td><a href="#m47">createOrder (createOrder)</a></td><td class="numi">1</td><td class="numi">32</td></tr><tr class="passedeven"><td><a href="#m48">readOrdersForCustomer (readOrdersForCustomer)</a></td><td class="numi">1</td><td class="numi">16</td></tr>
+<tr class="passedodd"><td rowspan="2">org.broadleafcommerce.test.integration.OrderServiceTest<td><a href="#m49">findCurrentBasketForCustomerAfterCreation (findCurrentBasketForCustomerAfterCreation)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m50">findCurrentBasketForCustomerBeforeCreation (findCurrentBasketForCustomerBeforeCreation)</a></td><td class="numi">1</td><td class="numi">15</td></tr>
+<tr class="passedeven"><td rowspan="1">org.broadleafcommerce.test.integration.OrmTest<td><a href="#m51">testMappings</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedodd"><td rowspan="3">org.broadleafcommerce.test.integration.ProductDaoTest<td><a href="#m52">testMaintainProduct (createProduct)</a></td><td class="numi">1</td><td class="numi">47</td></tr><tr class="passedodd"><td><a href="#m53">testReadProductsById</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedodd"><td><a href="#m54">testReadProductsByName</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+<tr class="passedeven"><td rowspan="3">org.broadleafcommerce.test.integration.SkuDaoTest<td><a href="#m55">createSku (createSku)</a></td><td class="numi">1</td><td class="numi">31</td></tr><tr class="passedeven"><td><a href="#m56">readFirstSku (readFirstSku)</a></td><td class="numi">1</td><td class="numi">0</td></tr><tr class="passedeven"><td><a href="#m57">readSkuById (readSkuById)</a></td><td class="numi">1</td><td class="numi">0</td></tr>
+</table>
+<h1>broadleafcommerce-layout</h1>
+<a id="m1"></a><h2>org.broadleafcommerce.layout.test.PaginationCommandObjectTest:testDisplayList</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m2"></a><h2>org.broadleafcommerce.layout.test.PaginationCommandObjectTest:testFullList</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m3"></a><h2>org.broadleafcommerce.layout.test.PaginationCommandObjectTest:testIndices</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<h1>broadleafcommerce-unittest</h1>
+<h1>commerce-integrationtest</h1>
+<a id="m4"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest:createDefaultFullfillmentGroup</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup@a02839</td>
+</tr>
+<tr><td style="padding-left:3em" colspan="1">
+<p>No bean named 'defaultFullfillmentGroup' is defined</p>
+org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+<br/>at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+<br/>at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+<br/>at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+<br/>at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+<br/>at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+<br/>at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+<br/>at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+<br/>at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.createDefault(FullfillmentGroupDaoJpa.java:82)
+<br/>at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup(FullfillmentGroupDaoTest.java:46)
+<br/>29 lines not shown
+</td></tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m5"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest:createFullfillmentGroup</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup@c6a3a0</td>
+</tr>
+<tr><td style="padding-left:3em" colspan="1">
+<p>No bean named 'fullfillmentGroup' is defined</p>
+org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+<br/>at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+<br/>at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+<br/>at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+<br/>at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+<br/>at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+<br/>at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+<br/>at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+<br/>at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.create(FullfillmentGroupDaoJpa.java:88)
+<br/>at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup(FullfillmentGroupDaoTest.java:83)
+<br/>29 lines not shown
+</td></tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m6"></a><h2>org.broadleafcommerce.test.integration.OrderDaoTest:deleteOrder</h2>
+<div style="padding-left:3em">
+<p>Unknown entity: org.broadleafcommerce.order.domain.Order</p>
+org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+<br/>at java.lang.reflect.Method.invoke(Unknown Source)
+<br/>at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+<br/>at $Proxy42.find(Unknown Source)
+<br/>at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+<br/>at org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder(OrderDaoTest.java:62)
+<br/>29 lines not shown
+<p>Caused by Unknown entity: org.broadleafcommerce.order.domain.Order</p>
+org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+<br/>at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+<br/>at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+<br/>at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+<br/>at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+<br/>at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+<br/>at java.lang.reflect.Method.invoke(Unknown Source)
+<br/>at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+<br/>at $Proxy42.find(Unknown Source)
+<br/>at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+<br/>at org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder(OrderDaoTest.java:62)
+<br/>29 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m7"></a><h2>org.broadleafcommerce.test.integration.OrderDaoTest:readOrderById</h2>
+<div style="padding-left:3em">
+<p>Unknown entity: org.broadleafcommerce.order.domain.Order</p>
+org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+<br/>at java.lang.reflect.Method.invoke(Unknown Source)
+<br/>at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+<br/>at $Proxy42.find(Unknown Source)
+<br/>at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+<br/>at org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById(OrderDaoTest.java:47)
+<br/>29 lines not shown
+<p>Caused by Unknown entity: org.broadleafcommerce.order.domain.Order</p>
+org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+<br/>at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+<br/>at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+<br/>at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+<br/>at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+<br/>at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+<br/>at java.lang.reflect.Method.invoke(Unknown Source)
+<br/>at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+<br/>at $Proxy42.find(Unknown Source)
+<br/>at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+<br/>at org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById(OrderDaoTest.java:47)
+<br/>29 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m8"></a><h2>org.broadleafcommerce.test.integration.OrderItemDaoTest:createOrderItem</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.order.domain.BroadleafOrderItem@666a53</td>
+</tr>
+<tr><td style="padding-left:3em" colspan="1">
+<p>argument type mismatch</p>
+sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+<br/>at java.lang.reflect.Method.invoke(Unknown Source)
+<br/>at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+<br/>at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+<br/>at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+<br/>at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+<br/>at java.lang.reflect.Method.invoke(Unknown Source)
+<br/>at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+<br/>at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+<br/>at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+<br/>at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</td></tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m9"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:addContactInfoToOrder</h2>
+<div style="padding-left:3em">
+<p>org.hibernate.QueryParameterException: could not locate named parameter [orderId]</p>
+org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:184)
+<br/>at org.broadleafcommerce.order.dao.OrderItemDaoJpa.readOrderItemsForOrder(OrderItemDaoJpa.java:54)
+<br/>at org.broadleafcommerce.order.service.OrderServiceImpl.calculateOrderTotal(OrderServiceImpl.java:268)
+<br/>at org.broadleafcommerce.order.service.OrderServiceImpl.maintainOrder(OrderServiceImpl.java:296)
+<br/>at org.broadleafcommerce.order.service.OrderServiceImpl.addContactInfoToOrder(OrderServiceImpl.java:110)
+<br/>at org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder(OrderServiceTest.java:81)
+<br/>29 lines not shown
+<p>Caused by could not locate named parameter [orderId]</p>
+org.hibernate.engine.query.ParameterMetadata.getNamedParameterDescriptor(ParameterMetadata.java:75)
+<br/>at org.hibernate.engine.query.ParameterMetadata.getNamedParameterExpectedType(ParameterMetadata.java:81)
+<br/>at org.hibernate.impl.AbstractQueryImpl.determineType(AbstractQueryImpl.java:413)
+<br/>at org.hibernate.impl.AbstractQueryImpl.setParameter(AbstractQueryImpl.java:383)
+<br/>at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:179)
+<br/>at org.broadleafcommerce.order.dao.OrderItemDaoJpa.readOrderItemsForOrder(OrderItemDaoJpa.java:54)
+<br/>at org.broadleafcommerce.order.service.OrderServiceImpl.calculateOrderTotal(OrderServiceImpl.java:268)
+<br/>at org.broadleafcommerce.order.service.OrderServiceImpl.maintainOrder(OrderServiceImpl.java:296)
+<br/>at org.broadleafcommerce.order.service.OrderServiceImpl.addContactInfoToOrder(OrderServiceImpl.java:110)
+<br/>at org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder(OrderServiceTest.java:81)
+<br/>29 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m10"></a><h2>org.broadleafcommerce.test.integration.PaymentInfoDaoTest:createPaymentInfo</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.order.domain.BroadleafPaymentInfo@1fcca7b</td>
+</tr>
+<tr><td style="padding-left:3em" colspan="1">
+<p>Unknown entity: org.broadleafcommerce.order.domain.BroadleafPaymentInfo</p>
+org.hibernate.ejb.AbstractEntityManagerImpl.persist(AbstractEntityManagerImpl.java:223)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+<br/>at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+<br/>at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+<br/>at java.lang.reflect.Method.invoke(Unknown Source)
+<br/>at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+<br/>at $Proxy42.persist(Unknown Source)
+<br/>at org.broadleafcommerce.order.dao.PaymentInfoDaoJpa.maintainPaymentInfo(PaymentInfoDaoJpa.java:32)
+<br/>at org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo(PaymentInfoDaoTest.java:49)
+<br/>30 lines not shown
+</td></tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m11"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest:readDefaultFullfillmentGroupForId</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m12"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest:readDefaultFullfillmentGroupForOrder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m13"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest:readFullfillmentGroupsForId</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m14"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest:readFullfillmentGroupsForOrder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m15"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest:createFullfillmentGroupItem</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m16"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest:readFullfillmentGroupItemsById</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m17"></a><h2>org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest:readFullfillmentGroupItemsForFullfillmentGroup</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m18"></a><h2>org.broadleafcommerce.test.integration.OrderItemDaoTest:readOrderItemsById</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m19"></a><h2>org.broadleafcommerce.test.integration.OrderItemDaoTest:readOrderItemsForOrder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m20"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:addFullfillmentGroupToOrderFirst</h2>
+<div style="padding-left:3em">
+<p>Method org.broadleafcommerce.test.integration.OrderServiceTest.addFullfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FullfillmentGroup) depends on nonexistent group "createOrderForCustomer"</p>
+org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m21"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:addItemToOrder</h2>
+<div style="padding-left:3em">
+<p>Method org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrder() depends on nonexistent group "createOrderForCustomer"</p>
+org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m22"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:addPaymentToOrder</h2>
+<div style="padding-left:3em">
+<p>Method org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrder(org.broadleafcommerce.order.domain.PaymentInfo) depends on nonexistent group "createOrderForCustomer"</p>
+org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m23"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:findDefaultFillmentGroupForOrder</h2>
+<div style="padding-left:3em">
+<p>Method org.broadleafcommerce.test.integration.OrderServiceTest.findDefaultFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"</p>
+org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m24"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:findFillmentGroupForOrderFirst</h2>
+<div style="padding-left:3em">
+<p>Method org.broadleafcommerce.test.integration.OrderServiceTest.findFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"</p>
+org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m25"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:getItemsForOrder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m26"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:getOrdersForCustomer</h2>
+<div style="padding-left:3em">
+<p>Method org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForCustomer() depends on nonexistent group "createOrderForCustomer"</p>
+org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m27"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:removeDefaultFulFillmentGroupForOrder</h2>
+<div style="padding-left:3em">
+<p>Method org.broadleafcommerce.test.integration.OrderServiceTest.removeDefaultFulFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"</p>
+org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m28"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:removeFulFillmentGroupForOrderFirst</h2>
+<div style="padding-left:3em">
+<p>Method org.broadleafcommerce.test.integration.OrderServiceTest.removeFulFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"</p>
+org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+<br/>at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+<br/>at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+<br/>at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+<br/>at org.testng.TestRunner.privateRun(TestRunner.java:582)
+<br/>at org.testng.TestRunner.run(TestRunner.java:477)
+<br/>at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+<br/>at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+<br/>at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+<br/>at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+<br/>at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+<br/>at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+<br/>at org.testng.TestNG.run(TestNG.java:708)
+<br/>at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+<br/>at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+<br/>1 lines not shown
+</div>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m29"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:removeItemFromOrder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m30"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:removeItemFromOrderAfterFulfillmentGroups</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m31"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:updateItemsInOrder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m32"></a><h2>org.broadleafcommerce.test.integration.PaymentInfoDaoTest:readPaymentInfoById</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m33"></a><h2>org.broadleafcommerce.test.integration.PaymentInfoDaoTest:readPaymentInfoByOrder</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m34"></a><h2>org.broadleafcommerce.profile.test.AddressTest:createAddress</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.profile.domain.BroadleafCustomerAddress@8d41f2</td>
+</tr>
+<tr class="stripe"><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.profile.domain.BroadleafCustomerAddress@944dbd</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m35"></a><h2>org.broadleafcommerce.profile.test.AddressTest:readAddressByUserId</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m36"></a><h2>org.broadleafcommerce.profile.test.ContactInfoTest:createContactInfo</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.profile.domain.BroadleafContactInfo@11a9310</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m37"></a><h2>org.broadleafcommerce.profile.test.ContactInfoTest:readContactInfoById</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m38"></a><h2>org.broadleafcommerce.profile.test.ContactInfoTest:readContactInfoByUserId</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m39"></a><h2>org.broadleafcommerce.profile.test.CustomerTest:changeCustomerPasswords</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m40"></a><h2>org.broadleafcommerce.profile.test.CustomerTest:createCustomer</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.profile.domain.BroadleafCustomer@1b2b450</td>
+</tr>
+<tr class="stripe"><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.profile.domain.BroadleafCustomer@1a3eab6</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m41"></a><h2>org.broadleafcommerce.profile.test.CustomerTest:readCustomersById</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m42"></a><h2>org.broadleafcommerce.profile.test.CustomerTest:readCustomersByUsername1</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m43"></a><h2>org.broadleafcommerce.profile.test.CustomerTest:readCustomersByUsername2</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m44"></a><h2>org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest:testBadAddress</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m45"></a><h2>org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest:testSuccessfulAddress</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m46"></a><h2>org.broadleafcommerce.test.integration.ExtensibilityTest:test</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m47"></a><h2>org.broadleafcommerce.test.integration.OrderDaoTest:createOrder</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.order.domain.BroadleafOrder@1e5c339</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m48"></a><h2>org.broadleafcommerce.test.integration.OrderDaoTest:readOrdersForCustomer</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m49"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:findCurrentBasketForCustomerAfterCreation</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m50"></a><h2>org.broadleafcommerce.test.integration.OrderServiceTest:findCurrentBasketForCustomerBeforeCreation</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m51"></a><h2>org.broadleafcommerce.test.integration.OrmTest:testMappings</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m52"></a><h2>org.broadleafcommerce.test.integration.ProductDaoTest:testMaintainProduct</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.catalog.domain.BroadleafProduct@169df00</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m53"></a><h2>org.broadleafcommerce.test.integration.ProductDaoTest:testReadProductsById</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.catalog.domain.BroadleafProduct@1a99836</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m54"></a><h2>org.broadleafcommerce.test.integration.ProductDaoTest:testReadProductsByName</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.catalog.domain.BroadleafProduct@5ebac9</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m55"></a><h2>org.broadleafcommerce.test.integration.SkuDaoTest:createSku</h2>
+<table cellspacing=0 cellpadding=0 class="param">
+<tr><th style="padding-left:1em;padding-right:1em">Parameter #1</th></tr>
+<tr><td style="padding-left:.5em;padding-right:2em">org.broadleafcommerce.catalog.domain.BroadleafSku@16f2067</td>
+</tr>
+</table>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m56"></a><h2>org.broadleafcommerce.test.integration.SkuDaoTest:readFirstSku</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+<a id="m57"></a><h2>org.broadleafcommerce.test.integration.SkuDaoTest:readSkuById</h2>
+<p class="totop"><a href="#summary">back to summary</a></p>
+</body></html>
