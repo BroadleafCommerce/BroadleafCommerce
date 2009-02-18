@@ -1,7 +1,5 @@
 package org.broadleafcommerce.profile.service;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.CustomerDao;
@@ -19,16 +17,13 @@ public class CustomerServiceImpl implements CustomerService {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource(name = "customerDao")
     private CustomerDao customerDao;
 
-    @Resource(name = "passwordEncoder")
     private PasswordEncoder passwordEncoder;
 
     // @Resource(name = "saltSource")
     // private SaltSource saltSource;
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public Customer saveCustomer(Customer customer) {
         if (customer.getUnencodedPassword() != null) {
             customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), null));
@@ -62,5 +57,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer readCustomerById(Long id) {
         return customerDao.readCustomerById(id);
+    }
+
+    public void setCustomerDao(CustomerDao customerDao) {
+        this.customerDao = customerDao;
+    }
+
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 }

@@ -1,7 +1,5 @@
 package org.broadleafcommerce.profile.service;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
@@ -17,7 +15,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource
     private CustomerService customerService;
 
     private boolean forcePasswordChange = false;
@@ -35,11 +32,20 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         User returnUser = null;
 
-        if (!forcePasswordChange) {
-            returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
+        boolean pwChangeRequired = customer.isPasswordChangeRequired();
+        if (pwChangeRequired) {
+            if (forcePasswordChange) {
+                returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
+            } else {
+                returnUser = new User(username, customer.getPassword(), true, true, true, true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER"), new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED") });
+            }
         } else {
             returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
         }
         return returnUser;
+    }
+
+    public void setCustomerService(CustomerService customerService) {
+        this.customerService = customerService;
     }
 }

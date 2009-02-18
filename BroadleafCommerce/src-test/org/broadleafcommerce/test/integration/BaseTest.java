@@ -9,7 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.annotations.BeforeClass;
 
-@ContextConfiguration(locations = { "classpath:/applicationContext.xml", "classpath:/applicationContext-test.xml",  "classpath*:/applicationContext-service.xml"})
+@ContextConfiguration(locations = { "classpath:/applicationContext.xml", "classpath*:/applicationContext-service.xml", "classpath:/applicationContext-test.xml"})
 public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextTests {
 
     /** Logger for this class and subclasses */

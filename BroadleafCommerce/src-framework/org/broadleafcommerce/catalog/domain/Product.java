@@ -22,9 +22,9 @@ public interface Product {
 
     public void setItemAttributes(Map<String, ItemAttribute> itemAttributes);
 
-    public Set<Sku> getSkus();
+    public List<Sku> getSkus();
 
-    public void setSkus(Set<Sku> skus);
+    public void setSkus(List<Sku> skus);
 
     public Set<ProductImage> getProductImages();
 
