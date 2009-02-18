@@ -95,6 +95,14 @@
 	<!-- Entity mappings - override for extensibility -->
 	<bean id="org.broadleafcommerce.catalog.domain.BasePrice" class="org.broadleafcommerce.catalog.domain.BroadleafBasePrice"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Category" class="org.broadleafcommerce.catalog.domain.BroadleafCategory"/>
+	<bean id="org.broadleafcommerce.order.domain.BasketOrder" class="org.broadleafcommerce.order.domain.BroadleafBasketOrder"/>
+	<bean id="org.broadleafcommerce.order.domain.DefaultFullfillmentGroup" class="org.broadleafcommerce.order.domain.BroadleafDefaultFullfillmentGroup"/>
+	<bean id="org.broadleafcommerce.order.domain.FullfillmentGroup" class="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup"/>
+	<bean id="org.broadleafcommerce.order.domain.FullfillmentGroupItem" class="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroupItem"/>
+	<bean id="org.broadleafcommerce.order.domain.Order" class="org.broadleafcommerce.order.domain.BroadleafOrder"/>
+	<bean id="org.broadleafcommerce.order.domain.OrderItem" class="org.broadleafcommerce.order.domain.BroadleafOrderItem"/>
+	<bean id="org.broadleafcommerce.order.domain.PaymentInfo" class="org.broadleafcommerce.order.domain.BroadleafPaymentInfo"/>
+	<bean id="org.broadleafcommerce.order.domain.SubmittedOrder" class="org.broadleafcommerce.order.domain.BroadleafSubmittedOrder"/>
 	<bean id="org.broadleafcommerce.profile.domain.ContactInfo" class="org.broadleafcommerce.profile.domain.BroadleafContactInfo"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.BroadleafCustomer"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.BroadleafProduct"/>

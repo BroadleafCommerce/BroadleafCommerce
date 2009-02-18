@@ -38,7 +38,7 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
 
     @Override
     public PaymentInfo readPaymentInfoById(Long paymentId) {
-        return em.find(PaymentInfo.class, paymentId);
+        return (PaymentInfo)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.PaymentInfo"), paymentId);
     }
 
     @Override

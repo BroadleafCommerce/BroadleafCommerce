@@ -79,7 +79,7 @@ public class FullfillmentGroupDaoJpa implements FullfillmentGroupDao {
 
 	@Override
 	public DefaultFullfillmentGroup createDefault() {
-		return ((DefaultFullfillmentGroup)entityConfiguration.createEntityInstance("defaultFullfillmentGroup"));
+		return ((DefaultFullfillmentGroup)entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.DefaultFullfillmentGroup"));
 	}
 	
 	
