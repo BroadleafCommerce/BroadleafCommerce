@@ -36,6 +36,8 @@ public class BroadleafCategory implements Category, Serializable {
 
     private Map<String, String> categoryImageMap;
 
+    private String longDescription;
+
     public Long getId() {
         return id;
     }
@@ -138,5 +140,13 @@ public class BroadleafCategory implements Category, Serializable {
             }
         }
         return categoryImageMap.get(key);
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 }

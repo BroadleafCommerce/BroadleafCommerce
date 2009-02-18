@@ -18,7 +18,7 @@ public class BroadleafProduct implements Product, Serializable {
 
     private String name;
 
-    private Set<Sku> skus;
+    private List<Sku> skus;
 
     private Set<ProductImage> productImages;
 
@@ -58,11 +58,11 @@ public class BroadleafProduct implements Product, Serializable {
         this.itemAttributes = itemAttributes;
     }
 
-    public Set<Sku> getSkus() {
+    public List<Sku> getSkus() {
         return skus;
     }
 
-    public void setSkus(Set<Sku> skus) {
+    public void setSkus(List<Sku> skus) {
         this.skus = skus;
     }
 

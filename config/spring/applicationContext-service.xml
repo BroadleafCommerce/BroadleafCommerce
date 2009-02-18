@@ -9,18 +9,41 @@
 	<!-- Catalog -->
 	<bean id="basePriceDao" class="org.broadleafcommerce.catalog.dao.BasePriceDaoJpa"/>
 
-	<bean id="catalogService" class="org.broadleafcommerce.catalog.service.CatalogServiceImpl"/>
-	<bean id="categoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoJpa"/>
+<!--
+	<bean name="catalogServiceProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="catalogService"/>
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="*">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+-->
+	<bean id="catalogService" class="org.broadleafcommerce.catalog.service.CatalogServiceImpl">
+		<property name="categoryDao" ref="categoryDao"/>
+		<property name="productDao" ref="productDao"/>
+		<property name="skuDao" ref="skuDao"/>
+	</bean>
+	<bean id="categoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoJpa">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
 
 	<bean id="itemAttributeDao" class="org.broadleafcommerce.catalog.dao.ItemAttributeDaoJpa"/>
 
-	<bean id="productDao" class="org.broadleafcommerce.catalog.dao.ProductDaoJpa"/>
+	<bean id="productDao" class="org.broadleafcommerce.catalog.dao.ProductDaoJpa">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityConfiguration" ref="entityConfiguration"/>
+	</bean>
 
-	<bean id="productListAssociationDao" class="org.broadleafcommerce.catalog.dao.ProductListEntryDaoJpa"/>
+	<bean id="productListEntryDao" class="org.broadleafcommerce.catalog.dao.ProductListEntryDaoJpa"/>
 
 	<bean id="productListDao" class="org.broadleafcommerce.catalog.dao.ProductListDaoJpa"/>
 
-	<bean id="skuDao" class="org.broadleafcommerce.catalog.dao.SkuDaoJpa"/>
+	<bean id="skuDao" class="org.broadleafcommerce.catalog.dao.SkuDaoJpa">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityConfiguration" ref="entityConfiguration"/>
+	</bean>
 
 	<!-- Order -->
 	<bean id="orderService" class="org.broadleafcommerce.order.service.OrderServiceImpl"/>
@@ -52,14 +75,38 @@
 	<bean id="contactInfoService" class="org.broadleafcommerce.profile.service.ContactInfoServiceImpl"/>
 	<bean id="contactInfoDao" class="org.broadleafcommerce.profile.dao.ContactInfoDaoJpa"/>
 
-	<bean id="customerService" class="org.broadleafcommerce.profile.service.CustomerServiceImpl"/>
-	<bean id="customerDao" class="org.broadleafcommerce.profile.dao.CustomerDaoJpa"/>
+<!--
+	<bean name="customerServiceProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="customerService"/>
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveCustomer">PROPAGATION_REQUIRED</prop>
+			</props>
+		</property>
+	</bean>
+-->
+	<bean id="customerService" class="org.broadleafcommerce.profile.service.CustomerServiceImpl">
+		<property name="customerDao" ref="customerDao"/>
+		<property name="passwordEncoder" ref="passwordEncoder"/>
+	</bean>
+	<bean id="customerDao" class="org.broadleafcommerce.profile.dao.CustomerDaoJpa">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityConfiguration" ref="entityConfiguration"/>
+	</bean>
 
 	<bean id="emailService" class="org.broadleafcommerce.profile.service.EmailServiceImpl"/>
 
-	<bean id="userDetailsService" class="org.broadleafcommerce.profile.service.UserDetailsServiceImpl"/>
+	<bean id="userDetailsService" class="org.broadleafcommerce.profile.service.UserDetailsServiceImpl">
+		<property name="forcePasswordChange" value="false"/>
+		<property name="customerService" ref="customerService"/>
+	</bean>
 
 	<bean id="userService" class="org.broadleafcommerce.profile.service.UserServiceImpl"/>
 	<bean id="userDao" class="org.broadleafcommerce.profile.dao.UserDaoJpa"/>
+
+	<bean id="customerStateStore" class="org.broadleafcommerce.security.CustomerStateStore">
+		<property name="customerService" ref="customerService"/>
+	</bean>
 
 </beans>
