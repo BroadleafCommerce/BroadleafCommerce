@@ -6,7 +6,6 @@
 	<entity class="org.broadleafcommerce.catalog.domain.BroadleafBasePrice" name="basePrice">
         <table name="BLC_BASE_PRICE"/>
         <inheritance strategy="JOINED"/>
-
         <attributes>
             <id name="id">
             	<column name="BASE_PRICE_ID"/>
@@ -29,5 +28,4 @@
 			<embedded name="auditable"/>
         </attributes>
     </entity>
-
 </entity-mappings>

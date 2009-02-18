@@ -31,12 +31,10 @@
 		<entity-listeners>
 			<entity-listener class="org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener" />
 		</entity-listeners>
-
         <attributes>
             <id name="id">
             	<column name="ADDRESS_ID"/>
                 <generated-value/>
-
             </id>
             <basic name="addressName">
                 <column name="ADDRESS_NAME" />
@@ -74,5 +72,4 @@
             </many-to-one>
         </attributes>
     </entity>
-
 </entity-mappings>

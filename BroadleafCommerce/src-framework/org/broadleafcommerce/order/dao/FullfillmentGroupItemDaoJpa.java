@@ -19,50 +19,51 @@ public class FullfillmentGroupItemDaoJpa implements FullfillmentGroupItemDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
-    
+
     @Resource
-    private EntityConfiguration entityConfiguration;    
+    private EntityConfiguration entityConfiguration;
 
     @PersistenceContext
     private EntityManager em;
-	
-	@Override
-	public void deleteFullfillmentGroupItem(FullfillmentGroupItem fullfillmentGroupItem) {
-		em.remove(fullfillmentGroupItem);
-	}
 
-	@Override
-	public FullfillmentGroupItem maintainFullfillmentGroupItem(
-			FullfillmentGroupItem fullfillmentGroupItem) {
-		if(fullfillmentGroupItem.getId() == null) {
-			em.persist(fullfillmentGroupItem);			
-		}else{
-			fullfillmentGroupItem = em.merge(fullfillmentGroupItem);
-		}
-		
-		return fullfillmentGroupItem;
-	}
+    @Override
+    public void deleteFullfillmentGroupItem(FullfillmentGroupItem fullfillmentGroupItem) {
+        em.remove(fullfillmentGroupItem);
+    }
 
-	@Override
-	public FullfillmentGroupItem readFullfillmentGroupItemById(
-			Long fullfillmentGroupItemId) {
-		return (FullfillmentGroupItem)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FullfillmentGroupItem"), fullfillmentGroupItemId);
-	}
+    @Override
+    public FullfillmentGroupItem maintainFullfillmentGroupItem(
+            FullfillmentGroupItem fullfillmentGroupItem) {
+        if(fullfillmentGroupItem.getId() == null) {
+            em.persist(fullfillmentGroupItem);
+        }else{
+            fullfillmentGroupItem = em.merge(fullfillmentGroupItem);
+        }
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public List<FullfillmentGroupItem> readFullfillmentGroupItemsForFullfillmentGroup(
-			FullfillmentGroup fullfillmentGroup) {
-		Query query = em.createNamedQuery("READ_FULLFILLMENT_GROUP_ITEM_BY_FULLFILLMENT_GROUP_ID");
-		query.setParameter("fullfillmentGroupId", fullfillmentGroup.getId());
-		return query.getResultList();
-	}
+        return fullfillmentGroupItem;
+    }
 
-	@Override
-	public FullfillmentGroupItem create() {
-		return ((FullfillmentGroupItem)entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FullfillmentGroupItem"));
-	}
-	
-	
+    @SuppressWarnings("unchecked")
+    @Override
+    public FullfillmentGroupItem readFullfillmentGroupItemById(
+            Long fullfillmentGroupItemId) {
+        return (FullfillmentGroupItem)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FullfillmentGroupItem"), fullfillmentGroupItemId);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<FullfillmentGroupItem> readFullfillmentGroupItemsForFullfillmentGroup(
+            FullfillmentGroup fullfillmentGroup) {
+        Query query = em.createNamedQuery("READ_FULLFILLMENT_GROUP_ITEM_BY_FULLFILLMENT_GROUP_ID");
+        query.setParameter("fullfillmentGroupId", fullfillmentGroup.getId());
+        return query.getResultList();
+    }
+
+    @Override
+    public FullfillmentGroupItem create() {
+        return ((FullfillmentGroupItem)entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FullfillmentGroupItem"));
+    }
+
+
 
 }

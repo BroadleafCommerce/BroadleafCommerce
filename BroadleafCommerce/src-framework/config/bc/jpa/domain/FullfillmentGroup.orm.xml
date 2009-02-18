@@ -42,7 +42,6 @@
 			<one-to-many name="fullfillmentGroupItems" mapped-by="id" target-entity="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroupItem" >
 				<map-key name="ID"/>
 			</one-to-many>
-
         </attributes>
     </entity>
 
