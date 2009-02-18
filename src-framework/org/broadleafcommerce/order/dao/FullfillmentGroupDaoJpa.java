@@ -40,7 +40,7 @@ public class FullfillmentGroupDaoJpa implements FullfillmentGroupDao {
 
     @Override
     public FullfillmentGroup readFullfillmentGroupById(Long fullfillmentGroupId) {
-        return em.find(FullfillmentGroup.class, fullfillmentGroupId);
+        return (FullfillmentGroup)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FullfillmentGroup"), fullfillmentGroupId);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class FullfillmentGroupDaoJpa implements FullfillmentGroupDao {
 	@Override
 	public DefaultFullfillmentGroup readDefaultFullfillmentGroupById(
 			Long fullfillmentGroupId) {
-		return em.find(DefaultFullfillmentGroup.class, fullfillmentGroupId);
+		return (DefaultFullfillmentGroup)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.DefaultFullfillmentGroup"), fullfillmentGroupId);
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class FullfillmentGroupDaoJpa implements FullfillmentGroupDao {
 	
 	@Override
 	public FullfillmentGroup create() {
-		return ((FullfillmentGroup)entityConfiguration.createEntityInstance("fullfillmentGroup"));
+		return ((FullfillmentGroup)entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FullfillmentGroup"));
 	}
 
 }

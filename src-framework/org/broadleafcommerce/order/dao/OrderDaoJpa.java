@@ -10,6 +10,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.order.domain.BasketOrder;
 import org.broadleafcommerce.order.domain.BroadleafBasketOrder;
 import org.broadleafcommerce.order.domain.BroadleafSubmittedOrder;
 import org.broadleafcommerce.order.domain.Order;
@@ -64,15 +65,15 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public BroadleafBasketOrder readBasketOrderForCustomer(Customer customer) {
-        BroadleafBasketOrder bo;
+    public BasketOrder readBasketOrderForCustomer(Customer customer) {
+        BasketOrder bo;
         Query query = em.createNamedQuery("READ_ORDER_BASKET_FOR_CUSTOMER_ID");
         query.setParameter("customerId", customer.getId());
         try {
             bo = (BroadleafBasketOrder) query.getSingleResult();
             return (BroadleafBasketOrder) query.getSingleResult();
         } catch (NoResultException nre) {
-            bo = new BroadleafBasketOrder();
+            bo = (BasketOrder)entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.BasketOrder");
             bo.setCustomer(customer);
             em.persist(bo);
             return bo;
