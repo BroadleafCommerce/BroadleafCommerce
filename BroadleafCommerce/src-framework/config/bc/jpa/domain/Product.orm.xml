@@ -9,8 +9,7 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.catalog.domain.BroadleafProduct" name="product">
-        <table name="BLC_PRODUCT" >
-        </table>
+        <table name="BLC_PRODUCT"/>
         <inheritance strategy="JOINED"/>
         <attributes>
             <id name="id">

@@ -26,12 +26,10 @@
         	</unique-constraint>
         </table>
         <inheritance strategy="JOINED"/>
-
         <attributes>
             <id name="id">
             	<column name="USER_ID"/>
                 <generated-value/>
-
             </id>
             <basic name="username">
                 <column name="USER_NAME" />
@@ -63,6 +61,4 @@
 			<transient name="unencodedPassword"/>
         </attributes>
     </entity>
-
-
 </entity-mappings>

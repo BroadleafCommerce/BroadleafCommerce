@@ -9,10 +9,8 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.order.domain.BroadleafOrderItem" name="orderItem">
-        <table name="BLC_ORDER_ITEM" >
-        </table>
+        <table name="BLC_ORDER_ITEM"/>
         <inheritance strategy="JOINED"/>
-
         <attributes>
             <id name="id">
             	<column name="ORDER_ITEM_ID"/>
@@ -32,7 +30,4 @@
 			</many-to-one>
         </attributes>
     </entity>
-
-
-
 </entity-mappings>

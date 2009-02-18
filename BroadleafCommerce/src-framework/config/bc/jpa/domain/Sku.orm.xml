@@ -26,8 +26,7 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.catalog.domain.BroadleafSku" name="sku">
-        <table name="BLC_SKU" >
-        </table>
+        <table name="BLC_SKU"/>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
         <attributes>

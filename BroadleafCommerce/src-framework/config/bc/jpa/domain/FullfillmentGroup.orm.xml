@@ -16,15 +16,13 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup" name="fullfillmentGroup">
-        <table name="BLC_FULLFILLMENT_GROUP" >        	        	
-        </table>
+        <table name="BLC_FULLFILLMENT_GROUP"/>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="ID"/>
                 <generated-value/>
-                
             </id>
             <basic name="method">
                 <column name="METHOD" />
@@ -40,11 +38,11 @@
             </basic>
 			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomerAddress">
 				<join-column name="ADDRESS_ID"/>
-			</many-to-one>			
+			</many-to-one>
 			<one-to-many name="fullfillmentGroupItems" mapped-by="id" >
 				<map-key name="ID"/>
 			</one-to-many>
-			
+
         </attributes>
     </entity>
 
@@ -52,5 +50,4 @@
 		<discriminator-value>DEFAULT</discriminator-value>
 		<discriminator-column name="TYPE"/>
 	</entity>
-
 </entity-mappings>

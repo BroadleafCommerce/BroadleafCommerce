@@ -4,8 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<entity class="org.broadleafcommerce.promotion.domain.Promotion" name="promotion">
-        <table name="BLC_PROMOTION" >
-        </table>
+        <table name="BLC_PROMOTION"/>
         <inheritance strategy="JOINED"/>
         <attributes>
             <id name="id">

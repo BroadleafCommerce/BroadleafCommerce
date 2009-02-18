@@ -4,8 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<entity class="org.broadleafcommerce.catalog.domain.BroadleafBasePrice" name="basePrice">
-        <table name="BLC_BASE_PRICE" >
-        </table>
+        <table name="BLC_BASE_PRICE"/>
         <inheritance strategy="JOINED"/>
 
         <attributes>
