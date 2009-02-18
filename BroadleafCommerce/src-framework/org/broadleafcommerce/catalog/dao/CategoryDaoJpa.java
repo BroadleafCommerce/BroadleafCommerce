@@ -8,12 +8,15 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 
 public class CategoryDaoJpa implements CategoryDao {
 
     private JpaTemplate jpaTemplate;
+
+    private EntityConfiguration entityConfiguration;
 
     public Category maintainCategory(final Category category) {
         return (Category) this.jpaTemplate.execute(new JpaCallback() {
@@ -32,8 +35,9 @@ public class CategoryDaoJpa implements CategoryDao {
     @Override
     public Category readCategoryById(final Long categoryId) {
         return (Category) this.jpaTemplate.execute(new JpaCallback() {
+            @SuppressWarnings("unchecked")
             public Object doInJpa(EntityManager em) throws PersistenceException {
-                return em.find(Category.class, categoryId);
+                return em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Category"), categoryId);
             }
         });
     }
@@ -64,5 +68,9 @@ public class CategoryDaoJpa implements CategoryDao {
 
     public void setEntityManagerFactory(EntityManagerFactory emf) {
         this.jpaTemplate = new JpaTemplate(emf);
+    }
+
+    public void setEntityConfiguration(EntityConfiguration entityConfiguration) {
+        this.entityConfiguration = entityConfiguration;
     }
 }

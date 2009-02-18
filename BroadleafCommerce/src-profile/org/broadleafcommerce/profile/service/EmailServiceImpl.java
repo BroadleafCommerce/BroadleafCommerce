@@ -50,10 +50,6 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    public void setMailSender(JavaMailSenderImpl mailSender) {
-        this.mailSender = mailSender;
-    }
-
     private MimeMessage buildMessage(Customer customer, String subject, String body, String fromAddress) throws MessagingException {
         MimeMessage message = this.mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -64,5 +60,13 @@ public class EmailServiceImpl implements EmailService {
         message.setContent(body, "text/html");
 
         return message;
+    }
+
+    public void setMailSender(JavaMailSenderImpl mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public void setVelocityEngine(VelocityEngine velocityEngine) {
+        this.velocityEngine = velocityEngine;
     }
 }

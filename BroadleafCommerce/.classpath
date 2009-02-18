@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src-framework"/>
-	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="src" path="src-extensibility"/>
+	<classpathentry kind="src" path="src-framework"/>
 	<classpathentry kind="src" path="src-layout"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src-profile"/>
+	<classpathentry kind="src" path="src-test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/common/bin/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/spring.jar" sourcepath="lib/common/source/spring-sources.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/commons-beanutils-1.7.0.jar"/>

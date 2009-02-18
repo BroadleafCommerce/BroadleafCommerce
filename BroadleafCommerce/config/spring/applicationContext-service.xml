@@ -7,7 +7,10 @@
 
 	<!-- Framework -->
 	<!-- Catalog -->
-	<bean id="basePriceDao" class="org.broadleafcommerce.catalog.dao.BasePriceDaoJpa"/>
+	<bean id="basePriceDao" class="org.broadleafcommerce.catalog.dao.BasePriceDaoJpa">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityConfiguration" ref="entityConfiguration"/>
+	</bean>
 
 <!--
 	<bean name="catalogServiceProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -27,6 +30,7 @@
 	</bean>
 	<bean id="categoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoJpa">
 		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityConfiguration" ref="entityConfiguration"/>
 	</bean>
 
 	<bean id="itemAttributeDao" class="org.broadleafcommerce.catalog.dao.ItemAttributeDaoJpa"/>
@@ -62,18 +66,29 @@
 	<bean id="ruleDao" class="org.broadleafcommerce.rules.dao.RuleDaoJpa"/>
 
 	<!-- Search -->
-	<bean id="searchService" class="org.broadleafcommerce.search.service.SearchServiceImpl"/>
+	<bean id="searchService" class="org.broadleafcommerce.search.service.SearchServiceImpl">
+		<property name="catalogService" ref="catalogService"/>
+	</bean>
 
 
 	<!-- Profile -->
 	<!-- Profile -->
-	<bean id="addressService" class="org.broadleafcommerce.profile.service.AddressServiceImpl"/>
-	<bean id="addressDao" class="org.broadleafcommerce.profile.dao.AddressDaoJpa"/>
+	<bean id="addressService" class="org.broadleafcommerce.profile.service.AddressServiceImpl">
+		<property name="addressDao" ref="addressDao"/>
+	</bean>
+	<bean id="addressDao" class="org.broadleafcommerce.profile.dao.AddressDaoJpa">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+	</bean>
 
 	<bean id="addressStandardizationService" class="org.broadleafcommerce.profile.service.AddressStandardizationServiceImpl"/>
 
-	<bean id="contactInfoService" class="org.broadleafcommerce.profile.service.ContactInfoServiceImpl"/>
-	<bean id="contactInfoDao" class="org.broadleafcommerce.profile.dao.ContactInfoDaoJpa"/>
+	<bean id="contactInfoService" class="org.broadleafcommerce.profile.service.ContactInfoServiceImpl">
+		<property name="contactInfoDao" ref="contactInfoDao"/>
+	</bean>
+	<bean id="contactInfoDao" class="org.broadleafcommerce.profile.dao.ContactInfoDaoJpa">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityConfiguration" ref="entityConfiguration"/>
+	</bean>
 
 <!--
 	<bean name="customerServiceProxy" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
@@ -95,15 +110,24 @@
 		<property name="entityConfiguration" ref="entityConfiguration"/>
 	</bean>
 
-	<bean id="emailService" class="org.broadleafcommerce.profile.service.EmailServiceImpl"/>
+	<bean id="emailService" class="org.broadleafcommerce.profile.service.EmailServiceImpl">
+		<property name="mailSender" ref="mailSender"/>
+		<property name="velocityEngine" ref="velocityEngine"/>
+	</bean>
 
 	<bean id="userDetailsService" class="org.broadleafcommerce.profile.service.UserDetailsServiceImpl">
 		<property name="forcePasswordChange" value="false"/>
 		<property name="customerService" ref="customerService"/>
 	</bean>
 
-	<bean id="userService" class="org.broadleafcommerce.profile.service.UserServiceImpl"/>
-	<bean id="userDao" class="org.broadleafcommerce.profile.dao.UserDaoJpa"/>
+	<bean id="userService" class="org.broadleafcommerce.profile.service.UserServiceImpl">
+		<property name="userDao" ref="userDao"/>
+		<property name="passwordEncoder" ref="passwordEncoder"/>
+	</bean>
+	<bean id="userDao" class="org.broadleafcommerce.profile.dao.UserDaoJpa">
+		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityConfiguration" ref="entityConfiguration"/>
+	</bean>
 
 	<bean id="customerStateStore" class="org.broadleafcommerce.security.CustomerStateStore">
 		<property name="customerService" ref="customerService"/>

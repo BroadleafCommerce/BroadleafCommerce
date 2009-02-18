@@ -15,6 +15,7 @@ import org.broadleafcommerce.order.domain.OrderPayment;
 import org.broadleafcommerce.order.domain.OrderShipping;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.BroadleafContactInfo;
 import org.broadleafcommerce.profile.domain.BroadleafCustomerAddress;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -56,7 +57,7 @@ public class CheckoutController extends AbstractWizardFormController {
         OrderPayment orderPayment = new OrderPayment();
         orderPayment.setAddress(new BroadleafCustomerAddress());
 
-        ContactInfo contactInfo = new ContactInfo();
+        ContactInfo contactInfo = new BroadleafContactInfo();
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Customer customer = customerService.readCustomerByUsername(auth.getName());
@@ -73,7 +74,6 @@ public class CheckoutController extends AbstractWizardFormController {
         checkout.setOrderShipping(orderShipping);
         checkout.setOrderPayment(orderPayment);
         return checkout;
-
     }
 
     protected ModelAndView processFinish(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {

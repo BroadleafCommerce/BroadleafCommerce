@@ -1,61 +1,16 @@
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
+public interface UserRole {
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+    public Long getId();
 
-//@Entity
-//@EntityListeners(value = { TemporalTimestampListener.class })
-//@Table(name = "USER_ROLE")
-public class UserRole implements Serializable {
+    public void setId(Long id);
 
-    private static final long serialVersionUID = 1L;
+    public User getUser();
 
-    //    @Transient
-    protected Log logger = LogFactory.getLog(getClass());
+    public void setUser(User user);
 
-    //    @Id
-    //    @GeneratedValue
-    //    @Column(name = "USER_ROLE_ID")
-    private Long id;
+    public String getRoleName();
 
-    //    @ManyToOne(targetEntity = BroadleafUser.class)
-    //    @JoinColumn(name = "USER_ID")
-    private User user;
-
-    //    @Column(name = "ROLE_NAME")
-    private String roleName;
-
-    public UserRole() {
-    }
-
-    public UserRole(User user, String roleName) {
-        this.user = user;
-        this.roleName = roleName;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
+    public void setRoleName(String roleName);
 }
