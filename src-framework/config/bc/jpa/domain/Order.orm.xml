@@ -22,15 +22,15 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.order.domain.BroadleafOrder" name="order">
-        <table name="BLC_ORDER" >        	
+        <table name="BLC_ORDER" >
         </table>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
 
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="ORDER_ID"/>
-                <generated-value/>                
+                <generated-value/>
             </id>
             <basic name="orderStatus">
                 <column name="ORDER_STATUS" />
@@ -41,7 +41,7 @@
             <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomer">
 				<join-column name="CUSTOMER_ID" nullable="false"/>
             </many-to-one>
-			<many-to-one name="contactInfo" >
+			<many-to-one name="contactInfo" target-entity="org.broadleafcommerce.profile.domain.BroadleafContactInfo">
 				<join-column name="CONTACT_INFO_ID"/>
 			</many-to-one>
 			<embedded name="auditable"></embedded>

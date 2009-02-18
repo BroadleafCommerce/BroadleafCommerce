@@ -2,8 +2,6 @@ package org.broadleafcommerce.profile.service;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.UserDao;
@@ -22,10 +20,8 @@ public class UserServiceImpl implements UserService {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource(name = "userDao")
     private UserDao userDao;
 
-    @Resource(name = "passwordEncoder")
     private PasswordEncoder passwordEncoder;
 
     // @Resource(name = "saltSource")
@@ -70,5 +66,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public User readUserById(Long id) {
         return userDao.readUserById(id);
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 }

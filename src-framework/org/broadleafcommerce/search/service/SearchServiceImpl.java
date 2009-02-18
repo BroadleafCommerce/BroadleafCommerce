@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -26,14 +24,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
-import org.springframework.stereotype.Service;
 
-@Service("searchService")
 public class SearchServiceImpl implements SearchService {
-    @Resource
+
     private CatalogService catalogService;
 
-    @Override
     public List<Sku> performSearch(String queryString) {
         try {
             Analyzer analyzer = new StandardAnalyzer();
@@ -68,7 +63,6 @@ public class SearchServiceImpl implements SearchService {
         return null;
     }
 
-    @Override
     public void rebuildSkuIndex() {
         try {
 
@@ -107,6 +101,10 @@ public class SearchServiceImpl implements SearchService {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public void setCatalogService(CatalogService catalogService) {
+        this.catalogService = catalogService;
     }
 
     // ---------------------- The methods below are if you are using Compass ----------

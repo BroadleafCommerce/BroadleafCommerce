@@ -20,7 +20,6 @@
         	</unique-constraint>
         </table>
         <inheritance strategy="JOINED"/>
-
         <attributes>
             <id name="id">
             	<column name="CUSTOMER_ID"/>

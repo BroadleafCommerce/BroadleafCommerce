@@ -93,9 +93,12 @@
 	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
 
 	<!-- Entity mappings - override for extensibility -->
-	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
+	<bean id="org.broadleafcommerce.catalog.domain.BasePrice" class="org.broadleafcommerce.catalog.domain.BroadleafBasePrice"/>
+	<bean id="org.broadleafcommerce.catalog.domain.Category" class="org.broadleafcommerce.catalog.domain.BroadleafCategory"/>
+	<bean id="org.broadleafcommerce.profile.domain.ContactInfo" class="org.broadleafcommerce.profile.domain.BroadleafContactInfo"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.BroadleafCustomer"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.BroadleafProduct"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.BroadleafSku"/>
+	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
 
 </beans>

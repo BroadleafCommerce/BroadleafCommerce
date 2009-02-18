@@ -1,20 +1,29 @@
 package org.broadleafcommerce.profile.domain;
 
-//@Entity
-//@Table(name="BLC_CUSTOMER_ADDRESS")
 public class BroadleafCustomerAddress implements Address {
 
     private Long id;
+
     private String addressName;
+
     private Customer customer;
+
     private String addressLine1;
+
     private String addressLine2;
+
     private String city;
+
     private CountryEnums.Country country;
+
     private String postalCode;
+
     private String stateProvRegion;
+
     private String tokenizedAddress;
+
     private Boolean standardized = Boolean.FALSE;
+
     // This field is temporary and will be removed later
     private String zipFour;
 
