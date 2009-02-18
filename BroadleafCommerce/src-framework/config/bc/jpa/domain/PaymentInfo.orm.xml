@@ -8,13 +8,16 @@
 		WHERE paymentInfo.order.id = :orderId</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.order.domain.PaymentInfo" name="paymentInfo">
-        <table name="BLC_ORDER_PAYMENT"/>
+	<entity class="org.broadleafcommerce.order.domain.BroadleafPaymentInfo" name="paymentInfo">
+        <table name="BLC_ORDER_PAYMENT" >        	
+        </table>
         <inheritance strategy="JOINED"/>
+
         <attributes>
-            <id name="id">
+            <id name="id">            	
             	<column name="PAYMENT_ID"/>
                 <generated-value/>
+                
             </id>
             <basic name="amount">
                 <column name="AMOUNT" />
@@ -30,4 +33,6 @@
 			</many-to-one>
         </attributes>
     </entity>
+
+
 </entity-mappings>

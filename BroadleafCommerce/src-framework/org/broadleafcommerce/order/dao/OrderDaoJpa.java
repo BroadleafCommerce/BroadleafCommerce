@@ -30,8 +30,9 @@ public class OrderDaoJpa implements OrderDao {
     private EntityManager em;
 
     @Override
+    @SuppressWarnings("unchecked")
     public Order readOrderById(Long orderId) {
-        return em.find(Order.class, orderId);
+    	return (Order)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.Order"), orderId);
     }
 
     @Override

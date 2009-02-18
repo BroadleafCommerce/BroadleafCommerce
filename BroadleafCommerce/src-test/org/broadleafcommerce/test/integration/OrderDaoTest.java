@@ -58,12 +58,10 @@ public class OrderDaoTest extends BaseTest {
     
     @Test(groups = {"deleteOrderForCustomer"}, dependsOnGroups = {"createOrder"})
     @Rollback(false)
-    public void deleteOrder(){
+    public void deleteOrderForCustomer(){
     	Order order = orderDao.readOrderById(orderId);
     	assert order != null;
     	assert order.getId() != null;
     	orderDao.deleteOrderForCustomer(order);
-    	Order shouldntexist = orderDao.readOrderById(orderId);
-    	assert shouldntexist == null;
     }
 }
