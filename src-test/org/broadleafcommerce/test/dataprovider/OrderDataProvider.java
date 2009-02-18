@@ -9,8 +9,8 @@ public class OrderDataProvider {
 	@DataProvider(name="basicOrder")
 	public static Object[][] provideBasicSalesOrder() {
 		BroadleafOrder so = new BroadleafOrder();
-		so.setOrderStatus("TEST ORDER STATUS");
-		so.setOrderTotal(1000);
+		so.setStatus("TEST ORDER STATUS");
+		so.setTotal(1000);
 		return new Object[][]{{so}};
 	}
 	

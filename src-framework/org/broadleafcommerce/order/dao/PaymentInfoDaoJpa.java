@@ -10,12 +10,12 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("orderItemDao")
-public class OrderItemDaoJpa implements OrderItemDao {
+@Repository("paymentInfoDao")
+public class PaymentInfoDaoJpa implements PaymentInfoDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
@@ -27,36 +27,30 @@ public class OrderItemDaoJpa implements OrderItemDao {
     private EntityManager em;
 
     @Override
-    public OrderItem maintainOrderItem(OrderItem orderItem) {
-        if (orderItem.getId() == null) {
-            em.persist(orderItem);
+    public PaymentInfo maintainPaymentInfo(PaymentInfo paymentInfo) {
+        if (paymentInfo.getId() == null) {
+            em.persist(paymentInfo);
         } else {
-            orderItem = em.merge(orderItem);
+            paymentInfo = em.merge(paymentInfo);
         }
-        return orderItem;
+        return paymentInfo;
     }
 
     @Override
-    public OrderItem readOrderItemById(Long orderItemId) {
-        return em.find(OrderItem.class, orderItemId);
-    }
-
-    @Override
-    public void deleteOrderItem(OrderItem orderItem) {
-        OrderItem deleteItem = em.getReference(OrderItem.class, orderItem.getId());
-        em.remove(deleteItem);
+    public PaymentInfo readPaymentInfoById(Long paymentId) {
+        return em.find(PaymentInfo.class, paymentId);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<OrderItem> readOrderItemsForOrder(Order order) {
-        Query query = em.createNamedQuery("READ_ORDER_ITEMS_BY_ORDER_ID");
+    public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
+        Query query = em.createNamedQuery("READ_ORDERS_PAYMENTS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }
     
-    public OrderItem create(){
-		return ((OrderItem)entityConfiguration.createEntityInstance("orderItem"));
-	}
-    
+    @Override
+    public PaymentInfo create() {
+		return ((PaymentInfo)entityConfiguration.createEntityInstance("paymentInfo"));
+    }
 }

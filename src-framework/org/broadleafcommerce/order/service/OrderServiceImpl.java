@@ -1,19 +1,23 @@
 package org.broadleafcommerce.order.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.order.dao.FullfillmentGroupDao;
+import org.broadleafcommerce.order.dao.FullfillmentGroupItemDao;
 import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.dao.OrderItemDao;
-import org.broadleafcommerce.order.dao.OrderPaymentDao;
-import org.broadleafcommerce.order.dao.OrderShippingDao;
-import org.broadleafcommerce.order.domain.BroadleafOrder;
+import org.broadleafcommerce.order.dao.PaymentInfoDao;
+import org.broadleafcommerce.order.domain.DefaultFullfillmentGroup;
+import org.broadleafcommerce.order.domain.FullfillmentGroup;
+import org.broadleafcommerce.order.domain.FullfillmentGroupItem;
+import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.domain.OrderPayment;
-import org.broadleafcommerce.order.domain.OrderShipping;
+import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.dao.CustomerDao;
@@ -33,11 +37,14 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemDao orderItemDao;
 
     @Resource
-    private OrderPaymentDao orderPaymentDao;
+    private PaymentInfoDao paymentInfoDao;
 
     @Resource
-    private OrderShippingDao orderShippingDao;
+    private FullfillmentGroupDao fullfillmentGroupDao;
 
+    @Resource
+    private FullfillmentGroupItemDao fullfillmentGroupItemDao;
+    
     @Resource
     private SkuDao skuDao;
 
@@ -51,16 +58,51 @@ public class OrderServiceImpl implements OrderService {
     private AddressDao addressDao;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder createOrderForCustomer(Customer customer) {
-        BroadleafOrder order = new BroadleafOrder();
-        order.setCustomer(customer);
-        return maintainOrder(order);
+    public Order findCurrentBasketForCustomer(Customer customer) {
+        return orderDao.readBasketOrderForCustomer(customer);
+    }
+    
+	@Override
+	public DefaultFullfillmentGroup findDefaultFullfillmentGroupForOrder(Order order) {
+		DefaultFullfillmentGroup dfg = fullfillmentGroupDao.readDefaultFullfillmentGroupForOrder(order);
+		if(dfg.getFullfillmentGroupItems().size() == 0){
+			// Only Default fulfillment group has been created so
+			// add all orderItems for order to group
+			List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
+			List<FullfillmentGroupItem> fgItems = new ArrayList<FullfillmentGroupItem>();
+			for (OrderItem orderItem : orderItems) {
+				fullfillmentGroupItemDao.create();
+				fgItems.add(this.createFulfillmentGroupItemFromOrderItem(orderItem, dfg.getId()));
+			}
+			dfg.setFullfillmentGroupItems(fgItems);
+			// Go ahead and persist it so we don't have to do this later
+			fullfillmentGroupDao.maintainDefaultFullfillmentGroup(dfg);
+		}
+		return dfg;
+	}
+
+	@Override
+	public List<FullfillmentGroup> findFullfillmentGroupsForOrder(Order order){
+		return fullfillmentGroupDao.readFullfillmentGroupsForOrder(order);
+	}	
+	
+    @Override
+    public List<Order> findOrdersForCustomer(Customer customer) {
+        return orderDao.readOrdersForCustomer(customer);
     }
 
     @Override
+    public List<OrderItem> findItemsForOrder(Order order) {
+        List<OrderItem> result = orderItemDao.readOrderItemsForOrder(order);
+        for (OrderItem oi : result) {
+            oi.getSku().getItemAttributes();
+        }
+        return result;
+    }
+    
+    @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder addContactInfoToOrder(BroadleafOrder order, ContactInfo contactInfo) {
+    public Order addContactInfoToOrder(Order order, ContactInfo contactInfo) {
         if (contactInfo.getId() == null) {
             contactInfoDao.maintainContactInfo(contactInfo);
         }
@@ -70,66 +112,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public OrderPayment addPaymentToOrder(BroadleafOrder order, OrderPayment payment) {
-        payment.setOrder(order);
-        if (payment.getAddress() != null && payment.getAddress().getId() == null) {
-            payment.setAddress(addressDao.maintainAddress(payment.getAddress()));
-        }
-        return orderPaymentDao.maintainOrderPayment(payment);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public OrderShipping addShippingToOrder(BroadleafOrder order, OrderShipping shipping) {
-        shipping.setOrder(order);
-        if (shipping.getAddress() != null && shipping.getAddress().getId() == null) {
-            shipping.setAddress(addressDao.maintainAddress(shipping.getAddress()));
-        }
-        return orderShippingDao.maintainOrderShipping(shipping);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder calculateOrderTotal(BroadleafOrder order) {
-        double total = 0;
-        List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
-        for (OrderItem item : orderItemList) {
-            total += item.getFinalPrice();
-        }
-
-        List<OrderShipping> shippingList = orderShippingDao.readOrderShippingForOrder(order);
-        for (OrderShipping shipping : shippingList) {
-            total += shipping.getCost();
-        }
-        order.setOrderTotal(total);
-        return order;
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void cancelOrder(BroadleafOrder order) {
-        orderDao.deleteOrderForCustomer(order);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder confirmOrder(BroadleafOrder order) {
-        // TODO Other actions needed to complete order. Code below is only a start.
-        return orderDao.submitOrder(order);
-    }
-
-    @Override
-    public List<OrderItem> getItemsForOrder(BroadleafOrder order) {
-        List<OrderItem> result = orderItemDao.readOrderItemsForOrder(order);
-        for (OrderItem oi : result) {
-            oi.getSku().getItemAttributes();
-        }
-        return result;
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem addItemToOrder(BroadleafOrder order, Sku item, int quantity) {
+    public OrderItem addItemToOrder(Order order, Sku item, int quantity) {
         OrderItem orderItem = null;
         List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem orderItem2 : orderItems) {
@@ -137,7 +120,8 @@ public class OrderServiceImpl implements OrderService {
                 orderItem = orderItem2;
         }
         if (orderItem == null)
-            orderItem = new OrderItem();
+            // orderItem = new OrderItem();
+        	orderItem = orderItemDao.create();
         orderItem.setSku(item);
         orderItem.setQuantity(orderItem.getQuantity() + quantity);
         orderItem.setOrder(order);
@@ -146,15 +130,115 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder removeItemFromOrder(BroadleafOrder order, OrderItem item) {
-        orderItemDao.deleteOrderItem(item);
-        calculateOrderTotal(order);
-        return order;
-    }
+    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
+        payment.setOrder(order);
+        if (payment.getAddress() != null && payment.getAddress().getId() == null) {
+            payment.setAddress(addressDao.maintainAddress(payment.getAddress()));
+        }
+        return paymentInfoDao.maintainPaymentInfo(payment);
+    }  
+    
+	@Override
+	public FullfillmentGroup addItemToFullfillmentGroup(OrderItem item,
+			FullfillmentGroup fullfillmentGroup,
+			int quantity) {
+		
+		FullfillmentGroupItem fgi = null;
+		
+		if(fullfillmentGroup.getId() == null){
+			// API user is trying to add an item to a fulfillment group not created
+			fullfillmentGroup = addFullfillmentGroupToOrder(item.getOrder(), fullfillmentGroup);
+		}
+		// API user is trying to add an item to a fulfillment 
+		// Steps are
 
+		// 1) Find the item's existing fulfillment group
+		for (FullfillmentGroup fg : item.getOrder().getFullfillmentGroups()) {
+			for (FullfillmentGroupItem tempFgi : fg.getFullfillmentGroupItems()){
+				if(tempFgi.getOrderItem().getId().equals(item.getId())){
+					fgi = tempFgi;
+		// 2) remove item from it's existing fulfillment group
+					fg.getFullfillmentGroupItems().remove(fg);
+					fullfillmentGroupDao.maintainFullfillmentGroup(fg);
+				}
+			}
+		}
+		if(fgi == null)
+			fgi = createFulfillmentGroupItemFromOrderItem(item, fullfillmentGroup.getId());
+
+		// 3) add the item to the new fulfillment group
+		fullfillmentGroupItemDao.maintainFullfillmentGroupItem(fgi);
+		return fullfillmentGroupDao.readFullfillmentGroupById(fullfillmentGroup.getId());
+	}
+
+	@Override
+	public FullfillmentGroup addFullfillmentGroupToOrder(Order order,
+			FullfillmentGroup fullfillmentGroup) {
+
+		List<FullfillmentGroup> currentFullfillmentGroups = fullfillmentGroupDao.readFullfillmentGroupsForOrder(order);
+		DefaultFullfillmentGroup dfg = fullfillmentGroupDao.readDefaultFullfillmentGroupForOrder(order);
+		if(dfg == null){
+			// This is the first fulfillment group added so make it the
+			// default one
+			return fullfillmentGroupDao.maintainDefaultFullfillmentGroup(createDefaultFulfillmentGroupFromFulfillmentGroup(fullfillmentGroup, order.getId()));
+		}else if(dfg.getId().equals(fullfillmentGroup.getId())){
+			// API user is trying to re-add the default fulfillment group
+			// to the same order
+			// um....treat it as update/maintain for now
+			return fullfillmentGroupDao.maintainDefaultFullfillmentGroup(createDefaultFulfillmentGroupFromFulfillmentGroup(fullfillmentGroup, order.getId()));
+		}else if(currentFullfillmentGroups.size() == 1){
+			// API user is adding first non default fulfillment group to the order
+			// Steps are:
+			// 1) Create a list of existing order items (that are by default in the default group)
+			List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
+			// 2) Create a list of fulfillment order items from existing order items
+			List<FullfillmentGroupItem> fgItems = new ArrayList<FullfillmentGroupItem>();
+			for (OrderItem orderItem : orderItems) {
+				fgItems.add(createFulfillmentGroupItemFromOrderItem(orderItem, dfg.getId()));
+			}
+			// 3) Remove items in new fulfillment group from existing order items 
+			for (FullfillmentGroupItem fullfillmentGroupItem : fullfillmentGroup.getFullfillmentGroupItems()) {
+				fgItems.remove(fullfillmentGroupItem);
+			}
+			// 4) maintain default fulfillment group 
+			dfg.setFullfillmentGroupItems(fgItems);
+			fullfillmentGroupDao.maintainDefaultFullfillmentGroup(dfg);
+			// 5) maintain new fulfillment group, returning it
+			fullfillmentGroup.setOrderId(order.getId());
+			return fullfillmentGroupDao.maintainFullfillmentGroup(fullfillmentGroup);
+		}else{
+			// API user is adding a new fulfillment group to the order and
+			// the order already has multiple fulfillment groups
+			fullfillmentGroup.setOrderId(order.getId());
+
+			// 1) For each item in the new fulfillment group
+			for (FullfillmentGroupItem fgItem : fullfillmentGroup.getFullfillmentGroupItems()) {
+				
+				// 2) Find the item's existing fulfillment group
+				for (FullfillmentGroup fg : order.getFullfillmentGroups()) {
+					for (FullfillmentGroupItem tempFgi : fg.getFullfillmentGroupItems()){
+						if(tempFgi.getOrderItem().getId().equals(fgItem.getId())){
+				// 3) remove item from it's existing fulfillment group
+							fg.getFullfillmentGroupItems().remove(fg);
+							fullfillmentGroupDao.maintainFullfillmentGroup(fg);
+						}
+					}
+				}
+			}
+			
+			return fullfillmentGroupDao.maintainFullfillmentGroup(fullfillmentGroup);
+		}
+	}
+
+	@Override
+	public FullfillmentGroup updateFullfillmentGroup(
+			FullfillmentGroup fullfillmentGroup) {
+		return fullfillmentGroupDao.maintainFullfillmentGroup(fullfillmentGroup);
+	}
+    
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem updateItemInOrder(BroadleafOrder order, OrderItem item) {
+    public OrderItem updateItemInOrder(Order order, OrderItem item) {
         // This isn't quite right. It will need to be changed later to reflect
         // the exact requirements we want.
         // item.setQuantity(quantity);
@@ -163,120 +247,80 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<BroadleafOrder> getOrdersForCustomer(Customer customer) {
-        return orderDao.readOrdersForCustomer(customer);
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Order removeItemFromOrder(Order order, OrderItem item) {
+        orderItemDao.deleteOrderItem(item);
+        calculateOrderTotal(order);
+        return order;
     }
 
-    @Override
-    public BroadleafOrder getCurrentBasketForCustomer(Customer customer) {
-        return orderDao.readBasketOrderForCustomer(customer);
+	@Override
+	public void removeFullfillmentGroupFromOrder(Order order,
+			FullfillmentGroup fullfillmentGroup) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Order calculateOrderTotal(Order order) {
+        double total = 0;
+        List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
+        for (OrderItem item : orderItemList) {
+            total += item.getFinalPrice();
+        }
+
+        List<FullfillmentGroup> fullfillmentGroupList = fullfillmentGroupDao.readFullfillmentGroupsForOrder(order);
+        for (FullfillmentGroup fullfillmentGroup : fullfillmentGroupList) {
+            total += fullfillmentGroup.getCost();
+        }
+        order.setTotal(total);
+        return order;
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder createOrderForCustomer(long customerId) {
-        Customer customer = customerDao.readCustomerById(customerId);
-        return createOrderForCustomer(customer);
+    public Order confirmOrder(Order order) {
+        // TODO Other actions needed to complete order. Code below is only a start.
+        return orderDao.submitOrder(order);
     }
+
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem addItemToOrder(Long orderId, Long itemId, int quantity) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        Sku si = skuDao.readSkuById(itemId);
-        return this.addItemToOrder(order, si, quantity);
+    public void cancelOrder(Order order) {
+        orderDao.deleteOrderForCustomer(order);
     }
 
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public OrderPayment addPaymentToOrder(Long orderId, Long paymentId) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        OrderPayment sop = orderPaymentDao.readOrderPaymentById(paymentId);
-        return this.addPaymentToOrder(order, sop);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public OrderShipping addShippingToOrder(Long orderId, Long shippingId) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        OrderShipping shipping = orderShippingDao.readOrderShippingById(shippingId);
-        return this.addShippingToOrder(order, shipping);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder calculateOrderTotal(Long orderId) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        return this.calculateOrderTotal(order);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void cancelOrder(Long orderId) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        this.cancelOrder(order);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder confirmOrder(Long orderId) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        return this.confirmOrder(order);
-    }
-
-    @Override
-    public List<OrderItem> getItemsForOrder(Long orderId) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        return this.getItemsForOrder(order);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder removeItemFromOrder(Long orderId, Long itemId) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        OrderItem item = orderItemDao.readOrderItemById(itemId);
-        return this.removeItemFromOrder(order, item);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem updateItemInOrder(Long orderId, Long itemId, int quantity, double finalPrice) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        OrderItem item = orderItemDao.readOrderItemById(itemId);
-        item.setQuantity(quantity);
-        item.setFinalPrice(finalPrice);
-        return this.updateItemInOrder(order, item);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder addContactInfoToOrder(Long orderId, Long contactId) {
-        BroadleafOrder order = orderDao.readOrderById(orderId);
-        ContactInfo ci = contactInfoDao.readContactInfoById(contactId);
-        return this.addContactInfoToOrder(order, ci);
-
-    }
-
-    @Override
-    public List<BroadleafOrder> getOrdersForCustomer(Long userId) {
-        return orderDao.readOrdersForCustomer(userId);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public BroadleafOrder getCurrentBasketForUserId(Long userId) {
-        return orderDao.readBasketOrderForCustomer(customerDao.readCustomerById(userId));
-    }
-
-    private BroadleafOrder maintainOrder(BroadleafOrder order) {
+    protected Order maintainOrder(Order order) {
         calculateOrderTotal(order);
         return orderDao.maintianOrder(order);
     }
 
-    private OrderItem maintainOrderItem(OrderItem orderItem) {
+    protected OrderItem maintainOrderItem(OrderItem orderItem) {
         orderItem.setFinalPrice(orderItem.getQuantity() * orderItem.getSku().getPrice());
         OrderItem returnedOrderItem = orderItemDao.maintainOrderItem(orderItem);
         maintainOrder(orderItem.getOrder());
         return returnedOrderItem;
+    }
+
+    protected DefaultFullfillmentGroup createDefaultFulfillmentGroupFromFulfillmentGroup(FullfillmentGroup fullfillmentGroup, Long orderId){
+		DefaultFullfillmentGroup newDfg = fullfillmentGroupDao.createDefault();
+		newDfg.setAddress(fullfillmentGroup.getAddress());
+		newDfg.setCost(fullfillmentGroup.getCost());
+		newDfg.setFullfillmentGroupItems(fullfillmentGroup.getFullfillmentGroupItems());
+		newDfg.setMethod(fullfillmentGroup.getMethod());
+		newDfg.setOrderId(orderId);
+		newDfg.setReferenceNumber(fullfillmentGroup.getReferenceNumber());
+		return newDfg;
+    	
+    }
+    
+    protected FullfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, Long fulfillmentGroupId){
+		FullfillmentGroupItem fgi = fullfillmentGroupItemDao.create();
+		fgi.setFullfillmentGroupId(fulfillmentGroupId);
+		fgi.setOrderItem(orderItem);
+		fgi.setQuantity(orderItem.getQuantity());
+    	return fgi;
     }
 }

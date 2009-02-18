@@ -2,7 +2,7 @@ package org.broadleafcommerce.order.dao;
 
 import java.util.List;
 
-import org.broadleafcommerce.order.domain.BroadleafOrder;
+import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 
 public interface OrderItemDao {
@@ -13,5 +13,7 @@ public interface OrderItemDao {
 	
 	public void deleteOrderItem(OrderItem orderItem);
 	
-	public List<OrderItem> readOrderItemsForOrder(BroadleafOrder order);
+	public List<OrderItem> readOrderItemsForOrder(Order order);
+	
+	public OrderItem create();
 }

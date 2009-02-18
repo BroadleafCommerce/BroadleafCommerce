@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+
+	<named-query name="READ_FULLFILLMENT_GROUPS_BY_ORDER_ID" >
+		<query>SELECT fullfillmentGroup FROM org.broadleafcommerce.order.domain.FullfillmentGroup fullfillmentGroup
+		WHERE fullfillmentGroup.order.id = :orderId</query>
+	</named-query>
+
+	<named-query name="READ_DEFAULT_FULLFILLMENT_GROUP_BY_ORDER_ID">
+		<query>
+			SELECT defaultFullfillmentGroup FROM org.broadleafcommerce.order.domain.DefaultFullfillmentGroup defaultFullfillmentGroup
+			 WHERE defaultFullfillmentGroup.orderId = :orderId
+		</query>
+	</named-query>
+
+	<entity class="org.broadleafcommerce.order.domain.FullfillmentGroup" name="fullfillmentGroup">
+        <table name="BLC_FULLFILLMENT_GROUP" >        	        	
+        </table>
+        <inheritance strategy="JOINED"/>
+		<discriminator-column name="TYPE"/>
+        <attributes>
+            <id name="id">            	
+            	<column name="ID"/>
+                <generated-value/>
+                
+            </id>
+            <basic name="method">
+                <column name="METHOD" />
+            </basic>
+            <basic name="cost">
+                <column name="COST" />
+            </basic>
+            <basic name="referenceNumber">
+                <column name="REFERENCE_NUMBER"/>
+            </basic>
+            <basic name="orderId">
+                <column name="ORDER_ID"/>
+            </basic>
+			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomerAddress">
+				<join-column name="ADDRESS_ID"/>
+			</many-to-one>			
+			<one-to-many name="fullfillmentGroupItems" mapped-by="FullfillmentGroupItem" >
+				<map-key name="ID"/>
+			</one-to-many>
+			
+        </attributes>
+    </entity>
+
+	<entity class="org.broadleafcommerce.order.domain.BroadleafDefaultFullfillmentGroup" name="defaultFullfillmentGroup">
+		<discriminator-value>DEFAULT</discriminator-value>
+		<discriminator-column name="TYPE"/>
+	</entity>
+
+</entity-mappings>

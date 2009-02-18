@@ -8,7 +8,7 @@ import org.broadleafcommerce.catalog.dao.SkuDaoJpa;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.dao.OrderDaoJpa;
 import org.broadleafcommerce.order.dao.OrderItemDaoJpa;
-import org.broadleafcommerce.order.domain.BroadleafOrder;
+import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
@@ -19,7 +19,7 @@ import org.testng.annotations.Test;
 public class OrderItemDaoTest extends BaseTest {
 
     private Long orderItemId;
-    private BroadleafOrder order;
+    private Order order;
 
     @Resource
     private OrderItemDaoJpa orderItemDao;
@@ -40,7 +40,7 @@ public class OrderItemDaoTest extends BaseTest {
         Sku si = skuDao.readFirstSku();
         orderItem.setSku(si);
         Customer customer = customerService.readCustomerByUsername(userName);
-        BroadleafOrder so = (orderDao.readOrdersForCustomer(customer)).get(0);
+        Order so = (orderDao.readOrdersForCustomer(customer)).get(0);
         orderItem.setOrder(so);
         assert orderItem.getId() == null;
 

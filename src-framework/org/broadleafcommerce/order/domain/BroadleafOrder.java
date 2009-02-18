@@ -1,6 +1,7 @@
 package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.profile.domain.ContactInfo;
@@ -10,7 +11,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 //@DiscriminatorColumn(name = "TYPE")
 //@Table(name = "BLC_ORDER")
-public class BroadleafOrder implements Serializable {
+public class BroadleafOrder implements Serializable,Order {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,10 +34,12 @@ public class BroadleafOrder implements Serializable {
     private ContactInfo contactInfo;
 
 //    @Column(name = "ORDER_STATUS")
-    private String orderStatus;
+    private String status;
 
 //    @Column(name = "ORDER_TOTAL")
-    private double orderTotal;
+    private double total;
+    
+    private List<FullfillmentGroup> fullfillmentGroups;
 
     public Long getId() {
         return id;
@@ -54,20 +57,20 @@ public class BroadleafOrder implements Serializable {
         this.auditable = auditable;
     }
 
-    public String getOrderStatus() {
-        return orderStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
+    public void setStatus(String orderStatus) {
+        this.status = orderStatus;
     }
 
-    public double getOrderTotal() {
-        return orderTotal;
+    public double getTotal() {
+        return total;
     }
 
-    public void setOrderTotal(double orderTotal) {
-        this.orderTotal = orderTotal;
+    public void setTotal(double orderTotal) {
+        this.total = orderTotal;
     }
 
     public Customer getCustomer() {
@@ -94,4 +97,14 @@ public class BroadleafOrder implements Serializable {
 		this.type = type;
 	}
 
+	public List<FullfillmentGroup> getFullfillmentGroups() {
+		return fullfillmentGroups;
+	}
+
+	public void setFullfillmentGroups(List<FullfillmentGroup> fullfillmentGroups) {
+		this.fullfillmentGroups = fullfillmentGroups;
+	}
+
+	
+	
 }

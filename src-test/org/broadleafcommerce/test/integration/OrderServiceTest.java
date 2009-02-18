@@ -6,25 +6,29 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.dao.SkuDaoJpa;
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.order.dao.OrderPaymentDaoJpa;
-import org.broadleafcommerce.order.dao.OrderShippingDaoJpa;
-import org.broadleafcommerce.order.domain.BroadleafOrder;
+import org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa;
+import org.broadleafcommerce.order.dao.PaymentInfoDaoJpa;
+import org.broadleafcommerce.order.domain.DefaultFullfillmentGroup;
+import org.broadleafcommerce.order.domain.FullfillmentGroup;
+import org.broadleafcommerce.order.domain.FullfillmentGroupItem;
+import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.domain.OrderPayment;
-import org.broadleafcommerce.order.domain.OrderShipping;
+import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.OrderServiceImpl;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.ContactInfoServiceImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.dataprovider.OrderPaymentDataProvider;
-import org.broadleafcommerce.test.dataprovider.OrderShippingDataProvider;
+import org.broadleafcommerce.test.dataprovider.FullfillmentGroupDataProvider;
+import org.broadleafcommerce.test.dataprovider.PaymentInfoDataProvider;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 public class OrderServiceTest extends BaseTest {
 
-    private BroadleafOrder order = null;
+    private Order order = null;
+    private int numOrderItems = 0;
+    private FullfillmentGroup fulfillmentGroup;
 
     private List<OrderItem> orderItems = null;
 
@@ -41,163 +45,71 @@ public class OrderServiceTest extends BaseTest {
     private SkuDaoJpa skuDao;
 
     @Resource
-    OrderPaymentDaoJpa orderPaymentDao;
+    PaymentInfoDaoJpa paymentInfoDao;
 
     @Resource
-    OrderShippingDaoJpa shippingDao;
+    FullfillmentGroupDaoJpa fulfillmentGroupDao;
 
-    @Test(groups = { "createOrderForCustomerFromObj" }, dependsOnGroups = { "readCustomer1", "createContactInfo" })
+    @Test(groups = { "findCurrentBasketForCustomerBeforeCreation" }, dependsOnGroups = { "readCustomer1", "createContactInfo" })
     @Rollback(false)
-    public void createOrderForCustomerFromObj() {
+    public void findCurrentBasketForCustomerBeforeCreation() {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
 
-        BroadleafOrder order = soService.createOrderForCustomer(customer);
+        Order order = soService.findCurrentBasketForCustomer(customer);
         assert order != null;
         assert order.getId() != null;
         this.order = order;
     }
 
-    @Test(groups = { "addContactInfoToOrderFromObj" }, dependsOnGroups = { "createOrderForCustomerFromObj" })
-    public void addContactInfoToOrderFromObj() {
+    @Test(groups = { "findCurrentBasketForCustomerAfterCreation" }, dependsOnGroups = { "readCustomer1", "createContactInfo" })
+    @Rollback(false)
+    public void findCurrentBasketForCustomerAfterCreation() {
+        String userName = "customer1";
+        Customer customer = customerService.readCustomerByUsername(userName);
+
+        Order order = soService.findCurrentBasketForCustomer(customer);
+        assert order != null;
+        assert order.getId() != null;
+        this.order = order;
+    }
+
+    @Test(groups = { "addContactInfoToOrder" }, dependsOnGroups = { "findCurrentBasketForCustomerBeforeCreation" })
+    public void addContactInfoToOrder() {
         ContactInfo contactInfo = (contactService.readContactInfoByUserId(order.getCustomer().getId())).get(0);
         assert contactInfo.getId() != null;
-        BroadleafOrder order = soService.addContactInfoToOrder(this.order, contactInfo);
+        Order order = soService.addContactInfoToOrder(this.order, contactInfo);
         assert order != null;
         assert order.getContactInfo() != null;
         assert order.getContactInfo().getId().equals(contactInfo.getId());
     }
 
-    @Test(groups = { "addItemToOrderFromObj" }, dependsOnGroups = { "createOrderForCustomerFromObj", "createSku" })
+    @Test(groups = { "addItemToOrder" }, dependsOnGroups = { "createOrderForCustomer", "createSku" })
     @Rollback(false)
-    public void addItemToOrderFromObj() {
+    public void addItemToOrder() {
+    	numOrderItems++;
         Sku sku = skuDao.readFirstSku();
         assert sku.getId() != null;
         OrderItem item = soService.addItemToOrder(order, sku, 1);
         assert item != null;
-        // TODO: fix this assert
-        // assert item.getQuantity() == 1;
+        assert item.getQuantity() == numOrderItems;
         assert item.getOrder() != null;
         assert item.getOrder().getId().equals(order.getId());
         assert item.getSku() != null;
         assert item.getSku().getId().equals(sku.getId());
     }
 
-    @Test(groups = { "addPaymentToOrderFromObj" }, dataProvider = "basicOrderPayment", dataProviderClass = OrderPaymentDataProvider.class, dependsOnGroups = { "readCustomer1", "createOrderForCustomerFromObj", "createOrderPayment" })
+    @Test(groups = { "getItemsForOrder" }, dependsOnGroups = { "addItemToOrder" })
     @Rollback(false)
-    public void addPaymentToOrderFromObj(OrderPayment orderPayment) {
-        orderPayment = orderPaymentDao.maintainOrderPayment(orderPayment);
-        assert orderPayment.getId() != null;
-        OrderPayment payment = soService.addPaymentToOrder(order, orderPayment);
-        assert payment != null;
-        assert payment.getId() != null;
-        assert payment.getOrder() != null;
-        assert payment.getOrder().getId().equals(order.getId());
-    }
-
-    @Test(groups = { "addShippingToOrderByObj" }, dataProvider = "basicOrderShipping", dataProviderClass = OrderShippingDataProvider.class, dependsOnGroups = { "createOrderForCustomerFromObj", "createOrderShipping" })
-    @Rollback(false)
-    public void addShippingToOrderByObj(OrderShipping orderShipping) {
-        orderShipping = shippingDao.maintainOrderShipping(orderShipping);
-        assert orderShipping.getId() != null;
-        OrderShipping shipping = soService.addShippingToOrder(order, orderShipping);
-        assert shipping != null;
-        assert shipping.getId() != null;
-        assert shipping.getOrder() != null;
-        assert shipping.getOrder().getId().equals(order.getId());
-    }
-
-    @Test(groups = { "createOrderForCustomerFromId" }, dependsOnGroups = { "readCustomer1", "createContactInfo" })
-    public void createOrderForCustomerFromId() {
-        String username = "customer1";
-        Customer customer = customerService.readCustomerByUsername(username);
-        BroadleafOrder order = soService.createOrderForCustomer(customer.getId());
-        assert order != null;
-        assert order.getId() != null;
-    }
-
-    @Test(groups = { "addContactInfoToOrderFromId" }, dependsOnGroups = { "createOrderForCustomerFromObj", "createContactInfo" })
-    public void addContactInfoToOrderFromId() {
-        ContactInfo contactInfo = (contactService.readContactInfoByUserId(order.getCustomer().getId())).get(0);
-        assert contactInfo.getId() != null;
-        BroadleafOrder order = soService.addContactInfoToOrder(this.order.getId(), contactInfo.getId());
-        assert order != null;
-        assert order.getContactInfo() != null;
-        assert order.getContactInfo().getId().equals(contactInfo.getId());
-    }
-
-    @Test(groups = { "addItemToOrderFromId" }, dependsOnGroups = { "createOrderForCustomerFromObj", "createSku" })
-    public void addItemToOrderFromId() {
-        Sku sku = skuDao.readFirstSku();
-        assert sku.getId() != null;
-        assert order != null;
-        OrderItem item = soService.addItemToOrder(order.getId(), sku.getId(), 1);
-        assert item != null;
-        assert item.getQuantity() == 1;
-        assert item.getOrder() != null;
-        assert item.getOrder().getId().equals(order.getId());
-        assert item.getSku() != null;
-        assert item.getSku().getId().equals(sku.getId());
-    }
-
-    @Test(groups = { "addPaymentToOrderFromId" }, dataProvider = "basicOrderPayment", dataProviderClass = OrderPaymentDataProvider.class, dependsOnGroups = { "createOrderForCustomerFromObj", "createOrderPayment" })
-    public void addPaymentToOrderFromId(OrderPayment orderPayment) {
-        orderPayment = orderPaymentDao.maintainOrderPayment(orderPayment);
-        assert orderPayment.getId() != null;
-        OrderPayment payment = soService.addPaymentToOrder(order.getId(), orderPayment.getId());
-        assert payment != null;
-        assert payment.getId() != null;
-        assert payment.getOrder() != null;
-        assert payment.getOrder().getId().equals(order.getId());
-    }
-
-    @Test(groups = { "addShippingToOrderById" }, dataProvider = "basicOrderShipping", dataProviderClass = OrderShippingDataProvider.class, dependsOnGroups = { "createOrderForCustomerFromObj" })
-    public void addShippingToOrderById(OrderShipping orderShipping) {
-        orderShipping = shippingDao.maintainOrderShipping(orderShipping);
-        assert orderShipping.getId() != null;
-        OrderShipping shipping = soService.addShippingToOrder(order.getId(), orderShipping.getId());
-        assert shipping != null;
-        assert shipping.getId() != null;
-        assert shipping.getOrder() != null;
-        assert shipping.getOrder().getId().equals(order.getId());
-    }
-
-    @Test(groups = { "getItemsForOrderFromObj" }, dependsOnGroups = { "addItemToOrderFromObj" })
-    @Rollback(false)
-    public void getItemsForOrderFromObj() {
-        List<OrderItem> orderItems = soService.getItemsForOrder(order);
+    public void getItemsForOrder() {
+        List<OrderItem> orderItems = soService.findItemsForOrder(order);
         assert orderItems != null;
-        assert orderItems.size() > 0;
+        assert orderItems.size() == numOrderItems;
         this.orderItems = orderItems;
     }
 
-    @Test(groups = { "getItemsForOrderFromId" }, dependsOnGroups = { "addItemToOrderFromObj" })
-    public void getItemsForOrderFromId() {
-        List<OrderItem> orderItems = soService.getItemsForOrder(order.getId());
-        assert orderItems != null;
-        assert orderItems.size() > 0;
-    }
-
-    @Test(groups = { "getOrdersForCustomerFromObj" }, dependsOnGroups = { "readCustomer1", "createOrderForCustomerFromObj" })
-    public void getOrdersForCustomerFromObj() {
-        String username = "customer1";
-        Customer customer = customerService.readCustomerByUsername(username);
-        List<BroadleafOrder> orders = soService.getOrdersForCustomer(customer);
-        assert orders != null;
-        assert orders.size() > 0;
-    }
-
-    @Test(groups = { "getOrdersForCustomerFromId" }, dependsOnGroups = { "readCustomer1", "createOrderForCustomerFromObj" })
-    public void getOrdersForCustomerFromId() {
-        String username = "customer1";
-        Customer customer = customerService.readCustomerByUsername(username);
-        List<BroadleafOrder> orders = soService.getOrdersForCustomer(customer.getId());
-        assert orders != null;
-        assert orders.size() > 0;
-    }
-
-    @Test(groups = { "updateItemsInOrderByObj" }, dependsOnGroups = { "getItemsForOrderFromObj" })
-    public void updateItemsInOrderByObj() {
+    @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
+    public void updateItemsInOrder() {
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
         item.setFinalPrice(10000);
@@ -208,27 +120,113 @@ public class OrderServiceTest extends BaseTest {
         assert updatedItem.getFinalPrice() == (updatedItem.getSku().getPrice() * updatedItem.getQuantity());
     }
 
-    @Test(groups = { "removeItemFromOrderByObj" }, dependsOnGroups = { "getItemsForOrderFromObj" })
-    public void removeItemFromOrderByObj() {
+    @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
+    public void removeItemFromOrder() {
         assert orderItems.size() > 0;
         int startingSize = orderItems.size();
         OrderItem item = orderItems.get(0);
         assert item != null;
         soService.removeItemFromOrder(order, item);
-        List<OrderItem> items = soService.getItemsForOrder(order);
+        List<OrderItem> items = soService.findItemsForOrder(order);
         assert items != null;
         assert items.size() == startingSize - 1;
+    }
+    
+    @Test(groups = { "addPaymentToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class, dependsOnGroups = { "readCustomer1", "createOrderForCustomer", "createPaymentInfo" })
+    @Rollback(false)
+    public void addPaymentToOrder(PaymentInfo paymentInfo) {
+        paymentInfo = paymentInfoDao.maintainPaymentInfo(paymentInfo);
+        assert paymentInfo.getId() != null;
+        PaymentInfo payment = soService.addPaymentToOrder(order, paymentInfo);
+        assert payment != null;
+        assert payment.getId() != null;
+        assert payment.getOrder() != null;
+        assert payment.getOrder().getId().equals(order.getId());
     }
 
-    @Test(groups = { "removeItemFromOrderById" }, dependsOnGroups = { "getItemsForOrderFromObj" })
-    public void removeItemFromOrderById() {
+    @Test(groups = { "addFullfillmentGroupToOrderFirst" }, dataProvider="basicFullfillmentGroup", dataProviderClass=FullfillmentGroupDataProvider.class, dependsOnGroups = { "createOrderForCustomer","addItemToOrder"})
+    public void addFullfillmentGroupToOrderFirst(FullfillmentGroup fullfillmentGroup){
+    	fullfillmentGroup.setOrderId(order.getId());
+    	FullfillmentGroup fg = soService.addFullfillmentGroupToOrder(order, fullfillmentGroup);
+    	assert fg != null;
+    	assert fg.getId() != null;
+    	assert fg.getAddress().equals(fullfillmentGroup.getAddress());
+    	assert fg.getCost() == fullfillmentGroup.getCost();
+    	assert fg.getOrderId().equals(order.getId());
+    	assert fg.getMethod().equals(fullfillmentGroup.getMethod());
+    	assert fg.getReferenceNumber().equals(fullfillmentGroup.getReferenceNumber());
+    	assert fg.getType().equals("DEFAULT");
+    	this.fulfillmentGroup = fg;
+    }
+    
+    @Test(groups = { "findFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "createOrderForCustomer", "addFullfillmentGroupToOrderFirst"})
+    public void findFillmentGroupForOrderFirst(){
+    	FullfillmentGroup fg = soService.findFullfillmentGroupsForOrder(order).get(0);
+    	assert fg != null;
+    	assert fg.getId() != null;
+    	assert fg.getAddress().equals(fulfillmentGroup.getAddress());
+    	assert fg.getCost() == fulfillmentGroup.getCost();
+    	assert fg.getOrderId().equals(order.getId());
+    	assert fg.getMethod().equals(fulfillmentGroup.getMethod());
+    	assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
+    	assert fg.getType().equals("DEFAULT");
+    }
+
+    @Test(groups = {"removeFulFillmentGroupForOrderFirst"}, dependsOnGroups = { "createOrderForCustomer", "addFullfillmentGroupToOrderFirst"})
+    @Rollback(false)
+    public void removeFulFillmentGroupForOrderFirst(){
+    	soService.removeFullfillmentGroupFromOrder(order, fulfillmentGroup);
+    	assert soService.findFullfillmentGroupsForOrder(order).size() == 0;
+    }
+    
+    @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "createOrderForCustomer", "addFullfillmentGroupToOrderFirst"})
+    @Rollback(false)
+    public void findDefaultFillmentGroupForOrder(){
+    	DefaultFullfillmentGroup fg = soService.findDefaultFullfillmentGroupForOrder(order);
+    	assert fg != null;
+    	assert fg.getId() != null;
+    	assert fg.getAddress().equals(fulfillmentGroup.getAddress());
+    	assert fg.getCost() == fulfillmentGroup.getCost();
+    	assert fg.getOrderId().equals(order.getId());
+    	assert fg.getMethod().equals(fulfillmentGroup.getMethod());
+    	assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
+    	assert fg.getType().equals("DEFAULT");
+    	this.fulfillmentGroup = fg;
+    }
+
+    @Test(groups = {"removeDefaultFulFillmentGroupForOrder"}, dependsOnGroups = { "createOrderForCustomer", "addFullfillmentGroupToOrderFirst"})
+    public void removeDefaultFulFillmentGroupForOrder(){
+    	soService.removeFullfillmentGroupFromOrder(order, fulfillmentGroup);
+    	assert soService.findFullfillmentGroupsForOrder(order).size() == 0;
+    }
+
+    
+    @Test(groups = { "removeItemFromOrderAfterDefaultFulfillmentGroup" }, dependsOnGroups = { "addFullfillmentGroupToOrderFirst"})
+    public void removeItemFromOrderAfterFulfillmentGroups() {
         assert orderItems.size() > 0;
-        int startingSize = orderItems.size();
         OrderItem item = orderItems.get(0);
         assert item != null;
-        soService.removeItemFromOrder(order.getId(), item.getId());
-        List<OrderItem> items = soService.getItemsForOrder(order);
-        assert items != null;
-        assert items.size() == startingSize - 1;
+        soService.removeItemFromOrder(order, item);
+        DefaultFullfillmentGroup dfg = fulfillmentGroupDao.readDefaultFullfillmentGroupForOrder(order);
+        for (FullfillmentGroupItem fullfillmentGroupItem : dfg.getFullfillmentGroupItems()) {
+        	assert fullfillmentGroupItem.getOrderItem().getId() != item.getId();
+		}
     }
+    
+    
+    
+    
+    
+    
+    
+    @Test(groups = { "getOrdersForCustomer" }, dependsOnGroups = { "readCustomer1", "createOrderForCustomer" })
+    public void getOrdersForCustomer() {
+        String username = "customer1";
+        Customer customer = customerService.readCustomerByUsername(username);
+        List<Order> orders = soService.findOrdersForCustomer(customer);
+        assert orders != null;
+        assert orders.size() > 0;
+    }
+
+
 }

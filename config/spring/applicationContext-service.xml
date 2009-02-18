@@ -55,9 +55,9 @@
 
 	<bean id="orderItemDao" class="org.broadleafcommerce.order.dao.OrderItemDaoJpa"/>
 
-	<bean id="orderPaymentDao" class="org.broadleafcommerce.order.dao.OrderPaymentDaoJpa"/>
+	<bean id="paymentInfoDao" class="org.broadleafcommerce.order.dao.PaymentInfoDaoJpa"/>
 
-	<bean id="orderShippingDao" class="org.broadleafcommerce.order.dao.OrderShippingDaoJpa"/>
+	<bean id="fullfillmentGroupDao" class="org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa"/>
 
 	<!-- Rules -->
 	<bean id="ruleBaseService" class="org.broadleafcommerce.rules.service.RuleBaseServiceImpl"/>

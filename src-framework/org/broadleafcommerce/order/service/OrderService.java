@@ -3,65 +3,50 @@ package org.broadleafcommerce.order.service;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.order.domain.BroadleafOrder;
+import org.broadleafcommerce.order.domain.DefaultFullfillmentGroup;
+import org.broadleafcommerce.order.domain.FullfillmentGroup;
+import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.domain.OrderPayment;
-import org.broadleafcommerce.order.domain.OrderShipping;
+import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OrderService {
 
-    public BroadleafOrder createOrderForCustomer(Customer customer);
+	public Order findCurrentBasketForCustomer(Customer customer);
 
-    public BroadleafOrder createOrderForCustomer(long userId);
+	public DefaultFullfillmentGroup findDefaultFullfillmentGroupForOrder(Order order);
+	
+	public List<FullfillmentGroup> findFullfillmentGroupsForOrder(Order order);
+	
+	public List<Order> findOrdersForCustomer(Customer customer);
+	
+	public List<OrderItem> findItemsForOrder(Order order);
+	
+    public Order addContactInfoToOrder(Order order, ContactInfo contactInfo);
 
-    public BroadleafOrder addContactInfoToOrder(BroadleafOrder order, ContactInfo contactInfo);
+    public OrderItem addItemToOrder(Order order, Sku item, int quantity);
 
-    public BroadleafOrder addContactInfoToOrder(Long orderId, Long contactId);
+    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
+    
+    public FullfillmentGroup addItemToFullfillmentGroup(OrderItem item, FullfillmentGroup fullfillmentGroup, int quantity);
 
-    public OrderItem addItemToOrder(BroadleafOrder order, Sku item, int quantity);
+    public FullfillmentGroup addFullfillmentGroupToOrder(Order order, FullfillmentGroup fullfillmentGroup);
 
-    public OrderItem addItemToOrder(Long orderId, Long itemId, int quantity);
+    public FullfillmentGroup updateFullfillmentGroup(FullfillmentGroup fullfillmentGroup);
+        
+    public OrderItem updateItemInOrder(Order order, OrderItem item);
 
-    public OrderPayment addPaymentToOrder(BroadleafOrder order, OrderPayment payment);
+    public void removeFullfillmentGroupFromOrder(Order order, FullfillmentGroup fullfillmentGroup);
 
-    public OrderPayment addPaymentToOrder(Long orderId, Long paymentId);
+    public Order removeItemFromOrder(Order order, OrderItem item);
 
-    public OrderShipping addShippingToOrder(BroadleafOrder order, OrderShipping shipping);
+    public Order calculateOrderTotal(Order order);
 
-    public OrderShipping addShippingToOrder(Long orderId, Long shippingId) throws Exception;
+    public Order confirmOrder(Order order);
 
-    public List<BroadleafOrder> getOrdersForCustomer(Customer customer);
+    public void cancelOrder(Order order);
 
-    public List<BroadleafOrder> getOrdersForCustomer(Long userId);
 
-    public List<OrderItem> getItemsForOrder(BroadleafOrder order);
-
-    public List<OrderItem> getItemsForOrder(Long orderId);
-
-    public OrderItem updateItemInOrder(BroadleafOrder order, OrderItem item);
-
-    public OrderItem updateItemInOrder(Long orderId, Long itemId, int quantity, double finalPrice);
-
-    public BroadleafOrder removeItemFromOrder(BroadleafOrder order, OrderItem item);
-
-    public BroadleafOrder removeItemFromOrder(Long orderId, Long itemId);
-
-    public BroadleafOrder confirmOrder(BroadleafOrder order);
-
-    public BroadleafOrder confirmOrder(Long orderId);
-
-    public BroadleafOrder calculateOrderTotal(BroadleafOrder order);
-
-    public BroadleafOrder calculateOrderTotal(Long orderId);
-
-    public void cancelOrder(BroadleafOrder order);
-
-    public void cancelOrder(Long orderId);
-
-    public BroadleafOrder getCurrentBasketForCustomer(Customer customer);
-
-    public BroadleafOrder getCurrentBasketForUserId(Long userId);
 
 }
