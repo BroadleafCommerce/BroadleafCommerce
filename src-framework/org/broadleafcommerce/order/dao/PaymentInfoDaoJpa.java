@@ -22,7 +22,7 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
 
     @Resource
     private EntityConfiguration entityConfiguration;
-    
+
     @PersistenceContext
     private EntityManager em;
 
@@ -36,9 +36,10 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
         return paymentInfo;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public PaymentInfo readPaymentInfoById(Long paymentId) {
-        return (PaymentInfo)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.PaymentInfo"), paymentId);
+        return (PaymentInfo) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.PaymentInfo"), paymentId);
     }
 
     @Override
@@ -48,9 +49,9 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }
-    
+
     @Override
     public PaymentInfo create() {
-		return ((PaymentInfo)entityConfiguration.createEntityInstance("paymentInfo"));
+        return ((PaymentInfo) entityConfiguration.createEntityInstance("paymentInfo"));
     }
 }
