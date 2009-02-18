@@ -38,7 +38,7 @@ public class OrderItemDaoJpa implements OrderItemDao {
 
     @Override
     public OrderItem readOrderItemById(Long orderItemId) {
-        return em.find(OrderItem.class, orderItemId);
+        return (OrderItem) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.OrderItem"), orderItemId);
     }
 
     @Override

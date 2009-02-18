@@ -51,24 +51,26 @@ public class FullfillmentGroupDaoTest extends BaseTest {
         newFG.setReferenceNumber(fullfillmentGroup.getReferenceNumber());        
         
         assert newFG.getId() == null;
-        fullfillmentGroupDao.maintainDefaultFullfillmentGroup(newFG);
+        fullfillmentGroup = fullfillmentGroupDao.maintainDefaultFullfillmentGroup(newFG);
         assert fullfillmentGroup.getId() != null;
         order = salesOrder;
         defaultFulfillmentGroupId = fullfillmentGroup.getId();
     }
 
-    @Test (groups = {"readDefaultFullfillmentGroupForOrder"}, dependsOnGroups={"createFullfillmentGroup"})
+    @Test (groups = {"readDefaultFullfillmentGroupForOrder"}, dependsOnGroups={"createDefaultFullfillmentGroup"})
     public void readDefaultFullfillmentGroupForOrder(){
         DefaultFullfillmentGroup dfg = fullfillmentGroupDao.readDefaultFullfillmentGroupForOrder(order);
         assert dfg.getId() != null;
+        assert dfg.getType() != null;
         assert dfg.getType().equals("DEFAULT");
     }
 
-    @Test (groups = {"readDefaultFullfillmentGroupForId"}, dependsOnGroups={"createFullfillmentGroup"})
+    @Test (groups = {"readDefaultFullfillmentGroupForId"}, dependsOnGroups={"createDefaultFullfillmentGroup"})
     public void readDefaultFullfillmentGroupForId(){
         DefaultFullfillmentGroup dfg = fullfillmentGroupDao.readDefaultFullfillmentGroupById(defaultFulfillmentGroupId);
         assert dfg != null;
         assert dfg.getId() != null;
+        assert dfg.getType() != null;
         assert dfg.getType().equals("DEFAULT");
     }
 
@@ -88,7 +90,7 @@ public class FullfillmentGroupDaoTest extends BaseTest {
         newFG.setReferenceNumber(fullfillmentGroup.getReferenceNumber());        
         
         assert newFG.getId() == null;
-        fullfillmentGroupDao.maintainFullfillmentGroup(newFG);
+        fullfillmentGroup = fullfillmentGroupDao.maintainFullfillmentGroup(newFG);
         assert fullfillmentGroup.getId() != null;
         order = salesOrder;
         fulfillmentGroupId = fullfillmentGroup.getId();
@@ -108,7 +110,7 @@ public class FullfillmentGroupDaoTest extends BaseTest {
         assert fgs.size() > 0;
         boolean defaultFGReturned = false;
         for (FullfillmentGroup fullfillmentGroup : fgs) {
-			if(fullfillmentGroup.getType() == "DEFAULT"){
+			if(fullfillmentGroup.getType()!=  null && fullfillmentGroup.getType().equals("DEFAULT")){
 				defaultFGReturned = true;
 			}
 		}

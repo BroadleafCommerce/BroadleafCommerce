@@ -6,7 +6,7 @@ import org.broadleafcommerce.catalog.domain.Sku;
 
 //@Entity
 //@Table(name = "SC_ORDER_ITEM")
-public class BroadleafOrderItem implements Serializable {
+public class BroadleafOrderItem implements OrderItem, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
