@@ -31,6 +31,9 @@
             <basic name="orderItemId">
                 <column name="ORDER_ITEM_ID" />
             </basic>            
+			<one-to-one name="orderItem" target-entity="org.broadleafcommerce.order.domain.BroadleafOrderItem">
+				<join-column name="ID"/>
+			</one-to-one>
         </attributes>
     </entity>
 

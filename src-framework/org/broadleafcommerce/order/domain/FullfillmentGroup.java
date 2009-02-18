@@ -22,9 +22,9 @@ public interface FullfillmentGroup {
 	
 	public void setFullfillmentGroupItems(List<FullfillmentGroupItem> fullfillmentGroupItems);
 	
-	public Object getMethod();
+	public String getMethod();
 	
-	public void setMethod(Object fullfillmentMethod);
+	public void setMethod(String fullfillmentMethod);
 	
 	public double getCost();
 	

@@ -41,9 +41,12 @@
             <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomer">
 				<join-column name="CUSTOMER_ID" nullable="false"/>
             </many-to-one>
-			<many-to-one name="contactInfo" >
+			<many-to-one name="contactInfo" target-entity="org.broadleafcommerce.profile.domain.BroadleafContactInfo" >
 				<join-column name="CONTACT_INFO_ID"/>
 			</many-to-one>
+			<one-to-many name="fullfillmentGroups" mapped-by="orderId" target-entity="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup">
+				<map-key name="ID"/>
+			</one-to-many>
 			<embedded name="auditable"></embedded>
         </attributes>
     </entity>

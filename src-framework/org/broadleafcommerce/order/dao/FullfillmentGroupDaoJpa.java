@@ -15,7 +15,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("FullfillmentGroupDao")
+@Repository("fullfillmentGroupDao")
 public class FullfillmentGroupDaoJpa implements FullfillmentGroupDao {
 
     /** Logger for this class and subclasses */

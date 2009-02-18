@@ -1,0 +1,881 @@
+<html>
+<head>
+<title>TestNG:  commerce-integrationtest</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>commerce-integrationtest</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>26/7/23</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Feb 18 13:55:53 CST 2009</td>
+</tr>
+<tr><td>Total time:</td><td>8 seconds (8062 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-failed'>
+<tr><td colspan='3' align='center'><b>FAILED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td width="30%"><b>Exception</b></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder()'>addContactInfoToOrder</td>
+<td>0</td>
+<td><div><pre>java.lang.IllegalArgumentException: org.hibernate.QueryParameterException: could not locate named parameter [orderId]
+	at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:184)
+	at org.broadleafcommerce.order.dao.OrderItemDaoJpa.readOrderItemsForOrder(OrderItemDaoJpa.java:54)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.calculateOrderTotal(OrderServiceImpl.java:268)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.maintainOrder(OrderServiceImpl.java:296)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.addContactInfoToOrder(OrderServiceImpl.java:110)
+	at org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder(OrderServiceTest.java:81)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+Caused by: org.hibernate.QueryParameterException: could not locate named parameter [orderId]
+	at org.hibernate.engine.query.ParameterMetadata.getNamedParameterDescriptor(ParameterMetadata.java:75)
+	at org.hibernate.engine.query.ParameterMetadata.getNamedParameterExpectedType(ParameterMetadata.java:81)
+	at org.hibernate.impl.AbstractQueryImpl.determineType(AbstractQueryImpl.java:413)
+	at org.hibernate.impl.AbstractQueryImpl.setParameter(AbstractQueryImpl.java:383)
+	at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:179)
+	... 33 more
+... Removed 27 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace6435687", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace6435687'><pre>java.lang.IllegalArgumentException: org.hibernate.QueryParameterException: could not locate named parameter [orderId]
+	at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:184)
+	at org.broadleafcommerce.order.dao.OrderItemDaoJpa.readOrderItemsForOrder(OrderItemDaoJpa.java:54)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.calculateOrderTotal(OrderServiceImpl.java:268)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.maintainOrder(OrderServiceImpl.java:296)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.addContactInfoToOrder(OrderServiceImpl.java:110)
+	at org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder(OrderServiceTest.java:81)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+Caused by: org.hibernate.QueryParameterException: could not locate named parameter [orderId]
+	at org.hibernate.engine.query.ParameterMetadata.getNamedParameterDescriptor(ParameterMetadata.java:75)
+	at org.hibernate.engine.query.ParameterMetadata.getNamedParameterExpectedType(ParameterMetadata.java:81)
+	at org.hibernate.impl.AbstractQueryImpl.determineType(AbstractQueryImpl.java:413)
+	at org.hibernate.impl.AbstractQueryImpl.setParameter(AbstractQueryImpl.java:383)
+	at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:179)
+	... 33 more
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup()'>createDefaultFullfillmentGroup<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup@a02839</td>
+<td>0</td>
+<td><div><pre>org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'defaultFullfillmentGroup' is defined
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+	at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.createDefault(FullfillmentGroupDaoJpa.java:82)
+	at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup(FullfillmentGroupDaoTest.java:46)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 27 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace18367270", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace18367270'><pre>org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'defaultFullfillmentGroup' is defined
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+	at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.createDefault(FullfillmentGroupDaoJpa.java:82)
+	at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup(FullfillmentGroupDaoTest.java:46)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup()'>createFullfillmentGroup<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup@c6a3a0</td>
+<td>0</td>
+<td><div><pre>org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'fullfillmentGroup' is defined
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+	at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.create(FullfillmentGroupDaoJpa.java:88)
+	at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup(FullfillmentGroupDaoTest.java:83)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 27 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace17615284", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace17615284'><pre>org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'fullfillmentGroup' is defined
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+	at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.create(FullfillmentGroupDaoJpa.java:88)
+	at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup(FullfillmentGroupDaoTest.java:83)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderItemDaoTest.createOrderItem()'>createOrderItem<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.BroadleafOrderItem@666a53</td>
+<td>0</td>
+<td><div><pre>java.lang.IllegalArgumentException: argument type mismatch
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 27 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace9505547", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace9505547'><pre>java.lang.IllegalArgumentException: argument type mismatch
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo()'>createPaymentInfo<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.BroadleafPaymentInfo@1fcca7b</td>
+<td>0</td>
+<td><div><pre>java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.BroadleafPaymentInfo
+	at org.hibernate.ejb.AbstractEntityManagerImpl.persist(AbstractEntityManagerImpl.java:223)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.persist(Unknown Source)
+	at org.broadleafcommerce.order.dao.PaymentInfoDaoJpa.maintainPaymentInfo(PaymentInfoDaoJpa.java:32)
+	at org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo(PaymentInfoDaoTest.java:49)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+... Removed 32 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace17376327", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace17376327'><pre>java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.BroadleafPaymentInfo
+	at org.hibernate.ejb.AbstractEntityManagerImpl.persist(AbstractEntityManagerImpl.java:223)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.persist(Unknown Source)
+	at org.broadleafcommerce.order.dao.PaymentInfoDaoJpa.maintainPaymentInfo(PaymentInfoDaoJpa.java:32)
+	at org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo(PaymentInfoDaoTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder()'>deleteOrder</td>
+<td>0</td>
+<td><div><pre>java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.find(Unknown Source)
+	at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+	at org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder(OrderDaoTest.java:62)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+Caused by: org.hibernate.MappingException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+	at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+	at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+	... 36 more
+... Removed 31 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace14205934", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace14205934'><pre>java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.find(Unknown Source)
+	at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+	at org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder(OrderDaoTest.java:62)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+Caused by: org.hibernate.MappingException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+	at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+	at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+	... 36 more
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById()'>readOrderById</td>
+<td>0</td>
+<td><div><pre>java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.find(Unknown Source)
+	at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+	at org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById(OrderDaoTest.java:47)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+Caused by: org.hibernate.MappingException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+	at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+	at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+	... 36 more
+... Removed 31 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace27655002", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace27655002'><pre>java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.find(Unknown Source)
+	at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+	at org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById(OrderDaoTest.java:47)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+Caused by: org.hibernate.MappingException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+	at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+	at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+	... 36 more
+</pre></div></td>
+</tr>
+</table><p>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='3' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td width="30%"><b>Exception</b></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.CustomerTest.changeCustomerPasswords()'>changeCustomerPasswords</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.AddressTest.createAddress()'>createAddress<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.BroadleafCustomerAddress@944dbd</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.AddressTest.createAddress()'>createAddress<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.BroadleafCustomerAddress@8d41f2</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.ContactInfoTest.createContactInfo()'>createContactInfo<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.BroadleafContactInfo@11a9310</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.CustomerTest.createCustomer()'>createCustomer<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.BroadleafCustomer@1b2b450</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.CustomerTest.createCustomer()'>createCustomer<br/><b>Parameters:</b> org.broadleafcommerce.profile.domain.BroadleafCustomer@1a3eab6</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderDaoTest.createOrder()'>createOrder<br/><b>Parameters:</b> org.broadleafcommerce.order.domain.BroadleafOrder@1e5c339</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.SkuDaoTest.createSku()'>createSku<br/><b>Parameters:</b> org.broadleafcommerce.catalog.domain.BroadleafSku@16f2067</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.findCurrentBasketForCustomerAfterCreation()'>findCurrentBasketForCustomerAfterCreation</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.findCurrentBasketForCustomerBeforeCreation()'>findCurrentBasketForCustomerBeforeCreation</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.AddressTest.readAddressByUserId()'>readAddressByUserId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoById()'>readContactInfoById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoByUserId()'>readContactInfoByUserId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.CustomerTest.readCustomersById()'>readCustomersById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.CustomerTest.readCustomersByUsername1()'>readCustomersByUsername1</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.CustomerTest.readCustomersByUsername2()'>readCustomersByUsername2</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.SkuDaoTest.readFirstSku()'>readFirstSku</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderDaoTest.readOrdersForCustomer()'>readOrdersForCustomer</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.SkuDaoTest.readSkuById()'>readSkuById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.ExtensibilityTest.test()'>test</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testBadAddress()'>testBadAddress</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.ProductDaoTest.testMaintainProduct()'>testMaintainProduct<br/><b>Parameters:</b> org.broadleafcommerce.catalog.domain.BroadleafProduct@169df00</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrmTest.testMappings()'>testMappings</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.ProductDaoTest.testReadProductsById()'>testReadProductsById<br/><b>Parameters:</b> org.broadleafcommerce.catalog.domain.BroadleafProduct@1a99836</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.ProductDaoTest.testReadProductsByName()'>testReadProductsByName<br/><b>Parameters:</b> org.broadleafcommerce.catalog.domain.BroadleafProduct@5ebac9</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testSuccessfulAddress()'>testSuccessfulAddress</td>
+<td>0</td>
+<td></td>
+</tr>
+</table><p>
+<table width='100%' border='1' class='invocation-skipped'>
+<tr><td colspan='3' align='center'><b>SKIPPED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td width="30%"><b>Exception</b></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addFullfillmentGroupToOrderFirst()'>addFullfillmentGroupToOrderFirst</td>
+<td>0</td>
+<td><div><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addFullfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FullfillmentGroup) depends on nonexistent group "createOrderForCustomer"
+... Removed 15 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace3042406", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace3042406'><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addFullfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FullfillmentGroup) depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrder()'>addItemToOrder</td>
+<td>0</td>
+<td><div><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrder() depends on nonexistent group "createOrderForCustomer"
+... Removed 15 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace15724536", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace15724536'><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrder() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrder()'>addPaymentToOrder</td>
+<td>0</td>
+<td><div><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrder(org.broadleafcommerce.order.domain.PaymentInfo) depends on nonexistent group "createOrderForCustomer"
+... Removed 15 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace19716308", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace19716308'><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrder(org.broadleafcommerce.order.domain.PaymentInfo) depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest.createFullfillmentGroupItem()'>createFullfillmentGroupItem</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.findDefaultFillmentGroupForOrder()'>findDefaultFillmentGroupForOrder</td>
+<td>0</td>
+<td><div><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.findDefaultFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"
+... Removed 15 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1699466", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1699466'><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.findDefaultFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.findFillmentGroupForOrderFirst()'>findFillmentGroupForOrderFirst</td>
+<td>0</td>
+<td><div><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.findFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"
+... Removed 15 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace14807813", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace14807813'><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.findFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.getItemsForOrder()'>getItemsForOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForCustomer()'>getOrdersForCustomer</td>
+<td>0</td>
+<td><div><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForCustomer() depends on nonexistent group "createOrderForCustomer"
+... Removed 15 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace835474", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace835474'><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForCustomer() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.readDefaultFullfillmentGroupForId()'>readDefaultFullfillmentGroupForId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.readDefaultFullfillmentGroupForOrder()'>readDefaultFullfillmentGroupForOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest.readFullfillmentGroupItemsById()'>readFullfillmentGroupItemsById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest.readFullfillmentGroupItemsForFullfillmentGroup()'>readFullfillmentGroupItemsForFullfillmentGroup</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.readFullfillmentGroupsForId()'>readFullfillmentGroupsForId</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.readFullfillmentGroupsForOrder()'>readFullfillmentGroupsForOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderItemDaoTest.readOrderItemsById()'>readOrderItemsById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderItemDaoTest.readOrderItemsForOrder()'>readOrderItemsForOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.PaymentInfoDaoTest.readPaymentInfoById()'>readPaymentInfoById</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.PaymentInfoDaoTest.readPaymentInfoByOrder()'>readPaymentInfoByOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.removeDefaultFulFillmentGroupForOrder()'>removeDefaultFulFillmentGroupForOrder</td>
+<td>0</td>
+<td><div><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.removeDefaultFulFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"
+... Removed 15 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace30332961", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace30332961'><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.removeDefaultFulFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.removeFulFillmentGroupForOrderFirst()'>removeFulFillmentGroupForOrderFirst</td>
+<td>0</td>
+<td><div><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.removeFulFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"
+... Removed 15 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace22198005", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace22198005'><pre>java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.removeFulFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+</pre></div></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.removeItemFromOrder()'>removeItemFromOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.removeItemFromOrderAfterFulfillmentGroups()'>removeItemFromOrderAfterFulfillmentGroups</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td title='org.broadleafcommerce.test.integration.OrderServiceTest.updateItemsInOrder()'>updateItemsInOrder</td>
+<td>0</td>
+<td></td>
+</tr>
+</table><p>
+</body>
+</html>

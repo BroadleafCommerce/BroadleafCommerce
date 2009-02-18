@@ -1,0 +1,1651 @@
+<testng-results>
+  <reporter-output>
+  </reporter-output>
+  <suite name="BroadleafCommerce Test Suite">
+    <groups>
+      <group name="removeFulFillmentGroupForOrderFirst">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.removeFulFillmentGroupForOrderFirst()" name="removeFulFillmentGroupForOrderFirst" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="createOrderItem">
+        <method signature="org.broadleafcommerce.test.integration.OrderItemDaoTest.createOrderItem(org.broadleafcommerce.order.domain.OrderItem)" name="createOrderItem" class="org.broadleafcommerce.test.integration.OrderItemDaoTest"/>
+      </group>
+      <group name="addContactInfoToOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder()" name="addContactInfoToOrder" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="paginationObject">
+        <method signature="org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testIndices()" name="testIndices" class="org.broadleafcommerce.layout.test.PaginationCommandObjectTest"/>
+        <method signature="org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testFullList()" name="testFullList" class="org.broadleafcommerce.layout.test.PaginationCommandObjectTest"/>
+        <method signature="org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testDisplayList()" name="testDisplayList" class="org.broadleafcommerce.layout.test.PaginationCommandObjectTest"/>
+      </group>
+      <group name="createFullfillmentGroupItem">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest.createFullfillmentGroupItem()" name="createFullfillmentGroupItem" class="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest"/>
+      </group>
+      <group name="removeItemFromOrderAfterDefaultFulfillmentGroup">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.removeItemFromOrderAfterFulfillmentGroups()" name="removeItemFromOrderAfterFulfillmentGroups" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="readCustomer1">
+        <method signature="org.broadleafcommerce.profile.test.CustomerTest.readCustomersByUsername1()" name="readCustomersByUsername1" class="org.broadleafcommerce.profile.test.CustomerTest"/>
+      </group>
+      <group name="readCustomer2">
+        <method signature="org.broadleafcommerce.profile.test.CustomerTest.readCustomersByUsername2()" name="readCustomersByUsername2" class="org.broadleafcommerce.profile.test.CustomerTest"/>
+      </group>
+      <group name="readCustomer">
+        <method signature="org.broadleafcommerce.profile.test.CustomerTest.readCustomersById()" name="readCustomersById" class="org.broadleafcommerce.profile.test.CustomerTest"/>
+      </group>
+      <group name="createFullfillmentGroup">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup(org.broadleafcommerce.order.domain.FullfillmentGroup)" name="createFullfillmentGroup" class="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest"/>
+      </group>
+      <group name="readDefaultFullfillmentGroupForId">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.readDefaultFullfillmentGroupForId()" name="readDefaultFullfillmentGroupForId" class="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest"/>
+      </group>
+      <group name="testBadAddress">
+        <method signature="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testBadAddress()" name="testBadAddress" class="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest"/>
+      </group>
+      <group name="readOrderItemsById">
+        <method signature="org.broadleafcommerce.test.integration.OrderItemDaoTest.readOrderItemsById()" name="readOrderItemsById" class="org.broadleafcommerce.test.integration.OrderItemDaoTest"/>
+      </group>
+      <group name="createProduct">
+        <method signature="org.broadleafcommerce.test.integration.ProductDaoTest.testMaintainProduct(org.broadleafcommerce.catalog.domain.Product)" name="testMaintainProduct" class="org.broadleafcommerce.test.integration.ProductDaoTest"/>
+      </group>
+      <group name="findFulFillmentGroupForOrderFirst">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.findFillmentGroupForOrderFirst()" name="findFillmentGroupForOrderFirst" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="createSku">
+        <method signature="org.broadleafcommerce.test.integration.SkuDaoTest.createSku(org.broadleafcommerce.catalog.domain.Sku)" name="createSku" class="org.broadleafcommerce.test.integration.SkuDaoTest"/>
+      </group>
+      <group name="createDefaultFullfillmentGroup">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup(org.broadleafcommerce.order.domain.FullfillmentGroup)" name="createDefaultFullfillmentGroup" class="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest"/>
+      </group>
+      <group name="createOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderDaoTest.createOrder(org.broadleafcommerce.order.domain.Order)" name="createOrder" class="org.broadleafcommerce.test.integration.OrderDaoTest"/>
+      </group>
+      <group name="findCurrentBasketForCustomerBeforeCreation">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.findCurrentBasketForCustomerBeforeCreation()" name="findCurrentBasketForCustomerBeforeCreation" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="readFullfillmentGroupItemsForFullfillmentGroup">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest.readFullfillmentGroupItemsForFullfillmentGroup()" name="readFullfillmentGroupItemsForFullfillmentGroup" class="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest"/>
+      </group>
+      <group name="createAddress">
+        <method signature="org.broadleafcommerce.profile.test.AddressTest.createAddress(org.broadleafcommerce.profile.domain.Address)" name="createAddress" class="org.broadleafcommerce.profile.test.AddressTest"/>
+      </group>
+      <group name="readPaymentInfoById">
+        <method signature="org.broadleafcommerce.test.integration.PaymentInfoDaoTest.readPaymentInfoById()" name="readPaymentInfoById" class="org.broadleafcommerce.test.integration.PaymentInfoDaoTest"/>
+      </group>
+      <group name="readFirstSku">
+        <method signature="org.broadleafcommerce.test.integration.SkuDaoTest.readFirstSku()" name="readFirstSku" class="org.broadleafcommerce.test.integration.SkuDaoTest"/>
+      </group>
+      <group name="readFullfillmentGroupsForOrder">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.readFullfillmentGroupsForOrder()" name="readFullfillmentGroupsForOrder" class="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest"/>
+      </group>
+      <group name="changeCustomerPassword">
+        <method signature="org.broadleafcommerce.profile.test.CustomerTest.changeCustomerPasswords()" name="changeCustomerPasswords" class="org.broadleafcommerce.profile.test.CustomerTest"/>
+      </group>
+      <group name="getOrdersForCustomer">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForCustomer()" name="getOrdersForCustomer" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="removeDefaultFulFillmentGroupForOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.removeDefaultFulFillmentGroupForOrder()" name="removeDefaultFulFillmentGroupForOrder" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="readSkuById">
+        <method signature="org.broadleafcommerce.test.integration.SkuDaoTest.readSkuById()" name="readSkuById" class="org.broadleafcommerce.test.integration.SkuDaoTest"/>
+      </group>
+      <group name="readDefaultFullfillmentGroupForOrder">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.readDefaultFullfillmentGroupForOrder()" name="readDefaultFullfillmentGroupForOrder" class="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest"/>
+      </group>
+      <group name="readOrderItemsForOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderItemDaoTest.readOrderItemsForOrder()" name="readOrderItemsForOrder" class="org.broadleafcommerce.test.integration.OrderItemDaoTest"/>
+      </group>
+      <group name="readOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById()" name="readOrderById" class="org.broadleafcommerce.test.integration.OrderDaoTest"/>
+      </group>
+      <group name="createPaymentInfo">
+        <method signature="org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo(org.broadleafcommerce.order.domain.PaymentInfo)" name="createPaymentInfo" class="org.broadleafcommerce.test.integration.PaymentInfoDaoTest"/>
+      </group>
+      <group name="addPaymentToOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrder(org.broadleafcommerce.order.domain.PaymentInfo)" name="addPaymentToOrder" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="findDefaultFulFillmentGroupForOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.findDefaultFillmentGroupForOrder()" name="findDefaultFillmentGroupForOrder" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="getItemsForOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.getItemsForOrder()" name="getItemsForOrder" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="readContactInfo">
+        <method signature="org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoByUserId()" name="readContactInfoByUserId" class="org.broadleafcommerce.profile.test.ContactInfoTest"/>
+      </group>
+      <group name="readFullfillmentGroupItemsById">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest.readFullfillmentGroupItemsById()" name="readFullfillmentGroupItemsById" class="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest"/>
+      </group>
+      <group name="readPaymentInfosByOrder">
+        <method signature="org.broadleafcommerce.test.integration.PaymentInfoDaoTest.readPaymentInfoByOrder()" name="readPaymentInfoByOrder" class="org.broadleafcommerce.test.integration.PaymentInfoDaoTest"/>
+      </group>
+      <group name="readAddress">
+        <method signature="org.broadleafcommerce.profile.test.AddressTest.readAddressByUserId()" name="readAddressByUserId" class="org.broadleafcommerce.profile.test.AddressTest"/>
+      </group>
+      <group name="deleteOrderForCustomer">
+        <method signature="org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder()" name="deleteOrder" class="org.broadleafcommerce.test.integration.OrderDaoTest"/>
+      </group>
+      <group name="updateItemsInOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.updateItemsInOrder()" name="updateItemsInOrder" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="findCurrentBasketForCustomerAfterCreation">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.findCurrentBasketForCustomerAfterCreation()" name="findCurrentBasketForCustomerAfterCreation" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="readContactInfoById">
+        <method signature="org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoById()" name="readContactInfoById" class="org.broadleafcommerce.profile.test.ContactInfoTest"/>
+      </group>
+      <group name="addFullfillmentGroupToOrderFirst">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.addFullfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FullfillmentGroup)" name="addFullfillmentGroupToOrderFirst" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="readFullfillmentGroupsForId">
+        <method signature="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.readFullfillmentGroupsForId()" name="readFullfillmentGroupsForId" class="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest"/>
+      </group>
+      <group name="testSuccessfulAddress">
+        <method signature="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testSuccessfulAddress()" name="testSuccessfulAddress" class="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest"/>
+      </group>
+      <group name="createCustomers">
+        <method signature="org.broadleafcommerce.profile.test.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)" name="createCustomer" class="org.broadleafcommerce.profile.test.CustomerTest"/>
+      </group>
+      <group name="removeItemFromOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.removeItemFromOrder()" name="removeItemFromOrder" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+      <group name="readOrdersForCustomer">
+        <method signature="org.broadleafcommerce.test.integration.OrderDaoTest.readOrdersForCustomer()" name="readOrdersForCustomer" class="org.broadleafcommerce.test.integration.OrderDaoTest"/>
+      </group>
+      <group name="createContactInfo">
+        <method signature="org.broadleafcommerce.profile.test.ContactInfoTest.createContactInfo(org.broadleafcommerce.profile.domain.ContactInfo)" name="createContactInfo" class="org.broadleafcommerce.profile.test.ContactInfoTest"/>
+      </group>
+      <group name="addItemToOrder">
+        <method signature="org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrder()" name="addItemToOrder" class="org.broadleafcommerce.test.integration.OrderServiceTest"/>
+      </group>
+    </groups>
+    <test name="broadleafcommerce-layout">
+      <class name="org.broadleafcommerce.layout.test.PaginationCommandObjectTest">
+        <test-method status="PASS" signature="testFullList()" name="testFullList" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testDisplayList()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testFullList()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testDisplayList()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testIndices()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testFullList()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="testDisplayList()" name="testDisplayList" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.layout.test.PaginationCommandObjectTest.testIndices()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="testIndices()" name="testIndices" duration-ms="16" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+      </class>
+    </test>
+    <test name="broadleafcommerce-unittest">
+    </test>
+    <test name="commerce-integrationtest">
+      <class name="org.broadleafcommerce.profile.test.ContactInfoTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoById()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="readContactInfoByUserId()" name="readContactInfoByUserId" duration-ms="0" depends-on-groups="createContactInfo" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="readContactInfoById()" name="readContactInfoById" duration-ms="0" depends-on-groups="createContactInfo" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.ContactInfoTest.createContactInfo(org.broadleafcommerce.profile.domain.ContactInfo)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoById()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="16" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoByUserId()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createContactInfo(org.broadleafcommerce.profile.domain.ContactInfo)" name="createContactInfo" duration-ms="0" depends-on-groups="readCustomer1" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.BroadleafContactInfo@11a9310]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.ContactInfoTest.createContactInfo(org.broadleafcommerce.profile.domain.ContactInfo)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.ContactInfoTest.readContactInfoByUserId()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.profile.test.CustomerTest">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="16" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="createCustomer(org.broadleafcommerce.profile.domain.Customer)" name="createCustomer" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.BroadleafCustomer@1b2b450]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.changeCustomerPasswords()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.readCustomersByUsername1()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="changeCustomerPasswords()" name="changeCustomerPasswords" duration-ms="16" depends-on-groups="readCustomer1" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.readCustomersByUsername1()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.readCustomersById()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.changeCustomerPasswords()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="15" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createCustomer(org.broadleafcommerce.profile.domain.Customer)" name="createCustomer" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.BroadleafCustomer@1a3eab6]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.readCustomersByUsername2()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="readCustomersByUsername2()" name="readCustomersByUsername2" duration-ms="0" depends-on-groups="changeCustomerPassword" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.readCustomersById()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="readCustomersByUsername1()" name="readCustomersByUsername1" duration-ms="16" depends-on-groups="createCustomers" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.CustomerTest.readCustomersByUsername2()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="readCustomersById()" name="readCustomersById" duration-ms="0" depends-on-groups="createCustomers" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.OrmTest">
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="testMappings()" name="testMappings" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrmTest.testMappings()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrmTest.testMappings()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="31" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.FullfillmentGroupItemDaoTest">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="16" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="createFullfillmentGroupItem()" name="createFullfillmentGroupItem" duration-ms="0" depends-on-groups="createOrderItem, createDefaultFullfillmentGroup, createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="readFullfillmentGroupItemsById()" name="readFullfillmentGroupItemsById" duration-ms="0" depends-on-groups="createFullfillmentGroupItem" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="readFullfillmentGroupItemsForFullfillmentGroup()" name="readFullfillmentGroupItemsForFullfillmentGroup" duration-ms="0" depends-on-groups="createFullfillmentGroupItem" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.OrderDaoTest">
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderDaoTest.createOrder(org.broadleafcommerce.order.domain.Order)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="FAIL" signature="deleteOrder()" name="deleteOrder" duration-ms="0" depends-on-groups="createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Unknown entity: org.broadleafcommerce.order.domain.Order]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.find(Unknown Source)
+	at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+	at org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder(OrderDaoTest.java:62)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+Caused by: org.hibernate.MappingException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+	at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+	at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+	... 36 more
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="readOrdersForCustomer()" name="readOrdersForCustomer" duration-ms="16" depends-on-groups="readCustomer1, createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="15" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createOrder(org.broadleafcommerce.order.domain.Order)" name="createOrder" duration-ms="32" depends-on-groups="readCustomer1, createContactInfo" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.order.domain.BroadleafOrder@1e5c339]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderDaoTest.readOrdersForCustomer()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderDaoTest.createOrder(org.broadleafcommerce.order.domain.Order)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderDaoTest.deleteOrder()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderDaoTest.readOrdersForCustomer()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="FAIL" signature="readOrderById()" name="readOrderById" duration-ms="0" depends-on-groups="createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Unknown entity: org.broadleafcommerce.order.domain.Order]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:193)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.find(Unknown Source)
+	at org.broadleafcommerce.order.dao.OrderDaoJpa.readOrderById(OrderDaoJpa.java:34)
+	at org.broadleafcommerce.test.integration.OrderDaoTest.readOrderById(OrderDaoTest.java:47)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+Caused by: org.hibernate.MappingException: Unknown entity: org.broadleafcommerce.order.domain.Order
+	at org.hibernate.impl.SessionFactoryImpl.getEntityPersister(SessionFactoryImpl.java:557)
+	at org.hibernate.event.def.DefaultLoadEventListener.onLoad(DefaultLoadEventListener.java:68)
+	at org.hibernate.impl.SessionImpl.fireLoad(SessionImpl.java:882)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:819)
+	at org.hibernate.impl.SessionImpl.get(SessionImpl.java:812)
+	at org.hibernate.ejb.AbstractEntityManagerImpl.find(AbstractEntityManagerImpl.java:182)
+	... 36 more
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="15" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="16" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="readFullfillmentGroupsForId()" name="readFullfillmentGroupsForId" duration-ms="0" depends-on-groups="createFullfillmentGroup" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="readDefaultFullfillmentGroupForOrder()" name="readDefaultFullfillmentGroupForOrder" duration-ms="0" depends-on-groups="createFullfillmentGroup" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="FAIL" signature="createDefaultFullfillmentGroup(org.broadleafcommerce.order.domain.FullfillmentGroup)" name="createDefaultFullfillmentGroup" duration-ms="0" depends-on-groups="createAddress, createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup@a02839]]>
+              </value>
+            </param>
+          </params>
+          <exception class="org.springframework.beans.factory.NoSuchBeanDefinitionException">
+            <message>
+              <![CDATA[No bean named 'defaultFullfillmentGroup' is defined]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'defaultFullfillmentGroup' is defined
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+	at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.createDefault(FullfillmentGroupDaoJpa.java:82)
+	at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup(FullfillmentGroupDaoTest.java:46)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="FAIL" signature="createFullfillmentGroup(org.broadleafcommerce.order.domain.FullfillmentGroup)" name="createFullfillmentGroup" duration-ms="16" depends-on-groups="createAddress, createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup@c6a3a0]]>
+              </value>
+            </param>
+          </params>
+          <exception class="org.springframework.beans.factory.NoSuchBeanDefinitionException">
+            <message>
+              <![CDATA[No bean named 'fullfillmentGroup' is defined]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[org.springframework.beans.factory.NoSuchBeanDefinitionException: No bean named 'fullfillmentGroup' is defined
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanDefinition(DefaultListableBeanFactory.java:387)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getMergedLocalBeanDefinition(AbstractBeanFactory.java:968)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:246)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:881)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.lookupEntityClass(EntityConfiguration.java:22)
+	at org.broadleafcommerce.profile.util.EntityConfiguration.createEntityInstance(EntityConfiguration.java:31)
+	at org.broadleafcommerce.order.dao.FullfillmentGroupDaoJpa.create(FullfillmentGroupDaoJpa.java:88)
+	at org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup(FullfillmentGroupDaoTest.java:83)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup(org.broadleafcommerce.order.domain.FullfillmentGroup)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup(org.broadleafcommerce.order.domain.FullfillmentGroup)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="SKIP" signature="readFullfillmentGroupsForOrder()" name="readFullfillmentGroupsForOrder" duration-ms="0" depends-on-groups="createFullfillmentGroup" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createFullfillmentGroup(org.broadleafcommerce.order.domain.FullfillmentGroup)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="SKIP" signature="readDefaultFullfillmentGroupForId()" name="readDefaultFullfillmentGroupForId" duration-ms="0" depends-on-groups="createFullfillmentGroup" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.FullfillmentGroupDaoTest.createDefaultFullfillmentGroup(org.broadleafcommerce.order.domain.FullfillmentGroup)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.SkuDaoTest">
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.SkuDaoTest.readFirstSku()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.SkuDaoTest.readSkuById()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="readFirstSku()" name="readFirstSku" duration-ms="0" depends-on-groups="createSku" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.SkuDaoTest.readFirstSku()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="readSkuById()" name="readSkuById" duration-ms="0" depends-on-groups="createSku" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.SkuDaoTest.createSku(org.broadleafcommerce.catalog.domain.Sku)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createSku(org.broadleafcommerce.catalog.domain.Sku)" name="createSku" duration-ms="31" depends-on-groups="readCustomer1, createProduct, createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.catalog.domain.BroadleafSku@16f2067]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.SkuDaoTest.createSku(org.broadleafcommerce.catalog.domain.Sku)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.SkuDaoTest.readSkuById()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="16" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.PaymentInfoDaoTest">
+        <test-method status="SKIP" signature="readPaymentInfoByOrder()" name="readPaymentInfoByOrder" duration-ms="0" depends-on-groups="createPaymentInfo" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="readPaymentInfoById()" name="readPaymentInfoById" duration-ms="0" depends-on-groups="createPaymentInfo" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo(org.broadleafcommerce.order.domain.PaymentInfo)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="16" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo(org.broadleafcommerce.order.domain.PaymentInfo)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="FAIL" signature="createPaymentInfo(org.broadleafcommerce.order.domain.PaymentInfo)" name="createPaymentInfo" duration-ms="31" depends-on-groups="readAddress, readCustomer1, createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.order.domain.BroadleafPaymentInfo@1fcca7b]]>
+              </value>
+            </param>
+          </params>
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[Unknown entity: org.broadleafcommerce.order.domain.BroadleafPaymentInfo]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: Unknown entity: org.broadleafcommerce.order.domain.BroadleafPaymentInfo
+	at org.hibernate.ejb.AbstractEntityManagerImpl.persist(AbstractEntityManagerImpl.java:223)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.orm.jpa.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler.invoke(SharedEntityManagerCreator.java:194)
+	at $Proxy42.persist(Unknown Source)
+	at org.broadleafcommerce.order.dao.PaymentInfoDaoJpa.maintainPaymentInfo(PaymentInfoDaoJpa.java:32)
+	at org.broadleafcommerce.test.integration.PaymentInfoDaoTest.createPaymentInfo(PaymentInfoDaoTest.java:49)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testSuccessfulAddress()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="15" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:58Z" finished-at="2009-02-18T13:55:58Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testBadAddress()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="testBadAddress()" name="testBadAddress" duration-ms="2891" started-at="2009-02-18T13:55:58Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="testSuccessfulAddress()" name="testSuccessfulAddress" duration-ms="328" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:58Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testBadAddress()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:58Z" finished-at="2009-02-18T13:55:58Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.USPSAddressStandardizationServiceTest.testSuccessfulAddress()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.profile.test.AddressTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.AddressTest.readAddressByUserId()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.AddressTest.createAddress(org.broadleafcommerce.profile.domain.Address)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.AddressTest.createAddress(org.broadleafcommerce.profile.domain.Address)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.AddressTest.createAddress(org.broadleafcommerce.profile.domain.Address)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="readAddressByUserId()" name="readAddressByUserId" duration-ms="16" depends-on-groups="createAddress" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.AddressTest.createAddress(org.broadleafcommerce.profile.domain.Address)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.test.AddressTest.readAddressByUserId()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createAddress(org.broadleafcommerce.profile.domain.Address)" name="createAddress" duration-ms="0" depends-on-groups="readCustomer1" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.BroadleafCustomerAddress@944dbd]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="15" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="createAddress(org.broadleafcommerce.profile.domain.Address)" name="createAddress" duration-ms="0" depends-on-groups="readCustomer1" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.BroadleafCustomerAddress@8d41f2]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.OrderServiceTest">
+        <test-method status="PASS" signature="findCurrentBasketForCustomerAfterCreation()" name="findCurrentBasketForCustomerAfterCreation" duration-ms="0" depends-on-groups="readCustomer1, createContactInfo" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="removeDefaultFulFillmentGroupForOrder()" name="removeDefaultFulFillmentGroupForOrder" duration-ms="0" depends-on-groups="createOrderForCustomer, addFullfillmentGroupToOrderFirst" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.test.integration.OrderServiceTest.removeDefaultFulFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.removeDefaultFulFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderServiceTest.findCurrentBasketForCustomerBeforeCreation()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderServiceTest.findCurrentBasketForCustomerBeforeCreation()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="15" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="findDefaultFillmentGroupForOrder()" name="findDefaultFillmentGroupForOrder" duration-ms="0" depends-on-groups="createOrderForCustomer, addFullfillmentGroupToOrderFirst" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.test.integration.OrderServiceTest.findDefaultFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.findDefaultFillmentGroupForOrder() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="SKIP" signature="addPaymentToOrder(org.broadleafcommerce.order.domain.PaymentInfo)" name="addPaymentToOrder" duration-ms="0" depends-on-groups="createOrderForCustomer, createPaymentInfo, readCustomer1" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrder(org.broadleafcommerce.order.domain.PaymentInfo) depends on nonexistent group "createOrderForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addPaymentToOrder(org.broadleafcommerce.order.domain.PaymentInfo) depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="SKIP" signature="findFillmentGroupForOrderFirst()" name="findFillmentGroupForOrderFirst" duration-ms="0" depends-on-groups="createOrderForCustomer, addFullfillmentGroupToOrderFirst" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.test.integration.OrderServiceTest.findFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.findFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="FAIL" signature="addContactInfoToOrder()" name="addContactInfoToOrder" duration-ms="0" depends-on-groups="findCurrentBasketForCustomerBeforeCreation" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[org.hibernate.QueryParameterException: could not locate named parameter [orderId]]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: org.hibernate.QueryParameterException: could not locate named parameter [orderId]
+	at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:184)
+	at org.broadleafcommerce.order.dao.OrderItemDaoJpa.readOrderItemsForOrder(OrderItemDaoJpa.java:54)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.calculateOrderTotal(OrderServiceImpl.java:268)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.maintainOrder(OrderServiceImpl.java:296)
+	at org.broadleafcommerce.order.service.OrderServiceImpl.addContactInfoToOrder(OrderServiceImpl.java:110)
+	at org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder(OrderServiceTest.java:81)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+Caused by: org.hibernate.QueryParameterException: could not locate named parameter [orderId]
+	at org.hibernate.engine.query.ParameterMetadata.getNamedParameterDescriptor(ParameterMetadata.java:75)
+	at org.hibernate.engine.query.ParameterMetadata.getNamedParameterExpectedType(ParameterMetadata.java:81)
+	at org.hibernate.impl.AbstractQueryImpl.determineType(AbstractQueryImpl.java:413)
+	at org.hibernate.impl.AbstractQueryImpl.setParameter(AbstractQueryImpl.java:383)
+	at org.hibernate.ejb.QueryImpl.setParameter(QueryImpl.java:179)
+	... 33 more
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="SKIP" signature="getItemsForOrder()" name="getItemsForOrder" duration-ms="0" depends-on-groups="addItemToOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="removeFulFillmentGroupForOrderFirst()" name="removeFulFillmentGroupForOrderFirst" duration-ms="0" depends-on-groups="createOrderForCustomer, addFullfillmentGroupToOrderFirst" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.test.integration.OrderServiceTest.removeFulFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.removeFulFillmentGroupForOrderFirst() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="findCurrentBasketForCustomerBeforeCreation()" name="findCurrentBasketForCustomerBeforeCreation" duration-ms="15" depends-on-groups="readCustomer1, createContactInfo" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="addFullfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FullfillmentGroup)" name="addFullfillmentGroupToOrderFirst" duration-ms="0" depends-on-groups="createOrderForCustomer, addItemToOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.test.integration.OrderServiceTest.addFullfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FullfillmentGroup) depends on nonexistent group "createOrderForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addFullfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FullfillmentGroup) depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderServiceTest.findCurrentBasketForCustomerAfterCreation()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="SKIP" signature="getOrdersForCustomer()" name="getOrdersForCustomer" duration-ms="0" depends-on-groups="createOrderForCustomer, readCustomer1" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForCustomer() depends on nonexistent group "createOrderForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.getOrdersForCustomer() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="SKIP" signature="removeItemFromOrderAfterFulfillmentGroups()" name="removeItemFromOrderAfterFulfillmentGroups" duration-ms="0" depends-on-groups="addFullfillmentGroupToOrderFirst" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="addItemToOrder()" name="addItemToOrder" duration-ms="0" depends-on-groups="createOrderForCustomer, createSku" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrder() depends on nonexistent group "createOrderForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.test.integration.OrderServiceTest.addItemToOrder() depends on nonexistent group "createOrderForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderServiceTest.findCurrentBasketForCustomerAfterCreation()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderServiceTest.addContactInfoToOrder()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="SKIP" signature="updateItemsInOrder()" name="updateItemsInOrder" duration-ms="0" depends-on-groups="getItemsForOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="removeItemFromOrder()" name="removeItemFromOrder" duration-ms="0" depends-on-groups="getItemsForOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.OrderItemDaoTest">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="FAIL" signature="createOrderItem(org.broadleafcommerce.order.domain.OrderItem)" name="createOrderItem" duration-ms="0" depends-on-groups="createSku, createOrder" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.order.domain.BroadleafOrderItem@666a53]]>
+              </value>
+            </param>
+          </params>
+          <exception class="java.lang.IllegalArgumentException">
+            <message>
+              <![CDATA[argument type mismatch]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.IllegalArgumentException: argument type mismatch
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:580)
+	at org.testng.internal.MethodHelper$1.runTestMethod(MethodHelper.java:698)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:140)
+	at sun.reflect.GeneratedMethodAccessor28.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.testng.internal.MethodHelper.invokeHookable(MethodHelper.java:706)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:468)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:617)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:885)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="SKIP" signature="readOrderItemsById()" name="readOrderItemsById" duration-ms="0" depends-on-groups="createOrderItem" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="SKIP" signature="readOrderItemsForOrder()" name="readOrderItemsForOrder" duration-ms="0" depends-on-groups="createOrderItem" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderItemDaoTest.createOrderItem(org.broadleafcommerce.order.domain.OrderItem)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.OrderItemDaoTest.createOrderItem(org.broadleafcommerce.order.domain.OrderItem)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.ProductDaoTest">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.ProductDaoTest.testReadProductsByName(org.broadleafcommerce.catalog.domain.Product)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.ProductDaoTest.testReadProductsById(org.broadleafcommerce.catalog.domain.Product)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="3813" started-at="2009-02-18T13:55:53Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.ProductDaoTest.testReadProductsByName(org.broadleafcommerce.catalog.domain.Product)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="testReadProductsById(org.broadleafcommerce.catalog.domain.Product)" name="testReadProductsById" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.catalog.domain.BroadleafProduct@1a99836]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="testMaintainProduct(org.broadleafcommerce.catalog.domain.Product)" name="testMaintainProduct" duration-ms="47" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.catalog.domain.BroadleafProduct@169df00]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.ProductDaoTest.testReadProductsById(org.broadleafcommerce.catalog.domain.Product)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="47" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.ProductDaoTest.testMaintainProduct(org.broadleafcommerce.catalog.domain.Product)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="15" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:55:57Z" finished-at="2009-02-18T13:55:57Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.ProductDaoTest.testMaintainProduct(org.broadleafcommerce.catalog.domain.Product)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="testReadProductsByName(org.broadleafcommerce.catalog.domain.Product)" name="testReadProductsByName" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.catalog.domain.BroadleafProduct@5ebac9]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.test.integration.ExtensibilityTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.ExtensibilityTest.test()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.test.integration.ExtensibilityTest.test()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="test()" name="test" duration-ms="437" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="47" started-at="2009-02-18T13:56:01Z" finished-at="2009-02-18T13:56:01Z">
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>
