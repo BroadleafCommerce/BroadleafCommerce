@@ -48,12 +48,12 @@
         </attributes>
     </entity>
 
-	<entity class="org.broadleafcommerce.order.domain.BasketOrder" name="basketOrder">
+	<entity class="org.broadleafcommerce.order.domain.BroadleafBasketOrder" name="basketOrder">
 		<discriminator-value>BASKET</discriminator-value>
 		<discriminator-column name="TYPE"/>
 	</entity>
 
-	<entity class="org.broadleafcommerce.order.domain.SubmittedOrder" name="submittedOrder">
+	<entity class="org.broadleafcommerce.order.domain.BroadleafSubmittedOrder" name="submittedOrder">
 		<discriminator-value>SUBMITTED</discriminator-value>
 		<discriminator-column name="TYPE"/>
 	</entity>
