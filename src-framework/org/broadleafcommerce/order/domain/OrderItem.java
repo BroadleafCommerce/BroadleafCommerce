@@ -3,24 +3,24 @@ package org.broadleafcommerce.order.domain;
 import org.broadleafcommerce.catalog.domain.Sku;
 
 public interface OrderItem {
-	public Long getId();
 
-	public void setId(Long id);
+    public Long getId();
 
-	public Sku getSku();
+    public void setId(Long id);
 
-	public void setSku(Sku sku);
+    public Sku getSku();
 
-	public Order getOrder();
+    public void setSku(Sku sku);
 
-	public void setOrder(Order order);
+    public Order getOrder();
 
-	public double getFinalPrice();
+    public void setOrder(Order order);
 
-	public void setFinalPrice(double finalPrice);
+    public double getFinalPrice();
 
-	public int getQuantity();
+    public void setFinalPrice(double finalPrice);
 
-	public void setQuantity(int quantity);
+    public int getQuantity();
 
+    public void setQuantity(int quantity);
 }

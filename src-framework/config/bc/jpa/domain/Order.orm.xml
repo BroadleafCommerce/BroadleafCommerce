@@ -22,15 +22,13 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.order.domain.BroadleafOrder" name="order">
-        <table name="BLC_ORDER" >        	
-        </table>
+        <table name="BLC_ORDER"/>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
-
         <attributes>
-            <id name="id">            	
+            <id name="id">
             	<column name="ORDER_ID"/>
-                <generated-value/>                
+                <generated-value/>
             </id>
             <basic name="status">
                 <column name="ORDER_STATUS" />

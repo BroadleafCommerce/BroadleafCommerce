@@ -9,8 +9,7 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.profile.domain.BroadleafContactInfo" name="contactInfo">
-        <table name="BLC_CONTACT_INFO" >
-        </table>
+        <table name="BLC_CONTACT_INFO"/>
         <inheritance strategy="JOINED"/>
 		<entity-listeners>
 			<entity-listener class="org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener" />

@@ -19,10 +19,8 @@
 	</named-query>
 
 	<entity class="org.broadleafcommerce.catalog.domain.BroadleafCategory" name="category">
-		<table name="BLC_CATEGORY">
-		</table>
+		<table name="BLC_CATEGORY"/>
 		<inheritance strategy="JOINED" />
-
 		<attributes>
 			<id name="id">
 				<column name="CATEGORY_ID" />
