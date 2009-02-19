@@ -5,88 +5,95 @@ import java.util.List;
 
 import org.broadleafcommerce.profile.domain.Address;
 
-public class BroadleafFullfillmentGroup implements FullfillmentGroup,Serializable {
-	private Long id;
-	private Long orderId;
-	private String referenceNumber;
-	private List<FullfillmentGroupItem> fullfillmentGroupItems;
-	private Address address;
-	private String method;
-	private double cost;
-	private String type;
-	
-	public Long getId() {
-		return id;
-	}
+public class BroadleafFullfillmentGroup implements FullfillmentGroup, Serializable {
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public Long getOrderId() {
-		return orderId;
-	}
+    private static final long serialVersionUID = 1L;
 
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
-	}
+    private Long id;
 
-	public String getReferenceNumber() {
-		return referenceNumber;
-	}
+    private Long orderId;
 
-	public void setReferenceNumber(String referenceNumber) {
-		this.referenceNumber = referenceNumber;
-	}
+    private String referenceNumber;
 
-	public List<FullfillmentGroupItem> getFullfillmentGroupItems() {
-		return fullfillmentGroupItems;
-	}
+    private List<FullfillmentGroupItem> fullfillmentGroupItems;
 
-	public void setFullfillmentGroupItems(
-			List<FullfillmentGroupItem> fullfillmentGroupItems) {
-		this.fullfillmentGroupItems = fullfillmentGroupItems;
-	}
+    private Address address;
 
-	@Override
-	public Address getAddress() {
-		return address;
-	}
+    private String method;
 
-	@Override
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    private double cost;
 
-	@Override
-	public String getMethod() {
-		return method;
-	}
+    private String type;
 
-	@Override
-	public void setMethod(String fullfillmentMethod) {
-		this.method = fullfillmentMethod;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public double getCost() {
-		return cost;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public void setCost(double fullfillmentCost) {
-		this.cost = fullfillmentCost;
-	}
+    public Long getOrderId() {
+        return orderId;
+    }
 
-	@Override
-	public String getType() {
-		return type;
-	}
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
 
-	@Override
-	public void setType(String type) {
-		this.type = type;
-	}
-	
-	
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
+
+    public List<FullfillmentGroupItem> getFullfillmentGroupItems() {
+        return fullfillmentGroupItems;
+    }
+
+    public void setFullfillmentGroupItems(List<FullfillmentGroupItem> fullfillmentGroupItems) {
+        this.fullfillmentGroupItems = fullfillmentGroupItems;
+    }
+
+    @Override
+    public Address getAddress() {
+        return address;
+    }
+
+    @Override
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    @Override
+    public String getMethod() {
+        return method;
+    }
+
+    @Override
+    public void setMethod(String fullfillmentMethod) {
+        this.method = fullfillmentMethod;
+    }
+
+    @Override
+    public double getCost() {
+        return cost;
+    }
+
+    @Override
+    public void setCost(double fullfillmentCost) {
+        this.cost = fullfillmentCost;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 }

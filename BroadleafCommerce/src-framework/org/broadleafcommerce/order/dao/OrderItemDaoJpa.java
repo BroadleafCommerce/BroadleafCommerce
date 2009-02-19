@@ -22,7 +22,7 @@ public class OrderItemDaoJpa implements OrderItemDao {
 
     @Resource
     private EntityConfiguration entityConfiguration;
-    
+
     @PersistenceContext
     private EntityManager em;
 
@@ -36,14 +36,16 @@ public class OrderItemDaoJpa implements OrderItemDao {
         return orderItem;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public OrderItem readOrderItemById(Long orderItemId) {
         return (OrderItem) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.OrderItem"), orderItemId);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void deleteOrderItem(OrderItem orderItem) {
-        OrderItem deleteItem = (OrderItem)em.getReference(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.OrderItem"), orderItem.getId());
+        OrderItem deleteItem = (OrderItem) em.getReference(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.OrderItem"), orderItem.getId());
         em.remove(deleteItem);
     }
 
@@ -54,9 +56,9 @@ public class OrderItemDaoJpa implements OrderItemDao {
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }
-    
-    public OrderItem create(){
-		return ((OrderItem)entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.OrderItem"));
-	}
-    
+
+    public OrderItem create() {
+        return ((OrderItem) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.OrderItem"));
+    }
+
 }
