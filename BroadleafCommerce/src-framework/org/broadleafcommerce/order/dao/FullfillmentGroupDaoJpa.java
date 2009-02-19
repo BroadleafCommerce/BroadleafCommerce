@@ -73,14 +73,14 @@ public class FullfillmentGroupDaoJpa implements FullfillmentGroupDao {
         Query query = em.createNamedQuery("READ_DEFAULT_FULLFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return (DefaultFullfillmentGroup) query.getSingleResult();
-
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void removeFulfillmentGroupForOrder(Order order, FullfillmentGroup fulfillmentGroup) {
         fulfillmentGroup.setOrderId(order.getId());
+        fulfillmentGroup = (FullfillmentGroup) em.getReference(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.DefaultFullfillmentGroup"), fulfillmentGroup.getId());
         em.remove(fulfillmentGroup);
-
     }
 
     @Override
@@ -92,5 +92,4 @@ public class FullfillmentGroupDaoJpa implements FullfillmentGroupDao {
     public FullfillmentGroup create() {
         return ((FullfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FullfillmentGroup"));
     }
-
 }

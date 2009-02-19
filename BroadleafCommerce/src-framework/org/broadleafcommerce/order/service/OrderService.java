@@ -13,28 +13,28 @@ import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OrderService {
 
-	public Order findCurrentBasketForCustomer(Customer customer);
+    public Order findCurrentBasketForCustomer(Customer customer);
 
-	public DefaultFullfillmentGroup findDefaultFullfillmentGroupForOrder(Order order);
-	
-	public List<FullfillmentGroup> findFullfillmentGroupsForOrder(Order order);
-	
-	public List<Order> findOrdersForCustomer(Customer customer);
-	
-	public List<OrderItem> findItemsForOrder(Order order);
-	
+    public DefaultFullfillmentGroup findDefaultFullfillmentGroupForOrder(Order order);
+
+    public List<FullfillmentGroup> findFullfillmentGroupsForOrder(Order order);
+
+    public List<Order> findOrdersForCustomer(Customer customer);
+
+    public List<OrderItem> findItemsForOrder(Order order);
+
     public Order addContactInfoToOrder(Order order, ContactInfo contactInfo);
 
     public OrderItem addItemToOrder(Order order, Sku item, int quantity);
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
-    
+
     public FullfillmentGroup addItemToFullfillmentGroup(OrderItem item, FullfillmentGroup fullfillmentGroup, int quantity);
 
     public FullfillmentGroup addFullfillmentGroupToOrder(Order order, FullfillmentGroup fullfillmentGroup);
 
     public FullfillmentGroup updateFullfillmentGroup(FullfillmentGroup fullfillmentGroup);
-        
+
     public OrderItem updateItemInOrder(Order order, OrderItem item);
 
     public void removeFullfillmentGroupFromOrder(Order order, FullfillmentGroup fullfillmentGroup);
@@ -46,7 +46,4 @@ public interface OrderService {
     public Order confirmOrder(Order order);
 
     public void cancelOrder(Order order);
-
-
-
 }
