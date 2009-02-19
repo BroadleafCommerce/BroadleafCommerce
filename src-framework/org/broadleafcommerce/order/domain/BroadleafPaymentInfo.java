@@ -4,57 +4,59 @@ import java.io.Serializable;
 
 import org.broadleafcommerce.profile.domain.Address;
 
-public class BroadleafPaymentInfo implements PaymentInfo,Serializable {
+public class BroadleafPaymentInfo implements PaymentInfo, Serializable {
 
-	private Long id;
-	private Order order;
-	private Address address;
-	private double amount;
-	private String referenceNumber;
-	
-	@Override
-	public double getAmount() {
-		return amount;
-	}
+    private static final long serialVersionUID = 1L;
 
-	@Override
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    private Order order;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private Address address;
 
-	public Order getOrder() {
-		return order;
-	}
+    private double amount;
 
-	public void setOrder(Order order) {
-		this.order = order;
-	}
+    private String referenceNumber;
 
-	public Address getAddress() {
-		return address;
-	}
+    @Override
+    public double getAmount() {
+        return amount;
+    }
 
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    @Override
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 
-	public String getReferenceNumber() {
-		return referenceNumber;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setReferenceNumber(String referenceNumber) {
-		this.referenceNumber = referenceNumber;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	
-	
-	
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public String getReferenceNumber() {
+        return referenceNumber;
+    }
+
+    public void setReferenceNumber(String referenceNumber) {
+        this.referenceNumber = referenceNumber;
+    }
 }
