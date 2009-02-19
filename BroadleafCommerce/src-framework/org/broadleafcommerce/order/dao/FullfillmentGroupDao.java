@@ -20,6 +20,8 @@ public interface FullfillmentGroupDao {
 	
 	public DefaultFullfillmentGroup readDefaultFullfillmentGroupForOrder(Order order);
 	
+	public void removeFulfillmentGroupForOrder(Order order, FullfillmentGroup fulfillmentGroup);
+	
 	public DefaultFullfillmentGroup createDefault();
 	
 	public FullfillmentGroup create();

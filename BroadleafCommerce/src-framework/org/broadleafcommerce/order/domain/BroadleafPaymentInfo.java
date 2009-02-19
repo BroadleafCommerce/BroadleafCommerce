@@ -1,8 +1,10 @@
 package org.broadleafcommerce.order.domain;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.profile.domain.Address;
 
-public class BroadleafPaymentInfo implements PaymentInfo {
+public class BroadleafPaymentInfo implements PaymentInfo,Serializable {
 
 	private Long id;
 	private Order order;

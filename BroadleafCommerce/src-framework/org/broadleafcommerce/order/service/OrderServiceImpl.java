@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.dao.FullfillmentGroupDao;
@@ -68,7 +69,8 @@ public class OrderServiceImpl implements OrderService {
             }
             dfg.setFullfillmentGroupItems(fgItems);
             // Go ahead and persist it so we don't have to do this later
-            fullfillmentGroupDao.maintainDefaultFullfillmentGroup(dfg);
+            // or not
+            // fullfillmentGroupDao.maintainDefaultFullfillmentGroup(dfg);
         }
         return dfg;
     }
@@ -168,12 +170,17 @@ public class OrderServiceImpl implements OrderService {
             FullfillmentGroup fullfillmentGroup) {
 
         List<FullfillmentGroup> currentFullfillmentGroups = fullfillmentGroupDao.readFullfillmentGroupsForOrder(order);
-        DefaultFullfillmentGroup dfg = fullfillmentGroupDao.readDefaultFullfillmentGroupForOrder(order);
-        if(dfg == null){
+        DefaultFullfillmentGroup dfg;
+        try{
+        	dfg = fullfillmentGroupDao.readDefaultFullfillmentGroupForOrder(order);        	
+        }catch(NoResultException nre){
             // This is the first fulfillment group added so make it the
             // default one
-            return fullfillmentGroupDao.maintainDefaultFullfillmentGroup(createDefaultFulfillmentGroupFromFulfillmentGroup(fullfillmentGroup, order.getId()));
-        }else if(dfg.getId().equals(fullfillmentGroup.getId())){
+            return fullfillmentGroupDao.maintainDefaultFullfillmentGroup(createDefaultFulfillmentGroupFromFulfillmentGroup(fullfillmentGroup, order.getId()));        	
+        }
+//        if(dfg == null){
+//        }else 
+        if(dfg.getId().equals(fullfillmentGroup.getId())){
             // API user is trying to re-add the default fulfillment group
             // to the same order
             // um....treat it as update/maintain for now
@@ -248,8 +255,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void removeFullfillmentGroupFromOrder(Order order,
-            FullfillmentGroup fullfillmentGroup) {
-        // TODO Auto-generated method stub
+            FullfillmentGroup fulfillmentGroup) {
+        fullfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
 
     }
 

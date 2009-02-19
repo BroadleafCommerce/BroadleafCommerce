@@ -1,10 +1,11 @@
 package org.broadleafcommerce.order.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.broadleafcommerce.profile.domain.Address;
 
-public class BroadleafFullfillmentGroup implements FullfillmentGroup {
+public class BroadleafFullfillmentGroup implements FullfillmentGroup,Serializable {
 	private Long id;
 	private Long orderId;
 	private String referenceNumber;
