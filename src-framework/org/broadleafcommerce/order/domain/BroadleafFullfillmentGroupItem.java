@@ -1,6 +1,8 @@
 package org.broadleafcommerce.order.domain;
 
-public class BroadleafFullfillmentGroupItem implements FullfillmentGroupItem {
+import java.io.Serializable;
+
+public class BroadleafFullfillmentGroupItem implements FullfillmentGroupItem,Serializable {
 
 	private Long id;
 	private Long fullfillmentGroupId;
