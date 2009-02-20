@@ -18,6 +18,7 @@ import org.broadleafcommerce.order.domain.FullfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.domain.ContactInfo;
@@ -50,6 +51,9 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     private AddressDao addressDao;
 
+    @Resource
+    private PricingService pricingService;
+    
     @Override
     public Order findCurrentBasketForCustomer(Customer customer) {
         return orderDao.readBasketOrderForCustomer(customer);
@@ -257,18 +261,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Order calculateOrderTotal(Order order) {
-        double total = 0;
-        List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
-        for (OrderItem item : orderItemList) {
-            total += item.getFinalPrice();
-        }
-
-        List<FullfillmentGroup> fullfillmentGroupList = fullfillmentGroupDao.readFullfillmentGroupsForOrder(order);
-        for (FullfillmentGroup fullfillmentGroup : fullfillmentGroupList) {
-            total += fullfillmentGroup.getCost();
-        }
-        order.setTotal(total);
-        return order;
+    	return pricingService.calculateOrderAmount(order);
     }
 
     @Override
@@ -290,7 +283,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected OrderItem maintainOrderItem(OrderItem orderItem) {
-        orderItem.setFinalPrice(orderItem.getQuantity() * orderItem.getSku().getPrice());
+        orderItem.setAmount(orderItem.getQuantity() * orderItem.getSku().getPrice());
         OrderItem returnedOrderItem = orderItemDao.maintainOrderItem(orderItem);
         maintainOrder(orderItem.getOrder());
         return returnedOrderItem;

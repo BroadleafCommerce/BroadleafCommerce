@@ -10,7 +10,7 @@ public class OrderDataProvider {
 	public static Object[][] provideBasicSalesOrder() {
 		BroadleafOrder so = new BroadleafOrder();
 		so.setStatus("TEST ORDER STATUS");
-		so.setTotal(1000);
+		so.setTotalAmount(1000);
 		return new Object[][]{{so}};
 	}
 	

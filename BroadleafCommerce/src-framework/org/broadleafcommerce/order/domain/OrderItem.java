@@ -16,9 +16,9 @@ public interface OrderItem {
 
     public void setOrder(Order order);
 
-    public double getFinalPrice();
+    public double getAmount();
 
-    public void setFinalPrice(double finalPrice);
+    public void setAmount(double finalPrice);
 
     public int getQuantity();
 

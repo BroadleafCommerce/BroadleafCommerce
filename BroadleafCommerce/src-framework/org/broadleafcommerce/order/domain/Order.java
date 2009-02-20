@@ -20,9 +20,9 @@ public interface Order {
 
     public void setStatus(String orderStatus);
 
-    public double getTotal();
+    public double getTotalAmount();
 
-    public void setTotal(double orderTotal);
+    public void setTotalAmount(double totalAmount);
 
     public Customer getCustomer();
 

@@ -2,7 +2,7 @@ package org.broadleafcommerce.promotion.domain;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.order.domain.BroadleafOrder;
+import org.broadleafcommerce.order.domain.Order;
 
 //@Entity
 //@Table(name = "BLC_ORDER_ADJUSTMENTS")
@@ -17,7 +17,7 @@ public class OrderAdjustment implements Serializable {
 
     // @ManyToOne
     // @JoinColumn(name = "SALES_ORDER_ID")
-    private BroadleafOrder order;
+    private Order order;
 
     // @ManyToOne
     // @JoinColumn(name = "PROMOTIONAL_ID")
@@ -31,11 +31,11 @@ public class OrderAdjustment implements Serializable {
         this.id = id;
     }
 
-    public BroadleafOrder getOrder() {
+    public Order getOrder() {
         return order;
     }
 
-    public void setOrder(BroadleafOrder order) {
+    public void setOrder(Order order) {
         this.order = order;
     }
 

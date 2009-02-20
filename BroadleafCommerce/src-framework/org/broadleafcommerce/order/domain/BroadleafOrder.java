@@ -37,7 +37,8 @@ public class BroadleafOrder implements Serializable,Order {
     private String status;
 
 //    @Column(name = "ORDER_TOTAL")
-    private double total;
+    // TODO: This needs to be changed to type Money
+    private double totalAmount;
     
     private List<FullfillmentGroup> fullfillmentGroups;
 
@@ -65,12 +66,12 @@ public class BroadleafOrder implements Serializable,Order {
         this.status = orderStatus;
     }
 
-    public double getTotal() {
-        return total;
+    public double getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTotal(double orderTotal) {
-        this.total = orderTotal;
+    public void setTotalAmount(double orderTotal) {
+        this.totalAmount = orderTotal;
     }
 
     public Customer getCustomer() {

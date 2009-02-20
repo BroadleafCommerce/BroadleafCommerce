@@ -22,7 +22,7 @@
 		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="generateDdl" value="true" />
+				<property name="generateDdl" value="false" />
 				<property name="showSql" value="false" />
 				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
 			</bean>
@@ -71,6 +71,14 @@
       </property>
    </bean>
 
+	<bean id="broadleafCommerceDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName">
+			<value>java:/comp/env/jdbc/BroadleafCommerceDS</value>
+		</property>
+	</bean>
+
+
+<!--
 	<bean id="broadleafCommerceDS" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="${jdbc.driverClassName}" />
@@ -79,7 +87,7 @@
 		<property name="password" value="${jdbc.password}" />
 	</bean>
 
-	<bean id="propertyConfigurer"
+  	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
@@ -87,7 +95,7 @@
 			</list>
 		</property>
 	</bean>
-
+-->
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 
 	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
