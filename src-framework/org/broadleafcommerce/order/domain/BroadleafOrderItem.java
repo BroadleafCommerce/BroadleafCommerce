@@ -24,7 +24,8 @@ public class BroadleafOrderItem implements OrderItem, Serializable {
 	private Order order;
 	
 //	@Column(name = "FINAL_PRICE")
-	private double finalPrice;
+	// TODO: this needs to be changed to type Money
+	private double amount;
 	
 //	@Column(name = "QUANTITY")
 	private int quantity;
@@ -53,12 +54,12 @@ public class BroadleafOrderItem implements OrderItem, Serializable {
 		this.order = order;
 	}
 
-	public double getFinalPrice() {
-		return finalPrice;
+	public double getAmount() {
+		return amount;
 	}
 
-	public void setFinalPrice(double finalPrice) {
-		this.finalPrice = finalPrice;
+	public void setAmount(double amount) {
+		this.amount = amount;
 	}
 
 	public int getQuantity() {

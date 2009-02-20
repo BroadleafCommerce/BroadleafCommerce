@@ -14,6 +14,7 @@ public class BroadleafPaymentInfo implements PaymentInfo, Serializable {
 
     private Address address;
 
+    // TODO: This needs to be changed to type Money
     private double amount;
 
     private String referenceNumber;

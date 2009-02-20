@@ -8,7 +8,7 @@ public class OrderItemDataProvider {
 	@DataProvider(name="basicOrderItem")
 	public static Object[][] provideBasicSalesOrderItem() {
 		BroadleafOrderItem soi = new BroadleafOrderItem();
-		soi.setFinalPrice(10.25);
+		soi.setAmount(10.25);
 		soi.setQuantity(3);
 		return new Object[][]{{soi}};
 	}
