@@ -1,5 +1,7 @@
 package org.broadleafcommerce.order.domain;
 
+import java.math.BigDecimal;
+
 import org.broadleafcommerce.catalog.domain.Sku;
 
 public interface OrderItem {
@@ -16,9 +18,9 @@ public interface OrderItem {
 
     public void setOrder(Order order);
 
-    public double getAmount();
+    public BigDecimal getFinalPrice();
 
-    public void setAmount(double finalPrice);
+    public void setFinalPrice(BigDecimal finalPrice);
 
     public int getQuantity();
 

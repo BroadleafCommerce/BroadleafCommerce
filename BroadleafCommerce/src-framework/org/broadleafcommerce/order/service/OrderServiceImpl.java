@@ -1,5 +1,6 @@
 package org.broadleafcommerce.order.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private PricingService pricingService;
-    
+
     @Override
     public Order findCurrentBasketForCustomer(Customer customer) {
         return orderDao.readBasketOrderForCustomer(customer);
@@ -92,9 +93,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderItem> findItemsForOrder(Order order) {
         List<OrderItem> result = orderItemDao.readOrderItemsForOrder(order);
-        for (OrderItem oi : result) {
-            oi.getSku().getItemAttributes();
-        }
+        // TODO
+        //        for (OrderItem oi : result) {
+        //            oi.getSku().getItemAttributes();
+        //        }
         return result;
     }
 
@@ -261,7 +263,18 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Order calculateOrderTotal(Order order) {
-    	return pricingService.calculateOrderAmount(order);
+        BigDecimal total = BigDecimal.ZERO;
+        List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
+        for (OrderItem item : orderItemList) {
+            total = total.add(item.getFinalPrice());
+        }
+
+        List<FullfillmentGroup> fullfillmentGroupList = fullfillmentGroupDao.readFullfillmentGroupsForOrder(order);
+        for (FullfillmentGroup fullfillmentGroup : fullfillmentGroupList) {
+            total = total.add(fullfillmentGroup.getCost());
+        }
+        order.setTotal(total);
+        return order;
     }
 
     @Override
@@ -283,7 +296,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected OrderItem maintainOrderItem(OrderItem orderItem) {
-        orderItem.setAmount(orderItem.getQuantity() * orderItem.getSku().getPrice());
+        orderItem.setFinalPrice(orderItem.getSku().getSalePrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
         OrderItem returnedOrderItem = orderItemDao.maintainOrderItem(orderItem);
         maintainOrder(orderItem.getOrder());
         return returnedOrderItem;

@@ -1,6 +1,7 @@
 package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.profile.domain.Address;
@@ -21,7 +22,7 @@ public class BroadleafFullfillmentGroup implements FullfillmentGroup, Serializab
 
     private String method;
 
-    private double cost;
+    private BigDecimal cost;
 
     private String type;
 
@@ -78,12 +79,12 @@ public class BroadleafFullfillmentGroup implements FullfillmentGroup, Serializab
     }
 
     @Override
-    public double getCost() {
+    public BigDecimal getCost() {
         return cost;
     }
 
     @Override
-    public void setCost(double fullfillmentCost) {
+    public void setCost(BigDecimal fullfillmentCost) {
         this.cost = fullfillmentCost;
     }
 

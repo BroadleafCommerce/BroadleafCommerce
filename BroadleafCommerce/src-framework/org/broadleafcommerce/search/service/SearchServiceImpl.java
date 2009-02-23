@@ -83,7 +83,7 @@ public class SearchServiceImpl implements SearchService {
                     // manipulate this data when it is indexing this doc
                     doc.add(new Field("ID", item.getId().toString(), Field.Store.YES, Field.Index.NO));
                     doc.add(new Field("name", item.getName(), Field.Store.YES, Field.Index.ANALYZED));
-                    doc.add(new Field("price", item.getPrice() + "", Field.Store.YES, Field.Index.ANALYZED));
+                    doc.add(new Field("price", item.getSalePrice() + "", Field.Store.YES, Field.Index.ANALYZED));
 
                     // Add the lucene document to the indexer to do the magic
                     writer.addDocument(doc);

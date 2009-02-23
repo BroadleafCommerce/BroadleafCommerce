@@ -1,6 +1,7 @@
 package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
@@ -11,35 +12,34 @@ import org.broadleafcommerce.profile.domain.Customer;
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 //@DiscriminatorColumn(name = "TYPE")
 //@Table(name = "BLC_ORDER")
-public class BroadleafOrder implements Serializable,Order {
+public class BroadleafOrder implements Order, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-//    @Id
-//    @GeneratedValue
-//    @Column(name = "ORDER_ID")
+    //    @Id
+    //    @GeneratedValue
+    //    @Column(name = "ORDER_ID")
     private Long id;
 
-//    @Embedded
+    //    @Embedded
     private Auditable auditable;
 
     private String type;
 
-//    @ManyToOne(targetEntity = BroadleafCustomer.class)
-//    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    //    @ManyToOne(targetEntity = BroadleafCustomer.class)
+    //    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;
 
-//    @ManyToOne
-//    @JoinColumn(name = "CONTACT_INFO_ID")
+    //    @ManyToOne
+    //    @JoinColumn(name = "CONTACT_INFO_ID")
     private ContactInfo contactInfo;
 
-//    @Column(name = "ORDER_STATUS")
+    //    @Column(name = "ORDER_STATUS")
     private String status;
 
-//    @Column(name = "ORDER_TOTAL")
-    // TODO: This needs to be changed to type Money
-    private double totalAmount;
-    
+    //    @Column(name = "ORDER_TOTAL")
+    private BigDecimal total;
+
     private List<FullfillmentGroup> fullfillmentGroups;
 
     public Long getId() {
@@ -66,12 +66,12 @@ public class BroadleafOrder implements Serializable,Order {
         this.status = orderStatus;
     }
 
-    public double getTotalAmount() {
-        return totalAmount;
+    public BigDecimal getTotal() {
+        return total;
     }
 
-    public void setTotalAmount(double orderTotal) {
-        this.totalAmount = orderTotal;
+    public void setTotal(BigDecimal orderTotal) {
+        this.total = orderTotal;
     }
 
     public Customer getCustomer() {
@@ -90,22 +90,19 @@ public class BroadleafOrder implements Serializable,Order {
         this.contactInfo = contactInfo;
     }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public List<FullfillmentGroup> getFullfillmentGroups() {
-		return fullfillmentGroups;
-	}
+    public List<FullfillmentGroup> getFullfillmentGroups() {
+        return fullfillmentGroups;
+    }
 
-	public void setFullfillmentGroups(List<FullfillmentGroup> fullfillmentGroups) {
-		this.fullfillmentGroups = fullfillmentGroups;
-	}
-
-	
-	
+    public void setFullfillmentGroups(List<FullfillmentGroup> fullfillmentGroups) {
+        this.fullfillmentGroups = fullfillmentGroups;
+    }
 }

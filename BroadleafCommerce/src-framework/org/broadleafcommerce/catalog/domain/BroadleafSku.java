@@ -1,33 +1,78 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.Date;
 
-import org.broadleafcommerce.common.domain.Auditable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_SKU")
+// @DiscriminatorColumn(name="TYPE")
 public class BroadleafSku implements Sku, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    // TODO SKU_ID
+    @Id
+    @GeneratedValue
+    @Column(name = "ID")
     private Long id;
 
-    //    private Set<Sku> childSkus;
+    // private Set<Sku> childSkus;
 
-    private double price;
+    // TODO return money class from getter SALE_PRICE
+    @Column(name = "SALE_PRICE")
+    private BigDecimal salePrice;
 
-    private Auditable auditable;
+    // TODO return money class from getter LIST_PRICE
+    @Column(name = "LIST_PRICE")
+    private BigDecimal listPrice;
 
-    private Product product;
+    // TODO
+    // private Map<String, ItemAttribute> itemAttributes;
 
-    private Map<String, ItemAttribute> itemAttributes;
-
+    // TODO return money class from getter NAME
+    @Column(name = "NAME")
     private String name;
 
-    private Set<SkuImage> skuImages;
+    // TODO DESCRIPTION
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-    private Map<String, String> skuImageMap;
+    // TODO LONG_DESCRIPTION
+    @Column(name = "LONG_DESCRIPTION")
+    private String longDescription;
+
+    // TODO TAXABLE_FLAG
+    @Column(name = "TAXABLE_FLAG")
+    private boolean taxable;
+
+    // TODO ACTIVE_START_DATE
+    @Column(name = "ACTIVE_START_DATE")
+    private Date activeStartDate;
+
+    // TODO ACTIVE_END_DATE
+    @Column(name = "ACTIVE_END_DATE")
+    private Date activeEndDate;
+
+    // TODO fix map
+    //    private Set<SkuImage> skuImages;
+
+    //    private Map<String, String> skuImageMap;
+
+    @ManyToOne(targetEntity = BroadleafProduct.class)
+    @JoinColumn(name = "PRODUCT_ID")
+    private Product product;
 
     public Long getId() {
         return id;
@@ -36,37 +81,30 @@ public class BroadleafSku implements Sku, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
     // TODO fix
-    //    public Set<Sku> getChildSkus() {
-    //        return childSkus;
-    //    }
+    // public Set<Sku> getChildSkus() {
+    // return childSkus;
+    // }
     //
-    //    public void setChildSkus(Set<Sku> childSkus) {
-    //        this.childSkus = childSkus;
-    //    }
+    // public void setChildSkus(Set<Sku> childSkus) {
+    // this.childSkus = childSkus;
+    // }
 
-    public double getPrice() {
-        return price;
+    public BigDecimal getSalePrice() {
+        return salePrice;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
     }
 
-    public Product getProduct() {
-        return product;
+    public BigDecimal getListPrice() {
+        return listPrice;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Auditable getAuditable() {
-        return auditable;
-    }
-
-    public void setAuditable(Auditable auditable) {
-        this.auditable = auditable;
+    public void setListPrice(BigDecimal listPrice) {
+        this.listPrice = listPrice;
     }
 
     public String getName() {
@@ -77,32 +115,56 @@ public class BroadleafSku implements Sku, Serializable {
         this.name = name;
     }
 
-    public Map<String, ItemAttribute> getItemAttributes() {
-        return itemAttributes;
+    public String getDescription() {
+        return description;
     }
 
-    public void setItemAttributes(Map<String, ItemAttribute> itemAttributes) {
-        this.itemAttributes = itemAttributes;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Set<SkuImage> getSkuImages() {
-        return skuImages;
+    public String getLongDescription() {
+        return longDescription;
     }
 
-    public void setSkuImages(Set<SkuImage> skuImages) {
-        this.skuImages = skuImages;
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
     }
 
-    public String getSkuImage(String key) {
-        if (skuImageMap == null) {
-            skuImageMap = new HashMap<String, String>();
-            Set<SkuImage> images = getSkuImages();
-            if (images != null) {
-                for (SkuImage s : images) {
-                    skuImageMap.put(s.getName(), s.getUrl());
-                }
-            }
-        }
-        return skuImageMap.get(key);
+    public boolean isTaxable() {
+        return taxable;
     }
+
+    public void setTaxable(boolean taxable) {
+        this.taxable = taxable;
+    }
+
+    public Date getActiveStartDate() {
+        return activeStartDate;
+    }
+
+    public void setActiveStartDate(Date activeStartDate) {
+        this.activeStartDate = activeStartDate;
+    }
+
+    public Date getActiveEndDate() {
+        return activeEndDate;
+    }
+
+    public void setActiveEndDate(Date activeEndDate) {
+        this.activeEndDate = activeEndDate;
+    }
+
+    // public String getSkuImage(String key) {
+    // if (skuImageMap == null) {
+    // skuImageMap = new HashMap<String, String>();
+    // Set<SkuImage> images = getSkuImages();
+    // if (images != null) {
+    // for (SkuImage s : images) {
+    // skuImageMap.put(s.getName(), s.getUrl());
+    // }
+    // }
+    // }
+    // return skuImageMap.get(key);
+    // }
 }

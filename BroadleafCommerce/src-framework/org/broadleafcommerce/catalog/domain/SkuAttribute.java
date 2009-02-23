@@ -1,6 +1,6 @@
 package org.broadleafcommerce.catalog.domain;
 
-public interface ItemAttribute {
+public interface SkuAttribute {
 
     public Long getId();
 
@@ -14,10 +14,6 @@ public interface ItemAttribute {
 
     public void setSearchable(Boolean searchable);
 
-    public Product getProduct();
-
-    public void setProduct(Product product);
-
     public Sku getSku();
 
     public void setSku(Sku sku);
@@ -26,5 +22,4 @@ public interface ItemAttribute {
 
     public void setName(String name);
 
-    public String toString();
 }
