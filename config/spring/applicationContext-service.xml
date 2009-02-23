@@ -33,7 +33,9 @@
 		<property name="entityConfiguration" ref="entityConfiguration"/>
 	</bean>
 
+<!--
 	<bean id="itemAttributeDao" class="org.broadleafcommerce.catalog.dao.ItemAttributeDaoJpa"/>
+-->
 
 	<bean id="productDao" class="org.broadleafcommerce.catalog.dao.ProductDaoJpa">
 		<property name="entityManagerFactory" ref="entityManagerFactory"/>

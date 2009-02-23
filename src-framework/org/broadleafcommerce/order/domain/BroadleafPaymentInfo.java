@@ -1,6 +1,7 @@
 package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.broadleafcommerce.profile.domain.Address;
 
@@ -15,17 +16,17 @@ public class BroadleafPaymentInfo implements PaymentInfo, Serializable {
     private Address address;
 
     // TODO: This needs to be changed to type Money
-    private double amount;
+    private BigDecimal amount;
 
     private String referenceNumber;
 
     @Override
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
     @Override
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

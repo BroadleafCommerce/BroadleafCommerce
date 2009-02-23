@@ -2,41 +2,78 @@ package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.apache.commons.validator.GenericValidator;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.MapKey;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_CATEGORY")
 public class BroadleafCategory implements Category, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue
+    @Column(name = "ID")
     private Long id;
 
+    @Column(name = "NAME")
     private String name;
 
+    @Column(name = "URL")
     private String url;
 
+    @Column(name = "URL_KEY")
     private String urlKey;
 
+    @ManyToOne(targetEntity = BroadleafCategory.class)
+    @JoinColumn(name = "PARENT_CATEGORY_ID")
     private Category parentCategory;
 
+    @Column(name = "DISPLAY_ORDER")
     private Integer displayOrder;
 
+    @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "ACTIVE_START_DATE")
     private Date activeStartDate;
 
+    @Column(name = "ACTIVE_END_DATE")
     private Date activeEndDate;
 
+    @Column(name = "DISPLAY_TEMPLATE")
     private String displayTemplate;
 
-    private Set<CategoryImage> categoryImages;
+    // @OneToMany(mappedBy = "category", targetEntity = BroadleafCategoryImage.class)
+    @CollectionOfElements
+    @JoinTable(name = "CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
+    @MapKey(columns = { @Column(name = "NAME", length = 5) })
+    @Column(name = "URL")
+    private Map<String, String> categoryImages;
 
-    private Map<String, String> categoryImageMap;
-
+    @Column(name = "LONG_DESCRIPTION")
     private String longDescription;
+
+    // TODO
+    // @OneToMany(targetEntity = BroadleafProduct.class)
+    // @IndexColumn(name = "SEQUENCE")
+    // @JoinColumn(name = "sku", nullable = false)
+    // private List<Product> products;
 
     public Long getId() {
         return id;
@@ -121,25 +158,12 @@ public class BroadleafCategory implements Category, Serializable {
         this.displayTemplate = displayTemplate;
     }
 
-    public Set<CategoryImage> getCategoryImages() {
+    public Map<String, String> getCategoryImages() {
         return categoryImages;
     }
 
-    public void setCategoryImages(Set<CategoryImage> categoryImages) {
+    public void setCategoryImages(Map<String, String> categoryImages) {
         this.categoryImages = categoryImages;
-    }
-
-    public String getCategoryImage(String key) {
-        if (categoryImageMap == null) {
-            categoryImageMap = new HashMap<String, String>();
-            Set<CategoryImage> images = getCategoryImages();
-            if (images != null) {
-                for (CategoryImage ci : images) {
-                    categoryImageMap.put(ci.getName(), ci.getUrl());
-                }
-            }
-        }
-        return categoryImageMap.get(key);
     }
 
     public String getLongDescription() {

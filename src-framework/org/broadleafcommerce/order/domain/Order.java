@@ -1,5 +1,6 @@
 package org.broadleafcommerce.order.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
@@ -15,14 +16,14 @@ public interface Order {
     public Auditable getAuditable();
 
     public void setAuditable(Auditable auditable);
-	
+
     public String getStatus();
 
     public void setStatus(String orderStatus);
 
-    public double getTotalAmount();
+    public BigDecimal getTotal();
 
-    public void setTotalAmount(double totalAmount);
+    public void setTotal(BigDecimal orderTotal);
 
     public Customer getCustomer();
 
@@ -32,12 +33,12 @@ public interface Order {
 
     public void setContactInfo(ContactInfo contactInfo);
 
-	public String getType();
+    public String getType();
 
-	public void setType(String type);
-	
-	public List<FullfillmentGroup> getFullfillmentGroups();
-	
-	public void setFullfillmentGroups(List<FullfillmentGroup> fullfillmentGroups);
-	
+    public void setType(String type);
+
+    public List<FullfillmentGroup> getFullfillmentGroups();
+
+    public void setFullfillmentGroups(List<FullfillmentGroup> fullfillmentGroups);
+
 }

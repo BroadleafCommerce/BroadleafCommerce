@@ -1,6 +1,6 @@
 package org.broadleafcommerce.catalog.domain;
 
-public interface ProductAuxImage {
+public interface ImageDescription {
 
     public Long getId();
 
@@ -9,14 +9,6 @@ public interface ProductAuxImage {
     public String getUrl();
 
     public void setUrl(String url);
-
-    public Product getProduct();
-
-    public void setProduct(Product product);
-
-    public Integer getDisplayOrder();
-
-    public void setDisplayOrder(Integer displayOrder);
 
     public String getDescription();
 

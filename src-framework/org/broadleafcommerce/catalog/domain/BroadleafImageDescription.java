@@ -2,18 +2,30 @@ package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
 
-public class BroadleafProductAuxImage implements ProductAuxImage, Serializable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_IMAGE_DESCRIPTION")
+public class BroadleafImageDescription implements ImageDescription, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue
+    @Column(name = "ID")
     private Long id;
 
+    @Column(name = "URL")
     private String url;
 
-    private Product product;
-
-    private Integer displayOrder;
-
+    @Column(name = "DESCRIPTION")
     private String description;
 
     public Long getId() {
@@ -30,22 +42,6 @@ public class BroadleafProductAuxImage implements ProductAuxImage, Serializable {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Integer getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(Integer displayOrder) {
-        this.displayOrder = displayOrder;
     }
 
     public String getDescription() {

@@ -1,41 +1,53 @@
 package org.broadleafcommerce.catalog.domain;
 
-import java.util.Map;
-import java.util.Set;
-
-import org.broadleafcommerce.common.domain.Auditable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 public interface Sku {
 
     public Long getId();
 
     public void setId(Long id);
-    //TODO fix
-    //    public Set<Sku> getChildSkus();
+
+    // TODO fix
+    // public Set<Sku> getChildSkus();
     //
-    //    public void setChildSkus(Set<Sku> childSkus);
+    // public void setChildSkus(Set<Sku> childSkus);
 
-    public double getPrice();
+    public BigDecimal getSalePrice();
 
-    public void setPrice(double price);
+    public void setSalePrice(BigDecimal salePrice);
 
-    public Product getProduct();
+    public BigDecimal getListPrice();
 
-    public void setProduct(Product product);
-
-    public Auditable getAuditable();
-
-    public void setAuditable(Auditable auditable);
+    public void setListPrice(BigDecimal listPrice);
 
     public String getName();
 
     public void setName(String name);
 
-    public Map<String, ItemAttribute> getItemAttributes();
+    public String getDescription();
 
-    public void setItemAttributes(Map<String, ItemAttribute> itemAttributes);
+    public void setDescription(String description);
 
-    public Set<SkuImage> getSkuImages();
+    public String getLongDescription();
 
-    public void setSkuImages(Set<SkuImage> skuImages);
+    public void setLongDescription(String longDescription);
+
+    public boolean isTaxable();
+
+    public void setTaxable(boolean taxable);
+
+    public Date getActiveStartDate();
+
+    public void setActiveStartDate(Date activeStartDate);
+
+    public Date getActiveEndDate();
+
+    public void setActiveEndDate(Date activeEndDate);
+
+    // public Map<String, ItemAttribute> getItemAttributes();
+    //
+    // public void setItemAttributes(Map<String, ItemAttribute> itemAttributes);
+
 }

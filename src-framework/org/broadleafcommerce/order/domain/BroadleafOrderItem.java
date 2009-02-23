@@ -1,6 +1,7 @@
 package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 
@@ -8,68 +9,64 @@ import org.broadleafcommerce.catalog.domain.Sku;
 //@Table(name = "SC_ORDER_ITEM")
 public class BroadleafOrderItem implements OrderItem, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-//	@Id
-//	@GeneratedValue
-//	@Column(name = "ORDER_ITEM_ID")
-	private Long id;
-	
-//	@ManyToOne
-//	@JoinColumn(name = "SKU_ID", nullable=false)
-	private Sku sku;
-	
-//	@ManyToOne
-//	@JoinColumn(name = "SC_ORDER_ID", nullable = false)
-	private Order order;
-	
-//	@Column(name = "FINAL_PRICE")
-	// TODO: this needs to be changed to type Money
-	private double amount;
-	
-//	@Column(name = "QUANTITY")
-	private int quantity;
+    // @Id
+    // @GeneratedValue
+    // @Column(name = "ORDER_ITEM_ID")
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
+    // @ManyToOne
+    // @JoinColumn(name = "SKU_ID", nullable=false)
+    private Sku sku;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    // @ManyToOne
+    // @JoinColumn(name = "SC_ORDER_ID", nullable = false)
+    private Order order;
 
-	public Sku getSku() {
-		return sku;
-	}
+    // @Column(name = "FINAL_PRICE")
+    private BigDecimal finalPrice;
 
-	public void setSku(Sku sku) {
-		this.sku = sku;
-	}
+    // @Column(name = "QUANTITY")
+    private int quantity;
 
-	public Order getOrder() {
-		return order;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setOrder(Order order) {
-		this.order = order;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public double getAmount() {
-		return amount;
-	}
+    public Sku getSku() {
+        return sku;
+    }
 
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
+    public void setSku(Sku sku) {
+        this.sku = sku;
+    }
 
-	public int getQuantity() {
-		return quantity;
-	}
+    public Order getOrder() {
+        return order;
+    }
 
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
-	
-	
-	
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public BigDecimal getFinalPrice() {
+        return finalPrice;
+    }
+
+    public void setFinalPrice(BigDecimal finalPrice) {
+        this.finalPrice = finalPrice;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }
