@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.broadleafcommerce.profile.domain.Address;
 
-public interface FullfillmentGroup {
+public interface FulfillmentGroup {
 
     public Long getId();
 
@@ -19,17 +19,17 @@ public interface FullfillmentGroup {
 
     public void setAddress(Address address);
 
-    public List<FullfillmentGroupItem> getFullfillmentGroupItems();
+    public List<FulfillmentGroupItem> getFulfillmentGroupItems();
 
-    public void setFullfillmentGroupItems(List<FullfillmentGroupItem> fullfillmentGroupItems);
+    public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems);
 
     public String getMethod();
 
-    public void setMethod(String fullfillmentMethod);
+    public void setMethod(String fulfillmentMethod);
 
     public BigDecimal getCost();
 
-    public void setCost(BigDecimal fullfillmentCost);
+    public void setCost(BigDecimal fulfillmentCost);
 
     public String getReferenceNumber();
 

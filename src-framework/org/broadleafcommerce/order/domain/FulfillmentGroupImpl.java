@@ -23,8 +23,8 @@ import org.broadleafcommerce.profile.domain.AddressImpl;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "TYPE")
-@Table(name = "BLC_FULLFILLMENT_GROUP")
-public class FullfillmentGroupImpl implements FullfillmentGroup, Serializable {
+@Table(name = "BLC_FULFILLMENT_GROUP")
+public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -39,9 +39,9 @@ public class FullfillmentGroupImpl implements FullfillmentGroup, Serializable {
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
 
-    @OneToMany(mappedBy = "id", targetEntity = FullfillmentGroupItemImpl.class)
+    @OneToMany(mappedBy = "id", targetEntity = FulfillmentGroupItemImpl.class)
     @MapKey(name = "id")
-    private List<FullfillmentGroupItem> fullfillmentGroupItems;
+    private List<FulfillmentGroupItem> fulfillmentGroupItems;
 
     @ManyToOne(targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
@@ -80,12 +80,12 @@ public class FullfillmentGroupImpl implements FullfillmentGroup, Serializable {
         this.referenceNumber = referenceNumber;
     }
 
-    public List<FullfillmentGroupItem> getFullfillmentGroupItems() {
-        return fullfillmentGroupItems;
+    public List<FulfillmentGroupItem> getFulfillmentGroupItems() {
+        return fulfillmentGroupItems;
     }
 
-    public void setFullfillmentGroupItems(List<FullfillmentGroupItem> fullfillmentGroupItems) {
-        this.fullfillmentGroupItems = fullfillmentGroupItems;
+    public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems) {
+        this.fulfillmentGroupItems = fulfillmentGroupItems;
     }
 
     @Override
@@ -104,8 +104,8 @@ public class FullfillmentGroupImpl implements FullfillmentGroup, Serializable {
     }
 
     @Override
-    public void setMethod(String fullfillmentMethod) {
-        this.method = fullfillmentMethod;
+    public void setMethod(String fulfillmentMethod) {
+        this.method = fulfillmentMethod;
     }
 
     @Override
@@ -114,8 +114,8 @@ public class FullfillmentGroupImpl implements FullfillmentGroup, Serializable {
     }
 
     @Override
-    public void setCost(BigDecimal fullfillmentCost) {
-        this.cost = fullfillmentCost;
+    public void setCost(BigDecimal fulfillmentCost) {
+        this.cost = fulfillmentCost;
     }
 
     @Override
