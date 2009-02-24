@@ -3,8 +3,8 @@ package org.broadleafcommerce.order.service;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.order.domain.DefaultFulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
@@ -15,7 +15,7 @@ public interface OrderService {
 
     public Order findCurrentBasketForCustomer(Customer customer);
 
-    public DefaultFulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
+    public FulfillmentGroupImpl findDefaultFulfillmentGroupForOrder(Order order);
 
     public List<FulfillmentGroup> findFulfillmentGroupsForOrder(Order order);
 

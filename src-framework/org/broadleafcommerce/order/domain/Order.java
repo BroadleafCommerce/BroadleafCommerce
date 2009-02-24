@@ -6,6 +6,7 @@ import java.util.List;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.type.OrderType;
 
 public interface Order {
 
@@ -33,9 +34,9 @@ public interface Order {
 
     public void setContactInfo(ContactInfo contactInfo);
 
-    public String getType();
+    public OrderType getType();
 
-    public void setType(String type);
+    public void setType(OrderType type);
 
     public List<FulfillmentGroup> getFulfillmentGroups();
 

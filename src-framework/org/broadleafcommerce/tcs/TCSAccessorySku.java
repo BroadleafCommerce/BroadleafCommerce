@@ -34,4 +34,36 @@ public class TCSAccessorySku implements Serializable {
 
     @Column(name = "SALES_TEXT")
     private String salesText;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Sku getSku() {
+        return sku;
+    }
+
+    public void setSku(Sku sku) {
+        this.sku = sku;
+    }
+
+    public TCSProduct getProduct() {
+        return product;
+    }
+
+    public void setProduct(TCSProduct product) {
+        this.product = product;
+    }
+
+    public String getSalesText() {
+        return salesText;
+    }
+
+    public void setSalesText(String salesText) {
+        this.salesText = salesText;
+    }
 }

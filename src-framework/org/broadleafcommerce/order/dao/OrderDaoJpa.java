@@ -10,12 +10,11 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.order.domain.BasketOrder;
-import org.broadleafcommerce.order.domain.BasketOrderImpl;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.SubmittedOrderImpl;
+import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.type.OrderType;
 import org.springframework.stereotype.Repository;
 
 @Repository("orderDao")
@@ -33,7 +32,7 @@ public class OrderDaoJpa implements OrderDao {
     @Override
     @SuppressWarnings("unchecked")
     public Order readOrderById(Long orderId) {
-        return (Order)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.Order"), orderId);
+        return (Order) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.Order"), orderId);
     }
 
     @Override
@@ -65,32 +64,34 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public BasketOrder readBasketOrderForCustomer(Customer customer) {
-        BasketOrder bo;
-        Query query = em.createNamedQuery("READ_ORDER_BASKET_FOR_CUSTOMER_ID");
+    public Order readBasketOrdersForCustomer(Customer customer) {
+        Order bo;
+        Query query = em.createNamedQuery("READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
         query.setParameter("customerId", customer.getId());
+        query.setParameter("orderType", OrderType.BASKET);
         try {
-            bo = (BasketOrderImpl) query.getSingleResult();
-            return (BasketOrderImpl) query.getSingleResult();
+            bo = (OrderImpl) query.getSingleResult();
+            return (OrderImpl) query.getSingleResult();
         } catch (NoResultException nre) {
-            bo = (BasketOrder)entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.BasketOrder");
+            bo = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
             bo.setCustomer(customer);
+            bo.setType(OrderType.BASKET);
             em.persist(bo);
             return bo;
         }
     }
 
     @Override
-    public SubmittedOrderImpl submitOrder(Order basketOrder) {
-        SubmittedOrderImpl so = new SubmittedOrderImpl();
+    public Order submitOrder(Order basketOrder) {
+        OrderImpl so = new OrderImpl();
         so.setId(basketOrder.getId());
-        Query query = em.createNamedQuery("UPDATE_BASKET_ORER_TO_SUBMITED");
+        Query query = em.createNamedQuery("UPDATE_BASKET_ORDER_TO_SUBMITTED");
         query.setParameter("id", basketOrder.getId());
         query.executeUpdate();
-        return em.find(SubmittedOrderImpl.class, so.getId());
+        return em.find(OrderImpl.class, so.getId());
     }
 
-    public Order create(){
-        return ((Order)entityConfiguration.createEntityInstance("order"));
+    public Order create() {
+        return ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.OrderImpl"));
     }
 }

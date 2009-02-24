@@ -36,4 +36,44 @@ public class TCSComponentSku implements Serializable {
 
     @Column(name = "QUANTITY")
     private Integer quantity;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Sku getSku() {
+        return sku;
+    }
+
+    public void setSku(Sku sku) {
+        this.sku = sku;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public Integer getCutlength() {
+        return cutlength;
+    }
+
+    public void setCutlength(Integer cutlength) {
+        this.cutlength = cutlength;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 }

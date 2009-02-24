@@ -21,7 +21,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.IndexColumn;
+import org.hibernate.annotations.OrderBy;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -40,26 +40,21 @@ public class ProductImpl implements Product, Serializable {
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ProductAttributeImpl.class)
     @MapKey(name = "name")
-    @JoinTable(name = "PRODUCTS_PRODUCT_ATTRIBUTES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ATTRIBUTE_ID"))
+    @JoinTable(name = "PRODUCT_PRODUCT_ATTRIBUTES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ATTRIBUTE_ID"))
     private Map<String, ProductAttribute> productAttributes;
 
-    // TODO NAME
     @Column(name = "NAME")
     private String name;
 
-    // TODO DESCRIPTION
     @Column(name = "DESCRIPTION")
     private String description;
 
-    // TODO LONG_DESCRIPTION
     @Column(name = "LONG_DESCRIPTION")
     private String longDescription;
 
-    // TODO ACTIVE_START_DATE
     @Column(name = "ACTIVE_START_DATE")
     private Date activeStartDate;
 
-    // TODO ACTIVE_END_DATE
     @Column(name = "ACTIVE_END_DATE")
     private Date activeEndDate;
 
@@ -75,14 +70,29 @@ public class ProductImpl implements Product, Serializable {
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
-    @IndexColumn(name = "SEQUENCE")
-    @JoinTable(name = "PRODUCTS_AUXILLARY_IMAGES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "IMAGE_DESCRIPTION_ID"))
+    @OrderBy(clause = "SEQUENCE")
+    @JoinTable(name = "PRODUCT_AUXILLARY_IMAGES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "IMAGE_DESCRIPTION_ID"))
     private List<ImageDescription> productAuxillaryImages;
 
-    // TODO DEFAULT_CATEGORY_ID
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     private Category defaultCategory;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Map<String, ProductAttribute> getProductAttributes() {
+        return productAttributes;
+    }
+
+    public void setProductAttributes(Map<String, ProductAttribute> productAttributes) {
+        this.productAttributes = productAttributes;
+    }
 
     public String getName() {
         return name;
@@ -100,12 +110,28 @@ public class ProductImpl implements Product, Serializable {
         this.description = description;
     }
 
-    public Long getId() {
-        return id;
+    public String getLongDescription() {
+        return longDescription;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    public Date getActiveStartDate() {
+        return activeStartDate;
+    }
+
+    public void setActiveStartDate(Date activeStartDate) {
+        this.activeStartDate = activeStartDate;
+    }
+
+    public Date getActiveEndDate() {
+        return activeEndDate;
+    }
+
+    public void setActiveEndDate(Date activeEndDate) {
+        this.activeEndDate = activeEndDate;
     }
 
     public List<Sku> getSkus() {
@@ -116,32 +142,27 @@ public class ProductImpl implements Product, Serializable {
         this.skus = skus;
     }
 
-    // public Set<ProductImage> getProductImages() {
-    // return productImages;
-    // }
-    //
-    // public void setProductImages(Set<ProductImage> productImages) {
-    // this.productImages = productImages;
-    // }
+    public Map<String, String> getProductImages() {
+        return productImages;
+    }
 
-    // public String getProductImage(String key) {
-    // if (productImageMap == null) {
-    // productImageMap = new HashMap<String, String>();
-    // Set<ProductImage> images = getProductImages();
-    // if (images != null) {
-    // for (ProductImage pi : images) {
-    // productImageMap.put(pi.getName(), pi.getUrl());
-    // }
-    // }
-    // }
-    // return productImageMap.get(key);
-    // }
+    public void setProductImages(Map<String, String> productImages) {
+        this.productImages = productImages;
+    }
 
-    // public List<ImageDescription> getProductAuxillaryImages() {
-    // return productAuxillaryImages;
-    // }
-    //
-    // public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
-    // this.productAuxillaryImages = productAuxillaryImages;
-    // }
+    public List<ImageDescription> getProductAuxillaryImages() {
+        return productAuxillaryImages;
+    }
+
+    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
+        this.productAuxillaryImages = productAuxillaryImages;
+    }
+
+    public Category getDefaultCategory() {
+        return defaultCategory;
+    }
+
+    public void setDefaultCategory(Category defaultCategory) {
+        this.defaultCategory = defaultCategory;
+    }
 }

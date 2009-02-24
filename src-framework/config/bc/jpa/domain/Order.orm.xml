@@ -8,13 +8,14 @@
 		WHERE order.customer.id = :customerId</query>
 	</named-query>
 
-	<named-query name="READ_ORDER_BASKET_FOR_CUSTOMER_ID">
-		<query>SELECT basketOrder FROM org.broadleafcommerce.order.domain.BasketOrder basketOrder
-		        WHERE basketOrder.customer.id = :customerId
+	<named-query name="READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE">
+		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
+		        WHERE order.customer.id = :customerId
+		        AND order.type = :orderType
 		</query>
 	</named-query>
 
-	<named-query name="UPDATE_BASKET_ORER_TO_SUBMITED">
+	<named-query name="UPDATE_BASKET_ORDER_TO_SUBMITTED">
 		<query>UPDATE org.broadleafcommerce.order.domain.Order blcOrder
 		          SET blcOrder.type = 'SUBMITTED'
 		        WHERE blcOrder.id = :id

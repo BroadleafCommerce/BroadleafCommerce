@@ -6,8 +6,8 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.order.dao.OrderDaoJpa;
-import org.broadleafcommerce.order.domain.DefaultFulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.dao.AddressDaoJpa;
 import org.broadleafcommerce.profile.domain.Address;
@@ -43,7 +43,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         Address address = (addressDao.readAddressByUserId(customer.getId())).get(0);
         Order salesOrder= (orderDao.readOrdersForCustomer(customer)).get(0);
 
-        DefaultFulfillmentGroup newFG = fulfillmentGroupDao.createDefault();
+        FulfillmentGroupImpl newFG = fulfillmentGroupDao.createDefault();
         newFG.setAddress(address);
         newFG.setCost(fulfillmentGroup.getCost());
         newFG.setMethod(fulfillmentGroup.getMethod());
@@ -59,17 +59,17 @@ public class FulfillmentGroupDaoTest extends BaseTest {
 
     @Test (groups = {"readDefaultFulfillmentGroupForOrder"}, dependsOnGroups={"createDefaultFulfillmentGroup"})
     public void readDefaultFulfillmentGroupForOrder(){
-        DefaultFulfillmentGroup dfg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
-        assert dfg.getId() != null;
-        assert dfg.getId().equals(defaultFulfillmentGroupId);
+        FulfillmentGroupImpl fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
+        assert fg.getId() != null;
+        assert fg.getId().equals(defaultFulfillmentGroupId);
     }
 
     @Test (groups = {"readDefaultFulfillmentGroupForId"}, dependsOnGroups={"createDefaultFulfillmentGroup"})
     public void readDefaultFulfillmentGroupForId(){
-        DefaultFulfillmentGroup dfg = fulfillmentGroupDao.readDefaultFulfillmentGroupById(defaultFulfillmentGroupId);
-        assert dfg != null;
-        assert dfg.getId() != null;
-        assert dfg.getId().equals(defaultFulfillmentGroupId);
+        FulfillmentGroupImpl fg = fulfillmentGroupDao.readDefaultFulfillmentGroupById(defaultFulfillmentGroupId);
+        assert fg != null;
+        assert fg.getId() != null;
+        assert fg.getId().equals(defaultFulfillmentGroupId);
     }
 
     @Test(groups={"createFulfillmentGroup"}, dataProvider="basicFulfillmentGroup", dataProviderClass=FulfillmentGroupDataProvider.class,dependsOnGroups={"createOrder","createAddress"})

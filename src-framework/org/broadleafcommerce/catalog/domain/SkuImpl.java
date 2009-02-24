@@ -22,10 +22,9 @@ public class SkuImpl implements Sku, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // TODO SKU_ID
     @Id
     @GeneratedValue
-    @Column(name = "ID")
+    @Column(name = "SKU_ID")
     private Long id;
 
     // private Set<Sku> childSkus;
@@ -45,30 +44,25 @@ public class SkuImpl implements Sku, Serializable {
     @Column(name = "NAME")
     private String name;
 
-    // TODO DESCRIPTION
     @Column(name = "DESCRIPTION")
     private String description;
 
-    // TODO LONG_DESCRIPTION
     @Column(name = "LONG_DESCRIPTION")
     private String longDescription;
 
-    // TODO TAXABLE_FLAG
     @Column(name = "TAXABLE_FLAG")
     private boolean taxable;
 
-    // TODO ACTIVE_START_DATE
     @Column(name = "ACTIVE_START_DATE")
     private Date activeStartDate;
 
-    // TODO ACTIVE_END_DATE
     @Column(name = "ACTIVE_END_DATE")
     private Date activeEndDate;
 
     // TODO fix map
-    //    private Set<SkuImage> skuImages;
+    // private Set<SkuImage> skuImages;
 
-    //    private Map<String, String> skuImageMap;
+    // private Map<String, String> skuImageMap;
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
@@ -81,15 +75,6 @@ public class SkuImpl implements Sku, Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
-    // TODO fix
-    // public Set<Sku> getChildSkus() {
-    // return childSkus;
-    // }
-    //
-    // public void setChildSkus(Set<Sku> childSkus) {
-    // this.childSkus = childSkus;
-    // }
 
     public BigDecimal getSalePrice() {
         return salePrice;
@@ -153,6 +138,14 @@ public class SkuImpl implements Sku, Serializable {
 
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     // public String getSkuImage(String key) {
