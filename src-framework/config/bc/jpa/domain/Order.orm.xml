@@ -20,42 +20,4 @@
 		        WHERE blcOrder.id = :id
 		</query>
 	</named-query>
-
-	<entity class="org.broadleafcommerce.order.domain.OrderImpl" name="order">
-        <table name="BLC_ORDER"/>
-        <inheritance strategy="JOINED"/>
-		<discriminator-column name="TYPE"/>
-        <attributes>
-            <id name="id">
-            	<column name="ORDER_ID"/>
-                <generated-value/>
-            </id>
-            <basic name="status">
-                <column name="ORDER_STATUS" />
-            </basic>
-            <basic name="total">
-                <column name="ORDER_TOTAL"/>
-            </basic>
-            <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.CustomerImpl">
-				<join-column name="CUSTOMER_ID" nullable="false"/>
-            </many-to-one>
-			<many-to-one name="contactInfo" target-entity="org.broadleafcommerce.profile.domain.ContactInfoImpl" >
-				<join-column name="CONTACT_INFO_ID"/>
-			</many-to-one>
-			<one-to-many name="fullfillmentGroups" mapped-by="orderId" target-entity="org.broadleafcommerce.order.domain.FullfillmentGroupImpl">
-				<map-key name="ID"/>
-			</one-to-many>
-			<embedded name="auditable"></embedded>
-        </attributes>
-    </entity>
-
-	<entity class="org.broadleafcommerce.order.domain.BasketOrderImpl" name="basketOrder">
-		<discriminator-value>BASKET</discriminator-value>
-		<discriminator-column name="TYPE"/>
-	</entity>
-
-	<entity class="org.broadleafcommerce.order.domain.SubmittedOrderImpl" name="submittedOrder">
-		<discriminator-value>SUBMITTED</discriminator-value>
-		<discriminator-column name="TYPE"/>
-	</entity>
 </entity-mappings>

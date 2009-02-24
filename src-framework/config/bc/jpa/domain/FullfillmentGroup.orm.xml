@@ -15,38 +15,4 @@
 		</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.order.domain.FullfillmentGroupImpl" name="fullfillmentGroup">
-        <table name="BLC_FULLFILLMENT_GROUP"/>
-        <inheritance strategy="JOINED"/>
-		<discriminator-column name="TYPE"/>
-        <attributes>
-            <id name="id">
-            	<column name="ID"/>
-                <generated-value/>
-            </id>
-            <basic name="method">
-                <column name="METHOD" />
-            </basic>
-            <basic name="cost">
-                <column name="COST" />
-            </basic>
-            <basic name="referenceNumber">
-                <column name="REFERENCE_NUMBER"/>
-            </basic>
-            <basic name="orderId">
-                <column name="ORDER_ID"/>
-            </basic>
-			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.AddressImpl">
-				<join-column name="ADDRESS_ID"/>
-			</many-to-one>
-			<one-to-many name="fullfillmentGroupItems" mapped-by="id" target-entity="org.broadleafcommerce.order.domain.FullfillmentGroupItemImpl" >
-				<map-key name="ID"/>
-			</one-to-many>
-        </attributes>
-    </entity>
-
-	<entity class="org.broadleafcommerce.order.domain.DefaultFullfillmentGroupImpl" name="defaultFullfillmentGroup">
-		<discriminator-value>DEFAULT</discriminator-value>
-		<discriminator-column name="TYPE"/>
-	</entity>
 </entity-mappings>

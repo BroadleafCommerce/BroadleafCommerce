@@ -12,44 +12,4 @@
 		<query>SELECT customer FROM org.broadleafcommerce.profile.domain.Customer customer
 		WHERE customer.emailAddress = :email</query>
 	</named-query>
-
-	<entity class="org.broadleafcommerce.profile.domain.CustomerImpl" name="customer">
-        <table name="BLC_CUSTOMER" >
-        	<unique-constraint>
-        		<column-name>USER_NAME</column-name>
-        	</unique-constraint>
-        </table>
-        <inheritance strategy="JOINED"/>
-        <attributes>
-            <id name="id">
-            	<column name="CUSTOMER_ID"/>
-                <generated-value/>
-            </id>
-            <basic name="username">
-                <column name="USER_NAME" />
-            </basic>
-            <basic name="password">
-                <column name="PASSWORD"/>
-            </basic>
-            <basic name="firstName">
-            	<column name="FIRST_NAME"/>
-            </basic>
-            <basic name="lastName">
-            	<column name="LAST_NAME"/>
-            </basic>
-            <basic name="emailAddress">
-            	<column name="EMAIL_ADDRESS"/>
-            </basic>
-            <basic name="challengeQuestion">
-            	<column name="CHALLENGE_QUESTION"/>
-            </basic>
-            <basic name="challengeAnswer">
-            	<column name="CHALLENGE_ANSWER"/>
-            </basic>
-            <basic name="passwordChangeRequired">
-            	<column name="PASSWORD_CHANGE_REQUIRED"/>
-            </basic>
-			<transient name="unencodedPassword"/>
-        </attributes>
-    </entity>
 </entity-mappings>

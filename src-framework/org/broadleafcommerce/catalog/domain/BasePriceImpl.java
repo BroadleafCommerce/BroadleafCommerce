@@ -4,22 +4,49 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.broadleafcommerce.common.domain.Auditable;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_BASE_PRICE")
 public class BasePriceImpl implements BasePrice, Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @GeneratedValue
+    @Column(name = "BASE_PRICE_ID")
     private Long id;
 
+    @Embedded
     private Auditable auditable;
 
+    @ManyToOne(targetEntity = SkuImpl.class)
+    @JoinColumn(name = "SKU_ID", nullable = false)
     private Sku sku;
 
+    @Column(name = "AMOUNT")
     private BigDecimal amount;
 
+    @Column(name = "START_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
 
+    @Column(name = "END_DATE")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date endDate;
 
     public Long getId() {

@@ -7,27 +7,4 @@
 		<query>SELECT paymentInfo FROM org.broadleafcommerce.order.domain.PaymentInfo paymentInfo
 		WHERE paymentInfo.order.id = :orderId</query>
 	</named-query>
-
-	<entity class="org.broadleafcommerce.order.domain.PaymentInfoImpl" name="paymentInfo">
-        <table name="BLC_ORDER_PAYMENT"/>
-        <inheritance strategy="JOINED"/>
-        <attributes>
-            <id name="id">
-            	<column name="PAYMENT_ID"/>
-                <generated-value/>
-            </id>
-            <basic name="amount">
-                <column name="AMOUNT" />
-            </basic>
-            <basic name="referenceNumber">
-                <column name="REFERENCE_NUMBER"/>
-            </basic>
-            <many-to-one name="order" target-entity="org.broadleafcommerce.order.domain.OrderImpl">
-				<join-column name="ORDER_ID"/>
-            </many-to-one>
-			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.AddressImpl">
-				<join-column name="ADDRESS_ID"/>
-			</many-to-one>
-        </attributes>
-    </entity>
 </entity-mappings>
