@@ -4,18 +4,18 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<named-query name="READ_FULLFILLMENT_GROUPS_BY_ORDER_ID" >
-		<query>SELECT fullfillmentGroup FROM org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup fullfillmentGroup
+		<query>SELECT fullfillmentGroup FROM org.broadleafcommerce.order.domain.FullfillmentGroup fullfillmentGroup
 		WHERE fullfillmentGroup.orderId = :orderId</query>
 	</named-query>
 
 	<named-query name="READ_DEFAULT_FULLFILLMENT_GROUP_BY_ORDER_ID">
 		<query>
-			SELECT defaultFullfillmentGroup FROM org.broadleafcommerce.order.domain.BroadleafDefaultFullfillmentGroup defaultFullfillmentGroup
+			SELECT defaultFullfillmentGroup FROM org.broadleafcommerce.order.domain.DefaultFullfillmentGroup defaultFullfillmentGroup
 			 WHERE defaultFullfillmentGroup.orderId = :orderId
 		</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup" name="fullfillmentGroup">
+	<entity class="org.broadleafcommerce.order.domain.FullfillmentGroupImpl" name="fullfillmentGroup">
         <table name="BLC_FULLFILLMENT_GROUP"/>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
@@ -36,16 +36,16 @@
             <basic name="orderId">
                 <column name="ORDER_ID"/>
             </basic>
-			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomerAddress">
+			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.AddressImpl">
 				<join-column name="ADDRESS_ID"/>
 			</many-to-one>
-			<one-to-many name="fullfillmentGroupItems" mapped-by="id" target-entity="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroupItem" >
+			<one-to-many name="fullfillmentGroupItems" mapped-by="id" target-entity="org.broadleafcommerce.order.domain.FullfillmentGroupItemImpl" >
 				<map-key name="ID"/>
 			</one-to-many>
         </attributes>
     </entity>
 
-	<entity class="org.broadleafcommerce.order.domain.BroadleafDefaultFullfillmentGroup" name="defaultFullfillmentGroup">
+	<entity class="org.broadleafcommerce.order.domain.DefaultFullfillmentGroupImpl" name="defaultFullfillmentGroup">
 		<discriminator-value>DEFAULT</discriminator-value>
 		<discriminator-column name="TYPE"/>
 	</entity>

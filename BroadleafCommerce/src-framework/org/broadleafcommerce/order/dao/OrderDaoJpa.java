@@ -11,8 +11,8 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.BasketOrder;
-import org.broadleafcommerce.order.domain.BroadleafBasketOrder;
-import org.broadleafcommerce.order.domain.BroadleafSubmittedOrder;
+import org.broadleafcommerce.order.domain.BasketOrderImpl;
+import org.broadleafcommerce.order.domain.SubmittedOrderImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
@@ -70,8 +70,8 @@ public class OrderDaoJpa implements OrderDao {
         Query query = em.createNamedQuery("READ_ORDER_BASKET_FOR_CUSTOMER_ID");
         query.setParameter("customerId", customer.getId());
         try {
-            bo = (BroadleafBasketOrder) query.getSingleResult();
-            return (BroadleafBasketOrder) query.getSingleResult();
+            bo = (BasketOrderImpl) query.getSingleResult();
+            return (BasketOrderImpl) query.getSingleResult();
         } catch (NoResultException nre) {
             bo = (BasketOrder)entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.BasketOrder");
             bo.setCustomer(customer);
@@ -81,13 +81,13 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public BroadleafSubmittedOrder submitOrder(Order basketOrder) {
-        BroadleafSubmittedOrder so = new BroadleafSubmittedOrder();
+    public SubmittedOrderImpl submitOrder(Order basketOrder) {
+        SubmittedOrderImpl so = new SubmittedOrderImpl();
         so.setId(basketOrder.getId());
         Query query = em.createNamedQuery("UPDATE_BASKET_ORER_TO_SUBMITED");
         query.setParameter("id", basketOrder.getId());
         query.executeUpdate();
-        return em.find(BroadleafSubmittedOrder.class, so.getId());
+        return em.find(SubmittedOrderImpl.class, so.getId());
     }
     
     public Order create(){

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class BroadleafUser implements User, Serializable {
+public class UserImpl implements User, Serializable {
 
     private static final long serialVersionUID = 1L;
 

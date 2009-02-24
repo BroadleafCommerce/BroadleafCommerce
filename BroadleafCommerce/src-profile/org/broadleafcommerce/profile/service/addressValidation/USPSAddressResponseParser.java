@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.BroadleafCustomerAddress;
+import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -86,7 +86,7 @@ public class USPSAddressResponseParser extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
     	if (qName.equals(ADDRESS_TAG)) {
             addressStandarizationResponse = new AddressStandarizationResponse();
-            address = new BroadleafCustomerAddress();
+            address = new AddressImpl();
             addressStandarizationResponse.setAddress(address);
         }
 

@@ -5,8 +5,8 @@ import java.io.Serializable;
 //@Entity
 //@DiscriminatorColumn(name="TYPE")
 //@DiscriminatorValue("BASKET")
-public class BroadleafBasketOrder extends BroadleafOrder implements BasketOrder, Serializable {
+public class BasketOrderImpl extends OrderImpl implements BasketOrder, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
 }

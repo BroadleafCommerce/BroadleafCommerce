@@ -13,7 +13,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_IMAGE_DESCRIPTION")
-public class BroadleafImageDescription implements ImageDescription, Serializable {
+public class ImageDescriptionImpl implements ImageDescription, Serializable {
 
     private static final long serialVersionUID = 1L;
 

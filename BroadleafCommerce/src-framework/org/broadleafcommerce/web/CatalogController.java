@@ -45,7 +45,7 @@ public class CatalogController extends AbstractController{
 	@Override
 	protected ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		BroadleafCommerceRequestState requestState = (BroadleafCommerceRequestState) BroadleafCommerceRequestState.getRequestState(request);
+		CommerceRequestStateImpl requestState = (CommerceRequestStateImpl) CommerceRequestStateImpl.getRequestState(request);
 
 		String productId = request.getParameter("productId");
 

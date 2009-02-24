@@ -2,7 +2,7 @@ package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
 
-public class BroadleafProductList implements ProductList, Serializable {
+public class ProductListImpl implements ProductList, Serializable {
 
     private static final long serialVersionUID = 1L;
 

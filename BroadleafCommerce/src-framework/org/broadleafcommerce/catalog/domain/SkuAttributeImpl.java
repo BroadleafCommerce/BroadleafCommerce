@@ -14,8 +14,8 @@ import javax.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_PRODUCT_ATTRIBUTE")
-public class BroadleafProductAttribute implements ProductAttribute, Serializable {
+@Table(name = "BLC_SKU_ATTRIBUTE")
+public class SkuAttributeImpl implements SkuAttribute, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,9 +24,9 @@ public class BroadleafProductAttribute implements ProductAttribute, Serializable
     @Column(name = "ID")
     private Long id;
 
-    @ManyToOne(targetEntity = BroadleafProduct.class)
-    @JoinColumn(name = "PRODUCT_ID")
-    private Product product;
+    @ManyToOne(targetEntity = SkuImpl.class)
+    @JoinColumn(name = "SKU_ID")
+    private Sku sku;
 
     @Column(name = "NAME")
     private String name;
@@ -61,12 +61,12 @@ public class BroadleafProductAttribute implements ProductAttribute, Serializable
         this.searchable = searchable;
     }
 
-    public Product getProduct() {
-        return product;
+    public Sku getSku() {
+        return sku;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setSku(Sku sku) {
+        this.sku = sku;
     }
 
     public String getName() {
@@ -77,7 +77,9 @@ public class BroadleafProductAttribute implements ProductAttribute, Serializable
         this.name = name;
     }
 
+    @Override
     public String toString() {
         return value;
     }
+
 }

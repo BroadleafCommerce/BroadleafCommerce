@@ -10,7 +10,7 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.log4j.Logger;
 import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.web.BroadleafCommerceRequestState;
+import org.broadleafcommerce.web.CommerceRequestStateImpl;
 
 public class BreadcrumbTag extends BodyTagSupport {
     private Logger log = Logger.getLogger(this.getClass());
@@ -22,7 +22,7 @@ public class BreadcrumbTag extends BodyTagSupport {
 	public int doStartTag() throws JspException {
     	JspWriter out = pageContext.getOut();
     	HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-    	BroadleafCommerceRequestState requestState = (BroadleafCommerceRequestState) BroadleafCommerceRequestState.getRequestState(request);
+    	CommerceRequestStateImpl requestState = (CommerceRequestStateImpl) CommerceRequestStateImpl.getRequestState(request);
 
     	try {
         	if (requestState.getCategory() == null){

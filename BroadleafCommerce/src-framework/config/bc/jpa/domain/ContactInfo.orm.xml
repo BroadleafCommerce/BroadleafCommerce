@@ -8,7 +8,7 @@
 		WHERE contactInfo.customer.id = :customerId</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.profile.domain.BroadleafContactInfo" name="contactInfo">
+	<entity class="org.broadleafcommerce.profile.domain.ContactInfoImpl" name="contactInfo">
         <table name="BLC_CONTACT_INFO"/>
         <inheritance strategy="JOINED"/>
 		<entity-listeners>
@@ -31,7 +31,7 @@
             <basic name="fax">
                 <column name="FAX"/>
             </basic>
-            <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomer">
+            <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.CustomerImpl">
             	<join-column name="CUSTOMER_ID"/>
             	<cascade><cascade-all/></cascade>
             </many-to-one>

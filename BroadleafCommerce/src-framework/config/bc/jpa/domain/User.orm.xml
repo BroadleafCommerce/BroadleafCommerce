@@ -3,14 +3,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-
 	<named-query name="READ_USER_BY_USER_NAME" >
-		<query>SELECT user FROM org.broadleafcommerce.profile.domain.BroadleafUser user
+		<query>SELECT user FROM org.broadleafcommerce.profile.domain.User user
 		WHERE user.username = :username</query>
 	</named-query>
 
 	<named-query name="READ_USER_BY_EMAIL" >
-		<query>SELECT user FROM org.broadleafcommerce.profile.domain.BroadleafUser user
+		<query>SELECT user FROM org.broadleafcommerce.profile.domain.User user
 		WHERE user.emailAddress = :email</query>
 	</named-query>
 
@@ -19,7 +18,7 @@
 		WHERE role.user.id = :userId</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.profile.domain.BroadleafUser" name="user">
+	<entity class="org.broadleafcommerce.profile.domain.UserImpl" name="user">
         <table name="BLC_USER" >
         	<unique-constraint>
         		<column-name>USER_NAME</column-name>

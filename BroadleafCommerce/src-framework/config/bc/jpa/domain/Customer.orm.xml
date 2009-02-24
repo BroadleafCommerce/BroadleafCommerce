@@ -13,7 +13,7 @@
 		WHERE customer.emailAddress = :email</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.profile.domain.BroadleafCustomer" name="customer">
+	<entity class="org.broadleafcommerce.profile.domain.CustomerImpl" name="customer">
         <table name="BLC_CUSTOMER" >
         	<unique-constraint>
         		<column-name>USER_NAME</column-name>

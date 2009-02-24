@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class BroadleafUserRole implements UserRole, Serializable {
+public class UserRoleImpl implements UserRole, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -17,10 +17,10 @@ public class BroadleafUserRole implements UserRole, Serializable {
 
     private String roleName;
 
-    public BroadleafUserRole() {
+    public UserRoleImpl() {
     }
 
-    public BroadleafUserRole(User user, String roleName) {
+    public UserRoleImpl(User user, String roleName) {
         this.user = user;
         this.roleName = roleName;
     }

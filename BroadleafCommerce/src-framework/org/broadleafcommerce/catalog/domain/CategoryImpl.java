@@ -22,7 +22,7 @@ import org.hibernate.annotations.MapKey;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
-public class BroadleafCategory implements Category, Serializable {
+public class CategoryImpl implements Category, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -40,7 +40,7 @@ public class BroadleafCategory implements Category, Serializable {
     @Column(name = "URL_KEY")
     private String urlKey;
 
-    @ManyToOne(targetEntity = BroadleafCategory.class)
+    @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "PARENT_CATEGORY_ID")
     private Category parentCategory;
 

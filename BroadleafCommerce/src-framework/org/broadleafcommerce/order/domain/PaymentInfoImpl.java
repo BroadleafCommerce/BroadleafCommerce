@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 
 import org.broadleafcommerce.profile.domain.Address;
 
-public class BroadleafPaymentInfo implements PaymentInfo, Serializable {
+public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     private static final long serialVersionUID = 1L;
 

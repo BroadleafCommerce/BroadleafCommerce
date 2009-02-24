@@ -11,7 +11,7 @@
             	<column name="ORDER_ADJUSTMENT_ID"/>
                 <generated-value/>
             </id>
-            <many-to-one name="order" target-entity="org.broadleafcommerce.order.domain.BroadleafOrder" >
+            <many-to-one name="order" target-entity="org.broadleafcommerce.order.domain.OrderImpl" >
 				<join-column name="ORDER_ID" />
             </many-to-one>
 			<many-to-one name="promotion" >

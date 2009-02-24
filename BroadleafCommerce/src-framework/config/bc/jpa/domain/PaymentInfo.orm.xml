@@ -8,7 +8,7 @@
 		WHERE paymentInfo.order.id = :orderId</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.order.domain.BroadleafPaymentInfo" name="paymentInfo">
+	<entity class="org.broadleafcommerce.order.domain.PaymentInfoImpl" name="paymentInfo">
         <table name="BLC_ORDER_PAYMENT"/>
         <inheritance strategy="JOINED"/>
         <attributes>
@@ -22,10 +22,10 @@
             <basic name="referenceNumber">
                 <column name="REFERENCE_NUMBER"/>
             </basic>
-            <many-to-one name="order" target-entity="org.broadleafcommerce.order.domain.BroadleafOrder">
+            <many-to-one name="order" target-entity="org.broadleafcommerce.order.domain.OrderImpl">
 				<join-column name="ORDER_ID"/>
             </many-to-one>
-			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomerAddress">
+			<many-to-one name="address" target-entity="org.broadleafcommerce.profile.domain.AddressImpl">
 				<join-column name="ADDRESS_ID"/>
 			</many-to-one>
         </attributes>

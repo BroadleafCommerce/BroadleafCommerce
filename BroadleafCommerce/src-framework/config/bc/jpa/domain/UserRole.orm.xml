@@ -17,7 +17,7 @@
             <basic name="roleName">
                 <column name="ROLE_NAME" />
             </basic>
-			<many-to-one name="user" target-entity="org.broadleafcommerce.profile.domain.BroadleafUser">
+			<many-to-one name="user" target-entity="org.broadleafcommerce.profile.domain.UserImpl">
 				<join-column name="user"/>
 			</many-to-one>
         </attributes>

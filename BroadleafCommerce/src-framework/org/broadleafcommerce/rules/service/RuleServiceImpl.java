@@ -105,7 +105,7 @@ public class RuleServiceImpl implements RuleService {
 
             output.write("package org.broadleafcommerce.rules;" + newLine);
             output.write("import org.broadleafcommerce.rules.domain.CouponCode;" + newLine);
-            output.write("import org.broadleafcommerce.order.domain.BroadleafOrder;" + newLine);
+            output.write("import org.broadleafcommerce.order.domain.Order;" + newLine);
 
             output.write("rule \"" + shoppingCartPromotion.getName() + "\"" + newLine);
 

@@ -2,7 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 
-public class BroadleafFullfillmentGroupItem implements FullfillmentGroupItem, Serializable {
+public class FullfillmentGroupItemImpl implements FullfillmentGroupItem, Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -12,7 +12,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 //@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 //@DiscriminatorColumn(name = "TYPE")
 //@Table(name = "BLC_ORDER")
-public class BroadleafOrder implements Order, Serializable {
+public class OrderImpl implements Order, Serializable {
 
     private static final long serialVersionUID = 1L;
 

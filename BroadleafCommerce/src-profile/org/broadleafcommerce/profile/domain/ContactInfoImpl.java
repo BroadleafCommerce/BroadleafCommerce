@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class BroadleafContactInfo implements ContactInfo, Serializable {
+public class ContactInfoImpl implements ContactInfo, Serializable {
 
     private static final long serialVersionUID = 1L;
 
