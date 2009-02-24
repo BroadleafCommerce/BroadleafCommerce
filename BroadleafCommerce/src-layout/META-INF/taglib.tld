@@ -6,6 +6,7 @@
     <tlib-version>3.0</tlib-version>
     <jsp-version>2.1</jsp-version>
     <short-name>bc</short-name>
+	<uri>/broadleaf-layout</uri>
 
     <tag>
         <name>list</name>
