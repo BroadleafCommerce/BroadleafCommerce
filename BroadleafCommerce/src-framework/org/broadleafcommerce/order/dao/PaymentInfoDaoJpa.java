@@ -20,11 +20,11 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource
-    private EntityConfiguration entityConfiguration;
-
     @PersistenceContext
     private EntityManager em;
+
+    @Resource
+    private EntityConfiguration entityConfiguration;
 
     @Override
     public PaymentInfo maintainPaymentInfo(PaymentInfo paymentInfo) {

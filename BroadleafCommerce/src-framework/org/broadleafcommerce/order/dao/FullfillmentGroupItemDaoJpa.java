@@ -14,17 +14,17 @@ import org.broadleafcommerce.order.domain.FullfillmentGroupItem;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("FullfillmentGroupItemDao")
+@Repository("fullfillmentGroupItemDao")
 public class FullfillmentGroupItemDaoJpa implements FullfillmentGroupItemDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource
-    private EntityConfiguration entityConfiguration;
-
     @PersistenceContext
     private EntityManager em;
+
+    @Resource
+    private EntityConfiguration entityConfiguration;
 
     @Override
     public void deleteFullfillmentGroupItem(FullfillmentGroupItem fullfillmentGroupItem) {

@@ -5,7 +5,6 @@ import org.broadleafcommerce.catalog.domain.BasePrice;
 public interface BasePriceDao {
 
     public BasePrice readBasePriceById(Long basePriceId);
-    
-    public BasePrice maintainBasePrice(BasePrice basePrice);
 
+    public BasePrice maintainBasePrice(BasePrice basePrice);
 }

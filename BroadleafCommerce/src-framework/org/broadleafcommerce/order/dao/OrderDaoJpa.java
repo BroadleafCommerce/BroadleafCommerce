@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.BasketOrder;
 import org.broadleafcommerce.order.domain.BasketOrderImpl;
-import org.broadleafcommerce.order.domain.SubmittedOrderImpl;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.SubmittedOrderImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
@@ -24,16 +24,16 @@ public class OrderDaoJpa implements OrderDao {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource
-    private EntityConfiguration entityConfiguration;
-    
     @PersistenceContext
     private EntityManager em;
+
+    @Resource
+    private EntityConfiguration entityConfiguration;
 
     @Override
     @SuppressWarnings("unchecked")
     public Order readOrderById(Long orderId) {
-    	return (Order)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.Order"), orderId);
+        return (Order)em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.Order"), orderId);
     }
 
     @Override
@@ -89,8 +89,8 @@ public class OrderDaoJpa implements OrderDao {
         query.executeUpdate();
         return em.find(SubmittedOrderImpl.class, so.getId());
     }
-    
+
     public Order create(){
-		return ((Order)entityConfiguration.createEntityInstance("order"));
-	}
+        return ((Order)entityConfiguration.createEntityInstance("order"));
+    }
 }
