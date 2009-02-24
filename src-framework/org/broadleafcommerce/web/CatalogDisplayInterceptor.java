@@ -34,7 +34,7 @@ public class CatalogDisplayInterceptor extends HandlerInterceptorAdapter {
 
         String path = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());
 
-        BroadleafCommerceRequestState requestState = BroadleafCommerceRequestState.getRequestState(request);
+        CommerceRequestStateImpl requestState = CommerceRequestStateImpl.getRequestState(request);
         requestState.setCatalogPrefix(catalogPrefix);
         Category category = retrieveCategory(path);
         String productId = request.getParameter("productId");

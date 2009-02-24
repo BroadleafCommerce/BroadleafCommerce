@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
 	<named-query name="READ_ORDERS_BY_CUSTOMER_ID" >
-		<query>SELECT order FROM org.broadleafcommerce.order.domain.BroadleafOrder order
+		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
 		WHERE order.customer.id = :customerId</query>
 	</named-query>
 
@@ -15,13 +15,13 @@
 	</named-query>
 
 	<named-query name="UPDATE_BASKET_ORER_TO_SUBMITED">
-		<query>UPDATE org.broadleafcommerce.order.domain.BroadleafOrder blcOrder
+		<query>UPDATE org.broadleafcommerce.order.domain.Order blcOrder
 		          SET blcOrder.type = 'SUBMITTED'
 		        WHERE blcOrder.id = :id
 		</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.order.domain.BroadleafOrder" name="order">
+	<entity class="org.broadleafcommerce.order.domain.OrderImpl" name="order">
         <table name="BLC_ORDER"/>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
@@ -36,25 +36,25 @@
             <basic name="total">
                 <column name="ORDER_TOTAL"/>
             </basic>
-            <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomer">
+            <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.CustomerImpl">
 				<join-column name="CUSTOMER_ID" nullable="false"/>
             </many-to-one>
-			<many-to-one name="contactInfo" target-entity="org.broadleafcommerce.profile.domain.BroadleafContactInfo" >
+			<many-to-one name="contactInfo" target-entity="org.broadleafcommerce.profile.domain.ContactInfoImpl" >
 				<join-column name="CONTACT_INFO_ID"/>
 			</many-to-one>
-			<one-to-many name="fullfillmentGroups" mapped-by="orderId" target-entity="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroup">
+			<one-to-many name="fullfillmentGroups" mapped-by="orderId" target-entity="org.broadleafcommerce.order.domain.FullfillmentGroupImpl">
 				<map-key name="ID"/>
 			</one-to-many>
 			<embedded name="auditable"></embedded>
         </attributes>
     </entity>
 
-	<entity class="org.broadleafcommerce.order.domain.BroadleafBasketOrder" name="basketOrder">
+	<entity class="org.broadleafcommerce.order.domain.BasketOrderImpl" name="basketOrder">
 		<discriminator-value>BASKET</discriminator-value>
 		<discriminator-column name="TYPE"/>
 	</entity>
 
-	<entity class="org.broadleafcommerce.order.domain.BroadleafSubmittedOrder" name="submittedOrder">
+	<entity class="org.broadleafcommerce.order.domain.SubmittedOrderImpl" name="submittedOrder">
 		<discriminator-value>SUBMITTED</discriminator-value>
 		<discriminator-column name="TYPE"/>
 	</entity>

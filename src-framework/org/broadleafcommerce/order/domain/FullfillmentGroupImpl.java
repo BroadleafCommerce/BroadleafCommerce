@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.broadleafcommerce.profile.domain.Address;
 
-public class BroadleafFullfillmentGroup implements FullfillmentGroup, Serializable {
+public class FullfillmentGroupImpl implements FullfillmentGroup, Serializable {
 
     private static final long serialVersionUID = 1L;
 

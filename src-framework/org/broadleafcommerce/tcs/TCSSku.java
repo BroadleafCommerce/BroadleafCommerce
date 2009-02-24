@@ -6,12 +6,12 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.catalog.domain.BroadleafSku;
+import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.hibernate.annotations.IndexColumn;
 
 @Entity
 @Table(name = "TCS_SKU")
-public class TCSSku extends BroadleafSku {
+public class TCSSku extends SkuImpl {
 
     private static final long serialVersionUID = 1L;
 

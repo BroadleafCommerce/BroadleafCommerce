@@ -20,7 +20,7 @@
 		WHERE address.id = :addressId</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.profile.domain.BroadleafCustomerAddress" name="address">
+	<entity class="org.broadleafcommerce.profile.domain.AddressImpl" name="address">
         <table name="BLC_CUSTOMER_ADDRESS" >
         	<unique-constraint>
         		<column-name>CUSTOMER_ID</column-name>
@@ -66,7 +66,7 @@
             <basic name="standardized">
             	<column name="STANDARDIZED"/>
             </basic>
-            <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.BroadleafCustomer">
+            <many-to-one name="customer" target-entity="org.broadleafcommerce.profile.domain.CustomerImpl">
             	<join-column name="CUSTOMER_ID"/>
             	<cascade><cascade-all/></cascade>
             </many-to-one>

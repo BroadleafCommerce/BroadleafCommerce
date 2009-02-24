@@ -26,7 +26,7 @@ import org.hibernate.annotations.IndexColumn;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT")
-public class BroadleafProduct implements Product, Serializable {
+public class ProductImpl implements Product, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,7 +38,7 @@ public class BroadleafProduct implements Product, Serializable {
     // TODO : figure out maps
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = BroadleafProductAttribute.class)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ProductAttributeImpl.class)
     @MapKey(name = "name")
     @JoinTable(name = "PRODUCTS_PRODUCT_ATTRIBUTES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ATTRIBUTE_ID"))
     private Map<String, ProductAttribute> productAttributes;
@@ -63,7 +63,7 @@ public class BroadleafProduct implements Product, Serializable {
     @Column(name = "ACTIVE_END_DATE")
     private Date activeEndDate;
 
-    @OneToMany(mappedBy = "product", targetEntity = BroadleafSku.class)
+    @OneToMany(mappedBy = "product", targetEntity = SkuImpl.class)
     private List<Sku> skus;
 
     @CollectionOfElements
@@ -74,13 +74,13 @@ public class BroadleafProduct implements Product, Serializable {
 
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = BroadleafImageDescription.class)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
     @IndexColumn(name = "SEQUENCE")
     @JoinTable(name = "PRODUCTS_AUXILLARY_IMAGES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "IMAGE_DESCRIPTION_ID"))
     private List<ImageDescription> productAuxillaryImages;
 
     // TODO DEFAULT_CATEGORY_ID
-    @OneToOne(targetEntity = BroadleafCategory.class)
+    @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     private Category defaultCategory;
 

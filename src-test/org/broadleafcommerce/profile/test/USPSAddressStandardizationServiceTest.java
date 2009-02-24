@@ -3,8 +3,8 @@ package org.broadleafcommerce.profile.test;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.BroadleafCustomer;
-import org.broadleafcommerce.profile.domain.BroadleafCustomerAddress;
+import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.AddressStandardizationServiceImpl;
 import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
@@ -34,11 +34,11 @@ public class USPSAddressStandardizationServiceTest extends BaseTest{
 
     private Address getValidAddress() {
         //TODO:  For USPS test server, only certain addresses would work.  Rest will throw an error
-        Customer customer = new BroadleafCustomer();
+        Customer customer = new CustomerImpl();
         customer.setId( new Long(7427));
         customer.setUsername("customer1");
         customer.setPassword("customer1");
-        Address addr = new BroadleafCustomerAddress();
+        Address addr = new AddressImpl();
         addr.setCustomer(customer);
         addr.setAddressName("WORK");
         addr.setAddressLine1("6406 Ivy Lane");

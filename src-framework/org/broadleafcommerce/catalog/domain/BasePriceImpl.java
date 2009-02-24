@@ -6,7 +6,7 @@ import java.util.Date;
 
 import org.broadleafcommerce.common.domain.Auditable;
 
-public class BroadleafBasePrice implements BasePrice, Serializable {
+public class BasePriceImpl implements BasePrice, Serializable {
 
     private static final long serialVersionUID = 1L;
 

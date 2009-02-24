@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
 // @DiscriminatorColumn(name="TYPE")
-public class BroadleafSku implements Sku, Serializable {
+public class SkuImpl implements Sku, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -70,7 +70,7 @@ public class BroadleafSku implements Sku, Serializable {
 
     //    private Map<String, String> skuImageMap;
 
-    @ManyToOne(targetEntity = BroadleafProduct.class)
+    @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;
 

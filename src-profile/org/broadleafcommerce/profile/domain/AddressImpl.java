@@ -1,6 +1,6 @@
 package org.broadleafcommerce.profile.domain;
 
-public class BroadleafCustomerAddress implements Address {
+public class AddressImpl implements Address {
 
     private Long id;
 

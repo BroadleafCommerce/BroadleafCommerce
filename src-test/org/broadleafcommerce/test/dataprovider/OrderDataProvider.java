@@ -2,14 +2,14 @@ package org.broadleafcommerce.test.dataprovider;
 
 import java.math.BigDecimal;
 
-import org.broadleafcommerce.order.domain.BroadleafOrder;
+import org.broadleafcommerce.order.domain.OrderImpl;
 import org.testng.annotations.DataProvider;
 
 public class OrderDataProvider {
 
     @DataProvider(name = "basicOrder")
     public static Object[][] provideBasicSalesOrder() {
-        BroadleafOrder so = new BroadleafOrder();
+        OrderImpl so = new OrderImpl();
         so.setStatus("TEST ORDER STATUS");
         so.setTotal(BigDecimal.valueOf(1000));
         return new Object[][] { { so } };

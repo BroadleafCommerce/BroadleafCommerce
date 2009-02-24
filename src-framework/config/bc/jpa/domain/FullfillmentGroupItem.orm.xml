@@ -8,7 +8,7 @@
 		WHERE fullfillmentGroupItem.fullfillmentGroupId = :fullfillmentGroupId</query>
 	</named-query>
 
-	<entity class="org.broadleafcommerce.order.domain.BroadleafFullfillmentGroupItem" name="fullfillmentGroupItem">
+	<entity class="org.broadleafcommerce.order.domain.FullfillmentGroupItemImpl" name="fullfillmentGroupItem">
         <table name="BLC_FULLFILLMENT_GROUP_ITEM"/>
         <inheritance strategy="JOINED"/>
 		<discriminator-column name="TYPE"/>
@@ -29,7 +29,7 @@
             <basic name="orderItemId">
                 <column name="ORDER_ITEM_ID" />
             </basic>
-			<one-to-one name="orderItem" target-entity="org.broadleafcommerce.order.domain.BroadleafOrderItem">
+			<one-to-one name="orderItem" target-entity="org.broadleafcommerce.order.domain.OrderItemImpl">
 				<join-column name="ID"/>
 			</one-to-one>
         </attributes>
