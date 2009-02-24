@@ -5,9 +5,10 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -23,9 +24,9 @@ import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.ContactInfoImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.broadleafcommerce.type.OrderType;
 
 @Entity
-@DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
 public class OrderImpl implements Order, Serializable {
@@ -41,7 +42,8 @@ public class OrderImpl implements Order, Serializable {
     private Auditable auditable;
 
     @Column(name = "TYPE")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private OrderType type;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
@@ -109,11 +111,11 @@ public class OrderImpl implements Order, Serializable {
         this.contactInfo = contactInfo;
     }
 
-    public String getType() {
+    public OrderType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(OrderType type) {
         this.type = type;
     }
 

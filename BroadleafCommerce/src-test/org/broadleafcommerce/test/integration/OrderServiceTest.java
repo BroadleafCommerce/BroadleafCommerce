@@ -9,8 +9,8 @@ import org.broadleafcommerce.catalog.dao.SkuDaoJpa;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.dao.FulfillmentGroupDaoJpa;
 import org.broadleafcommerce.order.dao.PaymentInfoDaoJpa;
-import org.broadleafcommerce.order.domain.DefaultFulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
@@ -178,7 +178,7 @@ public class OrderServiceTest extends BaseTest {
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getAddress().getId().equals(fulfillmentGroup.getAddress().getId());
-        assert fg.getCost() == fulfillmentGroup.getCost();
+        assert fg.getCost().equals(fulfillmentGroup.getCost());
         assert fg.getOrderId().equals(order.getId());
         assert fg.getMethod().equals(fulfillmentGroup.getMethod());
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
@@ -195,11 +195,11 @@ public class OrderServiceTest extends BaseTest {
 
     @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentBasketForCustomerAfterCreation", "addFulfillmentGroupToOrderFirst" })
     public void findDefaultFillmentGroupForOrder() {
-        DefaultFulfillmentGroup fg = soService.findDefaultFulfillmentGroupForOrder(order);
+        FulfillmentGroupImpl fg = soService.findDefaultFulfillmentGroupForOrder(order);
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getAddress().getId().equals(fulfillmentGroup.getAddress().getId());
-        assert fg.getCost() == fulfillmentGroup.getCost();
+        assert fg.getCost().equals(fulfillmentGroup.getCost());
         assert fg.getOrderId().equals(order.getId());
         assert fg.getMethod().equals(fulfillmentGroup.getMethod());
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
@@ -219,8 +219,8 @@ public class OrderServiceTest extends BaseTest {
         OrderItem item = orderItems.get(0);
         assert item != null;
         soService.removeItemFromOrder(order, item);
-        DefaultFulfillmentGroup dfg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
-        for (FulfillmentGroupItem fulfillmentGroupItem : dfg.getFulfillmentGroupItems()) {
+        FulfillmentGroupImpl fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
+        for (FulfillmentGroupItem fulfillmentGroupItem : fg.getFulfillmentGroupItems()) {
             assert fulfillmentGroupItem.getOrderItem().getId() != item.getId();
         }
     }

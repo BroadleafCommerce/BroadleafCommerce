@@ -5,8 +5,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -19,10 +20,10 @@ import javax.persistence.Table;
 
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
+import org.broadleafcommerce.type.FulfillmentGroupType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "TYPE")
 @Table(name = "BLC_FULFILLMENT_GROUP")
 public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
@@ -54,7 +55,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     private BigDecimal cost;
 
     @Column(name = "TYPE")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private FulfillmentGroupType type;
 
     public Long getId() {
         return id;
@@ -119,12 +121,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     }
 
     @Override
-    public String getType() {
+    public FulfillmentGroupType getType() {
         return type;
     }
 
     @Override
-    public void setType(String type) {
+    public void setType(FulfillmentGroupType type) {
         this.type = type;
     }
 }

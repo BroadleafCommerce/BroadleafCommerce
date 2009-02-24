@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.type.FulfillmentGroupType;
 
 public interface FulfillmentGroup {
 
@@ -35,8 +36,7 @@ public interface FulfillmentGroup {
 
     public void setReferenceNumber(String referenceNumber);
 
-    public String getType();
+    public FulfillmentGroupType getType();
 
-    public void setType(String type);
-
+    public void setType(FulfillmentGroupType type);
 }
