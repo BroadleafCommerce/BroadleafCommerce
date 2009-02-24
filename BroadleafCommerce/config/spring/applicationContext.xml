@@ -104,9 +104,9 @@
 	<bean id="org.broadleafcommerce.catalog.domain.BasePrice" class="org.broadleafcommerce.catalog.domain.BasePriceImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Category" class="org.broadleafcommerce.catalog.domain.CategoryImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.BasketOrder" class="org.broadleafcommerce.order.domain.BasketOrderImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.DefaultFullfillmentGroup" class="org.broadleafcommerce.order.domain.DefaultFullfillmentGroupImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.FullfillmentGroup" class="org.broadleafcommerce.order.domain.FullfillmentGroupImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.FullfillmentGroupItem" class="org.broadleafcommerce.order.domain.FullfillmentGroupItemImpl"/>
+	<bean id="org.broadleafcommerce.order.domain.DefaultFulfillmentGroup" class="org.broadleafcommerce.order.domain.DefaultFulfillmentGroupImpl"/>
+	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroup" class="org.broadleafcommerce.order.domain.FulfillmentGroupImpl"/>
+	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.Order" class="org.broadleafcommerce.order.domain.OrderImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.OrderItem" class="org.broadleafcommerce.order.domain.OrderItemImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.PaymentInfo" class="org.broadleafcommerce.order.domain.PaymentInfoImpl"/>

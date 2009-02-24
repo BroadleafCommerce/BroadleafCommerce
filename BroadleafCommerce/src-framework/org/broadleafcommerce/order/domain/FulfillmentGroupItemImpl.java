@@ -16,8 +16,8 @@ import javax.persistence.Table;
 @Entity
 @DiscriminatorColumn(name="TYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_FULLFILLMENT_GROUP_ITEM")
-public class FullfillmentGroupItemImpl implements FullfillmentGroupItem, Serializable {
+@Table(name = "BLC_FULFILLMENT_GROUP_ITEM")
+public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,8 +26,8 @@ public class FullfillmentGroupItemImpl implements FullfillmentGroupItem, Seriali
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "FULLFILLMENT_GROUP_ID")
-    private Long fullfillmentGroupId;
+    @Column(name = "FULFILLMENT_GROUP_ID")
+    private Long fulfillmentGroupId;
 
     @OneToOne(targetEntity=OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ID")
@@ -44,12 +44,12 @@ public class FullfillmentGroupItemImpl implements FullfillmentGroupItem, Seriali
         this.id = id;
     }
 
-    public Long getFullfillmentGroupId() {
-        return fullfillmentGroupId;
+    public Long getFulfillmentGroupId() {
+        return fulfillmentGroupId;
     }
 
-    public void setFullfillmentGroupId(Long fullfillmentGroupId) {
-        this.fullfillmentGroupId = fullfillmentGroupId;
+    public void setFulfillmentGroupId(Long fulfillmentGroupId) {
+        this.fulfillmentGroupId = fulfillmentGroupId;
     }
 
     public OrderItem getOrderItem() {

@@ -57,9 +57,9 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "ORDER_TOTAL")
     private BigDecimal total;
 
-    @OneToMany(mappedBy = "orderId", targetEntity = FullfillmentGroupImpl.class)
+    @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
     @MapKey(name = "id")
-    private List<FullfillmentGroup> fullfillmentGroups;
+    private List<FulfillmentGroup> fulfillmentGroups;
 
     public Long getId() {
         return id;
@@ -117,11 +117,11 @@ public class OrderImpl implements Order, Serializable {
         this.type = type;
     }
 
-    public List<FullfillmentGroup> getFullfillmentGroups() {
-        return fullfillmentGroups;
+    public List<FulfillmentGroup> getFulfillmentGroups() {
+        return fulfillmentGroups;
     }
 
-    public void setFullfillmentGroups(List<FullfillmentGroup> fullfillmentGroups) {
-        this.fullfillmentGroups = fullfillmentGroups;
+    public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups) {
+        this.fulfillmentGroups = fulfillmentGroups;
     }
 }

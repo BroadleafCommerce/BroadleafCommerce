@@ -3,8 +3,8 @@ package org.broadleafcommerce.order.service;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.order.domain.DefaultFullfillmentGroup;
-import org.broadleafcommerce.order.domain.FullfillmentGroup;
+import org.broadleafcommerce.order.domain.DefaultFulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
@@ -15,9 +15,9 @@ public interface OrderService {
 
     public Order findCurrentBasketForCustomer(Customer customer);
 
-    public DefaultFullfillmentGroup findDefaultFullfillmentGroupForOrder(Order order);
+    public DefaultFulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
-    public List<FullfillmentGroup> findFullfillmentGroupsForOrder(Order order);
+    public List<FulfillmentGroup> findFulfillmentGroupsForOrder(Order order);
 
     public List<Order> findOrdersForCustomer(Customer customer);
 
@@ -29,15 +29,15 @@ public interface OrderService {
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
 
-    public FullfillmentGroup addItemToFullfillmentGroup(OrderItem item, FullfillmentGroup fullfillmentGroup, int quantity);
+    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity);
 
-    public FullfillmentGroup addFullfillmentGroupToOrder(Order order, FullfillmentGroup fullfillmentGroup);
+    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup);
 
-    public FullfillmentGroup updateFullfillmentGroup(FullfillmentGroup fullfillmentGroup);
+    public FulfillmentGroup updateFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
     public OrderItem updateItemInOrder(Order order, OrderItem item);
 
-    public void removeFullfillmentGroupFromOrder(Order order, FullfillmentGroup fullfillmentGroup);
+    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup);
 
     public Order removeItemFromOrder(Order order, OrderItem item);
 

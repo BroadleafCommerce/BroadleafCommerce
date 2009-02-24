@@ -37,8 +37,8 @@ public interface Order {
 
     public void setType(String type);
 
-    public List<FullfillmentGroup> getFullfillmentGroups();
+    public List<FulfillmentGroup> getFulfillmentGroups();
 
-    public void setFullfillmentGroups(List<FullfillmentGroup> fullfillmentGroups);
+    public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
 }

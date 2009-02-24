@@ -9,7 +9,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue("DEFAULT")
-public class DefaultFullfillmentGroupImpl extends FullfillmentGroupImpl implements DefaultFullfillmentGroup, Serializable {
+public class DefaultFulfillmentGroupImpl extends FulfillmentGroupImpl implements DefaultFulfillmentGroup, Serializable {
 
     private static final long serialVersionUID = 1L;
 }
