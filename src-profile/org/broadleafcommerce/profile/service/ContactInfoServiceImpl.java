@@ -2,13 +2,18 @@ package org.broadleafcommerce.profile.service;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.domain.ContactInfo;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository("contactInfoService")
 public class ContactInfoServiceImpl implements ContactInfoService {
 
+    @Resource
     private ContactInfoDao contactInfoDao;
 
     @Transactional(propagation = Propagation.REQUIRED)

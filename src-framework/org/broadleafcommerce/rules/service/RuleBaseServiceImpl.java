@@ -4,7 +4,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.drools.RuleBase;
 import org.drools.RuleBaseFactory;
+import org.springframework.stereotype.Repository;
 
+@Repository("ruleBaseService")
 public class RuleBaseServiceImpl implements RuleBaseService {
 
     /** Logger for this class and subclasses */

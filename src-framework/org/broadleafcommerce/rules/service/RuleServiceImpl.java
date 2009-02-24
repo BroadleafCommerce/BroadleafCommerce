@@ -30,7 +30,6 @@ public class RuleServiceImpl implements RuleService {
     @Resource
     private RuleBaseService ruleBaseService;
 
-    @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ShoppingCartPromotion saveShoppingCartPromotion(ShoppingCartPromotion shoppingCartPromotion) {
         return ruleDao.maintainShoppingCartPromotion(shoppingCartPromotion);

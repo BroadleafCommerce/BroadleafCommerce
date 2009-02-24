@@ -2,6 +2,8 @@ package org.broadleafcommerce.profile.service;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.UserDao;
@@ -12,16 +14,20 @@ import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.encoding.PasswordEncoder;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository("userService")
 public class UserServiceImpl implements UserService {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
+    @Resource
     private UserDao userDao;
 
+    @Resource
     private PasswordEncoder passwordEncoder;
 
     // @Resource(name = "saltSource")

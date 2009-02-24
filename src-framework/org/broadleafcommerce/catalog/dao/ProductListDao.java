@@ -5,7 +5,6 @@ import org.broadleafcommerce.catalog.domain.ProductList;
 public interface ProductListDao {
 
     public ProductList readProductListById(Long productListId);
-    
-    public ProductList maintainProductList(ProductList productList);
 
+    public ProductList maintainProductList(ProductList productList);
 }

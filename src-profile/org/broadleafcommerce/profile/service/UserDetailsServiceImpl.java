@@ -1,5 +1,7 @@
 package org.broadleafcommerce.profile.service;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.dao.DataAccessException;
@@ -9,12 +11,15 @@ import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Repository;
 
+@Repository("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
+    @Resource
     private CustomerService customerService;
 
     private boolean forcePasswordChange = false;

@@ -5,21 +5,28 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.broadleafcommerce.catalog.dao.CategoryDao;
 import org.broadleafcommerce.catalog.dao.ProductDao;
 import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository("catalogService")
 public class CatalogServiceImpl implements CatalogService {
 
+    @Resource
     private CategoryDao categoryDao;
 
+    @Resource
     private ProductDao productDao;
 
+    @Resource
     private SkuDao skuDao;
 
     public Product findProductById(Long productId) {
