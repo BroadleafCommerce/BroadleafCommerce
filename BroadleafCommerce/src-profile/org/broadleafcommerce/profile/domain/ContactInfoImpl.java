@@ -2,25 +2,47 @@ package org.broadleafcommerce.profile.domain;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
+
+@Entity
+@EntityListeners(value = { TemporalTimestampListener.class })
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_CONTACT_INFO")
 public class ContactInfoImpl implements ContactInfo, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected Log logger = LogFactory.getLog(getClass());
-
+    @Id
+    @GeneratedValue
+    @Column(name = "CONTACT_ID")
     private Long id;
 
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = CustomerImpl.class)
+    @JoinColumn(name = "CUSTOMER_ID")
     private Customer customer;
 
+    @Column(name = "PRIMARY_PHONE")
     private String primaryPhone;
 
+    @Column(name = "SECONDARY_PHONE")
     private String secondaryPhone;
 
+    @Column(name = "EMAIL")
     private String email;
 
+    @Column(name = "FAX")
     private String fax;
 
     public Long getId() {

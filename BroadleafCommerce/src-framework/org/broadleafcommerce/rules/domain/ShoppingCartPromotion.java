@@ -3,24 +3,33 @@ package org.broadleafcommerce.rules.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-//@Entity
-//@Table(name = "BLC_PROMOTION_RULE_DEFINITION")
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Table;
+
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_PROMOTION_RULE_DEFINITION")
 public class ShoppingCartPromotion implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // @Id
-    // @GeneratedValue
-    // @Column(name = "SHOPPING_CART_PROMOTION_RULE_ID")
+    @Id
+    @GeneratedValue
+    @Column(name = "SHOPPING_CART_PROMOTION_RULE_ID")
     private Long id;
 
-    // @Column(name = "NAME")
+    @Column(name = "NAME")
     private String name;
 
-    // @Column(name = "COUPON_CODE")
+    @Column(name = "COUPON_CODE")
     private String couponCode;
 
-    // @Column(name = "ORDER_TOTAL")
+    @Column(name = "ORDER_TOTAL")
     private BigDecimal orderTotal;
 
     public void setId(Long id) {

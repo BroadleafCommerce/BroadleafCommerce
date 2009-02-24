@@ -7,31 +7,4 @@
 		<query>SELECT fullfillmentGroupItem FROM org.broadleafcommerce.order.domain.FullfillmentGroupItem fullfillmentGroupItem
 		WHERE fullfillmentGroupItem.fullfillmentGroupId = :fullfillmentGroupId</query>
 	</named-query>
-
-	<entity class="org.broadleafcommerce.order.domain.FullfillmentGroupItemImpl" name="fullfillmentGroupItem">
-        <table name="BLC_FULLFILLMENT_GROUP_ITEM"/>
-        <inheritance strategy="JOINED"/>
-		<discriminator-column name="TYPE"/>
-        <attributes>
-            <id name="id">
-            	<column name="ID"/>
-                <generated-value/>
-            </id>
-            <basic name="quantity">
-                <column name="QUANTITY" />
-            </basic>
-            <basic name="cost">
-                <column name="COST" />
-            </basic>
-            <basic name="fullfillmentGroupId">
-                <column name="FULLFILLMENT_GROUP_ID" />
-            </basic>
-            <basic name="orderItemId">
-                <column name="ORDER_ITEM_ID" />
-            </basic>
-			<one-to-one name="orderItem" target-entity="org.broadleafcommerce.order.domain.OrderItemImpl">
-				<join-column name="ID"/>
-			</one-to-one>
-        </attributes>
-    </entity>
 </entity-mappings>

@@ -1,30 +1,64 @@
 package org.broadleafcommerce.profile.domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
+
+@Entity
+@EntityListeners(value = { TemporalTimestampListener.class })
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
 public class AddressImpl implements Address {
 
+    @Id
+    @GeneratedValue
+    @Column(name = "ADDRESS_ID")
     private Long id;
 
+    @Column(name = "ADDRESS_NAME")
     private String addressName;
 
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = CustomerImpl.class)
+    @JoinColumn(name = "CUSTOMER_ID")
     private Customer customer;
 
+    @Column(name = "ADDRESS_LINE1")
     private String addressLine1;
 
+    @Column(name = "ADDRESS_LINE2")
     private String addressLine2;
 
+    @Column(name = "CITY")
     private String city;
 
+    @Column(name = "COUNTRY")
     private CountryEnums.Country country;
 
+    @Column(name = "postalCode")
     private String postalCode;
 
+    @Column(name = "stateProvRegion")
     private String stateProvRegion;
 
+    @Column(name = "TOKENIZED_ADDRESS")
     private String tokenizedAddress;
 
+    @Column(name = "STANDARDIZED")
     private Boolean standardized = Boolean.FALSE;
 
     // This field is temporary and will be removed later
+    @Column(name = "zipFour")
     private String zipFour;
 
     public Long getId() {

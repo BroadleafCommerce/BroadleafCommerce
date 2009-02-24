@@ -2,19 +2,37 @@ package org.broadleafcommerce.profile.domain;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
+import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
+
+@Entity
+@EntityListeners(value = { TemporalTimestampListener.class })
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_USER_ROLE")
 public class UserRoleImpl implements UserRole, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected Log logger = LogFactory.getLog(getClass());
-
+    @Id
+    @GeneratedValue
+    @Column(name = "USER_ROLE_ID")
     private Long id;
 
+    @ManyToOne(targetEntity=UserImpl.class)
+    @JoinColumn(name = "USER_ID")
     private User user;
 
+    @Column(name = "ROLE_NAME")
     private String roleName;
 
     public UserRoleImpl() {

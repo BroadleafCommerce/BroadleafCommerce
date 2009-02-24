@@ -2,25 +2,34 @@ package org.broadleafcommerce.promotion.domain;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.order.domain.Order;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-//@Entity
-//@Table(name = "BLC_ORDER_ADJUSTMENTS")
+import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.OrderImpl;
+
+@Entity
+@Table(name = "BLC_ORDER_ADJUSTMENT")
 public class OrderAdjustment implements Serializable {
 
     public static final long serialVersionUID = 1L;
 
-    // @Id
-    // @GeneratedValue
-    // @Column(name = "ORDER_ADJUSTMENT_ID")
+    @Id
+    @GeneratedValue
+    @Column(name = "ORDER_ADJUSTMENT_ID")
     private Long id;
 
-    // @ManyToOne
-    // @JoinColumn(name = "SALES_ORDER_ID")
+    @ManyToOne(targetEntity = OrderImpl.class)
+    @JoinColumn(name = "ORDER_ID")
     private Order order;
 
-    // @ManyToOne
-    // @JoinColumn(name = "PROMOTIONAL_ID")
+    @ManyToOne
+    @JoinColumn(name = "PROMOTIONAL_ID")
     private Promotion promotion;
 
     public Long getId() {
