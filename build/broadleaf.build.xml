@@ -68,6 +68,16 @@
 			</fileset>
 		</copy>
 
+		<if>
+			<equals arg1="${hibernate.hbm2ddl.auto}" arg2="false" />
+			<then>
+				<replace file="${stage.dir}/framework-jar/META-INF/persistence-framework.xml">
+					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
+					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
+				</replace>
+			</then>
+		</if>
+
 		<jar jarfile="${stage.dir}/broadleaf-framework.jar" basedir="${stage.dir}/framework-jar">
 			<include name="**/*.class" />
 			<include name="**/*.properties" />
@@ -76,6 +86,17 @@
 			<exclude name="**/test/**/*.class" />
 		</jar>
 		<delete dir="${stage.dir}/framework-jar" />
+	</target>
+
+	<target name="build-framework-source-jar" depends="build-extensibility-source-jar, build-profile-source-jar">
+		<delete file="${stage.dir}/broadleaf-framework-sources.jar" />
+		<jar jarfile="${stage.dir}/broadleaf-framework-sources.jar" basedir="${framework.src.dir}">
+			<include name="**/*.java" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
 	</target>
 
 	<target name="build-extensibility-jar" depends="setup">
@@ -111,6 +132,17 @@
 			<exclude name="**/test/**/*.class" />
 		</jar>
 		<delete dir="${stage.dir}/extensibility-jar" />
+	</target>
+
+	<target name="build-extensibility-source-jar">
+		<delete file="${stage.dir}/build-extensibility-source-jar" />
+		<jar jarfile="${stage.dir}/broadleaf-extensibility-sources.jar" basedir="${extensibility.src.dir}">
+			<include name="**/*.java" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
 	</target>
 
 	<target name="generate-javadocs">
@@ -161,6 +193,17 @@
 		<delete dir="${stage.dir}/profile-jar" />
 	</target>
 
+	<target name="build-layout-source-jar" depends="build-extensibility-source-jar, build-profile-source-jar, build-framework-source-jar">
+		<delete file="${stage.dir}/broadleaf-layout-sources.jar" />
+		<jar jarfile="${stage.dir}/broadleaf-layout-sources.jar" basedir="${layout.src.dir}">
+			<include name="**/*.java" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
+	</target>
+
 	<target name="build-profile-jar" depends="setup, build-extensibility-jar">
 		<mkdir dir="${stage.dir}/profile-jar" />
 
@@ -196,7 +239,21 @@
 		<delete dir="${stage.dir}/profile-jar" />
 	</target>
 
+	<target name="build-profile-source-jar" depends="build-extensibility-source-jar">
+		<delete file="${stage.dir}/broadleaf-profile-sources.jar" />
+		<jar jarfile="${stage.dir}/broadleaf-profile-sources.jar" basedir="${profile.src.dir}">
+			<include name="**/*.java" />
+			<include name="**/*.properties" />
+			<include name="**/*.xml" />
+			<include name="**/*.vm" />
+			<include name="META-INF/**" />
+			<exclude name="**/test/**/*.class" />
+		</jar>
+	</target>
+
 	<target name="build-jars" depends="build-framework-jar,build-extensibility-jar,build-profile-jar,build-layout-jar"/>
+
+	<target name="build-source-jars" depends="build-framework-source-jar,build-extensibility-source-jar,build-profile-source-jar,build-layout-source-jar"/>
 
 	<target name="clean">
 		<delete dir="${stage.dir}" />
