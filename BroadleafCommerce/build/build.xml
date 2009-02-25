@@ -36,6 +36,16 @@
 		<ant antfile="${test.build.file}" target="runall" />
 	</target>
 
+	<target name="7. Build Source Jars" description="Builds all source jars to the staging area.">
+		<ant antfile="${internal.build.file}" target="build-source-jars" />
+	</target>
+
+	<target name="8. Build Release Binaries and Source Jars" depends="1. Build Jars, 7. Build Source Jars" description="Builds all production (disable automatic ddl table creation) binary and source jars to the staging area.">
+		<property name="hibernate.hbm2ddl.auto" value="false" />
+		<ant antfile="${internal.build.file}" target="build-jars" />
+		<ant antfile="${internal.build.file}" target="build-source-jars" />
+	</target>
+
 	<target name="usage">
 		<echo>
 			This is the ANT build file for the Broadleaf Commerce project.
