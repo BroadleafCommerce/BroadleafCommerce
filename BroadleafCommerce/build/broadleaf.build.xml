@@ -190,7 +190,7 @@
 			<include name="META-INF/**" />
 			<exclude name="**/test/**/*.class" />
 		</jar>
-		<delete dir="${stage.dir}/profile-jar" />
+		<delete dir="${stage.dir}/layout-jar" />
 	</target>
 
 	<target name="build-layout-source-jar" depends="build-extensibility-source-jar, build-profile-source-jar, build-framework-source-jar">
