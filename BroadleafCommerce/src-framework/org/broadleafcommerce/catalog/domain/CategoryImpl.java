@@ -28,7 +28,7 @@ public class CategoryImpl implements Category, Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "ID")
+    @Column(name = "CATEGORY_ID")
     private Long id;
 
     @Column(name = "NAME")

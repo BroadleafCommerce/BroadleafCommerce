@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.springframework.security.Authentication;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository("customerStateStore")
+@Service("customerStateStore")
 public class CustomerStateStore implements PostLoginObserver {
 
     @Resource

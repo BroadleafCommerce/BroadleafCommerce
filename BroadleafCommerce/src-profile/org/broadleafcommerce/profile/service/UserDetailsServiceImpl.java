@@ -11,9 +11,9 @@ import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
-@Repository("userDetailsService")
+@Service("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     /** Logger for this class and subclasses */

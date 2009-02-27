@@ -14,10 +14,10 @@ import org.apache.velocity.exception.VelocityException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
-@Repository("emailService")
+@Service("emailService")
 public class EmailServiceImpl implements EmailService {
 
     protected final Log logger = LogFactory.getLog(getClass());

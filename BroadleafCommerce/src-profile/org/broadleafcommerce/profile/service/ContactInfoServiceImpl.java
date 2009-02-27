@@ -6,11 +6,11 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.domain.ContactInfo;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository("contactInfoService")
+@Service("contactInfoService")
 public class ContactInfoServiceImpl implements ContactInfoService {
 
     @Resource
