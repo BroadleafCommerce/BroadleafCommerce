@@ -6,11 +6,11 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.domain.Address;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository("addressService")
+@Service("addressService")
 public class AddressServiceImpl implements AddressService {
 
     @Resource

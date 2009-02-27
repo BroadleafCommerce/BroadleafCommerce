@@ -27,10 +27,10 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
-@Repository("addressStandardizationService")
+@Service("addressStandardizationService")
 public class AddressStandardizationServiceImpl implements AddressStandardizationService, ServiceDownResponse {
     protected final Log logger = LogFactory.getLog(getClass());
     private static final String HTTP_PROTOCOL = "http://";
