@@ -18,12 +18,12 @@
 		WHERE category.urlKey = :urlKey</query>
 	</named-query>
 
-	<named-query name="BC_READ_CATEGORIES_BY_PARENT_CATEGORY_AND_AVTIVE_DATES">
-		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
-		WHERE category.defaultParentCategory = :defaultParentCategory
-		AND category.activeStartDate &lt;= CURRENT_DATE
-		AND (category.activeEndDate &gt; CURRENT_DATE OR category.activeEndDate = null)
-		ORDER BY category.displayOrder</query>
+	<named-query name="BC_READ_ACTIVE_SUB_CATEGORIES">
+		<query>SELECT categoryxref.subCategory FROM org.broadleafcommerce.catalog.domain.CategoryCategory categoryxref
+		WHERE categoryxref.category = :category
+		AND categoryxref.subCategory.activeStartDate &lt;= CURRENT_DATE
+		AND (categoryxref.subCategory.activeEndDate &gt; CURRENT_DATE OR categoryxref.subCategory.activeEndDate = null)
+		ORDER BY categoryxref.displayOrder</query>
 	</named-query>
 
 </entity-mappings>

@@ -39,6 +39,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
+    public List<Product> findActiveProductsByCategory(Category category) {
+        return productDao.readActiveProductsByCategory(category.getId());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
     public Product saveProduct(Product product) {
         return productDao.maintainProduct(product);
     }
