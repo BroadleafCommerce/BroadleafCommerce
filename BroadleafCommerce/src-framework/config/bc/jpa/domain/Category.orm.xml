@@ -10,7 +10,7 @@
 
 	<named-query name="BC_READ_ALL_SUBCATEGORIES">
 		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
-		WHERE category.parentCategory = :parentCategory</query>
+		WHERE category.defaultParentCategory = :defaultParentCategory</query>
 	</named-query>
 
 	<named-query name="BC_READ_CATEGORY_BY_URL_KEY">
@@ -20,7 +20,7 @@
 
 	<named-query name="BC_READ_CATEGORIES_BY_PARENT_CATEGORY_AND_AVTIVE_DATES">
 		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
-		WHERE category.parentCategory = :category
+		WHERE category.defaultParentCategory = :defaultParentCategory
 		AND category.activeStartDate &lt;= CURRENT_DATE
 		AND (category.activeEndDate &gt; CURRENT_DATE OR category.activeEndDate = null)
 		ORDER BY category.displayOrder</query>

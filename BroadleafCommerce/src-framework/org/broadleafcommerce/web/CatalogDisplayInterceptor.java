@@ -83,7 +83,7 @@ public class CatalogDisplayInterceptor extends HandlerInterceptorAdapter {
         String token = tokens.pop();
         boolean check;
         if (category != null && token.equals(category.getUrlKey())){
-            check = isValidCategory(tokens, category.getParentCategory(), ignoreToken);
+            check = isValidCategory(tokens, category.getDefaultParentCategory(), ignoreToken);
         } else {
             if (category == null && token.equals(ignoreToken)){
                 return true;
