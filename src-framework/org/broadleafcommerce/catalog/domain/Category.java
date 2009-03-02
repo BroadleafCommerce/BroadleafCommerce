@@ -13,9 +13,9 @@ public interface Category {
 
     public void setName(String name);
 
-    public Category getParentCategory();
+    public Category getDefaultParentCategory();
 
-    public void setParentCategory(Category parentCategory);
+    public void setDefaultParentCategory(Category defaultParentCategory);
 
     public String getUrl();
 

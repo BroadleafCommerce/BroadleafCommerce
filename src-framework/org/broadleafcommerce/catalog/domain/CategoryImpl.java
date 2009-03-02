@@ -41,8 +41,8 @@ public class CategoryImpl implements Category, Serializable {
     private String urlKey;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
-    @JoinColumn(name = "PARENT_CATEGORY_ID")
-    private Category parentCategory;
+    @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
+    private Category defaultParentCategory;
 
     @Column(name = "DISPLAY_ORDER")
     private Integer displayOrder;
@@ -91,12 +91,12 @@ public class CategoryImpl implements Category, Serializable {
         this.name = name;
     }
 
-    public Category getParentCategory() {
-        return parentCategory;
+    public Category getDefaultParentCategory() {
+        return defaultParentCategory;
     }
 
-    public void setParentCategory(Category parentCategory) {
-        this.parentCategory = parentCategory;
+    public void setDefaultParentCategory(Category defaultParentCategory) {
+        this.defaultParentCategory = defaultParentCategory;
     }
 
     public String getUrl() {
