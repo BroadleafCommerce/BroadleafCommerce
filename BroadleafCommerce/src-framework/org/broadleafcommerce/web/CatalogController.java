@@ -17,67 +17,67 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 public class CatalogController extends AbstractController{
-	protected final Log logger = LogFactory.getLog(getClass());
-	private CatalogService catalogService;
-	private String defaultView;
-	private String defaultProductView;
+    protected final Log logger = LogFactory.getLog(getClass());
+    private CatalogService catalogService;
+    private String defaultView;
+    private String defaultProductView;
 
-	public void setCatalogService(CatalogService catalogService) {
-		this.catalogService = catalogService;
-	}
+    public void setCatalogService(CatalogService catalogService) {
+        this.catalogService = catalogService;
+    }
 
-	public String getDefaultView() {
-		return defaultView;
-	}
+    public String getDefaultView() {
+        return defaultView;
+    }
 
-	public void setDefaultView(String defaultView) {
-		this.defaultView = defaultView;
-	}
+    public void setDefaultView(String defaultView) {
+        this.defaultView = defaultView;
+    }
 
-	public String getDefaultProductView() {
-		return defaultProductView;
-	}
+    public String getDefaultProductView() {
+        return defaultProductView;
+    }
 
-	public void setDefaultProductView(String defaultProductView) {
-		this.defaultProductView = defaultProductView;
-	}
+    public void setDefaultProductView(String defaultProductView) {
+        this.defaultProductView = defaultProductView;
+    }
 
-	@Override
-	protected ModelAndView handleRequestInternal(HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		CommerceRequestStateImpl requestState = (CommerceRequestStateImpl) CommerceRequestStateImpl.getRequestState(request);
+    @Override
+    protected ModelAndView handleRequestInternal(HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        CommerceRequestStateImpl requestState = (CommerceRequestStateImpl) CommerceRequestStateImpl.getRequestState(request);
 
-		String productId = request.getParameter("productId");
+        String productId = request.getParameter("productId");
 
-		if (requestState.getCategory() != null){
+        if (requestState.getCategory() != null){
 
-			if (productId != null){
-				try {
-					Product item = catalogService.findProductById(new Long(productId));
-					if (item != null){
-						List<Sku> skus = catalogService.findSkusForProductId(item.getId());
+            if (productId != null){
+                try {
+                    Product item = catalogService.findProductById(new Long(productId));
+                    if (item != null){
+                        List<Sku> skus = item.getActiveSkus();
 
-						ProductSkus productSkus = new ProductSkus(item, skus);
-						Map<Object, Object> model = new HashMap<Object, Object>();
-						model.put("productSkus", productSkus);
+                        ProductSkus productSkus = new ProductSkus(item, skus);
+                        Map<Object, Object> model = new HashMap<Object, Object>();
+                        model.put("productSkus", productSkus);
 
-						return new ModelAndView(getDefaultProductView(), model);
+                        return new ModelAndView(getDefaultProductView(), model);
 
-					}
-				} catch (NumberFormatException e) {
-					logger.error("Unable to parse productId: " + e.getMessage());
-				}
-			} else{
-				List<Category> subCategories = catalogService.findAllSubCategories(requestState.getCategory());
+                    }
+                } catch (NumberFormatException e) {
+                    logger.error("Unable to parse productId: " + e.getMessage());
+                }
+            } else{
+                List<Category> subCategories = catalogService.findAllSubCategories(requestState.getCategory());
 
-				Map<Object, Object> model = new HashMap<Object, Object>();
-				model.put("subCategories", subCategories);
-				model.put("category", requestState.getCategory());
+                Map<Object, Object> model = new HashMap<Object, Object>();
+                model.put("subCategories", subCategories);
+                model.put("category", requestState.getCategory());
 
-				return new ModelAndView(getDefaultView(), model);
-			}
-		}
+                return new ModelAndView(getDefaultView(), model);
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

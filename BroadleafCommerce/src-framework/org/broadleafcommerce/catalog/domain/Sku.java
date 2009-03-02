@@ -2,17 +2,13 @@ package org.broadleafcommerce.catalog.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Map;
 
 public interface Sku {
 
     public Long getId();
 
     public void setId(Long id);
-
-    // TODO fix
-    // public Set<Sku> getChildSkus();
-    //
-    // public void setChildSkus(Set<Sku> childSkus);
 
     public BigDecimal getSalePrice();
 
@@ -46,8 +42,9 @@ public interface Sku {
 
     public void setActiveEndDate(Date activeEndDate);
 
-    // public Map<String, ItemAttribute> getItemAttributes();
-    //
-    // public void setItemAttributes(Map<String, ItemAttribute> itemAttributes);
+    public Map<String, String> getSkuImages();
 
+    public String getSkuImage(String imageKey);
+
+    public void setSkuImages(Map<String, String> skuImages);
 }

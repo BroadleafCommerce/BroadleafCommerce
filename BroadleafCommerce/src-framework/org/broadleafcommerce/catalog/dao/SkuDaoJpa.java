@@ -46,13 +46,6 @@ public class SkuDaoJpa implements SkuDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Sku> readSkusByProductId(Long productId) {
-        Query query = em.createNamedQuery("BC_READ_SKUS_BY_CATEGORY_ID");
-        query.setParameter("productId", productId);
-        return query.getResultList();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<Sku> readSkusById(List<Long> ids) {
         Query query = em.createNamedQuery("BC_READ_SKUS_BY_ID");
         query.setParameter("skuIds", ids);

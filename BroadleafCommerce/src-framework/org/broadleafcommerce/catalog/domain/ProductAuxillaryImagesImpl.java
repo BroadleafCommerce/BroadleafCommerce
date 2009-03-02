@@ -15,7 +15,7 @@ import javax.persistence.Table;
 // TODO: This class is not need accept to create the columns for unit tests
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "PRODUCT_AUXILLARY_IMAGES")
+@Table(name = "BLC_PRODUCT_AUX_IMAGE")
 public class ProductAuxillaryImagesImpl implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -29,8 +29,8 @@ public class ProductAuxillaryImagesImpl implements Serializable {
     @JoinColumn(name = "PRODUCT_ID")
     private Product product;
 
-    @Column(name = "SEQUENCE")
-    private Integer sequence;
+    @Column(name = "DISPLAY_ORDER")
+    private Integer displayOrder;
 
     public Long getId() {
         return id;
@@ -40,19 +40,11 @@ public class ProductAuxillaryImagesImpl implements Serializable {
         this.id = id;
     }
 
-    public Product getProduct() {
-        return product;
+    public Integer getDisplayOrder() {
+        return displayOrder;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public Integer getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
+    public void setDisplayOrder(Integer displayOrder) {
+        this.displayOrder = displayOrder;
     }
 }

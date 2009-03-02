@@ -3,6 +3,7 @@ package org.broadleafcommerce.catalog.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,13 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.JoinTable;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.CollectionOfElements;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
-// @DiscriminatorColumn(name="TYPE")
 public class SkuImpl implements Sku, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,20 +29,12 @@ public class SkuImpl implements Sku, Serializable {
     @Column(name = "SKU_ID")
     private Long id;
 
-    // private Set<Sku> childSkus;
-
-    // TODO return money class from getter SALE_PRICE
     @Column(name = "SALE_PRICE")
     private BigDecimal salePrice;
 
-    // TODO return money class from getter LIST_PRICE
     @Column(name = "LIST_PRICE")
     private BigDecimal listPrice;
 
-    // TODO
-    // private Map<String, ItemAttribute> itemAttributes;
-
-    // TODO return money class from getter NAME
     @Column(name = "NAME")
     private String name;
 
@@ -59,14 +53,11 @@ public class SkuImpl implements Sku, Serializable {
     @Column(name = "ACTIVE_END_DATE")
     private Date activeEndDate;
 
-    // TODO fix map
-    // private Set<SkuImage> skuImages;
-
-    // private Map<String, String> skuImageMap;
-
-    @ManyToOne(targetEntity = ProductImpl.class)
-    @JoinColumn(name = "PRODUCT_ID")
-    private Product product;
+    @CollectionOfElements
+    @JoinTable(name = "SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
+    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
+    @Column(name = "URL")
+    private Map<String, String> skuImages;
 
     public Long getId() {
         return id;
@@ -140,24 +131,15 @@ public class SkuImpl implements Sku, Serializable {
         this.activeEndDate = activeEndDate;
     }
 
-    public Product getProduct() {
-        return product;
+    public Map<String, String> getSkuImages() {
+        return skuImages;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public String getSkuImage(String imageKey) {
+        return skuImages.get(imageKey);
     }
 
-    // public String getSkuImage(String key) {
-    // if (skuImageMap == null) {
-    // skuImageMap = new HashMap<String, String>();
-    // Set<SkuImage> images = getSkuImages();
-    // if (images != null) {
-    // for (SkuImage s : images) {
-    // skuImageMap.put(s.getName(), s.getUrl());
-    // }
-    // }
-    // }
-    // return skuImageMap.get(key);
-    // }
+    public void setSkuImages(Map<String, String> skuImages) {
+        this.skuImages = skuImages;
+    }
 }

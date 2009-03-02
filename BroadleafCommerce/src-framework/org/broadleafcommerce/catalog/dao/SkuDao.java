@@ -6,15 +6,13 @@ import org.broadleafcommerce.catalog.domain.Sku;
 
 public interface SkuDao {
 
-	public Sku readSkuById(Long skuId);
+    public Sku readSkuById(Long skuId);
 
-	public Sku maintainSku(Sku sku);
+    public Sku maintainSku(Sku sku);
 
-	public Sku readFirstSku();
+    public Sku readFirstSku();
 
-	public List<Sku> readAllSkus();
+    public List<Sku> readAllSkus();
 
-	public List<Sku> readSkusById(List<Long> ids);
-
-	public List<Sku> readSkusByProductId(Long productId);
+    public List<Sku> readSkusById(List<Long> ids);
 }

@@ -1,23 +1,29 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.annotations.OrderBy;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -56,6 +62,11 @@ public class CategoryImpl implements Category, Serializable {
     @Column(name = "DISPLAY_TEMPLATE")
     private String displayTemplate;
 
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
+    @OrderBy(clause = "DISPLAY_ORDER")
+    private List<Category> childCategories;
+
     // @OneToMany(mappedBy = "category", targetEntity = BroadleafCategoryImage.class)
     @CollectionOfElements
     @JoinTable(name = "CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
@@ -66,11 +77,8 @@ public class CategoryImpl implements Category, Serializable {
     @Column(name = "LONG_DESCRIPTION")
     private String longDescription;
 
-    // TODO
-    // @OneToMany(targetEntity = BroadleafProduct.class)
-    // @IndexColumn(name = "SEQUENCE")
-    // @JoinColumn(name = "sku", nullable = false)
-    // private List<Product> products;
+    @Transient
+    private List<Category> activeChildCategories;
 
     public Long getId() {
         return id;
@@ -147,8 +155,34 @@ public class CategoryImpl implements Category, Serializable {
         this.displayTemplate = displayTemplate;
     }
 
+    private List<Category> getChildCategories() {
+        return childCategories;
+    }
+
+    public List<Category> getActiveChildCategories() {
+        if (activeChildCategories == null) {
+            activeChildCategories = new ArrayList<Category>();
+            List<Category> categories = getChildCategories();
+            for (Category category : categories) {
+                if (category.getActiveStartDate().before(new Date()) && (category.getActiveEndDate() == null || new Date().before(category.getActiveEndDate()))) {
+                    activeChildCategories.add(category);
+                }
+            }
+        }
+        return activeChildCategories;
+
+    }
+
+    public void setChildCategories(List<Category> childCategories) {
+        this.childCategories = childCategories;
+    }
+
     public Map<String, String> getCategoryImages() {
         return categoryImages;
+    }
+
+    public String getCategoryImage(String imageKey) {
+        return categoryImages.get(imageKey);
     }
 
     public void setCategoryImages(Map<String, String> categoryImages) {
