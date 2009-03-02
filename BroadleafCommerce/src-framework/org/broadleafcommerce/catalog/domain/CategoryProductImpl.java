@@ -21,7 +21,7 @@ public class CategoryProductImpl implements CategoryProduct, Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "CATEGORY_PRODUCT_XREF_ID")
+    @Column(name = "ID")
     private Long id;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
