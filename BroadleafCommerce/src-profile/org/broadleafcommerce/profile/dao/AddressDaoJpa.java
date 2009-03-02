@@ -22,13 +22,13 @@ public class AddressDaoJpa implements AddressDao {
 
     @SuppressWarnings("unchecked")
     public List<Address> readAddressByUserId(Long customerId) {
-        Query query = em.createNamedQuery("READ_ADDRESS_BY_CUSTOMER_ID");
+        Query query = em.createNamedQuery("BC_READ_ADDRESS_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
 
     public Address readAddressByUserIdAndName(Long customerId, String addressName) {
-        Query query = em.createNamedQuery("READ_ADDRESS_BY_CUSTOMER_ID_AND_NAME");
+        Query query = em.createNamedQuery("BC_sREAD_ADDRESS_BY_CUSTOMER_ID_AND_NAME");
         query.setParameter("customerId", customerId);
         query.setParameter("addressName", addressName);
         return (Address) query.getSingleResult();
@@ -44,7 +44,7 @@ public class AddressDaoJpa implements AddressDao {
     }
 
     public Address readAddressById(Long addressId) {
-        Query query = em.createNamedQuery("READ_ADDRESS_BY_ID");
+        Query query = em.createNamedQuery("BC_READ_ADDRESS_BY_ID");
         query.setParameter("addressId", addressId);
         return (Address) query.getSingleResult();
     }

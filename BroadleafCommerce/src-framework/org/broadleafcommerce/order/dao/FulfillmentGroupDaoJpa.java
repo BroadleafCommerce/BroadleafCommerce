@@ -48,7 +48,7 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<FulfillmentGroup> readFulfillmentGroupsForOrder(Order order) {
-        Query query = em.createNamedQuery("READ_FULFILLMENT_GROUPS_BY_ORDER_ID");
+        Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }
@@ -71,7 +71,7 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
 
     @Override
     public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(Order order) {
-        Query query = em.createNamedQuery("READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
+        Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return (FulfillmentGroupImpl) query.getSingleResult();
     }

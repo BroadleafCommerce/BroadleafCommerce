@@ -45,7 +45,7 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
-        Query query = em.createNamedQuery("READ_ORDERS_PAYMENTS_BY_ORDER_ID");
+        Query query = em.createNamedQuery("BC_READ_ORDERS_PAYMENTS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }

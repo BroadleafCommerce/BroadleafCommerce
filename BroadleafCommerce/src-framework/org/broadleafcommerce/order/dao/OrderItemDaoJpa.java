@@ -52,7 +52,7 @@ public class OrderItemDaoJpa implements OrderItemDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<OrderItem> readOrderItemsForOrder(Order order) {
-        Query query = em.createNamedQuery("READ_ORDER_ITEMS_BY_ORDER_ID");
+        Query query = em.createNamedQuery("BC_READ_ORDER_ITEMS_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         return query.getResultList();
     }

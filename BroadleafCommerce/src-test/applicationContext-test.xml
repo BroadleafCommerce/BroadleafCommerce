@@ -6,6 +6,16 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
+	<bean id="persistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath:/META-INF/persistence-framework.xml</value>
+				<value>classpath:/META-INF/persistence-profile.xml</value>
+			</list>
+		</property>
+		<property name="defaultDataSource" ref="broadleafCommerceDS"/>
+	</bean>
+
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
 		<property name="jpaVendorAdapter">

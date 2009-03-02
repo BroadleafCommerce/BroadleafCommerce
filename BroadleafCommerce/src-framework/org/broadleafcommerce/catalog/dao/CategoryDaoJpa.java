@@ -36,14 +36,14 @@ public class CategoryDaoJpa implements CategoryDao {
 
     @SuppressWarnings("unchecked")
     public List<Category> readAllCategories() {
-        Query query = em.createNamedQuery("READ_ALL_CATEGORIES");
+        Query query = em.createNamedQuery("BC_READ_ALL_CATEGORIES");
         query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public List<Category> readAllSubCategories(final Category category) {
-        Query query = em.createNamedQuery("READ_ALL_SUBCATEGORIES");
+        Query query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES");
         query.setParameter("parentCategory", category);
         return query.getResultList();
     }
