@@ -1,6 +1,7 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 public interface Category {
@@ -41,7 +42,17 @@ public interface Category {
 
     public void setDisplayTemplate(String displayTemplate);
 
+    public List<Category> getActiveChildCategories();
+
+    public void setChildCategories(List<Category> childCategories);
+
     public Map<String, String> getCategoryImages();
 
+    public String getCategoryImage(String imageKey);
+
     public void setCategoryImages(Map<String, String> categoryImages);
+
+    public String getLongDescription();
+
+    public void setLongDescription(String longDescription);
 }

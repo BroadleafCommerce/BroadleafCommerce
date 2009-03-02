@@ -86,11 +86,6 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<Sku> findSkusForProductId(Long productId) {
-        return skuDao.readSkusByProductId(productId);
-    }
-
-    @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Sku saveSku(Sku sku) {
         return skuDao.maintainSku(sku);

@@ -15,9 +15,4 @@
 		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.SkuImpl sku
 		WHERE sku.id IN (:skuIds)</query>
 	</named-query>
-
-	<named-query name="BC_READ_SKUS_BY_CATEGORY_ID">
-		<query>SELECT sku FROM org.broadleafcommerce.catalog.domain.SkuImpl sku
-		WHERE sku.product.id = :productId</query>
-	</named-query>
 </entity-mappings>

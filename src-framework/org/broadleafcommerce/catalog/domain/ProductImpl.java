@@ -1,6 +1,7 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.OrderBy;
@@ -58,7 +61,9 @@ public class ProductImpl implements Product, Serializable {
     @Column(name = "ACTIVE_END_DATE")
     private Date activeEndDate;
 
-    @OneToMany(mappedBy = "product", targetEntity = SkuImpl.class)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
+    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PROGRAM_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
+    @OrderBy(clause = "DISPLAY_ORDER")
     private List<Sku> skus;
 
     @CollectionOfElements
@@ -67,16 +72,20 @@ public class ProductImpl implements Product, Serializable {
     @Column(name = "URL")
     private Map<String, String> productImages;
 
+    // TODO fix jb
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
-    @OrderBy(clause = "SEQUENCE")
-    @JoinTable(name = "PRODUCT_AUXILLARY_IMAGES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "IMAGE_DESCRIPTION_ID"))
-    private List<ImageDescription> productAuxillaryImages;
+    //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
+    //    @OrderBy(clause = "SEQUENCE")
+    //    @JoinTable(name = "PRODUCT_AUX_IMAGES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "IMAGE_DESCRIPTION_ID"))
+    //    private List<ImageDescription> productAuxillaryImages;
 
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     private Category defaultCategory;
+
+    @Transient
+    private List<Sku> activeSkus;
 
     public Long getId() {
         return id;
@@ -134,29 +143,47 @@ public class ProductImpl implements Product, Serializable {
         this.activeEndDate = activeEndDate;
     }
 
-    public List<Sku> getSkus() {
+    private List<Sku> getSkus() {
         return skus;
+    }
+
+    public List<Sku> getActiveSkus() {
+        if (activeSkus == null) {
+            activeSkus = new ArrayList<Sku>();
+            List<Sku> skus = getSkus();
+            for (Sku sku : skus) {
+                if (sku.getActiveStartDate().before(new Date()) && (sku.getActiveEndDate() == null || new Date().before(sku.getActiveEndDate()))) {
+                    activeSkus.add(sku);
+                }
+            }
+        }
+        return activeSkus;
     }
 
     public void setSkus(List<Sku> skus) {
         this.skus = skus;
+        this.activeSkus = null;
     }
 
     public Map<String, String> getProductImages() {
         return productImages;
     }
 
+    public String getProductImage(String imageKey) {
+        return productImages.get(imageKey);
+    }
+
     public void setProductImages(Map<String, String> productImages) {
         this.productImages = productImages;
     }
 
-    public List<ImageDescription> getProductAuxillaryImages() {
-        return productAuxillaryImages;
-    }
-
-    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
-        this.productAuxillaryImages = productAuxillaryImages;
-    }
+    //    public List<ImageDescription> getProductAuxillaryImages() {
+    //        return productAuxillaryImages;
+    //    }
+    //
+    //    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
+    //        this.productAuxillaryImages = productAuxillaryImages;
+    //    }
 
     public Category getDefaultCategory() {
         return defaultCategory;

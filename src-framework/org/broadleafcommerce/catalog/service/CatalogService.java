@@ -30,8 +30,6 @@ public interface CatalogService {
 
     public Sku saveSku(Sku sku);
 
-    public List<Sku> findSkusForProductId(Long productId);
-
     public List<Sku> findAllSkus();
 
     public List<Sku> findSkusByIds(List<Long> ids);
