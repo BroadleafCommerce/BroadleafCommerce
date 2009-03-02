@@ -14,6 +14,8 @@ public interface CatalogService {
 
     public List<Product> findProductsByName(String searchName);
 
+    public List<Product> findActiveProductsByCategory(Category category);
+
     public Category saveCategory(Category category);
 
     public Category findCategoryById(Long categoryId);

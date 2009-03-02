@@ -40,4 +40,11 @@ public class ProductDaoJpa implements ProductDao {
         query.setParameter("name", searchName + "%");
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+    public List<Product> readActiveProductsByCategory(Long categoryId) {
+        Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY");
+        query.setParameter("categoryId", categoryId);
+        return query.getResultList();
+    }
 }

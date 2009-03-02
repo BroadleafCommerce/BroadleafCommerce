@@ -25,10 +25,6 @@ public interface Category {
 
     public void setUrlKey(String urlKey);
 
-    public Integer getDisplayOrder();
-
-    public void setDisplayOrder(Integer displayOrder);
-
     public String getDescription();
 
     public void setDescription(String description);

@@ -7,4 +7,12 @@
 		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product
 		WHERE product.name LIKE :name</query>
 	</named-query>
+
+	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
+		<query>SELECT categoryProductXref.product FROM org.broadleafcommerce.catalog.domain.CategoryProduct categoryProductXref
+		WHERE categoryProductXref.category.id = :categoryId
+		AND categoryProductXref.product.activeStartDate &lt;= CURRENT_DATE
+		AND (categoryProductXref.product.activeEndDate &gt; CURRENT_DATE OR categoryProductXref.product.activeEndDate = null)
+		ORDER BY categoryProductXref.displayOrder</query>
+	</named-query>
 </entity-mappings>

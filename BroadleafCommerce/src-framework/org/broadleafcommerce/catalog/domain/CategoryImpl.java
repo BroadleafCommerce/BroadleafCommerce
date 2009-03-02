@@ -44,9 +44,6 @@ public class CategoryImpl implements Category, Serializable {
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     private Category defaultParentCategory;
 
-    @Column(name = "DISPLAY_ORDER")
-    private Integer displayOrder;
-
     @Column(name = "DESCRIPTION")
     private String description;
 
@@ -116,14 +113,6 @@ public class CategoryImpl implements Category, Serializable {
 
     public void setUrlKey(String urlKey) {
         this.urlKey = urlKey;
-    }
-
-    public Integer getDisplayOrder() {
-        return displayOrder;
-    }
-
-    public void setDisplayOrder(Integer displayOrder) {
-        this.displayOrder = displayOrder;
     }
 
     public String getDescription() {
