@@ -30,7 +30,7 @@ public class CustomerDaoJpa implements CustomerDao {
     }
 
     public Customer readCustomerByUsername(String username) {
-        Query query = em.createNamedQuery("READ_CUSTOMER_BY_USER_NAME");
+        Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
         query.setParameter("username", username);
         try {
             return (Customer) query.getSingleResult();
@@ -40,7 +40,7 @@ public class CustomerDaoJpa implements CustomerDao {
     }
 
     public Customer readCustomerByEmail(String emailAddress) {
-        Query query = em.createNamedQuery("READ_CUSTOMER_BY_EMAIL");
+        Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL");
         query.setParameter("email", emailAddress);
         try {
             return (Customer) query.getSingleResult();

@@ -36,7 +36,7 @@ public class ProductDaoJpa implements ProductDao {
 
     @SuppressWarnings("unchecked")
     public List<Product> readProductsByName(String searchName) {
-        Query query = em.createNamedQuery("READ_PRODUCTS_BY_NAME");
+        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_NAME");
         query.setParameter("name", searchName + "%");
         return query.getResultList();
     }

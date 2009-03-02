@@ -58,7 +58,7 @@ public class OrderDaoJpa implements OrderDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<Order> readOrdersForCustomer(Long customerId) {
-        Query query = em.createNamedQuery("READ_ORDERS_BY_CUSTOMER_ID");
+        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
@@ -66,7 +66,7 @@ public class OrderDaoJpa implements OrderDao {
     @Override
     public Order readBasketOrdersForCustomer(Customer customer) {
         Order bo;
-        Query query = em.createNamedQuery("READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
+        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderType", OrderType.BASKET);
         try {
@@ -85,7 +85,7 @@ public class OrderDaoJpa implements OrderDao {
     public Order submitOrder(Order basketOrder) {
         OrderImpl so = new OrderImpl();
         so.setId(basketOrder.getId());
-        Query query = em.createNamedQuery("UPDATE_BASKET_ORDER_TO_SUBMITTED");
+        Query query = em.createNamedQuery("BC_UPDATE_BASKET_ORDER_TO_SUBMITTED");
         query.setParameter("id", basketOrder.getId());
         query.executeUpdate();
         return em.find(OrderImpl.class, so.getId());

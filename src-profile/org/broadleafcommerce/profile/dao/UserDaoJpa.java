@@ -28,7 +28,7 @@ public class UserDaoJpa implements UserDao {
     private EntityConfiguration entityConfiguration;
 
     public User readUserByUsername(String username) {
-        Query query = em.createNamedQuery("READ_USER_BY_USER_NAME");
+        Query query = em.createNamedQuery("BC_sREAD_USER_BY_USER_NAME");
         query.setParameter("username", username);
         try {
             return (User) query.getSingleResult();
@@ -38,7 +38,7 @@ public class UserDaoJpa implements UserDao {
     }
 
     public User readUserByEmail(String emailAddress) {
-        Query query = em.createNamedQuery("READ_USER_BY_EMAIL");
+        Query query = em.createNamedQuery("BC_READ_USER_BY_EMAIL");
         query.setParameter("email", emailAddress);
         try {
             return (User) query.getSingleResult();
@@ -49,7 +49,7 @@ public class UserDaoJpa implements UserDao {
 
     @SuppressWarnings("unchecked")
     public List<UserRole> readUserRolesByUserId(Long userId) {
-        Query query = em.createNamedQuery("READ_ROLES_BY_USER_ID");
+        Query query = em.createNamedQuery("BC_READ_ROLES_BY_USER_ID");
         query.setParameter("userId", userId);
         return query.getResultList();
     }

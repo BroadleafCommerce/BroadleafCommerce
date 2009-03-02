@@ -35,26 +35,26 @@ public class SkuDaoJpa implements SkuDao {
     }
 
     public Sku readFirstSku() {
-        Query query = em.createNamedQuery("READ_FIRST_SKU");
+        Query query = em.createNamedQuery("BC_READ_FIRST_SKU");
         return (Sku) query.getSingleResult();
     }
 
     @SuppressWarnings("unchecked")
     public List<Sku> readAllSkus() {
-        Query query = em.createNamedQuery("READ_ALL_SKUS");
+        Query query = em.createNamedQuery("BC_READ_ALL_SKUS");
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public List<Sku> readSkusByProductId(Long productId) {
-        Query query = em.createNamedQuery("READ_SKUS_BY_CATEGORY_ID");
+        Query query = em.createNamedQuery("BC_READ_SKUS_BY_CATEGORY_ID");
         query.setParameter("productId", productId);
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
     public List<Sku> readSkusById(List<Long> ids) {
-        Query query = em.createNamedQuery("READ_SKUS_BY_ID");
+        Query query = em.createNamedQuery("BC_READ_SKUS_BY_ID");
         query.setParameter("skuIds", ids);
         return query.getResultList();
     }

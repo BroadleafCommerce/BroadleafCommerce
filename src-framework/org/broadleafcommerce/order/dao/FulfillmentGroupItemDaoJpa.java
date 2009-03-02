@@ -51,7 +51,7 @@ public class FulfillmentGroupItemDaoJpa implements FulfillmentGroupItemDao {
     @Override
     @SuppressWarnings("unchecked")
     public List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        Query query = em.createNamedQuery("READ_FULFILLMENT_GROUP_ITEM_BY_FULFILLMENT_GROUP_ID");
+        Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_ITEM_BY_FULFILLMENT_GROUP_ID");
         query.setParameter("fulfillmentGroupId", fulfillmentGroup.getId());
         return query.getResultList();
     }

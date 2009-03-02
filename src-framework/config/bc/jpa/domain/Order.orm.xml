@@ -3,22 +3,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<named-query name="READ_ORDERS_BY_CUSTOMER_ID" >
+	<named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID" >
 		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
 		WHERE order.customer.id = :customerId</query>
 	</named-query>
 
-	<named-query name="READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE">
+	<named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE">
 		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
-		        WHERE order.customer.id = :customerId
-		        AND order.type = :orderType
-		</query>
+		WHERE order.customer.id = :customerId
+		AND order.type = :orderType</query>
 	</named-query>
 
-	<named-query name="UPDATE_BASKET_ORDER_TO_SUBMITTED">
+	<named-query name="BC_UPDATE_BASKET_ORDER_TO_SUBMITTED">
 		<query>UPDATE org.broadleafcommerce.order.domain.Order blcOrder
-		          SET blcOrder.type = 'SUBMITTED'
-		        WHERE blcOrder.id = :id
-		</query>
+		SET blcOrder.type = 'SUBMITTED'
+		WHERE blcOrder.id = :id</query>
 	</named-query>
 </entity-mappings>

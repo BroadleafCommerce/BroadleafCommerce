@@ -36,7 +36,7 @@ public class ContactInfoDaoJpa implements ContactInfoDao {
 
     @SuppressWarnings("unchecked")
     public List<ContactInfo> readContactInfoByUserId(Long customerId) {
-        Query query = em.createNamedQuery("READ_CONTACT_INFO_BY_CUSTOMER_ID");
+        Query query = em.createNamedQuery("BC_READ_CONTACT_INFO_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
