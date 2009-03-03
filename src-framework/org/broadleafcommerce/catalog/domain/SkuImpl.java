@@ -54,7 +54,7 @@ public class SkuImpl implements Sku, Serializable {
     private Date activeEndDate;
 
     @CollectionOfElements
-    @JoinTable(name = "SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
+    @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     private Map<String, String> skuImages;

@@ -69,7 +69,7 @@ public class CategoryImpl implements Category, Serializable {
 
     // @OneToMany(mappedBy = "category", targetEntity = BroadleafCategoryImage.class)
     @CollectionOfElements
-    @JoinTable(name = "CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
+    @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     private Map<String, String> categoryImages;

@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,8 +16,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -35,16 +32,8 @@ public class ProductImpl implements Product, Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "ID")
+    @Column(name = "PRODUCT_ID")
     private Long id;
-
-    // TODO : figure out maps
-    // This is a One-To-Many which OWNS!!! the collection
-    // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ProductAttributeImpl.class)
-    @MapKey(name = "name")
-    @JoinTable(name = "PRODUCT_PRODUCT_ATTRIBUTES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ATTRIBUTE_ID"))
-    private Map<String, ProductAttribute> productAttributes;
 
     @Column(name = "NAME")
     private String name;
@@ -62,12 +51,12 @@ public class ProductImpl implements Product, Serializable {
     private Date activeEndDate;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
-    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PROGRAM_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
+    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
     private List<Sku> allSkus;
 
     @CollectionOfElements
-    @JoinTable(name = "PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
+    @JoinTable(name = "BLC_PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     private Map<String, String> productImages;
@@ -75,10 +64,10 @@ public class ProductImpl implements Product, Serializable {
     // TODO fix jb
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
-    @OrderBy(clause = "DISPLAY_ORDER")
-    @JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
-    private List<ImageDescription> productAuxillaryImages;
+    //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
+    //    @OrderBy(clause = "DISPLAY_ORDER")
+    //    @JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
+    //    private List<ImageDescription> productAuxillaryImages;
 
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -93,14 +82,6 @@ public class ProductImpl implements Product, Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Map<String, ProductAttribute> getProductAttributes() {
-        return productAttributes;
-    }
-
-    public void setProductAttributes(Map<String, ProductAttribute> productAttributes) {
-        this.productAttributes = productAttributes;
     }
 
     public String getName() {
@@ -177,13 +158,13 @@ public class ProductImpl implements Product, Serializable {
         this.productImages = productImages;
     }
 
-    public List<ImageDescription> getProductAuxillaryImages() {
-        return productAuxillaryImages;
-    }
-
-    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
-        this.productAuxillaryImages = productAuxillaryImages;
-    }
+    //    public List<ImageDescription> getProductAuxillaryImages() {
+    //        return productAuxillaryImages;
+    //    }
+    //
+    //    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
+    //        this.productAuxillaryImages = productAuxillaryImages;
+    //    }
 
     public Category getDefaultCategory() {
         return defaultCategory;
