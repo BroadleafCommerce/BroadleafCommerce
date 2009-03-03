@@ -167,8 +167,8 @@ public class CategoryImpl implements Category, Serializable {
     public List<Category> getChildCategories() {
         if (childCategories == null) {
             childCategories = new ArrayList<Category>();
-            List<Category> categories = getAllChildCategories();
-            for (Category category : categories) {
+            List<Category> allChildCategories = getAllChildCategories();
+            for (Category category : allChildCategories) {
                 if (category.isActive()) {
                     childCategories.add(category);
                 }

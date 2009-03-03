@@ -138,8 +138,8 @@ public class ProductImpl implements Product, Serializable {
     public List<Sku> getSkus() {
         if (skus == null) {
             skus = new ArrayList<Sku>();
-            List<Sku> skus = getAllSkus();
-            for (Sku sku : skus) {
+            List<Sku> allSkus = getAllSkus();
+            for (Sku sku : allSkus) {
                 if (sku.isActive()) {
                     skus.add(sku);
                 }
