@@ -65,7 +65,7 @@ public class CategoryImpl implements Category, Serializable {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
-    private List<Category> childCategories;
+    private List<Category> allChildCategories;
 
     // @OneToMany(mappedBy = "category", targetEntity = BroadleafCategoryImage.class)
     @CollectionOfElements
@@ -78,7 +78,7 @@ public class CategoryImpl implements Category, Serializable {
     private String longDescription;
 
     @Transient
-    private List<Category> activeChildCategories;
+    private List<Category> childCategories;
 
     public Long getId() {
         return id;
@@ -155,26 +155,26 @@ public class CategoryImpl implements Category, Serializable {
         this.displayTemplate = displayTemplate;
     }
 
-    private List<Category> getChildCategories() {
-        return childCategories;
+    private List<Category> getAllChildCategories() {
+        return allChildCategories;
     }
 
-    public List<Category> getActiveChildCategories() {
-        if (activeChildCategories == null) {
-            activeChildCategories = new ArrayList<Category>();
-            List<Category> categories = getChildCategories();
+    public List<Category> getChildCategories() {
+        if (childCategories == null) {
+            childCategories = new ArrayList<Category>();
+            List<Category> categories = getAllChildCategories();
             for (Category category : categories) {
                 if (category.getActiveStartDate().before(new Date()) && (category.getActiveEndDate() == null || new Date().before(category.getActiveEndDate()))) {
-                    activeChildCategories.add(category);
+                    childCategories.add(category);
                 }
             }
         }
-        return activeChildCategories;
+        return childCategories;
 
     }
 
-    public void setChildCategories(List<Category> childCategories) {
-        this.childCategories = childCategories;
+    public void setAllChildCategories(List<Category> allChildCategories) {
+        this.allChildCategories = allChildCategories;
     }
 
     public Map<String, String> getCategoryImages() {

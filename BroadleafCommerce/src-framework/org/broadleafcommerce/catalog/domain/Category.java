@@ -42,9 +42,9 @@ public interface Category {
 
     public void setDisplayTemplate(String displayTemplate);
 
-    public List<Category> getActiveChildCategories();
+    public List<Category> getChildCategories();
 
-    public void setChildCategories(List<Category> childCategories);
+    public void setAllChildCategories(List<Category> allChildCategories);
 
     public Map<String, String> getCategoryImages();
 

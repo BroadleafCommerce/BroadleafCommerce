@@ -64,7 +64,7 @@ public class ProductImpl implements Product, Serializable {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PROGRAM_ID", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
-    private List<Sku> skus;
+    private List<Sku> allSkus;
 
     @CollectionOfElements
     @JoinTable(name = "PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
@@ -85,7 +85,7 @@ public class ProductImpl implements Product, Serializable {
     private Category defaultCategory;
 
     @Transient
-    private List<Sku> activeSkus;
+    private List<Sku> skus;
 
     public Long getId() {
         return id;
@@ -143,26 +143,26 @@ public class ProductImpl implements Product, Serializable {
         this.activeEndDate = activeEndDate;
     }
 
-    private List<Sku> getSkus() {
-        return skus;
+    private List<Sku> getAllSkus() {
+        return allSkus;
     }
 
-    public List<Sku> getActiveSkus() {
-        if (activeSkus == null) {
-            activeSkus = new ArrayList<Sku>();
-            List<Sku> skus = getSkus();
+    public List<Sku> getSkus() {
+        if (skus == null) {
+            skus = new ArrayList<Sku>();
+            List<Sku> skus = getAllSkus();
             for (Sku sku : skus) {
                 if (sku.getActiveStartDate().before(new Date()) && (sku.getActiveEndDate() == null || new Date().before(sku.getActiveEndDate()))) {
-                    activeSkus.add(sku);
+                    skus.add(sku);
                 }
             }
         }
-        return activeSkus;
+        return skus;
     }
 
-    public void setSkus(List<Sku> skus) {
-        this.skus = skus;
-        this.activeSkus = null;
+    public void setAllSkus(List<Sku> skus) {
+        this.allSkus = skus;
+        this.skus = null;
     }
 
     public Map<String, String> getProductImages() {

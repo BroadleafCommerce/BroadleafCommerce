@@ -34,9 +34,9 @@ public interface Product {
 
     public void setActiveEndDate(Date activeEndDate);
 
-    public List<Sku> getActiveSkus();
+    public List<Sku> getSkus();
 
-    public void setSkus(List<Sku> skus);
+    public void setAllSkus(List<Sku> skus);
 
     public Map<String, String> getProductImages();
 
