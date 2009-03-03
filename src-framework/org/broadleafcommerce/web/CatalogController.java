@@ -55,7 +55,7 @@ public class CatalogController extends AbstractController{
                 try {
                     Product item = catalogService.findProductById(new Long(productId));
                     if (item != null){
-                        List<Sku> skus = item.getActiveSkus();
+                        List<Sku> skus = item.getSkus();
 
                         ProductSkus productSkus = new ProductSkus(item, skus);
                         Map<Object, Object> model = new HashMap<Object, Object>();
