@@ -29,6 +29,12 @@ public class CatalogServiceImpl implements CatalogService {
     @Resource
     private SkuDao skuDao;
 
+    private Map<String,Category> cachedUrlProductKeyMap;
+
+    public void init() {
+    	refreshCategoryUrlKeyMap();
+    }
+
     public Product findProductById(Long productId) {
         return productDao.readProductById(productId);
     }
@@ -65,14 +71,18 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<Category> findAllSubCategories(Category category) {
-        return categoryDao.readAllSubCategories(category);
+    public Map<String,Category> getCategoryUrlKeyMap() {
+    	return cachedUrlProductKeyMap;
     }
 
-    @Override
-    public Category findCategoryByUrlKey(String urlKey) {
-        Map<String, Category> catMap = buildUrlKeyCategoryMap();
-        return catMap.get(urlKey);
+    public void refreshCategoryUrlKeyMap() {
+    	Map<String,Category> tmpMap = new HashMap<String, Category>();
+        List<Category> categories = findAllCategories();
+        for (Iterator<Category> itr = categories.iterator(); itr.hasNext();) {
+            Category cat = itr.next();
+            tmpMap.put(cat.getUrlKey(), cat);
+        }
+        cachedUrlProductKeyMap= tmpMap;
     }
 
     @Override
@@ -89,17 +99,6 @@ public class CatalogServiceImpl implements CatalogService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Sku saveSku(Sku sku) {
         return skuDao.maintainSku(sku);
-    }
-
-    private Map<String, Category> buildUrlKeyCategoryMap() {
-        Map<String, Category> catMap = new HashMap<String, Category>();
-        List<Category> categories = categoryDao.readAllCategories();
-        for (Iterator<Category> itr = categories.iterator(); itr.hasNext();) {
-            Category cat = itr.next();
-            catMap.put(cat.getUrlKey(), cat);
-        }
-
-        return catMap;
     }
 
     @Override

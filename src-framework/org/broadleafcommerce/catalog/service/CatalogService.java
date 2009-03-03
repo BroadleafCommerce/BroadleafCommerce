@@ -1,6 +1,7 @@
 package org.broadleafcommerce.catalog.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
@@ -20,11 +21,11 @@ public interface CatalogService {
 
     public Category findCategoryById(Long categoryId);
 
-    public Category findCategoryByUrlKey(String urlKey);
+    public Map<String,Category> getCategoryUrlKeyMap();
+
+    public void refreshCategoryUrlKeyMap();
 
     public List<Category> findAllCategories();
-
-    public List<Category> findAllSubCategories(Category category);
 
     public List<Product> findProductsForCategory(Category category);
 
