@@ -17,7 +17,7 @@ public class DateUtil {
         if (ret == null) {
             ret = new Date();
         }
-        return overrideDate;
+        return ret;
     }
 
     public static Date getToday() {
