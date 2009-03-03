@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.util.DateUtil;
 import org.hibernate.annotations.CollectionOfElements;
 
 @Entity
@@ -129,6 +130,10 @@ public class SkuImpl implements Sku, Serializable {
 
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
+    }
+
+    public boolean isActive() {
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
     }
 
     public Map<String, String> getSkuImages() {

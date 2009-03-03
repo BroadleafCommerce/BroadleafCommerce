@@ -42,6 +42,8 @@ public interface Sku {
 
     public void setActiveEndDate(Date activeEndDate);
 
+    public boolean isActive();
+
     public Map<String, String> getSkuImages();
 
     public String getSkuImage(String imageKey);

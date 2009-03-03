@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.validator.GenericValidator;
+import org.broadleafcommerce.util.DateUtil;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
@@ -147,6 +148,10 @@ public class CategoryImpl implements Category, Serializable {
         this.activeEndDate = activeEndDate;
     }
 
+    public boolean isActive() {
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
+    }
+
     public String getDisplayTemplate() {
         return displayTemplate;
     }
@@ -164,13 +169,17 @@ public class CategoryImpl implements Category, Serializable {
             childCategories = new ArrayList<Category>();
             List<Category> categories = getAllChildCategories();
             for (Category category : categories) {
-                if (category.getActiveStartDate().before(new Date()) && (category.getActiveEndDate() == null || new Date().before(category.getActiveEndDate()))) {
+                if (category.isActive()) {
                     childCategories.add(category);
                 }
             }
         }
         return childCategories;
 
+    }
+
+    public boolean hasChildCategories() {
+        return getChildCategories().size() > 0;
     }
 
     public void setAllChildCategories(List<Category> allChildCategories) {
