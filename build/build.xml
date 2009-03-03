@@ -46,6 +46,10 @@
 		<ant antfile="${internal.build.file}" target="build-source-jars" />
 	</target>
 
+	<target name="9. Publish Binaries and Source Jars" description="Publish production build to Ivy">
+		<ant antfile="${internal.build.file}" target="publish-jars" />
+	</target>
+
 	<target name="usage">
 		<echo>
 			This is the ANT build file for the Broadleaf Commerce project.
