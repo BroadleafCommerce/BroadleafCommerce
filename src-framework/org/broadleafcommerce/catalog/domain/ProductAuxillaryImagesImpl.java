@@ -12,7 +12,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-// TODO: This class is not need accept to create the columns for unit tests
+/**
+ * This class is not need accept to create the columns for unit tests
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_AUX_IMAGE")
@@ -22,7 +24,7 @@ public class ProductAuxillaryImagesImpl implements Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "IMAGE_DESCRIPTION_ID")
+    @Column(name = "ID")
     private Long id;
 
     @ManyToOne(targetEntity = ProductImpl.class)
@@ -38,6 +40,14 @@ public class ProductAuxillaryImagesImpl implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Integer getDisplayOrder() {

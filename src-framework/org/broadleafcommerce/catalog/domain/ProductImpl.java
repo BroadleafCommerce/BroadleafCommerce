@@ -75,10 +75,10 @@ public class ProductImpl implements Product, Serializable {
     // TODO fix jb
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
-    //    @OrderBy(clause = "SEQUENCE")
-    //    @JoinTable(name = "PRODUCT_AUX_IMAGES", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "IMAGE_DESCRIPTION_ID"))
-    //    private List<ImageDescription> productAuxillaryImages;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
+    private List<ImageDescription> productAuxillaryImages;
 
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -177,13 +177,13 @@ public class ProductImpl implements Product, Serializable {
         this.productImages = productImages;
     }
 
-    //    public List<ImageDescription> getProductAuxillaryImages() {
-    //        return productAuxillaryImages;
-    //    }
-    //
-    //    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
-    //        this.productAuxillaryImages = productAuxillaryImages;
-    //    }
+    public List<ImageDescription> getProductAuxillaryImages() {
+        return productAuxillaryImages;
+    }
+
+    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
+        this.productAuxillaryImages = productAuxillaryImages;
+    }
 
     public Category getDefaultCategory() {
         return defaultCategory;
