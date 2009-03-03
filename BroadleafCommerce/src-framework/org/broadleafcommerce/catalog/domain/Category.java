@@ -24,6 +24,8 @@ public interface Category {
 
     public String getUrlKey();
 
+    public String getGeneratedUrl();
+
     public void setUrlKey(String urlKey);
 
     public String getDescription();
