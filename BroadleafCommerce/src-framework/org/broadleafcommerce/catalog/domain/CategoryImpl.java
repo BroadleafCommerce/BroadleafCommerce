@@ -22,9 +22,11 @@ import javax.persistence.Transient;
 
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
+import org.springframework.security.util.UrlUtils;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -114,10 +116,27 @@ public class CategoryImpl implements Category, Serializable {
     }
 
     public String getUrlKey() {
-        if (GenericValidator.isBlankOrNull(urlKey)) {
-            return String.valueOf(getId());
-        }
-        return urlKey;
+		if (GenericValidator.isBlankOrNull(urlKey) && getName() != null) {
+			return UrlUtil.generateUrlKey(getName());
+		}
+		return urlKey;
+    }
+
+    public String getGeneratedUrl() {
+    	return buildLink(null, this, false);
+    }
+
+    private String buildLink(String link, Category category, boolean ignoreTopLevel){
+    	if (category == null || (ignoreTopLevel && category.getDefaultParentCategory() == null)){
+    		return link;
+    	} else {
+    		if (link == null){
+    			link = category.getUrlKey();
+    		} else {
+    			link = category.getUrlKey() + "/" + link;
+    		}
+    	}
+    	return buildLink(link, category.getDefaultParentCategory(), ignoreTopLevel);
     }
 
     public void setUrlKey(String urlKey) {
