@@ -103,7 +103,6 @@
 	<!-- Entity mappings - override for extensibility -->
 	<bean id="org.broadleafcommerce.catalog.domain.BasePrice" class="org.broadleafcommerce.catalog.domain.BasePriceImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Category" class="org.broadleafcommerce.catalog.domain.CategoryImpl"/>
-	<bean id="org.broadleafcommerce.catalog.domain.CategoryCategory" class="org.broadleafcommerce.catalog.domain.CategoryCategoryImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.CategoryProduct" class="org.broadleafcommerce.catalog.domain.CategoryProductImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroup" class="org.broadleafcommerce.order.domain.FulfillmentGroupImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl"/>
