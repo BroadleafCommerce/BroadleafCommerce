@@ -12,13 +12,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-/**
- * This class is not need accept to create the columns for unit tests
- */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_AUX_IMAGE")
-public class ProductAuxillaryImagesImpl implements Serializable {
+public class ProductAuxillaryImagesImpl implements ImageDescription, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +30,12 @@ public class ProductAuxillaryImagesImpl implements Serializable {
 
     @Column(name = "DISPLAY_ORDER")
     private Integer displayOrder;
+
+    @Column(name = "URL")
+    private String url;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
 
     public Long getId() {
         return id;
@@ -56,5 +59,21 @@ public class ProductAuxillaryImagesImpl implements Serializable {
 
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

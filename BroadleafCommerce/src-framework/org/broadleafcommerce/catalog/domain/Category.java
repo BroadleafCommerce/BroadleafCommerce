@@ -38,11 +38,15 @@ public interface Category {
 
     public void setActiveEndDate(Date activeEndDate);
 
+    public boolean isActive();
+
     public String getDisplayTemplate();
 
     public void setDisplayTemplate(String displayTemplate);
 
     public List<Category> getChildCategories();
+
+    public boolean hasChildCategories();
 
     public void setAllChildCategories(List<Category> allChildCategories);
 

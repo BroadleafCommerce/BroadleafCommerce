@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,10 +17,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.broadleafcommerce.util.DateUtil;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.OrderBy;
 
@@ -64,10 +67,10 @@ public class ProductImpl implements Product, Serializable {
     // TODO fix jb
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ImageDescriptionImpl.class)
-    //    @OrderBy(clause = "DISPLAY_ORDER")
-    //    @JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
-    //    private List<ImageDescription> productAuxillaryImages;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ProductAuxillaryImagesImpl.class)
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
+    private List<ImageDescription> productAuxillaryImages;
 
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -124,6 +127,10 @@ public class ProductImpl implements Product, Serializable {
         this.activeEndDate = activeEndDate;
     }
 
+    public boolean isActive() {
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
+    }
+
     private List<Sku> getAllSkus() {
         return allSkus;
     }
@@ -133,7 +140,7 @@ public class ProductImpl implements Product, Serializable {
             skus = new ArrayList<Sku>();
             List<Sku> skus = getAllSkus();
             for (Sku sku : skus) {
-                if (sku.getActiveStartDate().before(new Date()) && (sku.getActiveEndDate() == null || new Date().before(sku.getActiveEndDate()))) {
+                if (sku.isActive()) {
                     skus.add(sku);
                 }
             }
@@ -158,13 +165,13 @@ public class ProductImpl implements Product, Serializable {
         this.productImages = productImages;
     }
 
-    //    public List<ImageDescription> getProductAuxillaryImages() {
-    //        return productAuxillaryImages;
-    //    }
-    //
-    //    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
-    //        this.productAuxillaryImages = productAuxillaryImages;
-    //    }
+    public List<ImageDescription> getProductAuxillaryImages() {
+        return productAuxillaryImages;
+    }
+
+    public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
+        this.productAuxillaryImages = productAuxillaryImages;
+    }
 
     public Category getDefaultCategory() {
         return defaultCategory;
