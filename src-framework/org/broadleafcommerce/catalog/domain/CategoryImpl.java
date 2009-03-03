@@ -26,7 +26,6 @@ import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
-import org.springframework.security.util.UrlUtils;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
