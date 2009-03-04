@@ -46,6 +46,8 @@ public interface Category {
 
     public void setDisplayTemplate(String displayTemplate);
 
+    public Map<String,List<Category>> getChildCategoryURLMap();
+
     public List<Category> getChildCategories();
 
     public boolean hasChildCategories();

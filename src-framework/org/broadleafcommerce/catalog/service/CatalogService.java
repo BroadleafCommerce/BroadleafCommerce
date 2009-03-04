@@ -21,10 +21,6 @@ public interface CatalogService {
 
     public Category findCategoryById(Long categoryId);
 
-    public Map<String,Category> getCategoryUrlKeyMap();
-
-    public void refreshCategoryUrlKeyMap();
-
     public List<Category> findAllCategories();
 
     public List<Product> findProductsForCategory(Category category);
