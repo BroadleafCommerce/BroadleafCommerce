@@ -3,6 +3,7 @@ package org.broadleafcommerce.catalog.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +82,9 @@ public class CategoryImpl implements Category, Serializable {
 
     @Transient
     private List<Category> childCategories;
+
+    @Transient
+    private Map<String, List<Category>> cachedChildCategoryUrlMap = new HashMap<String, List<Category>>();
 
     public Long getId() {
         return id;
@@ -223,4 +227,29 @@ public class CategoryImpl implements Category, Serializable {
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
+
+
+    public Map<String,List<Category>> getChildCategoryURLMap() {
+    	// TODO: Add expiration logic to the Map
+    	if (cachedChildCategoryUrlMap.isEmpty()) {
+    		synchronized (cachedChildCategoryUrlMap) {
+    			if (cachedChildCategoryUrlMap.isEmpty()) {
+    				Map<String,List<Category>> newMap = new HashMap<String,List<Category>>();
+    				fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
+    				cachedChildCategoryUrlMap = newMap;
+    			}
+    		}
+    	}
+    	return cachedChildCategoryUrlMap;
+    }
+
+	private void fillInURLMapForCategory(Map<String,List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) {
+		String currentPath = startingPath + "/" + category.getUrlKey();
+		List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
+		newCategoryList.add(category);
+		categoryUrlMap.put(currentPath, newCategoryList);
+		for (Category currentCategory : category.getChildCategories()) {
+			fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
+		}
+	}
 }
