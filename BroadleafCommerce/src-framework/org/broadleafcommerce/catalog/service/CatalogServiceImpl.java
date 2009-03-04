@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.dao.CategoryDao;
@@ -31,8 +32,9 @@ public class CatalogServiceImpl implements CatalogService {
 
     private Map<String,Category> cachedUrlProductKeyMap;
 
+    @PostConstruct
     public void init() {
-    	refreshCategoryUrlKeyMap();
+        refreshCategoryUrlKeyMap();
     }
 
     public Product findProductById(Long productId) {
@@ -72,11 +74,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Map<String,Category> getCategoryUrlKeyMap() {
-    	return cachedUrlProductKeyMap;
+        return cachedUrlProductKeyMap;
     }
 
     public void refreshCategoryUrlKeyMap() {
-    	Map<String,Category> tmpMap = new HashMap<String, Category>();
+        Map<String,Category> tmpMap = new HashMap<String, Category>();
         List<Category> categories = findAllCategories();
         for (Iterator<Category> itr = categories.iterator(); itr.hasNext();) {
             Category cat = itr.next();
