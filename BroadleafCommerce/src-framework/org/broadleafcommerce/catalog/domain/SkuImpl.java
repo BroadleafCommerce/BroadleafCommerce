@@ -17,6 +17,7 @@ import javax.persistence.Table;
 
 import org.broadleafcommerce.util.DateUtil;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -46,6 +47,7 @@ public class SkuImpl implements Sku, Serializable {
     private String longDescription;
 
     @Column(name = "TAXABLE_FLAG")
+    @Type(type = "yes_no")
     private boolean taxable;
 
     @Column(name = "ACTIVE_START_DATE")

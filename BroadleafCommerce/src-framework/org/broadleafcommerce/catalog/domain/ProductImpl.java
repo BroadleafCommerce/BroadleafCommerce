@@ -67,7 +67,7 @@ public class ProductImpl implements Product, Serializable {
     // TODO fix jb
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ProductAuxillaryImagesImpl.class)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ProductAuxillaryImagesImpl.class)
     @OrderBy(clause = "DISPLAY_ORDER")
     @JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
     private List<ImageDescription> productAuxillaryImages;
