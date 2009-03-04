@@ -65,7 +65,11 @@
 		<if>
 			<equals arg1="${hibernate.hbm2ddl.auto}" arg2="false" />
 			<then>
-				<replace file="${stage.dir}/framework-jar/META-INF/persistence-framework.xml">
+				<replace file="${stage.dir}/framework-jar/META-INF/persistence-framework-catalog.xml">
+					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
+					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
+				</replace>
+				<replace file="${stage.dir}/framework-jar/META-INF/persistence-framework-user.xml">
 					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
 					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
 				</replace>
