@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.dao.CategoryDao;
@@ -32,7 +31,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     private Map<String,Category> cachedUrlProductKeyMap;
 
-    @PostConstruct
+    // TODO: fix to call on init of service
     public void init() {
         refreshCategoryUrlKeyMap();
     }
