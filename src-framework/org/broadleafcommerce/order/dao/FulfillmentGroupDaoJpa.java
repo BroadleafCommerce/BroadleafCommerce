@@ -22,7 +22,7 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(name="blPU")
     private EntityManager em;
 
     @Resource

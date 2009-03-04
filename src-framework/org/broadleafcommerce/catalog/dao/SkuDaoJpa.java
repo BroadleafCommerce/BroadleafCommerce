@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository("skuDao")
 public class SkuDaoJpa implements SkuDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(name="blPU")
     private EntityManager em;
 
     @Resource

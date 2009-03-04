@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository("productDao")
 public class ProductDaoJpa implements ProductDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(name="blPU")
     private EntityManager em;
 
     @Resource
