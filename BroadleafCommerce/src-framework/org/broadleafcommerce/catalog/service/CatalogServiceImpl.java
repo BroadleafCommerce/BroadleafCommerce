@@ -1,9 +1,6 @@
 package org.broadleafcommerce.catalog.service;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -28,13 +25,6 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Resource
     private SkuDao skuDao;
-
-    private Map<String,Category> cachedUrlProductKeyMap;
-
-    // TODO: fix to call on init of service
-    public void init() {
-        refreshCategoryUrlKeyMap();
-    }
 
     public Product findProductById(Long productId) {
         return productDao.readProductById(productId);
@@ -69,21 +59,6 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public List<Category> findAllCategories() {
         return categoryDao.readAllCategories();
-    }
-
-    @Override
-    public Map<String,Category> getCategoryUrlKeyMap() {
-        return cachedUrlProductKeyMap;
-    }
-
-    public void refreshCategoryUrlKeyMap() {
-        Map<String,Category> tmpMap = new HashMap<String, Category>();
-        List<Category> categories = findAllCategories();
-        for (Iterator<Category> itr = categories.iterator(); itr.hasNext();) {
-            Category cat = itr.next();
-            tmpMap.put(cat.getUrlKey(), cat);
-        }
-        cachedUrlProductKeyMap= tmpMap;
     }
 
     @Override
