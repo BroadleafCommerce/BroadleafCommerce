@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository("productListDao")
 public class ProductListDaoJpa implements ProductListDao {
 
-    @PersistenceContext
+    @PersistenceContext(unitName="blPU")
     private EntityManager em;
 
     @Override

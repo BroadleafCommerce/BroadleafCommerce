@@ -11,15 +11,16 @@
 	<bean id="persistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
-				<value>classpath:/META-INF/persistence-framework.xml</value>
-				<value>classpath:/META-INF/persistence-profile.xml</value>
+				<value>classpath*:/META-INF/persistence-framework-catalog.xml</value>
+				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
+				<value>classpath*:/META-INF/persistence-profile.xml</value>
 			</list>
 		</property>
-		<property name="defaultDataSource" ref="broadleafCommerceDS"/>
 	</bean>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
+		<property name="persistenceUnitName" value="blPU"/>
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="generateDdl" value="false" />
@@ -27,18 +28,80 @@
 				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
 			</bean>
 		</property>
-		<property name="jpaPropertyMap">
-			<map>
-				<entry key="hibernate.transaction.flush_before_completion" value="false" />
-				<entry key="hibernate.connection.autocommit" value="false" />
-				<entry key="hibernate.cache.use_query_cache" value="false" />
-			</map>
-		</property>
 	</bean>
-
+	
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
-		<property name="dataSource" ref="broadleafCommerceDS" />
+	</bean>
+	
+	<bean name="catalogService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="catalogServiceImpl"/>
+		<property name="transactionManager" ref="transactionManager"/>
+	   <property name="transactionAttributes">
+	     <props>
+	       <prop key="*">PROPAGATION_REQUIRED</prop>
+	     </props>
+	   </property>
+	</bean>
+	
+	<bean name="orderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="orderServiceImpl"/>
+		<property name="transactionManager" ref="transactionManager"/>
+	   <property name="transactionAttributes">
+	     <props>
+	       <prop key="*">PROPAGATION_REQUIRED</prop>
+	     </props>
+	   </property>
+	</bean>
+	
+	<bean name="ruleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="ruleServiceImpl"/>
+		<property name="transactionManager" ref="transactionManager"/>
+	   <property name="transactionAttributes">
+	     <props>
+	       <prop key="*">PROPAGATION_REQUIRED</prop>
+	     </props>
+	   </property>
+	</bean>
+	
+	<bean name="addressService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="addressServiceImpl"/>
+		<property name="transactionManager" ref="transactionManager"/>
+	   <property name="transactionAttributes">
+	     <props>
+	       <prop key="*">PROPAGATION_REQUIRED</prop>
+	     </props>
+	   </property>
+	</bean>
+	
+	<bean name="contactInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="contactInfoServiceImpl"/>
+		<property name="transactionManager" ref="transactionManager"/>
+	   <property name="transactionAttributes">
+	     <props>
+	       <prop key="*">PROPAGATION_REQUIRED</prop>
+	     </props>
+	   </property>
+	</bean>
+	
+	<bean name="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="customerServiceImpl"/>
+		<property name="transactionManager" ref="transactionManager"/>
+	   <property name="transactionAttributes">
+	     <props>
+	       <prop key="*">PROPAGATION_REQUIRED</prop>
+	     </props>
+	   </property>
+	</bean>
+	
+	<bean name="userService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="target" ref="userServiceImpl"/>
+		<property name="transactionManager" ref="transactionManager"/>
+	   <property name="transactionAttributes">
+	     <props>
+	       <prop key="*">PROPAGATION_REQUIRED</prop>
+	     </props>
+	   </property>
 	</bean>
 
 	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
@@ -70,12 +133,6 @@
          </value>
       </property>
    </bean>
-
-	<bean id="broadleafCommerceDS" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="jndiName">
-			<value>java:/comp/env/jdbc/BroadleafCommerceDS</value>
-		</property>
-	</bean>
 
 
 <!--

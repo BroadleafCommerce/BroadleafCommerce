@@ -15,13 +15,13 @@ public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextT
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    protected EntityManager em;
+    protected EntityManager emUser;
 
     public EntityManager getEntityManager() {
-        if (em == null) {
-            em = ((EntityManagerFactory) applicationContext.getBean("entityManagerFactory")).createEntityManager();
+        if (emUser == null) {
+        	emUser = ((EntityManagerFactory) applicationContext.getBean("entityManagerFactory")).createEntityManager();
         }
-        return em;
+        return emUser;
     }
 
     @BeforeClass

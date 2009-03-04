@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("orderService")
+@Service("orderServiceImpl")
 public class OrderServiceImpl implements OrderService {
 
     @Resource
@@ -98,7 +98,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public Order addContactInfoToOrder(Order order, ContactInfo contactInfo) {
         if (contactInfo.getId() == null) {
             contactInfoDao.maintainContactInfo(contactInfo);
@@ -108,7 +107,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public OrderItem addItemToOrder(Order order, Sku item, int quantity) {
         OrderItem orderItem = null;
         List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
@@ -126,7 +124,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
         payment.setOrder(order);
         if (payment.getAddress() != null && payment.getAddress().getId() == null) {
@@ -235,7 +232,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public OrderItem updateItemInOrder(Order order, OrderItem item) {
         // This isn't quite right. It will need to be changed later to reflect
         // the exact requirements we want.
@@ -245,7 +241,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public Order removeItemFromOrder(Order order, OrderItem item) {
         orderItemDao.deleteOrderItem(item);
         calculateOrderTotal(order);
@@ -258,7 +253,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public Order calculateOrderTotal(Order order) {
         BigDecimal total = BigDecimal.ZERO;
         List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
@@ -275,14 +269,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public Order confirmOrder(Order order) {
         // TODO Other actions needed to complete order. Code below is only a start.
         return orderDao.submitOrder(order);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public void cancelOrder(Order order) {
         orderDao.deleteOrderForCustomer(order);
     }
