@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,11 +16,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.util.DateUtil;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class SkuImpl implements Sku, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,6 +61,7 @@ public class SkuImpl implements Sku, Serializable {
     @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Map<String, String> skuImages;
 
     public Long getId() {

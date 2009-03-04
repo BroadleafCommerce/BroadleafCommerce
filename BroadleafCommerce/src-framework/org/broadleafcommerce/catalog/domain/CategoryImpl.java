@@ -24,6 +24,8 @@ import javax.persistence.Transient;
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.UrlUtil;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
@@ -31,6 +33,7 @@ import org.hibernate.annotations.OrderBy;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CategoryImpl implements Category, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -68,6 +71,7 @@ public class CategoryImpl implements Category, Serializable {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private List<Category> allChildCategories;
 
     // @OneToMany(mappedBy = "category", targetEntity = BroadleafCategoryImage.class)
