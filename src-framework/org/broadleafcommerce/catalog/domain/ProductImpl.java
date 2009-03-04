@@ -23,12 +23,15 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.util.DateUtil;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.OrderBy;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class ProductImpl implements Product, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -56,12 +59,14 @@ public class ProductImpl implements Product, Serializable {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private List<Sku> allSkus;
 
     @CollectionOfElements
     @JoinTable(name = "BLC_PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Map<String, String> productImages;
 
     // TODO fix jb
@@ -70,6 +75,7 @@ public class ProductImpl implements Product, Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ProductAuxillaryImagesImpl.class)
     @OrderBy(clause = "DISPLAY_ORDER")
     @JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private List<ImageDescription> productAuxillaryImages;
 
     @OneToOne(targetEntity = CategoryImpl.class)

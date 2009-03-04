@@ -10,9 +10,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_IMAGE_DESCRIPTION")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class ImageDescriptionImpl implements ImageDescription, Serializable {
 
     private static final long serialVersionUID = 1L;
