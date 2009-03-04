@@ -35,17 +35,17 @@ public class CatalogController extends AbstractController {
     	HashMap<String,Object> model = new HashMap<String,Object>();
         boolean categoryError = false;
 
-    	Category rootCategory = catalogService.findCategoryById(rootCategoryId);
+    	Category rootCategory = null;
+    	if (getRootCategoryId() != null) {
+    		rootCategory = catalogService.findCategoryById(getRootCategoryId());
+    	}
     	if (rootCategory == null) {
-    		throw new IllegalStateException("Catalog Controller configured incorrectly - root category not found." + rootCategoryId);
+    		throw new IllegalStateException("Catalog Controller configured incorrectly - root category not found: " + rootCategoryId);
     	}
 
     	String path = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());
     	List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(path);
-    	if (categoryList != null) {
-    		model.put("currentCategory", categoryList.get(categoryList.size()-1));
-        	model.put("breadcrumbCategories", categoryList);
-    	} else {
+    	if (categoryList == null) {
     		// TODO: nice to have would be nice to see if a lower level category is
     		// usable -- check to see if any of the parent categories are valid
     		categoryError = true;
@@ -74,6 +74,10 @@ public class CatalogController extends AbstractController {
         }
 
         Category currentCategory = categoryList.get(categoryList.size()-1);
+        List<Product> currentProducts = catalogService.findActiveProductsByCategory(currentCategory);
+        if (currentProducts.size() > 0) {
+        	model.put("currentProducts", currentProducts);
+        }
 
        	model.put("categoryError", categoryError);
        	model.put("productError", productError);
@@ -88,7 +92,6 @@ public class CatalogController extends AbstractController {
     		if (currentCategory.getUrl() != null) {
     			view = currentCategory.getUrl();
     		} else if (currentCategory.getDisplayTemplate() != null) {
-    			// TODO: Test this out
     			view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
     		} else {
     			view = defaultCategoryView;
