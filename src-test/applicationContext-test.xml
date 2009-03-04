@@ -29,6 +29,7 @@
 			</bean>
 		</property>
 	</bean>
+
 	<bean id="broadleafCommerceDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
 		<property name="url" value="jdbc:hsqldb:mem:broadleaf" />
