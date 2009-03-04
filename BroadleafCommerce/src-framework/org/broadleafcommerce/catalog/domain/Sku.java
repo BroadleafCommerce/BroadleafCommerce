@@ -30,9 +30,9 @@ public interface Sku {
 
     public void setLongDescription(String longDescription);
 
-    public boolean isTaxable();
+    public Boolean isTaxable();
 
-    public void setTaxable(boolean taxable);
+    public void setTaxable(Boolean taxable);
 
     public Date getActiveStartDate();
 

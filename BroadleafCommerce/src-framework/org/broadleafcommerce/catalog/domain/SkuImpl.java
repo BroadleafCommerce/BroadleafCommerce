@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +18,6 @@ import javax.persistence.Table;
 
 import org.broadleafcommerce.util.DateUtil;
 import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.Type;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -47,8 +47,7 @@ public class SkuImpl implements Sku, Serializable {
     private String longDescription;
 
     @Column(name = "TAXABLE_FLAG")
-    @Type(type = "yes_no")
-    private boolean taxable;
+    private Character taxable;
 
     @Column(name = "ACTIVE_START_DATE")
     private Date activeStartDate;
@@ -110,12 +109,18 @@ public class SkuImpl implements Sku, Serializable {
         this.longDescription = longDescription;
     }
 
-    public boolean isTaxable() {
-        return taxable;
+    public Boolean isTaxable() {
+        if (taxable == null)
+            return null;
+        return taxable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    public void setTaxable(boolean taxable) {
-        this.taxable = taxable;
+    public void setTaxable(Boolean taxable) {
+        if (taxable == null) {
+            this.taxable = null;
+        } else {
+            this.taxable = taxable ? 'Y' : 'N';
+        }
     }
 
     public Date getActiveStartDate() {
