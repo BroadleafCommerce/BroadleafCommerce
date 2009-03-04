@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("customerServiceImpl")
+@Service("customerService")
 public class CustomerServiceImpl implements CustomerService {
 
     /** Logger for this class and subclasses */
@@ -37,10 +37,12 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDao.maintainCustomer(customer);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public Customer readCustomerByEmail(String emailAddress) {
         return customerDao.readCustomerByEmail(emailAddress);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public Customer changePassword(PasswordChange passwordChange) {
         Customer customer = readCustomerByUsername(passwordChange.getUsername());
         customer.setUnencodedPassword(passwordChange.getNewPassword());
@@ -53,6 +55,7 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public Customer readCustomerByUsername(String username) {
         return customerDao.readCustomerByUsername(username);
     }

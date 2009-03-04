@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("userServiceImpl")
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
     /** Logger for this class and subclasses */
@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
     // @Resource(name = "saltSource")
     // private SaltSource saltSource;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public User saveUser(User user) {
         if (user.getUnencodedPassword() != null) {
             user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), null));
@@ -40,14 +41,17 @@ public class UserServiceImpl implements UserService {
         return userDao.maintainUser(user);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<UserRole> readUserRolesByUserId(Long userId) {
         return userDao.readUserRolesByUserId(userId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public User readUserByEmail(String emailAddress) {
         return userDao.readUserByEmail(emailAddress);
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public User changePassword(PasswordChange passwordChange) {
         User user = readUserByUsername(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
@@ -60,6 +64,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     public User readUserByUsername(String username) {
         return userDao.readUserByUsername(username);
     }
