@@ -7,11 +7,9 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.catalog.dao.ProductDaoJpa;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.test.dataprovider.ProductDataProvider;
-import org.springframework.stereotype.Component;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
-@Component("productDaoTest")
 public class ProductDaoTest extends BaseTest {
     
     @Resource
