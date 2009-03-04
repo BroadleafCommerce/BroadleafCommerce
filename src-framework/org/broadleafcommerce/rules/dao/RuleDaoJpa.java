@@ -14,7 +14,7 @@ public class RuleDaoJpa implements RuleDao {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @PersistenceContext
+    @PersistenceContext(unitName="blPU")
     private EntityManager em;
 
     @Override

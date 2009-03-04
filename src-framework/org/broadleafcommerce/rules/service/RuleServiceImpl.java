@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("ruleService")
+@Service("ruleServiceImpl")
 public class RuleServiceImpl implements RuleService {
 
     @Resource
@@ -30,7 +30,6 @@ public class RuleServiceImpl implements RuleService {
     @Resource
     private RuleBaseService ruleBaseService;
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public ShoppingCartPromotion saveShoppingCartPromotion(ShoppingCartPromotion shoppingCartPromotion) {
         return ruleDao.maintainShoppingCartPromotion(shoppingCartPromotion);
     }
