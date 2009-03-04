@@ -19,7 +19,7 @@ public class ContactInfoDaoJpa implements ContactInfoDao {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext
     private EntityManager em;
 
     @Resource
