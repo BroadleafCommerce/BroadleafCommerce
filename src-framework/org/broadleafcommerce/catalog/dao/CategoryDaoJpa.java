@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository("categoryDao")
 public class CategoryDaoJpa implements CategoryDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext
     private EntityManager em;
 
     @Resource
