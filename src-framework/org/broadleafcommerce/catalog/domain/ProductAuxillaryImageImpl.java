@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_AUX_IMAGE")
-public class ProductAuxillaryImagesImpl implements ImageDescription, Serializable {
+public class ProductAuxillaryImageImpl implements ProductAuxillaryImage, Serializable {
 
     private static final long serialVersionUID = 1L;
 
