@@ -61,7 +61,7 @@
 				<include name="jdbc.properties" />
 			</fileset>
 		</copy>
-
+		
 		<if>
 			<equals arg1="${hibernate.hbm2ddl.auto}" arg2="false" />
 			<then>
@@ -125,11 +125,12 @@
 		<jar jarfile="${stage.dir}/broadleaf-extensibility.jar" basedir="${stage.dir}/extensibility-jar">
 			<include name="**/*.class" />
 			<include name="**/*.properties" />
+			<include name="**/*.txt" />
 			<include name="**/*.xml" />
 			<include name="META-INF/**" />
 			<exclude name="**/test/**/*.class" />
 		</jar>
-		<delete dir="${stage.dir}/extensibility-jar" />
+		
 	</target>
 
 	<target name="build-extensibility-source-jar">
@@ -225,6 +226,16 @@
 				<include name="**/*.vm" />
 			</fileset>
 		</copy>
+		
+		<if>
+			<equals arg1="${hibernate.hbm2ddl.auto}" arg2="false" />
+			<then>
+				<replace file="${stage.dir}/profile-jar/META-INF/persistence-profile.xml">
+					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
+					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
+				</replace>
+			</then>
+		</if>
 
 		<jar jarfile="${stage.dir}/broadleaf-profile.jar" basedir="${stage.dir}/profile-jar">
 			<include name="**/*.class" />

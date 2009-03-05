@@ -33,7 +33,7 @@
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 	
-	<bean name="catalogService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="catalogService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="target" ref="catalogServiceImpl"/>
 		<property name="transactionManager" ref="transactionManager"/>
 	   <property name="transactionAttributes">
@@ -43,7 +43,7 @@
 	   </property>
 	</bean>
 	
-	<bean name="orderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="orderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="target" ref="orderServiceImpl"/>
 		<property name="transactionManager" ref="transactionManager"/>
 	   <property name="transactionAttributes">
@@ -53,7 +53,7 @@
 	   </property>
 	</bean>
 	
-	<bean name="ruleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="ruleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="target" ref="ruleServiceImpl"/>
 		<property name="transactionManager" ref="transactionManager"/>
 	   <property name="transactionAttributes">
@@ -63,7 +63,7 @@
 	   </property>
 	</bean>
 	
-	<bean name="addressService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="addressService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="target" ref="addressServiceImpl"/>
 		<property name="transactionManager" ref="transactionManager"/>
 	   <property name="transactionAttributes">
@@ -73,7 +73,7 @@
 	   </property>
 	</bean>
 	
-	<bean name="contactInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="contactInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="target" ref="contactInfoServiceImpl"/>
 		<property name="transactionManager" ref="transactionManager"/>
 	   <property name="transactionAttributes">
@@ -83,7 +83,7 @@
 	   </property>
 	</bean>
 	
-	<bean name="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="target" ref="customerServiceImpl"/>
 		<property name="transactionManager" ref="transactionManager"/>
 	   <property name="transactionAttributes">
@@ -93,7 +93,7 @@
 	   </property>
 	</bean>
 	
-	<bean name="userService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+	<bean id="userService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="target" ref="userServiceImpl"/>
 		<property name="transactionManager" ref="transactionManager"/>
 	   <property name="transactionAttributes">

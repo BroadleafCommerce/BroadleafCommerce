@@ -42,11 +42,12 @@
 
 	<target name="8. Build Release Binaries and Source Jars" depends="1. Build Jars, 7. Build Source Jars" description="Builds all production (disable automatic ddl table creation) binary and source jars to the staging area.">
 		<property name="hibernate.hbm2ddl.auto" value="false" />
-		<ant antfile="${internal.build.file}" target="build-jars" />
-		<ant antfile="${internal.build.file}" target="build-source-jars" />
+		<ant antfile="${internal.build.file}" target="build-jars"/>
+		<ant antfile="${internal.build.file}" target="build-source-jars"/>
 	</target>
 
 	<target name="9. Publish Binaries and Source Jars" description="Publish production build to Ivy">
+		<property name="hibernate.hbm2ddl.auto" value="false" />
 		<ant antfile="${internal.build.file}" target="publish-jars" />
 	</target>
 

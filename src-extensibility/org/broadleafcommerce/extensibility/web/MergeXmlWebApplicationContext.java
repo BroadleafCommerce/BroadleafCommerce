@@ -62,22 +62,11 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 	 * @see #getResourcePatternResolver
 	 */
 	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
-		String[] configLocations = getConfigLocations();
 		String[] broadleafConfigLocations = getStandardConfigLocations();
-		int totalLength = broadleafConfigLocations.length;
-		if (configLocations != null) {
-			totalLength += configLocations.length;
-		}
-		String[] totalLocations = new String[totalLength];
-		System.arraycopy(broadleafConfigLocations, 0, totalLocations, 0, broadleafConfigLocations.length);
-		if (configLocations != null) {
-			System.arraycopy(configLocations,0,totalLocations,broadleafConfigLocations.length, configLocations.length);
-		}
 		
-		InputStream[] sources = new InputStream[totalLocations.length];
-		for (int i = 0; i < totalLocations.length; i++) {
-			Resource resource = getResourceByPath(totalLocations[i]);
-			sources[i] = resource.getInputStream();
+		InputStream[] sources = new InputStream[broadleafConfigLocations.length];
+		for (int i = 0; i < broadleafConfigLocations.length; i++) {
+			sources[i] = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(broadleafConfigLocations[i]);
 		}
 		String patchLocation = getPatchLocation();
 		String[] patchLocations = StringUtils.tokenizeToStringArray(patchLocation, CONFIG_LOCATION_DELIMITERS);
