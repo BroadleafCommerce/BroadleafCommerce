@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("addressService")
+@Service("addressServiceBLC")
 public class AddressServiceImpl implements AddressService {
 
     @Resource

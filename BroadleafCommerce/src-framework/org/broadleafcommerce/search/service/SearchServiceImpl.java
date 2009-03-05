@@ -28,7 +28,7 @@ import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.springframework.stereotype.Service;
 
-@Service("searchService")
+@Service("searchServiceBLC")
 public class SearchServiceImpl implements SearchService {
 
     @Resource

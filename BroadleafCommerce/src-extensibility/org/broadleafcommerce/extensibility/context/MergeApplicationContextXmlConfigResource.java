@@ -50,15 +50,17 @@ public class MergeApplicationContextXmlConfigResource extends MergeXmlConfigReso
 				LOG.debug("Merged Stage1 Sources: \n" + serialize(new ByteArrayInputStream(mergedArray)));
 			}
 			
-			InputStream[] patches2 = new InputStream[patches.length+1];
-			patches2[0] = new ByteArrayInputStream(mergedArray);
-			System.arraycopy(patches, 0, patches2, 1, patches.length);
-			
-			//Set the second stage for more complex merge that includes the interiors of matching beans
-			Properties stage2 = new Properties();
-			stage2.load(MergeApplicationContextXmlConfigResource.class.getResourceAsStream("MergeApplicationContextXmlConfigResource.2.properties"));
-			configurer = new PropertyXPathConfigurer(stage2);
-			merged = merge(patches2, configurer);
+			if (patches != null) {
+				InputStream[] patches2 = new InputStream[patches.length+1];
+				patches2[0] = new ByteArrayInputStream(mergedArray);
+				System.arraycopy(patches, 0, patches2, 1, patches.length);
+				
+				//Set the second stage for more complex merge that includes the interiors of matching beans
+				Properties stage2 = new Properties();
+				stage2.load(MergeApplicationContextXmlConfigResource.class.getResourceAsStream("MergeApplicationContextXmlConfigResource.2.properties"));
+				configurer = new PropertyXPathConfigurer(stage2);
+				merged = merge(patches2, configurer);
+			}
 			
 			//read the final stream into a byte array
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();

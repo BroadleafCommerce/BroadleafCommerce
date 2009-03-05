@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("ruleService")
+@Service("ruleServiceBLC")
 public class RuleServiceImpl implements RuleService {
 
     @Resource
