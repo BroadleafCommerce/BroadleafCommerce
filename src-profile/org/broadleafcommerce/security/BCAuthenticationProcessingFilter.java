@@ -23,6 +23,8 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
 
     private final List<PostLoginObserver> postLoginListeners = new ArrayList<PostLoginObserver>();
 
+    private String passwordChangeUri = "/passwordChange.htm";
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request) throws AuthenticationException {
         Authentication auth = null;
@@ -69,7 +71,7 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         for (GrantedAuthority ga : auth.getAuthorities()) {
             if ("ROLE_PASSWORD_CHANGE_REQUIRED".equals(ga.getAuthority())) {
-                return "/passwordChange.htm";
+                return passwordChangeUri;
             }
         }
         return super.determineTargetUrl(request);
@@ -90,5 +92,9 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
             PostLoginObserver listener = iter.next();
             listener.process(request, response, authResult);
         }
+    }
+
+    public void setPasswordChangeUri(String passwordChangeUri) {
+        this.passwordChangeUri = passwordChangeUri;
     }
 }
