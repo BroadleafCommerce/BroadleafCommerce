@@ -1,7 +1,6 @@
 package org.broadleafcommerce.catalog.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;

@@ -72,11 +72,10 @@ public class ProductImpl implements Product, Serializable {
     // TODO fix jb
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ProductAuxillaryImageImpl.class)
-    //@OrderBy(clause = "DISPLAY_ORDER")
-    //@JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
-    //@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    //private List<ImageDescription> productAuxillaryImages;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ProductAuxillaryImageImpl.class)
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @JoinTable(name = "BLC_PRODUCT_AUX_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "ID"))
+    private List<ProductAuxillaryImage> productAuxillaryImages;
 
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -171,13 +170,13 @@ public class ProductImpl implements Product, Serializable {
         this.productImages = productImages;
     }
 
-    //public List<ImageDescription> getProductAuxillaryImages() {
-    //    return productAuxillaryImages;
-    //}
+    public List<ProductAuxillaryImage> getProductAuxillaryImages() {
+        return productAuxillaryImages;
+    }
 
-    //public void setProductAuxillaryImages(List<ImageDescription> productAuxillaryImages) {
-    //    this.productAuxillaryImages = productAuxillaryImages;
-   // }
+    public void setProductAuxillaryImages(List<ProductAuxillaryImage> productAuxillaryImages) {
+        this.productAuxillaryImages = productAuxillaryImages;
+    }
 
     public Category getDefaultCategory() {
         return defaultCategory;
