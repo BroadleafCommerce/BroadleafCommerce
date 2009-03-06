@@ -1,9 +1,9 @@
 package org.broadleafcommerce.web;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,9 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.util.UrlPathHelper;
 
-// TODO:  REQUIRED Support find by category id (double check product id logic)
 public class CatalogController extends AbstractController {
-	private static final int MAX_LEVELS = 10; // protection against recursive category structure
 	protected final Log logger = LogFactory.getLog(getClass());
 	private final UrlPathHelper pathHelper = new UrlPathHelper();
 	private CatalogService catalogService;
@@ -33,8 +31,28 @@ public class CatalogController extends AbstractController {
             HttpServletResponse response) {
 
     	HashMap<String,Object> model = new HashMap<String,Object>();
-        boolean categoryError = false;
 
+    	addCategoryToModel(request, model);
+    	boolean productFound = addProductsToModel(request, model);
+
+    	String view = defaultCategoryView;
+      	if (productFound) {
+      		// TODO: Nice to have: product logic similar to category below
+      		view = defaultProductView;
+      	} else {
+      		Category currentCategory = (Category) model.get("currentCategory");
+      		if (currentCategory.getUrl() != null) {
+      			view = currentCategory.getUrl();
+      		} else if (currentCategory.getDisplayTemplate() != null) {
+      			view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
+      		} else {
+      			view = defaultCategoryView;
+      		}
+      	}
+          return new ModelAndView(view, model);
+	}
+
+	protected void addCategoryToModel(HttpServletRequest request, Map<String,Object> model ) {
     	Category rootCategory = null;
     	if (getRootCategoryId() != null) {
     		rootCategory = catalogService.findCategoryById(getRootCategoryId());
@@ -43,87 +61,112 @@ public class CatalogController extends AbstractController {
     		throw new IllegalStateException("Catalog Controller configured incorrectly - root category not found: " + rootCategoryId);
     	}
 
-    	String path = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());
-    	List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(path);
-    	if (categoryList == null) {
-    		// TODO: nice to have would be nice to see if a lower level category is
-    		// usable -- check to see if any of the parent categories are valid
+    	String url = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());
+        String categoryId = request.getParameter("categoryId");
+        if (categoryId != null) {
+        	Category category = catalogService.findCategoryById(new Long(categoryId));
+        	if (category != null) {
+        		url = category.getUrl();
+        	}
+        }
+
+    	List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(url);
+    	addCategoryListToModel(categoryList, rootCategory, url, model);
+    	model.put("rootCategory", rootCategory);
+	}
+
+	protected int findProductPositionInList(Product product, List<Product> products) {
+		for (int i=0; i < products.size(); i++) {
+			Product currentProduct = products.get(i);
+			if (product.getId().equals(currentProduct.getId())) {
+				return i+1;
+			}
+		}
+		return 0;
+	}
+
+	protected boolean addCategoryListToModel(List<Category> categoryList, Category rootCategory, String url, Map<String,Object> model) {
+		boolean categoryError = false;
+
+		while (categoryList == null) {
     		categoryError = true;
-    		model.put("currentCategory", rootCategory);
-    		categoryList = new ArrayList<Category>();
-    		categoryList.add(rootCategory);
-    		model.put("breadcrumbCategories", categoryList);
+
+    		int pos = url.indexOf("/");
+    		if (pos == -1) {
+        		categoryList = new ArrayList<Category>();
+        		categoryList.add(rootCategory);
+    		} else {
+    			url = url.substring(0, url.lastIndexOf("/"));
+        		categoryList = rootCategory.getChildCategoryURLMap().get(url);
+    		}
     	}
 
-        boolean productError = false;
+    	model.put("breadcrumbCategories", categoryList);
+		model.put("currentCategory", categoryList.get(categoryList.size()-1));
+		model.put("categoryError", categoryError);
+		return categoryError;
+	}
+
+	protected boolean validateProductAndAddToModel(Product product, Map<String,Object> model) {
+		Category currentCategory = (Category) model.get("currentCategory");
+		Category rootCategory = (Category) model.get("rootCategory");
+		int productPosition=0;
+
+		List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+		if (productList != null) {
+			model.put("currentProducts", productList);
+		}
+		productPosition = findProductPositionInList(product, productList);
+		if (productPosition == 0) {
+			// look for product in its default category and override category from request URL
+			currentCategory = product.getDefaultCategory();
+			productList = catalogService.findActiveProductsByCategory(currentCategory);
+			if (productList != null) {
+				model.put("currentProducts", productList);
+			}
+			String url = currentCategory.getGeneratedUrl();
+
+			// override category list settings using this products default
+			List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(url);
+	    	if (categoryList != null && ! addCategoryListToModel(categoryList, rootCategory, url, model)) {
+				productPosition = findProductPositionInList(product, productList);
+	    	}
+		}
+
+		if (productPosition != 0) {
+			model.put("productError", false);
+			model.put("currentProduct", product);
+			model.put("productPosition", productPosition);
+			if (productPosition != 1) {
+				model.put("previousProduct", productList.get(productPosition-2));
+			}
+			if (productPosition < productList.size()) {
+				model.put("nextProduct", productList.get(productPosition));
+			}
+			model.put("totalProducts", productList.size());
+		} else {
+			model.put("productError", true);
+		}
+
+		return (productPosition !=0);
+	}
+
+	protected boolean addProductsToModel(HttpServletRequest request, Map<String,Object> model ) {
         boolean productFound = false;
 
         String productId = request.getParameter("productId");
         if (productId != null) {
         	Product product = catalogService.findProductById(new Long(productId));
-        	// TODO: REQUIRED - Validate that product exists in a valid category (e.g. to exclude christmas products)
         	if (product != null) {
-        		model.put("currentProduct", product);
-        		productFound = true;
-        		if (categoryError) {
-        			categoryError = buildBreadcrumbCategoriesFromProduct(product, categoryList);
-        		}
-        	} else {
-        		productError = true;
+        		productFound = validateProductAndAddToModel(product, model);
         	}
+        } else {
+        	Category currentCategory = (Category) model.get("currentCategory");
+        	List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+        	model.put("currentProducts", productList);
         }
 
-        Category currentCategory = categoryList.get(categoryList.size()-1);
-        List<Product> currentProducts = catalogService.findActiveProductsByCategory(currentCategory);
-        if (currentProducts.size() > 0) {
-        	model.put("currentProducts", currentProducts);
-        }
-
-       	model.put("categoryError", categoryError);
-       	model.put("productError", productError);
-		model.put("currentCategory", currentCategory);
-    	model.put("breadcrumbCategories", categoryList);
-
-        String view = defaultCategoryView;
-    	if (productFound) {
-    		// TODO: Nice to have: product logic similar to category below
-    		view = defaultProductView;
-    	} else {
-    		if (currentCategory.getUrl() != null) {
-    			view = currentCategory.getUrl();
-    		} else if (currentCategory.getDisplayTemplate() != null) {
-    			view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
-    		} else {
-    			view = defaultCategoryView;
-    		}
-    	}
-        return new ModelAndView(view, model);
-    }
-
-	protected boolean buildBreadcrumbCategoriesFromProduct(Product product,
-			List<Category> categoryList) {
-		return buildBreadcrumbCategoriesFromCategory(product
-				.getDefaultCategory(), categoryList);
-	}
-
-	protected boolean buildBreadcrumbCategoriesFromCategory(Category category,
-			List<Category> categoryList) {
-		categoryList.clear();
-		int count = 0;
-		Category tmpCategory = category;
-		boolean categoryError = false;
-		while (tmpCategory != null && count < MAX_LEVELS) {
-			if (tmpCategory.isActive()) {
-				categoryList.add(tmpCategory);
-				tmpCategory = tmpCategory.getDefaultParentCategory();
-			} else {
-				categoryError = true;
-			}
-			count++;
-		}
-
-		Collections.reverse(categoryList);
-		return categoryError;
+        return productFound;
 	}
 
 	public Long getRootCategoryId() {
