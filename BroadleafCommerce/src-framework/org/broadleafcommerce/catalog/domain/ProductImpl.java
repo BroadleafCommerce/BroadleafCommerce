@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +16,6 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -72,9 +70,9 @@ public class ProductImpl implements Product, Serializable {
     // TODO fix jb
     // This is a One-To-Many which OWNS!!! the collection
     // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ProductAuxillaryImageImpl.class)
-    @OrderBy(clause = "DISPLAY_ORDER")
-    private List<ProductAuxillaryImage> productAuxillaryImages;
+    //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ProductAuxillaryImageImpl.class)
+    //    @OrderBy(clause = "DISPLAY_ORDER")
+    //    private List<ProductAuxillaryImage> productAuxillaryImages;
 
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -169,13 +167,13 @@ public class ProductImpl implements Product, Serializable {
         this.productImages = productImages;
     }
 
-    public List<ProductAuxillaryImage> getProductAuxillaryImages() {
-        return productAuxillaryImages;
-    }
-
-    public void setProductAuxillaryImages(List<ProductAuxillaryImage> productAuxillaryImages) {
-        this.productAuxillaryImages = productAuxillaryImages;
-    }
+    //    public List<ProductAuxillaryImage> getProductAuxillaryImages() {
+    //        return productAuxillaryImages;
+    //    }
+    //
+    //    public void setProductAuxillaryImages(List<ProductAuxillaryImage> productAuxillaryImages) {
+    //        this.productAuxillaryImages = productAuxillaryImages;
+    //    }
 
     public Category getDefaultCategory() {
         return defaultCategory;
