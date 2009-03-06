@@ -24,7 +24,6 @@ import org.broadleafcommerce.util.DateUtil;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
-import org.hibernate.annotations.OrderBy;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -56,7 +55,7 @@ public class ProductImpl implements Product, Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
-    @OrderBy(clause = "DISPLAY_ORDER")
+    @org.hibernate.annotations.OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private List<Sku> allSkus;
 
@@ -66,13 +65,6 @@ public class ProductImpl implements Product, Serializable {
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Map<String, String> productImages;
-
-    // TODO fix jb
-    // This is a One-To-Many which OWNS!!! the collection
-    // Notice that I don't have a "mappedBy" member on the @OneToMany annotation
-    //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = ProductAuxillaryImageImpl.class)
-    //    @OrderBy(clause = "DISPLAY_ORDER")
-    //    private List<ProductAuxillaryImage> productAuxillaryImages;
 
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
@@ -166,14 +158,6 @@ public class ProductImpl implements Product, Serializable {
     public void setProductImages(Map<String, String> productImages) {
         this.productImages = productImages;
     }
-
-    //    public List<ProductAuxillaryImage> getProductAuxillaryImages() {
-    //        return productAuxillaryImages;
-    //    }
-    //
-    //    public void setProductAuxillaryImages(List<ProductAuxillaryImage> productAuxillaryImages) {
-    //        this.productAuxillaryImages = productAuxillaryImages;
-    //    }
 
     public Category getDefaultCategory() {
         return defaultCategory;

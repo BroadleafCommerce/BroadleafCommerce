@@ -42,10 +42,6 @@ public interface Product {
 
     public void setProductImages(Map<String, String> productImages);
 
-    //    public List<ProductAuxillaryImage> getProductAuxillaryImages();
-    //
-    //    public void setProductAuxillaryImages(List<ProductAuxillaryImage> productAuxillaryImages);
-
     public Category getDefaultCategory();
 
     public void setDefaultCategory(Category defaultCategory);
