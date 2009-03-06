@@ -24,9 +24,10 @@ public class AddressTest extends BaseTest {
     String userName = new String();
     Long userId;
 
-    @Resource(name = "addressService")
+    @Resource
     private AddressService addressService;
-    @Resource(name="customerService")
+
+    @Resource
     private CustomerService customerService;
 
     @Test(groups =  {"createAddress"}, dataProvider = "setupAddress", dataProviderClass = AddressDataProvider.class, dependsOnGroups={ "readCustomer1" })

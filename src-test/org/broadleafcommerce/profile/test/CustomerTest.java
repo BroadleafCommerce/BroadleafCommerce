@@ -21,10 +21,10 @@ public class CustomerTest extends BaseTest {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource(name = "customerService")
+    @Resource
     private CustomerService customerService;
 
-    @Resource(name = "userDetailsService")
+    @Resource
     private UserDetailsService userDetailsService;
 
     List<Long> userIds = new ArrayList<Long>();

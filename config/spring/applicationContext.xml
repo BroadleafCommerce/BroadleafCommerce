@@ -34,75 +34,75 @@
 	</bean>
 
 
-	<bean id="catalogService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="catalogServiceBLC"/>
-		<property name="transactionManager" ref="transactionManager"/>
-	   <property name="transactionAttributes">
-	     <props>
-	       <prop key="*">PROPAGATION_REQUIRED</prop>
-	     </props>
-	   </property>
-	</bean>
-
-	<bean id="orderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="orderServiceBLC"/>
-		<property name="transactionManager" ref="transactionManager"/>
-	   <property name="transactionAttributes">
-	     <props>
-	       <prop key="*">PROPAGATION_REQUIRED</prop>
-	     </props>
-	   </property>
-	</bean>
-
-	<bean id="ruleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="ruleServiceBLC"/>
-		<property name="transactionManager" ref="transactionManager"/>
-	   <property name="transactionAttributes">
-	     <props>
-	       <prop key="*">PROPAGATION_REQUIRED</prop>
-	     </props>
-	   </property>
-	</bean>
-
-	<bean id="addressService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="addressServiceBLC"/>
-		<property name="transactionManager" ref="transactionManager"/>
-	   <property name="transactionAttributes">
-	     <props>
-	       <prop key="*">PROPAGATION_REQUIRED</prop>
-	     </props>
-	   </property>
-	</bean>
-
-	<bean id="contactInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="contactInfoServiceBLC"/>
-		<property name="transactionManager" ref="transactionManager"/>
-	   <property name="transactionAttributes">
-	     <props>
-	       <prop key="*">PROPAGATION_REQUIRED</prop>
-	     </props>
-	   </property>
-	</bean>
-
-	<bean id="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="customerServiceBLC"/>
-		<property name="transactionManager" ref="transactionManager"/>
-	   <property name="transactionAttributes">
-	     <props>
-	       <prop key="*">PROPAGATION_REQUIRED</prop>
-	     </props>
-	   </property>
-	</bean>
-
-	<bean id="userService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="target" ref="userServiceBLC"/>
-		<property name="transactionManager" ref="transactionManager"/>
-	   <property name="transactionAttributes">
-	     <props>
-	       <prop key="*">PROPAGATION_REQUIRED</prop>
-	     </props>
-	   </property>
-	</bean>
+<!--	<bean id="catalogService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--		<property name="target" ref="catalogServiceBLC"/>-->
+<!--		<property name="transactionManager" ref="transactionManager"/>-->
+<!--	   <property name="transactionAttributes">-->
+<!--	     <props>-->
+<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--	     </props>-->
+<!--	   </property>-->
+<!--	</bean>-->
+<!---->
+<!--	<bean id="orderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--		<property name="target" ref="orderServiceBLC"/>-->
+<!--		<property name="transactionManager" ref="transactionManager"/>-->
+<!--	   <property name="transactionAttributes">-->
+<!--	     <props>-->
+<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--	     </props>-->
+<!--	   </property>-->
+<!--	</bean>-->
+<!---->
+<!--	<bean id="ruleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--		<property name="target" ref="ruleServiceBLC"/>-->
+<!--		<property name="transactionManager" ref="transactionManager"/>-->
+<!--	   <property name="transactionAttributes">-->
+<!--	     <props>-->
+<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--	     </props>-->
+<!--	   </property>-->
+<!--	</bean>-->
+<!---->
+<!--	<bean id="addressService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--		<property name="target" ref="addressServiceBLC"/>-->
+<!--		<property name="transactionManager" ref="transactionManager"/>-->
+<!--	   <property name="transactionAttributes">-->
+<!--	     <props>-->
+<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--	     </props>-->
+<!--	   </property>-->
+<!--	</bean>-->
+<!---->
+<!--	<bean id="contactInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--		<property name="target" ref="contactInfoServiceBLC"/>-->
+<!--		<property name="transactionManager" ref="transactionManager"/>-->
+<!--	   <property name="transactionAttributes">-->
+<!--	     <props>-->
+<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--	     </props>-->
+<!--	   </property>-->
+<!--	</bean>-->
+<!---->
+<!--	<bean id="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--		<property name="target" ref="customerServiceBLC"/>-->
+<!--		<property name="transactionManager" ref="transactionManager"/>-->
+<!--	   <property name="transactionAttributes">-->
+<!--	     <props>-->
+<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--	     </props>-->
+<!--	   </property>-->
+<!--	</bean>-->
+<!---->
+<!--	<bean id="userService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+<!--		<property name="target" ref="userServiceBLC"/>-->
+<!--		<property name="transactionManager" ref="transactionManager"/>-->
+<!--	   <property name="transactionAttributes">-->
+<!--	     <props>-->
+<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
+<!--	     </props>-->
+<!--	   </property>-->
+<!--	</bean>-->
 
 	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
@@ -169,7 +169,6 @@
 	<bean id="org.broadleafcommerce.profile.domain.ContactInfo" class="org.broadleafcommerce.profile.domain.ContactInfoImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl"/>
-	<bean id="org.broadleafcommerce.catalog.domain.ProductAuxillaryImage" class="org.broadleafcommerce.catalog.domain.ProductAuxillaryImageImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.SkuImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.UserImpl"/>
 

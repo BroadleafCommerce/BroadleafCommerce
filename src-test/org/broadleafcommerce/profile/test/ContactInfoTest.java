@@ -20,16 +20,17 @@ public class ContactInfoTest extends BaseTest {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
+    @Resource
+    private ContactInfoService contactInfoService;
+
+    @Resource
+    private CustomerService customerService;
+
     List<Long> contactInfoIds = new ArrayList<Long>();
     String userName = new String();
     Long userId;
 
     private Long contactId;
-
-    @Resource(name = "contactInfoService")
-    private ContactInfoService contactInfoService;
-    @Resource(name="customerService")
-    private CustomerService customerService;
 
     @Test(groups =  {"createContactInfo"}, dataProvider = "setupContactInfo", dataProviderClass = ContactInfoDataProvider.class, dependsOnGroups={ "readCustomer1" })
     @Rollback(false)
