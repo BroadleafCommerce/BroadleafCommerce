@@ -3,9 +3,9 @@ package org.broadleafcommerce.profile.test;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.service.AddressStandardizationServiceImpl;
 import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
 import org.broadleafcommerce.test.integration.BaseTest;
@@ -13,7 +13,7 @@ import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 public class USPSAddressStandardizationServiceTest extends BaseTest{
-    @Resource(name = "addressStandardizationService")
+    @Resource
     private AddressStandardizationServiceImpl addressStandardizationService;
     boolean uspsError = true;
 

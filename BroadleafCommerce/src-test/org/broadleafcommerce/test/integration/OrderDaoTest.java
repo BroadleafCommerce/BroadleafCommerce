@@ -22,7 +22,7 @@ public class OrderDaoTest extends BaseTest {
     @Resource
     private OrderDaoJpa orderDao;
 
-    @Resource(name = "customerService")
+    @Resource
     private CustomerService customerService;
 
     @Resource
@@ -55,12 +55,12 @@ public class OrderDaoTest extends BaseTest {
         List<Order> orders = orderDao.readOrdersForCustomer(user);
         assert orders.size() > 0;
     }
-    
+
     @Test(groups = {"deleteOrderForCustomer"}, dependsOnGroups = {"createOrder"})
     public void deleteOrderForCustomer(){
-    	Order order = orderDao.readOrderById(orderId);
-    	assert order != null;
-    	assert order.getId() != null;
-    	orderDao.deleteOrderForCustomer(order);
+        Order order = orderDao.readOrderById(orderId);
+        assert order != null;
+        assert order.getId() != null;
+        orderDao.deleteOrderForCustomer(order);
     }
 }
