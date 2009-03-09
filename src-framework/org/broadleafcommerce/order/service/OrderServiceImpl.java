@@ -23,6 +23,7 @@ import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.promotion.domain.Offer;
 import org.broadleafcommerce.type.FulfillmentGroupType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -53,8 +54,8 @@ public class OrderServiceImpl implements OrderService {
     private AddressDao addressDao;
 
     @Override
-    public Order findCurrentBasketForCustomer(Customer customer) {
-        return orderDao.readBasketOrdersForCustomer(customer);
+    public Order findCurrentCartForCustomer(Customer customer) {
+        return orderDao.readCartOrdersForCustomer(customer);
     }
 
     @Override
@@ -268,7 +269,7 @@ public class OrderServiceImpl implements OrderService {
 
         List<FulfillmentGroup> fulfillmentGroupList = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroupList) {
-            total = total.add(fulfillmentGroup.getCost());
+            total = total.add(fulfillmentGroup.getRetailPrice());
         }
         order.setTotal(total);
         return order;
@@ -279,9 +280,21 @@ public class OrderServiceImpl implements OrderService {
     public Order confirmOrder(Order order) {
         // TODO Other actions needed to complete order. Code below is only a start.
         return orderDao.submitOrder(order);
-    }
+    }       
 
     @Override
+	public Order addOfferToOrder(Order order, String offerCode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Order removeOfferFromOrder(Order order, Offer offer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void cancelOrder(Order order) {
         orderDao.deleteOrderForCustomer(order);
@@ -302,7 +315,7 @@ public class OrderServiceImpl implements OrderService {
     protected FulfillmentGroupImpl createDefaultFulfillmentGroupFromFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Long orderId) {
         FulfillmentGroupImpl newFg = fulfillmentGroupDao.createDefault();
         newFg.setAddress(fulfillmentGroup.getAddress());
-        newFg.setCost(fulfillmentGroup.getCost());
+        newFg.setRetailPrice(fulfillmentGroup.getRetailPrice());
         newFg.setFulfillmentGroupItems(fulfillmentGroup.getFulfillmentGroupItems());
         newFg.setMethod(fulfillmentGroup.getMethod());
         newFg.setOrderId(orderId);

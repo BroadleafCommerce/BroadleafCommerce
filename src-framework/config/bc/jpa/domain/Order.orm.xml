@@ -14,7 +14,7 @@
 		AND order.type = :orderType</query>
 	</named-query>
 
-	<named-query name="BC_UPDATE_BASKET_ORDER_TO_SUBMITTED">
+	<named-query name="BC_UPDATE_CART_ORDER_TO_SUBMITTED">
 		<query>UPDATE org.broadleafcommerce.order.domain.Order blcOrder
 		SET blcOrder.type = 'SUBMITTED'
 		WHERE blcOrder.id = :id</query>

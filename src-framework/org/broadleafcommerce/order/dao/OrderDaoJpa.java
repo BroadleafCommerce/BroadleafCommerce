@@ -64,29 +64,29 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public Order readBasketOrdersForCustomer(Customer customer) {
+    public Order readCartOrdersForCustomer(Customer customer) {
         Order bo;
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
         query.setParameter("customerId", customer.getId());
-        query.setParameter("orderType", OrderType.BASKET);
+        query.setParameter("orderType", OrderType.CART);
         try {
             bo = (OrderImpl) query.getSingleResult();
             return (OrderImpl) query.getSingleResult();
         } catch (NoResultException nre) {
             bo = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
             bo.setCustomer(customer);
-            bo.setType(OrderType.BASKET);
+            bo.setType(OrderType.CART);
             em.persist(bo);
             return bo;
         }
     }
 
     @Override
-    public Order submitOrder(Order basketOrder) {
+    public Order submitOrder(Order cartOrder) {
         OrderImpl so = new OrderImpl();
-        so.setId(basketOrder.getId());
-        Query query = em.createNamedQuery("BC_UPDATE_BASKET_ORDER_TO_SUBMITTED");
-        query.setParameter("id", basketOrder.getId());
+        so.setId(cartOrder.getId());
+        Query query = em.createNamedQuery("BC_UPDATE_CART_ORDER_TO_SUBMITTED");
+        query.setParameter("id", cartOrder.getId());
         query.executeUpdate();
         return em.find(OrderImpl.class, so.getId());
     }

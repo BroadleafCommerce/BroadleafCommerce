@@ -24,6 +24,10 @@ import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.ContactInfoImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.broadleafcommerce.promotion.domain.Offer;
+import org.broadleafcommerce.promotion.domain.OfferAudit;
+import org.broadleafcommerce.promotion.domain.OfferAuditImpl;
+import org.broadleafcommerce.promotion.domain.OfferImpl;
 import org.broadleafcommerce.type.OrderType;
 
 @Entity
@@ -62,7 +66,15 @@ public class OrderImpl implements Order, Serializable {
     @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
     @MapKey(name = "id")
     private List<FulfillmentGroup> fulfillmentGroups;
-
+    
+    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
+    @MapKey(name = "id")
+    private List<Offer> candidateOffers;
+    
+    @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
+    @MapKey(name = "id")
+    private List<OfferAudit> appliedOffers;
+    
     public Long getId() {
         return id;
     }
@@ -126,4 +138,41 @@ public class OrderImpl implements Order, Serializable {
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups) {
         this.fulfillmentGroups = fulfillmentGroups;
     }
+
+	@Override
+	public void addCandidateOffer(Offer offer) {
+		candidateOffers.add(offer);
+	}
+
+	@Override
+	public List<OfferAudit> getAppliedOffers() {
+		return appliedOffers;
+	}
+
+	@Override
+	public List<Offer> getCandidateOffers() {
+		return candidateOffers;
+	}
+
+	@Override
+	public void setAppliedOffers(List<OfferAudit> offers) {
+		this.appliedOffers = offers;
+		
+	}
+
+	@Override
+	public void setCandaditeOffers(List<Offer> offers) {
+		this.candidateOffers = offers;
+		
+	}
+
+	@Override
+	public void addAppliedOffer(OfferAudit offer) {
+		appliedOffers.add(offer);
+		
+	}
+	
+	
+    
+    
 }
