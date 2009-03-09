@@ -12,7 +12,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.springframework.stereotype.Service;
 
-@Service("pricingServiceBLC")
+@Service("pricingService")
 public class PricingServiceImpl implements PricingService {
 
     @Resource

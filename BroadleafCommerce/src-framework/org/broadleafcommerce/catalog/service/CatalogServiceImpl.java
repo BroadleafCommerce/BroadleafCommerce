@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("catalogServiceBLC")
+@Service("catalogService")
 public class CatalogServiceImpl implements CatalogService {
 
     @Resource

@@ -15,12 +15,12 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.order.service.OrderServiceImpl;
+import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.dao.AddressDaoJpa;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.ContactInfoServiceImpl;
+import org.broadleafcommerce.profile.service.ContactInfoService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.test.dataprovider.PaymentInfoDataProvider;
@@ -39,13 +39,13 @@ public class OrderServiceTest extends BaseTest {
     private AddressDaoJpa addressDao;
 
     @Resource
-    private OrderServiceImpl soService;
+    private OrderService soService;
 
     @Resource
     private CustomerService customerService;
 
     @Resource
-    private ContactInfoServiceImpl contactService;
+    private ContactInfoService contactService;
 
     @Resource
     private SkuDaoJpa skuDao;

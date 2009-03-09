@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("customerServiceBLC")
+@Service("customerService")
 public class CustomerServiceImpl implements CustomerService {
 
     /** Logger for this class and subclasses */
