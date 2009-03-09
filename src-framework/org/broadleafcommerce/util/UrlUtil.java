@@ -1,18 +1,12 @@
 package org.broadleafcommerce.util;
 
+import org.apache.commons.lang.StringUtils;
+
 public class UrlUtil {
 	public static String generateUrlKey(String toConvert) {
-		StringBuffer newUrlKey = new StringBuffer();
-		boolean firstChar = true;
-		for (int i = 0; i < toConvert.length(); i++) {
-			if (Character.isLetter(toConvert.charAt(i)))
-				if (firstChar) {
-					newUrlKey.append(toConvert.substring(i,i+1).toLowerCase());
-					firstChar = false;
-				} else {
-					newUrlKey.append(toConvert.charAt(i));
-				}
-		}
-		return newUrlKey.toString();
+		//remove all non-word characters
+		String result = toConvert.replaceAll("\\W","");
+		//uncapitalizes the first letter of the url key
+		return StringUtils.uncapitalize(result);
 	}
 }
