@@ -10,10 +10,11 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.promotion.domain.Offer;
 
 public interface OrderService {
 
-    public Order findCurrentBasketForCustomer(Customer customer);
+    public Order findCurrentCartForCustomer(Customer customer);
 
     public FulfillmentGroupImpl findDefaultFulfillmentGroupForOrder(Order order);
 
@@ -43,6 +44,10 @@ public interface OrderService {
 
     public Order calculateOrderTotal(Order order);
 
+    public Order addOfferToOrder(Order order, String offerCode);
+    
+    public Order removeOfferFromOrder(Order order, Offer offer);
+    
     public Order confirmOrder(Order order);
 
     public void cancelOrder(Order order);

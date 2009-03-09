@@ -1,0 +1,54 @@
+package org.broadleafcommerce.promotion.dao;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.promotion.domain.OfferAudit;
+import org.springframework.stereotype.Repository;
+
+@Repository("offerAuditDao")
+public class OfferAuditDaoJpa implements OfferAuditDao {
+
+	/** Lookup identifier for Offer bean **/
+	private static String beanName = "org.broadleafcommerce.promotion.domain.OfferAudit";
+	
+	/** Logger for this class and subclasses */
+    protected final Log logger = LogFactory.getLog(getClass());
+	
+    @PersistenceContext(unitName="blPU")
+    private EntityManager em;
+    
+    @Resource
+    private EntityConfiguration entityConfiguration;
+    	
+	@Override
+	public OfferAudit create() {
+		return ((OfferAudit) entityConfiguration.createEntityInstance(beanName));
+	}
+
+	@Override
+	public void deleteOfferAudit(OfferAudit offerAudit) {
+		em.remove(offerAudit);
+	}
+
+	@Override
+	public OfferAudit maintainOfferAudit(OfferAudit offerAudit) {
+		if(offerAudit.getId() == null){
+			em.persist(offerAudit);
+		}else{
+			offerAudit = em.merge(offerAudit);
+		}
+		return offerAudit;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public OfferAudit readAuditById(Long offerAuditId) {
+		return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(beanName), offerAuditId);
+	}
+
+}

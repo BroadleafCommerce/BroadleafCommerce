@@ -45,7 +45,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
 
         FulfillmentGroupImpl newFG = fulfillmentGroupDao.createDefault();
         newFG.setAddress(address);
-        newFG.setCost(fulfillmentGroup.getCost());
+        newFG.setRetailPrice(fulfillmentGroup.getRetailPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
         newFG.setOrderId(salesOrder.getId());
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
@@ -82,7 +82,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
 
         FulfillmentGroup newFG = fulfillmentGroupDao.create();
         newFG.setAddress(address);
-        newFG.setCost(fulfillmentGroup.getCost());
+        newFG.setRetailPrice(fulfillmentGroup.getRetailPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
         newFG.setOrderId(salesOrder.getId());
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());

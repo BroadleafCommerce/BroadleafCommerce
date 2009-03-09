@@ -17,9 +17,9 @@ public interface OrderDao {
 
     public void deleteOrderForCustomer(Order order);
 
-    public Order readBasketOrdersForCustomer(Customer customer);
+    public Order readCartOrdersForCustomer(Customer customer);
 
-    public Order submitOrder(Order basketOrder);
+    public Order submitOrder(Order cartOrder);
 
     public Order create();
 }
