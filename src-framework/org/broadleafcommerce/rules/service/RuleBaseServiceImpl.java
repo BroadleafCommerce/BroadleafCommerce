@@ -6,7 +6,7 @@ import org.drools.RuleBase;
 import org.drools.RuleBaseFactory;
 import org.springframework.stereotype.Service;
 
-@Service("ruleBaseServiceBLC")
+@Service("ruleBaseService")
 public class RuleBaseServiceImpl implements RuleBaseService {
 
     /** Logger for this class and subclasses */

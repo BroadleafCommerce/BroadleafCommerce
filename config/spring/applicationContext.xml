@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
            http://www.springframework.org/schema/context
-           http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx 
+           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 	<context:component-scan base-package="org.broadleafcommerce" />
 
@@ -32,77 +39,47 @@
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
+	
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
 
-
-<!--	<bean id="catalogService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--		<property name="target" ref="catalogServiceBLC"/>-->
-<!--		<property name="transactionManager" ref="transactionManager"/>-->
-<!--	   <property name="transactionAttributes">-->
-<!--	     <props>-->
-<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
-<!--	     </props>-->
-<!--	   </property>-->
-<!--	</bean>-->
-<!---->
-<!--	<bean id="orderService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--		<property name="target" ref="orderServiceBLC"/>-->
-<!--		<property name="transactionManager" ref="transactionManager"/>-->
-<!--	   <property name="transactionAttributes">-->
-<!--	     <props>-->
-<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
-<!--	     </props>-->
-<!--	   </property>-->
-<!--	</bean>-->
-<!---->
-<!--	<bean id="ruleService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--		<property name="target" ref="ruleServiceBLC"/>-->
-<!--		<property name="transactionManager" ref="transactionManager"/>-->
-<!--	   <property name="transactionAttributes">-->
-<!--	     <props>-->
-<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
-<!--	     </props>-->
-<!--	   </property>-->
-<!--	</bean>-->
-<!---->
-<!--	<bean id="addressService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--		<property name="target" ref="addressServiceBLC"/>-->
-<!--		<property name="transactionManager" ref="transactionManager"/>-->
-<!--	   <property name="transactionAttributes">-->
-<!--	     <props>-->
-<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
-<!--	     </props>-->
-<!--	   </property>-->
-<!--	</bean>-->
-<!---->
-<!--	<bean id="contactInfoService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--		<property name="target" ref="contactInfoServiceBLC"/>-->
-<!--		<property name="transactionManager" ref="transactionManager"/>-->
-<!--	   <property name="transactionAttributes">-->
-<!--	     <props>-->
-<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
-<!--	     </props>-->
-<!--	   </property>-->
-<!--	</bean>-->
-<!---->
-<!--	<bean id="customerService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--		<property name="target" ref="customerServiceBLC"/>-->
-<!--		<property name="transactionManager" ref="transactionManager"/>-->
-<!--	   <property name="transactionAttributes">-->
-<!--	     <props>-->
-<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
-<!--	     </props>-->
-<!--	   </property>-->
-<!--	</bean>-->
-<!---->
-<!--	<bean id="userService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
-<!--		<property name="target" ref="userServiceBLC"/>-->
-<!--		<property name="transactionManager" ref="transactionManager"/>-->
-<!--	   <property name="transactionAttributes">-->
-<!--	     <props>-->
-<!--	       <prop key="*">PROPAGATION_REQUIRED</prop>-->
-<!--	     </props>-->
-<!--	   </property>-->
-<!--	</bean>-->
+	<aop:config>
+	    <aop:pointcut id="catalogServiceOperation" expression="execution(* org.broadleafcommerce.catalog.service.CatalogService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="catalogServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="orderServiceOperation" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="orderServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="ruleServiceOperation" expression="execution(* org.broadleafcommerce.rules.service.RuleService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="ruleServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="addressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.AddressService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="addressServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="contactInfoServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.ContactInfoService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="contactInfoServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="customerServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="customerServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="userServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.UserService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceOperation"/>
+	</aop:config>
 
 	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 

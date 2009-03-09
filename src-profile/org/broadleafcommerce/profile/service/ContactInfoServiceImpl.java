@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("contactInfoServiceBLC")
+@Service("contactInfoService")
 public class ContactInfoServiceImpl implements ContactInfoService {
 
     @Resource

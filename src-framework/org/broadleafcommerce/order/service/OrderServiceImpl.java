@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("orderServiceBLC")
+@Service("orderService")
 public class OrderServiceImpl implements OrderService {
 
     @Resource
