@@ -42,7 +42,7 @@ public class CatalogController extends AbstractController {
       	} else {
       		Category currentCategory = (Category) model.get("currentCategory");
       		if (currentCategory.getUrl() != null) {
-      			view = currentCategory.getUrl();
+      			return new ModelAndView("redirect:"+currentCategory.getUrl());
       		} else if (currentCategory.getDisplayTemplate() != null) {
       			view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
       		} else {
