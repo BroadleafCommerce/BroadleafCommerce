@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
@@ -72,28 +73,28 @@ public class SkuImpl implements Sku, Serializable {
         this.id = id;
     }
 
-    public BigDecimal getSalePrice() {
-        return salePrice;
+    public Money getSalePrice() {
+        return new Money(salePrice);
     }
 
-    public void setSalePrice(BigDecimal salePrice) {
-        this.salePrice = salePrice;
+    public void setSalePrice(Money salePrice) {
+        this.salePrice = Money.toAmount(salePrice);
     }
 
-    public BigDecimal getRetailPrice() {
-		return retailPrice;
-	}
-
-	public void setRetailPrice(BigDecimal retailPrice) {
-		this.retailPrice = retailPrice;
-	}
-
-	public BigDecimal getListPrice() {
-        return retailPrice;
+    public Money getRetailPrice() {
+        return new Money(retailPrice);
     }
 
-    public void setListPrice(BigDecimal listPrice) {
-        this.retailPrice = listPrice;
+    public void setRetailPrice(Money retailPrice) {
+        this.retailPrice = Money.toAmount(retailPrice);
+    }
+
+    public Money getListPrice() {
+        return new Money(retailPrice);
+    }
+
+    public void setListPrice(Money listPrice) {
+        this.retailPrice = Money.toAmount(listPrice);
     }
 
     public String getName() {

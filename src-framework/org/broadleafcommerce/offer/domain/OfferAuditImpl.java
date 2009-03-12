@@ -13,125 +13,123 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.type.OfferDiscountType;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Table(name = "OFFER_AUDIT")
-public class OfferAuditImpl implements Serializable,OfferAudit {
-	public static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue
-	@Column(name = "OFFER_AUDIT_ID")
-	private Long id;
-	
-	@ManyToOne(targetEntity = OfferImpl.class)
-	@JoinColumn(name = "OFFER_ID")
-	private Offer offer;
-	
-	@Column(name = "OFFER_CODE_ID")
-	private Long offerCodeId;
-	
-	@Column(name = "CUSTOMER_ID")
-	private Long customerId;
-	
-	@Column(name = "OFFER_TYPE")
-	private OfferDiscountType offerType;
-	
-	@Column(name = "RELATED_ID")
-	private Long relatedId;
-	
-	@Column(name = "RELATED_RETAIL_PRICE")
-	private BigDecimal relatedRetailPrice;
-	
-	@Column(name = "RELATED_SALE_PRICE")
-	private BigDecimal relatedSalePrice;
-	
-	@Column(name = "RELATED_PRICE")
-	private BigDecimal relatedPrice;
-		
-	@Column(name = "REDEEMED_DATE")
-	private Date redeemedDate;
+public class OfferAuditImpl implements Serializable, OfferAudit {
+    public static final long serialVersionUID = 1L;
 
-	public Long getId() {
-		return id;
-	}
+    @Id
+    @GeneratedValue
+    @Column(name = "OFFER_AUDIT_ID")
+    private Long id;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @ManyToOne(targetEntity = OfferImpl.class)
+    @JoinColumn(name = "OFFER_ID")
+    private Offer offer;
 
-	public Offer getOffer() {
-		return offer;
-	}
+    @Column(name = "OFFER_CODE_ID")
+    private Long offerCodeId;
 
-	public void setOffer(Offer offer) {
-		this.offer = offer;
-	}
+    @Column(name = "CUSTOMER_ID")
+    private Long customerId;
 
-	public Long getOfferCodeId() {
-		return offerCodeId;
-	}
+    @Column(name = "OFFER_TYPE")
+    private OfferDiscountType offerType;
 
-	public void setOfferCodeId(Long offerCodeId) {
-		this.offerCodeId = offerCodeId;
-	}
+    @Column(name = "RELATED_ID")
+    private Long relatedId;
 
-	public Long getCustomerId() {
-		return customerId;
-	}
+    @Column(name = "RELATED_RETAIL_PRICE")
+    private BigDecimal relatedRetailPrice;
 
-	public void setCustomerId(Long customerId) {
-		this.customerId = customerId;
-	}
-		
-	public OfferDiscountType getOfferType() {
-		return offerType;
-	}
+    @Column(name = "RELATED_SALE_PRICE")
+    private BigDecimal relatedSalePrice;
 
-	public void setOfferType(OfferDiscountType offerType) {
-		this.offerType = offerType;
-	}
+    @Column(name = "RELATED_PRICE")
+    private BigDecimal relatedPrice;
 
-	public Long getRelatedId() {
-		return relatedId;
-	}
+    @Column(name = "REDEEMED_DATE")
+    private Date redeemedDate;
 
-	public void setRelatedId(Long relatedId) {
-		this.relatedId = relatedId;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public BigDecimal getRelatedRetailPrice() {
-		return relatedRetailPrice;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setRelatedRetailPrice(BigDecimal relatedRetailPrice) {
-		this.relatedRetailPrice = relatedRetailPrice;
-	}
+    public Offer getOffer() {
+        return offer;
+    }
 
-	public BigDecimal getRelatedSalePrice() {
-		return relatedSalePrice;
-	}
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+    }
 
-	public void setRelatedSalePrice(BigDecimal relatedSalePrice) {
-		this.relatedSalePrice = relatedSalePrice;
-	}
+    public Long getOfferCodeId() {
+        return offerCodeId;
+    }
 
-	public BigDecimal getRelatedPrice() {
-		return relatedPrice;
-	}
+    public void setOfferCodeId(Long offerCodeId) {
+        this.offerCodeId = offerCodeId;
+    }
 
-	public void setRelatedPrice(BigDecimal relatedPrice) {
-		this.relatedPrice = relatedPrice;
-	}
+    public Long getCustomerId() {
+        return customerId;
+    }
 
-	public Date getRedeemedDate() {
-		return redeemedDate;
-	}
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
 
-	public void setRedeemedDate(Date redeemedDate) {
-		this.redeemedDate = redeemedDate;
-	}
+    public OfferDiscountType getOfferType() {
+        return offerType;
+    }
 
-	
-	
+    public void setOfferType(OfferDiscountType offerType) {
+        this.offerType = offerType;
+    }
+
+    public Long getRelatedId() {
+        return relatedId;
+    }
+
+    public void setRelatedId(Long relatedId) {
+        this.relatedId = relatedId;
+    }
+
+    public Money getRelatedRetailPrice() {
+        return new Money(relatedRetailPrice);
+    }
+
+    public void setRelatedRetailPrice(Money relatedRetailPrice) {
+        this.relatedRetailPrice = Money.toAmount(relatedRetailPrice);
+    }
+
+    public Money getRelatedSalePrice() {
+        return new Money(relatedSalePrice);
+    }
+
+    public void setRelatedSalePrice(Money relatedSalePrice) {
+        this.relatedSalePrice = Money.toAmount(relatedSalePrice);
+    }
+
+    public Money getRelatedPrice() {
+        return new Money(relatedPrice);
+    }
+
+    public void setRelatedPrice(Money relatedPrice) {
+        this.relatedPrice = Money.toAmount(relatedPrice);
+    }
+
+    public Date getRedeemedDate() {
+        return redeemedDate;
+    }
+
+    public void setRedeemedDate(Date redeemedDate) {
+        this.redeemedDate = redeemedDate;
+    }
 }

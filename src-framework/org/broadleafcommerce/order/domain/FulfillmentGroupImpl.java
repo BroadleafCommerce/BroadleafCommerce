@@ -25,6 +25,7 @@ import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.type.FulfillmentGroupType;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -60,22 +61,21 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     @Column(name = "SALE_PRICE")
     private BigDecimal salePrice;
-    
+
     @Column(name = "PRICE")
     private BigDecimal price;
-    
+
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
     private FulfillmentGroupType type;
-    
+
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
     private List<Offer> candidateOffers;
-    
+
     @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
     @MapKey(name = "id")
     private List<OfferAudit> appliedOffers;
-    
 
     public Long getId() {
         return id;
@@ -130,13 +130,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     }
 
     @Override
-    public BigDecimal getRetailPrice() {
-        return retailPrice;
+    public Money getRetailPrice() {
+        return new Money(retailPrice);
     }
 
     @Override
-    public void setRetailPrice(BigDecimal fulfillmentCost) {
-        this.retailPrice = fulfillmentCost;
+    public void setRetailPrice(Money fulfillmentCost) {
+        this.retailPrice = Money.toAmount(fulfillmentCost);
     }
 
     @Override
@@ -148,60 +148,57 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     public void setType(FulfillmentGroupType type) {
         this.type = type;
     }
-    
-	@Override
-	public void addCandidateOffer(Offer offer) {
-		candidateOffers.add(offer);
-	}
 
-	@Override
-	public List<OfferAudit> getAppliedOffers() {
-		return appliedOffers;
-	}
+    @Override
+    public void addCandidateOffer(Offer offer) {
+        candidateOffers.add(offer);
+    }
 
-	@Override
-	public List<Offer> getCandidateOffers() {
-		return candidateOffers;
-	}
+    @Override
+    public List<OfferAudit> getAppliedOffers() {
+        return appliedOffers;
+    }
 
-	@Override
-	public void setAppliedOffers(List<OfferAudit> offers) {
-		this.appliedOffers = offers;
-		
-	}
+    @Override
+    public List<Offer> getCandidateOffers() {
+        return candidateOffers;
+    }
 
-	@Override
-	public void setCandaditeOffers(List<Offer> offers) {
-		this.candidateOffers = offers;
-		
-	}
+    @Override
+    public void setAppliedOffers(List<OfferAudit> offers) {
+        this.appliedOffers = offers;
 
-	@Override
-	public void addAppliedOffer(OfferAudit offer) {
-		appliedOffers.add(offer);
-		
-	}
+    }
 
-	public BigDecimal getSalePrice() {
-		return salePrice;
-	}
+    @Override
+    public void setCandaditeOffers(List<Offer> offers) {
+        this.candidateOffers = offers;
 
-	public void setSalePrice(BigDecimal salePrice) {
-		this.salePrice = salePrice;
-	}
+    }
 
-	public BigDecimal getPrice() {
-		return price;
-	}
+    @Override
+    public void addAppliedOffer(OfferAudit offer) {
+        appliedOffers.add(offer);
 
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
+    }
 
-	public void setCandidateOffers(List<Offer> candidateOffers) {
-		this.candidateOffers = candidateOffers;
-	}
-	
-	
-	    
+    public Money getSalePrice() {
+        return new Money(salePrice);
+    }
+
+    public void setSalePrice(Money salePrice) {
+        this.salePrice = Money.toAmount(salePrice);
+    }
+
+    public Money getPrice() {
+        return new Money(price);
+    }
+
+    public void setPrice(Money price) {
+        this.price = Money.toAmount(price);
+    }
+
+    public void setCandidateOffers(List<Offer> candidateOffers) {
+        this.candidateOffers = candidateOffers;
+    }
 }

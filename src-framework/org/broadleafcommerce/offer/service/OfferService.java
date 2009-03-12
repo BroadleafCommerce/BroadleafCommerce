@@ -9,13 +9,14 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OfferService {
-	public Offer lookupOfferByCode(String code);
-	
-	public boolean consumeOffer(Offer offer, Customer customer);
-	
-	public List<Offer> lookupValidOffersForSystem(String system);
-	
-	public OfferCode lookupCodeByOffer(Offer offer);
-	
-	public List<OfferAudit> findAppliedOffers(List<Offer> candidateOffers, OrderItem orderItem);
+
+    public Offer lookupOfferByCode(String code);
+
+    public boolean consumeOffer(Offer offer, Customer customer);
+
+    public List<Offer> lookupValidOffersForSystem(String system);
+
+    public OfferCode lookupCodeByOffer(Offer offer);
+
+    public List<OfferAudit> findAppliedOffers(List<Offer> candidateOffers, OrderItem orderItem);
 }

@@ -1,60 +1,60 @@
 package org.broadleafcommerce.offer.domain;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.List;
 
 import org.broadleafcommerce.type.OfferDiscountType;
 import org.broadleafcommerce.type.OfferScopeType;
 import org.broadleafcommerce.type.OfferType;
+import org.broadleafcommerce.util.money.Money;
 
 public interface Offer {
-	public void setId(Long id) ;
-	
-	public Long getId();
+    public void setId(Long id);
 
-	public String getName() ;
+    public Long getId();
 
-	public void setName(String name) ;
+    public String getName();
 
-	public OfferType getType();
-	
-	public void setType(OfferType offerType);
+    public void setName(String name);
 
-	public OfferDiscountType getDiscountType() ;
-	
-	public void setDiscountType(OfferDiscountType type) ;
+    public OfferType getType();
 
-	public OfferScopeType getScopeType();
-	
-	public void setScopeType(OfferScopeType scopeType);
-	
-	public BigDecimal getValue();
-	
-	public void setValue(BigDecimal value);
-	
-	public int getPriority() ;
+    public void setType(OfferType offerType);
 
-	public void setPriority(int priority) ;
+    public OfferDiscountType getDiscountType();
 
-	public Date getStartDate() ;
+    public void setDiscountType(OfferDiscountType type);
 
-	public void setStartDate(Date startDate) ;
+    public OfferScopeType getScopeType();
 
-	public Date getEndDate() ;
+    public void setScopeType(OfferScopeType scopeType);
 
-	public void setEndDate(Date endDate) ;
+    public Money getValue();
 
-	public boolean isStackable() ;
+    public void setValue(Money value);
 
-	public void setStackable(boolean stackable) ;
+    public int getPriority();
 
-	public boolean isTargetSystem() ;
+    public void setPriority(int priority);
 
-	public void setTargetSystem(boolean targetSystem) ;
-	
-	public List<OfferOrderItem> getOfferOrderItems();
-	
-	public void setOfferOrderItems(List<OfferOrderItem> offerOrderItems);
+    public Date getStartDate();
+
+    public void setStartDate(Date startDate);
+
+    public Date getEndDate();
+
+    public void setEndDate(Date endDate);
+
+    public boolean isStackable();
+
+    public void setStackable(boolean stackable);
+
+    public boolean isTargetSystem();
+
+    public void setTargetSystem(boolean targetSystem);
+
+    public List<OfferOrderItem> getOfferOrderItems();
+
+    public void setOfferOrderItems(List<OfferOrderItem> offerOrderItems);
 
 }

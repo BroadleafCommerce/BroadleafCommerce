@@ -27,6 +27,7 @@ import org.broadleafcommerce.profile.domain.ContactInfoImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.type.OrderType;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -60,22 +61,22 @@ public class OrderImpl implements Order, Serializable {
 
     @Column(name = "ORDER_SUBTOTAL")
     private BigDecimal subTotal;
-    
+
     @Column(name = "ORDER_TOTAL")
     private BigDecimal total;
 
     @OneToMany(mappedBy = "id", targetEntity = OrderItemImpl.class)
     @MapKey(name = "id")
     private List<OrderItem> orderItems;
-    
+
     @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
     @MapKey(name = "id")
     private List<FulfillmentGroup> fulfillmentGroups;
-    
+
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
     private List<Offer> candidateOffers;
-    
+
     public Long getId() {
         return id;
     }
@@ -100,24 +101,24 @@ public class OrderImpl implements Order, Serializable {
         this.status = orderStatus;
     }
 
-    public BigDecimal getSubTotal() {
-		return subTotal;
-	}
-
-	public void setSubTotal(BigDecimal subTotal) {
-		this.subTotal = subTotal;
-	}
-
-	public void setCandidateOffers(List<Offer> candidateOffers) {
-		this.candidateOffers = candidateOffers;
-	}
-
-	public BigDecimal getTotal() {
-        return total;
+    public Money getSubTotal() {
+        return new Money(subTotal);
     }
 
-    public void setTotal(BigDecimal orderTotal) {
-        this.total = orderTotal;
+    public void setSubTotal(Money subTotal) {
+        this.subTotal = Money.toAmount(subTotal);
+    }
+
+    public void setCandidateOffers(List<Offer> candidateOffers) {
+        this.candidateOffers = candidateOffers;
+    }
+
+    public Money getTotal() {
+        return new Money(total);
+    }
+
+    public void setTotal(Money orderTotal) {
+        this.total = Money.toAmount(orderTotal);
     }
 
     public Customer getCustomer() {
@@ -145,14 +146,14 @@ public class OrderImpl implements Order, Serializable {
     }
 
     public List<OrderItem> getOrderItems() {
-		return orderItems;
-	}
+        return orderItems;
+    }
 
-	public void setOrderItems(List<OrderItem> orderItems) {
-		this.orderItems = orderItems;
-	}
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
 
-	public List<FulfillmentGroup> getFulfillmentGroups() {
+    public List<FulfillmentGroup> getFulfillmentGroups() {
         return fulfillmentGroups;
     }
 
@@ -160,20 +161,19 @@ public class OrderImpl implements Order, Serializable {
         this.fulfillmentGroups = fulfillmentGroups;
     }
 
-	@Override
-	public void addCandidateOffer(Offer offer) {
-		candidateOffers.add(offer);
-	}
+    @Override
+    public void addCandidateOffer(Offer offer) {
+        candidateOffers.add(offer);
+    }
 
-	@Override
-	public List<Offer> getCandidateOffers() {
-		return candidateOffers;
-	}
+    @Override
+    public List<Offer> getCandidateOffers() {
+        return candidateOffers;
+    }
 
-	@Override
-	public void setCandaditeOffers(List<Offer> offers) {
-		this.candidateOffers = offers;
-		
-	}
+    @Override
+    public void setCandaditeOffers(List<Offer> offers) {
+        this.candidateOffers = offers;
 
+    }
 }

@@ -18,6 +18,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -57,12 +58,12 @@ public class BasePriceImpl implements BasePrice, Serializable {
         this.id = id;
     }
 
-    public BigDecimal getAmount() {
-        return amount;
+    public Money getAmount() {
+        return new Money(amount);
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setAmount(Money amount) {
+        this.amount = Money.toAmount(amount);
     }
 
     public Date getStartDate() {
@@ -96,5 +97,4 @@ public class BasePriceImpl implements BasePrice, Serializable {
     public void setAuditable(Auditable auditable) {
         this.auditable = auditable;
     }
-
 }

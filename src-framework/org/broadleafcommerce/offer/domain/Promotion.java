@@ -11,6 +11,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.util.money.Money;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PROMOTION")
@@ -62,12 +64,12 @@ public class Promotion implements Serializable {
         this.reference = reference;
     }
 
-    public BigDecimal getDiscount() {
-        return discount;
+    public Money getDiscount() {
+        return new Money(discount);
     }
 
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
+    public void setDiscount(Money discount) {
+        this.discount = Money.toAmount(discount);
     }
 
     public int getUses() {

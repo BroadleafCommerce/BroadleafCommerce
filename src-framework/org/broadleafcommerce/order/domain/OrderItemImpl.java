@@ -22,6 +22,7 @@ import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.offer.domain.OfferAuditImpl;
 import org.broadleafcommerce.offer.domain.OfferImpl;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -54,7 +55,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
 
     @Column(name = "QUANTITY")
     private int quantity;
-    
+
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
     private List<Offer> candidateOffers;
@@ -87,28 +88,28 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.order = order;
     }
 
-    public BigDecimal getRetailPrice() {
-		return retailPrice;
-	}
-
-	public void setRetailPrice(BigDecimal retailPrice) {
-		this.retailPrice = retailPrice;
-	}
-
-	public BigDecimal getSalePrice() {
-		return salePrice;
-	}
-
-	public void setSalePrice(BigDecimal salePrice) {
-		this.salePrice = salePrice;
-	}
-
-	public BigDecimal getPrice() {
-        return price;
+    public Money getRetailPrice() {
+        return new Money(retailPrice);
     }
 
-    public void setPrice(BigDecimal finalPrice) {
-        this.price = finalPrice;
+    public void setRetailPrice(Money retailPrice) {
+        this.retailPrice = Money.toAmount(retailPrice);
+    }
+
+    public Money getSalePrice() {
+        return new Money(salePrice);
+    }
+
+    public void setSalePrice(Money salePrice) {
+        this.salePrice = Money.toAmount(salePrice);
+    }
+
+    public Money getPrice() {
+        return new Money(price);
+    }
+
+    public void setPrice(Money finalPrice) {
+        this.price = Money.toAmount(finalPrice);
     }
 
     public int getQuantity() {
@@ -119,29 +120,29 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.quantity = quantity;
     }
 
-	public List<Offer> getCandidateOffers() {
-		return candidateOffers;
-	}
+    public List<Offer> getCandidateOffers() {
+        return candidateOffers;
+    }
 
-	public void setCandidateOffers(List<Offer> candidateOffers) {
-		this.candidateOffers = candidateOffers;
-	}
-	
-	public List<Offer> addCandidateOffer(Offer candidateOffer){
-		this.candidateOffers.add(candidateOffer);
-		return candidateOffers;
-	}
+    public void setCandidateOffers(List<Offer> candidateOffers) {
+        this.candidateOffers = candidateOffers;
+    }
 
-	public List<OfferAudit> getAppliedOffers() {
-		return appliedOffers;
-	}
+    public List<Offer> addCandidateOffer(Offer candidateOffer) {
+        this.candidateOffers.add(candidateOffer);
+        return candidateOffers;
+    }
 
-	public void setAppliedOffers(List<OfferAudit> appliedOffers) {
-		this.appliedOffers = appliedOffers;
-	}
-    
-    public List<OfferAudit> addAppliedOffer(OfferAudit appliedOffer){
-    	this.appliedOffers.add(appliedOffer);
-    	return appliedOffers;
+    public List<OfferAudit> getAppliedOffers() {
+        return appliedOffers;
+    }
+
+    public void setAppliedOffers(List<OfferAudit> appliedOffers) {
+        this.appliedOffers = appliedOffers;
+    }
+
+    public List<OfferAudit> addAppliedOffer(OfferAudit appliedOffer) {
+        this.appliedOffers.add(appliedOffer);
+        return appliedOffers;
     }
 }

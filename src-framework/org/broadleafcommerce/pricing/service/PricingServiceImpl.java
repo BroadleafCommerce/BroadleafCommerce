@@ -10,6 +10,7 @@ import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.util.money.Money;
 import org.springframework.stereotype.Service;
 
 @Service("pricingService")
@@ -23,7 +24,7 @@ public class PricingServiceImpl implements PricingService {
 
     @Override
     public Order calculateOrderTotal(Order order) {
-        BigDecimal total = BigDecimal.ZERO;
+        Money total = new Money(BigDecimal.ZERO);
         List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem item : orderItemList) {
             total = total.add(item.getPrice());
@@ -36,5 +37,4 @@ public class PricingServiceImpl implements PricingService {
         order.setTotal(total);
         return order;
     }
-
 }

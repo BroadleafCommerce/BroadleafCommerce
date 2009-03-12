@@ -1,9 +1,9 @@
 package org.broadleafcommerce.catalog.domain;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.util.money.Money;
 
 public interface BasePrice {
 
@@ -11,9 +11,9 @@ public interface BasePrice {
 
     public void setId(Long id);
 
-    public BigDecimal getAmount();
+    public Money getAmount();
 
-    public void setAmount(BigDecimal amount);
+    public void setAmount(Money amount);
 
     public Date getStartDate();
 

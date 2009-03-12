@@ -24,6 +24,7 @@ import org.broadleafcommerce.profile.service.ContactInfoService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.test.dataprovider.PaymentInfoDataProvider;
+import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
@@ -119,7 +120,7 @@ public class OrderServiceTest extends BaseTest {
     public void updateItemsInOrder() {
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
-        item.setPrice(BigDecimal.valueOf(10000));
+        item.setPrice(new Money(BigDecimal.valueOf(10000)));
         item.setQuantity(10);
         OrderItem updatedItem = soService.updateItemInOrder(order, item);
         assert updatedItem != null;
@@ -165,7 +166,7 @@ public class OrderServiceTest extends BaseTest {
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getAddress().equals(fulfillmentGroup.getAddress());
-        assert fg.getRetailPrice() == fulfillmentGroup.getRetailPrice();
+        assert fg.getRetailPrice().equals(fulfillmentGroup.getRetailPrice());
         assert fg.getOrderId().equals(order.getId());
         assert fg.getMethod().equals(fulfillmentGroup.getMethod());
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
