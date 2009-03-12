@@ -1,41 +1,41 @@
 package org.broadleafcommerce.offer.domain;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 
+import org.broadleafcommerce.util.money.Money;
+
 public interface OfferAudit {
-	public Long getId() ;
+    public Long getId();
 
-	public void setId(Long id) ;
+    public void setId(Long id);
 
-	public Offer getOffer() ;
+    public Offer getOffer();
 
-	public void setOffer(Offer offer) ;
+    public void setOffer(Offer offer);
 
-	public Long getOfferCodeId() ;
+    public Long getOfferCodeId();
 
-	public void setOfferCodeId(Long offerCodeId) ;
+    public void setOfferCodeId(Long offerCodeId);
 
-	public Long getCustomerId() ;
+    public Long getCustomerId();
 
-	public void setCustomerId(Long customerId) ;
+    public void setCustomerId(Long customerId);
 
-	public void setRelatedId(Long id);
-	
-	public BigDecimal getRelatedRetailPrice() ;
+    public void setRelatedId(Long id);
 
-	public void setRelatedRetailPrice(BigDecimal relatedRetailPrice) ;
+    public Money getRelatedRetailPrice();
 
-	public BigDecimal getRelatedSalePrice() ;
+    public void setRelatedRetailPrice(Money relatedRetailPrice);
 
-	public void setRelatedSalePrice(BigDecimal relatedSalePrice) ;
+    public Money getRelatedSalePrice();
 
-	public BigDecimal getRelatedPrice() ;
-	
-	public void setRelatedPrice(BigDecimal relatedPrice) ;
+    public void setRelatedSalePrice(Money relatedSalePrice);
 
-	public Date getRedeemedDate() ;
+    public Money getRelatedPrice();
 
-	public void setRedeemedDate(Date redeemedDate) ;
+    public void setRelatedPrice(Money relatedPrice);
 
+    public Date getRedeemedDate();
+
+    public void setRedeemedDate(Date redeemedDate);
 }

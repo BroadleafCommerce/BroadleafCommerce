@@ -1,12 +1,12 @@
 package org.broadleafcommerce.order.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.type.FulfillmentGroupType;
+import org.broadleafcommerce.util.money.Money;
 
 public interface FulfillmentGroup {
 
@@ -30,18 +30,18 @@ public interface FulfillmentGroup {
 
     public void setMethod(String fulfillmentMethod);
 
-    public BigDecimal getRetailPrice();
+    public Money getRetailPrice();
 
-    public void setRetailPrice(BigDecimal fulfillmentCost);
+    public void setRetailPrice(Money fulfillmentCost);
 
-	public BigDecimal getSalePrice() ;
+    public Money getSalePrice() ;
 
-	public void setSalePrice(BigDecimal salePrice) ;
+    public void setSalePrice(Money salePrice) ;
 
-	public BigDecimal getPrice() ;
+    public Money getPrice() ;
 
-	public void setPrice(BigDecimal price) ;
-    
+    public void setPrice(Money price) ;
+
     public String getReferenceNumber();
 
     public void setReferenceNumber(String referenceNumber);
@@ -49,17 +49,17 @@ public interface FulfillmentGroup {
     public FulfillmentGroupType getType();
 
     public void setType(FulfillmentGroupType type);
-    
+
     public List<Offer> getCandidateOffers();
-    
+
     public void setCandaditeOffers(List<Offer> offers);
-    
+
     public void addCandidateOffer(Offer offer);
-    
+
     public List<OfferAudit> getAppliedOffers();
-    
+
     public void setAppliedOffers(List<OfferAudit> offers);
-    
+
     public void addAppliedOffer(OfferAudit offer);
-    
+
 }

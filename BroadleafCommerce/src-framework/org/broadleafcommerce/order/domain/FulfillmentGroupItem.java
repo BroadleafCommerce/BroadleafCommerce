@@ -1,10 +1,10 @@
 package org.broadleafcommerce.order.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferAudit;
+import org.broadleafcommerce.util.money.Money;
 
 public interface FulfillmentGroupItem {
 
@@ -23,32 +23,32 @@ public interface FulfillmentGroupItem {
     public int getQuantity();
 
     public void setQuantity(int quantity);
-    
-    public BigDecimal getRetailPrice();
-    
-    public void setRetailPrice(BigDecimal retailPrice);
-    
-    public BigDecimal getSalePrice();
-    
-    public void setSalePrice(BigDecimal salePrice);
-    
-    public BigDecimal getPrice();
-    
-    public void setPrice(BigDecimal price);
-    
+
+    public Money getRetailPrice();
+
+    public void setRetailPrice(Money retailPrice);
+
+    public Money getSalePrice();
+
+    public void setSalePrice(Money salePrice);
+
+    public Money getPrice();
+
+    public void setPrice(Money price);
+
     public List<Offer> getCandidateOffers();
-    
+
     public void setCandidateOffers(List<Offer> offers);
-    
+
     public void addCandidateOffer(Offer offer);
-    
+
     public void removeCandidateOffer(Offer offer);
-    
+
     public List<OfferAudit> getAppliedOffers();
-    
+
     public void setAppliedOffers(List<OfferAudit> offers);
-    
+
     public void addAppliedOffer(OfferAudit offer);
-    
+
     public void removeAppliedOffer(OfferAudit offer);
 }

@@ -15,150 +15,147 @@ import javax.persistence.Table;
 import org.broadleafcommerce.type.OfferDiscountType;
 import org.broadleafcommerce.type.OfferScopeType;
 import org.broadleafcommerce.type.OfferType;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Table(name = "BLC_OFFER")
 public class OfferImpl implements Serializable, Offer {
-	
-	public static final long serialVersionUID = 1L;
-	
-	@Id
-	@GeneratedValue
-	@Column(name = "OFFER_ID")
-	private Long id;
-	
-	@Column(name = "OFFER_NAME")
-	private String name;
-	
-	@Column(name = "OFFER_TYPE")
-	private OfferType type;
-	
-	@Column(name = "OFFER_DISCOUNT_TYPE")
-	private OfferDiscountType discountType;
-	
-	@Column(name = "OFFER_SCOPE_TYPE")
-	private OfferScopeType scopeType;
-	
-	@Column(name = "OFFER_VALUE")
-	private BigDecimal value;
-	
-	@Column(name = "OFFER_PRIORITY")
-	private int priority;
-	
-	@Column(name = "START_DATE")
-	private Date startDate;
-	
-	@Column(name = "END_DATE")
-	private Date endDate;
-	
-	@Column(name = "STACKABLE")
-	private boolean stackable;
-	
-	@Column(name = "TARGET_SYSTEM")
-	private boolean targetSystem;
-	
-	@OneToMany(mappedBy = "id", targetEntity = OfferOrderItemImpl.class)
-	private List<OfferOrderItem> offerOrderItems;
-	
-	
-	public Long getId() {
-		return id;
-	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public static final long serialVersionUID = 1L;
 
-	public String getName() {
-		return name;
-	}
+    @Id
+    @GeneratedValue
+    @Column(name = "OFFER_ID")
+    private Long id;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Column(name = "OFFER_NAME")
+    private String name;
 
-	public OfferType getType() {
-		return type;
-	}
+    @Column(name = "OFFER_TYPE")
+    private OfferType type;
 
-	public void setType(OfferType type) {
-		this.type = type;
-	}
+    @Column(name = "OFFER_DISCOUNT_TYPE")
+    private OfferDiscountType discountType;
 
-	public OfferScopeType getScopeType() {
-		return scopeType;
-	}
+    @Column(name = "OFFER_SCOPE_TYPE")
+    private OfferScopeType scopeType;
 
-	public void setScopeType(OfferScopeType useType) {
-		this.scopeType = useType;
-	}
+    @Column(name = "OFFER_VALUE")
+    private BigDecimal value;
 
-	public OfferDiscountType getDiscountType() {
-		return discountType;
-	}
+    @Column(name = "OFFER_PRIORITY")
+    private int priority;
 
-	@Override
-	public void setDiscountType(OfferDiscountType type) {
-		this.discountType = type;
-		
-	}
+    @Column(name = "START_DATE")
+    private Date startDate;
 
-	public BigDecimal getValue() {
-		return value;
-	}
+    @Column(name = "END_DATE")
+    private Date endDate;
 
-	public void setValue(BigDecimal value) {
-		this.value = value;
-	}
+    @Column(name = "STACKABLE")
+    private boolean stackable;
 
-	public int getPriority() {
-		return priority;
-	}
-	
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    @Column(name = "TARGET_SYSTEM")
+    private boolean targetSystem;
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    @OneToMany(mappedBy = "id", targetEntity = OfferOrderItemImpl.class)
+    private List<OfferOrderItem> offerOrderItems;
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public boolean isStackable() {
-		return stackable;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setStackable(boolean stackable) {
-		this.stackable = stackable;
-	}
+    public OfferType getType() {
+        return type;
+    }
 
-	public boolean isTargetSystem() {
-		return targetSystem;
-	}
+    public void setType(OfferType type) {
+        this.type = type;
+    }
 
-	public void setTargetSystem(boolean targetSystem) {
-		this.targetSystem = targetSystem;
-	}
+    public OfferScopeType getScopeType() {
+        return scopeType;
+    }
 
-	public List<OfferOrderItem> getOfferOrderItems() {
-		return offerOrderItems;
-	}
+    public void setScopeType(OfferScopeType useType) {
+        this.scopeType = useType;
+    }
 
-	public void setOfferOrderItems(List<OfferOrderItem> offerOrderItems) {
-		this.offerOrderItems = offerOrderItems;
-	}
+    public OfferDiscountType getDiscountType() {
+        return discountType;
+    }
 
-	
-	
+    @Override
+    public void setDiscountType(OfferDiscountType type) {
+        this.discountType = type;
+
+    }
+
+    public Money getValue() {
+        return new Money(value);
+    }
+
+    public void setValue(Money value) {
+        this.value = Money.toAmount(value);
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public boolean isStackable() {
+        return stackable;
+    }
+
+    public void setStackable(boolean stackable) {
+        this.stackable = stackable;
+    }
+
+    public boolean isTargetSystem() {
+        return targetSystem;
+    }
+
+    public void setTargetSystem(boolean targetSystem) {
+        this.targetSystem = targetSystem;
+    }
+
+    public List<OfferOrderItem> getOfferOrderItems() {
+        return offerOrderItems;
+    }
+
+    public void setOfferOrderItems(List<OfferOrderItem> offerOrderItems) {
+        this.offerOrderItems = offerOrderItems;
+    }
 }

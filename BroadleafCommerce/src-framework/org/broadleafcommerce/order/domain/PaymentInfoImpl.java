@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -44,13 +45,13 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     private String referenceNumber;
 
     @Override
-    public BigDecimal getAmount() {
-        return amount;
+    public Money getAmount() {
+        return new Money(amount);
     }
 
     @Override
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setAmount(Money amount) {
+        this.amount = Money.toAmount(amount);
     }
 
     public Long getId() {

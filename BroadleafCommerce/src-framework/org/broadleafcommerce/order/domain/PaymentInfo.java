@@ -1,14 +1,13 @@
 package org.broadleafcommerce.order.domain;
 
-import java.math.BigDecimal;
-
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentInfo {
 
-    //	public Object getPayment();
+    // public Object getPayment();
     //
-    //	public void setPayment(Object payment);
+    // public void setPayment(Object payment);
 
     public Long getId();
 
@@ -22,9 +21,9 @@ public interface PaymentInfo {
 
     public void setAddress(Address address);
 
-    public BigDecimal getAmount();
+    public Money getAmount();
 
-    public void setAmount(BigDecimal amount);
+    public void setAmount(Money amount);
 
     public String getReferenceNumber();
 

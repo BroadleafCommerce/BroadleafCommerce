@@ -11,6 +11,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.util.money.Money;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PROMOTION_RULE_DEFINITION")
@@ -56,11 +58,11 @@ public class ShoppingCartPromotion implements Serializable {
         return couponCode;
     }
 
-    public void setOrderTotal(BigDecimal orderTotal) {
-        this.orderTotal = orderTotal;
+    public void setOrderTotal(Money orderTotal) {
+        this.orderTotal = Money.toAmount(orderTotal);
     }
 
-    public BigDecimal getOrderTotal() {
-        return orderTotal;
+    public Money getOrderTotal() {
+        return new Money(orderTotal);
     }
 }
