@@ -217,7 +217,7 @@ public final class Money implements Serializable, Cloneable, Comparable {
     }
 
     public String toString() {
-        return amount.toString() + " " + currency.getCurrencyCode();
+        return amount.toString();
     }
 
     public double doubleValue() {
@@ -234,7 +234,7 @@ public final class Money implements Serializable, Cloneable, Comparable {
     }
 
     public String stringValue() {
-        return amount.toString();
+        return amount.toString() + " " + currency.getCurrencyCode();
     }
 
     public static Money zero(String currencyCode) {
