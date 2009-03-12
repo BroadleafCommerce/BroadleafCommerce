@@ -22,7 +22,7 @@ public class PricingServiceImpl implements PricingService {
     private FulfillmentGroupDao fulfillmentGroupDao;
 
     @Override
-    public Order calculateOrderAmount(Order order) {
+    public Order calculateOrderTotal(Order order) {
         BigDecimal total = BigDecimal.ZERO;
         List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem item : orderItemList) {

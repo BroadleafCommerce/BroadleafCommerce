@@ -21,6 +21,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.domain.ContactInfo;
@@ -57,6 +58,9 @@ public class OrderServiceImpl implements OrderService {
     
     @Resource
     private OfferService offerService;
+    
+    @Resource
+    private PricingService pricingService;
 
     @Override
     public Order findCurrentCartForCustomer(Customer customer) {
@@ -254,30 +258,13 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Order removeItemFromOrder(Order order, OrderItem item) {
         orderItemDao.deleteOrderItem(item);
-        calculateOrderTotal(order);
+        pricingService.calculateOrderTotal(order);
         return order;
     }
 
     @Override
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) {
         fulfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Order calculateOrderTotal(Order order) {
-        BigDecimal total = BigDecimal.ZERO;
-        List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
-        for (OrderItem item : orderItemList) {
-            total = total.add(item.getPrice());
-        }
-
-        List<FulfillmentGroup> fulfillmentGroupList = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
-        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroupList) {
-            total = total.add(fulfillmentGroup.getRetailPrice());
-        }
-        order.setTotal(total);
-        return order;
     }
 
     @Override
@@ -323,7 +310,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected Order maintainOrder(Order order) {
-        calculateOrderTotal(order);
+    	pricingService.calculateOrderTotal(order);
         return orderDao.maintianOrder(order);
     }
 
