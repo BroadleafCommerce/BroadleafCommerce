@@ -3,6 +3,7 @@ package org.broadleafcommerce.order.service;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
@@ -10,7 +11,6 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.promotion.domain.Offer;
 
 public interface OrderService {
 

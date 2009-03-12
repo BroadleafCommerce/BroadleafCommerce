@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.promotion.domain.Offer;
-import org.broadleafcommerce.promotion.domain.OfferAudit;
+import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OfferAudit;
 
 public interface OrderItem {
 

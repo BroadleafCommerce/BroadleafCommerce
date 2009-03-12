@@ -1,4 +1,4 @@
-package org.broadleafcommerce.promotion.dao;
+package org.broadleafcommerce.offer.dao;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -6,8 +6,8 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
-import org.broadleafcommerce.promotion.domain.OfferAudit;
 import org.springframework.stereotype.Repository;
 
 @Repository("offerAuditDao")

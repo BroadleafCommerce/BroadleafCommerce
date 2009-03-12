@@ -1,6 +1,6 @@
-package org.broadleafcommerce.promotion.dao;
+package org.broadleafcommerce.offer.dao;
 
-import org.broadleafcommerce.promotion.domain.OfferCode;
+import org.broadleafcommerce.offer.domain.OfferCode;
 
 public interface OfferCodeDao {
 	
