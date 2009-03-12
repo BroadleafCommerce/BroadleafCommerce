@@ -25,8 +25,6 @@ import org.broadleafcommerce.profile.domain.ContactInfoImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.promotion.domain.Offer;
-import org.broadleafcommerce.promotion.domain.OfferAudit;
-import org.broadleafcommerce.promotion.domain.OfferAuditImpl;
 import org.broadleafcommerce.promotion.domain.OfferImpl;
 import org.broadleafcommerce.type.OrderType;
 
@@ -60,6 +58,9 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "ORDER_STATUS")
     private String status;
 
+    @Column(name = "ORDER_SUBTOTAL")
+    private BigDecimal subTotal;
+    
     @Column(name = "ORDER_TOTAL")
     private BigDecimal total;
 
@@ -70,10 +71,6 @@ public class OrderImpl implements Order, Serializable {
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
     private List<Offer> candidateOffers;
-    
-    @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
-    @MapKey(name = "id")
-    private List<OfferAudit> appliedOffers;
     
     public Long getId() {
         return id;
@@ -99,7 +96,19 @@ public class OrderImpl implements Order, Serializable {
         this.status = orderStatus;
     }
 
-    public BigDecimal getTotal() {
+    public BigDecimal getSubTotal() {
+		return subTotal;
+	}
+
+	public void setSubTotal(BigDecimal subTotal) {
+		this.subTotal = subTotal;
+	}
+
+	public void setCandidateOffers(List<Offer> candidateOffers) {
+		this.candidateOffers = candidateOffers;
+	}
+
+	public BigDecimal getTotal() {
         return total;
     }
 
@@ -145,19 +154,8 @@ public class OrderImpl implements Order, Serializable {
 	}
 
 	@Override
-	public List<OfferAudit> getAppliedOffers() {
-		return appliedOffers;
-	}
-
-	@Override
 	public List<Offer> getCandidateOffers() {
 		return candidateOffers;
-	}
-
-	@Override
-	public void setAppliedOffers(List<OfferAudit> offers) {
-		this.appliedOffers = offers;
-		
 	}
 
 	@Override
@@ -166,13 +164,4 @@ public class OrderImpl implements Order, Serializable {
 		
 	}
 
-	@Override
-	public void addAppliedOffer(OfferAudit offer) {
-		appliedOffers.add(offer);
-		
-	}
-	
-	
-    
-    
 }

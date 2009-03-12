@@ -119,7 +119,7 @@ public class OrderServiceTest extends BaseTest {
     public void updateItemsInOrder() {
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
-        item.setFinalPrice(BigDecimal.valueOf(10000));
+        item.setPrice(BigDecimal.valueOf(10000));
         item.setQuantity(10);
         OrderItem updatedItem = soService.updateItemInOrder(order, item);
         assert updatedItem != null;

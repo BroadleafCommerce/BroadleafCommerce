@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,10 +12,16 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
+import org.broadleafcommerce.promotion.domain.Offer;
+import org.broadleafcommerce.promotion.domain.OfferAudit;
+import org.broadleafcommerce.promotion.domain.OfferAuditImpl;
+import org.broadleafcommerce.promotion.domain.OfferImpl;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -36,11 +43,25 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @JoinColumn(name = "SC_ORDER_ID")
     private Order order;
 
-    @Column(name = "FINAL_PRICE")
-    private BigDecimal finalPrice;
+    @Column(name = "RETAIL_PRICE")
+    private BigDecimal retailPrice;
+
+    @Column(name = "SALE_PRICE")
+    private BigDecimal salePrice;
+
+    @Column(name = "PRICE")
+    private BigDecimal price;
 
     @Column(name = "QUANTITY")
     private int quantity;
+    
+    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
+    @MapKey(name = "id")
+    private List<Offer> candidateOffers;
+
+    @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
+    @MapKey(name = "id")
+    private List<OfferAudit> appliedOffers;
 
     public Long getId() {
         return id;
@@ -66,12 +87,28 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.order = order;
     }
 
-    public BigDecimal getFinalPrice() {
-        return finalPrice;
+    public BigDecimal getRetailPrice() {
+		return retailPrice;
+	}
+
+	public void setRetailPrice(BigDecimal retailPrice) {
+		this.retailPrice = retailPrice;
+	}
+
+	public BigDecimal getSalePrice() {
+		return salePrice;
+	}
+
+	public void setSalePrice(BigDecimal salePrice) {
+		this.salePrice = salePrice;
+	}
+
+	public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setFinalPrice(BigDecimal finalPrice) {
-        this.finalPrice = finalPrice;
+    public void setPrice(BigDecimal finalPrice) {
+        this.price = finalPrice;
     }
 
     public int getQuantity() {
@@ -80,5 +117,31 @@ public class OrderItemImpl implements OrderItem, Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+	public List<Offer> getCandidateOffers() {
+		return candidateOffers;
+	}
+
+	public void setCandidateOffers(List<Offer> candidateOffers) {
+		this.candidateOffers = candidateOffers;
+	}
+	
+	public List<Offer> addCandidateOffer(Offer candidateOffer){
+		this.candidateOffers.add(candidateOffer);
+		return candidateOffers;
+	}
+
+	public List<OfferAudit> getAppliedOffers() {
+		return appliedOffers;
+	}
+
+	public void setAppliedOffers(List<OfferAudit> appliedOffers) {
+		this.appliedOffers = appliedOffers;
+	}
+    
+    public List<OfferAudit> addAppliedOffer(OfferAudit appliedOffer){
+    	this.appliedOffers.add(appliedOffer);
+    	return appliedOffers;
     }
 }

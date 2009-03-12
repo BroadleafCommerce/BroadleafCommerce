@@ -7,9 +7,9 @@ public interface OfferCustomer {
 
 	public void setId(Long id) ;
 
-	public OfferImpl getOfferCode() ;
+	public OfferCode getOfferCode() ;
 
-	public void setOfferCode(OfferImpl offerCode) ;
+	public void setOfferCode(OfferCode offerCode) ;
 
 	public Customer getCustomer() ;
 

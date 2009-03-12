@@ -7,7 +7,6 @@ import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.promotion.domain.Offer;
-import org.broadleafcommerce.promotion.domain.OfferAudit;
 import org.broadleafcommerce.type.OrderType;
 
 public interface Order {
@@ -24,6 +23,10 @@ public interface Order {
 
     public void setStatus(String orderStatus);
 
+    public BigDecimal getSubTotal();
+    
+    public void setSubTotal(BigDecimal subTotal);
+    
     public BigDecimal getTotal();
 
     public void setTotal(BigDecimal orderTotal);
@@ -50,10 +53,4 @@ public interface Order {
     
     public void addCandidateOffer(Offer offer);
     
-    public List<OfferAudit> getAppliedOffers();
-    
-    public void setAppliedOffers(List<OfferAudit> offers);
-    
-    public void addAppliedOffer(OfferAudit offer);
-
 }

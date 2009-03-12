@@ -24,7 +24,9 @@ import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.promotion.domain.Offer;
+import org.broadleafcommerce.promotion.service.OfferService;
 import org.broadleafcommerce.type.FulfillmentGroupType;
+import org.broadleafcommerce.type.OfferType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +54,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private AddressDao addressDao;
+    
+    @Resource
+    private OfferService offerService;
 
     @Override
     public Order findCurrentCartForCustomer(Customer customer) {
@@ -264,7 +269,7 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal total = BigDecimal.ZERO;
         List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem item : orderItemList) {
-            total = total.add(item.getFinalPrice());
+            total = total.add(item.getPrice());
         }
 
         List<FulfillmentGroup> fulfillmentGroupList = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
@@ -284,14 +289,31 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
 	public Order addOfferToOrder(Order order, String offerCode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    	Offer offer = offerService.lookupOfferByCode(offerCode);
+    	List<OrderItem> orderItems = findItemsForOrder(order);
+    	for (OrderItem orderItem : orderItems) {
+	    	if(offer.getType() == OfferType.ORDER_ITEM){
+	   			if(offer.getOfferOrderItems().indexOf(orderItem) > -1){
+	   				orderItem.addCandidateOffer(offer);    				
+	   			}
+			}
+	    	else
+	    		if(offer.getType() == OfferType.ORDER){
+	    			orderItem.addCandidateOffer(offer);
+	    		}
+    	}	
+    	
+    	return order;
+    }
 
 	@Override
 	public Order removeOfferFromOrder(Order order, Offer offer) {
-		// TODO Auto-generated method stub
-		return null;
+    	List<OrderItem> orderItems = findItemsForOrder(order);
+    	for (OrderItem orderItem : orderItems) {
+    		orderItem.getAppliedOffers().remove(offer);
+    		orderItem.getCandidateOffers().remove(offer);
+    	}		
+    	return order;
 	}
 
 	@Override
@@ -306,7 +328,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected OrderItem maintainOrderItem(OrderItem orderItem) {
-        orderItem.setFinalPrice(orderItem.getSku().getSalePrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
+        orderItem.setPrice(orderItem.getSku().getSalePrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
         OrderItem returnedOrderItem = orderItemDao.maintainOrderItem(orderItem);
         maintainOrder(orderItem.getOrder());
         return returnedOrderItem;
