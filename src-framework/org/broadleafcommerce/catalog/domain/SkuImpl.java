@@ -36,8 +36,8 @@ public class SkuImpl implements Sku, Serializable {
     @Column(name = "SALE_PRICE")
     private BigDecimal salePrice;
 
-    @Column(name = "LIST_PRICE")
-    private BigDecimal listPrice;
+    @Column(name = "RETAIL_PRICE")
+    private BigDecimal retailPrice;
 
     @Column(name = "NAME")
     private String name;
@@ -80,12 +80,20 @@ public class SkuImpl implements Sku, Serializable {
         this.salePrice = salePrice;
     }
 
-    public BigDecimal getListPrice() {
-        return listPrice;
+    public BigDecimal getRetailPrice() {
+		return retailPrice;
+	}
+
+	public void setRetailPrice(BigDecimal retailPrice) {
+		this.retailPrice = retailPrice;
+	}
+
+	public BigDecimal getListPrice() {
+        return retailPrice;
     }
 
     public void setListPrice(BigDecimal listPrice) {
-        this.listPrice = listPrice;
+        this.retailPrice = listPrice;
     }
 
     public String getName() {
