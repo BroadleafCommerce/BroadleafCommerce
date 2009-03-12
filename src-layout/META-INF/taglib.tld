@@ -23,4 +23,20 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
     </tag>
+
+    <tag>
+        <name>skuLookup</name>
+        <tag-class>org.broadleafcommerce.layout.tags.SkuLookupTag</tag-class>
+        <body-content>JSP</body-content>
+       	<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>skuId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
 </taglib>
