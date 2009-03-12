@@ -1,6 +1,6 @@
-package org.broadleafcommerce.promotion.dao;
+package org.broadleafcommerce.offer.dao;
 
-import org.broadleafcommerce.promotion.domain.OfferAudit;
+import org.broadleafcommerce.offer.domain.OfferAudit;
 
 public interface OfferAuditDao {
 	public OfferAudit readAuditById(Long offerAuditId);

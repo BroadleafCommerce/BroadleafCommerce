@@ -16,10 +16,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.promotion.domain.Offer;
-import org.broadleafcommerce.promotion.domain.OfferAudit;
-import org.broadleafcommerce.promotion.domain.OfferAuditImpl;
-import org.broadleafcommerce.promotion.domain.OfferImpl;
+import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OfferAudit;
+import org.broadleafcommerce.offer.domain.OfferAuditImpl;
+import org.broadleafcommerce.offer.domain.OfferImpl;
 
 @Entity
 @DiscriminatorColumn(name="TYPE")

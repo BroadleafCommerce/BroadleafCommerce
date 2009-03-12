@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.order.dao.OrderDao;
@@ -23,8 +25,6 @@ import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.promotion.domain.Offer;
-import org.broadleafcommerce.promotion.service.OfferService;
 import org.broadleafcommerce.type.FulfillmentGroupType;
 import org.broadleafcommerce.type.OfferType;
 import org.springframework.stereotype.Service;

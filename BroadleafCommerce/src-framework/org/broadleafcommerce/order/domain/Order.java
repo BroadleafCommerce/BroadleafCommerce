@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.promotion.domain.Offer;
 import org.broadleafcommerce.type.OrderType;
 
 public interface Order {

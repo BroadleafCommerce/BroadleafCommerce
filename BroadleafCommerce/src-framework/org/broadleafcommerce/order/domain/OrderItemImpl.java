@@ -18,10 +18,10 @@ import javax.persistence.Table;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
-import org.broadleafcommerce.promotion.domain.Offer;
-import org.broadleafcommerce.promotion.domain.OfferAudit;
-import org.broadleafcommerce.promotion.domain.OfferAuditImpl;
-import org.broadleafcommerce.promotion.domain.OfferImpl;
+import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OfferAudit;
+import org.broadleafcommerce.offer.domain.OfferAuditImpl;
+import org.broadleafcommerce.offer.domain.OfferImpl;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
