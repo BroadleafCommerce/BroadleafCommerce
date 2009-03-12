@@ -15,7 +15,9 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.type.OfferDiscountType;
 import org.broadleafcommerce.util.DateUtil;
+import org.springframework.stereotype.Service;
 
+@Service("offerService")
 public class OfferServiceImpl implements OfferService {
 
 	@Resource
