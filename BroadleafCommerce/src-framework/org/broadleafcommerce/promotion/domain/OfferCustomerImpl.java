@@ -25,7 +25,7 @@ public class OfferCustomerImpl implements Serializable,OfferCustomer {
 	
 	@ManyToOne(targetEntity = OfferCodeImpl.class)
 	@JoinColumn(name = "OFFER_CODE_ID")
-	private OfferImpl offerCode;
+	private OfferCode offerCode;
 	
 	@ManyToOne(targetEntity = CustomerImpl.class)
 	@JoinColumn(name = "CUSTOMER_ID")
@@ -39,11 +39,11 @@ public class OfferCustomerImpl implements Serializable,OfferCustomer {
 		this.id = id;
 	}
 
-	public OfferImpl getOfferCode() {
+	public OfferCode getOfferCode() {
 		return offerCode;
 	}
 
-	public void setOfferCode(OfferImpl offerCode) {
+	public void setOfferCode(OfferCode offerCode) {
 		this.offerCode = offerCode;
 	}
 

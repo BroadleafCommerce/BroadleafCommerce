@@ -1,8 +1,11 @@
 package org.broadleafcommerce.order.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.promotion.domain.Offer;
+import org.broadleafcommerce.promotion.domain.OfferAudit;
 
 public interface OrderItem {
 
@@ -18,11 +21,31 @@ public interface OrderItem {
 
     public void setOrder(Order order);
 
-    public BigDecimal getFinalPrice();
+    public BigDecimal getRetailPrice();
+    
+    public void setRetailPrice(BigDecimal retailPrice);
+    
+    public BigDecimal getSalePrice();
+    
+    public void setSalePrice(BigDecimal salePrice);
+    
+    public BigDecimal getPrice();
 
-    public void setFinalPrice(BigDecimal finalPrice);
+    public void setPrice(BigDecimal price);
 
     public int getQuantity();
 
     public void setQuantity(int quantity);
+    
+    public List<Offer> getCandidateOffers();
+    
+    public void setCandidateOffers(List<Offer> canidateOffers);
+    
+    public List<Offer> addCandidateOffer(Offer candidateOffer);
+    
+    public List<OfferAudit> getAppliedOffers();
+    
+    public void setAppliedOffers(List<OfferAudit> appliedOffers);
+    
+    public List<OfferAudit> addAppliedOffer(OfferAudit offerAudit);
 }

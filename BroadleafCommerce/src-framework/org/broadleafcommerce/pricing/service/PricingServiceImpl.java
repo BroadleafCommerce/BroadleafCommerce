@@ -26,7 +26,7 @@ public class PricingServiceImpl implements PricingService {
         BigDecimal total = BigDecimal.ZERO;
         List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem item : orderItemList) {
-            total = total.add(item.getFinalPrice());
+            total = total.add(item.getPrice());
         }
 
         List<FulfillmentGroup> fulfillmentGroupList = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);

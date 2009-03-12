@@ -20,13 +20,7 @@ public interface OfferAudit {
 
 	public void setCustomerId(Long customerId) ;
 
-	public Long getOrderId() ;
-
-	public void setOrderId(Long orderId) ;
-
-	public void setFullfillmentGroupId(Long fullfillmentGroupId);
-	
-	public Long getFullfillmentGroupId();
+	public void setRelatedId(Long id);
 	
 	public BigDecimal getRelatedRetailPrice() ;
 

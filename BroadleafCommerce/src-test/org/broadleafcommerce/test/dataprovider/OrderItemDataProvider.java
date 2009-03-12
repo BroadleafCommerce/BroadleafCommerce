@@ -10,7 +10,7 @@ public class OrderItemDataProvider {
     @DataProvider(name = "basicOrderItem")
     public static Object[][] provideBasicSalesOrderItem() {
         OrderItemImpl soi = new OrderItemImpl();
-        soi.setFinalPrice(BigDecimal.valueOf(10.25));
+        soi.setPrice(BigDecimal.valueOf(10.25));
         soi.setQuantity(3);
         return new Object[][] { { soi } };
     }

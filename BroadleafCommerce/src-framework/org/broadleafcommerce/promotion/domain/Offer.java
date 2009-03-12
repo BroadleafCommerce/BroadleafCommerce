@@ -2,9 +2,11 @@ package org.broadleafcommerce.promotion.domain;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.List;
 
+import org.broadleafcommerce.type.OfferDiscountType;
+import org.broadleafcommerce.type.OfferScopeType;
 import org.broadleafcommerce.type.OfferType;
-import org.broadleafcommerce.type.OfferUseType;
 
 public interface Offer {
 	public void setId(Long id) ;
@@ -15,13 +17,17 @@ public interface Offer {
 
 	public void setName(String name) ;
 
-	public OfferType getType() ;
-
-	public void setType(OfferType type) ;
-
-	public OfferUseType getUseType();
+	public OfferType getType();
 	
-	public void setUseType(OfferUseType useType);
+	public void setType(OfferType offerType);
+
+	public OfferDiscountType getDiscountType() ;
+	
+	public void setDiscountType(OfferDiscountType type) ;
+
+	public OfferScopeType getScopeType();
+	
+	public void setScopeType(OfferScopeType scopeType);
 	
 	public BigDecimal getValue();
 	
@@ -46,9 +52,9 @@ public interface Offer {
 	public boolean isTargetSystem() ;
 
 	public void setTargetSystem(boolean targetSystem) ;
-
-	public String getScope() ;
-
-	public void setScope(String scope);
 	
+	public List<OfferOrderItem> getOfferOrderItems();
+	
+	public void setOfferOrderItems(List<OfferOrderItem> offerOrderItems);
+
 }

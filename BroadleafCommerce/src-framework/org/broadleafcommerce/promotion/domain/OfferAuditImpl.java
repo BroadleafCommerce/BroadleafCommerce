@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.type.OfferDiscountType;
+
 @Entity
 @Table(name = "OFFER_AUDIT")
 public class OfferAuditImpl implements Serializable,OfferAudit {
@@ -32,12 +34,12 @@ public class OfferAuditImpl implements Serializable,OfferAudit {
 	@Column(name = "CUSTOMER_ID")
 	private Long customerId;
 	
-	@Column(name = "ORDER_ID", nullable = true)
-	private Long orderId;
+	@Column(name = "OFFER_TYPE")
+	private OfferDiscountType offerType;
 	
-	@Column(name = "FULLFILLMENT_GROUP_ID", nullable = true)
-	private Long fullfillmentGroupId;
-
+	@Column(name = "RELATED_ID")
+	private Long relatedId;
+	
 	@Column(name = "RELATED_RETAIL_PRICE")
 	private BigDecimal relatedRetailPrice;
 	
@@ -81,21 +83,21 @@ public class OfferAuditImpl implements Serializable,OfferAudit {
 	public void setCustomerId(Long customerId) {
 		this.customerId = customerId;
 	}
-
-	public Long getOrderId() {
-		return orderId;
+		
+	public OfferDiscountType getOfferType() {
+		return offerType;
 	}
 
-	public void setOrderId(Long orderId) {
-		this.orderId = orderId;
+	public void setOfferType(OfferDiscountType offerType) {
+		this.offerType = offerType;
 	}
 
-	public Long getFullfillmentGroupId() {
-		return fullfillmentGroupId;
+	public Long getRelatedId() {
+		return relatedId;
 	}
 
-	public void setFullfillmentGroupId(Long fullfillmentGroupId) {
-		this.fullfillmentGroupId = fullfillmentGroupId;
+	public void setRelatedId(Long relatedId) {
+		this.relatedId = relatedId;
 	}
 
 	public BigDecimal getRelatedRetailPrice() {
