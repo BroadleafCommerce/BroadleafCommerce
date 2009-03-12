@@ -4,6 +4,6 @@ import org.broadleafcommerce.order.domain.Order;
 
 public interface PricingService {
 
-	Order calculateOrderAmount(Order order);
+	Order calculateOrderTotal(Order order);
 	
 }

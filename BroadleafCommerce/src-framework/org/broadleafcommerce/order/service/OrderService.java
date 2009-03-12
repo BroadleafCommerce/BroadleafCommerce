@@ -42,8 +42,6 @@ public interface OrderService {
 
     public Order removeItemFromOrder(Order order, OrderItem item);
 
-    public Order calculateOrderTotal(Order order);
-
     public Order addOfferToOrder(Order order, String offerCode);
     
     public Order removeOfferFromOrder(Order order, Offer offer);
