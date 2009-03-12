@@ -64,6 +64,10 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "ORDER_TOTAL")
     private BigDecimal total;
 
+    @OneToMany(mappedBy = "id", targetEntity = OrderItemImpl.class)
+    @MapKey(name = "id")
+    private List<OrderItem> orderItems;
+    
     @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
     @MapKey(name = "id")
     private List<FulfillmentGroup> fulfillmentGroups;
@@ -140,7 +144,15 @@ public class OrderImpl implements Order, Serializable {
         this.type = type;
     }
 
-    public List<FulfillmentGroup> getFulfillmentGroups() {
+    public List<OrderItem> getOrderItems() {
+		return orderItems;
+	}
+
+	public void setOrderItems(List<OrderItem> orderItems) {
+		this.orderItems = orderItems;
+	}
+
+	public List<FulfillmentGroup> getFulfillmentGroups() {
         return fulfillmentGroups;
     }
 

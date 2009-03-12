@@ -43,6 +43,10 @@ public interface Order {
 
     public void setType(OrderType type);
     
+    public List<OrderItem> getOrderItems();
+    
+    public void setOrderItems(List<OrderItem> orderItems);
+    
     public List<FulfillmentGroup> getFulfillmentGroups();
     
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
