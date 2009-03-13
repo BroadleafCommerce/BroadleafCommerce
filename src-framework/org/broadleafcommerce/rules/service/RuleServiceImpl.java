@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.rules.dao.RuleDao;
 import org.broadleafcommerce.rules.domain.ShoppingCartPromotion;
+import org.broadleafcommerce.util.money.Money;
 import org.drools.compiler.DroolsParserException;
 import org.drools.compiler.PackageBuilder;
 import org.drools.rule.Package;
@@ -120,7 +121,7 @@ public class RuleServiceImpl implements RuleService {
 						+ newLine + tab);
 			}
 
-			if (shoppingCartPromotion.getOrderTotal() > 0) {
+			if (shoppingCartPromotion.getOrderTotal().greaterThan(new Money(0))) {
 				output.write("BroadleafOrder(orderTotal " + logicalOperator
 						+ " " + shoppingCartPromotion.getOrderTotal() + ")"
 						+ newLine);
