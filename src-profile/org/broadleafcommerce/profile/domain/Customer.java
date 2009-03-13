@@ -30,9 +30,9 @@ public interface Customer {
 
     public void setEmailAddress(String emailAddress);
 
-    public String getChallengeQuestion();
+    public ChallengeQuestion getChallengeQuestion();
 
-    public void setChallengeQuestion(String challengeQuestion);
+    public void setChallengeQuestion(ChallengeQuestion challengeQuestion);
 
     public String getChallengeAnswer();
 

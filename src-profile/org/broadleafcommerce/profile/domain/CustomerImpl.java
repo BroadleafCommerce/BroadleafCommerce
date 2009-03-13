@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -42,8 +44,9 @@ public class CustomerImpl implements Customer, Serializable {
     @Column(name = "EMAIL_ADDRESS")
     private String emailAddress;
 
-    @Column(name = "CHALLENGE_QUESTION")
-    private String challengeQuestion;
+    @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
+    @JoinColumn(name = "CHALLENGE_QUESTION_ID")
+    private ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
     private String challengeAnswer;
@@ -110,11 +113,11 @@ public class CustomerImpl implements Customer, Serializable {
         this.emailAddress = emailAddress;
     }
 
-    public String getChallengeQuestion() {
+    public ChallengeQuestion getChallengeQuestion() {
         return challengeQuestion;
     }
 
-    public void setChallengeQuestion(String challengeQuestion) {
+    public void setChallengeQuestion(ChallengeQuestion challengeQuestion) {
         this.challengeQuestion = challengeQuestion;
     }
 
