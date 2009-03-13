@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
@@ -24,117 +23,127 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("ruleService")
 public class RuleServiceImpl implements RuleService {
 
-    @Resource
-    private RuleDao ruleDao;
+	@Resource
+	private RuleDao ruleDao;
 
-    @Resource
-    private RuleBaseService ruleBaseService;
+	@Resource
+	private RuleBaseService ruleBaseService;
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public ShoppingCartPromotion saveShoppingCartPromotion(ShoppingCartPromotion shoppingCartPromotion) {
-        return ruleDao.maintainShoppingCartPromotion(shoppingCartPromotion);
-    }
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public ShoppingCartPromotion saveShoppingCartPromotion(
+			ShoppingCartPromotion shoppingCartPromotion) {
+		return ruleDao.maintainShoppingCartPromotion(shoppingCartPromotion);
+	}
 
-    public Package addRuleToNewPackage(File drlFile) {
+	public Package addRuleToNewPackage(File drlFile) {
 
-        PackageBuilder pkgBuilder = new PackageBuilder();
-        Reader drlFileReader = null;
-        ;
+		PackageBuilder pkgBuilder = new PackageBuilder();
+		Reader drlFileReader = null;
+		;
 
-        try {
-            drlFileReader = new FileReader(drlFile);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+		try {
+			drlFileReader = new FileReader(drlFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
-        try {
-            pkgBuilder.addPackageFromDrl(drlFileReader);
-        } catch (DroolsParserException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		try {
+			pkgBuilder.addPackageFromDrl(drlFileReader);
+		} catch (DroolsParserException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-        Package pkg = pkgBuilder.getPackage();
+		Package pkg = pkgBuilder.getPackage();
 
-        return pkg;
+		return pkg;
 
-    }
+	}
 
-    public void removeRuleFromRuleBase(String pkg, Long id) {
+	public void mergePackageWithRuleBase(Package pkg) {
 
-        // Pass in the package name and rule name as strings to remove the rule
-        ruleBaseService.getRuleBase().removeRule(pkg, id.toString());
+		try {
+			ruleBaseService.getRuleBase().addPackage(pkg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-    }
+	}
 
-    public void mergePackageWithRuleBase(Package pkg) {
+	public void writeRuleFile(ShoppingCartPromotion shoppingCartPromotion,
+			String logicalOperator) {
 
-        try {
-            ruleBaseService.getRuleBase().addPackage(pkg);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
 
-    }
+			File drlFile = new File("war/WEB-INF/drools/"
+					+ shoppingCartPromotion.getName() + ".drl");
 
-    public void writeRuleFile(ShoppingCartPromotion shoppingCartPromotion, String logicalOperator) {
+			Writer output = new BufferedWriter(new FileWriter(drlFile));
 
-        try {
+			if (drlFile == null) {
+				throw new IllegalArgumentException("File should not be null.");
+			}
+			if (!drlFile.exists()) {
+				throw new FileNotFoundException("File does not exist: "
+						+ drlFile);
+			}
+			if (!drlFile.isFile()) {
+				throw new IllegalArgumentException(
+						"Should not be a directory: " + drlFile);
+			}
+			if (!drlFile.canWrite()) {
+				throw new IllegalArgumentException("File cannot be written: "
+						+ drlFile);
+			}
 
-            File drlFile = new File("war/WEB-INF/drools/" + shoppingCartPromotion.getName() + ".drl");
+			String newLine = "\n";
+			String tab = "\t";
 
-            Writer output = new BufferedWriter(new FileWriter(drlFile));
+			output.write("package org.broadleafcommerce.rules;" + newLine);
+			output
+					.write("import org.broadleafcommerce.rules.domain.CouponCode;"
+							+ newLine);
+			output
+					.write("import org.broadleafcommerce.order.domain.BroadleafOrder;"
+							+ newLine);
 
-            if (drlFile == null) {
-                throw new IllegalArgumentException("File should not be null.");
-            }
-            if (!drlFile.exists()) {
-                throw new FileNotFoundException("File does not exist: " + drlFile);
-            }
-            if (!drlFile.isFile()) {
-                throw new IllegalArgumentException("Should not be a directory: " + drlFile);
-            }
-            if (!drlFile.canWrite()) {
-                throw new IllegalArgumentException("File cannot be written: " + drlFile);
-            }
+			output.write("rule \"" + shoppingCartPromotion.getName() + "\""
+					+ newLine);
 
-            String newLine = "\n";
-            String tab = "\t";
+			output.write("when" + newLine + tab);
 
-            output.write("package org.broadleafcommerce.rules;" + newLine);
-            output.write("import org.broadleafcommerce.rules.domain.CouponCode;" + newLine);
-            output.write("import org.broadleafcommerce.order.domain.Order;" + newLine);
+			if (!shoppingCartPromotion.getCouponCode().isEmpty()) {
+				output.write("CouponCode(code == \""
+						+ shoppingCartPromotion.getCouponCode() + "\")"
+						+ newLine + tab);
+			}
 
-            output.write("rule \"" + shoppingCartPromotion.getName() + "\"" + newLine);
+			if (shoppingCartPromotion.getOrderTotal() > 0) {
+				output.write("BroadleafOrder(orderTotal " + logicalOperator
+						+ " " + shoppingCartPromotion.getOrderTotal() + ")"
+						+ newLine);
+			}
 
-            output.write("when" + newLine + tab);
+			output.write("then" + newLine + tab);
 
-            if (!shoppingCartPromotion.getCouponCode().isEmpty()) {
-                output.write("CouponCode(code == \"" + shoppingCartPromotion.getCouponCode() + "\")" + newLine + tab);
-            }
+			output.write("System.out.println(\"SUCCESS\");" + newLine);
 
-            if (shoppingCartPromotion.getOrderTotal().compareTo(BigDecimal.ZERO) > 0) {
-                output.write("BroadleafOrder(orderTotal " + logicalOperator + " " + shoppingCartPromotion.getOrderTotal() + ")" + newLine);
-            }
+			output.write("end");
 
-            output.write("then" + newLine + tab);
+			output.close();
 
-            output.write("System.out.println(\"SUCCESS\");" + newLine);
+			Package pkg = addRuleToNewPackage(drlFile);
 
-            output.write("end");
+			mergePackageWithRuleBase(pkg);
 
-            output.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error writing drools file");
+		} finally {
 
-            Package pkg = addRuleToNewPackage(drlFile);
+		}
 
-            mergePackageWithRuleBase(pkg);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error writing drools file");
-        } finally {
-
-        }
-    }
+	}
 }
