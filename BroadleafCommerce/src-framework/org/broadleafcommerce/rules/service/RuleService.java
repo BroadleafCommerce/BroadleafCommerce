@@ -11,8 +11,6 @@ public interface RuleService {
 
 	public Package addRuleToNewPackage(File drlFile);
 
-	public void removeRuleFromRuleBase(String pkg, Long id);
-
 	public void mergePackageWithRuleBase(Package pkg);
 
 	public void writeRuleFile(ShoppingCartPromotion shoppingCartPromotion, String logicalOperator);
