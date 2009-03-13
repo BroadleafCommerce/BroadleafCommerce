@@ -26,34 +26,62 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
 
+/**
+ * The Class ProductImpl is the default implementation of {@link Product}.  A product is a general description
+ * of an item that can be sold (for example: a hat).  Products are not sold or added to a cart.  {@link Sku}s
+ * which are specific items (for example: a XL Blue Hat) are sold or added to a cart.
+ * <br>
+ * <br>
+ * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
+ * this class and add your fields.  If you need to make significant changes to the ProductImpl then you
+ * should implement your own version of {@link Product}. 
+ * <br>
+ * <br>
+ * This implementation uses a Hibernate implementation of JPA configured through annotations.
+ * The Entity references the following tables: 
+ * BLC_PRODUCT,
+ * BLC_PRODUCT_SKU_XREF,
+ * BLC_PRODUCT_IMAGE
+ * 
+ * @author btaylor
+ * @see {@link Product}, {@link SkuImpl}, {@link CategoryImpl}
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class ProductImpl implements Product, Serializable {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The id. */
     @Id
     @GeneratedValue
     @Column(name = "PRODUCT_ID")
     private Long id;
 
+    /** The name. */
     @Column(name = "NAME")
     private String name;
 
+    /** The description. */
     @Column(name = "DESCRIPTION")
     private String description;
 
+    /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
     private String longDescription;
 
+    /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
     private Date activeStartDate;
 
+    /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     private Date activeEndDate;
 
+    /** The all skus. */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
     @org.hibernate.annotations.OrderBy(clause = "DISPLAY_ORDER")
@@ -61,6 +89,7 @@ public class ProductImpl implements Product, Serializable {
     @BatchSize(size=50)
     private List<Sku> allSkus;
 
+    /** The product images. */
     @CollectionOfElements
     @JoinTable(name = "BLC_PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
@@ -68,69 +97,118 @@ public class ProductImpl implements Product, Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Map<String, String> productImages;
 
+    /** The default category. */
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     private Category defaultCategory;
 
+    /** The skus. */
     @Transient
     private List<Sku> skus;
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getId()
+     */
     public Long getId() {
         return id;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setId(java.lang.Long)
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getName()
+     */
     public String getName() {
         return name;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setName(java.lang.String)
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getDescription()
+     */
     public String getDescription() {
         return description;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setDescription(java.lang.String)
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getLongDescription()
+     */
     public String getLongDescription() {
         return longDescription;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setLongDescription(java.lang.String)
+     */
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getActiveStartDate()
+     */
     public Date getActiveStartDate() {
         return activeStartDate;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setActiveStartDate(java.util.Date)
+     */
     public void setActiveStartDate(Date activeStartDate) {
         this.activeStartDate = activeStartDate;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getActiveEndDate()
+     */
     public Date getActiveEndDate() {
         return activeEndDate;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setActiveEndDate(java.util.Date)
+     */
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#isActive()
+     */
     public boolean isActive() {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
     }
 
+    /**
+     * Gets the all skus.
+     * 
+     * @return the all skus
+     */
     private List<Sku> getAllSkus() {
         return allSkus;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getSkus()
+     */
     public List<Sku> getSkus() {
         if (skus == null) {
             skus = new ArrayList<Sku>();
@@ -144,27 +222,45 @@ public class ProductImpl implements Product, Serializable {
         return skus;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setAllSkus(java.util.List)
+     */
     public void setAllSkus(List<Sku> skus) {
         this.allSkus = skus;
         this.skus = null;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getProductImages()
+     */
     public Map<String, String> getProductImages() {
         return productImages;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getProductImage(java.lang.String)
+     */
     public String getProductImage(String imageKey) {
         return productImages.get(imageKey);
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setProductImages(java.util.Map)
+     */
     public void setProductImages(Map<String, String> productImages) {
         this.productImages = productImages;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#getDefaultCategory()
+     */
     public Category getDefaultCategory() {
         return defaultCategory;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Product#setDefaultCategory(org.broadleafcommerce.catalog.domain.Category)
+     */
     public void setDefaultCategory(Category defaultCategory) {
         this.defaultCategory = defaultCategory;
     }

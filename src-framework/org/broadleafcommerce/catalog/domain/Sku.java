@@ -5,14 +5,15 @@ import java.util.Map;
 
 import org.broadleafcommerce.util.money.Money;
 /**
- * Instances of this interface are used to hold data about a SKU.  A SKU is
+ * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as
  * color or size.
- *
+ * <br>
+ * <br>
  * You should implement this class if you want to make significant changes to how the
- * SKU is persisted.  If you just want to add additional fields then you should extend {@link SkuImpl}.
+ * class is persisted.  If you just want to add additional fields then you should extend {@link SkuImpl}.
  *
- * @see Product, SkuImpl
+ * @see {@link SkuImpl}, {@link Money}
  * @author btaylor
  *
  */
