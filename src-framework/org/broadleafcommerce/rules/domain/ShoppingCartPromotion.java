@@ -63,6 +63,6 @@ public class ShoppingCartPromotion implements Serializable {
     }
 
     public Money getOrderTotal() {
-        return new Money(orderTotal);
+        return orderTotal == null ? null : new Money(orderTotal);
     }
 }

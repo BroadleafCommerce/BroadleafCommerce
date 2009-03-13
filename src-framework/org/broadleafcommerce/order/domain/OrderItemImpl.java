@@ -89,7 +89,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
     }
 
     public Money getRetailPrice() {
-        return new Money(retailPrice);
+        return retailPrice == null ? null : new Money(retailPrice);
     }
 
     public void setRetailPrice(Money retailPrice) {
@@ -97,7 +97,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
     }
 
     public Money getSalePrice() {
-        return new Money(salePrice);
+        return salePrice == null ? null : new Money(salePrice);
     }
 
     public void setSalePrice(Money salePrice) {
@@ -105,7 +105,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
     }
 
     public Money getPrice() {
-        return new Money(price);
+        return price == null ? null : new Money(price);
     }
 
     public void setPrice(Money finalPrice) {

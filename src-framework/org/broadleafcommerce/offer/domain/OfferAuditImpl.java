@@ -102,7 +102,7 @@ public class OfferAuditImpl implements Serializable, OfferAudit {
     }
 
     public Money getRelatedRetailPrice() {
-        return new Money(relatedRetailPrice);
+        return relatedRetailPrice == null ? null : new Money(relatedRetailPrice);
     }
 
     public void setRelatedRetailPrice(Money relatedRetailPrice) {
@@ -110,7 +110,7 @@ public class OfferAuditImpl implements Serializable, OfferAudit {
     }
 
     public Money getRelatedSalePrice() {
-        return new Money(relatedSalePrice);
+        return relatedSalePrice == null ? null : new Money(relatedSalePrice);
     }
 
     public void setRelatedSalePrice(Money relatedSalePrice) {
@@ -118,7 +118,7 @@ public class OfferAuditImpl implements Serializable, OfferAudit {
     }
 
     public Money getRelatedPrice() {
-        return new Money(relatedPrice);
+        return relatedPrice == null ? null : new Money(relatedPrice);
     }
 
     public void setRelatedPrice(Money relatedPrice) {

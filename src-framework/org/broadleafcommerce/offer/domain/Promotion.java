@@ -65,7 +65,7 @@ public class Promotion implements Serializable {
     }
 
     public Money getDiscount() {
-        return new Money(discount);
+        return discount == null ? null : new Money(discount);
     }
 
     public void setDiscount(Money discount) {
