@@ -68,7 +68,7 @@ public class CategoryImpl implements Category, Serializable {
     @Column(name = "DISPLAY_TEMPLATE")
     private String displayTemplate;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
