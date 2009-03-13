@@ -46,7 +46,7 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     @Override
     public Money getAmount() {
-        return new Money(amount);
+        return amount == null ? null : new Money(amount);
     }
 
     @Override

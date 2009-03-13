@@ -102,7 +102,7 @@ public class OrderImpl implements Order, Serializable {
     }
 
     public Money getSubTotal() {
-        return new Money(subTotal);
+        return subTotal == null ? null : new Money(subTotal);
     }
 
     public void setSubTotal(Money subTotal) {
@@ -114,7 +114,7 @@ public class OrderImpl implements Order, Serializable {
     }
 
     public Money getTotal() {
-        return new Money(total);
+        return total == null ? null : new Money(total);
     }
 
     public void setTotal(Money orderTotal) {

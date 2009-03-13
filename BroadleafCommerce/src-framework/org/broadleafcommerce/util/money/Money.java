@@ -3,6 +3,7 @@ package org.broadleafcommerce.util.money;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Locale;
 
 @SuppressWarnings("unchecked")
 public final class Money implements Serializable, Cloneable, Comparable {
@@ -14,27 +15,27 @@ public final class Money implements Serializable, Cloneable, Comparable {
     private final Currency currency;
 
     public Money() {
-        this(BankersRounding.zeroAmount(), Currency.getInstance("USD"));
+        this(BankersRounding.zeroAmount(), defaultCurrency());
     }
 
     public Money(BigDecimal amount) {
-        this(amount, Currency.getInstance("USD"));
+        this(amount, defaultCurrency());
     }
 
     public Money(double amount) {
-        this(valueOf(amount), Currency.getInstance("USD"));
+        this(valueOf(amount), defaultCurrency());
     }
 
     public Money(int amount) {
-        this(BigDecimal.valueOf(amount), Currency.getInstance("USD"));
+        this(BigDecimal.valueOf(amount), defaultCurrency());
     }
 
     public Money(long amount) {
-        this(BigDecimal.valueOf(amount), Currency.getInstance("USD"));
+        this(BigDecimal.valueOf(amount), defaultCurrency());
     }
 
     public Money(String amount) {
-        this(new BigDecimal(amount), Currency.getInstance("USD"));
+        this(new BigDecimal(amount), defaultCurrency());
     }
 
     public Money(BigDecimal amount, String currencyCode) {
@@ -272,5 +273,18 @@ public final class Money implements Serializable, Cloneable, Comparable {
      */
     private static BigDecimal valueOf(double amount) {
         return new BigDecimal(String.valueOf(amount));
+    }
+
+    /**
+     * Attempts to load a default currency by using the default locale. {@link Currency#getInstance(Locale)} uses the country component of the locale to resolve the currency. In some instances, the locale may not have a country component, in which case the default currency can be controlled with a
+     * system property.
+     * @return The default currency to use when none is specified
+     */
+    private static Currency defaultCurrency() {
+        Locale locale = Locale.getDefault();
+        if (locale.getCountry() != null && locale.getCountry().length() == 2) {
+            return Currency.getInstance(locale);
+        }
+        return Currency.getInstance(System.getProperty("currency.default", "USD"));
     }
 }

@@ -104,7 +104,7 @@ public class OfferImpl implements Serializable, Offer {
     }
 
     public Money getValue() {
-        return new Money(value);
+        return value == null ? null : new Money(value);
     }
 
     public void setValue(Money value) {
