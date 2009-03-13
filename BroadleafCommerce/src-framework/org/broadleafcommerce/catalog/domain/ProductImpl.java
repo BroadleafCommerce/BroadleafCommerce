@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.util.DateUtil;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
@@ -57,6 +58,7 @@ public class ProductImpl implements Product, Serializable {
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
     @org.hibernate.annotations.OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @BatchSize(size=50)
     private List<Sku> allSkus;
 
     @CollectionOfElements

@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.UrlUtil;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
@@ -72,6 +73,7 @@ public class CategoryImpl implements Category, Serializable {
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @BatchSize(size=100)
     private List<Category> allChildCategories;
 
     // @OneToMany(mappedBy = "category", targetEntity = BroadleafCategoryImage.class)
@@ -79,6 +81,7 @@ public class CategoryImpl implements Category, Serializable {
     @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Map<String, String> categoryImages;
 
     @Column(name = "LONG_DESCRIPTION")
