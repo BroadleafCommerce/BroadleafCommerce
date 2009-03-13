@@ -74,7 +74,7 @@ public class SkuImpl implements Sku, Serializable {
     }
 
     public Money getSalePrice() {
-        return new Money(salePrice);
+        return salePrice == null ? null : new Money(salePrice);
     }
 
     public void setSalePrice(Money salePrice) {
@@ -82,7 +82,7 @@ public class SkuImpl implements Sku, Serializable {
     }
 
     public Money getRetailPrice() {
-        return new Money(retailPrice);
+        return retailPrice == null ? null : new Money(retailPrice);
     }
 
     public void setRetailPrice(Money retailPrice) {
@@ -90,7 +90,7 @@ public class SkuImpl implements Sku, Serializable {
     }
 
     public Money getListPrice() {
-        return new Money(retailPrice);
+        return retailPrice == null ? null : new Money(retailPrice);
     }
 
     public void setListPrice(Money listPrice) {

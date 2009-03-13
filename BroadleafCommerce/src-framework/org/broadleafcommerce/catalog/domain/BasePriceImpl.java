@@ -59,7 +59,7 @@ public class BasePriceImpl implements BasePrice, Serializable {
     }
 
     public Money getAmount() {
-        return new Money(amount);
+        return amount == null ? null : new Money(amount);
     }
 
     public void setAmount(Money amount) {
