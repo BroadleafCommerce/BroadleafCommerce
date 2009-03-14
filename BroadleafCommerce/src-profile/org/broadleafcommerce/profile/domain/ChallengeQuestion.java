@@ -6,7 +6,7 @@ public interface ChallengeQuestion {
 
     public void setId(Long id);
 
-    public String getChallengeQuestion();
+    public String getQuestion();
 
-    public void setChallengeQuestion(String challengeQuestion);
+    public void setQuestion(String question);
 }

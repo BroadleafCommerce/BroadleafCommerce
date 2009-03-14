@@ -26,7 +26,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion, Serializable {
     private Long id;
 
     @Column(name = "QUESTION")
-    private String challengeQuestion;
+    private String question;
 
     public Long getId() {
         return id;
@@ -36,11 +36,15 @@ public class ChallengeQuestionImpl implements ChallengeQuestion, Serializable {
         this.id = id;
     }
 
-    public String getChallengeQuestion() {
-        return challengeQuestion;
+    public String getQuestion() {
+        return question;
     }
 
-    public void setChallengeQuestion(String challengeQuestion) {
-        this.challengeQuestion = challengeQuestion;
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String toString() {
+        return question;
     }
 }

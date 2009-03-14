@@ -6,6 +6,7 @@
     <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
     	<non-jta-data-source>jdbc/BroadleafCommerceDS</non-jta-data-source>
 		<mapping-file>config/bc/jpa/domain/Address.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/ChallengeQuestion.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ContactInfo.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Customer.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/User.orm.xml</mapping-file>
