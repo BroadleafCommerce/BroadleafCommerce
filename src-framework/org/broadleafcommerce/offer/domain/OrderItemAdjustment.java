@@ -32,8 +32,8 @@ public class OrderItemAdjustment implements Serializable {
     private OrderItem orderItem;
 
     @ManyToOne
-    @JoinColumn(name = "PROMOTION_ID")
-    private Promotion promotion;
+    @JoinColumn(name = "OFFER_ID")
+    private Offer offer;
 
     public Long getId() {
         return id;
@@ -51,12 +51,12 @@ public class OrderItemAdjustment implements Serializable {
         this.orderItem = orderItem;
     }
 
-    public Promotion getPromotion() {
-        return promotion;
+    public Offer getOffer() {
+        return offer;
     }
 
-    public void setPromotion(Promotion promotion) {
-        this.promotion = promotion;
+    public void setOffer(Offer offer) {
+        this.offer = offer;
     }
 
 }
