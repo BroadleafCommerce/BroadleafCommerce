@@ -12,16 +12,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
-import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.domain.OfferAudit;
-import org.broadleafcommerce.offer.domain.OfferAuditImpl;
-import org.broadleafcommerce.offer.domain.OfferImpl;
+import org.broadleafcommerce.offer.domain.ItemOffer;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -56,13 +52,9 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Column(name = "QUANTITY")
     private int quantity;
 
-    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
-    @MapKey(name = "id")
-    private List<Offer> candidateOffers;
-
-    @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
-    @MapKey(name = "id")
-    private List<OfferAudit> appliedOffers;
+    @Transient
+    // TODO: Need to persist this
+    private List<ItemOffer> candidateItemOffers;
 
     public Long getId() {
         return id;
@@ -120,29 +112,24 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.quantity = quantity;
     }
 
-    public List<Offer> getCandidateOffers() {
-        return candidateOffers;
+    public List<ItemOffer> getCandidateItemOffers() {
+        return candidateItemOffers;
     }
 
-    public void setCandidateOffers(List<Offer> candidateOffers) {
-        this.candidateOffers = candidateOffers;
+    public void setCandidateItemOffers(List<ItemOffer> itemOffers) {
+        this.candidateItemOffers = itemOffers;
     }
 
-    public List<Offer> addCandidateOffer(Offer candidateOffer) {
-        this.candidateOffers.add(candidateOffer);
-        return candidateOffers;
+    public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer) {
+    	// TODO: if stacked, add all of the items to the persisted structure and add just the stacked version
+    	//       to this collection
+        this.candidateItemOffers.add(candidateOffer);
+        return candidateItemOffers;
     }
 
-    public List<OfferAudit> getAppliedOffers() {
-        return appliedOffers;
-    }
-
-    public void setAppliedOffers(List<OfferAudit> appliedOffers) {
-        this.appliedOffers = appliedOffers;
-    }
-
-    public List<OfferAudit> addAppliedOffer(OfferAudit appliedOffer) {
-        this.appliedOffers.add(appliedOffer);
-        return appliedOffers;
+    public void removeAllOffers() {
+    	if (candidateItemOffers != null) {
+    		candidateItemOffers.clear();
+    	}
     }
 }

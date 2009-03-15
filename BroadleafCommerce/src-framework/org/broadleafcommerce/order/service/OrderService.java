@@ -43,9 +43,9 @@ public interface OrderService {
     public Order removeItemFromOrder(Order order, OrderItem item);
 
     public Order addOfferToOrder(Order order, String offerCode);
-    
+
     public Order removeOfferFromOrder(Order order, Offer offer);
-    
+
     public Order confirmOrder(Order order);
 
     public void cancelOrder(Order order);

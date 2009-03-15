@@ -176,4 +176,22 @@ public class OrderImpl implements Order, Serializable {
         this.candidateOffers = offers;
 
     }
+
+	@Override
+	public void removeAllOffers() {
+		if (candidateOffers != null) {
+    		candidateOffers.clear();
+    	}
+		if (getOrderItems() != null) {
+			for (OrderItem item : getOrderItems()) {
+				item.removeAllOffers();
+			}
+		}
+
+		if (getFulfillmentGroups() != null) {
+			for (FulfillmentGroup fg : getFulfillmentGroups()) {
+				fg.removeAllOffers();
+			}
+		}
+	}
 }

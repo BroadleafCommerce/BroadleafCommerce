@@ -1,28 +1,22 @@
 package org.broadleafcommerce.offer.service;
 
-import java.math.BigDecimal;
-import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import org.apache.commons.beanutils.BeanComparator;
+import org.broadleafcommerce.offer.domain.CandidateOffer;
 import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.offer.domain.OfferCode;
+import org.broadleafcommerce.offer.domain.StackedOffer;
+import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
-import org.broadleafcommerce.type.OfferDiscountType;
-import org.broadleafcommerce.util.DateUtil;
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.type.OfferType;
 import org.springframework.stereotype.Service;
 
 @Service("offerService")
 public class OfferServiceImpl implements OfferService {
-
-    @Resource
-    private EntityConfiguration entityConfiguration;
 
     @Override
     public boolean consumeOffer(Offer offer, Customer customer) {
@@ -30,40 +24,111 @@ public class OfferServiceImpl implements OfferService {
         return false;
     }
 
-    @Override
-    public List<OfferAudit> findAppliedOffers(List<Offer> candidateOffers,
-            OrderItem orderItem) {
-        List<OfferAudit> foundOffers = new ArrayList<OfferAudit>();
+    public void applyOffersToOrder(List<Offer> offers, Order order) {
+    	order.removeAllOffers();
+    	if (offers != null) {
+    		order.setCandaditeOffers(offers);
+    		distributeItemOffers(order, offers);
 
-        for (Offer candOffer : candidateOffers) {
-            if(candOffer.isStackable()){  				// If the offer is stackable, add it to applied
-                foundOffers.add(createOfferAuditFromOffer(candOffer,orderItem));
-            }else										// Start logic to compare offer to applied offers
-                if(foundOffers.size() > 0){ 				// If we have applied offers already
-                    for (OfferAudit appOfferAudit : foundOffers) { 	// iterate through the applied offers
-                        Offer appOffer = appOfferAudit.getOffer();
-                        if(!appOffer.isStackable()){	   	// Only examine non-stackable offers
-                            if(!(appOffer.getPriority() == candOffer.getPriority())){ // Test equal priority
-                                if(isCandOfferHasPriorityOverAppOffer(appOffer,candOffer)){ // Test greater priority
-                                    foundOffers.remove(appOfferAudit);
-                                    foundOffers.add(createOfferAuditFromOffer(candOffer,orderItem));
-                                }
-                            }else {							// Priorities are equal
-                                if(isCandOfferGreaterThanAppOffer(candOffer, appOffer, orderItem.getRetailPrice())){
-                                    foundOffers.remove(appOfferAudit);
-                                    foundOffers.add(createOfferAuditFromOffer(candOffer,orderItem));
-                                }
-                            }
+    		// At this point, each item may have a list of offers which have been sorted such that the
+    		// best offer is the first offer in the list.
 
-                        }
-                    }
-                }else{ 									// No applied offers yet
-                    foundOffers.add(createOfferAuditFromOffer(candOffer,orderItem));			// Add one
-                }
-        }
-        return foundOffers;
+    		// Now we need to evaluate the order offers to determine if the order, item, or both should be
+    		// applied.
 
+    		// I see order offers having three variations of "stackable".   1.  Not-stackable, 2.  Stackable on top of item offers,
+    		// 3.  Stackable on top of item and order offers
+    		// Based on this, we need to do the following:
+    		// 1. Build list of order offers stackable on top of item offers
+    		// 2. Build list of order offers stackable on top of just order offers
+    		// 3. Build list of order offers stackable that are not stackable
+    		// Next compute the following order totals:
+    		// E1. orderTotalWithItemOffersOnly = xxx;
+    		// E2. orderTotalWithItemAndOrderOffers = xxx;
+    		// E3. orderTotalWithBestOrderOfferOnly = xxx;
+    		//
+    		boolean e1wins=true;
+    		boolean e2wins=false;
+    		boolean e3wins=false;
+    		if (e1wins) {
+    			// TODO: Create ItemAdjustment and add them to each OrderItem for the winning offer on each item
+    		}
+    		if (e2wins) {
+    			// TODO: Create ItemAdjustment and add them to each OrderItem for the winning offer on each item
+    			// TODO: Create ItemAdjustment records for the winning Order offer(s) and add them to each item
+    		}
+    		if (e3wins) {
+    			// TODO: Create ItemAdjustment records for the winning Order offer(s) and add them to each item
+    		}
+
+
+    		// now we can apply the first offer for each item which might be a stacked offer
+    		// but first, we need to determine if a non-stacked order offer should be applied instead
+    		// TODO: handle item discount distribution (e.g. applies to maximum of 1 in this order)
+    		// TODO: compute order total with item discounts
+    		// TODO: compute order total without item discounts
+    		// TODO: compute best non-stackable order discount
+    		// TODO: compute best stackable order discount
+    		// TODO: compute best non-stackable order discount that works with item discounts
+    		// TODO: compute best
+    		// TODO: compute order total with discounts plus stackable order discounts
+    		// TODO: compute order total with
+    		//evaluateOffers(order);
+
+    	}
     }
+
+    @SuppressWarnings("unchecked")
+	private void distributeItemOffers(Order order, List<Offer> offers) {
+    	for (OrderItem item : order.getOrderItems()) {
+    		List<Offer> stackableOffersList = null;
+			for (Offer offer : offers) {
+				if (OfferType.ORDER_ITEM.equals(offer.getType())) {
+					if (couldOfferApplyToOrderItem(offer, order, item)) {
+						if (offer.isStackable()) {
+							if (stackableOffersList == null) {
+								stackableOffersList = new ArrayList<Offer>();
+							}
+							stackableOffersList.add(offer);
+						} else {
+							CandidateOffer candidateOffer = new CandidateOffer(offer, item.getRetailPrice(), item.getSalePrice());
+							item.addCandidateItemOffer(candidateOffer);
+						}
+					}
+				}
+			}
+			if (stackableOffersList != null) {
+				StackedOffer stackedOffer = new StackedOffer(stackableOffersList, item.getRetailPrice(), item.getSalePrice());
+				item.addCandidateItemOffer(stackedOffer);
+			}
+
+			// Sorts offers by priority then discounted price
+			Collections.sort(item.getCandidateItemOffers(), new BeanComparator("priority", new BeanComparator("discountedPrice")));
+		}
+    }
+
+    private boolean couldOfferApplyToOrderItem(Offer offer, Order order, OrderItem item) {
+    	// TODO: Evaluate rule to determine if this offer can apply to the given item
+    	// TODO: Applies to rule should support any combination of the following expressions:
+    	// TODO:      // "all items",
+    	// TODO:      // "items whose ${reflected property} (eq, ne, in) ${value(s)}"
+    	// TODO:      // "items from category "${category}"
+    	// TODO: .........................................
+    	// TODO: if offer might apply to this item, then check the when condition
+    	// TODO:     "always"
+    	// TODO:     "when order contains $(qty} of item whose ${reflected property} (eq, ne, in) ${value}
+    	return true;
+    }
+
+
+    protected void chooseItemOffers(Order order) {
+    	// Loop through offer
+    	// Build list of order items that qualify for offer
+    	// Sort list by item amount
+    	//
+    }
+
+
 
     @Override
     public OfferCode lookupCodeByOffer(Offer offer) {
@@ -82,48 +147,4 @@ public class OfferServiceImpl implements OfferService {
         // TODO Auto-generated method stub
         return null;
     }
-
-    private boolean isCandOfferHasPriorityOverAppOffer(Offer appliedOffer,Offer candidateOffer){
-        if(candidateOffer.getPriority() > appliedOffer.getPriority()){
-            return true;
-        }else{
-            return false;
-        }
-
-    }
-
-    private boolean isCandOfferGreaterThanAppOffer(Offer candidateOffer, Offer appliedOffer, Money price){
-        Money candAmount = getOfferAmount(candidateOffer, price);
-        Money appAmount = getOfferAmount(appliedOffer, price);
-        return candAmount.compareTo(appAmount) > 0;
-    }
-
-    private Money getOfferAmount(Offer offer, Money price){
-        if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
-            return price.subtract(offer.getValue());
-        }
-        if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
-            return offer.getValue();
-        }
-
-        if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
-            return price.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount());
-        }
-        return price;
-
-    }
-
-    private OfferAudit createOfferAuditFromOffer(Offer offer,OrderItem orderItem){
-        OfferAudit oa = (OfferAudit)entityConfiguration.createEntityInstance("offerAudit");
-        oa.setOffer(offer);
-        oa.setRedeemedDate(new Date(DateUtil.getNow().getTime()));
-        oa.setRelatedId(orderItem.getId());
-        oa.setRelatedPrice(getOfferAmount(offer, orderItem.getRetailPrice()));
-        oa.setRelatedRetailPrice(orderItem.getRetailPrice());
-        oa.setRelatedSalePrice(orderItem.getSalePrice());
-        oa.setOfferCodeId(lookupCodeByOffer(offer).getId());
-        return oa;
-    }
-
-
 }

@@ -56,4 +56,6 @@ public interface Order {
     public void setCandaditeOffers(List<Offer> offers);
 
     public void addCandidateOffer(Offer offer);
+
+    public void removeAllOffers();
 }

@@ -62,4 +62,6 @@ public interface FulfillmentGroup {
 
     public void addAppliedOffer(OfferAudit offer);
 
+    public void removeAllOffers();
+
 }

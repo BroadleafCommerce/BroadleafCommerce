@@ -201,4 +201,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     public void setCandidateOffers(List<Offer> candidateOffers) {
         this.candidateOffers = candidateOffers;
     }
+
+    public void removeAllOffers() {
+    	if (candidateOffers != null) {
+    		candidateOffers.clear();
+    	}
+    }
 }
