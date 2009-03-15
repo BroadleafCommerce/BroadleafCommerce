@@ -1,7 +1,6 @@
 package org.broadleafcommerce.offer.domain;
 
 import java.sql.Date;
-import java.util.List;
 
 import org.broadleafcommerce.type.OfferDiscountType;
 import org.broadleafcommerce.type.OfferScopeType;
@@ -49,12 +48,12 @@ public interface Offer {
 
     public void setStackable(boolean stackable);
 
-    public boolean isTargetSystem();
+    public String getTargetSystem();
 
-    public void setTargetSystem(boolean targetSystem);
+    public void setTargetSystem(String targetSystem);
 
-    public List<OfferOrderItem> getOfferOrderItems();
+    public boolean getApplyDiscountToSalePrice();
 
-    public void setOfferOrderItems(List<OfferOrderItem> offerOrderItems);
+    public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
 
 }

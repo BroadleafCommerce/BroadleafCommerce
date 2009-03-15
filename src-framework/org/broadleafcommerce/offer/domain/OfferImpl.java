@@ -3,13 +3,13 @@ package org.broadleafcommerce.offer.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.type.OfferDiscountType;
@@ -31,12 +31,15 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "OFFER_NAME")
     private String name;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "OFFER_TYPE")
     private OfferType type;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "OFFER_DISCOUNT_TYPE")
     private OfferDiscountType discountType;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "OFFER_SCOPE_TYPE")
     private OfferScopeType scopeType;
 
@@ -56,10 +59,10 @@ public class OfferImpl implements Serializable, Offer {
     private boolean stackable;
 
     @Column(name = "TARGET_SYSTEM")
-    private boolean targetSystem;
+    private String targetSystem;
 
-    @OneToMany(mappedBy = "id", targetEntity = OfferOrderItemImpl.class)
-    private List<OfferOrderItem> offerOrderItems;
+    @Column(name = "APPLY_TO_SALE_PRICE")
+    private boolean applyToSalePrice;
 
     public Long getId() {
         return id;
@@ -94,12 +97,13 @@ public class OfferImpl implements Serializable, Offer {
     }
 
     public OfferDiscountType getDiscountType() {
-        return discountType;
+    	return discountType;
+
     }
 
     @Override
-    public void setDiscountType(OfferDiscountType type) {
-        this.discountType = type;
+    public void setDiscountType(OfferDiscountType discountType) {
+        this.discountType = discountType;
 
     }
 
@@ -143,19 +147,22 @@ public class OfferImpl implements Serializable, Offer {
         this.stackable = stackable;
     }
 
-    public boolean isTargetSystem() {
+    public String getTargetSystem() {
         return targetSystem;
     }
 
-    public void setTargetSystem(boolean targetSystem) {
+    public void setTargetSystem(String targetSystem) {
         this.targetSystem = targetSystem;
     }
 
-    public List<OfferOrderItem> getOfferOrderItems() {
-        return offerOrderItems;
-    }
+	@Override
+	public boolean getApplyDiscountToSalePrice() {
+		return applyToSalePrice;
+	}
 
-    public void setOfferOrderItems(List<OfferOrderItem> offerOrderItems) {
-        this.offerOrderItems = offerOrderItems;
-    }
+	@Override
+	public void setApplyDiscountToSalePrice(boolean applyToSalePrice) {
+		this.applyToSalePrice=applyToSalePrice;
+
+	}
 }

@@ -27,7 +27,6 @@ import org.broadleafcommerce.profile.dao.ContactInfoDao;
 import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.type.FulfillmentGroupType;
-import org.broadleafcommerce.type.OfferType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,10 +54,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private AddressDao addressDao;
-    
+
     @Resource
     private OfferService offerService;
-    
+
     @Resource
     private PricingService pricingService;
 
@@ -272,35 +271,16 @@ public class OrderServiceImpl implements OrderService {
     public Order confirmOrder(Order order) {
         // TODO Other actions needed to complete order. Code below is only a start.
         return orderDao.submitOrder(order);
-    }       
+    }
 
     @Override
 	public Order addOfferToOrder(Order order, String offerCode) {
-    	Offer offer = offerService.lookupOfferByCode(offerCode);
-    	List<OrderItem> orderItems = findItemsForOrder(order);
-    	for (OrderItem orderItem : orderItems) {
-	    	if(offer.getType() == OfferType.ORDER_ITEM){
-	   			if(offer.getOfferOrderItems().indexOf(orderItem) > -1){
-	   				orderItem.addCandidateOffer(offer);    				
-	   			}
-			}
-	    	else
-	    		if(offer.getType() == OfferType.ORDER){
-	    			orderItem.addCandidateOffer(offer);
-	    		}
-    	}	
-    	
-    	return order;
+		throw new UnsupportedOperationException();
     }
 
 	@Override
 	public Order removeOfferFromOrder(Order order, Offer offer) {
-    	List<OrderItem> orderItems = findItemsForOrder(order);
-    	for (OrderItem orderItem : orderItems) {
-    		orderItem.getAppliedOffers().remove(offer);
-    		orderItem.getCandidateOffers().remove(offer);
-    	}		
-    	return order;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

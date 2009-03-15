@@ -3,8 +3,7 @@ package org.broadleafcommerce.order.domain;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.domain.OfferAudit;
+import org.broadleafcommerce.offer.domain.ItemOffer;
 import org.broadleafcommerce.util.money.Money;
 
 public interface OrderItem {
@@ -37,15 +36,11 @@ public interface OrderItem {
 
     public void setQuantity(int quantity);
 
-    public List<Offer> getCandidateOffers();
+    public List<ItemOffer> getCandidateItemOffers();
 
-    public void setCandidateOffers(List<Offer> canidateOffers);
+    public void setCandidateItemOffers(List<ItemOffer> candidateOffers);
 
-    public List<Offer> addCandidateOffer(Offer candidateOffer);
+    public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer);
 
-    public List<OfferAudit> getAppliedOffers();
-
-    public void setAppliedOffers(List<OfferAudit> appliedOffers);
-
-    public List<OfferAudit> addAppliedOffer(OfferAudit offerAudit);
+    public void removeAllOffers();
 }
