@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 import org.springframework.security.CredentialsExpiredException;
@@ -20,6 +21,8 @@ import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
 import org.springframework.security.util.TextUtils;
 
 public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
+
+    public static final String BC_LOGIN_SUCCESS_URL_KEY = "broadleaf_commerce.login_success_url";
 
     private final List<PostLoginObserver> postLoginListeners = new ArrayList<PostLoginObserver>();
 
@@ -74,6 +77,11 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
                 return passwordChangeUri;
             }
         }
+        String refererUrl = (String) request.getSession().getAttribute(BC_LOGIN_SUCCESS_URL_KEY);
+        if (refererUrl != null) {
+            removeLoginSuccessUrl(request);
+            return refererUrl;
+        }
         return super.determineTargetUrl(request);
     }
 
@@ -96,5 +104,18 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
 
     public void setPasswordChangeUri(String passwordChangeUri) {
         this.passwordChangeUri = passwordChangeUri;
+    }
+
+    public void setLoginSuccessUrl(HttpServletRequest request, String refererUrl) {
+        request.getSession().setAttribute(BC_LOGIN_SUCCESS_URL_KEY, refererUrl);
+    }
+
+    public void removeLoginSuccessUrl(HttpServletRequest request) {
+        request.getSession().removeAttribute(BC_LOGIN_SUCCESS_URL_KEY);
+    }
+
+    public void setLoginSuccessUrlWithReferer(HttpServletRequest request) {
+        String baseUrl = StringUtils.remove(request.getRequestURL().toString(), request.getRequestURI());
+        setLoginSuccessUrl(request, StringUtils.remove(request.getHeader("Referer"), baseUrl));
     }
 }
