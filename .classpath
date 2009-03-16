@@ -18,7 +18,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/compile/bin/servletapi-2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/test/bin/spring-test.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/test/bin/testng-5.8-jdk15.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/spring-security-core-2.0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/common/bin/spring-security-core-2.0.4.jar" sourcepath="lib/common/source/spring-security-core-2.0.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/dom4j-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/spring-webmvc.jar" sourcepath="lib/common/source/spring-webmvc-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/log4j-1.2.15.jar"/>
