@@ -9,7 +9,6 @@ import javax.persistence.NoResultException;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.order.dao.OrderDao;
@@ -54,9 +53,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private AddressDao addressDao;
-
-    @Resource
-    private OfferService offerService;
 
     @Resource
     private PricingService pricingService;
@@ -274,23 +270,23 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-	public Order addOfferToOrder(Order order, String offerCode) {
-		throw new UnsupportedOperationException();
+    public Order addOfferToOrder(Order order, String offerCode) {
+        throw new UnsupportedOperationException();
     }
 
-	@Override
-	public Order removeOfferFromOrder(Order order, Offer offer) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Order removeOfferFromOrder(Order order, Offer offer) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
+    @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void cancelOrder(Order order) {
         orderDao.deleteOrderForCustomer(order);
     }
 
     protected Order maintainOrder(Order order) {
-    	pricingService.calculateOrderTotal(order);
+        pricingService.calculateOrderTotal(order);
         return orderDao.maintianOrder(order);
     }
 
