@@ -6,5 +6,5 @@ import org.broadleafcommerce.profile.domain.ChallengeQuestion;
 
 public interface ChallengeQuestionService {
 
-    public List<ChallengeQuestion> readAddressById();
+    public List<ChallengeQuestion> readChallengeQuestions();
 }

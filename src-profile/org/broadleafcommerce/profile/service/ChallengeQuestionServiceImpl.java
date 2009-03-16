@@ -17,7 +17,7 @@ public class ChallengeQuestionServiceImpl implements ChallengeQuestionService {
     private ChallengeQuestionDao challengeQuestionDao;
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public List<ChallengeQuestion> readAddressById() {
+    public List<ChallengeQuestion> readChallengeQuestions() {
         return challengeQuestionDao.readChallengeQuestions();
     }
 }
