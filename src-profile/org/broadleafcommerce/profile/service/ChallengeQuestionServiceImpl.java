@@ -20,4 +20,10 @@ public class ChallengeQuestionServiceImpl implements ChallengeQuestionService {
     public List<ChallengeQuestion> readChallengeQuestions() {
         return challengeQuestionDao.readChallengeQuestions();
     }
+
+    @Override
+    public ChallengeQuestion readChallengeQuestionById(long challengeQuestionId) {
+        return challengeQuestionDao.readChallengeQuestionById(challengeQuestionId);
+    }
+    
 }

@@ -25,4 +25,13 @@ public class ChallengeQuestionDaoJpa implements ChallengeQuestionDao {
         Query query = em.createNamedQuery("BC_READ_CHALLENGE_QUESTIONS");
         return query.getResultList();
     }
+
+    @Override
+    public ChallengeQuestion readChallengeQuestionById(long challengeQuestionId) {
+        Query query = em.createNamedQuery("BC_READ_CHALLENGE_QUESTION_BY_ID");
+        query.setParameter("question_id", challengeQuestionId);
+        return (ChallengeQuestion) query.getSingleResult();
+    }
+    
+    
 }
