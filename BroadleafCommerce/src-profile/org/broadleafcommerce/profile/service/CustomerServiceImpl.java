@@ -46,7 +46,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer changePassword(PasswordChange passwordChange) {
         Customer customer = readCustomerByUsername(passwordChange.getUsername());
         customer.setUnencodedPassword(passwordChange.getNewPassword());
-        customer.setPasswordChangeRequired(false);
+        customer.setPasswordChangeRequired(passwordChange.getPasswordChangeRequired());
         customer = saveCustomer(customer);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(passwordChange.getUsername(), passwordChange.getNewPassword(), auth.getAuthorities());

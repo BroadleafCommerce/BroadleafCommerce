@@ -7,4 +7,8 @@
 		<query>SELECT question FROM org.broadleafcommerce.profile.domain.ChallengeQuestion question
 		ORDER BY question.id</query>
 	</named-query>
+	<named-query name="BC_READ_CHALLENGE_QUESTION_BY_ID" >
+		<query>SELECT question FROM org.broadleafcommerce.profile.domain.ChallengeQuestion question
+		WHERE question.id = :question_id</query>
+	</named-query>
 </entity-mappings>

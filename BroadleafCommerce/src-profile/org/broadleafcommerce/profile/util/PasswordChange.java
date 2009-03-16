@@ -28,6 +28,8 @@ public class PasswordChange implements Serializable {
     private String challengeAnswer;
 
     private String email;
+    
+    private boolean passwordChangeRequired;
 
     public PasswordChange() {
     }
@@ -91,4 +93,13 @@ public class PasswordChange implements Serializable {
     public void setNewPasswordConfirm(String newPasswordConfirm) {
         this.newPasswordConfirm = newPasswordConfirm;
     }
+    
+    public boolean getPasswordChangeRequired() {
+        return passwordChangeRequired;
+    }
+
+    public void setPasswordChangeRequired(boolean passwordChangeRequired) {
+        this.passwordChangeRequired = passwordChangeRequired;
+    }
+
 }
