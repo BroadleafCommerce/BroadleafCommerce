@@ -28,7 +28,7 @@ public class OrderAdjustment implements Serializable {
     @JoinColumn(name = "ORDER_ID")
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = OfferImpl.class)
     @JoinColumn(name = "OFFER_ID")
     private Offer offer;
 
