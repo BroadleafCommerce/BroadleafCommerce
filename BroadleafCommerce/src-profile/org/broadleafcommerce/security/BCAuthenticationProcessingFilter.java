@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 import org.springframework.security.CredentialsExpiredException;
@@ -115,7 +114,6 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
     }
 
     public void setLoginSuccessUrlWithReferer(HttpServletRequest request) {
-        String baseUrl = StringUtils.remove(request.getRequestURL().toString(), request.getRequestURI());
-        setLoginSuccessUrl(request, StringUtils.remove(request.getHeader("Referer"), baseUrl));
+        setLoginSuccessUrl(request, request.getHeader("Referer"));
     }
 }
