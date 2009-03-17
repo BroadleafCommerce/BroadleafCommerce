@@ -1,5 +1,5 @@
-DROP TABLE blc_challenge_question;
 DROP TABLE blc_customer;
+DROP TABLE blc_challenge_question;
 
 CREATE TABLE blc_challenge_question
 (
@@ -18,14 +18,12 @@ CREATE TABLE blc_customer
   PASSWORD VARCHAR2(255) ,
   PASSWORD_CHANGE_REQUIRED NUMBER(1,0) ,
   USER_NAME VARCHAR2(255) ,
+  RECEIVE_EMAIL NUMBER(1,0) ,
   CONSTRAINT cust_ques_fk FOREIGN KEY (CHALLENGE_QUESTION_ID) REFERENCES blc_challenge_question(QUESTION_ID)
 );
 
-CREATE UNIQUE INDEX PRIMARY
-   ON blc_customer ( CUSTOMER_ID);
-
 CREATE UNIQUE INDEX USER_NAME
-   ON blc_customer ( USER);
+   ON blc_customer ( USER_NAME);
 
 ------------------------
 -- INSERT TEST CHALLENGE QUESTIONS
@@ -38,6 +36,5 @@ INSERT INTO blc_challenge_question ( QUESTION_ID, QUESTION ) VALUES ( 3, 'What i
 -- INSERT TEST CUSTOMER
 ------------------------
 INSERT INTO blc_customer
-  ( CUSTOMER_ID, USER_NAME, PASSWORD, PASSWORD_CHANGE_REQUIRED )
-  VALUES ( 1, 'rod', '16d7a4fca7442dda3ad93c9a726597e4', 1 );
-
+  ( CUSTOMER_ID, USER_NAME, PASSWORD, PASSWORD_CHANGE_REQUIRED, RECEIVE_EMAIL )
+  VALUES ( 1, 'rod', '16d7a4fca7442dda3ad93c9a726597e4', 1, 1 );

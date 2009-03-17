@@ -49,7 +49,10 @@ public class CustomerImpl implements Customer, Serializable {
     private String challengeAnswer;
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
-    private boolean passwordChangeRequired;
+    private boolean passwordChangeRequired = false;
+
+    @Column(name = "RECEIVE_EMAIL")
+    private boolean receiveEmail = true;
 
     @Transient
     private String unencodedPassword;
@@ -132,5 +135,13 @@ public class CustomerImpl implements Customer, Serializable {
 
     public void setUnencodedPassword(String unencodedPassword) {
         this.unencodedPassword = unencodedPassword;
+    }
+
+    public boolean isReceiveEmail() {
+        return receiveEmail;
+    }
+
+    public void setReceiveEmail(boolean receiveEmail) {
+        this.receiveEmail = receiveEmail;
     }
 }

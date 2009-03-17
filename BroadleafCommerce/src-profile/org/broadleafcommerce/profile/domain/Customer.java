@@ -41,4 +41,8 @@ public interface Customer {
     public String getUnencodedPassword();
 
     public void setUnencodedPassword(String unencodedPassword);
+
+    public boolean isReceiveEmail();
+
+    public void setReceiveEmail(boolean receiveEmail);
 }
