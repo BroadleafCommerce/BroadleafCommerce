@@ -6,11 +6,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
+import org.broadleafcommerce.profile.domain.StateProvince;
+import org.broadleafcommerce.profile.domain.StateProvinceImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class USPSAddressResponseParser extends DefaultHandler {
-	protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
     public static final String ADDRESS_VALIDATE_REQUEST_TAG = "AddressValidateRequest";
     public static final String ADDRESS_TAG = "Address";
     public static final String ADDRESS1_TAG = "Address1";
@@ -50,7 +52,9 @@ public class USPSAddressResponseParser extends DefaultHandler {
             address.setCity(buffer.toString().trim());
             buffer = new StringBuffer();
         } else if (qName.equals(STATE_TAG)) {
-            address.setStateProvRegion(buffer.toString().trim());
+            StateProvince stateProvince = new StateProvinceImpl();
+            stateProvince.setShortName(buffer.toString().trim());
+            address.setStateProvRegion(stateProvince);
             buffer = new StringBuffer();
         } else if (qName.equals(ZIP5_TAG)) {
             address.setPostalCode(buffer.toString().trim());
@@ -84,7 +88,7 @@ public class USPSAddressResponseParser extends DefaultHandler {
     }
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
-    	if (qName.equals(ADDRESS_TAG)) {
+        if (qName.equals(ADDRESS_TAG)) {
             addressStandarizationResponse = new AddressStandarizationResponse();
             address = new AddressImpl();
             addressStandarizationResponse.setAddress(address);

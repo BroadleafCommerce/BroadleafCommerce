@@ -42,14 +42,16 @@ public class AddressImpl implements Address {
     @Column(name = "CITY")
     private String city;
 
-    @Column(name = "COUNTRY")
-    private CountryEnums.Country country;
+    @ManyToOne(cascade=CascadeType.ALL, targetEntity = CountryImpl.class)
+    @JoinColumn(name = "COUNTRY")
+    private Country country;
 
     @Column(name = "POSTAL_CODE")
     private String postalCode;
 
-    @Column(name = "STATE_PROV_REGION")
-    private String stateProvRegion;
+    @ManyToOne(cascade=CascadeType.ALL, targetEntity = StateProvinceImpl.class)
+    @JoinColumn(name = "STATE_PROV_REGION")
+    private StateProvince stateProvRegion;
 
     @Column(name = "TOKENIZED_ADDRESS")
     private String tokenizedAddress;
@@ -130,11 +132,11 @@ public class AddressImpl implements Address {
         this.city = city;
     }
 
-    public CountryEnums.Country getCountry() {
+    public Country getCountry() {
         return country;
     }
 
-    public void setCountry(CountryEnums.Country country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
 
@@ -146,11 +148,11 @@ public class AddressImpl implements Address {
         this.postalCode = postalCode;
     }
 
-    public String getStateProvRegion() {
+    public StateProvince getStateProvRegion() {
         return stateProvRegion;
     }
 
-    public void setStateProvRegion(String stateProvRegion) {
+    public void setStateProvRegion(StateProvince stateProvRegion) {
         this.stateProvRegion = stateProvRegion;
     }
 
