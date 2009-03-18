@@ -95,23 +95,34 @@ public class OfferServiceImpl implements OfferService {
 			//
 			// Pass Two:
 			//- Iterate through the list above and begin applying ALL of the offers to the order by doing the following:
-			//- Determine the amount that should be discounted for each item
-			//----- If the items sale price is better than the discounted price, don't apply
-			//----- If the offer requires other items, check to see if the items are still unmarked
-			//----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
-			//----- If the item already has a discount and this offer is not-stackable, don't apply
-			//----- If the item already has a discount and this offer is stackable, apply on top of the existing offer
-			//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-			 
-
 			for(OrderItem orderItem: order.getOrderItems()) {
-				for (Offer offer : offersWithValidDates) {
-					if(offer.getType().equals(OfferType.ORDER_ITEM)){
-						
+				//- Determine the amount that should be discounted for each item
+				for (ItemOffer itemOffer : qualifiedItemOffers) {
+					//----- If the items sale price is better than the discounted price, don't apply
+					if(orderItem.getSalePrice().greaterThan(itemOffer.getDiscountedPrice())){
+						// TODO: ----- If the offer requires other items, check to see if the items are still unmarked
+						// TODO: ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
+						//----- If the item already has a discount and this offer is not-stackable, don't apply
+						if(itemOffer.getOffers().size() > 0){							
+							for (Offer offer : itemOffer.getOffers()) {
+								//----- If the item already has a discount and this offer is stackable, apply on top of the existing offer
+								if(offer.isStackable()){
+									//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+									applyItemOffer(orderItem,itemOffer);
+								}
+							}	
+						}else{
+							//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+							applyItemOffer(orderItem,itemOffer);
+						}
 					}
 				}
 				
 			}
+			
+			// TODO: How and what do we do with order level offers?
+			 
+
 //    		order.setCandaditeOffers(offers);
 //    		distributeItemOffers(order, offers);
 //
@@ -165,6 +176,11 @@ public class OfferServiceImpl implements OfferService {
     	}
     }
 
+    private void applyItemOffer(OrderItem orderItem, ItemOffer itemOffer){
+    	// TODO: Apply item offer
+		//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+    }
+    
     private Offer calculateAtomOfferDiscount(Offer offer, Money startingValue){
 		if(offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)){
 			offer.setDiscountPrice(startingValue.subtract(offer.getValue()));
