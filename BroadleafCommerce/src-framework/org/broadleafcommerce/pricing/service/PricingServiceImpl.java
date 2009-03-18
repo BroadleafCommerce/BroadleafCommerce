@@ -27,8 +27,12 @@ public class PricingServiceImpl implements PricingService {
         Money total = new Money(BigDecimal.ZERO);
         List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
         for (OrderItem item : orderItemList) {
-            total = total.add(item.getPrice());
+        	if(item.getPrice() == null){
+        		item.setPrice(item.getSalePrice());
+        	}
+        	total = total.add(item.getPrice());        		
         }
+        order.setSubTotal(total);
 
         List<FulfillmentGroup> fulfillmentGroupList = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroupList) {
@@ -37,4 +41,19 @@ public class PricingServiceImpl implements PricingService {
         order.setTotal(total);
         return order;
     }
+
+	@Override
+	public Order calculateShippingForOrder(Order order) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Order calculateTaxForOrder(Order order) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    
+    
 }
