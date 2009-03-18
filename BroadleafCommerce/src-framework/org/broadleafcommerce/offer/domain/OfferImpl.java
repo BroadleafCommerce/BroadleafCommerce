@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.broadleafcommerce.type.OfferDiscountType;
 import org.broadleafcommerce.type.OfferScopeType;
@@ -63,7 +64,19 @@ public class OfferImpl implements Serializable, Offer {
 
     @Column(name = "APPLY_TO_SALE_PRICE")
     private boolean applyToSalePrice;
+    
+    @Column(name = "APPLIES_TO_RULES")
+    private String appliesToRules;
+    
+    @Column(name = "APPLIES_WHEN_RULES")
+    private String appliesWhenRules;
+    
+    @Transient
+    private Money calculatedDiscount;
 
+    @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
+    private boolean applyDiscountToMarkedItems;
+    
     public Long getId() {
         return id;
     }
@@ -165,4 +178,39 @@ public class OfferImpl implements Serializable, Offer {
 		this.applyToSalePrice=applyToSalePrice;
 
 	}
+
+	public String getAppliesToRules() {
+		return appliesToRules;
+	}
+
+	public void setAppliesToRules(String appliesToRules) {
+		this.appliesToRules = appliesToRules;
+	}
+
+	public String getAppliesWhenRules() {
+		return appliesWhenRules;
+	}
+
+	public void setAppliesWhenRules(String appliesWhenRules) {
+		this.appliesWhenRules = appliesWhenRules;
+	}
+
+	public Money getDiscountPrice() {
+		return calculatedDiscount;
+	}
+
+	public void setDiscountPrice(Money calculatedDiscount) {
+		this.calculatedDiscount = calculatedDiscount;
+	}
+
+	public boolean isApplyDiscountToMarkedItems() {
+		return applyDiscountToMarkedItems;
+	}
+
+	public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems) {
+		this.applyDiscountToMarkedItems = applyDiscountToMarkedItems;
+	}
+	
+	
+	
 }

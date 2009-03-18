@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.offer.domain.ItemOffer;
+import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.util.money.Money;
 
 public interface OrderItem {
@@ -41,6 +42,6 @@ public interface OrderItem {
     public void setCandidateItemOffers(List<ItemOffer> candidateOffers);
 
     public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer);
-
+        
     public void removeAllOffers();
 }
