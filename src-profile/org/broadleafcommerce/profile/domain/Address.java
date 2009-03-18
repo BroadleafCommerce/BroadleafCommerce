@@ -26,9 +26,9 @@ public interface Address {
 
     public String getCity();
 
-    public void setStateProvRegion(String stateProvRegion);
+    public void setStateProvRegion(StateProvince stateProvRegion);
 
-    public String getStateProvRegion();
+    public StateProvince getStateProvRegion();
 
     public void setPostalCode(String postalCode);
 
@@ -40,9 +40,9 @@ public interface Address {
     // This field is temporary and will be removed later
     public void setZipFour(String zipFour);
 
-    public void setCountry(CountryEnums.Country country);
+    public void setCountry(Country country);
 
-    public CountryEnums.Country getCountry();
+    public Country getCountry();
 
     public String getTokenizedAddress();
 
