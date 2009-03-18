@@ -52,4 +52,27 @@ public interface Address {
 
     public void setStandardized(Boolean standardized);
 
+    public String getCompanyName();
+
+    public void setCompanyName(String companyName);
+
+    public boolean isDefault();
+
+    public void setDefault(boolean isDefault);
+
+    public String getFirstName();
+
+    public void setFirstName(String firstName);
+
+    public String getLastName();
+
+    public void setLastName(String lastName);
+
+    public String getPrimaryPhone();
+
+    public void setPrimaryPhone(String primaryPhone);
+
+    public String getSecondaryPhone();
+
+    public void setSecondaryPhone(String secondaryPhone);
 }

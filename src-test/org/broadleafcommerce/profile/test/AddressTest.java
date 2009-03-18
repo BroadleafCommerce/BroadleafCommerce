@@ -44,7 +44,7 @@ public class AddressTest extends BaseTest {
 
     @Test(groups =  {"readAddress"}, dependsOnGroups =  {"createAddress"})
     public void readAddressByUserId() {
-        List<Address> addressList = addressService.readAddressByUserId(userId);
+        List<Address> addressList = addressService.readActiveAddressesByCustomerId(userId);
         for (Address address : addressList) {
             assert address!=null;
         }

@@ -8,7 +8,9 @@ public interface AddressService {
 
     public Address saveAddress(Address address);
 
-    public List<Address> readAddressByUserId(Long userId);
+    public List<Address> readActiveAddressesByCustomerId(Long customerId);
 
     public Address readAddressById(Long addressId);
+
+    public void makeAddressDefault(Long addressId, Long customerId);
 }
