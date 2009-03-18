@@ -157,7 +157,7 @@ public class OrderServiceTest extends BaseTest {
     public void addFulfillmentGroupToOrderFirst(FulfillmentGroup fulfillmentGroup) {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
-        Address address = (addressDao.readAddressByUserId(customer.getId())).get(0);
+        Address address = (addressDao.readActiveAddressesByCustomerId(customer.getId())).get(0);
 
         fulfillmentGroup.setOrderId(order.getId());
         fulfillmentGroup.setAddress(address);
