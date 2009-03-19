@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.StateProvince;
+import org.broadleafcommerce.profile.domain.StateProvinceImpl;
 import org.broadleafcommerce.profile.service.AddressService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.test.dataprovider.AddressDataProvider;
@@ -30,7 +32,28 @@ public class AddressTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Test(groups =  {"createAddress"}, dataProvider = "setupAddress", dataProviderClass = AddressDataProvider.class, dependsOnGroups={ "readCustomer1" })
+    @Test(groups = "createStateProvince")
+    @Rollback(false)
+    public void createStateProvince() {
+        StateProvince state = new StateProvinceImpl();
+        state.setShortName("KY");
+        state.setShortName("Kentucky");
+        em.persist(state);
+    }
+
+    @Test(groups = "findStateProvinces", dependsOnGroups="createStateProvince")
+    public void findStateProvinces() {
+        List<StateProvince> states = addressService.findStateProvinces();
+        assert states.size() > 0;
+    }
+
+    @Test(groups = "findStateProvinceByAbbreviation", dependsOnGroups="findStateProvinces")
+    public void findStateProvinceByAbbreviation() {
+        List<StateProvince> states = addressService.findStateProvinces();
+        assert states.size() > 0;
+    }
+
+    @Test(groups = { "createAddress" }, dataProvider = "setupAddress", dataProviderClass = AddressDataProvider.class, dependsOnGroups = { "readCustomer1" })
     @Rollback(false)
     public void createAddress(Address address) {
         userName = "customer1";
@@ -42,11 +65,11 @@ public class AddressTest extends BaseTest {
         userId = address.getCustomer().getId();
     }
 
-    @Test(groups =  {"readAddress"}, dependsOnGroups =  {"createAddress"})
+    @Test(groups = { "readAddress" }, dependsOnGroups = { "createAddress" })
     public void readAddressByUserId() {
         List<Address> addressList = addressService.readActiveAddressesByCustomerId(userId);
         for (Address address : addressList) {
-            assert address!=null;
+            assert address != null;
         }
     }
 }

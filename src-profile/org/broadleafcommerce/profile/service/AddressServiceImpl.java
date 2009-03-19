@@ -52,7 +52,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public StateProvince findStateProvinces() {
+    public List<StateProvince> findStateProvinces() {
         return addressDao.findStateProvinces();
     }
 
