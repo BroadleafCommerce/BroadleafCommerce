@@ -3,6 +3,7 @@ package org.broadleafcommerce.profile.dao;
 import java.util.List;
 
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.StateProvince;
 
 public interface AddressDao {
@@ -17,5 +18,9 @@ public interface AddressDao {
 
     public List<StateProvince> findStateProvinces();
 
-    public StateProvince findStateProvinceByAbbreviation(String abbreviation);
+    public StateProvince findStateProvinceByShortName(String shortName);
+
+    public List<Country> findCountries();
+
+    public Country findCountryByShortName(String shortName);
 }
