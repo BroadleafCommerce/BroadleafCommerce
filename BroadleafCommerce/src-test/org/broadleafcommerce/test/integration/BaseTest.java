@@ -2,6 +2,7 @@ package org.broadleafcommerce.test.integration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,6 +16,7 @@ public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextT
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     public EntityManager getEntityManager() {

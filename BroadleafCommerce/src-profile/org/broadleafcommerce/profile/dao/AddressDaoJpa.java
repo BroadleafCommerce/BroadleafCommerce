@@ -60,9 +60,10 @@ public class AddressDaoJpa implements AddressDao {
         return (StateProvince) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.StateProvince"), abbreviation);
     }
 
-    public StateProvince findStateProvinces() {
+    @SuppressWarnings("unchecked")
+    public List<StateProvince> findStateProvinces() {
         Query query = em.createNamedQuery("BC_FIND_STATE_PROVINCES");
         query.setHint("org.hibernate.cacheable", true);
-        return (StateProvince) query.getResultList();
+        return query.getResultList();
     }
 }

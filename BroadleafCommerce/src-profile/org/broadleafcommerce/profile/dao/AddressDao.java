@@ -15,7 +15,7 @@ public interface AddressDao {
 
     public void makeAddressDefault(Long addressId, Long customerId);
 
-    public StateProvince findStateProvinces();
+    public List<StateProvince> findStateProvinces();
 
     public StateProvince findStateProvinceByAbbreviation(String abbreviation);
 }
