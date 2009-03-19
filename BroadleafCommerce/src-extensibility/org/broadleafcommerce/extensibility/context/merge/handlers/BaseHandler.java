@@ -5,7 +5,7 @@ public abstract class BaseHandler implements MergeHandler, Comparable<Object> {
 
 	protected int priority;
 	protected String xpath;
-	protected MergeHandler[] children;
+	protected MergeHandler[] children = {};
 	protected String name;
 
 	@Override

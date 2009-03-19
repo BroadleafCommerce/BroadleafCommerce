@@ -1,10 +1,11 @@
 package org.broadleafcommerce.extensibility.context.merge.handlers;
 
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public interface MergeHandler {
 	
-	public void merge(Node node1, Node node2);
+	public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes);
 	
 	public int getPriority();
 	
