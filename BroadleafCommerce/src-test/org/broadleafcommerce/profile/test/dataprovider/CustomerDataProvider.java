@@ -1,7 +1,7 @@
 package org.broadleafcommerce.profile.test.dataprovider;
 
-import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.testng.annotations.DataProvider;
 
 public class CustomerDataProvider {

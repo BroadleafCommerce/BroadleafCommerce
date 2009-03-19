@@ -1,7 +1,7 @@
 package org.broadleafcommerce.profile.test.dataprovider;
 
-import org.broadleafcommerce.profile.domain.ContactInfoImpl;
 import org.broadleafcommerce.profile.domain.ContactInfo;
+import org.broadleafcommerce.profile.domain.ContactInfoImpl;
 import org.testng.annotations.DataProvider;
 
 public class ContactInfoDataProvider {
