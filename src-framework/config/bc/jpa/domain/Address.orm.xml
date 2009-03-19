@@ -16,4 +16,9 @@
 		AND address.addressName = :addressName</query>
 	</named-query>
 
+	<named-query name="BC_FIND_STATE_PROVINCES" >
+		<query>SELECT stateProvince FROM org.broadleafcommerce.profile.domain.StateProvince stateProvince
+		ORDER BY stateProvince.shortName</query>
+	</named-query>
+
 </entity-mappings>
