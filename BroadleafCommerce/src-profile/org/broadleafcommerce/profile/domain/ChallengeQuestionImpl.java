@@ -12,9 +12,13 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CHALLENGE_QUESTION")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class ChallengeQuestionImpl implements ChallengeQuestion, Serializable {
 
     private static final long serialVersionUID = 1L;

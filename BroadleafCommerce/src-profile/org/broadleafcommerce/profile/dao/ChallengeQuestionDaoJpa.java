@@ -17,12 +17,13 @@ public class ChallengeQuestionDaoJpa implements ChallengeQuestionDao {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     private EntityManager em;
 
     @SuppressWarnings("unchecked")
     public List<ChallengeQuestion> readChallengeQuestions() {
         Query query = em.createNamedQuery("BC_READ_CHALLENGE_QUESTIONS");
+        query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
     }
 
@@ -32,6 +33,4 @@ public class ChallengeQuestionDaoJpa implements ChallengeQuestionDao {
         query.setParameter("question_id", challengeQuestionId);
         return (ChallengeQuestion) query.getSingleResult();
     }
-    
-    
 }
