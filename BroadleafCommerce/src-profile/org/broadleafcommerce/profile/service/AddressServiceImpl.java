@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.StateProvince;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,5 +49,15 @@ public class AddressServiceImpl implements AddressService {
     @Transactional(propagation = Propagation.REQUIRED)
     public void makeAddressDefault(Long addressId, Long customerId) {
         addressDao.makeAddressDefault(addressId, customerId);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public StateProvince findStateProvinces() {
+        return addressDao.findStateProvinces();
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    public StateProvince findStateProvinceByAbbreviation(String abbreviation) {
+        return addressDao.findStateProvinceByAbbreviation(abbreviation);
     }
 }

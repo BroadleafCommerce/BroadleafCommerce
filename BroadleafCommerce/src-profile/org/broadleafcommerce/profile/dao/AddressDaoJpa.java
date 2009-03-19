@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.StateProvince;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -52,5 +53,16 @@ public class AddressDaoJpa implements AddressDao {
             address.setDefault(address.getId().equals(addressId));
             em.merge(address);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public StateProvince findStateProvinceByAbbreviation(String abbreviation) {
+        return (StateProvince) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.StateProvince"), abbreviation);
+    }
+
+    public StateProvince findStateProvinces() {
+        Query query = em.createNamedQuery("BC_FIND_STATE_PROVINCES");
+        query.setHint("org.hibernate.cacheable", true);
+        return (StateProvince) query.getResultList();
     }
 }
