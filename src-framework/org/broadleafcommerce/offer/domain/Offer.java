@@ -1,6 +1,5 @@
 package org.broadleafcommerce.offer.domain;
 
-import java.math.BigDecimal;
 import java.sql.Date;
 
 import org.broadleafcommerce.type.OfferDiscountType;
@@ -9,6 +8,7 @@ import org.broadleafcommerce.type.OfferType;
 import org.broadleafcommerce.util.money.Money;
 
 public interface Offer {
+
     public void setId(Long id);
 
     public Long getId();
@@ -56,21 +56,21 @@ public interface Offer {
     public boolean getApplyDiscountToSalePrice();
 
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
-    
+
     public String getAppliesToRules();
-    
+
     public void setAppliesToRules(String appliesToRules);
-    
+
     public String getAppliesWhenRules();
-    
+
     public void setAppliesWhenRules(String appliesWhen);
-    
-	public Money getDiscountPrice() ;
 
-	public void setDiscountPrice(Money calculatedDiscount);
+    public Money getDiscountPrice() ;
 
-	public boolean isApplyDiscountToMarkedItems();
+    public void setDiscountPrice(Money calculatedDiscount);
 
-	public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
-	
+    public boolean isApplyDiscountToMarkedItems();
+
+    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
+
 }

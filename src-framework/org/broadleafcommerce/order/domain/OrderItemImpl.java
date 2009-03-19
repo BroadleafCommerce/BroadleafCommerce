@@ -2,7 +2,6 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -19,7 +18,6 @@ import javax.persistence.Transient;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.offer.domain.ItemOffer;
-import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity

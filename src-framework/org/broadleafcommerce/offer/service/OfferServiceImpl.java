@@ -16,7 +16,6 @@ import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.StackedOffer;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.type.OfferDiscountType;

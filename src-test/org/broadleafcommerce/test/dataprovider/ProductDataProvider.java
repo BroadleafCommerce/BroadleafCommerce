@@ -1,7 +1,7 @@
 package org.broadleafcommerce.test.dataprovider;
 
-import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.testng.annotations.DataProvider;
 
 public class ProductDataProvider {
