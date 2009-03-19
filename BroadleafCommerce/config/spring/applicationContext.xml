@@ -146,9 +146,11 @@
 	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.ContactInfo" class="org.broadleafcommerce.profile.domain.ContactInfoImpl"/>
+	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.SkuImpl"/>
+	<bean id="org.broadleafcommerce.profile.domain.StateProvince" class="org.broadleafcommerce.profile.domain.StateProvinceImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.UserImpl"/>
 
 </beans>

@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.StateProvince;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -36,7 +37,6 @@ public class AddressServiceImpl implements AddressService {
         return addressDao.maintainAddress(address);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<Address> readActiveAddressesByCustomerId(Long customerId) {
         return addressDao.readActiveAddressesByCustomerId(customerId);
     }
@@ -51,13 +51,19 @@ public class AddressServiceImpl implements AddressService {
         addressDao.makeAddressDefault(addressId, customerId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<StateProvince> findStateProvinces() {
         return addressDao.findStateProvinces();
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
-    public StateProvince findStateProvinceByAbbreviation(String abbreviation) {
-        return addressDao.findStateProvinceByAbbreviation(abbreviation);
+    public StateProvince findStateProvinceByShortName(String shortName) {
+        return addressDao.findStateProvinceByShortName(shortName);
+    }
+
+    public List<Country> findCountries() {
+        return addressDao.findCountries();
+    }
+
+    public Country findCountryByShortName(String shortName) {
+        return addressDao.findCountryByShortName(shortName);
     }
 }

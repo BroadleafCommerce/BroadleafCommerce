@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.Country;
+import org.broadleafcommerce.profile.domain.CountryImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.StateProvince;
 import org.broadleafcommerce.profile.domain.StateProvinceImpl;
@@ -37,20 +39,41 @@ public class AddressTest extends BaseTest {
     public void createStateProvince() {
         StateProvince state = new StateProvinceImpl();
         state.setShortName("KY");
-        state.setShortName("Kentucky");
+        state.setLongName("Kentucky");
         em.persist(state);
     }
 
-    @Test(groups = "findStateProvinces", dependsOnGroups="createStateProvince")
+    @Test(groups = "findStateProvinces", dependsOnGroups = "createStateProvince")
     public void findStateProvinces() {
         List<StateProvince> states = addressService.findStateProvinces();
         assert states.size() > 0;
     }
 
-    @Test(groups = "findStateProvinceByAbbreviation", dependsOnGroups="findStateProvinces")
-    public void findStateProvinceByAbbreviation() {
-        List<StateProvince> states = addressService.findStateProvinces();
-        assert states.size() > 0;
+    @Test(groups = "findStateProvinceByShortName", dependsOnGroups = "findStateProvinces")
+    public void findStateProvinceByShortName() {
+        StateProvince state = addressService.findStateProvinceByShortName("KY");
+        assert state != null;
+    }
+
+    @Test(groups = "createCountry")
+    @Rollback(false)
+    public void createCountry() {
+        Country country = new CountryImpl();
+        country.setShortName("US");
+        country.setLongName("United States");
+        em.persist(country);
+    }
+
+    @Test(groups = "findCountries", dependsOnGroups = "createCountry")
+    public void findCountries() {
+        List<Country> countries = addressService.findCountries();
+        assert countries.size() > 0;
+    }
+
+    @Test(groups = "findCountryByShortName", dependsOnGroups = "findCountries")
+    public void findCountryByShortName() {
+        Country country = addressService.findCountryByShortName("US");
+        assert country != null;
     }
 
     @Test(groups = { "createAddress" }, dataProvider = "setupAddress", dataProviderClass = AddressDataProvider.class, dependsOnGroups = { "readCustomer1" })

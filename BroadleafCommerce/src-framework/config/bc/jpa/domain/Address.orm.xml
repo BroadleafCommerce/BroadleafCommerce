@@ -21,4 +21,9 @@
 		ORDER BY stateProvince.shortName</query>
 	</named-query>
 
+	<named-query name="BC_FIND_COUNTRIES" >
+		<query>SELECT country FROM org.broadleafcommerce.profile.domain.Country country
+		ORDER BY country.shortName</query>
+	</named-query>
+
 </entity-mappings>
