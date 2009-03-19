@@ -10,6 +10,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * This class provides the xml merging apparatus at a defined XPath merge point in 
+ * 2 xml documents. The MergeHandler that embodies the XPath point can have
+ * embedded XPath merge points, resulting in a cumulative effect with varying
+ * merge behavior for a sector of the documents. For example, it may be desirable
+ * to replace all the child nodes of a given node with all the child nodes from the same
+ * parent node in the patch document, with the exception of a single node. That single
+ * node may instead contribute its contents in a additive fashion (rather than replace).
+ * 
+ * @author jfischer
+ *
+ */
 public class MergePoint {
 	
 	private MergeHandler handler;
@@ -25,6 +37,14 @@ public class MergePoint {
 		xPath=factory.newXPath();
 	}
 	
+	/**
+	 * Execute the merge operation and also provide a list of nodes that have already been
+	 * merged. It is up to the handler implementation to respect or ignore this list.
+	 * 
+	 * @param exhaustedNodes
+	 * @return list of merged nodes
+	 * @throws XPathExpressionException
+	 */
 	public Node[] merge(Node[] exhaustedNodes) throws XPathExpressionException {
 		return merge(handler, exhaustedNodes);
 	}

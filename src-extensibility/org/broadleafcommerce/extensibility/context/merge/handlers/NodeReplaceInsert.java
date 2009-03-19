@@ -10,10 +10,25 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class Replace extends BaseHandler {
+/**
+ * This handler is responsible for replacing nodes in the source document
+ * with the same nodes from the patch document. Note, additional nodes
+ * from the patch document that are not present in the source document
+ * are simply appended to the source document.
+ * 
+ * @author jfischer
+ *
+ */
+public class NodeReplaceInsert extends BaseHandler {
 
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#merge(org.w3c.dom.NodeList, org.w3c.dom.NodeList, org.w3c.dom.Node[])
+	 */
 	@Override
 	public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
+		if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
+			return null;
+		}
 		Node[] primaryNodes = new Node[nodeList1.getLength()];
 		for (int j=0;j<primaryNodes.length;j++){
 			primaryNodes[j] = nodeList1.item(j);
@@ -92,47 +107,38 @@ public class Replace extends BaseHandler {
 			if (primaryNodes[j].isEqualNode(testNode)) {
 				return true;
 			}
-			/*String primaryName = primaryNodes[j].getNodeName();
-			String testName = testNode.getNodeName();
-			if (primaryName.equals(testName)) {
-				NamedNodeMap primaryMap = primaryNodes[j].getAttributes();
-				NamedNodeMap testMap = testNode.getAttributes();
-				int primaryLength = primaryMap.getLength();
-				int testLength = testMap.getLength();
-				if (primaryLength == testLength) {
-					for (int x=0;x<primaryLength;x++){
-						Attr primaryAttr = (Attr) primaryMap.item(x);
-						String key = primaryAttr.getName();
-						String value = primaryAttr.getValue();
-						Attr testAttr = (Attr) testMap.getNamedItem(key);
-						if (testAttr == null) {
-							return false;
-						}
-						if (!value.equals(testAttr.getValue())) {
-							return false;
-						}
-					}
-					return true;
-				}
-			}*/
 		}
 		return false;
 	}
 	
 	private boolean replaceNode(Node[] primaryNodes, Node testNode, final String attribute) {
+		if (testNode.getAttributes().getNamedItem(attribute) == null) {
+			return false;
+		}
+		//filter out primary nodes that don't have the attribute
+		ArrayList<Node> filterList = new ArrayList<Node>();
+		for (int j=0;j<primaryNodes.length;j++){
+			if (primaryNodes[j].getAttributes().getNamedItem(attribute) != null) {
+				filterList.add(primaryNodes[j]);
+			}
+		}
+		Node[] filtered = {};
+		filtered = filterList.toArray(filtered);
+		
 		Comparator<Node> idCompare = new Comparator<Node>() {
 			@Override
 			public int compare(Node arg0, Node arg1) {
 				Node id1 = arg0.getAttributes().getNamedItem(attribute);
 				Node id2 = arg1.getAttributes().getNamedItem(attribute);
-				if (id1 == null || id2 == null) return -1;
-				return id1.getNodeValue().compareTo(id2.getNodeValue());
+				String idVal1 = id1.getNodeValue();
+				String idVal2 = id2.getNodeValue();
+				return idVal1.compareTo(idVal2);
 			} 
 		};
-		Arrays.sort(primaryNodes, idCompare);
-		int pos = Arrays.binarySearch(primaryNodes, testNode, idCompare);
+		Arrays.sort(filtered, idCompare);
+		int pos = Arrays.binarySearch(filtered, testNode, idCompare);
 		if (pos >= 0) {
-			primaryNodes[pos].getParentNode().replaceChild(primaryNodes[pos].getOwnerDocument().importNode(testNode.cloneNode(true), true), primaryNodes[pos]);
+			filtered[pos].getParentNode().replaceChild(filtered[pos].getOwnerDocument().importNode(testNode.cloneNode(true), true), filtered[pos]);
 			return true;
 		}
 		return false;

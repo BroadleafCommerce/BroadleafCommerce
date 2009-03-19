@@ -6,10 +6,22 @@ import java.util.Iterator;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class AttributeValueMerge extends BaseHandler {
+/**
+ * MergeHandler implementation that provides merging for the white space
+ * delimited text values of a source and patch node. This merge takes into
+ * account the same values from both nodes, such that the resulting string
+ * is a union of the two without any repeat values.
+ * 
+ * @author jfischer
+ *
+ */
+public class NodeValueMerge extends BaseHandler {
 
 	@Override
 	public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
+		if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
+			return null;
+		}
 		Node node1 = nodeList1.item(0);
 		Node node2 = nodeList2.item(0);
 		String[] items1 = node1.getNodeValue().split("[\\s\\n\\r]+");

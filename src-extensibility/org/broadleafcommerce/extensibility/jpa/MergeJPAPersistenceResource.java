@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,6 +14,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.extensibility.MergeXmlConfigResource;
+import org.broadleafcommerce.extensibility.context.merge.exceptions.MergeException;
+import org.broadleafcommerce.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
@@ -26,17 +27,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
-import ch.elca.el4j.services.xmlmergemod.AbstractXmlMergeException;
-import ch.elca.el4j.services.xmlmergemod.ConfigurationException;
-import ch.elca.el4j.services.xmlmergemod.Configurer;
-import ch.elca.el4j.services.xmlmergemod.config.PropertyXPathConfigurer;
-
 public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
 
 	private static final Log LOG = LogFactory.getLog(MergeJPAPersistenceResource.class);
 	private ErrorHandler handler = new SimpleSaxErrorHandler(LOG);
 	
-	public Resource getMergedConfigResource(InputStream[] sources, Properties config) throws BeansException {
+	public Resource getMergedConfigResource(InputStream[] sources) throws BeansException {
 		Resource configResource = null;
 		InputStream merged = null;
 		try {
@@ -48,8 +44,7 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
 				inMemoryStreams[j] = new ByteArrayInputStream(sourceArray);
 			}
 			
-			Configurer configurer = new PropertyXPathConfigurer(config);
-			merged = merge(inMemoryStreams, configurer);
+			merged = merge(inMemoryStreams);
 			
 			//read the final stream into a byte array
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -67,9 +62,9 @@ public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Merged config: \n" + serialize(configResource));
 			}
-		} catch (ConfigurationException e) {
+		} catch (MergeException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);
-		} catch (AbstractXmlMergeException e) {
+		} catch (MergeManagerSetupException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);
 		} catch (IOException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);

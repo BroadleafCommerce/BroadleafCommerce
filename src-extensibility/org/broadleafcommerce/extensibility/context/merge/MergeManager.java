@@ -32,6 +32,14 @@ import org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandlerAd
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+/**
+ * This class manages all xml merge interactions with callers. It is responsible for 
+ * not only loading the handler configurations, but also for cycling through the handlers
+ * in a prioritized fashion and exporting the final merged document.
+ * 
+ * @author jfischer
+ *
+ */
 public class MergeManager {
 	
 	public static void main(String[] items) {
@@ -68,8 +76,21 @@ public class MergeManager {
 		}
 	}
 	
+	/**
+	 * Additional merge points may be added by the caller. Also default merge points
+	 * may be overriden to change their current behavior. This is accomplished by
+	 * specifying the system property denoted by the key MergeManager.MERGE_DEFINITION_SYSTEM_PROPERTY
+	 * with a value stating the fully qualified path of user-created property file. Please refer
+	 * to the default properties file located at org/broadleafcommerce/extensibility/context/merge/default.properties
+	 * for more details.
+	 * 
+	 */
+	public static final String MERGE_DEFINITION_SYSTEM_PROPERTY = "org.broadleafcommerce.extensibility.context.merge.handlers.merge.properties";
+	
 	private static final Log LOG = LogFactory.getLog(MergeManager.class);
+	
 	private static DocumentBuilder builder;
+	
 	static {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		try {
@@ -94,6 +115,55 @@ public class MergeManager {
 			throw new MergeManagerSetupException(e);
 		} catch (InstantiationException e) {
 			throw new MergeManagerSetupException(e);
+		}
+    }
+    
+    /**
+     * Merge 2 xml document streams together into a final resulting stream. During
+     * the merge, various merge business rules are followed based on configuration
+     * defined for various merge points.
+     * 
+     * @param stream1
+     * @param stream2
+     * @return the stream representing the merged document
+     * @throws MergeException
+     */
+    public InputStream merge(InputStream stream1, InputStream stream2) throws MergeException {
+    	try {
+			Document doc1 = builder.parse(stream1);
+			Document doc2 = builder.parse(stream2);
+			
+			List<Node> exhaustedNodes = new ArrayList<Node>();
+			
+			//process any defined handlers
+			for (int j=0;j<this.handlers.length;j++){
+				MergePoint point = new MergePoint(this.handlers[j], doc1, doc2);
+				Node[] temp = {};
+				temp = exhaustedNodes.toArray(temp);
+				Node[] list = point.merge(temp);
+				if (list != null) {
+					for (int x=0;x<list.length;x++){
+						exhaustedNodes.add(list[x]);
+					}
+				}
+			}
+			
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+			Transformer xmlTransformer = tFactory.newTransformer();
+			xmlTransformer.setOutputProperty(OutputKeys.VERSION, "1.0");
+			xmlTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			xmlTransformer.setOutputProperty(OutputKeys.METHOD, "xml");
+			xmlTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			
+			DOMSource source = new DOMSource(doc1);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baos));
+			StreamResult result = new StreamResult(writer);
+			xmlTransformer.transform(source, result);
+			
+			return new ByteArrayInputStream(baos.toByteArray());
+		} catch (Throwable e) {
+			throw new MergeException(e);
 		}
     }
     
@@ -159,7 +229,7 @@ public class MergeManager {
     	Properties defaultProperties = new Properties();
     	defaultProperties.load(MergeManager.class.getResourceAsStream("default.properties"));
     	Properties props;
-    	String overrideFileClassPath = System.getProperty("org.broadleafcommerce.extensibility.context.merge.handlers.merge.properties");
+    	String overrideFileClassPath = System.getProperty(MERGE_DEFINITION_SYSTEM_PROPERTY);
     	if (overrideFileClassPath != null) {
     		props = new Properties(defaultProperties);
     		props.load(MergeManager.class.getClassLoader().getResourceAsStream(overrideFileClassPath));
@@ -170,42 +240,4 @@ public class MergeManager {
     	return props;
     }
     
-    public InputStream merge(InputStream stream1, InputStream stream2) throws MergeException {
-    	try {
-			Document doc1 = builder.parse(stream1);
-			Document doc2 = builder.parse(stream2);
-			
-			List<Node> exhaustedNodes = new ArrayList<Node>();
-			
-			//process any defined handlers
-			for (int j=0;j<this.handlers.length;j++){
-				MergePoint point = new MergePoint(this.handlers[j], doc1, doc2);
-				Node[] temp = {};
-				temp = exhaustedNodes.toArray(temp);
-				Node[] list = point.merge(temp);
-				if (list != null) {
-					for (int x=0;x<list.length;x++){
-						exhaustedNodes.add(list[x]);
-					}
-				}
-			}
-			
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer xmlTransformer = tFactory.newTransformer();
-			xmlTransformer.setOutputProperty(OutputKeys.VERSION, "1.0");
-			xmlTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-			xmlTransformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			xmlTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			
-			DOMSource source = new DOMSource(doc1);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baos));
-			StreamResult result = new StreamResult(writer);
-			xmlTransformer.transform(source, result);
-			
-			return new ByteArrayInputStream(baos.toByteArray());
-		} catch (Throwable e) {
-			throw new MergeException(e);
-		}
-    }
 }
