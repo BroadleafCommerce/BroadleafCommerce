@@ -4,20 +4,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.extensibility.MergeXmlConfigResource;
+import org.broadleafcommerce.extensibility.context.merge.exceptions.MergeException;
+import org.broadleafcommerce.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-
-import ch.elca.el4j.services.xmlmergemod.AbstractXmlMergeException;
-import ch.elca.el4j.services.xmlmergemod.ConfigurationException;
-import ch.elca.el4j.services.xmlmergemod.Configurer;
-import ch.elca.el4j.services.xmlmergemod.config.PropertyXPathConfigurer;
 
 public class MergeApplicationContextXmlConfigResource extends MergeXmlConfigResource {
 
@@ -38,11 +34,7 @@ public class MergeApplicationContextXmlConfigResource extends MergeXmlConfigReso
 		Resource[] configResources = null;
 		InputStream merged = null;
 		try {
-			//Set the first stage for simple replace only - this is the source application context files
-			Properties stage1 = new Properties();
-			stage1.load(MergeApplicationContextXmlConfigResource.class.getResourceAsStream("MergeApplicationContextXmlConfigResource.1.properties"));
-			Configurer configurer = new PropertyXPathConfigurer(stage1);
-			merged = merge(sources, configurer);
+			merged = merge(sources);
 			
 			byte[] mergedArray = buildArrayFromStream(merged);
 			
@@ -55,11 +47,7 @@ public class MergeApplicationContextXmlConfigResource extends MergeXmlConfigReso
 				patches2[0] = new ByteArrayInputStream(mergedArray);
 				System.arraycopy(patches, 0, patches2, 1, patches.length);
 				
-				//Set the second stage for more complex merge that includes the interiors of matching beans
-				Properties stage2 = new Properties();
-				stage2.load(MergeApplicationContextXmlConfigResource.class.getResourceAsStream("MergeApplicationContextXmlConfigResource.2.properties"));
-				configurer = new PropertyXPathConfigurer(stage2);
-				merged = merge(patches2, configurer);
+				merged = merge(patches2);
 			}
 			
 			//read the final stream into a byte array
@@ -78,9 +66,9 @@ public class MergeApplicationContextXmlConfigResource extends MergeXmlConfigReso
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Merged ApplicationContext Including Patches: \n" + serialize(configResources[0]));
 			}
-		} catch (ConfigurationException e) {
+		} catch (MergeException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);
-		} catch (AbstractXmlMergeException e) {
+		} catch (MergeManagerSetupException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);
 		} catch (IOException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);

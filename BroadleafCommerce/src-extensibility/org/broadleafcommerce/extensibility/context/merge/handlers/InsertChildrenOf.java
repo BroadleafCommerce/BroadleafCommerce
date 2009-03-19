@@ -3,10 +3,24 @@ package org.broadleafcommerce.extensibility.context.merge.handlers;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class Insert extends BaseHandler {
+/**
+ * This handler implementation provides behavior where the child nodes from
+ * an element in the patch document are added to the same node in the source
+ * document.
+ * 
+ * @author jfischer
+ *
+ */
+public class InsertChildrenOf extends BaseHandler {
 
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#merge(org.w3c.dom.NodeList, org.w3c.dom.NodeList, org.w3c.dom.Node[])
+	 */
 	@Override
 	public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
+		if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
+			return null;
+		}
 		Node node1 = nodeList1.item(0);
 		Node node2 = nodeList2.item(0);
 		NodeList list2 = node2.getChildNodes();

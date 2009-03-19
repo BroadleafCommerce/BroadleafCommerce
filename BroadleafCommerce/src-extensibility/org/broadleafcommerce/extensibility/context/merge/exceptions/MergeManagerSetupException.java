@@ -1,5 +1,12 @@
 package org.broadleafcommerce.extensibility.context.merge.exceptions;
 
+/**
+ * This exception is thrown when a problem is encountered during
+ * the MergeManager initialization
+ * 
+ * @author jfischer
+ *
+ */
 public class MergeManagerSetupException extends Exception {
 
 	private static final long serialVersionUID = 1L;

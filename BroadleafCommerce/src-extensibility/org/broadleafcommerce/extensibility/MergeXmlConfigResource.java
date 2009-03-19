@@ -4,20 +4,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.extensibility.context.merge.MergeManager;
+import org.broadleafcommerce.extensibility.context.merge.exceptions.MergeException;
+import org.broadleafcommerce.extensibility.context.merge.exceptions.MergeManagerSetupException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-
-import ch.elca.el4j.services.xmlmergemod.AbstractXmlMergeException;
-import ch.elca.el4j.services.xmlmergemod.ConfigurationException;
-import ch.elca.el4j.services.xmlmergemod.Configurer;
-import ch.elca.el4j.services.xmlmergemod.config.ConfigurableXmlMerge;
-import ch.elca.el4j.services.xmlmergemod.config.PropertyXPathConfigurer;
 
 public class MergeXmlConfigResource {
 	
@@ -27,10 +23,7 @@ public class MergeXmlConfigResource {
 		Resource configResource = null;
 		InputStream merged = null;
 		try {
-			Properties props = new Properties();
-			props.load(MergeXmlConfigResource.class.getResourceAsStream("MergeXmlConfigResource.properties"));
-			Configurer configurer = new PropertyXPathConfigurer(props);
-			merged = merge(sources, configurer);
+			merged = merge(sources);
 			
 			//read the final stream into a byte array
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -48,9 +41,9 @@ public class MergeXmlConfigResource {
 			if (LOG.isDebugEnabled()) {
 				LOG.debug("Merged config: \n" + serialize(configResource));
 			}
-		} catch (ConfigurationException e) {
+		} catch (MergeException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);
-		} catch (AbstractXmlMergeException e) {
+		} catch (MergeManagerSetupException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);
 		} catch (IOException e) {
 			throw new FatalBeanException("Unable to merge source and patch locations", e);
@@ -63,7 +56,7 @@ public class MergeXmlConfigResource {
 		return configResource;
 	}
 
-	protected InputStream merge(InputStream[] sources, Configurer configurer) throws ConfigurationException, AbstractXmlMergeException {
+	protected InputStream merge(InputStream[] sources) throws MergeException, MergeManagerSetupException {
 		if (sources.length == 1) return sources[0];
 		
 		InputStream response = null;
@@ -71,7 +64,7 @@ public class MergeXmlConfigResource {
 		pair[0] = sources[0];
 		for (int j=1;j<sources.length;j++){
 			pair[1] = sources[j];
-			response = mergeItems(pair, configurer);
+			response = mergeItems(pair);
 			try{
 				pair[0].close();
 			} catch (Throwable e) {}
@@ -84,8 +77,8 @@ public class MergeXmlConfigResource {
 		return response;
 	}
 	
-	protected InputStream mergeItems(InputStream[] sourceLocations, Configurer configurer) throws ConfigurationException, AbstractXmlMergeException {
-		InputStream response = new ConfigurableXmlMerge(configurer).merge(sourceLocations);
+	protected InputStream mergeItems(InputStream[] sourceLocations) throws MergeException, MergeManagerSetupException {
+		InputStream response = new MergeManager().merge(sourceLocations[0], sourceLocations[1]);
 		
 		return response;
 	}

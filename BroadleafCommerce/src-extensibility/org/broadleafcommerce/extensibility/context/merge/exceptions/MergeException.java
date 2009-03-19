@@ -1,5 +1,12 @@
 package org.broadleafcommerce.extensibility.context.merge.exceptions;
 
+/**
+ * This exception is thrown when a problem is encountered during
+ * the actual merge of the source and patch documents.
+ * 
+ * @author jfischer
+ *
+ */
 public class MergeException extends Exception {
 
 	private static final long serialVersionUID = 1L;
