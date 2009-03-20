@@ -21,11 +21,6 @@
 				<value>classpath*:/META-INF/persistence-profile.xml</value>
 			</list>
 		</property>
-		<property name="dataSources">
-			<map>
-				<entry key="jdbc/BroadleafCommerceDS" value-ref="broadleafCommerceDS" />
-			</map>
-		</property>
 		<property name="defaultDataSource" ref="broadleafCommerceDS"/>
 	</bean>
 
