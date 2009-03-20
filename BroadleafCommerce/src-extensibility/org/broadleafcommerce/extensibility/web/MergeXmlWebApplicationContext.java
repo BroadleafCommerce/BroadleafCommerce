@@ -72,8 +72,12 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 		String[] patchLocations = StringUtils.tokenizeToStringArray(patchLocation, CONFIG_LOCATION_DELIMITERS);
 		InputStream[] patches = new InputStream[patchLocations.length];
 		for (int i = 0; i < patchLocations.length; i++) {
-			Resource resource = getResourceByPath(patchLocations[i]);
-			patches[i] = resource.getInputStream();
+			if (patchLocations[i].startsWith("classpath")) {
+				patches[i] = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(patchLocations[i].substring("classpath*:".length(), patchLocations[i].length()));
+			} else {
+				Resource resource = getResourceByPath(patchLocations[i]);
+				patches[i] = resource.getInputStream();
+			}
 		}
 		Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
 
