@@ -61,7 +61,7 @@
 				<include name="jdbc.properties" />
 			</fileset>
 		</copy>
-		
+
 		<if>
 			<equals arg1="${hibernate.hbm2ddl.auto}" arg2="false" />
 			<then>
@@ -130,7 +130,7 @@
 			<include name="META-INF/**" />
 			<exclude name="**/test/**/*.class" />
 		</jar>
-		
+
 	</target>
 
 	<target name="build-extensibility-source-jar">
@@ -226,7 +226,7 @@
 				<include name="**/*.vm" />
 			</fileset>
 		</copy>
-		
+
 		<if>
 			<equals arg1="${hibernate.hbm2ddl.auto}" arg2="false" />
 			<then>
@@ -275,6 +275,14 @@
     	<copy file="${stage.dir}/broadleaf-layout-sources.jar" todir="${basedir}/../web/lib/include/src" overwrite="true"/>
        	<copy file="${stage.dir}/broadleaf-profile.jar" todir="${basedir}/../web/lib/include/bin" overwrite="true"/>
        	<copy file="${stage.dir}/broadleaf-profile-sources.jar" todir="${basedir}/../web/lib/include/src" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-extensibility.jar" todir="${basedir}/../libraries/org.broadleafcommerce/extensibility/0.0.0/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-extensibility-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/extensibility/0.0.0/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-layout.jar" todir="${basedir}/../libraries/org.broadleafcommerce/layout/0.0.0/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-layout-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/layout/0.0.0/sources" overwrite="true"/>
+       	<copy file="${stage.dir}/broadleaf-profile.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile/0.0.0/jars" overwrite="true"/>
+       	<copy file="${stage.dir}/broadleaf-profile-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile/0.0.0/sources" overwrite="true"/>
     </target>
 
 	<target name="clean">
