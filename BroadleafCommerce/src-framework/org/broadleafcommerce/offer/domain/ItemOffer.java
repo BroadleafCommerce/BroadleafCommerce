@@ -8,4 +8,5 @@ public interface ItemOffer {
 	public Money getDiscountedPrice();
 	public List<Offer> getOffers();
 	public int getPriority();
+	public Offer getOffer();
 }

@@ -60,4 +60,8 @@ public class StackedOffer implements ItemOffer {
 		//       which one is first
 		// TODO: Once we have the whose list, we can build the candidate offers list
 	}
+	
+	public Offer getOffer(){
+		return null;
+	}
 }

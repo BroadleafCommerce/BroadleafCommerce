@@ -82,8 +82,12 @@ public class OfferServiceImpl implements OfferService {
 	    	//
 	    	// . Create a sorted list sorted by priority asc then amount desc
 	    	//
-    		Collections.sort(qualifiedOrderOffers, new BeanComparator("priority", new BeanComparator("discountedPrice")));
-			Collections.sort(qualifiedItemOffers, new BeanComparator("priority", new BeanComparator("discountedPrice")));
+    		Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
+    		Collections.reverse(qualifiedOrderOffers);
+    		Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
+    		Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
+    		Collections.reverse(qualifiedItemOffers);
+			Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
 			//
 			// . Add offers that could be used on the order to the order.candidateOffers and item.candidateOffers lists respectively
 			//
@@ -95,24 +99,33 @@ public class OfferServiceImpl implements OfferService {
 			// Pass Two:
 			//- Iterate through the list above and begin applying ALL of the offers to the order by doing the following:
 			for(OrderItem orderItem: order.getOrderItems()) {
-				//- Determine the amount that should be discounted for each item
 				for (ItemOffer itemOffer : qualifiedItemOffers) {
-					//----- If the items sale price is better than the discounted price, don't apply
-					if(orderItem.getSalePrice().greaterThan(itemOffer.getDiscountedPrice())){
-						// TODO: ----- If the offer requires other items, check to see if the items are still unmarked
-						// TODO: ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
-						//----- If the item already has a discount and this offer is not-stackable, don't apply
-						if(itemOffer.getOffers().size() > 0){							
-							for (Offer offer : itemOffer.getOffers()) {
-								//----- If the item already has a discount and this offer is stackable, apply on top of the existing offer
-								if(offer.isStackable()){
-									//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-									applyItemOffer(orderItem,itemOffer);
-								}
-							}	
-						}else{
-							//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-							applyItemOffer(orderItem,itemOffer);
+					if(orderItem.getCandidateItemOffers().contains(itemOffer)){						
+						//- Determine the amount that should be discounted for each item
+						//----- If the items sale price is better than the discounted price, don't apply
+						if(itemOffer.getDiscountedPrice().greaterThan(orderItem.getSalePrice())){
+							// TODO: ----- If the offer requires other items, check to see if the items are still unmarked
+							if(requiresMultipleSkus(itemOffer)){
+								// TODO: ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
+								if(!orderItem.isMarkedForOffer() ||
+										(orderItem.isMarkedForOffer() && itemOffer.getOffer().isApplyDiscountToMarkedItems())){
+									//----- If the item already has a discount 
+									if(orderItem.isMarkedForOffer()){
+										
+										//  and this offer is stackable, apply on top of the existing offer
+										if(itemOffer.getOffer().isStackable()){
+											//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+											applyItemOffer(orderItem,itemOffer);
+										}
+										// and this offer is not-stackable, don't apply
+											
+									}else{
+										//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+										applyItemOffer(orderItem,itemOffer);
+									}
+									
+								}								
+							}
 						}
 					}
 				}
@@ -121,7 +134,7 @@ public class OfferServiceImpl implements OfferService {
 			
 			// TODO: How and what do we do with order level offers?
 			 
-
+//**************** PREVIOUS STRATEGY **************************
 //    		order.setCandaditeOffers(offers);
 //    		distributeItemOffers(order, offers);
 //
@@ -175,9 +188,16 @@ public class OfferServiceImpl implements OfferService {
     	}
     }
 
+    private boolean requiresMultipleSkus(ItemOffer itemOffer){
+    	// TODO: Add determination code for offer requiring multiple skus
+    	// Assume offer does not for now
+    	return false;
+    }
+    
     private void applyItemOffer(OrderItem orderItem, ItemOffer itemOffer){
     	// TODO: Apply item offer
 		//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+    	orderItem.setMarkedForOffer(true);
     }
     
     private Offer calculateAtomOfferDiscount(Offer offer, Money startingValue){
