@@ -45,4 +45,8 @@ public interface Customer {
     public boolean isReceiveEmail();
 
     public void setReceiveEmail(boolean receiveEmail);
+
+    public boolean isAuthenticated();
+
+    public void setAuthenticated(boolean authenticated);
 }
