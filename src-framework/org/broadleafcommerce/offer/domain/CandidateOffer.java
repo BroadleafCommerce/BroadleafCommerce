@@ -48,4 +48,8 @@ public class CandidateOffer implements ItemOffer {
 	public List<Offer> getOffers() {
 		return offers;
 	}
+	
+	public Offer getOffer() {
+		return offer;
+	}
 }

@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -70,6 +71,9 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Transient
     // TODO: Need to persist this
     private List<ItemOffer> candidateItemOffers;
+    
+    @Transient
+    private boolean markedForOffer;
 
     public Long getId() {
         return id;
@@ -164,5 +168,13 @@ public class OrderItemImpl implements OrderItem, Serializable {
     	}
     }
 
+	public boolean isMarkedForOffer() {
+		return markedForOffer;
+	}
 
+	public void setMarkedForOffer(boolean markedForOffer) {
+		this.markedForOffer = markedForOffer;
+	}
+
+    
 }
