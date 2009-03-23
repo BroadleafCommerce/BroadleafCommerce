@@ -18,14 +18,6 @@ public interface OrderItem {
 
     public void setSku(Sku sku);
 
-    public Product getProduct();
-
-    public void setProduct(Product product);
-
-    public Category getCategory();
-
-    public void setCategory(Category category);
-
     public Order getOrder();
 
     public void setOrder(Order order);
@@ -53,4 +45,5 @@ public interface OrderItem {
     public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer);
 
     public void removeAllOffers();
+
 }
