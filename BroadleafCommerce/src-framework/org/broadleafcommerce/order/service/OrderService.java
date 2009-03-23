@@ -2,6 +2,8 @@ package org.broadleafcommerce.order.service;
 
 import java.util.List;
 
+import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
@@ -28,6 +30,8 @@ public interface OrderService {
 
     public OrderItem addItemToOrder(Order order, Sku item, int quantity);
 
+    public OrderItem addItemToOrder(Order order, Sku item, Product product, Category category, int quantity);
+
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity);
@@ -49,4 +53,5 @@ public interface OrderService {
     public Order confirmOrder(Order order);
 
     public void cancelOrder(Order order);
+
 }

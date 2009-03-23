@@ -7,6 +7,8 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 
+import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
@@ -115,19 +117,27 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public OrderItem addItemToOrder(Order order, Sku item, int quantity) {
-        OrderItem orderItem = null;
-        List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
-        for (OrderItem orderItem2 : orderItems) {
-            if (orderItem2.getSku().getId().equals(item.getId()))
-                orderItem = orderItem2;
-        }
-        if (orderItem == null)
-            // orderItem = new OrderItem();
-            orderItem = orderItemDao.create();
-        orderItem.setSku(item);
-        orderItem.setQuantity(orderItem.getQuantity() + quantity);
-        orderItem.setOrder(order);
-        return maintainOrderItem(orderItem);
+        return addItemToOrder(order, item, null, null, quantity);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public OrderItem addItemToOrder(Order order, Sku item, Product product, Category category, int quantity) {
+    	OrderItem orderItem = null;
+    	List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
+    	for (OrderItem orderItem2 : orderItems) {
+    		if (orderItem2.getSku().getId().equals(item.getId()))
+    			orderItem = orderItem2;
+    	}
+    	if (orderItem == null)
+    		// orderItem = new OrderItem();
+    		orderItem = orderItemDao.create();
+    	orderItem.setProduct(product);
+    	orderItem.setCategory(category);
+    	orderItem.setSku(item);
+    	orderItem.setQuantity(orderItem.getQuantity() + quantity);
+    	orderItem.setOrder(order);
+    	return maintainOrderItem(orderItem);
     }
 
     @Override
