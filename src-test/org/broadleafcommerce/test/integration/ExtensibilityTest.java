@@ -5,6 +5,11 @@ import org.broadleafcommerce.test.integration.extensibility.ExtensibilityTestBea
 import org.broadleafcommerce.test.integration.extensibility.ExtensibilityTestBean3;
 import org.testng.annotations.Test;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class ExtensibilityTest extends BaseTest {
 
 	@Test

@@ -27,6 +27,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class MergeJPAPersistenceResource extends MergeXmlConfigResource {
 
 	private static final Log LOG = LogFactory.getLog(MergeJPAPersistenceResource.class);

@@ -33,5 +33,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-commons-annotations.jar" sourcepath="lib/common/source/hibernate-commons-annotations-3.1.0.CR1-sources.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-entitymanager.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/jms.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/velocity-tools-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

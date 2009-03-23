@@ -15,6 +15,11 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class MergeApplicationContextXmlConfigResource extends MergeXmlConfigResource {
 
 	private static final Log LOG = LogFactory.getLog(MergeApplicationContextXmlConfigResource.class);
