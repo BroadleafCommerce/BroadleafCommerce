@@ -8,6 +8,7 @@
 		<mapping-file>config/bc/jpa/domain/ChallengeQuestion.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ContactInfo.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Customer.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/IdGeneration.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/User.orm.xml</mapping-file>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

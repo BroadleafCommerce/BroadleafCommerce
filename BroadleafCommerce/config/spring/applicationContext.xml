@@ -81,6 +81,11 @@
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceOperation"/>
 	</aop:config>
 
+	<aop:config>
+		<aop:pointcut id="idGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="idGenerationServiceOperation"/>
+	</aop:config>
+
 	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
@@ -148,6 +153,7 @@
 	<bean id="org.broadleafcommerce.profile.domain.ContactInfo" class="org.broadleafcommerce.profile.domain.ContactInfoImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl"/>
+	<bean id="org.broadleafcommerce.profile.domain.IdGeneration" class="org.broadleafcommerce.profile.domain.IdGenerationImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.SkuImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.StateProvince" class="org.broadleafcommerce.profile.domain.StateProvinceImpl"/>
