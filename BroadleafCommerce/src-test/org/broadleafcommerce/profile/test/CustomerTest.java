@@ -8,6 +8,8 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.IdGeneration;
+import org.broadleafcommerce.profile.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.test.dataprovider.CustomerDataProvider;
 import org.broadleafcommerce.test.integration.BaseTest;
@@ -31,12 +33,26 @@ public class CustomerTest extends BaseTest {
 
     List<String> userNames = new ArrayList<String>();
 
-    @Test(groups = { "createCustomers" }, dataProvider = "setupCustomers", dataProviderClass = CustomerDataProvider.class)
+    @Test(groups = { "createCustomerIdGeneration" })
     @Rollback(false)
-    public void createCustomer(Customer customer) {
-        assert customer.getId() == null;
+    public void createCustomerIdGeneration() {
+        IdGeneration idGeneration = new IdGenerationImpl();
+        idGeneration.setType("org.broadleafcommerce.profile.domain.Customer");
+        idGeneration.setBatchStart(1L);
+        idGeneration.setBatchSize(10L);
+        em.persist(idGeneration);
+    }
+
+    @Test(groups = "createCustomers", dependsOnGroups="createCustomerIdGeneration", dataProvider = "setupCustomers", dataProviderClass = CustomerDataProvider.class)
+    @Rollback(false)
+    public void createCustomer(Customer customerInfo) {
+        Customer customer = customerService.createNewCustomer();
+        customer.setPassword(customerInfo.getPassword());
+        customer.setUsername(customerInfo.getUsername());
+        Long customerId = customer.getId();
+        assert customerId != null;
         customer = customerService.saveCustomer(customer);
-        assert customer.getId() != null;
+        assert customer.getId() == customerId;
         userIds.add(customer.getId());
         userNames.add(customer.getUsername());
     }

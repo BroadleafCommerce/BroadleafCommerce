@@ -30,7 +30,7 @@ public class IdGenerationTest extends BaseTest {
     @Rollback(false)
     public void createId() {
         IdGeneration idGeneration = new IdGenerationImpl();
-        idGeneration.setType("CustomerImpl");
+        idGeneration.setType("IdGenerationTest");
         idGeneration.setBatchStart(1L);
         idGeneration.setBatchSize(10L);
         em.persist(idGeneration);
@@ -40,7 +40,7 @@ public class IdGenerationTest extends BaseTest {
     @Rollback(true)
     public void findIds() {
         for (int i = 1; i < 101; i++) {
-            Long id = idGenerationService.findNextId("CustomerImpl");
+            Long id = idGenerationService.findNextId("IdGenerationTest");
             assert id == i;
         }
     }
