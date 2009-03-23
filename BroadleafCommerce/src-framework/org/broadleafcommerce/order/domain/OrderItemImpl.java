@@ -7,14 +7,20 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.offer.domain.ItemOffer;
@@ -28,7 +34,8 @@ public class OrderItemImpl implements OrderItem, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 1)
     @Column(name = "ORDER_ITEM_ID")
     private Long id;
 
@@ -36,8 +43,16 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @JoinColumn(name = "SKU_ID", nullable = false)
     private Sku sku;
 
+    @ManyToOne(targetEntity = ProductImpl.class)
+    @JoinColumn(name = "PRODUCT_ID")
+    private Product product;
+
+    @ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "CATEGORY_ID")
+    private Category category;
+
     @ManyToOne(targetEntity = OrderImpl.class)
-    @JoinColumn(name = "SC_ORDER_ID")
+    @JoinColumn(name = "ORDER_ID")
     private Order order;
 
     @Column(name = "RETAIL_PRICE")
@@ -120,7 +135,23 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.candidateItemOffers = itemOffers;
     }
 
-    public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer) {
+    public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer) {
     	// TODO: if stacked, add all of the items to the persisted structure and add just the stacked version
     	//       to this collection
         this.candidateItemOffers.add(candidateOffer);
@@ -133,5 +164,5 @@ public class OrderItemImpl implements OrderItem, Serializable {
     	}
     }
 
-    
+
 }
