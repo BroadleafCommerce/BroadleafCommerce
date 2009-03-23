@@ -43,6 +43,14 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @JoinColumn(name = "SKU_ID", nullable = false)
     private Sku sku;
 
+    @ManyToOne(targetEntity = ProductImpl.class)
+    @JoinColumn(name = "PRODUCT_ID")
+    private Product product;
+
+    @ManyToOne(targetEntity = CategoryImpl.class)
+    @JoinColumn(name = "CATEGORY_ID")
+    private Category category;
+
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
     private Order order;
@@ -126,6 +134,22 @@ public class OrderItemImpl implements OrderItem, Serializable {
     public void setCandidateItemOffers(List<ItemOffer> itemOffers) {
         this.candidateItemOffers = itemOffers;
     }
+
+    public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 
 	public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer) {
     	// TODO: if stacked, add all of the items to the persisted structure and add just the stacked version
