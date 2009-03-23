@@ -131,8 +131,40 @@ public class OfferServiceImpl implements OfferService {
 				}
 				
 			}
+
+			Money newOrderTotal = pricingService.calculateOrderTotal(order).getSubTotal();
 			
 			// TODO: How and what do we do with order level offers?
+			for (Offer offer : qualifiedOrderOffers) {
+				if(order.getCandidateOffers().contains(offer)){						
+					//- Determine the amount that should be discounted for each item
+					//----- If the order sale price is better than the discounted price, don't apply
+					if(newOrderTotal.greaterThan(order.getSubTotal())){
+						// TODO: ----- If the offer requires other items, check to see if the items are still unmarked
+//						if(requiresMultipleSkus(offer)){
+							// ----- If the order itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
+							if(!order.isMarkedForOffer() ||
+									(order.isMarkedForOffer() && offer.isApplyDiscountToMarkedItems())){
+								//----- If the order already has a discount 
+								if(order.isMarkedForOffer()){
+									
+									//  and this offer is stackable, apply on top of the existing offer
+									if(offer.isStackable()){
+										//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+										applyOrderOffer(order,offer);
+									}
+									// and this offer is not-stackable, don't apply
+										
+								}else{
+									//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+									applyOrderOffer(order,offer);
+								}
+								
+							}								
+						}
+					}
+				}
+			
 			 
 //**************** PREVIOUS STRATEGY **************************
 //    		order.setCandaditeOffers(offers);
@@ -198,6 +230,11 @@ public class OfferServiceImpl implements OfferService {
     	// TODO: Apply item offer
 		//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
     	orderItem.setMarkedForOffer(true);
+    }
+    
+    private void applyOrderOffer(Order order, Offer offer){
+    	// TODO: Apply order offer
+    	order.setMarkedForOffer(true);
     }
     
     private Offer calculateAtomOfferDiscount(Offer offer, Money startingValue){

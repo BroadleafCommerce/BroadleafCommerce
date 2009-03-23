@@ -58,4 +58,8 @@ public interface Order {
     public void addCandidateOffer(Offer offer);
 
     public void removeAllOffers();
+    
+    public boolean isMarkedForOffer();
+    
+    public void setMarkedForOffer(boolean markForOffer);
 }
