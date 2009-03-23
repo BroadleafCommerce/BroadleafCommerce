@@ -38,6 +38,14 @@ public interface OrderItem {
 
     public void setQuantity(int quantity);
 
+    public Product getProduct();
+
+	public void setProduct(Product product);
+
+	public Category getCategory();
+
+	public void setCategory(Category category);
+
     public List<ItemOffer> getCandidateItemOffers();
 
     public void setCandidateItemOffers(List<ItemOffer> candidateOffers);
