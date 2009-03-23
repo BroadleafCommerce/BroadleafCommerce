@@ -988,11 +988,11 @@
 <column alias="" auto-increment="false" column-size="14" decimal-digits="6" default-value="" mandatory="true" name="OrderTotal" remarks="" uid="51e300:11e45f18139:-7f25">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -1155,8 +1155,8 @@
 <column alias="" auto-increment="false" column-size="5" decimal-digits="0" default-value="" mandatory="false" name="ManufacturerURLClickQuantity" remarks="" uid="51e300:11e45f18139:-7fb4">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -1228,8 +1228,8 @@
 <column alias="" auto-increment="false" column-size="4" decimal-digits="0" default-value="" mandatory="true" name="InventoryQuantity" remarks="" uid="51e300:11e45f18139:-7c3a">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -1248,11 +1248,11 @@
 <column alias="" auto-increment="false" column-size="15" decimal-digits="4" default-value="" mandatory="true" name="Price" remarks="" uid="51e300:11e45f18139:-7c38">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -1279,11 +1279,11 @@
 <column alias="" auto-increment="false" column-size="5" decimal-digits="2" default-value="" mandatory="true" name="Weight" remarks="" uid="51e300:11e45f18139:-7c34">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -1399,11 +1399,11 @@
 <column alias="" auto-increment="false" column-size="15" decimal-digits="4" default-value="" mandatory="true" name="FinalPrice" remarks="" uid="51e300:11e45f18139:-7ba9">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -1412,11 +1412,11 @@
 <column alias="" auto-increment="false" column-size="7" decimal-digits="4" default-value="" mandatory="true" name="Tax" remarks="" uid="51e300:11e45f18139:-7ba8">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -1438,8 +1438,8 @@
 <column alias="" auto-increment="false" column-size="2" decimal-digits="0" default-value="" mandatory="true" name="Quantity" remarks="" uid="51e300:11e45f18139:-7ba0">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -1666,11 +1666,11 @@
 <column alias="" auto-increment="false" column-size="15" decimal-digits="4" default-value="" mandatory="true" name="FinalPrice" remarks="" uid="51e300:11e45f18139:-7a20">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -1679,11 +1679,11 @@
 <column alias="" auto-increment="false" column-size="7" decimal-digits="4" default-value="" mandatory="true" name="Tax" remarks="" uid="51e300:11e45f18139:-78e8">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -1705,8 +1705,8 @@
 <column alias="" auto-increment="false" column-size="2" decimal-digits="0" default-value="" mandatory="true" name="Quantity" remarks="" uid="51e300:11e45f18139:-78e6">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -1779,11 +1779,11 @@
 <column alias="" auto-increment="false" column-size="15" decimal-digits="4" default-value="" mandatory="true" name="Price" remarks="" uid="51e300:11e45f18139:-79b4">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -1925,8 +1925,8 @@
 <column alias="" auto-increment="false" column-size="2" decimal-digits="0" default-value="" mandatory="false" name="DownloadMaxDays" remarks="" uid="51e300:11e45f18139:-788f">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -1938,8 +1938,8 @@
 <column alias="" auto-increment="false" column-size="2" decimal-digits="0" default-value="" mandatory="false" name="DownloadMaxCount" remarks="" uid="51e300:11e45f18139:-788e">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -1998,8 +1998,8 @@
 <column alias="" auto-increment="false" column-size="2" decimal-digits="0" default-value="" mandatory="false" name="DownloadCount" remarks="" uid="51e300:11e45f18139:-7866">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -2018,8 +2018,8 @@
 <column alias="" auto-increment="false" column-size="2" decimal-digits="0" default-value="" mandatory="false" name="DownloadMaxDays" remarks="" uid="51e300:11e45f18139:-7864">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -2238,8 +2238,8 @@
 <column alias="" auto-increment="false" column-size="1" decimal-digits="0" default-value="" mandatory="true" name="Rating" remarks="" uid="51e300:11e45f18139:-7759">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -2263,8 +2263,8 @@
 <column alias="" auto-increment="false" column-size="5" decimal-digits="0" default-value="0" mandatory="true" name="TimesRead" remarks="" uid="51e300:11e45f18139:-7756">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -2468,8 +2468,8 @@
 <column alias="" auto-increment="false" column-size="5" decimal-digits="0" default-value="1" mandatory="true" name="TaxPriority" remarks="" uid="51e300:11e45f18139:-763c">
 <column-description></column-description>
 <data-type jdbc-type="4" name="INT" selected-variant-pattern="INT(%n)">
-<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n)"/>
+<variant type-name-pattern="INT"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="10" precision-min="0" precision-variable="%n" type-name-pattern="INT(%n) ZEROFILL"/>
@@ -2481,11 +2481,11 @@
 <column alias="" auto-increment="false" column-size="7" decimal-digits="4" default-value="" mandatory="true" name="TaxRate" remarks="" uid="51e300:11e45f18139:-763b">
 <column-description></column-description>
 <data-type jdbc-type="3" name="DEC" selected-variant-pattern="DEC(%p, %s)">
+<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%n" type-name-pattern="DEC(%n) ZEROFILL"/>
-<variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s)"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) UNSIGNED ZEROFILL"/>
 <variant precision-max="65" precision-min="0" precision-variable="%p" scale-max="30" scale-min="0" scale-variable="%s" type-name-pattern="DEC(%p, %s) ZEROFILL"/>
@@ -2715,6 +2715,199 @@
 <fk-fig-bendpoint-list/>
 </foreign-key-figure>
 <foreign-key-column column-name="GeographicalZoneID" referenced-key-column-name="GeographicalZoneID"/>
+</foreign-key>
+</foreign-key-list>
+<index-list/>
+</table>
+<table alias="" name="BLC_EMAIL_TRACKING" remarks="" uid="5686c4:12034cdb79c:-7fc2">
+<table-description></table-description>
+<table-figure-bounds height="-1" width="-1" x="1158" y="-43"/>
+<column-list>
+<column alias="" auto-increment="true" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="EMAIL_TRACKING_ID" remarks="" uid="5686c4:12034cdb79c:-7fbc">
+<column-description></column-description>
+<data-type jdbc-type="-5" name="BIGINT" selected-variant-pattern="BIGINT">
+<variant type-name-pattern="BIGINT"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n)"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) ZEROFILL"/>
+<variant type-name-pattern="BIGINT UNSIGNED"/>
+<variant type-name-pattern="BIGINT UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="BIGINT ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="150" decimal-digits="0" default-value="" mandatory="true" name="EMAIL_ADDRESS" remarks="" uid="5686c4:12034cdb79c:-7fbb">
+<column-description></column-description>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DATE_SENT" remarks="" uid="5686c4:12034cdb79c:-7fba">
+<column-description></column-description>
+<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
+<variant type-name-pattern="DATETIME"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="50" decimal-digits="0" default-value="" mandatory="false" name="TYPE" remarks="" uid="5686c4:12034cdb79c:-7fb9">
+<column-description></column-description>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+</column-list>
+<primary-key alias="" name="PK_BLC_EMAIL_TRACKING" remarks="" uid="5686c4:12034cdb79c:-7fc1">
+<primary-key-description></primary-key-description>
+<primary-key-column name="EMAIL_TRACKING_ID"/>
+</primary-key>
+<unique-key-list/>
+<foreign-key-list/>
+<index-list/>
+</table>
+<table alias="" name="BLC_EMAIL_TRACKING_CLICKS" remarks="" uid="5686c4:12034cdb79c:-7fb8">
+<table-description></table-description>
+<table-figure-bounds height="-1" width="-1" x="1159" y="72"/>
+<column-list>
+<column alias="" auto-increment="true" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="CLICK_ID" remarks="" uid="5686c4:12034cdb79c:-7fb4">
+<column-description></column-description>
+<data-type jdbc-type="-5" name="BIGINT" selected-variant-pattern="BIGINT">
+<variant type-name-pattern="BIGINT"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n)"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) ZEROFILL"/>
+<variant type-name-pattern="BIGINT UNSIGNED"/>
+<variant type-name-pattern="BIGINT UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="BIGINT ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DATE_CLICKED" remarks="" uid="5686c4:12034cdb79c:-7fb3">
+<column-description></column-description>
+<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
+<variant type-name-pattern="DATETIME"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="250" decimal-digits="0" default-value="" mandatory="true" name="DESTINATION_URI" remarks="" uid="5686c4:12034cdb79c:-7faf">
+<column-description></column-description>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="250" decimal-digits="0" default-value="" mandatory="false" name="QUERY_STRING" remarks="" uid="5686c4:12034cdb79c:-7fae">
+<column-description></column-description>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="CustomerID" remarks="" uid="5686c4:12034cdb79c:-7fa4">
+<column-description></column-description>
+<data-type jdbc-type="-5" name="BIGINT" selected-variant-pattern="BIGINT">
+<variant type-name-pattern="BIGINT"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n)"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) ZEROFILL"/>
+<variant type-name-pattern="BIGINT UNSIGNED"/>
+<variant type-name-pattern="BIGINT UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="BIGINT ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="EMAIL_TRACKING_ID" remarks="" uid="5686c4:12034cdb79c:-7f99">
+<column-description></column-description>
+<data-type jdbc-type="-5" name="BIGINT" selected-variant-pattern="BIGINT">
+<variant type-name-pattern="BIGINT"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n)"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) ZEROFILL"/>
+<variant type-name-pattern="BIGINT UNSIGNED"/>
+<variant type-name-pattern="BIGINT UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="BIGINT ZEROFILL"/>
+</data-type>
+</column>
+</column-list>
+<primary-key alias="" name="PK_BLC_EMAIL_TRACKING_CLICKS" remarks="" uid="5686c4:12034cdb79c:-7fb7">
+<primary-key-description></primary-key-description>
+<primary-key-column name="CLICK_ID"/>
+</primary-key>
+<unique-key-list/>
+<foreign-key-list>
+<foreign-key alias="" name="FK_BLC_EMAIL_TRACKING_CLICKS_1" on-delete="" on-update="" referenced-key="PK_CUSTOMER" referenced-table="Customer" referenced-table-schema="broadleafcommerce" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="5686c4:12034cdb79c:-7fa5">
+<foreign-key-description></foreign-key-description>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="CustomerID" referenced-key-column-name="CustomerID"/>
+</foreign-key>
+<foreign-key alias="" name="FK_BLC_EMAIL_TRACKING_CLICKS_2" on-delete="" on-update="" referenced-key="PK_BLC_EMAIL_TRACKING" referenced-table="BLC_EMAIL_TRACKING" referenced-table-schema="broadleafcommerce" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="5686c4:12034cdb79c:-7f76">
+<foreign-key-description></foreign-key-description>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="EMAIL_TRACKING_ID" referenced-key-column-name="EMAIL_TRACKING_ID"/>
+</foreign-key>
+</foreign-key-list>
+<index-list/>
+</table>
+<table alias="" name="BLC_EMAIL_TRACKING_OPENS" remarks="" uid="5686c4:12034cdb79c:-7f66">
+<table-description></table-description>
+<table-figure-bounds height="-1" width="-1" x="1148" y="-162"/>
+<column-list>
+<column alias="" auto-increment="true" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="OPEN_ID" remarks="" uid="5686c4:12034cdb79c:-7f60">
+<column-description></column-description>
+<data-type jdbc-type="-5" name="BIGINT" selected-variant-pattern="BIGINT">
+<variant type-name-pattern="BIGINT"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n)"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) ZEROFILL"/>
+<variant type-name-pattern="BIGINT UNSIGNED"/>
+<variant type-name-pattern="BIGINT UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="BIGINT ZEROFILL"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="DATE_OPENED" remarks="" uid="5686c4:12034cdb79c:-7f5f">
+<column-description></column-description>
+<data-type jdbc-type="93" literal-prefix="'" literal-suffix="'" name="DATETIME" selected-variant-pattern="DATETIME">
+<variant type-name-pattern="DATETIME"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="150" decimal-digits="0" default-value="" mandatory="true" name="USER_AGENT" remarks="" uid="5686c4:12034cdb79c:-7f5e">
+<column-description></column-description>
+<data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>
+<variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
+</data-type>
+</column>
+<column alias="" auto-increment="false" column-size="0" decimal-digits="0" default-value="" mandatory="true" name="EMAIL_TRACKING_ID" remarks="" uid="5686c4:12034cdb79c:-7f5d">
+<column-description></column-description>
+<data-type jdbc-type="-5" name="BIGINT" selected-variant-pattern="BIGINT">
+<variant type-name-pattern="BIGINT"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n)"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) UNSIGNED ZEROFILL"/>
+<variant precision-max="255" precision-min="0" precision-variable="%n" type-name-pattern="BIGINT(%n) ZEROFILL"/>
+<variant type-name-pattern="BIGINT UNSIGNED"/>
+<variant type-name-pattern="BIGINT UNSIGNED ZEROFILL"/>
+<variant type-name-pattern="BIGINT ZEROFILL"/>
+</data-type>
+</column>
+</column-list>
+<primary-key alias="" name="PK_BLC_EMAIL_TRACKING_OPENS" remarks="" uid="5686c4:12034cdb79c:-7f65">
+<primary-key-description></primary-key-description>
+<primary-key-column name="OPEN_ID"/>
+</primary-key>
+<unique-key-list/>
+<foreign-key-list>
+<foreign-key alias="" name="FK_BLC_EMAIL_TRACKING_OPENS_1" on-delete="" on-update="" referenced-key="PK_BLC_EMAIL_TRACKING" referenced-table="BLC_EMAIL_TRACKING" referenced-table-schema="broadleafcommerce" remarks="" source-entity-role="" source-multiplicity="0..*" source-relationship-type="" target-entity-role="" target-multiplicity="1" target-relationship-type="" uid="5686c4:12034cdb79c:-7f53">
+<foreign-key-description></foreign-key-description>
+<foreign-key-figure>
+<fk-fig-bendpoint-list/>
+</foreign-key-figure>
+<foreign-key-column column-name="EMAIL_TRACKING_ID" referenced-key-column-name="EMAIL_TRACKING_ID"/>
 </foreign-key>
 </foreign-key-list>
 <index-list/>
