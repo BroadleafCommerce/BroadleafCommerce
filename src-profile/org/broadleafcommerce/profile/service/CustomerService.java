@@ -15,5 +15,10 @@ public interface CustomerService {
 
     public Customer readCustomerById(Long userId);
 
-    public Customer createNewCustomer();
+    /**
+     * Returns a <code>Customer</code> by first looking in the database, otherwise creating a new non-persisted <code>Customer</code>
+     * @param customerId the id of the customer to lookup
+     * @return either a <code>Customer</code> from the database if it exists, or a new non-persisted <code>Customer</code>
+     */
+    public Customer createCustomerFromId(Long customerId);
 }

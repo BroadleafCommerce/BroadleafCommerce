@@ -17,7 +17,7 @@ public class IdGenerationImpl implements IdGeneration, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "TYPE")
+    @Column(name = "ID_TYPE")
     private String type;
 
     @Column(name = "BATCH_START")
