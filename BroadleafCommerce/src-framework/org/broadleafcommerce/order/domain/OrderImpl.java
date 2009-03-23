@@ -20,6 +20,7 @@ import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.Offer;
@@ -79,6 +80,9 @@ public class OrderImpl implements Order, Serializable {
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
     private List<Offer> candidateOffers;
+    
+    @Transient
+    private boolean markedForOffer;
 
     public Long getId() {
         return id;
@@ -197,4 +201,14 @@ public class OrderImpl implements Order, Serializable {
 			}
 		}
 	}
+
+	public boolean isMarkedForOffer() {
+		return markedForOffer;
+	}
+
+	public void setMarkedForOffer(boolean markedForOffer) {
+		this.markedForOffer = markedForOffer;
+	}
+	
+	
 }
