@@ -1,5 +1,10 @@
 package org.broadleafcommerce.test.integration.extensibility;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class ExtensibilityTestBean3 extends ExtensibilityTestBean {
 	
 	private String testProperty = "new";
