@@ -140,8 +140,6 @@ public class OfferServiceImpl implements OfferService {
 					//- Determine the amount that should be discounted for each item
 					//----- If the order sale price is better than the discounted price, don't apply
 					if(newOrderTotal.greaterThan(order.getSubTotal())){
-						// TODO: ----- If the offer requires other items, check to see if the items are still unmarked
-//						if(requiresMultipleSkus(offer)){
 							// ----- If the order itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
 							if(!order.isMarkedForOffer() ||
 									(order.isMarkedForOffer() && offer.isApplyDiscountToMarkedItems())){
