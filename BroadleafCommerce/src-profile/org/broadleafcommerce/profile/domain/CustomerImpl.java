@@ -50,6 +50,9 @@ public class CustomerImpl implements Customer, Serializable {
     private boolean receiveEmail = true;
 
     @Transient
+    private boolean authenticated = false;
+
+    @Transient
     private String unencodedPassword;
 
     public Long getId() {
@@ -139,4 +142,12 @@ public class CustomerImpl implements Customer, Serializable {
     public void setReceiveEmail(boolean receiveEmail) {
         this.receiveEmail = receiveEmail;
     }
+
+	public boolean isAuthenticated() {
+		return authenticated;
+	}
+
+	public void setAuthenticated(boolean authenticated) {
+		this.authenticated = authenticated;
+	}
 }
