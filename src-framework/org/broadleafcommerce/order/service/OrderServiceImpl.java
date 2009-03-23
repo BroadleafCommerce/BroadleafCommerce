@@ -132,9 +132,8 @@ public class OrderServiceImpl implements OrderService {
     	if (orderItem == null)
     		// orderItem = new OrderItem();
     		orderItem = orderItemDao.create();
-    	//TODO: set product and category
-    	//orderItem.setProduct(product);
-    	//orderItem.setCategory(category);
+    	orderItem.setProduct(product);
+    	orderItem.setCategory(category);
     	orderItem.setSku(item);
     	orderItem.setQuantity(orderItem.getQuantity() + quantity);
     	orderItem.setOrder(order);
