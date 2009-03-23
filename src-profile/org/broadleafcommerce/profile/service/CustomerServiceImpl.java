@@ -6,6 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.profile.util.PasswordChange;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
@@ -25,7 +26,13 @@ public class CustomerServiceImpl implements CustomerService {
     private CustomerDao customerDao;
 
     @Resource
+    private IdGenerationService idGenerationService;
+
+    @Resource
     private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private EntityConfiguration entityConfiguration;
 
     // @Resource(name = "saltSource")
     // private SaltSource saltSource;
@@ -71,5 +78,11 @@ public class CustomerServiceImpl implements CustomerService {
 
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public Customer createNewCustomer() {
+        Customer customer = (Customer) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Customer");
+        customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
+        return customer;
     }
 }

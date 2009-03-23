@@ -1,5 +1,8 @@
 package org.broadleafcommerce.profile.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
@@ -18,28 +21,39 @@ public class IdGenerationServiceImpl implements IdGenerationService {
     @Resource
     private IdGenerationDao idGenerationDao;
 
-    private Long nextId = null;
-
-    private Long batchSize = null;
+    private Map<String, Id> idTypeIdMap = new HashMap<String, Id>();
 
     @Transactional(propagation = Propagation.REQUIRED)
     public synchronized Long findNextId(String idType) {
-        if (nextId == null || batchSize == null || batchSize.equals(0L)) {
+        Id id = idTypeIdMap.get(idType);
+        if (id == null || id.batchSize.equals(0L)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("I don't have the next id, going to the database");
             }
             IdGeneration idGeneration = idGenerationDao.findNextId(idType);
-            nextId = idGeneration.getBatchStart();
-            batchSize = idGeneration.getBatchSize();
+            Long nextId = idGeneration.getBatchStart();
+            Long batchSize = idGeneration.getBatchSize();
             idGeneration.setBatchStart(nextId + batchSize);
             idGenerationDao.updateNextId(idGeneration);
+            id = new Id(nextId, batchSize);
         } else {
             if (logger.isDebugEnabled()) {
                 logger.debug("I already have the next id");
             }
         }
-        Long retId = nextId++;
-        batchSize--;
+        Long retId = id.nextId++;
+        id.batchSize--;
+        idTypeIdMap.put(idType, id);
         return retId;
+    }
+
+    private class Id {
+        public Long nextId;
+        public Long batchSize;
+
+        public Id(Long nextId, Long batchSize) {
+            this.nextId = nextId;
+            this.batchSize = batchSize;
+        }
     }
 }

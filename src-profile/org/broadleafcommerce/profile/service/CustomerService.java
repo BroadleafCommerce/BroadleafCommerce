@@ -14,4 +14,6 @@ public interface CustomerService {
     public Customer changePassword(PasswordChange passwordChange);
 
     public Customer readCustomerById(Long userId);
+
+    public Customer createNewCustomer();
 }
