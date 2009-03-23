@@ -106,7 +106,7 @@ public class OfferServiceImpl implements OfferService {
 						if(itemOffer.getDiscountedPrice().greaterThan(orderItem.getSalePrice())){
 							// TODO: ----- If the offer requires other items, check to see if the items are still unmarked
 							if(requiresMultipleSkus(itemOffer)){
-								// TODO: ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
+								// ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
 								if(!orderItem.isMarkedForOffer() ||
 										(orderItem.isMarkedForOffer() && itemOffer.getOffer().isApplyDiscountToMarkedItems())){
 									//----- If the item already has a discount 
