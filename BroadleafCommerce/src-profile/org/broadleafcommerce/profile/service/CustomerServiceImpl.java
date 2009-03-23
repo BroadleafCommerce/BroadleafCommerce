@@ -80,9 +80,12 @@ public class CustomerServiceImpl implements CustomerService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Customer createNewCustomer() {
-        Customer customer = (Customer) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Customer");
-        customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
+    public Customer createCustomerFromId(Long customerId) {
+        Customer customer = customerId != null ? readCustomerById(customerId) : null;
+        if (customer == null) {
+            customer = (Customer) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Customer");
+            customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
+        }
         return customer;
     }
 }

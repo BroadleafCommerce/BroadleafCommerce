@@ -46,7 +46,7 @@ public class CustomerTest extends BaseTest {
     @Test(groups = "createCustomers", dependsOnGroups="createCustomerIdGeneration", dataProvider = "setupCustomers", dataProviderClass = CustomerDataProvider.class)
     @Rollback(false)
     public void createCustomer(Customer customerInfo) {
-        Customer customer = customerService.createNewCustomer();
+        Customer customer = customerService.createCustomerFromId(null);
         customer.setPassword(customerInfo.getPassword());
         customer.setUsername(customerInfo.getUsername());
         Long customerId = customer.getId();

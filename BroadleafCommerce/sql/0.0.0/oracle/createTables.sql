@@ -98,6 +98,14 @@ CREATE TABLE blc_fulfillment_group
   CONSTRAINT PK_BLC_FULFILLMENT_GROUP PRIMARY KEY(ID) USING INDEX TABLESPACE WEB_IDX1
 );
 
+CREATE TABLE BLC_ID_GENERATION
+(
+  ID_TYPE VARCHAR2(255) NOT NULL,
+  BATCH_START NUMBER(19,0) ,
+  BATCH_SIZE NUMBER(19,0) ,
+  CONSTRAINT BLC_ID_GENERATION PRIMARY KEY(ID_TYPE) USING INDEX TABLESPACE WEB_IDX1,
+);
+
 ------------------------
 -- INSERT TEST CHALLENGE QUESTIONS
 ------------------------
@@ -113,3 +121,8 @@ INSERT INTO blc_customer
   VALUES ( 1, 'rod', '16d7a4fca7442dda3ad93c9a726597e4', 1, 1 );
 
 insert into blc_customer_address (ADDRESS_ID, ADDRESS_LINE1, ADDRESS_NAME, CITY, POSTAL_CODE, STATE_PROV_REGION, CUSTOMER_ID, IS_DEFAULT, IS_ACTIVE) values (1, '1 a way', 'home', 'Frisco', '75035', 'TX', 37, 1, 1);
+
+------------------------
+-- INSERT TEST ID GENERATION
+------------------------
+INSERT INTO BLC_ID_GENERATION ( ID_TYPE, BATCH_START, BATCH_SIZE ) VALUES ( 'org.broadleafcommerce.profile.domain.Customer', 1, 10 );;
