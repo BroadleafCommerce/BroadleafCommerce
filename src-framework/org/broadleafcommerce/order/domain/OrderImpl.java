@@ -180,11 +180,6 @@ public class OrderImpl implements Order, Serializable {
         return candidateOffers;
     }
 
-    @Override
-    public void setCandaditeOffers(List<Offer> offers) {
-        this.candidateOffers = offers;
-
-    }
 
 	@Override
 	public void removeAllOffers() {
