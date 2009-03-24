@@ -14,7 +14,7 @@
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 	<context:component-scan base-package="org.broadleafcommerce" />
-	
+
 	<bean id="serverInfo" class="org.broadleafcommerce.email.info.ServerInfo">
 		<property name="serverName" value="localhost"/>
 		<property name="serverPort" value="8080"/>
@@ -120,8 +120,6 @@
          </value>
       </property>
    </bean>
-
-	<bean id="currentCustomerInterceptor" class="org.broadleafcommerce.security.CurrentCustomerInterceptor"/>
 
 <!--
 	<bean id="broadleafCommerceDS" class="org.apache.commons.dbcp.BasicDataSource"
