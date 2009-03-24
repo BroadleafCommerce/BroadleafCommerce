@@ -7,5 +7,5 @@ import org.springframework.security.Authentication;
 
 public interface PostLoginObserver {
 
-    public void process(HttpServletRequest request, HttpServletResponse response, Authentication authResult);
+    public void processPostLogin(HttpServletRequest request, HttpServletResponse response, Authentication authResult);
 }

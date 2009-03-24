@@ -97,7 +97,7 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
     public void notifyListeners(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         for (Iterator<PostLoginObserver> iter = postLoginListeners.iterator(); iter.hasNext();) {
             PostLoginObserver listener = iter.next();
-            listener.process(request, response, authResult);
+            listener.processPostLogin(request, response, authResult);
         }
     }
 

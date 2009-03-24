@@ -32,7 +32,7 @@ public class BCLogoutHandler extends SecurityContextLogoutHandler {
     public void notifyListeners(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         for (Iterator<PreLogoutObserver> iter = preLogoutListeners.iterator(); iter.hasNext();) {
             PreLogoutObserver listener = iter.next();
-            listener.process(request, response, authResult);
+            listener.processPreLogout(request, response, authResult);
         }
     }
 }
