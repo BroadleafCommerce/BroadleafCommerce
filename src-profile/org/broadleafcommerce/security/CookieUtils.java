@@ -20,13 +20,21 @@ public class CookieUtils {
 		return null;
 	}
 
-    public static void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue, String path) {
+    public static void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue, String path, Integer maxAge) {
 		Cookie cookie = new Cookie(cookieName, cookieValue);
 		cookie.setPath(path);
+		if (maxAge != null) {
+			cookie.setMaxAge(maxAge);
+		}
 		response.addCookie(cookie);
     }
 
     public static void setCookieValue(HttpServletResponse response, String cookieName, String cookieValue) {
-    	setCookieValue(response, cookieName, cookieValue, "/");
+    	setCookieValue(response, cookieName, cookieValue, "/", null);
     }
+
+    public static void invalidateCookie(HttpServletResponse response, String cookieName) {
+    	setCookieValue(response, cookieName, "", "/", 0);
+    }
+
 }
