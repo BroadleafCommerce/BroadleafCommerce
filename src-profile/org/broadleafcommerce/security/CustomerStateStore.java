@@ -19,8 +19,4 @@ public class CustomerStateStore implements PostLoginObserver {
         Customer customer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
         CustomerState.setCustomer(customer, request);
     }
-
-    public void setCustomerService(CustomerService customerService) {
-        this.customerService = customerService;
-    }
 }
