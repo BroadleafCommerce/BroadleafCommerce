@@ -10,7 +10,7 @@ import org.springframework.security.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service("customerStateStore")
-public class CustomerStateStore implements PostLoginObserver {
+public class CustomerStateStore implements PostLoginObserver, PreLogoutObserver {
 
     @Resource
     private CustomerService customerService;
@@ -20,4 +20,9 @@ public class CustomerStateStore implements PostLoginObserver {
         CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, customer.getId() + "");
         CustomerState.setCustomer(customer, request);
     }
+
+	@Override
+	public void processPreLogout(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
+		CookieUtils.invalidateCookie(response, CookieUtils.CUSTOMER_COOKIE_NAME);
+	}
 }
