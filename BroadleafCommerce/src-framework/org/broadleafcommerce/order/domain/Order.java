@@ -53,7 +53,7 @@ public interface Order {
 
     public List<Offer> getCandidateOffers();
 
-    public void setCandaditeOffers(List<Offer> offers);
+    public void setCandidateOffers(List<Offer> offers);
 
     public void addCandidateOffer(Offer offer);
 
