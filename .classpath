@@ -35,5 +35,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate3.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/jms.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/velocity-tools-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/test/bin/greenmail.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

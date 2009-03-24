@@ -164,5 +164,8 @@
 	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.SkuImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.StateProvince" class="org.broadleafcommerce.profile.domain.StateProvinceImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.UserImpl"/>
-
+	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl"/>
+	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl"/>
+	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
+	
 </beans>

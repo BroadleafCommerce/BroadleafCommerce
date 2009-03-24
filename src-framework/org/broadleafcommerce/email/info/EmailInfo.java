@@ -28,7 +28,9 @@ public class EmailInfo implements Serializable {
         Properties defaults = new Properties();
         defaults.load(EmailInfo.class.getResourceAsStream("/org/broadleafcommerce/email/props/defaultEmail.properties"));
         Properties props = new Properties(defaults);
-        props.load(EmailInfo.class.getResourceAsStream(propertiesPath));
+        if (propertiesPath != null) {
+        	props.load(EmailInfo.class.getResourceAsStream(propertiesPath));
+        }
         //TODO find out where the subject is coming from in the current system
         setEmailType(props.getProperty("emailType"));
         setEmailTemplate(props.getProperty("emailTemplate"));
