@@ -61,7 +61,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findCurrentCartForCustomer(Customer customer) {
-        return orderDao.readCartOrdersForCustomer(customer);
+    	return orderDao.readCartOrdersForCustomer(customer, false);
+    }
+
+    @Override
+    public Order createCurrentCartForCustomer(Customer customer) {
+    	return orderDao.readCartOrdersForCustomer(customer, true);
     }
 
     @Override

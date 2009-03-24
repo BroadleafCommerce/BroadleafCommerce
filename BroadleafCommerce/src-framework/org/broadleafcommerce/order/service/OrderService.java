@@ -18,6 +18,8 @@ public interface OrderService {
 
     public Order findCurrentCartForCustomer(Customer customer);
 
+	public Order createCurrentCartForCustomer(Customer customer);
+
     public FulfillmentGroupImpl findDefaultFulfillmentGroupForOrder(Order order);
 
     public List<FulfillmentGroup> findFulfillmentGroupsForOrder(Order order);
@@ -53,5 +55,4 @@ public interface OrderService {
     public Order confirmOrder(Order order);
 
     public void cancelOrder(Order order);
-
 }

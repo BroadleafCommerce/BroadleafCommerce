@@ -64,8 +64,8 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public Order readCartOrdersForCustomer(Customer customer) {
-        Order bo;
+    public Order readCartOrdersForCustomer(Customer customer, boolean persist) {
+        Order bo = null;
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderType", OrderType.CART);
@@ -73,10 +73,12 @@ public class OrderDaoJpa implements OrderDao {
             bo = (OrderImpl) query.getSingleResult();
             return (OrderImpl) query.getSingleResult();
         } catch (NoResultException nre) {
-            bo = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
-            bo.setCustomer(customer);
-            bo.setType(OrderType.CART);
-            em.persist(bo);
+        	if (persist) {
+	            bo = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
+	            bo.setCustomer(customer);
+	            bo.setType(OrderType.CART);
+	            em.persist(bo);
+        	}
             return bo;
         }
     }

@@ -9,6 +9,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,8 +56,9 @@ public class OrderImpl implements Order, Serializable {
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;
-
-    @ManyToOne(targetEntity = ContactInfoImpl.class)
+	
+	//TODO: changed FetchType to lazy because table did not exist yet; this should be revisited
+    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ContactInfoImpl.class)
     @JoinColumn(name = "CONTACT_INFO_ID")
     private ContactInfo contactInfo;
 
