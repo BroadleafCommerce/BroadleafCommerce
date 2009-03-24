@@ -61,4 +61,34 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
     </tag>
+
+    <tag>
+        <name>currentCart</name>
+        <tag-class>org.broadleafcommerce.layout.tags.CurrentCartTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Looks up a cart by customerId.  If no customerId is provided, the cart of the customer currently logged in is returned.  Can also provide the items in the order, and the total quantity of items in the cart.</description>
+       	<attribute>
+			<name>customerId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>orderVar</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Page scoped variable that the order is set to</description>
+		</attribute>
+       	<attribute>
+			<name>orderItemsVar</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Page scoped variable for a List of the order items associated with the order</description>
+		</attribute>
+       	<attribute>
+			<name>totalQuantityVar</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Page scoped variable that the order items count is set to. The order items count is a sum of the quantity of each item in the order.</description>
+		</attribute>
+    </tag>
 </taglib>

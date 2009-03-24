@@ -121,6 +121,7 @@
       </property>
    </bean>
 
+	<bean id="currentCustomerInterceptor" class="org.broadleafcommerce.security.CurrentCustomerInterceptor"/>
 
 <!--
 	<bean id="broadleafCommerceDS" class="org.apache.commons.dbcp.BasicDataSource"

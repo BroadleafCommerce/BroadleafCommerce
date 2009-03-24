@@ -17,6 +17,7 @@ public class CustomerStateStore implements PostLoginObserver {
 
     public void processPostLogin(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         Customer customer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
+        CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, customer.getId() + "");
         CustomerState.setCustomer(customer, request);
     }
 }
