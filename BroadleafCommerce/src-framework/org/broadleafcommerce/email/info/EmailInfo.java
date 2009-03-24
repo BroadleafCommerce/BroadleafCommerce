@@ -16,11 +16,17 @@ public class EmailInfo implements Serializable {
     private String emailTemplate;
     private String subject;
     private String fromAddress;
-    private String bccAddress;
+    
+    private String siteHttpServerName;
+    private String siteHttpServerPort;
+    private String siteSecureHttpServerPort;
+    
+    private String sendEmailReliableAsync;
+    private String sendAsyncPriority;
 
     public EmailInfo(String propertiesPath) throws IOException {
         Properties defaults = new Properties();
-        defaults.load(EmailInfo.class.getResourceAsStream("/com/containerstore/web/email/props/defaultEmail.properties"));
+        defaults.load(EmailInfo.class.getResourceAsStream("/org/broadleafcommerce/email/props/defaultEmail.properties"));
         Properties props = new Properties(defaults);
         props.load(EmailInfo.class.getResourceAsStream(propertiesPath));
         //TODO find out where the subject is coming from in the current system
@@ -28,7 +34,11 @@ public class EmailInfo implements Serializable {
         setEmailTemplate(props.getProperty("emailTemplate"));
         setSubject(props.getProperty("subject"));
         setFromAddress(props.getProperty("fromAddress"));
-        setBccAddress(props.getProperty("bccAddress"));
+        setSiteHttpServerName(props.getProperty("siteHttpServerName"));
+        setSiteHttpServerPort(props.getProperty("siteHttpServerPort"));
+        setSiteSecureHttpServerPort(props.getProperty("siteSecureHttpServerPort"));
+        setSendEmailReliableAsync(props.getProperty("sendEmailReliableAsync"));
+        setSendAsyncPriority(props.getProperty("sendAsyncPriority"));
     }
 
     /**
@@ -87,17 +97,73 @@ public class EmailInfo implements Serializable {
         this.fromAddress = fromAddress;
     }
 
-    /**
-     * @return the bccAddress
-     */
-    public String getBccAddress() {
-        return bccAddress;
-    }
+	/**
+	 * @return the siteHttpServerName
+	 */
+	public String getSiteHttpServerName() {
+		return siteHttpServerName;
+	}
 
-    /**
-     * @param bccAddress the bccAddress to set
-     */
-    public void setBccAddress(String bccAddress) {
-        this.bccAddress = bccAddress;
-    }
+	/**
+	 * @param siteHttpServerName the siteHttpServerName to set
+	 */
+	public void setSiteHttpServerName(String siteHttpServerName) {
+		this.siteHttpServerName = siteHttpServerName;
+	}
+
+	/**
+	 * @return the siteHttpServerPort
+	 */
+	public String getSiteHttpServerPort() {
+		return siteHttpServerPort;
+	}
+
+	/**
+	 * @param siteHttpServerPort the siteHttpServerPort to set
+	 */
+	public void setSiteHttpServerPort(String siteHttpServerPort) {
+		this.siteHttpServerPort = siteHttpServerPort;
+	}
+
+	/**
+	 * @return the siteSecureHttpServerPort
+	 */
+	public String getSiteSecureHttpServerPort() {
+		return siteSecureHttpServerPort;
+	}
+
+	/**
+	 * @param siteSecureHttpServerPort the siteSecureHttpServerPort to set
+	 */
+	public void setSiteSecureHttpServerPort(String siteSecureHttpServerPort) {
+		this.siteSecureHttpServerPort = siteSecureHttpServerPort;
+	}
+
+	/**
+	 * @return the sendEmailReliableAsync
+	 */
+	public String getSendEmailReliableAsync() {
+		return sendEmailReliableAsync;
+	}
+
+	/**
+	 * @param sendEmailReliableAsync the sendEmailReliableAsync to set
+	 */
+	public void setSendEmailReliableAsync(String sendEmailReliableAsync) {
+		this.sendEmailReliableAsync = sendEmailReliableAsync;
+	}
+
+	/**
+	 * @return the sendAsyncPriority
+	 */
+	public String getSendAsyncPriority() {
+		return sendAsyncPriority;
+	}
+
+	/**
+	 * @param sendAsyncPriority the sendAsyncPriority to set
+	 */
+	public void setSendAsyncPriority(String sendAsyncPriority) {
+		this.sendAsyncPriority = sendAsyncPriority;
+	}
 }

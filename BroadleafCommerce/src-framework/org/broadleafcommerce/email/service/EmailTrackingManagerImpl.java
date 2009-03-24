@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author jfischer
  *
  */
-@Service("emailTrackingManager")
+@Service("emailTrackingManagerBLC")
 public class EmailTrackingManagerImpl implements EmailTrackingManager {
 
     private static final Log LOG = LogFactory.getLog(EmailTrackingManagerImpl.class);
