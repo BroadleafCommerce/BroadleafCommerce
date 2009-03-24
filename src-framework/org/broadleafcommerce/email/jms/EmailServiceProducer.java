@@ -8,21 +8,18 @@ import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Session;
 
+import org.broadleafcommerce.email.info.EmailInfo;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-import org.springframework.stereotype.Component;
 
 /**
  * @author jfischer
  *
  */
-@Component("emailServiceProducer")
 public class EmailServiceProducer {
 
-    //@Resource
     private JmsTemplate emailServiceTemplate;
 
-    //@Resource(name="emailServiceQueue")
     private Destination emailServiceDestination;
 
     @SuppressWarnings("unchecked")
@@ -30,6 +27,8 @@ public class EmailServiceProducer {
         emailServiceTemplate.send(emailServiceDestination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 ObjectMessage message = session.createObjectMessage(props);
+                EmailInfo info = (EmailInfo) props.get("info");
+                message.setJMSPriority(Integer.parseInt(info.getSendAsyncPriority()));
                 return message;
             }
         });
