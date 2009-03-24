@@ -50,7 +50,7 @@ public class OfferServiceImpl implements OfferService {
     	List<Offer> qualifiedOrderOffers = new ArrayList<Offer>();
     	List<ItemOffer> qualifiedItemOffers = new ArrayList<ItemOffer>();
     	order.removeAllOffers();
-    	order.setCandaditeOffers(new ArrayList<Offer>());
+    	order.setCandidateOffers(new ArrayList<Offer>());
     	order = pricingService.calculateOrderTotal(order);
     	List<Offer> offersWithValidDates = removeOutOfDateOffers(offers);    	
     	if (offersWithValidDates != null) {
@@ -91,7 +91,7 @@ public class OfferServiceImpl implements OfferService {
 			//
 			// . Add offers that could be used on the order to the order.candidateOffers and item.candidateOffers lists respectively
 			//
-			order.setCandaditeOffers(qualifiedOrderOffers);
+			order.setCandidateOffers(qualifiedOrderOffers);
 			for (OrderItem orderItem : order.getOrderItems()) {
 				orderItem.setCandidateItemOffers(qualifiedItemOffers);
 			}
@@ -106,26 +106,27 @@ public class OfferServiceImpl implements OfferService {
 						if(itemOffer.getDiscountedPrice().greaterThan(orderItem.getSalePrice())){
 							// TODO: ----- If the offer requires other items, check to see if the items are still unmarked
 							if(requiresMultipleSkus(itemOffer)){
-								// ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
-								if(!orderItem.isMarkedForOffer() ||
-										(orderItem.isMarkedForOffer() && itemOffer.getOffer().isApplyDiscountToMarkedItems())){
-									//----- If the item already has a discount 
-									if(orderItem.isMarkedForOffer()){
-										
-										//  and this offer is stackable, apply on top of the existing offer
-										if(itemOffer.getOffer().isStackable()){
-											//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-											applyItemOffer(orderItem,itemOffer);
-										}
-										// and this offer is not-stackable, don't apply
-											
-									}else{
+								// TODO: apply offer to other skus
+							}
+							// ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
+							if(!orderItem.isMarkedForOffer() ||
+									(orderItem.isMarkedForOffer() && itemOffer.getOffer().isApplyDiscountToMarkedItems())){
+								//----- If the item already has a discount 
+								if(orderItem.isMarkedForOffer()){
+									
+									//  and this offer is stackable, apply on top of the existing offer
+									if(itemOffer.getOffer().isStackable()){
 										//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
 										applyItemOffer(orderItem,itemOffer);
 									}
-									
-								}								
-							}
+									// and this offer is not-stackable, don't apply
+										
+								}else{
+									//----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+									applyItemOffer(orderItem,itemOffer);
+								}
+								
+							}								
 						}
 					}
 				}
