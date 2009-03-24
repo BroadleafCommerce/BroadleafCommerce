@@ -63,7 +63,7 @@ public class OrderServiceTest extends BaseTest {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
 
-        Order order = soService.findCurrentCartForCustomer(customer);
+        Order order = soService.createCurrentCartForCustomer(customer);
         assert order != null;
         assert order.getId() != null;
         this.order = order;
@@ -75,7 +75,7 @@ public class OrderServiceTest extends BaseTest {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
 
-        Order order = soService.findCurrentCartForCustomer(customer);
+        Order order = soService.createCurrentCartForCustomer(customer);
         assert order != null;
         assert order.getId() != null;
         assert order.getId().equals(this.order.getId());
