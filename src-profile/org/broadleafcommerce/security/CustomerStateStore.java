@@ -15,7 +15,7 @@ public class CustomerStateStore implements PostLoginObserver {
     @Resource
     private CustomerService customerService;
 
-    public void process(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
+    public void processPostLogin(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         Customer customer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
         CustomerState.setCustomer(customer, request);
     }

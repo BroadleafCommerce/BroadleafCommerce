@@ -7,5 +7,5 @@ import org.springframework.security.Authentication;
 
 public interface PreLogoutObserver {
 
-    public void process(HttpServletRequest request, HttpServletResponse response, Authentication authResult);
+    public void processPreLogout(HttpServletRequest request, HttpServletResponse response, Authentication authResult);
 }
