@@ -26,7 +26,7 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
     private static final Log LOG = LogFactory.getLog(EmailTrackingManagerImpl.class);
 
     @Resource
-    EmailReportingDao emailReportingDao;
+    protected EmailReportingDao emailReportingDao;
 
     /* (non-Javadoc)
      * @see com.containerstore.web.task.service.EmailTrackingManager#createTrackedEmail(java.lang.String, java.lang.String, java.lang.String)

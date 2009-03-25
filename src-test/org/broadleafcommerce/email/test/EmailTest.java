@@ -3,7 +3,6 @@ package org.broadleafcommerce.email.test;
 import java.util.HashMap;
 
 import javax.annotation.Resource;
-import javax.mail.internet.MimeMessage;
 
 import org.broadleafcommerce.email.domain.AbstractEmailTarget;
 import org.broadleafcommerce.email.domain.EmailTarget;

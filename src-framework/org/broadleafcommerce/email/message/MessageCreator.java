@@ -9,6 +9,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.tools.generic.NumberTool;
 import org.broadleafcommerce.email.domain.EmailTarget;
 import org.broadleafcommerce.email.info.EmailInfo;
+import org.broadleafcommerce.email.info.ServerInfo;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -31,6 +32,7 @@ public class MessageCreator {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 EmailTarget emailUser = (EmailTarget) props.get("user");
                 EmailInfo info = (EmailInfo) props.get("info");
+                ServerInfo serverInfo = (ServerInfo) props.get("serverInfo");
                 MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
                 message.setTo(emailUser.getEmailAddress());
                 message.setFrom(info.getFromAddress());
@@ -44,6 +46,7 @@ public class MessageCreator {
                 //TODO: need a way to configure the Velocity Tools more generically
                 HashMap copy = (HashMap) props.clone();
                 copy.put("number", new NumberTool());
+                copy.put("serverInfo", serverInfo);
                 String text = VelocityEngineUtils.mergeTemplateIntoString(velocityEngine, info.getEmailTemplate(), copy);
                 message.setText(text, true);
             }
