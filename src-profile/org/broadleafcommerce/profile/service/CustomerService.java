@@ -7,6 +7,8 @@ public interface CustomerService {
 
     public Customer saveCustomer(Customer customer);
 
+    public Customer registerCustomer(Customer customer);
+
     public Customer readCustomerByUsername(String customerName);
 
     public Customer readCustomerByEmail(String emailAddress);

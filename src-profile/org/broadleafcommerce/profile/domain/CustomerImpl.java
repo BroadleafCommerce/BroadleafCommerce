@@ -49,6 +49,9 @@ public class CustomerImpl implements Customer, Serializable {
     @Column(name = "RECEIVE_EMAIL")
     private boolean receiveEmail = true;
 
+    @Column(name = "IS_REGISTERED")
+    private boolean registered = false;
+
     @Transient
     private boolean authenticated = false;
 
@@ -143,11 +146,19 @@ public class CustomerImpl implements Customer, Serializable {
         this.receiveEmail = receiveEmail;
     }
 
-	public boolean isAuthenticated() {
-		return authenticated;
-	}
+    public boolean isRegistered() {
+        return registered;
+    }
 
-	public void setAuthenticated(boolean authenticated) {
-		this.authenticated = authenticated;
-	}
+    public void setRegistered(boolean registered) {
+        this.registered = registered;
+    }
+
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
+    }
 }
