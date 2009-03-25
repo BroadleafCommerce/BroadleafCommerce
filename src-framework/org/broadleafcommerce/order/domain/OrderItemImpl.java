@@ -2,7 +2,6 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -71,7 +70,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Transient
     // TODO: Need to persist this
     private List<ItemOffer> candidateItemOffers;
-    
+
     @Transient
     private boolean markedForOffer;
 
@@ -140,41 +139,41 @@ public class OrderItemImpl implements OrderItem, Serializable {
     }
 
     public Product getProduct() {
-		return product;
-	}
+        return product;
+    }
 
-	public void setProduct(Product product) {
-		this.product = product;
-	}
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 
-	public Category getCategory() {
-		return category;
-	}
+    public Category getCategory() {
+        return category;
+    }
 
-	public void setCategory(Category category) {
-		this.category = category;
-	}
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
-	public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer) {
-    	// TODO: if stacked, add all of the items to the persisted structure and add just the stacked version
-    	//       to this collection
+    public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer) {
+        // TODO: if stacked, add all of the items to the persisted structure and add just the stacked version
+        //       to this collection
         this.candidateItemOffers.add(candidateOffer);
         return candidateItemOffers;
     }
 
     public void removeAllOffers() {
-    	if (candidateItemOffers != null) {
-    		candidateItemOffers.clear();
-    	}
+        if (candidateItemOffers != null) {
+            candidateItemOffers.clear();
+        }
     }
 
-	public boolean isMarkedForOffer() {
-		return markedForOffer;
-	}
+    public boolean isMarkedForOffer() {
+        return markedForOffer;
+    }
 
-	public void setMarkedForOffer(boolean markedForOffer) {
-		this.markedForOffer = markedForOffer;
-	}
+    public void setMarkedForOffer(boolean markedForOffer) {
+        this.markedForOffer = markedForOffer;
+    }
 
-    
+
 }
