@@ -38,10 +38,18 @@ public class CustomerServiceImpl implements CustomerService {
     // private SaltSource saltSource;
 
     public Customer saveCustomer(Customer customer) {
+        if (!customer.isRegistered()) {
+            customer.setRegistered(true);
+        }
         if (customer.getUnencodedPassword() != null) {
             customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), null));
         }
         return customerDao.maintainCustomer(customer);
+    }
+
+    public Customer registerCustomer(Customer customer) {
+        customer.setRegistered(true);
+        return saveCustomer(customer);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
