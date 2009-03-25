@@ -56,7 +56,7 @@ public class EmailOpenTrackingServlet extends HttpServlet {
                 LOG.debug("service() => Recording Open for Email[" + emailId + "]");
             }
             WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-            EmailTrackingManager emailTrackingManager = (EmailTrackingManager) context.getBean("emailTrackingManager");
+            EmailTrackingManager emailTrackingManager = (EmailTrackingManager) context.getBean("emailTrackingManagerBLC");
             emailTrackingManager.recordOpen(emailId, request);
         }
 

@@ -2,6 +2,7 @@ package org.broadleafcommerce.email.jms;
 
 import java.util.HashMap;
 
+import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -20,6 +21,7 @@ import org.springframework.mail.MailSendException;
  */
 public class EmailServiceMDP implements MessageListener {
 
+	@Resource
     private MessageCreator messageCreator;
 
     /* (non-Javadoc)

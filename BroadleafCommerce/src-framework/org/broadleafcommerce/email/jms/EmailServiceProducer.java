@@ -33,4 +33,33 @@ public class EmailServiceProducer {
             }
         });
     }
+
+	/**
+	 * @return the emailServiceTemplate
+	 */
+	public JmsTemplate getEmailServiceTemplate() {
+		return emailServiceTemplate;
+	}
+
+	/**
+	 * @param emailServiceTemplate the emailServiceTemplate to set
+	 */
+	public void setEmailServiceTemplate(JmsTemplate emailServiceTemplate) {
+		this.emailServiceTemplate = emailServiceTemplate;
+	}
+
+	/**
+	 * @return the emailServiceDestination
+	 */
+	public Destination getEmailServiceDestination() {
+		return emailServiceDestination;
+	}
+
+	/**
+	 * @param emailServiceDestination the emailServiceDestination to set
+	 */
+	public void setEmailServiceDestination(Destination emailServiceDestination) {
+		this.emailServiceDestination = emailServiceDestination;
+	}
+    
 }
