@@ -23,7 +23,7 @@ import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
-import org.broadleafcommerce.offer.domain.ItemOffer;
+import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -69,8 +69,8 @@ public class OrderItemImpl implements OrderItem, Serializable {
 
     @Transient
     // TODO: Need to persist this
-    private List<ItemOffer> candidateItemOffers;
-
+    private List<CandidateItemOffer> candidateItemOffers;
+    
     @Transient
     private boolean markedForOffer;
 
@@ -130,50 +130,50 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.quantity = quantity;
     }
 
-    public List<ItemOffer> getCandidateItemOffers() {
+    public List<CandidateItemOffer> getCandidateItemOffers() {
         return candidateItemOffers;
     }
 
-    public void setCandidateItemOffers(List<ItemOffer> itemOffers) {
+    public void setCandidateItemOffers(List<CandidateItemOffer> itemOffers) {
         this.candidateItemOffers = itemOffers;
     }
 
     public Product getProduct() {
-        return product;
-    }
+		return product;
+	}
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 
-    public Category getCategory() {
-        return category;
-    }
+	public Category getCategory() {
+		return category;
+	}
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 
-    public List<ItemOffer> addCandidateItemOffer(ItemOffer candidateOffer) {
-        // TODO: if stacked, add all of the items to the persisted structure and add just the stacked version
-        //       to this collection
+	public List<CandidateItemOffer> addCandidateItemOffer(CandidateItemOffer candidateOffer) {
+    	// TODO: if stacked, add all of the items to the persisted structure and add just the stacked version
+    	//       to this collection
         this.candidateItemOffers.add(candidateOffer);
         return candidateItemOffers;
     }
 
     public void removeAllOffers() {
-        if (candidateItemOffers != null) {
-            candidateItemOffers.clear();
-        }
+    	if (candidateItemOffers != null) {
+    		candidateItemOffers.clear();
+    	}
     }
 
-    public boolean isMarkedForOffer() {
-        return markedForOffer;
-    }
+	public boolean isMarkedForOffer() {
+		return markedForOffer;
+	}
 
-    public void setMarkedForOffer(boolean markedForOffer) {
-        this.markedForOffer = markedForOffer;
-    }
+	public void setMarkedForOffer(boolean markedForOffer) {
+		this.markedForOffer = markedForOffer;
+	}
 
-
+    
 }
