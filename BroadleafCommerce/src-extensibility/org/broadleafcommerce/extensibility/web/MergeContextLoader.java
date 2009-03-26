@@ -49,6 +49,18 @@ public class MergeContextLoader extends ContextLoader {
 	 * that can specify the config location for the root context.
 	 */
 	public static final String PATCH_LOCATION_PARAM = "patchConfigLocation";
+	
+	/**
+	 * Name of a bean to hook before Spring shutdown for this
+	 * context commences.
+	 */
+	public static final String SHUTDOWN_HOOK_BEAN = "shutdownHookBean";
+	
+	/**
+	 * Name of method to call on the shutdown hook bean before
+	 * Spring shutdown for this context commences
+	 */
+	public static final String SHUTDOWN_HOOK_METHOD = "shutdownHookMethod";
 
 	/**
 	 * Instantiate the root WebApplicationContext for this loader, either the
@@ -70,6 +82,8 @@ public class MergeContextLoader extends ContextLoader {
 		wac.setServletContext(servletContext);
 		wac.setConfigLocation(servletContext.getInitParameter(CONFIG_LOCATION_PARAM));
 		wac.setPatchLocation(servletContext.getInitParameter(PATCH_LOCATION_PARAM));
+		wac.setShutdownBean(servletContext.getInitParameter(SHUTDOWN_HOOK_BEAN));
+		wac.setShutdownMethod(servletContext.getInitParameter(SHUTDOWN_HOOK_METHOD));
 		customizeContext(servletContext, wac);
 		wac.refresh();
 
