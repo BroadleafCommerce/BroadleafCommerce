@@ -4,8 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.extensibility.context.MergeApplicationContextXmlConfigResource;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
@@ -46,7 +50,11 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
  */
 public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 
+	private static final Log LOG = LogFactory.getLog(MergeXmlWebApplicationContext.class);
+	
 	private String patchLocation;
+	private String shutdownBean;
+	private String shutdownMethod;
 
 	/**
 	 * Load the bean definitions with the given XmlBeanDefinitionReader.
@@ -111,6 +119,31 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 		
 		return response;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.springframework.context.support.AbstractApplicationContext#doClose()
+	 */
+	@Override
+	protected void doClose() {
+		if (getShutdownBean() != null && getShutdownMethod() != null) {
+			Object shutdownBean = getBean(getShutdownBean());
+			try {
+				Method shutdownMethod = shutdownBean.getClass().getMethod(getShutdownMethod(), new Class[]{});
+				shutdownMethod.invoke(shutdownBean, new Object[]{});
+			} catch (SecurityException e) {
+				LOG.error("Unable to execute custom shutdown call", e);
+			} catch (IllegalArgumentException e) {
+				LOG.error("Unable to execute custom shutdown call", e);
+			} catch (NoSuchMethodException e) {
+				LOG.error("Unable to execute custom shutdown call", e);
+			} catch (IllegalAccessException e) {
+				LOG.error("Unable to execute custom shutdown call", e);
+			} catch (InvocationTargetException e) {
+				LOG.error("Unable to execute custom shutdown call", e);
+			}
+		}
+		super.doClose();
+	}
 
 	/**
 	 * @return the patchLocation
@@ -124,6 +157,34 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 	 */
 	public void setPatchLocation(String patchLocation) {
 		this.patchLocation = patchLocation;
+	}
+
+	/**
+	 * @return the shutdownBean
+	 */
+	public String getShutdownBean() {
+		return shutdownBean;
+	}
+
+	/**
+	 * @param shutdownBean the shutdownBean to set
+	 */
+	public void setShutdownBean(String shutdownBean) {
+		this.shutdownBean = shutdownBean;
+	}
+
+	/**
+	 * @return the shutdownMethod
+	 */
+	public String getShutdownMethod() {
+		return shutdownMethod;
+	}
+
+	/**
+	 * @param shutdownMethod the shutdownMethod to set
+	 */
+	public void setShutdownMethod(String shutdownMethod) {
+		this.shutdownMethod = shutdownMethod;
 	}
 
 }
