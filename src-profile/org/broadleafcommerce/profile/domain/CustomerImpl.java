@@ -58,6 +58,9 @@ public class CustomerImpl implements Customer, Serializable {
     @Transient
     private String unencodedPassword;
 
+    @Transient
+    private String unencodedChallengeAnswer;
+
     public Long getId() {
         return id;
     }
@@ -160,5 +163,13 @@ public class CustomerImpl implements Customer, Serializable {
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
+    }
+
+    public String getUnencodedChallengeAnswer() {
+        return unencodedChallengeAnswer;
+    }
+
+    public void setUnencodedChallengeAnswer(String unencodedChallengeAnswer) {
+        this.unencodedChallengeAnswer = unencodedChallengeAnswer;
     }
 }

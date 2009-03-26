@@ -44,6 +44,11 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getUnencodedPassword() != null) {
             customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), null));
         }
+
+        // let's make sure they entered a new challenge answer (we will populate the password field with hashed values so check that they have changed id
+        if (customer.getUnencodedChallengeAnswer() != null && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
+            customer.setChallengeAnswer(passwordEncoder.encodePassword(customer.getUnencodedChallengeAnswer(), null));
+        }
         return customerDao.maintainCustomer(customer);
     }
 
