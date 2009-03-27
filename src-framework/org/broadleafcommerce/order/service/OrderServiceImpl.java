@@ -266,6 +266,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    public Order removeItemFromOrder(Order order, long orderItemId) {
+    	OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
+    	if(orderItem == null) {
+    		return null;
+    	}
+    	orderItemDao.deleteOrderItem(orderItem);
+    	pricingService.calculateOrderTotal(order);
+    	return order;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public Order removeItemFromOrder(Order order, OrderItem item) {
         orderItemDao.deleteOrderItem(item);
         pricingService.calculateOrderTotal(order);

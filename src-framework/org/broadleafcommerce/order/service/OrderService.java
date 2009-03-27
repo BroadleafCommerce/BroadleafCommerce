@@ -48,6 +48,8 @@ public interface OrderService {
 
     public Order removeItemFromOrder(Order order, OrderItem item);
 
+    public Order removeItemFromOrder(Order order, long orderItemId);
+
     public Order addOfferToOrder(Order order, String offerCode);
 
     public Order removeOfferFromOrder(Order order, Offer offer);
@@ -55,4 +57,5 @@ public interface OrderService {
     public Order confirmOrder(Order order);
 
     public void cancelOrder(Order order);
+
 }
