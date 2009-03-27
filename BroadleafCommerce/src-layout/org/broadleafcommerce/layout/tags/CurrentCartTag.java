@@ -40,7 +40,7 @@ public class CurrentCartTag extends BodyTagSupport {
         	pageContext.setAttribute(orderVar, order);
         }
         List<OrderItem> orderItems = null;
-        if (orderItemsVar != null || totalQuantityVar != null && order != null) {
+        if ((orderItemsVar != null || totalQuantityVar != null) && order != null) {
         	orderItems = orderService.findItemsForOrder(order);
         	if (orderItemsVar != null) {
         		pageContext.setAttribute(orderItemsVar, orderItems);
