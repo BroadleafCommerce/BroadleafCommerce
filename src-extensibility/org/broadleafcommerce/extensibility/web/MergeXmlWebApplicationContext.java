@@ -126,19 +126,11 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
 	@Override
 	protected void doClose() {
 		if (getShutdownBean() != null && getShutdownMethod() != null) {
-			Object shutdownBean = getBean(getShutdownBean());
 			try {
+				Object shutdownBean = getBean(getShutdownBean());
 				Method shutdownMethod = shutdownBean.getClass().getMethod(getShutdownMethod(), new Class[]{});
 				shutdownMethod.invoke(shutdownBean, new Object[]{});
-			} catch (SecurityException e) {
-				LOG.error("Unable to execute custom shutdown call", e);
-			} catch (IllegalArgumentException e) {
-				LOG.error("Unable to execute custom shutdown call", e);
-			} catch (NoSuchMethodException e) {
-				LOG.error("Unable to execute custom shutdown call", e);
-			} catch (IllegalAccessException e) {
-				LOG.error("Unable to execute custom shutdown call", e);
-			} catch (InvocationTargetException e) {
+			} catch (Throwable e) {
 				LOG.error("Unable to execute custom shutdown call", e);
 			}
 		}
