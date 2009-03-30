@@ -33,6 +33,10 @@ public class ContactInfoImpl implements ContactInfo, Serializable {
     @JoinColumn(name = "CUSTOMER_ID")
     private Customer customer;
 
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class)
+    @JoinColumn(name = "ADDRESS_ID")
+    private Address address;
+
     @Column(name = "PRIMARY_PHONE")
     private String primaryPhone;
 
@@ -59,6 +63,14 @@ public class ContactInfoImpl implements ContactInfo, Serializable {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public String getPrimaryPhone() {
