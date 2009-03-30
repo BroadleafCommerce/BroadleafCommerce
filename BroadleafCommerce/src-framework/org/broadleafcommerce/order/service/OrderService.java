@@ -11,14 +11,13 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OrderService {
 
     public Order findCurrentCartForCustomer(Customer customer);
 
-	public Order createCurrentCartForCustomer(Customer customer);
+    public Order createCurrentCartForCustomer(Customer customer);
 
     public FulfillmentGroupImpl findDefaultFulfillmentGroupForOrder(Order order);
 
@@ -27,8 +26,6 @@ public interface OrderService {
     public List<Order> findOrdersForCustomer(Customer customer);
 
     public List<OrderItem> findItemsForOrder(Order order);
-
-    public Order addContactInfoToOrder(Order order, ContactInfo contactInfo);
 
     public OrderItem addItemToOrder(Order order, Sku item, int quantity);
 

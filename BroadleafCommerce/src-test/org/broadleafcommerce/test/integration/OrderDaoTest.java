@@ -6,8 +6,6 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.dao.OrderDaoJpa;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.profile.dao.ContactInfoDaoJpa;
-import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.OrderDataProvider;
@@ -25,18 +23,13 @@ public class OrderDaoTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Resource
-    private ContactInfoDaoJpa contactInfoDao;
-
-    @Test(groups = { "createOrder" }, dataProvider = "basicOrder", dataProviderClass = OrderDataProvider.class, dependsOnGroups = { "readCustomer1", "createContactInfo" })
+    @Test(groups = { "createOrder" }, dataProvider = "basicOrder", dataProviderClass = OrderDataProvider.class, dependsOnGroups = { "readCustomer1", "createPhone" })
     @Rollback(false)
     public void createOrder(Order order) {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
-        ContactInfo ci = (contactInfoDao.readContactInfoByUserId(customer.getId())).get(0);
         assert order.getId() == null;
         order.setCustomer(customer);
-        order.setContactInfo(ci);
         order = orderDao.maintianOrder(order);
         assert order.getId() != null;
         orderId = order.getId();

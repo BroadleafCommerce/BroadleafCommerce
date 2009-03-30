@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.type.OrderType;
 import org.broadleafcommerce.util.money.Money;
@@ -35,10 +34,6 @@ public interface Order {
 
     public void setCustomer(Customer customer);
 
-    public ContactInfo getContactInfo();
-
-    public void setContactInfo(ContactInfo contactInfo);
-
     public OrderType getType();
 
     public void setType(OrderType type);
@@ -58,8 +53,8 @@ public interface Order {
     public void addCandidateOffer(Offer offer);
 
     public void removeAllOffers();
-    
+
     public boolean isMarkedForOffer();
-    
+
     public void setMarkedForOffer(boolean markForOffer);
 }

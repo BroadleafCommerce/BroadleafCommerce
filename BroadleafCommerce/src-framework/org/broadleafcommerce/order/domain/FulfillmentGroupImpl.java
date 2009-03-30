@@ -24,6 +24,8 @@ import org.broadleafcommerce.offer.domain.OfferAuditImpl;
 import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
+import org.broadleafcommerce.profile.domain.Phone;
+import org.broadleafcommerce.profile.domain.PhoneImpl;
 import org.broadleafcommerce.type.FulfillmentGroupType;
 import org.broadleafcommerce.util.money.Money;
 
@@ -52,6 +54,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @ManyToOne(targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
+
+    @ManyToOne(targetEntity = PhoneImpl.class)
+    @JoinColumn(name = "PHONE_ID")
+    private Phone phone;
 
     @Column(name = "METHOD")
     private String method;
@@ -117,6 +123,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Override
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public Phone getPhone() {
+        return phone;
+    }
+
+    public void setPhone(Phone phone) {
+        this.phone = phone;
     }
 
     @Override
@@ -203,8 +217,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     }
 
     public void removeAllOffers() {
-    	if (candidateOffers != null) {
-    		candidateOffers.clear();
-    	}
+        if (candidateOffers != null) {
+            candidateOffers.clear();
+        }
     }
 }

@@ -3,8 +3,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<named-query name="BC_READ_CONTACT_INFO_BY_CUSTOMER_ID" >
-		<query>SELECT contactInfo FROM org.broadleafcommerce.profile.domain.ContactInfo contactInfo
-		WHERE contactInfo.customer.id = :customerId</query>
+	<named-query name="BC_READ_PHONE_BY_CUSTOMER_ID" >
+		<query>SELECT phone FROM org.broadleafcommerce.profile.domain.Phone phone
+		WHERE phone.customer.id = :customerId</query>
 	</named-query>
 </entity-mappings>

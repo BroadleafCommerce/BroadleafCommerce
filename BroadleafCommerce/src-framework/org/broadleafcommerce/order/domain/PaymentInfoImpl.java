@@ -15,6 +15,8 @@ import javax.persistence.Table;
 
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
+import org.broadleafcommerce.profile.domain.Phone;
+import org.broadleafcommerce.profile.domain.PhoneImpl;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -36,6 +38,10 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @ManyToOne(targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
+
+    @ManyToOne(targetEntity = PhoneImpl.class)
+    @JoinColumn(name = "PHONE_ID")
+    private Phone phone;
 
     // TODO: This needs to be changed to type Money
     @Column(name = "AMOUNT")
@@ -76,6 +82,14 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public Phone getPhone() {
+        return phone;
+    }
+
+    public void setPhone(Phone phone) {
+        this.phone = phone;
     }
 
     public String getReferenceNumber() {

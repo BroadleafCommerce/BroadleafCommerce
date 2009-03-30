@@ -9,7 +9,6 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,8 +25,6 @@ import javax.persistence.Transient;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferImpl;
-import org.broadleafcommerce.profile.domain.ContactInfo;
-import org.broadleafcommerce.profile.domain.ContactInfoImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.type.OrderType;
@@ -56,11 +53,6 @@ public class OrderImpl implements Order, Serializable {
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;
-	
-	//TODO: changed FetchType to lazy because table did not exist yet; this should be revisited
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = ContactInfoImpl.class)
-    @JoinColumn(name = "CONTACT_INFO_ID")
-    private ContactInfo contactInfo;
 
     @Column(name = "ORDER_STATUS")
     private String status;
@@ -82,7 +74,7 @@ public class OrderImpl implements Order, Serializable {
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
     private List<Offer> candidateOffers;
-    
+
     @Transient
     private boolean markedForOffer;
 
@@ -138,14 +130,6 @@ public class OrderImpl implements Order, Serializable {
         this.customer = customer;
     }
 
-    public ContactInfo getContactInfo() {
-        return contactInfo;
-    }
-
-    public void setContactInfo(ContactInfo contactInfo) {
-        this.contactInfo = contactInfo;
-    }
-
     public OrderType getType() {
         return type;
     }
@@ -181,31 +165,31 @@ public class OrderImpl implements Order, Serializable {
     }
 
 
-	@Override
-	public void removeAllOffers() {
-		if (candidateOffers != null) {
-    		candidateOffers.clear();
-    	}
-		if (getOrderItems() != null) {
-			for (OrderItem item : getOrderItems()) {
-				item.removeAllOffers();
-			}
-		}
+    @Override
+    public void removeAllOffers() {
+        if (candidateOffers != null) {
+            candidateOffers.clear();
+        }
+        if (getOrderItems() != null) {
+            for (OrderItem item : getOrderItems()) {
+                item.removeAllOffers();
+            }
+        }
 
-		if (getFulfillmentGroups() != null) {
-			for (FulfillmentGroup fg : getFulfillmentGroups()) {
-				fg.removeAllOffers();
-			}
-		}
-	}
+        if (getFulfillmentGroups() != null) {
+            for (FulfillmentGroup fg : getFulfillmentGroups()) {
+                fg.removeAllOffers();
+            }
+        }
+    }
 
-	public boolean isMarkedForOffer() {
-		return markedForOffer;
-	}
+    public boolean isMarkedForOffer() {
+        return markedForOffer;
+    }
 
-	public void setMarkedForOffer(boolean markedForOffer) {
-		this.markedForOffer = markedForOffer;
-	}
-	
-	
+    public void setMarkedForOffer(boolean markedForOffer) {
+        this.markedForOffer = markedForOffer;
+    }
+
+
 }

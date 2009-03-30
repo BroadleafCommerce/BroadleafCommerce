@@ -24,8 +24,6 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.dao.AddressDao;
-import org.broadleafcommerce.profile.dao.ContactInfoDao;
-import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.type.FulfillmentGroupType;
 import org.springframework.stereotype.Service;
@@ -51,9 +49,6 @@ public class OrderServiceImpl implements OrderService {
     private FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
     @Resource
-    private ContactInfoDao contactInfoDao;
-
-    @Resource
     private AddressDao addressDao;
 
     @Resource
@@ -61,12 +56,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findCurrentCartForCustomer(Customer customer) {
-    	return orderDao.readCartOrdersForCustomer(customer, false);
+        return orderDao.readCartOrdersForCustomer(customer, false);
     }
 
     @Override
     public Order createCurrentCartForCustomer(Customer customer) {
-    	return orderDao.readCartOrdersForCustomer(customer, true);
+        return orderDao.readCartOrdersForCustomer(customer, true);
     }
 
     @Override
@@ -103,20 +98,10 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderItem> findItemsForOrder(Order order) {
         List<OrderItem> result = orderItemDao.readOrderItemsForOrder(order);
         // TODO
-        //        for (OrderItem oi : result) {
-        //            oi.getSku().getItemAttributes();
-        //        }
+        // for (OrderItem oi : result) {
+        // oi.getSku().getItemAttributes();
+        // }
         return result;
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Order addContactInfoToOrder(Order order, ContactInfo contactInfo) {
-        if (contactInfo.getId() == null) {
-            contactInfoDao.maintainContactInfo(contactInfo);
-        }
-        order.setContactInfo(contactInfo);
-        return maintainOrder(order);
     }
 
     @Override
@@ -128,21 +113,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public OrderItem addItemToOrder(Order order, Sku item, Product product, Category category, int quantity) {
-    	OrderItem orderItem = null;
-    	List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
-    	for (OrderItem orderItem2 : orderItems) {
-    		if (orderItem2.getSku().getId().equals(item.getId()))
-    			orderItem = orderItem2;
-    	}
-    	if (orderItem == null)
-    		// orderItem = new OrderItem();
-    		orderItem = orderItemDao.create();
-    	orderItem.setProduct(product);
-    	orderItem.setCategory(category);
-    	orderItem.setSku(item);
-    	orderItem.setQuantity(orderItem.getQuantity() + quantity);
-    	orderItem.setOrder(order);
-    	return maintainOrderItem(orderItem);
+        OrderItem orderItem = null;
+        List<OrderItem> orderItems = orderItemDao.readOrderItemsForOrder(order);
+        for (OrderItem orderItem2 : orderItems) {
+            if (orderItem2.getSku().getId().equals(item.getId()))
+                orderItem = orderItem2;
+        }
+        if (orderItem == null)
+            // orderItem = new OrderItem();
+            orderItem = orderItemDao.create();
+        orderItem.setProduct(product);
+        orderItem.setCategory(category);
+        orderItem.setSku(item);
+        orderItem.setQuantity(orderItem.getQuantity() + quantity);
+        orderItem.setOrder(order);
+        return maintainOrderItem(orderItem);
     }
 
     @Override
@@ -267,13 +252,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Order removeItemFromOrder(Order order, long orderItemId) {
-    	OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
-    	if(orderItem == null) {
-    		return null;
-    	}
-    	orderItemDao.deleteOrderItem(orderItem);
-    	pricingService.calculateOrderTotal(order);
-    	return order;
+        OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
+        if (orderItem == null) {
+            return null;
+        }
+        orderItemDao.deleteOrderItem(orderItem);
+        pricingService.calculateOrderTotal(order);
+        return order;
     }
 
     @Override
