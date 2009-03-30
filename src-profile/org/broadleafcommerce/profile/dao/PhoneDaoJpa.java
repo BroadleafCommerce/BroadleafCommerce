@@ -9,12 +9,12 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.ContactInfo;
+import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("contactInfoDao")
-public class ContactInfoDaoJpa implements ContactInfoDao {
+@Repository("phoneDao")
+public class PhoneDaoJpa implements PhoneDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
@@ -25,24 +25,24 @@ public class ContactInfoDaoJpa implements ContactInfoDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    public ContactInfo maintainContactInfo(ContactInfo contactInfo) {
-        if (contactInfo.getId() == null) {
-            em.persist(contactInfo);
+    public Phone maintainPhone(Phone phone) {
+        if (phone.getId() == null) {
+            em.persist(phone);
         } else {
-            contactInfo = em.merge(contactInfo);
+            phone = em.merge(phone);
         }
-        return contactInfo;
+        return phone;
     }
 
     @SuppressWarnings("unchecked")
-    public List<ContactInfo> readContactInfoByUserId(Long customerId) {
-        Query query = em.createNamedQuery("BC_READ_CONTACT_INFO_BY_CUSTOMER_ID");
+    public List<Phone> readPhoneByUserId(Long customerId) {
+        Query query = em.createNamedQuery("BC_READ_PHONE_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    public ContactInfo readContactInfoById(Long contactId) {
-        return (ContactInfo) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.ContactInfo"), contactId);
+    public Phone readPhoneById(Long phoneId) {
+        return (Phone) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Phone"), phoneId);
     }
 }

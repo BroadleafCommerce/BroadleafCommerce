@@ -18,9 +18,7 @@ import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.dao.AddressDaoJpa;
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.ContactInfo;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.ContactInfoService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.test.dataprovider.PaymentInfoDataProvider;
@@ -46,9 +44,6 @@ public class OrderServiceTest extends BaseTest {
     private CustomerService customerService;
 
     @Resource
-    private ContactInfoService contactService;
-
-    @Resource
     private SkuDaoJpa skuDao;
 
     @Resource
@@ -57,7 +52,7 @@ public class OrderServiceTest extends BaseTest {
     @Resource
     FulfillmentGroupDaoJpa fulfillmentGroupDao;
 
-    @Test(groups = { "findCurrentCartForCustomerBeforeCreation" }, dependsOnGroups = { "readCustomer1", "createContactInfo" })
+    @Test(groups = { "findCurrentCartForCustomerBeforeCreation" }, dependsOnGroups = { "readCustomer1", "createPhone" })
     @Rollback(false)
     public void findCurrentCartForCustomerBeforeCreation() {
         String userName = "customer1";
@@ -80,16 +75,6 @@ public class OrderServiceTest extends BaseTest {
         assert order.getId() != null;
         assert order.getId().equals(this.order.getId());
         this.order = order;
-    }
-
-    @Test(groups = { "addContactInfoToOrder" }, dependsOnGroups = { "findCurrentCartForCustomerBeforeCreation" })
-    public void addContactInfoToOrder() {
-        ContactInfo contactInfo = (contactService.readContactInfoByUserId(order.getCustomer().getId())).get(0);
-        assert contactInfo.getId() != null;
-        Order order = soService.addContactInfoToOrder(this.order, contactInfo);
-        assert order != null;
-        assert order.getContactInfo() != null;
-        assert order.getContactInfo().getId().equals(contactInfo.getId());
     }
 
     @Test(groups = { "addItemToOrder" }, dependsOnGroups = { "findCurrentCartForCustomerAfterCreation", "createSku" })

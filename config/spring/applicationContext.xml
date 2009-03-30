@@ -14,7 +14,7 @@
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 	<context:component-scan base-package="org.broadleafcommerce" />
-	
+
 	<bean id="serverInfo" class="org.broadleafcommerce.email.info.ServerInfo">
 		<property name="serverName" value="localhost"/>
 		<property name="serverPort" value="8080"/>
@@ -72,8 +72,8 @@
 	</aop:config>
 
 	<aop:config>
-		<aop:pointcut id="contactInfoServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.ContactInfoService.*(..))"/>
-	    <aop:advisor advice-ref="txAdvice" pointcut-ref="contactInfoServiceOperation"/>
+		<aop:pointcut id="phoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.PhoneService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="phoneServiceOperation"/>
 	</aop:config>
 
 	<aop:config>
@@ -154,10 +154,10 @@
 	<bean id="org.broadleafcommerce.order.domain.PaymentInfo" class="org.broadleafcommerce.order.domain.PaymentInfoImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.ContactInfo" class="org.broadleafcommerce.profile.domain.ContactInfoImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.IdGeneration" class="org.broadleafcommerce.profile.domain.IdGenerationImpl"/>
+	<bean id="org.broadleafcommerce.profile.domain.Phone" class="org.broadleafcommerce.profile.domain.PhoneImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.SkuImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.StateProvince" class="org.broadleafcommerce.profile.domain.StateProvinceImpl"/>
@@ -165,5 +165,5 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
-	
+
 </beans>
