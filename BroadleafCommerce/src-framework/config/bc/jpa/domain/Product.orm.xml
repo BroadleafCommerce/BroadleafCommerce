@@ -8,6 +8,11 @@
 		WHERE product.name LIKE :name</query>
 	</named-query>
 
+	<named-query name="BC_READ_PRODUCTS_BY_SKU" >
+		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product, IN(product.allSkus) sku
+		WHERE sku.id = :skuId</query>
+	</named-query>
+
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
 		<query>SELECT categoryProductXref.product FROM org.broadleafcommerce.catalog.domain.CategoryProduct categoryProductXref
 		WHERE categoryProductXref.category.id = :categoryId
