@@ -51,4 +51,13 @@ public class ProductDaoJpa implements ProductDao {
         query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
     }
+
+    @SuppressWarnings("unchecked")
+	public List<Product> readProductsBySku(Long skuId) {
+        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU");
+        query.setParameter("skuId", skuId);
+        //TODO externalize this hibernate cache string
+        query.setHint("org.hibernate.cacheable", true);
+        return query.getResultList();
+	}
 }
