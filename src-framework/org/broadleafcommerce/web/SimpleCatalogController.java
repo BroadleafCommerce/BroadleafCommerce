@@ -121,6 +121,7 @@ public class SimpleCatalogController extends AbstractController {
 		if (productPosition == 0) {
 			// look for product in its default category and override category from request URL
 			currentCategory = product.getDefaultCategory();
+			model.put("currentCategory", currentCategory);
 			productList = catalogService.findActiveProductsByCategory(currentCategory);
 			if (productList != null) {
 				model.put("currentProducts", productList);
