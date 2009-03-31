@@ -1,11 +1,18 @@
 package org.broadleafcommerce.profile.service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.service.listener.PostRegistrationObserver;
+import org.broadleafcommerce.profile.service.validator.RegistrationResponse;
+import org.broadleafcommerce.profile.service.validator.RegistrationValidator;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.profile.util.PasswordChange;
 import org.springframework.security.Authentication;
@@ -34,6 +41,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource
     private EntityConfiguration entityConfiguration;
 
+    @Resource
+    private RegistrationValidator registrationValidator;
+
+    private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
+
     // @Resource(name = "saltSource")
     // private SaltSource saltSource;
 
@@ -52,9 +64,16 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDao.maintainCustomer(customer);
     }
 
-    public Customer registerCustomer(Customer customer) {
-        customer.setRegistered(true);
-        return saveCustomer(customer);
+    public RegistrationResponse registerCustomer(Customer customer, String password, String passwordConfirm) {
+        RegistrationResponse response = new RegistrationResponse(customer, customer.getClass().getSimpleName());
+        //        registrationValidator.validate(customer, password, passwordConfirm, response.getErrors());
+        if (!response.hasErrors()) {
+            customer.setRegistered(true);
+            Customer retCustomer = saveCustomer(customer);
+            notifyListeners(retCustomer);
+            response.setCustomer(retCustomer);
+        }
+        return response;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -80,7 +99,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDao.readCustomerByUsername(username);
     }
 
-    @Override
     public Customer readCustomerById(Long id) {
         return customerDao.readCustomerById(id);
     }
@@ -100,5 +118,22 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
         }
         return customer;
+    }
+
+    public void addListener(PostRegistrationObserver postRegisterListeners) {
+        this.postRegisterListeners.add(postRegisterListeners);
+    }
+
+    public void removeListener(PostRegistrationObserver postRegisterListeners) {
+        if (this.postRegisterListeners.contains(postRegisterListeners)) {
+            this.postRegisterListeners.remove(postRegisterListeners);
+        }
+    }
+
+    public void notifyListeners(Customer customer) {
+        for (Iterator<PostRegistrationObserver> iter = postRegisterListeners.iterator(); iter.hasNext();) {
+            PostRegistrationObserver listener = iter.next();
+            listener.processRegistrationEvent(customer);
+        }
     }
 }
