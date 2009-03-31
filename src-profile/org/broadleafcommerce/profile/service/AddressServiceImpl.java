@@ -66,4 +66,8 @@ public class AddressServiceImpl implements AddressService {
     public Country findCountryByShortName(String shortName) {
         return addressDao.findCountryByShortName(shortName);
     }
+
+    public void deleteAddressByIdAndCustomerId(Long addressId, Long customerId){
+        addressDao.deleteAddressByIdAndCustomerId(addressId, customerId);
+    }
 }

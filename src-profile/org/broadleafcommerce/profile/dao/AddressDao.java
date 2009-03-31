@@ -23,4 +23,6 @@ public interface AddressDao {
     public List<Country> findCountries();
 
     public Country findCountryByShortName(String shortName);
+
+    public void deleteAddressByIdAndCustomerId(Long addressId, Long customerId);
 }

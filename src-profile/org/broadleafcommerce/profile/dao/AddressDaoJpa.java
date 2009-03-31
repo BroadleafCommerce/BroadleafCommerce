@@ -48,6 +48,15 @@ public class AddressDaoJpa implements AddressDao {
         return (Address) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Address"), id);
     }
 
+    @SuppressWarnings("unchecked")
+    public Address readAddressByIdAndCustomerId(Long addressId, Long customerId) {
+        Query query = em.createNamedQuery("BC_READ_ADDRESS_BY_ID_AND_CUSTOMER_ID");
+        query.setParameter("customerId", customerId);
+        query.setParameter("addressId", addressId);
+        List<Address> addresses = query.getResultList();
+        return addresses.isEmpty() ? null : addresses.get(0);
+    }
+
     public void makeAddressDefault(Long addressId, Long customerId) {
         List<Address> addresses = readActiveAddressesByCustomerId(customerId);
         for (Address address : addresses) {
@@ -78,5 +87,12 @@ public class AddressDaoJpa implements AddressDao {
         Query query = em.createNamedQuery("BC_FIND_COUNTRIES");
         query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
+    }
+
+    @Override
+    public void deleteAddressByIdAndCustomerId(Long addressId, Long customerId) {
+        // TODO: determine if hard delete or deactivate, and consider throwing exception if read fails
+        Address address = readAddressByIdAndCustomerId(addressId, customerId);
+        em.remove(address.getId());
     }
 }

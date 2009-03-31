@@ -10,6 +10,12 @@
 		ORDER BY address.id</query>
 	</named-query>
 
+	<named-query name="BC_READ_ADDRESS_BY_ID_AND_CUSTOMER_ID" >
+		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
+		WHERE address.customer.id = :customerId
+		AND address.id = :addressId</query>
+	</named-query>
+
 	<named-query name="BC_READ_ADDRESS_BY_CUSTOMER_ID_AND_NAME" >
 		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
 		WHERE address.customer.id = :customerId
