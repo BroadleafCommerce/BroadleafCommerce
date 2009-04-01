@@ -4,10 +4,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.dao.FulfillmentGroupDaoJpa;
-import org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoJpa;
-import org.broadleafcommerce.order.dao.OrderDaoJpa;
-import org.broadleafcommerce.order.dao.OrderItemDaoJpa;
+import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
+import org.broadleafcommerce.order.dao.FulfillmentGroupItemDao;
+import org.broadleafcommerce.order.dao.OrderDao;
+import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
@@ -23,19 +23,19 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     private Long fulfillmentGroupItemId;
 
     @Resource
-    private FulfillmentGroupDaoJpa fulfillmentGroupDao;
+    private FulfillmentGroupDao fulfillmentGroupDao;
 
     @Resource
-    private FulfillmentGroupItemDaoJpa fulfillmentGroupItemDao;
+    private FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
     @Resource
     private CustomerService customerService;
 
     @Resource
-    private OrderDaoJpa orderDao;
+    private OrderDao orderDao;
 
     @Resource
-    private OrderItemDaoJpa orderItemDao;
+    private OrderItemDao orderItemDao;
 
     @Test(groups={"createFulfillmentGroupItem"},dependsOnGroups={"createOrder","createOrderItem","createDefaultFulfillmentGroup"})
     @Rollback(false)

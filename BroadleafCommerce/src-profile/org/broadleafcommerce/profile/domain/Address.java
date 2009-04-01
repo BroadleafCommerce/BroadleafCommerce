@@ -6,14 +6,6 @@ public interface Address {
 
     public Long getId();
 
-    public void setAddressName(String addressName);
-
-    public String getAddressName();
-
-    public Customer getCustomer();
-
-    public void setCustomer(Customer customer);
-
     public void setAddressLine1(String addressLine1);
 
     public String getAddressLine1();

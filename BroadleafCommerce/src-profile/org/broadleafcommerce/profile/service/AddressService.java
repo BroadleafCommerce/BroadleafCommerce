@@ -10,11 +10,7 @@ public interface AddressService {
 
     public Address saveAddress(Address address);
 
-    public List<Address> readActiveAddressesByCustomerId(Long customerId);
-
     public Address readAddressById(Long addressId);
-
-    public void makeAddressDefault(Long addressId, Long customerId);
 
     public List<StateProvince> findStateProvinces();
 
@@ -23,6 +19,4 @@ public interface AddressService {
     public List<Country> findCountries();
 
     public Country findCountryByShortName(String shortName);
-
-    public void deleteAddressByIdAndCustomerId(Long addressId, Long customerId);
 }

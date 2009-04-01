@@ -85,11 +85,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<FulfillmentGroup> findFulfillmentGroupsForOrder(Order order) {
         return fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public List<Order> findOrdersForCustomer(Customer customer) {
         return orderDao.readOrdersForCustomer(customer);
     }
@@ -270,6 +272,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) {
         fulfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
     }

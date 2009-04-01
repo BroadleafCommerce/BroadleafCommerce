@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.dao.OrderDaoJpa;
-import org.broadleafcommerce.order.dao.PaymentInfoDaoJpa;
+import org.broadleafcommerce.order.dao.OrderDao;
+import org.broadleafcommerce.order.dao.PaymentInfoDao;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.profile.dao.AddressDaoJpa;
+import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
@@ -23,13 +23,13 @@ public class PaymentInfoDaoTest extends BaseTest {
     private PaymentInfo paymentInfo;
 
     @Resource
-    private PaymentInfoDaoJpa paymentInfoDao;
+    private PaymentInfoDao paymentInfoDao;
 
     @Resource
-    private OrderDaoJpa orderDao;
+    private OrderDao orderDao;
 
     @Resource
-    private AddressDaoJpa addressDao;
+    private CustomerAddressDao customerAddressDao;
 
     @Resource
     private CustomerService customerService;
@@ -39,7 +39,7 @@ public class PaymentInfoDaoTest extends BaseTest {
     public void createPaymentInfo(PaymentInfo paymentInfo){
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
-        Address address = (addressDao.readActiveAddressesByCustomerId(customer.getId())).get(0);
+        Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
         Order salesOrder = (orderDao.readOrdersForCustomer(customer)).get(0);
 
         paymentInfo.setAddress(address);

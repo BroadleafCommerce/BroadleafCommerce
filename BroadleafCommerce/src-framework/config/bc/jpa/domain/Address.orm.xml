@@ -3,25 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
 
-	<named-query name="BC_READ_ACTIVE_ADDRESSES_BY_CUSTOMER_ID" >
-		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
-		WHERE address.customer.id = :customerId
-		AND address.isActive = TRUE
-		ORDER BY address.id</query>
-	</named-query>
-
-	<named-query name="BC_READ_ADDRESS_BY_ID_AND_CUSTOMER_ID" >
-		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
-		WHERE address.customer.id = :customerId
-		AND address.id = :addressId</query>
-	</named-query>
-
-	<named-query name="BC_READ_ADDRESS_BY_CUSTOMER_ID_AND_NAME" >
-		<query>SELECT address FROM org.broadleafcommerce.profile.domain.Address address
-		WHERE address.customer.id = :customerId
-		AND address.addressName = :addressName</query>
-	</named-query>
-
 	<named-query name="BC_FIND_STATE_PROVINCES" >
 		<query>SELECT stateProvince FROM org.broadleafcommerce.profile.domain.StateProvince stateProvince
 		ORDER BY stateProvince.shortName</query>

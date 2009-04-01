@@ -4,10 +4,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.SkuDaoJpa;
+import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.order.dao.OrderDaoJpa;
-import org.broadleafcommerce.order.dao.OrderItemDaoJpa;
+import org.broadleafcommerce.order.dao.OrderDao;
+import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -22,13 +22,13 @@ public class OrderItemDaoTest extends BaseTest {
     private Order order;
 
     @Resource
-    private OrderItemDaoJpa orderItemDao;
+    private OrderItemDao orderItemDao;
 
     @Resource
-    private OrderDaoJpa orderDao;
+    private OrderDao orderDao;
 
     @Resource
-    private SkuDaoJpa skuDao;
+    private SkuDao skuDao;
 
     @Resource
     private CustomerService customerService;

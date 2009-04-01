@@ -27,13 +27,6 @@ public class AddressDaoJpa implements AddressDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    @SuppressWarnings("unchecked")
-    public List<Address> readActiveAddressesByCustomerId(Long customerId) {
-        Query query = em.createNamedQuery("BC_READ_ACTIVE_ADDRESSES_BY_CUSTOMER_ID");
-        query.setParameter("customerId", customerId);
-        return query.getResultList();
-    }
-
     public Address maintainAddress(Address address) {
         if (address.getId() == null) {
             em.persist(address);
@@ -46,23 +39,6 @@ public class AddressDaoJpa implements AddressDao {
     @SuppressWarnings("unchecked")
     public Address readAddressById(Long id) {
         return (Address) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Address"), id);
-    }
-
-    @SuppressWarnings("unchecked")
-    public Address readAddressByIdAndCustomerId(Long addressId, Long customerId) {
-        Query query = em.createNamedQuery("BC_READ_ADDRESS_BY_ID_AND_CUSTOMER_ID");
-        query.setParameter("customerId", customerId);
-        query.setParameter("addressId", addressId);
-        List<Address> addresses = query.getResultList();
-        return addresses.isEmpty() ? null : addresses.get(0);
-    }
-
-    public void makeAddressDefault(Long addressId, Long customerId) {
-        List<Address> addresses = readActiveAddressesByCustomerId(customerId);
-        for (Address address : addresses) {
-            address.setDefault(address.getId().equals(addressId));
-            em.merge(address);
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -87,12 +63,5 @@ public class AddressDaoJpa implements AddressDao {
         Query query = em.createNamedQuery("BC_FIND_COUNTRIES");
         query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
-    }
-
-    @Override
-    public void deleteAddressByIdAndCustomerId(Long addressId, Long customerId) {
-        // TODO: determine if hard delete or deactivate, and consider throwing exception if read fails
-        Address address = readAddressByIdAndCustomerId(addressId, customerId);
-        em.remove(address.getId());
     }
 }

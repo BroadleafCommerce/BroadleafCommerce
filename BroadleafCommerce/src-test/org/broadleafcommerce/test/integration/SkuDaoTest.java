@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.SkuDaoJpa;
+import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.test.dataprovider.SkuDaoDataProvider;
 import org.broadleafcommerce.util.money.Money;
@@ -16,7 +16,7 @@ public class SkuDaoTest extends BaseTest {
     private Long skuId;
 
     @Resource
-    private SkuDaoJpa skuDao;
+    private SkuDao skuDao;
 
     @Test(groups = { "createSku" }, dataProvider = "basicSku", dataProviderClass = SkuDaoDataProvider.class, dependsOnGroups = { "readCustomer1", "createOrder", "createProduct" })
     @Rollback(false)

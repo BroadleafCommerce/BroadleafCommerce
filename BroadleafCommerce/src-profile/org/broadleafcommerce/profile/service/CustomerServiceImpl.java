@@ -12,7 +12,6 @@ import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.listener.PostRegistrationObserver;
 import org.broadleafcommerce.profile.service.validator.RegistrationResponse;
-import org.broadleafcommerce.profile.service.validator.RegistrationValidator;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.profile.util.PasswordChange;
 import org.springframework.security.Authentication;
@@ -40,9 +39,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Resource
     private EntityConfiguration entityConfiguration;
-
-    @Resource
-    private RegistrationValidator registrationValidator;
 
     private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
 

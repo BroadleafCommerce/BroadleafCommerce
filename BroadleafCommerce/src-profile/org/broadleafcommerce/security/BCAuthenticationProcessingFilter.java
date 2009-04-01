@@ -76,10 +76,10 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
                 return passwordChangeUri;
             }
         }
-        String refererUrl = (String) request.getSession().getAttribute(BC_LOGIN_SUCCESS_URL_KEY);
-        if (refererUrl != null) {
+        String sessionUrl = (String) request.getSession().getAttribute(BC_LOGIN_SUCCESS_URL_KEY);
+        if (sessionUrl != null) {
             removeLoginSuccessUrl(request);
-            return refererUrl;
+            return sessionUrl;
         }
         return super.determineTargetUrl(request);
     }
