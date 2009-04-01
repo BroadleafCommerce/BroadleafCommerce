@@ -6,7 +6,7 @@ import org.broadleafcommerce.profile.domain.CustomerAddress;
 
 public interface CustomerAddressDao {
 
-    public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long userId);
+    public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId);
 
     public CustomerAddress maintainCustomerAddress(CustomerAddress customerAddress);
 
