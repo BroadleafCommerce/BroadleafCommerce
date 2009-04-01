@@ -14,8 +14,9 @@ import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OrderService {
+	public Order findOrderById(Long customerId, Long orderId);
 
-    public Order findCurrentCartForCustomer(Customer customer);
+	public Order findCurrentCartForCustomer(Customer customer);
 
     public Order createCurrentCartForCustomer(Customer customer);
 
@@ -54,5 +55,9 @@ public interface OrderService {
     public Order confirmOrder(Order order);
 
     public void cancelOrder(Order order);
+
+	public List<Order> findSubmittedOrdersForCustomer(Customer customer);
+
+
 
 }

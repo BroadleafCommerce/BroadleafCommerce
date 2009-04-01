@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.broadleafcommerce.type.OrderStatusType;
 import org.broadleafcommerce.type.OrderType;
 import org.broadleafcommerce.util.money.Money;
 
@@ -55,7 +57,8 @@ public class OrderImpl implements Order, Serializable {
     private Customer customer;
 
     @Column(name = "ORDER_STATUS")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatusType status;
 
     @Column(name = "ORDER_SUBTOTAL")
     private BigDecimal subTotal;
@@ -63,7 +66,10 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "ORDER_TOTAL")
     private BigDecimal total;
 
-    @OneToMany(mappedBy = "id", targetEntity = OrderItemImpl.class)
+    @Column(name = "SUBMIT_DATE")
+    private Date submitDate;
+
+	@OneToMany(mappedBy = "id", targetEntity = OrderItemImpl.class)
     @MapKey(name = "id")
     private List<OrderItem> orderItems;
 
@@ -94,14 +100,6 @@ public class OrderImpl implements Order, Serializable {
         this.auditable = auditable;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String orderStatus) {
-        this.status = orderStatus;
-    }
-
     public Money getSubTotal() {
         return subTotal == null ? null : new Money(subTotal);
     }
@@ -122,6 +120,14 @@ public class OrderImpl implements Order, Serializable {
         this.total = Money.toAmount(orderTotal);
     }
 
+    public Date getSubmitDate() {
+		return submitDate;
+	}
+
+	public void setSubmitDate(Date submitDate) {
+		this.submitDate = submitDate;
+	}
+
     public Customer getCustomer() {
         return customer;
     }
@@ -130,7 +136,15 @@ public class OrderImpl implements Order, Serializable {
         this.customer = customer;
     }
 
-    public OrderType getType() {
+    public OrderStatusType getStatus() {
+		return status;
+	}
+
+	public void setStatus(OrderStatusType status) {
+		this.status = status;
+	}
+
+	public OrderType getType() {
         return type;
     }
 

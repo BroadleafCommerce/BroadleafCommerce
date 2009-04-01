@@ -19,7 +19,11 @@ public interface OrderDao {
 
     public Order readCartOrdersForCustomer(Customer customer, boolean persist);
 
+    public List<Order> readSubmittedOrdersForCustomer(Customer customer);
+
     public Order submitOrder(Order cartOrder);
 
     public Order create();
+
+	public Order readOrderForCustomer(Long customerId, Long orderId);
 }
