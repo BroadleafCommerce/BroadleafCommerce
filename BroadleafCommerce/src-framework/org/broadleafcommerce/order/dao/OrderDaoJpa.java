@@ -64,6 +64,14 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
+    public Order readOrderForCustomer(Long customerId, Long orderId) {
+    	Query query = em.createNamedQuery("BC_READ_ORDER_BY_CUSTOMER_ID");
+    	query.setParameter("orderId", orderId);
+    	query.setParameter("customerId", customerId);
+    	return (Order) query.getSingleResult();
+    }
+
+    @Override
     public Order readCartOrdersForCustomer(Customer customer, boolean persist) {
         Order bo = null;
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
@@ -81,6 +89,15 @@ public class OrderDaoJpa implements OrderDao {
         	}
             return bo;
         }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Order> readSubmittedOrdersForCustomer(Customer customer) {
+    	Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
+    	query.setParameter("customerId", customer.getId());
+    	query.setParameter("orderType", OrderType.SUBMITTED);
+		return query.getResultList();
     }
 
     @Override

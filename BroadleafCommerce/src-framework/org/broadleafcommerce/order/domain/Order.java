@@ -1,10 +1,12 @@
 package org.broadleafcommerce.order.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.type.OrderStatusType;
 import org.broadleafcommerce.type.OrderType;
 import org.broadleafcommerce.util.money.Money;
 
@@ -18,10 +20,6 @@ public interface Order {
 
     public void setAuditable(Auditable auditable);
 
-    public String getStatus();
-
-    public void setStatus(String orderStatus);
-
     public Money getSubTotal();
 
     public void setSubTotal(Money subTotal);
@@ -33,6 +31,10 @@ public interface Order {
     public Customer getCustomer();
 
     public void setCustomer(Customer customer);
+
+    public OrderStatusType getStatus();
+
+	public void setStatus(OrderStatusType status);
 
     public OrderType getType();
 
@@ -57,4 +59,8 @@ public interface Order {
     public boolean isMarkedForOffer();
 
     public void setMarkedForOffer(boolean markForOffer);
+
+	public Date getSubmitDate();
+
+	public void setSubmitDate(Date submitDate);
 }
