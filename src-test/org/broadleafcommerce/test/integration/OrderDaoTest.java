@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.dao.OrderDaoJpa;
+import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
@@ -18,7 +18,7 @@ public class OrderDaoTest extends BaseTest {
     Long orderId;
 
     @Resource
-    private OrderDaoJpa orderDao;
+    private OrderDao orderDao;
 
     @Resource
     private CustomerService customerService;

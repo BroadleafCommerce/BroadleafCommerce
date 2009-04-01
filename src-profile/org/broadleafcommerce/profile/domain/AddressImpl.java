@@ -11,27 +11,19 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
+@Table(name = "BLC_ADDRESS")
 public class AddressImpl implements Address {
 
     @Id
     @GeneratedValue
     @Column(name = "ADDRESS_ID")
     private Long id;
-
-    @Column(name = "ADDRESS_NAME")
-    private String addressName;
-
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = CustomerImpl.class)
-    @JoinColumn(name = "CUSTOMER_ID")
-    private Customer customer;
 
     @Column(name = "ADDRESS_LINE1")
     private String addressLine1;
@@ -42,14 +34,14 @@ public class AddressImpl implements Address {
     @Column(name = "CITY")
     private String city;
 
-    @ManyToOne(cascade=CascadeType.ALL, targetEntity = CountryImpl.class)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = CountryImpl.class)
     @JoinColumn(name = "COUNTRY")
     private Country country;
 
     @Column(name = "POSTAL_CODE")
     private String postalCode;
 
-    @ManyToOne(cascade=CascadeType.ALL, targetEntity = StateProvinceImpl.class)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = StateProvinceImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     private StateProvince stateProvRegion;
 
@@ -90,22 +82,6 @@ public class AddressImpl implements Address {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getAddressName() {
-        return addressName;
-    }
-
-    public void setAddressName(String addressName) {
-        this.addressName = addressName;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     public String getAddressLine1() {

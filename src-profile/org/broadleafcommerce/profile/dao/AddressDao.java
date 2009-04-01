@@ -8,13 +8,9 @@ import org.broadleafcommerce.profile.domain.StateProvince;
 
 public interface AddressDao {
 
-    public List<Address> readActiveAddressesByCustomerId(Long userId);
-
     public Address maintainAddress(Address address);
 
     public Address readAddressById(Long addressId);
-
-    public void makeAddressDefault(Long addressId, Long customerId);
 
     public List<StateProvince> findStateProvinces();
 
@@ -23,6 +19,4 @@ public interface AddressDao {
     public List<Country> findCountries();
 
     public Country findCountryByShortName(String shortName);
-
-    public void deleteAddressByIdAndCustomerId(Long addressId, Long customerId);
 }

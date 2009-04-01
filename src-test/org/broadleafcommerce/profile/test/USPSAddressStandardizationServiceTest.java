@@ -41,8 +41,6 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
         customer.setUsername("customer1");
         customer.setPassword("customer1");
         Address addr = new AddressImpl();
-        addr.setCustomer(customer);
-        addr.setAddressName("WORK");
         addr.setAddressLine1("6406 Ivy Lane");
         addr.setCity("Greenbelt");
         StateProvince stateProvince = new StateProvinceImpl();

@@ -240,8 +240,14 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
 
     private ArrayList<AddressStandarizationResponse> parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
         USPSAddressResponseParser addrContentHelper = new USPSAddressResponseParser();
-        SAXParserFactory.newInstance().newSAXParser().parse(response, addrContentHelper);
+        // FileOutputStream fos = new FileOutputStream("/temp/" + System.currentTimeMillis() + ".xml");
+        // int nextChar;
+        // while ((nextChar = response.read()) != -1)
+        // fos.write(Character.toUpperCase((char) nextChar));
+        // fos.write('\n');
+        // fos.flush();
 
+        SAXParserFactory.newInstance().newSAXParser().parse(response, addrContentHelper);
         return addrContentHelper.getAddressResponseList();
     }
 
