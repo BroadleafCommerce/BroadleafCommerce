@@ -35,27 +35,53 @@ public class SkuAvailabilityTest extends BaseTest {
 
     @Test(dependsOnGroups = { "createSkuAvailability" })
     public void readSKUAvailabilityEntries() {
-        List<SkuAvailability> skuAvailabilityList = availabilityService.checkSKUAvailability(skuIdList, false);
+        List<SkuAvailability> skuAvailabilityList = availabilityService.lookupSKUAvailability(skuIdList, false);
         assert(skuAvailabilityList.size() == 5);
 
-        int skuCount=0;
+        int backorderCount=0;
+        int availableCount=0;
         for (SkuAvailability skuAvailability : skuAvailabilityList) {
-			if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().isAvailable()) {
-				skuCount++;
+			if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals("backordered")) {
+				backorderCount++;
+			}
+			if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals("available")) {
+				availableCount++;
 			}
 		}
-        assert(skuCount == 1);
+        assert(backorderCount == 1);
+        assert(availableCount == 1);
     }
 
     @Test(dependsOnGroups = { "createSkuAvailability" })
     public void readAvailableSkusForUnknownLocation() {
-        List<SkuAvailability> skuAvailabilityList = availabilityService.checkSKUAvailabilityForLocation(skuIdList, 100L, false);
+        List<SkuAvailability> skuAvailabilityList = availabilityService.lookupSKUAvailabilityForLocation(skuIdList, 100L, false);
         assert(skuAvailabilityList.size() == 0);
     }
 
     @Test(dependsOnGroups = { "createSkuAvailability" })
     public void readAvailableSkusForLocation() {
-        List<SkuAvailability> skuAvailabilityList = availabilityService.checkSKUAvailabilityForLocation(skuIdList, 1L, false);
+        List<SkuAvailability> skuAvailabilityList = availabilityService.lookupSKUAvailabilityForLocation(skuIdList, 1L, false);
         assert(skuAvailabilityList.size() == 5);
+    }
+
+    @Test(dependsOnGroups = { "createSkuAvailability" })
+    public void checkAvailableQuantityWithReserveAndQOH() {
+        SkuAvailability skuAvailability = availabilityService.lookupSKUAvailabilityForLocation(2L, 1L, false);
+        assert(skuAvailability.getReserveQuantity() == 1 && skuAvailability.getQuantityOnHand() == 5);
+        assert(skuAvailability.getAvailableQuantity() == 4);
+    }
+
+    @Test(dependsOnGroups = { "createSkuAvailability" })
+    public void checkAvailableQuantityWithNullReserveQty() {
+        SkuAvailability skuAvailability = availabilityService.lookupSKUAvailabilityForLocation(5L, 1L, false);
+        assert(skuAvailability.getReserveQuantity() == null && skuAvailability.getQuantityOnHand() == 5);
+        assert(skuAvailability.getAvailableQuantity() == 5);
+    }
+
+    @Test(dependsOnGroups = { "createSkuAvailability" })
+    public void checkAvailableQuantityWithNullQuantityOnHand() {
+        SkuAvailability skuAvailability = availabilityService.lookupSKUAvailabilityForLocation(1L, 1L, false);
+        assert(skuAvailability.getReserveQuantity() == 1 && skuAvailability.getQuantityOnHand() == null);
+        assert(skuAvailability.getAvailableQuantity() == null);
     }
 }

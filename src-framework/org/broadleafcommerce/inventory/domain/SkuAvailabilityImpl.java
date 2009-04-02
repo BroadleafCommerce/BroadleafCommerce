@@ -10,10 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.inventory.service.AvailabilityStatusEnum;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -31,7 +29,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
  *
  * @see {@link Sku}
  * @author bpolster
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -56,25 +53,22 @@ public class SkuAvailabilityImpl implements SkuAvailability, Serializable {
     @Column(name = "LOCATION_ID")
     private Long locationId;
 
-    /** The name. */
+    /** The quantity on hand. */
     @Column(name = "QTY_ON_HAND")
-    private Long quantityOnHand;
+    private Integer quantityOnHand;
+
+    /** The reserve quantity. */
+    @Column(name = "RESERVE_QTY")
+    private Integer reserveQuantity;
 
     /** The description. */
     @Column(name = "AVAILABILITY_STATUS")
     private String availabilityStatus;
 
-    @Transient
+    /** The date this product will be available. */
+    @Column(name = "AVAILABILITY_DATE")
     private Date availabilityDate;
 
-	@Override
-	public AvailabilityStatusEnum getAvailabilityStatus() {
-		if (availabilityStatus != null) {
-			return AvailabilityStatusEnum.valueOf(availabilityStatus);
-		} else {
-			return null;
-		}
-	}
 
 	@Override
 	public Long getId() {
@@ -87,21 +81,13 @@ public class SkuAvailabilityImpl implements SkuAvailability, Serializable {
 	}
 
 	@Override
-	public Long getQuantityOnHand() {
+	public Integer getQuantityOnHand() {
 		return quantityOnHand;
 	}
 
 	@Override
 	public Long getSkuId() {
 		return skuId;
-	}
-
-	@Override
-	public void setAvailabilityStatus(AvailabilityStatusEnum status) {
-		if (status != null) {
-			availabilityStatus = status.toString();
-		}
-
 	}
 
 	@Override
@@ -115,7 +101,7 @@ public class SkuAvailabilityImpl implements SkuAvailability, Serializable {
 	}
 
 	@Override
-	public void setQuantityOnHand(Long qoh) {
+	public void setQuantityOnHand(Integer qoh) {
 		this.quantityOnHand = qoh;
 	}
 
@@ -124,16 +110,64 @@ public class SkuAvailabilityImpl implements SkuAvailability, Serializable {
 		this.skuId = skuId;
 	}
 
+	@Override
 	public Date getAvailabilityDate() {
-		if (availabilityDate == null && getAvailabilityStatus() != null) {
-			if (getAvailabilityStatus().isAvailable()) {
-				return new Date();
-			}
-		}
 		return availabilityDate;
 	}
 
+	@Override
 	public void setAvailabilityDate(Date availabilityDate) {
 		this.availabilityDate = availabilityDate;
+	}
+
+
+	//=======================================================================>
+
+
+    /**
+     * Returns an implementation specific availability status.   This property can return null.
+     */
+    public String getAvailabilityStatus() {
+    	return availabilityStatus;
+    }
+
+    /**
+     * Sets the availability status.
+     */
+    public void setAvailabilityStatus(String status) {
+    	this.availabilityStatus = status;
+    }
+
+
+
+    /**
+     * Returns the reserve quantity.   Nulls will be treated the same as 0.
+     * Implementations may want to manage a reserve quantity at each location so that the
+     * available quantity for purchases is the quantityOnHand - reserveQuantity.
+     */
+	public Integer getReserveQuantity() {
+		return reserveQuantity;
+	}
+
+    /**
+     * Sets the reserve quantity.
+     * Implementations may want to manage a reserve quantity at each location so that the
+     * available quantity for purchases is the quantityOnHand - reserveQuantity.
+     */
+	public void setReserveQuantity(Integer reserveQuantity) {
+		this.reserveQuantity = reserveQuantity;
+	}
+
+    /**
+     * Returns the getQuantityOnHand() - getReserveQuantity().
+     * Preferred implementation is to return null if getQuantityOnHand() is null and to treat
+     * a null in getReserveQuantity() as ZERO.
+     */
+	public Integer getAvailableQuantity() {
+		if (getQuantityOnHand() == null || getReserveQuantity() == null) {
+			return getQuantityOnHand();
+		} else {
+			return getQuantityOnHand() - getReserveQuantity();
+		}
 	}
 }
