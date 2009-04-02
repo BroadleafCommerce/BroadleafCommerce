@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="broadleafcommerce-layout" failures="0" tests="3" time="0.031" errors="0">
+  <properties/>
+  <testcase name="testIndices" time="0.0" classname="org.broadleafcommerce.layout.test.PaginationCommandObjectTest"/>
+  <testcase name="testFullList" time="0.0" classname="org.broadleafcommerce.layout.test.PaginationCommandObjectTest"/>
+  <testcase name="testDisplayList" time="0.0" classname="org.broadleafcommerce.layout.test.PaginationCommandObjectTest"/>
+</testsuite>
