@@ -10,7 +10,7 @@ public interface CustomerAddressDao {
 
     public CustomerAddress maintainCustomerAddress(CustomerAddress customerAddress);
 
-    public CustomerAddress readCustomerAddressById(Long customerAddressId);
+    public CustomerAddress readCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId);
 
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId);
 
