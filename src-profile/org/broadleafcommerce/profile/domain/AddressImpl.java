@@ -79,6 +79,9 @@ public class AddressImpl implements Address {
     @Column(name = "IS_BUSINESS")
     private boolean isBusiness = false;
 
+    @Column(name = "VERIFICATION_LEVEL")
+    private String verificationLevel;
+
     public Long getId() {
         return id;
     }
@@ -221,5 +224,13 @@ public class AddressImpl implements Address {
 
     public void setBusiness(boolean isBusiness) {
         this.isBusiness = isBusiness;
+    }
+
+    public String getVerificationLevel() {
+        return verificationLevel;
+    }
+
+    public void setVerificationLevel(String verificationLevel) {
+        this.verificationLevel = verificationLevel;
     }
 }
