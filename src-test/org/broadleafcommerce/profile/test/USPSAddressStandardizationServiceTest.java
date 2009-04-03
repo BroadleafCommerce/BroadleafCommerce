@@ -6,8 +6,8 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
-import org.broadleafcommerce.profile.domain.StateProvince;
-import org.broadleafcommerce.profile.domain.StateProvinceImpl;
+import org.broadleafcommerce.profile.domain.State;
+import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.profile.service.AddressStandardizationServiceImpl;
 import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
 import org.broadleafcommerce.test.integration.BaseTest;
@@ -43,9 +43,9 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
         Address addr = new AddressImpl();
         addr.setAddressLine1("6406 Ivy Lane");
         addr.setCity("Greenbelt");
-        StateProvince stateProvince = new StateProvinceImpl();
-        stateProvince.setShortName("MD");
-        addr.setStateProvRegion(stateProvince);
+        State state = new StateImpl();
+        state.setAbbreviation("MD");
+        addr.setState(state);
 
         return addr;
     }
@@ -57,9 +57,9 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
             addressVerificationSetUp();
             Address testAddress = getValidAddress();
             testAddress.setPostalCode("70057");
-            StateProvince stateProvince = new StateProvinceImpl();
-            stateProvince.setShortName("CL");
-            testAddress.setStateProvRegion(stateProvince);
+            State state = new StateImpl();
+            state.setAbbreviation("CL");
+            testAddress.setState(state);
 
             AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
             if (standardizedResponse.isErrorDetected()) {

@@ -14,32 +14,32 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_STATE_PROVINCE")
+@Table(name = "BLC_STATE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class StateProvinceImpl implements StateProvince, Serializable {
+public class StateImpl implements State, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "ABBREVIATION")
-    private String shortName;
+    private String abbreviation;
 
-    @Column(name = "LONG_NAME")
-    private String longName;
+    @Column(name = "NAME")
+    private String name;
 
-    public String getShortName() {
-        return shortName;
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
-    public void setShortName(String shortName) {
-        this.shortName = shortName;
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
 
-    public String getLongName() {
-        return longName;
+    public String getName() {
+        return name;
     }
 
-    public void setLongName(String longName) {
-        this.longName = longName;
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -41,9 +41,9 @@ public class AddressImpl implements Address {
     @Column(name = "POSTAL_CODE")
     private String postalCode;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = StateProvinceImpl.class)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
-    private StateProvince stateProvRegion;
+    private State state;
 
     @Column(name = "TOKENIZED_ADDRESS")
     private String tokenizedAddress;
@@ -124,12 +124,12 @@ public class AddressImpl implements Address {
         this.postalCode = postalCode;
     }
 
-    public StateProvince getStateProvRegion() {
-        return stateProvRegion;
+    public State getState() {
+        return state;
     }
 
-    public void setStateProvRegion(StateProvince stateProvRegion) {
-        this.stateProvRegion = stateProvRegion;
+    public void setState(State state) {
+        this.state = state;
     }
 
     public String getTokenizedAddress() {

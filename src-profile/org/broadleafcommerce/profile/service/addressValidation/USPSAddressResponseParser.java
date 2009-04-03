@@ -6,8 +6,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
-import org.broadleafcommerce.profile.domain.StateProvince;
-import org.broadleafcommerce.profile.domain.StateProvinceImpl;
+import org.broadleafcommerce.profile.domain.State;
+import org.broadleafcommerce.profile.domain.StateImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -52,9 +52,9 @@ public class USPSAddressResponseParser extends DefaultHandler {
             address.setCity(buffer.toString().trim());
             buffer = new StringBuffer();
         } else if (qName.equals(STATE_TAG)) {
-            StateProvince stateProvince = new StateProvinceImpl();
-            stateProvince.setShortName(buffer.toString().trim());
-            address.setStateProvRegion(stateProvince);
+            State state = new StateImpl();
+            state.setAbbreviation(buffer.toString().trim());
+            address.setState(state);
             buffer = new StringBuffer();
         } else if (qName.equals(ZIP5_TAG)) {
             address.setPostalCode(buffer.toString().trim());
