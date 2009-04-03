@@ -40,8 +40,8 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAddress readCustomerAddressById(Long customerAddressId) {
-        return customerAddressDao.readCustomerAddressById(customerAddressId);
+    public CustomerAddress readCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId) {
+        return customerAddressDao.readCustomerAddressByIdAndCustomerId(customerAddressId, customerId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
