@@ -18,9 +18,9 @@ public interface Address {
 
     public String getCity();
 
-    public void setStateProvRegion(StateProvince stateProvRegion);
+    public void setState(State state);
 
-    public StateProvince getStateProvRegion();
+    public State getState();
 
     public void setPostalCode(String postalCode);
 

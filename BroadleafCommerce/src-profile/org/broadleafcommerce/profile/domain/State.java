@@ -1,10 +1,10 @@
 package org.broadleafcommerce.profile.domain;
 
-public interface Country {
+public interface State {
 
     public String getAbbreviation();
 
-    public void setAbbreviation(String Abbreviation);
+    public void setAbbreviation(String abbreviation);
 
     public String getName();
 

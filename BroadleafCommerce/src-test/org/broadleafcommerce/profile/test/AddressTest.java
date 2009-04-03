@@ -9,9 +9,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.CountryImpl;
-import org.broadleafcommerce.profile.domain.StateProvince;
-import org.broadleafcommerce.profile.domain.StateProvinceImpl;
-import org.broadleafcommerce.profile.service.AddressService;
+import org.broadleafcommerce.profile.domain.State;
+import org.broadleafcommerce.profile.domain.StateImpl;
+import org.broadleafcommerce.profile.service.CountryService;
+import org.broadleafcommerce.profile.service.StateService;
 import org.broadleafcommerce.test.integration.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
@@ -25,26 +26,29 @@ public class AddressTest extends BaseTest {
     Long userId;
 
     @Resource
-    private AddressService addressService;
+    private StateService stateService;
 
-    @Test(groups = "createStateProvince")
+    @Resource
+    private CountryService countryService;
+
+    @Test(groups = "createState")
     @Rollback(false)
-    public void createStateProvince() {
-        StateProvince state = new StateProvinceImpl();
-        state.setShortName("KY");
-        state.setLongName("Kentucky");
+    public void createState() {
+        State state = new StateImpl();
+        state.setAbbreviation("KY");
+        state.setName("Kentucky");
         em.persist(state);
     }
 
-    @Test(groups = "findStateProvinces", dependsOnGroups = "createStateProvince")
-    public void findStateProvinces() {
-        List<StateProvince> states = addressService.findStateProvinces();
+    @Test(groups = "findStates", dependsOnGroups = "createState")
+    public void findStates() {
+        List<State> states = stateService.findStates();
         assert states.size() > 0;
     }
 
-    @Test(groups = "findStateProvinceByShortName", dependsOnGroups = "findStateProvinces")
-    public void findStateProvinceByShortName() {
-        StateProvince state = addressService.findStateProvinceByShortName("KY");
+    @Test(groups = "findStateByAbbreviation", dependsOnGroups = "findStates")
+    public void findStateByAbbreviation() {
+        State state = stateService.findStateByAbbreviation("KY");
         assert state != null;
     }
 
@@ -52,20 +56,20 @@ public class AddressTest extends BaseTest {
     @Rollback(false)
     public void createCountry() {
         Country country = new CountryImpl();
-        country.setShortName("US");
-        country.setLongName("United States");
+        country.setAbbreviation("US");
+        country.setName("United States");
         em.persist(country);
     }
 
     @Test(groups = "findCountries", dependsOnGroups = "createCountry")
     public void findCountries() {
-        List<Country> countries = addressService.findCountries();
+        List<Country> countries = countryService.findCountries();
         assert countries.size() > 0;
     }
 
     @Test(groups = "findCountryByShortName", dependsOnGroups = "findCountries")
     public void findCountryByShortName() {
-        Country country = addressService.findCountryByShortName("US");
+        Country country = countryService.findCountryByAbbreviation("US");
         assert country != null;
     }
     /*

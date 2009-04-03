@@ -108,7 +108,7 @@
 <variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n) BINARY"/>
 </data-type>
 </column>
-<column alias="" auto-increment="false" column-size="32" decimal-digits="0" default-value="" mandatory="true" name="StateProvince" remarks="" uid="144809c:11e41644bb0:-7fe3">
+<column alias="" auto-increment="false" column-size="32" decimal-digits="0" default-value="" mandatory="true" name="State" remarks="" uid="144809c:11e41644bb0:-7fe3">
 <column-description></column-description>
 <data-type jdbc-type="12" literal-prefix="'" literal-suffix="'" name="VARCHAR" selected-variant-pattern="VARCHAR(%n)">
 <variant precision-max="255" precision-min="1" precision-variable="%n" type-name-pattern="VARCHAR(%n)"/>

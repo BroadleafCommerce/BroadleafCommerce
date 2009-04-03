@@ -140,7 +140,7 @@ CREATE TABLE broadleafcommerce.Address (
      , StreeAddress2 VARCHAR(64)
      , PostalCode VARCHAR(10) NOT NULL
      , City VARCHAR(32) NOT NULL
-     , StateProvince VARCHAR(32) NOT NULL
+     , State VARCHAR(32) NOT NULL
      , CountryID BIGINT NOT NULL
      , PRIMARY KEY (AddressID)
      , INDEX (CountryID)
