@@ -16,6 +16,8 @@ import org.broadleafcommerce.profile.domain.Customer;
 public interface OrderService {
 	public Order findOrderById(Long customerId, Long orderId);
 
+	public Order findOrderById(Long orderId);
+
 	public Order findCurrentCartForCustomer(Customer customer);
 
     public Order createCurrentCartForCustomer(Customer customer);

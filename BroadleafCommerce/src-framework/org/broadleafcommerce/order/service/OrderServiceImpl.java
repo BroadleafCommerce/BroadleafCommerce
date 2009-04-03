@@ -59,6 +59,11 @@ public class OrderServiceImpl implements OrderService {
     	return orderDao.readOrderForCustomer(customerId, orderId);
     }
 
+	@Override
+	public Order findOrderById(Long orderId) {
+		return orderDao.readOrderById(orderId);
+	}
+
     @Override
     public Order findCurrentCartForCustomer(Customer customer) {
         return orderDao.readCartOrdersForCustomer(customer, false);
