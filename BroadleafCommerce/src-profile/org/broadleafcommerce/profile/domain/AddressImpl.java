@@ -76,6 +76,9 @@ public class AddressImpl implements Address {
     @Column(name = "SECONDARY_PHONE")
     private String secondaryPhone;
 
+    @Column(name = "IS_BUSINESS")
+    private boolean isBusiness = false;
+
     public Long getId() {
         return id;
     }
@@ -210,5 +213,13 @@ public class AddressImpl implements Address {
 
     public void setSecondaryPhone(String secondaryPhone) {
         this.secondaryPhone = secondaryPhone;
+    }
+
+    public boolean isBusiness() {
+        return isBusiness;
+    }
+
+    public void setBusiness(boolean isBusiness) {
+        this.isBusiness = isBusiness;
     }
 }

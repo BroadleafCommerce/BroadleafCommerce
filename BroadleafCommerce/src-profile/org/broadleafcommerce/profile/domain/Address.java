@@ -67,4 +67,8 @@ public interface Address {
     public String getSecondaryPhone();
 
     public void setSecondaryPhone(String secondaryPhone);
+
+    public boolean isBusiness();
+
+    public void setBusiness(boolean isBusiness);
 }
