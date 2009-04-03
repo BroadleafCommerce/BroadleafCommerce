@@ -36,6 +36,14 @@ public class CustomerAddressImpl implements CustomerAddress {
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
 
+    public CustomerAddressImpl() {
+    }
+
+    public CustomerAddressImpl(Long customerId) {
+        this.customerId = customerId;
+        this.address = new AddressImpl();
+    }
+
     public Long getId() {
         return id;
     }

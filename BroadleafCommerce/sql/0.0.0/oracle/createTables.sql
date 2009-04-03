@@ -1,8 +1,19 @@
+------------------------
+-- DROP TABLE STATEMENTS
+------------------------
 DROP TABLE blc_address;
 DROP TABLE blc_customer_address;
 DROP TABLE blc_customer;
 DROP TABLE blc_challenge_question;
+DROP TABLE blc_country;
 
+
+--------------------------
+-- CREATE TABLE STATEMENTS
+--------------------------
+--------------------------
+-- blc_challenge_question
+--------------------------
 CREATE TABLE blc_challenge_question
 (
   QUESTION_ID NUMBER(19,0) NOT NULL,
@@ -10,6 +21,9 @@ CREATE TABLE blc_challenge_question
   CONSTRAINT PK_BLC_CHALLENGE_QUESTION PRIMARY KEY(QUESTION_ID) USING INDEX TABLESPACE WEB_IDX1
 );
 
+--------------------------
+-- blc_customer
+--------------------------
 CREATE TABLE blc_customer
 (
   CUSTOMER_ID NUMBER(19,0) NOT NULL,
@@ -29,6 +43,9 @@ CREATE TABLE blc_customer
 
 CREATE UNIQUE INDEX IX1_BLC_CUSTOMER ON blc_customer (USER_NAME) USING INDEX TABLESPACE WEB_IDX1;
 
+--------------------------
+-- blc_address
+--------------------------
 CREATE TABLE blc_address
 (
   ADDRESS_ID NUMBER(19,0) NOT NULL,
@@ -51,6 +68,9 @@ CREATE TABLE blc_address
   CONSTRAINT PK_BLC_CUSTOMER_ADDRESS PRIMARY KEY(ADDRESS_ID) USING INDEX TABLESPACE WEB_IDX1
 );
 
+--------------------------
+-- blc_customer_address
+--------------------------
 CREATE TABLE blc_customer_address
 (
   CUSTOMER_ADDRESS_ID NUMBER(19,0) NOT NULL,
@@ -61,6 +81,9 @@ CREATE TABLE blc_customer_address
   CONSTRAINT FK_CUSTOMER_ADDRESS FOREIGN KEY (ADDRESS_ID) REFERENCES blc_address(ADDRESS_ID)
 );
 
+--------------------------
+-- blc_order
+--------------------------
 CREATE TABLE blc_order
 (
   ORDER_ID NUMBER(19,0) NOT NULL,
@@ -78,6 +101,9 @@ CREATE TABLE blc_order
   CONSTRAINT FK_ORDER_CUSTOMER_fk FOREIGN KEY (CUSTOMER_ID) REFERENCES blc_customer(CUSTOMER_ID)
 );
 
+--------------------------
+-- blc_order_item
+--------------------------
 CREATE TABLE blc_order_item
 (
   ORDER_ITEM_ID NUMBER(19,0) NOT NULL,
@@ -92,6 +118,9 @@ CREATE TABLE blc_order_item
   CONSTRAINT PK_BLC_ORDER_ITEM PRIMARY KEY(ORDER_ITEM_ID) USING INDEX TABLESPACE WEB_IDX1
 );
 
+--------------------------
+-- blc_fulfillment_group
+--------------------------
 CREATE TABLE blc_fulfillment_group
 (
   ID NUMBER(19,0) NOT NULL,
@@ -108,6 +137,9 @@ CREATE TABLE blc_fulfillment_group
   CONSTRAINT PK_BLC_FULFILLMENT_GROUP PRIMARY KEY(ID) USING INDEX TABLESPACE WEB_IDX1
 );
 
+--------------------------
+-- BLC_ID_GENERATION
+--------------------------
 CREATE TABLE BLC_ID_GENERATION
 (
   ID_TYPE VARCHAR2(255) NOT NULL,
@@ -116,21 +148,26 @@ CREATE TABLE BLC_ID_GENERATION
   CONSTRAINT BLC_ID_GENERATION PRIMARY KEY(ID_TYPE) USING INDEX TABLESPACE WEB_IDX1
 );
 
+--------------------------
+-- BLC_COUNTRY
+--------------------------
+CREATE TABLE BLC_COUNTRY
+(
+  ABBREVIATION VARCHAR2(2) NOT NULL,
+  NAME VARCHAR2(255) ,
+  CONSTRAINT PK_BLC_COUNTRY PRIMARY KEY(ABBREVIATION) USING INDEX TABLESPACE WEB_IDX1
+);
+------------------------
+-- INSERT COUNTRIES
+------------------------
+INSERT INTO BLC_COUNTRY VALUES ( 'US', 'United States' );
+
 ------------------------
 -- INSERT TEST CHALLENGE QUESTIONS
 ------------------------
 INSERT INTO blc_challenge_question ( QUESTION_ID, QUESTION ) VALUES ( 1, 'What is your place of birth?' );;
 INSERT INTO blc_challenge_question ( QUESTION_ID, QUESTION ) VALUES ( 2, 'What is your Mother''s maiden name?' );
 INSERT INTO blc_challenge_question ( QUESTION_ID, QUESTION ) VALUES ( 3, 'What is the name of your favorite pet?' );
-
-------------------------
--- INSERT TEST CUSTOMER
-------------------------
-INSERT INTO blc_customer
-  ( CUSTOMER_ID, USER_NAME, PASSWORD, PASSWORD_CHANGE_REQUIRED, RECEIVE_EMAIL )
-  VALUES ( 1, 'rod', '16d7a4fca7442dda3ad93c9a726597e4', 1, 1 );
-
-insert into blc_customer_address (ADDRESS_ID, ADDRESS_LINE1, ADDRESS_NAME, CITY, POSTAL_CODE, STATE_PROV_REGION, CUSTOMER_ID, IS_DEFAULT, IS_ACTIVE) values (1, '1 a way', 'home', 'Frisco', '75035', 'TX', 37, 1, 1);
 
 ------------------------
 -- INSERT TEST ID GENERATION
