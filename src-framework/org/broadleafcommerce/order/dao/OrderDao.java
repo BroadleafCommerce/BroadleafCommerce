@@ -21,6 +21,10 @@ public interface OrderDao {
 
     public List<Order> readSubmittedOrdersForCustomer(Customer customer);
 
+    public Order readNamedOrderForCustomer(Customer customer, String name);
+
+    public List<Order> readNamedOrdersForcustomer(Customer customer);
+    
     public Order submitOrder(Order cartOrder);
 
     public Order create();

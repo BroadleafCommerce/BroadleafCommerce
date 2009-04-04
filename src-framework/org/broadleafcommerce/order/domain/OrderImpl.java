@@ -52,6 +52,9 @@ public class OrderImpl implements Order, Serializable {
     @Enumerated(EnumType.STRING)
     private OrderType type;
 
+    @Column(name = "NAME")
+    private String name;
+    
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;
@@ -205,5 +208,14 @@ public class OrderImpl implements Order, Serializable {
         this.markedForOffer = markedForOffer;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    
 
 }

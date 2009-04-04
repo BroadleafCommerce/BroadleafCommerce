@@ -22,6 +22,12 @@ public interface OrderService {
 
     public Order createCurrentCartForCustomer(Customer customer);
 
+    public Order createNamedCartForCustomer(String name, Customer customer);
+    
+    public Order findNamedOrderForCustomer(String name, Customer customer);
+    
+    public List<Order> findNamedOrdersForCustomer(Customer customer);
+    
     public FulfillmentGroupImpl findDefaultFulfillmentGroupForOrder(Order order);
 
     public List<FulfillmentGroup> findFulfillmentGroupsForOrder(Order order);
@@ -59,6 +65,10 @@ public interface OrderService {
     public void cancelOrder(Order order);
 
 	public List<Order> findSubmittedOrdersForCustomer(Customer customer);
+	
+	public OrderItem addItemToCartFromNamedOrder(Order order, Sku item, int quantity);
+	
+	public Order createCartFromNamedOrder(Order namedOrder, boolean deleteNamedorder);
 
 
 
