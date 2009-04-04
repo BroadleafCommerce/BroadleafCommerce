@@ -2,5 +2,6 @@ package org.broadleafcommerce.type;
 
 public enum OrderType {
     SUBMITTED,
-    CART
+    CART,
+    NAMED
 }
