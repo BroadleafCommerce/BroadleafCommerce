@@ -36,13 +36,13 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public Order maintianOrder(Order salesOrder) {
-        if (salesOrder.getId() == null) {
-            em.persist(salesOrder);
+    public Order maintianOrder(Order order) {
+        if (order.getId() == null) {
+            em.persist(order);
         } else {
-            salesOrder = em.merge(salesOrder);
+            order = em.merge(order);
         }
-        return salesOrder;
+        return order;
     }
 
     @Override
@@ -99,6 +99,25 @@ public class OrderDaoJpa implements OrderDao {
     	query.setParameter("orderType", OrderType.SUBMITTED);
 		return query.getResultList();
     }
+    
+    @Override
+    public Order readNamedOrderForCustomer(Customer customer, String name) {
+        Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
+        query.setParameter("customerId", customer.getId());
+        query.setParameter("orderType", OrderType.NAMED);
+        query.setParameter("orderName", name);
+        return (Order)query.getSingleResult();
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Order> readNamedOrdersForcustomer(Customer customer) {
+        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
+        query.setParameter("customerId", customer.getId());
+        query.setParameter("orderType", OrderType.NAMED);
+        return query.getResultList();
+    }
+    
 
     @Override
     public Order submitOrder(Order cartOrder) {

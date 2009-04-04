@@ -26,6 +26,7 @@ import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.type.FulfillmentGroupType;
+import org.broadleafcommerce.type.OrderType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -347,4 +348,53 @@ public class OrderServiceImpl implements OrderService {
         fgi.setQuantity(orderItem.getQuantity());
         return fgi;
     }
+
+    @Override
+    public Order createNamedCartForCustomer(String name, Customer customer) {
+        Order namedOrder = orderDao.create();
+        namedOrder.setCustomer(customer);
+        namedOrder.setName(name);
+        namedOrder.setType(OrderType.NAMED);
+        return orderDao.maintianOrder(namedOrder);
+    
+    }
+
+    @Override
+    public Order findNamedOrderForCustomer(String name, Customer customer) {
+        return orderDao.readNamedOrderForCustomer(customer, name);
+    }
+
+    @Override
+    public List<Order> findNamedOrdersForCustomer(Customer customer) {
+        return orderDao.readNamedOrdersForcustomer(customer);
+    }
+
+    @Override
+    public OrderItem addItemToCartFromNamedOrder(Order namedOrder, Sku item,
+            int quantity) {
+        removeItemFromOrder(namedOrder, item.getId());
+        return addItemToOrder(namedOrder, item, quantity);
+        
+        
+    }
+
+    @Override
+    public Order createCartFromNamedOrder(Order namedOrder, boolean deleteNamedOrder) {
+        Order cartOrder = orderDao.readCartOrdersForCustomer(namedOrder.getCustomer(), false);
+        if(cartOrder == null) {
+            cartOrder = createCurrentCartForCustomer(namedOrder.getCustomer());
+        }
+        for (OrderItem orderItem : namedOrder.getOrderItems()) {
+            removeItemFromOrder(namedOrder, orderItem.getId());
+            addItemToOrder(cartOrder, orderItem.getSku(), orderItem.getQuantity());
+        }
+        if(deleteNamedOrder) {
+            orderDao.deleteOrderForCustomer(namedOrder);
+        }
+        return cartOrder;
+    }
+    
+    
+    
+    
 }

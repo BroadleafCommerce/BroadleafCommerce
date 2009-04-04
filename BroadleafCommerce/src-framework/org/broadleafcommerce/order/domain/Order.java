@@ -16,6 +16,10 @@ public interface Order {
 
     public void setId(Long id);
 
+    public String getName();
+    
+    public void setName(String name);
+    
     public Auditable getAuditable();
 
     public void setAuditable(Auditable auditable);
