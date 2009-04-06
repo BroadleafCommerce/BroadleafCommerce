@@ -26,6 +26,10 @@ public interface Address {
 
     public String getPostalCode();
 
+    public String getCounty();
+
+    public void setCounty(String county);
+
     // This field is temporary and will be removed later
     public String getZipFour();
 
@@ -71,4 +75,8 @@ public interface Address {
     public boolean isBusiness();
 
     public void setBusiness(boolean isBusiness);
+
+    public String getVerificationLevel();
+
+    public void setVerificationLevel(String verificationLevel);
 }
