@@ -34,16 +34,20 @@ public class AddressImpl implements Address {
     @Column(name = "CITY")
     private String city;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = CountryImpl.class)
-    @JoinColumn(name = "COUNTRY")
-    private Country country;
-
     @Column(name = "POSTAL_CODE")
     private String postalCode;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = StateImpl.class)
+    @JoinColumn(name = "COUNTY")
+    private String county;
+
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     private State state;
+
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = CountryImpl.class)
+    @JoinColumn(name = "COUNTRY")
+    private Country country;
 
     @Column(name = "TOKENIZED_ADDRESS")
     private String tokenizedAddress;
@@ -128,6 +132,14 @@ public class AddressImpl implements Address {
 
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+    }
+
+    public String getCounty() {
+        return county;
+    }
+
+    public void setCounty(String county) {
+        this.county = county;
     }
 
     public State getState() {
