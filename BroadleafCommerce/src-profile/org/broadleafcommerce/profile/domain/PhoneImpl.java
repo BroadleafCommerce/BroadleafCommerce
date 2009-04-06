@@ -2,7 +2,6 @@ package org.broadleafcommerce.profile.domain;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -10,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
@@ -29,15 +26,14 @@ public class PhoneImpl implements Phone, Serializable {
     @Column(name = "PHONE_ID")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = CustomerImpl.class)
-    @JoinColumn(name = "CUSTOMER_ID")
-    private Customer customer;
-
     @Column(name = "PHONE_NUMBER")
     private String phoneNumber;
 
-    @Column(name = "PHONE_NAME")
-    private String phoneName;
+    @Column(name = "IS_DEFAULT")
+    private boolean isDefault = false;
+
+    @Column(name = "IS_ACTIVE")
+    private boolean isActive = true;
 
     public Long getId() {
         return id;
@@ -45,14 +41,6 @@ public class PhoneImpl implements Phone, Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     public String getPhoneNumber() {
@@ -63,11 +51,19 @@ public class PhoneImpl implements Phone, Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getPhoneName() {
-        return phoneName;
+    public boolean isDefault() {
+        return isDefault;
     }
 
-    public void setPhoneName(String phoneName) {
-        this.phoneName = phoneName;
+    public void setDefault(boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
 }

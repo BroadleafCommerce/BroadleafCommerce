@@ -1,11 +1,8 @@
 package org.broadleafcommerce.profile.dao;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,13 +29,6 @@ public class PhoneDaoJpa implements PhoneDao {
             phone = em.merge(phone);
         }
         return phone;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Phone> readPhoneByUserId(Long customerId) {
-        Query query = em.createNamedQuery("BC_READ_PHONE_BY_CUSTOMER_ID");
-        query.setParameter("customerId", customerId);
-        return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")

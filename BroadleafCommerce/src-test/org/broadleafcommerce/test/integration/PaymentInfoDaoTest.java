@@ -34,7 +34,7 @@ public class PaymentInfoDaoTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer1","createOrder","readAddress"})
+    @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer1","createOrder"})
     @Rollback(false)
     public void createPaymentInfo(PaymentInfo paymentInfo){
         userName = "customer1";

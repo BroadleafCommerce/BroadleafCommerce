@@ -7,9 +7,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.Phone;
-import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.service.PhoneService;
 import org.broadleafcommerce.profile.test.dataprovider.PhoneDataProvider;
 import org.broadleafcommerce.test.integration.BaseTest;
@@ -23,12 +21,8 @@ public class PhoneTest extends BaseTest {
     @Resource
     private PhoneService phoneService;
 
-    @Resource
-    private CustomerService customerService;
-
     List<Long> phoneIds = new ArrayList<Long>();
     String userName = new String();
-    Long userId;
 
     private Long phoneId;
 
@@ -36,21 +30,10 @@ public class PhoneTest extends BaseTest {
     @Rollback(false)
     public void createPhone(Phone phone) {
         userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
         assert phone.getId() == null;
-        phone.setCustomer(customer);
         phone = phoneService.savePhone(phone);
         assert phone.getId() != null;
-        userId = phone.getCustomer().getId();
         phoneId = phone.getId();
-    }
-
-    @Test(groups = { "readPhone" }, dependsOnGroups = { "createPhone" })
-    public void readPhoneByUserId() {
-        List<Phone> phoneList = phoneService.readPhoneByUserId(userId);
-        for (Phone phone : phoneList) {
-            assert phone != null;
-        }
     }
 
     @Test(groups = { "readPhoneById" }, dependsOnGroups = { "createPhone" })

@@ -6,15 +6,15 @@ public interface Phone {
 
     public void setId(Long id);
 
-    public Customer getCustomer();
-
-    public void setCustomer(Customer customer);
-
     public String getPhoneNumber();
 
     public void setPhoneNumber(String phoneNumber);
 
-    public String getPhoneName();
+    public boolean isDefault();
 
-    public void setPhoneName(String phoneName);
+    public void setDefault(boolean isDefault);
+
+    public boolean isActive();
+
+    public void setActive(boolean isActive);
 }
