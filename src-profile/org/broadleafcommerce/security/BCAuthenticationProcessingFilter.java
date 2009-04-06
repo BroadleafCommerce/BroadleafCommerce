@@ -76,10 +76,28 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
             }
         }
         String successUrlParam = request.getParameter("successUrl");
-        if (StringUtils.isNotEmpty(successUrlParam)){
+        if (StringUtils.isNotEmpty(successUrlParam)) {
             return successUrlParam;
         }
         return super.determineTargetUrl(request);
+    }
+
+    @Override
+    protected String determineFailureUrl(HttpServletRequest request, AuthenticationException failed) {
+        String failureUrlParam = request.getParameter("failureUrl");
+        if (StringUtils.isNotEmpty(failureUrlParam)) {
+            String failureUrl = failureUrlParam;
+            String successUrlParam = request.getParameter("successUrl");
+            if (StringUtils.isNotEmpty(successUrlParam)) {
+                if (failureUrl.contains("?")) {
+                    failureUrl += "?successUrl=" + successUrlParam;
+                } else {
+                    failureUrl += "&successUrl=" + successUrlParam;
+                }
+            }
+            return failureUrl;
+        }
+        return super.determineFailureUrl(request, failed);
     }
 
     public void addListener(PostLoginObserver postLoginObserver) {
