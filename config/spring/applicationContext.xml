@@ -82,6 +82,11 @@
 	</aop:config>
 
 	<aop:config>
+		<aop:pointcut id="customerPhoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerPhoneService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="customerPhoneServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
 		<aop:pointcut id="customerServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerService.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="customerServiceOperation"/>
 	</aop:config>
@@ -162,6 +167,7 @@
 	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.CustomerAddress" class="org.broadleafcommerce.profile.domain.CustomerAddressImpl"/>
+	<bean id="org.broadleafcommerce.profile.domain.CustomerPhone" class="org.broadleafcommerce.profile.domain.CustomerPhoneImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.IdGeneration" class="org.broadleafcommerce.profile.domain.IdGenerationImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Phone" class="org.broadleafcommerce.profile.domain.PhoneImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl"/>

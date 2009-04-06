@@ -1,7 +1,5 @@
 package org.broadleafcommerce.profile.service;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.dao.PhoneDao;
@@ -15,11 +13,6 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Resource
     private PhoneDao phoneDao;
-
-    @Transactional(propagation = Propagation.REQUIRED)
-    public List<Phone> readPhoneByUserId(Long userId) {
-        return phoneDao.readPhoneByUserId(userId);
-    }
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Phone savePhone(Phone phone) {
