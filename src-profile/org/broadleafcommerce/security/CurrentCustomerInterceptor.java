@@ -40,7 +40,7 @@ public class CurrentCustomerInterceptor extends HandlerInterceptorAdapter {
 
 		// if no customer in session or cookie, create a new one
 		Customer firstTimeCustomer = customerService.createCustomerFromId(null);
-		CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "");
+		CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "","/",604800);
 		request.getSession().setAttribute(CUSTOMER_SESSION_ATTR_NAME, firstTimeCustomer);
 		return true;
 	}
