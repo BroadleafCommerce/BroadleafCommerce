@@ -4,6 +4,7 @@
         <packages>
         	<package name="org.broadleafcommerce.test.integration"></package>
         	<package name="org.broadleafcommerce.profile.test"></package>
+        	<package name="org.broadleafcommerce.pricing.test"></package>
         	<package name="org.broadleafcommerce.inventory.test"></package>
         	<package name="org.broadleafcommerce.email.test"></package>
         </packages>

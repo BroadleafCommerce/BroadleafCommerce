@@ -5,6 +5,7 @@ import java.util.List;
 import org.broadleafcommerce.pricing.module.TaxModule;
 
 public interface TaxService {
+	
 	public List<TaxModule> getTaxModules();
 	
 	public void setTaxModules(List<TaxModule> taxModules);

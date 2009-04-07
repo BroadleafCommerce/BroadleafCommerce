@@ -100,6 +100,11 @@
 		<aop:pointcut id="idGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="idGenerationServiceOperation"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="taxServiceOperation" expression="execution(* org.broadleafcommerce.pricing.service.TaxService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="taxServiceOperation"/>
+	</aop:config>
 
 	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
@@ -177,5 +182,25 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
-
+	
+	<bean id="taxService" class="org.broadleafcommerce.pricing.service.TaxServiceImpl">
+		<property name="taxModules">
+			<list>
+				<bean class="org.broadleafcommerce.pricing.module.SimpleTaxModule"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="offerContext" class="org.broadleafcommerce.pricing.workflow.OfferContext"/>
+	
+	<bean id="pricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
+		<property name="processContextClass" value="org.broadleafcommerce.pricing.workflow.OfferContext"/>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.pricing.workflow.CalculateTax">
+					<property name="taxModuleName" value="simpleTaxModule"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
 </beans>
