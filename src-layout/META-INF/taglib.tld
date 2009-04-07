@@ -45,24 +45,6 @@
     </tag>
 
     <tag>
-        <name>customerLookup</name>
-        <tag-class>org.broadleafcommerce.layout.tags.CustomerLookupTag</tag-class>
-        <body-content>empty</body-content>
-        <description>Looks up a customer by customerId.  If no customerId is provided, the customer currently logged in is returned.</description>
-       	<attribute>
-			<name>var</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<description>Page scoped variable that the result is set to</description>
-		</attribute>
-       	<attribute>
-			<name>customerId</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-    </tag>
-
-    <tag>
         <name>currentCart</name>
         <tag-class>org.broadleafcommerce.layout.tags.CurrentCartTag</tag-class>
         <body-content>empty</body-content>
