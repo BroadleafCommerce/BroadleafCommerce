@@ -11,8 +11,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import org.springframework.security.context.SecurityContextHolder;
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
@@ -53,6 +51,9 @@ public class CustomerImpl implements Customer, Serializable {
 
     @Column(name = "IS_REGISTERED")
     private boolean registered = false;
+
+    @Transient
+    private boolean authenticated = false;
 
     @Transient
     private String unencodedPassword;
@@ -157,10 +158,11 @@ public class CustomerImpl implements Customer, Serializable {
     }
 
     public boolean isAuthenticated() {
-        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null) {
-            return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
-        }
-        return false;
+        return authenticated;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        this.authenticated = authenticated;
     }
 
     public String getUnencodedChallengeAnswer() {
