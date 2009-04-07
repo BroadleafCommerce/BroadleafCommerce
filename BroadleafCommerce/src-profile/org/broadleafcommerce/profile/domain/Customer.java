@@ -52,8 +52,6 @@ public interface Customer {
 
     public boolean isAuthenticated();
 
-    public void setAuthenticated(boolean authenticated);
-
     public String getUnencodedChallengeAnswer();
 
     public void setUnencodedChallengeAnswer(String unencodedChallengeAnswer);
