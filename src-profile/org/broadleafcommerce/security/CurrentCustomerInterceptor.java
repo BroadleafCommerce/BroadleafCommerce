@@ -11,7 +11,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class CurrentCustomerInterceptor extends HandlerInterceptorAdapter {
 
-	private final static String CUSTOMER_SESSION_ATTR_NAME = "broadleaf_commerce.customer";
+	private final static String CUSTOMER_SESSION_ATTR_NAME = CustomerState.getCustomerSessionAttributeName();
 
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		Customer sessionCustomer = (Customer) request.getSession().getAttribute(CUSTOMER_SESSION_ATTR_NAME);

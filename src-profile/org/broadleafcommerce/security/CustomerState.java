@@ -15,13 +15,17 @@ public class CustomerState {
     public static void setCustomer(Customer customer, HttpServletRequest request) {
         request.getSession().setAttribute(sessionAttributeName, customer);
     }
-    
+
     public static Long getCustomerId(HttpServletRequest request) {
         return getCustomer(request) == null ? null : getCustomer(request).getId();
-    }    
+    }
 
     public static void setCustomerSessionAttributeName(String sessionAttributeName) {
     	CustomerState.sessionAttributeName = sessionAttributeName;
+    }
+
+    public static String getCustomerSessionAttributeName() {
+    	return sessionAttributeName;
     }
 
 }
