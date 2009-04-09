@@ -1,24 +1,34 @@
 package org.broadleafcommerce.pricing.module;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.util.money.Money;
 
 public class SimpleTaxModule implements TaxModule {
 	
 	public static final String MODULENAME = "simpleTaxModule";
 	
 	protected String name = MODULENAME;
-	protected double factor = 0.05D;
+	protected Double factor;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.pricing.module.TaxModule#calculateTaxForOrder(org.broadleafcommerce.order.domain.Order)
 	 */
 	@Override
 	public Order calculateTaxForOrder(Order order) {
-		/*
-		 * TODO does Order need a member variable to hold the specific
-		 * tax amount?
-		 */
-		order.setTotal(order.getSubTotal().multiply(factor+1D));
+		order.setTotalTax(new Money(0));
+		
+		List<FulfillmentGroup> groups = order.getFulfillmentGroups();
+		Iterator<FulfillmentGroup> itr = groups.iterator();
+		while(itr.hasNext()) {
+			FulfillmentGroup group = itr.next();
+			group.setTotalTax(group.getPrice().multiply(factor));
+			order.setTotalTax(order.getTotalTax().add(group.getTotalTax()));
+		}
+		order.setTotal(order.getTotal().add(order.getTotalTax()));
 		return order;
 	}
 
@@ -41,14 +51,14 @@ public class SimpleTaxModule implements TaxModule {
 	/**
 	 * @return the factor
 	 */
-	public double getFactor() {
+	public Double getFactor() {
 		return factor;
 	}
 
 	/**
 	 * @param factor the factor to set
 	 */
-	public void setFactor(double factor) {
+	public void setFactor(Double factor) {
 		this.factor = factor;
 	}
 

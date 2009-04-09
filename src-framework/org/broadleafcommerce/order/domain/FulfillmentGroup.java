@@ -67,5 +67,25 @@ public interface FulfillmentGroup {
     public void addAppliedOffer(OfferAudit offer);
 
     public void removeAllOffers();
+    
+    public Money getCityTax();
+
+	public void setCityTax(Money cityTax);
+
+	public Money getCountyTax();
+
+	public void setCountyTax(Money countyTax);
+
+	public Money getStateTax();
+
+	public void setStateTax(Money stateTax);
+
+	public Money getCountryTax();
+
+	public void setCountryTax(Money countryTax);
+	
+	public Money getTotalTax();
+
+	public void setTotalTax(Money totalTax);
 
 }

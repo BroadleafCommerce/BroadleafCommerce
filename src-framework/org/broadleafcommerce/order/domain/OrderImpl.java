@@ -57,6 +57,21 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "ORDER_STATUS")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+    
+    @Column(name="CITY_TAX")
+    private BigDecimal cityTax;
+    
+    @Column(name="COUNTY_TAX")
+    private BigDecimal countyTax;
+    
+    @Column(name="STATE_TAX")
+    private BigDecimal stateTax;
+    
+    @Column(name="COUNTRY_TAX")
+    private BigDecimal countryTax;
+    
+    @Column(name="TOTAL_TAX")
+    private BigDecimal totalTax;
 
     @Column(name = "ORDER_SUBTOTAL")
     private BigDecimal subTotal;
@@ -218,4 +233,44 @@ public class OrderImpl implements Order, Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+	public Money getCityTax() {
+		return cityTax == null ? null : new Money(cityTax);
+	}
+
+	public void setCityTax(Money cityTax) {
+		this.cityTax = Money.toAmount(cityTax);
+	}
+
+	public Money getCountyTax() {
+		return countyTax == null ? null : new Money(countyTax);
+	}
+
+	public void setCountyTax(Money countyTax) {
+		this.countyTax = Money.toAmount(countyTax);
+	}
+
+	public Money getStateTax() {
+		return stateTax == null ? null : new Money(stateTax);
+	}
+
+	public void setStateTax(Money stateTax) {
+		this.stateTax = Money.toAmount(stateTax);
+	}
+
+	public Money getCountryTax() {
+		return countryTax == null ? null : new Money(countryTax);
+	}
+
+	public void setCountryTax(Money countryTax) {
+		this.countryTax = Money.toAmount(countryTax);
+	}
+
+	public Money getTotalTax() {
+		return totalTax == null ? null : new Money(totalTax);
+	}
+
+	public void setTotalTax(Money totalTax) {
+		this.totalTax = Money.toAmount(totalTax);
+	}
 }
