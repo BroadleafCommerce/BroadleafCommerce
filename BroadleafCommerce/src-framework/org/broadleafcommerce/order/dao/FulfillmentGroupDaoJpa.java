@@ -20,7 +20,7 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     private EntityManager em;
 
     @Resource
@@ -42,14 +42,6 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     public FulfillmentGroup readFulfillmentGroupById(Long fulfillmentGroupId) {
         return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
     }
-
-    //    @Override
-    //    @SuppressWarnings("unchecked")
-    //    public List<FulfillmentGroup> readFulfillmentGroupsForOrder(Order order) {
-    //        Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID");
-    //        query.setParameter("orderId", order.getId());
-    //        return query.getResultList();
-    //    }
 
     @Override
     public FulfillmentGroupImpl maintainDefaultFulfillmentGroup(FulfillmentGroupImpl defaultFulfillmentGroup) {
@@ -78,7 +70,6 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     @SuppressWarnings("unchecked")
     @Override
     public void removeFulfillmentGroupForOrder(Order order, FulfillmentGroup fulfillmentGroup) {
-        //fulfillmentGroup.setOrderId(order.getId());
         fulfillmentGroup = (FulfillmentGroup) em.getReference(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroup.getId());
         em.remove(fulfillmentGroup);
     }

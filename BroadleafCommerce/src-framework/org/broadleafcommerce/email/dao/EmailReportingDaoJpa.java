@@ -23,50 +23,48 @@ import org.springframework.stereotype.Repository;
 @Repository("emailReportingDao")
 public class EmailReportingDaoJpa implements EmailReportingDao {
 
-	@PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName="blPU")
     private EntityManager em;
-	
-	@Resource
+
+    @Resource
     private EntityConfiguration entityConfiguration;
 
     /* (non-Javadoc)
-	 * @see WebReportingDao#createTracking(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public Long createTracking(String emailAddress, String type, String extraValue) {
-		EmailTracking tracking = new EmailTrackingImpl();
-		tracking.setDateSent(new Date());
-		tracking.setEmailAddress(emailAddress);
-		tracking.setType(type);
-		//tracking.setExtraValue(extraValue);
-		
-		em.persist(tracking);
-		
-		return tracking.getId();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public EmailTracking retrieveTracking(Long emailId) {
-		return (EmailTracking) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.email.domain.EmailTracking"), emailId);
-	}
+     * @see WebReportingDao#createTracking(java.lang.String, java.lang.String, java.lang.String)
+     */
+    public Long createTracking(String emailAddress, String type, String extraValue) {
+        EmailTracking tracking = new EmailTrackingImpl();
+        tracking.setDateSent(new Date());
+        tracking.setEmailAddress(emailAddress);
+        tracking.setType(type);
 
-	public void recordOpen(Long emailId, String userAgent) {
-		EmailTrackingOpens opens = new EmailTrackingOpensImpl();
-		opens.setEmailTracking(retrieveTracking(emailId));
-		opens.setDateOpened(new Date());
-		opens.setUserAgent(userAgent);
-		
-		em.persist(opens);
-	}
-	
-	public void recordClick(Long emailId, Customer customer, String destinationUri, String queryString) {
-		EmailTrackingClicks clicks = new EmailTrackingClicksImpl();
-		clicks.setEmailTracking(retrieveTracking(emailId));
-		clicks.setDateClicked(new Date());
-		clicks.setDestinationUri(destinationUri);
-		clicks.setQueryString(queryString);
-		clicks.setCustomer(customer);
-		//clicks.setSessionId(sessionId);
-		
-		em.persist(clicks);
-	}
+        em.persist(tracking);
+
+        return tracking.getId();
+    }
+
+    @SuppressWarnings("unchecked")
+    public EmailTracking retrieveTracking(Long emailId) {
+        return (EmailTracking) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.email.domain.EmailTracking"), emailId);
+    }
+
+    public void recordOpen(Long emailId, String userAgent) {
+        EmailTrackingOpens opens = new EmailTrackingOpensImpl();
+        opens.setEmailTracking(retrieveTracking(emailId));
+        opens.setDateOpened(new Date());
+        opens.setUserAgent(userAgent);
+
+        em.persist(opens);
+    }
+
+    public void recordClick(Long emailId, Customer customer, String destinationUri, String queryString) {
+        EmailTrackingClicks clicks = new EmailTrackingClicksImpl();
+        clicks.setEmailTracking(retrieveTracking(emailId));
+        clicks.setDateClicked(new Date());
+        clicks.setDestinationUri(destinationUri);
+        clicks.setQueryString(queryString);
+        clicks.setCustomer(customer);
+
+        em.persist(clicks);
+    }
 }

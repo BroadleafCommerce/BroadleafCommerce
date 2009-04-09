@@ -39,16 +39,13 @@ public class OrderItemDaoTest extends BaseTest {
         assert si.getId() != null;
         orderItem.setSku(si);
         Customer customer = customerService.readCustomerByUsername(userName);
-        // Order so = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
         Order so = orderDao.readCartForCustomer(customer, false);
         assert so.getStatus() == OrderStatus.IN_PROCESS;
         assert so.getId() != null;
-        // orderItem.setOrder(so);
         assert orderItem.getId() == null;
 
         orderItem = orderItemDao.maintainOrderItem(orderItem);
         assert orderItem.getId() != null;
-        // order = so;
         orderItemId = orderItem.getId();
     }
 

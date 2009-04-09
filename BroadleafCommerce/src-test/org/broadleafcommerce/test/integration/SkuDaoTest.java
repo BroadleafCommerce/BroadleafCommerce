@@ -21,8 +21,6 @@ public class SkuDaoTest extends BaseTest {
     @Test(groups = { "createSku" }, dataProvider = "basicSku", dataProviderClass = SkuDaoDataProvider.class, dependsOnGroups = { "readCustomer1", "createOrder", "createProduct" })
     @Rollback(false)
     public void createSku(Sku sku) {
-        // Product product = (productDao.readProductsByName("setOfAggieDominoes")).get(0);
-        // sku.setProduct(product);
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         assert sku.getId() == null;
         sku = skuDao.maintainSku(sku);

@@ -8,12 +8,11 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class SkuLookupTag extends BodyTagSupport {
-    // private Logger log = Logger.getLogger(this.getClass());
     private static final long serialVersionUID = 1L;
     private String var;
     private long skuId;
 
-	@Override
+    @Override
     public int doStartTag() throws JspException {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         CatalogService catalogService = (CatalogService) applicationContext.getBean("catalogService");
@@ -29,11 +28,11 @@ public class SkuLookupTag extends BodyTagSupport {
         this.var = var;
     }
 
-	public long getSkuId() {
-		return skuId;
-	}
+    public long getSkuId() {
+        return skuId;
+    }
 
-	public void setSkuId(long skuId) {
-		this.skuId = skuId;
-	}
+    public void setSkuId(long skuId) {
+        this.skuId = skuId;
+    }
 }
