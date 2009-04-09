@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -18,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferAudit;
@@ -38,17 +40,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "FulfillmentGroupId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "FulfillmentGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupImpl", allocationSize = 1)
     @Column(name = "ID")
     private Long id;
 
-//    @ManyToOne(targetEntity=OrderImpl.class)
-//    @JoinColumn(name = "ORDER_ID")
-//    private Order order;
-
-    @Column(name="ORDER_ID")
+    @Column(name = "ORDER_ID")
     private Long orderId;
-    
+
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
 
@@ -86,20 +85,20 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
     @MapKey(name = "id")
     private List<OfferAudit> appliedOffers;
-    
-    @Column(name="CITY_TAX")
+
+    @Column(name = "CITY_TAX")
     private BigDecimal cityTax;
-    
-    @Column(name="COUNTY_TAX")
+
+    @Column(name = "COUNTY_TAX")
     private BigDecimal countyTax;
-    
-    @Column(name="STATE_TAX")
+
+    @Column(name = "STATE_TAX")
     private BigDecimal stateTax;
-    
-    @Column(name="COUNTRY_TAX")
+
+    @Column(name = "COUNTRY_TAX")
     private BigDecimal countryTax;
-    
-    @Column(name="TOTAL_TAX")
+
+    @Column(name = "TOTAL_TAX")
     private BigDecimal totalTax;
 
     public Long getId() {
@@ -110,22 +109,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         this.id = id;
     }
 
-//    public Order getOrder() {
-//        return order;
-//    }
-//
-//    public void setOrder(Order order) {
-//        this.order = order;
-//    }
-
     public Long getOrderId() {
         return orderId;
     }
-    
+
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
-    
+
     public String getReferenceNumber() {
         return referenceNumber;
     }
@@ -248,44 +239,44 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
             candidateOffers.clear();
         }
     }
-    
+
     public Money getCityTax() {
-		return cityTax == null ? null : new Money(cityTax);
-	}
+        return cityTax == null ? null : new Money(cityTax);
+    }
 
-	public void setCityTax(Money cityTax) {
-		this.cityTax = Money.toAmount(cityTax);
-	}
+    public void setCityTax(Money cityTax) {
+        this.cityTax = Money.toAmount(cityTax);
+    }
 
-	public Money getCountyTax() {
-		return countyTax == null ? null : new Money(countyTax);
-	}
+    public Money getCountyTax() {
+        return countyTax == null ? null : new Money(countyTax);
+    }
 
-	public void setCountyTax(Money countyTax) {
-		this.countyTax = Money.toAmount(countyTax);
-	}
+    public void setCountyTax(Money countyTax) {
+        this.countyTax = Money.toAmount(countyTax);
+    }
 
-	public Money getStateTax() {
-		return stateTax == null ? null : new Money(stateTax);
-	}
+    public Money getStateTax() {
+        return stateTax == null ? null : new Money(stateTax);
+    }
 
-	public void setStateTax(Money stateTax) {
-		this.stateTax = Money.toAmount(stateTax);
-	}
+    public void setStateTax(Money stateTax) {
+        this.stateTax = Money.toAmount(stateTax);
+    }
 
-	public Money getCountryTax() {
-		return countryTax == null ? null : new Money(countryTax);
-	}
+    public Money getCountryTax() {
+        return countryTax == null ? null : new Money(countryTax);
+    }
 
-	public void setCountryTax(Money countryTax) {
-		this.countryTax = Money.toAmount(countryTax);
-	}
+    public void setCountryTax(Money countryTax) {
+        this.countryTax = Money.toAmount(countryTax);
+    }
 
-	public Money getTotalTax() {
-		return totalTax == null ? null : new Money(totalTax);
-	}
+    public Money getTotalTax() {
+        return totalTax == null ? null : new Money(totalTax);
+    }
 
-	public void setTotalTax(Money totalTax) {
-		this.totalTax = Money.toAmount(totalTax);
-	}
+    public void setTotalTax(Money totalTax) {
+        this.totalTax = Money.toAmount(totalTax);
+    }
 }
