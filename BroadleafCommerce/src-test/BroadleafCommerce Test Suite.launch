@@ -58,6 +58,7 @@
 <listAttribute key="org.testng.eclipse.GROUP_LIST"/>
 <listAttribute key="org.testng.eclipse.GROUP_LIST_CLASS"/>
 <stringAttribute key="org.testng.eclipse.LOG_LEVEL" value="2"/>
+<listAttribute key="org.testng.eclipse.PACKAGE_TEST_LIST"/>
 <listAttribute key="org.testng.eclipse.SUITE_TEST_LIST">
 <listEntry value="bin\testng.xml"/>
 </listAttribute>
