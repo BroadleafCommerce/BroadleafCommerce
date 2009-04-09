@@ -42,9 +42,11 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     public void createFulfillmentGroupItem(){
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
-        Order salesOrder= (orderDao.readOrdersForCustomer(customer)).get(0);
-        OrderItem orderItem = orderItemDao.readOrderItemsForOrder(salesOrder).get(0);
-        fulfillmentGroup = fulfillmentGroupDao.readFulfillmentGroupsForOrder(salesOrder).get(0);
+        Order salesOrder= (orderDao.readOrdersForCustomer(customer.getId())).get(0);
+        //OrderItem orderItem = orderItemDao.readOrderItemsForOrder(salesOrder).get(0);
+        OrderItem orderItem = salesOrder.getOrderItems().get(0);
+        //fulfillmentGroup = fulfillmentGroupDao.readFulfillmentGroupsForOrder(salesOrder).get(0);
+        fulfillmentGroup = salesOrder.getFulfillmentGroups().get(0);
         Long fulfillmentGroupId = fulfillmentGroup.getId();
 
         assert fulfillmentGroup != null;

@@ -42,14 +42,17 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "ORDER_ID")
-    private Long orderId;
+//    @ManyToOne(targetEntity=OrderImpl.class)
+//    @JoinColumn(name = "ORDER_ID")
+//    private Order order;
 
+    @Column(name="ORDER_ID")
+    private Long orderId;
+    
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
 
     @OneToMany(mappedBy = "id", targetEntity = FulfillmentGroupItemImpl.class)
-    @MapKey(name = "id")
     private List<FulfillmentGroupItem> fulfillmentGroupItems;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = CascadeType.ALL)
@@ -92,14 +95,22 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         this.id = id;
     }
 
+//    public Order getOrder() {
+//        return order;
+//    }
+//
+//    public void setOrder(Order order) {
+//        this.order = order;
+//    }
+
     public Long getOrderId() {
         return orderId;
     }
-
+    
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
-
+    
     public String getReferenceNumber() {
         return referenceNumber;
     }

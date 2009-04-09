@@ -5,6 +5,13 @@
 
 	<named-query name="BC_READ_ORDER_ITEMS_BY_ORDER_ID" >
 		<query>SELECT orderItem FROM org.broadleafcommerce.order.domain.OrderItem orderItem
-		WHERE orderItem.order.id = :orderId</query>
+		WHERE orderItem.orderId = :orderId</query>
+	</named-query>
+
+	<named-query name="BC_READ_ORDER_BY_ORDER_ITEM" >
+		<query>
+			SELECT orderItem FROM org.broadleafcommerce.order.domain.OrderItem orderItem
+			 WHERE orderItem.orderId = :orderId
+	 	</query>
 	</named-query>
 </entity-mappings>

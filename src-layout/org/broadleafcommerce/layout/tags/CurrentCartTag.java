@@ -35,13 +35,13 @@ public class CurrentCartTag extends BodyTagSupport {
 		}
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         OrderService orderService = (OrderService) applicationContext.getBean("orderService");
-        Order order = orderService.findCurrentCartForCustomer(customer);
+        Order order = orderService.findCartForCustomer(customer);
         if (orderVar != null) {
         	pageContext.setAttribute(orderVar, order);
         }
         List<OrderItem> orderItems = null;
         if ((orderItemsVar != null || totalQuantityVar != null) && order != null) {
-        	orderItems = orderService.findItemsForOrder(order);
+        	orderItems = order.getOrderItems();
         	if (orderItemsVar != null) {
         		pageContext.setAttribute(orderItemsVar, orderItems);
         	}

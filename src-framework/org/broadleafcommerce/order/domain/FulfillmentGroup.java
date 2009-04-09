@@ -14,11 +14,15 @@ public interface FulfillmentGroup {
 
     public void setId(Long id);
 
-    public Long getOrderId();
+//    public Order getOrder();
+//
+//    public void setOrder(Order order);
 
-    public void setOrderId(Long orderId);
-
-    public Address getAddress();
+    public Long getOrderId() ;
+    
+    public void setOrderId(Long orderId) ;    
+    
+    public Address getAddress();    
 
     public void setAddress(Address address);
 

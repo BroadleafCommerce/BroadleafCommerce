@@ -18,10 +18,14 @@ public interface OrderItem {
 
     public void setSku(Sku sku);
 
-    public Order getOrder();
+//    public Order getOrder();
+//
+//    public void setOrder(Order order);
 
-    public void setOrder(Order order);
-
+    public Long getOrderId();
+    
+    public void setOrderId(Long orderId);
+    
     public Money getRetailPrice();
 
     public void setRetailPrice(Money retailPrice);

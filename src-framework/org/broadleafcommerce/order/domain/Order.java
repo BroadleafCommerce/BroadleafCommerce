@@ -6,8 +6,7 @@ import java.util.List;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.type.OrderStatusType;
-import org.broadleafcommerce.type.OrderType;
+import org.broadleafcommerce.type.OrderStatus;
 import org.broadleafcommerce.util.money.Money;
 
 public interface Order {
@@ -36,23 +35,27 @@ public interface Order {
 
     public void setCustomer(Customer customer);
 
-    public OrderStatusType getStatus();
+    public OrderStatus getStatus();
 
-	public void setStatus(OrderStatusType status);
-
-    public OrderType getType();
-
-    public void setType(OrderType type);
+	public void setStatus(OrderStatus status);
 
     public List<OrderItem> getOrderItems();
 
     public void setOrderItems(List<OrderItem> orderItems);
 
+    public void addOrderItem(OrderItem orderItem) ;
+    
+    public void removeOrderItem(OrderItem orderItem);
+    
     public List<FulfillmentGroup> getFulfillmentGroups();
 
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
-    public List<Offer> getCandidateOffers();
+    public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) ;
+    
+    public void removeFulfillmentGroup(FulfillmentGroup fulfillmentGroup) ;
+
+        public List<Offer> getCandidateOffers();
 
     public void setCandidateOffers(List<Offer> offers);
 

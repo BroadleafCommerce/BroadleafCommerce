@@ -14,7 +14,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
-import org.broadleafcommerce.type.OrderType;
+import org.broadleafcommerce.type.OrderStatus;
 import org.springframework.stereotype.Repository;
 
 @Repository("orderDao")
@@ -50,9 +50,18 @@ public class OrderDaoJpa implements OrderDao {
         em.remove(salesOrder);
     }
 
-    @Override
-    public List<Order> readOrdersForCustomer(Customer customer) {
-        return readOrdersForCustomer(customer.getId());
+    @Override 
+    @SuppressWarnings("unchecked")
+    public List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus) {
+        if(orderStatus == null) {
+            return readOrdersForCustomer(customer.getId());
+        }else {            
+            Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS");
+            query.setParameter("customerId", customer.getId());
+            query.setParameter("orderStatus", orderStatus);
+            return query.getResultList();            
+        }
+        
     }
 
     @Override
@@ -64,27 +73,20 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public Order readOrderForCustomer(Long customerId, Long orderId) {
-    	Query query = em.createNamedQuery("BC_READ_ORDER_BY_CUSTOMER_ID");
-    	query.setParameter("orderId", orderId);
-    	query.setParameter("customerId", customerId);
-    	return (Order) query.getSingleResult();
-    }
-
-    @Override
-    public Order readCartOrdersForCustomer(Customer customer, boolean persist) {
+    public Order readCartForCustomer(Customer customer, boolean persist) {
         Order bo = null;
-        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
+        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
-        query.setParameter("orderType", OrderType.CART);
+        query.setParameter("orderStatus", OrderStatus.IN_PROCESS);
+//        query.setParameter("orderName", null);
         try {
-            bo = (OrderImpl) query.getSingleResult();
-            return (OrderImpl) query.getSingleResult();
+            bo = (Order) query.getSingleResult();
+            return (Order) query.getSingleResult();
         } catch (NoResultException nre) {
         	if (persist) {
 	            bo = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
 	            bo.setCustomer(customer);
-	            bo.setType(OrderType.CART);
+	            bo.setStatus(OrderStatus.IN_PROCESS);
 	            em.persist(bo);
         	}
             return bo;
@@ -92,36 +94,8 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<Order> readSubmittedOrdersForCustomer(Customer customer) {
-    	Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
-    	query.setParameter("customerId", customer.getId());
-    	query.setParameter("orderType", OrderType.SUBMITTED);
-		return query.getResultList();
-    }
-    
-    @Override
-    public Order readNamedOrderForCustomer(Customer customer, String name) {
-        Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
-        query.setParameter("customerId", customer.getId());
-        query.setParameter("orderType", OrderType.NAMED);
-        query.setParameter("orderName", name);
-        return (Order)query.getSingleResult();
-    }
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Order> readNamedOrdersForcustomer(Customer customer) {
-        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
-        query.setParameter("customerId", customer.getId());
-        query.setParameter("orderType", OrderType.NAMED);
-        return query.getResultList();
-    }
-    
-
-    @Override
     public Order submitOrder(Order cartOrder) {
-        OrderImpl so = new OrderImpl();
+        Order so = create();
         so.setId(cartOrder.getId());
         Query query = em.createNamedQuery("BC_UPDATE_CART_ORDER_TO_SUBMITTED");
         query.setParameter("id", cartOrder.getId());
@@ -132,4 +106,43 @@ public class OrderDaoJpa implements OrderDao {
     public Order create() {
         return ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.OrderImpl"));
     }
+
+    @Override
+    public Order readNamedOrderForCustomer(Customer customer, String name) {
+        Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
+        query.setParameter("customerId", customer.getId());
+        query.setParameter("orderStatus", OrderStatus.IN_PROCESS);
+        query.setParameter("orderName", name);
+        return (Order)query.getSingleResult();
+    }
+
+    //   Removed Methods
+//    
+//    @Override
+//    public Order readOrderForCustomer(Long customerId, Long orderId) {
+//        Query query = em.createNamedQuery("BC_READ_ORDER_BY_CUSTOMER_ID");
+//        query.setParameter("orderId", orderId);
+//        query.setParameter("customerId", customerId);
+//        return (Order) query.getSingleResult();
+//    }
+//
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public List<Order> readSubmittedOrdersForCustomer(Customer customer) {
+//        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
+//        query.setParameter("customerId", customer.getId());
+//        query.setParameter("orderType", OrderType.SUBMITTED);
+//        return query.getResultList();
+//    }
+//    
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public List<Order> readNamedOrdersForcustomer(Customer customer) {
+//        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
+//        query.setParameter("customerId", customer.getId());
+//        query.setParameter("orderType", OrderType.NAMED);
+//        return query.getResultList();
+//    }
+//    
+
 }

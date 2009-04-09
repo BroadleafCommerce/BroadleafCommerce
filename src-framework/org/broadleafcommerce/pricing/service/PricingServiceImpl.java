@@ -25,7 +25,8 @@ public class PricingServiceImpl implements PricingService {
     @Override
     public Order calculateOrderTotal(Order order) {
         Money total = new Money(BigDecimal.ZERO);
-        List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
+        //List<OrderItem> orderItemList = orderItemDao.readOrderItemsForOrder(order);
+        List<OrderItem> orderItemList = order.getOrderItems();
         for (OrderItem item : orderItemList) {
         	if(item.getPrice() == null){
         		item.setPrice(item.getSalePrice());
@@ -34,7 +35,8 @@ public class PricingServiceImpl implements PricingService {
         }
         order.setSubTotal(total);
 
-        List<FulfillmentGroup> fulfillmentGroupList = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
+        //List<FulfillmentGroup> fulfillmentGroupList = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
+        List<FulfillmentGroup> fulfillmentGroupList = order.getFulfillmentGroups();
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroupList) {
             total = total.add(fulfillmentGroup.getRetailPrice());
         }

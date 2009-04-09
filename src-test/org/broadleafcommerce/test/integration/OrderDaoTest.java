@@ -45,7 +45,7 @@ public class OrderDaoTest extends BaseTest {
     public void readOrdersForCustomer() {
         userName = "customer1";
         Customer user = customerService.readCustomerByUsername(userName);
-        List<Order> orders = orderDao.readOrdersForCustomer(user);
+        List<Order> orders = orderDao.readOrdersForCustomer(user.getId());
         assert orders.size() > 0;
     }
 

@@ -45,18 +45,19 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
         return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<FulfillmentGroup> readFulfillmentGroupsForOrder(Order order) {
-        Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID");
-        query.setParameter("orderId", order.getId());
-        return query.getResultList();
-    }
+//    @Override
+//    @SuppressWarnings("unchecked")
+//    public List<FulfillmentGroup> readFulfillmentGroupsForOrder(Order order) {
+//        Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID");
+//        query.setParameter("orderId", order.getId());
+//        return query.getResultList();
+//    }
 
     @Override
     public FulfillmentGroupImpl maintainDefaultFulfillmentGroup(FulfillmentGroupImpl defaultFulfillmentGroup) {
         if (defaultFulfillmentGroup.getId() == null) {
             em.persist(defaultFulfillmentGroup);
+            em.flush();
         } else {
             defaultFulfillmentGroup = em.merge(defaultFulfillmentGroup);
         }
@@ -79,7 +80,7 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     @SuppressWarnings("unchecked")
     @Override
     public void removeFulfillmentGroupForOrder(Order order, FulfillmentGroup fulfillmentGroup) {
-        fulfillmentGroup.setOrderId(order.getId());
+        //fulfillmentGroup.setOrderId(order.getId());
         fulfillmentGroup = (FulfillmentGroup) em.getReference(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroup.getId());
         em.remove(fulfillmentGroup);
     }
