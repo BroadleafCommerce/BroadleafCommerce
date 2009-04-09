@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -50,7 +49,7 @@ public class OrderImpl implements Order, Serializable {
 
     @Column(name = "NAME")
     private String name;
-    
+
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;
@@ -68,14 +67,11 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "SUBMIT_DATE")
     private Date submitDate;
 
-	@OneToMany(mappedBy = "orderId", targetEntity = OrderItemImpl.class)
+    @OneToMany(mappedBy = "orderId", targetEntity = OrderItemImpl.class)
     private List<OrderItem> orderItems;
 
     @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
     private List<FulfillmentGroup> fulfillmentGroups;
-    
-//    @OneToMany(mappedBy = "id", targetEntity = PaymentInfoImpl.class)
-//    private List<PaymentInfo> paymentInfos;
 
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
@@ -108,7 +104,6 @@ public class OrderImpl implements Order, Serializable {
         this.subTotal = Money.toAmount(subTotal);
     }
 
-    
     public void setCandidateOffers(List<Offer> candidateOffers) {
         this.candidateOffers = candidateOffers;
     }
@@ -122,12 +117,12 @@ public class OrderImpl implements Order, Serializable {
     }
 
     public Date getSubmitDate() {
-		return submitDate;
-	}
+        return submitDate;
+    }
 
-	public void setSubmitDate(Date submitDate) {
-		this.submitDate = submitDate;
-	}
+    public void setSubmitDate(Date submitDate) {
+        this.submitDate = submitDate;
+    }
 
     public Customer getCustomer() {
         return customer;
@@ -138,12 +133,12 @@ public class OrderImpl implements Order, Serializable {
     }
 
     public OrderStatus getStatus() {
-		return status;
-	}
+        return status;
+    }
 
-	public void setStatus(OrderStatus status) {
-		this.status = status;
-	}
+    public void setStatus(OrderStatus status) {
+        this.status = status;
+    }
 
     public List<OrderItem> getOrderItems() {
         return orderItems;
@@ -163,7 +158,7 @@ public class OrderImpl implements Order, Serializable {
     public void removeOrderItem(OrderItem orderItem) {
         this.orderItems.remove(orderItem);
     }
-    
+
     public List<FulfillmentGroup> getFulfillmentGroups() {
         return fulfillmentGroups;
     }
@@ -175,11 +170,11 @@ public class OrderImpl implements Order, Serializable {
     public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         this.fulfillmentGroups.add(fulfillmentGroup);
     }
-    
+
     public void removeFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         this.fulfillmentGroups.remove(fulfillmentGroup);
     }
-    
+
     @Override
     public void addCandidateOffer(Offer offer) {
         candidateOffers.add(offer);
@@ -189,7 +184,6 @@ public class OrderImpl implements Order, Serializable {
     public List<Offer> getCandidateOffers() {
         return candidateOffers;
     }
-
 
     @Override
     public void removeAllOffers() {
@@ -224,7 +218,4 @@ public class OrderImpl implements Order, Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    
-
 }

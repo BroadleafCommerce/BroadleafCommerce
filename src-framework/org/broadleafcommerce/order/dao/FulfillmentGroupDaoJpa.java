@@ -1,7 +1,5 @@
 package org.broadleafcommerce.order.dao;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -45,13 +43,13 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
         return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
     }
 
-//    @Override
-//    @SuppressWarnings("unchecked")
-//    public List<FulfillmentGroup> readFulfillmentGroupsForOrder(Order order) {
-//        Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID");
-//        query.setParameter("orderId", order.getId());
-//        return query.getResultList();
-//    }
+    //    @Override
+    //    @SuppressWarnings("unchecked")
+    //    public List<FulfillmentGroup> readFulfillmentGroupsForOrder(Order order) {
+    //        Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUPS_BY_ORDER_ID");
+    //        query.setParameter("orderId", order.getId());
+    //        return query.getResultList();
+    //    }
 
     @Override
     public FulfillmentGroupImpl maintainDefaultFulfillmentGroup(FulfillmentGroupImpl defaultFulfillmentGroup) {
