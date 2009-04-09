@@ -21,7 +21,7 @@ public class CalculateOrderSubtotal extends BaseActivity {
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((OfferContext) context).getSeedData();
         Money subTotal = new Money(BigDecimal.ZERO);
-        List<OrderItem> orderItems = orderService.findItemsForOrder(order);
+        List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
             subTotal.add(orderItem.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
         }

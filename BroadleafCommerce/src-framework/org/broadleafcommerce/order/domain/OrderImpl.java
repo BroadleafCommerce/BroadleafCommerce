@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -28,8 +29,7 @@ import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
-import org.broadleafcommerce.type.OrderStatusType;
-import org.broadleafcommerce.type.OrderType;
+import org.broadleafcommerce.type.OrderStatus;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -48,10 +48,6 @@ public class OrderImpl implements Order, Serializable {
     @Embedded
     private Auditable auditable;
 
-    @Column(name = "TYPE")
-    @Enumerated(EnumType.STRING)
-    private OrderType type;
-
     @Column(name = "NAME")
     private String name;
     
@@ -61,7 +57,7 @@ public class OrderImpl implements Order, Serializable {
 
     @Column(name = "ORDER_STATUS")
     @Enumerated(EnumType.STRING)
-    private OrderStatusType status;
+    private OrderStatus status;
 
     @Column(name = "ORDER_SUBTOTAL")
     private BigDecimal subTotal;
@@ -72,13 +68,14 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "SUBMIT_DATE")
     private Date submitDate;
 
-	@OneToMany(mappedBy = "id", targetEntity = OrderItemImpl.class)
-    @MapKey(name = "id")
+	@OneToMany(mappedBy = "orderId", targetEntity = OrderItemImpl.class)
     private List<OrderItem> orderItems;
 
     @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
-    @MapKey(name = "id")
     private List<FulfillmentGroup> fulfillmentGroups;
+    
+//    @OneToMany(mappedBy = "id", targetEntity = PaymentInfoImpl.class)
+//    private List<PaymentInfo> paymentInfos;
 
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
@@ -111,6 +108,7 @@ public class OrderImpl implements Order, Serializable {
         this.subTotal = Money.toAmount(subTotal);
     }
 
+    
     public void setCandidateOffers(List<Offer> candidateOffers) {
         this.candidateOffers = candidateOffers;
     }
@@ -139,30 +137,33 @@ public class OrderImpl implements Order, Serializable {
         this.customer = customer;
     }
 
-    public OrderStatusType getStatus() {
+    public OrderStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(OrderStatusType status) {
+	public void setStatus(OrderStatus status) {
 		this.status = status;
 	}
-
-	public OrderType getType() {
-        return type;
-    }
-
-    public void setType(OrderType type) {
-        this.type = type;
-    }
 
     public List<OrderItem> getOrderItems() {
         return orderItems;
     }
 
+    @Override
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
+    @Override
+    public void addOrderItem(OrderItem orderItem) {
+        this.orderItems.add(orderItem);
+    }
+
+    @Override
+    public void removeOrderItem(OrderItem orderItem) {
+        this.orderItems.remove(orderItem);
+    }
+    
     public List<FulfillmentGroup> getFulfillmentGroups() {
         return fulfillmentGroups;
     }
@@ -171,6 +172,14 @@ public class OrderImpl implements Order, Serializable {
         this.fulfillmentGroups = fulfillmentGroups;
     }
 
+    public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+        this.fulfillmentGroups.add(fulfillmentGroup);
+    }
+    
+    public void removeFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+        this.fulfillmentGroups.remove(fulfillmentGroup);
+    }
+    
     @Override
     public void addCandidateOffer(Offer offer) {
         candidateOffers.add(offer);

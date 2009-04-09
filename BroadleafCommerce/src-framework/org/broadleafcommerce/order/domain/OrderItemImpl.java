@@ -51,10 +51,13 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @JoinColumn(name = "CATEGORY_ID")
     private Category category;
 
-    @ManyToOne(targetEntity = OrderImpl.class)
-    @JoinColumn(name = "ORDER_ID")
-    private Order order;
+//    @ManyToOne(targetEntity = OrderImpl.class)
+//    @JoinColumn(name = "ORDER_ID")
+//    private Order order;
 
+    @Column(name = "ORDER_ID")
+    private Long orderId;
+    
     @Column(name = "RETAIL_PRICE")
     private BigDecimal retailPrice;
 
@@ -90,16 +93,26 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.sku = sku;
     }
 
-    public Order getOrder() {
-        return order;
-    }
+//    public Order getOrder() {
+//        return order;
+//    }
+//
+//    public void setOrder(Order order) {
+//        this.order = order;
+//    }
 
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
+    
+    
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public void setRetailPrice(Money retailPrice) {

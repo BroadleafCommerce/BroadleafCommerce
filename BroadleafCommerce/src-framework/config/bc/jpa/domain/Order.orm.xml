@@ -7,6 +7,15 @@
 		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
 		WHERE order.customer.id = :customerId</query>
 	</named-query>
+	
+	<named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS">
+		<query>
+			SELECT order 
+			   FROM org.broadleafcommerce.order.domain.Order order
+			WHERE order.customer.id = :customerId
+			     AND order.status = :orderStatus  
+		</query>
+	</named-query>
 
 	<named-query name="BC_READ_ORDER_BY_CUSTOMER_ID" >
 		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
@@ -14,15 +23,23 @@
 		AND order.id = :orderId</query>
 	</named-query>
 
-	<named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE">
+	<named-query name="BC_READ_ORDERS_BY_CUSTOMER_NAME_AND_STATUS">
 		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
-		WHERE order.customer.id = :customerId
-		AND order.type = :orderType</query>
+		WHERE order.customer.id = :customerId		     
+		AND order.status = :orderStatus
+		AND order.name = :orderName</query>
+	</named-query>
+
+	<named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL">
+		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
+		WHERE order.customer.id = :customerId		     
+		AND order.status = :orderStatus
+		AND order.name is null</query>
 	</named-query>
 
 	<named-query name="BC_UPDATE_CART_ORDER_TO_SUBMITTED">
 		<query>UPDATE org.broadleafcommerce.order.domain.Order blcOrder
-		SET blcOrder.type = 'SUBMITTED'
+		SET blcOrder.status = 'SUBMITTED'
 		WHERE blcOrder.id = :id</query>
 	</named-query>
 
@@ -32,7 +49,7 @@
 			FROM  org.broadleafcommerce.order.domain.Order order
 			WHERE order.customer.id = :customerId
 				 AND order.name = :orderName
-				 AND order.type = :orderType
+				 AND order.status = :orderStatus
 		</query>
 	</named-query>
 

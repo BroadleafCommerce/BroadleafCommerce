@@ -40,7 +40,8 @@ public class PaymentInfoDaoTest extends BaseTest {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
-        Order salesOrder = (orderDao.readOrdersForCustomer(customer)).get(0);
+        //Order salesOrder = (orderDao.readOrdersForCustomer(customer)).get(0);
+        Order salesOrder = orderDao.readCartForCustomer(customer, false);
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);

@@ -12,8 +12,8 @@ public interface FulfillmentGroupDao {
 
     public FulfillmentGroup maintainFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
-    public List<FulfillmentGroup> readFulfillmentGroupsForOrder(Order order);
-
+//    public List<FulfillmentGroup> readFulfillmentGroupsForOrder(Order order);
+//
     public FulfillmentGroupImpl maintainDefaultFulfillmentGroup(FulfillmentGroupImpl defaultFulfillmentGroup);
 
     public FulfillmentGroupImpl readDefaultFulfillmentGroupById(Long fulfillmentGroupId);

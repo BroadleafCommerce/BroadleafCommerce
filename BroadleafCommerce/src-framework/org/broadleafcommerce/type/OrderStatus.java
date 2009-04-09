@@ -1,6 +1,6 @@
 package org.broadleafcommerce.type;
 
-public enum OrderStatusType {
+public enum OrderStatus {
     IN_PROCESS,
     SUBMITTED
 }

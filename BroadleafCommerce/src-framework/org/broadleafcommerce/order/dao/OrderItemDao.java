@@ -13,7 +13,9 @@ public interface OrderItemDao {
 	
 	public void deleteOrderItem(OrderItem orderItem);
 	
-	public List<OrderItem> readOrderItemsForOrder(Order order);
+//	public List<OrderItem> readOrderItemsForOrder(Order order);
+//
+//	public Order readOrderForOrderItem(OrderItem orderItem);
 	
 	public OrderItem create();
 }
