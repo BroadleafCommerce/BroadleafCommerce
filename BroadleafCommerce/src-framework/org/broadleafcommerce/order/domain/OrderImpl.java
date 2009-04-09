@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -50,7 +51,7 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "NAME")
     private String name;
 
-    @ManyToOne(targetEntity = CustomerImpl.class)
+    @ManyToOne(targetEntity = CustomerImpl.class, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;
 

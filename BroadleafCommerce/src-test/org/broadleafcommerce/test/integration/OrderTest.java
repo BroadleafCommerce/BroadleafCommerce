@@ -25,7 +25,7 @@ import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
-public class OrderServiceTest extends BaseTest {
+public class OrderTest extends BaseTest {
 
     private Long orderId = null;
     private int numOrderItems = 0;
@@ -82,8 +82,8 @@ public class OrderServiceTest extends BaseTest {
         OrderItem item = orderService.addSkuToOrder(order, sku, 1);
         assert item != null;
         assert item.getQuantity() == numOrderItems;
-        //assert item.getOrder() != null;
-        //assert item.getOrder().getId().equals(order.getId());
+        // assert item.getOrder() != null;
+        // assert item.getOrder().getId().equals(order.getId());
         assert item.getSku() != null;
         assert item.getSku().getId().equals(sku.getId());
 
@@ -121,7 +121,7 @@ public class OrderServiceTest extends BaseTest {
         OrderItem item = orderItems.get(0);
         assert item != null;
         order = orderService.removeItemFromOrder(order, item);
-        //List<OrderItem> items = orderService.findItemsForOrder(order);
+        // List<OrderItem> items = orderService.findItemsForOrder(order);
         List<OrderItem> items = order.getOrderItems();
         assert items != null;
         assert items.size() == startingSize - 1;
@@ -145,7 +145,7 @@ public class OrderServiceTest extends BaseTest {
     public void addFulfillmentGroupToOrderFirst(FulfillmentGroup fulfillmentGroup) {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
-        //Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
+        // Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
         Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
         Order order = orderService.findOrderById(orderId);
 
@@ -165,7 +165,7 @@ public class OrderServiceTest extends BaseTest {
 
     @Test(groups = { "findFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "findCurrentCartForCustomerAfterCreation", "addFulfillmentGroupToOrderFirst" })
     public void findFillmentGroupForOrderFirst() {
-        //FulfillmentGroup fg = orderService.findFulfillmentGroupsForOrder(order).get(0);
+        // FulfillmentGroup fg = orderService.findFulfillmentGroupsForOrder(order).get(0);
         Order order = orderService.findOrderById(orderId);
         FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
         assert fg != null;
@@ -177,15 +177,10 @@ public class OrderServiceTest extends BaseTest {
         assert fg.getMethod().equals(fulfillmentGroup.getMethod());
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
     }
+
     /*
-    @Test(groups = { "removeFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "findCurrentCartForCustomerAfterCreation", "addFulfillmentGroupToOrderFirst" })
-    public void removeFulFillmentGroupForOrderFirst() {
-        int beforeRemove = orderService.findFulfillmentGroupsForOrder(order).size();
-        FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
-        orderService.removeFulfillmentGroupFromOrder(order, fulfillmentGroup);
-        int afterRemove = orderService.findFulfillmentGroupsForOrder(order).size();
-        assert (beforeRemove - afterRemove) == 1;
-    }
+     * @Test(groups = { "removeFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "findCurrentCartForCustomerAfterCreation", "addFulfillmentGroupToOrderFirst" }) public void removeFulFillmentGroupForOrderFirst() { int beforeRemove = orderService.findFulfillmentGroupsForOrder(order).size();
+     * FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId); orderService.removeFulfillmentGroupFromOrder(order, fulfillmentGroup); int afterRemove = orderService.findFulfillmentGroupsForOrder(order).size(); assert (beforeRemove - afterRemove) == 1; }
      */
     @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomerAfterCreation", "addFulfillmentGroupToOrderFirst" })
     public void findDefaultFillmentGroupForOrder() {
@@ -200,14 +195,10 @@ public class OrderServiceTest extends BaseTest {
         assert fg.getMethod().equals(fulfillmentGroup.getMethod());
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
     }
+
     /*
-    @Test(groups = { "removeDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomerAfterCreation", "addFulfillmentGroupToOrderFirst" })
-    public void removeDefaultFulFillmentGroupForOrder() {
-        int beforeRemove = orderService.findFulfillmentGroupsForOrder(order).size();
-        orderService.removeFulfillmentGroupFromOrder(order, fulfillmentGroup);
-        int afterRemove = orderService.findFulfillmentGroupsForOrder(order).size();
-        assert (beforeRemove - afterRemove) == 1;
-    }
+     * @Test(groups = { "removeDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomerAfterCreation", "addFulfillmentGroupToOrderFirst" }) public void removeDefaultFulFillmentGroupForOrder() { int beforeRemove = orderService.findFulfillmentGroupsForOrder(order).size();
+     * orderService.removeFulfillmentGroupFromOrder(order, fulfillmentGroup); int afterRemove = orderService.findFulfillmentGroupsForOrder(order).size(); assert (beforeRemove - afterRemove) == 1; }
      */
     @Test(groups = { "removeItemFromOrderAfterDefaultFulfillmentGroup" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
     public void removeItemFromOrderAfterFulfillmentGroups() {
@@ -230,5 +221,15 @@ public class OrderServiceTest extends BaseTest {
         List<Order> orders = orderService.findOrdersForCustomer(customer);
         assert orders != null;
         assert orders.size() > 0;
+    }
+
+    @Test(groups = { "findCartForAnonymousCustomer" }, dependsOnGroups = { "getOrdersForCustomer" })
+    public void findCartForAnonymousCustomer() {
+        Customer customer = customerService.createCustomerFromId(null);
+        Order order = orderService.findCartForCustomer(customer, true);
+        Long orderId = order.getId();
+        Order newOrder = orderService.findOrderById(orderId);
+        assert newOrder != null;
+        assert newOrder.getCustomer() != null;
     }
 }
