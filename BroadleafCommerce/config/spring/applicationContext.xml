@@ -186,7 +186,9 @@
 	<bean id="taxService" class="org.broadleafcommerce.pricing.service.TaxServiceImpl">
 		<property name="taxModules">
 			<list>
-				<bean class="org.broadleafcommerce.pricing.module.SimpleTaxModule"/>
+				<bean class="org.broadleafcommerce.pricing.module.SimpleTaxModule">
+					<property name="factor" value="0.05"/>
+				</bean>
 			</list>
 		</property>
 	</bean>

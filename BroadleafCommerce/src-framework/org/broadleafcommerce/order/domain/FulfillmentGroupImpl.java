@@ -86,6 +86,21 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
     @MapKey(name = "id")
     private List<OfferAudit> appliedOffers;
+    
+    @Column(name="CITY_TAX")
+    private BigDecimal cityTax;
+    
+    @Column(name="COUNTY_TAX")
+    private BigDecimal countyTax;
+    
+    @Column(name="STATE_TAX")
+    private BigDecimal stateTax;
+    
+    @Column(name="COUNTRY_TAX")
+    private BigDecimal countryTax;
+    
+    @Column(name="TOTAL_TAX")
+    private BigDecimal totalTax;
 
     public Long getId() {
         return id;
@@ -233,4 +248,44 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
             candidateOffers.clear();
         }
     }
+    
+    public Money getCityTax() {
+		return cityTax == null ? null : new Money(cityTax);
+	}
+
+	public void setCityTax(Money cityTax) {
+		this.cityTax = Money.toAmount(cityTax);
+	}
+
+	public Money getCountyTax() {
+		return countyTax == null ? null : new Money(countyTax);
+	}
+
+	public void setCountyTax(Money countyTax) {
+		this.countyTax = Money.toAmount(countyTax);
+	}
+
+	public Money getStateTax() {
+		return stateTax == null ? null : new Money(stateTax);
+	}
+
+	public void setStateTax(Money stateTax) {
+		this.stateTax = Money.toAmount(stateTax);
+	}
+
+	public Money getCountryTax() {
+		return countryTax == null ? null : new Money(countryTax);
+	}
+
+	public void setCountryTax(Money countryTax) {
+		this.countryTax = Money.toAmount(countryTax);
+	}
+
+	public Money getTotalTax() {
+		return totalTax == null ? null : new Money(totalTax);
+	}
+
+	public void setTotalTax(Money totalTax) {
+		this.totalTax = Money.toAmount(totalTax);
+	}
 }
