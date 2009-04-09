@@ -28,13 +28,7 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
 
     @Override
     public FulfillmentGroup maintainFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        if (fulfillmentGroup.getId() == null) {
-            em.persist(fulfillmentGroup);
-        } else {
-            fulfillmentGroup = em.merge(fulfillmentGroup);
-        }
-
-        return fulfillmentGroup;
+        return em.merge(fulfillmentGroup);
     }
 
     @SuppressWarnings("unchecked")
