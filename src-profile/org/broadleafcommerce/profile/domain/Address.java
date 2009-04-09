@@ -30,10 +30,8 @@ public interface Address {
 
     public void setCounty(String county);
 
-    // This field is temporary and will be removed later
     public String getZipFour();
 
-    // This field is temporary and will be removed later
     public void setZipFour(String zipFour);
 
     public void setCountry(Country country);

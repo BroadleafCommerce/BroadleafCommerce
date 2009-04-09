@@ -22,7 +22,6 @@ import org.broadleafcommerce.type.OfferType;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.stereotype.Service;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class OfferServiceImpl.
  */

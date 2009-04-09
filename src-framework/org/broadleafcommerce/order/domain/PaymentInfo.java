@@ -5,10 +5,6 @@ import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentInfo {
 
-    // public Object getPayment();
-    //
-    // public void setPayment(Object payment);
-
     public Long getId();
 
     public void setId(Long id);

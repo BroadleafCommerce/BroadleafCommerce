@@ -43,14 +43,14 @@ import org.hibernate.annotations.OrderBy;
  * <BR>
  * <BR>
  * This implementation uses a Hibernate implementation of JPA configured through annotations.
- * The Entity references the following tables: 
+ * The Entity references the following tables:
  * BLC_CATEGORY,
  * BLC_CATEGORY_XREF,
  * BLC_CATEGORY_IMAGE
- * 
+ *
  * @see {@link Category}
  * @author btaylor
- *  
+ *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -108,7 +108,6 @@ public class CategoryImpl implements Category, Serializable {
     @BatchSize(size=50)
     private List<Category> allChildCategories;
 
-    // @OneToMany(mappedBy = "category", targetEntity = BroadleafCategoryImage.class)
     /** The category images. */
     @CollectionOfElements
     @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
@@ -204,11 +203,11 @@ public class CategoryImpl implements Category, Serializable {
 
     /**
      * Builds the link.
-     * 
+     *
      * @param link the link
      * @param category the category
      * @param ignoreTopLevel the ignore top level
-     * 
+     *
      * @return the string
      */
     private String buildLink(String link, Category category, boolean ignoreTopLevel) {
@@ -296,7 +295,7 @@ public class CategoryImpl implements Category, Serializable {
 
     /**
      * Gets the all child categories.
-     * 
+     *
      * @return the all child categories
      */
     private List<Category> getAllChildCategories() {
@@ -374,34 +373,34 @@ public class CategoryImpl implements Category, Serializable {
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
     public Map<String,List<Category>> getChildCategoryURLMap() {
-    	// TODO: Add expiration logic to the Map
-    	if (cachedChildCategoryUrlMap.isEmpty()) {
-    		synchronized (cachedChildCategoryUrlMap) {
-    			if (cachedChildCategoryUrlMap.isEmpty()) {
-    				Map<String,List<Category>> newMap = new HashMap<String,List<Category>>();
-    				fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
-    				cachedChildCategoryUrlMap = newMap;
-    			}
-    		}
-    	}
-    	return cachedChildCategoryUrlMap;
+        // TODO: Add expiration logic to the Map
+        if (cachedChildCategoryUrlMap.isEmpty()) {
+            synchronized (cachedChildCategoryUrlMap) {
+                if (cachedChildCategoryUrlMap.isEmpty()) {
+                    Map<String,List<Category>> newMap = new HashMap<String,List<Category>>();
+                    fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
+                    cachedChildCategoryUrlMap = newMap;
+                }
+            }
+        }
+        return cachedChildCategoryUrlMap;
     }
 
-	/**
-	 * Fill in url map for category.
-	 * 
-	 * @param categoryUrlMap the category url map
-	 * @param category the category
-	 * @param startingPath the starting path
-	 * @param startingCategoryList the starting category list
-	 */
-	private void fillInURLMapForCategory(Map<String,List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) {
-		String currentPath = startingPath + "/" + category.getUrlKey();
-		List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
-		newCategoryList.add(category);
-		categoryUrlMap.put(currentPath, newCategoryList);
-		for (Category currentCategory : category.getChildCategories()) {
-			fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
-		}
-	}
+    /**
+     * Fill in url map for category.
+     *
+     * @param categoryUrlMap the category url map
+     * @param category the category
+     * @param startingPath the starting path
+     * @param startingCategoryList the starting category list
+     */
+    private void fillInURLMapForCategory(Map<String,List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) {
+        String currentPath = startingPath + "/" + category.getUrlKey();
+        List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
+        newCategoryList.add(category);
+        categoryUrlMap.put(currentPath, newCategoryList);
+        for (Category currentCategory : category.getChildCategories()) {
+            fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
+        }
+    }
 }

@@ -14,15 +14,11 @@ public interface FulfillmentGroup {
 
     public void setId(Long id);
 
-//    public Order getOrder();
-//
-//    public void setOrder(Order order);
-
     public Long getOrderId() ;
-    
-    public void setOrderId(Long orderId) ;    
-    
-    public Address getAddress();    
+
+    public void setOrderId(Long orderId) ;
+
+    public Address getAddress();
 
     public void setAddress(Address address);
 
@@ -67,25 +63,24 @@ public interface FulfillmentGroup {
     public void addAppliedOffer(OfferAudit offer);
 
     public void removeAllOffers();
-    
+
     public Money getCityTax();
 
-	public void setCityTax(Money cityTax);
+    public void setCityTax(Money cityTax);
 
-	public Money getCountyTax();
+    public Money getCountyTax();
 
-	public void setCountyTax(Money countyTax);
+    public void setCountyTax(Money countyTax);
 
-	public Money getStateTax();
+    public Money getStateTax();
 
-	public void setStateTax(Money stateTax);
+    public void setStateTax(Money stateTax);
 
-	public Money getCountryTax();
+    public Money getCountryTax();
 
-	public void setCountryTax(Money countryTax);
-	
-	public Money getTotalTax();
+    public void setCountryTax(Money countryTax);
 
-	public void setTotalTax(Money totalTax);
+    public Money getTotalTax();
 
+    public void setTotalTax(Money totalTax);
 }

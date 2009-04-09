@@ -8,20 +8,19 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class ProductLookupTag extends BodyTagSupport {
-    // private Logger log = Logger.getLogger(this.getClass());
     private static final long serialVersionUID = 1L;
     private String var;
     private long productId;
 
     public long getProductId() {
-		return productId;
-	}
+        return productId;
+    }
 
-	public void setProductId(long productId) {
-		this.productId = productId;
-	}
+    public void setProductId(long productId) {
+        this.productId = productId;
+    }
 
-	@Override
+    @Override
     public int doStartTag() throws JspException {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         CatalogService catalogService = (CatalogService) applicationContext.getBean("catalogService");

@@ -18,14 +18,10 @@ public interface OrderItem {
 
     public void setSku(Sku sku);
 
-//    public Order getOrder();
-//
-//    public void setOrder(Order order);
-
     public Long getOrderId();
-    
+
     public void setOrderId(Long orderId);
-    
+
     public Money getRetailPrice();
 
     public void setRetailPrice(Money retailPrice);
@@ -44,11 +40,11 @@ public interface OrderItem {
 
     public Product getProduct();
 
-	public void setProduct(Product product);
+    public void setProduct(Product product);
 
-	public Category getCategory();
+    public Category getCategory();
 
-	public void setCategory(Category category);
+    public void setCategory(Category category);
 
     public List<CandidateItemOffer> getCandidateItemOffers();
 
@@ -57,8 +53,8 @@ public interface OrderItem {
     public List<CandidateItemOffer> addCandidateItemOffer(CandidateItemOffer candidateOffer);
 
     public void removeAllOffers();
-    
+
     public boolean isMarkedForOffer();
-    
+
     public void setMarkedForOffer(boolean markedForOffer);
 }
