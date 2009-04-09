@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.persistence.PersistenceException;
 
 import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Sku;
@@ -17,6 +18,7 @@ import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.FulfillmentGroupDataProvider;
@@ -239,5 +241,10 @@ public class OrderTest extends BaseTest {
         Order newOrder = orderService.findOrderById(orderId);
         assert newOrder != null;
         assert newOrder.getCustomer() != null;
+    }
+
+    @Test(expectedExceptions = PersistenceException.class)
+    public void findCartForNullCustomerId() {
+        orderService.findCartForCustomer(new CustomerImpl(), true);
     }
 }
