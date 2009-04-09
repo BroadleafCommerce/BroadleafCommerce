@@ -24,6 +24,7 @@ public interface FulfillmentGroupItem {
 
     public void setQuantity(int quantity);
 
+    //TODO refactor these price method names to reflect that they represent shipping prices
     public Money getRetailPrice();
 
     public void setRetailPrice(Money retailPrice);

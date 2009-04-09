@@ -30,6 +30,7 @@ public interface FulfillmentGroup {
 
     public void setMethod(String fulfillmentMethod);
 
+    //TODO refactor these price method names to reflect that they represent shipping prices
     public Money getRetailPrice();
 
     public void setRetailPrice(Money fulfillmentCost);
