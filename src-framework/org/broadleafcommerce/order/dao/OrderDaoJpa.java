@@ -23,7 +23,7 @@ public class OrderDaoJpa implements OrderDao {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     private EntityManager em;
 
     @Resource
@@ -50,18 +50,18 @@ public class OrderDaoJpa implements OrderDao {
         em.remove(salesOrder);
     }
 
-    @Override 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus) {
-        if(orderStatus == null) {
+        if (orderStatus == null) {
             return readOrdersForCustomer(customer.getId());
-        }else {            
+        } else {
             Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS");
             query.setParameter("customerId", customer.getId());
             query.setParameter("orderStatus", orderStatus);
-            return query.getResultList();            
+            return query.getResultList();
         }
-        
+
     }
 
     @Override
@@ -74,33 +74,35 @@ public class OrderDaoJpa implements OrderDao {
 
     @Override
     public Order readCartForCustomer(Customer customer, boolean persist) {
-        Order bo = null;
+        Order order = null;
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS);
-//        query.setParameter("orderName", null);
         try {
-            bo = (Order) query.getSingleResult();
+            order = (Order) query.getSingleResult();
             return (Order) query.getSingleResult();
         } catch (NoResultException nre) {
-        	if (persist) {
-	            bo = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
-	            bo.setCustomer(customer);
-	            bo.setStatus(OrderStatus.IN_PROCESS);
-	            em.persist(bo);
-        	}
-            return bo;
+            if (persist) {
+                order = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
+                if (customer.getUsername() == null) {
+                    customer.setUsername(String.valueOf(customer.getId()));
+                }
+                order.setCustomer(customer);
+                order.setStatus(OrderStatus.IN_PROCESS);
+                em.persist(order);
+            }
+            return order;
         }
     }
 
     @Override
     public Order submitOrder(Order cartOrder) {
-        Order so = create();
-        so.setId(cartOrder.getId());
+        Order order = create();
+        order.setId(cartOrder.getId());
         Query query = em.createNamedQuery("BC_UPDATE_CART_ORDER_TO_SUBMITTED");
         query.setParameter("id", cartOrder.getId());
         query.executeUpdate();
-        return em.find(OrderImpl.class, so.getId());
+        return em.find(OrderImpl.class, order.getId());
     }
 
     public Order create() {
@@ -113,36 +115,6 @@ public class OrderDaoJpa implements OrderDao {
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS);
         query.setParameter("orderName", name);
-        return (Order)query.getSingleResult();
+        return (Order) query.getSingleResult();
     }
-
-    //   Removed Methods
-//    
-//    @Override
-//    public Order readOrderForCustomer(Long customerId, Long orderId) {
-//        Query query = em.createNamedQuery("BC_READ_ORDER_BY_CUSTOMER_ID");
-//        query.setParameter("orderId", orderId);
-//        query.setParameter("customerId", customerId);
-//        return (Order) query.getSingleResult();
-//    }
-//
-//    @Override
-//    @SuppressWarnings("unchecked")
-//    public List<Order> readSubmittedOrdersForCustomer(Customer customer) {
-//        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
-//        query.setParameter("customerId", customer.getId());
-//        query.setParameter("orderType", OrderType.SUBMITTED);
-//        return query.getResultList();
-//    }
-//    
-//    @Override
-//    @SuppressWarnings("unchecked")
-//    public List<Order> readNamedOrdersForcustomer(Customer customer) {
-//        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_TYPE");
-//        query.setParameter("customerId", customer.getId());
-//        query.setParameter("orderType", OrderType.NAMED);
-//        return query.getResultList();
-//    }
-//    
-
 }
