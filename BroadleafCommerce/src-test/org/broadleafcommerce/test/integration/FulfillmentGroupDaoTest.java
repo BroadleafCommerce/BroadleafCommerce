@@ -1,7 +1,5 @@
 package org.broadleafcommerce.test.integration;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
@@ -31,7 +29,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
 
     @Resource
     private CustomerAddressDao customerAddressDao;
-    
+
     @Resource
     private OrderDao orderDao;
 
@@ -61,7 +59,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
     public void readDefaultFulfillmentGroupForOrder() {
         Order order = orderDao.readOrderById(orderId);
         assert order != null;
-        assert order.getId()==orderId;
+        assert order.getId() == orderId;
         FulfillmentGroupImpl fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
         assert fg.getId() != null;
         assert fg.getId().equals(defaultFulfillmentGroupId);
@@ -87,7 +85,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         newFG.setAddress(address);
         newFG.setRetailPrice(fulfillmentGroup.getRetailPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
-        //newFG.setOrderId(salesOrder.getId());
+        // newFG.setOrderId(salesOrder.getId());
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
 
         assert newFG.getId() == null;
@@ -103,23 +101,4 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         assert fg != null;
         assert fg.getId() != null;
     }
-
-//    @Test(groups = { "readFulfillmentGroupsForOrder" }, dependsOnGroups = { "createFulfillmentGroup" })
-//    public void readFulfillmentGroupsForOrder() {
-//        Order order = orderDao.readOrderById(orderId);
-//        assert order != null;
-//        assert order.getId() != null;
-//        //List<FulfillmentGroup> fgs = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
-//        List<FulfillmentGroup> fgs = order.getFulfillmentGroups();
-//        assert fgs != null;
-//        assert fgs.size() > 0;
-//        boolean defaultFGReturned = false;
-//        for (FulfillmentGroup fulfillmentGroup : fgs) {
-//            if (fulfillmentGroup.getId().equals(fulfillmentGroupId)) {
-//                defaultFGReturned = true;
-//            }
-//        }
-//        assert defaultFGReturned;
-//    }
-
 }

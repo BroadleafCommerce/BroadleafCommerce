@@ -15,10 +15,8 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.OrderService;
-import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.AddressService;
 import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.FulfillmentGroupDataProvider;
@@ -29,14 +27,13 @@ import org.testng.annotations.Test;
 
 public class OrderServiceTest extends BaseTest {
 
-    // private Order order = null;
     private Long orderId = null;
     private int numOrderItems = 0;
     private Long fulfillmentGroupId;
 
     @Resource
     private CustomerAddressService customerAddressService;
-    
+
     @Resource
     private OrderService orderService;
 
@@ -89,7 +86,7 @@ public class OrderServiceTest extends BaseTest {
         //assert item.getOrder().getId().equals(order.getId());
         assert item.getSku() != null;
         assert item.getSku().getId().equals(sku.getId());
-        
+
     }
 
     @Test(groups = { "getItemsForOrder" }, dependsOnGroups = { "addItemToOrder" })
