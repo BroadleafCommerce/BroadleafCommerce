@@ -26,9 +26,9 @@ public interface CustomerService {
      */
     public Customer createCustomerFromId(Long customerId);
 
-    public void addListener(PostRegistrationObserver postRegisterListeners);
+    public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
 
-    public void removeListener(PostRegistrationObserver postRegisterListeners);
+    public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners);
 
-    public void notifyListeners(Customer customer);
+    public void notifyPostRegisterListeners(Customer customer);
 }

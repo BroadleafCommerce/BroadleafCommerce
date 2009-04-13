@@ -75,4 +75,6 @@ public interface OrderService {
     public void cancelOrder(Order order);
 
     public void removeAllFulfillmentGroupsFromOrder(Order order);
+
+    public Order mergeCart(Customer customer, Long anonymousCartId);
 }

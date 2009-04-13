@@ -25,12 +25,12 @@ public class OrderLookupTag extends BodyTagSupport {
     @Override
     public int doStartTag() throws JspException {
         Customer customer = null;
-        if (customerId != null){
+        if (customerId != null) {
             WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
             CustomerService customerService = (CustomerService) applicationContext.getBean("customerService");
             customer = customerService.readCustomerById((customerId));
         } else {
-            customer =  CustomerState.getCustomer((HttpServletRequest)pageContext.getRequest());
+            customer = CustomerState.getCustomer((HttpServletRequest) pageContext.getRequest());
         }
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         OrderService orderService = (OrderService) applicationContext.getBean("orderService");
@@ -100,5 +100,4 @@ public class OrderLookupTag extends BodyTagSupport {
     public void setOrderId(Long orderId) {
         this.orderId = orderId;
     }
-
 }

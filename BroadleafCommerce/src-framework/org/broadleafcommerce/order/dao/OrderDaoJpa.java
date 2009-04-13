@@ -86,6 +86,7 @@ public class OrderDaoJpa implements OrderDao {
                 order = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
                 if (customer.getUsername() == null) {
                     customer.setUsername(String.valueOf(customer.getId()));
+                    em.persist(customer);
                 }
                 order.setCustomer(customer);
                 order.setStatus(OrderStatus.IN_PROCESS);

@@ -15,21 +15,21 @@ public class BCLogoutHandler extends SecurityContextLogoutHandler {
     private final List<PreLogoutObserver> preLogoutListeners = new ArrayList<PreLogoutObserver>();
 
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        notifyListeners(request, response, authentication);
+        notifyPreLogoutListeners(request, response, authentication);
         super.logout(request, response, authentication);
     }
 
-    public void addListener(PreLogoutObserver preLogoutObserver) {
+    public void addPreLogoutListener(PreLogoutObserver preLogoutObserver) {
         this.preLogoutListeners.add(preLogoutObserver);
     }
 
-    public void removeListener(PreLogoutObserver preLogoutObserver) {
+    public void removePreLogoutListener(PreLogoutObserver preLogoutObserver) {
         if (this.preLogoutListeners.contains(preLogoutObserver)) {
             this.preLogoutListeners.remove(preLogoutObserver);
         }
     }
 
-    public void notifyListeners(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
+    public void notifyPreLogoutListeners(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         for (Iterator<PreLogoutObserver> iter = preLogoutListeners.iterator(); iter.hasNext();) {
             PreLogoutObserver listener = iter.next();
             listener.processPreLogout(request, response, authResult);

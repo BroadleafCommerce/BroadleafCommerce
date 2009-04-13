@@ -16,4 +16,9 @@
 		AND ca.id = :customerAddressId</query>
 	</named-query>
 
+	<named-query name="BC_FIND_DEFAULT_ADDRESS_BY_CUSTOMER_ID" >
+		<query>SELECT ca FROM org.broadleafcommerce.profile.domain.CustomerAddress ca
+		WHERE ca.customerId = :customerId
+		AND ca.address.isDefault = TRUE</query>
+	</named-query>
 </entity-mappings>

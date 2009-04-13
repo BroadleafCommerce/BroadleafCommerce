@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,6 +24,9 @@ import org.springframework.security.util.TextUtils;
 public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 
     private final List<PostLoginObserver> postLoginListeners = new ArrayList<PostLoginObserver>();
+
+    @Resource
+    private MergeCartProcessor mergeCartProcessor;
 
     private String passwordChangeUri = "/passwordChange.htm";
 
@@ -64,7 +68,10 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
     @Override
     protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
         super.onSuccessfulAuthentication(request, response, authResult);
-        notifyListeners(request, response, authResult);
+        if (mergeCartProcessor != null) {
+            mergeCartProcessor.execute(request, response, authResult);
+        }
+        notifyPostLoginListeners(request, response, authResult);
     }
 
     @Override
@@ -102,17 +109,17 @@ public class BCAuthenticationProcessingFilter extends AuthenticationProcessingFi
         return failureUrl;
     }
 
-    public void addListener(PostLoginObserver postLoginObserver) {
+    public void addPostLoginListener(PostLoginObserver postLoginObserver) {
         this.postLoginListeners.add(postLoginObserver);
     }
 
-    public void removeListener(PostLoginObserver postLoginObserver) {
+    public void removePostLoginListener(PostLoginObserver postLoginObserver) {
         if (this.postLoginListeners.contains(postLoginObserver)) {
             this.postLoginListeners.remove(postLoginObserver);
         }
     }
 
-    public void notifyListeners(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
+    public void notifyPostLoginListeners(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         for (Iterator<PostLoginObserver> iter = postLoginListeners.iterator(); iter.hasNext();) {
             PostLoginObserver listener = iter.next();
             listener.processPostLogin(request, response, authResult);

@@ -57,6 +57,8 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     private PricingService pricingService;
 
+    private boolean rollupOrderItems = true;
+
     @Override
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
@@ -402,8 +404,8 @@ public class OrderServiceImpl implements OrderService {
         newFg = fulfillmentGroupDao.maintainDefaultFulfillmentGroup(newFg);
         order.addFulfillmentGroup(newFg);
         order = maintainOrder(order);
-        for (OrderItem  orderItem : order.getOrderItems()) {
-            newFg =  addItemToFulfillmentGroup(orderItem, newFg, orderItem.getQuantity());
+        for (OrderItem orderItem : order.getOrderItems()) {
+            newFg = addItemToFulfillmentGroup(orderItem, newFg, orderItem.getQuantity());
         }
 
         return newFg;
@@ -421,10 +423,12 @@ public class OrderServiceImpl implements OrderService {
     protected OrderItem addSkuToLocalOrder(Order order, Sku item, Product product, Category category, int quantity) {
         OrderItem orderItem = null;
         List<OrderItem> orderItems = order.getOrderItems();
-        if (orderItem != null) {
+        if (orderItems != null && rollupOrderItems) {
             for (OrderItem orderItem2 : orderItems) {
-                if (orderItem2.getSku().getId().equals(item.getId()))
+                if (orderItem2.getSku().getId().equals(item.getId())) {
                     orderItem = orderItem2;
+                    break;
+                }
             }
         }
         if (orderItem == null) {
@@ -438,5 +442,32 @@ public class OrderServiceImpl implements OrderService {
         // orderItem.setOrder(order);
         orderItem.setOrderId(order.getId());
         return orderItem;
+    }
+
+    @Override
+    public Order mergeCart(Customer customer, Long anonymousCartId) {
+        Order customerCart = findCartForCustomer(customer, false);
+        Order anonymousCart = findOrderById(anonymousCartId);
+        if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
+            if (customerCart == null) {
+                customerCart = findCartForCustomer(customer, true);
+            }
+            // TODO improve merge algorithm to support various requirements - currently we'll just add items
+            for (OrderItem orderItem : anonymousCart.getOrderItems()) {
+                // TODO make sure sku is valid
+                addSkuToOrder(customerCart, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), orderItem.getQuantity());
+                removeItemFromOrder(anonymousCart, orderItem.getId());
+                orderDao.deleteOrderForCustomer(anonymousCart);
+            }
+        }
+        return customerCart;
+    }
+
+    public boolean isRollupOrderItems() {
+        return rollupOrderItems;
+    }
+
+    public void setRollupOrderItems(boolean rollupOrderItems) {
+        this.rollupOrderItems = rollupOrderItems;
     }
 }
