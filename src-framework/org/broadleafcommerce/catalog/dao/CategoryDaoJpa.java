@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -38,6 +39,12 @@ public class CategoryDaoJpa implements CategoryDao {
     public List<Category> readAllCategories() {
         Query query = em.createNamedQuery("BC_READ_ALL_CATEGORIES");
         query.setHint("org.hibernate.cacheable", true);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Product> readAllProducts() {
+        Query query = em.createNamedQuery("BC_READ_ALL_PRODUCTS");
         return query.getResultList();
     }
 
