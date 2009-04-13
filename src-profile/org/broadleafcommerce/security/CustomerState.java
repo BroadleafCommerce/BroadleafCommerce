@@ -6,10 +6,10 @@ import org.broadleafcommerce.profile.domain.Customer;
 
 public class CustomerState {
 
-	private static String sessionAttributeName = "customer";
+    private static String sessionAttributeName = "customer";
 
     public static Customer getCustomer(HttpServletRequest request) {
-    	return (Customer) request.getSession().getAttribute(sessionAttributeName);
+        return (Customer) request.getSession().getAttribute(sessionAttributeName);
     }
 
     public static void setCustomer(Customer customer, HttpServletRequest request) {
@@ -21,11 +21,10 @@ public class CustomerState {
     }
 
     public static void setCustomerSessionAttributeName(String sessionAttributeName) {
-    	CustomerState.sessionAttributeName = sessionAttributeName;
+        CustomerState.sessionAttributeName = sessionAttributeName;
     }
 
     public static String getCustomerSessionAttributeName() {
-    	return sessionAttributeName;
+        return sessionAttributeName;
     }
-
 }

@@ -58,4 +58,13 @@ public class CustomerAddressDaoJpa implements CustomerAddressDao {
         CustomerAddress customerAddress = readCustomerAddressByIdAndCustomerId(customerAddressId, customerId);
         em.remove(customerAddress.getId());
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public CustomerAddress findDefaultCustomerAddress(Long customerId) {
+        Query query = em.createNamedQuery("BC_FIND_DEFAULT_ADDRESS_BY_CUSTOMER_ID");
+        query.setParameter("customerId", customerId);
+        List<CustomerAddress> customerAddresses = query.getResultList();
+        return customerAddresses.isEmpty() ? null : customerAddresses.get(0);
+    }
 }

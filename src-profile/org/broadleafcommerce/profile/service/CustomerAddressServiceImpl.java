@@ -52,4 +52,9 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     public void deleteCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId){
         customerAddressDao.deleteCustomerAddressByIdAndCustomerId(customerAddressId, customerId);
     }
+
+    @Override
+    public CustomerAddress findDefaultCustomerAddress(Long customerId) {
+        return customerAddressDao.findDefaultCustomerAddress(customerId);
+    }
 }

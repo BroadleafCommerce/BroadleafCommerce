@@ -66,7 +66,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (!response.hasErrors()) {
             customer.setRegistered(true);
             Customer retCustomer = saveCustomer(customer);
-            notifyListeners(retCustomer);
+            notifyPostRegisterListeners(retCustomer);
             response.setCustomer(retCustomer);
         }
         return response;
@@ -116,17 +116,17 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
-    public void addListener(PostRegistrationObserver postRegisterListeners) {
+    public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners) {
         this.postRegisterListeners.add(postRegisterListeners);
     }
 
-    public void removeListener(PostRegistrationObserver postRegisterListeners) {
+    public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners) {
         if (this.postRegisterListeners.contains(postRegisterListeners)) {
             this.postRegisterListeners.remove(postRegisterListeners);
         }
     }
 
-    public void notifyListeners(Customer customer) {
+    public void notifyPostRegisterListeners(Customer customer) {
         for (Iterator<PostRegistrationObserver> iter = postRegisterListeners.iterator(); iter.hasNext();) {
             PostRegistrationObserver listener = iter.next();
             listener.processRegistrationEvent(customer);

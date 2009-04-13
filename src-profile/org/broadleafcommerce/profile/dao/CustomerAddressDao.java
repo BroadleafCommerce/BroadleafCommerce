@@ -15,4 +15,6 @@ public interface CustomerAddressDao {
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId);
 
     public void deleteCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId);
+
+    public CustomerAddress findDefaultCustomerAddress(Long customerId);
 }

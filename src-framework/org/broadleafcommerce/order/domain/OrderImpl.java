@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -51,26 +50,26 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "NAME")
     private String name;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, cascade = CascadeType.PERSIST)
+    @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     private Customer customer;
 
     @Column(name = "ORDER_STATUS")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    
+
     @Column(name="CITY_TAX")
     private BigDecimal cityTax;
-    
+
     @Column(name="COUNTY_TAX")
     private BigDecimal countyTax;
-    
+
     @Column(name="STATE_TAX")
     private BigDecimal stateTax;
-    
+
     @Column(name="COUNTRY_TAX")
     private BigDecimal countryTax;
-    
+
     @Column(name="TOTAL_TAX")
     private BigDecimal totalTax;
 
@@ -235,43 +234,43 @@ public class OrderImpl implements Order, Serializable {
         this.name = name;
     }
 
-	public Money getCityTax() {
-		return cityTax == null ? null : new Money(cityTax);
-	}
+    public Money getCityTax() {
+        return cityTax == null ? null : new Money(cityTax);
+    }
 
-	public void setCityTax(Money cityTax) {
-		this.cityTax = Money.toAmount(cityTax);
-	}
+    public void setCityTax(Money cityTax) {
+        this.cityTax = Money.toAmount(cityTax);
+    }
 
-	public Money getCountyTax() {
-		return countyTax == null ? null : new Money(countyTax);
-	}
+    public Money getCountyTax() {
+        return countyTax == null ? null : new Money(countyTax);
+    }
 
-	public void setCountyTax(Money countyTax) {
-		this.countyTax = Money.toAmount(countyTax);
-	}
+    public void setCountyTax(Money countyTax) {
+        this.countyTax = Money.toAmount(countyTax);
+    }
 
-	public Money getStateTax() {
-		return stateTax == null ? null : new Money(stateTax);
-	}
+    public Money getStateTax() {
+        return stateTax == null ? null : new Money(stateTax);
+    }
 
-	public void setStateTax(Money stateTax) {
-		this.stateTax = Money.toAmount(stateTax);
-	}
+    public void setStateTax(Money stateTax) {
+        this.stateTax = Money.toAmount(stateTax);
+    }
 
-	public Money getCountryTax() {
-		return countryTax == null ? null : new Money(countryTax);
-	}
+    public Money getCountryTax() {
+        return countryTax == null ? null : new Money(countryTax);
+    }
 
-	public void setCountryTax(Money countryTax) {
-		this.countryTax = Money.toAmount(countryTax);
-	}
+    public void setCountryTax(Money countryTax) {
+        this.countryTax = Money.toAmount(countryTax);
+    }
 
-	public Money getTotalTax() {
-		return totalTax == null ? null : new Money(totalTax);
-	}
+    public Money getTotalTax() {
+        return totalTax == null ? null : new Money(totalTax);
+    }
 
-	public void setTotalTax(Money totalTax) {
-		this.totalTax = Money.toAmount(totalTax);
-	}
+    public void setTotalTax(Money totalTax) {
+        this.totalTax = Money.toAmount(totalTax);
+    }
 }
