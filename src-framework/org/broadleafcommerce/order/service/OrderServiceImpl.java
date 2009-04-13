@@ -445,22 +445,29 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order mergeCart(Customer customer, Long anonymousCartId) {
+    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) {
+        MergeCartResponse mergeCartResponse = new MergeCartResponse();
         Order customerCart = findCartForCustomer(customer, false);
         Order anonymousCart = findOrderById(anonymousCartId);
         if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
             if (customerCart == null) {
                 customerCart = findCartForCustomer(customer, true);
             }
-            // TODO improve merge algorithm to support various requirements - currently we'll just add items
+            // TODO improve merge algorithm to support various requirements -
+            // currently we'll just add items
             for (OrderItem orderItem : anonymousCart.getOrderItems()) {
-                // TODO make sure sku is valid
-                addSkuToOrder(customerCart, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), orderItem.getQuantity());
+                if (orderItem.getSku().isActive()) {
+                    addSkuToOrder(customerCart, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), orderItem.getQuantity());
+                    mergeCartResponse.getAddedItems().add(orderItem);
+                } else {
+                    mergeCartResponse.getRemovedItems().add(orderItem);
+                }
                 removeItemFromOrder(anonymousCart, orderItem.getId());
                 orderDao.deleteOrderForCustomer(anonymousCart);
             }
         }
-        return customerCart;
+        mergeCartResponse.setOrder(customerCart);
+        return mergeCartResponse;
     }
 
     public boolean isRollupOrderItems() {
