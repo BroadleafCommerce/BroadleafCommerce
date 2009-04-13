@@ -28,7 +28,9 @@ public class PricingServiceImpl implements PricingService {
         // List<FulfillmentGroup> fulfillmentGroupList = fulfillmentGroupDao.readFulfillmentGroupsForOrder(order);
         List<FulfillmentGroup> fulfillmentGroupList = order.getFulfillmentGroups();
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroupList) {
-            total = total.add(fulfillmentGroup.getRetailPrice());
+            if (fulfillmentGroup.getRetailPrice() != null) {
+                total = total.add(fulfillmentGroup.getRetailPrice());
+            }
         }
         order.setTotal(total);
         return order;
