@@ -39,13 +39,14 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
 
     @Override
     public FulfillmentGroup maintainDefaultFulfillmentGroup(FulfillmentGroup defaultFulfillmentGroup) {
-        if (defaultFulfillmentGroup.getId() == null) {
+        return em.merge(defaultFulfillmentGroup);
+        /*if (defaultFulfillmentGroup.getId() == null) {
             em.persist(defaultFulfillmentGroup);
             em.flush();
         } else {
             defaultFulfillmentGroup = em.merge(defaultFulfillmentGroup);
         }
-        return defaultFulfillmentGroup;
+        return defaultFulfillmentGroup;*/
     }
 
     @SuppressWarnings("unchecked")
