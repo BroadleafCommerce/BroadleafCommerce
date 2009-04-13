@@ -62,6 +62,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public List<Product> findAllProducts() {
+        return categoryDao.readAllProducts();
+    }
+
+    @Override
     public List<Sku> findAllSkus() {
         return skuDao.readAllSkus();
     }
