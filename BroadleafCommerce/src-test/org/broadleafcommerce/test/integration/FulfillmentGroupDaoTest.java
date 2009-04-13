@@ -5,7 +5,6 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
@@ -41,7 +40,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
         Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
 
-        FulfillmentGroupImpl newFG = fulfillmentGroupDao.createDefault();
+        FulfillmentGroup newFG = fulfillmentGroupDao.createDefault();
         newFG.setAddress(address);
         newFG.setRetailPrice(fulfillmentGroup.getRetailPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
@@ -60,14 +59,14 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         Order order = orderDao.readOrderById(orderId);
         assert order != null;
         assert order.getId() == orderId;
-        FulfillmentGroupImpl fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
+        FulfillmentGroup fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
         assert fg.getId() != null;
         assert fg.getId().equals(defaultFulfillmentGroupId);
     }
 
     @Test(groups = { "readDefaultFulfillmentGroupForId" }, dependsOnGroups = { "createDefaultFulfillmentGroup" })
     public void readDefaultFulfillmentGroupForId() {
-        FulfillmentGroupImpl fg = fulfillmentGroupDao.readDefaultFulfillmentGroupById(defaultFulfillmentGroupId);
+        FulfillmentGroup fg = fulfillmentGroupDao.readDefaultFulfillmentGroupById(defaultFulfillmentGroupId);
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getId().equals(defaultFulfillmentGroupId);

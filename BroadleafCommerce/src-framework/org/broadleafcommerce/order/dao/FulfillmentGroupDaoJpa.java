@@ -38,7 +38,7 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     }
 
     @Override
-    public FulfillmentGroupImpl maintainDefaultFulfillmentGroup(FulfillmentGroupImpl defaultFulfillmentGroup) {
+    public FulfillmentGroup maintainDefaultFulfillmentGroup(FulfillmentGroup defaultFulfillmentGroup) {
         if (defaultFulfillmentGroup.getId() == null) {
             em.persist(defaultFulfillmentGroup);
             em.flush();
@@ -50,8 +50,8 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public FulfillmentGroupImpl readDefaultFulfillmentGroupById(Long fulfillmentGroupId) {
-        return (FulfillmentGroupImpl) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
+    public FulfillmentGroup readDefaultFulfillmentGroupById(Long fulfillmentGroupId) {
+        return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
     }
 
     @Override

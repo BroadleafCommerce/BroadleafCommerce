@@ -8,7 +8,6 @@ import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
@@ -31,7 +30,7 @@ public interface OrderService {
 
     public Order findNamedOrderForCustomer(String name, Customer customer);
 
-    public FulfillmentGroupImpl findDefaultFulfillmentGroupForOrder(Order order);
+    public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
     public OrderItem addSkuToOrder(Order order, Sku item, int quantity);
 
