@@ -62,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
         Order namedOrder = orderDao.create();
         namedOrder.setCustomer(customer);
         namedOrder.setName(name);
-        namedOrder.setStatus(OrderStatus.IN_PROCESS);
+        namedOrder.setStatus(OrderStatus.NAMED);
         return orderDao.maintianOrder(namedOrder);
 
     }
