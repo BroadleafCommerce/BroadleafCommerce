@@ -1,6 +1,7 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.util.money.Money;
@@ -148,4 +149,14 @@ public interface Sku {
      * is a string to the URL of the image.  This is used to display images while browsing the sku.
      */
     public void setSkuImages(Map<String, String> skuImages);
+
+    /**
+     * Get all the parent products since a sku can exist in multiple
+     */
+    public List<Product> getAllParentProducts();
+
+    /**
+     * Set all the parent products since a sku can exist in multiple
+     */
+    public void setAllParentProducts(List<Product> allParentProducts);
 }

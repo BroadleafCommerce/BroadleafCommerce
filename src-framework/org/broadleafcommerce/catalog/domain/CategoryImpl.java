@@ -33,24 +33,19 @@ import org.hibernate.annotations.OrderBy;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class CategoryImpl is the default implementation of {@link Category}.  A category is a group of
- * products.
+ * The Class CategoryImpl is the default implementation of {@link Category}. A
+ * category is a group of products. <br>
  * <br>
- * <br>
- * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
- * this class and add your fields.  If you need to make significant changes to the CategoryImpl then you
- * should implment your own version of {@link Category}.
+ * If you want to add fields specific to your implementation of
+ * BroadLeafCommerce you should extend this class and add your fields. If you
+ * need to make significant changes to the CategoryImpl then you should implment
+ * your own version of {@link Category}. <BR>
  * <BR>
- * <BR>
- * This implementation uses a Hibernate implementation of JPA configured through annotations.
- * The Entity references the following tables:
- * BLC_CATEGORY,
- * BLC_CATEGORY_XREF,
- * BLC_CATEGORY_IMAGE
- *
+ * This implementation uses a Hibernate implementation of JPA configured through
+ * annotations. The Entity references the following tables: BLC_CATEGORY,
+ * BLC_CATEGORY_XREF, BLC_CATEGORY_IMAGE
  * @see {@link Category}
  * @author btaylor
- *
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -105,8 +100,16 @@ public class CategoryImpl implements Category, Serializable {
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    @BatchSize(size=50)
+    @BatchSize(size = 50)
     private List<Category> allChildCategories;
+
+    /** The all parent categories. */
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @BatchSize(size = 50)
+    private List<Category> allParentCategories;
 
     /** The category images. */
     @CollectionOfElements
@@ -128,63 +131,77 @@ public class CategoryImpl implements Category, Serializable {
     @Transient
     private Map<String, List<Category>> cachedChildCategoryUrlMap = new HashMap<String, List<Category>>();
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getId()
      */
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#setId(java.lang.Long)
      */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getName()
      */
     public String getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setName(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setName(java.lang.String)
      */
     public void setName(String name) {
         this.name = name;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#getDefaultParentCategory()
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#getDefaultParentCategory()
      */
     public Category getDefaultParentCategory() {
         return defaultParentCategory;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setDefaultParentCategory(org.broadleafcommerce.catalog.domain.Category)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setDefaultParentCategory
+     * (org.broadleafcommerce.catalog.domain.Category)
      */
     public void setDefaultParentCategory(Category defaultParentCategory) {
         this.defaultParentCategory = defaultParentCategory;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getUrl()
      */
     public String getUrl() {
         return url;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setUrl(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setUrl(java.lang.String)
      */
     public void setUrl(String url) {
         this.url = url;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getUrlKey()
      */
     public String getUrlKey() {
@@ -194,7 +211,8 @@ public class CategoryImpl implements Category, Serializable {
         return urlKey;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getGeneratedUrl()
      */
     public String getGeneratedUrl() {
@@ -203,11 +221,9 @@ public class CategoryImpl implements Category, Serializable {
 
     /**
      * Builds the link.
-     *
      * @param link the link
      * @param category the category
      * @param ignoreTopLevel the ignore top level
-     *
      * @return the string
      */
     private String buildLink(String link, Category category, boolean ignoreTopLevel) {
@@ -223,71 +239,90 @@ public class CategoryImpl implements Category, Serializable {
         return buildLink(link, category.getDefaultParentCategory(), ignoreTopLevel);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setUrlKey(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setUrlKey(java.lang.String)
      */
     public void setUrlKey(String urlKey) {
         this.urlKey = urlKey;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getDescription()
      */
     public String getDescription() {
         return description;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setDescription(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setDescription(java.lang
+     * .String)
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getActiveStartDate()
      */
     public Date getActiveStartDate() {
         return activeStartDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setActiveStartDate(java.util.Date)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setActiveStartDate(java
+     * .util.Date)
      */
     public void setActiveStartDate(Date activeStartDate) {
         this.activeStartDate = activeStartDate;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getActiveEndDate()
      */
     public Date getActiveEndDate() {
         return activeEndDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setActiveEndDate(java.util.Date)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setActiveEndDate(java.util
+     * .Date)
      */
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#isActive()
      */
     public boolean isActive() {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getDisplayTemplate()
      */
     public String getDisplayTemplate() {
         return displayTemplate;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setDisplayTemplate(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setDisplayTemplate(java
+     * .lang.String)
      */
     public void setDisplayTemplate(String displayTemplate) {
         this.displayTemplate = displayTemplate;
@@ -295,14 +330,14 @@ public class CategoryImpl implements Category, Serializable {
 
     /**
      * Gets the all child categories.
-     *
      * @return the all child categories
      */
     private List<Category> getAllChildCategories() {
         return allChildCategories;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
@@ -319,65 +354,81 @@ public class CategoryImpl implements Category, Serializable {
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#hasChildCategories()
      */
     public boolean hasChildCategories() {
         return getChildCategories().size() > 0;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setAllChildCategories(java.util.List)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setAllChildCategories(java
+     * .util.List)
      */
     public void setAllChildCategories(List<Category> allChildCategories) {
         this.allChildCategories = allChildCategories;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getCategoryImages()
      */
     public Map<String, String> getCategoryImages() {
         return categoryImages;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#getCategoryImage(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#getCategoryImage(java.lang
+     * .String)
      */
     public String getCategoryImage(String imageKey) {
         return categoryImages.get(imageKey);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setCategoryImages(java.util.Map)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setCategoryImages(java.
+     * util.Map)
      */
     public void setCategoryImages(Map<String, String> categoryImages) {
         this.categoryImages = categoryImages;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getLongDescription()
      */
     public String getLongDescription() {
         return longDescription;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#setLongDescription(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#setLongDescription(java
+     * .lang.String)
      */
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
 
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
-    public Map<String,List<Category>> getChildCategoryURLMap() {
+    public Map<String, List<Category>> getChildCategoryURLMap() {
         // TODO: Add expiration logic to the Map
         if (cachedChildCategoryUrlMap.isEmpty()) {
             synchronized (cachedChildCategoryUrlMap) {
                 if (cachedChildCategoryUrlMap.isEmpty()) {
-                    Map<String,List<Category>> newMap = new HashMap<String,List<Category>>();
+                    Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
                     fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
                     cachedChildCategoryUrlMap = newMap;
                 }
@@ -388,13 +439,12 @@ public class CategoryImpl implements Category, Serializable {
 
     /**
      * Fill in url map for category.
-     *
      * @param categoryUrlMap the category url map
      * @param category the category
      * @param startingPath the starting path
      * @param startingCategoryList the starting category list
      */
-    private void fillInURLMapForCategory(Map<String,List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) {
+    private void fillInURLMapForCategory(Map<String, List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) {
         String currentPath = startingPath + "/" + category.getUrlKey();
         List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
@@ -402,5 +452,13 @@ public class CategoryImpl implements Category, Serializable {
         for (Category currentCategory : category.getChildCategories()) {
             fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);
         }
+    }
+
+    public List<Category> getAllParentCategories() {
+        return allParentCategories;
+    }
+
+    public void setAllParentCategories(List<Category> allParentCategories) {
+        this.allParentCategories = allParentCategories;
     }
 }

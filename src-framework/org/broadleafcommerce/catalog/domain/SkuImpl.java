@@ -3,16 +3,19 @@ package org.broadleafcommerce.catalog.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.util.DateUtil;
@@ -22,24 +25,20 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
 
 /**
- * The Class SkuImpl is the default implementation of {@link Sku}.  A SKU is
- * a specific item that can be sold including any specific attributes of the item such as
- * color or size.
+ * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
+ * specific item that can be sold including any specific attributes of the item
+ * such as color or size. <br>
  * <br>
- * <br> 
- * If you want to add fields specific to your implementation of BroadLeafCommerce you should extend
- * this class and add your fields.  If you need to make significant changes to the SkuImpl then you
- * should implement your own version of {@link Sku}.
+ * If you want to add fields specific to your implementation of
+ * BroadLeafCommerce you should extend this class and add your fields. If you
+ * need to make significant changes to the SkuImpl then you should implement
+ * your own version of {@link Sku}. <br>
  * <br>
- * <br>
- * This implementation uses a Hibernate implementation of JPA configured through annotations.
- * The Entity references the following tables: 
- * BLC_SKU,
- * BLC_SKU_IMAGE 
- * 
+ * This implementation uses a Hibernate implementation of JPA configured through
+ * annotations. The Entity references the following tables: BLC_SKU,
+ * BLC_SKU_IMAGE
  * @see {@link Sku}
  * @author btaylor
- * 
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -96,105 +95,133 @@ public class SkuImpl implements Sku, Serializable {
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Map<String, String> skuImages;
 
-    /* (non-Javadoc)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
+    @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
+    private List<Product> allParentProducts;
+
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getId()
      */
     public Long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#setId(java.lang.Long)
      */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getSalePrice()
      */
     public Money getSalePrice() {
         return salePrice == null ? null : new Money(salePrice);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#setSalePrice(org.broadleafcommerce.util.money.Money)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setSalePrice(org.broadleafcommerce
+     * .util.money.Money)
      */
     public void setSalePrice(Money salePrice) {
         this.salePrice = Money.toAmount(salePrice);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getRetailPrice()
      */
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#setRetailPrice(org.broadleafcommerce.util.money.Money)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setRetailPrice(org.broadleafcommerce
+     * .util.money.Money)
      */
     public void setRetailPrice(Money retailPrice) {
         this.retailPrice = Money.toAmount(retailPrice);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getListPrice()
      */
     public Money getListPrice() {
         return new Money(retailPrice);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#setListPrice(org.broadleafcommerce.util.money.Money)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setListPrice(org.broadleafcommerce
+     * .util.money.Money)
      */
     public void setListPrice(Money listPrice) {
         this.retailPrice = Money.toAmount(listPrice);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getName()
      */
     public String getName() {
         return name;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#setName(java.lang.String)
      */
     public void setName(String name) {
         this.name = name;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getDescription()
      */
     public String getDescription() {
         return description;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#setDescription(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setDescription(java.lang.String)
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getLongDescription()
      */
     public String getLongDescription() {
         return longDescription;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#setLongDescription(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setLongDescription(java.lang
+     * .String)
      */
     public void setLongDescription(String longDescription) {
         this.longDescription = longDescription;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#isTaxable()
      */
     public Boolean isTaxable() {
@@ -203,8 +230,10 @@ public class SkuImpl implements Sku, Serializable {
         return taxable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#setTaxable(java.lang.Boolean)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setTaxable(java.lang.Boolean)
      */
     public void setTaxable(Boolean taxable) {
         if (taxable == null) {
@@ -214,59 +243,79 @@ public class SkuImpl implements Sku, Serializable {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getActiveStartDate()
      */
     public Date getActiveStartDate() {
         return activeStartDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#setActiveStartDate(java.util.Date)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setActiveStartDate(java.util
+     * .Date)
      */
     public void setActiveStartDate(Date activeStartDate) {
         this.activeStartDate = activeStartDate;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getActiveEndDate()
      */
     public Date getActiveEndDate() {
         return activeEndDate;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#setActiveEndDate(java.util.Date)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setActiveEndDate(java.util.Date)
      */
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#isActive()
      */
     public boolean isActive() {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getSkuImages()
      */
     public Map<String, String> getSkuImages() {
         return skuImages;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.Sku#getSkuImage(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#getSkuImage(java.lang.String)
      */
     public String getSkuImage(String imageKey) {
         return skuImages.get(imageKey);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#setSkuImages(java.util.Map)
      */
     public void setSkuImages(Map<String, String> skuImages) {
         this.skuImages = skuImages;
+    }
+
+    public List<Product> getAllParentProducts() {
+        return allParentProducts;
+    }
+
+    public void setAllParentProducts(List<Product> allParentProducts) {
+        this.allParentProducts = allParentProducts;
     }
 }
