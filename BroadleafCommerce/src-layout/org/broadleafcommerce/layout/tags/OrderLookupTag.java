@@ -49,7 +49,7 @@ public class OrderLookupTag extends BodyTagSupport {
         }
         if (totalQuantityVar != null) {
             int orderItemsCount = 0;
-            if (order.getOrderItems() != null) {
+            if (order != null && order.getOrderItems() != null) {
                 for (OrderItem orderItem : order.getOrderItems()) {
                     orderItemsCount += orderItem.getQuantity();
                 }
