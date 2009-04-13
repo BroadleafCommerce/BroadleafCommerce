@@ -73,4 +73,6 @@ public interface OrderService {
     public Order confirmOrder(Order order);
 
     public void cancelOrder(Order order);
+
+    public void removeAllFulfillmentGroupsFromOrder(Order order);
 }

@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -334,10 +335,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
+    public void removeAllFulfillmentGroupsFromOrder(Order order) {
+        for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {
+            iterator.next();
+            iterator.remove();
+        }
+        maintainOrder(order);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) {
         order.getFulfillmentGroups().remove(fulfillmentGroup);
         maintainOrder(order);
-        fulfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
     }
 
     @Override
