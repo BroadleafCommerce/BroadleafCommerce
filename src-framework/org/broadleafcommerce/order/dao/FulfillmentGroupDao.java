@@ -1,7 +1,6 @@
 package org.broadleafcommerce.order.dao;
 
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 
 public interface FulfillmentGroupDao {
@@ -10,15 +9,15 @@ public interface FulfillmentGroupDao {
 
     public FulfillmentGroup maintainFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
-    public FulfillmentGroupImpl maintainDefaultFulfillmentGroup(FulfillmentGroupImpl defaultFulfillmentGroup);
+    public FulfillmentGroup maintainDefaultFulfillmentGroup(FulfillmentGroup defaultFulfillmentGroup);
 
-    public FulfillmentGroupImpl readDefaultFulfillmentGroupById(Long fulfillmentGroupId);
+    public FulfillmentGroup readDefaultFulfillmentGroupById(Long fulfillmentGroupId);
 
-    public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(Order order);
+    public FulfillmentGroup readDefaultFulfillmentGroupForOrder(Order order);
 
     public void removeFulfillmentGroupForOrder(Order order, FulfillmentGroup fulfillmentGroup);
 
-    public FulfillmentGroupImpl createDefault();
+    public FulfillmentGroup createDefault();
 
     public FulfillmentGroup create();
 }

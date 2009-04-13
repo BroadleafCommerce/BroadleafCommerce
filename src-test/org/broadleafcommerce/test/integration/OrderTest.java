@@ -188,7 +188,7 @@ public class OrderTest extends BaseTest {
     @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomerAfterCreation", "addFulfillmentGroupToOrderFirst" })
     public void findDefaultFillmentGroupForOrder() {
         Order order = orderService.findOrderById(orderId);
-        FulfillmentGroupImpl fg = orderService.findDefaultFulfillmentGroupForOrder(order);
+        FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
         assert fg != null;
         assert fg.getId() != null;
         FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
@@ -218,7 +218,7 @@ public class OrderTest extends BaseTest {
         OrderItem item = orderItems.get(0);
         assert item != null;
         orderService.removeItemFromOrder(order, item);
-        FulfillmentGroupImpl fg = orderService.findDefaultFulfillmentGroupForOrder(order);
+        FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
         for (FulfillmentGroupItem fulfillmentGroupItem : fg.getFulfillmentGroupItems()) {
             assert fulfillmentGroupItem.getOrderItem().getId() != item.getId();
         }

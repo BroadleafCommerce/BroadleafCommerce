@@ -19,7 +19,6 @@ import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.dao.PaymentInfoDao;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
@@ -99,8 +98,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public FulfillmentGroupImpl findDefaultFulfillmentGroupForOrder(Order order) {
-        FulfillmentGroupImpl fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
+    public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order) {
+        FulfillmentGroup fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
         if (fg.getFulfillmentGroupItems().size() == 0) {
             // Only Default fulfillment group has been created so
             // add all orderItems for order to group
@@ -170,7 +169,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) {
 
-        FulfillmentGroupImpl dfg;
+        FulfillmentGroup dfg;
         try {
             dfg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
         } catch (NoResultException nre) {
@@ -380,8 +379,8 @@ public class OrderServiceImpl implements OrderService {
         return returnedOrderItem;
     }
 
-    protected FulfillmentGroupImpl createDefaultFulfillmentGroupFromFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Order order) {
-        FulfillmentGroupImpl newFg = fulfillmentGroupDao.createDefault();
+    protected FulfillmentGroup createDefaultFulfillmentGroupFromFulfillmentGroup(FulfillmentGroup fulfillmentGroup, Order order) {
+        FulfillmentGroup newFg = fulfillmentGroupDao.createDefault();
         newFg.setAddress(fulfillmentGroup.getAddress());
         newFg.setRetailPrice(fulfillmentGroup.getRetailPrice());
         newFg.setFulfillmentGroupItems(fulfillmentGroup.getFulfillmentGroupItems());
@@ -392,7 +391,11 @@ public class OrderServiceImpl implements OrderService {
         newFg.setType(FulfillmentGroupType.DEFAULT);
         newFg = fulfillmentGroupDao.maintainDefaultFulfillmentGroup(newFg);
         order.addFulfillmentGroup(newFg);
-        maintainOrder(order);
+        order = maintainOrder(order);
+        for (OrderItem  orderItem : order.getOrderItems()) {
+            newFg =  addItemToFulfillmentGroup(orderItem, newFg, orderItem.getQuantity());
+        }
+
         return newFg;
 
     }
