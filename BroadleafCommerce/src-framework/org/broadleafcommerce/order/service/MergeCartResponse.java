@@ -1,5 +1,6 @@
 package org.broadleafcommerce.order.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
@@ -9,9 +10,9 @@ public class MergeCartResponse {
 
     private Order order;
 
-    private List<OrderItem> addedItems;
+    private List<OrderItem> addedItems = new ArrayList<OrderItem>();;
 
-    private List<OrderItem> removedItems;
+    private List<OrderItem> removedItems = new ArrayList<OrderItem>();;
 
     public Order getOrder() {
         return order;
