@@ -35,6 +35,7 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP")
+
 public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -51,7 +52,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
 
-    @OneToMany(mappedBy = "id", targetEntity = FulfillmentGroupItemImpl.class)
+    @OneToMany(mappedBy = "fulfillmentGroupId", targetEntity = FulfillmentGroupItemImpl.class)
     private List<FulfillmentGroupItem> fulfillmentGroupItems;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = CascadeType.ALL)
