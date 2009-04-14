@@ -449,47 +449,62 @@ public class OrderServiceImpl implements OrderService {
         return orderItem;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.order.service.OrderService#mergeCart(org.broadleafcommerce.profile.domain.Customer, java.lang.Long)
+    /*
+     * (non-Javadoc)
+     * @seeorg.broadleafcommerce.order.service.OrderService#mergeCart(org.
+     * broadleafcommerce.profile.domain.Customer, java.lang.Long)
      */
     @Override
     public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         Order customerCart = findCartForCustomer(customer, false);
-        Order anonymousCart = findOrderById(anonymousCartId);
-        if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
-            if (customerCart == null) {
-                customerCart = findCartForCustomer(customer, true);
-            }
-            // TODO improve merge algorithm to support various requirements -
-            // currently we'll just add items
-            for (OrderItem orderItem : anonymousCart.getOrderItems()) {
-                if (orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
-                    addSkuToOrder(customerCart, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), orderItem.getQuantity());
-                    mergeCartResponse.getAddedItems().add(orderItem);
-                } else {
-                    mergeCartResponse.getRemovedItems().add(orderItem);
+        // reconstruct cart items (make sure they are valid)
+        ReconstructCartResponse reconstructCartResponse = reconstructCart(customer);
+        mergeCartResponse.setRemovedItems(reconstructCartResponse.getRemovedItems());
+        customerCart = reconstructCartResponse.getOrder();
+
+        // add anonymous cart items (make sure they are valid)
+        if (anonymousCartId != null) {
+            Order anonymousCart = findOrderById(anonymousCartId);
+            if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
+                if (customerCart == null) {
+                    customerCart = findCartForCustomer(customer, true);
                 }
-                removeItemFromOrder(anonymousCart, orderItem.getId());
-                orderDao.deleteOrderForCustomer(anonymousCart);
+                // TODO improve merge algorithm to support various requirements
+                // currently we'll just add items
+                for (OrderItem orderItem : anonymousCart.getOrderItems()) {
+                    if (orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
+                        addSkuToOrder(customerCart, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), orderItem.getQuantity());
+                        mergeCartResponse.getAddedItems().add(orderItem);
+                    } else {
+                        mergeCartResponse.getRemovedItems().add(orderItem);
+                    }
+                    removeItemFromOrder(anonymousCart, orderItem.getId());
+                    orderDao.deleteOrderForCustomer(anonymousCart);
+                }
             }
         }
         mergeCartResponse.setOrder(customerCart);
         return mergeCartResponse;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.order.service.OrderService#reconstructCart(org.broadleafcommerce.profile.domain.Customer)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.order.service.OrderService#reconstructCart(org.
+     * broadleafcommerce.profile.domain.Customer)
      */
     @Override
     public ReconstructCartResponse reconstructCart(Customer customer) {
         ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
         Order customerCart = findCartForCustomer(customer, false);
-        for (OrderItem orderItem : customerCart.getOrderItems()) {
-            if (!orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
-                reconstructCartResponse.getRemovedItems().add(orderItem);
+        if (customerCart != null) {
+            for (OrderItem orderItem : customerCart.getOrderItems()) {
+                if (!orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
+                    reconstructCartResponse.getRemovedItems().add(orderItem);
+                }
+                removeItemFromOrder(customerCart, orderItem.getId());
             }
-            removeItemFromOrder(customerCart, orderItem.getId());
         }
         reconstructCartResponse.setOrder(customerCart);
         return reconstructCartResponse;
