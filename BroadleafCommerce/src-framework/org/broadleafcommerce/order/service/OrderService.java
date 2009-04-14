@@ -32,13 +32,15 @@ public interface OrderService {
 
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
-    public OrderItem addSkuToOrder(Order order, Sku item, int quantity);
+    public OrderItem addSkuToOrder(Order order, Sku sku, int quantity);
 
-    public OrderItem addSkuToOrder(Order order, Sku item, Product product, Category category, int quantity);
+    public OrderItem addSkuToOrder(Order order, Sku sku, Product product, Category category, int quantity);
+
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, int quantity);
 
     public List<OrderItem> addSkusToOrder(Map<String, Integer> skuIdQtyMap, Order order) throws Exception;
 
-    public OrderItem addItemToCartFromNamedOrder(Order order, Sku item, int quantity);
+    public OrderItem addItemToCartFromNamedOrder(Order order, Sku sku, int quantity);
 
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder);
 
@@ -56,7 +58,7 @@ public interface OrderService {
 
     public List<OrderItem> updateItemsInOrder(Order order, List<OrderItem> orderItems);
 
-    public OrderItem moveItemToCartFromNamedOrder(Order order, Sku item, int quantity);
+    public OrderItem moveItemToCartFromNamedOrder(Order order, Sku sku, int quantity);
 
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean deleteNamedorder);
 
