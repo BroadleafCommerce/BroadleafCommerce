@@ -163,6 +163,21 @@ CREATE TABLE blc_fulfillment_group
 );
 
 --------------------------
+-- blc_fulfillment_group_item
+--------------------------
+CREATE TABLE blc_fulfillment_group_item
+(
+  ID NUMBER(19,0) NOT NULL,
+  ORDER_ID NUMBER(19,0) NOT NULL,
+  FULFILLMENT_GROUP_ID NUMBER(19,0) NOT NULL,
+  QUANTITY NUMBER(10,0),
+  RETAIL_PRICE NUMBER(12,2),
+  SALE_PRICE NUMBER(12,2),
+  PRICE NUMBER(12,2),
+  CONSTRAINT PK_BLC_FULFILLMENT_GROUP_ITEM PRIMARY KEY(ID) USING INDEX TABLESPACE WEB_IDX1
+);
+
+--------------------------
 -- BLC_ID_GENERATION
 --------------------------
 CREATE TABLE BLC_ID_GENERATION
