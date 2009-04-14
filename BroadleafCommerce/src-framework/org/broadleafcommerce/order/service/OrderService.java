@@ -76,5 +76,22 @@ public interface OrderService {
 
     public void removeAllFulfillmentGroupsFromOrder(Order order);
 
+    /**
+     * Merge the anonymous cart with the customer's cart taking into
+     * consideration sku activation
+     * @param customer the customer whose cart is to be merged
+     * @param anonymousCartId the anonymous cart id
+     * @return the response containing the cart, any items added to the cart,
+     *         and any items removed from the cart
+     */
     public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId);
+
+    /**
+     * Reconstruct the cart using previous stored state taking into
+     * consideration sku activation
+     * @param customer the customer whose cart is to be reconstructed
+     * @return the response containing the cart and any items removed from the
+     *         cart
+     */
+    public ReconstructCartResponse reconstructCart(Customer customer);
 }

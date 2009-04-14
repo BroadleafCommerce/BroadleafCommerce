@@ -18,6 +18,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.apache.log4j.Logger;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
@@ -48,6 +49,8 @@ public class SkuImpl implements Sku, Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    protected transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
@@ -283,7 +286,26 @@ public class SkuImpl implements Sku, Serializable {
      * @see org.broadleafcommerce.catalog.domain.Sku#isActive()
      */
     public boolean isActive() {
+        if (log.isDebugEnabled()) {
+            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
+                log.debug("sku, " + id + ", inactive due to date");
+            }
+        }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
+    }
+
+    @Override
+    public boolean isActive(Product product, Category category) {
+        if (log.isDebugEnabled()) {
+            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
+                log.debug("sku, " + id + ", inactive due to date");
+            } else if (!product.isActive()) {
+                log.debug("sku, " + id + ", inactive due to product being inactive");
+            } else if (!category.isActive()) {
+                log.debug("sku, " + id + ", inactive due to category being inactive");
+            }
+        }
+        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false) || !product.isActive() || !category.isActive();
     }
 
     /*
