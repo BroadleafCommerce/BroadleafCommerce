@@ -464,7 +464,9 @@ public class OrderServiceImpl implements OrderService {
         customerCart = reconstructCartResponse.getOrder();
 
         // add anonymous cart items (make sure they are valid)
-        if (anonymousCartId != null) {
+        if (customerCart != null && customerCart.getId().equals(anonymousCartId)) {
+            // case when customer cart is same as anonymousCartId passed in
+        } else if (anonymousCartId != null) {
             Order anonymousCart = findOrderById(anonymousCartId);
             if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
                 if (customerCart == null) {
