@@ -21,6 +21,11 @@
 				<value>classpath*:/META-INF/persistence-profile.xml</value>
 			</list>
 		</property>
+		<property name="validPersistenceUnitNames">
+			<list>
+				<value>blPU</value>
+			</list>
+		</property>
 		<property name="defaultDataSource" ref="broadleafCommerceDS"/>
 	</bean>
 
@@ -40,6 +45,7 @@
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
+		<property name="persistenceUnitName" value="blPU"/>
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="generateDdl" value="true" />
