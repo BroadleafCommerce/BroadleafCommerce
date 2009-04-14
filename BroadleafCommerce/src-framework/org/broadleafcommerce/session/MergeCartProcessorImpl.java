@@ -16,9 +16,9 @@ import org.springframework.stereotype.Service;
 @Service("mergeCartProcessor")
 public class MergeCartProcessorImpl implements MergeCartProcessor {
 
-    public final static String BC_MERGE_CART_ITEMS_ADDED_SESSION_KEY = "merge_cart_items_added";
+    private String mergeCartItemsAddedKey = "merge_cart_items_added";
 
-    public final static String BC_MERGE_CART_ITEMS_REMOVED_SESSION_KEY = "merge_cart_items_removed";
+    private String mergeCartItemsRemovedKey = "merge_cart_items_removed";
 
     @Resource
     private CustomerService customerService;
@@ -32,10 +32,26 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
         Long anonymousCartId = orderService.findCartForCustomer(anonymousCustomer) == null ? null : orderService.findCartForCustomer(anonymousCustomer).getId();
         MergeCartResponse mergeCartResponse = orderService.mergeCart(loggedInCustomer, anonymousCartId);
         if (!mergeCartResponse.getAddedItems().isEmpty()) {
-            request.getSession().setAttribute(BC_MERGE_CART_ITEMS_ADDED_SESSION_KEY, mergeCartResponse.getAddedItems());
+            request.getSession().setAttribute(mergeCartItemsAddedKey, mergeCartResponse.getAddedItems());
         }
         if (!mergeCartResponse.getRemovedItems().isEmpty()) {
-            request.getSession().setAttribute(BC_MERGE_CART_ITEMS_REMOVED_SESSION_KEY, mergeCartResponse.getRemovedItems());
+            request.getSession().setAttribute(mergeCartItemsRemovedKey, mergeCartResponse.getRemovedItems());
         }
+    }
+
+    public String getMergeCartItemsAddedKey() {
+        return mergeCartItemsAddedKey;
+    }
+
+    public void setMergeCartItemsAddedKey(String mergeCartItemsAddedKey) {
+        this.mergeCartItemsAddedKey = mergeCartItemsAddedKey;
+    }
+
+    public String getMergeCartItemsRemovedKey() {
+        return mergeCartItemsRemovedKey;
+    }
+
+    public void setMergeCartItemsRemovedKey(String mergeCartItemsRemovedKey) {
+        this.mergeCartItemsRemovedKey = mergeCartItemsRemovedKey;
     }
 }
