@@ -38,7 +38,7 @@ import org.hibernate.annotations.CollectionOfElements;
  * need to make significant changes to the ProductImpl then you should implement
  * your own version of {@link Product}. <br>
  * <br>
- * This implementation uses a Hibernate implementation of JPA configured through
+  * This implementation uses a Hibernate implementation of JPA configured through
  * annotations. The Entity references the following tables: BLC_PRODUCT,
  * BLC_PRODUCT_SKU_XREF, BLC_PRODUCT_IMAGE
  * @author btaylor
