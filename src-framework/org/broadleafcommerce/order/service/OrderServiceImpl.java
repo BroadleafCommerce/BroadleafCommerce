@@ -240,12 +240,14 @@ public class OrderServiceImpl implements OrderService {
 
         // 1) Find the item's existing fulfillment group
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-            for (FulfillmentGroupItem tempFgi : fg.getFulfillmentGroupItems()) {
-                if (tempFgi.getOrderItem().getId().equals(item.getId())) {
-                    fgi = tempFgi;
-                    // 2) remove item from it's existing fulfillment group
-                    fg.getFulfillmentGroupItems().remove(fg);
-                    fulfillmentGroupDao.maintainFulfillmentGroup(fg);
+            if (fg.getFulfillmentGroupItems() != null) {
+                for (FulfillmentGroupItem tempFgi : fg.getFulfillmentGroupItems()) {
+                    if (tempFgi.getOrderItem().getId().equals(item.getId())) {
+                        fgi = tempFgi;
+                        // 2) remove item from it's existing fulfillment group
+                        fg.getFulfillmentGroupItems().remove(fg);
+                        fulfillmentGroupDao.maintainFulfillmentGroup(fg);
+                    }
                 }
             }
         }
@@ -338,11 +340,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void removeAllFulfillmentGroupsFromOrder(Order order) {
-        for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {
-            iterator.next();
-            iterator.remove();
+        if (order.getFulfillmentGroups() != null) {
+            for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {
+                FulfillmentGroup fulfillmentGroup = iterator.next();
+                iterator.remove();
+                fulfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
+            }
         }
-        maintainOrder(order);
     }
 
     @Override
@@ -350,6 +354,7 @@ public class OrderServiceImpl implements OrderService {
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) {
         order.getFulfillmentGroups().remove(fulfillmentGroup);
         maintainOrder(order);
+        fulfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
     }
 
     @Override
