@@ -159,4 +159,6 @@ public interface Sku {
      * Set all the parent products since a sku can exist in multiple
      */
     public void setAllParentProducts(List<Product> allParentProducts);
+
+    public boolean isActive(Product product, Category category);
 }

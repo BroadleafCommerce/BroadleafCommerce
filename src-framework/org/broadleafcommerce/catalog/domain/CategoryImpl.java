@@ -22,6 +22,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.validator.GenericValidator;
+import org.apache.log4j.Logger;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.BatchSize;
@@ -55,6 +56,8 @@ public class CategoryImpl implements Category, Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    protected transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
@@ -307,6 +310,11 @@ public class CategoryImpl implements Category, Serializable {
      * @see org.broadleafcommerce.catalog.domain.Category#isActive()
      */
     public boolean isActive() {
+        if (log.isDebugEnabled()) {
+            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
+                log.debug("category, " + id + ", inactive due to date");
+            }
+        }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
     }
 

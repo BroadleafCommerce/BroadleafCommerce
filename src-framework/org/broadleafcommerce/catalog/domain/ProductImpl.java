@@ -20,6 +20,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.log4j.Logger;
 import org.broadleafcommerce.util.DateUtil;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -51,6 +52,8 @@ public class ProductImpl implements Product, Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
+
+    protected transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
@@ -220,6 +223,11 @@ public class ProductImpl implements Product, Serializable {
      * @see org.broadleafcommerce.catalog.domain.Product#isActive()
      */
     public boolean isActive() {
+        if (log.isDebugEnabled()) {
+            if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
+                log.debug("product, " + id + ", inactive due to date");
+            }
+        }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
     }
 

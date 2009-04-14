@@ -444,6 +444,9 @@ public class OrderServiceImpl implements OrderService {
         return orderItem;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.order.service.OrderService#mergeCart(org.broadleafcommerce.profile.domain.Customer, java.lang.Long)
+     */
     @Override
     public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
@@ -456,7 +459,7 @@ public class OrderServiceImpl implements OrderService {
             // TODO improve merge algorithm to support various requirements -
             // currently we'll just add items
             for (OrderItem orderItem : anonymousCart.getOrderItems()) {
-                if (orderItem.getSku().isActive()) {
+                if (orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
                     addSkuToOrder(customerCart, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), orderItem.getQuantity());
                     mergeCartResponse.getAddedItems().add(orderItem);
                 } else {
@@ -468,6 +471,23 @@ public class OrderServiceImpl implements OrderService {
         }
         mergeCartResponse.setOrder(customerCart);
         return mergeCartResponse;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.order.service.OrderService#reconstructCart(org.broadleafcommerce.profile.domain.Customer)
+     */
+    @Override
+    public ReconstructCartResponse reconstructCart(Customer customer) {
+        ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
+        Order customerCart = findCartForCustomer(customer, false);
+        for (OrderItem orderItem : customerCart.getOrderItems()) {
+            if (!orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
+                reconstructCartResponse.getRemovedItems().add(orderItem);
+            }
+            removeItemFromOrder(customerCart, orderItem.getId());
+        }
+        reconstructCartResponse.setOrder(customerCart);
+        return reconstructCartResponse;
     }
 
     public boolean isRollupOrderItems() {
