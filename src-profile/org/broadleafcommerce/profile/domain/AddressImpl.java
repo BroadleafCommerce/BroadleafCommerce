@@ -43,11 +43,11 @@ public class AddressImpl implements Address {
     @Column(name = "COUNTY")
     private String county;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = StateImpl.class)
+    @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
     private State state;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = CountryImpl.class)
+    @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = CountryImpl.class)
     @JoinColumn(name = "COUNTRY")
     private Country country;
 
