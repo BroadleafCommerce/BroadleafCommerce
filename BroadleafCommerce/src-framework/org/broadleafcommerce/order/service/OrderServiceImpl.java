@@ -515,8 +515,8 @@ public class OrderServiceImpl implements OrderService {
             for (OrderItem orderItem : customerCart.getOrderItems()) {
                 if (!orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
                     reconstructCartResponse.getRemovedItems().add(orderItem);
+                    removeItemFromOrder(customerCart, orderItem.getId());
                 }
-                removeItemFromOrder(customerCart, orderItem.getId());
             }
         }
         reconstructCartResponse.setOrder(customerCart);
