@@ -13,6 +13,7 @@ import javax.persistence.NoResultException;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.order.dao.FulfillmentGroupItemDao;
@@ -56,6 +57,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     private PricingService pricingService;
+
+    @Resource
+    private CatalogService catalogService;
 
     private boolean rollupOrderItems = true;
 
@@ -122,15 +126,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem addSkuToOrder(Order order, Sku item, int quantity) {
-        return addSkuToOrder(order, item, null, null, quantity);
+    public OrderItem addSkuToOrder(Order order, Sku sku, int quantity) {
+        return addSkuToOrder(order, sku, null, null, quantity);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem addSkuToOrder(Order order, Sku item, Product product, Category category, int quantity) {
-        OrderItem orderItem = addSkuToLocalOrder(order, item, product, category, quantity);
+    public OrderItem addSkuToOrder(Order order, Sku sku, Product product, Category category, int quantity) {
+        OrderItem orderItem = addSkuToLocalOrder(order, sku, product, category, quantity);
         return maintainOrderItem(orderItem);
+    }
+
+    @Override
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, int quantity) {
+        Order order = orderDao.readOrderById(orderId);
+        Sku sku = catalogService.readSkuById(skuId);
+        Product product = catalogService.findProductById(productId);
+        Category category = catalogService.findCategoryById(categoryId);
+        return addSkuToOrder(order, sku, product, category, quantity);
     }
 
     @Override
@@ -144,9 +157,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderItem addItemToCartFromNamedOrder(Order order, Sku item, int quantity) {
-        removeItemFromOrder(order, item.getId());
-        return addSkuToOrder(order, item, quantity);
+    public OrderItem addItemToCartFromNamedOrder(Order order, Sku sku, int quantity) {
+        removeItemFromOrder(order, sku.getId());
+        return addSkuToOrder(order, sku, quantity);
     }
 
     @Override
@@ -292,9 +305,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, Sku item, int quantity) {
-        removeItemFromOrder(namedOrder, item.getId());
-        return addSkuToOrder(namedOrder, item, quantity);
+    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, Sku sku, int quantity) {
+        removeItemFromOrder(namedOrder, sku.getId());
+        return addSkuToOrder(namedOrder, sku, quantity);
 
     }
 
@@ -425,12 +438,12 @@ public class OrderServiceImpl implements OrderService {
         return fgi;
     }
 
-    protected OrderItem addSkuToLocalOrder(Order order, Sku item, Product product, Category category, int quantity) {
+    protected OrderItem addSkuToLocalOrder(Order order, Sku sku, Product product, Category category, int quantity) {
         OrderItem orderItem = null;
         List<OrderItem> orderItems = order.getOrderItems();
         if (orderItems != null && rollupOrderItems) {
             for (OrderItem orderItem2 : orderItems) {
-                if (orderItem2.getSku().getId().equals(item.getId())) {
+                if (orderItem2.getSku().getId().equals(sku.getId())) {
                     orderItem = orderItem2;
                     break;
                 }
@@ -442,7 +455,7 @@ public class OrderServiceImpl implements OrderService {
         }
         orderItem.setProduct(product);
         orderItem.setCategory(category);
-        orderItem.setSku(item);
+        orderItem.setSku(sku);
         orderItem.setQuantity(orderItem.getQuantity() + quantity);
         // orderItem.setOrder(order);
         orderItem.setOrderId(order.getId());
