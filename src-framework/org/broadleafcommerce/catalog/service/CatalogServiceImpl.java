@@ -72,7 +72,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public Sku readSkuById(Long skuId) {
+    public Sku findSkuById(Long skuId) {
         return skuDao.readSkuById(skuId);
     }
 
