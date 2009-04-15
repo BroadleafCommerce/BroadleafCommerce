@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Lonstar-unittests" default="runall" basedir="..">
+<project name="Broadleaf-unittests" default="runall" basedir="..">
 	<description>
             Broadleaf Commerce Unit Test Execution File
     </description>
