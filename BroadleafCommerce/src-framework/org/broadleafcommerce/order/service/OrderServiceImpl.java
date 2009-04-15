@@ -140,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, int quantity) {
         Order order = orderDao.readOrderById(orderId);
-        Sku sku = catalogService.readSkuById(skuId);
+        Sku sku = catalogService.findSkuById(skuId);
         Product product = catalogService.findProductById(productId);
         Category category = catalogService.findCategoryById(categoryId);
         return addSkuToOrder(order, sku, product, category, quantity);

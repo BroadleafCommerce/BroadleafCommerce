@@ -16,7 +16,7 @@ public class SkuLookupTag extends BodyTagSupport {
     public int doStartTag() throws JspException {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         CatalogService catalogService = (CatalogService) applicationContext.getBean("catalogService");
-        pageContext.setAttribute(var, catalogService.readSkuById(skuId));
+        pageContext.setAttribute(var, catalogService.findSkuById(skuId));
         return EVAL_PAGE;
     }
 

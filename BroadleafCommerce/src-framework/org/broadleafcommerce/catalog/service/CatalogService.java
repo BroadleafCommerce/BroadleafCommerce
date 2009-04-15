@@ -32,5 +32,5 @@ public interface CatalogService {
 
     public List<Sku> findSkusByIds(List<Long> ids);
 
-    public Sku readSkuById(Long skuId);
+    public Sku findSkuById(Long skuId);
 }
