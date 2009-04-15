@@ -63,6 +63,10 @@ public class OrderServiceImpl implements OrderService {
 
     private boolean rollupOrderItems = true;
 
+    private boolean moveNamedOrderItems = true;
+
+    private boolean deleteEmptyNamedOrders = true;
+
     @Override
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
@@ -166,7 +170,9 @@ public class OrderServiceImpl implements OrderService {
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder) {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer(), true);
         for (OrderItem orderItem : namedOrder.getOrderItems()) {
-            removeItemFromOrder(namedOrder, orderItem.getId());
+            if(moveNamedOrderItems) {
+                removeItemFromOrder(namedOrder, orderItem.getId());
+            }
             addSkuToOrder(cartOrder, orderItem.getSku(), orderItem.getQuantity());
         }
         return cartOrder;
@@ -305,16 +311,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, Sku sku, int quantity) {
-        removeItemFromOrder(namedOrder, sku.getId());
-        return addSkuToOrder(namedOrder, sku, quantity);
+    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, Long orderItemId, int quantity) {
+        OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
+        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer(), true);
+        if(moveNamedOrderItems) {
+            Order updatedNamedOrder = removeItemFromOrder(namedOrder, orderItem);
+            if(updatedNamedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
+                orderDao.deleteOrderForCustomer(updatedNamedOrder);
+            }
+
+        }
+        return addSkuToOrder(cartOrder, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), quantity);
 
     }
 
     @Override
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean deleteNamedOrder) {
+    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) {
         Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder);
-        if (deleteNamedOrder) {
+        if (deleteEmptyNamedOrders) {
             orderDao.deleteOrderForCustomer(namedOrder);
         }
         return cartOrder;
@@ -530,4 +544,22 @@ public class OrderServiceImpl implements OrderService {
     public void setRollupOrderItems(boolean rollupOrderItems) {
         this.rollupOrderItems = rollupOrderItems;
     }
+
+    public boolean isMoveNamedOrderItems() {
+        return moveNamedOrderItems;
+    }
+
+    public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
+        this.moveNamedOrderItems = moveNamedOrderItems;
+    }
+
+    public boolean isDeleteEmptyNamedOrders() {
+        return deleteEmptyNamedOrders;
+    }
+
+    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
+        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
+    }
+
+
 }
