@@ -173,6 +173,21 @@ public class OrderTest extends BaseTest {
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
     }
 
+    @Test(groups= {"addItemToFulfillmentGroupFirst"}, dependsOnGroups = { "addItemToOrder" })
+    public void addItemToFulfillmentgroupFirst() {
+        String userName = "customer1";
+        Customer customer = customerService.readCustomerByUsername(userName);
+        Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
+        Order order = orderService.findOrderById(orderId);
+        List<OrderItem> orderItems = order.getOrderItems();
+        FulfillmentGroup newFg = new FulfillmentGroupImpl();
+        newFg.setAddress(address);
+        FulfillmentGroup newNewFg = orderService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
+        assert(newNewFg.getFulfillmentGroupItems().size() == 1);
+        assert(newNewFg.getFulfillmentGroupItems().get(0).getOrderItem().equals(orderItems.get(0)));
+
+    }
+
     /*
      * @Test(groups = { "removeFulFillmentGroupForOrderFirst" }, dependsOnGroups
      * = { "findCurrentCartForCustomerAfterCreation",
