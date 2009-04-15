@@ -26,6 +26,8 @@ public interface FulfillmentGroup {
 
     public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems);
 
+    public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
+
     public String getMethod();
 
     public void setMethod(String fulfillmentMethod);

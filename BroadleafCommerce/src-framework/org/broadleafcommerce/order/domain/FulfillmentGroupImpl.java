@@ -3,6 +3,7 @@ package org.broadleafcommerce.order.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Vector;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -132,6 +133,15 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems) {
         this.fulfillmentGroupItems = fulfillmentGroupItems;
+    }
+
+    @Override
+    public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem) {
+        if(this.fulfillmentGroupItems == null) {
+            this.fulfillmentGroupItems = new Vector<FulfillmentGroupItem>();
+        }
+        this.fulfillmentGroupItems.add(fulfillmentGroupItem);
+
     }
 
     @Override
@@ -280,4 +290,5 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
     }
+
 }
