@@ -58,9 +58,9 @@ public interface OrderService {
 
     public List<OrderItem> updateItemsInOrder(Order order, List<OrderItem> orderItems);
 
-    public OrderItem moveItemToCartFromNamedOrder(Order order, Sku sku, int quantity);
+    public OrderItem moveItemToCartFromNamedOrder(Order order, Long orderItemId, int quantity);
 
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean deleteNamedorder);
+    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder);
 
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup);
 
