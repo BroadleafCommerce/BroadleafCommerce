@@ -1,5 +1,8 @@
 package org.broadleafcommerce.payment.secure.service;
 
+import javax.annotation.Resource;
+
+import org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDao;
 import org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo;
 import org.springframework.stereotype.Service;
@@ -17,13 +20,15 @@ import org.springframework.stereotype.Service;
 @Service("securePaymentInfoService")
 public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
+    @Resource
+    private SecurePaymentInfoDao securePaymentInfoDao;
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.payment.secure.service.SecurePaymentInfoService#findBankAccountInfo(java.lang.String)
      */
     @Override
     public BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
-        // TODO Auto-generated method stub
-        return null;
+        return securePaymentInfoDao.findBankAccountInfo(referenceNumber);
     }
 
     /* (non-Javadoc)
@@ -31,8 +36,7 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
      */
     @Override
     public CreditCardPaymentInfo findCreditCardInfo(String referenceNumber) {
-        // TODO Auto-generated method stub
-        return null;
+        return securePaymentInfoDao.findCreditCardInfo(referenceNumber);
     }
 
 }

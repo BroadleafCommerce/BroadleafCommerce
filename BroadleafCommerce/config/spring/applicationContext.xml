@@ -187,6 +187,8 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
+	<bean id="org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfoImpl"/>
+	<bean id="org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfoImpl"/>
 	
 	<bean id="taxService" class="org.broadleafcommerce.pricing.service.TaxServiceImpl">
 		<property name="taxModules">
@@ -198,8 +200,6 @@
 		</property>
 	</bean>
 	
-	<bean id="offerContext" class="org.broadleafcommerce.pricing.workflow.OfferContext"/>
-	
 	<bean id="pricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextClass" value="org.broadleafcommerce.pricing.workflow.OfferContext"/>
 		<property name="activities">
@@ -209,5 +209,9 @@
 				</bean>
 			</list>
 		</property>
+	</bean>
+	
+	<bean id="securePaymentInfoDao" class="org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDaoJpa">
+		<constructor-arg index="0"><ref bean="entityManagerFactory"/></constructor-arg>
 	</bean>
 </beans>

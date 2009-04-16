@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Phone;
+import org.broadleafcommerce.type.PaymentInfoType;
 import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentInfo {
@@ -29,4 +30,8 @@ public interface PaymentInfo {
     public String getReferenceNumber();
 
     public void setReferenceNumber(String referenceNumber);
+
+    public PaymentInfoType getType();
+
+    public void setType(PaymentInfoType type);
 }

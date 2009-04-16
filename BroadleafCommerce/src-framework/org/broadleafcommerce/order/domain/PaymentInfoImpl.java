@@ -47,7 +47,6 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @JoinColumn(name = "PHONE_ID")
     private Phone phone;
 
-    // TODO: This needs to be changed to type Money
     @Column(name = "AMOUNT")
     private BigDecimal amount;
 
