@@ -73,4 +73,8 @@ public interface Offer {
 
     public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
 
+    public boolean isCombinableWithOtherOffers();
+
+    public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers);
+
 }

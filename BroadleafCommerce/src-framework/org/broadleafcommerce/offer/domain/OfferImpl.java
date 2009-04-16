@@ -64,19 +64,22 @@ public class OfferImpl implements Serializable, Offer {
 
     @Column(name = "APPLY_TO_SALE_PRICE")
     private boolean applyToSalePrice;
-    
+
     @Column(name = "APPLIES_TO_RULES")
     private String appliesToRules;
-    
+
     @Column(name = "APPLIES_WHEN_RULES")
     private String appliesWhenRules;
-    
+
     @Transient
     private Money calculatedDiscount;
 
     @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
     private boolean applyDiscountToMarkedItems;
-    
+
+    @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
+    private boolean combinableWithOtherOffers;
+
     public Long getId() {
         return id;
     }
@@ -110,7 +113,7 @@ public class OfferImpl implements Serializable, Offer {
     }
 
     public OfferDiscountType getDiscountType() {
-    	return discountType;
+        return discountType;
 
     }
 
@@ -168,49 +171,55 @@ public class OfferImpl implements Serializable, Offer {
         this.targetSystem = targetSystem;
     }
 
-	@Override
-	public boolean getApplyDiscountToSalePrice() {
-		return applyToSalePrice;
-	}
+    @Override
+    public boolean getApplyDiscountToSalePrice() {
+        return applyToSalePrice;
+    }
 
-	@Override
-	public void setApplyDiscountToSalePrice(boolean applyToSalePrice) {
-		this.applyToSalePrice=applyToSalePrice;
+    @Override
+    public void setApplyDiscountToSalePrice(boolean applyToSalePrice) {
+        this.applyToSalePrice=applyToSalePrice;
 
-	}
+    }
 
-	public String getAppliesToRules() {
-		return appliesToRules;
-	}
+    public String getAppliesToRules() {
+        return appliesToRules;
+    }
 
-	public void setAppliesToRules(String appliesToRules) {
-		this.appliesToRules = appliesToRules;
-	}
+    public void setAppliesToRules(String appliesToRules) {
+        this.appliesToRules = appliesToRules;
+    }
 
-	public String getAppliesWhenRules() {
-		return appliesWhenRules;
-	}
+    public String getAppliesWhenRules() {
+        return appliesWhenRules;
+    }
 
-	public void setAppliesWhenRules(String appliesWhenRules) {
-		this.appliesWhenRules = appliesWhenRules;
-	}
+    public void setAppliesWhenRules(String appliesWhenRules) {
+        this.appliesWhenRules = appliesWhenRules;
+    }
 
-	public Money getDiscountPrice() {
-		return calculatedDiscount;
-	}
+    public Money getDiscountPrice() {
+        return calculatedDiscount;
+    }
 
-	public void setDiscountPrice(Money calculatedDiscount) {
-		this.calculatedDiscount = calculatedDiscount;
-	}
+    public void setDiscountPrice(Money calculatedDiscount) {
+        this.calculatedDiscount = calculatedDiscount;
+    }
 
-	public boolean isApplyDiscountToMarkedItems() {
-		return applyDiscountToMarkedItems;
-	}
+    public boolean isApplyDiscountToMarkedItems() {
+        return applyDiscountToMarkedItems;
+    }
 
-	public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems) {
-		this.applyDiscountToMarkedItems = applyDiscountToMarkedItems;
-	}
-	
-	
-	
+    public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems) {
+        this.applyDiscountToMarkedItems = applyDiscountToMarkedItems;
+    }
+
+    public boolean isCombinableWithOtherOffers() {
+        return combinableWithOtherOffers;
+    }
+
+    public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers) {
+        this.combinableWithOtherOffers = combinableWithOtherOffers;
+    }
+
 }
