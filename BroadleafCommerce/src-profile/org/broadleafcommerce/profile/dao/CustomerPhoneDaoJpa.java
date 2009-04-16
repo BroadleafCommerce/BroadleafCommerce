@@ -58,4 +58,13 @@ public class CustomerPhoneDaoJpa implements CustomerPhoneDao {
         CustomerPhone customerPhone = readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerId);
         em.remove(customerPhone.getId());
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public CustomerPhone findDefaultCustomerPhone(Long customerId) {
+        Query query = em.createNamedQuery("BC_FIND_DEFAULT_PHONE_BY_CUSTOMER_ID");
+        query.setParameter("customerId", customerId);
+        List<CustomerPhone> customerPhones = query.getResultList();
+        return customerPhones.isEmpty() ? null : customerPhones.get(0);
+    }
 }

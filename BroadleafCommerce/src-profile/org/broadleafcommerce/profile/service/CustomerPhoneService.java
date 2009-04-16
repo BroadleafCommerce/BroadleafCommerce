@@ -15,4 +15,6 @@ public interface CustomerPhoneService {
     public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId);
 
     public void deleteCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId);
+
+    public CustomerPhone findDefaultCustomerPhone(Long customerId);
 }

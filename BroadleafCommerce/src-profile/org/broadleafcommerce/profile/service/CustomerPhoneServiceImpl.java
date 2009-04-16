@@ -52,4 +52,9 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
     public void deleteCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId){
         customerPhoneDao.deleteCustomerPhoneByIdAndCustomerId(customerPhoneId, customerId);
     }
+
+    @Override
+    public CustomerPhone findDefaultCustomerPhone(Long customerId) {
+        return customerPhoneDao.findDefaultCustomerPhone(customerId);
+    }
 }
