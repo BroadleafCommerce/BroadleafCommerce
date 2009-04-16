@@ -16,9 +16,9 @@ public interface Order {
     public void setId(Long id);
 
     public String getName();
-    
+
     public void setName(String name);
-    
+
     public Auditable getAuditable();
 
     public void setAuditable(Auditable auditable);
@@ -37,25 +37,25 @@ public interface Order {
 
     public OrderStatus getStatus();
 
-	public void setStatus(OrderStatus status);
+    public void setStatus(OrderStatus status);
 
     public List<OrderItem> getOrderItems();
 
     public void setOrderItems(List<OrderItem> orderItems);
 
     public void addOrderItem(OrderItem orderItem) ;
-    
+
     public void removeOrderItem(OrderItem orderItem);
-    
+
     public List<FulfillmentGroup> getFulfillmentGroups();
 
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
     public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) ;
-    
+
     public void removeFulfillmentGroup(FulfillmentGroup fulfillmentGroup) ;
 
-        public List<Offer> getCandidateOffers();
+    public List<Offer> getCandidateOffers();
 
     public void setCandidateOffers(List<Offer> offers);
 
@@ -67,27 +67,31 @@ public interface Order {
 
     public void setMarkedForOffer(boolean markForOffer);
 
-	public Date getSubmitDate();
+    public Date getSubmitDate();
 
-	public void setSubmitDate(Date submitDate);
-	
-	public Money getCityTax();
+    public void setSubmitDate(Date submitDate);
 
-	public void setCityTax(Money cityTax);
+    public Money getCityTax();
 
-	public Money getCountyTax();
+    public void setCityTax(Money cityTax);
 
-	public void setCountyTax(Money countyTax);
+    public Money getCountyTax();
 
-	public Money getStateTax();
+    public void setCountyTax(Money countyTax);
 
-	public void setStateTax(Money stateTax);
+    public Money getStateTax();
 
-	public Money getCountryTax();
+    public void setStateTax(Money stateTax);
 
-	public void setCountryTax(Money countryTax);
-	
-	public Money getTotalTax();
+    public Money getCountryTax();
 
-	public void setTotalTax(Money totalTax);
+    public void setCountryTax(Money countryTax);
+
+    public Money getTotalTax();
+
+    public void setTotalTax(Money totalTax);
+
+    public List<PaymentInfo> getPaymentInfos();
+
+    public void setPaymentInfos(List<PaymentInfo> paymentInfos);
 }

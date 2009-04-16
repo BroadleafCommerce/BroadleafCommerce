@@ -58,19 +58,19 @@ public class OrderImpl implements Order, Serializable {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Column(name="CITY_TAX")
+    @Column(name = "CITY_TAX")
     private BigDecimal cityTax;
 
-    @Column(name="COUNTY_TAX")
+    @Column(name = "COUNTY_TAX")
     private BigDecimal countyTax;
 
-    @Column(name="STATE_TAX")
+    @Column(name = "STATE_TAX")
     private BigDecimal stateTax;
 
-    @Column(name="COUNTRY_TAX")
+    @Column(name = "COUNTRY_TAX")
     private BigDecimal countryTax;
 
-    @Column(name="TOTAL_TAX")
+    @Column(name = "TOTAL_TAX")
     private BigDecimal totalTax;
 
     @Column(name = "ORDER_SUBTOTAL")
@@ -91,6 +91,9 @@ public class OrderImpl implements Order, Serializable {
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
     private List<Offer> candidateOffers;
+
+    @OneToMany(mappedBy = "order", targetEntity = PaymentInfo.class)
+    private List<PaymentInfo> paymentInfos;
 
     @Transient
     private boolean markedForOffer;
@@ -272,5 +275,13 @@ public class OrderImpl implements Order, Serializable {
 
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
+    }
+
+    public List<PaymentInfo> getPaymentInfos() {
+        return paymentInfos;
+    }
+
+    public void setPaymentInfos(List<PaymentInfo> paymentInfos) {
+        this.paymentInfos = paymentInfos;
     }
 }
