@@ -66,7 +66,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Column(name = "QUANTITY")
     private int quantity;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = PersonalMessageImpl.class)
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     private PersonalMessage personalMessage;
 
