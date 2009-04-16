@@ -103,6 +103,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "TOTAL_TAX")
     private BigDecimal totalTax;
 
+    @Column(name = "DELIVERY_INSTRUCTION")
+    private String deliveryInstruction;
+
+    @ManyToOne
+    @JoinColumn(name = "PERSONAL_MESSAGE_ID")
+    private PersonalMessage personalMessage;
+
     public Long getId() {
         return id;
     }
@@ -291,4 +298,19 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         this.totalTax = Money.toAmount(totalTax);
     }
 
+    public String getDeliveryInstruction() {
+        return deliveryInstruction;
+    }
+
+    public void setDeliveryInstruction(String deliveryInstruction) {
+        this.deliveryInstruction = deliveryInstruction;
+    }
+
+    public PersonalMessage getPersonalMessage() {
+        return personalMessage;
+    }
+
+    public void setPersonalMessage(PersonalMessage personalMessage) {
+        this.personalMessage = personalMessage;
+    }
 }

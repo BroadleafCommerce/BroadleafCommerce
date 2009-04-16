@@ -91,4 +91,12 @@ public interface FulfillmentGroup {
     public Money getTotalTax();
 
     public void setTotalTax(Money totalTax);
+
+    public String getDeliveryInstruction();
+
+    public void setDeliveryInstruction(String deliveryInstruction);
+
+    public PersonalMessage getPersonalMessage();
+
+    public void setPersonalMessage(PersonalMessage personalMessage);
 }
