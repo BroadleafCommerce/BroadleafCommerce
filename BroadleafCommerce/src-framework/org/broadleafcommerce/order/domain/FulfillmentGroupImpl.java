@@ -52,7 +52,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
 
-    @OneToMany(mappedBy = "fulfillmentGroupId", targetEntity = FulfillmentGroupItemImpl.class)
+    @OneToMany(mappedBy = "fulfillmentGroupId", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
     private List<FulfillmentGroupItem> fulfillmentGroupItems;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = CascadeType.ALL)

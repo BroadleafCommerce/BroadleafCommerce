@@ -15,9 +15,9 @@ public interface FulfillmentGroup {
 
     public void setId(Long id);
 
-    public Long getOrderId() ;
+    public Long getOrderId();
 
-    public void setOrderId(Long orderId) ;
+    public void setOrderId(Long orderId);
 
     public Address getAddress();
 
@@ -37,18 +37,19 @@ public interface FulfillmentGroup {
 
     public void setMethod(String fulfillmentMethod);
 
-    //TODO refactor these price method names to reflect that they represent shipping prices
+    // TODO refactor these price method names to reflect that they represent
+    // shipping prices
     public Money getRetailPrice();
 
     public void setRetailPrice(Money fulfillmentCost);
 
-    public Money getSalePrice() ;
+    public Money getSalePrice();
 
-    public void setSalePrice(Money salePrice) ;
+    public void setSalePrice(Money salePrice);
 
-    public Money getPrice() ;
+    public Money getPrice();
 
-    public void setPrice(Money price) ;
+    public void setPrice(Money price);
 
     public String getReferenceNumber();
 
