@@ -1,6 +1,7 @@
 package org.broadleafcommerce.order.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +115,7 @@ public class OrderServiceImpl implements OrderService {
             fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
         }catch(NoResultException nre){
             fg = createDefaultFulfillmentGroup(order);
+            fg = fulfillmentGroupDao.maintainDefaultFulfillmentGroup(fg);
         }
         if (fg.getFulfillmentGroupItems() == null || fg.getFulfillmentGroupItems().size() == 0) {
             // Only Default fulfillment group has been created so
@@ -121,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
             List<OrderItem> orderItems = order.getOrderItems();
             for (OrderItem orderItem : orderItems) {
                 FulfillmentGroupItem fgi = this.createFulfillmentGroupItemFromOrderItem(orderItem, fg.getId());
-                fulfillmentGroupItemDao.maintainFulfillmentGroupItem(fgi);
+                fgi = fulfillmentGroupItemDao.maintainFulfillmentGroupItem(fgi);
                 fg.addFulfillmentGroupItem(fgi);
             }
             // Go ahead and persist it so we don't have to do this later
@@ -261,17 +263,20 @@ public class OrderServiceImpl implements OrderService {
 
 
         // 1) Find the item's existing fulfillment group
-        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+        for (Iterator<FulfillmentGroup> fgIterator = order.getFulfillmentGroups().iterator(); fgIterator.hasNext();) {
+            FulfillmentGroup fg = fgIterator.next();
             if (fg.getFulfillmentGroupItems() != null) {
-                for (Iterator<FulfillmentGroupItem> iterator = fg.getFulfillmentGroupItems().iterator(); iterator.hasNext();) {
-                    FulfillmentGroupItem tempFgi =  iterator.next();
+                List<FulfillmentGroupItem> itemsToRemove = new ArrayList<FulfillmentGroupItem>();
+                for (Iterator<FulfillmentGroupItem> fgiIterator = fg.getFulfillmentGroupItems().iterator(); fgiIterator.hasNext();) {
+                    FulfillmentGroupItem tempFgi =  fgiIterator.next();
                     if (tempFgi.getOrderItem().getId().equals(item.getId())) {
                         fgi = tempFgi;
                         // 2) remove item from it's existing fulfillment group
-                        iterator.remove();
-                        fulfillmentGroupDao.maintainFulfillmentGroup(fg);
+                        itemsToRemove.add(fgi);
                     }
                 }
+                fg.getFulfillmentGroupItems().remove(itemsToRemove);
+                fulfillmentGroupDao.maintainFulfillmentGroup(fg);
             }
         }
         if (fgi == null) {
