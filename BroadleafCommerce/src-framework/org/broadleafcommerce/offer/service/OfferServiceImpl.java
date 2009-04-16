@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.ComparatorUtils;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.offer.domain.Offer;
@@ -66,28 +67,23 @@ public class OfferServiceImpl implements OfferService {
                     // Assume for now that all orders qualify
                     offer = calculateAtomOfferDiscount(offer, order.getSubTotal());
                     qualifiedOrderOffers.add(offer);
-                }
-                if(offer.getType().equals(OfferType.ORDER_ITEM)){
+                } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
                     for (OrderItem orderItem : order.getOrderItems()) {
                         // TODO: Determine if orderItem qualifies for offer
                         // Assume for now that all orderItems qualify
                         if(couldOfferApplyToOrderItem(offer, order, orderItem))
                             qualifiedItemOffers.add(new CandidateItemOfferImpl(orderItem, offer ));
                     }
-                }
-                if(offer.getType().equals(OfferType.FULLFILLMENT_GROUP)){
+                } else if(offer.getType().equals(OfferType.FULLFILLMENT_GROUP)){
                     // TODO: Handle Offer calculation for offer type of fullfillment group
                 }
             }
             //
             // . Create a sorted list sorted by priority asc then amount desc
             //
-            Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
-            Collections.reverse(qualifiedOrderOffers);
+            Collections.sort(qualifiedOrderOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountedPrice")));
             Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
-            Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
-            Collections.reverse(qualifiedItemOffers);
-            Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
+
             //
             // . Add offers that could be used on the order to the order.candidateOffers and item.candidateOffers lists respectively
             //
