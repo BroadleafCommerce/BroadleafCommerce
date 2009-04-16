@@ -36,7 +36,6 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP")
-
 public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -106,7 +105,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "DELIVERY_INSTRUCTION")
     private String deliveryInstruction;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = PersonalMessageImpl.class)
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     private PersonalMessage personalMessage;
 
@@ -144,7 +143,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     @Override
     public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem) {
-        if(this.fulfillmentGroupItems == null) {
+        if (this.fulfillmentGroupItems == null) {
             this.fulfillmentGroupItems = new Vector<FulfillmentGroupItem>();
         }
         this.fulfillmentGroupItems.add(fulfillmentGroupItem);
