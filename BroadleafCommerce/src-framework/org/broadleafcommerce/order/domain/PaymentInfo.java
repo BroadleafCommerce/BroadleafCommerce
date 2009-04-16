@@ -1,6 +1,7 @@
 package org.broadleafcommerce.order.domain;
 
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentInfo {
@@ -16,6 +17,10 @@ public interface PaymentInfo {
     public Address getAddress();
 
     public void setAddress(Address address);
+
+    public Phone getPhone();
+
+    public void setPhone(Phone phone);
 
     public Money getAmount();
 

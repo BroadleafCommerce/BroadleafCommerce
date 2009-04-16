@@ -5,6 +5,7 @@ import java.util.List;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.type.FulfillmentGroupType;
 import org.broadleafcommerce.util.money.Money;
 
@@ -21,6 +22,10 @@ public interface FulfillmentGroup {
     public Address getAddress();
 
     public void setAddress(Address address);
+
+    public Phone getPhone();
+
+    public void setPhone(Phone phone);
 
     public List<FulfillmentGroupItem> getFulfillmentGroupItems();
 
