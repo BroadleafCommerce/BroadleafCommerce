@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -18,6 +20,7 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.domain.PhoneImpl;
+import org.broadleafcommerce.type.PaymentInfoType;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -50,6 +53,10 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PAYMENT_TYPE")
+    private PaymentInfoType type;
 
     @Override
     public Money getAmount() {
@@ -99,5 +106,19 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+
+    /**
+     * @return the type
+     */
+    public PaymentInfoType getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(PaymentInfoType type) {
+        this.type = type;
     }
 }
