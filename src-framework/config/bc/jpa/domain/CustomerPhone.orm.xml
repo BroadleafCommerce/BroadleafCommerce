@@ -19,6 +19,6 @@
 	<named-query name="BC_FIND_DEFAULT_PHONE_BY_CUSTOMER_ID" >
 		<query>SELECT cp FROM org.broadleafcommerce.profile.domain.CustomerPhone cp
 		WHERE cp.customerId = :customerId
-		AND cp.address.isDefault = TRUE</query>
+		AND cp.phone.isDefault = TRUE</query>
 	</named-query>
 </entity-mappings>
