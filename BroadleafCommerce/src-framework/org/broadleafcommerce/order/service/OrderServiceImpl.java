@@ -1,7 +1,6 @@
 package org.broadleafcommerce.order.service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -200,7 +199,10 @@ public class OrderServiceImpl implements OrderService {
         } catch (NoResultException nre) {
             // This is the first fulfillment group added so make it the
             // default one
-            return findDefaultFulfillmentGroupForOrder(order);
+            //          order.setFulfillmentGroups(new Vector<FulfillmentGroup>([fg]));
+            FulfillmentGroup newDfg = findDefaultFulfillmentGroupForOrder(order);
+            order.addFulfillmentGroup(newDfg);
+            return newDfg;
         }
         // if(dfg == null){
         // }else
@@ -250,19 +252,23 @@ public class OrderServiceImpl implements OrderService {
             // API user is trying to add an item to a fulfillment group not
             // created
             fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup);
-            fulfillmentGroup.setFulfillmentGroupItems(new ArrayList<FulfillmentGroupItem>());
+            //fulfillmentGroup.setFulfillmentGroupItems(new ArrayList<FulfillmentGroupItem>());
         }
         // API user is trying to add an item to an existing fulfillment group
         // Steps are
 
+        order = orderDao.readOrderById(item.getOrderId());
+
+
         // 1) Find the item's existing fulfillment group
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             if (fg.getFulfillmentGroupItems() != null) {
-                for (FulfillmentGroupItem tempFgi : fg.getFulfillmentGroupItems()) {
+                for (Iterator<FulfillmentGroupItem> iterator = fg.getFulfillmentGroupItems().iterator(); iterator.hasNext();) {
+                    FulfillmentGroupItem tempFgi =  iterator.next();
                     if (tempFgi.getOrderItem().getId().equals(item.getId())) {
                         fgi = tempFgi;
                         // 2) remove item from it's existing fulfillment group
-                        fg.getFulfillmentGroupItems().remove(fgi);
+                        iterator.remove();
                         fulfillmentGroupDao.maintainFulfillmentGroup(fg);
                     }
                 }
@@ -273,7 +279,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 3) add the item to the new fulfillment group
-        fgi.setFulfillmentGroupId(fulfillmentGroup.getId());
+        //        fgi.setFulfillmentGroupId(fulfillmentGroup.getId());
         //        fgi = fulfillmentGroupItemDao.maintainFulfillmentGroupItem(fgi);
         fulfillmentGroup.addFulfillmentGroupItem(fgi);
 
