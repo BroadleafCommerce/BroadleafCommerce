@@ -1,6 +1,6 @@
 package org.broadleafcommerce.payment.secure.domain;
 
-public interface CreditCardPaymentInfo {
+public interface CreditCardPaymentInfo extends Referenced {
 
     /**
      * @return the id
@@ -11,16 +11,6 @@ public interface CreditCardPaymentInfo {
      * @param id the id to set
      */
     public void setId(long id);
-
-    /**
-     * @return the referenceNumber
-     */
-    public String getReferenceNumber();
-
-    /**
-     * @param referenceNumber the referenceNumber to set
-     */
-    public void setReferenceNumber(String referenceNumber);
 
     /**
      * @return the pan
