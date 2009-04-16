@@ -203,6 +203,7 @@ public class OrderServiceImpl implements OrderService {
             // default one
             //          order.setFulfillmentGroups(new Vector<FulfillmentGroup>([fg]));
             FulfillmentGroup newDfg = findDefaultFulfillmentGroupForOrder(order);
+
             order.addFulfillmentGroup(newDfg);
             return newDfg;
         }
