@@ -110,10 +110,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order) {
-        FulfillmentGroup fg  = null;
-        try{
+        FulfillmentGroup fg = null;
+        try {
             fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
-        }catch(NoResultException nre){
+        } catch (NoResultException nre) {
             fg = createDefaultFulfillmentGroup(order);
             fg = fulfillmentGroupDao.maintainDefaultFulfillmentGroup(fg);
         }
@@ -174,7 +174,7 @@ public class OrderServiceImpl implements OrderService {
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder) {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer(), true);
         for (OrderItem orderItem : namedOrder.getOrderItems()) {
-            if(moveNamedOrderItems) {
+            if (moveNamedOrderItems) {
                 removeItemFromOrder(namedOrder, orderItem.getId());
             }
             addSkuToOrder(cartOrder, orderItem.getSku(), orderItem.getQuantity());
@@ -201,7 +201,7 @@ public class OrderServiceImpl implements OrderService {
         } catch (NoResultException nre) {
             // This is the first fulfillment group added so make it the
             // default one
-            //          order.setFulfillmentGroups(new Vector<FulfillmentGroup>([fg]));
+            // order.setFulfillmentGroups(new Vector<FulfillmentGroup>([fg]));
             FulfillmentGroup newDfg = findDefaultFulfillmentGroupForOrder(order);
 
             order.addFulfillmentGroup(newDfg);
@@ -257,13 +257,13 @@ public class OrderServiceImpl implements OrderService {
             // API user is trying to add an item to a fulfillment group not
             // created
             fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup);
-            //fulfillmentGroup.setFulfillmentGroupItems(new ArrayList<FulfillmentGroupItem>());
+            // fulfillmentGroup.setFulfillmentGroupItems(new
+            // ArrayList<FulfillmentGroupItem>());
         }
         // API user is trying to add an item to an existing fulfillment group
         // Steps are
 
         order = orderDao.readOrderById(item.getOrderId());
-
 
         // 1) Find the item's existing fulfillment group
         for (Iterator<FulfillmentGroup> fgIterator = order.getFulfillmentGroups().iterator(); fgIterator.hasNext();) {
@@ -271,15 +271,17 @@ public class OrderServiceImpl implements OrderService {
             if (fg.getFulfillmentGroupItems() != null) {
                 List<FulfillmentGroupItem> itemsToRemove = new ArrayList<FulfillmentGroupItem>();
                 for (Iterator<FulfillmentGroupItem> fgiIterator = fg.getFulfillmentGroupItems().iterator(); fgiIterator.hasNext();) {
-                    FulfillmentGroupItem tempFgi =  fgiIterator.next();
+                    FulfillmentGroupItem tempFgi = fgiIterator.next();
                     if (tempFgi.getOrderItem().getId().equals(item.getId())) {
                         fgi = tempFgi;
                         // 2) remove item from it's existing fulfillment group
                         itemsToRemove.add(fgi);
                     }
                 }
-                fg.getFulfillmentGroupItems().remove(itemsToRemove);
-                fulfillmentGroupDao.maintainFulfillmentGroup(fg);
+                if (!itemsToRemove.isEmpty()) {
+                    fg.getFulfillmentGroupItems().remove(itemsToRemove);
+                    fulfillmentGroupDao.maintainFulfillmentGroup(fg);
+                }
             }
         }
         if (fgi == null) {
@@ -287,7 +289,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 3) add the item to the new fulfillment group
-        if(fulfillmentGroup.getType()!= null && fulfillmentGroup.getType() != FulfillmentGroupType.DEFAULT) {
+        if (fulfillmentGroup.getType() == null) {
             fulfillmentGroup.addFulfillmentGroupItem(fgi);
         }
 
@@ -332,9 +334,9 @@ public class OrderServiceImpl implements OrderService {
     public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, Long orderItemId, int quantity) {
         OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer(), true);
-        if(moveNamedOrderItems) {
+        if (moveNamedOrderItems) {
             Order updatedNamedOrder = removeItemFromOrder(namedOrder, orderItem);
-            if(updatedNamedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
+            if (updatedNamedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
                 orderDao.deleteOrderForCustomer(updatedNamedOrder);
             }
 
@@ -445,13 +447,13 @@ public class OrderServiceImpl implements OrderService {
         FulfillmentGroup newFg = fulfillmentGroupDao.createDefault();
         newFg.setOrderId(order.getId());
         newFg.setType(FulfillmentGroupType.DEFAULT);
-        //        for (OrderItem orderItem : order.getOrderItems()) {
-        //            newFg = addItemToFulfillmentGroup(orderItem, newFg, orderItem.getQuantity());
-        //        }
+        // for (OrderItem orderItem : order.getOrderItems()) {
+        // newFg = addItemToFulfillmentGroup(orderItem, newFg,
+        // orderItem.getQuantity());
+        // }
 
         return newFg;
     }
-
 
     protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, Long fulfillmentGroupId) {
         FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
@@ -569,6 +571,5 @@ public class OrderServiceImpl implements OrderService {
     public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
         this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }
-
 
 }

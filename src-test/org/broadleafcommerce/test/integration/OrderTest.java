@@ -173,8 +173,8 @@ public class OrderTest extends BaseTest {
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
     }
 
-    @Test(groups= {"addItemToFulfillmentGroupFirst"}, dependsOnGroups = { "addItemToOrder" })
-    public void addItemToFulfillmentgroupFirst() {
+    @Test(groups= {"addItemToFulfillmentGroupSecond"}, dependsOnGroups = { "addItemToOrder" })
+    public void addItemToFulfillmentgroupSecond() {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
