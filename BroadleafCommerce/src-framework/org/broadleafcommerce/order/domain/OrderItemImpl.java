@@ -66,6 +66,10 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Column(name = "QUANTITY")
     private int quantity;
 
+    @ManyToOne
+    @JoinColumn(name = "PERSONAL_MESSAGE_ID")
+    private PersonalMessage personalMessage;
+
     @Transient
     // TODO: Need to persist this
     private List<CandidateItemOffer> candidateItemOffers;
@@ -173,5 +177,13 @@ public class OrderItemImpl implements OrderItem, Serializable {
 
     public void setMarkedForOffer(boolean markedForOffer) {
         this.markedForOffer = markedForOffer;
+    }
+
+    public PersonalMessage getPersonalMessage() {
+        return personalMessage;
+    }
+
+    public void setPersonalMessage(PersonalMessage personalMessage) {
+        this.personalMessage = personalMessage;
     }
 }

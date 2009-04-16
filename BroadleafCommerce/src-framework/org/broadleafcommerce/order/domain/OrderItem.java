@@ -57,4 +57,8 @@ public interface OrderItem {
     public boolean isMarkedForOffer();
 
     public void setMarkedForOffer(boolean markedForOffer);
+
+    public PersonalMessage getPersonalMessage();
+
+    public void setPersonalMessage(PersonalMessage personalMessage);
 }

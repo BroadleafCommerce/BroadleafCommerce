@@ -1,6 +1,14 @@
 ------------------------
 -- DROP TABLE STATEMENTS
 ------------------------
+DROP TABLE blc_id_generation;
+DROP TABLE blc_fulfillment_group_item;
+DROP TABLE blc_fulfillment_group;
+DROP TABLE blc_order_item;
+DROP TABLE blc_personal_message;
+DROP TABLE blc_order;
+DROP TABLE blc_phone;
+DROP TABLE blc_customer_phone;
 DROP TABLE blc_address;
 DROP TABLE blc_customer_address;
 DROP TABLE blc_customer;
@@ -72,17 +80,6 @@ CREATE TABLE blc_address
 );
 
 --------------------------
---------------------------
--- blc_phone
-CREATE TABLE blc_phone
-(
-  PHONE_ID NUMBER(19,0) NOT NULL,
-  PHONE_NUMBER VARCHAR2(255) ,
-  IS_DEFAULT NUMBER(1,0) ,
-  IS_ACTIVE NUMBER(1,0) ,
-  CONSTRAINT PK_BLC_PHONE PRIMARY KEY(PHONE_ID) USING INDEX TABLESPACE WEB_IDX1
-);
---------------------------
 -- blc_customer_address
 --------------------------
 CREATE TABLE blc_customer_address
@@ -93,6 +90,31 @@ CREATE TABLE blc_customer_address
   ADDRESS_ID NUMBER(19,0) NOT NULL,
   CONSTRAINT PK_BLC_CUSTOMER_ADDRESS PRIMARY KEY(ADDRESS_ID) USING INDEX TABLESPACE WEB_IDX1,
   CONSTRAINT FK_CUSTOMER_ADDRESS FOREIGN KEY (ADDRESS_ID) REFERENCES blc_address(ADDRESS_ID)
+);
+
+--------------------------
+--------------------------
+-- blc_phone
+CREATE TABLE blc_phone
+(
+  PHONE_ID NUMBER(19,0) NOT NULL,
+  PHONE_NUMBER VARCHAR2(255) ,
+  IS_DEFAULT NUMBER(1,0) ,
+  IS_ACTIVE NUMBER(1,0) ,
+  CONSTRAINT PK_BLC_PHONE PRIMARY KEY(PHONE_ID) USING INDEX TABLESPACE WEB_IDX1
+);
+
+--------------------------
+-- blc_customer_phone
+--------------------------
+CREATE TABLE blc_customer_phone
+(
+  CUSTOMER_PHONE_ID NUMBER(19,0) NOT NULL,
+  PHONE_NAME VARCHAR2(255) ,
+  CUSTOMER_ID NUMBER(19,0) NOT NULL,
+  PHONE_ID NUMBER(19,0) NOT NULL,
+  CONSTRAINT PK_BLC_CUSTOMER_PHONE PRIMARY KEY(PHONE_ID) USING INDEX TABLESPACE WEB_IDX1,
+  CONSTRAINT FK_CUSTOMER_PHONE FOREIGN KEY (PHONE_ID) REFERENCES blc_address(PHONE_ID)
 );
 
 --------------------------
@@ -122,6 +144,18 @@ CREATE TABLE blc_order
 );
 
 --------------------------
+-- blc_personal_message
+--------------------------
+CREATE TABLE blc_personal_message
+(
+  PERSONAL_MESSAGE_ID NUMBER(19,0) NOT NULL,
+  MESSAGE_TO VARCHAR2(255),
+  MESSAGE_FROM VARCHAR2(255),
+  MESSAGE VARCHAR2(255),
+  CONSTRAINT PK_BLC_PERSONAL_MESSAGE PRIMARY KEY(PERSONAL_MESSAGE_ID) USING INDEX TABLESPACE WEB_IDX1
+);
+
+--------------------------
 -- blc_order_item
 --------------------------
 CREATE TABLE blc_order_item
@@ -135,7 +169,9 @@ CREATE TABLE blc_order_item
   SALE_PRICE NUMBER(12,2),
   PRICE NUMBER(12,2),
   QUANTITY NUMBER(10,0),
-  CONSTRAINT PK_BLC_ORDER_ITEM PRIMARY KEY(ORDER_ITEM_ID) USING INDEX TABLESPACE WEB_IDX1
+  PERSONAL_MESSAGE_ID NUMBER(19,0),
+  CONSTRAINT PK_BLC_ORDER_ITEM PRIMARY KEY(ORDER_ITEM_ID) USING INDEX TABLESPACE WEB_IDX1,
+  CONSTRAINT FK_ORDER_MESSAGE FOREIGN KEY (PERSONAL_MESSAGE_ID) REFERENCES blc_personal_message(PERSONAL_MESSAGE_ID)
 );
 
 --------------------------
@@ -159,7 +195,10 @@ CREATE TABLE blc_fulfillment_group
   TOTAL_TAX NUMBER(12,2),
   "TYPE" VARCHAR(255),
   QUANTITY NUMBER(10,0),
-  CONSTRAINT PK_BLC_FULFILLMENT_GROUP PRIMARY KEY(ID) USING INDEX TABLESPACE WEB_IDX1
+  DELIVERY_INSTRUCTION VARCHAR(255),
+  PERSONAL_MESSAGE_ID NUMBER(19,0),
+  CONSTRAINT PK_BLC_FULFILLMENT_GROUP PRIMARY KEY(ID) USING INDEX TABLESPACE WEB_IDX1,
+  CONSTRAINT FK_FULFILLMENT_GROUP_MESSAGE FOREIGN KEY (PERSONAL_MESSAGE_ID) REFERENCES blc_personal_message(PERSONAL_MESSAGE_ID)
 );
 
 --------------------------
@@ -178,9 +217,9 @@ CREATE TABLE blc_fulfillment_group_item
 );
 
 --------------------------
--- BLC_ID_GENERATION
+-- blc_id_generation
 --------------------------
-CREATE TABLE BLC_ID_GENERATION
+CREATE TABLE blc_id_generation
 (
   ID_TYPE VARCHAR2(255) NOT NULL,
   BATCH_START NUMBER(19,0) ,
