@@ -284,11 +284,14 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 3) add the item to the new fulfillment group
-        //        fgi.setFulfillmentGroupId(fulfillmentGroup.getId());
-        //        fgi = fulfillmentGroupItemDao.maintainFulfillmentGroupItem(fgi);
-        fulfillmentGroup.addFulfillmentGroupItem(fgi);
+        if(fulfillmentGroup.getType()!= null && fulfillmentGroup.getType() != FulfillmentGroupType.DEFAULT) {
+            fulfillmentGroup.addFulfillmentGroupItem(fgi);
+        }
 
-        return fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
+        fulfillmentGroup = fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
+        fgi.setFulfillmentGroupId(fulfillmentGroup.getId());
+        fgi = fulfillmentGroupItemDao.maintainFulfillmentGroupItem(fgi);
+        return fulfillmentGroup;
     }
 
     @Override
