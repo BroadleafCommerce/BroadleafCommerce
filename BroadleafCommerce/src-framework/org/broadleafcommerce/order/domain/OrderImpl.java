@@ -92,7 +92,7 @@ public class OrderImpl implements Order, Serializable {
     @MapKey(name = "id")
     private List<Offer> candidateOffers;
 
-    @OneToMany(mappedBy = "order", targetEntity = PaymentInfo.class)
+    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class)
     private List<PaymentInfo> paymentInfos;
 
     @Transient
