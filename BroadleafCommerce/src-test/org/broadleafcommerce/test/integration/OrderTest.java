@@ -180,6 +180,7 @@ public class OrderTest extends BaseTest {
         Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
         Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
+        assert(orderItems.size() > 0);
         FulfillmentGroup newFg = new FulfillmentGroupImpl();
         newFg.setAddress(address);
         FulfillmentGroup newNewFg = orderService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
