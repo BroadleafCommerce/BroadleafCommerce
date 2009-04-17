@@ -8,8 +8,6 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.order.module.GiftCardModule;
 import org.broadleafcommerce.payment.order.service.GiftCardService;
-import org.broadleafcommerce.payment.order.workflow.PaymentContext.ActionType;
-import org.broadleafcommerce.payment.order.workflow.PaymentContext.CombinedPaymentContextSeed;
 import org.broadleafcommerce.payment.secure.domain.Referenced;
 import org.broadleafcommerce.type.PaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
@@ -38,9 +36,9 @@ public class PayWithGiftCard extends BaseActivity {
              * Detailed logging is a PCI requirement.
              */
             if (info.getType().equals(PaymentInfoType.CREDIT_CARD)) {
-                if (seed.getActionType() == ActionType.AUTHORIZE) {
+                if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
                     module.authorize(info);
-                } else if (seed.getActionType() == ActionType.DEBIT) {
+                } else if (seed.getActionType() == PaymentActionType.DEBIT) {
                     module.debit(info);
                 } else {
                     module.authorizeAndDebit(info);

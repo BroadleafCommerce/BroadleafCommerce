@@ -5,14 +5,11 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.BeanFactoryUtils;
-import org.springframework.beans.factory.ListableBeanFactory;
 
 public class SequenceProcessor extends BaseProcessor {
 
-	   //private ProcessContextLocator processContextLocator;
     private Log logger = LogFactory.getLog(SequenceProcessor.class);
-    private Class<ProcessContext> processContextClass;
+    private ProcessContextFactory processContextFactory;
 
     /*
      * (non-Javadoc)
@@ -20,39 +17,32 @@ public class SequenceProcessor extends BaseProcessor {
      * @see org.iocworkflow.BaseProcessor#supports(java.lang.Class)
      */
     public boolean supports(Activity activity) {
-
         return (activity instanceof BaseActivity);
     }
 
-    public void doActivities() {
-        doActivities(null);
-
+    public ProcessContext doActivities() throws WorkflowException {
+        return doActivities(null);
     }
 
-    public void doActivities(Object seedData) {
-
-        if (logger.isDebugEnabled())
+    public ProcessContext doActivities(Object seedData) throws WorkflowException {
+        if (logger.isDebugEnabled()) {
             logger.debug(getBeanName() + " processor is running..");
+        }
 
         //retrieve injected by Spring
         List<Activity> activities = getActivities();
 
         //retrieve a new instance of the Workflow ProcessContext
-        ProcessContext context = createContext();
-
-        if (seedData != null)
-            context.setSeedData(seedData);
+        ProcessContext context = createContext(seedData);
 
         for (Iterator<Activity> it = activities.iterator(); it.hasNext();) {
-
-            Activity activity = (Activity) it.next();
-
-            if (logger.isDebugEnabled())
+            Activity activity = it.next();
+            if (logger.isDebugEnabled()) {
                 logger.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
+            }
 
             try {
                 context = activity.execute(context);
-
             } catch (Throwable th) {
                 ErrorHandler errorHandler = activity.getErrorHandler();
                 if (errorHandler == null) {
@@ -64,12 +54,15 @@ public class SequenceProcessor extends BaseProcessor {
                     errorHandler.handleError(context, th);
                 }
             }
-            
+
             //ensure its ok to continue the process
-            if (processShouldStop(context, activity))
+            if (processShouldStop(context, activity)) {
                 break;
+            }
         }
         logger.debug(getBeanName() + " processor is done.");
+
+        return context;
     }
 
     /**
@@ -81,24 +74,20 @@ public class SequenceProcessor extends BaseProcessor {
      *            the current activity in the iteration
      */
     private boolean processShouldStop(ProcessContext context, Activity activity) {
-        if (context != null && context.stopProcess()) {
+        if (context != null && context.isStopped()) {
             logger.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;
         }
         return false;
     }
 
-    private ProcessContext createContext() {
-        // return processContextLocator.getService();
-        return (ProcessContext) BeanFactoryUtils.beanOfTypeIncludingAncestors((ListableBeanFactory) getBeanFactory(),
-                                                                              processContextClass);
+    private ProcessContext createContext(Object seedData) throws WorkflowException {
+        return processContextFactory.createContext(seedData);
     }
 
-    //    public void setProcessContextLocator(ProcessContextLocator processContextLocator) {
-    //        this.processContextLocator = processContextLocator;
-    //    }
-    public void setProcessContextClass(Class<ProcessContext> processContextClass) {
-        this.processContextClass = processContextClass;
+    @Override
+    public void setProcessContextFactory(ProcessContextFactory processContextFactory) {
+        this.processContextFactory = processContextFactory;
     }
 
 }

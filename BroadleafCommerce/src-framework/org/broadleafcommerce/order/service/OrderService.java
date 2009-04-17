@@ -78,6 +78,8 @@ public interface OrderService {
 
     public void removeAllFulfillmentGroupsFromOrder(Order order);
 
+    public List<PaymentInfo> readPaymentInfosForOrder(Order order);
+
     /**
      * Merge the anonymous cart with the customer's cart taking into
      * consideration sku activation

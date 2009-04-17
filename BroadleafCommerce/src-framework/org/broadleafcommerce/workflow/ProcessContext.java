@@ -5,14 +5,16 @@ import java.io.Serializable;
 public interface ProcessContext extends Serializable {
     /**
      * Activly informs the workflow process to stop processing
-     * no further activities will be exeecuted 
+     * no further activities will be exeecuted
      * @return
      */
     public boolean stopProcess();
-    
+
+    public boolean isStopped();
+
     /**
-     * Provide seed information to this ProcessContext, usually 
-     * provided at time of workflow kickoff by the containing 
+     * Provide seed information to this ProcessContext, usually
+     * provided at time of workflow kickoff by the containing
      * workflow processor.
      * 
      * @param seedObject - initial seed data for the workflow
