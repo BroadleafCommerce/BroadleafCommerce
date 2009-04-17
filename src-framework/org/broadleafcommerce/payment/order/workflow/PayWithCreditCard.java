@@ -8,8 +8,6 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.order.module.CreditCardModule;
 import org.broadleafcommerce.payment.order.service.CreditCardService;
-import org.broadleafcommerce.payment.order.workflow.PaymentContext.ActionType;
-import org.broadleafcommerce.payment.order.workflow.PaymentContext.CombinedPaymentContextSeed;
 import org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.secure.domain.Referenced;
 import org.broadleafcommerce.type.PaymentInfoType;
@@ -39,9 +37,9 @@ public class PayWithCreditCard extends BaseActivity {
              * Detailed logging is a PCI requirement.
              */
             if (info.getType().equals(PaymentInfoType.CREDIT_CARD)) {
-                if (seed.getActionType() == ActionType.AUTHORIZE) {
+                if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
                     module.authorize(info, (CreditCardPaymentInfo) infos.get(info));
-                } else if (seed.getActionType() == ActionType.DEBIT) {
+                } else if (seed.getActionType() == PaymentActionType.DEBIT) {
                     module.debit(info, (CreditCardPaymentInfo) infos.get(info));
                 } else {
                     module.authorizeAndDebit(info, (CreditCardPaymentInfo) infos.get(info));

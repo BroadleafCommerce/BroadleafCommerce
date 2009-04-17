@@ -1,17 +1,17 @@
-package org.broadleafcommerce.pricing.workflow;
+package org.broadleafcommerce.checkout.workflow;
 
-import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class OfferContext implements ProcessContext {
+public class CheckoutContext implements ProcessContext {
+
     public final static long serialVersionUID = 1L;
 
     private boolean stopEntireProcess = false;
-    private Order seedData;
+    private CheckoutSeed seedData;
 
     @Override
     public void setSeedData(Object seedObject) {
-        seedData = (Order)seedObject;
+        seedData = (CheckoutSeed) seedObject;
     }
 
     @Override
@@ -24,8 +24,9 @@ public class OfferContext implements ProcessContext {
         return stopEntireProcess;
     }
 
-    public Order getSeedData(){
+    public CheckoutSeed getSeedData(){
         return seedData;
     }
+
 
 }

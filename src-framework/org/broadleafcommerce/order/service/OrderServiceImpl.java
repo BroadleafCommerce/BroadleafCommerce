@@ -548,6 +548,11 @@ public class OrderServiceImpl implements OrderService {
         return reconstructCartResponse;
     }
 
+    @Override
+    public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
+        return paymentInfoDao.readPaymentInfosForOrder(order);
+    }
+
     public boolean isRollupOrderItems() {
         return rollupOrderItems;
     }

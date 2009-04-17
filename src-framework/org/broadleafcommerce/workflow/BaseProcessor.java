@@ -19,7 +19,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
  * 
  * @since March 1, 2005
  * @see Activity
- *  
+ * 
  */
 public abstract class BaseProcessor implements InitializingBean, BeanNameAware, BeanFactoryAware, Processor {
 
@@ -28,7 +28,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
     private List<Activity> activities;
     private ErrorHandler defaultErrorHandler;
 
-    /* Sets name of the spring bean in the application context that this 
+    /* Sets name of the spring bean in the application context that this
      * processor is configured under
      * (non-Javadoc)
      * @see org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang.String)
@@ -38,7 +38,7 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
 
     }
 
-    /* Sets the spring bean factroy bean that is responsible for this processor. 
+    /* Sets the spring bean factroy bean that is responsible for this processor.
      * (non-Javadoc)
      * @see org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
      */
@@ -55,21 +55,23 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     public void afterPropertiesSet() throws Exception {
-        
-        if(!(beanFactory instanceof ListableBeanFactory))
-            throw new BeanInitializationException("The workflow processor ["+beanName+"] " +
-            		"is not managed by a ListableBeanFactory, please re-deploy using some dirivative of ListableBeanFactory such as" +
-            		"ClassPathXmlApplicationContext ");
 
-        if (activities == null || activities.isEmpty())
+        if(!(beanFactory instanceof ListableBeanFactory)) {
+            throw new BeanInitializationException("The workflow processor ["+beanName+"] " +
+                    "is not managed by a ListableBeanFactory, please re-deploy using some dirivative of ListableBeanFactory such as" +
+            "ClassPathXmlApplicationContext ");
+        }
+
+        if (activities == null || activities.isEmpty()) {
             throw new UnsatisfiedDependencyException(getBeanDesc(), beanName, "activities",
-                                                     "No activities were wired for this workflow");
-        
+            "No activities were wired for this workflow");
+        }
+
         for (Iterator<Activity> iter = activities.iterator(); iter.hasNext();) {
-            Activity activitiy = (Activity) iter.next();
+            Activity activitiy = iter.next();
             if( !supports(activitiy))
                 throw new BeanInitializationException("The workflow processor ["+beanName+"] does " +
-                		"not support the activity of type"+activitiy.getClass().getName());
+                        "not support the activity of type"+activitiy.getClass().getName());
         }
 
     }
@@ -82,10 +84,8 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
         return (beanFactory instanceof ConfigurableListableBeanFactory) ?
                 ((ConfigurableListableBeanFactory) beanFactory).getBeanDefinition(beanName).getResourceDescription()
                 : "Workflow Processor: " + beanName;
-
     }
 
- 
     /**
      * Sets the collection of Activities to be executed by the Workflow Process
      * 
@@ -94,21 +94,23 @@ public abstract class BaseProcessor implements InitializingBean, BeanNameAware, 
     public void setActivities(List<Activity> activities) {
         this.activities = activities;
     }
-    
+
     public void setDefaultErrorHandler(ErrorHandler defaultErrorHandler) {
         this.defaultErrorHandler = defaultErrorHandler;
     }
-    
-    
+
     public List<Activity> getActivities() {
         return activities;
     }
+
     public String getBeanName() {
         return beanName;
     }
+
     public ErrorHandler getDefaultErrorHandler() {
         return defaultErrorHandler;
     }
+
     public BeanFactory getBeanFactory() {
         return beanFactory;
     }

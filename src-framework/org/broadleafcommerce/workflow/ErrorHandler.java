@@ -4,6 +4,6 @@ import org.springframework.beans.factory.BeanNameAware;
 
 public interface ErrorHandler extends BeanNameAware{
 
-	    
-	    public void handleError(ProcessContext context, Throwable th);
+    public void handleError(ProcessContext context, Throwable th);
+
 }

@@ -200,8 +200,34 @@
 		</property>
 	</bean>
 	
+	<bean id="bankAccountService" class="org.broadleafcommerce.payment.order.service.BankAccountServiceImpl">
+		<property name="bankAccountModules">
+			<list>
+				<bean class="org.broadleafcommerce.payment.order.module.DefaultBankAccountModule"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="creditCardService" class="org.broadleafcommerce.payment.order.service.CreditCardServiceImpl">
+		<property name="creditCardModules">
+			<list>
+				<bean class="org.broadleafcommerce.payment.order.module.DefaultCreditCardModule"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="giftCardService" class="org.broadleafcommerce.payment.order.service.GiftCardServiceImpl">
+		<property name="giftCardModules">
+			<list>
+				<bean class="org.broadleafcommerce.payment.order.module.DefaultGiftCardModule"/>
+			</list>
+		</property>
+	</bean>
+	
 	<bean id="pricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
-		<property name="processContextClass" value="org.broadleafcommerce.pricing.workflow.OfferContext"/>
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.pricing.workflow.PricingProcessContextFactory"/>
+		</property>
 		<property name="activities">
 			<list>
 				<bean class="org.broadleafcommerce.pricing.workflow.CalculateTax">
@@ -209,6 +235,46 @@
 				</bean>
 			</list>
 		</property>
+		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
+	</bean>
+	
+	<bean id="authorizeAndDebitWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.payment.order.workflow.PaymentProcessContextFactory">
+				<property name="paymentActionType" value="AUTHORIZEANDDEBIT"/>
+			</bean>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.payment.order.workflow.PayWithGiftCard">
+					<property name="giftCardModuleName" value="defaultGiftCardModule"/>
+				</bean>
+				<bean class="org.broadleafcommerce.payment.order.workflow.PayWithBankAccount">
+					<property name="bankAccountModuleName" value="defaultBankAccountModule"/>
+				</bean>
+				<bean class="org.broadleafcommerce.payment.order.workflow.PayWithCreditCard">
+					<property name="creditCardModuleName" value="defaultCreditCardModule"/>
+				</bean>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
+	</bean>
+	
+	<bean id="checkoutWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.checkout.workflow.CheckoutProcessContextFactory"/>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.checkout.workflow.ApplyOperation">
+					<property name="workflow" ref="pricingWorkflow"/>
+				</bean>
+				<bean class="org.broadleafcommerce.checkout.workflow.ApplyOperation">
+					<property name="workflow" ref="authorizeAndDebitWorkflow"/>
+				</bean>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
 	
 	<bean id="securePaymentInfoDao" class="org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDaoJpa">
