@@ -46,7 +46,7 @@ public class PaymentInfoDaoTest extends BaseTest {
         paymentInfo.setOrder(salesOrder);
 
         assert paymentInfo.getId() == null;
-        paymentInfoDao.maintainPaymentInfo(paymentInfo);
+        paymentInfo = paymentInfoDao.maintainPaymentInfo(paymentInfo);
         assert paymentInfo.getId() != null;
         this.paymentInfo = paymentInfo;
     }
