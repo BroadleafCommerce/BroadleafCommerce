@@ -3,11 +3,8 @@ package org.broadleafcommerce.payment.order.workflow;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.order.module.GiftCardModule;
-import org.broadleafcommerce.payment.order.service.GiftCardService;
 import org.broadleafcommerce.payment.secure.domain.Referenced;
 import org.broadleafcommerce.type.PaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
@@ -15,17 +12,13 @@ import org.broadleafcommerce.workflow.ProcessContext;
 
 public class PayWithGiftCard extends BaseActivity {
 
-    @Resource
-    private GiftCardService giftCardService;
-
-    private String giftCardModuleName;
+    private GiftCardModule giftCardModule;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
      */
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        GiftCardModule module = giftCardService.getGiftCardModuleByName(giftCardModuleName);
         CombinedPaymentContextSeed seed = ((PaymentContext) context).getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
         Iterator<PaymentInfo> itr = infos.keySet().iterator();
@@ -37,11 +30,11 @@ public class PayWithGiftCard extends BaseActivity {
              */
             if (info.getType().equals(PaymentInfoType.CREDIT_CARD)) {
                 if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
-                    module.authorize(info);
+                    giftCardModule.authorize(info);
                 } else if (seed.getActionType() == PaymentActionType.DEBIT) {
-                    module.debit(info);
+                    giftCardModule.debit(info);
                 } else {
-                    module.authorizeAndDebit(info);
+                    giftCardModule.authorizeAndDebit(info);
                 }
             }
         }
@@ -49,12 +42,12 @@ public class PayWithGiftCard extends BaseActivity {
         return context;
     }
 
-    public String getGiftCardModuleName() {
-        return giftCardModuleName;
+    public GiftCardModule getGiftCardModule() {
+        return giftCardModule;
     }
 
-    public void setGiftCardModuleName(String giftCardModuleName) {
-        this.giftCardModuleName = giftCardModuleName;
+    public void setGiftCardModule(GiftCardModule giftCardModule) {
+        this.giftCardModule = giftCardModule;
     }
 
 }
