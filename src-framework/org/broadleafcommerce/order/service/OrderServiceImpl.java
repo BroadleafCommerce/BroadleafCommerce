@@ -361,6 +361,7 @@ public class OrderServiceImpl implements OrderService {
         if (orderItem == null) {
             return null;
         }
+        removeOrderItemFromFullfillmentGroup(order, orderItem);
         orderItemDao.deleteOrderItem(orderItem);
         pricingService.calculateOrderTotal(order);
         return orderDao.readOrderById(order.getId());
@@ -370,14 +371,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(propagation = Propagation.REQUIRED)
     public Order removeItemFromOrder(Order order, OrderItem item) {
         orderItemDao.deleteOrderItem(item);
-        order.getFulfillmentGroups();
-        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-            for (FulfillmentGroupItem fgItem : fg.getFulfillmentGroupItems()) {
-                if (fgItem.getOrderItem().equals(item)) {
-                    fulfillmentGroupItemDao.deleteFulfillmentGroupItem(fgItem);
-                }
-            }
-        }
+        removeOrderItemFromFullfillmentGroup(order, item);
         pricingService.calculateOrderTotal(order);
         order.getOrderItems().remove(item);
         orderDao.maintianOrder(order);
@@ -485,6 +479,19 @@ public class OrderServiceImpl implements OrderService {
         // orderItem.setOrder(order);
         orderItem.setOrderId(order.getId());
         return orderItem;
+    }
+
+    protected void removeOrderItemFromFullfillmentGroup(Order order, OrderItem orderItem) {
+        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            List<FulfillmentGroupItem> fgItems = fulfillmentGroup.getFulfillmentGroupItems();
+            for (FulfillmentGroupItem fulfillmentGroupItem : fgItems) {
+                if(fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
+                    fulfillmentGroup.getFulfillmentGroupItems().remove(fulfillmentGroupItem);
+                    fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
+                }
+            }
+        }
     }
 
     /*
