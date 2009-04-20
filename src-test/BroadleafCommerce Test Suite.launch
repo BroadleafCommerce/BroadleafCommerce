@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <launchConfiguration type="org.testng.eclipse.launchconfig">
 <stringAttribute key="bad_container_name" value="\BroadleafCommerce\src-test\B"/>
 <listAttribute key="org.eclipse.jdt.launching.CLASSPATH">
@@ -60,7 +60,7 @@
 <stringAttribute key="org.testng.eclipse.LOG_LEVEL" value="2"/>
 <listAttribute key="org.testng.eclipse.PACKAGE_TEST_LIST"/>
 <listAttribute key="org.testng.eclipse.SUITE_TEST_LIST">
-<listEntry value="bin\testng.xml"/>
+<listEntry value="src-test/testng.xml"/>
 </listAttribute>
 <intAttribute key="org.testng.eclipse.TYPE" value="3"/>
 </launchConfiguration>
