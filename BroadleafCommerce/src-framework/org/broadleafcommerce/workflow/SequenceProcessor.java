@@ -13,7 +13,7 @@ public class SequenceProcessor extends BaseProcessor {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.iocworkflow.BaseProcessor#supports(java.lang.Class)
      */
     public boolean supports(Activity activity) {
@@ -44,6 +44,7 @@ public class SequenceProcessor extends BaseProcessor {
             try {
                 context = activity.execute(context);
             } catch (Throwable th) {
+                th.printStackTrace();
                 ErrorHandler errorHandler = activity.getErrorHandler();
                 if (errorHandler == null) {
                     logger.info("no error handler for this action, run default error" + "handler and abort processing ");
@@ -67,7 +68,7 @@ public class SequenceProcessor extends BaseProcessor {
 
     /**
      * Determine if the process should stop
-     * 
+     *
      * @param context
      *            the current process context
      * @param activity
