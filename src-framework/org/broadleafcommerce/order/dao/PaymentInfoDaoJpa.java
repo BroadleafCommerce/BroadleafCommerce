@@ -28,12 +28,7 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
 
     @Override
     public PaymentInfo maintainPaymentInfo(PaymentInfo paymentInfo) {
-        if (paymentInfo.getId() == null) {
-            em.persist(paymentInfo);
-        } else {
-            paymentInfo = em.merge(paymentInfo);
-        }
-        return paymentInfo;
+        return em.merge(paymentInfo);
     }
 
     @SuppressWarnings("unchecked")
