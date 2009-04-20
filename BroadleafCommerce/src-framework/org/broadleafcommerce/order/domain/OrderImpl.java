@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -86,7 +87,7 @@ public class OrderImpl implements Order, Serializable {
     private Date submitDate;
 
     @OneToMany(mappedBy = "orderId", targetEntity = OrderItemImpl.class)
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
     @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
     private List<FulfillmentGroup> fulfillmentGroups;
