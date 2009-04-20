@@ -1,6 +1,5 @@
 package org.broadleafcommerce.pricing.workflow;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
@@ -14,13 +13,19 @@ public class CalculateOrderSubtotal extends BaseActivity {
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((OfferContext) context).getSeedData();
-        Money subTotal = new Money(BigDecimal.ZERO);
+        Money subTotal = new Money(0D);
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
-            subTotal.add(orderItem.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+            subTotal = subTotal.add(orderItem.getPrice().multiply(orderItem.getQuantity()));
         }
         order.setSubTotal(subTotal);
         context.setSeedData(order);
+
         return context;
+    }
+
+    public static void main(String[] items) {
+        //BigDecimal dec = new BigDecimal(10D);
+        //System.out.println(dec.multiply(1));
     }
 }

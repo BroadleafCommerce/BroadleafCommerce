@@ -91,6 +91,10 @@ public interface Order {
 
     public void setTotalTax(Money totalTax);
 
+    public Money getTotalShipping();
+
+    public void setTotalShipping(Money totalShipping);
+
     public List<PaymentInfo> getPaymentInfos();
 
     public void setPaymentInfos(List<PaymentInfo> paymentInfos);

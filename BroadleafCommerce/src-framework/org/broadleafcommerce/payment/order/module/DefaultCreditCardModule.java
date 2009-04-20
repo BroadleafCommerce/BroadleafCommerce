@@ -15,7 +15,8 @@ public class DefaultCreditCardModule implements CreditCardModule {
      */
     @Override
     public void authorize(PaymentInfo paymentInfo, CreditCardPaymentInfo creditCardPaymentInfo) throws PaymentException {
-        throw new PaymentException("authorize not implemented.");
+        //throw new PaymentException("authorize not implemented.");
+        //do nothing
     }
 
     /* (non-Javadoc)
@@ -23,7 +24,8 @@ public class DefaultCreditCardModule implements CreditCardModule {
      */
     @Override
     public void authorizeAndDebit(PaymentInfo paymentInfo, CreditCardPaymentInfo creditCardPaymentInfo) throws PaymentException {
-        throw new PaymentException("authorizeAndDebit not implemented.");
+        //throw new PaymentException("authorizeAndDebit not implemented.");
+        //do nothing
     }
 
     /* (non-Javadoc)
@@ -31,7 +33,8 @@ public class DefaultCreditCardModule implements CreditCardModule {
      */
     @Override
     public void debit(PaymentInfo paymentInfo, CreditCardPaymentInfo creditCardPaymentInfo) throws PaymentException {
-        throw new PaymentException("debit not implemented.");
+        //throw new PaymentException("debit not implemented.");
+        //do nothing
     }
 
     /* (non-Javadoc)

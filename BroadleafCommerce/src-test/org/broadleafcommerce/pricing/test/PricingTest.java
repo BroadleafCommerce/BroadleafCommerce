@@ -10,6 +10,8 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
+import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.domain.OrderItemImpl;
 import org.broadleafcommerce.test.integration.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.Processor;
@@ -29,8 +31,15 @@ public class PricingTest extends BaseTest {
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
         group.setPrice(total);
-        order.setSubTotal(total);
-        order.setTotal(total);
+
+        OrderItem item = new OrderItemImpl();
+        item.setPrice(new Money(10D));
+        item.setQuantity(1);
+        List<OrderItem> items = new ArrayList<OrderItem>();
+        items.add(item);
+        order.setOrderItems(items);
+
+        order.setTotalShipping(new Money(0D));
 
         CheckoutSeed seed = new CheckoutSeed(order, null);
 

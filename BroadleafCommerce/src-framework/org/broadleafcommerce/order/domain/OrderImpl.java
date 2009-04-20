@@ -73,6 +73,9 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "TOTAL_TAX")
     private BigDecimal totalTax;
 
+    @Column(name = "TOTAL_SHIPPING")
+    private BigDecimal totalShipping;
+
     @Column(name = "ORDER_SUBTOTAL")
     private BigDecimal subTotal;
 
@@ -275,6 +278,14 @@ public class OrderImpl implements Order, Serializable {
 
     public void setTotalTax(Money totalTax) {
         this.totalTax = Money.toAmount(totalTax);
+    }
+
+    public Money getTotalShipping() {
+        return totalShipping == null ? null : new Money(totalShipping);
+    }
+
+    public void setTotalShipping(Money totalShipping) {
+        this.totalShipping = Money.toAmount(totalShipping);
     }
 
     public List<PaymentInfo> getPaymentInfos() {
