@@ -363,7 +363,7 @@ public class OrderServiceImpl implements OrderService {
         }
         removeOrderItemFromFullfillmentGroup(order, orderItem);
         orderItemDao.deleteOrderItem(orderItem);
-        pricingService.calculateOrderTotal(order);
+        order = pricingService.executePricing(order);
         return orderDao.readOrderById(order.getId());
     }
 
@@ -372,7 +372,7 @@ public class OrderServiceImpl implements OrderService {
     public Order removeItemFromOrder(Order order, OrderItem item) {
         orderItemDao.deleteOrderItem(item);
         removeOrderItemFromFullfillmentGroup(order, item);
-        pricingService.calculateOrderTotal(order);
+        order = pricingService.executePricing(order);
         order.getOrderItems().remove(item);
         orderDao.maintianOrder(order);
         return orderDao.readOrderById(order.getId());
@@ -426,7 +426,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected Order maintainOrder(Order order) {
-        pricingService.calculateOrderTotal(order);
+        order = pricingService.executePricing(order);
         return orderDao.maintianOrder(order);
     }
 

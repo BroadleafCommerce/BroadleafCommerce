@@ -52,7 +52,7 @@ public class OfferServiceImpl implements OfferService {
         List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
         order.removeAllOffers();
         order.setCandidateOffers(new ArrayList<Offer>());
-        order = pricingService.calculateOrderTotal(order);
+        order = pricingService.executePricing(order);
         List<Offer> offersWithValidDates = removeOutOfDateOffers(offers);
         if (offersWithValidDates != null) {
             //
@@ -129,7 +129,7 @@ public class OfferServiceImpl implements OfferService {
 
             }
 
-            Money newOrderTotal = pricingService.calculateOrderTotal(order).getSubTotal();
+            Money newOrderTotal = pricingService.executePricing(order).getSubTotal();
 
             // TODO: How and what do we do with order level offers?
             for (Offer offer : qualifiedOrderOffers) {

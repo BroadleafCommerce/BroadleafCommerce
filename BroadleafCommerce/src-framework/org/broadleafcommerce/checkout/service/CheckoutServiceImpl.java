@@ -24,6 +24,9 @@ public class CheckoutServiceImpl implements CheckoutService {
      */
     @Override
     public void performCheckout(Order order, Map<PaymentInfo, Referenced> payments) throws CheckoutException {
+        /*
+         * TODO add validation that checks the order and payment information for validity.
+         */
         try {
             CheckoutSeed seed = new CheckoutSeed(order, payments);
             checkoutWorkflow.doActivities(seed);

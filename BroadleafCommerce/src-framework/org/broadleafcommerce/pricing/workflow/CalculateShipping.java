@@ -6,6 +6,7 @@ import java.util.List;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.module.ShippingModule;
+import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
@@ -33,6 +34,7 @@ public class CalculateShipping extends BaseActivity {
         List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
         Iterator<FulfillmentGroup> itr = fulfillmentGroups.iterator();
 
+        Money totalShipping = new Money(0D);
         while ( itr.hasNext() ) {
             FulfillmentGroup fulfillmentGroup = itr.next();
             System.out.println("**** FG b4 change: " + fulfillmentGroup.getMethod());
@@ -43,8 +45,9 @@ public class CalculateShipping extends BaseActivity {
             System.out.println("**** FG after change: " + fulfillmentGroup.getMethod());
             order.setFulfillmentGroups(fulfillmentGroups);
             System.out.println("**** order after change: " + order);
+            totalShipping = totalShipping.add(fulfillmentGroup.getPrice());
         }
-
+        order.setTotalShipping(totalShipping);
         // TODO Add code to calculate shipping
         context.setSeedData(order);
         return context;

@@ -49,6 +49,8 @@ public class BandedShippingModule implements ShippingModule {
 
         System.out.println("*** address: " + address);
 
+        fulfillmentGroup.setPrice(new Money(0D));
+
         return fulfillmentGroup;
     }
 
