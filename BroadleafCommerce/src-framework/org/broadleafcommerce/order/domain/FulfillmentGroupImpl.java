@@ -243,6 +243,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         return price == null ? null : new Money(price);
     }
 
+    // shipping price
     public void setPrice(Money price) {
         this.price = Money.toAmount(price);
     }

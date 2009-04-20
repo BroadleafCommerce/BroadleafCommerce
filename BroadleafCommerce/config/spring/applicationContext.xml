@@ -105,7 +105,7 @@
 		<aop:pointcut id="idGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="idGenerationServiceOperation"/>
 	</aop:config>
-	
+
 	<aop:config>
 		<aop:pointcut id="taxServiceOperation" expression="execution(* org.broadleafcommerce.pricing.service.TaxService.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="taxServiceOperation"/>
@@ -189,7 +189,7 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
 	<bean id="org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfoImpl"/>
 	<bean id="org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfoImpl"/>
-	
+
 	<bean id="taxService" class="org.broadleafcommerce.pricing.service.TaxServiceImpl">
 		<property name="taxModules">
 			<list>
@@ -199,7 +199,10 @@
 			</list>
 		</property>
 	</bean>
-	
+
+
+	<bean id="offerContext" class="org.broadleafcommerce.pricing.workflow.OfferContext"/>
+
 	<bean id="bankAccountService" class="org.broadleafcommerce.payment.order.service.BankAccountServiceImpl">
 		<property name="bankAccountModules">
 			<list>
@@ -207,7 +210,7 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="creditCardService" class="org.broadleafcommerce.payment.order.service.CreditCardServiceImpl">
 		<property name="creditCardModules">
 			<list>
@@ -215,7 +218,7 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="giftCardService" class="org.broadleafcommerce.payment.order.service.GiftCardServiceImpl">
 		<property name="giftCardModules">
 			<list>
@@ -223,21 +226,31 @@
 			</list>
 		</property>
 	</bean>
-	
+
 	<bean id="pricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
 			<bean class="org.broadleafcommerce.pricing.workflow.PricingProcessContextFactory"/>
 		</property>
 		<property name="activities">
 			<list>
+                <bean class="org.broadleafcommerce.pricing.workflow.CalculateShipping">
+                    <property name="shippingModuleName" value="bandedShippingModule"/>
+                </bean>
 				<bean class="org.broadleafcommerce.pricing.workflow.CalculateTax">
 					<property name="taxModuleName" value="simpleTaxModule"/>
 				</bean>
 			</list>
 		</property>
-		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
-	
+
+    <bean id="shippingService" class="org.broadleafcommerce.pricing.service.ShippingServiceImpl">
+        <property name="shippingModules">
+            <list>
+                <bean class="org.broadleafcommerce.pricing.module.BandedShippingModule" />
+            </list>
+        </property>
+    </bean>
+
 	<bean id="authorizeAndDebitWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
 			<bean class="org.broadleafcommerce.payment.order.workflow.PaymentProcessContextFactory">
@@ -259,7 +272,7 @@
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
-	
+
 	<bean id="checkoutWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
 			<bean class="org.broadleafcommerce.checkout.workflow.CheckoutProcessContextFactory"/>
@@ -276,8 +289,9 @@
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
-	
+
 	<bean id="securePaymentInfoDao" class="org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDaoJpa">
 		<constructor-arg index="0"><ref bean="entityManagerFactory"/></constructor-arg>
 	</bean>
+
 </beans>
