@@ -68,9 +68,6 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "APPLIES_TO_RULES")
     private String appliesToRules;
 
-    @Column(name = "APPLIES_WHEN_RULES")
-    private String appliesWhenRules;
-
     @Transient
     private Money calculatedDiscount;
 
@@ -188,14 +185,6 @@ public class OfferImpl implements Serializable, Offer {
 
     public void setAppliesToRules(String appliesToRules) {
         this.appliesToRules = appliesToRules;
-    }
-
-    public String getAppliesWhenRules() {
-        return appliesWhenRules;
-    }
-
-    public void setAppliesWhenRules(String appliesWhenRules) {
-        this.appliesWhenRules = appliesWhenRules;
     }
 
     public Money getDiscountPrice() {

@@ -61,10 +61,6 @@ public interface Offer {
 
     public void setAppliesToRules(String appliesToRules);
 
-    public String getAppliesWhenRules();
-
-    public void setAppliesWhenRules(String appliesWhen);
-
     public Money getDiscountPrice() ;
 
     public void setDiscountPrice(Money calculatedDiscount);
