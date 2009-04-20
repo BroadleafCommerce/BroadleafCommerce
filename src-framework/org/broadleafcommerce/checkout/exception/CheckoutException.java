@@ -1,6 +1,6 @@
 package org.broadleafcommerce.checkout.exception;
 
-public class CheckoutException extends Exception {
+public class CheckoutException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

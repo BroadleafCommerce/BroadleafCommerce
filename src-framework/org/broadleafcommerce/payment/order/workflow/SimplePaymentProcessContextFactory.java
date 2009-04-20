@@ -1,23 +1,23 @@
-package org.broadleafcommerce.pricing.workflow;
+package org.broadleafcommerce.payment.order.workflow;
 
-import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.workflow.ProcessContext;
 import org.broadleafcommerce.workflow.ProcessContextFactory;
 import org.broadleafcommerce.workflow.WorkflowException;
 
-public class PricingProcessContextFactory implements ProcessContextFactory {
+public class SimplePaymentProcessContextFactory implements ProcessContextFactory {
 
     @Override
     public ProcessContext createContext(Object seedData) throws WorkflowException {
-        if(!(seedData instanceof Order)){
+        if(!(seedData instanceof PaymentSeed)){
             throw new WorkflowException("Seed data instance is incorrect. " +
-                    "Required class is "+Order.class.getName()+" " +
+                    "Required class is "+PaymentSeed.class.getName()+" " +
                     "but found class: "+seedData.getClass().getName());
         }
-        OfferContext context = new OfferContext();
-        context.setSeedData(seedData);
 
-        return context;
+        PaymentContext response = new PaymentContext();
+        response.setSeedData(seedData);
+
+        return response;
     }
 
 }

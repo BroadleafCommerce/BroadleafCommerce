@@ -1,6 +1,6 @@
 package org.broadleafcommerce.payment.order.exception;
 
-public class PaymentException extends Exception {
+public class PaymentException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

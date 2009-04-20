@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.checkout.workflow.CheckoutSeed;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDao;
@@ -31,18 +30,18 @@ public class PaymentProcessContextFactory implements ProcessContextFactory {
 
     @Override
     public ProcessContext createContext(Object seedData) throws WorkflowException {
-        if(!(seedData instanceof CheckoutSeed)){
+        if(!(seedData instanceof PaymentSeed)){
             throw new WorkflowException("Seed data instance is incorrect. " +
-                    "Required class is "+CheckoutSeed.class.getName()+" " +
+                    "Required class is "+PaymentSeed.class.getName()+" " +
                     "but found class: "+seedData.getClass().getName());
         }
-        CheckoutSeed checkoutSeed = (CheckoutSeed) seedData;
-        Map<PaymentInfo, Referenced> secureMap = checkoutSeed.getInfos();
+        PaymentSeed paymentSeed = (PaymentSeed) seedData;
+        Map<PaymentInfo, Referenced> secureMap = paymentSeed.getInfos();
         if (secureMap == null) {
             secureMap = new HashMap<PaymentInfo, Referenced>();
-            List<PaymentInfo> paymentInfoList = orderService.readPaymentInfosForOrder(checkoutSeed.getOrder());
+            List<PaymentInfo> paymentInfoList = orderService.readPaymentInfosForOrder(paymentSeed.getOrder());
             if (paymentInfoList == null || paymentInfoList.size() == 0) {
-                throw new WorkflowException("No payment info instances associated with the order -- id: " + checkoutSeed.getOrder().getId());
+                throw new WorkflowException("No payment info instances associated with the order -- id: " + paymentSeed.getOrder().getId());
             }
             Iterator<PaymentInfo> infos = paymentInfoList.iterator();
             while(infos.hasNext()) {

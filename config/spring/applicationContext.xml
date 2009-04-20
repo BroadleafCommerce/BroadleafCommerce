@@ -238,16 +238,13 @@
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
 	
-	<bean id="checkoutWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
+	<bean id="paymentWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.checkout.workflow.CheckoutProcessContextFactory"/>
+			<bean class="org.broadleafcommerce.payment.order.workflow.SimplePaymentProcessContextFactory"/>
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.checkout.workflow.ApplyOperation">
-					<property name="workflow" ref="pricingWorkflow"/>
-				</bean>
-				<bean class="org.broadleafcommerce.checkout.workflow.ApplyOperation">
+				<bean class="org.broadleafcommerce.payment.order.workflow.WorkflowOperation">
 					<property name="workflow" ref="authorizeAndDebitWorkflow"/>
 				</bean>
 			</list>
@@ -255,12 +252,20 @@
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
 	
-	<bean id="securePaymentInfoDao" class="org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDaoJpa">
-		<constructor-arg index="0"><ref bean="entityManagerFactory"/></constructor-arg>
+	<bean id="checkoutWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
+		<property name="processContextFactory">
+			<bean class="org.broadleafcommerce.checkout.workflow.CheckoutProcessContextFactory"/>
+		</property>
+		<property name="activities">
+			<list>
+				<bean class="org.broadleafcommerce.checkout.workflow.PricingServiceOperation"/>
+				<bean class="org.broadleafcommerce.checkout.workflow.PaymentServiceOperation"/>
+			</list>
+		</property>
+		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
 	
-	<bean id="pricingService" class="org.broadleafcommerce.pricing.service.PricingServiceImpl">
-		<property name="taxModule" ref="taxModule"/>
-		<property name="shippingModule" ref="shippingModule"/>
+	<bean id="securePaymentInfoDao" class="org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDaoJpa">
+		<constructor-arg index="0"><ref bean="entityManagerFactory"/></constructor-arg>
 	</bean>
 </beans>
