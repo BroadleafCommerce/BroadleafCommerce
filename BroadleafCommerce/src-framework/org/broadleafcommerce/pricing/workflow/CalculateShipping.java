@@ -3,25 +3,15 @@ package org.broadleafcommerce.pricing.workflow;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.module.ShippingModule;
-import org.broadleafcommerce.pricing.service.ShippingService;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
 public class CalculateShipping extends BaseActivity {
 
-    @Resource
-    private ShippingService shippingService;
-
-    private String shippingModuleName;
-
-    public void setShippingModuleName(String shippingModuleName) {
-        this.shippingModuleName = shippingModuleName;
-    }
+    private ShippingModule shippingModule;
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
@@ -29,8 +19,6 @@ public class CalculateShipping extends BaseActivity {
 
         System.out.println("*** in CalculateShipping.execute()");
 
-        ShippingModule shippingModule = shippingService.getShippingModuleByName(
-                shippingModuleName);
         /*
          * 1. Get FGs from Order
          * 2. take each FG and call shipping module with the shipping svc
@@ -50,6 +38,14 @@ public class CalculateShipping extends BaseActivity {
         // TODO Add code to calculate shipping
         context.setSeedData(order);
         return context;
+    }
+
+    public ShippingModule getShippingModule() {
+        return shippingModule;
+    }
+
+    public void setShippingModule(ShippingModule shippingModule) {
+        this.shippingModule = shippingModule;
     }
 
 }

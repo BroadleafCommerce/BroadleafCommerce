@@ -3,11 +3,8 @@ package org.broadleafcommerce.payment.order.workflow;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.order.module.CreditCardModule;
-import org.broadleafcommerce.payment.order.service.CreditCardService;
 import org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.secure.domain.Referenced;
 import org.broadleafcommerce.type.PaymentInfoType;
@@ -16,17 +13,13 @@ import org.broadleafcommerce.workflow.ProcessContext;
 
 public class PayWithCreditCard extends BaseActivity {
 
-    @Resource
-    private CreditCardService creditCardService;
-
-    private String creditCardModuleName;
+    private CreditCardModule creditCardModule;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
      */
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        CreditCardModule module = creditCardService.getCreditCardModuleByName(creditCardModuleName);
         CombinedPaymentContextSeed seed = ((PaymentContext) context).getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
         Iterator<PaymentInfo> itr = infos.keySet().iterator();
@@ -38,11 +31,11 @@ public class PayWithCreditCard extends BaseActivity {
              */
             if (info.getType().equals(PaymentInfoType.CREDIT_CARD)) {
                 if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
-                    module.authorize(info, (CreditCardPaymentInfo) infos.get(info));
+                    creditCardModule.authorize(info, (CreditCardPaymentInfo) infos.get(info));
                 } else if (seed.getActionType() == PaymentActionType.DEBIT) {
-                    module.debit(info, (CreditCardPaymentInfo) infos.get(info));
+                    creditCardModule.debit(info, (CreditCardPaymentInfo) infos.get(info));
                 } else {
-                    module.authorizeAndDebit(info, (CreditCardPaymentInfo) infos.get(info));
+                    creditCardModule.authorizeAndDebit(info, (CreditCardPaymentInfo) infos.get(info));
                 }
             }
         }
@@ -50,18 +43,12 @@ public class PayWithCreditCard extends BaseActivity {
         return context;
     }
 
-    /**
-     * @return the creditCardModuleName
-     */
-    public String getCreditCardModuleName() {
-        return creditCardModuleName;
+    public CreditCardModule getCreditCardModule() {
+        return creditCardModule;
     }
 
-    /**
-     * @param creditCardModuleName the creditCardModuleName to set
-     */
-    public void setCreditCardModuleName(String creditCardModuleName) {
-        this.creditCardModuleName = creditCardModuleName;
+    public void setCreditCardModule(CreditCardModule creditCardModule) {
+        this.creditCardModule = creditCardModule;
     }
 
 }
