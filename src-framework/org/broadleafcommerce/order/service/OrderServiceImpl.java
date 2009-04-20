@@ -484,12 +484,16 @@ public class OrderServiceImpl implements OrderService {
     protected void removeOrderItemFromFullfillmentGroup(Order order, OrderItem orderItem) {
         List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            List<FulfillmentGroupItem> itemsToRemove = new ArrayList<FulfillmentGroupItem>();
             List<FulfillmentGroupItem> fgItems = fulfillmentGroup.getFulfillmentGroupItems();
             for (FulfillmentGroupItem fulfillmentGroupItem : fgItems) {
                 if(fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
-                    fulfillmentGroup.getFulfillmentGroupItems().remove(fulfillmentGroupItem);
-                    fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
+                    itemsToRemove.add(fulfillmentGroupItem);
                 }
+            }
+            if (!itemsToRemove.isEmpty()) {
+                fulfillmentGroup.getFulfillmentGroupItems().remove(itemsToRemove);
+                fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
             }
         }
     }
