@@ -13,7 +13,7 @@ public class CompositeActivity extends BaseActivity {
      */
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        ProcessContext subContext = workflow.doActivities(((PaymentContext) context).getSeedData());
+        ProcessContext subContext = workflow.doActivities(((SimplePaymentContext) context).getSeedData());
         if (subContext.isStopped()) {
             context.stopProcess();
         }
