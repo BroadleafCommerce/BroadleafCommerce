@@ -8,7 +8,7 @@ public class ApplyOrderOffers extends BaseActivity {
 
 	@Override
 	public ProcessContext execute(ProcessContext context) throws Exception {
-		Order order = ((OfferContext)context).getSeedData();
+		Order order = ((PricingContext)context).getSeedData();
 		
 		// TODO Add code to apply order offers
 		context.setSeedData(order);		

@@ -11,7 +11,7 @@ public class CalculateTax extends BaseActivity {
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((OfferContext)context).getSeedData();
+        Order order = ((PricingContext)context).getSeedData();
         order = taxModule.calculateTaxForOrder(order);
 
         context.setSeedData(order);

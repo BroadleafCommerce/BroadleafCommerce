@@ -1,19 +1,16 @@
-package org.broadleafcommerce.checkout.workflow;
+package org.broadleafcommerce.pricing.workflow;
 
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 import org.broadleafcommerce.workflow.SequenceProcessor;
 
-public class WorkflowOperation extends BaseActivity {
+public class CompositeActivity extends BaseActivity {
 
     private SequenceProcessor workflow;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
-     */
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        ProcessContext subContext = workflow.doActivities(((CheckoutContext) context).getSeedData());
+        ProcessContext subContext = workflow.doActivities(((PricingContext) context).getSeedData());
         if (subContext.isStopped()) {
             context.stopProcess();
         }
@@ -28,4 +25,5 @@ public class WorkflowOperation extends BaseActivity {
     public void setWorkflow(SequenceProcessor workflow) {
         this.workflow = workflow;
     }
+
 }

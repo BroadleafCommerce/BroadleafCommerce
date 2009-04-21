@@ -20,7 +20,7 @@ public class CalculateShipping extends BaseActivity {
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((OfferContext)context).getSeedData();
+        Order order = ((PricingContext)context).getSeedData();
 
         System.out.println("*** in CalculateShipping.execute()");
         System.out.println("*** order: " + order);

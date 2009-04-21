@@ -12,7 +12,7 @@ public class CalculateOrderSubtotal extends BaseActivity {
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((OfferContext) context).getSeedData();
+        Order order = ((PricingContext) context).getSeedData();
         Money subTotal = new Money(0D);
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
