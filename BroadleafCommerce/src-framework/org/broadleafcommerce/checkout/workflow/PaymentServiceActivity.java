@@ -6,7 +6,7 @@ import org.broadleafcommerce.payment.order.service.PaymentService;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class PaymentServiceOperation extends BaseActivity {
+public class PaymentServiceActivity extends BaseActivity {
 
     @Resource
     private PaymentService paymentService;

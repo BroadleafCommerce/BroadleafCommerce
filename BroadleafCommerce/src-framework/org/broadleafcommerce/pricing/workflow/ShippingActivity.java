@@ -10,7 +10,7 @@ import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class CalculateShipping extends BaseActivity {
+public class ShippingActivity extends BaseActivity {
 
     private ShippingModule shippingModule;
 
@@ -22,7 +22,7 @@ public class CalculateShipping extends BaseActivity {
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext)context).getSeedData();
 
-        System.out.println("*** in CalculateShipping.execute()");
+        System.out.println("*** in ShippingActivity.execute()");
         System.out.println("*** order: " + order);
 
         /*

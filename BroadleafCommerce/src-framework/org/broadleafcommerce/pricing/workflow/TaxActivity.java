@@ -5,7 +5,7 @@ import org.broadleafcommerce.pricing.module.TaxModule;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class CalculateTax extends BaseActivity {
+public class TaxActivity extends BaseActivity {
 
     private TaxModule taxModule;
 

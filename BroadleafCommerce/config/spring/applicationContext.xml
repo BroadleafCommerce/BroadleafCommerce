@@ -203,14 +203,14 @@
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.pricing.workflow.CalculateShipping">
+				<bean class="org.broadleafcommerce.pricing.workflow.ShippingActivity">
                     <property name="shippingModule" ref="shippingModule"/>
                 </bean>
-                <bean class="org.broadleafcommerce.pricing.workflow.CalculateOrderSubtotal"/>
-				<bean class="org.broadleafcommerce.pricing.workflow.CalculateTax">
+                <bean class="org.broadleafcommerce.pricing.workflow.OrderSubtotalActivity"/>
+				<bean class="org.broadleafcommerce.pricing.workflow.TaxActivity">
 					<property name="taxModule" ref="taxModule"/>
 				</bean>
-				<bean class="org.broadleafcommerce.pricing.workflow.CalculateTotal"/>
+				<bean class="org.broadleafcommerce.pricing.workflow.TotalActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
@@ -224,13 +224,13 @@
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.payment.order.workflow.PayWithGiftCard">
+				<bean class="org.broadleafcommerce.payment.order.workflow.GiftCardActivity">
 					<property name="giftCardModule" ref="giftCardModule"/>
 				</bean>
-				<bean class="org.broadleafcommerce.payment.order.workflow.PayWithBankAccount">
+				<bean class="org.broadleafcommerce.payment.order.workflow.BankAccountActivity">
 					<property name="bankAccountModule" ref="bankAccountModule"/>
 				</bean>
-				<bean class="org.broadleafcommerce.payment.order.workflow.PayWithCreditCard">
+				<bean class="org.broadleafcommerce.payment.order.workflow.CreditCardActivity">
 					<property name="creditCardModule" ref="creditCardModule"/>
 				</bean>
 			</list>
@@ -258,8 +258,8 @@
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.checkout.workflow.PricingServiceOperation"/>
-				<bean class="org.broadleafcommerce.checkout.workflow.PaymentServiceOperation"/>
+				<bean class="org.broadleafcommerce.checkout.workflow.PricingServiceActivity"/>
+				<bean class="org.broadleafcommerce.checkout.workflow.PaymentServiceActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>

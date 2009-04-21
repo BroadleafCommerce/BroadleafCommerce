@@ -4,7 +4,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class ApplyOrderOffers extends BaseActivity {
+public class OrderOfferActivity extends BaseActivity {
 
 	@Override
 	public ProcessContext execute(ProcessContext context) throws Exception {
