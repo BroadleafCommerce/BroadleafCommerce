@@ -8,7 +8,7 @@ import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class CalculateOrderSubtotal extends BaseActivity {
+public class OrderSubtotalActivity extends BaseActivity {
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {

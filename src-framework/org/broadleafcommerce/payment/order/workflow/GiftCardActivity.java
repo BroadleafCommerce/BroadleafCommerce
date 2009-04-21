@@ -4,16 +4,15 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.payment.order.module.CreditCardModule;
-import org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.payment.order.module.GiftCardModule;
 import org.broadleafcommerce.payment.secure.domain.Referenced;
 import org.broadleafcommerce.type.PaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class PayWithCreditCard extends BaseActivity {
+public class GiftCardActivity extends BaseActivity {
 
-    private CreditCardModule creditCardModule;
+    private GiftCardModule giftCardModule;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
@@ -31,11 +30,11 @@ public class PayWithCreditCard extends BaseActivity {
              */
             if (info.getType().equals(PaymentInfoType.CREDIT_CARD)) {
                 if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
-                    creditCardModule.authorize(info, (CreditCardPaymentInfo) infos.get(info));
+                    giftCardModule.authorize(info);
                 } else if (seed.getActionType() == PaymentActionType.DEBIT) {
-                    creditCardModule.debit(info, (CreditCardPaymentInfo) infos.get(info));
+                    giftCardModule.debit(info);
                 } else {
-                    creditCardModule.authorizeAndDebit(info, (CreditCardPaymentInfo) infos.get(info));
+                    giftCardModule.authorizeAndDebit(info);
                 }
             }
         }
@@ -43,12 +42,12 @@ public class PayWithCreditCard extends BaseActivity {
         return context;
     }
 
-    public CreditCardModule getCreditCardModule() {
-        return creditCardModule;
+    public GiftCardModule getGiftCardModule() {
+        return giftCardModule;
     }
 
-    public void setCreditCardModule(CreditCardModule creditCardModule) {
-        this.creditCardModule = creditCardModule;
+    public void setGiftCardModule(GiftCardModule giftCardModule) {
+        this.giftCardModule = giftCardModule;
     }
 
 }

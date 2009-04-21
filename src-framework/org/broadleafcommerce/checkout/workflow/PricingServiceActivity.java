@@ -7,7 +7,7 @@ import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class PricingServiceOperation extends BaseActivity {
+public class PricingServiceActivity extends BaseActivity {
 
     @Resource
     private PricingService pricingService;

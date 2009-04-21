@@ -11,7 +11,7 @@ import org.broadleafcommerce.type.PaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class PayWithBankAccount extends BaseActivity {
+public class BankAccountActivity extends BaseActivity {
 
     private BankAccountModule bankAccountModule;
 
