@@ -14,7 +14,7 @@ public class PricingProcessContextFactory implements ProcessContextFactory {
                     "Required class is "+Order.class.getName()+" " +
                     "but found class: "+seedData.getClass().getName());
         }
-        OfferContext context = new OfferContext();
+        PricingContext context = new PricingContext();
         context.setSeedData(seedData);
 
         return context;

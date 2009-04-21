@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.exception.PricingException;
-import org.broadleafcommerce.pricing.workflow.OfferContext;
+import org.broadleafcommerce.pricing.workflow.PricingContext;
 import org.broadleafcommerce.workflow.SequenceProcessor;
 import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class PricingServiceImpl implements PricingService {
 
     public Order executePricing(Order order) throws PricingException {
         try {
-            OfferContext context = (OfferContext) pricingWorkflow.doActivities(order);
+            PricingContext context = (PricingContext) pricingWorkflow.doActivities(order);
             return context.getSeedData();
         } catch (WorkflowException e) {
             throw new PricingException("Unable to execute pricing for order -- id: " + order.getId(), e);

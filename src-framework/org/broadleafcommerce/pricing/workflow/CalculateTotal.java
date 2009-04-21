@@ -11,7 +11,7 @@ public class CalculateTotal extends BaseActivity {
 
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        Order order = ((OfferContext) context).getSeedData();
+        Order order = ((PricingContext) context).getSeedData();
         Money total = new Money(BigDecimal.ZERO);
         total = total.add(order.getSubTotal());
         total = total.add(order.getTotalTax());

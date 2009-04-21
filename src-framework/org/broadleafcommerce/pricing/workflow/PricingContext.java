@@ -3,7 +3,7 @@ package org.broadleafcommerce.pricing.workflow;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class OfferContext implements ProcessContext {
+public class PricingContext implements ProcessContext {
     public final static long serialVersionUID = 1L;
 
     private boolean stopEntireProcess = false;
