@@ -28,7 +28,7 @@ public class GiftCardActivity extends BaseActivity {
              * TODO add database logging to a log table before and after each of the actions.
              * Detailed logging is a PCI requirement.
              */
-            if (info.getType().equals(PaymentInfoType.CREDIT_CARD)) {
+            if (info.getType().equals(PaymentInfoType.GIFT_CARD)) {
                 if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
                     giftCardModule.authorize(info);
                 } else if (seed.getActionType() == PaymentActionType.DEBIT) {

@@ -29,7 +29,7 @@ public class BankAccountActivity extends BaseActivity {
              * TODO add database logging to a log table before and after each of the actions.
              * Detailed logging is a PCI requirement.
              */
-            if (info.getType().equals(PaymentInfoType.CREDIT_CARD)) {
+            if (info.getType().equals(PaymentInfoType.BANK_ACCOUNT)) {
                 if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
                     bankAccountModule.authorize(info, (BankAccountPaymentInfo) infos.get(info));
                 } else if (seed.getActionType() == PaymentActionType.DEBIT) {
