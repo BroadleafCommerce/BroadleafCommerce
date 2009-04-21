@@ -14,7 +14,7 @@ public class SimplePaymentProcessContextFactory implements ProcessContextFactory
                     "but found class: "+seedData.getClass().getName());
         }
 
-        PaymentContext response = new PaymentContext();
+        SimplePaymentContext response = new SimplePaymentContext();
         response.setSeedData(seedData);
 
         return response;
