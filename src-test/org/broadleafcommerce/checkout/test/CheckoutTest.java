@@ -1,16 +1,38 @@
 package org.broadleafcommerce.checkout.test;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.checkout.service.CheckoutService;
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
+import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.OrderImpl;
+import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.domain.OrderItemImpl;
+import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.order.domain.PaymentInfoImpl;
+import org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfoImpl;
+import org.broadleafcommerce.payment.secure.domain.Referenced;
+import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.AddressImpl;
+import org.broadleafcommerce.profile.domain.State;
+import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.test.integration.BaseTest;
-import org.broadleafcommerce.workflow.Processor;
+import org.broadleafcommerce.util.money.Money;
+import org.testng.annotations.Test;
 
 public class CheckoutTest extends BaseTest {
 
-    @Resource(name="checkoutWorkflow")
-    private Processor checkoutWorkflow;
+    @Resource(name="checkoutService")
+    private CheckoutService checkoutService;
 
-    /*@Test
+    @Test
     public void testCheckout() throws Exception {
         Order order = new OrderImpl();
         FulfillmentGroup group = new FulfillmentGroupImpl();
@@ -41,14 +63,22 @@ public class CheckoutTest extends BaseTest {
         state.setAbbreviation("TX");
         address.setState(state);
         payment.setAddress(address);
-        payment.setAmount
+        payment.setAmount(new Money(15D + (15D * 0.05D)));
+        payment.setReferenceNumber("1234");
 
-        CheckoutSeed seed = new CheckoutSeed(order, null);
+        CreditCardPaymentInfo cc = new CreditCardPaymentInfoImpl();
+        cc.setExpirationMonth(11);
+        cc.setExpirationYear(2011);
+        cc.setPan(1111111111111111L);
+        cc.setReferenceNumber("1234");
 
-        checkoutWorkflow.doActivities(seed);
+        Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
+        map.put(payment, cc);
+
+        checkoutService.performCheckout(order, map);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D)));
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax())));
-    }*/
+    }
 }
