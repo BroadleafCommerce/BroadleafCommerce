@@ -24,10 +24,10 @@ public class OrderDaoJpa implements OrderDao {
     protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName = "blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -80,10 +80,10 @@ public class OrderDaoJpa implements OrderDao {
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS);
         try {
             order = (Order) query.getSingleResult();
-            return (Order) query.getSingleResult();
+            return order;
         } catch (NoResultException nre) {
             if (persist) {
-                order = (Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order");
+                order = create();
                 if (customer.getUsername() == null) {
                     customer.setUsername(String.valueOf(customer.getId()));
                     em.persist(customer);
