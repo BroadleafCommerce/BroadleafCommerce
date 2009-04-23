@@ -7,19 +7,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.springframework.security.Authentication;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service("customerStateStore")
+@Component("customerStateStore")
 public class CustomerStateStore implements PostLoginObserver, PreLogoutObserver {
 
     @Resource
     private CustomerService customerService;
 
+    @Resource
+    private CustomerState customerState;
+
     public void processPostLogin(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         Customer customer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
         customer.setAuthenticated(true);
         CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, customer.getId() + "","/",604800);
-        CustomerState.setCustomer(customer, request);
+        customerState.setCustomer(customer, request);
     }
 
     @Override

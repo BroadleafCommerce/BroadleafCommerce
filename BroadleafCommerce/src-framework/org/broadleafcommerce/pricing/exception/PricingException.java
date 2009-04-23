@@ -1,6 +1,6 @@
 package org.broadleafcommerce.pricing.exception;
 
-public class PricingException extends RuntimeException {
+public class PricingException extends Exception {
 
     private static final long serialVersionUID = 1L;
 

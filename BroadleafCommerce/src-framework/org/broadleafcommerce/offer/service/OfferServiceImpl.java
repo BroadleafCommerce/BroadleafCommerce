@@ -16,6 +16,7 @@ import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.pricing.exception.PricingException;
 import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.type.OfferDiscountType;
@@ -47,7 +48,7 @@ public class OfferServiceImpl implements OfferService {
      * @see org.broadleafcommerce.offer.service.OfferService#applyOffersToOrder(java.util.List, org.broadleafcommerce.order.domain.Order)
      */
     @SuppressWarnings("unchecked")
-    public void applyOffersToOrder(List<Offer> offers, Order order) {
+    public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         List<Offer> qualifiedOrderOffers = new ArrayList<Offer>();
         List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
         order.removeAllOffers();

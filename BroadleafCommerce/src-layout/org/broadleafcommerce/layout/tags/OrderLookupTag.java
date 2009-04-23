@@ -8,7 +8,6 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.security.CustomerState;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -16,7 +15,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class OrderLookupTag extends BodyTagSupport {
     // private Logger log = Logger.getLogger(this.getClass());
     private static final long serialVersionUID = 1L;
-    private Long customerId;
     private Long orderId;
     private String orderName;
     private String orderVar;
@@ -24,15 +22,9 @@ public class OrderLookupTag extends BodyTagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        Customer customer = null;
-        if (customerId != null) {
-            WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
-            CustomerService customerService = (CustomerService) applicationContext.getBean("customerService");
-            customer = customerService.readCustomerById((customerId));
-        } else {
-            customer = CustomerState.getCustomer((HttpServletRequest) pageContext.getRequest());
-        }
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
+        CustomerState customerState = (CustomerState) applicationContext.getBean("customerState");
+        Customer customer = customerState.getCustomer((HttpServletRequest) pageContext.getRequest());
         OrderService orderService = (OrderService) applicationContext.getBean("orderService");
         Order order = null;
         if (orderName != null && orderId != null) {
@@ -41,7 +33,7 @@ public class OrderLookupTag extends BodyTagSupport {
             order = orderService.findOrderById(orderId);
         } else if (orderName != null) {
             order = orderService.findNamedOrderForCustomer(orderName, customer);
-        } else {
+        } else if (customer != null){
             order = orderService.findCartForCustomer(customer);
         }
         if (orderVar != null) {
@@ -59,14 +51,6 @@ public class OrderLookupTag extends BodyTagSupport {
             pageContext.setAttribute(totalQuantityVar, 0);
         }
         return EVAL_PAGE;
-    }
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
     }
 
     public String getOrderVar() {

@@ -11,9 +11,13 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CustomerImpl implements Customer, Serializable {
 
     private static final long serialVersionUID = 1L;
