@@ -11,37 +11,46 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class CurrentCustomerInterceptor extends HandlerInterceptorAdapter {
 
-	private final static String CUSTOMER_SESSION_ATTR_NAME = CustomerState.getCustomerSessionAttributeName();
+    private final static String CUSTOMER_REQUEST_ATTR_NAME = "customer";
 
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		Customer sessionCustomer = (Customer) request.getSession().getAttribute(CUSTOMER_SESSION_ATTR_NAME);
-		if (sessionCustomer != null) {
-			return true;
-		}
-		String cookieCustomerIdVal = CookieUtils.getCookieValue(request, CookieUtils.CUSTOMER_COOKIE_NAME);
-		Long cookieCustomerId = null;
-		if (cookieCustomerIdVal != null) {
-			cookieCustomerId = new Long(cookieCustomerIdVal);
-		}
-		WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(request
-				.getSession().getServletContext());
-		CustomerService customerService = (CustomerService) applicationContext.getBean("customerService");
-		if (cookieCustomerId != null) {
-			Customer persistedCookieCustomer = customerService.readCustomerById(cookieCustomerId);
-			if (persistedCookieCustomer != null) {
-				request.getSession().setAttribute(CUSTOMER_SESSION_ATTR_NAME, persistedCookieCustomer);
-				return true;
-			} else {
-				Customer anonymousCookieCustomer = customerService.createCustomerFromId(cookieCustomerId);
-				request.getSession().setAttribute(CUSTOMER_SESSION_ATTR_NAME, anonymousCookieCustomer);
-				return true;
-			}
-		}
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
+        CustomerState customerState = (CustomerState) applicationContext.getBean("customerState");
+        Customer requestCustomer;
+        checkSession: {
+            Customer sessionCustomer = customerState.getCustomer(request);
+            if (sessionCustomer != null) {
+                requestCustomer = sessionCustomer;
+                break checkSession;
+            }
+            String cookieCustomerIdVal = CookieUtils.getCookieValue(request, CookieUtils.CUSTOMER_COOKIE_NAME);
+            Long cookieCustomerId = null;
+            if (cookieCustomerIdVal != null) {
+                cookieCustomerId = new Long(cookieCustomerIdVal);
+            }
 
-		// if no customer in session or cookie, create a new one
-		Customer firstTimeCustomer = customerService.createCustomerFromId(null);
-		CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "","/",604800);
-		request.getSession().setAttribute(CUSTOMER_SESSION_ATTR_NAME, firstTimeCustomer);
-		return true;
-	}
+            CustomerService customerService = (CustomerService) applicationContext.getBean("customerService");
+            if (cookieCustomerId != null) {
+                Customer persistedCookieCustomer = customerService.readCustomerById(cookieCustomerId);
+                if (persistedCookieCustomer != null) {
+                    customerState.setCustomer(persistedCookieCustomer, request);
+                    requestCustomer = persistedCookieCustomer;
+                    break checkSession;
+                } else {
+                    Customer anonymousCookieCustomer = customerService.createCustomerFromId(cookieCustomerId);
+                    customerState.setCustomer(anonymousCookieCustomer, request);
+                    requestCustomer = anonymousCookieCustomer;
+                    break checkSession;
+                }
+            }
+
+            // if no customer in session or cookie, create a new one
+            Customer firstTimeCustomer = customerService.createCustomerFromId(null);
+            CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "","/",604800);
+            customerState.setCustomer(firstTimeCustomer, request);
+            requestCustomer = firstTimeCustomer;
+        }
+        request.setAttribute(CUSTOMER_REQUEST_ATTR_NAME, requestCustomer);
+        return true;
+    }
 }

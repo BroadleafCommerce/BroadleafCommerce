@@ -11,6 +11,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.pricing.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.type.OrderStatus;
 
@@ -40,15 +41,15 @@ public interface OrderService {
 
     public List<OrderItem> addSkusToOrder(Map<String, Integer> skuIdQtyMap, Order order) throws Exception;
 
-    public OrderItem addItemToCartFromNamedOrder(Order order, Sku sku, int quantity);
+    public OrderItem addItemToCartFromNamedOrder(Order order, Sku sku, int quantity) throws PricingException;
 
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder);
+    public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
 
-    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup);
+    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
 
-    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity);
+    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException;
 
     public Order addOfferToOrder(Order order, String offerCode);
 
@@ -58,15 +59,15 @@ public interface OrderService {
 
     public List<OrderItem> updateItemsInOrder(Order order, List<OrderItem> orderItems);
 
-    public OrderItem moveItemToCartFromNamedOrder(Order order, Long orderItemId, int quantity);
+    public OrderItem moveItemToCartFromNamedOrder(Order order, Long orderItemId, int quantity) throws PricingException;
 
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder);
+    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
 
-    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup);
+    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
 
-    public Order removeItemFromOrder(Order order, OrderItem item);
+    public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException;
 
-    public Order removeItemFromOrder(Order order, long orderItemId);
+    public Order removeItemFromOrder(Order order, long orderItemId) throws PricingException;
 
     public Order removeOfferFromOrder(Order order, Offer offer);
 
@@ -88,7 +89,7 @@ public interface OrderService {
      * @return the response containing the cart, any items added to the cart,
      *         and any items removed from the cart
      */
-    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId);
+    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException;
 
     /**
      * Reconstruct the cart using previous stored state taking into
@@ -97,5 +98,5 @@ public interface OrderService {
      * @return the response containing the cart and any items removed from the
      *         cart
      */
-    public ReconstructCartResponse reconstructCart(Customer customer);
+    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
 }

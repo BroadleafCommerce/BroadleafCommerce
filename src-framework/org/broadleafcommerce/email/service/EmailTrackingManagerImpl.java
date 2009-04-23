@@ -28,6 +28,9 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
     @Resource
     protected EmailReportingDao emailReportingDao;
 
+    @Resource
+    protected CustomerState customerState;
+
     /* (non-Javadoc)
      * @see com.containerstore.web.task.service.EmailTrackingManager#createTrackedEmail(java.lang.String, java.lang.String, java.lang.String)
      */
@@ -77,8 +80,8 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
             newQuery = newQueryParms.toString();
         }
         String uri = request.getRequestURI();
-        
-        Customer customer = CustomerState.getCustomer(request);
+
+        Customer customer = customerState.getCustomer(request);
 
         emailReportingDao.recordClick(emailId, customer, uri, newQuery);
     }

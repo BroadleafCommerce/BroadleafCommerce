@@ -16,6 +16,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.OrderService;
+import org.broadleafcommerce.pricing.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
@@ -118,7 +119,11 @@ public class OrderTest extends BaseTest {
         int startingSize = orderItems.size();
         OrderItem item = orderItems.get(0);
         assert item != null;
-        order = orderService.removeItemFromOrder(order, item);
+        try {
+            order = orderService.removeItemFromOrder(order, item);
+        } catch (PricingException e) {
+            throw new RuntimeException(e);
+        }
         List<OrderItem> items = order.getOrderItems();
         assert items != null;
         assert items.size() == startingSize - 1;
@@ -148,7 +153,12 @@ public class OrderTest extends BaseTest {
         fulfillmentGroup.setOrderId(order.getId());
         fulfillmentGroup.setAddress(address);
 
-        FulfillmentGroup fg = orderService.addFulfillmentGroupToOrder(order, fulfillmentGroup);
+        FulfillmentGroup fg;
+        try {
+            fg = orderService.addFulfillmentGroupToOrder(order, fulfillmentGroup);
+        } catch (PricingException e) {
+            throw new RuntimeException(e);
+        }
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getAddress().equals(fulfillmentGroup.getAddress());
@@ -183,7 +193,12 @@ public class OrderTest extends BaseTest {
         assert(orderItems.size() > 0);
         FulfillmentGroup newFg = new FulfillmentGroupImpl();
         newFg.setAddress(address);
-        FulfillmentGroup newNewFg = orderService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
+        FulfillmentGroup newNewFg;
+        try {
+            newNewFg = orderService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
+        } catch (PricingException e) {
+            throw new RuntimeException(e);
+        }
         assert(newNewFg.getFulfillmentGroupItems().size() == 1);
         assert(newNewFg.getFulfillmentGroupItems().get(0).getOrderItem().equals(orderItems.get(0)));
 
@@ -233,7 +248,11 @@ public class OrderTest extends BaseTest {
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
         assert item != null;
-        orderService.removeItemFromOrder(order, item);
+        try {
+            orderService.removeItemFromOrder(order, item);
+        } catch (PricingException e) {
+            throw new RuntimeException(e);
+        }
         FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
         for (FulfillmentGroupItem fulfillmentGroupItem : fg.getFulfillmentGroupItems()) {
             assert fulfillmentGroupItem.getOrderItem().getId() != item.getId();

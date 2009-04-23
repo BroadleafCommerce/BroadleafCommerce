@@ -25,6 +25,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.pricing.exception.PricingException;
 import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -165,13 +166,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderItem addItemToCartFromNamedOrder(Order order, Sku sku, int quantity) {
+    public OrderItem addItemToCartFromNamedOrder(Order order, Sku sku, int quantity) throws PricingException {
         removeItemFromOrder(order, sku.getId());
         return addSkuToOrder(order, sku, quantity);
     }
 
     @Override
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder) {
+    public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer(), true);
         for (OrderItem orderItem : namedOrder.getOrderItems()) {
             if (moveNamedOrderItems) {
@@ -193,7 +194,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) {
+    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
 
         FulfillmentGroup dfg;
         try {
@@ -248,7 +249,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) {
+    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException {
 
         FulfillmentGroupItem fgi = null;
         Order order = orderDao.readOrderById(item.getOrderId());
@@ -331,7 +332,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, Long orderItemId, int quantity) {
+    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, Long orderItemId, int quantity) throws PricingException {
         OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer(), true);
         if (moveNamedOrderItems) {
@@ -346,7 +347,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) {
+    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
         Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder);
         if (deleteEmptyNamedOrders) {
             orderDao.deleteOrderForCustomer(namedOrder);
@@ -356,7 +357,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Order removeItemFromOrder(Order order, long orderItemId) {
+    public Order removeItemFromOrder(Order order, long orderItemId) throws PricingException {
         OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
         if (orderItem == null) {
             return null;
@@ -369,7 +370,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Order removeItemFromOrder(Order order, OrderItem item) {
+    public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException {
         orderItemDao.deleteOrderItem(item);
         removeOrderItemFromFullfillmentGroup(order, item);
         order = pricingService.executePricing(order);
@@ -392,7 +393,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) {
+    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
         order.getFulfillmentGroups().remove(fulfillmentGroup);
         maintainOrder(order);
         fulfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
@@ -425,7 +426,7 @@ public class OrderServiceImpl implements OrderService {
         orderDao.deleteOrderForCustomer(order);
     }
 
-    protected Order maintainOrder(Order order) {
+    protected Order maintainOrder(Order order) throws PricingException {
         order = pricingService.executePricing(order);
         return orderDao.maintianOrder(order);
     }
@@ -506,7 +507,7 @@ public class OrderServiceImpl implements OrderService {
      * broadleafcommerce.profile.domain.Customer, java.lang.Long)
      */
     @Override
-    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) {
+    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         Order customerCart = findCartForCustomer(customer, false);
         // reconstruct cart items (make sure they are valid)
@@ -546,7 +547,7 @@ public class OrderServiceImpl implements OrderService {
      * broadleafcommerce.profile.domain.Customer)
      */
     @Override
-    public ReconstructCartResponse reconstructCart(Customer customer) {
+    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
         ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
         Order customerCart = findCartForCustomer(customer, false);
         if (customerCart != null) {
