@@ -279,7 +279,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 if (!itemsToRemove.isEmpty()) {
-                    fg.getFulfillmentGroupItems().remove(itemsToRemove);
+                    fg.getFulfillmentGroupItems().removeAll(itemsToRemove);
                     fulfillmentGroupDao.maintainFulfillmentGroup(fg);
                 }
             }
@@ -492,8 +492,10 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
             if (!itemsToRemove.isEmpty()) {
-                fulfillmentGroup.getFulfillmentGroupItems().remove(itemsToRemove);
-                fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
+                for (FulfillmentGroupItem fgi : itemsToRemove) {
+                    fulfillmentGroupItemDao.deleteFulfillmentGroupItem(fgi);
+                }
+                fulfillmentGroup.getFulfillmentGroupItems().removeAll(itemsToRemove);
             }
         }
     }
