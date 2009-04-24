@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -161,6 +162,9 @@ public class OrderItemImpl implements OrderItem, Serializable {
         // TODO: if stacked, add all of the items to the persisted structure and
         // add just the stacked version
         // to this collection
+        if (this.candidateItemOffers == null) {
+            this.candidateItemOffers = new ArrayList<CandidateItemOffer>();
+        }
         this.candidateItemOffers.add(candidateOffer);
         return candidateItemOffers;
     }
