@@ -105,6 +105,10 @@
 		<aop:pointcut id="idGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="idGenerationServiceOperation"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="targetContentServiceOperation" expression="execution(* org.broadleafcommerce.marketing.service.TargetContentService.*(..))"/>
+	</aop:config>
 
 	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
@@ -184,6 +188,7 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
 	<bean id="org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfoImpl"/>
 	<bean id="org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfoImpl"/>
+	<bean id="org.broadleafcommerce.marketing.domain.TargetContent" class="org.broadleafcommerce.marketing.domain.TargetContentImpl" />
 	
 	<bean id="taxModule" class="org.broadleafcommerce.pricing.module.SimpleTaxModule">
 		<property name="factor" value="0.05"/>
