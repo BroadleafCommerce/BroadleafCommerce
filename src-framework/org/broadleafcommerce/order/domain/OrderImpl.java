@@ -190,6 +190,9 @@ public class OrderImpl implements Order, Serializable {
     }
 
     public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+        if (this.fulfillmentGroups == null) {
+            this.fulfillmentGroups = new ArrayList<FulfillmentGroup>();
+        }
         this.fulfillmentGroups.add(fulfillmentGroup);
     }
 
