@@ -80,4 +80,67 @@
 			<description>Page scoped variable that the order items count is set to. The order items count is a sum of the quantity of each item in the order.</description>
 		</attribute>
     </tag>
+    
+    <tag>
+        <name>contentDisplay</name>
+        <tag-class>org.broadleafcommerce.layout.tags.ContentDisplayTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Looks up a content display by name and type</description>
+       	<attribute>
+			<name>varList</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Page scoped variable that the List result is set to</description>
+		</attribute>
+       	<attribute>
+			<name>varFirstItem</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Page scoped variable that the first result is set to</description>
+		</attribute>
+       	<attribute>
+			<name>contentKey</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>contentType</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
+    <tag>
+        <name>contentDisplayRandom</name>
+        <tag-class>org.broadleafcommerce.layout.tags.RandomContentDisplayTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Looks up a content display by name and type</description>
+       	<attribute>
+			<name>varList</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Page scoped variable that the result is set to</description>
+		</attribute>
+       	<attribute>
+			<name>varFirstItem</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Page scoped variable that the first result is set to</description>
+		</attribute>
+       	<attribute>
+			<name>contentKey</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>contentType</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>numItems</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
+    
 </taglib>
