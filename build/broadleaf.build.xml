@@ -5,7 +5,7 @@
     </description>
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="framework.src.dir" value="${basedir}/src-framework" />
-	<property name="extensibility.src.dir" value="${basedir}/src-extensibility" />
+	<property name="auxiliary.src.dir" value="${basedir}/src-auxiliary" />
 	<property name="profile.src.dir" value="${basedir}/src-profile" />
 	<property name="layout.src.dir" value="${basedir}/src-layout" />
 	<property name="lib.dir" value="${basedir}/lib" />
@@ -31,7 +31,7 @@
 		<include name="**/*.jar" />
 	</fileset>
 
-	<target name="build-framework-jar" depends="setup, build-extensibility-jar, build-profile-jar">
+	<target name="build-framework-jar" depends="setup, build-auxiliary-jar, build-profile-jar">
 		<mkdir dir="${stage.dir}/framework-jar" />
 
 		<path id="compile-lib">
@@ -87,7 +87,7 @@
 		<delete dir="${stage.dir}/framework-jar" />
 	</target>
 
-	<target name="build-framework-source-jar" depends="build-extensibility-source-jar, build-profile-source-jar">
+	<target name="build-framework-source-jar" depends="build-auxiliary-source-jar, build-profile-source-jar">
 		<delete file="${stage.dir}/broadleaf-framework-sources.jar" />
 		<jar jarfile="${stage.dir}/broadleaf-framework-sources.jar" basedir="${framework.src.dir}">
 			<include name="**/*.java" />
@@ -98,8 +98,8 @@
 		</jar>
 	</target>
 
-	<target name="build-extensibility-jar" depends="setup">
-		<mkdir dir="${stage.dir}/extensibility-jar" />
+	<target name="build-auxiliary-jar" depends="setup">
+		<mkdir dir="${stage.dir}/auxiliary-jar" />
 
 		<path id="compile-lib">
 			<fileset refid="compile.lib" />
@@ -108,22 +108,22 @@
 		</path>
 
 		<echo>Compiling with debug=${debug.compile}</echo>
-		<javac destdir="${stage.dir}/extensibility-jar" srcdir="${extensibility.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
+		<javac destdir="${stage.dir}/auxiliary-jar" srcdir="${auxiliary.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
 
-		<copy todir="${stage.dir}/extensibility-jar">
-			<fileset dir="${extensibility.src.dir}">
+		<copy todir="${stage.dir}/auxiliary-jar">
+			<fileset dir="${auxiliary.src.dir}">
 				<include name="**/*.*" />
 				<exclude name="**/*.java" />
 			</fileset>
 		</copy>
 
-		<copy tofile="${stage.dir}/extensibility-jar/jdbc.properties">
+		<copy tofile="${stage.dir}/auxiliary-jar/jdbc.properties">
 			<fileset dir="${jdbc.config.dir}">
 				<include name="jdbc.properties" />
 			</fileset>
 		</copy>
 
-		<jar jarfile="${stage.dir}/broadleaf-extensibility.jar" basedir="${stage.dir}/extensibility-jar">
+		<jar jarfile="${stage.dir}/broadleaf-auxiliary.jar" basedir="${stage.dir}/auxiliary-jar">
 			<include name="**/*.class" />
 			<include name="**/*.properties" />
 			<include name="**/*.txt" />
@@ -134,9 +134,9 @@
 
 	</target>
 
-	<target name="build-extensibility-source-jar">
-		<delete file="${stage.dir}/build-extensibility-source-jar" />
-		<jar jarfile="${stage.dir}/broadleaf-extensibility-sources.jar" basedir="${extensibility.src.dir}">
+	<target name="build-auxiliary-source-jar">
+		<delete file="${stage.dir}/build-auxiliary-source-jar" />
+		<jar jarfile="${stage.dir}/broadleaf-auxiliary-sources.jar" basedir="${auxiliary.src.dir}">
 			<include name="**/*.java" />
 			<include name="**/*.properties" />
 			<include name="**/*.xml" />
@@ -160,7 +160,7 @@
 		</javadoc>
 	</target>
 
-	<target name="build-layout-jar" depends="setup, build-extensibility-jar, build-profile-jar, build-framework-jar">
+	<target name="build-layout-jar" depends="setup, build-auxiliary-jar, build-profile-jar, build-framework-jar">
 		<mkdir dir="${stage.dir}/layout-jar" />
 
 		<path id="compile-lib">
@@ -193,7 +193,7 @@
 		<delete dir="${stage.dir}/layout-jar" />
 	</target>
 
-	<target name="build-layout-source-jar" depends="build-extensibility-source-jar, build-profile-source-jar, build-framework-source-jar">
+	<target name="build-layout-source-jar" depends="build-auxiliary-source-jar, build-profile-source-jar, build-framework-source-jar">
 		<delete file="${stage.dir}/broadleaf-layout-sources.jar" />
 		<jar jarfile="${stage.dir}/broadleaf-layout-sources.jar" basedir="${layout.src.dir}">
 			<include name="**/*.java" />
@@ -204,13 +204,13 @@
 		</jar>
 	</target>
 
-	<target name="build-profile-jar" depends="setup, build-extensibility-jar">
+	<target name="build-profile-jar" depends="setup, build-auxiliary-jar">
 		<mkdir dir="${stage.dir}/profile-jar" />
 
 		<path id="compile-lib">
 			<fileset refid="compile.lib" />
 			<fileset refid="common.lib" />
-			<fileset file="${stage.dir}/broadleaf-extensibility.jar" />
+			<fileset file="${stage.dir}/broadleaf-auxiliary.jar" />
 		</path>
 
 		<echo>Compiling with debug=${debug.compile}</echo>
@@ -249,7 +249,7 @@
 		<delete dir="${stage.dir}/profile-jar" />
 	</target>
 
-	<target name="build-profile-source-jar" depends="build-extensibility-source-jar">
+	<target name="build-profile-source-jar" depends="build-auxiliary-source-jar">
 		<delete file="${stage.dir}/broadleaf-profile-sources.jar" />
 		<jar jarfile="${stage.dir}/broadleaf-profile-sources.jar" basedir="${profile.src.dir}">
 			<include name="**/*.java" />
@@ -261,15 +261,15 @@
 		</jar>
 	</target>
 
-	<target name="build-jars" depends="build-framework-jar,build-extensibility-jar,build-profile-jar,build-layout-jar"/>
+	<target name="build-jars" depends="build-framework-jar,build-auxiliary-jar,build-profile-jar,build-layout-jar"/>
 
-	<target name="build-source-jars" depends="build-framework-source-jar,build-extensibility-source-jar,build-profile-source-jar,build-layout-source-jar"/>
+	<target name="build-source-jars" depends="build-framework-source-jar,build-auxiliary-source-jar,build-profile-source-jar,build-layout-source-jar"/>
 
     <target name="publish-jars"
             depends="build-jars, build-source-jars"
             description="Publishes all artifacts from this build to the shared repository">
-    	<copy file="${stage.dir}/broadleaf-extensibility.jar" todir="${basedir}/../libraries/org.broadleafcommerce/extensibility/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-extensibility-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/extensibility/0.0.0/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-auxiliary.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary/0.0.0/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-auxiliary-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary/0.0.0/sources" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/jars" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/sources" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-layout.jar" todir="${basedir}/../libraries/org.broadleafcommerce/layout/0.0.0/jars" overwrite="true"/>

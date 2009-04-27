@@ -15,7 +15,7 @@
 
 	<context:component-scan base-package="org.broadleafcommerce" />
 
-	<bean id="serverInfo" class="org.broadleafcommerce.email.info.ServerInfo">
+	<bean id="serverInfo" class="org.broadleafcommerce.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>
 		<property name="serverPort" value="8080"/>
 	</bean>
@@ -186,36 +186,36 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
-	<bean id="org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfoImpl"/>
-	<bean id="org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfoImpl"/>
+	<bean id="org.broadleafcommerce.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl"/>
+	<bean id="org.broadleafcommerce.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl"/>
 	<bean id="org.broadleafcommerce.marketing.domain.TargetContent" class="org.broadleafcommerce.marketing.domain.TargetContentImpl" />
 	
-	<bean id="taxModule" class="org.broadleafcommerce.pricing.module.SimpleTaxModule">
+	<bean id="taxModule" class="org.broadleafcommerce.pricing.service.module.SimpleTaxModule">
 		<property name="factor" value="0.05"/>
 	</bean>
 	
-	<bean id="shippingModule" class="org.broadleafcommerce.pricing.module.BandedShippingModule"/>
+	<bean id="shippingModule" class="org.broadleafcommerce.pricing.service.module.BandedShippingModule"/>
 	
-	<bean id="giftCardModule" class="org.broadleafcommerce.payment.order.module.DefaultGiftCardModule"/>
+	<bean id="giftCardModule" class="org.broadleafcommerce.payment.service.module.DefaultGiftCardModule"/>
 	
-	<bean id="bankAccountModule" class="org.broadleafcommerce.payment.order.module.DefaultBankAccountModule"/>
+	<bean id="bankAccountModule" class="org.broadleafcommerce.payment.service.module.DefaultBankAccountModule"/>
 	
-	<bean id="creditCardModule" class="org.broadleafcommerce.payment.order.module.DefaultCreditCardModule"/>
+	<bean id="creditCardModule" class="org.broadleafcommerce.payment.service.module.DefaultCreditCardModule"/>
 	
 	<bean id="pricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.pricing.workflow.PricingProcessContextFactory"/>
+			<bean class="org.broadleafcommerce.pricing.service.workflow.PricingProcessContextFactory"/>
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.pricing.workflow.ShippingActivity">
+				<bean class="org.broadleafcommerce.pricing.service.workflow.ShippingActivity">
                     <property name="shippingModule" ref="shippingModule"/>
                 </bean>
-                <bean class="org.broadleafcommerce.pricing.workflow.OrderSubtotalActivity"/>
-				<bean class="org.broadleafcommerce.pricing.workflow.TaxActivity">
+                <bean class="org.broadleafcommerce.pricing.service.workflow.OrderSubtotalActivity"/>
+				<bean class="org.broadleafcommerce.pricing.service.workflow.TaxActivity">
 					<property name="taxModule" ref="taxModule"/>
 				</bean>
-				<bean class="org.broadleafcommerce.pricing.workflow.TotalActivity"/>
+				<bean class="org.broadleafcommerce.pricing.service.workflow.TotalActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
@@ -223,19 +223,19 @@
 	
 	<bean id="authorizeAndDebitWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.payment.order.workflow.PaymentProcessContextFactory">
+			<bean class="org.broadleafcommerce.payment.service.workflow.PaymentProcessContextFactory">
 				<property name="paymentActionType" value="AUTHORIZEANDDEBIT"/>
 			</bean>
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.payment.order.workflow.GiftCardActivity">
+				<bean class="org.broadleafcommerce.payment.service.workflow.GiftCardActivity">
 					<property name="giftCardModule" ref="giftCardModule"/>
 				</bean>
-				<bean class="org.broadleafcommerce.payment.order.workflow.BankAccountActivity">
+				<bean class="org.broadleafcommerce.payment.service.workflow.BankAccountActivity">
 					<property name="bankAccountModule" ref="bankAccountModule"/>
 				</bean>
-				<bean class="org.broadleafcommerce.payment.order.workflow.CreditCardActivity">
+				<bean class="org.broadleafcommerce.payment.service.workflow.CreditCardActivity">
 					<property name="creditCardModule" ref="creditCardModule"/>
 				</bean>
 			</list>
@@ -245,11 +245,11 @@
 	
 	<bean id="paymentWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.payment.order.workflow.SimplePaymentProcessContextFactory"/>
+			<bean class="org.broadleafcommerce.payment.service.workflow.SimplePaymentProcessContextFactory"/>
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.payment.order.workflow.CompositeActivity">
+				<bean class="org.broadleafcommerce.payment.service.workflow.CompositeActivity">
 					<property name="workflow" ref="authorizeAndDebitWorkflow"/>
 				</bean>
 			</list>
@@ -259,18 +259,18 @@
 	
 	<bean id="checkoutWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
-			<bean class="org.broadleafcommerce.checkout.workflow.CheckoutProcessContextFactory"/>
+			<bean class="org.broadleafcommerce.checkout.service.workflow.CheckoutProcessContextFactory"/>
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.checkout.workflow.PricingServiceActivity"/>
-				<bean class="org.broadleafcommerce.checkout.workflow.PaymentServiceActivity"/>
+				<bean class="org.broadleafcommerce.checkout.service.workflow.PricingServiceActivity"/>
+				<bean class="org.broadleafcommerce.checkout.service.workflow.PaymentServiceActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
 	
-	<bean id="securePaymentInfoDao" class="org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDaoJpa">
+	<bean id="securePaymentInfoDao" class="org.broadleafcommerce.payment.dao.SecurePaymentInfoDaoJpa">
 		<constructor-arg index="0"><ref bean="entityManagerFactory"/></constructor-arg>
 	</bean>
 </beans>

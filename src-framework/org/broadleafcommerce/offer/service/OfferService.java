@@ -5,7 +5,7 @@ import java.util.List;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.pricing.exception.PricingException;
+import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 
 /**

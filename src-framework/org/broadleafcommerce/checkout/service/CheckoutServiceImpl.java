@@ -4,11 +4,11 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.checkout.exception.CheckoutException;
-import org.broadleafcommerce.checkout.workflow.CheckoutSeed;
+import org.broadleafcommerce.checkout.service.exception.CheckoutException;
+import org.broadleafcommerce.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.payment.secure.domain.Referenced;
+import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.workflow.SequenceProcessor;
 import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.stereotype.Service;

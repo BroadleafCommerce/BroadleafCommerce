@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.type.OrderStatus;
 import org.broadleafcommerce.util.money.Money;
 
 public interface Order {

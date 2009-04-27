@@ -3,8 +3,8 @@ package org.broadleafcommerce.order.dao;
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.type.OrderStatus;
 
 public interface OrderDao {
 

@@ -3,7 +3,7 @@ package org.broadleafcommerce.test.dataprovider;
 import java.math.BigDecimal;
 
 import org.broadleafcommerce.order.domain.OrderImpl;
-import org.broadleafcommerce.type.OrderStatus;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.DataProvider;
 

@@ -18,11 +18,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.domain.PhoneImpl;
-import org.broadleafcommerce.type.PaymentInfoType;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity

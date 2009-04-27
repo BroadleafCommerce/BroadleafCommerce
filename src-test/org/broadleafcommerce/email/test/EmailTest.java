@@ -6,8 +6,8 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.email.domain.AbstractEmailTarget;
 import org.broadleafcommerce.email.domain.EmailTarget;
-import org.broadleafcommerce.email.info.EmailInfo;
 import org.broadleafcommerce.email.service.EmailService;
+import org.broadleafcommerce.email.service.info.EmailInfo;
 import org.broadleafcommerce.test.integration.BaseTest;
 import org.testng.annotations.Test;
 

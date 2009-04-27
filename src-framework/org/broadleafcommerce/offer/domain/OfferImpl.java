@@ -13,9 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.broadleafcommerce.type.OfferDiscountType;
-import org.broadleafcommerce.type.OfferScopeType;
-import org.broadleafcommerce.type.OfferType;
+import org.broadleafcommerce.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.offer.service.type.OfferScopeType;
+import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
