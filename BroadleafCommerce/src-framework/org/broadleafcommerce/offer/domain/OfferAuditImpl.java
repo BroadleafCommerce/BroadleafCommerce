@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.broadleafcommerce.type.OfferDiscountType;
+import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity

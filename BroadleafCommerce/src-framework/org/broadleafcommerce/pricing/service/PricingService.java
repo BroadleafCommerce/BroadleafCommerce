@@ -1,7 +1,7 @@
 package org.broadleafcommerce.pricing.service;
 
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.pricing.exception.PricingException;
+import org.broadleafcommerce.pricing.service.exception.PricingException;
 
 public interface PricingService {
 

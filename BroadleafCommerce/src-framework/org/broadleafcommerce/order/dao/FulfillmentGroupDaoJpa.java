@@ -10,8 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
-import org.broadleafcommerce.type.FulfillmentGroupType;
 import org.springframework.stereotype.Repository;
 
 @Repository("fulfillmentGroupDao")

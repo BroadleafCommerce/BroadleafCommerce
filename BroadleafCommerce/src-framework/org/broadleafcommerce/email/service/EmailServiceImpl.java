@@ -5,10 +5,10 @@ import java.util.HashMap;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.email.domain.EmailTarget;
-import org.broadleafcommerce.email.info.EmailInfo;
-import org.broadleafcommerce.email.info.ServerInfo;
-import org.broadleafcommerce.email.jms.EmailServiceProducer;
-import org.broadleafcommerce.email.message.MessageCreator;
+import org.broadleafcommerce.email.service.info.EmailInfo;
+import org.broadleafcommerce.email.service.info.ServerInfo;
+import org.broadleafcommerce.email.service.jms.EmailServiceProducer;
+import org.broadleafcommerce.email.service.message.MessageCreator;
 import org.springframework.stereotype.Service;
 
 /**

@@ -1,6 +1,8 @@
 package org.broadleafcommerce.email.service;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
+import org.broadleafcommerce.profile.domain.Customer;
 
 
 /**
@@ -9,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface EmailTrackingManager {
 
-	public Long createTrackedEmail(String emailAddress, String type, String extraValue);
-	public void recordOpen (Long emailId , HttpServletRequest request);
-	public void recordClick(Long emailId , HttpServletRequest request);
-	
+    public Long createTrackedEmail(String emailAddress, String type, String extraValue);
+    public void recordOpen (Long emailId, Map<String, String> extraValues);
+    public void recordClick(Long emailId , Map<String, String> parameterMap, Customer customer, Map<String, String> extraValues);
+
 }

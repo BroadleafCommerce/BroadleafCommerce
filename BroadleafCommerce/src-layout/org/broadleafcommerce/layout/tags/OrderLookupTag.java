@@ -8,7 +8,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.security.CustomerState;
+import org.broadleafcommerce.profile.web.CustomerState;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

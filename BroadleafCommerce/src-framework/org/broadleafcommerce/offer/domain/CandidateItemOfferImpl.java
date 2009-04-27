@@ -2,8 +2,8 @@ package org.broadleafcommerce.offer.domain;
 
 import java.math.BigDecimal;
 
+import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.type.OfferDiscountType;
 import org.broadleafcommerce.util.money.Money;
 
 public class CandidateItemOfferImpl implements CandidateItemOffer {

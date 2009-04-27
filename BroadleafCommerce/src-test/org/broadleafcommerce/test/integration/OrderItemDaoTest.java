@@ -8,10 +8,10 @@ import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.OrderItemDataProvider;
-import org.broadleafcommerce.type.OrderStatus;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

@@ -2,10 +2,10 @@ package org.broadleafcommerce.checkout.service;
 
 import java.util.Map;
 
-import org.broadleafcommerce.checkout.exception.CheckoutException;
+import org.broadleafcommerce.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.payment.secure.domain.Referenced;
+import org.broadleafcommerce.payment.domain.Referenced;
 
 public interface CheckoutService {
 

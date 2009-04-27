@@ -11,9 +11,9 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.pricing.exception.PricingException;
+import org.broadleafcommerce.order.service.type.OrderStatus;
+import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.type.OrderStatus;
 
 public interface OrderService {
 
