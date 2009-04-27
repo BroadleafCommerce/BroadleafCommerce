@@ -1,5 +1,7 @@
 package org.broadleafcommerce.type;
 
 public enum FulfillmentGroupType {
-    DEFAULT
+    DEFAULT,
+    PICK_UP_AT_STORE,
+    SHIPPING
 }
