@@ -90,14 +90,14 @@ public class OrderImpl implements Order, Serializable {
     private List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
     @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
-    private List<FulfillmentGroup> fulfillmentGroups;
+    private List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
-    private List<Offer> candidateOffers;
+    private List<Offer> candidateOffers = new ArrayList<Offer>();
 
     @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class)
-    private List<PaymentInfo> paymentInfos;
+    private List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
     @Transient
     private boolean markedForOffer;
