@@ -90,6 +90,7 @@
 			<include name="**/*.properties" />
 			<include name="**/*.xml" />
 			<include name="**/*.vm" />
+			<include name="**/*.mvel" />
 			<include name="META-INF/**" />
 			<exclude name="**/test/**/*.class" />
 		</jar>
