@@ -72,12 +72,16 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     private PersonalMessage personalMessage;
 
-    @Transient
+    // TODO: Add OrderItemAdjustments
+    // Make sure that when you add appliedItemOffers you add them to the adjustments.
+
     // TODO: Need to persist this
+    @Transient
     private List<CandidateItemOffer> candidateItemOffers;
 
+    //This does not need to be persisted since the adjustments will be persisted.
+    //It just helps keep track of offers that were applied.
     @Transient
-    // TODO: Need to persist this
     private List<Offer> appliedItemOffers;
 
     @Transient
