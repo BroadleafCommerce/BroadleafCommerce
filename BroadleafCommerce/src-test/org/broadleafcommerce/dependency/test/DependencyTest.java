@@ -14,6 +14,15 @@ import org.objectweb.asm.ClassReader;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+/**
+ * Test target packages to make sure they do not have dependencies on
+ * improper classes. For example, service classes should not have dependencies
+ * on HttpServletRequest. In this case, one could test the service package
+ * against javax.servlet (which is the containing package for HttpServletRequest).
+ * 
+ * @author jfischer
+ *
+ */
 public class DependencyTest extends BaseTest {
 
     private List<String> testPackages;
