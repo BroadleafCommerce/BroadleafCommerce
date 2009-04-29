@@ -184,17 +184,14 @@ public class OfferServiceImpl implements OfferService {
 
     private void applyItemOffer(CandidateItemOffer itemOffer, Order order){
         //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-        HashMap<String, Object> vars = new HashMap<String, Object>();
-        vars.put("currentItem", itemOffer.getOrderItem());
-        vars.put("order", order);
-        vars.put("offer", itemOffer.getOffer());
-
         String expression = itemOffer.getOffer().getAppliesToCustomerRules();
-        if (expression != null && expression.indexOf("evalItemForOrderContains") >= 0) { //We know that they evaluated multiple items
-            StringBuffer exp = new StringBuffer(expression);
-            exp.append(" ");
-            exp.append("applyBogo()");
-            Boolean result = (Boolean)executeExpression(exp.toString(), vars);
+        if (expression != null && expression.indexOf("orderContainsPlusMark") >= 0) { //We know that they evaluated multiple items
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("currentItem", itemOffer.getOrderItem());
+            vars.put("order", order);
+            vars.put("offer", itemOffer.getOffer());
+            vars.put("doMark", Boolean.TRUE); //This will allow the orderContainsPlusMark function to mark the items
+            Boolean result = (Boolean)executeExpression(expression, vars);
             if (result) {
                 itemOffer.getOrderItem().addAppliedItemOffer(itemOffer.getOffer());  //This is how we can tell if an item has been discounted
             }
@@ -242,6 +239,7 @@ public class OfferServiceImpl implements OfferService {
         if (offer.getAppliesToItemRules() != null && offer.getAppliesToItemRules().length() != 0) {
 
             HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("doMark", Boolean.FALSE); //We never want to mark offers when we are checking if they could apply.
             vars.put("order", order);
             vars.put("offer", offer);
             if (currentItem != null) {

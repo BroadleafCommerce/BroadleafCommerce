@@ -23,12 +23,14 @@ def orderContainsPlusMark(quantity) {
     foreach (itemInList : order.orderItems) {
     	if (itemInList != currentItem) {
     		if (! itemInList.allQuantityMarkedForOffer) {
-    			if (evalItemForOrderContains(itemInList)) {
-					itemQty = itemInList.quantity;
-					markedQty = itemInList.markedForOffer;
-					quantityToCount = itemQty - markedQty;
-					foreach (x : quantityToCount) {
-						count++;
+    			if (itemInList.salePrice.amount >= currentItem.salePrice.amount) {
+	    			if (evalItemForOrderContains(itemInList)) {
+						itemQty = itemInList.quantity;
+						markedQty = itemInList.markedForOffer;
+						quantityToCount = itemQty - markedQty;
+						foreach (x : quantityToCount) {
+							count++;
+						}
 					}
 				}
     		}
@@ -43,14 +45,16 @@ def orderContainsPlusMark(quantity) {
 			if (itemInList != currentItem) {
 				if (count < quantity) {
 					if (! itemInList.allQuantityMarkedForOffer) {
-						if (evalItemForOrderContains(itemInList)) {
-							itemQty = itemInList.quantity;
-							markedQty = itemInList.markedForOffer;
-							quantityToCount = itemQty - markedQty;
-							foreach (x : quantityToCount) {
-								if (count < quantity){
-									itemInList.markForOffer();
-									count++;
+						if (itemInList.salePrice.amount >= currentItem.salePrice.amount) {
+							if (evalItemForOrderContains(itemInList)) {
+								itemQty = itemInList.quantity;
+								markedQty = itemInList.markedForOffer;
+								quantityToCount = itemQty - markedQty;
+								foreach (x : quantityToCount) {
+									if (count < quantity){
+										itemInList.markForOffer();
+										count++;
+									}
 								}
 							}
 						}
