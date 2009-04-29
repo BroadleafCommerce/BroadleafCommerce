@@ -85,14 +85,16 @@
 			</then>
 		</if>
 
-		<jar jarfile="${stage.dir}/broadleaf-framework.jar" basedir="${stage.dir}/framework-jar">
-			<include name="**/*.class" />
-			<include name="**/*.properties" />
-			<include name="**/*.xml" />
-			<include name="**/*.vm" />
-			<include name="**/*.mvel" />
-			<include name="META-INF/**" />
-			<exclude name="**/test/**/*.class" />
+		<jar jarfile="${stage.dir}/broadleaf-framework.jar">
+			<fileset dir="${stage.dir}/framework-jar">
+				<include name="**/*.class" />
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="**/*.vm" />
+				<include name="**/*.mvel" />
+				<include name="META-INF/**" />
+				<exclude name="**/test/**/*.class" />
+			</fileset>
 		</jar>
 	</target>
 
@@ -136,13 +138,15 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${stage.dir}/broadleaf-auxiliary.jar" basedir="${stage.dir}/auxiliary-jar">
-			<include name="**/*.class" />
-			<include name="**/*.properties" />
-			<include name="**/*.txt" />
-			<include name="**/*.xml" />
-			<include name="META-INF/**" />
-			<exclude name="**/test/**/*.class" />
+		<jar jarfile="${stage.dir}/broadleaf-auxiliary.jar">
+			<fileset dir="${stage.dir}/auxiliary-jar">
+				<include name="**/*.class" />
+				<include name="**/*.properties" />
+				<include name="**/*.txt" />
+				<include name="**/*.xml" />
+				<include name="META-INF/**" />
+				<exclude name="**/test/**/*.class" />
+			</fileset>
 		</jar>
 
 	</target>
@@ -203,12 +207,14 @@
 			</fileset>
 		</copy>
 
-		<jar jarfile="${stage.dir}/broadleaf-layout.jar" basedir="${stage.dir}/layout-jar">
-			<include name="**/*.class" />
-			<include name="**/*.properties" />
-			<include name="**/*.xml" />
-			<include name="META-INF/**" />
-			<exclude name="**/test/**/*.class" />
+		<jar jarfile="${stage.dir}/broadleaf-layout.jar">
+			<fileset dir="${stage.dir}/layout-jar">
+				<include name="**/*.class" />
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="META-INF/**" />
+				<exclude name="**/test/**/*.class" />
+			</fileset>
 		</jar>
 	</target>
 
@@ -261,13 +267,15 @@
 			</then>
 		</if>
 
-		<jar jarfile="${stage.dir}/broadleaf-profile.jar" basedir="${stage.dir}/profile-jar">
-			<include name="**/*.class" />
-			<include name="**/*.properties" />
-			<include name="**/*.xml" />
-			<include name="**/*.vm" />
-			<include name="META-INF/**" />
-			<exclude name="**/test/**/*.class" />
+		<jar jarfile="${stage.dir}/broadleaf-profile.jar">
+			<fileset dir="${stage.dir}/profile-jar">
+				<include name="**/*.class" />
+				<include name="**/*.properties" />
+				<include name="**/*.xml" />
+				<include name="**/*.vm" />
+				<include name="META-INF/**" />
+				<exclude name="**/test/**/*.class" />
+			</fileset>
 		</jar>
 	</target>
 

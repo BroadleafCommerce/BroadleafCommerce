@@ -8,6 +8,7 @@
         	<package name="org.broadleafcommerce.offer.test"></package>
         	<package name="org.broadleafcommerce.inventory.test"></package>
         	<package name="org.broadleafcommerce.email.test"></package>
+        	<package name="org.broadleafcommerce.dependency.test"></package>
         </packages>
     </test>
 	<test name="broadleafcommerce-unittest">
