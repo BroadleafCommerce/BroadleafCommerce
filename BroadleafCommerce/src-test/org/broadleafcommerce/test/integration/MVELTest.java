@@ -143,7 +143,7 @@ public class MVELTest extends BaseTest {
         ArrayList<OrderItem> items = new ArrayList<OrderItem>();
         order.setOrderItems(items);
         OrderItem item = new OrderItemImpl();
-        Money amount = new Money(250D);
+        Money amount = new Money(10D);
         items.add(item);
         item.setSalePrice(amount);
         ProductImpl product = new ProductImpl();
@@ -154,7 +154,7 @@ public class MVELTest extends BaseTest {
         item.setQuantity(3);
 
         OrderItem item2 = new OrderItemImpl();
-        Money amount2 = new Money(10D);
+        Money amount2 = new Money(250D);
         items.add(item2);
         item2.setSalePrice(amount2);
         ProductImpl product2 = new ProductImpl();
@@ -186,7 +186,7 @@ public class MVELTest extends BaseTest {
         ArrayList<OrderItem> items = new ArrayList<OrderItem>();
         order.setOrderItems(items);
         OrderItem item = new OrderItemImpl();
-        Money amount = new Money(250D);
+        Money amount = new Money(10D);
         items.add(item);
         item.setSalePrice(amount);
         ProductImpl product = new ProductImpl();
@@ -197,7 +197,7 @@ public class MVELTest extends BaseTest {
         item.setQuantity(3);
 
         OrderItem item2 = new OrderItemImpl();
-        Money amount2 = new Money(10D);
+        Money amount2 = new Money(250D);
         items.add(item2);
         item2.setSalePrice(amount2);
         ProductImpl product2 = new ProductImpl();
