@@ -1,6 +1,7 @@
 package org.broadleafcommerce.dependency.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -66,39 +67,46 @@ public class DependencyTest extends BaseTest {
     @Test
     public void testDependencies() throws Exception {
         for(String targetPackage : targetPackages) {
-            DependencyVisitor v = new DependencyVisitor();
+            List<String> finalClasses = findCandidateClasses(targetPackage);
+            validateDependencies(targetPackage, finalClasses);
+        }
+    }
 
-            List<String> classes = getClasses(targetPackage);
-            List<String> finalClasses = new ArrayList<String>();
-            /*
-             * remove acceptable packages
-             */
-            for (String clazz : classes) {
-                testPackage: {
-                for (String acceptablePackage : acceptablePackages) {
-                    if (clazz.startsWith(acceptablePackage)) {
-                        break testPackage;
-                    }
-                }
-                finalClasses.add(clazz);
-            }
-            }
+    private void validateDependencies(String targetPackage, List<String> finalClasses) throws IOException {
+        DependencyVisitor v = new DependencyVisitor();
+        for (String clazz : finalClasses) {
+            new ClassReader(clazz).accept(v, false);
+        }
 
-            for (String clazz : finalClasses) {
-                new ClassReader(clazz).accept(v, false);
-            }
-
-            Set<String> classPackages = v.getPackages();
-            String[] classNames = classPackages.toArray(new String[classPackages.size()]);
-            for (String className : classNames) {
-                className = className.replace('/', '.');
-                for (String testPackage : testPackages) {
-                    if (className.startsWith(testPackage) || testPackage.startsWith(className)) {
-                        throw new RuntimeException("Improper dependency (" + className + ") found in package (" + targetPackage + ")");
-                    }
+        Set<String> classPackages = v.getPackages();
+        String[] classNames = classPackages.toArray(new String[classPackages.size()]);
+        for (String className : classNames) {
+            className = className.replace('/', '.');
+            for (String testPackage : testPackages) {
+                if (className.startsWith(testPackage) || testPackage.startsWith(className)) {
+                    throw new RuntimeException("Improper dependency (" + className + ") found in package (" + targetPackage + ")");
                 }
             }
         }
+    }
+
+    private List<String> findCandidateClasses(String targetPackage) throws ClassNotFoundException {
+        List<String> classes = getClasses(targetPackage);
+        List<String> finalClasses = new ArrayList<String>();
+        /*
+         * remove acceptable packages
+         */
+        for (String clazz : classes) {
+            testPackage: {
+            for (String acceptablePackage : acceptablePackages) {
+                if (clazz.startsWith(acceptablePackage)) {
+                    break testPackage;
+                }
+            }
+            finalClasses.add(clazz);
+        }
+        }
+        return finalClasses;
     }
 
     private List<String> getClasses(String pckgname) throws ClassNotFoundException {
