@@ -1,6 +1,6 @@
 package org.broadleafcommerce.offer.domain;
 
-import java.sql.Date;
+import java.util.Date;
 
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferScopeType;
@@ -57,13 +57,13 @@ public interface Offer {
 
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
 
-    public String getAppliesToRules();
+    public String getAppliesToItemRules();
 
-    public void setAppliesToRules(String appliesToRules);
+    public void setAppliesToItemRules(String appliesToRules);
 
-    public String getAppliesWhenRules();
+    public String getAppliesToCustomerRules();
 
-    public void setAppliesWhenRules(String appliesWhen);
+    public void setAppliesToCustomerRules(String appliesToCustomerRules);
 
     public Money getDiscountPrice() ;
 

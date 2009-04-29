@@ -2,7 +2,7 @@ package org.broadleafcommerce.offer.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -66,10 +66,10 @@ public class OfferImpl implements Serializable, Offer {
     private boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
-    private String appliesToRules;
+    private String appliesToItemRules;
 
     @Column(name = "APPLIES_WHEN_RULES")
-    private String appliesWhenRules;
+    private String appliesToCustomerRules;
 
     @Transient
     private Money calculatedDiscount;
@@ -182,20 +182,20 @@ public class OfferImpl implements Serializable, Offer {
 
     }
 
-    public String getAppliesToRules() {
-        return appliesToRules;
+    public String getAppliesToItemRules() {
+        return appliesToItemRules;
     }
 
-    public void setAppliesToRules(String appliesToRules) {
-        this.appliesToRules = appliesToRules;
+    public void setAppliesToItemRules(String appliesToItemRules) {
+        this.appliesToItemRules = appliesToItemRules;
     }
 
-    public String getAppliesWhenRules() {
-        return appliesWhenRules;
+    public String getAppliesToCustomerRules() {
+        return appliesToCustomerRules;
     }
 
-    public void setAppliesWhenRules(String appliesWhenRules) {
-        this.appliesWhenRules = appliesWhenRules;
+    public void setAppliesToCustomerRules(String appliesToCustomerRules) {
+        this.appliesToCustomerRules = appliesToCustomerRules;
     }
 
     public Money getDiscountPrice() {
