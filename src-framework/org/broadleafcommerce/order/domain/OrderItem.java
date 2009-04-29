@@ -6,6 +6,7 @@ import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
+import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.util.money.Money;
 
 public interface OrderItem {
@@ -52,11 +53,21 @@ public interface OrderItem {
 
     public List<CandidateItemOffer> addCandidateItemOffer(CandidateItemOffer candidateOffer);
 
+    public void setAppliedItemOffers(List<Offer> appliedOffers);
+
+    public List<Offer> getAppliedItemOffers();
+
+    public List<Offer> addAppliedItemOffer(Offer appliedOffer);
+
     public void removeAllOffers();
 
-    public boolean isMarkedForOffer();
+    public boolean markForOffer();
 
-    public void setMarkedForOffer(boolean markedForOffer);
+    public int getMarkedForOffer();
+
+    public boolean unmarkForOffer();
+
+    public boolean isAllQuantityMarkedForOffer();
 
     public PersonalMessage getPersonalMessage();
 

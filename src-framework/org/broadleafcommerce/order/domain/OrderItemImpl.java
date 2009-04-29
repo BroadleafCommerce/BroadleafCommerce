@@ -25,6 +25,7 @@ import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
+import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -76,7 +77,11 @@ public class OrderItemImpl implements OrderItem, Serializable {
     private List<CandidateItemOffer> candidateItemOffers;
 
     @Transient
-    private boolean markedForOffer;
+    // TODO: Need to persist this
+    private List<Offer> appliedItemOffers;
+
+    @Transient
+    private int markedForOffer = 0;
 
     public Long getId() {
         return id;
@@ -169,18 +174,53 @@ public class OrderItemImpl implements OrderItem, Serializable {
         return candidateItemOffers;
     }
 
+    public void setAppliedItemOffers(List<Offer> appliedOffers) {
+        this.appliedItemOffers = appliedOffers;
+    }
+
+    public List<Offer> getAppliedItemOffers() {
+        return this.appliedItemOffers;
+    }
+
+    public List<Offer> addAppliedItemOffer(Offer appliedOffer) {
+        if (this.appliedItemOffers == null) {
+            this.appliedItemOffers = new ArrayList<Offer>();
+        }
+        this.appliedItemOffers.add(appliedOffer);
+        return this.appliedItemOffers;
+    }
+
     public void removeAllOffers() {
         if (candidateItemOffers != null) {
             candidateItemOffers.clear();
         }
     }
 
-    public boolean isMarkedForOffer() {
+    public boolean markForOffer() {
+        if (markedForOffer >= quantity) {
+            return false;
+        }
+        markedForOffer++;
+        return true;
+    }
+
+    public int getMarkedForOffer() {
         return markedForOffer;
     }
 
-    public void setMarkedForOffer(boolean markedForOffer) {
-        this.markedForOffer = markedForOffer;
+    public boolean unmarkForOffer() {
+        if (markedForOffer < 1) {
+            return false;
+        }
+        markedForOffer--;
+        return true;
+    }
+
+    public boolean isAllQuantityMarkedForOffer() {
+        if (markedForOffer >= quantity) {
+            return true;
+        }
+        return false;
     }
 
     public PersonalMessage getPersonalMessage() {

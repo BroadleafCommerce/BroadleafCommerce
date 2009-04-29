@@ -1,5 +1,8 @@
 package org.broadleafcommerce.offer.service;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,6 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -21,6 +25,7 @@ import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -36,9 +41,30 @@ import org.springframework.stereotype.Service;
 public class OfferServiceImpl implements OfferService {
 
     private static final LRUMap expressionCache = new LRUMap(100);
+    private static final StringBuffer functions = new StringBuffer();
 
     @Resource
     private PricingService pricingService;
+
+    static {
+        InputStream is = OfferServiceImpl.class.getResourceAsStream("/org/broadleafcommerce/offer/service/mvelFunctions.mvel");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                functions.append(line);
+            }
+            functions.append(" ");
+        } catch(Exception e){
+            throw new RuntimeException(e);
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (Exception e){}
+            }
+        }
+    }
 
     /*
      * (non-Javadoc)
@@ -80,7 +106,7 @@ public class OfferServiceImpl implements OfferService {
                     for (OrderItem orderItem : order.getOrderItems()) {
                         if(couldOfferApply(offer, order, orderItem)) {
                             CandidateItemOffer candidateOffer = new CandidateItemOfferImpl(orderItem, offer);
-                            //orderItem.addCandidateItemOffer(candidateOffer);
+                            orderItem.addCandidateItemOffer(candidateOffer);
                             qualifiedItemOffers.add(candidateOffer);
                         }
                     }
@@ -91,7 +117,7 @@ public class OfferServiceImpl implements OfferService {
             //
             // . Create a sorted list sorted by priority asc then amount desc
             //
-            Collections.sort(qualifiedOrderOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountedPrice")));
+            Collections.sort(qualifiedOrderOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountPrice")));
             Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
 
             Collections.sort(qualifiedItemOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountedPrice")));
@@ -108,25 +134,20 @@ public class OfferServiceImpl implements OfferService {
                 OrderItem orderItem = itemOffer.getOrderItem();
                 //- Determine the amount that should be discounted for each item
                 //----- If the items sale price is better than the discounted price, don't apply
-                if(itemOffer.getDiscountedPrice().greaterThan(orderItem.getSalePrice())){
-                    // TODO: ----- If the offer requires other items, check to see if the items are still unmarked
-                    if(requiresMultipleSkus(itemOffer)){
-                        // TODO: apply offer to other skus
-                    }
+                if(itemOffer.getDiscountedPrice().lessThan(orderItem.getSalePrice())){
                     // ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
-                    if(! orderItem.isMarkedForOffer() ||
-                            (orderItem.isMarkedForOffer() && itemOffer.getOffer().isApplyDiscountToMarkedItems())){
+                    if(! orderItem.isAllQuantityMarkedForOffer() || itemOffer.getOffer().isApplyDiscountToMarkedItems()) {
                         //----- If the item already has a discount
-                        if(orderItem.isMarkedForOffer()){
+                        if(orderItem.getAppliedItemOffers() != null && orderItem.getAppliedItemOffers().size() > 0){
                             //  and this offer is stackable, apply on top of the existing offer
                             if(itemOffer.getOffer().isStackable()){
                                 //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-                                applyItemOffer(orderItem,itemOffer);
+                                applyItemOffer(itemOffer, order);
                             }
                             // and this offer is not-stackable, don't apply
-                        }else{
+                        } else {
                             //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-                            applyItemOffer(orderItem,itemOffer);
+                            applyItemOffer(itemOffer, order);
                         }
                     }
                 }
@@ -161,16 +182,25 @@ public class OfferServiceImpl implements OfferService {
         }
     }
 
-    private boolean requiresMultipleSkus(CandidateItemOffer itemOffer){
-        // TODO: Add determination code for offer requiring multiple skus
-        // Assume offer does not for now
-        return false;
-    }
-
-    private void applyItemOffer(OrderItem orderItem, CandidateItemOffer itemOffer){
-        // TODO: Apply item offer
+    private void applyItemOffer(CandidateItemOffer itemOffer, Order order){
         //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-        orderItem.setMarkedForOffer(true);
+        HashMap<String, Object> vars = new HashMap<String, Object>();
+        vars.put("currentItem", itemOffer.getOrderItem());
+        vars.put("order", order);
+        vars.put("offer", itemOffer.getOffer());
+
+        String expression = itemOffer.getOffer().getAppliesToCustomerRules();
+        if (expression != null && expression.indexOf("evalItemForOrderContains") >= 0) { //We know that they evaluated multiple items
+            StringBuffer exp = new StringBuffer(expression);
+            exp.append(" ");
+            exp.append("applyBogo()");
+            Boolean result = (Boolean)executeExpression(exp.toString(), vars);
+            if (result) {
+                itemOffer.getOrderItem().addAppliedItemOffer(itemOffer.getOffer());  //This is how we can tell if an item has been discounted
+            }
+        } else {
+            itemOffer.getOrderItem().addAppliedItemOffer(itemOffer.getOffer());  //This is how we can tell if an item has been discounted
+        }
     }
 
     private void applyOrderOffer(Order order, Offer offer){
@@ -194,10 +224,9 @@ public class OfferServiceImpl implements OfferService {
         for (Offer offer : offers) {
             if(offer.getStartDate()!= null && offer.getStartDate().after(now)){
                 offers.remove(offer);
-            }else
-                if(offer.getEndDate()!= null && offer.getEndDate().before(now)){
-                    offers.remove(offer);
-                }
+            } else if(offer.getEndDate()!= null && offer.getEndDate().before(now)){
+                offers.remove(offer);
+            }
         }
         return offers;
     }
@@ -206,30 +235,55 @@ public class OfferServiceImpl implements OfferService {
         return couldOfferApply(offer, order, null);
     }
 
-    private boolean couldOfferApply(Offer offer, Order order, OrderItem item) {
-        if (offer.getAppliesToRules() != null && offer.getAppliesToRules().length() != 0) {
-            Serializable exp = (Serializable)expressionCache.get(offer.getAppliesToRules());
-            if (exp == null) {
-                ParserContext context = new ParserContext();
-                context.addImport("OfferType", OfferType.class);
-                exp = MVEL.compileExpression(offer.getAppliesToRules(), context);
-            }
-            expressionCache.put(offer.getAppliesToRules(), exp);
+    private boolean couldOfferApply(Offer offer, Order order, OrderItem currentItem) {
+        boolean appliesToItem = false;
+        boolean appliesToCustomer = false;
+
+        if (offer.getAppliesToItemRules() != null && offer.getAppliesToItemRules().length() != 0) {
 
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("order", order);
             vars.put("offer", offer);
-            if (item != null) {
-                vars.put("item", item);
+            if (currentItem != null) {
+                vars.put("currentItem", currentItem);
             }
-            Boolean expressionOutcome = (Boolean)MVEL.executeExpression(exp, vars);
+            Boolean expressionOutcome = (Boolean)executeExpression(offer.getAppliesToItemRules(), vars);
             if (expressionOutcome != null && expressionOutcome) {
-                return true;
-            } else {
-                return false;
+                appliesToItem = true;
             }
+        } else {
+            appliesToItem = true;
         }
-        return true;
+
+        if (offer.getAppliesToCustomerRules() != null && offer.getAppliesToCustomerRules().length() != 0) {
+
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("customer", order.getCustomer());
+            Boolean expressionOutcome = (Boolean)executeExpression(offer.getAppliesToCustomerRules(), vars);
+            if (expressionOutcome != null && expressionOutcome) {
+                appliesToCustomer = true;
+            }
+        } else {
+            appliesToCustomer = true;
+        }
+
+        return appliesToItem && appliesToCustomer;
+    }
+
+    private Object executeExpression(String expression, Map<String, Object> vars) {
+        Serializable exp = (Serializable)expressionCache.get(expression);
+        if (exp == null) {
+            ParserContext context = new ParserContext();
+            context.addImport("OfferType", OfferType.class);
+            context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
+            StringBuffer completeExpression = new StringBuffer(functions.toString());
+            completeExpression.append(" ").append(expression);
+            exp = MVEL.compileExpression(completeExpression.toString(), context);
+        }
+        expressionCache.put(expression, exp);
+
+        return MVEL.executeExpression(exp, vars);
+
     }
 
     /* (non-Javadoc)
