@@ -63,21 +63,20 @@ public class DependencyTest extends BaseTest {
         acceptablePackages.add("org.broadleafcommerce.profile.web");
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testDependencies() throws Exception {
         for(String targetPackage : targetPackages) {
             DependencyVisitor v = new DependencyVisitor();
 
-            List<Class> classes = getClasses(targetPackage);
-            List<Class> finalClasses = new ArrayList<Class>();
+            List<String> classes = getClasses(targetPackage);
+            List<String> finalClasses = new ArrayList<String>();
             /*
              * remove acceptable packages
              */
-            for (Class clazz : classes) {
+            for (String clazz : classes) {
                 testPackage: {
                 for (String acceptablePackage : acceptablePackages) {
-                    if (clazz.getName().startsWith(acceptablePackage)) {
+                    if (clazz.startsWith(acceptablePackage)) {
                         break testPackage;
                     }
                 }
@@ -85,8 +84,8 @@ public class DependencyTest extends BaseTest {
             }
             }
 
-            for (Class clazz : finalClasses) {
-                new ClassReader(clazz.getName()).accept(v, false);
+            for (String clazz : finalClasses) {
+                new ClassReader(clazz).accept(v, false);
             }
 
             Set<String> classPackages = v.getPackages();
@@ -102,9 +101,8 @@ public class DependencyTest extends BaseTest {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Class> getClasses(String pckgname) throws ClassNotFoundException {
-        ArrayList<Class> classes=new ArrayList<Class>();
+    private List<String> getClasses(String pckgname) throws ClassNotFoundException {
+        ArrayList<String> classes=new ArrayList<String>();
         try {
             URL url = DependencyVisitor.class.getResource('/'+pckgname.replace('.', '/'));
             if (url.getProtocol().equals("jar")) {
@@ -121,24 +119,22 @@ public class DependencyTest extends BaseTest {
         return classes;
     }
 
-    @SuppressWarnings("unchecked")
-    private void addClasses(JarFile jar, List<Class> classes, String pckgname) throws ClassNotFoundException {
+    private void addClasses(JarFile jar, List<String> classes, String pckgname) throws ClassNotFoundException {
         Enumeration<JarEntry> entries = jar.entries();
         while(entries.hasMoreElements()) {
             String name = entries.nextElement().getName().replace('/', '.');
             if (name.startsWith(pckgname) && name.endsWith(".class")) {
-                classes.add(Class.forName(name.substring(0, name.length()-6)));
+                classes.add(name.substring(0, name.length()-6));
             }
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void addClasses(File directory, List<Class> classes, String pckgname) throws ClassNotFoundException {
+    private void addClasses(File directory, List<String> classes, String pckgname) throws ClassNotFoundException {
         File[] files=directory.listFiles();
         for(File file : files) {
             if(file.getName().endsWith(".class")) {
                 String fileName = file.getName();
-                classes.add(Class.forName(pckgname + "." + fileName.substring(0, fileName.length()-6)));
+                classes.add(pckgname + "." + fileName.substring(0, fileName.length()-6));
             } else if (file.isDirectory()) {
                 addClasses(file, classes, pckgname + "." + file.getName());
             }
