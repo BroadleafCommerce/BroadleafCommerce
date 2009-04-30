@@ -16,7 +16,7 @@ public class CurrentCustomerInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
         CustomerState customerState = (CustomerState) applicationContext.getBean("customerState");
-        Customer requestCustomer;
+        Customer requestCustomer = null;
         checkSession: {
             Customer sessionCustomer = customerState.getCustomer(request);
             if (sessionCustomer != null) {
@@ -31,24 +31,18 @@ public class CurrentCustomerInterceptor extends HandlerInterceptorAdapter {
 
             CustomerService customerService = (CustomerService) applicationContext.getBean("customerService");
             if (cookieCustomerId != null) {
-                Customer persistedCookieCustomer = customerService.readCustomerById(cookieCustomerId);
-                if (persistedCookieCustomer != null) {
-                    customerState.setCustomer(persistedCookieCustomer, request);
-                    requestCustomer = persistedCookieCustomer;
-                    break checkSession;
-                } else {
-                    Customer anonymousCookieCustomer = customerService.createCustomerFromId(cookieCustomerId);
-                    customerState.setCustomer(anonymousCookieCustomer, request);
-                    requestCustomer = anonymousCookieCustomer;
-                    break checkSession;
-                }
+                Customer cookieCustomer = customerService.createCustomerFromId(cookieCustomerId);
+                customerState.setCustomer(cookieCustomer, request);
+                requestCustomer = cookieCustomer;
+                break checkSession;
+            } else {
+                // if no customer in session or cookie, create a new one
+                Customer firstTimeCustomer = customerService.createCustomerFromId(null);
+                CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "", "/", 604800);
+                customerState.setCustomer(firstTimeCustomer, request);
+                requestCustomer = firstTimeCustomer;
+                break checkSession;
             }
-
-            // if no customer in session or cookie, create a new one
-            Customer firstTimeCustomer = customerService.createCustomerFromId(null);
-            CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "","/",604800);
-            customerState.setCustomer(firstTimeCustomer, request);
-            requestCustomer = firstTimeCustomer;
         }
         request.setAttribute(CUSTOMER_REQUEST_ATTR_NAME, requestCustomer);
         return true;
