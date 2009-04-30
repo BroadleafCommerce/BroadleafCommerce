@@ -3,8 +3,8 @@ package org.broadleafcommerce.profile.web;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.springframework.stereotype.Component;
 
 @Component("customerState")
@@ -13,7 +13,7 @@ public class CustomerState {
     private static final String DEFAULTSESSIONATTRIBUTENAME = "customer_session";
 
     @Resource
-    private CustomerDao customerDao;
+    private CustomerService customerService;
 
     public Customer getCustomer(HttpServletRequest request) {
         Object sessionReference = request.getSession().getAttribute(DEFAULTSESSIONATTRIBUTENAME);
@@ -21,7 +21,7 @@ public class CustomerState {
         if (sessionReference instanceof Long) {
             Long customerId = (Long) sessionReference;
             if (customerId != null) {
-                customer = customerDao.readCustomerById(customerId);
+                customer = customerService.createCustomerFromId(customerId);
             } else {
                 customer = null;
             }
