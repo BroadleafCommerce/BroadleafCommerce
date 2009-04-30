@@ -53,7 +53,9 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setPassword(passwordEncoder.encodePassword(customer.getUnencodedPassword(), null));
         }
 
-        // let's make sure they entered a new challenge answer (we will populate the password field with hashed values so check that they have changed id
+        // let's make sure they entered a new challenge answer (we will populate
+        // the password field with hashed values so check that they have changed
+        // id
         if (customer.getUnencodedChallengeAnswer() != null && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
             customer.setChallengeAnswer(passwordEncoder.encodePassword(customer.getUnencodedChallengeAnswer(), null));
         }
@@ -62,7 +64,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     public RegistrationResponse registerCustomer(Customer customer, String password, String passwordConfirm) {
         RegistrationResponse response = new RegistrationResponse(customer, customer.getClass().getSimpleName());
-        //        registrationValidator.validate(customer, password, passwordConfirm, response.getErrors());
+        // registrationValidator.validate(customer, password, passwordConfirm,
+        // response.getErrors());
         if (!response.hasErrors()) {
             customer.setRegistered(true);
             Customer retCustomer = saveCustomer(customer);
@@ -111,7 +114,11 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerId != null ? readCustomerById(customerId) : null;
         if (customer == null) {
             customer = (Customer) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Customer");
-            customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
+            if (customerId != null) {
+                customer.setId(customerId);
+            } else {
+                customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
+            }
         }
         return customer;
     }
