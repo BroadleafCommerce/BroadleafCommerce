@@ -287,7 +287,7 @@ INSERT INTO blc_challenge_question ( QUESTION_ID, QUESTION ) VALUES ( 3, 'What i
 ------------------------
 -- INSERT TEST ID GENERATION
 ------------------------
-INSERT INTO BLC_ID_GENERATION ( ID_TYPE, BATCH_START, BATCH_SIZE ) VALUES ( 'org.broadleafcommerce.profile.domain.Customer', 1, 10 );;
+INSERT INTO BLC_ID_GENERATION ( ID_TYPE, BATCH_START, BATCH_SIZE ) VALUES ( 'org.broadleafcommerce.profile.domain.Customer', 1, 10 );
 
 
 ------------------------
@@ -309,5 +309,4 @@ INSERT INTO SEQUENCE_GENERATOR (ID_NAME,ID_VAL) VALUES ('FulfillmentGroupItemImp
 INSERT INTO SEQUENCE_GENERATOR (ID_NAME,ID_VAL) VALUES ('OrderImpl',1);
 INSERT INTO SEQUENCE_GENERATOR (ID_NAME,ID_VAL) VALUES ('OrderItemImpl',1);
 INSERT INTO SEQUENCE_GENERATOR (ID_NAME,ID_VAL) VALUES ('AddressImpl',1);
-INSERT INTO SEQUENCE_GENERATOR (ID_NAME,ID_VAL) VALUES('targetContentImpl',1);
-
+INSERT INTO SEQUENCE_GENERATOR (ID_NAME,ID_VAL) VALUES ('targetContentImpl',1);
