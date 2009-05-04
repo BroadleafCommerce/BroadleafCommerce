@@ -29,6 +29,8 @@ public interface Order {
 
     public Money getTotal();
 
+    public Money getRemainingTotal();
+
     public void setTotal(Money orderTotal);
 
     public Customer getCustomer();
