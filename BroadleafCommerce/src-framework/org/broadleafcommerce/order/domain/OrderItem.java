@@ -72,4 +72,6 @@ public interface OrderItem {
     public PersonalMessage getPersonalMessage();
 
     public void setPersonalMessage(PersonalMessage personalMessage);
+
+    public boolean isInCategory(String categoryName);
 }

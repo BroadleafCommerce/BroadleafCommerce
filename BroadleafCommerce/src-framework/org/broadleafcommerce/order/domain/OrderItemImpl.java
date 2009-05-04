@@ -234,4 +234,23 @@ public class OrderItemImpl implements OrderItem, Serializable {
     public void setPersonalMessage(PersonalMessage personalMessage) {
         this.personalMessage = personalMessage;
     }
+
+    @Override
+    public boolean isInCategory(String categoryName) {
+        Category currentCategory = category;
+        if(currentCategory != null) {
+            if(currentCategory.getName().equals(categoryName)){
+                return true;
+            }
+            while((currentCategory = currentCategory.getDefaultParentCategory()) != null) {
+                if(currentCategory.getName().equals(categoryName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+
 }
