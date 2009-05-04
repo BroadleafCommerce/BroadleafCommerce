@@ -51,9 +51,10 @@ def orderContainsPlusMark(quantity) {
 								markedQty = itemInList.markedForOffer;
 								quantityToCount = itemQty - markedQty;
 								foreach (x : quantityToCount) {
-									if (count < quantity){
-										itemInList.markForOffer();
-										count++;
+									if (count < quantity){								
+										if (itemInList.markForOffer()) {  
+											count++;
+										}
 									}
 								}
 							}
