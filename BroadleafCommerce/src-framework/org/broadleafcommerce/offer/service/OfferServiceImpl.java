@@ -47,6 +47,7 @@ public class OfferServiceImpl implements OfferService {
     private PricingService pricingService;
 
     static {
+        // load static mvel functions into SB
         InputStream is = OfferServiceImpl.class.getResourceAsStream("/org/broadleafcommerce/offer/service/mvelFunctions.mvel");
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -79,12 +80,13 @@ public class OfferServiceImpl implements OfferService {
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.offer.service.OfferService#applyOffersToOrder(java.util.List, org.broadleafcommerce.order.domain.Order)
+     * 1) setup collection of qualified orders offers and item offer
      */
     @SuppressWarnings("unchecked")
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         List<Offer> qualifiedOrderOffers = new ArrayList<Offer>();
         List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
-        order.removeAllOffers();
+        order.removeAllOffers(); // remove offers from orders, items, fulfillment groups?
         order.setCandidateOffers(new ArrayList<Offer>());
         order = pricingService.executePricing(order);
         List<Offer> offersWithValidDates = removeOutOfDateOffers(offers);
@@ -116,6 +118,7 @@ public class OfferServiceImpl implements OfferService {
             }
             //
             // . Create a sorted list sorted by priority asc then amount desc
+            // TODO: verify if discountPrice is the adjusted price or discount amount(not use reverse comparator)
             //
             Collections.sort(qualifiedOrderOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountPrice")));
             Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
@@ -184,7 +187,7 @@ public class OfferServiceImpl implements OfferService {
 
     private void applyItemOffer(CandidateItemOffer itemOffer, Order order){
         //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-        String expression = itemOffer.getOffer().getAppliesToCustomerRules();
+        String expression = itemOffer.getOffer().getAppliesToItemRules();
         if (expression != null && expression.indexOf("orderContainsPlusMark") >= 0) { //We know that they evaluated multiple items
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("currentItem", itemOffer.getOrderItem());
