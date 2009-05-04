@@ -138,6 +138,17 @@ public class OrderImpl implements Order, Serializable {
         this.total = Money.toAmount(orderTotal);
     }
 
+    public Money getRemainingTotal() {
+        if (getPaymentInfos() == null) {
+            return null;
+        }
+        Money totalPayments = new Money(BigDecimal.ZERO);
+        for (PaymentInfo pi : getPaymentInfos()) {
+            totalPayments = totalPayments.add(pi.getAmount());
+        }
+        return getTotal().subtract(totalPayments);
+    }
+
     public Date getSubmitDate() {
         return submitDate;
     }
