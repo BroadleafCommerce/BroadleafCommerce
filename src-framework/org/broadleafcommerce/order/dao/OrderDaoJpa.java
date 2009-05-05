@@ -1,18 +1,20 @@
 package org.broadleafcommerce.order.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.service.type.OrderStatus;
+import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
@@ -29,6 +31,9 @@ public class OrderDaoJpa implements OrderDao {
     @Resource
     protected EntityConfiguration entityConfiguration;
 
+    @Resource
+    protected CustomerDao customerDao;
+
     @Override
     @SuppressWarnings("unchecked")
     public Order readOrderById(Long orderId) {
@@ -36,17 +41,18 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     @Override
-    public Order maintianOrder(Order order) {
+    public Order save(Order order) {
         if (order.getId() == null) {
             em.persist(order);
         } else {
             order = em.merge(order);
         }
+        em.flush();
         return order;
     }
 
     @Override
-    public void deleteOrderForCustomer(Order salesOrder) {
+    public void delete(Order salesOrder) {
         em.remove(salesOrder);
     }
 
@@ -61,7 +67,6 @@ public class OrderDaoJpa implements OrderDao {
             query.setParameter("orderStatus", orderStatus);
             return query.getResultList();
         }
-
     }
 
     @Override
@@ -72,28 +77,32 @@ public class OrderDaoJpa implements OrderDao {
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Order readCartForCustomer(Customer customer, boolean persist) {
+    public Order readCartForCustomer(Customer customer) {
         Order order = null;
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS);
-        try {
-            order = (Order) query.getSingleResult();
-            return order;
-        } catch (NoResultException nre) {
-            if (persist) {
-                order = create();
-                if (customer.getUsername() == null) {
-                    customer.setUsername(String.valueOf(customer.getId()));
-                    em.persist(customer);
-                }
-                order.setCustomer(customer);
-                order.setStatus(OrderStatus.IN_PROCESS);
-                em.persist(order);
-            }
-            return order;
+        List<Order> result = query.getResultList();
+        if (result.size() > 0) {
+            order = result.get(0);
         }
+        return order;
+    }
+
+    public Order createNewCartForCustomer(Customer customer) {
+        Order order = create();
+        if (customer.getUsername() == null) {
+            customer.setUsername(String.valueOf(customer.getId()));
+            customer = customerDao.save(customer);
+        }
+        order.setCustomer(customer);
+        order.setStatus(OrderStatus.IN_PROCESS);
+
+        order = save(order);
+
+        return order;
     }
 
     @Override
@@ -107,7 +116,12 @@ public class OrderDaoJpa implements OrderDao {
     }
 
     public Order create() {
-        return ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order"));
+        Order order = ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order"));
+        Auditable auditable = new Auditable();
+        auditable.setDateCreated(new Date());
+        order.setAuditable(auditable);
+
+        return order;
     }
 
     @Override

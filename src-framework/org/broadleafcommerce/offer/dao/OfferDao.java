@@ -6,9 +6,9 @@ public interface OfferDao {
 
 	public Offer readOfferById(Long offerId);
 	
-	public Offer maintainOffer(Offer offer);
+	public Offer save(Offer offer);
 	
-	public void deleteOffer(Offer offer);
+	public void delete(Offer offer);
 	
 	public Offer create();
 }

@@ -1,35 +1,38 @@
 package org.broadleafcommerce.order.service;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.mail.MethodNotSupportedException;
-import javax.persistence.NoResultException;
 
+import org.broadleafcommerce.catalog.dao.CategoryDao;
+import org.broadleafcommerce.catalog.dao.ProductDao;
+import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.offer.dao.OfferDao;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.order.dao.OrderDao;
-import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.dao.PaymentInfoDao;
+import org.broadleafcommerce.order.domain.BundleOrderItem;
+import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
+import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.order.service.type.OrderStatus;
-import org.broadleafcommerce.pricing.service.PricingService;
+import org.broadleafcommerce.pricing.service.advice.PricingExecutionManager;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
-import org.broadleafcommerce.profile.dao.AddressDao;
+import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -39,34 +42,36 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderServiceImpl implements OrderService {
 
     @Resource
-    private OrderDao orderDao;
+    protected OrderDao orderDao;
 
     @Resource
-    private OrderItemDao orderItemDao;
+    protected PaymentInfoDao paymentInfoDao;
 
     @Resource
-    private PaymentInfoDao paymentInfoDao;
+    protected FulfillmentGroupDao fulfillmentGroupDao;
 
     @Resource
-    private FulfillmentGroupDao fulfillmentGroupDao;
+    protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
     @Resource
-    private FulfillmentGroupItemDao fulfillmentGroupItemDao;
+    protected OfferDao offerDao;
 
     @Resource
-    private AddressDao addressDao;
+    protected PricingExecutionManager pricingExecutionManager;
 
     @Resource
-    private PricingService pricingService;
+    protected OrderItemService orderItemService;
 
     @Resource
-    private CatalogService catalogService;
+    protected SkuDao skuDao;
 
-    private boolean rollupOrderItems = true;
+    @Resource
+    protected ProductDao productDao;
 
-    private boolean moveNamedOrderItems = true;
+    @Resource
+    protected CategoryDao categoryDao;
 
-    private boolean deleteEmptyNamedOrders = true;
+    protected boolean rollupOrderItems = true;
 
     @Override
     public Order createNamedOrderForCustomer(String name, Customer customer) {
@@ -74,8 +79,7 @@ public class OrderServiceImpl implements OrderService {
         namedOrder.setCustomer(customer);
         namedOrder.setName(name);
         namedOrder.setStatus(OrderStatus.NAMED);
-        return orderDao.maintianOrder(namedOrder);
-
+        return persistOrder(namedOrder);
     }
 
     @Override
@@ -84,17 +88,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findCartForCustomer(Customer customer, boolean createIfDoesntExist) {
-        return orderDao.readCartForCustomer(customer, createIfDoesntExist);
-    }
-
-    @Override
-    public Order findCartForCustomer(Customer customer) {
-        return orderDao.readCartForCustomer(customer, false);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<Order> findOrdersForCustomer(Customer customer) {
         return orderDao.readOrdersForCustomer(customer.getId());
     }
@@ -111,193 +104,142 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order) {
-        FulfillmentGroup fg = null;
-        try {
-            fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
-        } catch (NoResultException nre) {
-            fg = createDefaultFulfillmentGroup(order);
-            fg = fulfillmentGroupDao.maintainDefaultFulfillmentGroup(fg);
-        }
-        if (fg.getFulfillmentGroupItems() == null || fg.getFulfillmentGroupItems().size() == 0) {
-            // Only Default fulfillment group has been created so
-            // add all orderItems for order to group
-            List<OrderItem> orderItems = order.getOrderItems();
-            for (OrderItem orderItem : orderItems) {
-                FulfillmentGroupItem fgi = this.createFulfillmentGroupItemFromOrderItem(orderItem, fg.getId());
-                fgi = fulfillmentGroupItemDao.maintainFulfillmentGroupItem(fgi);
-                fg.addFulfillmentGroupItem(fgi);
-            }
-            // Go ahead and persist it so we don't have to do this later
-            fulfillmentGroupDao.maintainDefaultFulfillmentGroup(fg);
-        }
+        FulfillmentGroup fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
+
         return fg;
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem addSkuToOrder(Order order, Sku sku, int quantity) {
-        return addSkuToOrder(order, sku, null, null, quantity);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem addSkuToOrder(Order order, Sku sku, Product product, Category category, int quantity) {
-        OrderItem orderItem = addSkuToLocalOrder(order, sku, product, category, quantity);
-        return maintainOrderItem(orderItem);
-    }
-
-    @Override
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, int quantity) {
-        Order order = orderDao.readOrderById(orderId);
-        Sku sku = catalogService.findSkuById(skuId);
-        Product product = catalogService.findProductById(productId);
-        Category category = catalogService.findCategoryById(categoryId);
-        return addSkuToOrder(order, sku, product, category, quantity);
-    }
-
-    @Override
-    public List<OrderItem> addSkusToOrder(Map<String, Integer> skuIdQtyMap, Order order) throws MethodNotSupportedException {
-        // for (String skuId : skuIdQtyMap.keySet()) {
-        // Sku sku = catalogservice.findSkuById(skuId);
-        // }
-        // // TODO Implement if needed
-        // return null;
-        throw new MethodNotSupportedException();
-    }
-
-    @Override
-    public OrderItem addItemToCartFromNamedOrder(Order order, Sku sku, int quantity) throws PricingException {
-        removeItemFromOrder(order, sku.getId());
-        return addSkuToOrder(order, sku, quantity);
-    }
-
-    @Override
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer(), true);
-        for (OrderItem orderItem : namedOrder.getOrderItems()) {
-            if (moveNamedOrderItems) {
-                removeItemFromOrder(namedOrder, orderItem.getId());
-            }
-            addSkuToOrder(cartOrder, orderItem.getSku(), orderItem.getQuantity());
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
+        /*
+         * TODO add to test
+         */
+        Order order = findOrderById(orderId);
+        Sku sku = skuDao.readSkuById(skuId);
+        Product product;
+        if (productId != null) {
+            product = productDao.readProductById(productId);
+        } else {
+            product = null;
         }
-        return cartOrder;
+        Category category;
+        if (categoryId != null) {
+            category = categoryDao.readCategoryById(categoryId);
+        } else {
+            category = null;
+        }
+
+        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+        itemRequest.setCategory(category);
+        itemRequest.setProduct(product);
+        itemRequest.setQuantity(quantity);
+        itemRequest.setSku(sku);
+
+        return addDiscreteItemToOrder(order, itemRequest);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
+        DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
+        return addOrderItemToOrder(order, item);
+    }
+
+    @Override
+    public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException {
+        BundleOrderItem item = orderItemService.createBundleOrderItem(itemRequest);
+        return addOrderItemToOrder(order, item);
+    }
+
+    public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException {
+        Order order = findOrderById(orderId);
+        OrderItem orderItem = orderItemService.readOrderItemById(itemId);
+
+        return removeItemFromOrder(order, orderItem);
+    }
+
+    @Override
+    public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException {
+        removeOrderItemFromFullfillmentGroup(order, item);
+        OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
+        order = updateOrder(order);
+        orderItemService.delete(itemFromOrder);
+        return order;
+    }
+
+    @Override
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
         payment.setOrder(order);
-        if (payment.getAddress() != null && payment.getAddress().getId() == null) {
-            payment.setAddress(addressDao.maintainAddress(payment.getAddress()));
-        }
-        return paymentInfoDao.maintainPaymentInfo(payment);
+        order.getPaymentInfos().add(payment);
+        order = persistOrder(order);
+        return order.getPaymentInfos().get(order.getPaymentInfos().indexOf(payment));
     }
 
     @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
-
-        FulfillmentGroup dfg;
-        try {
-            dfg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
-        } catch (NoResultException nre) {
-            // This is the first fulfillment group added so make it the
-            // default one
-            // order.setFulfillmentGroups(new Vector<FulfillmentGroup>([fg]));
-            FulfillmentGroup newDfg = findDefaultFulfillmentGroupForOrder(order);
-
-            order.addFulfillmentGroup(newDfg);
-            newDfg.setAddress(fulfillmentGroup.getAddress());
-            fulfillmentGroupDao.maintainDefaultFulfillmentGroup(newDfg);
-            return newDfg;
+        FulfillmentGroup dfg =  findDefaultFulfillmentGroupForOrder(order);
+        if (dfg == null) {
+            dfg = createDefaultFulfillmentGroup(order, fulfillmentGroup.getAddress());
+            order = updateOrder(order);
+            return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(dfg));
         }
-        // if(dfg == null){
-        // }else
-        if (dfg.getId().equals(fulfillmentGroup.getId())) {
-            // API user is trying to re-add the default fulfillment group
-            // to the same order
-            // um....treat it as update/maintain for now
-            return fulfillmentGroupDao.maintainDefaultFulfillmentGroup(fulfillmentGroup);
+        if (dfg.equals(fulfillmentGroup)) {
+            // API user is trying to re-add the default fulfillment group to the same order
+            fulfillmentGroup.setType(FulfillmentGroupType.DEFAULT);
+            order.getFulfillmentGroups().remove(dfg);
+            order.getFulfillmentGroups().add(fulfillmentGroup);
+            order = updateOrder(order);
+            fulfillmentGroupDao.delete(dfg);
+            return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
         } else {
             // API user is adding a new fulfillment group to the order
-            fulfillmentGroup.setOrderId(order.getId());
-
+            fulfillmentGroup.setOrder(order);
             // 1) For each item in the new fulfillment group
-            if (fulfillmentGroup.getFulfillmentGroupItems() != null) {
-
-                for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-
-                    // 2) Find the item's existing fulfillment group
-
-                    for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                        for (FulfillmentGroupItem tempFgi : fg.getFulfillmentGroupItems()) {
-                            if (tempFgi.getOrderItem().getId().equals(fgItem.getId())) {
-                                // 3) remove item from it's existing fulfillment
-                                // group
-                                fg.getFulfillmentGroupItems().remove(fg);
-                            }
-                        }
-                        fulfillmentGroupDao.maintainFulfillmentGroup(fg);
-                    }
+            for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+                // 2) Find the item's existing fulfillment group
+                for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                    // 3) remove item from it's existing fulfillment
+                    // group
+                    fg.getFulfillmentGroupItems().remove(fgItem);
+                    fulfillmentGroupItemDao.delete(fgItem);
                 }
             }
-
-            FulfillmentGroup returnedFg = fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
-            order.addFulfillmentGroup(returnedFg);
-            maintainOrder(order);
-            return returnedFg;
+            order.getFulfillmentGroups().add(fulfillmentGroup);
+            order = updateOrder(order);
+            return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
         }
     }
 
     @Override
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException {
-
-        FulfillmentGroupItem fgi = null;
-        Order order = orderDao.readOrderById(item.getOrderId());
-
+        Order order = item.getOrder();
         if (fulfillmentGroup.getId() == null) {
-            // API user is trying to add an item to a fulfillment group not
-            // created
+            // API user is trying to add an item to a fulfillment group not created
             fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup);
-            // fulfillmentGroup.setFulfillmentGroupItems(new
-            // ArrayList<FulfillmentGroupItem>());
         }
         // API user is trying to add an item to an existing fulfillment group
         // Steps are
-
-        order = orderDao.readOrderById(item.getOrderId());
-
         // 1) Find the item's existing fulfillment group
-        for (Iterator<FulfillmentGroup> fgIterator = order.getFulfillmentGroups().iterator(); fgIterator.hasNext();) {
-            FulfillmentGroup fg = fgIterator.next();
-            if (fg.getFulfillmentGroupItems() != null) {
-                List<FulfillmentGroupItem> itemsToRemove = new ArrayList<FulfillmentGroupItem>();
-                for (Iterator<FulfillmentGroupItem> fgiIterator = fg.getFulfillmentGroupItems().iterator(); fgiIterator.hasNext();) {
-                    FulfillmentGroupItem tempFgi = fgiIterator.next();
-                    if (tempFgi.getOrderItem().getId().equals(item.getId())) {
-                        fgi = tempFgi;
-                        // 2) remove item from it's existing fulfillment group
-                        itemsToRemove.add(fgi);
-                    }
-                }
-                if (!itemsToRemove.isEmpty()) {
-                    fg.getFulfillmentGroupItems().removeAll(itemsToRemove);
-                    fulfillmentGroupDao.maintainFulfillmentGroup(fg);
+        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+            Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
+            while(itr.hasNext()) {
+                FulfillmentGroupItem fgItem = itr.next();
+                if (fgItem.getOrderItem().equals(item)) {
+                    // 2) remove item from it's existing fulfillment group
+                    itr.remove();
+                    fulfillmentGroupItemDao.delete(fgItem);
                 }
             }
         }
-        if (fgi == null) {
-            fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup.getId());
-        }
+        FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, quantity);
 
         // 3) add the item to the new fulfillment group
-        if (fulfillmentGroup.getType() == null) {
-            fulfillmentGroup.addFulfillmentGroupItem(fgi);
-        }
+        //TODO why are we only adding when the fulfillmentgroup type is null???
+        //if (fulfillmentGroup.getType() == null) {
+        fulfillmentGroup.addFulfillmentGroupItem(fgi);
+        //}
+        order = updateOrder(order);
 
-        fulfillmentGroup = fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
-        fgi.setFulfillmentGroupId(fulfillmentGroup.getId());
-        fgi = fulfillmentGroupItemDao.maintainFulfillmentGroupItem(fgi);
-        return fulfillmentGroup;
+        return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
     }
 
     @Override
@@ -306,108 +248,79 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public FulfillmentGroup updateFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        return fulfillmentGroupDao.maintainFulfillmentGroup(fulfillmentGroup);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public OrderItem updateItemInOrder(Order order, OrderItem item) {
+    public OrderItem updateItemInOrder(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
         // This isn't quite right. It will need to be changed later to reflect
         // the exact requirements we want.
         // item.setQuantity(quantity);
         // item.setOrder(order);
-        return maintainOrderItem(item);
+        if (!order.getOrderItems().contains(item)) {
+            throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() +")");
+        }
+        OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
+        itemFromOrder.setAppliedItemOffers(item.getAppliedItemOffers());
+        itemFromOrder.setCandidateItemOffers(item.getCandidateItemOffers());
+        itemFromOrder.setCategory(item.getCategory());
+        itemFromOrder.setPersonalMessage(item.getPersonalMessage());
+        itemFromOrder.setQuantity(item.getQuantity());
+
+        order = updateOrder(order);
+
+        return itemFromOrder;
     }
 
     @Override
-    public List<OrderItem> updateItemsInOrder(Order order, List<OrderItem> orderItems) {
+    public List<OrderItem> updateItemsInOrder(Order order, List<OrderItem> orderItems) throws ItemNotFoundException, PricingException {
+        ArrayList<OrderItem> response = new ArrayList<OrderItem>();
         for (OrderItem orderItem : orderItems) {
-            // orderItem.setOrder(order);
-            // TODO change this so it persists them all at once instead of each
-            // at a time
-            maintainOrderItem(orderItem);
+            OrderItem responseItem = updateItemInOrder(order, orderItem);
+            response.add(responseItem);
         }
         return orderItems;
     }
 
     @Override
-    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, Long orderItemId, int quantity) throws PricingException {
-        OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
-        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer(), true);
-        if (moveNamedOrderItems) {
-            Order updatedNamedOrder = removeItemFromOrder(namedOrder, orderItem);
-            if (updatedNamedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
-                orderDao.deleteOrderForCustomer(updatedNamedOrder);
-            }
-
-        }
-        return addSkuToOrder(cartOrder, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), quantity);
-
-    }
-
-    @Override
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-        Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder);
-        if (deleteEmptyNamedOrders) {
-            orderDao.deleteOrderForCustomer(namedOrder);
-        }
-        return cartOrder;
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Order removeItemFromOrder(Order order, long orderItemId) throws PricingException {
-        OrderItem orderItem = orderItemDao.readOrderItemById(orderItemId);
-        if (orderItem == null) {
-            return null;
-        }
-        removeOrderItemFromFullfillmentGroup(order, orderItem);
-        orderItemDao.deleteOrderItem(orderItem);
-        order = pricingService.executePricing(order);
-        return orderDao.readOrderById(order.getId());
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException {
-        orderItemDao.deleteOrderItem(item);
-        removeOrderItemFromFullfillmentGroup(order, item);
-        order = pricingService.executePricing(order);
-        order.getOrderItems().remove(item);
-        orderDao.maintianOrder(order);
-        return orderDao.readOrderById(order.getId());
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRED)
-    public void removeAllFulfillmentGroupsFromOrder(Order order) {
+    public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException {
         if (order.getFulfillmentGroups() != null) {
             for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {
                 FulfillmentGroup fulfillmentGroup = iterator.next();
                 iterator.remove();
-                fulfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
+                fulfillmentGroupDao.delete(fulfillmentGroup);
             }
+            updateOrder(order);
         }
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
         order.getFulfillmentGroups().remove(fulfillmentGroup);
-        maintainOrder(order);
-        fulfillmentGroupDao.removeFulfillmentGroupForOrder(order, fulfillmentGroup);
+        fulfillmentGroupDao.delete(fulfillmentGroup);
+        updateOrder(order);
     }
 
     @Override
-    public Order removeOfferFromOrder(Order order, Offer offer) {
-        throw new UnsupportedOperationException();
+    public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException {
+        order.getCandidateOffers().remove(offer);
+        offerDao.delete(offer);
+        order = updateOrder(order);
+        return order;
+    }
+
+    @Override
+    public Order removeAllOffersFromOrder(Order order) throws PricingException {
+        Iterator<Offer> itr = order.getCandidateOffers().iterator();
+        while(itr.hasNext()) {
+            Offer offer = itr.next();
+            itr.remove();
+            offerDao.delete(offer);
+        }
+        order = updateOrder(order);
+        return order;
     }
 
     @Override
     public void removeNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = findNamedOrderForCustomer(name, customer);
-        orderDao.deleteOrderForCustomer(namedOrder);
+        orderDao.delete(namedOrder);
     }
 
     @Override
@@ -421,145 +334,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public void cancelOrder(Order order) {
-        orderDao.deleteOrderForCustomer(order);
-    }
-
-    protected Order maintainOrder(Order order) throws PricingException {
-        order = pricingService.executePricing(order);
-        return orderDao.maintianOrder(order);
-    }
-
-    protected OrderItem maintainOrderItem(OrderItem orderItem) {
-        orderItem.setPrice(orderItem.getSku().getSalePrice().multiply(BigDecimal.valueOf(orderItem.getQuantity())));
-        OrderItem returnedOrderItem = orderItemDao.maintainOrderItem(orderItem);
-        // maintainOrder(orderItem.getOrder());
-        return returnedOrderItem;
-    }
-
-    protected FulfillmentGroup createDefaultFulfillmentGroup(Order order) {
-        FulfillmentGroup newFg = fulfillmentGroupDao.createDefault();
-        newFg.setOrderId(order.getId());
-        newFg.setType(FulfillmentGroupType.DEFAULT);
-        // for (OrderItem orderItem : order.getOrderItems()) {
-        // newFg = addItemToFulfillmentGroup(orderItem, newFg,
-        // orderItem.getQuantity());
-        // }
-
-        return newFg;
-    }
-
-    protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, Long fulfillmentGroupId) {
-        FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
-        fgi.setFulfillmentGroupId(fulfillmentGroupId);
-        fgi.setOrderItem(orderItem);
-        fgi.setQuantity(orderItem.getQuantity());
-        return fgi;
-    }
-
-    protected OrderItem addSkuToLocalOrder(Order order, Sku sku, Product product, Category category, int quantity) {
-        OrderItem orderItem = null;
-        List<OrderItem> orderItems = order.getOrderItems();
-        if (orderItems != null && rollupOrderItems) {
-            for (OrderItem orderItem2 : orderItems) {
-                if (orderItem2.getSku().getId().equals(sku.getId())) {
-                    orderItem = orderItem2;
-                    break;
-                }
-            }
-        }
-        if (orderItem == null) {
-            // orderItem = new OrderItem();
-            orderItem = orderItemDao.create();
-        }
-        orderItem.setProduct(product);
-        orderItem.setCategory(category);
-        orderItem.setSku(sku);
-        orderItem.setQuantity(orderItem.getQuantity() + quantity);
-        // orderItem.setOrder(order);
-        orderItem.setOrderId(order.getId());
-        return orderItem;
-    }
-
-    protected void removeOrderItemFromFullfillmentGroup(Order order, OrderItem orderItem) {
-        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
-        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-            List<FulfillmentGroupItem> itemsToRemove = new ArrayList<FulfillmentGroupItem>();
-            List<FulfillmentGroupItem> fgItems = fulfillmentGroup.getFulfillmentGroupItems();
-            for (FulfillmentGroupItem fulfillmentGroupItem : fgItems) {
-                if(fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
-                    itemsToRemove.add(fulfillmentGroupItem);
-                }
-            }
-            if (!itemsToRemove.isEmpty()) {
-                for (FulfillmentGroupItem fgi : itemsToRemove) {
-                    fulfillmentGroupItemDao.deleteFulfillmentGroupItem(fgi);
-                }
-                fulfillmentGroup.getFulfillmentGroupItems().removeAll(itemsToRemove);
-            }
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * @seeorg.broadleafcommerce.order.service.OrderService#mergeCart(org.
-     * broadleafcommerce.profile.domain.Customer, java.lang.Long)
-     */
-    @Override
-    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException {
-        MergeCartResponse mergeCartResponse = new MergeCartResponse();
-        Order customerCart = findCartForCustomer(customer, false);
-        // reconstruct cart items (make sure they are valid)
-        ReconstructCartResponse reconstructCartResponse = reconstructCart(customer);
-        mergeCartResponse.setRemovedItems(reconstructCartResponse.getRemovedItems());
-        customerCart = reconstructCartResponse.getOrder();
-
-        // add anonymous cart items (make sure they are valid)
-        if ((customerCart == null || !customerCart.getId().equals(anonymousCartId)) && anonymousCartId != null) {
-            Order anonymousCart = findOrderById(anonymousCartId);
-            if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
-                if (customerCart == null) {
-                    customerCart = findCartForCustomer(customer, true);
-                }
-                // TODO improve merge algorithm to support various requirements
-                // currently we'll just add items
-                for (OrderItem orderItem : anonymousCart.getOrderItems()) {
-                    if (orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
-                        addSkuToOrder(customerCart, orderItem.getSku(), orderItem.getProduct(), orderItem.getCategory(), orderItem.getQuantity());
-                        mergeCartResponse.getAddedItems().add(orderItem);
-                    } else {
-                        mergeCartResponse.getRemovedItems().add(orderItem);
-                    }
-                    removeItemFromOrder(anonymousCart, orderItem.getId());
-                    orderDao.deleteOrderForCustomer(anonymousCart);
-                }
-            }
-        }
-        mergeCartResponse.setOrder(customerCart);
-        return mergeCartResponse;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.broadleafcommerce.order.service.OrderService#reconstructCart(org.
-     * broadleafcommerce.profile.domain.Customer)
-     */
-    @Override
-    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
-        ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
-        Order customerCart = findCartForCustomer(customer, false);
-        if (customerCart != null) {
-            for (OrderItem orderItem : customerCart.getOrderItems()) {
-                if (!orderItem.getSku().isActive(orderItem.getProduct(), orderItem.getCategory())) {
-                    reconstructCartResponse.getRemovedItems().add(orderItem);
-                    removeItemFromOrder(customerCart, orderItem.getId());
-                }
-            }
-        }
-        reconstructCartResponse.setOrder(customerCart);
-        return reconstructCartResponse;
+        orderDao.delete(order);
     }
 
     @Override
@@ -575,20 +351,140 @@ public class OrderServiceImpl implements OrderService {
         this.rollupOrderItems = rollupOrderItems;
     }
 
-    public boolean isMoveNamedOrderItems() {
-        return moveNamedOrderItems;
+    protected OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
+        OrderItem addedItem;
+        List<OrderItem> orderItems = order.getOrderItems();
+        boolean containsItem = orderItems.contains(newOrderItem);
+        if (rollupOrderItems && containsItem) {
+            OrderItem itemFromOrder = orderItems.get(orderItems.indexOf(newOrderItem));
+            itemFromOrder.setQuantity(itemFromOrder.getQuantity() + newOrderItem.getQuantity());
+            addedItem = itemFromOrder;
+        } else {
+            if (containsItem) {
+                OrderItem itemFromOrder = orderItems.get(orderItems.indexOf(newOrderItem));
+                itemFromOrder.setQuantity(newOrderItem.getQuantity());
+                addedItem = itemFromOrder;
+            } else {
+                orderItems.add(newOrderItem);
+                newOrderItem.setOrder(order);
+                addedItem = newOrderItem;
+            }
+        }
+
+        //don't worry about fulfillment groups, since the phase for adding items occurs before shipping arrangements
+
+        order = updateOrder(order);
+
+        return order.getOrderItems().get(order.getOrderItems().indexOf(addedItem));
     }
 
-    public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
-        this.moveNamedOrderItems = moveNamedOrderItems;
+    protected Order updateOrder(Order order) throws PricingException {
+        pricingExecutionManager.executePricing(order);
+        return orderDao.save(order);
     }
 
-    public boolean isDeleteEmptyNamedOrders() {
-        return deleteEmptyNamedOrders;
+    protected Order persistOrder(Order order) {
+        return orderDao.save(order);
     }
 
-    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
-        this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
+    protected FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
+        /*
+         * TODO test order is persisted with default fulfillment group
+         */
+        FulfillmentGroup newFg = fulfillmentGroupDao.createDefault();
+        newFg.setOrder(order);
+        newFg.setType(FulfillmentGroupType.DEFAULT);
+        newFg.setAddress(address);
+
+        return newFg;
+    }
+
+    protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
+        FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
+        fgi.setFulfillmentGroup(fulfillmentGroup);
+        fgi.setOrderItem(orderItem);
+        fgi.setQuantity(quantity);
+        return fgi;
+    }
+
+    protected void removeOrderItemFromFullfillmentGroup(Order order, OrderItem orderItem) {
+        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            Iterator<FulfillmentGroupItem> itr = fulfillmentGroup.getFulfillmentGroupItems().iterator();
+            while(itr.hasNext()) {
+                FulfillmentGroupItem fulfillmentGroupItem = itr.next();
+                if(fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
+                    itr.remove();
+                    fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                }
+            }
+        }
+    }
+
+    protected DiscreteOrderItemRequest createDiscreteOrderItemRequest(DiscreteOrderItem discreteOrderItem) {
+        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+        itemRequest.setCategory(discreteOrderItem.getCategory());
+        itemRequest.setProduct(discreteOrderItem.getProduct());
+        itemRequest.setQuantity(discreteOrderItem.getQuantity());
+        itemRequest.setSku(discreteOrderItem.getSku());
+        return itemRequest;
+    }
+
+    protected BundleOrderItemRequest createBundleOrderItemRequest(BundleOrderItem bundleOrderItem, List<DiscreteOrderItemRequest> discreteOrderItemRequests) {
+        BundleOrderItemRequest bundleOrderItemRequest = new BundleOrderItemRequest();
+        bundleOrderItemRequest.setCategory(bundleOrderItem.getCategory());
+        bundleOrderItemRequest.setName(bundleOrderItem.getName());
+        bundleOrderItemRequest.setQuantity(bundleOrderItem.getQuantity());
+        bundleOrderItemRequest.setDiscreteOrderItems(discreteOrderItemRequests);
+        return bundleOrderItemRequest;
+    }
+
+    public OrderDao getOrderDao() {
+        return orderDao;
+    }
+
+    public void setOrderDao(OrderDao orderDao) {
+        this.orderDao = orderDao;
+    }
+
+    public PaymentInfoDao getPaymentInfoDao() {
+        return paymentInfoDao;
+    }
+
+    public void setPaymentInfoDao(PaymentInfoDao paymentInfoDao) {
+        this.paymentInfoDao = paymentInfoDao;
+    }
+
+    public FulfillmentGroupDao getFulfillmentGroupDao() {
+        return fulfillmentGroupDao;
+    }
+
+    public void setFulfillmentGroupDao(FulfillmentGroupDao fulfillmentGroupDao) {
+        this.fulfillmentGroupDao = fulfillmentGroupDao;
+    }
+
+    public FulfillmentGroupItemDao getFulfillmentGroupItemDao() {
+        return fulfillmentGroupItemDao;
+    }
+
+    public void setFulfillmentGroupItemDao(FulfillmentGroupItemDao fulfillmentGroupItemDao) {
+        this.fulfillmentGroupItemDao = fulfillmentGroupItemDao;
+    }
+
+    public PricingExecutionManager getPricingExecutionManager() {
+        return pricingExecutionManager;
+    }
+
+    public void setPricingExecutionManager(PricingExecutionManager pricingExecutionManager) {
+        this.pricingExecutionManager = pricingExecutionManager;
+    }
+
+    public OrderItemService getOrderItemService() {
+        return orderItemService;
+    }
+
+    public void setOrderItemService(OrderItemService orderItemService) {
+        this.orderItemService = orderItemService;
     }
 
 }

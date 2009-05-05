@@ -5,8 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.service.MergeCartResponse;
-import org.broadleafcommerce.order.service.OrderService;
+import org.broadleafcommerce.order.service.CartService;
+import org.broadleafcommerce.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
@@ -26,7 +26,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     private CustomerService customerService;
 
     @Resource
-    private OrderService orderService;
+    private CartService cartService;
 
     @Resource
     private CustomerState customerState;
@@ -34,7 +34,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         Customer loggedInCustomer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
         Customer anonymousCustomer = customerState.getCustomer(request);
-        Order cart = orderService.findCartForCustomer(anonymousCustomer);
+        Order cart = cartService.findCartForCustomer(anonymousCustomer);
         Long anonymousCartId;
         if (cart != null) {
             anonymousCartId = cart.getId();
@@ -43,7 +43,7 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
         }
         MergeCartResponse mergeCartResponse;
         try {
-            mergeCartResponse = orderService.mergeCart(loggedInCustomer, anonymousCartId);
+            mergeCartResponse = cartService.mergeCart(loggedInCustomer, anonymousCartId);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }

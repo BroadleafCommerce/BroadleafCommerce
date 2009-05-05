@@ -1,12 +1,19 @@
 package org.broadleafcommerce.order.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.order.domain.BundleOrderItem;
+import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.domain.OrderItemImpl;
+import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -23,7 +30,7 @@ public class OrderItemDaoJpa implements OrderItemDao {
     private EntityConfiguration entityConfiguration;
 
     @Override
-    public OrderItem maintainOrderItem(OrderItem orderItem) {
+    public OrderItem save(OrderItem orderItem) {
         if (orderItem.getId() == null) {
             em.persist(orderItem);
         } else {
@@ -32,20 +39,54 @@ public class OrderItemDaoJpa implements OrderItemDao {
         return orderItem;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public OrderItem readOrderItemById(Long orderItemId) {
-        return (OrderItem) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.OrderItem"), orderItemId);
+        return em.find(OrderItemImpl.class, orderItemId);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void deleteOrderItem(OrderItem orderItem) {
-        OrderItem deleteItem = (OrderItem) em.getReference(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.OrderItem"), orderItem.getId());
-        em.remove(deleteItem);
+    public void delete(OrderItem orderItem) {
+        em.remove(orderItem);
     }
 
-    public OrderItem create() {
-        return ((OrderItem) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.OrderItem"));
+    public OrderItem create(OrderItemType orderItemType) {
+        return (OrderItem) entityConfiguration.createEntityInstance(orderItemType.getClassName());
+    }
+
+    public OrderItem cloneOrderItem(OrderItem orderItem, OrderItemType orderItemType) {
+        if (orderItemType == OrderItemType.DISCRETE) {
+            return cloneDiscreteOrderItem((DiscreteOrderItem) orderItem);
+        } else {
+            return cloneBundleOrderItem((BundleOrderItem) orderItem);
+        }
+    }
+
+    protected DiscreteOrderItem cloneDiscreteOrderItem(DiscreteOrderItem orderItem) {
+        DiscreteOrderItem newItem = (DiscreteOrderItem) create(OrderItemType.DISCRETE);
+        newItem.setCategory(orderItem.getCategory());
+        newItem.setPersonalMessage(orderItem.getPersonalMessage());
+        newItem.setProduct(orderItem.getProduct());
+        newItem.setQuantity(orderItem.getQuantity());
+        newItem.setSku(orderItem.getSku());
+        newItem.setPrice(orderItem.getPrice());
+
+        return newItem;
+    }
+
+    protected BundleOrderItem cloneBundleOrderItem(BundleOrderItem orderItem) {
+        BundleOrderItem newItem = (BundleOrderItem) create(OrderItemType.BUNDLE);
+        newItem.setCategory(orderItem.getCategory());
+        newItem.setName(orderItem.getName());
+        newItem.setPersonalMessage(orderItem.getPersonalMessage());
+        newItem.setQuantity(orderItem.getQuantity());
+        List<DiscreteOrderItem> discreteItems = orderItem.getDiscreteOrderItems();
+        ArrayList<DiscreteOrderItem> newDiscreteOrders = new ArrayList<DiscreteOrderItem>();
+        for (DiscreteOrderItem discreteItem : discreteItems) {
+            newDiscreteOrders.add(cloneDiscreteOrderItem(discreteItem));
+        }
+        newItem.setDiscreteOrderItems(newDiscreteOrders);
+        newItem.setPrice(orderItem.getPrice());
+
+        return newItem;
     }
 }

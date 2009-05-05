@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -86,17 +87,18 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "SUBMIT_DATE")
     private Date submitDate;
 
-    @OneToMany(mappedBy = "orderId", targetEntity = OrderItemImpl.class)
+    @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
     private List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
-    @OneToMany(mappedBy = "orderId", targetEntity = FulfillmentGroupImpl.class)
+    @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
     private List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
-    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
+    //TODO does this work?? MapKey is supposed to be used with the type "Map" This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
+    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class, cascade = {CascadeType.ALL})
     @MapKey(name = "id")
     private List<Offer> candidateOffers = new ArrayList<Offer>();
 
-    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class)
+    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
     private List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
     @Transient
@@ -182,7 +184,7 @@ public class OrderImpl implements Order, Serializable {
         this.orderItems = orderItems;
     }
 
-    @Override
+    /*@Override
     public void addOrderItem(OrderItem orderItem) {
         this.orderItems.add(orderItem);
     }
@@ -190,7 +192,7 @@ public class OrderImpl implements Order, Serializable {
     @Override
     public void removeOrderItem(OrderItem orderItem) {
         this.orderItems.remove(orderItem);
-    }
+    }*/
 
     public List<FulfillmentGroup> getFulfillmentGroups() {
         return fulfillmentGroups;
@@ -200,7 +202,7 @@ public class OrderImpl implements Order, Serializable {
         this.fulfillmentGroups = fulfillmentGroups;
     }
 
-    public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+    /*public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         if (this.fulfillmentGroups == null) {
             this.fulfillmentGroups = new ArrayList<FulfillmentGroup>();
         }
@@ -209,19 +211,19 @@ public class OrderImpl implements Order, Serializable {
 
     public void removeFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         this.fulfillmentGroups.remove(fulfillmentGroup);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public void addCandidateOffer(Offer offer) {
         candidateOffers.add(offer);
-    }
+    }*/
 
     @Override
     public List<Offer> getCandidateOffers() {
         return candidateOffers;
     }
 
-    @Override
+    /*@Override
     public void removeAllOffers() {
         if (candidateOffers != null) {
             candidateOffers.clear();
@@ -237,7 +239,7 @@ public class OrderImpl implements Order, Serializable {
                 fg.removeAllOffers();
             }
         }
-    }
+    }*/
 
     public boolean isMarkedForOffer() {
         return markedForOffer;
@@ -309,5 +311,32 @@ public class OrderImpl implements Order, Serializable {
 
     public void setPaymentInfos(List<PaymentInfo> paymentInfos) {
         this.paymentInfos = paymentInfos;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || !(other instanceof OrderImpl)) return false;
+
+        OrderImpl item = (OrderImpl) other;
+
+        if (name != null ? !name.equals(item.name) : item.name != null) return false;
+        if (customer != null ? !customer.equals(item.customer) : item.customer != null) return false;
+
+        Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
+        Date otherDateCreated = item.auditable != null ? item.auditable.getDateCreated() : null;
+        if (myDateCreated != null ? !myDateCreated.equals(otherDateCreated) : otherDateCreated != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (customer != null ? customer.hashCode() : 0);
+        Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
+        result = 31 * result + (myDateCreated != null ? myDateCreated.hashCode() : 0);
+
+        return result;
     }
 }

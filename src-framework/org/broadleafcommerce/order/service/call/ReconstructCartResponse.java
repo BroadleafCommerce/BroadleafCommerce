@@ -1,4 +1,4 @@
-package org.broadleafcommerce.order.service;
+package org.broadleafcommerce.order.service.call;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,13 +6,11 @@ import java.util.List;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 
-public class MergeCartResponse {
+public class ReconstructCartResponse {
 
     private Order order;
 
-    private List<OrderItem> addedItems = new ArrayList<OrderItem>();;
-
-    private List<OrderItem> removedItems = new ArrayList<OrderItem>();;
+    private List<OrderItem> removedItems = new ArrayList<OrderItem>();
 
     public Order getOrder() {
         return order;
@@ -20,14 +18,6 @@ public class MergeCartResponse {
 
     public void setOrder(Order order) {
         this.order = order;
-    }
-
-    public List<OrderItem> getAddedItems() {
-        return addedItems;
-    }
-
-    public void setAddedItems(List<OrderItem> addedItems) {
-        this.addedItems = addedItems;
     }
 
     public List<OrderItem> getRemovedItems() {

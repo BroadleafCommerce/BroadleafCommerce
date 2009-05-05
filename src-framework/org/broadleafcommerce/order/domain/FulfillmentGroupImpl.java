@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -46,16 +47,17 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "ORDER_ID")
-    private Long orderId;
+    @ManyToOne(targetEntity = OrderImpl.class)
+    @JoinColumn(name = "ORDER_ID")
+    private Order order;
 
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
 
-    @OneToMany(mappedBy = "fulfillmentGroupId", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
-    private List<FulfillmentGroupItem> fulfillmentGroupItems;
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
+    private List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
 
@@ -79,13 +81,15 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Enumerated(EnumType.STRING)
     private FulfillmentGroupType type;
 
+    //TODO does this work?? MapKey is supposed to be used with the type "Map". This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
     @MapKey(name = "id")
-    private List<Offer> candidateOffers;
+    private List<Offer> candidateOffers = new ArrayList<Offer>();
 
+    //TODO does this work?? MapKey is supposed to be used with the type "Map". This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
     @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
     @MapKey(name = "id")
-    private List<OfferAudit> appliedOffers;
+    private List<OfferAudit> appliedOffers = new ArrayList<OfferAudit>();
 
     @Column(name = "CITY_TAX")
     private BigDecimal cityTax;
@@ -117,12 +121,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         this.id = id;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public String getReferenceNumber() {
@@ -312,5 +316,25 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     public void setPersonalMessage(PersonalMessage personalMessage) {
         this.personalMessage = personalMessage;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || !(other instanceof FulfillmentGroupImpl)) return false;
+
+        FulfillmentGroupImpl item = (FulfillmentGroupImpl) other;
+
+        if (address != null && item.address != null ? !address.equals(item.address) : address != item.address) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = address != null ? address.hashCode() : 0;
+        result *= 31;
+
+        return result;
     }
 }

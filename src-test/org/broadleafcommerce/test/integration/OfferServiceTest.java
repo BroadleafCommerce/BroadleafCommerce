@@ -22,7 +22,7 @@ public class OfferServiceTest extends BaseTest{
     @Resource
     CustomerService customerService;
 
-    @Test(groups = {"applyOffersToOrder"}, dataProvider = "offerDataProvider",  dataProviderClass=OfferDataProvider.class, dependsOnGroups = {"findCurrentCartForCustomerAfterCreation","getItemsForOrder" })
+    @Test(groups = {"applyOffersToOrder"}, dataProvider = "offerDataProvider",  dataProviderClass=OfferDataProvider.class, dependsOnGroups = {"findCurrentCartForCustomer","getItemsForOrder" })
     public void applyOffersToOrder(List<Offer> allOffers){
         //        String userName = "customer1";
         //        Customer customer = customerService.readCustomerByUsername(userName);

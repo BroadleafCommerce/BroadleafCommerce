@@ -9,11 +9,11 @@ public interface FulfillmentGroupItemDao {
 
     public FulfillmentGroupItem readFulfillmentGroupItemById(Long fulfillmentGroupItemId);
 
-    public FulfillmentGroupItem maintainFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
+    public FulfillmentGroupItem save(FulfillmentGroupItem fulfillmentGroupItem);
 
     public List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
-    public void deleteFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
+    public void delete(FulfillmentGroupItem fulfillmentGroupItem);
 
     public FulfillmentGroupItem create();
 }

@@ -5,12 +5,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.order.dao.OrderDao;
+import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.domain.OrderItemImpl;
 import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
@@ -25,9 +25,12 @@ public class PricingTest extends BaseTest {
     @Resource(name="pricingService")
     private PricingService pricingService;
 
+    @Resource
+    private OrderDao orderDao;
+
     @Test
     public void testPricing() throws Exception {
-        Order order = new OrderImpl();
+        Order order = orderDao.create();
         FulfillmentGroup group = new FulfillmentGroupImpl();
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         groups.add(group);
@@ -35,7 +38,7 @@ public class PricingTest extends BaseTest {
         Money total = new Money(5D);
         group.setPrice(total);
 
-        OrderItem item = new OrderItemImpl();
+        OrderItem item = new DiscreteOrderItemImpl();
         item.setPrice(new Money(10D));
         item.setQuantity(1);
         List<OrderItem> items = new ArrayList<OrderItem>();
@@ -53,7 +56,7 @@ public class PricingTest extends BaseTest {
 
     @Test
     public void testShipping() throws Exception {
-        Order order = new OrderImpl();
+        Order order = orderDao.create();
         FulfillmentGroup group1 = new FulfillmentGroupImpl();
         FulfillmentGroup group2 = new FulfillmentGroupImpl();
 
@@ -78,7 +81,7 @@ public class PricingTest extends BaseTest {
         order.setSubTotal(total);
         order.setTotal(total);
 
-        OrderItem item = new OrderItemImpl();
+        OrderItem item = new DiscreteOrderItemImpl();
         item.setPrice(new Money(10D));
         item.setQuantity(1);
         List<OrderItem> items = new ArrayList<OrderItem>();

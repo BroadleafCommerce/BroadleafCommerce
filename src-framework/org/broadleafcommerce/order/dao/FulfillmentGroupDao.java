@@ -7,15 +7,11 @@ public interface FulfillmentGroupDao {
 
     public FulfillmentGroup readFulfillmentGroupById(Long fulfillmentGroupId);
 
-    public FulfillmentGroup maintainFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
-
-    public FulfillmentGroup maintainDefaultFulfillmentGroup(FulfillmentGroup defaultFulfillmentGroup);
-
-    public FulfillmentGroup readDefaultFulfillmentGroupById(Long fulfillmentGroupId);
+    public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
 
     public FulfillmentGroup readDefaultFulfillmentGroupForOrder(Order order);
 
-    public void removeFulfillmentGroupForOrder(Order order, FulfillmentGroup fulfillmentGroup);
+    public void delete(FulfillmentGroup fulfillmentGroup);
 
     public FulfillmentGroup createDefault();
 

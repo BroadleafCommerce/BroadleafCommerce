@@ -16,27 +16,27 @@ public class AvailabilityDaoJpa implements AvailabilityDao {
     private EntityManager em;
 
     @SuppressWarnings("unchecked")
-	public List<SkuAvailability> readSKUAvailability(List<Long> skuIds, boolean realTime) {
+    public List<SkuAvailability> readSKUAvailability(List<Long> skuIds, boolean realTime) {
         Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_SKU_IDS");
         if (! realTime) {
-        	query.setHint("org.hibernate.cacheable", true);
+            query.setHint("org.hibernate.cacheable", true);
         }
         query.setParameter("skuIds", skuIds);
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
-	public List<SkuAvailability> readSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime) {
+    public List<SkuAvailability> readSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime) {
         Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_LOCATION_ID_AND_SKU_IDS");
         if (! realTime) {
-        	query.setHint("org.hibernate.cacheable", true);
+            query.setHint("org.hibernate.cacheable", true);
         }
         query.setParameter("skuIds", skuIds);
         query.setParameter("locationId", locationId);
         return query.getResultList();
     }
 
-    public void saveSKUAvailability(SkuAvailability skuAvailability) {
-    	em.persist(skuAvailability);
+    public void save(SkuAvailability skuAvailability) {
+        em.persist(skuAvailability);
     }
 }

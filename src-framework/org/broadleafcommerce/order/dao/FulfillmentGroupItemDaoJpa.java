@@ -27,12 +27,12 @@ public class FulfillmentGroupItemDaoJpa implements FulfillmentGroupItemDao {
     private EntityConfiguration entityConfiguration;
 
     @Override
-    public void deleteFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem) {
+    public void delete(FulfillmentGroupItem fulfillmentGroupItem) {
         em.remove(fulfillmentGroupItem);
     }
 
     @Override
-    public FulfillmentGroupItem maintainFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem) {
+    public FulfillmentGroupItem save(FulfillmentGroupItem fulfillmentGroupItem) {
         if (fulfillmentGroupItem.getId() == null) {
             em.persist(fulfillmentGroupItem);
         } else {

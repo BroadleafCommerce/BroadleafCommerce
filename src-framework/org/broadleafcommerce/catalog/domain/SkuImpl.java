@@ -340,4 +340,24 @@ public class SkuImpl implements Sku, Serializable {
     public void setAllParentProducts(List<Product> allParentProducts) {
         this.allParentProducts = allParentProducts;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || !(other instanceof SkuImpl)) return false;
+
+        SkuImpl item = (SkuImpl) other;
+
+        if (name != null && item.name != null ? !name.equals(item.name) : name != item.name) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result *= 31;
+
+        return result;
+    }
 }

@@ -17,7 +17,7 @@ public class BasePriceDaoJpa implements BasePriceDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    public BasePrice maintainBasePrice(BasePrice basePrice) {
+    public BasePrice save(BasePrice basePrice) {
         if (basePrice.getId() == null) {
             em.persist(basePrice);
         } else {

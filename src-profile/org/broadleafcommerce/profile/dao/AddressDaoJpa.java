@@ -22,7 +22,7 @@ public class AddressDaoJpa implements AddressDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    public Address maintainAddress(Address address) {
+    public Address save(Address address) {
         if (address.getId() == null) {
             em.persist(address);
         } else {

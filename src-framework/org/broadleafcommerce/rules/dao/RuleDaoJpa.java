@@ -18,7 +18,7 @@ public class RuleDaoJpa implements RuleDao {
     private EntityManager em;
 
     @Override
-    public ShoppingCartPromotion maintainShoppingCartPromotion(ShoppingCartPromotion shoppingCartPromotion) {
+    public ShoppingCartPromotion save(ShoppingCartPromotion shoppingCartPromotion) {
         if (shoppingCartPromotion.getId() == null) {
             em.persist(shoppingCartPromotion);
         } else {

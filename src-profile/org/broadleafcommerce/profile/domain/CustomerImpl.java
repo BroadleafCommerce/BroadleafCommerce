@@ -176,4 +176,24 @@ public class CustomerImpl implements Customer, Serializable {
     public void setUnencodedChallengeAnswer(String unencodedChallengeAnswer) {
         this.unencodedChallengeAnswer = unencodedChallengeAnswer;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || !(other instanceof CustomerImpl)) return false;
+
+        CustomerImpl item = (CustomerImpl) other;
+
+        if (username != null ? !username.equals(item.username) : item.username != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = username != null ? username.hashCode() : 0;
+        result *= 31;
+
+        return result;
+    }
 }

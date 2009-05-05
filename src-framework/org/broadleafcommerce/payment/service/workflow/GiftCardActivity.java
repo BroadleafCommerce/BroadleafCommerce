@@ -6,7 +6,7 @@ import java.util.Map;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.module.GiftCardModule;
-import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
@@ -28,7 +28,7 @@ public class GiftCardActivity extends BaseActivity {
              * TODO add database logging to a log table before and after each of the actions.
              * Detailed logging is a PCI requirement.
              */
-            if (info.getType().equals(PaymentInfoType.GIFT_CARD)) {
+            if (info.getType().equals(BLCPaymentInfoType.GIFT_CARD)) {
                 if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
                     giftCardModule.authorize(info);
                 } else if (seed.getActionType() == PaymentActionType.DEBIT) {

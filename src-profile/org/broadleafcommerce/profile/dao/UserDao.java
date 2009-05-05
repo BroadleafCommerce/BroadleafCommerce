@@ -11,7 +11,7 @@ public interface UserDao {
 
     public List<UserRole> readUserRolesByUserId(Long userId);
 
-    public User maintainUser(User user);
+    public User save(User user);
 
     public User readUserByEmail(String emailAddress);
 

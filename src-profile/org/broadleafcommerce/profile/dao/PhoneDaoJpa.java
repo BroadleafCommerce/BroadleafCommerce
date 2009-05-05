@@ -22,7 +22,7 @@ public class PhoneDaoJpa implements PhoneDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    public Phone maintainPhone(Phone phone) {
+    public Phone save(Phone phone) {
         if (phone.getId() == null) {
             em.persist(phone);
         } else {

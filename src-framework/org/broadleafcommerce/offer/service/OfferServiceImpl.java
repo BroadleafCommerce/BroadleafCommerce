@@ -25,6 +25,7 @@ import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
@@ -42,6 +43,9 @@ public class OfferServiceImpl implements OfferService {
 
     private static final LRUMap expressionCache = new LRUMap(100);
     private static final StringBuffer functions = new StringBuffer();
+
+    @Resource
+    private OrderService orderService;
 
     @Resource
     private PricingService pricingService;
@@ -86,9 +90,8 @@ public class OfferServiceImpl implements OfferService {
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         List<Offer> qualifiedOrderOffers = new ArrayList<Offer>();
         List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
-        order.removeAllOffers(); // remove offers from orders, items, fulfillment groups?
+        order = orderService.removeAllOffersFromOrder(order);
         order.setCandidateOffers(new ArrayList<Offer>());
-        order = pricingService.executePricing(order);
         List<Offer> offersWithValidDates = removeOutOfDateOffers(offers);
         if (offersWithValidDates != null && ! offersWithValidDates.isEmpty()) {
 

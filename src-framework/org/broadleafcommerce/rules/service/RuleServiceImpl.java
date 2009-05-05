@@ -34,7 +34,7 @@ public class RuleServiceImpl implements RuleService {
 	@Transactional(propagation = Propagation.REQUIRED)
 	public ShoppingCartPromotion saveShoppingCartPromotion(
 			ShoppingCartPromotion shoppingCartPromotion) {
-		return ruleDao.maintainShoppingCartPromotion(shoppingCartPromotion);
+		return ruleDao.save(shoppingCartPromotion);
 	}
 
 	public Package addRuleToNewPackage(File drlFile) {

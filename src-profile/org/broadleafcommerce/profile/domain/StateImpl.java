@@ -42,4 +42,24 @@ public class StateImpl implements State, Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || !(other instanceof StateImpl)) return false;
+
+        StateImpl item = (StateImpl) other;
+
+        if (name != null && item.name != null ? !name.equals(item.name) : name != item.name) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result *= 31;
+
+        return result;
+    }
 }

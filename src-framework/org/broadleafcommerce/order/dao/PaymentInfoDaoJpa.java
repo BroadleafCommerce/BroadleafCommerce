@@ -27,7 +27,7 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
     private EntityConfiguration entityConfiguration;
 
     @Override
-    public PaymentInfo maintainPaymentInfo(PaymentInfo paymentInfo) {
+    public PaymentInfo save(PaymentInfo paymentInfo) {
         return em.merge(paymentInfo);
     }
 

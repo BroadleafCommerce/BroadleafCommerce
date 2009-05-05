@@ -8,7 +8,7 @@ public interface SkuDao {
 
     public Sku readSkuById(Long skuId);
 
-    public Sku maintainSku(Sku sku);
+    public Sku save(Sku sku);
 
     public Sku readFirstSku();
 
