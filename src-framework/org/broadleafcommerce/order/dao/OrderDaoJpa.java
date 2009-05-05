@@ -47,7 +47,6 @@ public class OrderDaoJpa implements OrderDao {
         } else {
             order = em.merge(order);
         }
-        em.flush();
         return order;
     }
 
