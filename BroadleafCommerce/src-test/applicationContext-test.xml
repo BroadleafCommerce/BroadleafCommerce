@@ -35,12 +35,12 @@
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 
-<!--
-		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+
+		<!--property name="driverClassName" value="com.mysql.jdbc.Driver"/>
 		<property name="url" value="jdbc:mysql://localhost:3306/broadleaf"/>
-		<property name="username" value="broadleaf"/>
-		<property name="password" value="broadleaf"/>
--->
+		<property name="username" value="root"/>
+		<property name="password" value=""/-->
+
 	</bean>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -51,9 +51,7 @@
 				<property name="generateDdl" value="true" />
 				<property name="showSql" value="true" />
 				<property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
-<!--
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
--->
+				<!--property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" /-->
 			</bean>
 		</property>
 	</bean>

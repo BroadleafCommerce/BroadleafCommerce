@@ -10,7 +10,7 @@ public interface CategoryDao {
 
     public Category readCategoryById(Long categoryId);
 
-    public Category maintainCategory(Category category);
+    public Category save(Category category);
 
     public List<Category> readAllCategories();
 

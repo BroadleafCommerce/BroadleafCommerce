@@ -15,9 +15,9 @@ public interface FulfillmentGroup {
 
     public void setId(Long id);
 
-    public Long getOrderId();
+    public Order getOrder();
 
-    public void setOrderId(Long orderId);
+    public void setOrder(Order order);
 
     public Address getAddress();
 

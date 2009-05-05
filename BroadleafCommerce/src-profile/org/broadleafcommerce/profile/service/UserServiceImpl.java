@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
         if (user.getUnencodedPassword() != null) {
             user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), null));
         }
-        return userDao.maintainUser(user);
+        return userDao.save(user);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

@@ -20,7 +20,7 @@ public class SkuDaoJpa implements SkuDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    public Sku maintainSku(Sku sku) {
+    public Sku save(Sku sku) {
         if (sku.getId() == null) {
             em.persist(sku);
         } else {

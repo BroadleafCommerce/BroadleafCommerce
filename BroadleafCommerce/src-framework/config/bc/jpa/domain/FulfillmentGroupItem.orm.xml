@@ -5,6 +5,6 @@
 
 	<named-query name="BC_READ_FULFILLMENT_GROUP_ITEM_BY_FULFILLMENT_GROUP_ID" >
 		<query>SELECT fulfillmentGroupItem FROM org.broadleafcommerce.order.domain.FulfillmentGroupItem fulfillmentGroupItem
-		WHERE fulfillmentGroupItem.fulfillmentGroupId = :fulfillmentGroupId</query>
+		WHERE fulfillmentGroupItem.fulfillmentGroup.id = :fulfillmentGroupId</query>
 	</named-query>
 </entity-mappings>

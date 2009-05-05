@@ -8,7 +8,7 @@ public interface CustomerPhoneDao {
 
     public List<CustomerPhone> readActiveCustomerPhonesByCustomerId(Long customerId);
 
-    public CustomerPhone maintainCustomerPhone(CustomerPhone customerPhone);
+    public CustomerPhone save(CustomerPhone customerPhone);
 
     public CustomerPhone readCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId);
 

@@ -19,13 +19,13 @@ public class ProductDaoTest extends BaseTest {
     @Rollback(false)
     public void testMaintainProduct(Product product) {
         assert product.getId() == null;
-        product = productDao.maintainProduct(product);
+        product = productDao.save(product);
         assert product.getId() != null;
     }
 
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
     public void testReadProductsById(Product product) {
-        product = productDao.maintainProduct(product);
+        product = productDao.save(product);
         Product result = productDao.readProductById(product.getId());
         assert product.equals(result);
     }
@@ -33,7 +33,7 @@ public class ProductDaoTest extends BaseTest {
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
     public void testReadProductsByName(Product product) {
         String name = product.getName();
-        product = productDao.maintainProduct(product);
+        product = productDao.save(product);
         List<Product> result = productDao.readProductsByName(name);
         assert result.contains(product);
     }

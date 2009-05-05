@@ -3,8 +3,6 @@ package org.broadleafcommerce.order.domain;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.util.money.Money;
@@ -15,13 +13,9 @@ public interface OrderItem {
 
     public void setId(Long id);
 
-    public Sku getSku();
+    public Order getOrder();
 
-    public void setSku(Sku sku);
-
-    public Long getOrderId();
-
-    public void setOrderId(Long orderId);
+    public void setOrder(Order order);
 
     public Money getRetailPrice();
 
@@ -38,10 +32,6 @@ public interface OrderItem {
     public int getQuantity();
 
     public void setQuantity(int quantity);
-
-    public Product getProduct();
-
-    public void setProduct(Product product);
 
     public Category getCategory();
 

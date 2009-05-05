@@ -11,26 +11,28 @@ public interface OrderDao {
     public Order readOrderById(Long orderId);
 
     public List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
-    
-    public List<Order> readOrdersForCustomer(Long id);
-    
-    public Order readNamedOrderForCustomer(Customer customer, String name);
-    
-    public Order readCartForCustomer(Customer customer, boolean persist);
-    
-    public Order maintianOrder(Order order);
 
-    public void deleteOrderForCustomer(Order order);
+    public List<Order> readOrdersForCustomer(Long id);
+
+    public Order readNamedOrderForCustomer(Customer customer, String name);
+
+    public Order readCartForCustomer(Customer customer);
+
+    public Order save(Order order);
+
+    public void delete(Order order);
 
     public Order submitOrder(Order cartOrder);
 
     public Order create();
 
-//    removed methods
-//    public List<Order> readNamedOrdersForcustomer(Customer customer);
-//    
-//    public Order readOrderForCustomer(Long customerId, Long orderId);
-//    
-//    public List<Order> readSubmittedOrdersForCustomer(Customer customer);
-//    
+    public Order createNewCartForCustomer(Customer customer);
+
+    //    removed methods
+    //    public List<Order> readNamedOrdersForcustomer(Customer customer);
+    //
+    //    public Order readOrderForCustomer(Long customerId, Long orderId);
+    //
+    //    public List<Order> readSubmittedOrdersForCustomer(Customer customer);
+    //
 }

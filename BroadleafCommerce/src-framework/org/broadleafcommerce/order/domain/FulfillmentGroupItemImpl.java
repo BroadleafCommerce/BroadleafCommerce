@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -38,8 +40,9 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "FULFILLMENT_GROUP_ID")
-    private Long fulfillmentGroupId;
+    @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
+    @JoinColumn(name = "FULFILLMENT_GROUP_ID")
+    private FulfillmentGroup fulfillmentGroup;
 
     @OneToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ID")
@@ -57,11 +60,13 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
     @Column(name = "PRICE")
     private BigDecimal price;
 
+    //TODO does this work?? id is the primary key of OfferImpl. How does this help the ORM map the association back to FulfillmentGroupItem? This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
-    private List<Offer> candidateOffers;
+    private List<Offer> candidateOffers = new ArrayList<Offer>();
 
+    //TODO does this work?? id is the primary key of OfferAuditImpl. How does this help the ORM map the association back to FulfillmentGroupItem? This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
     @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
-    private List<OfferAudit> appliedOffers;
+    private List<OfferAudit> appliedOffers = new ArrayList<OfferAudit>();
 
     public Long getId() {
         return id;
@@ -71,12 +76,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
         this.id = id;
     }
 
-    public Long getFulfillmentGroupId() {
-        return fulfillmentGroupId;
+    public FulfillmentGroup getFulfillmentGroup() {
+        return fulfillmentGroup;
     }
 
-    public void setFulfillmentGroupId(Long fulfillmentGroupId) {
-        this.fulfillmentGroupId = fulfillmentGroupId;
+    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+        this.fulfillmentGroup = fulfillmentGroup;
     }
 
     public OrderItem getOrderItem() {
@@ -158,5 +163,25 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
     @Override
     public void setCandidateOffers(List<Offer> offers) {
         this.candidateOffers = offers;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || !(other instanceof FulfillmentGroupItemImpl)) return false;
+
+        FulfillmentGroupItemImpl item = (FulfillmentGroupItemImpl) other;
+
+        if (orderItem != null ? !orderItem.equals(item.orderItem) : item.orderItem != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = orderItem != null ? orderItem.hashCode() : 0;
+        result *= 31;
+
+        return result;
     }
 }

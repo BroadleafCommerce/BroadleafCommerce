@@ -27,7 +27,7 @@ public class CustomerPhoneDaoJpa implements CustomerPhoneDao {
         return query.getResultList();
     }
 
-    public CustomerPhone maintainCustomerPhone(CustomerPhone customerPhone) {
+    public CustomerPhone save(CustomerPhone customerPhone) {
         if (customerPhone.getId() == null) {
             em.persist(customerPhone);
         } else {

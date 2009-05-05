@@ -12,9 +12,9 @@ public interface FulfillmentGroupItem {
 
     public void setId(Long id);
 
-    public Long getFulfillmentGroupId();
+    public FulfillmentGroup getFulfillmentGroup();
 
-    public void setFulfillmentGroupId(Long fulfillmentGroupId);
+    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
     public OrderItem getOrderItem();
 

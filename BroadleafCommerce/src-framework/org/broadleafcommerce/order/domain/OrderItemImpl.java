@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,10 +21,6 @@ import javax.persistence.Transient;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.CategoryImpl;
-import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.catalog.domain.ProductImpl;
-import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.util.money.Money;
@@ -41,20 +38,13 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Column(name = "ORDER_ITEM_ID")
     private Long id;
 
-    @ManyToOne(targetEntity = SkuImpl.class)
-    @JoinColumn(name = "SKU_ID", nullable = false)
-    private Sku sku;
-
-    @ManyToOne(targetEntity = ProductImpl.class)
-    @JoinColumn(name = "PRODUCT_ID")
-    private Product product;
-
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     private Category category;
 
-    @Column(name = "ORDER_ID")
-    private Long orderId;
+    @ManyToOne(targetEntity = OrderImpl.class)
+    @JoinColumn(name = "ORDER_ID")
+    private Order order;
 
     @Column(name = "RETAIL_PRICE")
     private BigDecimal retailPrice;
@@ -68,7 +58,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Column(name = "QUANTITY")
     private int quantity;
 
-    @ManyToOne(targetEntity = PersonalMessageImpl.class)
+    @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     private PersonalMessage personalMessage;
 
@@ -87,32 +77,8 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Transient
     private int markedForOffer = 0;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Sku getSku() {
-        return sku;
-    }
-
-    public void setSku(Sku sku) {
-        this.sku = sku;
-    }
-
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
     }
 
     public void setRetailPrice(Money retailPrice) {
@@ -149,14 +115,6 @@ public class OrderItemImpl implements OrderItem, Serializable {
 
     public void setCandidateItemOffers(List<CandidateItemOffer> itemOffers) {
         this.candidateItemOffers = itemOffers;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public Category getCategory() {
@@ -234,6 +192,25 @@ public class OrderItemImpl implements OrderItem, Serializable {
     public void setPersonalMessage(PersonalMessage personalMessage) {
         this.personalMessage = personalMessage;
     }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 
     @Override
     public boolean isInCategory(String categoryName) {

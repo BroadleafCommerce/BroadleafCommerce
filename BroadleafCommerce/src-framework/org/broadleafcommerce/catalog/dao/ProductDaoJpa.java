@@ -20,7 +20,7 @@ public class ProductDaoJpa implements ProductDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    public Product maintainProduct(Product product) {
+    public Product save(Product product) {
         if (product.getId() == null) {
             em.persist(product);
         } else {
@@ -53,11 +53,11 @@ public class ProductDaoJpa implements ProductDao {
     }
 
     @SuppressWarnings("unchecked")
-	public List<Product> readProductsBySku(Long skuId) {
+    public List<Product> readProductsBySku(Long skuId) {
         Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU");
         query.setParameter("skuId", skuId);
         //TODO externalize this hibernate cache string
         query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
-	}
+    }
 }

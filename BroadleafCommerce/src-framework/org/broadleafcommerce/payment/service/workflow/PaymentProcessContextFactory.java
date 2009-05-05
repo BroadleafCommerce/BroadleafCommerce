@@ -13,7 +13,7 @@ import org.broadleafcommerce.payment.dao.SecurePaymentInfoDao;
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
-import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
 import org.broadleafcommerce.workflow.ProcessContext;
 import org.broadleafcommerce.workflow.ProcessContextFactory;
 import org.broadleafcommerce.workflow.WorkflowException;
@@ -43,22 +43,25 @@ public class PaymentProcessContextFactory implements ProcessContextFactory {
             if (paymentInfoList == null || paymentInfoList.size() == 0) {
                 throw new WorkflowException("No payment info instances associated with the order -- id: " + paymentSeed.getOrder().getId());
             }
+            /*
+             * TODO refactor this somehow - not friendly for an implementor who would like to add a new payment method
+             */
             Iterator<PaymentInfo> infos = paymentInfoList.iterator();
             while(infos.hasNext()) {
                 PaymentInfo info = infos.next();
-                if (info.getType() == PaymentInfoType.CREDIT_CARD) {
+                if (info.getType() == BLCPaymentInfoType.CREDIT_CARD) {
                     CreditCardPaymentInfo ccinfo = securePaymentInfoDao.findCreditCardInfo(info.getReferenceNumber());
                     if (ccinfo == null) {
                         throw new WorkflowException("No credit card info associated with credit card payment type with reference number: " + info.getReferenceNumber());
                     }
                     secureMap.put(info, ccinfo);
-                } else if (info.getType() == PaymentInfoType.BANK_ACCOUNT) {
+                } else if (info.getType() == BLCPaymentInfoType.BANK_ACCOUNT) {
                     BankAccountPaymentInfo bankinfo = securePaymentInfoDao.findBankAccountInfo(info.getReferenceNumber());
                     if (bankinfo == null) {
                         throw new WorkflowException("No bank account info associated with bank account payment type with reference number: " + info.getReferenceNumber());
                     }
                     secureMap.put(info, bankinfo);
-                } else if (info.getType() == PaymentInfoType.GIFT_CARD) {
+                } else if (info.getType() == BLCPaymentInfoType.GIFT_CARD) {
                     secureMap.put(info, null);
                 } else {
                     throw new WorkflowException("Payment info type ['" + info.getType() +  "'] not recognized with reference number: " + info.getReferenceNumber());

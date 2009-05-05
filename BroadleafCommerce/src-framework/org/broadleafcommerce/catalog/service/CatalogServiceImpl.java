@@ -42,7 +42,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Product saveProduct(Product product) {
-        return productDao.maintainProduct(product);
+        return productDao.save(product);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Category saveCategory(Category category) {
-        return categoryDao.maintainCategory(category);
+        return categoryDao.save(category);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Sku saveSku(Sku sku) {
-        return skuDao.maintainSku(sku);
+        return skuDao.save(sku);
     }
 
     @Override

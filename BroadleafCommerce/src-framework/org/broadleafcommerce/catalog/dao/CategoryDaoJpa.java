@@ -21,7 +21,7 @@ public class CategoryDaoJpa implements CategoryDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    public Category maintainCategory(Category category) {
+    public Category save(Category category) {
         if (category.getId() == null) {
             em.persist(category);
         } else {

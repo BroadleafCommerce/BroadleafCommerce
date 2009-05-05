@@ -49,7 +49,7 @@ public class CustomerDaoJpa implements CustomerDao {
         }
     }
 
-    public Customer maintainCustomer(Customer customer) {
+    public Customer save(Customer customer) {
         if (customer.getId() == null) {
             em.persist(customer);
         } else {

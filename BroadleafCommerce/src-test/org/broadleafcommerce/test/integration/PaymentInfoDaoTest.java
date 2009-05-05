@@ -40,13 +40,13 @@ public class PaymentInfoDaoTest extends BaseTest {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
-        Order salesOrder = orderDao.readCartForCustomer(customer, false);
+        Order salesOrder = orderDao.readCartForCustomer(customer);
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);
 
         assert paymentInfo.getId() == null;
-        paymentInfo = paymentInfoDao.maintainPaymentInfo(paymentInfo);
+        paymentInfo = paymentInfoDao.save(paymentInfo);
         assert paymentInfo.getId() != null;
         this.paymentInfo = paymentInfo;
     }

@@ -30,7 +30,7 @@ public class OrderDaoTest extends BaseTest {
         Customer customer = customerService.readCustomerByUsername(userName);
         assert order.getId() == null;
         order.setCustomer(customer);
-        order = orderDao.maintianOrder(order);
+        order = orderDao.save(order);
         assert order.getId() != null;
         orderId = order.getId();
     }
@@ -54,6 +54,6 @@ public class OrderDaoTest extends BaseTest {
         Order order = orderDao.readOrderById(orderId);
         assert order != null;
         assert order.getId() != null;
-        orderDao.deleteOrderForCustomer(order);
+        orderDao.delete(order);
     }
 }

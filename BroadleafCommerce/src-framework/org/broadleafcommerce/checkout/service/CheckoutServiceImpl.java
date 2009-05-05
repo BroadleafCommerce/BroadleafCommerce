@@ -27,6 +27,19 @@ public class CheckoutServiceImpl implements CheckoutService {
         /*
          * TODO add validation that checks the order and payment information for validity.
          */
+        /*
+         * TODO remove this simple validation and encapsulate using our real validation strategy
+         */
+        for (PaymentInfo info : payments.keySet()) {
+            if (info.getReferenceNumber() == null) {
+                throw new CheckoutException("PaymentInfo reference number cannot be null");
+            }
+        }
+        for (Referenced referenced : payments.values()) {
+            if (referenced.getReferenceNumber() == null) {
+                throw new CheckoutException("Referenced reference number cannot be null");
+            }
+        }
         try {
             CheckoutSeed seed = new CheckoutSeed(order, payments);
             checkoutWorkflow.doActivities(seed);

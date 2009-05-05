@@ -7,7 +7,7 @@ import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.module.BankAccountModule;
-import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
@@ -29,7 +29,7 @@ public class BankAccountActivity extends BaseActivity {
              * TODO add database logging to a log table before and after each of the actions.
              * Detailed logging is a PCI requirement.
              */
-            if (info.getType().equals(PaymentInfoType.BANK_ACCOUNT)) {
+            if (info.getType().equals(BLCPaymentInfoType.BANK_ACCOUNT)) {
                 if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
                     bankAccountModule.authorize(info, (BankAccountPaymentInfo) infos.get(info));
                 } else if (seed.getActionType() == PaymentActionType.DEBIT) {

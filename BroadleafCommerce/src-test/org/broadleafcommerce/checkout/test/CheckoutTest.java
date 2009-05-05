@@ -8,12 +8,12 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.checkout.service.CheckoutService;
+import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.domain.OrderItemImpl;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.domain.PaymentInfoImpl;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
@@ -42,7 +42,7 @@ public class CheckoutTest extends BaseTest {
         Money total = new Money(5D);
         group.setPrice(total);
 
-        OrderItem item = new OrderItemImpl();
+        OrderItem item = new DiscreteOrderItemImpl();
         item.setPrice(new Money(10D));
         item.setQuantity(1);
         List<OrderItem> items = new ArrayList<OrderItem>();

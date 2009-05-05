@@ -3,11 +3,8 @@ package org.broadleafcommerce.order.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,7 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
@@ -42,7 +38,7 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @JoinColumn(name = "ORDER_ID")
     private Order order;
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
 
@@ -59,10 +55,8 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "PAYMENT_TYPE")
-    private PaymentInfoType type;
-
+    private String type;
 
     /*
      * TODO need to add new fields for amount and priority. This will allow the implementor
@@ -119,7 +113,7 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
-
+    
     public String getPin() {
         return pin;
     }
@@ -128,17 +122,34 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
         this.pin = pin;
     }
 
-    /**
-     * @return the type
-     */
-    public PaymentInfoType getType() {
+    public String getType() {
         return type;
     }
 
-    /**
-     * @param type the type to set
-     */
-    public void setType(PaymentInfoType type) {
+    public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || !(other instanceof PaymentInfoImpl)) return false;
+
+        PaymentInfoImpl item = (PaymentInfoImpl) other;
+
+        if (referenceNumber != null ? !referenceNumber.equals(item.referenceNumber) : item.referenceNumber != null) return false;
+        if (type != null ? !type.equals(item.type) : item.type != null) return false;
+        if (order != null ? !order.equals(item.order) : item.order != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = referenceNumber != null ? referenceNumber.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (order != null ? order.hashCode() : 0);
+
+        return result;
     }
 }

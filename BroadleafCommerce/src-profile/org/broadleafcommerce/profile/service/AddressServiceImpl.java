@@ -16,7 +16,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Address saveAddress(Address address) {
-        return addressDao.maintainAddress(address);
+        return addressDao.save(address);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)

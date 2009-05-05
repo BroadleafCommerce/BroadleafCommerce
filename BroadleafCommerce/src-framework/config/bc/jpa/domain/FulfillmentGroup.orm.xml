@@ -10,8 +10,8 @@
  -->
 	<named-query name="BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID">
 		<query>
-			SELECT fg FROM org.broadleafcommerce.order.domain.FulfillmentGroupImpl fg
-			 WHERE fg.orderId = :orderId
+			SELECT fg FROM org.broadleafcommerce.order.domain.FulfillmentGroup fg
+			 WHERE fg.order.id = :orderId
 			 AND fg.type = 'DEFAULT'
 		</query>
 	</named-query>

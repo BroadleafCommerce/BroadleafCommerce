@@ -8,7 +8,7 @@ public interface CustomerDao {
 
     public Customer readCustomerByUsername(String username);
 
-    public Customer maintainCustomer(Customer customer);
+    public Customer save(Customer customer);
 
     public Customer readCustomerByEmail(String emailAddress);
 }

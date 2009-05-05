@@ -16,7 +16,7 @@ public class PhoneServiceImpl implements PhoneService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Phone savePhone(Phone phone) {
-        return phoneDao.maintainPhone(phone);
+        return phoneDao.save(phone);
     }
 
     public Phone readPhoneById(Long phoneId) {

@@ -37,17 +37,16 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
         Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
         OrderItem orderItem = salesOrder.getOrderItems().get(0);
         fulfillmentGroup = salesOrder.getFulfillmentGroups().get(0);
-        Long fulfillmentGroupId = fulfillmentGroup.getId();
 
         assert fulfillmentGroup != null;
 
         FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
-        fgi.setFulfillmentGroupId(fulfillmentGroupId);
+        fgi.setFulfillmentGroup(fulfillmentGroup);
         fgi.setOrderItem(orderItem);
         fgi.setQuantity(orderItem.getQuantity());
 
         assert fgi.getId() == null;
-        fgi = fulfillmentGroupItemDao.maintainFulfillmentGroupItem(fgi);
+        fgi = fulfillmentGroupItemDao.save(fgi);
         assert fgi.getId() != null;
         fulfillmentGroupItemId = fgi.getId();
 

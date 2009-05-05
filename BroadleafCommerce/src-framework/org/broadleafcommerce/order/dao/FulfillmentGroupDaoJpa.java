@@ -2,6 +2,7 @@ package org.broadleafcommerce.order.dao;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -27,13 +28,8 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     private EntityConfiguration entityConfiguration;
 
     @Override
-    public FulfillmentGroup maintainFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        //        if (fulfillmentGroup.getId() == null) {
-        //            em.persist(fulfillmentGroup);
-        //            //em.flush();
-        //        } else {
+    public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
         fulfillmentGroup = em.merge(fulfillmentGroup);
-        //        }
         return fulfillmentGroup;
     }
 
@@ -44,34 +40,21 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     }
 
     @Override
-    public FulfillmentGroup maintainDefaultFulfillmentGroup(FulfillmentGroup defaultFulfillmentGroup) {
-        return em.merge(defaultFulfillmentGroup);
-        /*if (defaultFulfillmentGroup.getId() == null) {
-            em.persist(defaultFulfillmentGroup);
-            em.flush();
-        } else {
-            defaultFulfillmentGroup = em.merge(defaultFulfillmentGroup);
-        }
-        return defaultFulfillmentGroup;*/
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public FulfillmentGroup readDefaultFulfillmentGroupById(Long fulfillmentGroupId) {
-        return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
-    }
-
-    @Override
     public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(Order order) {
         Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
-        return (FulfillmentGroupImpl) query.getSingleResult();
+        FulfillmentGroupImpl result;
+        try {
+            result = (FulfillmentGroupImpl) query.getSingleResult();
+        } catch (NoResultException e) {
+            result = null;
+        }
+
+        return result;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void removeFulfillmentGroupForOrder(Order order, FulfillmentGroup fulfillmentGroup) {
-        fulfillmentGroup = (FulfillmentGroup) em.getReference(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroup.getId());
+    public void delete(FulfillmentGroup fulfillmentGroup) {
         em.remove(fulfillmentGroup);
     }
 

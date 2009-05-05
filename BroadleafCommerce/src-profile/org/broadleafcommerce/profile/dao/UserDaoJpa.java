@@ -54,7 +54,7 @@ public class UserDaoJpa implements UserDao {
         return query.getResultList();
     }
 
-    public User maintainUser(User user) {
+    public User save(User user) {
         User retUser = user;
         if (retUser.getId() == null) {
             em.persist(retUser);

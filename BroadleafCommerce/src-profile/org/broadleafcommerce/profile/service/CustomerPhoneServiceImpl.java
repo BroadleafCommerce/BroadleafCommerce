@@ -27,12 +27,12 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
                 for (CustomerPhone activeCustomerPhone : activeCustomerPhones) {
                     if (activeCustomerPhone.getId() != customerPhone.getId() && activeCustomerPhone.getPhone().isDefault()) {
                         activeCustomerPhone.getPhone().setDefault(false);
-                        customerPhoneDao.maintainCustomerPhone(activeCustomerPhone);
+                        customerPhoneDao.save(activeCustomerPhone);
                     }
                 }
             }
         }
-        return customerPhoneDao.maintainCustomerPhone(customerPhone);
+        return customerPhoneDao.save(customerPhone);
     }
 
     public List<CustomerPhone> readActiveCustomerPhonesByCustomerId(Long customerId) {

@@ -6,7 +6,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.service.OrderService;
+import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.web.CustomerState;
 import org.springframework.web.context.WebApplicationContext;
@@ -25,16 +25,16 @@ public class OrderLookupTag extends BodyTagSupport {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         CustomerState customerState = (CustomerState) applicationContext.getBean("customerState");
         Customer customer = customerState.getCustomer((HttpServletRequest) pageContext.getRequest());
-        OrderService orderService = (OrderService) applicationContext.getBean("orderService");
+        CartService cartService = (CartService) applicationContext.getBean("cartService");
         Order order = null;
         if (orderName != null && orderId != null) {
             throw new IllegalArgumentException("Only orderName or orderId attribute may be specified on orderLookup tag");
         } else if (orderId != null) {
-            order = orderService.findOrderById(orderId);
+            order = cartService.findOrderById(orderId);
         } else if (orderName != null) {
-            order = orderService.findNamedOrderForCustomer(orderName, customer);
+            order = cartService.findNamedOrderForCustomer(orderName, customer);
         } else if (customer != null){
-            order = orderService.findCartForCustomer(customer);
+            order = cartService.findCartForCustomer(customer);
         }
         if (orderVar != null) {
             pageContext.setAttribute(orderVar, order);

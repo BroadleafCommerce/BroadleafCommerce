@@ -9,7 +9,7 @@ public interface PaymentInfoDao {
 
 	public PaymentInfo readPaymentInfoById(Long paymentId);
 	
-	public PaymentInfo maintainPaymentInfo(PaymentInfo paymentInfo);
+	public PaymentInfo save(PaymentInfo paymentInfo);
 	
 	public List<PaymentInfo> readPaymentInfosForOrder(Order order);
 	

@@ -59,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getUnencodedChallengeAnswer() != null && !customer.getUnencodedChallengeAnswer().equals(customer.getChallengeAnswer())) {
             customer.setChallengeAnswer(passwordEncoder.encodePassword(customer.getUnencodedChallengeAnswer(), null));
         }
-        return customerDao.maintainCustomer(customer);
+        return customerDao.save(customer);
     }
 
     public RegistrationResponse registerCustomer(Customer customer, String password, String passwordConfirm) {

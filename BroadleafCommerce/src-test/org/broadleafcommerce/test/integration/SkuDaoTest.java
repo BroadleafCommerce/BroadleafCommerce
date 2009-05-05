@@ -23,7 +23,7 @@ public class SkuDaoTest extends BaseTest {
     public void createSku(Sku sku) {
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         assert sku.getId() == null;
-        sku = skuDao.maintainSku(sku);
+        sku = skuDao.save(sku);
         assert sku.getId() != null;
         skuId = sku.getId();
     }

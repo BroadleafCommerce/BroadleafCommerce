@@ -44,11 +44,11 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         newFG.setAddress(address);
         newFG.setRetailPrice(fulfillmentGroup.getRetailPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
-        newFG.setOrderId(salesOrder.getId());
+        newFG.setOrder(salesOrder);
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
 
         assert newFG.getId() == null;
-        fulfillmentGroup = fulfillmentGroupDao.maintainDefaultFulfillmentGroup(newFG);
+        fulfillmentGroup = fulfillmentGroupDao.save(newFG);
         assert fulfillmentGroup.getId() != null;
         orderId = salesOrder.getId();
         defaultFulfillmentGroupId = fulfillmentGroup.getId();
@@ -66,7 +66,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
 
     @Test(groups = { "readDefaultFulfillmentGroupForId" }, dependsOnGroups = { "createDefaultFulfillmentGroup" })
     public void readDefaultFulfillmentGroupForId() {
-        FulfillmentGroup fg = fulfillmentGroupDao.readDefaultFulfillmentGroupById(defaultFulfillmentGroupId);
+        FulfillmentGroup fg = fulfillmentGroupDao.readFulfillmentGroupById(defaultFulfillmentGroupId);
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getId().equals(defaultFulfillmentGroupId);
@@ -88,7 +88,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
 
         assert newFG.getId() == null;
-        fulfillmentGroup = fulfillmentGroupDao.maintainFulfillmentGroup(newFG);
+        fulfillmentGroup = fulfillmentGroupDao.save(newFG);
         assert fulfillmentGroup.getId() != null;
         orderId = salesOrder.getId();
         fulfillmentGroupId = fulfillmentGroup.getId();

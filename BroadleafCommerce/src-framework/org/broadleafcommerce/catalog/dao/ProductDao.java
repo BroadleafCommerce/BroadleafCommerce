@@ -8,7 +8,7 @@ public interface ProductDao {
 
     public Product readProductById(Long productId);
 
-    public Product maintainProduct(Product product);
+    public Product save(Product product);
 
     public List<Product> readProductsByName(String searchName);
 

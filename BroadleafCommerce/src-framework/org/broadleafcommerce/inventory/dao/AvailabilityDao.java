@@ -24,5 +24,5 @@ public interface AvailabilityDao {
 	 */
     public List<SkuAvailability> readSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime);
 
-    public void saveSKUAvailability(SkuAvailability skuAvailability);
+    public void save(SkuAvailability skuAvailability);
 }
