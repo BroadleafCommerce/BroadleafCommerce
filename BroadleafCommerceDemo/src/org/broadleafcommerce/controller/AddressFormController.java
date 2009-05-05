@@ -1,8 +1,5 @@
 package org.broadleafcommerce.controller;
 
-import java.util.Iterator;
-import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.BroadleafCustomerAddress;
+import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.AddressService;
 import org.broadleafcommerce.profile.service.AddressStandardizationService;
@@ -47,7 +44,7 @@ public class AddressFormController extends SimpleFormController {
     }
 
     protected Object formBackingObject(HttpServletRequest request) throws ServletException {
-        Address address = new BroadleafCustomerAddress();
+        Address address = new AddressImpl();
 
         if (request.getParameter("addressId") != null) {
             address = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
@@ -63,14 +60,14 @@ public class AddressFormController extends SimpleFormController {
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException errors) throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Address addressFromDB = new BroadleafCustomerAddress();
+        Address addressFromDB = new AddressImpl();
         Address address = (Address) command;
         Customer customer = customerService.readCustomerByUsername(auth.getName());
 
         if (request.getParameter("addressId") != null) {
             addressFromDB = addressService.readAddressById(Long.valueOf(request.getParameter("addressId")));
         } else {
-            List<Address> addressList = addressService.readAddressByUserId(customer.getId());
+            /*List<Address> addressList = addressService.readAddressByUserId(customer.getId());
 
             for (Iterator<Address> itr = addressList.iterator(); itr.hasNext();) {
                 Address addressItr = itr.next();
@@ -78,7 +75,7 @@ public class AddressFormController extends SimpleFormController {
                 if (address.getAddressName().equalsIgnoreCase(addressItr.getAddressName())) {
                     errors.rejectValue("addressName", "addressName.duplicate", new Object[] { new String(address.getAddressName()) }, null);
                 }
-            }
+            }*/
         }
 
         // For USPS test server, only certain addresses would work. Rest will throw an error. Please make sure you check addressVerification.txt file
@@ -91,12 +88,12 @@ public class AddressFormController extends SimpleFormController {
                 errors.rejectValue("zipCode", "addressVerification.failed", null, null);
             } else {
                 address.setStandardized(true);
-                standardizedResponse.getAddress().setAddressName(address.getAddressName());
+                //standardizedResponse.getAddress().setAddressName(address.getAddressName());
                 if (addressFromDB.getId() != null) {
                     standardizedResponse.getAddress().setId(addressFromDB.getId());
                 }
                 addressFromDB = standardizedResponse.getAddress();
-                addressFromDB.setCustomer(customer);
+                //addressFromDB.setCustomer(customer);
             }
         }
         ModelAndView mav = new ModelAndView(getSuccessView(), errors.getModel());

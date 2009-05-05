@@ -80,7 +80,7 @@
 				<include name="${app.name}.jar" />
 				<include name="broadleaf-profile.jar" />
 				<include name="broadleaf-framework.jar"/>
-				<include name="broadleaf-extensibility.jar"/>
+				<include name="broadleaf-auxiliary.jar"/>
 				<include name="broadleaf-layout.jar"/>
 			</fileset>
 		</copy>
@@ -102,7 +102,7 @@
 			<fileset file="${stage.dir}/*.jar" />
 		</path>
 
-		<echo>Compiling with debug=${debug.compile}</echo>
+		<echo>Compiling with debug=${debug.compile} and JAVA_HOME ${java.home}</echo>
 		<javac destdir="${stage.dir}/classes-jar"
 			srcdir="${src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
 
@@ -182,7 +182,7 @@
 
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-profile.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-framework.jar" />
-		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-extensibility.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-auxiliary.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-layout.jar" />
 	</target>
 

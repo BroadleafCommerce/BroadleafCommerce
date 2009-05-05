@@ -28,7 +28,7 @@ public class CheckoutValidator implements Validator {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactInfo.primaryPhone", "primaryPhone.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactInfo.secondaryPhone", "secondaryPhone.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactInfo.email", "email.required");
-        
+        /*
         if(!checkout.getContactInfo().getPrimaryPhone().matches(REGEX_VALID_PHONE)){
         	errors.rejectValue("contactInfo.primaryPhone", "contactInfo.phone.invalid",null, null);
         }
@@ -40,7 +40,7 @@ public class CheckoutValidator implements Validator {
         if(!GenericValidator.isEmail(checkout.getContactInfo().getEmail())){
         	errors.rejectValue("contactInfo.email", "contactInfo.email.invalid", null, null);
         }
-    	
+    	*/
     }
     
     public void validateShippingAddressInformation(Object obj, Errors errors){

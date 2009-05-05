@@ -1,38 +1,22 @@
 package org.broadleafcommerce.controller;
 
-import java.net.BindException;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.controller.validator.CheckoutValidator;
-import org.broadleafcommerce.order.domain.BroadleafOrder;
-import org.broadleafcommerce.order.domain.OrderPayment;
-import org.broadleafcommerce.order.domain.OrderShipping;
-import org.broadleafcommerce.order.service.OrderService;
-import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.BroadleafContactInfo;
-import org.broadleafcommerce.profile.domain.BroadleafCustomerAddress;
-import org.broadleafcommerce.profile.domain.ContactInfo;
-import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.AddressService;
-import org.broadleafcommerce.profile.service.AddressStandardizationService;
-import org.broadleafcommerce.profile.service.ContactInfoService;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
-import org.broadleafcommerce.util.Checkout;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractWizardFormController;
 
 public class CheckoutController extends AbstractWizardFormController {
 
+	@Override
+	protected ModelAndView processFinish(HttpServletRequest arg0,
+			HttpServletResponse arg1, Object arg2, BindException arg3)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/*
     CustomerService customerService;
     OrderService orderService;
     ContactInfoService contactInfoService;
@@ -210,5 +194,5 @@ public class CheckoutController extends AbstractWizardFormController {
     public void setSuccessView(String successView) {
         this.successView = successView;
     }
-
+	*/
 }

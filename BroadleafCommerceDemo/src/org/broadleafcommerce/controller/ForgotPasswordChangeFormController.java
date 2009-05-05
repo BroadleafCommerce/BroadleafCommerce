@@ -1,23 +1,11 @@
 package org.broadleafcommerce.controller;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.profile.service.EmailService;
-import org.broadleafcommerce.profile.util.PasswordChange;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ForgotPasswordChangeFormController extends SimpleFormController {
 
     /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
+    /*protected final Log logger = LogFactory.getLog(getClass());
     private static final String TEMPLATE = "forgotPassword.vm";
     private static final String EMAIL_FROM = "BroadleafCommerce@credera.com";
     private static final String EMAIL_SUBJECT = "Email From Broadleaf Commerce Group";
@@ -47,4 +35,5 @@ public class ForgotPasswordChangeFormController extends SimpleFormController {
         mav.addObject("saved", true);
         return mav;
     }
+    */
 }

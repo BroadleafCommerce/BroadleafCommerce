@@ -1,21 +1,9 @@
 package org.broadleafcommerce.controller;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.order.domain.BroadleafOrder;
-import org.broadleafcommerce.rules.domain.CouponCode;
-import org.broadleafcommerce.rules.service.RuleBaseService;
-import org.drools.WorkingMemory;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ShoppingCartPromotionTestOrderFormController extends SimpleFormController {
-
+	/*
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	private RuleBaseService ruleBaseService;
@@ -58,5 +46,5 @@ public class ShoppingCartPromotionTestOrderFormController extends SimpleFormCont
 		return mav;
 
 	}
-
+	*/
 }

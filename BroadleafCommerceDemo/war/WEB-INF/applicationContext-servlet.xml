@@ -20,7 +20,7 @@
 		</constructor-arg>
 		<constructor-arg ref="resourceBundleExtensionPoint" />
 	</bean>
-
+	<!-- 
 	<bean id="passwordChange"
 		class="org.broadleafcommerce.controller.PasswordChangeFormController">
 		<property name="commandName" value="user" />
@@ -252,7 +252,8 @@
 		<property name="formView" value="searchIndex" />
 		<property name="successView" value="searchIndex" />
 	</bean>
-
+	-->
+	
 	<!-- Configures the Tiles layout system -->
 	<bean id="tilesConfigurer"
 		class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
@@ -281,14 +282,15 @@
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
 		<property name="alwaysUseFullPath" value="true" />
-		<property name="interceptors">
+		<!-- property name="interceptors">
 			<list>
 				<ref bean="catalogDisplayInterceptor" />
 			</list>
-		</property>
+		</property -->
 		<property name="mappings">
 			<props>
 				<prop key="/welcome.htm">welcome</prop>
+				<!-- 
 				<prop key="/registerCustomer.htm">registerCustomer</prop>
 				<prop key="/forgotPwd.htm">forgotPwd</prop>
 				<prop key="/challengeQuestion.htm">challengeQuestion</prop>
@@ -314,6 +316,7 @@
 				</prop>
 				<prop key="/createShoppingCartPromotionTestOrder.htm">createShoppingCartPromotionTestOrder
 				</prop>
+				 -->
 			</props>
 		</property>
 	</bean>

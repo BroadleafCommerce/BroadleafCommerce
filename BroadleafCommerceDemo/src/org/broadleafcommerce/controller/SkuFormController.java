@@ -1,27 +1,9 @@
 package org.broadleafcommerce.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.catalog.domain.BroadleafItemAttribute;
-import org.broadleafcommerce.catalog.domain.BroadleafProduct;
-import org.broadleafcommerce.catalog.domain.BroadleafSku;
-import org.broadleafcommerce.catalog.domain.ItemAttribute;
-import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.catalog.service.CatalogService;
-import org.springframework.validation.BindException;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class SkuFormController extends SimpleFormController {
-    protected final Log logger = LogFactory.getLog(getClass());
+    /*protected final Log logger = LogFactory.getLog(getClass());
     private CatalogService catalogService;
 
     public void setCatalogService(CatalogService catalogService) {
@@ -70,4 +52,5 @@ public class SkuFormController extends SimpleFormController {
 
         return mav;
     }
+    */
 }

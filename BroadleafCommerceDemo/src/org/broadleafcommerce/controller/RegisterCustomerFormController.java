@@ -1,24 +1,9 @@
 package org.broadleafcommerce.controller;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.BroadleafCustomer;
-import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.profile.service.EmailService;
-import org.broadleafcommerce.util.RegisterCustomer;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class RegisterCustomerFormController extends SimpleFormController {
-    protected final Log logger = LogFactory.getLog(getClass());
+    /*protected final Log logger = LogFactory.getLog(getClass());
     // TODO: Should move all these to a property file
     private static final String TEMPLATE = "registration.vm";
     private static final String EMAIL_FROM = "BroadleafCommerce@credera.com";
@@ -78,5 +63,5 @@ public class RegisterCustomerFormController extends SimpleFormController {
         RegisterCustomer registerCustomer = (RegisterCustomer) command;
 
         return super.processFormSubmission(request, response, registerCustomer, errors);
-    }
+    }*/
 }

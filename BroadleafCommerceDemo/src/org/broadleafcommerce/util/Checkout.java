@@ -1,15 +1,8 @@
 package org.broadleafcommerce.util;
 
-import java.util.List;
-
-import org.broadleafcommerce.order.domain.BroadleafOrder;
-import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.domain.OrderPayment;
-import org.broadleafcommerce.order.domain.OrderShipping;
-import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.ContactInfo;
 
 public class Checkout {
+	/*
 	private BroadleafOrder order;
 	private List<OrderItem> orderItems;
 	private List<ContactInfo> userContactInfo;
@@ -82,5 +75,5 @@ public class Checkout {
 	public void setSelectedBillingAddressId(String selectedBillingAddressId) {
 		this.selectedBillingAddressId = selectedBillingAddressId;
 	}
-	
+	*/
 }

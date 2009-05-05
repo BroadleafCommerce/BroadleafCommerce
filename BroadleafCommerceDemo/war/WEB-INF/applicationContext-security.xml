@@ -15,7 +15,7 @@
         <sec:intercept-url pattern="/images/**" filters="none" />
         <sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
         <sec:intercept-url pattern="/logoutSuccess*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/registerCustomer*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <sec:intercept-url pattern="/register*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/forgotPwd*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/challengeQuestion*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
         <sec:intercept-url pattern="/forgotPasswordChange*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
@@ -37,16 +37,15 @@
         <sec:custom-filter position="ANONYMOUS_FILTER"/>
     </bean>
 
-	<!-- Custom login filter which replaces the default AUTHENTICATION_PROCESSING_FILTER-->
+	<!-- Custom login filter which replaces the default AUTHENTICATION_PROCESSING_FILTER --><!-- 
 	<bean id="bcAuthenticationProcessingFilter" class="org.broadleafcommerce.security.BCAuthenticationProcessingFilter" >
-		<sec:custom-filter position="AUTHENTICATION_PROCESSING_FILTER"/> <!-- replace the default one -->
-		<property name="defaultTargetUrl" value="/index.jsp"/> <!-- After a successful login, the user will be taken to this page -->
-		<property name="authenticationFailureUrl" value="/login.jsp?login_error=1" /> <!-- Authentication failed? take him to error page -->
-		<property name="authenticationManager" ref="authenticationManager"/> <!-- Here it is the custom authenticationManager, login magic goes here-->
-        <property name="filterProcessesUrl" value="/loginProcess"/>
-		<property name="allowSessionCreation" value="true" /> <!-- Allow the application to create sessions -->
+		<sec:custom-filter position="AUTHENTICATION_PROCESSING_FILTER"/> 
+		<property name="defaultTargetUrl" value="/index.jsp"/> 
+		<property name="authenticationFailureUrl" value="/login.jsp?login_error=1" /> 
+		<property name="authenticationManager" ref="authenticationManager"/>         <property name="filterProcessesUrl" value="/loginProcess"/>
+		<property name="allowSessionCreation" value="true" /> 
 	</bean>
-
+-->
 	<!-- My custom auth manager -->
     <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
         <property name="providers">
@@ -77,21 +76,22 @@
  	</bean>
 
 	<!-- Observer pattern -->
-	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	<!-- bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 	    <property name="targetObject" ref="bcAuthenticationProcessingFilter"/>
 	    <property name="targetMethod" value="addListener"/>
 	    <property name="arguments">
 	    <list>
-	    	<ref bean="customerStateStore"/>
+	    	<ref bean="StateStore"/>
 	    </list>
 	    </property>
-	</bean>
+	</bean -->
 
 	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
 
 	<!-- Entity mappings - override for extensibility -->
+	<!-- 
 	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
-	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.BroadleafCustomer"/>
-
+	<bean id="org.broadleafcommerce.profile.domain." class="org.broadleafcommerce.profile.domain.Broadleaf"/>
+ 	-->
 
 </beans>

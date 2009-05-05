@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public class ChallengeQuestionFormController extends SimpleFormController {
+	/*
     protected final Log logger = LogFactory.getLog(getClass());
     private CustomerService customerService;
 
@@ -52,4 +53,5 @@ public class ChallengeQuestionFormController extends SimpleFormController {
 
         return mav;
     }
+    */
 }
