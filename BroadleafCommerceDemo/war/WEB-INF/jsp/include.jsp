@@ -6,4 +6,4 @@
 <%@ taglib prefix="form" uri="/spring-form"%>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles"%>
-<%@ taglib prefix="sc" uri="/broadleafcommerce"%>
+<!-- %@ taglib prefix="sc" uri="/broadleafcommerce"% -->
