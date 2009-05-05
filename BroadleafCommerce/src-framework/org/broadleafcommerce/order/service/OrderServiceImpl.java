@@ -388,9 +388,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
-        /*
-         * TODO test order is persisted with default fulfillment group
-         */
         FulfillmentGroup newFg = fulfillmentGroupDao.createDefault();
         newFg.setOrder(order);
         newFg.setType(FulfillmentGroupType.DEFAULT);
