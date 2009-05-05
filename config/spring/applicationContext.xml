@@ -73,6 +73,11 @@
             <aop:around method="priceOrder" pointcut-ref="serviceMethodWithReturnValue"/>
         </aop:aspect>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="cartServiceOperation" expression="execution(* org.broadleafcommerce.order.service.CartService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="cartServiceOperation"/>
+	</aop:config>
 
 	<aop:config>
 		<aop:pointcut id="ruleServiceOperation" expression="execution(* org.broadleafcommerce.rules.service.RuleService.*(..))"/>
