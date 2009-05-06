@@ -22,7 +22,6 @@ public class CustomerStateStore implements PostLoginObserver, PreLogoutObserver 
 
     public void processPostLogin(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         Customer customer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
-        customer.setAuthenticated(true);
         CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, customer.getId() + "","/",604800);
         customerState.setCustomer(customer, request);
     }

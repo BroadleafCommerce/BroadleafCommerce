@@ -13,11 +13,12 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.security.context.SecurityContextHolder;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class CustomerImpl implements Customer, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,9 +56,6 @@ public class CustomerImpl implements Customer, Serializable {
 
     @Column(name = "IS_REGISTERED")
     private boolean registered = false;
-
-    @Transient
-    private boolean authenticated = false;
 
     @Transient
     private String unencodedPassword;
@@ -162,11 +160,7 @@ public class CustomerImpl implements Customer, Serializable {
     }
 
     public boolean isAuthenticated() {
-        return authenticated;
-    }
-
-    public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
+        return SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
     }
 
     public String getUnencodedChallengeAnswer() {
@@ -179,12 +173,15 @@ public class CustomerImpl implements Customer, Serializable {
 
     @Override
     public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof CustomerImpl)) return false;
+        if (this == other)
+            return true;
+        if (other == null || !(other instanceof CustomerImpl))
+            return false;
 
         CustomerImpl item = (CustomerImpl) other;
 
-        if (username != null ? !username.equals(item.username) : item.username != null) return false;
+        if (username != null ? !username.equals(item.username) : item.username != null)
+            return false;
 
         return true;
     }
