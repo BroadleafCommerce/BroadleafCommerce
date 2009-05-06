@@ -61,14 +61,14 @@
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="catalogServiceOperation"/>
 	</aop:config>
 
-	<bean id="pricingAdvice" class="org.broadleafcommerce.pricing.service.advice.PricingAroundAdvice">
+	<bean id="pricingExecutionManager" class="org.broadleafcommerce.pricing.service.advice.PricingExecutionManagerImpl">
         <property name="order" value="1"/>
     </bean>
     
 	<aop:config>
 		<aop:pointcut id="orderServiceOperation" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="orderServiceOperation" order="2"/>
-	    <aop:aspect id="pricingAspect" ref="pricingAdvice">
+	    <aop:aspect id="pricingAspect" ref="pricingExecutionManager">
             <aop:pointcut id="serviceMethodWithReturnValue" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
             <aop:around method="priceOrder" pointcut-ref="serviceMethodWithReturnValue"/>
         </aop:aspect>
