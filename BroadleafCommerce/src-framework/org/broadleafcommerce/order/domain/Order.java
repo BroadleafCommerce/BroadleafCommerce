@@ -100,4 +100,7 @@ public interface Order {
     public List<PaymentInfo> getPaymentInfos();
 
     public void setPaymentInfos(List<PaymentInfo> paymentInfos);
+
+    public boolean hasCategoryItem(String categoryName);
+
 }

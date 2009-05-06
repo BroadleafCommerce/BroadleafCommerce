@@ -339,4 +339,15 @@ public class OrderImpl implements Order, Serializable {
 
         return result;
     }
+
+    @Override
+    public boolean hasCategoryItem(String categoryName) {
+        for (OrderItem orderItem : orderItems) {
+            if(orderItem.isInCategory(categoryName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
