@@ -1,15 +1,12 @@
-package org.broadleafcommerce.payment.service.module;
+package org.broadleafcommerce.payment.service;
 
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
+import org.broadleafcommerce.payment.service.module.PaymentResponse;
 
-public interface BankAccountModule {
-
-    public String getName();
-
-    public void setName(String name);
+public interface BankAccountService {
 
     public PaymentResponse authorize(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException, PaymentProcessorException;
 
@@ -20,4 +17,5 @@ public interface BankAccountModule {
     public PaymentResponse credit(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException, PaymentProcessorException;
 
     public PaymentResponse voidPayment(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException, PaymentProcessorException;
+
 }

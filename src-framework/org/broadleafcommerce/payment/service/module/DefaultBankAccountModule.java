@@ -3,6 +3,7 @@ package org.broadleafcommerce.payment.service.module;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
+import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
 
 public class DefaultBankAccountModule implements BankAccountModule {
 
@@ -10,44 +11,36 @@ public class DefaultBankAccountModule implements BankAccountModule {
 
     protected String name = MODULENAME;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.order.module.BankAccountModule#authorize(org.broadleafcommerce.order.domain.PaymentInfo, org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo)
-     */
     @Override
-    public void authorize(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException {
-        //throw new PaymentException("authorize not implemented.");
-        //do nothing
+    public PaymentResponse authorize(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException, PaymentProcessorException {
+        throw new PaymentException("authorize not implemented.");
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.order.module.BankAccountModule#authorizeAndDebit(org.broadleafcommerce.order.domain.PaymentInfo, org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo)
-     */
     @Override
-    public void authorizeAndDebit(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException {
-        //throw new PaymentException("authorizeAndDebit not implemented.");
-        //do nothing
+    public PaymentResponse authorizeAndDebit(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException, PaymentProcessorException {
+        throw new PaymentException("authorizeAndDebit not implemented.");
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.order.module.BankAccountModule#debit(org.broadleafcommerce.order.domain.PaymentInfo, org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo)
-     */
     @Override
-    public void debit(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException {
-        //throw new PaymentException("debit not implemented.");
-        //do nothing
+    public PaymentResponse debit(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException, PaymentProcessorException {
+        throw new PaymentException("debit not implemented.");
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.order.module.BankAccountModule#getName()
-     */
+    @Override
+    public PaymentResponse credit(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException, PaymentProcessorException {
+        throw new PaymentException("credit not implemented.");
+    }
+
+    @Override
+    public PaymentResponse voidPayment(PaymentInfo paymentInfo, BankAccountPaymentInfo bankAccountPaymentInfo) throws PaymentException, PaymentProcessorException {
+        throw new PaymentException("voidPayment not implemented.");
+    }
+
     @Override
     public String getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.order.module.BankAccountModule#setName(java.lang.String)
-     */
     @Override
     public void setName(String name) {
         this.name = name;

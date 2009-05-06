@@ -5,14 +5,15 @@ import java.util.Map;
 
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
-import org.broadleafcommerce.payment.service.module.GiftCardModule;
+import org.broadleafcommerce.payment.service.GiftCardService;
+import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
 public class GiftCardActivity extends BaseActivity {
 
-    private GiftCardModule giftCardModule;
+    protected GiftCardService giftCardService;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
@@ -29,12 +30,27 @@ public class GiftCardActivity extends BaseActivity {
              * Detailed logging is a PCI requirement.
              */
             if (info.getType().equals(BLCPaymentInfoType.GIFT_CARD)) {
-                if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
-                    giftCardModule.authorize(info);
-                } else if (seed.getActionType() == PaymentActionType.DEBIT) {
-                    giftCardModule.debit(info);
-                } else {
-                    giftCardModule.authorizeAndDebit(info);
+                switch(seed.getActionType()) {
+                case AUTHORIZE:
+                    giftCardService.authorize(info);
+                    break;
+                case AUTHORIZEANDDEBIT:
+                    giftCardService.authorizeAndDebit(info);
+                    break;
+                case BALANCE:
+                    giftCardService.balance(info);
+                    break;
+                case CREDIT:
+                    giftCardService.credit(info);
+                    break;
+                case DEBIT:
+                    giftCardService.debit(info);
+                    break;
+                case VOID:
+                    giftCardService.voidPayment(info);
+                    break;
+                default:
+                    throw new PaymentException("Module does not support payment type of: " + seed.getActionType().toString());
                 }
             }
         }
@@ -42,12 +58,12 @@ public class GiftCardActivity extends BaseActivity {
         return context;
     }
 
-    public GiftCardModule getGiftCardModule() {
-        return giftCardModule;
+    public GiftCardService getGiftCardService() {
+        return giftCardService;
     }
 
-    public void setGiftCardModule(GiftCardModule giftCardModule) {
-        this.giftCardModule = giftCardModule;
+    public void setGiftCardService(GiftCardService giftCardService) {
+        this.giftCardService = giftCardService;
     }
 
 }
