@@ -16,7 +16,7 @@ public class PricingAroundAdvice implements Ordered {
     private int order;
 
     @Resource
-    private Compileable<Order> orderCompileable;
+    private Compoundable<Order> orderCompoundable;
 
     @Resource
     private PricingService pricingService;
@@ -31,11 +31,13 @@ public class PricingAroundAdvice implements Ordered {
     }
 
     public Object priceOrder(ProceedingJoinPoint call) throws Throwable {
+        orderCompoundable.clearCache();
         Object returnValue;
         try {
             returnValue = call.proceed();
         } finally {
-            Order orderItem = orderCompileable.getLatestItem();
+            Order orderItem = orderCompoundable.getLatestItem();
+            orderCompoundable.clearCache();
             if (orderItem != null) {
                 pricingService.executePricing(orderItem);
                 LOG.debug("Context order priced : order id " + orderItem.getId());

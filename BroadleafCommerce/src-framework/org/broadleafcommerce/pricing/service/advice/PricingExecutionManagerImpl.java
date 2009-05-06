@@ -6,11 +6,15 @@ import org.broadleafcommerce.order.domain.Order;
 import org.springframework.stereotype.Component;
 
 @Component("pricingExecutionManager")
-public class PricingExecutionManagerImpl implements PricingExecutionManager, Compileable<Order> {
+public class PricingExecutionManagerImpl implements PricingExecutionManager, Compoundable<Order> {
 
     private static final Log LOG = LogFactory.getLog(PricingExecutionManagerImpl.class);
 
     private static final ThreadLocal <Order> uniqueOrder  = new ThreadLocal <Order>();
+
+    public void clearCache() {
+        uniqueOrder.remove();
+    }
 
     public void executePricing(Order order) {
         uniqueOrder.set(order);
@@ -21,7 +25,6 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Com
         Order order = uniqueOrder.get();
         if (order != null) {
             LOG.debug("Latest context order retrieved : order id " + order.getId());
-            uniqueOrder.remove();
         }
 
         return order;
