@@ -213,6 +213,11 @@ public class OrderItemImpl implements OrderItem, Serializable {
 
 
     @Override
+    public boolean getIsBundle() {
+        return this instanceof BundleOrderItem;
+    }
+
+    @Override
     public boolean isInCategory(String categoryName) {
         Category currentCategory = category;
         if(currentCategory != null) {

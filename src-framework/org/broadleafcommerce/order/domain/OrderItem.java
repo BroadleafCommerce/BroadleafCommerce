@@ -64,4 +64,6 @@ public interface OrderItem {
     public void setPersonalMessage(PersonalMessage personalMessage);
 
     public boolean isInCategory(String categoryName);
+
+    public boolean getIsBundle();
 }
