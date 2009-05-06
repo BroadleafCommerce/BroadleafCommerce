@@ -57,11 +57,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
     private List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
 
-    @ManyToOne(targetEntity = AddressImpl.class)
+    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
 
-    @ManyToOne(targetEntity = PhoneImpl.class)
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "PHONE_ID")
     private Phone phone;
 
