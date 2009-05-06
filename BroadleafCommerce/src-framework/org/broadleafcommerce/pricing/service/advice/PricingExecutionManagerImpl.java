@@ -11,7 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
 @Component("pricingExecutionManager")
-public class PricingExecutionManagerImpl implements PricingExecutionManager, Compoundable<Order>, Ordered {
+public class PricingExecutionManagerImpl implements PricingExecutionManager, Ordered {
 
     private static final Log LOG = LogFactory.getLog(PricingExecutionManagerImpl.class);
 
