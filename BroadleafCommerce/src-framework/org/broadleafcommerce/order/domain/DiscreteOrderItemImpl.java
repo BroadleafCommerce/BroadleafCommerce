@@ -56,23 +56,33 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof DiscreteOrderItemImpl)) return false;
-
-        DiscreteOrderItemImpl item = (DiscreteOrderItemImpl) other;
-
-        if (sku != null && item.sku != null ? !sku.equals(item.sku) : sku != item.sku) return false;
-        if (bundleOrderItem != null && item.bundleOrderItem != null ? !bundleOrderItem.getId().equals(item.bundleOrderItem.getId()) : bundleOrderItem != item.bundleOrderItem) return false;
-
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DiscreteOrderItemImpl other = (DiscreteOrderItemImpl) obj;
+        if (bundleOrderItem == null) {
+            if (other.bundleOrderItem != null)
+                return false;
+        } else if (!bundleOrderItem.equals(other.bundleOrderItem))
+            return false;
+        if (sku == null) {
+            if (other.sku != null)
+                return false;
+        } else if (!sku.equals(other.sku))
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = sku != null ? sku.getId().hashCode() : 0;
-        result = 31 * result + (bundleOrderItem != null ? bundleOrderItem.getId().hashCode() : 0);
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((bundleOrderItem == null) ? 0 : bundleOrderItem.hashCode());
+        result = prime * result + ((sku == null) ? 0 : sku.hashCode());
         return result;
     }
 

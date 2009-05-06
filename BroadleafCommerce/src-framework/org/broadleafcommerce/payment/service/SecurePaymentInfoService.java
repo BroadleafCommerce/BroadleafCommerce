@@ -1,12 +1,10 @@
 package org.broadleafcommerce.payment.service;
 
-import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
-import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.payment.domain.Referenced;
+import org.broadleafcommerce.workflow.WorkflowException;
 
 public interface SecurePaymentInfoService {
 
-    BankAccountPaymentInfo findBankAccountInfo(String referenceNumber);
-
-    CreditCardPaymentInfo findCreditCardInfo(String referenceNumber);
+    Referenced findSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException;
 
 }

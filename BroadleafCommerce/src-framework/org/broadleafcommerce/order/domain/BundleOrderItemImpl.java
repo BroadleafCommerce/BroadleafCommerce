@@ -41,22 +41,27 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof BundleOrderItemImpl)) return false;
-
-        BundleOrderItemImpl item = (BundleOrderItemImpl) other;
-
-        if (name != null ? !name.equals(item.name) : item.name != null) return false;
-
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BundleOrderItemImpl other = (BundleOrderItemImpl) obj;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result *= 31;
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 }

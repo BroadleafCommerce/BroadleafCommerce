@@ -469,4 +469,5 @@ public class CategoryImpl implements Category, Serializable {
     public void setAllParentCategories(List<Category> allParentCategories) {
         this.allParentCategories = allParentCategories;
     }
+
 }

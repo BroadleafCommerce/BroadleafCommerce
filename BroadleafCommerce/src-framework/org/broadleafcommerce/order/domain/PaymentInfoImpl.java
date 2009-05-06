@@ -113,7 +113,7 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
-    
+
     public String getPin() {
         return pin;
     }
@@ -131,25 +131,39 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof PaymentInfoImpl)) return false;
-
-        PaymentInfoImpl item = (PaymentInfoImpl) other;
-
-        if (referenceNumber != null ? !referenceNumber.equals(item.referenceNumber) : item.referenceNumber != null) return false;
-        if (type != null ? !type.equals(item.type) : item.type != null) return false;
-        if (order != null ? !order.equals(item.order) : item.order != null) return false;
-
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PaymentInfoImpl other = (PaymentInfoImpl) obj;
+        if (order == null) {
+            if (other.order != null)
+                return false;
+        } else if (!order.equals(other.order))
+            return false;
+        if (referenceNumber == null) {
+            if (other.referenceNumber != null)
+                return false;
+        } else if (!referenceNumber.equals(other.referenceNumber))
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        } else if (!type.equals(other.type))
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = referenceNumber != null ? referenceNumber.hashCode() : 0;
-        result = 31 * result + (type != null ? type.hashCode() : 0);
-        result = 31 * result + (order != null ? order.hashCode() : 0);
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((order == null) ? 0 : order.hashCode());
+        result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
 }

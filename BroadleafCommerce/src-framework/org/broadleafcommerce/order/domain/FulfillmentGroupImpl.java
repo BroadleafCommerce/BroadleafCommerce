@@ -319,22 +319,27 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof FulfillmentGroupImpl)) return false;
-
-        FulfillmentGroupImpl item = (FulfillmentGroupImpl) other;
-
-        if (address != null && item.address != null ? !address.equals(item.address) : address != item.address) return false;
-
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FulfillmentGroupImpl other = (FulfillmentGroupImpl) obj;
+        if (address == null) {
+            if (other.address != null)
+                return false;
+        } else if (!address.equals(other.address))
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = address != null ? address.hashCode() : 0;
-        result *= 31;
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
         return result;
     }
 }
