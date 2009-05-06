@@ -166,22 +166,27 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof FulfillmentGroupItemImpl)) return false;
-
-        FulfillmentGroupItemImpl item = (FulfillmentGroupItemImpl) other;
-
-        if (orderItem != null ? !orderItem.equals(item.orderItem) : item.orderItem != null) return false;
-
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FulfillmentGroupItemImpl other = (FulfillmentGroupItemImpl) obj;
+        if (orderItem == null) {
+            if (other.orderItem != null)
+                return false;
+        } else if (!orderItem.equals(other.orderItem))
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = orderItem != null ? orderItem.hashCode() : 0;
-        result *= 31;
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((orderItem == null) ? 0 : orderItem.hashCode());
         return result;
     }
 }

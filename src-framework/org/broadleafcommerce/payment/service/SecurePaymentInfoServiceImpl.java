@@ -5,6 +5,9 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.payment.dao.SecurePaymentInfoDao;
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.payment.domain.Referenced;
+import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
+import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,20 +26,33 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
     @Resource
     private SecurePaymentInfoDao securePaymentInfoDao;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.service.SecurePaymentInfoService#findBankAccountInfo(java.lang.String)
-     */
-    @Override
-    public BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
+    protected BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
         return securePaymentInfoDao.findBankAccountInfo(referenceNumber);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.service.SecurePaymentInfoService#findCreditCardInfo(java.lang.String)
-     */
-    @Override
-    public CreditCardPaymentInfo findCreditCardInfo(String referenceNumber) {
+    protected CreditCardPaymentInfo findCreditCardInfo(String referenceNumber) {
         return securePaymentInfoDao.findCreditCardInfo(referenceNumber);
+    }
+
+    @Override
+    public Referenced findSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException {
+        if (paymentInfoType.equals(BLCPaymentInfoType.CREDIT_CARD)) {
+            CreditCardPaymentInfo ccinfo = findCreditCardInfo(referenceNumber);
+            if (ccinfo == null) {
+                throw new WorkflowException("No credit card info associated with credit card payment type with reference number: " + referenceNumber);
+            }
+            return ccinfo;
+        } else if (paymentInfoType.equals(BLCPaymentInfoType.BANK_ACCOUNT)) {
+            BankAccountPaymentInfo bankinfo = findBankAccountInfo(referenceNumber);
+            if (bankinfo == null) {
+                throw new WorkflowException("No bank account info associated with bank account payment type with reference number: " + referenceNumber);
+            }
+            return bankinfo;
+        } else if (paymentInfoType.equals(BLCPaymentInfoType.GIFT_CARD)) {
+            return null;
+        } else {
+            throw new WorkflowException("Payment info type ['" + paymentInfoType +  "'] not recognized as a valid payment type.");
+        }
     }
 
 }
