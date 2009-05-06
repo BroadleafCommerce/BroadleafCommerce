@@ -6,14 +6,15 @@ import java.util.Map;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
-import org.broadleafcommerce.payment.service.module.BankAccountModule;
+import org.broadleafcommerce.payment.service.BankAccountService;
+import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
 public class BankAccountActivity extends BaseActivity {
 
-    private BankAccountModule bankAccountModule;
+    protected BankAccountService bankAccountService;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
@@ -29,13 +30,25 @@ public class BankAccountActivity extends BaseActivity {
              * TODO add database logging to a log table before and after each of the actions.
              * Detailed logging is a PCI requirement.
              */
-            if (info.getType().equals(BLCPaymentInfoType.BANK_ACCOUNT)) {
-                if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
-                    bankAccountModule.authorize(info, (BankAccountPaymentInfo) infos.get(info));
-                } else if (seed.getActionType() == PaymentActionType.DEBIT) {
-                    bankAccountModule.debit(info, (BankAccountPaymentInfo) infos.get(info));
-                } else {
-                    bankAccountModule.authorizeAndDebit(info, (BankAccountPaymentInfo) infos.get(info));
+            if (info.getType().equals(BLCPaymentInfoType.GIFT_CARD)) {
+                switch(seed.getActionType()) {
+                case AUTHORIZE:
+                    bankAccountService.authorize(info, (BankAccountPaymentInfo) infos.get(info));
+                    break;
+                case AUTHORIZEANDDEBIT:
+                    bankAccountService.authorizeAndDebit(info, (BankAccountPaymentInfo) infos.get(info));
+                    break;
+                case CREDIT:
+                    bankAccountService.credit(info, (BankAccountPaymentInfo) infos.get(info));
+                    break;
+                case DEBIT:
+                    bankAccountService.debit(info, (BankAccountPaymentInfo) infos.get(info));
+                    break;
+                case VOID:
+                    bankAccountService.voidPayment(info, (BankAccountPaymentInfo) infos.get(info));
+                    break;
+                default:
+                    throw new PaymentException("Module does not support payment type of: " + seed.getActionType().toString());
                 }
             }
         }
@@ -43,12 +56,12 @@ public class BankAccountActivity extends BaseActivity {
         return context;
     }
 
-    public BankAccountModule getBankAccountModule() {
-        return bankAccountModule;
+    public BankAccountService getBankAccountService() {
+        return bankAccountService;
     }
 
-    public void setBankAccountModule(BankAccountModule bankAccountModule) {
-        this.bankAccountModule = bankAccountModule;
+    public void setBankAccountService(BankAccountService bankAccountService) {
+        this.bankAccountService = bankAccountService;
     }
 
 }

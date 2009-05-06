@@ -6,14 +6,15 @@ import java.util.Map;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
-import org.broadleafcommerce.payment.service.module.CreditCardModule;
+import org.broadleafcommerce.payment.service.CreditCardService;
+import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
 public class CreditCardActivity extends BaseActivity {
 
-    private CreditCardModule creditCardModule;
+    protected CreditCardService creditCardService;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
@@ -29,13 +30,25 @@ public class CreditCardActivity extends BaseActivity {
              * TODO add database logging to a log table before and after each of the actions.
              * Detailed logging is a PCI requirement.
              */
-            if (info.getType().equals(BLCPaymentInfoType.CREDIT_CARD)) {
-                if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
-                    creditCardModule.authorize(info, (CreditCardPaymentInfo) infos.get(info));
-                } else if (seed.getActionType() == PaymentActionType.DEBIT) {
-                    creditCardModule.debit(info, (CreditCardPaymentInfo) infos.get(info));
-                } else {
-                    creditCardModule.authorizeAndDebit(info, (CreditCardPaymentInfo) infos.get(info));
+            if (info.getType().equals(BLCPaymentInfoType.GIFT_CARD)) {
+                switch(seed.getActionType()) {
+                case AUTHORIZE:
+                    creditCardService.authorize(info, (CreditCardPaymentInfo) infos.get(info));
+                    break;
+                case AUTHORIZEANDDEBIT:
+                    creditCardService.authorizeAndDebit(info, (CreditCardPaymentInfo) infos.get(info));
+                    break;
+                case CREDIT:
+                    creditCardService.credit(info, (CreditCardPaymentInfo) infos.get(info));
+                    break;
+                case DEBIT:
+                    creditCardService.debit(info, (CreditCardPaymentInfo) infos.get(info));
+                    break;
+                case VOID:
+                    creditCardService.voidPayment(info, (CreditCardPaymentInfo) infos.get(info));
+                    break;
+                default:
+                    throw new PaymentException("Module does not support payment type of: " + seed.getActionType().toString());
                 }
             }
         }
@@ -43,12 +56,12 @@ public class CreditCardActivity extends BaseActivity {
         return context;
     }
 
-    public CreditCardModule getCreditCardModule() {
-        return creditCardModule;
+    public CreditCardService getCreditCardService() {
+        return creditCardService;
     }
 
-    public void setCreditCardModule(CreditCardModule creditCardModule) {
-        this.creditCardModule = creditCardModule;
+    public void setCreditCardService(CreditCardService creditCardService) {
+        this.creditCardService = creditCardService;
     }
 
 }

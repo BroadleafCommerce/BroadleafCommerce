@@ -179,6 +179,7 @@ public class OrderServiceImpl implements OrderService {
         FulfillmentGroup dfg =  findDefaultFulfillmentGroupForOrder(order);
         if (dfg == null) {
             dfg = createDefaultFulfillmentGroup(order, fulfillmentGroup.getAddress());
+            order.getFulfillmentGroups().add(dfg);
             order = updateOrder(order);
             return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(dfg));
         }
