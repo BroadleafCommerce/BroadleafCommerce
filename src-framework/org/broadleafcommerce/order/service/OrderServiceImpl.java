@@ -34,11 +34,9 @@ import org.broadleafcommerce.pricing.service.advice.PricingExecutionManager;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("orderService")
 public class OrderServiceImpl implements OrderService {
 
     @Resource
@@ -361,15 +359,9 @@ public class OrderServiceImpl implements OrderService {
             itemFromOrder.setQuantity(itemFromOrder.getQuantity() + newOrderItem.getQuantity());
             addedItem = itemFromOrder;
         } else {
-            if (containsItem) {
-                OrderItem itemFromOrder = orderItems.get(orderItems.indexOf(newOrderItem));
-                itemFromOrder.setQuantity(newOrderItem.getQuantity());
-                addedItem = itemFromOrder;
-            } else {
-                orderItems.add(newOrderItem);
-                newOrderItem.setOrder(order);
-                addedItem = newOrderItem;
-            }
+            orderItems.add(newOrderItem);
+            newOrderItem.setOrder(order);
+            addedItem = newOrderItem;
         }
 
         //don't worry about fulfillment groups, since the phase for adding items occurs before shipping arrangements
