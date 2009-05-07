@@ -39,5 +39,11 @@
 	<classpathentry kind="lib" path="lib/common/bin/mvel2-2.0.7.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/asm.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/aspectjweaver.jar"/>
+	<classpathentry kind="lib" path="lib/test/org.easymock/bin/easymock.jar" sourcepath="lib/test/org.easymock/sources/easymock-src.zip"/>
+	<classpathentry kind="lib" path="lib/test/org.easymock/bin/easymockclassextension.jar" sourcepath="lib/test/org.easymock/sources/easymockclassextension-src.zip"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="lib/common/bin/cglib-2.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/compile/javax/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/axis.jar" sourcepath="lib/common/source/axis-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
