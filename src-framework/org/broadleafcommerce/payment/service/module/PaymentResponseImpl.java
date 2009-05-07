@@ -1,7 +1,10 @@
 package org.broadleafcommerce.payment.service.module;
 
+import org.broadleafcommerce.util.money.Money;
+
 public class PaymentResponseImpl implements PaymentResponse {
 
+    protected Money remainingBalance;
     protected String authorizationCode;
     protected String middlewareResponseCode;
     protected String middlewareResponseText;
@@ -55,6 +58,14 @@ public class PaymentResponseImpl implements PaymentResponse {
 
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+
+    public Money getRemainingBalance() {
+        return remainingBalance;
+    }
+
+    public void setRemainingBalance(Money remainingBalance) {
+        this.remainingBalance = remainingBalance;
     }
 
 }

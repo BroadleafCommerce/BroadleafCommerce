@@ -1,12 +1,14 @@
-package org.broadleafcommerce.payment.service;
+package org.broadleafcommerce.payment.service.module;
 
+import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
-import org.broadleafcommerce.payment.service.module.PaymentResponse;
 
-public interface PaymentService {
+public interface PaymentModule {
 
-    public Boolean isValidCandidate(String paymentType);
+    public String getName();
+
+    public void setName(String name);
 
     public PaymentResponse authorize(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
 
@@ -19,5 +21,7 @@ public interface PaymentService {
     public PaymentResponse voidPayment(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
 
     public PaymentResponse balance(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
+
+    public Boolean isValidCandidate(String paymentType);
 
 }

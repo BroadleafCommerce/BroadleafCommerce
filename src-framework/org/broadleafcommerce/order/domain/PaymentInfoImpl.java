@@ -58,12 +58,6 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @Column(name = "PAYMENT_TYPE")
     private String type;
 
-    /*
-     * TODO need to add new fields for amount and priority. This will allow the implementor
-     * to define specific amounts to charge for each payment info, or specify the order in
-     * which the payment infos are utilized.
-     */
-
     @Override
     public Money getAmount() {
         return amount == null ? null : new Money(amount);
