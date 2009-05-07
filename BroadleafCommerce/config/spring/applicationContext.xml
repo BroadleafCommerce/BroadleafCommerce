@@ -210,12 +210,6 @@
 	
 	<bean id="shippingModule" class="org.broadleafcommerce.pricing.service.module.BandedShippingModule"/>
 	
-	<bean id="giftCardModule" class="org.broadleafcommerce.payment.service.module.DefaultGiftCardModule"/>
-	
-	<bean id="bankAccountModule" class="org.broadleafcommerce.payment.service.module.DefaultBankAccountModule"/>
-	
-	<bean id="creditCardModule" class="org.broadleafcommerce.payment.service.module.DefaultCreditCardModule"/>
-	
 	<bean id="pricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
 			<bean class="org.broadleafcommerce.pricing.service.workflow.PricingProcessContextFactory"/>
@@ -235,16 +229,22 @@
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
 	
-	<bean id="giftCardService" class="org.broadleafcommerce.payment.service.GiftCardServiceImpl">
-		<property name="giftCardModule" ref="giftCardModule"/>
+	<bean id="giftCardModule" class="org.broadleafcommerce.payment.service.module.DefaultModule"/>
+	
+	<bean id="bankAccountModule" class="org.broadleafcommerce.payment.service.module.DefaultModule"/>
+	
+	<bean id="creditCardModule" class="org.broadleafcommerce.payment.service.module.DefaultModule"/>
+	
+	<bean id="giftCardService" class="org.broadleafcommerce.payment.service.PaymentServiceImpl">
+		<property name="paymentModule" ref="giftCardModule"/>
 	</bean>
 	
-	<bean id="creditCardService" class="org.broadleafcommerce.payment.service.CreditCardServiceImpl">
-		<property name="creditCardModule" ref="creditCardModule"/>
+	<bean id="creditCardService" class="org.broadleafcommerce.payment.service.PaymentServiceImpl">
+		<property name="paymentModule" ref="creditCardModule"/>
 	</bean>
 	
-	<bean id="bankAccountService" class="org.broadleafcommerce.payment.service.BankAccountServiceImpl">
-		<property name="bankAccountModule" ref="bankAccountModule"/>
+	<bean id="bankAccountService" class="org.broadleafcommerce.payment.service.PaymentServiceImpl">
+		<property name="paymentModule" ref="bankAccountModule"/>
 	</bean>
 	
 	<bean id="authorizeAndDebitWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
@@ -255,14 +255,14 @@
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.payment.service.workflow.GiftCardActivity">
-					<property name="giftCardService" ref="giftCardService"/>
+				<bean class="org.broadleafcommerce.payment.service.workflow.PaymentActivity">
+					<property name="paymentService" ref="giftCardService"/>
 				</bean>
-				<bean class="org.broadleafcommerce.payment.service.workflow.BankAccountActivity">
-					<property name="bankAccountService" ref="bankAccountService"/>
+				<bean class="org.broadleafcommerce.payment.service.workflow.PaymentActivity">
+					<property name="paymentService" ref="bankAccountService"/>
 				</bean>
-				<bean class="org.broadleafcommerce.payment.service.workflow.CreditCardActivity">
-					<property name="creditCardService" ref="creditCardService"/>
+				<bean class="org.broadleafcommerce.payment.service.workflow.PaymentActivity">
+					<property name="paymentService" ref="creditCardService"/>
 				</bean>
 			</list>
 		</property>

@@ -5,23 +5,24 @@ import java.util.Map;
 
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
-import org.broadleafcommerce.payment.service.GiftCardService;
+import org.broadleafcommerce.payment.service.PaymentContextImpl;
+import org.broadleafcommerce.payment.service.PaymentService;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
-import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class GiftCardActivity extends BaseActivity {
+public class PaymentActivity extends BaseActivity {
 
-    protected GiftCardService giftCardService;
+    protected PaymentService paymentService;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
      */
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-        CombinedPaymentContextSeed seed = ((PaymentContext) context).getSeedData();
+        CombinedPaymentContextSeed seed = ((WorkflowPaymentContext) context).getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();
+        PaymentContextImpl paymentContext = new PaymentContextImpl(seed.getOrderTotal(), seed.getOrderTotal());
         Iterator<PaymentInfo> itr = infos.keySet().iterator();
         while(itr.hasNext()) {
             PaymentInfo info = itr.next();
@@ -29,28 +30,29 @@ public class GiftCardActivity extends BaseActivity {
              * TODO add database logging to a log table before and after each of the actions.
              * Detailed logging is a PCI requirement.
              */
-            if (info.getType().equals(BLCPaymentInfoType.GIFT_CARD)) {
+            if (paymentService.isValidCandidate(info.getType())) {
+                paymentContext.setPaymentData(info, infos.get(info));
                 switch(seed.getActionType()) {
                 case AUTHORIZE:
-                    giftCardService.authorize(info);
+                    paymentService.authorize(paymentContext);
                     break;
                 case AUTHORIZEANDDEBIT:
-                    giftCardService.authorizeAndDebit(info);
+                    paymentService.authorizeAndDebit(paymentContext);
                     break;
                 case BALANCE:
-                    giftCardService.balance(info);
+                    paymentService.balance(paymentContext);
                     break;
                 case CREDIT:
-                    giftCardService.credit(info);
+                    paymentService.credit(paymentContext);
                     break;
                 case DEBIT:
-                    giftCardService.debit(info);
+                    paymentService.debit(paymentContext);
                     break;
                 case VOID:
-                    giftCardService.voidPayment(info);
+                    paymentService.voidPayment(paymentContext);
                     break;
                 default:
-                    throw new PaymentException("Module does not support payment type of: " + seed.getActionType().toString());
+                    throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
                 }
             }
         }
@@ -58,12 +60,12 @@ public class GiftCardActivity extends BaseActivity {
         return context;
     }
 
-    public GiftCardService getGiftCardService() {
-        return giftCardService;
+    public PaymentService getPaymentService() {
+        return paymentService;
     }
 
-    public void setGiftCardService(GiftCardService giftCardService) {
-        this.giftCardService = giftCardService;
+    public void setPaymentService(PaymentService paymentService) {
+        this.paymentService = paymentService;
     }
 
 }

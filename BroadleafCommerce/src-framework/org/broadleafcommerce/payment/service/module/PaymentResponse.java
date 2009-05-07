@@ -1,5 +1,7 @@
 package org.broadleafcommerce.payment.service.module;
 
+import org.broadleafcommerce.util.money.Money;
+
 public interface PaymentResponse {
 
     public String getAuthorizationCode();
@@ -25,5 +27,9 @@ public interface PaymentResponse {
     public String getReferenceNumber();
 
     public void setReferenceNumber(String referenceNumber);
+
+    public Money getRemainingBalance();
+
+    public void setRemainingBalance(Money remainingBalance);
 
 }

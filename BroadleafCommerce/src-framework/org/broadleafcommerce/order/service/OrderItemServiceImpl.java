@@ -31,6 +31,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
         item.setPrice(itemRequest.getSku().getSalePrice());
+        item.setSalePrice(itemRequest.getSku().getSalePrice());
+        item.setRetailPrice(itemRequest.getSku().getRetailPrice());
 
         return item;
     }
@@ -42,12 +44,16 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setCategory(itemRequest.getCategory());
         item.setName(itemRequest.getName());
         item.setPrice(new Money(0D));
+        item.setRetailPrice(new Money(0D));
+        item.setSalePrice(new Money(0D));
 
         for (DiscreteOrderItemRequest discreteItemRequest : itemRequest.getDiscreteOrderItems()) {
             DiscreteOrderItem discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
             discreteOrderItem.setBundleOrderItem(item);
             item.getDiscreteOrderItems().add(discreteOrderItem);
             item.setPrice(item.getPrice().add(discreteOrderItem.getPrice()));
+            if (discreteOrderItem.getSalePrice() != null) item.setSalePrice(item.getSalePrice().add(discreteOrderItem.getSalePrice()));
+            if (discreteOrderItem.getRetailPrice() != null) item.setRetailPrice(item.getRetailPrice().add(discreteOrderItem.getRetailPrice()));
         }
 
         return item;

@@ -2,7 +2,7 @@ package org.broadleafcommerce.payment.service.workflow;
 
 import org.broadleafcommerce.workflow.ProcessContext;
 
-public class PaymentContext implements ProcessContext {
+public class WorkflowPaymentContext implements ProcessContext {
 
     public final static long serialVersionUID = 1L;
 
