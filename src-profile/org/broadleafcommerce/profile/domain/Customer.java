@@ -50,8 +50,6 @@ public interface Customer {
 
     public void setRegistered(boolean registered);
 
-    public boolean isAuthenticated();
-
     public String getUnencodedChallengeAnswer();
 
     public void setUnencodedChallengeAnswer(String unencodedChallengeAnswer);

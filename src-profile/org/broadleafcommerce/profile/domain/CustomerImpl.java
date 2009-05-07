@@ -13,7 +13,6 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.security.context.SecurityContextHolder;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -157,10 +156,6 @@ public class CustomerImpl implements Customer, Serializable {
 
     public void setRegistered(boolean registered) {
         this.registered = registered;
-    }
-
-    public boolean isAuthenticated() {
-        return SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
     }
 
     public String getUnencodedChallengeAnswer() {
