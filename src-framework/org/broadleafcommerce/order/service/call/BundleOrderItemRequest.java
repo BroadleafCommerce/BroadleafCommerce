@@ -45,26 +45,42 @@ public class BundleOrderItemRequest {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BundleOrderItemRequest)) return false;
-
-        BundleOrderItemRequest that = (BundleOrderItemRequest) o;
-
-        if (!category.equals(that.category)) return false;
-        if (!name.equals(that.name)) return false;
-        if (quantity != that.quantity) return false;
-        if (discreteOrderItems != that.discreteOrderItems) return false;
-
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BundleOrderItemRequest other = (BundleOrderItemRequest) obj;
+        if (category == null) {
+            if (other.category != null)
+                return false;
+        } else if (!category.equals(other.category))
+            return false;
+        if (discreteOrderItems == null) {
+            if (other.discreteOrderItems != null)
+                return false;
+        } else if (!discreteOrderItems.equals(other.discreteOrderItems))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (quantity != other.quantity)
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (category != null ? category.hashCode() : 0);
-        result = 31 * result + (discreteOrderItems != null ? discreteOrderItems.hashCode() : 0);
-        result = 31 * result + quantity;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((category == null) ? 0 : category.hashCode());
+        result = prime * result + ((discreteOrderItems == null) ? 0 : discreteOrderItems.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + quantity;
         return result;
     }
 }
