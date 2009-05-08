@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.payment.dao.SecurePaymentInfoDao;
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.payment.domain.GiftCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
 import org.broadleafcommerce.workflow.WorkflowException;
@@ -34,6 +35,10 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
         return securePaymentInfoDao.findCreditCardInfo(referenceNumber);
     }
 
+    protected GiftCardPaymentInfo findGiftCardInfo(String referenceNumber) {
+        return securePaymentInfoDao.findGiftCardInfo(referenceNumber);
+    }
+
     @Override
     public Referenced findSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException {
         if (paymentInfoType.equals(BLCPaymentInfoType.CREDIT_CARD)) {
@@ -49,7 +54,11 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
             }
             return bankinfo;
         } else if (paymentInfoType.equals(BLCPaymentInfoType.GIFT_CARD)) {
-            return null;
+            GiftCardPaymentInfo gcinfo = findGiftCardInfo(referenceNumber);
+            if (gcinfo == null) {
+                throw new WorkflowException("No bank account info associated with gift card payment type with reference number: " + referenceNumber);
+            }
+            return gcinfo;
         } else {
             throw new WorkflowException("Payment info type ['" + paymentInfoType +  "'] not recognized as a valid payment type.");
         }

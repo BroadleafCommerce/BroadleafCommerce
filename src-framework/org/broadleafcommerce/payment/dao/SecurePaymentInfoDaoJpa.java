@@ -8,6 +8,7 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.payment.domain.GiftCardPaymentInfo;
 import org.springframework.stereotype.Repository;
 
 @Repository("securePaymentInfoDao")
@@ -27,9 +28,6 @@ public class SecurePaymentInfoDaoJpa implements SecurePaymentInfoDao {
         throw new RuntimeException("This class must be instantiated using a valid EntityManager instance");
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDao#findBankAccountInfo(java.lang.String)
-     */
     @SuppressWarnings("unchecked")
     @Override
     public BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
@@ -39,15 +37,21 @@ public class SecurePaymentInfoDaoJpa implements SecurePaymentInfoDao {
         return (infos==null || infos.size()==0)?null:infos.get(0);
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.dao.SecurePaymentInfoDao#findCreditCardInfo(java.lang.String)
-     */
     @SuppressWarnings("unchecked")
     @Override
     public CreditCardPaymentInfo findCreditCardInfo(String referenceNumber) {
         Query query = em.createNamedQuery("READ_CREDIT_CARD_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<CreditCardPaymentInfo> infos = query.getResultList();
+        return (infos==null || infos.size()==0)?null:infos.get(0);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public GiftCardPaymentInfo findGiftCardInfo(String referenceNumber) {
+        Query query = em.createNamedQuery("READ_GIFT_CARD_BY_REFERENCE_NUMBER");
+        query.setParameter("referenceNumber", referenceNumber);
+        List<GiftCardPaymentInfo> infos = query.getResultList();
         return (infos==null || infos.size()==0)?null:infos.get(0);
     }
 
