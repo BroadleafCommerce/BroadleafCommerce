@@ -21,15 +21,15 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @ManyToOne(targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID", nullable = false)
-    private Sku sku;
+    protected Sku sku;
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
-    private Product product;
+    protected Product product;
 
     @ManyToOne(targetEntity = BundleOrderItemImpl.class)
     @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
-    private BundleOrderItem bundleOrderItem;
+    protected BundleOrderItem bundleOrderItem;
 
     public Sku getSku() {
         return sku;
@@ -64,6 +64,9 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (getClass() != obj.getClass())
             return false;
         DiscreteOrderItemImpl other = (DiscreteOrderItemImpl) obj;
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
         if (bundleOrderItem == null) {
             if (other.bundleOrderItem != null)
                 return false;
