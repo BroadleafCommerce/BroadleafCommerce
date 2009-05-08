@@ -36,46 +36,46 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 1)
     @Column(name = "ORDER_ITEM_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
-    private Category category;
+    protected Category category;
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
-    private Order order;
+    protected Order order;
 
     @Column(name = "RETAIL_PRICE")
-    private BigDecimal retailPrice;
+    protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE")
-    private BigDecimal salePrice;
+    protected BigDecimal salePrice;
 
     @Column(name = "PRICE")
-    private BigDecimal price;
+    protected BigDecimal price;
 
     @Column(name = "QUANTITY")
-    private int quantity;
+    protected int quantity;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
-    private PersonalMessage personalMessage;
+    protected PersonalMessage personalMessage;
 
     // TODO: Add OrderItemAdjustments
     // Make sure that when you add appliedItemOffers you add them to the adjustments.
 
     // TODO: Need to persist this
     @Transient
-    private List<CandidateItemOffer> candidateItemOffers;
+    protected List<CandidateItemOffer> candidateItemOffers;
 
     //This does not need to be persisted since the adjustments will be persisted.
     //It just helps keep track of offers that were applied.
     @Transient
-    private List<Offer> appliedItemOffers;
+    protected List<Offer> appliedItemOffers;
 
     @Transient
-    private int markedForOffer = 0;
+    protected int markedForOffer = 0;
 
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);

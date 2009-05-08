@@ -174,6 +174,9 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
         if (getClass() != obj.getClass())
             return false;
         FulfillmentGroupItemImpl other = (FulfillmentGroupItemImpl) obj;
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
         if (orderItem == null) {
             if (other.orderItem != null)
                 return false;

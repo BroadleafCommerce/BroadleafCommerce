@@ -206,11 +206,7 @@ public class OrderServiceImpl implements OrderService {
             for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
                 // 3) remove item from it's existing fulfillment
                 // group
-                for (FulfillmentGroupItem oldItem : fg.getFulfillmentGroupItems()) {
-                    if (oldItem.getOrderItem().getId().equals(fgItem.getOrderItem().getId())) {
-                        fg.getFulfillmentGroupItems().remove(oldItem);
-                    }
-                }
+                fg.getFulfillmentGroupItems().remove(fgItem);
             }
         }
         order.getFulfillmentGroups().add(fulfillmentGroup);
@@ -232,7 +228,7 @@ public class OrderServiceImpl implements OrderService {
             Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
             while(itr.hasNext()) {
                 FulfillmentGroupItem fgItem = itr.next();
-                if (fgItem.getOrderItem().getId().equals(item.getId())) {
+                if (fgItem.getOrderItem().equals(item)) {
                     // 2) remove item from it's existing fulfillment group
                     itr.remove();
                     fulfillmentGroupItemDao.delete(fgItem);
