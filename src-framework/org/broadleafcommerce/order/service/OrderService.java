@@ -9,6 +9,7 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
@@ -33,6 +34,8 @@ public interface OrderService {
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException;
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
+
+    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException;
 
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
 

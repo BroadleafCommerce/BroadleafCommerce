@@ -5,6 +5,7 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.service.PricingService;
 import org.springframework.core.Ordered;
@@ -21,6 +22,9 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
 
     @Resource
     private PricingService pricingService;
+
+    @Resource(name="orderDao")
+    private OrderDao orderDao;
 
     @Override
     public int getOrder() {
@@ -59,6 +63,7 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
             clearCache();
             if (orderItem != null) {
                 pricingService.executePricing(orderItem);
+                orderDao.save(orderItem);
                 LOG.debug("Context order priced : order id " + orderItem.getId());
             }
         }
