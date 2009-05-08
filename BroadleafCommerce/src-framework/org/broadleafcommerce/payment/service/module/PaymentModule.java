@@ -6,10 +6,6 @@ import org.broadleafcommerce.payment.service.exception.PaymentProcessorException
 
 public interface PaymentModule {
 
-    public String getName();
-
-    public void setName(String name);
-
     public PaymentResponse authorize(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
 
     public PaymentResponse debit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
