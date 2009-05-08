@@ -2,6 +2,7 @@ package org.broadleafcommerce.payment.dao;
 
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.payment.domain.GiftCardPaymentInfo;
 
 public interface SecurePaymentInfoDao {
 
@@ -9,4 +10,5 @@ public interface SecurePaymentInfoDao {
 
     CreditCardPaymentInfo findCreditCardInfo(String referenceNumber);
 
+    GiftCardPaymentInfo findGiftCardInfo(String referenceNumber);
 }

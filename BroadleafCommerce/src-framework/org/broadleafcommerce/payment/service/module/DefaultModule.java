@@ -6,7 +6,7 @@ import org.broadleafcommerce.payment.service.exception.PaymentProcessorException
 
 public class DefaultModule implements PaymentModule {
 
-    public static final String MODULENAME = "defaultBankAccountModule";
+    public static final String MODULENAME = "defaultModule";
 
     protected String name = MODULENAME;
 

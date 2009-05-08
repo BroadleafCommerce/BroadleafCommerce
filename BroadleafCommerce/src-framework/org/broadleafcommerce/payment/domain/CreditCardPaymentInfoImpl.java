@@ -3,10 +3,12 @@ package org.broadleafcommerce.payment.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * TODO look at some pluggable encryption mechanism that would
@@ -22,7 +24,8 @@ import javax.persistence.Table;
 public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CreditCardPaymentInfoImpl", allocationSize = 1)
     @Column(name = "PAYMENT_ID")
     private long id;
 
