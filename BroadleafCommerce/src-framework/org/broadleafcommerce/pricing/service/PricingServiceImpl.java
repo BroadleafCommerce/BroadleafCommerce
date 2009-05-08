@@ -18,7 +18,9 @@ public class PricingServiceImpl implements PricingService {
     public Order executePricing(Order order) throws PricingException {
         try {
             PricingContext context = (PricingContext) pricingWorkflow.doActivities(order);
-            return context.getSeedData();
+            Order response = context.getSeedData();
+
+            return response;
         } catch (WorkflowException e) {
             throw new PricingException("Unable to execute pricing for order -- id: " + order.getId(), e);
         }

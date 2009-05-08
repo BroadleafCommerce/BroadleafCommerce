@@ -27,6 +27,8 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.order.service.call.FulfillmentGroupItemRequest;
+import org.broadleafcommerce.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.order.service.type.OrderStatus;
@@ -173,39 +175,47 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException {
+        //TODO change to a fulfillment group service call
+        FulfillmentGroup fg = fulfillmentGroupDao.create();
+        fg.setAddress(fulfillmentGroupRequest.getAddress());
+        fg.setOrder(fulfillmentGroupRequest.getOrder());
+        for (FulfillmentGroupItemRequest request : fulfillmentGroupRequest.getFulfillmentGroupItemRequests()) {
+            fg = addItemToFulfillmentGroup(request.getOrderItem(), fg, request.getQuantity());
+        }
+
+        return fg;
+    }
+
+    @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
         FulfillmentGroup dfg =  findDefaultFulfillmentGroupForOrder(order);
         if (dfg == null) {
-            dfg = createDefaultFulfillmentGroup(order, fulfillmentGroup.getAddress());
-            order.getFulfillmentGroups().add(dfg);
-            order = updateOrder(order);
-            return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(dfg));
-        }
-        if (dfg.equals(fulfillmentGroup)) {
+            fulfillmentGroup.setType(FulfillmentGroupType.DEFAULT);
+        } else if (dfg.equals(fulfillmentGroup)) {
             // API user is trying to re-add the default fulfillment group to the same order
             fulfillmentGroup.setType(FulfillmentGroupType.DEFAULT);
             order.getFulfillmentGroups().remove(dfg);
-            order.getFulfillmentGroups().add(fulfillmentGroup);
-            order = updateOrder(order);
             fulfillmentGroupDao.delete(dfg);
-            return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
-        } else {
-            // API user is adding a new fulfillment group to the order
-            fulfillmentGroup.setOrder(order);
-            // 1) For each item in the new fulfillment group
-            for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-                // 2) Find the item's existing fulfillment group
-                for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                    // 3) remove item from it's existing fulfillment
-                    // group
-                    fg.getFulfillmentGroupItems().remove(fgItem);
-                    fulfillmentGroupItemDao.delete(fgItem);
+        }
+
+        fulfillmentGroup.setOrder(order);
+        // 1) For each item in the new fulfillment group
+        for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
+            // 2) Find the item's existing fulfillment group
+            for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                // 3) remove item from it's existing fulfillment
+                // group
+                for (FulfillmentGroupItem oldItem : fg.getFulfillmentGroupItems()) {
+                    if (oldItem.getOrderItem().getId().equals(fgItem.getOrderItem().getId())) {
+                        fg.getFulfillmentGroupItems().remove(oldItem);
+                    }
                 }
             }
-            order.getFulfillmentGroups().add(fulfillmentGroup);
-            order = updateOrder(order);
-            return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
         }
+        order.getFulfillmentGroups().add(fulfillmentGroup);
+        order = updateOrder(order);
+        return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
     }
 
     @Override
@@ -222,7 +232,7 @@ public class OrderServiceImpl implements OrderService {
             Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
             while(itr.hasNext()) {
                 FulfillmentGroupItem fgItem = itr.next();
-                if (fgItem.getOrderItem().equals(item)) {
+                if (fgItem.getOrderItem().getId().equals(item.getId())) {
                     // 2) remove item from it's existing fulfillment group
                     itr.remove();
                     fulfillmentGroupItemDao.delete(fgItem);
