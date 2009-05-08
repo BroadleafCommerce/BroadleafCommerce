@@ -6,10 +6,6 @@ import org.broadleafcommerce.payment.service.exception.PaymentProcessorException
 
 public class DefaultModule implements PaymentModule {
 
-    public static final String MODULENAME = "defaultModule";
-
-    protected String name = MODULENAME;
-
     @Override
     public PaymentResponse authorize(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
         throw new PaymentException("authorize not implemented.");
@@ -38,16 +34,6 @@ public class DefaultModule implements PaymentModule {
     @Override
     public PaymentResponse balance(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
         throw new PaymentException("balance not implemented.");
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override
