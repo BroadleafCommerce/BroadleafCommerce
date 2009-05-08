@@ -51,9 +51,9 @@ public class OrderItemServiceImpl implements OrderItemService {
             DiscreteOrderItem discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
             discreteOrderItem.setBundleOrderItem(item);
             item.getDiscreteOrderItems().add(discreteOrderItem);
-            item.setPrice(item.getPrice().add(discreteOrderItem.getPrice()).multiply(discreteOrderItem.getQuantity()));
-            if (discreteOrderItem.getSalePrice() != null) item.setSalePrice(item.getSalePrice().add(discreteOrderItem.getSalePrice()).multiply(discreteOrderItem.getQuantity()));
-            if (discreteOrderItem.getRetailPrice() != null) item.setRetailPrice(item.getRetailPrice().add(discreteOrderItem.getRetailPrice()).multiply(discreteOrderItem.getQuantity()));
+            item.setPrice(item.getPrice().add(discreteOrderItem.getPrice().multiply(discreteItemRequest.getQuantity())));
+            if (discreteOrderItem.getSalePrice() != null) item.setSalePrice(item.getSalePrice().add(discreteOrderItem.getSalePrice().multiply(discreteItemRequest.getQuantity())));
+            if (discreteOrderItem.getRetailPrice() != null) item.setRetailPrice(item.getRetailPrice().add(discreteOrderItem.getRetailPrice().multiply(discreteItemRequest.getQuantity())));
         }
 
         return item;
