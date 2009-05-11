@@ -106,4 +106,19 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         this.implementorResponseText = implementorResponseText;
     }
 
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(PaymentResponseItem.class.getName() + "\n");
+        sb.append("auth code: " + this.getAuthorizationCode() + "\n");
+        sb.append("implementor response code: " + this.getImplementorResponseCode() + "\n");
+        sb.append("implementor response text: " + this.getImplementorResponseText() + "\n");
+        sb.append("middleware response code: " + this.getMiddlewareResponseCode() + "\n");
+        sb.append("middleware response text: " + this.getMiddlewareResponseText() + "\n");
+        sb.append("processor response code: " + this.getProcessorResponseCode() + "\n");
+        sb.append("processor response text: " + this.getProcessorResponseText() + "\n");
+        sb.append("reference number: " + this.getReferenceNumber());
+
+        return sb.toString();
+    }
 }
