@@ -14,6 +14,4 @@ public interface PaymentContext {
 
     public Referenced getReferencedPaymentInfo();
 
-    public void addPayment(Money paymentAmount);
-
 }

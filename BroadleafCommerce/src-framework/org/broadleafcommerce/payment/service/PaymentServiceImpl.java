@@ -3,7 +3,7 @@ package org.broadleafcommerce.payment.service;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
 import org.broadleafcommerce.payment.service.module.PaymentModule;
-import org.broadleafcommerce.payment.service.module.PaymentResponse;
+import org.broadleafcommerce.payment.service.module.PaymentResponseItem;
 
 public class PaymentServiceImpl implements PaymentService {
 
@@ -17,27 +17,27 @@ public class PaymentServiceImpl implements PaymentService {
         this.paymentModule = paymentModule;
     }
 
-    public PaymentResponse authorize(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
         return paymentModule.authorize(paymentContext);
     }
 
-    public PaymentResponse authorizeAndDebit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
         return paymentModule.authorizeAndDebit(paymentContext);
     }
 
-    public PaymentResponse balance(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
         return paymentModule.balance(paymentContext);
     }
 
-    public PaymentResponse credit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
         return paymentModule.credit(paymentContext);
     }
 
-    public PaymentResponse debit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
         return paymentModule.debit(paymentContext);
     }
 
-    public PaymentResponse voidPayment(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
         return paymentModule.voidPayment(paymentContext);
     }
 

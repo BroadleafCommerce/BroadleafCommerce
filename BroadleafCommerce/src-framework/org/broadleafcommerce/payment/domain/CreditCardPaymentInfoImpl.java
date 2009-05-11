@@ -9,6 +9,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 /**
  * TODO look at some pluggable encryption mechanism that would
@@ -27,19 +28,22 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CreditCardPaymentInfoImpl", allocationSize = 1)
     @Column(name = "PAYMENT_ID")
-    private long id;
+    protected long id;
 
     @Column(name = "REFERENCE_NUMBER")
-    private String referenceNumber;
+    protected String referenceNumber;
 
     @Column(name = "PAN")
-    private Long pan;
+    protected String pan;
 
     @Column(name = "EXPIRATION_MONTH")
-    private Integer expirationMonth;
+    protected Integer expirationMonth;
 
     @Column(name = "EXPIRATION_YEAR")
-    private Integer expirationYear;
+    protected Integer expirationYear;
+
+    @Transient
+    protected String cvvCode;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo#getId()
@@ -72,14 +76,14 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo#getPan()
      */
-    public Long getPan() {
+    public String getPan() {
         return pan;
     }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo#setPan(java.lang.Long)
      */
-    public void setPan(Long pan) {
+    public void setPan(String pan) {
         this.pan = pan;
     }
 
@@ -109,6 +113,14 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
      */
     public void setExpirationYear(Integer expirationYear) {
         this.expirationYear = expirationYear;
+    }
+
+    public String getCvvCode() {
+        return cvvCode;
+    }
+
+    public void setCvvCode(String cvvCode) {
+        this.cvvCode = cvvCode;
     }
 
 }

@@ -15,12 +15,12 @@ public interface CreditCardPaymentInfo extends Referenced {
     /**
      * @return the pan
      */
-    public Long getPan();
+    public String getPan();
 
     /**
      * @param pan the pan to set
      */
-    public void setPan(Long pan);
+    public void setPan(String pan);
 
     /**
      * @return the expirationMonth
@@ -42,4 +42,7 @@ public interface CreditCardPaymentInfo extends Referenced {
      */
     public void setExpirationYear(Integer expirationYear);
 
+    public String getCvvCode();
+
+    public void setCvvCode(String cvvCode);
 }

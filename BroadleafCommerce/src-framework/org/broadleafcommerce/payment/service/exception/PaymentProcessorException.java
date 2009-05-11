@@ -1,31 +1,31 @@
 package org.broadleafcommerce.payment.service.exception;
 
-import org.broadleafcommerce.payment.service.module.PaymentResponse;
+import org.broadleafcommerce.payment.service.module.PaymentResponseItem;
 
-public class PaymentProcessorException extends Exception {
+public class PaymentProcessorException extends PaymentException {
 
     private static final long serialVersionUID = 1L;
 
-    protected PaymentResponse paymentResponse;
+    protected PaymentResponseItem paymentResponseItem;
 
-    public PaymentProcessorException(PaymentResponse paymentResponse) {
+    public PaymentProcessorException(PaymentResponseItem paymentResponseItem) {
         super();
-        this.paymentResponse = paymentResponse;
+        this.paymentResponseItem = paymentResponseItem;
     }
 
-    public PaymentProcessorException(String message, Throwable cause, PaymentResponse paymentResponse) {
+    public PaymentProcessorException(String message, Throwable cause, PaymentResponseItem paymentResponseItem) {
         super(message, cause);
-        this.paymentResponse = paymentResponse;
+        this.paymentResponseItem = paymentResponseItem;
     }
 
-    public PaymentProcessorException(String message, PaymentResponse paymentResponse) {
+    public PaymentProcessorException(String message, PaymentResponseItem paymentResponseItem) {
         super(message);
-        this.paymentResponse = paymentResponse;
+        this.paymentResponseItem = paymentResponseItem;
     }
 
-    public PaymentProcessorException(Throwable cause, PaymentResponse paymentResponse) {
+    public PaymentProcessorException(Throwable cause, PaymentResponseItem paymentResponseItem) {
         super(cause);
-        this.paymentResponse = paymentResponse;
+        this.paymentResponseItem = paymentResponseItem;
     }
 
 }

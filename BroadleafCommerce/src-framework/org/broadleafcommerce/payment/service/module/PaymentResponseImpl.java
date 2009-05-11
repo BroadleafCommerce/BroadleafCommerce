@@ -1,71 +1,24 @@
 package org.broadleafcommerce.payment.service.module;
 
-import org.broadleafcommerce.util.money.Money;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.broadleafcommerce.order.domain.PaymentInfo;
+
 
 public class PaymentResponseImpl implements PaymentResponse {
 
-    protected Money remainingBalance;
-    protected String authorizationCode;
-    protected String middlewareResponseCode;
-    protected String middlewareResponseText;
-    protected String processorResponseCode;
-    protected String processorResponseText;
-    protected String referenceNumber;
+    protected Map<PaymentInfo, PaymentResponseItem> responses = new HashMap<PaymentInfo, PaymentResponseItem>();
 
-    public String getAuthorizationCode() {
-        return authorizationCode;
+    public void addPaymentResponseItem(PaymentInfo paymentInfo, PaymentResponseItem paymentResponseItem) {
+        responses.put(paymentInfo, paymentResponseItem);
     }
 
-    public void setAuthorizationCode(String authorizationCode) {
-        this.authorizationCode = authorizationCode;
+    public PaymentResponseItem getPaymentResponseItem(PaymentInfo paymentInfo) {
+        return responses.get(paymentInfo);
     }
 
-    public String getMiddlewareResponseCode() {
-        return middlewareResponseCode;
+    public Map<PaymentInfo, PaymentResponseItem> getResponseItems() {
+        return responses;
     }
-
-    public void setMiddlewareResponseCode(String middlewareResponseCode) {
-        this.middlewareResponseCode = middlewareResponseCode;
-    }
-
-    public String getMiddlewareResponseText() {
-        return middlewareResponseText;
-    }
-
-    public void setMiddlewareResponseText(String middlewareResponseText) {
-        this.middlewareResponseText = middlewareResponseText;
-    }
-
-    public String getProcessorResponseCode() {
-        return processorResponseCode;
-    }
-
-    public void setProcessorResponseCode(String processorResponseCode) {
-        this.processorResponseCode = processorResponseCode;
-    }
-
-    public String getProcessorResponseText() {
-        return processorResponseText;
-    }
-
-    public void setProcessorResponseText(String processorResponseText) {
-        this.processorResponseText = processorResponseText;
-    }
-
-    public String getReferenceNumber() {
-        return referenceNumber;
-    }
-
-    public void setReferenceNumber(String referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
-
-    public Money getRemainingBalance() {
-        return remainingBalance;
-    }
-
-    public void setRemainingBalance(Money remainingBalance) {
-        this.remainingBalance = remainingBalance;
-    }
-
 }

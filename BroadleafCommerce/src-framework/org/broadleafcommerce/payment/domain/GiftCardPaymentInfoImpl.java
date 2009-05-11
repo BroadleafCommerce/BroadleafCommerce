@@ -25,7 +25,7 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     private String referenceNumber;
 
     @Column(name = "PAN")
-    private Long pan;
+    private String pan;
 
     @Column(name = "PIN")
     private String pin;
@@ -36,7 +36,7 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     }
 
     @Override
-    public Long getPan() {
+    public String getPan() {
         return pan;
     }
 
@@ -51,7 +51,7 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     }
 
     @Override
-    public void setPan(Long pan) {
+    public void setPan(String pan) {
         this.pan = pan;
     }
 

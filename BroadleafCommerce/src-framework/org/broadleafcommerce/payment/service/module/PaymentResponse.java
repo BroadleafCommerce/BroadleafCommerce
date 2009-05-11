@@ -1,35 +1,15 @@
 package org.broadleafcommerce.payment.service.module;
 
-import org.broadleafcommerce.util.money.Money;
+import java.util.Map;
+
+import org.broadleafcommerce.order.domain.PaymentInfo;
 
 public interface PaymentResponse {
 
-    public String getAuthorizationCode();
+    public void addPaymentResponseItem(PaymentInfo paymentInfo, PaymentResponseItem paymentResponseItem);
 
-    public void setAuthorizationCode(String authorizationCode);
+    public PaymentResponseItem getPaymentResponseItem(PaymentInfo paymentInfo);
 
-    public String getMiddlewareResponseCode();
-
-    public void setMiddlewareResponseCode(String middlewareResponseCode);
-
-    public String getMiddlewareResponseText();
-
-    public void setMiddlewareResponseText(String middlewareResponseText);
-
-    public String getProcessorResponseCode();
-
-    public void setProcessorResponseCode(String processorResponseCode);
-
-    public String getProcessorResponseText();
-
-    public void setProcessorResponseText(String processorResponseText);
-
-    public String getReferenceNumber();
-
-    public void setReferenceNumber(String referenceNumber);
-
-    public Money getRemainingBalance();
-
-    public void setRemainingBalance(Money remainingBalance);
+    public Map<PaymentInfo, PaymentResponseItem> getResponseItems();
 
 }
