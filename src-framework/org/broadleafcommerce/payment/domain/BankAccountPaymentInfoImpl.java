@@ -33,65 +33,41 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
     private String referenceNumber;
 
     @Column(name = "ACCOUNT_NUMBER")
-    private Long pan;
+    private String accountNumber;
 
     @Column(name = "ROUTING_NUMBER")
-    private Integer expirationMonth;
+    private String routingNumber;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo#getId()
-     */
     public long getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo#setId(long)
-     */
     public void setId(long id) {
         this.id = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo#getReferenceNumber()
-     */
     public String getReferenceNumber() {
         return referenceNumber;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo#setReferenceNumber(java.lang.String)
-     */
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo#getPan()
-     */
-    public Long getPan() {
-        return pan;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo#setPan(java.lang.Long)
-     */
-    public void setPan(Long pan) {
-        this.pan = pan;
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo#getExpirationMonth()
-     */
-    public Integer getExpirationMonth() {
-        return expirationMonth;
+    public String getRoutingNumber() {
+        return routingNumber;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.payment.secure.domain.BankAccountPaymentInfo#setExpirationMonth(java.lang.Integer)
-     */
-    public void setExpirationMonth(Integer expirationMonth) {
-        this.expirationMonth = expirationMonth;
+    public void setRoutingNumber(String routingNumber) {
+        this.routingNumber = routingNumber;
     }
 
 }

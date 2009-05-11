@@ -59,9 +59,9 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
                 throw new WorkflowException("No bank account info associated with gift card payment type with reference number: " + referenceNumber);
             }
             return gcinfo;
-        } else {
-            throw new WorkflowException("Payment info type ['" + paymentInfoType +  "'] not recognized as a valid payment type.");
         }
+
+        return null;
     }
 
 }

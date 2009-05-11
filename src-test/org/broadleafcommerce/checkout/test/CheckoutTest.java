@@ -69,7 +69,8 @@ public class CheckoutTest extends BaseTest {
         CreditCardPaymentInfo cc = new CreditCardPaymentInfoImpl();
         cc.setExpirationMonth(11);
         cc.setExpirationYear(2011);
-        cc.setPan(1111111111111111L);
+        cc.setPan("1111111111111111");
+        cc.setCvvCode("123");
         cc.setReferenceNumber("1234");
 
         Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();

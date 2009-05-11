@@ -13,23 +13,23 @@ public interface BankAccountPaymentInfo extends Referenced {
     public void setId(long id);
 
     /**
-     * @return the pan
+     * @return the account number
      */
-    public Long getPan();
+    public String getAccountNumber();
 
     /**
-     * @param pan the pan to set
+     * @param account number the account number to set
      */
-    public void setPan(Long pan);
+    public void setAccountNumber(String accountNumber);
 
     /**
-     * @return the expirationMonth
+     * @return the routing number
      */
-    public Integer getExpirationMonth();
+    public String getRoutingNumber();
 
     /**
-     * @param expirationMonth the expirationMonth to set
+     * @param routing number the routing number to set
      */
-    public void setExpirationMonth(Integer expirationMonth);
+    public void setRoutingNumber(String routingNumber);
 
 }

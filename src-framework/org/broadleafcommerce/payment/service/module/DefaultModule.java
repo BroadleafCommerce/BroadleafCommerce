@@ -2,37 +2,36 @@ package org.broadleafcommerce.payment.service.module;
 
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
-import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
 
 public class DefaultModule implements PaymentModule {
 
     @Override
-    public PaymentResponse authorize(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("authorize not implemented.");
     }
 
     @Override
-    public PaymentResponse authorizeAndDebit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("authorizeAndDebit not implemented.");
     }
 
     @Override
-    public PaymentResponse debit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("debit not implemented.");
     }
 
     @Override
-    public PaymentResponse credit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("credit not implemented.");
     }
 
     @Override
-    public PaymentResponse voidPayment(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("voidPayment not implemented.");
     }
 
     @Override
-    public PaymentResponse balance(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
         throw new PaymentException("balance not implemented.");
     }
 

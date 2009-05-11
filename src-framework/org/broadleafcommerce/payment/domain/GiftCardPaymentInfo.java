@@ -15,12 +15,12 @@ public interface GiftCardPaymentInfo extends Referenced {
     /**
      * @return the pan
      */
-    public Long getPan();
+    public String getPan();
 
     /**
      * @param pan the pan to set
      */
-    public void setPan(Long pan);
+    public void setPan(String pan);
 
     /**
      * @return the pin

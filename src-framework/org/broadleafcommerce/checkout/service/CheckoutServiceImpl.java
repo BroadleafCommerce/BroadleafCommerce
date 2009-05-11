@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.checkout.service.exception.CheckoutException;
+import org.broadleafcommerce.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.PaymentInfo;
@@ -23,7 +24,7 @@ public class CheckoutServiceImpl implements CheckoutService {
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order, java.util.Map)
      */
     @Override
-    public void performCheckout(Order order, Map<PaymentInfo, Referenced> payments) throws CheckoutException {
+    public CheckoutResponse performCheckout(Order order, Map<PaymentInfo, Referenced> payments) throws CheckoutException {
         /*
          * TODO add validation that checks the order and payment information for validity.
          */
@@ -43,8 +44,14 @@ public class CheckoutServiceImpl implements CheckoutService {
         try {
             CheckoutSeed seed = new CheckoutSeed(order, payments);
             checkoutWorkflow.doActivities(seed);
+
+            return seed;
         } catch (WorkflowException e) {
-            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e);
+            Throwable cause = e;
+            while (e.getCause() != null) {
+                cause = e.getCause();
+            }
+            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), cause);
         }
     }
 
@@ -52,8 +59,8 @@ public class CheckoutServiceImpl implements CheckoutService {
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order)
      */
     @Override
-    public void performCheckout(Order order) throws CheckoutException {
-        performCheckout(order, null);
+    public CheckoutResponse performCheckout(Order order) throws CheckoutException {
+        return performCheckout(order, null);
     }
 
 }

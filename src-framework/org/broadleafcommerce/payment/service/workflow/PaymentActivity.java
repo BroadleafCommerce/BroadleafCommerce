@@ -8,6 +8,7 @@ import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.PaymentContextImpl;
 import org.broadleafcommerce.payment.service.PaymentService;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
+import org.broadleafcommerce.payment.service.module.PaymentResponseItem;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
@@ -32,28 +33,35 @@ public class PaymentActivity extends BaseActivity {
              */
             if (paymentService.isValidCandidate(info.getType())) {
                 paymentContext.setPaymentData(info, infos.get(info));
+                PaymentResponseItem paymentResponseItem;
                 switch(seed.getActionType()) {
                 case AUTHORIZE:
-                    paymentService.authorize(paymentContext);
+                    paymentResponseItem = paymentService.authorize(paymentContext);
                     break;
                 case AUTHORIZEANDDEBIT:
-                    paymentService.authorizeAndDebit(paymentContext);
+                    paymentResponseItem = paymentService.authorizeAndDebit(paymentContext);
                     break;
                 case BALANCE:
-                    paymentService.balance(paymentContext);
+                    paymentResponseItem = paymentService.balance(paymentContext);
                     break;
                 case CREDIT:
-                    paymentService.credit(paymentContext);
+                    paymentResponseItem = paymentService.credit(paymentContext);
                     break;
                 case DEBIT:
-                    paymentService.debit(paymentContext);
+                    paymentResponseItem = paymentService.debit(paymentContext);
                     break;
                 case VOID:
-                    paymentService.voidPayment(paymentContext);
+                    paymentResponseItem = paymentService.voidPayment(paymentContext);
                     break;
                 default:
                     throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
                 }
+                //validate payment response item
+                if (paymentResponseItem.getAmountPaid() == null || paymentResponseItem.getTransactionTimestamp() == null || paymentResponseItem.getTransactionSuccess() == null) {
+                    throw new PaymentException("The PaymentResponseItem instance did not contain one or more of the following: amountPaid, transactionTimestamp or transactionSuccess");
+                }
+                seed.getPaymentResponse().addPaymentResponseItem(info, paymentResponseItem);
+                paymentContext.addPayment(paymentResponseItem.getAmountPaid());
             }
         }
 

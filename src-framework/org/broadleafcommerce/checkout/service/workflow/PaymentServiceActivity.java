@@ -14,7 +14,7 @@ public class PaymentServiceActivity extends BaseActivity {
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
-        compositePaymentService.executePayment(seed.getOrder(), seed.getInfos());
+        compositePaymentService.executePayment(seed.getOrder(), seed.getInfos(), seed.getPaymentResponse());
 
         return context;
     }

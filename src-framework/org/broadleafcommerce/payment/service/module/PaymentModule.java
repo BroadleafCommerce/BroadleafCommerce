@@ -2,21 +2,20 @@ package org.broadleafcommerce.payment.service.module;
 
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
-import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
 
 public interface PaymentModule {
 
-    public PaymentResponse authorize(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
+    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException;
 
-    public PaymentResponse debit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
+    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException;
 
-    public PaymentResponse authorizeAndDebit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
+    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException;
 
-    public PaymentResponse credit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
+    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException;
 
-    public PaymentResponse voidPayment(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
+    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException;
 
-    public PaymentResponse balance(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException;
+    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException;
 
     public Boolean isValidCandidate(String paymentType);
 
