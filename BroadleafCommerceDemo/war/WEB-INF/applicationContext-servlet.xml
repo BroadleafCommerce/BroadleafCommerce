@@ -290,7 +290,7 @@
 		<property name="mappings">
 			<props>
 				<prop key="/welcome.htm">welcome</prop>
-				<prop key="/myaccount/phone/*">customerPhoneController</prop>
+				<prop key="/myaccount/phone/*">blCustomerPhoneController</prop>
 				<!-- 
 				<prop key="/registerCustomer.htm">registerCustomer</prop>
 				<prop key="/forgotPwd.htm">forgotPwd</prop>
@@ -320,14 +320,15 @@
 				 -->
 			</props>
 		</property>
-	</bean>
+	</bean><!--
 	
-    <bean id="customerPhoneController"
-          class="org.broadleafcommerce.myaccount.CustomerPhoneController">
+    <bean id="customerPhoneController" class="org.broadleafcommerce.controller.CustomerPhoneController">
         <constructor-arg ref="customerPhoneService"/>
         <constructor-arg ref="customerState"/>
     </bean>
 
+	-->
+	
 	<bean id="beanNameUrlMapping"
 		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
 		<property name="order" value="1" />
