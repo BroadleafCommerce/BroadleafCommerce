@@ -71,6 +71,9 @@ public class OrderServiceImpl implements OrderService {
     @Resource
     protected CategoryDao categoryDao;
 
+    @Resource
+    protected FulfillmentGroupService fulfillmentGroupService;
+
     protected boolean rollupOrderItems = true;
 
     @Override
@@ -387,7 +390,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
-        FulfillmentGroup newFg = fulfillmentGroupDao.createDefault();
+        FulfillmentGroup newFg = fulfillmentGroupService.createEmptyFulfillmentGroup();
         newFg.setOrder(order);
         newFg.setType(FulfillmentGroupType.DEFAULT);
         newFg.setAddress(address);
