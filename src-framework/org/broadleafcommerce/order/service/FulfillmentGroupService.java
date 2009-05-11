@@ -6,4 +6,6 @@ public interface FulfillmentGroupService {
 
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
 
+    public FulfillmentGroup createEmptyFulfillmentGroup();
+
 }

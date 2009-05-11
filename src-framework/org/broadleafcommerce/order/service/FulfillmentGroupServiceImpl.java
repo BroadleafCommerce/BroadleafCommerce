@@ -17,4 +17,9 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         return fulfillmentGroupDao.save(fulfillmentGroup);
     }
 
+    @Override
+    public FulfillmentGroup createEmptyFulfillmentGroup() {
+        return fulfillmentGroupDao.create();
+    }
+
 }
