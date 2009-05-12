@@ -50,9 +50,6 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @Column(name = "AMOUNT")
     private BigDecimal amount;
 
-    @Column(name = "PIN")
-    private String pin;
-
     @Column(name = "REFERENCE_NUMBER")
     private String referenceNumber;
 
@@ -107,14 +104,6 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
-    }
-
-    public String getPin() {
-        return pin;
-    }
-
-    public void setPin(String pin) {
-        this.pin = pin;
     }
 
     public String getType() {

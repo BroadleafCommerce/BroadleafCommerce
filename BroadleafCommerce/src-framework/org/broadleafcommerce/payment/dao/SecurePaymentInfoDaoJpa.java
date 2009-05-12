@@ -2,30 +2,42 @@ package org.broadleafcommerce.payment.dao;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.GiftCardPaymentInfo;
+import org.broadleafcommerce.payment.domain.Referenced;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("securePaymentInfoDao")
 public class SecurePaymentInfoDaoJpa implements SecurePaymentInfoDao {
 
-    /**
-     * don't use persistence context annotation here - it's unlikely this entity manager will be
-     * the same as that used by the rest of the framework
-     */
+    @PersistenceContext(unitName = "blSecurePU")
     private EntityManager em;
 
-    public SecurePaymentInfoDaoJpa(EntityManagerFactory emf) {
-        this.em = emf.createEntityManager();
+    @Resource
+    private EntityConfiguration entityConfiguration;
+
+    public Referenced save(Referenced securePaymentInfo) {
+        securePaymentInfo = em.merge(securePaymentInfo);
+        return securePaymentInfo;
     }
 
-    public SecurePaymentInfoDaoJpa() {
-        throw new RuntimeException("This class must be instantiated using a valid EntityManager instance");
+    public BankAccountPaymentInfo createBankAccountPaymentInfo() {
+        return (BankAccountPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.BankAccountPaymentInfo");
+    }
+
+    public GiftCardPaymentInfo createGiftCardPaymentInfo() {
+        return (GiftCardPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.GiftCardPaymentInfo");
+    }
+
+    public CreditCardPaymentInfo createCreditCardPaymentInfo() {
+        return (CreditCardPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.CreditCardPaymentInfo");
     }
 
     @SuppressWarnings("unchecked")

@@ -5,6 +5,10 @@ import org.broadleafcommerce.workflow.WorkflowException;
 
 public interface SecurePaymentInfoService {
 
-    Referenced findSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException;
+    public Referenced findSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException;
+
+    public Referenced save(Referenced securePaymentInfo);
+
+    public Referenced create(String paymentInfoType);
 
 }

@@ -123,4 +123,53 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
         this.cvvCode = cvvCode;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((cvvCode == null) ? 0 : cvvCode.hashCode());
+        result = prime * result + ((expirationMonth == null) ? 0 : expirationMonth.hashCode());
+        result = prime * result + ((expirationYear == null) ? 0 : expirationYear.hashCode());
+        result = prime * result + ((pan == null) ? 0 : pan.hashCode());
+        result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CreditCardPaymentInfoImpl other = (CreditCardPaymentInfoImpl) obj;
+        if (cvvCode == null) {
+            if (other.cvvCode != null)
+                return false;
+        } else if (!cvvCode.equals(other.cvvCode))
+            return false;
+        if (expirationMonth == null) {
+            if (other.expirationMonth != null)
+                return false;
+        } else if (!expirationMonth.equals(other.expirationMonth))
+            return false;
+        if (expirationYear == null) {
+            if (other.expirationYear != null)
+                return false;
+        } else if (!expirationYear.equals(other.expirationYear))
+            return false;
+        if (pan == null) {
+            if (other.pan != null)
+                return false;
+        } else if (!pan.equals(other.pan))
+            return false;
+        if (referenceNumber == null) {
+            if (other.referenceNumber != null)
+                return false;
+        } else if (!referenceNumber.equals(other.referenceNumber))
+            return false;
+        return true;
+    }
+
 }

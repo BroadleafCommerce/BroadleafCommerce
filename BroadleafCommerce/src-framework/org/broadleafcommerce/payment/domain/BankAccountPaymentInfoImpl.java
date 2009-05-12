@@ -70,4 +70,41 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
         this.routingNumber = routingNumber;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((accountNumber == null) ? 0 : accountNumber.hashCode());
+        result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
+        result = prime * result + ((routingNumber == null) ? 0 : routingNumber.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BankAccountPaymentInfoImpl other = (BankAccountPaymentInfoImpl) obj;
+        if (accountNumber == null) {
+            if (other.accountNumber != null)
+                return false;
+        } else if (!accountNumber.equals(other.accountNumber))
+            return false;
+        if (referenceNumber == null) {
+            if (other.referenceNumber != null)
+                return false;
+        } else if (!referenceNumber.equals(other.referenceNumber))
+            return false;
+        if (routingNumber == null) {
+            if (other.routingNumber != null)
+                return false;
+        } else if (!routingNumber.equals(other.routingNumber))
+            return false;
+        return true;
+    }
+
 }

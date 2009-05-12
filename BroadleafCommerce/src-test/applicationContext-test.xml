@@ -18,12 +18,14 @@
 			<list>
 				<value>classpath*:/META-INF/persistence-framework-catalog.xml</value>
 				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
+				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
 				<value>classpath*:/META-INF/persistence-profile.xml</value>
 			</list>
 		</property>
 		<property name="validPersistenceUnitNames">
 			<list>
 				<value>blPU</value>
+				<value>blSecurePU</value>
 			</list>
 		</property>
 		<property name="defaultDataSource" ref="broadleafCommerceDS"/>
@@ -52,6 +54,18 @@
 				<property name="showSql" value="true" />
 				<property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
 				<!--property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" /-->
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="entityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
+		<property name="persistenceUnitName" value="blSecurePU"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="showSql" value="true" />
+				<property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
 			</bean>
 		</property>
 	</bean>

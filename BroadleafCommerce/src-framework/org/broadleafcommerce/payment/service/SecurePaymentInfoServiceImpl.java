@@ -39,6 +39,25 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
         return securePaymentInfoDao.findGiftCardInfo(referenceNumber);
     }
 
+    public Referenced save(Referenced securePaymentInfo) {
+        return securePaymentInfoDao.save(securePaymentInfo);
+    }
+
+    public Referenced create(String paymentInfoType) {
+        if (paymentInfoType.equals(BLCPaymentInfoType.CREDIT_CARD)) {
+            CreditCardPaymentInfo ccinfo = securePaymentInfoDao.createCreditCardPaymentInfo();
+            return ccinfo;
+        } else if (paymentInfoType.equals(BLCPaymentInfoType.BANK_ACCOUNT)) {
+            BankAccountPaymentInfo bankinfo = securePaymentInfoDao.createBankAccountPaymentInfo();
+            return bankinfo;
+        } else if (paymentInfoType.equals(BLCPaymentInfoType.GIFT_CARD)) {
+            GiftCardPaymentInfo gcinfo = securePaymentInfoDao.createGiftCardPaymentInfo();
+            return gcinfo;
+        }
+
+        return null;
+    }
+
     @Override
     public Referenced findSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException {
         if (paymentInfoType.equals(BLCPaymentInfoType.CREDIT_CARD)) {

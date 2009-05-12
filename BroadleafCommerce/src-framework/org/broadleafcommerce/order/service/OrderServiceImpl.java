@@ -32,6 +32,8 @@ import org.broadleafcommerce.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.order.service.type.OrderStatus;
+import org.broadleafcommerce.payment.domain.Referenced;
+import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.pricing.service.advice.PricingExecutionManager;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
@@ -73,6 +75,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Resource
     protected FulfillmentGroupService fulfillmentGroupService;
+
+    @Resource
+    protected SecurePaymentInfoService securePaymentInfoService;
 
     protected boolean rollupOrderItems = true;
 
@@ -171,9 +176,19 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
+        return addPaymentToOrder(order, payment, null);
+    }
+
+    @Override
+    public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo) {
         payment.setOrder(order);
         order.getPaymentInfos().add(payment);
         order = persistOrder(order);
+
+        if (securePaymentInfo != null) {
+            securePaymentInfoService.save(securePaymentInfo);
+        }
+
         return order.getPaymentInfos().get(order.getPaymentInfos().indexOf(payment));
     }
 

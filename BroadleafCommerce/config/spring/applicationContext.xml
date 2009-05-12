@@ -25,18 +25,33 @@
 			<list>
 				<value>classpath*:/META-INF/persistence-framework-catalog.xml</value>
 				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
+				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
 				<value>classpath*:/META-INF/persistence-profile.xml</value>
 			</list>
 		</property>
 		<property name="validPersistenceUnitNames">
 			<list>
 				<value>blPU</value>
+				<value>blSecurePU</value>
 			</list>
 		</property>
 	</bean>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
+		<property name="persistenceUnitName" value="blPU"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="showSql" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="entityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
+		<property name="persistenceUnitName" value="blSecurePU"/>
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="generateDdl" value="false" />
@@ -51,6 +66,16 @@
 	</bean>
 
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+	
+	<bean id="transactionManagerSecureInfo" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactorySecureInfo" />
+	</bean>
+
+	<tx:advice id="txAdviceSecureInfo" transaction-manager="transactionManagerSecureInfo">
 	    <tx:attributes>
 	      <tx:method name="*" propagation="REQUIRED"/>
 	    </tx:attributes>
@@ -122,6 +147,11 @@
 	<aop:config>
 		<aop:pointcut id="idGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="idGenerationServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="securePaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.payment.service.SecurePaymentInfoService.*(..))"/>
+	    <aop:advisor advice-ref="txAdviceSecureInfo" pointcut-ref="securePaymentInfoServiceOperation"/>
 	</aop:config>
 
 	<aop:config>
@@ -207,6 +237,7 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
 	<bean id="org.broadleafcommerce.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl"/>
 	<bean id="org.broadleafcommerce.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl"/>
+	<bean id="org.broadleafcommerce.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl"/>
 	<bean id="org.broadleafcommerce.marketing.domain.TargetContent" class="org.broadleafcommerce.marketing.domain.TargetContentImpl" />
 
 	<bean id="taxModule" class="org.broadleafcommerce.pricing.service.module.SimpleTaxModule">
@@ -299,9 +330,5 @@
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
-	</bean>
-
-	<bean id="securePaymentInfoDao" class="org.broadleafcommerce.payment.dao.SecurePaymentInfoDaoJpa">
-		<constructor-arg index="0"><ref bean="entityManagerFactory"/></constructor-arg>
 	</bean>
 </beans>

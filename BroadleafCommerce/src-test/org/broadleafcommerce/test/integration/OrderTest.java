@@ -204,7 +204,7 @@ public class OrderTest extends BaseTest {
     @Rollback(false)
     public void addPaymentToOrder(PaymentInfo paymentInfo) {
         Order order = cartService.findOrderById(orderId);
-        cartService.addPaymentToOrder(order, paymentInfo);
+        cartService.addPaymentToOrder(order, paymentInfo, null);
 
         order = cartService.findOrderById(orderId);
         PaymentInfo payment = order.getPaymentInfos().get(order.getPaymentInfos().indexOf(paymentInfo));
