@@ -3,6 +3,7 @@ package org.broadleafcommerce.order.domain;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,7 +39,7 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @JoinColumn(name = "ORDER_ID")
     private Order order;
 
-    @ManyToOne(targetEntity = AddressImpl.class)
+    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDRESS_ID")
     private Address address;
 
