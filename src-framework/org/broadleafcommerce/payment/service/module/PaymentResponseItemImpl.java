@@ -17,6 +17,9 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected String referenceNumber;
     protected Boolean transactionSuccess;
     protected Date transactionTimestamp;
+    protected String transactionId;
+    protected String avsCode;
+    protected String cvvCode;
 
     public String getAuthorizationCode() {
         return authorizationCode;
@@ -106,6 +109,30 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         this.implementorResponseText = implementorResponseText;
     }
 
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public String getAvsCode() {
+        return avsCode;
+    }
+
+    public void setAvsCode(String avsCode) {
+        this.avsCode = avsCode;
+    }
+
+    public String getCvvCode() {
+        return cvvCode;
+    }
+
+    public void setCvvCode(String cvvCode) {
+        this.cvvCode = cvvCode;
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -118,7 +145,10 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         sb.append("processor response code: " + this.getProcessorResponseCode() + "\n");
         sb.append("processor response text: " + this.getProcessorResponseText() + "\n");
         sb.append("reference number: " + this.getReferenceNumber());
+        sb.append("transaction id: " + this.getTransactionId());
+        sb.append("avs code: " + this.getAvsCode());
 
         return sb.toString();
     }
+
 }

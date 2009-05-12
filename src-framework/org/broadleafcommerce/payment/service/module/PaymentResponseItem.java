@@ -50,4 +50,16 @@ public interface PaymentResponseItem {
 
     public void setImplementorResponseText(String implementorResponseText);
 
+    public String getTransactionId();
+
+    public void setTransactionId(String transactionId);
+
+    public String getAvsCode();
+
+    public void setAvsCode(String avsCode);
+
+    public String getCvvCode();
+
+    public void setCvvCode(String cvvCode);
+
 }
