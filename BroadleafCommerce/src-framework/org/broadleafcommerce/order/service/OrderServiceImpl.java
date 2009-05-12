@@ -226,6 +226,7 @@ public class OrderServiceImpl implements OrderService {
                 fg.getFulfillmentGroupItems().remove(fgItem);
             }
         }
+        fulfillmentGroup = fulfillmentGroupDao.save(fulfillmentGroup);
         order.getFulfillmentGroups().add(fulfillmentGroup);
         order = updateOrder(order);
         return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
@@ -253,6 +254,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, quantity);
+        fgi = fulfillmentGroupItemDao.save(fgi);
 
         // 3) add the item to the new fulfillment group
         //TODO why are we only adding when the fulfillmentgroup type is null???

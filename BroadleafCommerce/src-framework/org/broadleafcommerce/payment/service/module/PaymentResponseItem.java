@@ -32,7 +32,7 @@ public interface PaymentResponseItem {
 
     public Money getAmountPaid();
 
-    public void setAmountPaid(Money remainingBalance);
+    public void setAmountPaid(Money amount);
 
     public Boolean getTransactionSuccess();
 
@@ -61,5 +61,9 @@ public interface PaymentResponseItem {
     public String getCvvCode();
 
     public void setCvvCode(String cvvCode);
+
+    public Money getRemainingBalance();
+
+    public void setRemainingBalance(Money remainingBalance);
 
 }
