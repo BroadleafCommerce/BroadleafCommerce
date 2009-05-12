@@ -47,6 +47,6 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
 
     @Override
     public PaymentInfo create() {
-        return ((PaymentInfo) entityConfiguration.createEntityInstance("paymentInfo"));
+        return ((PaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.PaymentInfo"));
     }
 }

@@ -82,6 +82,10 @@
 					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
 					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
 				</replace>
+				<replace file="${stage.dir}/framework-jar/META-INF/persistence-framework-secure.xml">
+					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
+					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
+				</replace>
 			</then>
 		</if>
 

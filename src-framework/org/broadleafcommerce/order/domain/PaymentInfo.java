@@ -26,10 +26,6 @@ public interface PaymentInfo {
 
     public void setAmount(Money amount);
 
-    public String getPin();
-
-    public void setPin(String pin);
-
     public String getReferenceNumber();
 
     public void setReferenceNumber(String referenceNumber);

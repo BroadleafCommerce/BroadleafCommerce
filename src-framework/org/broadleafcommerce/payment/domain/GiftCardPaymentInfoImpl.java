@@ -70,4 +70,41 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
         this.referenceNumber = referenceNumber;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((pan == null) ? 0 : pan.hashCode());
+        result = prime * result + ((pin == null) ? 0 : pin.hashCode());
+        result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GiftCardPaymentInfoImpl other = (GiftCardPaymentInfoImpl) obj;
+        if (pan == null) {
+            if (other.pan != null)
+                return false;
+        } else if (!pan.equals(other.pan))
+            return false;
+        if (pin == null) {
+            if (other.pin != null)
+                return false;
+        } else if (!pin.equals(other.pin))
+            return false;
+        if (referenceNumber == null) {
+            if (other.referenceNumber != null)
+                return false;
+        } else if (!referenceNumber.equals(other.referenceNumber))
+            return false;
+        return true;
+    }
+
 }
