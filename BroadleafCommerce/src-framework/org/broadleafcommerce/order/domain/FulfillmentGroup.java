@@ -100,4 +100,9 @@ public interface FulfillmentGroup {
     public PersonalMessage getPersonalMessage();
 
     public void setPersonalMessage(PersonalMessage personalMessage);
+
+    public boolean isPrimary();
+
+    public void setPrimary(boolean primary);
+
 }
