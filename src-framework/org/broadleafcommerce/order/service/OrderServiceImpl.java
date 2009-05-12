@@ -30,7 +30,6 @@ import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
-import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
@@ -209,10 +208,10 @@ public class OrderServiceImpl implements OrderService {
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
         FulfillmentGroup dfg =  findDefaultFulfillmentGroupForOrder(order);
         if (dfg == null) {
-            fulfillmentGroup.setType(FulfillmentGroupType.DEFAULT);
+            fulfillmentGroup.setPrimary(true);
         } else if (dfg.equals(fulfillmentGroup)) {
             // API user is trying to re-add the default fulfillment group to the same order
-            fulfillmentGroup.setType(FulfillmentGroupType.DEFAULT);
+            fulfillmentGroup.setPrimary(true);
             order.getFulfillmentGroups().remove(dfg);
             fulfillmentGroupDao.delete(dfg);
         }
@@ -407,7 +406,7 @@ public class OrderServiceImpl implements OrderService {
     protected FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
         FulfillmentGroup newFg = fulfillmentGroupService.createEmptyFulfillmentGroup();
         newFg.setOrder(order);
-        newFg.setType(FulfillmentGroupType.DEFAULT);
+        newFg.setPrimary(true);
         newFg.setAddress(address);
 
         return newFg;

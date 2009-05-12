@@ -232,7 +232,7 @@ public class MVELTest extends BaseTest {
         OrderImpl order = new OrderImpl();
         order.setSubTotal(new Money(110D));
         FulfillmentGroupImpl group = new FulfillmentGroupImpl();
-        group.setType(FulfillmentGroupType.DEFAULT);
+        group.setPrimary(true);
 
         OfferImpl offer = new OfferImpl();
         offer.setType(OfferType.FULFILLMENT_GROUP);

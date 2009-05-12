@@ -109,6 +109,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "DELIVERY_INSTRUCTION")
     private String deliveryInstruction;
 
+    @Column(name = "IS_PRIMARY")
+    private boolean primary = false;
+
     @ManyToOne(targetEntity = PersonalMessageImpl.class)
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     private PersonalMessage personalMessage;
@@ -318,6 +321,23 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         this.personalMessage = personalMessage;
     }
 
+    public boolean isPrimary() {
+        return primary;
+    }
+
+    public void setPrimary(boolean primary) {
+        this.primary = primary;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((address == null) ? 0 : address.hashCode());
+        result = prime * result + ((fulfillmentGroupItems == null) ? 0 : fulfillmentGroupItems.hashCode());
+        return result;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -332,14 +352,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
                 return false;
         } else if (!address.equals(other.address))
             return false;
+        if (fulfillmentGroupItems == null) {
+            if (other.fulfillmentGroupItems != null)
+                return false;
+        } else if (!fulfillmentGroupItems.equals(other.fulfillmentGroupItems))
+            return false;
         return true;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((address == null) ? 0 : address.hashCode());
-        return result;
-    }
 }
