@@ -276,7 +276,7 @@ public class OrderTest extends BaseTest {
         FulfillmentGroup newFg = new FulfillmentGroupImpl();
         newFg.setAddress(address);
         try {
-            cartService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
+            newFg = cartService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }

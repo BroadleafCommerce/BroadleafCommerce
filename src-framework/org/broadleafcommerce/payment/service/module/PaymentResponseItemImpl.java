@@ -20,6 +20,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected String transactionId;
     protected String avsCode;
     protected String cvvCode;
+    protected Money remainingBalance;
 
     public String getAuthorizationCode() {
         return authorizationCode;
@@ -133,6 +134,14 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         this.cvvCode = cvvCode;
     }
 
+    public Money getRemainingBalance() {
+        return remainingBalance;
+    }
+
+    public void setRemainingBalance(Money remainingBalance) {
+        this.remainingBalance = remainingBalance;
+    }
+
     @Override
     public String toString() {
         StringBuffer sb = new StringBuffer();
@@ -147,6 +156,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         sb.append("reference number: " + this.getReferenceNumber());
         sb.append("transaction id: " + this.getTransactionId());
         sb.append("avs code: " + this.getAvsCode());
+        sb.append("remaining balance: " + this.getRemainingBalance());
 
         return sb.toString();
     }
