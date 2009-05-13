@@ -11,12 +11,9 @@ public class PaymentContextImpl implements PaymentContext {
     protected PaymentInfo paymentInfo;
     protected Referenced referencedPaymentInfo;
 
-    public PaymentContextImpl(Money originalPaymentAmount, Money remainingPaymentAmount) {
+    public PaymentContextImpl(Money originalPaymentAmount, Money remainingPaymentAmount, PaymentInfo paymentInfo, Referenced referencedPaymentInfo) {
         this.originalPaymentAmount = originalPaymentAmount;
         this.remainingPaymentAmount = remainingPaymentAmount;
-    }
-
-    public void setPaymentData(PaymentInfo paymentInfo, Referenced referencedPaymentInfo) {
         this.paymentInfo = paymentInfo;
         this.referencedPaymentInfo = referencedPaymentInfo;
     }
@@ -37,8 +34,4 @@ public class PaymentContextImpl implements PaymentContext {
         return referencedPaymentInfo;
     }
 
-    public void addPayment(Money paymentAmount) {
-        remainingPaymentAmount = remainingPaymentAmount.subtract(paymentAmount);
-        paymentInfo.setAmount(paymentAmount);
-    }
 }
