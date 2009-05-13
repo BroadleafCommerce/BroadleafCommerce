@@ -67,4 +67,8 @@ public class SecurePaymentInfoDaoJpa implements SecurePaymentInfoDao {
         return (infos==null || infos.size()==0)?null:infos.get(0);
     }
 
+    @Override
+    public void delete(Referenced securePaymentInfo) {
+        em.remove(securePaymentInfo);
+    }
 }

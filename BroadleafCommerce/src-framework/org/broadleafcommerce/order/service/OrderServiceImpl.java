@@ -37,6 +37,7 @@ import org.broadleafcommerce.pricing.service.advice.PricingExecutionManager;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -189,6 +190,24 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return order.getPaymentInfos().get(order.getPaymentInfos().indexOf(payment));
+    }
+
+    @Override
+    public void removeAllPaymentsFromOrder(Order order) {
+        for (PaymentInfo paymentInfo : order.getPaymentInfos()) {
+            Referenced securePaymentInfo = null;
+            try {
+                securePaymentInfo = securePaymentInfoService.findSecurePaymentInfo
+                (paymentInfo.getReferenceNumber(), paymentInfo.getType());
+            } catch (WorkflowException e) {
+                //do nothing--no secure payment is associated with the PaymentInfo (and that's OK)
+            }
+
+            if (securePaymentInfo != null) {
+                securePaymentInfoService.remove(securePaymentInfo);
+            }
+            paymentInfoDao.delete(paymentInfo);
+        }
     }
 
     @Override

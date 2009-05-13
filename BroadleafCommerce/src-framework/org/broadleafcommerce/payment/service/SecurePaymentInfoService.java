@@ -11,4 +11,6 @@ public interface SecurePaymentInfoService {
 
     public Referenced create(String paymentInfoType);
 
+    public void remove(Referenced securePaymentInfo);
+
 }
