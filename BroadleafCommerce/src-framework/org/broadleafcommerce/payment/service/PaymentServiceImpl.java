@@ -1,7 +1,6 @@
 package org.broadleafcommerce.payment.service;
 
 import org.broadleafcommerce.payment.service.exception.PaymentException;
-import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
 import org.broadleafcommerce.payment.service.module.PaymentModule;
 import org.broadleafcommerce.payment.service.module.PaymentResponseItem;
 
@@ -17,27 +16,27 @@ public class PaymentServiceImpl implements PaymentService {
         this.paymentModule = paymentModule;
     }
 
-    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException  {
         return paymentModule.authorize(paymentContext);
     }
 
-    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
         return paymentModule.authorizeAndDebit(paymentContext);
     }
 
-    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
         return paymentModule.balance(paymentContext);
     }
 
-    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
         return paymentModule.credit(paymentContext);
     }
 
-    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
         return paymentModule.debit(paymentContext);
     }
 
-    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException, PaymentProcessorException {
+    public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
         return paymentModule.voidPayment(paymentContext);
     }
 
