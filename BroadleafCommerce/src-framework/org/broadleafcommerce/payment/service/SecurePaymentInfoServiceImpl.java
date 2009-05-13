@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * the physical separation of this sensitive data from the order. As a result, implementors
  * may host sensitive user account information in a datastore separate from the datastore
  * housing the order. This measure goes towards achieving a PCI compliant architecture.
- *
+ * 
  * @author jfischer
  *
  */
@@ -44,13 +44,13 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
     }
 
     public Referenced create(String paymentInfoType) {
-        if (paymentInfoType.equals(BLCPaymentInfoType.CREDIT_CARD)) {
+        if (paymentInfoType.equals(BLCPaymentInfoType.CREDIT_CARD.toString())) {
             CreditCardPaymentInfo ccinfo = securePaymentInfoDao.createCreditCardPaymentInfo();
             return ccinfo;
-        } else if (paymentInfoType.equals(BLCPaymentInfoType.BANK_ACCOUNT)) {
+        } else if (paymentInfoType.equals(BLCPaymentInfoType.BANK_ACCOUNT.toString())) {
             BankAccountPaymentInfo bankinfo = securePaymentInfoDao.createBankAccountPaymentInfo();
             return bankinfo;
-        } else if (paymentInfoType.equals(BLCPaymentInfoType.GIFT_CARD)) {
+        } else if (paymentInfoType.equals(BLCPaymentInfoType.GIFT_CARD.toString())) {
             GiftCardPaymentInfo gcinfo = securePaymentInfoDao.createGiftCardPaymentInfo();
             return gcinfo;
         }
@@ -60,19 +60,19 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
     @Override
     public Referenced findSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException {
-        if (paymentInfoType.equals(BLCPaymentInfoType.CREDIT_CARD)) {
+        if (paymentInfoType.equals(BLCPaymentInfoType.CREDIT_CARD.toString())) {
             CreditCardPaymentInfo ccinfo = findCreditCardInfo(referenceNumber);
             if (ccinfo == null) {
                 throw new WorkflowException("No credit card info associated with credit card payment type with reference number: " + referenceNumber);
             }
             return ccinfo;
-        } else if (paymentInfoType.equals(BLCPaymentInfoType.BANK_ACCOUNT)) {
+        } else if (paymentInfoType.equals(BLCPaymentInfoType.BANK_ACCOUNT.toString())) {
             BankAccountPaymentInfo bankinfo = findBankAccountInfo(referenceNumber);
             if (bankinfo == null) {
                 throw new WorkflowException("No bank account info associated with bank account payment type with reference number: " + referenceNumber);
             }
             return bankinfo;
-        } else if (paymentInfoType.equals(BLCPaymentInfoType.GIFT_CARD)) {
+        } else if (paymentInfoType.equals(BLCPaymentInfoType.GIFT_CARD.toString())) {
             GiftCardPaymentInfo gcinfo = findGiftCardInfo(referenceNumber);
             if (gcinfo == null) {
                 throw new WorkflowException("No bank account info associated with gift card payment type with reference number: " + referenceNumber);
