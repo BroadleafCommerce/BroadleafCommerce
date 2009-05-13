@@ -20,6 +20,7 @@
 				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
 				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
 				<value>classpath*:/META-INF/persistence-profile.xml</value>
+				<value>classpath*:/META-INF/persistence-test.xml</value>
 			</list>
 		</property>
 		<property name="validPersistenceUnitNames">
@@ -28,6 +29,12 @@
 				<value>blSecurePU</value>
 			</list>
 		</property>
+		<property name="dataSources">
+            <map>
+                <entry key="jdbc/test" value-ref="broadleafCommerceDS"/>
+                <entry key="jdbc/testSecure" value-ref="broadleafCommerceDS"/>
+            </map>
+        </property>
 		<property name="defaultDataSource" ref="broadleafCommerceDS"/>
 	</bean>
 
