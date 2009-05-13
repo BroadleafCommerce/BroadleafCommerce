@@ -7,11 +7,13 @@ import org.broadleafcommerce.order.domain.PaymentInfo;
 
 public interface PaymentInfoDao {
 
-	public PaymentInfo readPaymentInfoById(Long paymentId);
-	
-	public PaymentInfo save(PaymentInfo paymentInfo);
-	
-	public List<PaymentInfo> readPaymentInfosForOrder(Order order);
-	
-	public PaymentInfo create();
+    public PaymentInfo readPaymentInfoById(Long paymentId);
+
+    public PaymentInfo save(PaymentInfo paymentInfo);
+
+    public List<PaymentInfo> readPaymentInfosForOrder(Order order);
+
+    public PaymentInfo create();
+
+    public void delete(PaymentInfo paymentInfo);
 }

@@ -21,4 +21,6 @@ public interface SecurePaymentInfoDao {
 
     public CreditCardPaymentInfo createCreditCardPaymentInfo();
 
+    public void delete(Referenced securePaymentInfo);
+
 }

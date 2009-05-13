@@ -72,4 +72,6 @@ public interface OrderService {
 
     public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException;
 
+    public void removeAllPaymentsFromOrder(Order order);
+
 }
