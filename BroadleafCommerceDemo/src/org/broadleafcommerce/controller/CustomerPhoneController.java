@@ -1,93 +1,129 @@
 package org.broadleafcommerce.controller;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
-import org.broadleafcommerce.myaccount.PhoneValidator;
+import org.apache.commons.validator.GenericValidator;
+import org.broadleafcommerce.controller.validator.PhoneValidator;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.domain.CustomerPhoneImpl;
-import org.broadleafcommerce.profile.domain.Phone;
+import org.broadleafcommerce.profile.domain.PhoneImpl;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
 import org.broadleafcommerce.profile.web.CustomerState;
-import org.broadleafcommerce.util.phone.PhoneFormatter;
+import org.broadleafcommerce.profile.web.model.PhoneNameForm;
+import org.broadleafcommerce.profile.web.util.PhoneFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("blCustomerPhoneController")
 public class CustomerPhoneController {
-
+    private static final String CONFIRMATION_MSG = "confirmationMessage";
     @Resource
     private final CustomerPhoneService customerPhoneService;
     @Resource
-    private final PhoneValidator phoneValidator;
+    private final CustomerState customerState;
     @Resource
     private final PhoneFormatter phoneFormatter;
-    private final CustomerState customerState;
+    @Resource
+    private final PhoneValidator phoneValidator;
 
-    //TODO: remove?
-    public CustomerPhoneController(CustomerPhoneService customerPhoneService,
-            CustomerState customerState, PhoneValidator phoneValidator, PhoneFormatter phoneFormatter) {
-        this.customerPhoneService = customerPhoneService;
-        this.customerState = customerState;
-        this.phoneValidator = phoneValidator;
-        this.phoneFormatter = phoneFormatter;
+    private String viewPhoneSuccessView = "";
+
+    private String VIEW_PHONE_SUCCESS = "success"; //update to full JSP URL as default
+
+    public CustomerPhoneController() {
+        this.customerPhoneService = null;
+        this.customerState = null;
+        this.phoneValidator = null;
+        this.phoneFormatter = null;
     }
 
-    @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
-    public String viewPhone(@RequestParam(required = false) Long customerPhoneId, Model model, HttpServletRequest request) {
-        CustomerPhone customerPhone = null;
-        if (customerPhoneId == null) {
-            customerPhone = initCustomerPhone(request);
-        } else {
-            customerPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
-        }
-        model.addAttribute("phone", customerPhone.getPhone());
-        model.addAttribute("phoneName", customerPhone.getPhoneName());
-        //model.addAttribute("customerPhone", customerPhone);
-        return "success";
-    }
-
-    @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
-    public String makePhoneDefault(@RequestParam(required = true) Long customerPhoneId, HttpServletRequest request) {
-        //TODO: check to see if this can be refactored to make one service call to pass in customerPhoneId to set to default
-        CustomerPhone customerPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
-        customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomerId());
-        return "success";
-    }
-
-    @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
-    //TODO: could ModelAttribute name be changed?
-    public String savePhone(@ModelAttribute("phone") Phone phone, @ModelAttribute("phoneName") String phoneName,
-            BindingResult bindResult, Model model, HttpServletRequest request) {
-        phoneFormatter.formatPhoneNumber(phone);
-        //        bindResult.setNestedPath("phone");
-        phoneValidator.validate(phone, bindResult);
-        //        bindResult.setNestedPath("");
-        if (!bindResult.hasErrors()) {
-            //build customerPhone
-            CustomerPhone customerPhone = new CustomerPhoneImpl();
-            customerPhone.setCustomerId(customerState.getCustomerId(request));
-            customerPhone.setPhoneName(phoneName);
-            customerPhone.setPhone(phone);
-            customerPhoneService.saveCustomerPhone(customerPhone);
-            return "success";
-        }
-        model.addAttribute("phone", phone);
-        return "success";
-    }
-
-    @RequestMapping(method = { RequestMethod.GET, RequestMethod.POST })
-    public String deletePhone(@RequestParam(required = true) Long customerPhoneId, HttpServletRequest request) {
+    @RequestMapping(method =  {
+            RequestMethod.GET, RequestMethod.POST}
+    )
+    public String deletePhone(@RequestParam(required = true)
+            Long customerPhoneId, Model model, WebRequest request) {
         customerPhoneService.deleteCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
         return "success";
     }
 
-    public CustomerPhone initCustomerPhone(HttpServletRequest request) {
-        return new CustomerPhoneImpl(customerState.getCustomerId(request));
+    @RequestMapping(method =  {
+            RequestMethod.GET, RequestMethod.POST}
+    )
+    public String makePhoneDefault(@RequestParam(required = true)
+            Long customerPhoneId, Model model, WebRequest request) {
+        //TODO: check to see if this can be refactored to make one service call to pass in customerPhoneId to set to default
+        CustomerPhone customerPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
+        customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomerId());
+        model.addAttribute(CONFIRMATION_MSG, "Your phone has been set to default.");
+
+        return "success";
+    }
+
+    //TODO: could ModelAttribute name be changed?
+    @RequestMapping(method =  {
+            RequestMethod.GET, RequestMethod.POST}
+    )
+    public ModelAndView savePhone(
+    		@ModelAttribute("phoneNameForm")PhoneNameForm phoneNameForm, 
+    		BindingResult errors, WebRequest request) {
+        if (GenericValidator.isBlankOrNull(phoneNameForm.getPhoneName())) {
+            ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneName", "phoneName.required");
+        }
+        phoneFormatter.formatPhoneNumber(phoneNameForm.getPhone());
+        errors.pushNestedPath("phone");
+        phoneValidator.validate(phoneNameForm.getPhone(), errors);
+        errors.popNestedPath();
+
+        if (! errors.hasErrors()) {
+            // TODO: lookup customerPhone using bl syntax
+            CustomerPhone customerPhone = new CustomerPhoneImpl();
+            customerPhone.setCustomerId(customerState.getCustomerId(request));
+            customerPhone.setPhoneName(phoneNameForm.getPhoneName());
+            customerPhone.setPhone(phoneNameForm.getPhone());
+            customerPhoneService.saveCustomerPhone(customerPhone);
+            //TODO return path from variable
+            return new ModelAndView(new RedirectView("success")).addObject("confirmationMessage","The stuff was completed.");
+        } else {
+        	ModelAndView mv = new ModelAndView(new RedirectView("success")); 
+        	mv.getModel().put("confirmationMessage", "some random confirmation message");
+        	
+            return mv; 
+        }
+    }
+
+    @RequestMapping(method =  {
+            RequestMethod.GET, RequestMethod.POST}
+    )
+    public String viewPhone(@RequestParam(required = false) Long customerPhoneId,  WebRequest request, @ModelAttribute("phoneNameForm") PhoneNameForm phoneNameForm) {
+        if (customerPhoneId == null) {
+            return "success"; // TODO: look this up
+        } else {
+            CustomerPhone cPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
+            if (cPhone != null) {
+                // TODO: verify this is the current customers phone
+                phoneNameForm.setPhone(cPhone.getPhone());
+                phoneNameForm.setPhoneName(cPhone.getPhoneName());
+                return "success";
+            } else {
+                return "error"; // TODO: look this up
+            }
+        }
+    }
+
+    @ModelAttribute("phoneNameForm")
+    public PhoneNameForm initPhoneNameForm(WebRequest request) {
+        PhoneNameForm form = new PhoneNameForm();
+        // TODO: Use broadleaf standard for constructing an entity object
+        form.setPhone(new PhoneImpl());
+        return form;
     }
 }
