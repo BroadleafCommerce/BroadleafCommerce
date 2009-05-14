@@ -1,6 +1,7 @@
 package org.broadleafcommerce.profile.web.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -50,7 +50,7 @@ public class CustomerPhoneController {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String deletePhone(@RequestParam(required = true)
-            Long customerPhoneId, Model model, WebRequest request) {
+            Long customerPhoneId, Model model, HttpServletRequest request) {
         customerPhoneService.deleteCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
         return "success";
     }
@@ -59,7 +59,7 @@ public class CustomerPhoneController {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String makePhoneDefault(@RequestParam(required = true)
-            Long customerPhoneId, Model model, WebRequest request) {
+            Long customerPhoneId, Model model, HttpServletRequest request) {
         //TODO: check to see if this can be refactored to make one service call to pass in customerPhoneId to set to default
         CustomerPhone customerPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
         customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomerId());
@@ -74,7 +74,7 @@ public class CustomerPhoneController {
     )
     public ModelAndView savePhone(
             @ModelAttribute("phoneNameForm")PhoneNameForm phoneNameForm,
-            BindingResult errors, WebRequest request) {
+            BindingResult errors, HttpServletRequest request) {
         if (GenericValidator.isBlankOrNull(phoneNameForm.getPhoneName())) {
             ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneName", "phoneName.required");
         }
@@ -103,7 +103,7 @@ public class CustomerPhoneController {
     @RequestMapping(method =  {
             RequestMethod.GET, RequestMethod.POST}
     )
-    public String viewPhone(@RequestParam(required = false) Long customerPhoneId,  WebRequest request, @ModelAttribute("phoneNameForm") PhoneNameForm phoneNameForm) {
+    public String viewPhone(@RequestParam(required = false) Long customerPhoneId,  HttpServletRequest request, @ModelAttribute("phoneNameForm") PhoneNameForm phoneNameForm) {
         if (customerPhoneId == null) {
             return "success"; // TODO: look this up
         } else {
@@ -120,7 +120,7 @@ public class CustomerPhoneController {
     }
 
     @ModelAttribute("phoneNameForm")
-    public PhoneNameForm initPhoneNameForm(WebRequest request) {
+    public PhoneNameForm initPhoneNameForm(HttpServletRequest request) {
         PhoneNameForm form = new PhoneNameForm();
         // TODO: Use broadleaf standard for constructing an entity object
         form.setPhone(new PhoneImpl());
