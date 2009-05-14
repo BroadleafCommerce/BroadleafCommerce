@@ -14,4 +14,7 @@ public interface PaymentContext {
 
     public Referenced getReferencedPaymentInfo();
 
+    public String getTransactionId();
+
+    public void setTransactionId(String transactionId);
 }
