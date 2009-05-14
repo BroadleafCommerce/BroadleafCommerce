@@ -219,6 +219,7 @@
 	<bean id="org.broadleafcommerce.order.domain.Order" class="org.broadleafcommerce.order.domain.OrderImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.DiscreteOrderItem" class="org.broadleafcommerce.order.domain.DiscreteOrderItemImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.BundleOrderItem" class="org.broadleafcommerce.order.domain.BundleOrderItemImpl"/>
+	<bean id="org.broadleafcommerce.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.PaymentInfo" class="org.broadleafcommerce.order.domain.PaymentInfoImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl"/>

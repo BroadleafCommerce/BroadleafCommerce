@@ -29,7 +29,7 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     @Resource
     private OrderDao orderDao;
 
-    @Test(groups = { "createFulfillmentGroupItem" }, dependsOnGroups = { "createOrder", "createOrderItem", "createDefaultFulfillmentGroup" })
+    @Test(groups = { "createFulfillmentGroupItem" }, dependsOnGroups = { "createOrder", "createDiscreteOrderItem", "createDefaultFulfillmentGroup" })
     @Rollback(false)
     public void createFulfillmentGroupItem() {
         String userName = "customer1";

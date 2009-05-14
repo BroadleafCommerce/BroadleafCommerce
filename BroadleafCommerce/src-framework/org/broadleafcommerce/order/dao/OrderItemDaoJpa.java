@@ -1,16 +1,11 @@
 package org.broadleafcommerce.order.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.order.domain.BundleOrderItem;
-import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.OrderItemImpl;
 import org.broadleafcommerce.order.service.type.OrderItemType;
@@ -53,12 +48,29 @@ public class OrderItemDaoJpa implements OrderItemDao {
         return (OrderItem) entityConfiguration.createEntityInstance(orderItemType.getClassName());
     }
 
-    public OrderItem cloneOrderItem(OrderItem orderItem, OrderItemType orderItemType) {
-        if (orderItemType == OrderItemType.DISCRETE) {
+    //TODO why do we have a cloneOrderItem method - it's not called
+    /*public OrderItem cloneOrderItem(OrderItem orderItem, OrderItemType orderItemType) {
+        switch(orderItemType) {
+        case DISCRETE:
             return cloneDiscreteOrderItem((DiscreteOrderItem) orderItem);
-        } else {
+        case BUNDLE:
             return cloneBundleOrderItem((BundleOrderItem) orderItem);
+        default:
+            return cloneGiftWrapOrderItem((GiftWrapOrderItem) orderItem);
         }
+    }
+
+    protected GiftWrapOrderItem cloneGiftWrapOrderItem(GiftWrapOrderItem orderItem) {
+        GiftWrapOrderItem newItem = (GiftWrapOrderItem) create(OrderItemType.GIFTWRAP);
+        newItem.setCategory(orderItem.getCategory());
+        newItem.setPersonalMessage(orderItem.getPersonalMessage());
+        newItem.setProduct(orderItem.getProduct());
+        newItem.setQuantity(orderItem.getQuantity());
+        newItem.setSku(orderItem.getSku());
+        newItem.setPrice(orderItem.getPrice());
+        newItem.getWrappedItems().addAll(orderItem.getWrappedItems());
+
+        return newItem;
     }
 
     protected DiscreteOrderItem cloneDiscreteOrderItem(DiscreteOrderItem orderItem) {
@@ -88,5 +100,5 @@ public class OrderItemDaoJpa implements OrderItemDao {
         newItem.setPrice(orderItem.getPrice());
 
         return newItem;
-    }
+    }*/
 }

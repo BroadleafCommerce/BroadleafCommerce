@@ -13,6 +13,7 @@ public interface OrderItemDao {
 
     public OrderItem create(OrderItemType orderItemType);
 
-    public OrderItem cloneOrderItem(OrderItem orderItem, OrderItemType orderItemType);
+    //TODO why do we have a cloneOrderItem method - it's not called
+    //public OrderItem cloneOrderItem(OrderItem orderItem, OrderItemType orderItemType);
 
 }
