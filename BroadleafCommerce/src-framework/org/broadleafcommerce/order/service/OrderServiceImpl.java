@@ -207,6 +207,7 @@ public class OrderServiceImpl implements OrderService {
                 securePaymentInfoService.remove(securePaymentInfo);
             }
             paymentInfoDao.delete(paymentInfo);
+            order.setPaymentInfos(new ArrayList<PaymentInfo>());
         }
     }
 
