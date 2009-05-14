@@ -22,6 +22,7 @@ import org.broadleafcommerce.order.domain.BundleOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.PaymentInfo;
@@ -29,6 +30,7 @@ import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.order.service.call.FulfillmentGroupRequest;
+import org.broadleafcommerce.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.Referenced;
@@ -149,6 +151,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
         DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
+        return addOrderItemToOrder(order, item);
+    }
+
+    @Override
+    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException {
+        GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
         return addOrderItemToOrder(order, item);
     }
 

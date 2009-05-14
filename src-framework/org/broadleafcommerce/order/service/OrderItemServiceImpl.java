@@ -5,9 +5,11 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.domain.BundleOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,21 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setPrice(itemRequest.getSku().getSalePrice());
         item.setSalePrice(itemRequest.getSku().getSalePrice());
         item.setRetailPrice(itemRequest.getSku().getRetailPrice());
+
+        return item;
+    }
+
+    @Override
+    public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest) {
+        GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
+        item.setSku(itemRequest.getSku());
+        item.setQuantity(itemRequest.getQuantity());
+        item.setCategory(itemRequest.getCategory());
+        item.setProduct(itemRequest.getProduct());
+        item.setPrice(itemRequest.getSku().getSalePrice());
+        item.setSalePrice(itemRequest.getSku().getSalePrice());
+        item.setRetailPrice(itemRequest.getSku().getRetailPrice());
+        item.getWrappedItems().addAll(itemRequest.getWrappedItems());
 
         return item;
     }
