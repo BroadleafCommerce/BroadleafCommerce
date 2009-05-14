@@ -10,6 +10,7 @@ public class PaymentContextImpl implements PaymentContext {
     protected Money remainingPaymentAmount;
     protected PaymentInfo paymentInfo;
     protected Referenced referencedPaymentInfo;
+    protected String transactionId;
 
     public PaymentContextImpl(Money originalPaymentAmount, Money remainingPaymentAmount, PaymentInfo paymentInfo, Referenced referencedPaymentInfo) {
         this.originalPaymentAmount = originalPaymentAmount;
@@ -32,6 +33,14 @@ public class PaymentContextImpl implements PaymentContext {
 
     public Referenced getReferencedPaymentInfo() {
         return referencedPaymentInfo;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
 }
