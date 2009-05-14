@@ -18,6 +18,8 @@ DROP TABLE blc_challenge_question;
 DROP TABLE blc_country;
 DROP TABLE blc_order_payment;
 DROP TABLE blc_gift_card_payment;
+DROP TABLE blc_giftwrap_order_item;
+DROP TABLE blc_giftwrap_orderitem_xref;
 
 
 --------------------------
@@ -228,6 +230,24 @@ CREATE TABLE blc_discrete_order_item
   BUNDLE_ORDER_ITEM_ID NUMBER(19,0),
   CONSTRAINT PK_BLC_DISCRETE_ORDER_ITEM PRIMARY KEY(ORDER_ITEM_ID) USING INDEX TABLESPACE WEB_IDX1,
   CONSTRAINT FK_BUNDLE_ORDER_ITEM FOREIGN KEY (BUNDLE_ORDER_ITEM_ID) REFERENCES blc_bundle_order_item(ORDER_ITEM_ID)
+);
+
+--------------------------
+-- blc_giftwrap_order_item
+--------------------------
+CREATE TABLE blc_giftwrap_order_item
+(
+  ORDER_ITEM_ID NUMBER(19,0) NOT NULL,
+  CONSTRAINT PK_BLC_GIFTWRAP_ORDER_ITEM PRIMARY KEY(ORDER_ITEM_ID) USING INDEX TABLESPACE WEB_IDX1
+);
+
+--------------------------
+-- blc_giftwrap_orderitem_xref
+--------------------------
+CREATE TABLE blc_giftwrap_orderitem_xref
+(
+  GIFTWRAP_ITEM_ID NUMBER(19,0) NOT NULL,
+  ORDER_ITEM_ID NUMBER(19,0) NOT NULL
 );
 
 --------------------------
