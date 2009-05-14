@@ -54,7 +54,7 @@
 		
 			<input type="hidden" name="action" value="${action}">
 			<c:choose>
-				<c:when test="${phone ne NULL && phone.phoneNumber ne NULL}">
+				<c:when test="${phoneNameForm.phone ne NULL && phoneNameForm.phone.phoneNumber ne NULL}">
 					<br /><h3>Edit an existing Phone&nbsp;&nbsp;<span class="instructions">* required field</span></h3>
 				</c:when>
 				<c:otherwise>
@@ -71,13 +71,13 @@
 				<tr>
 					<td width="90">Phone Number *</td>
 					<td width="160">
-						<input name="phoneNumber" value="${phone.phoneNumber}" size="20" maxlength="30" />
+						<form:input path="phone.phoneNumber" size="20" maxlength="30" />
 					</td>
 				</tr>
 				<tr>
 					<td align="left">Phone Nickname ${phoneName3 }</td>
 					<td colspan="3">
-						<input name="phoneName" value="${phoneName}" size="20" maxlength="30" />
+						<form:input path="phoneName" size="20" maxlength="30" />
 					</td>
 				</tr>
 				<tr>
@@ -93,7 +93,7 @@
 							Cancel
 						</a>  
 						
-						<c:if test="${phone ne NULL && phone.phoneNumber ne NULL}">
+						<c:if test="${phoneNameForm.phone ne NULL && phoneNameForm.phone.phoneNumber ne NULL}">
 							<a href="/broadleafdemo/myaccount/phone/deletePhone.htm?customerPhoneId=${customerPhone.phone.id}" class="submitLink" style="margin-right: 12px;">
 								Delete
 							</a>  
