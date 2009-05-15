@@ -337,19 +337,19 @@
             depends="build-jars, build-source-jars"
             description="Publishes all artifacts from this build to the shared repository">
     	<copy file="${stage.dir}/broadleaf-auxiliary.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary/0.0.0/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-auxiliary-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary-web/0.0.0/jars" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-auxiliary-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary/0.0.0/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-auxiliary-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary-web/0.0.0/sources" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework-web/0.0.0/jars" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework-web/0.0.0/sources" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-layout.jar" todir="${basedir}/../libraries/org.broadleafcommerce/layout/0.0.0/jars" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-layout-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/layout/0.0.0/sources" overwrite="true"/>
        	<copy file="${stage.dir}/broadleaf-profile.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-profile-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile/0.0.0/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-profile-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile-web/0.0.0/jars" overwrite="true"/>
        	<copy file="${stage.dir}/broadleaf-profile-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-profile-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile/0.0.0/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-profile-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile-web/0.0.0/sources" overwrite="true"/>
     </target>
 
 	<target name="clean">
