@@ -20,6 +20,10 @@ public class EmailInfo implements Serializable {
     private String sendEmailReliableAsync;
     private String sendAsyncPriority;
 
+    public EmailInfo() throws IOException {
+        this(null);
+    }
+
     public EmailInfo(String[] propertiesPath) throws IOException {
         Properties defaults = new Properties();
         defaults.load(EmailInfo.class.getResourceAsStream("/org/broadleafcommerce/email/service/props/defaultEmail.properties"));
@@ -125,4 +129,5 @@ public class EmailInfo implements Serializable {
     public void setSendAsyncPriority(String sendAsyncPriority) {
         this.sendAsyncPriority = sendAsyncPriority;
     }
+
 }

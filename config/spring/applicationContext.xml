@@ -211,35 +211,35 @@
 	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
 
 	<!-- Entity mappings - override for extensibility -->
-	<bean id="org.broadleafcommerce.catalog.domain.BasePrice" class="org.broadleafcommerce.catalog.domain.BasePriceImpl"/>
-	<bean id="org.broadleafcommerce.catalog.domain.Category" class="org.broadleafcommerce.catalog.domain.CategoryImpl"/>
-	<bean id="org.broadleafcommerce.catalog.domain.CategoryProduct" class="org.broadleafcommerce.catalog.domain.CategoryProductImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroup" class="org.broadleafcommerce.order.domain.FulfillmentGroupImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.Order" class="org.broadleafcommerce.order.domain.OrderImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.DiscreteOrderItem" class="org.broadleafcommerce.order.domain.DiscreteOrderItemImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.BundleOrderItem" class="org.broadleafcommerce.order.domain.BundleOrderItemImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.PaymentInfo" class="org.broadleafcommerce.order.domain.PaymentInfoImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.CustomerAddress" class="org.broadleafcommerce.profile.domain.CustomerAddressImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.CustomerPhone" class="org.broadleafcommerce.profile.domain.CustomerPhoneImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.IdGeneration" class="org.broadleafcommerce.profile.domain.IdGenerationImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.Phone" class="org.broadleafcommerce.profile.domain.PhoneImpl"/>
-	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl"/>
-	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.SkuImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.State" class="org.broadleafcommerce.profile.domain.StateImpl"/>
-	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.UserImpl"/>
-	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl"/>
-	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl"/>
-	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl"/>
-	<bean id="org.broadleafcommerce.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl"/>
-	<bean id="org.broadleafcommerce.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl"/>
-	<bean id="org.broadleafcommerce.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl"/>
-	<bean id="org.broadleafcommerce.marketing.domain.TargetContent" class="org.broadleafcommerce.marketing.domain.TargetContentImpl" />
+	<bean id="org.broadleafcommerce.catalog.domain.BasePrice" class="org.broadleafcommerce.catalog.domain.BasePriceImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.catalog.domain.Category" class="org.broadleafcommerce.catalog.domain.CategoryImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.catalog.domain.CategoryProduct" class="org.broadleafcommerce.catalog.domain.CategoryProductImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroup" class="org.broadleafcommerce.order.domain.FulfillmentGroupImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.order.domain.Order" class="org.broadleafcommerce.order.domain.OrderImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.order.domain.DiscreteOrderItem" class="org.broadleafcommerce.order.domain.DiscreteOrderItemImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.order.domain.BundleOrderItem" class="org.broadleafcommerce.order.domain.BundleOrderItemImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.order.domain.PaymentInfo" class="org.broadleafcommerce.order.domain.PaymentInfoImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.CustomerAddress" class="org.broadleafcommerce.profile.domain.CustomerAddressImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.CustomerPhone" class="org.broadleafcommerce.profile.domain.CustomerPhoneImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.IdGeneration" class="org.broadleafcommerce.profile.domain.IdGenerationImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.Phone" class="org.broadleafcommerce.profile.domain.PhoneImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.SkuImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.State" class="org.broadleafcommerce.profile.domain.StateImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.UserImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.marketing.domain.TargetContent" class="org.broadleafcommerce.marketing.domain.TargetContentImpl" scope="prototype"/>
 
 	<bean id="taxModule" class="org.broadleafcommerce.pricing.service.module.SimpleTaxModule">
 		<property name="factor" value="0.05"/>
