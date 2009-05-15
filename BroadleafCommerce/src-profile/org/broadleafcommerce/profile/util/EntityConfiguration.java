@@ -26,19 +26,8 @@ public class EntityConfiguration implements ApplicationContextAware {
         return clazz;
     }
 
-    @SuppressWarnings("unchecked")
     public Object createEntityInstance(String beanId) {
-        Class clazz = lookupEntityClass(beanId);
-        try {
-            return clazz.newInstance();
-        } catch (IllegalAccessException iae) {
-            // TODO: handle exception
-            System.out.println("IllegalAccessException in EntityConfiguration.createEntityInsetance(" + beanId + ")");
-        } catch (InstantiationException ie) {
-            // TODO: handle exception
-            System.out.println("InstantiationException in EntityConfiguration.createEntityInsetance(" + beanId + ")");
-        }
-        return null;
+        return applicationcontext.getBean(beanId);
     }
 
     @Override
