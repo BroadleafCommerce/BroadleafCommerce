@@ -94,10 +94,10 @@
 						</a>  
 						
 						<c:if test="${phoneNameForm.phone ne NULL && phoneNameForm.phone.phoneNumber ne NULL}">
-							<a href="/broadleafdemo/myaccount/phone/deletePhone.htm?customerPhoneId=${customerPhone.phone.id}" class="submitLink" style="margin-right: 12px;">
+							<a href="/broadleafdemo/myaccount/phone/deletePhone.htm?customerPhoneId=${customerPhoneId}" class="submitLink" style="margin-right: 12px;">
 								Delete
 							</a>  
-							<a href="/broadleafdemo/myaccount/phone/makePhoneDefault.htm?customerPhoneId=${customerPhone.phone.id}" class="submitLink" style="margin-right: 12px;">
+							<a href="/broadleafdemo/myaccount/phone/makePhoneDefault.htm?customerPhoneId=${customerPhoneId}" class="submitLink" style="margin-right: 12px;">
 								Set As Default
 							</a>  
 						</c:if>
