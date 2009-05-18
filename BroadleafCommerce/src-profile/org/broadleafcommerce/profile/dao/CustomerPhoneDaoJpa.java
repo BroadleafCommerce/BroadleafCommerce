@@ -54,9 +54,11 @@ public class CustomerPhoneDaoJpa implements CustomerPhoneDao {
     }
 
     public void deleteCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId) {
-        // TODO: determine if hard delete or deactivate, and consider throwing exception if read fails
+        //         TODO: determine if hard delete or deactivate, and consider throwing exception if read fails
         CustomerPhone customerPhone = readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerId);
-        em.remove(customerPhone.getId());
+
+        //TODO: what do we do if the phone does not exist?
+        em.remove(customerPhone);
     }
 
     @SuppressWarnings("unchecked")
@@ -66,5 +68,12 @@ public class CustomerPhoneDaoJpa implements CustomerPhoneDao {
         query.setParameter("customerId", customerId);
         List<CustomerPhone> customerPhones = query.getResultList();
         return customerPhones.isEmpty() ? null : customerPhones.get(0);
+    }
+
+    @Override
+    public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId) {
+        Query query = em.createNamedQuery("BC_READ_ALL_CUSTOMER_PHONES_BY_CUSTOMER_ID");
+        query.setParameter("customerId", customerId);
+        return query.getResultList();
     }
 }
