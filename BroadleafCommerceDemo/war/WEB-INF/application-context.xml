@@ -58,13 +58,13 @@
         <property name="persistenceUnitName" value="blPU"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="generateDdl" value="false"/>
-                <property name="showSql" value="false"/>
-                <property name="databasePlatform" value="org.hibernate.dialect.Oracle10gDialect"/>
+                <property name="showSql" value="true"/>
+                <property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect"/>
             </bean>
         </property>
         <property name="jpaPropertyMap">
             <map>
+                <entry key="hibernate.hbm2ddl.auto" value="create"/>
                 <entry key="hibernate.transaction.flush_before_completion" value="false"/>
                 <entry key="hibernate.connection.autocommit" value="false"/>
             </map>
