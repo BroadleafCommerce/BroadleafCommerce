@@ -18,11 +18,11 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerPhone saveCustomerPhone(CustomerPhone customerPhone) {
-        // if parameter phone is set as default, unset all other default phones
         List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(customerPhone.getCustomerId());
-        if (activeCustomerPhones.size() == 0) {
+        if (activeCustomerPhones != null && activeCustomerPhones.size() == 0) {
             customerPhone.getPhone().setDefault(true);
         } else {
+            // if parameter customerPhone is set as default, unset all other default phones
             if (customerPhone.getPhone().isDefault()) {
                 for (CustomerPhone activeCustomerPhone : activeCustomerPhones) {
                     if (activeCustomerPhone.getId() != customerPhone.getId() && activeCustomerPhone.getPhone().isDefault()) {
@@ -56,5 +56,10 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
     @Override
     public CustomerPhone findDefaultCustomerPhone(Long customerId) {
         return customerPhoneDao.findDefaultCustomerPhone(customerId);
+    }
+
+    @Override
+    public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId) {
+        return customerPhoneDao.readAllCustomerPhonesByCustomerId(customerId);
     }
 }
