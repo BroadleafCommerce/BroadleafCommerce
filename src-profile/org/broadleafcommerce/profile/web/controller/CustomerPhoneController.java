@@ -5,10 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
-import org.broadleafcommerce.profile.domain.CustomerPhoneImpl;
-import org.broadleafcommerce.profile.domain.PhoneImpl;
+import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.profile.web.CustomerState;
+import org.broadleafcommerce.profile.web.controller.validator.CustomerPhoneValidator;
 import org.broadleafcommerce.profile.web.controller.validator.PhoneValidator;
 import org.broadleafcommerce.profile.web.model.PhoneNameForm;
 import org.broadleafcommerce.profile.web.util.PhoneFormatter;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 @Controller("blCustomerPhoneController")
 public class CustomerPhoneController {
@@ -34,6 +33,10 @@ public class CustomerPhoneController {
     private final PhoneFormatter phoneFormatter;
     @Resource
     private final PhoneValidator phoneValidator;
+    @Resource
+    private final CustomerPhoneValidator customerPhoneValidator;
+    @Resource
+    private EntityConfiguration entityConfiguration;
 
     private String viewPhoneSuccessView = "";
 
@@ -44,6 +47,7 @@ public class CustomerPhoneController {
         this.customerState = null;
         this.phoneValidator = null;
         this.phoneFormatter = null;
+        this.customerPhoneValidator = null;
     }
 
     @RequestMapping(method =  {
@@ -52,7 +56,7 @@ public class CustomerPhoneController {
     public String deletePhone(@RequestParam(required = true)
             Long customerPhoneId, Model model, HttpServletRequest request) {
         customerPhoneService.deleteCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
-        return "success";
+        return "redirect:success";
     }
 
     @RequestMapping(method =  {
@@ -65,14 +69,13 @@ public class CustomerPhoneController {
         customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomerId());
         model.addAttribute(CONFIRMATION_MSG, "Your phone has been set to default.");
 
-        return "success";
+        return "redirect:success";
     }
 
-    //TODO: could ModelAttribute name be changed?
     @RequestMapping(method =  {
             RequestMethod.GET, RequestMethod.POST}
     )
-    public ModelAndView savePhone(
+    public String savePhone(
             @ModelAttribute("phoneNameForm")PhoneNameForm phoneNameForm,
             BindingResult errors, HttpServletRequest request) {
         if (GenericValidator.isBlankOrNull(phoneNameForm.getPhoneName())) {
@@ -84,26 +87,30 @@ public class CustomerPhoneController {
         errors.popNestedPath();
 
         if (! errors.hasErrors()) {
-            // TODO: lookup customerPhone using bl syntax
-            CustomerPhone customerPhone = new CustomerPhoneImpl();
+            CustomerPhone customerPhone = (CustomerPhone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.CustomerPhone");
             customerPhone.setCustomerId(customerState.getCustomerId(request));
             customerPhone.setPhoneName(phoneNameForm.getPhoneName());
             customerPhone.setPhone(phoneNameForm.getPhone());
-            customerPhoneService.saveCustomerPhone(customerPhone);
-            //TODO return path from variable
-            return new ModelAndView(new RedirectView("success")).addObject("confirmationMessage","The stuff was completed.");
-        } else {
-            ModelAndView mv = new ModelAndView(new RedirectView("success"));
-            mv.getModel().put("confirmationMessage", "some random confirmation message");
 
-            return mv;
+            customerPhoneValidator.validate(customerPhone, errors);
+
+            if (! errors.hasErrors()) {
+                customerPhoneService.saveCustomerPhone(customerPhone);
+                request.setAttribute("customerPhoneId", customerPhone.getId());
+            }
+            //TODO return path from variable
+            return "success";
+        } else {
+            return "success";
         }
     }
 
     @RequestMapping(method =  {
             RequestMethod.GET, RequestMethod.POST}
     )
-    public String viewPhone(@RequestParam(required = false) Long customerPhoneId,  HttpServletRequest request, @ModelAttribute("phoneNameForm") PhoneNameForm phoneNameForm) {
+    public String viewPhone(@RequestParam(required = false) Long customerPhoneId,  HttpServletRequest request,
+            @ModelAttribute("phoneNameForm") PhoneNameForm phoneNameForm,
+            BindingResult errors) {
         if (customerPhoneId == null) {
             return "success"; // TODO: look this up
         } else {
@@ -112,9 +119,11 @@ public class CustomerPhoneController {
                 // TODO: verify this is the current customers phone
                 phoneNameForm.setPhone(cPhone.getPhone());
                 phoneNameForm.setPhoneName(cPhone.getPhoneName());
+                request.setAttribute("customerPhoneId", cPhone.getId());
                 return "success";
             } else {
-                return "error"; // TODO: look this up
+                //TODO redirect the user to an error page
+                return "errors"; // TODO: look this up
             }
         }
     }
@@ -122,8 +131,7 @@ public class CustomerPhoneController {
     @ModelAttribute("phoneNameForm")
     public PhoneNameForm initPhoneNameForm(HttpServletRequest request) {
         PhoneNameForm form = new PhoneNameForm();
-        // TODO: Use broadleaf standard for constructing an entity object
-        form.setPhone(new PhoneImpl());
+        form.setPhone((Phone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Phone"));
         return form;
     }
 }
