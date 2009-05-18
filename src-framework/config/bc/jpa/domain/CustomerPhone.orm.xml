@@ -21,4 +21,10 @@
 		WHERE cp.customerId = :customerId
 		AND cp.phone.isDefault = TRUE</query>
 	</named-query>
+	
+	<named-query name="BC_READ_ALL_CUSTOMER_PHONES_BY_CUSTOMER_ID" >
+		<query>SELECT cp FROM org.broadleafcommerce.profile.domain.CustomerPhone cp
+		WHERE cp.customerId = :customerId
+		ORDER BY cp.id</query>
+	</named-query>
 </entity-mappings>
