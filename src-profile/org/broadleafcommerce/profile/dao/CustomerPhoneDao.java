@@ -17,4 +17,6 @@ public interface CustomerPhoneDao {
     public void deleteCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId);
 
     public CustomerPhone findDefaultCustomerPhone(Long customerId);
+
+    public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId);
 }
