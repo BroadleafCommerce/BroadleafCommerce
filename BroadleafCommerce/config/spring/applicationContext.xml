@@ -245,7 +245,20 @@
 		<property name="factor" value="0.05"/>
 	</bean>
 
-	<bean id="shippingModule" class="org.broadleafcommerce.pricing.service.module.BandedShippingModule"/>
+	<bean id="shippingModule" class="org.broadleafcommerce.pricing.service.module.BandedShippingModule">
+		<property name="feeTypeMapping">
+			<map>
+	 			<entry key="standard" value="SHIPPING" />
+			</map>
+		</property>				
+		<property name="feeSubTypeMapping">
+			<map>
+				<entry key="ALL" value="ALL" />
+	 			<entry key="alsk" value="alsk" />
+	 			<entry key="hawi" value="hawi" />
+			</map>
+		</property>				
+	</bean>
 
 	<bean id="pricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
 		<property name="processContextFactory">
