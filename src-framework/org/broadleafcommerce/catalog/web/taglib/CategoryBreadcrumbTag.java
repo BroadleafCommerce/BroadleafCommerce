@@ -58,4 +58,11 @@ public class CategoryBreadcrumbTag extends AbstractCatalogTag {
     public void setVar(String var) {
         this.var = var;
     }
+
+    @Override
+    public void release(){
+        var = null;
+        categoryId = 0L;
+        categoryList.clear();
+    }
 }

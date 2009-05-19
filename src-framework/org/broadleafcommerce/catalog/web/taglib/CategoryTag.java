@@ -42,4 +42,10 @@ public class CategoryTag extends AbstractCatalogTag {
         this.categoryId = categoryId;
     }
 
+    @Override
+    public void release(){
+        var = null;
+        categoryId = 0L;
+    }
+
 }

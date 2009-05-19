@@ -61,4 +61,9 @@ public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
         this.categoryId = categoryId;
     }
 
+    @Override
+    public void release(){
+        var = null;
+        categoryId = 0L;
+    }
 }
