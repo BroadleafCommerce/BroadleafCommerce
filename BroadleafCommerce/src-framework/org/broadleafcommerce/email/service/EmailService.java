@@ -11,4 +11,7 @@ public interface EmailService {
     @SuppressWarnings("unchecked")
     public boolean sendTemplateEmail(final HashMap props);
 
+    @SuppressWarnings("unchecked")
+    public boolean sendBasicEmail(HashMap props);
+
 }
