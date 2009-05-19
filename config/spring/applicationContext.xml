@@ -345,4 +345,17 @@
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
+	
+	<bean id="messageCreatorBLC" class="org.broadleafcommerce.email.service.message.MessageCreator">
+		<constructor-arg ref="velocityEngine"/>
+		<constructor-arg ref="mailSender"/>
+		<constructor-arg>
+			<map>
+                <entry key="number">
+                	<bean class="org.apache.velocity.tools.generic.NumberTool" scope="prototype"/>
+                </entry>
+                <entry key="serverInfo" value-ref="serverInfo"/>
+            </map>
+        </constructor-arg>
+	</bean>
 </beans>

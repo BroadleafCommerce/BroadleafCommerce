@@ -2,7 +2,11 @@ package org.broadleafcommerce.email.service.info;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+
+import org.broadleafcommerce.email.service.message.Attachment;
 
 /**
  * @author jfischer
@@ -16,6 +20,8 @@ public class EmailInfo implements Serializable {
     private String emailTemplate;
     private String subject;
     private String fromAddress;
+    private String messageBody;
+    private List<Attachment> attachments = new ArrayList<Attachment>();
 
     private String sendEmailReliableAsync;
     private String sendAsyncPriority;
@@ -37,7 +43,6 @@ public class EmailInfo implements Serializable {
         } else {
             props = new Properties(defaults);
         }
-        //TODO find out where the subject is coming from in the current system
         setEmailType(props.getProperty("emailType"));
         setEmailTemplate(props.getProperty("emailTemplate"));
         setSubject(props.getProperty("subject"));
@@ -128,6 +133,22 @@ public class EmailInfo implements Serializable {
      */
     public void setSendAsyncPriority(String sendAsyncPriority) {
         this.sendAsyncPriority = sendAsyncPriority;
+    }
+
+    public String getMessageBody() {
+        return messageBody;
+    }
+
+    public void setMessageBody(String messageBody) {
+        this.messageBody = messageBody;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
     }
 
 }
