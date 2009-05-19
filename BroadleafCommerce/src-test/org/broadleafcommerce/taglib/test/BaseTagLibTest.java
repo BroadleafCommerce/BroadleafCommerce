@@ -1,21 +1,21 @@
 package org.broadleafcommerce.taglib.test;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import junit.framework.TestCase;
 
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.easymock.classextension.EasyMock;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 abstract public class BaseTagLibTest extends TestCase {
-    protected HttpServletRequest request;
+    protected MockHttpServletRequest request;
     protected PageContext pageContext;
     protected CatalogService catalogService;
 
     public BaseTagLibTest() {
         pageContext = EasyMock.createMock(PageContext.class);
-        request = EasyMock.createStrictMock(HttpServletRequest.class);
+        request = new MockHttpServletRequest();
         catalogService = EasyMock.createMock(CatalogService.class);
     }
 
