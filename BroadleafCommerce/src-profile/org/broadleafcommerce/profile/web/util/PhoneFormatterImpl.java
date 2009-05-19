@@ -1,12 +1,15 @@
 package org.broadleafcommerce.profile.web.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.springframework.stereotype.Service;
 
 @Service("phoneFormatter")
 public class PhoneFormatterImpl implements PhoneFormatter {
     public void formatPhoneNumber(Phone phone) {
-        phone.setPhoneNumber(formatTelephoneNumber(phone.getPhoneNumber()));
+        if(phone != null && StringUtils.isNotEmpty(phone.getPhoneNumber())){
+            phone.setPhoneNumber(formatTelephoneNumber(phone.getPhoneNumber()));
+        }
     }
 
     private String formatTelephoneNumber(String pNumber) {
