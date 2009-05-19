@@ -54,8 +54,10 @@ public class CustomerPhoneController {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String deletePhone(@RequestParam(required = true)
-            Long customerPhoneId, Model model, HttpServletRequest request) {
+            Long customerPhoneId, HttpServletRequest request) {
         customerPhoneService.deleteCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
+
+        request.setAttribute("phone.deletedPhone", "true");
         return "redirect:success";
     }
 
@@ -63,11 +65,12 @@ public class CustomerPhoneController {
             RequestMethod.GET, RequestMethod.POST}
     )
     public String makePhoneDefault(@RequestParam(required = true)
-            Long customerPhoneId, Model model, HttpServletRequest request) {
+            Long customerPhoneId, HttpServletRequest request) {
         //TODO: check to see if this can be refactored to make one service call to pass in customerPhoneId to set to default
         CustomerPhone customerPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
         customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomerId());
-        model.addAttribute(CONFIRMATION_MSG, "Your phone has been set to default.");
+
+        request.setAttribute("phone.madePhoneDefault", "true");
 
         return "redirect:success";
     }
@@ -129,7 +132,7 @@ public class CustomerPhoneController {
     }
 
     @ModelAttribute("phoneNameForm")
-    public PhoneNameForm initPhoneNameForm(HttpServletRequest request) {
+    public PhoneNameForm initPhoneNameForm(HttpServletRequest request, Model model) {
         PhoneNameForm form = new PhoneNameForm();
         form.setPhone((Phone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Phone"));
         return form;
