@@ -146,7 +146,9 @@ public class OrderImpl implements Order, Serializable {
         }
         Money totalPayments = new Money(BigDecimal.ZERO);
         for (PaymentInfo pi : getPaymentInfos()) {
-            totalPayments = totalPayments.add(pi.getAmount());
+            if (pi.getAmount() != null) {
+                totalPayments = totalPayments.add(pi.getAmount());
+            }
         }
         return getTotal().subtract(totalPayments);
     }
