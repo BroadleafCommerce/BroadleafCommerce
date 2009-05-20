@@ -229,7 +229,7 @@ public class OrderTest extends BaseTest {
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getAddress().equals(fulfillmentGroup.getAddress());
-        assert fg.getRetailPrice().equals(fulfillmentGroup.getRetailPrice());
+        assert fg.getRetailShippingPrice().equals(fulfillmentGroup.getRetailShippingPrice());
         assert fg.getOrder().equals(order);
         assert fg.getMethod().equals(fulfillmentGroup.getMethod());
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
@@ -259,7 +259,7 @@ public class OrderTest extends BaseTest {
         assert fg.getId() != null;
         FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
         assert fg.getAddress().getId().equals(fulfillmentGroup.getAddress().getId());
-        assert fg.getRetailPrice().equals(fulfillmentGroup.getRetailPrice());
+        assert fg.getRetailShippingPrice().equals(fulfillmentGroup.getRetailShippingPrice());
         assert fg.getOrder().equals(order);
         assert fg.getMethod().equals(fulfillmentGroup.getMethod());
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());
@@ -307,7 +307,7 @@ public class OrderTest extends BaseTest {
         assert fg.getId() != null;
         FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
         assert fg.getAddress().getId().equals(fulfillmentGroup.getAddress().getId());
-        assert fg.getRetailPrice().equals(fulfillmentGroup.getRetailPrice());
+        assert fg.getRetailShippingPrice().equals(fulfillmentGroup.getRetailShippingPrice());
         assert fg.getOrder().equals(order);
         assert fg.getMethod().equals(fulfillmentGroup.getMethod());
         assert fg.getReferenceNumber().equals(fulfillmentGroup.getReferenceNumber());

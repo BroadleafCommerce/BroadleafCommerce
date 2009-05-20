@@ -45,7 +45,7 @@ public class PricingTest extends BaseTest {
         groups.add(group);
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
-        group.setPrice(total);
+        group.setShippingPrice(total);
 
         OrderItem item = new DiscreteOrderItemImpl();
         item.setPrice(new Money(10D));
@@ -92,8 +92,10 @@ public class PricingTest extends BaseTest {
         //groups.add(group2);
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
-        group1.setPrice(total);
-        group2.setPrice(total);
+        group1.setShippingPrice(total);
+        group2.setShippingPrice(total);
+        group1.setTotalTax(new Money(1D));
+        group2.setTotalTax(new Money(1D));
         order.setSubTotal(total);
         order.setTotal(total);
 

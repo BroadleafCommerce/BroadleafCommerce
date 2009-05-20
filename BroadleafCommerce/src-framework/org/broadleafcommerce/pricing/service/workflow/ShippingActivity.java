@@ -45,7 +45,7 @@ public class ShippingActivity extends BaseActivity {
             System.out.println("**** FG after change: " + fulfillmentGroup.getMethod());
             order.setFulfillmentGroups(fulfillmentGroups);
             System.out.println("**** order after change: " + order);
-            totalShipping = totalShipping.add(fulfillmentGroup.getPrice());
+            totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
         }
         order.setTotalShipping(totalShipping);
         // TODO Add code to calculate shipping

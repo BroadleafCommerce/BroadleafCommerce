@@ -1,10 +1,7 @@
 package org.broadleafcommerce.pricing.service.module;
 
-import java.util.Iterator;
-import java.util.List;
-
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.util.money.Money;
 
 /**
@@ -26,16 +23,13 @@ public class SimpleTaxModule implements TaxModule {
      */
     @Override
     public Order calculateTaxForOrder(Order order) {
-        order.setTotalTax(new Money(0));
+        Money totalTax = order.getSubTotal().multiply(factor);
+        order.setTotalTax(totalTax);
 
-        List<OrderItem> items = order.getOrderItems();
-        Iterator<OrderItem> itr = items.iterator();
-        Money tax = new Money(0D);
-        while(itr.hasNext()) {
-            OrderItem item = itr.next();
-            tax = tax.add(item.getPrice().multiply(factor));
+        for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            Money fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);
+            fulfillmentGroup.setTotalTax(fgTotalTax);
         }
-        order.setTotalTax(tax);
 
         return order;
     }

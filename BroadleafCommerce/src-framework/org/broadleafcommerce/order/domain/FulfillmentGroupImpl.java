@@ -68,14 +68,17 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "METHOD")
     private String method;
 
+    //TODO change column name to RETAIL_SHIPPING_PRICE
     @Column(name = "RETAIL_PRICE")
-    private BigDecimal retailPrice;
+    private BigDecimal retailShippingPrice;
 
+    //TODO change column name to SALE_SHIPPING_PRICE
     @Column(name = "SALE_PRICE")
-    private BigDecimal salePrice;
+    private BigDecimal saleShippingPrice;
 
+    //TODO change column name to SHIPPING_PRICE
     @Column(name = "PRICE")
-    private BigDecimal price;
+    private BigDecimal shippingPrice;
 
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
@@ -115,6 +118,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @ManyToOne(targetEntity = PersonalMessageImpl.class)
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     private PersonalMessage personalMessage;
+
+    @Column(name = "MERCHANDISE_TOTAL")
+    private BigDecimal merchandiseTotal;
+
+    @Column(name = "TOTAL")
+    private BigDecimal total;
 
     public Long getId() {
         return id;
@@ -186,13 +195,13 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     }
 
     @Override
-    public Money getRetailPrice() {
-        return retailPrice == null ? null : new Money(retailPrice);
+    public Money getRetailShippingPrice() {
+        return retailShippingPrice == null ? null : new Money(retailShippingPrice);
     }
 
     @Override
-    public void setRetailPrice(Money fulfillmentCost) {
-        this.retailPrice = Money.toAmount(fulfillmentCost);
+    public void setRetailShippingPrice(Money retailShippingPrice) {
+        this.retailShippingPrice = Money.toAmount(retailShippingPrice);
     }
 
     @Override
@@ -238,21 +247,20 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     }
 
-    public Money getSalePrice() {
-        return salePrice == null ? null : new Money(salePrice);
+    public Money getSaleShippingPrice() {
+        return saleShippingPrice == null ? null : new Money(saleShippingPrice);
     }
 
-    public void setSalePrice(Money salePrice) {
-        this.salePrice = Money.toAmount(salePrice);
+    public void setSaleShippingPrice(Money saleShippingPrice) {
+        this.saleShippingPrice = Money.toAmount(saleShippingPrice);
     }
 
-    public Money getPrice() {
-        return price == null ? null : new Money(price);
+    public Money getShippingPrice() {
+        return shippingPrice == null ? null : new Money(shippingPrice);
     }
 
-    // shipping price
-    public void setPrice(Money price) {
-        this.price = Money.toAmount(price);
+    public void setShippingPrice(Money shippingPrice) {
+        this.shippingPrice = Money.toAmount(shippingPrice);
     }
 
     public void setCandidateOffers(List<Offer> candidateOffers) {
@@ -327,6 +335,22 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     public void setPrimary(boolean primary) {
         this.primary = primary;
+    }
+
+    public Money getMerchandiseTotal() {
+        return merchandiseTotal == null ? null : new Money(merchandiseTotal);
+    }
+
+    public void setMerchandiseTotal(Money merchandiseTotal) {
+        this.merchandiseTotal = Money.toAmount(merchandiseTotal);
+    }
+
+    public Money getTotal() {
+        return total == null ? null : new Money(total);
+    }
+
+    public void setTotal(Money orderTotal) {
+        this.total = Money.toAmount(orderTotal);
     }
 
     @Override

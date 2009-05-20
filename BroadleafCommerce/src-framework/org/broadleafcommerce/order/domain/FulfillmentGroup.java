@@ -37,19 +37,17 @@ public interface FulfillmentGroup {
 
     public void setMethod(String fulfillmentMethod);
 
-    // TODO refactor these price method names to reflect that they represent
-    // shipping prices
-    public Money getRetailPrice();
+    public Money getRetailShippingPrice();
 
-    public void setRetailPrice(Money fulfillmentCost);
+    public void setRetailShippingPrice(Money retailShippingPrice);
 
-    public Money getSalePrice();
+    public Money getSaleShippingPrice();
 
-    public void setSalePrice(Money salePrice);
+    public void setSaleShippingPrice(Money saleShippingPrice);
 
-    public Money getPrice();
+    public Money getShippingPrice();
 
-    public void setPrice(Money price);
+    public void setShippingPrice(Money shippingPrice);
 
     public String getReferenceNumber();
 
@@ -105,4 +103,11 @@ public interface FulfillmentGroup {
 
     public void setPrimary(boolean primary);
 
+    public Money getMerchandiseTotal();
+
+    public void setMerchandiseTotal(Money merchandiseTotal);
+
+    public Money getTotal();
+
+    public void setTotal(Money orderTotal);
 }
