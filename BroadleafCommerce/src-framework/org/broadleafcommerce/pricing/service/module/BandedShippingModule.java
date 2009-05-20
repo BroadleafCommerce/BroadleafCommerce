@@ -81,7 +81,11 @@ public class BandedShippingModule implements ShippingModule {
         String feeSubType = ((feeSubTypeMapping.get(state) == null)? feeSubTypeMapping.get("ALL") : feeSubTypeMapping.get(state));
 
         for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-            retailTotal = retailTotal.add(fulfillmentGroupItem.getRetailPrice().getAmount());
+            BigDecimal price = fulfillmentGroupItem.getRetailPrice().getAmount();
+            if(price == null) {
+                price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount();
+            }
+            retailTotal = retailTotal.add(price);
         }
 
         System.out.println("feeType: "+feeType+" feeSubType: "+feeSubType+" retailTotal: "+retailTotal);
