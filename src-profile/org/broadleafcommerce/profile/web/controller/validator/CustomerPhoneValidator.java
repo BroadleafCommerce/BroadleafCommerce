@@ -44,6 +44,10 @@ public class CustomerPhoneValidator implements Validator {
             String phoneName = cPhone.getPhoneName();
 
             for (CustomerPhone existingPhone : phones) {
+                if(existingPhone.getId().equals(cPhone.getId())){
+                    continue;
+                }
+
                 if(phoneNum.equals(existingPhone.getPhone().getPhoneNumber())){
                     errors.pushNestedPath("phone");
                     errors.rejectValue("phoneNumber", "phoneNumber.duplicate", null);
