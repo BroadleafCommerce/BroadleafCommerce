@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller("blCustomerPhoneController")
 public class CustomerPhoneController {
     private static final String prefix = "myAccount/phone/customerPhones";
+    private static final String redirect = "redirect:/myaccount/phone/viewPhone.htm";
     @Resource
     private CustomerPhoneService customerPhoneService;
     @Resource
@@ -42,16 +43,21 @@ public class CustomerPhoneController {
     private PhoneFormatter phoneFormatter;
     @Resource
     private PhoneValidator phoneValidator;
-    private String deletePhoneSuccessUrl = prefix;
-    private String makePhoneDefaultSuccessUrl = prefix;
+
+    /* ??? -
+     * Will these static defaults alter their ability to be
+     * overwritten via the appContext?  TODO scc: test this scenario
+     * */
+    private String deletePhoneSuccessUrl = redirect;
+    private String makePhoneDefaultSuccessUrl = redirect;
     private String savePhoneErrorUrl = prefix;
     private String savePhoneSuccessUrl = prefix;
     private String viewPhoneErrorUrl = prefix;
     private String viewPhoneSuccessUrl = prefix;
 
     /**
-     * Completely deletes the customerPhone with the given customerPhoneId from the system. Security is enforced by getting the customerId out of the
-     * Session and passing that customerId into the service. A parameter called 'phone.deletedPhone=true' is added to the returned URL, which allows for a
+     * Completely deletes the customerPhone with the given customerPhoneId from the database.
+     * A parameter called 'phone.deletedPhone=true' is added to the returned URL, which allows for a
      * confirmation message to be displayed on the page if you so choose.
      *
      * @param customerPhoneId
@@ -68,12 +74,12 @@ public class CustomerPhoneController {
 
         request.setAttribute("phone.deletedPhone", "true");
 
-        return deletePhoneSuccessUrl;
+        return deletePhoneSuccessUrl + customerPhoneId;
     }
 
     /**
-     * This method is called before each and every request comes into the controller.  It creates an instance of phoneNameForm, which will be set on the
-     * request.
+     * Called before each and every request comes into the controller, and is placed on the request for use by those methods.
+     * 
      *
      * @param request
      * @param model
@@ -89,7 +95,7 @@ public class CustomerPhoneController {
     }
 
     /**
-     * Sets the passed in customerPhoneId as the default phone for the user.  The customerId is grabbed off of the Session in order to enforce Security.
+     * Sets the passed in customerPhoneId as the default phone for the user.
      *
      * @param customerPhoneId
      * @param request
@@ -111,7 +117,8 @@ public class CustomerPhoneController {
     }
 
     /**
-     * Creates a new phone if a
+     * Creates a new phone if no customerPhoneId & phoneId are passed in; otherwise, it creates a new customerPhone object otherwise.  If they are passed in,
+     *  it is assumed that there is an update.
      *
      * @param phoneNameForm
      * @param errors
@@ -213,6 +220,17 @@ public class CustomerPhoneController {
         this.viewPhoneSuccessUrl = viewPhoneSuccessUrl;
     }
 
+    /**
+     * Provides a blank template for a new Customer Phone to be created if no customerPhoneId is provided.
+     *  Otherwise, when a customerPhoneId is provided, the associated customerPhone object is retrieved,
+     *  and placed on the request.
+     * 
+     * @param customerPhoneId
+     * @param request
+     * @param phoneNameForm
+     * @param errors
+     * @return
+     */
     @RequestMapping(method =  {
             RequestMethod.GET, RequestMethod.POST}
     )
