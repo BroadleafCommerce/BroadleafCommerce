@@ -67,7 +67,6 @@ public class CustomerPhoneControllerTest extends BaseTest {
         for (CustomerPhone p : phones_1) {
             if (!p.getPhone().isDefault()) {
                 nonDefaultPhoneId = p.getId();
-
                 break;
             }
         }
@@ -75,7 +74,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
         request = this.getNewServletInstance();
 
         String view = customerPhoneController.makePhoneDefault(nonDefaultPhoneId, request);
-        assert (view.indexOf(SUCCESS) >= 0);
+        assert (view.indexOf("viewPhone") >= 0);
 
         List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
 
@@ -96,7 +95,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
         request = this.getNewServletInstance();
 
         String view = customerPhoneController.deletePhone(createdCustomerPhoneIds.get(0), request);
-        assert (view.indexOf(SUCCESS) >= 0);
+        assert (view.indexOf("viewPhone") >= 0);
 
         List<CustomerPhone> phones_2 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
         assert ((phones_1_size - phones_2.size()) == 1);
