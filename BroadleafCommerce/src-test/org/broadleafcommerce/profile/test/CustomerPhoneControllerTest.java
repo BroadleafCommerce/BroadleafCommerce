@@ -29,6 +29,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
     private List<Long> createdCustomerPhoneIds = new ArrayList<Long>();
     private Long userId = 1L;
     private MockHttpServletRequest request;
+    private static final String SUCCESS = "customerPhones";
 
     @Test(groups = "createCustomerPhoneFromController", dataProvider = "setupCustomerPhoneControllerData", dataProviderClass = CustomerPhoneControllerTestDataProvider.class)
     @Rollback(false)
@@ -38,8 +39,8 @@ public class CustomerPhoneControllerTest extends BaseTest {
         request = this.getNewServletInstance();
         request.getSession().setAttribute("customer_session", userId); //set customer on session
 
-        String view = customerPhoneController.savePhone(phoneNameForm, errors, request);
-        assert (view.indexOf("success") >= 0);
+        String view = customerPhoneController.savePhone(phoneNameForm, errors, request, null, null);
+        assert (view.indexOf(SUCCESS) >= 0);
 
         List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
 
@@ -74,7 +75,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
         request = this.getNewServletInstance();
 
         String view = customerPhoneController.makePhoneDefault(nonDefaultPhoneId, request);
-        assert (view.indexOf("success") >= 0);
+        assert (view.indexOf(SUCCESS) >= 0);
 
         List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
 
@@ -95,7 +96,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
         request = this.getNewServletInstance();
 
         String view = customerPhoneController.deletePhone(createdCustomerPhoneIds.get(0), request);
-        assert (view.indexOf("success") >= 0);
+        assert (view.indexOf(SUCCESS) >= 0);
 
         List<CustomerPhone> phones_2 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
         assert ((phones_1_size - phones_2.size()) == 1);
@@ -110,7 +111,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
         request = this.getNewServletInstance();
 
         String view = customerPhoneController.viewPhone(null, request, pnf, errors);
-        assert (view.indexOf("success") >= 0);
+        assert (view.indexOf(SUCCESS) >= 0);
         assert (request.getAttribute("customerPhoneId") == null);
     }
 
@@ -124,7 +125,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
         request = this.getNewServletInstance();
 
         String view = customerPhoneController.viewPhone(phones_1.get(0).getId(), request, pnf, errors);
-        assert (view.indexOf("success") >= 0);
+        assert (view.indexOf(SUCCESS) >= 0);
         assert (request.getAttribute("customerPhoneId").equals(phones_1.get(0).getId()));
     }
 
