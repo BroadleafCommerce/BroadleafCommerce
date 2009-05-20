@@ -27,6 +27,7 @@
 				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
 				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
 				<value>classpath*:/META-INF/persistence-profile.xml</value>
+				<value>classpath*:/META-INF/persistence-auxiliary.xml</value>
 			</list>
 		</property>
 		<property name="validPersistenceUnitNames">
@@ -97,6 +98,11 @@
             <aop:pointcut id="serviceMethodWithReturnValue" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
             <aop:around method="priceOrder" pointcut-ref="serviceMethodWithReturnValue"/>
         </aop:aspect>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="orderDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderDao.*(..))"/>
+	    <aop:advisor advice-ref="txAdvice" pointcut-ref="orderDaoOperation"/>
 	</aop:config>
 
 	<aop:config>
