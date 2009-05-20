@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Execute the payment workflow independently of the checkout workflow
- * 
+ *
  * @author jfischer
  *
  */
@@ -41,6 +41,9 @@ public class CompositePaymentServiceImpl implements CompositePaymentService {
         } catch (WorkflowException e) {
             Throwable cause = null;
             while(e.getCause() != null) {
+                if (cause.equals(e.getCause())) {
+                    break;
+                }
                 cause = e.getCause();
             }
             if (cause != null && PaymentException.class.isAssignableFrom(cause.getClass())) {

@@ -49,6 +49,9 @@ public class CheckoutServiceImpl implements CheckoutService {
         } catch (WorkflowException e) {
             Throwable cause = e;
             while (e.getCause() != null) {
+                if (cause.equals(e.getCause())) {
+                    break;
+                }
                 cause = e.getCause();
             }
             throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), cause);
