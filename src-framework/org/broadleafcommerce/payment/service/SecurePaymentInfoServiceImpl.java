@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * the physical separation of this sensitive data from the order. As a result, implementors
  * may host sensitive user account information in a datastore separate from the datastore
  * housing the order. This measure goes towards achieving a PCI compliant architecture.
- * 
+ *
  * @author jfischer
  *
  */
@@ -81,6 +81,13 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
         }
 
         return null;
+    }
+
+    @Override
+    public void findAndRemoveSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException {
+        Referenced referenced = findSecurePaymentInfo(referenceNumber, paymentInfoType);
+        remove(referenced);
+
     }
 
     @Override

@@ -13,4 +13,6 @@ public interface SecurePaymentInfoService {
 
     public void remove(Referenced securePaymentInfo);
 
+    public void findAndRemoveSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException;
+
 }

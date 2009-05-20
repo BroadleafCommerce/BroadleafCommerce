@@ -203,20 +203,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void removeAllPaymentsFromOrder(Order order) {
         for (PaymentInfo paymentInfo : order.getPaymentInfos()) {
-            Referenced securePaymentInfo = null;
             try {
-                securePaymentInfo = securePaymentInfoService.findSecurePaymentInfo
+                securePaymentInfoService.findAndRemoveSecurePaymentInfo
                 (paymentInfo.getReferenceNumber(), paymentInfo.getType());
             } catch (WorkflowException e) {
                 //do nothing--no secure payment is associated with the PaymentInfo (and that's OK)
             }
 
-            if (securePaymentInfo != null) {
-                securePaymentInfoService.remove(securePaymentInfo);
-            }
             paymentInfoDao.delete(paymentInfo);
-            order.getPaymentInfos().clear();
         }
+        order.getPaymentInfos().clear();
     }
 
     @Override
