@@ -16,6 +16,7 @@ DROP TABLE blc_customer_address;
 DROP TABLE blc_customer;
 DROP TABLE blc_challenge_question;
 DROP TABLE blc_country;
+DROP TABLE blc_credit_card_payment
 DROP TABLE blc_order_payment;
 DROP TABLE blc_gift_card_payment;
 DROP TABLE blc_giftwrap_order_item;
@@ -141,6 +142,20 @@ CREATE TABLE blc_order_payment
   CONSTRAINT FK_ORDERPAYMENT_ADDRESS_fk FOREIGN KEY (ADDRESS_ID) REFERENCES blc_address(ADDRESS_ID),
   CONSTRAINT FK_ORDERPAYMENT_PHONE_fk FOREIGN KEY (PHONE_ID) REFERENCES blc_phone(PHONE_ID)
 );
+
+--------------------------
+-- blc_credit_card_payment
+--------------------------
+CREATE TABLE blc_credit_card_payment
+(
+  PAYMENT_ID NUMBER(19,0) NOT NULL,
+  REFERENCE_NUMBER VARCHAR2(255),
+  PAN VARCHAR2(255),
+  EXPIRATION_MONTH NUMBER(19,0),
+  EXPIRATION_YEAR NUMBER(19,0)
+);
+
+
 
 --------------------------
 -- blc_gift_card_payment
