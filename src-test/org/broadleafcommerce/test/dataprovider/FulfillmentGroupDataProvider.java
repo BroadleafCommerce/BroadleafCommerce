@@ -11,7 +11,7 @@ public class FulfillmentGroupDataProvider {
     @DataProvider(name = "basicFulfillmentGroup")
     public static Object[][] provideBasicSalesFulfillmentGroup() {
         FulfillmentGroupImpl sos = new FulfillmentGroupImpl();
-        sos.setRetailPrice(new Money(BigDecimal.valueOf(9.99)));
+        sos.setRetailShippingPrice(new Money(BigDecimal.valueOf(9.99)));
         sos.setReferenceNumber("123456789");
         sos.setMethod("UPS");
         return new Object[][] { { sos } };

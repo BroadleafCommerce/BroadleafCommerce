@@ -272,10 +272,10 @@
 		</property>
 		<property name="activities">
 			<list>
-				<bean class="org.broadleafcommerce.pricing.service.workflow.ShippingActivity">
+                <bean class="org.broadleafcommerce.pricing.service.workflow.SubtotalActivity"/>
+                <bean class="org.broadleafcommerce.pricing.service.workflow.ShippingActivity">
                     <property name="shippingModule" ref="shippingModule"/>
                 </bean>
-                <bean class="org.broadleafcommerce.pricing.service.workflow.OrderSubtotalActivity"/>
 				<bean class="org.broadleafcommerce.pricing.service.workflow.TaxActivity">
 					<property name="taxModule" ref="taxModule"/>
 				</bean>

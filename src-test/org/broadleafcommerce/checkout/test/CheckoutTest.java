@@ -40,7 +40,7 @@ public class CheckoutTest extends BaseTest {
         groups.add(group);
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
-        group.setPrice(total);
+        group.setShippingPrice(total);
 
         OrderItem item = new DiscreteOrderItemImpl();
         item.setPrice(new Money(10D));

@@ -39,15 +39,15 @@ public class BandedShippingModule implements ShippingModule {
         // right now the only one in the table is standard.
 
         if ("truck".equalsIgnoreCase(shippingMethod)) {
-            System.out.println("**** price: " + fulfillmentGroup.getPrice());
-            fulfillmentGroup.setPrice(new Money(0));
-            System.out.println("**** price: " + fulfillmentGroup.getPrice());
+            System.out.println("**** price: " + fulfillmentGroup.getShippingPrice());
+            fulfillmentGroup.setShippingPrice(new Money(0));
+            System.out.println("**** price: " + fulfillmentGroup.getShippingPrice());
 
             return fulfillmentGroup;
         }
 
         if ("pickup".equalsIgnoreCase(shippingMethod)) {
-            fulfillmentGroup.setPrice(new Money(0));
+            fulfillmentGroup.setShippingPrice(new Money(0));
 
             return fulfillmentGroup;
         }
@@ -68,7 +68,7 @@ public class BandedShippingModule implements ShippingModule {
 
         System.out.println("*** address: " + address);
 
-        fulfillmentGroup.setPrice(new Money(0D));
+        fulfillmentGroup.setShippingPrice(new Money(0D));
 
         return fulfillmentGroup;
     }
@@ -98,7 +98,7 @@ public class BandedShippingModule implements ShippingModule {
         }else {
             shippingPrice = sr.getBandResultQuantity();
         }
-        fulfillmentGroup.setPrice(new Money(shippingPrice));
+        fulfillmentGroup.setShippingPrice(new Money(shippingPrice));
 
     }
 

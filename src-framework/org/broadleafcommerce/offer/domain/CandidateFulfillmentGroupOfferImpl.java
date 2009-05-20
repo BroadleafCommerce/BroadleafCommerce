@@ -53,9 +53,9 @@ public class CandidateFulfillmentGroupOfferImpl implements
 	protected void computeDiscountAmount() {
 		if(offer != null && fulfillmentGroup != null){
 			
-			Money priceToUse = fulfillmentGroup.getRetailPrice();
+			Money priceToUse = fulfillmentGroup.getRetailShippingPrice();
 			if (offer.getApplyDiscountToSalePrice()) {
-				priceToUse = fulfillmentGroup.getSalePrice();
+				priceToUse = fulfillmentGroup.getSaleShippingPrice();
 			}
 	
 	        if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
