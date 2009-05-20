@@ -241,7 +241,7 @@ public class OrderServiceImpl implements OrderService {
             // API user is trying to re-add the default fulfillment group to the same order
             fulfillmentGroup.setPrimary(true);
             order.getFulfillmentGroups().remove(dfg);
-            fulfillmentGroupDao.delete(dfg);
+            //            fulfillmentGroupDao.delete(dfg);
         }
 
         fulfillmentGroup.setOrder(order);
@@ -249,9 +249,12 @@ public class OrderServiceImpl implements OrderService {
         for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
             // 2) Find the item's existing fulfillment group
             for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
-                // 3) remove item from it's existing fulfillment
-                // group
-                fg.getFulfillmentGroupItems().remove(fgItem);
+                // If the existing fulfillment group is different than passed in fulfillment group
+                if(!fg.equals(fulfillmentGroup)) {
+                    // 3) remove item from it's existing fulfillment
+                    // group
+                    fg.getFulfillmentGroupItems().remove(fgItem);
+                }
             }
         }
         fulfillmentGroup = fulfillmentGroupDao.save(fulfillmentGroup);
@@ -447,6 +450,9 @@ public class OrderServiceImpl implements OrderService {
         fgi.setFulfillmentGroup(fulfillmentGroup);
         fgi.setOrderItem(orderItem);
         fgi.setQuantity(quantity);
+        fgi.setPrice(orderItem.getPrice());
+        fgi.setRetailPrice(orderItem.getRetailPrice());
+        fgi.setSalePrice(orderItem.getSalePrice());
         return fgi;
     }
 

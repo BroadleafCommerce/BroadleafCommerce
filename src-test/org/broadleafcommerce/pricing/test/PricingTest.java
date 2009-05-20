@@ -99,6 +99,7 @@ public class PricingTest extends BaseTest {
 
         OrderItem item = new DiscreteOrderItemImpl();
         item.setPrice(new Money(10D));
+        item.setRetailPrice(new Money(15D));
         item.setQuantity(1);
         List<OrderItem> items = new ArrayList<OrderItem>();
         items.add(item);
@@ -106,7 +107,7 @@ public class PricingTest extends BaseTest {
         for (OrderItem orderItem : items) {
             FulfillmentGroupItem fgi = new FulfillmentGroupItemImpl();
             fgi.setOrderItem(orderItem);
-            fgi.setRetailPrice(new Money(15D));
+            //            fgi.setRetailPrice(new Money(15D));
             group1.addFulfillmentGroupItem(fgi);
         }
 
