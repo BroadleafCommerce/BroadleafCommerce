@@ -15,9 +15,10 @@ public class DefaultErrorHandler implements ErrorHandler {
      * @see org.broadleafcommerce.workflow.ErrorHandler#handleError(org.broadleafcommerce.workflow.ProcessContext, java.lang.Throwable)
      */
     @Override
-    public void handleError(ProcessContext context, Throwable th) {
+    public void handleError(ProcessContext context, Throwable th) throws WorkflowException {
         context.stopProcess();
         LOG.error("An error occurred during the workflow", th);
+        throw new WorkflowException(th);
     }
 
     /* (non-Javadoc)
