@@ -62,7 +62,7 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
             Order orderItem = getLatestItem();
             clearCache();
             if (orderItem != null) {
-                pricingService.executePricing(orderItem);
+                orderItem = pricingService.executePricing(orderItem);
                 orderDao.save(orderItem);
                 LOG.debug("Context order priced : order id " + orderItem.getId());
             }

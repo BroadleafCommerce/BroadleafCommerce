@@ -32,9 +32,9 @@
 		<include name="**/*.jar" />
 	</fileset>
 	
-	<target name="compile-all" depends="compile-profile, compile-auxiliary, compile-framework, compile-layout"/>
+	<target name="compile-all" depends="compile-auxiliary, compile-profile, compile-framework, compile-layout"/>
 
-	<target name="compile-framework" depends="setup, compile-profile, compile-auxiliary">
+	<target name="compile-framework" depends="setup, compile-auxiliary, compile-profile">
 		<!--
 			Framework is allowed to depend on profile and auxiliary, but nothing else
 		-->
@@ -126,7 +126,7 @@
 	
 	<target name="compile-auxiliary" depends="setup">
 		<!--
-			Auxiliary is not allowed to depend on other modules
+			Auxiliary is allowed to depend on Profile only
 		-->
 		<mkdir dir="${stage.dir}/auxiliary-jar" />
 
@@ -136,7 +136,8 @@
 		</path>
 
 		<echo>Compiling with debug=${debug.compile}</echo>
-		<javac destdir="${stage.dir}/auxiliary-jar" srcdir="${auxiliary.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
+		<javac destdir="${stage.dir}/auxiliary-jar" srcdir="${auxiliary.src.dir}:${profile.src.dir}" excludes="org/broadleafcommerce/profile/**" classpathref="compile-lib" debug="${debug.compile}"/>
+		<delete dir="${stage.dir}/auxiliary-jar/org/broadleafcommerce/profile"/>
 	</target>
 
 	<target name="build-auxiliary-jar" depends="compile-auxiliary">
@@ -159,6 +160,8 @@
 				<include name="**/*.properties" />
 				<include name="**/*.txt" />
 				<include name="**/*.xml" />
+				<include name="**/*.vm" />
+				<include name="**/*.mvel" />
 				<include name="META-INF/**" />
 				<exclude name="**/test/**/*.class" />
 				<exclude name="**/web/**/*.*" />
@@ -257,21 +260,21 @@
 	
 	<target name="compile-profile" depends="setup">
 		<!--
-			Profile is not allowed to depend on any of the other modules
+			Profile is allowed to depend on Auxiliary only
 		-->
 		<mkdir dir="${stage.dir}/profile-jar" />
 
 		<path id="compile-lib">
 			<fileset refid="compile.lib" />
 			<fileset refid="common.lib" />
+			<dirset dir="${stage.dir}/auxiliary-jar"/>
 		</path>
 
 		<echo>Compiling with debug=${debug.compile}</echo>
-		<javac destdir="${stage.dir}/profile-jar"
-			srcdir="${profile.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
+		<javac destdir="${stage.dir}/profile-jar" srcdir="${profile.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
 	</target>
 
-	<target name="build-profile-jar" depends="compile-profile, build-auxiliary-jar">
+	<target name="build-profile-jar" depends="build-auxiliary-jar, compile-profile">
 		<copy todir="${stage.dir}/profile-jar">
 			<fileset dir="${profile.src.dir}">
 				<include name="**/*.*" />
