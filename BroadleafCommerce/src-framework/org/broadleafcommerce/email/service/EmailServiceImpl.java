@@ -45,6 +45,15 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @SuppressWarnings("unchecked")
+    public boolean sendTemplateEmail(EmailInfo emailInfo, HashMap props) {
+        if (props == null) return false;
+
+        props.put(EmailPropertyType.INFO.toString(), emailInfo);
+
+        return sendTemplateEmail(props);
+    }
+
+    @SuppressWarnings("unchecked")
     public boolean sendBasicEmail(HashMap props) {
         EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.toString());
         if (Boolean.parseBoolean(info.getSendEmailReliableAsync())) {
@@ -111,5 +120,6 @@ public class EmailServiceImpl implements EmailService {
     public void setMessageCreator(MessageCreator messageCreator) {
         this.messageCreator = messageCreator;
     }
+
 
 }
