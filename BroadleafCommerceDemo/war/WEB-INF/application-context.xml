@@ -18,15 +18,6 @@
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-    <!-- bean id="environment"
-          class="com.containerstore.core.spring.EnvironmentProperties">
-        <property name="protectedKeys">
-            <list merge="true">
-                <value>datasource.web.password</value>
-            </list>
-        </property>
-    </bean-->
-
     <bean id="persistenceUnitManager"
           class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
         <property name="persistenceXmlLocations">
@@ -70,5 +61,17 @@
             </map>
         </property>
     </bean>
+    
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+    	<property name="host"><value>172.16.8.200</value></property>
+    	<property name="port"><value>2525</value></property>
+    	<property name="protocol"><value>smtp</value></property>
+    	<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.timeout">25000</prop>
+			</props>
+		</property>
+	</bean>
 
 </beans>
