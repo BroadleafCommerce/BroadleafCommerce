@@ -43,7 +43,27 @@ public class CustomerPhoneValidator implements Validator {
             String phoneNum = cPhone.getPhone().getPhoneNumber();
             String phoneName = cPhone.getPhoneName();
 
+            Long phoneId = cPhone.getPhone().getId();
+            Long customerPhoneId = cPhone.getId();
+
+            boolean foundPhoneIdForUpdate = false;
+            boolean foundCustomerPhoneIdForUpdate = false;
+
             for (CustomerPhone existingPhone : phones) {
+                //validate that the phoneId passed for an editPhone scenario exists for this user
+                if(phoneId != null && !foundPhoneIdForUpdate){
+                    if(existingPhone.getPhone().getId().equals(phoneId)){
+                        foundPhoneIdForUpdate = true;
+                    }
+                }
+
+                //validate that the customerPhoneId passed for an editPhone scenario exists for this user
+                if(customerPhoneId != null && !foundCustomerPhoneIdForUpdate){
+                    if(existingPhone.getId().equals(customerPhoneId)){
+                        foundCustomerPhoneIdForUpdate = true;
+                    }
+                }
+
                 if(existingPhone.getId().equals(cPhone.getId())){
                     continue;
                 }
@@ -57,6 +77,16 @@ public class CustomerPhoneValidator implements Validator {
                 if(phoneName.equalsIgnoreCase(existingPhone.getPhoneName())){
                     errors.rejectValue("phoneName", "phoneName.duplicate", null);
                 }
+            }
+
+            if(phoneId != null && !foundPhoneIdForUpdate){
+                errors.pushNestedPath("phone");
+                errors.rejectValue("id", "phone.invalid_id", null);
+                errors.popNestedPath();
+            }
+
+            if(customerPhoneId != null && !foundCustomerPhoneIdForUpdate){
+                errors.rejectValue("id", "phone.invalid_id", null);
             }
         }
     }
