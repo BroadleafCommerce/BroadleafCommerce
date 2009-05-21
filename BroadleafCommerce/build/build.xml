@@ -24,8 +24,8 @@
 		<ant antfile="${internal.build.file}" target="build-framework-jar" />
 	</target>
 
-	<target name="4. Build Extensibility Jar" description="Build broadleaf-extensibility.jar to the staging area.">
-		<ant antfile="${internal.build.file}" target="build-extensibility-jar" />
+	<target name="4. Build Auxiliary Jar" description="Build broadleaf-auxiliary.jar to the staging area.">
+		<ant antfile="${internal.build.file}" target="build-auxiliary-jar" />
 	</target>
 
 	<target name="5. Generate Java Docs" description="Generates Javadocs for the entire application.">
