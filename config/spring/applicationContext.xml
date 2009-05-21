@@ -14,6 +14,15 @@
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 	<context:component-scan base-package="org.broadleafcommerce" />
+	
+	<bean id="environment"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:config/bc/config.properties</value>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="serverInfo" class="org.broadleafcommerce.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>

@@ -1,6 +1,5 @@
 package org.broadleafcommerce.catalog.domain;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface ProductAttribute.
  */

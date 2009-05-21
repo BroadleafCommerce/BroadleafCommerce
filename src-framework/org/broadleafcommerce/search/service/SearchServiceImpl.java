@@ -34,77 +34,54 @@ public class SearchServiceImpl implements SearchService {
     @Resource
     private CatalogService catalogService;
 
-    public List<Sku> performSearch(String queryString) {
-        try {
-            Analyzer analyzer = new StandardAnalyzer();
-            Directory fsDir = FSDirectory.getDirectory(new File("/temp/search/lucene"));
-            IndexSearcher is = new IndexSearcher(fsDir);
-            QueryParser parser = new QueryParser("name", analyzer);
-            Query query = parser.parse(queryString);
-            TopDocCollector collector = new TopDocCollector(100);
-            is.search(query, collector);
-            ScoreDoc[] hits = collector.topDocs().scoreDocs;
-            List<Long> ids = new ArrayList<Long>();
-            for (int i = 0; i < hits.length; i++) {
-                int docId = hits[i].doc;
-                Document d = is.doc(docId);
-                String id = d.get("ID");
-                ids.add(new Long(id));
-            }
-            if (ids.size() > 0) {
-                return catalogService.findSkusByIds(ids);
-            }
-
-        } catch (CorruptIndexException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ParseException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    public List<Sku> performSearch(String queryString) throws CorruptIndexException, IOException, ParseException {
+        Analyzer analyzer = new StandardAnalyzer();
+        Directory fsDir = FSDirectory.getDirectory(new File("/temp/search/lucene"));
+        IndexSearcher is = new IndexSearcher(fsDir);
+        QueryParser parser = new QueryParser("name", analyzer);
+        Query query = parser.parse(queryString);
+        TopDocCollector collector = new TopDocCollector(100);
+        is.search(query, collector);
+        ScoreDoc[] hits = collector.topDocs().scoreDocs;
+        List<Long> ids = new ArrayList<Long>();
+        for (int i = 0; i < hits.length; i++) {
+            int docId = hits[i].doc;
+            Document d = is.doc(docId);
+            String id = d.get("ID");
+            ids.add(new Long(id));
         }
+        if (ids.size() > 0) {
+            return catalogService.findSkusByIds(ids);
+        }
+
         return null;
     }
 
-    public void rebuildSkuIndex() {
-        try {
-
-            List<Sku> skus = catalogService.findAllSkus();
-            if (skus != null) {
-                // Create a new indexer to index our files.
-                File indexDir = new File("/temp/search/lucene");
-                if (!indexDir.exists()) {
-                    indexDir.mkdir();
-                }
-                MaxFieldLength mfl = new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
-                IndexWriter writer = new IndexWriter(indexDir, new StandardAnalyzer(), true, mfl);
-
-                for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();) {
-                    Sku item = itr.next();
-                    Document doc = new Document();
-                    // set the sku id as a keyword -- this means that lucene won't try to
-                    // manipulate this data when it is indexing this doc
-                    doc.add(new Field("ID", item.getId().toString(), Field.Store.YES, Field.Index.NO));
-                    doc.add(new Field("name", item.getName(), Field.Store.YES, Field.Index.ANALYZED));
-                    doc.add(new Field("price", item.getSalePrice() + "", Field.Store.YES, Field.Index.ANALYZED));
-
-                    // Add the lucene document to the indexer to do the magic
-                    writer.addDocument(doc);
-                }
-
-                writer.close();
+    public void rebuildSkuIndex() throws CorruptIndexException, LockObtainFailedException, IOException {
+        List<Sku> skus = catalogService.findAllSkus();
+        if (skus != null) {
+            // Create a new indexer to index our files.
+            File indexDir = new File("/temp/search/lucene");
+            if (!indexDir.exists()) {
+                indexDir.mkdir();
             }
-        } catch (CorruptIndexException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (LockObtainFailedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            MaxFieldLength mfl = new MaxFieldLength(IndexWriter.DEFAULT_MAX_FIELD_LENGTH);
+            IndexWriter writer = new IndexWriter(indexDir, new StandardAnalyzer(), true, mfl);
+
+            for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();) {
+                Sku item = itr.next();
+                Document doc = new Document();
+                // set the sku id as a keyword -- this means that lucene won't try to
+                // manipulate this data when it is indexing this doc
+                doc.add(new Field("ID", item.getId().toString(), Field.Store.YES, Field.Index.NO));
+                doc.add(new Field("name", item.getName(), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("price", item.getSalePrice() + "", Field.Store.YES, Field.Index.ANALYZED));
+
+                // Add the lucene document to the indexer to do the magic
+                writer.addDocument(doc);
+            }
+
+            writer.close();
         }
     }
 

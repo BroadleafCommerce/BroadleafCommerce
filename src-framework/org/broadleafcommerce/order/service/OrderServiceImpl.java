@@ -121,9 +121,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
-        /*
-         * TODO add to test
-         */
         Order order = findOrderById(orderId);
         Sku sku = skuDao.readSkuById(skuId);
         Product product;
@@ -217,7 +214,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException {
-        //TODO change to a fulfillment group service call
         FulfillmentGroup fg = fulfillmentGroupDao.create();
         fg.setAddress(fulfillmentGroupRequest.getAddress());
         fg.setOrder(fulfillmentGroupRequest.getOrder());

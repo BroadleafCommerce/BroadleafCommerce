@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CategoryXref is for testing purposes only.  It helps autogenerate the cross reference table
  * properly with the DISPLY_ORDER column
@@ -27,7 +26,7 @@ public class CategoryXref implements Serializable {
     @Column(name = "CATEGORY_ID")
     private Long categoryId;
 
-	/** The sub-category id. */
+    /** The sub-category id. */
     @Id
     @Column(name = "SUB_CATEGORY_ID")
     private Long subCategoryId;
@@ -37,27 +36,27 @@ public class CategoryXref implements Serializable {
 
 
     public Long getCategoryId() {
-		return categoryId;
-	}
+        return categoryId;
+    }
 
-	public void setCategoryId(Long categoryId) {
-		this.categoryId = categoryId;
-	}
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
 
-	public Long getSubCategoryId() {
-		return subCategoryId;
-	}
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
 
-	public void setSubCategoryId(Long subCategoryId) {
-		this.subCategoryId = subCategoryId;
-	}
+    public void setSubCategoryId(Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
 
-	public int getDisplayOrder() {
-		return displayOrder;
-	}
+    public int getDisplayOrder() {
+        return displayOrder;
+    }
 
-	public void setDisplayOrder(int displayOrder) {
-		this.displayOrder = displayOrder;
-	}
+    public void setDisplayOrder(int displayOrder) {
+        this.displayOrder = displayOrder;
+    }
 
 }
