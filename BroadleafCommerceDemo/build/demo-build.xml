@@ -5,14 +5,15 @@
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="src.dir" value="${basedir}/src" />
 	<property name="test.src.dir" value="${basedir}/test" />
-	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="compile.lib.dir" value="${lib.dir}/compile/bin" />
-	<property name="war.lib.dir" value="${lib.dir}/include/bin" />
+	<property name="war.lib.dir" value="${lib.dir}/common/bin" />
 	<property file="${basedir}/build/build.properties" />
 
+	<echo>LIB DIR: ${lib.dir}</echo>
+	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
-			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
+			<pathelement location="${lib.dir}/compile/bin/ant-contrib-1.0b3.jar" />
 		</classpath>
 	</taskdef>
 

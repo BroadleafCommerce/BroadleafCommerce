@@ -2,7 +2,7 @@
 <project name="Broadleaf Commerce Demo" basedir=".." default="8. Redeploy and Restart Tomcat">
 	<property name="internal.build.file" value="${basedir}/build/demo-build.xml" />
 	<property file="${basedir}/build/build.properties" />
-	<property name="lib.dir" value="${basedir}/lib" />
+	<property name="lib.dir" value="${basedir}/../BroadleafCommerce/lib" />
 	<property name="build.env" value="dev"/>
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
