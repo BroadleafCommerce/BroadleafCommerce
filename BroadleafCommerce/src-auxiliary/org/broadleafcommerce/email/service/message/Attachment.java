@@ -1,11 +1,14 @@
 package org.broadleafcommerce.email.service.message;
 
-import javax.activation.DataSource;
+import java.io.Serializable;
 
-public class Attachment {
+public class Attachment implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private String filename;
-    private DataSource dataSource;
+    private byte[] data;
+    private String mimeType;
 
     public String getFilename() {
         return filename;
@@ -15,12 +18,20 @@ public class Attachment {
         this.filename = filename;
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
+    public byte[] getData() {
+        return data;
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 
 }
