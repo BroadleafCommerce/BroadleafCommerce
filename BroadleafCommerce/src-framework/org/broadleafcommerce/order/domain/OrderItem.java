@@ -66,4 +66,8 @@ public interface OrderItem {
     public boolean isInCategory(String categoryName);
 
     public boolean getIsBundle();
+
+    public GiftWrapOrderItem getGiftWrapOrderItem();
+
+    public void setGiftWrapOrderItem(GiftWrapOrderItem giftWrapOrderItem);
 }

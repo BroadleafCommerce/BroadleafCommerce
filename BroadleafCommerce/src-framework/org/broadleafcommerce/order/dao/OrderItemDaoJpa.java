@@ -6,6 +6,7 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.OrderItemImpl;
 import org.broadleafcommerce.order.service.type.OrderItemType;
@@ -41,6 +42,13 @@ public class OrderItemDaoJpa implements OrderItemDao {
 
     @Override
     public void delete(OrderItem orderItem) {
+        if (GiftWrapOrderItem.class.isAssignableFrom(orderItem.getClass())) {
+            GiftWrapOrderItem giftItem = (GiftWrapOrderItem) orderItem;
+            for (OrderItem wrappedItem : giftItem.getWrappedItems()) {
+                wrappedItem.setGiftWrapOrderItem(null);
+                save(wrappedItem);
+            }
+        }
         em.remove(orderItem);
     }
 

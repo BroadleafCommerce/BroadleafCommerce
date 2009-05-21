@@ -67,6 +67,7 @@ public class OrderItemDaoTest extends BaseTest {
 
         OrderItem discreteItem = orderItemDao.readOrderItemById(orderItemId);
         orderItem.getWrappedItems().add(discreteItem);
+        discreteItem.setGiftWrapOrderItem(orderItem);
 
         orderItem = (GiftWrapOrderItem) orderItemDao.save(orderItem);
         assert orderItem.getId() != null;
@@ -83,6 +84,7 @@ public class OrderItemDaoTest extends BaseTest {
     }
 
     @Test(groups = { "deleteGiftWrapOrderItemsById" }, dependsOnGroups = { "readGiftWrapOrderItemsById" })
+    @Rollback(false)
     public void deleteGiftWrapOrderItemsById() {
         OrderItem result = orderItemDao.readOrderItemById(giftWrapItemId);
         orderItemDao.delete(result);
@@ -103,5 +105,6 @@ public class OrderItemDaoTest extends BaseTest {
         OrderItem result = orderItemDao.readOrderItemById(orderItemId);
         assert result != null;
         assert result.getId().equals(orderItemId);
+        assert result.getGiftWrapOrderItem() == null;
     }
 }

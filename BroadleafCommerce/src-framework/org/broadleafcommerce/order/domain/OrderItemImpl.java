@@ -62,6 +62,10 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     protected PersonalMessage personalMessage;
 
+    @ManyToOne(targetEntity = GiftWrapOrderItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
+    protected GiftWrapOrderItem giftWrapOrderItem;
+
     // TODO: Add OrderItemAdjustments
     // Make sure that when you add appliedItemOffers you add them to the adjustments.
 
@@ -231,8 +235,13 @@ public class OrderItemImpl implements OrderItem, Serializable {
             }
         }
         return false;
-
     }
 
+    public GiftWrapOrderItem getGiftWrapOrderItem() {
+        return giftWrapOrderItem;
+    }
 
+    public void setGiftWrapOrderItem(GiftWrapOrderItem giftWrapOrderItem) {
+        this.giftWrapOrderItem = giftWrapOrderItem;
+    }
 }

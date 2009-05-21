@@ -50,6 +50,9 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setSalePrice(itemRequest.getSku().getSalePrice());
         item.setRetailPrice(itemRequest.getSku().getRetailPrice());
         item.getWrappedItems().addAll(itemRequest.getWrappedItems());
+        for (OrderItem orderItem : item.getWrappedItems()) {
+            orderItem.setGiftWrapOrderItem(item);
+        }
 
         return item;
     }
