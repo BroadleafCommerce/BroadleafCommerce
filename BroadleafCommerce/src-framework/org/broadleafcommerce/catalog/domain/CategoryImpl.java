@@ -32,7 +32,6 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class CategoryImpl is the default implementation of {@link Category}. A
  * category is a group of products. <br>

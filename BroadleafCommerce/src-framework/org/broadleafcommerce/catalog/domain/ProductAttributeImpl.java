@@ -12,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ProductAttributeImpl.
  */

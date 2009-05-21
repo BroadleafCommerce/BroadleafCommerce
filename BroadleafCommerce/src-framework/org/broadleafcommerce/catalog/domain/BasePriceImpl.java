@@ -20,7 +20,6 @@ import javax.persistence.TemporalType;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.util.money.Money;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class BasePriceImpl.
  */

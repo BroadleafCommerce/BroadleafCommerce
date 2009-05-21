@@ -1,7 +1,6 @@
 package org.broadleafcommerce.catalog.domain;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementations of this interface are used to hold data about a SKU's Attributes.
  * A SKU Attribute is a designator on a SKU that differentiates it from other similar SKUs

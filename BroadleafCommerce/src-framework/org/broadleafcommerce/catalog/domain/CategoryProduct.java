@@ -1,6 +1,5 @@
 package org.broadleafcommerce.catalog.domain;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementations of this interface are used to hold data about the many-to-many relationship between
  * the Category table and the Product table.  This entity is only used for executing a named
@@ -8,12 +7,12 @@ package org.broadleafcommerce.catalog.domain;
  * <br>
  * <br>
  * You should implement this class if you want to make significant changes to the
- * relationship between Category and Product.  If you just want to add additional fields 
+ * relationship between Category and Product.  If you just want to add additional fields
  * then you should extend {@link CategoryProductImpl}.
  * 
  *  @see {@link CategoryProductImpl},{@link Category}, {@link Product}
  *  @author btaylor
- *  
+ * 
  */
 public interface CategoryProduct {
 

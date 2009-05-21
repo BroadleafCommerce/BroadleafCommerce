@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Auto-generated Javadoc
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description
  * of an item that can be sold (for example: a hat).  Products are not sold or added to a cart.  {@link Sku}s
@@ -13,17 +12,17 @@ import java.util.Map;
  * <br>
  * You should implement this class if you want to make significant changes to how the
  * Product is persisted.  If you just want to add additional fields then you should extend {@link ProductImpl}.
- *  
+ * 
  * @author btaylor
  * @see {@link ProductImpl},{@link Sku}, {@link Category}
  */
 public interface Product {
 
-	/**
-	 * The id of the Product.
-	 * 
-	 * @return the id of the Product
-	 */
+    /**
+     * The id of the Product.
+     * 
+     * @return the id of the Product
+     */
     public Long getId();
 
     /**

@@ -5,7 +5,6 @@ import java.util.Date;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.util.money.Money;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface BasePrice.
  */
