@@ -6,14 +6,13 @@
 	<property name="src.dir" value="${basedir}/src" />
 	<property name="test.src.dir" value="${basedir}/test" />
 	<property name="compile.lib.dir" value="${lib.dir}/compile/bin" />
+	<property name="include.lib.dir" value="${basedir}/lib/include/bin" />
 	<property name="war.lib.dir" value="${lib.dir}/common/bin" />
 	<property file="${basedir}/build/build.properties" />
 
-	<echo>LIB DIR: ${lib.dir}</echo>
-	
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
-			<pathelement location="${lib.dir}/compile/bin/ant-contrib-1.0b3.jar" />
+			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
 		</classpath>
 	</taskdef>
 
@@ -21,6 +20,10 @@
 		<include name="**/*.jar" />
 	</fileset>
 
+	<fileset id="include.lib" dir="${include.lib.dir}" description="run-time dependencies">
+		<include name="**/*.jar" />
+	</fileset>
+	
 	<fileset id="war.lib" dir="${war.lib.dir}" description="war dependencies">
 		<include name="**/*.jar" />
 	</fileset>
@@ -80,14 +83,20 @@
 			<fileset dir="${stage.dir}">
 				<include name="${app.name}.jar" />
 				<include name="broadleaf-profile.jar" />
+				<include name="broadleaf-profile-web.jar" />
 				<include name="broadleaf-framework.jar"/>
+				<include name="broadleaf-framework-web.jar"/>
 				<include name="broadleaf-auxiliary.jar"/>
+				<include name="broadleaf-auxiliary-web.jar"/>
 				<include name="broadleaf-layout.jar"/>
 			</fileset>
 		</copy>
 
 		<copy todir="${stage.dir}/war/WEB-INF/lib">
 			<fileset dir="${war.lib.dir}">
+				<include name="**/*.jar" />
+			</fileset>
+			<fileset dir="${include.lib.dir}">
 				<include name="**/*.jar" />
 			</fileset>
 		</copy>
@@ -182,8 +191,11 @@
 		</if>
 
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-profile.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-profile-web.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-framework.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-framework-web.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-auxiliary.jar" />
+		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-auxiliary-web.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-layout.jar" />
 	</target>
 
