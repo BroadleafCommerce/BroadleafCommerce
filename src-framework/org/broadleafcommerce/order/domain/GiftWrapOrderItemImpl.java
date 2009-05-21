@@ -8,9 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -20,8 +18,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
-    @JoinTable(name = "BLC_GIFTWRAP_ORDERITEM_XREF", joinColumns = @JoinColumn(name = "GIFTWRAP_ITEM_ID", referencedColumnName = "ORDER_ITEM_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "ORDER_ITEM_ID", referencedColumnName = "ORDER_ITEM_ID", nullable = true))
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "giftWrapOrderItem", targetEntity = OrderItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<OrderItem> wrappedItems = new ArrayList<OrderItem>();
 
     public List<OrderItem> getWrappedItems() {
