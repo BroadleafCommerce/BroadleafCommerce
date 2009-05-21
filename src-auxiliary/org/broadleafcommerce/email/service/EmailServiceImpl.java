@@ -34,6 +34,7 @@ public class EmailServiceImpl implements EmailService {
      * @see com.containerstore.web.task.service.EmailService#sendTemplateEmail(com.containerstore.web.task.domain.AbstractEmailTargetUser)
      */
     @SuppressWarnings("unchecked")
+    @Deprecated
     public boolean sendTemplateEmail(HashMap props) {
         props.put(EmailPropertyType.SERVERINFO.toString(), serverInfo);
         EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.toString());
@@ -45,10 +46,11 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @SuppressWarnings("unchecked")
-    public boolean sendTemplateEmail(EmailInfo emailInfo, HashMap props) {
+    public boolean sendTemplateEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap props) {
         if (props == null) return false;
 
         props.put(EmailPropertyType.INFO.toString(), emailInfo);
+        props.put(EmailPropertyType.USER.toString(), emailTarget);
 
         return sendTemplateEmail(props);
     }
