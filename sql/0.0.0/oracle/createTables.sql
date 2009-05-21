@@ -20,7 +20,6 @@ DROP TABLE blc_credit_card_payment
 DROP TABLE blc_order_payment;
 DROP TABLE blc_gift_card_payment;
 DROP TABLE blc_giftwrap_order_item;
-DROP TABLE blc_giftwrap_orderitem_xref;
 DROP TABLE blc_shipping_rate;
 
 
@@ -256,15 +255,6 @@ CREATE TABLE blc_giftwrap_order_item
 (
   ORDER_ITEM_ID NUMBER(19,0) NOT NULL,
   CONSTRAINT PK_BLC_GIFTWRAP_ORDER_ITEM PRIMARY KEY(ORDER_ITEM_ID) USING INDEX TABLESPACE WEB_IDX1
-);
-
---------------------------
--- blc_giftwrap_orderitem_xref
---------------------------
-CREATE TABLE blc_giftwrap_orderitem_xref
-(
-  GIFTWRAP_ITEM_ID NUMBER(19,0) NOT NULL,
-  ORDER_ITEM_ID NUMBER(19,0) NOT NULL
 );
 
 --------------------------
