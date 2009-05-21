@@ -3,6 +3,7 @@ package org.broadleafcommerce.email.service.message;
 import java.util.HashMap;
 
 import javax.mail.internet.MimeMessage;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.broadleafcommerce.email.domain.EmailTarget;
@@ -31,7 +32,7 @@ public class MessageCreator {
             public void prepare(MimeMessage mimeMessage) throws Exception {
                 EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.toString());
                 EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.toString());
-                MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
+                MimeMessageHelper message = new MimeMessageHelper(mimeMessage, (info.getAttachments() != null && info.getAttachments().size() > 0));
                 message.setTo(emailUser.getEmailAddress());
                 message.setFrom(info.getFromAddress());
                 message.setSubject(info.getSubject());
@@ -54,7 +55,8 @@ public class MessageCreator {
                 }
                 message.setText(text, true);
                 for (Attachment attachment : info.getAttachments()) {
-                    message.addAttachment(attachment.getFilename(), attachment.getDataSource());
+                    ByteArrayDataSource dataSource = new ByteArrayDataSource(attachment.getData(), attachment.getMimeType());
+                    message.addAttachment(attachment.getFilename(), dataSource);
                 }
             }
         };
