@@ -16,6 +16,7 @@ public class PaymentSeed implements CompositePaymentResponse {
     public PaymentSeed(Order order, Map<PaymentInfo, Referenced> infos, PaymentResponse paymentResponse) {
         this.order = order;
         this.infos = infos;
+        this.paymentResponse = paymentResponse;
     }
 
     public Map<PaymentInfo, Referenced> getInfos() {
