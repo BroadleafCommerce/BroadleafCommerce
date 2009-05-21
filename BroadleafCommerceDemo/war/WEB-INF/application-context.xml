@@ -55,7 +55,7 @@
         </property>
         <property name="jpaPropertyMap">
             <map>
-                <entry key="hibernate.hbm2ddl.auto" value="create"/>
+                <entry key="hibernate.hbm2ddl.auto" value="update"/>
                 <entry key="hibernate.transaction.flush_before_completion" value="false"/>
                 <entry key="hibernate.connection.autocommit" value="false"/>
             </map>
