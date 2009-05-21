@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
- * Provides access and mutator functions for everything CustomerPhone.
+ * Provides access and mutator functions to manage a customer's phones.
  *
  * @author sconlon
  */
@@ -57,9 +57,7 @@ public class CustomerPhoneController {
 
     /**
      * Completely deletes the customerPhone with the given customerPhoneId from the database.
-     * A parameter called 'phone.deletedPhone=true' is added to the returned URL, which allows for a
-     * confirmation message to be displayed on the page if you so choose.
-     *
+     * 
      * @param customerPhoneId
      * @param request
      *
