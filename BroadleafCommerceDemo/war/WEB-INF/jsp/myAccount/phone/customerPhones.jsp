@@ -82,7 +82,20 @@
 						<c:if test="${phoneNameForm.phone.default eq true}">
 							<c:out value="This phone is your default phone."/>
 						</c:if>
+						<br/>
 					</td>
+				</tr>
+				<tr>
+					<td>
+					</td>
+					<td>
+						Active
+						<form:radiobutton id="phone.active" path="phone.active" value="true" />
+					</td>
+    				<td>
+    					Inactive
+    					<form:radiobutton id="phone.active" path="phone.active" value="false" />
+    				</td>
 				</tr>
 				<tr>
 					<td></td>
@@ -92,7 +105,8 @@
 					<td colspan="4"><img src="/images/etc/dot_clear.gif" width="1" height="1" vspace="3" border="0"></td>
 				</tr>
 				<tr>
-					<td colspan="4" align="right">
+					
+					<td>
 						<a href="/broadleafdemo/myaccount/phone/viewPhone.htm" class="submitLink" style="margin-right: 12px;">
 							Cancel
 						</a>  
