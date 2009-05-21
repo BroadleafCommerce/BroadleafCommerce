@@ -41,7 +41,7 @@ public class CompositePaymentServiceImpl implements CompositePaymentService {
         } catch (WorkflowException e) {
             Throwable cause = null;
             while(e.getCause() != null) {
-                if (cause.equals(e.getCause())) {
+                if (cause != null && cause.equals(e.getCause())) {
                     break;
                 }
                 cause = e.getCause();
