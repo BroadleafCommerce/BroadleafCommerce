@@ -256,6 +256,15 @@
 	<bean id="org.broadleafcommerce.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.marketing.domain.TargetContent" class="org.broadleafcommerce.marketing.domain.TargetContentImpl" scope="prototype"/>
 
+	<bean id="blEmailInfo" class="org.broadleafcommerce.email.service.info.EmailInfo" />
+	<bean id="blRegistrationEmailInfo" parent="blEmailInfo">
+		<property name="subject"><value>You have successfully registered!</value></property>
+		<property name="fromAddress"><value>demo@broadleafcommerce.com</value></property>
+		<property name="emailTemplate"><value>org/broadleafcommerce/email/service/template/default.vm</value></property>
+		<property name="sendAsyncPriority"><value>2</value></property>
+		<property name="sendEmailReliableAsync"><value>false</value></property>
+	</bean>
+
 	<bean id="taxModule" class="org.broadleafcommerce.pricing.service.module.SimpleTaxModule">
 		<property name="factor" value="0.05"/>
 	</bean>
