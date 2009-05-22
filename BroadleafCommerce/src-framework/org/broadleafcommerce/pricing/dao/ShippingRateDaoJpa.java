@@ -1,6 +1,7 @@
 package org.broadleafcommerce.pricing.dao;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -51,13 +52,19 @@ public class ShippingRateDaoJpa implements ShippingRateDao {
         return (ShippingRate) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.pricing.domain.ShippingRate"), id);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity) {
         Query query = em.createNamedQuery("READ_FIRST_SHIPPING_RATE_BY_FEE_TYPES");
         query.setParameter("feeType", feeType);
         query.setParameter("feeSubType", feeSubType);
         query.setParameter("bandUnitQuantity", unitQuantity);
-        return(ShippingRate) query.getResultList().get(0);
+        List<ShippingRate> returnedRates = query.getResultList();
+        if(returnedRates.size() > 0) {
+            return returnedRates.get(0);
+        }else {
+            return null;
+        }
     }
 
 
