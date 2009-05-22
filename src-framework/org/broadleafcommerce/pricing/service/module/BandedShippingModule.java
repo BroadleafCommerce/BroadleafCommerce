@@ -39,7 +39,7 @@ public class BandedShippingModule implements ShippingModule {
 
     private void calculateShipping(FulfillmentGroup fulfillmentGroup) {
         Address address = fulfillmentGroup.getAddress();
-        String state = address.getState().getAbbreviation();
+        String state = (address!= null && address.getState() != null)? address.getState().getAbbreviation(): null;
         BigDecimal retailTotal = new BigDecimal(0);
         String feeType = feeTypeMapping.get(fulfillmentGroup.getMethod());
         String feeSubType = ((feeSubTypeMapping.get(state) == null)? feeSubTypeMapping.get("ALL") : feeSubTypeMapping.get(state));
