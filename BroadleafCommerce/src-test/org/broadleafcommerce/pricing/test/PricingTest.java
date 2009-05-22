@@ -37,11 +37,12 @@ public class PricingTest extends BaseTest {
     @Resource
     private ShippingRateDao shippingRateDao;
 
-    @Test
+    @Test(dependsOnGroups = { "testShippingInsert" })
     public void testPricing() throws Exception {
         Order order = orderDao.create();
         FulfillmentGroup group = new FulfillmentGroupImpl();
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
+        group.setMethod("standard");
         groups.add(group);
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
