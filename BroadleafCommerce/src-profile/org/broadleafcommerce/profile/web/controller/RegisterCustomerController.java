@@ -3,7 +3,6 @@ package org.broadleafcommerce.profile.web.controller;
 import java.util.HashMap;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.broadleafcommerce.email.domain.AbstractEmailTarget;
@@ -19,9 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller("blRegisterCustomerFormController")
@@ -32,13 +29,16 @@ public class RegisterCustomerController {
     @Resource
     private EmailService emailService;
 
+    @Resource(name="blRegistrationEmailInfo")
+    EmailInfo emailInfo;
+
     @Resource
     private RegisterCustomerValidator registerCustomerValidator;
 
     public RegisterCustomerController() { }
 
     @RequestMapping(method = { RequestMethod.GET })
-    protected String viewForm() {
+    public String viewForm() {
         return "registerCustomer";
     }
 
@@ -58,17 +58,12 @@ public class RegisterCustomerController {
     }
 
     private void sendConfirmationEmail(HttpServletRequest request, RegisterCustomer customer) {
-        ServletContext servletContext = request.getSession().getServletContext();
-        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
-        EmailInfo emailInfo = (EmailInfo) wac.getBean("blRegistrationEmailInfo");
-
         EmailTarget target = new AbstractEmailTarget(){};
         target.setEmailAddress(customer.getEmailAddress());
 
         HashMap<String, Object> props = new HashMap<String, Object>();
-        props.put("user", target);
 
-        emailService.sendTemplateEmail(emailInfo, props);
+        emailService.sendTemplateEmail(emailInfo, target, props);
     }
 
     private void createCustomer(RegisterCustomer registerCustomer) {
