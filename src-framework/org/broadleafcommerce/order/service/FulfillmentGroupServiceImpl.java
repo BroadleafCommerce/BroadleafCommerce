@@ -22,4 +22,5 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         return fulfillmentGroupDao.create();
     }
 
+
 }

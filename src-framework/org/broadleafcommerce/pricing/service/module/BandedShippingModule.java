@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.pricing.dao.ShippingRateDao;
@@ -30,47 +31,10 @@ public class BandedShippingModule implements ShippingModule {
     public FulfillmentGroup calculateShippingForFulfillmentGroup(
             FulfillmentGroup fulfillmentGroup) {
 
-        System.out.println("*** in BandedShippingModule.calculateShippingForFG()");
-
-        String shippingMethod = fulfillmentGroup.getMethod();
-        Address address = fulfillmentGroup.getAddress();
-
-        // TODO Replace these strings with row entries in table.
-        // right now the only one in the table is standard.
-
-        if ("truck".equalsIgnoreCase(shippingMethod)) {
-            System.out.println("**** price: " + fulfillmentGroup.getShippingPrice());
-            fulfillmentGroup.setShippingPrice(new Money(0));
-            System.out.println("**** price: " + fulfillmentGroup.getShippingPrice());
-
-            return fulfillmentGroup;
-        }
-
-        if ("pickup".equalsIgnoreCase(shippingMethod)) {
-            fulfillmentGroup.setShippingPrice(new Money(0));
-
-            return fulfillmentGroup;
-        }
-
-        if ("delivery".equalsIgnoreCase(shippingMethod)) {
-            throw new UnsupportedOperationException();
-        }
-
-        if ("expedited".equalsIgnoreCase(shippingMethod)) {
-            throw new UnsupportedOperationException();
-        }
-
-        if ("standard".equalsIgnoreCase(shippingMethod)) {
-            //throw new UnsupportedOperationException();
-            calculateShipping(fulfillmentGroup);
-            return fulfillmentGroup;
-        }
-
-        System.out.println("*** address: " + address);
-
-        fulfillmentGroup.setShippingPrice(new Money(0D));
-
+        calculateShipping(fulfillmentGroup);
         return fulfillmentGroup;
+
+
     }
 
     private void calculateShipping(FulfillmentGroup fulfillmentGroup) {
@@ -81,20 +45,21 @@ public class BandedShippingModule implements ShippingModule {
         String feeSubType = ((feeSubTypeMapping.get(state) == null)? feeSubTypeMapping.get("ALL") : feeSubTypeMapping.get(state));
 
         for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-            BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null)? fulfillmentGroupItem.getRetailPrice().getAmount():null;
+            BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null)? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())):null;
             if(price == null) {
-                price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount();
+                price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
             }
             retailTotal = retailTotal.add(price);
         }
 
-        System.out.println("feeType: "+feeType+" feeSubType: "+feeSubType+" retailTotal: "+retailTotal);
-
         ShippingRate sr = shippingRateDao.readShippingRateByFeeTypesUnityQty(feeType, feeSubType, retailTotal);
+        if(sr == null) {
+            throw new NotImplementedException("Shipping rate "+fulfillmentGroup.getMethod()+" not supported");
+        }
         BigDecimal shippingPrice = new BigDecimal(0);
         if(sr.getBandResultPercent().compareTo(0) > 0) {
-            BigDecimal percent = new BigDecimal(sr.getBandResultPercent()*100);
-            shippingPrice = sr.getBandResultQuantity().add(sr.getBandResultQuantity().multiply(percent));
+            BigDecimal percent = new BigDecimal(sr.getBandResultPercent()/100);
+            shippingPrice = retailTotal.multiply(percent);
         }else {
             shippingPrice = sr.getBandResultQuantity();
         }
