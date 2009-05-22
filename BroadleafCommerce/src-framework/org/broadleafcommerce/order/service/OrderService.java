@@ -82,5 +82,6 @@ public interface OrderService {
 
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address);
 
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException;
 
 }
