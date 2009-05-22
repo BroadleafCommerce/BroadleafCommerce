@@ -45,7 +45,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
     private FulfillmentGroup fulfillmentGroup;
 
     @OneToOne(targetEntity = OrderItemImpl.class)
-    @JoinColumn(name = "ORDER_ID")
+    @JoinColumn(name = "ORDER_ITEM_ID")
     private OrderItem orderItem;
 
     @Column(name = "QUANTITY")
