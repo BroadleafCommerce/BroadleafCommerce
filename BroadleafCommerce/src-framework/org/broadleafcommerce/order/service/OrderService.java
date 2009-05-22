@@ -15,11 +15,14 @@ import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
+import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OrderService {
 
     public Order createNamedOrderForCustomer(String name, Customer customer);
+
+    public Order save(Order order) throws PricingException;
 
     public Order findOrderById(Long orderId);
 
@@ -76,5 +79,8 @@ public interface OrderService {
     public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException;
 
     public void removeAllPaymentsFromOrder(Order order);
+
+    public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address);
+
 
 }

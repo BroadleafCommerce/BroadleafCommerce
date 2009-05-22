@@ -93,6 +93,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order save(Order order) throws PricingException {
+        return updateOrder(order);
+    }
+
+    @Override
     public Order findOrderById(Long orderId) {
         return orderDao.readOrderById(orderId);
     }
@@ -428,12 +433,20 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.save(order);
     }
 
-    protected FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
+    public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            if(fulfillmentGroup.isPrimary()) {
+                return fulfillmentGroup;
+            }
+        }
+
         FulfillmentGroup newFg = fulfillmentGroupService.createEmptyFulfillmentGroup();
         newFg.setOrder(order);
         newFg.setPrimary(true);
         newFg.setAddress(address);
-
+        for(OrderItem orderItem : order.getOrderItems()) {
+            newFg.addFulfillmentGroupItem(createFulfillmentGroupItemFromOrderItem(orderItem, newFg, orderItem.getQuantity()));
+        }
         return newFg;
     }
 
