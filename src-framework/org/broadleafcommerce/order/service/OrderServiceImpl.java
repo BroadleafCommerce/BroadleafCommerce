@@ -403,7 +403,7 @@ public class OrderServiceImpl implements OrderService {
         this.rollupOrderItems = rollupOrderItems;
     }
 
-    protected OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
         OrderItem addedItem;
         List<OrderItem> orderItems = order.getOrderItems();
         boolean containsItem = orderItems.contains(newOrderItem);
