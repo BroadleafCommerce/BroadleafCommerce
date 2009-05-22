@@ -15,14 +15,14 @@
 
 	<context:component-scan base-package="org.broadleafcommerce" />
 	
-	<bean id="environment"
+	<!--bean id="configuration"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 				<value>classpath:config/bc/config.properties</value>
 			</list>
 		</property>
-	</bean>
+	</bean-->
 
 	<bean id="serverInfo" class="org.broadleafcommerce.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>

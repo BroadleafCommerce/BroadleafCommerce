@@ -19,10 +19,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     private static final long serialVersionUID = 1L;
 
     @Column(name = "NAME")
-    private String name;
+    protected String name;
 
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, cascade = {CascadeType.ALL})
-    private List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
+    protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
 
     public String getName() {
         return name;

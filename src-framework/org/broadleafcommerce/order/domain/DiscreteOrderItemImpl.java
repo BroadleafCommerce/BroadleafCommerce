@@ -55,6 +55,10 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         this.bundleOrderItem = bundleOrderItem;
     }
 
+    public String getName() {
+        return getSku().getName();
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

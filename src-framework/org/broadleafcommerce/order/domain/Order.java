@@ -45,25 +45,13 @@ public interface Order {
 
     public void setOrderItems(List<OrderItem> orderItems);
 
-    //public void addOrderItem(OrderItem orderItem) ;
-
-    //public void removeOrderItem(OrderItem orderItem);
-
     public List<FulfillmentGroup> getFulfillmentGroups();
 
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
-    //public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) ;
-
-    //public void removeFulfillmentGroup(FulfillmentGroup fulfillmentGroup) ;
-
     public List<Offer> getCandidateOffers();
 
     public void setCandidateOffers(List<Offer> offers);
-
-    //public void addCandidateOffer(Offer offer);
-
-    //public void removeAllOffers();
 
     public boolean isMarkedForOffer();
 
