@@ -186,16 +186,6 @@ public class OrderImpl implements Order, Serializable {
         this.orderItems = orderItems;
     }
 
-    /*@Override
-    public void addOrderItem(OrderItem orderItem) {
-        this.orderItems.add(orderItem);
-    }
-
-    @Override
-    public void removeOrderItem(OrderItem orderItem) {
-        this.orderItems.remove(orderItem);
-    }*/
-
     public List<FulfillmentGroup> getFulfillmentGroups() {
         return fulfillmentGroups;
     }
@@ -204,44 +194,10 @@ public class OrderImpl implements Order, Serializable {
         this.fulfillmentGroups = fulfillmentGroups;
     }
 
-    /*public void addFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        if (this.fulfillmentGroups == null) {
-            this.fulfillmentGroups = new ArrayList<FulfillmentGroup>();
-        }
-        this.fulfillmentGroups.add(fulfillmentGroup);
-    }
-
-    public void removeFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        this.fulfillmentGroups.remove(fulfillmentGroup);
-    }*/
-
-    /*@Override
-    public void addCandidateOffer(Offer offer) {
-        candidateOffers.add(offer);
-    }*/
-
     @Override
     public List<Offer> getCandidateOffers() {
         return candidateOffers;
     }
-
-    /*@Override
-    public void removeAllOffers() {
-        if (candidateOffers != null) {
-            candidateOffers.clear();
-        }
-        if (getOrderItems() != null) {
-            for (OrderItem item : getOrderItems()) {
-                item.removeAllOffers();
-            }
-        }
-
-        if (getFulfillmentGroups() != null) {
-            for (FulfillmentGroup fg : getFulfillmentGroups()) {
-                fg.removeAllOffers();
-            }
-        }
-    }*/
 
     public boolean isMarkedForOffer() {
         return markedForOffer;

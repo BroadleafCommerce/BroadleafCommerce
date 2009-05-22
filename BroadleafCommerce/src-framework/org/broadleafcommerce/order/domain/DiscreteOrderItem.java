@@ -17,4 +17,6 @@ public interface DiscreteOrderItem extends OrderItem {
 
     public void setBundleOrderItem(BundleOrderItem bundleOrderItem);
 
+    public String getName();
+
 }
