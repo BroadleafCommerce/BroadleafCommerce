@@ -22,6 +22,7 @@ public class SkuDaoTest extends BaseTest {
     @Rollback(false)
     public void createSku(Sku sku) {
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
+        sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         assert sku.getId() == null;
         sku = skuDao.save(sku);
         assert sku.getId() != null;
