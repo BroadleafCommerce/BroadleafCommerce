@@ -13,7 +13,7 @@ public class FulfillmentGroupDataProvider {
         FulfillmentGroupImpl sos = new FulfillmentGroupImpl();
         sos.setRetailShippingPrice(new Money(BigDecimal.valueOf(9.99)));
         sos.setReferenceNumber("123456789");
-        sos.setMethod("UPS");
+        sos.setMethod("standard");
         return new Object[][] { { sos } };
     }
 }
