@@ -6,10 +6,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 
@@ -22,7 +24,8 @@ public class PhoneImpl implements Phone, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "PhoneId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "PhoneId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PhoneImpl", allocationSize = 1)
     @Column(name = "PHONE_ID")
     private Long id;
 
