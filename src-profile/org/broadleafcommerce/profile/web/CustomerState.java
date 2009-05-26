@@ -33,8 +33,9 @@ public class CustomerState {
                         break checkCustomer;
                     }
                 }
+                customer = customerService.createCustomerFromId(customerId);
             }
-            customer = customerService.createCustomerFromId((Long) sessionReference);
+            customer = null;
         }
 
         return customer;
