@@ -1,6 +1,7 @@
 package org.broadleafcommerce.profile.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,6 +9,11 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.email.domain.AbstractEmailTarget;
+import org.broadleafcommerce.email.domain.EmailTarget;
+import org.broadleafcommerce.email.service.EmailService;
+import org.broadleafcommerce.email.service.info.EmailInfo;
+import org.broadleafcommerce.email.service.info.NullEmailInfo;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.listener.PostRegistrationObserver;
@@ -40,10 +46,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource
     private EntityConfiguration entityConfiguration;
 
-    private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
+    @Resource
+    private EmailService emailService;
 
-    // @Resource(name = "saltSource")
-    // private SaltSource saltSource;
+    @Resource(name="blRegistrationEmailInfo")
+    EmailInfo emailInfo;
+
+    private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
 
     public Customer saveCustomer(Customer customer) {
         if (!customer.isRegistered()) {
@@ -70,7 +79,9 @@ public class CustomerServiceImpl implements CustomerService {
             customer.setRegistered(true);
             Customer retCustomer = saveCustomer(customer);
             notifyPostRegisterListeners(retCustomer);
+            this.sendConfirmationEmail(retCustomer);
             response.setCustomer(retCustomer);
+
         }
         return response;
     }
@@ -138,5 +149,18 @@ public class CustomerServiceImpl implements CustomerService {
             PostRegistrationObserver listener = iter.next();
             listener.processRegistrationEvent(customer);
         }
+    }
+
+    private void sendConfirmationEmail(Customer customer) {
+        if (emailInfo == null || emailInfo instanceof NullEmailInfo) {
+            logger.info("Customer Registration Email not being sent because blRegistrationEmailInfo is not configured");
+            return;
+        }
+
+        EmailTarget target = new AbstractEmailTarget(){};
+        target.setEmailAddress(customer.getEmailAddress());
+        HashMap<String, Object> props = new HashMap<String, Object>();
+
+        emailService.sendTemplateEmail(emailInfo, target, props);
     }
 }
