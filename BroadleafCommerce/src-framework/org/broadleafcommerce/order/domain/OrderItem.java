@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.util.money.Money;
 
 public interface OrderItem {
@@ -25,9 +25,18 @@ public interface OrderItem {
 
     public void setSalePrice(Money salePrice);
 
+    public Money getAdjustmentPrice();
+
+    public void setAdjustmentPrice(Money adjustmentPrice);
+
     public Money getPrice();
 
     public void setPrice(Money price);
+
+
+    public void assignFinalPrice();
+
+    public Money getCurrentPrice();
 
     public int getQuantity();
 
@@ -43,13 +52,7 @@ public interface OrderItem {
 
     public List<CandidateItemOffer> addCandidateItemOffer(CandidateItemOffer candidateOffer);
 
-    public void setAppliedItemOffers(List<Offer> appliedOffers);
-
-    public List<Offer> getAppliedItemOffers();
-
-    public List<Offer> addAppliedItemOffer(Offer appliedOffer);
-
-    public void removeAllOffers();
+    public void removeAllCandidateOffers();
 
     public boolean markForOffer();
 
@@ -58,6 +61,14 @@ public interface OrderItem {
     public boolean unmarkForOffer();
 
     public boolean isAllQuantityMarkedForOffer();
+
+    public List<OrderItemAdjustment> getOrderItemAdjustments();
+
+    public List<OrderItemAdjustment> addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment);
+
+    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
+
+    public void removeAllAdjustments();
 
     public PersonalMessage getPersonalMessage();
 

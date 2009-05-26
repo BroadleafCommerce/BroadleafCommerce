@@ -14,20 +14,20 @@ public class CandidateFulfillmentGroupOfferImpl implements
 	private FulfillmentGroup fulfillmentGroup;
 
 	public CandidateFulfillmentGroupOfferImpl(){
-		
+
 	}
-	
+
 	public CandidateFulfillmentGroupOfferImpl(FulfillmentGroup fulfillmentGroup, Offer offer){
 		this.offer = offer;
 		this.fulfillmentGroup = fulfillmentGroup;
 		computeDiscountAmount();
 	}
-	
+
 	public Offer getOffer() {
 		return offer;
 	}
 
-	
+
 	public void setOffer(Offer offer) {
 		this.offer = offer;
 		computeDiscountAmount();
@@ -40,36 +40,35 @@ public class CandidateFulfillmentGroupOfferImpl implements
 	public FulfillmentGroup getFulfillmentGroup() {
 		return fulfillmentGroup;
 	}
-	public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {		
+	public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
 		this.fulfillmentGroup = fulfillmentGroup;
 		computeDiscountAmount();
 	}
-	
+
 	public int getPriority() {
 		return offer.getPriority();
 	}
-	
-	
+
+
 	protected void computeDiscountAmount() {
 		if(offer != null && fulfillmentGroup != null){
-			
-			Money priceToUse = fulfillmentGroup.getRetailShippingPrice();
-			if (offer.getApplyDiscountToSalePrice()) {
-				priceToUse = fulfillmentGroup.getSaleShippingPrice();
-			}
-	
+
+            Money priceToUse = fulfillmentGroup.getRetailShippingPrice();
+//            if (offer.getApplyDiscountToSalePrice()) {
+//                priceToUse = fulfillmentGroup.getSaleShippingPrice();
+
 	        if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
 	            priceToUse.subtract(offer.getValue());
 	        }
 	        if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
 	            priceToUse = offer.getValue();
 	        }
-	
+
 	        if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
-	            priceToUse = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount());
+	            priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
 	        }
 	        discountedPrice = priceToUse;
 		}
 	}
-	
+
 }
