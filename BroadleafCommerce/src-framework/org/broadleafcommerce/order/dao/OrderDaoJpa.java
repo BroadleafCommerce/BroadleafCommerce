@@ -57,13 +57,13 @@ public class OrderDaoJpa implements OrderDao {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Order> readOrdersForCustomer(Customer customer, String orderStatus) {
+    public List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus) {
         if (orderStatus == null) {
             return readOrdersForCustomer(customer.getId());
         } else {
             Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS");
             query.setParameter("customerId", customer.getId());
-            query.setParameter("orderStatus", orderStatus);
+            query.setParameter("orderStatus", orderStatus.getName());
             return query.getResultList();
         }
     }
@@ -82,7 +82,7 @@ public class OrderDaoJpa implements OrderDao {
         Order order = null;
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
-        query.setParameter("orderStatus", OrderStatus.IN_PROCESS.toString());
+        query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getName());
         List<Order> result = query.getResultList();
         if (result.size() > 0) {
             order = result.get(0);
@@ -97,7 +97,7 @@ public class OrderDaoJpa implements OrderDao {
             customer = customerDao.save(customer);
         }
         order.setCustomer(customer);
-        order.setStatus(OrderStatus.IN_PROCESS.toString());
+        order.setStatus(OrderStatus.IN_PROCESS.getName());
 
         order = save(order);
 
@@ -127,7 +127,7 @@ public class OrderDaoJpa implements OrderDao {
     public Order readNamedOrderForCustomer(Customer customer, String name) {
         Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", customer.getId());
-        query.setParameter("orderStatus", OrderStatus.NAMED.toString());
+        query.setParameter("orderStatus", OrderStatus.NAMED.getName());
         query.setParameter("orderName", name);
         return (Order) query.getSingleResult();
     }

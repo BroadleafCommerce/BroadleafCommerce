@@ -3,13 +3,14 @@ package org.broadleafcommerce.order.dao;
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OrderDao {
 
     public Order readOrderById(Long orderId);
 
-    public List<Order> readOrdersForCustomer(Customer customer, String orderStatus);
+    public List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
 
     public List<Order> readOrdersForCustomer(Long id);
 
