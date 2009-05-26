@@ -15,7 +15,7 @@ public class CompleteOrderActivity extends BaseActivity {
     @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
-        seed.getOrder().setStatus(OrderStatus.SUBMITTED);
+        seed.getOrder().setStatus(OrderStatus.SUBMITTED.toString());
         cartService.createNewCartForCustomer(seed.getOrder().getCustomer());
         return context;
     }

@@ -21,20 +21,15 @@ public class BandedShippingModule implements ShippingModule {
 
     @Resource
     private ShippingRateDao shippingRateDao;
-
     private Map<String, String> feeTypeMapping;
-
     private Map<String, String> feeSubTypeMapping;
 
     @Override
     // this will need to calculate shipping on each fulfilmentGroup in an order
     public FulfillmentGroup calculateShippingForFulfillmentGroup(
             FulfillmentGroup fulfillmentGroup) {
-
         calculateShipping(fulfillmentGroup);
         return fulfillmentGroup;
-
-
     }
 
     private void calculateShipping(FulfillmentGroup fulfillmentGroup) {
@@ -64,7 +59,8 @@ public class BandedShippingModule implements ShippingModule {
             shippingPrice = sr.getBandResultQuantity();
         }
         fulfillmentGroup.setShippingPrice(new Money(shippingPrice));
-
+        fulfillmentGroup.setRetailShippingPrice(fulfillmentGroup.getSaleShippingPrice());
+        fulfillmentGroup.setSaleShippingPrice(fulfillmentGroup.getShippingPrice());
     }
 
     @Override

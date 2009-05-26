@@ -35,7 +35,7 @@ public class WishlistController extends CartController {
 
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public String viewWishlists(ModelMap model, HttpServletRequest request) {
-        List<Order> wishlistOrders = cartService.findOrdersForCustomer(customerState.getCustomer(request), OrderStatus.NAMED);
+        List<Order> wishlistOrders = cartService.findOrdersForCustomer(customerState.getCustomer(request), OrderStatus.NAMED.toString());
         model.addAttribute("wishlists", wishlistOrders);
         return "success";
     }

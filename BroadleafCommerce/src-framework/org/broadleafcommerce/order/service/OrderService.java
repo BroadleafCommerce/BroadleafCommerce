@@ -12,7 +12,6 @@ import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
-import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
@@ -28,7 +27,7 @@ public interface OrderService {
 
     public List<Order> findOrdersForCustomer(Customer customer);
 
-    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status);
+    public List<Order> findOrdersForCustomer(Customer customer, String status);
 
     public Order findNamedOrderForCustomer(String name, Customer customer);
 

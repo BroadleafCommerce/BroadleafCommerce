@@ -10,8 +10,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +29,6 @@ import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
@@ -60,8 +57,7 @@ public class OrderImpl implements Order, Serializable {
     private Customer customer;
 
     @Column(name = "ORDER_STATUS")
-    @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private String status;
 
     @Column(name = "CITY_TAX")
     private BigDecimal cityTax;
@@ -137,6 +133,11 @@ public class OrderImpl implements Order, Serializable {
         this.subTotal = Money.toAmount(subTotal);
     }
 
+    /*
+     * TODO we prob need to remove this method, as subtotal is currently
+     * handled through the pricing workflow. We do not want to handle pricing
+     * from 2 different directions.
+     */
     public Money calculateSubTotal() {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
@@ -196,11 +197,11 @@ public class OrderImpl implements Order, Serializable {
         this.customer = customer;
     }
 
-    public OrderStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(OrderStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

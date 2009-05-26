@@ -29,6 +29,9 @@ public class SimpleTaxModule implements TaxModule {
         for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             Money fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);
             fulfillmentGroup.setTotalTax(fgTotalTax);
+            fulfillmentGroup.setCityTax(new Money(0D));
+            fulfillmentGroup.setCountyTax(new Money(0D));
+            fulfillmentGroup.setCountryTax(new Money(0D));
         }
 
         return order;
