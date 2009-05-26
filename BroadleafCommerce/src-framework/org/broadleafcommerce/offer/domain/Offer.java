@@ -53,9 +53,9 @@ public interface Offer {
 
     public void setTargetSystem(String targetSystem);
 
-    public boolean getApplyDiscountToSalePrice();
+//    public boolean getApplyDiscountToSalePrice();
 
-    public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
+//    public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
 
     public String getAppliesToItemRules();
 

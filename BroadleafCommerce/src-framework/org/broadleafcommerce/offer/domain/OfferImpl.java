@@ -62,8 +62,9 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "TARGET_SYSTEM")
     private String targetSystem;
 
-    @Column(name = "APPLY_TO_SALE_PRICE")
-    private boolean applyToSalePrice;
+//  Not supported in current implementation
+//    @Column(name = "APPLY_TO_SALE_PRICE")
+//    private boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
     private String appliesToItemRules;
@@ -78,7 +79,7 @@ public class OfferImpl implements Serializable, Offer {
     private boolean applyDiscountToMarkedItems;
 
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
-    private boolean combinableWithOtherOffers;
+    private boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
 
     public Long getId() {
         return id;
@@ -171,6 +172,7 @@ public class OfferImpl implements Serializable, Offer {
         this.targetSystem = targetSystem;
     }
 
+/*
     @Override
     public boolean getApplyDiscountToSalePrice() {
         return applyToSalePrice;
@@ -181,6 +183,7 @@ public class OfferImpl implements Serializable, Offer {
         this.applyToSalePrice=applyToSalePrice;
 
     }
+*/
 
     public String getAppliesToItemRules() {
         return appliesToItemRules;

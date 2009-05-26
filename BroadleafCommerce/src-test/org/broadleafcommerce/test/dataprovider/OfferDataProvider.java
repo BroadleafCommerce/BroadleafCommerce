@@ -29,7 +29,7 @@ public class OfferDataProvider {
         o.setStackable(true);
         o.setStartDate(new Date(DateUtil.getNow().getTime()));
         o.setEndDate(new Date(DateUtil.getNow().getTime()+100000000));
-        o.setApplyDiscountToSalePrice(false);
+        o.setApplyDiscountToMarkedItems(false);
         o.setTargetSystem("WEB");
         o.setType(OfferType.ORDER_ITEM);
         o.setAppliesToItemRules(
@@ -61,7 +61,7 @@ public class OfferDataProvider {
         o.setStackable(false);
         o.setStartDate(new Date(DateUtil.getNow().getTime()));
         o.setEndDate(new Date(DateUtil.getNow().getTime()+100000000));
-        o.setApplyDiscountToSalePrice(false);
+        o.setApplyDiscountToMarkedItems(false);
         o.setTargetSystem("WEB");
         o.setType(OfferType.FULFILLMENT_GROUP);
         o.setAppliesToItemRules(
