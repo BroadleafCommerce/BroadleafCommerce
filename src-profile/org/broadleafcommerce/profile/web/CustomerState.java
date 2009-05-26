@@ -33,6 +33,7 @@ public class CustomerState {
                         break checkCustomer;
                     }
                     customer = customerService.createCustomerFromId(customerId);
+                    break checkCustomer;
                 }
             }
             customer = null;
