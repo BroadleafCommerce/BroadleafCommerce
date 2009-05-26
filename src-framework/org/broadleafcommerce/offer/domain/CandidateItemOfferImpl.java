@@ -11,7 +11,6 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
     private Offer offer;
     private Money discountedPrice;
 
-
     public CandidateItemOfferImpl(){
 
     }
@@ -19,7 +18,6 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
     public CandidateItemOfferImpl(OrderItem orderItem, Offer offer){
         this.orderItem = orderItem;
         this.offer = offer;
-        computeDiscountAmount();
     }
 
     public OrderItem getOrderItem() {
@@ -28,17 +26,19 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
 
     public void setOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
-        computeDiscountAmount();
+        discountedPrice = null;  // price needs to be recalculated
     }
 
     public void setOffer(Offer offer) {
         this.offer = offer;
-        computeDiscountAmount();
-
+        discountedPrice = null;  // price needs to be recalculated
     }
 
+    // returns null if no order item or offer
     public Money getDiscountedPrice() {
-        computeDiscountAmount();
+        if (discountedPrice == null) {
+            computeDiscountPrice();
+        }
         return discountedPrice;
     }
 
@@ -50,23 +50,23 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
         return offer;
     }
 
-    protected void computeDiscountAmount() {
-        if(offer != null && orderItem != null){
+    protected void computeDiscountPrice() {
+        if (offer != null && orderItem != null){
 
             Money priceToUse = orderItem.getRetailPrice();
-            if (offer.getApplyDiscountToSalePrice()) {
+/*            if (offer.getApplyDiscountToSalePrice()) {
                 priceToUse = orderItem.getSalePrice();
             }
-
-            if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
+*/
+            if (offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ) {
                 priceToUse.subtract(offer.getValue());
             }
-            if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
+            if (offer.getDiscountType() == OfferDiscountType.FIX_PRICE) {
                 priceToUse = offer.getValue();
             }
 
-            if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
-                priceToUse = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount());
+            if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF) {
+                priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
             }
             discountedPrice = priceToUse;
         }

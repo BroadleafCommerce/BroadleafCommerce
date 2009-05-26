@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -17,17 +16,26 @@ import javax.annotation.Resource;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.collections.map.LRUMap;
+import org.broadleafcommerce.offer.domain.Adjustment;
+import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateItemOfferImpl;
+import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
-import org.broadleafcommerce.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
+import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.offer.service.type.OfferType;
+import org.broadleafcommerce.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
-import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
@@ -44,11 +52,12 @@ public class OfferServiceImpl implements OfferService {
     private static final LRUMap expressionCache = new LRUMap(100);
     private static final StringBuffer functions = new StringBuffer();
 
+    // should be called outside of Offer service after Offer service is executed
     @Resource
     private OrderService orderService;
 
-    @Resource
-    private PricingService pricingService;
+    //@Resource
+    //private PricingService pricingService;
 
     static {
         // load static mvel functions into SB
@@ -82,136 +91,274 @@ public class OfferServiceImpl implements OfferService {
     }
 
     /*
-     * (non-Javadoc)
-     * @see org.broadleafcommerce.offer.service.OfferService#applyOffersToOrder(java.util.List, org.broadleafcommerce.order.domain.Order)
-     * 1) setup collection of qualified orders offers and item offer
+     *
+     * Offers Logic:
+     * 1) Remove all existing offers in the Order (order, item, and fulfillment)
+     * 2) Check and remove offers that are out of date
+     * 3) Loop through offers
+     *    a) Verifies type of offer (order, order item, fulfillment)
+     *    b) Verifies if offer can be applies
+     *    c) Assign offer to type (order, order item, fulfillment)
+     * 4) Sort the order, item and fulfillment offers list by discount and priority (priority out ranks discount)
+     * 5) Identify the best offers to apply to order item and create adjustments for each item offer
+     * 6) Compare order item adjustment price to sales price, and remove adjustments if sale price is better
+     * 7) Identify the best offers to apply to the order and create adjustments for each order offer (assume order subtotal represents retail price)
+     * 8) If item contains non-Combinable offers or order contains non-Stackable offers, remove the item or order adjustments based on value
+     * 9) Set final order item prices and reapply order offers
+     * 10)
+     *
+     * Assumptions:
+     * 1) % off all items will be created as an item offer with no expression
+     * 2) $ off order will be created as an order offer
+     * 3) Order offers applies to the best price for each item (not just retail price)
+     * 4) Fulfillment offers apply to best price for each item (not just retail price)
      */
     @SuppressWarnings("unchecked")
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
-        List<Offer> qualifiedOrderOffers = new ArrayList<Offer>();
-        List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
-        order = orderService.removeAllOffersFromOrder(order);
-        order.setCandidateOffers(new ArrayList<Offer>());
-        List<Offer> offersWithValidDates = removeOutOfDateOffers(offers);
-        if (offersWithValidDates != null && ! offersWithValidDates.isEmpty()) {
+        // we assume that all offers that can be applied to this order exists in the offers list
+        List<CandidateOrderOffer> qualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
 
-            //
-            // . Pass One:
-            //
+        List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
+
+        order = orderService.removeAllOffersFromOrder(order);
+        order.removeAllAdjustments();
+        // set order subtotal price to total item price without adjustments
+        order.setSubTotal(order.calculateSubTotal());
+
+        List<Offer> offersWithValidDates = removeOutOfDateOffers(offers);
+
+        List<DiscreteOrderItem> discreteOrderItems = order.getDiscreteOrderItems();
+
+
+        if (offersWithValidDates != null && !offersWithValidDates.isEmpty()) {
+
             for (Offer offer : offersWithValidDates) {
                 //
                 // . Evaluate all offers and compute their discount amount as if they were the only offer on the order
                 //
+
+                //TODO: change code so the computing discount only happens in the CandidateItemOffer or CandidateOrderOffer objects
                 if(offer.getType().equals(OfferType.ORDER)){
                     if (couldOfferApply(offer, order)) {
-                        offer = calculateAtomOfferDiscount(offer, order.getSubTotal());
-                        qualifiedOrderOffers.add(offer);
+                        CandidateOrderOffer candidateOffer = new CandidateOrderOfferImpl(order, offer);
+                        // Why do we add offers here when we set the sorted list later
+                        order.addCandidateOrderOffer(candidateOffer);
+                        qualifiedOrderOffers.add(candidateOffer);
                     }
                 } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
-                    for (OrderItem orderItem : order.getOrderItems()) {
-                        if(couldOfferApply(offer, order, orderItem)) {
-                            CandidateItemOffer candidateOffer = new CandidateItemOfferImpl(orderItem, offer);
-                            orderItem.addCandidateItemOffer(candidateOffer);
+                    for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                        if(couldOfferApply(offer, order, discreteOrderItem)) {
+                            CandidateItemOffer candidateOffer = new CandidateItemOfferImpl(discreteOrderItem, offer);
+                            discreteOrderItem.addCandidateItemOffer(candidateOffer);
                             qualifiedItemOffers.add(candidateOffer);
                         }
                     }
                 } else if(offer.getType().equals(OfferType.FULFILLMENT_GROUP)){
                     // TODO: Handle Offer calculation for offer type of fullfillment group
+                    // how to verify if offer applies for fulfillment?
+                    for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+                        if(couldOfferApply(offer, order, fulfillmentGroup)) {
+                            CandidateFulfillmentGroupOffer candidateOffer = new CandidateFulfillmentGroupOfferImpl(fulfillmentGroup, offer);
+                            fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
+                        }
+                    }
                 }
             }
             //
             // . Create a sorted list sorted by priority asc then amount desc
             // TODO: verify if discountPrice is the adjusted price or discount amount(not use reverse comparator)
             //
-            Collections.sort(qualifiedOrderOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountPrice")));
+            Collections.sort(qualifiedOrderOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountedPrice")));
             Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
 
             Collections.sort(qualifiedItemOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountedPrice")));
             Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
+            // qualifiedItemOffers list is sorted but the candidate offer list on the item is not sorted.  what do we use?
 
-            //
-            // . Add offers that could be used on the order to the order.candidateOffers and item.candidateOffers lists respectively
-            //
-            order.setCandidateOffers(qualifiedOrderOffers);
 
+            // Determine if the offers should be applied to this line item; may want to move to its own method
             // Iterate through the collection of CandiateItemOffers. Remember that each one is an offer that may apply to a
             // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
+            //
+            // isCombinableWithOtherOffers - not combinable with any offers in the order
+            // isStackable - cannot be stack on top of an existing item offer back, other offers can be stack of top of it
+            //
+            // List<Adjustment> itemAdjustments = new ArrayList<Adjustment>(); // used to calculate total discount applied to order items
+            boolean isItemAdjustmentApplied = false;
             for (CandidateItemOffer itemOffer : qualifiedItemOffers) {
                 OrderItem orderItem = itemOffer.getOrderItem();
-                //- Determine the amount that should be discounted for each item
-                //----- If the items sale price is better than the discounted price, don't apply
-                if(itemOffer.getDiscountedPrice().lessThan(orderItem.getSalePrice())){
-                    // ----- If the item itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
-                    if(! orderItem.isAllQuantityMarkedForOffer() || itemOffer.getOffer().isApplyDiscountToMarkedItems()) {
-                        //----- If the item already has a discount
-                        if(orderItem.getAppliedItemOffers() != null && orderItem.getAppliedItemOffers().size() > 0){
-                            //  and this offer is stackable, apply on top of the existing offer
-                            if(itemOffer.getOffer().isStackable()){
-                                //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-                                applyItemOffer(itemOffer, order);
+                if ((itemOffer.getOffer().isCombinableWithOtherOffers()) || (isItemAdjustmentApplied)) {
+                    // check to see if this offer can be applied to the order
+                    // if no offer has been applied to any of the items, or an offer has been applied but the new offer can be combined
+                    if ((itemOffer.getOffer().isStackable()) || orderItem.getOrderItemAdjustments().size() == 0) {
+                        // check to see if this offer can be applied to the order item
+                        // the offer needs to be stackable or no adjustment has been applied to this line item
+                        //if (doesItemOfferApply(itemOffer, order, itemAdjustments)) {
+                            applyOrderItemOffer(itemOffer);
+                            isItemAdjustmentApplied = true;
+                            if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                                // Offer applied is not combinable with other offers, ignore other offers
+                                break;
                             }
-                            // and this offer is not-stackable, don't apply
-                        } else {
-                            //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-                            applyItemOffer(itemOffer, order);
-                        }
+                        //}
+                    }
+                } else {
+                    // no code here; offer cannot be combined with another offer so move to the next offer
+                }
+            }
+
+            // compare adjustment price to sales price
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                Money itemPrice = discreteOrderItem.getRetailPrice();
+                if (discreteOrderItem.getSalePrice() != null) {
+                    itemPrice = discreteOrderItem.getSalePrice();
+                }
+                if ((discreteOrderItem.getAdjustmentPrice() != null) && (discreteOrderItem.getAdjustmentPrice().greaterThanOrEqual(itemPrice))) {
+                    // adjustment price is not best price, remove adjustments for this item
+                    discreteOrderItem.removeAllAdjustments();
+                }
+            }
+
+            // Determine which order offers apply to the order
+            // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
+            // Non stackable offers will need to be check at a later time since other offers can be stack on top
+            for (CandidateOrderOffer orderOffer : qualifiedOrderOffers) {
+                if (order.getOrderAdjustments().size() == 0) {
+                    if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
+                        //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
+                            applyOrderOffer(orderOffer);
+                            // check to see if this not combinable offer has a greater value than all the item offers
+                            if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateSubTotal())) {
+                                // item offers has more value; remove order offer
+                                order.removeAllAdjustments();
+                            } else {
+                                order.removeAllItemAdjustments();
+                                isItemAdjustmentApplied = false;
+                            }
+                        //}
+                    } else {
+                        //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
+                            applyOrderOffer(orderOffer);
+                        //}
+                    }
+                } else if (orderOffer.getOffer().isCombinableWithOtherOffers()) {
+                    // check to see if this offer can be applied to the order
+                    // if no offer has been applied to any of the items, or an offer has been applied but the new offer can be combined
+                    if (orderOffer.getOffer().isStackable()) {
+                        // check to see if this offer can be applied to the order item
+                        // the offer needs to be stackable or no adjustment has been applied to this line item
+                        //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
+                            applyOrderOffer(orderOffer);
+                            if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
+                                // Offer applied is not combinable with other offers, ignore other offers
+                                break;
+                            }
+                        //}
+                    }
+                } else {
+                    // no code here; offer cannot be combined with another offer so move to the next offer
+                }
+            }
+
+            // if order contains a non-Combinable item offer or a non-Stackable order offer, determine which offer
+            // should apply
+            if ((order.getOrderAdjustments().size() > 0) && (isItemAdjustmentApplied)) {
+                if ((order.containsNotCombinableItemOffer()) || (order.containsNotStackableOrderOffer())) {
+                    if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateSubTotal())) {
+                        // remove all order adjustments
+                        order.removeAllAdjustments();
+                    } else {
+                        order.removeAllItemAdjustments();
                     }
                 }
             }
 
-            Money newOrderTotal = pricingService.executePricing(order).getSubTotal();
-
-            // TODO: How and what do we do with order level offers?
-            for (Offer offer : qualifiedOrderOffers) {
-                //- Determine the amount that should be discounted for each item
-                //----- If the order sale price is better than the discounted price, don't apply
-                if(newOrderTotal.greaterThan(order.getSubTotal())){
-                    // ----- If the order itself has been marked by another discount then don't apply this offer unless the offer's applyDiscountToMarkedItems = true (edge case)
-                    if(! order.isMarkedForOffer() ||
-                            (order.isMarkedForOffer() && offer.isApplyDiscountToMarkedItems())){
-                        //----- If the order already has a discount
-                        if(order.isMarkedForOffer()){
-                            //  and this offer is stackable, apply on top of the existing offer
-                            if(offer.isStackable()){
-                                //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-                                applyOrderOffer(order,offer);
-                            }
-                            // and this offer is not-stackable, don't apply
-
-                        }else{
-                            //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
-                            applyOrderOffer(order,offer);
-                        }
-                    }
-                }
-            }
+            order.assignOrderItemsFinalPrice();
+            order.setSubTotal(order.calculateSubTotal());
+            order.reapplyOrderAdjustments();
         }
     }
 
-    private void applyItemOffer(CandidateItemOffer itemOffer, Order order){
+
+    /*
+     * The applyItemOffer method checks to see if an offer expression exist and will execute the expression
+     * against the line item.  If no expression exists, or the expression passes, and item adjustment is
+     * created on the order item.  Each item adjustment will calculate a new adjustment price for the order
+     * item.
+     */
+/*    private boolean doesItemOfferApply(CandidateItemOffer itemOffer, Order order, List<Adjustment> itemAdjustments){
         //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
+        boolean isApplyOffer = false;
         String expression = itemOffer.getOffer().getAppliesToItemRules();
-        if (expression != null && expression.indexOf("orderContainsPlusMark") >= 0) { //We know that they evaluated multiple items
+        if (expression != null) { //We know that they evaluated multiple items
             HashMap<String, Object> vars = new HashMap<String, Object>();
             vars.put("currentItem", itemOffer.getOrderItem());
             vars.put("order", order);
             vars.put("offer", itemOffer.getOffer());
-            vars.put("doMark", Boolean.TRUE); //This will allow the orderContainsPlusMark function to mark the items
+//            if (expression.indexOf("orderContainsPlusMark") != -1) {
+//                vars.put("doMark", Boolean.TRUE); //This will allow the orderContainsPlusMark function to mark the items
+//            } else {
+//                vars.put("doMark", Boolean.FALSE);
+//            }
             Boolean result = (Boolean)executeExpression(expression, vars);
             if (result) {
-                itemOffer.getOrderItem().addAppliedItemOffer(itemOffer.getOffer());  //This is how we can tell if an item has been discounted
+                isApplyOffer = true;
             }
         } else {
-            itemOffer.getOrderItem().addAppliedItemOffer(itemOffer.getOffer());  //This is how we can tell if an item has been discounted
+            isApplyOffer = true;
         }
+
+        return isApplyOffer;
+    }
+*/
+    private void applyOrderItemOffer(CandidateItemOffer itemOffer) {
+        OrderItemAdjustment itemAdjustment = new OrderItemAdjustmentImpl(itemOffer.getOrderItem(), itemOffer.getOffer(), itemOffer.getOffer().getName());
+        //add to adjustment
+        itemOffer.getOrderItem().addOrderItemAdjustment(itemAdjustment); //This is how we can tell if an item has been discounted
     }
 
-    private void applyOrderOffer(Order order, Offer offer){
-        // TODO: Apply order offer
-        order.setMarkedForOffer(true);
-    }
+/*    private boolean doesOrderOfferApply(CandidateOrderOffer orderOffer, Order order, List<Adjustment> orderAdjustments){
+        //----- Create corresponding item adjustments records and if (markItems == true) then mark the items used so that this offer is possible
 
-    private Offer calculateAtomOfferDiscount(Offer offer, Money startingValue){
+        boolean isApplyOffer = false;
+        String expression = orderOffer.getOffer().getAppliesToItemRules();
+        if (expression != null) { //We know that they evaluated multiple items
+            HashMap<String, Object> vars = new HashMap<String, Object>();
+            vars.put("currentItem", orderOffer.getOrder());
+            vars.put("order", order);
+            vars.put("offer", orderOffer.getOffer());
+//            if (expression.indexOf("orderContainsPlusMark") != -1) {
+//                vars.put("doMark", Boolean.TRUE); //This will allow the orderContainsPlusMark function to mark the items
+//            } else {
+//                vars.put("doMark", Boolean.FALSE);
+//            }
+            Boolean result = (Boolean)executeExpression(expression, vars);
+            if (result) {
+                isApplyOffer = true;
+            }
+        } else {
+            isApplyOffer = true;
+        }
+
+        if (isApplyOffer) {
+            OrderAdjustment orderAdjustment = new OrderAdjustmentImpl(orderOffer.getOrder(), orderOffer.getOffer(), orderOffer.getOffer().getName());
+            //add to adjustment
+            orderOffer.getOrder().addOrderAdjustments(orderAdjustment); //This is how we can tell if an item has been discounted
+            orderAdjustments.add(orderAdjustment);
+        }
+
+        return isApplyOffer;
+    }
+*/
+    private void applyOrderOffer(CandidateOrderOffer orderOffer) {
+        OrderAdjustment orderAdjustment = new OrderAdjustmentImpl(orderOffer.getOrder(), orderOffer.getOffer(), orderOffer.getOffer().getName());
+        //add to adjustment
+        orderOffer.getOrder().addOrderAdjustments(orderAdjustment); //This is how we can tell if an item has been discounted
+   }
+
+
+
+/*    private Offer calculateAtomOfferDiscount(Offer offer, Money startingValue){
         if(offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)){
             offer.setDiscountPrice(startingValue.subtract(offer.getValue()));
         } else if(offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)){
@@ -221,24 +368,37 @@ public class OfferServiceImpl implements OfferService {
         }
         return offer;
     }
-
+*/
     private List<Offer> removeOutOfDateOffers(List<Offer> offers){
         Date now = new Date();
+        List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
             if(offer.getStartDate()!= null && offer.getStartDate().after(now)){
-                offers.remove(offer);
+                offersToRemove.add(offer);
             } else if(offer.getEndDate()!= null && offer.getEndDate().before(now)){
-                offers.remove(offer);
+                offersToRemove.add(offer);
             }
+        }
+        // remove all offers in the offersToRemove list from original offers list
+        for (Offer offer : offersToRemove) {
+            offers.remove(offer);
         }
         return offers;
     }
 
     private boolean couldOfferApply(Offer offer, Order order) {
-        return couldOfferApply(offer, order, null);
+        return couldOfferApply(offer, order, null, null);
     }
 
-    private boolean couldOfferApply(Offer offer, Order order, OrderItem currentItem) {
+    private boolean couldOfferApply(Offer offer, Order order, DiscreteOrderItem discreteOrderItem) {
+        return couldOfferApply(offer, order, discreteOrderItem, null);
+    }
+
+    private boolean couldOfferApply(Offer offer, Order order, FulfillmentGroup fulfillmentGroup) {
+        return couldOfferApply(offer, order, null, fulfillmentGroup);
+    }
+
+    private boolean couldOfferApply(Offer offer, Order order, DiscreteOrderItem discreteOrderItem, FulfillmentGroup fulfillmentGroup) {
         boolean appliesToItem = false;
         boolean appliesToCustomer = false;
 
@@ -248,8 +408,11 @@ public class OfferServiceImpl implements OfferService {
             vars.put("doMark", Boolean.FALSE); //We never want to mark offers when we are checking if they could apply.
             vars.put("order", order);
             vars.put("offer", offer);
-            if (currentItem != null) {
-                vars.put("currentItem", currentItem);
+//            if (fulfillmentGroup != null) {
+//                vars.put("currentfulfillmentGroup", fulfillmentGroup);
+//            }
+            if (discreteOrderItem != null) {
+                vars.put("discreteOrderItem", discreteOrderItem);
             }
             Boolean expressionOutcome = (Boolean)executeExpression(offer.getAppliesToItemRules(), vars);
             if (expressionOutcome != null && expressionOutcome) {
@@ -315,5 +478,14 @@ public class OfferServiceImpl implements OfferService {
     public List<Offer> lookupValidOffersForSystem(String system) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    // calculates the total value for all the adjustments
+    public Money calculateTotalAdjustmentValue(List<Adjustment> adjustments) {
+        Money totalAdjustmentValue = new Money();
+        for (Adjustment adjustment : adjustments) {
+            totalAdjustmentValue = totalAdjustmentValue.add(adjustment.getValue());
+        }
+        return totalAdjustmentValue;
     }
 }
