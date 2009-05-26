@@ -56,6 +56,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     public boolean sendBasicEmail(HashMap props) {
         EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.toString());
         if (Boolean.parseBoolean(info.getSendEmailReliableAsync())) {
@@ -65,6 +66,18 @@ public class EmailServiceImpl implements EmailService {
         }
 
         return true;
+    }
+
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap props) {
+        if (props == null) return false;
+
+        props.put(EmailPropertyType.INFO.toString(), emailInfo);
+        props.put(EmailPropertyType.USER.toString(), emailTarget);
+
+        return sendBasicEmail(props);
     }
 
     /**
@@ -122,6 +135,5 @@ public class EmailServiceImpl implements EmailService {
     public void setMessageCreator(MessageCreator messageCreator) {
         this.messageCreator = messageCreator;
     }
-
 
 }

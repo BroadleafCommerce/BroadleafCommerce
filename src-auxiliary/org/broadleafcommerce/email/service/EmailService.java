@@ -12,12 +12,16 @@ import org.broadleafcommerce.email.service.info.EmailInfo;
 public interface EmailService {
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     public boolean sendTemplateEmail(final HashMap props);
 
     @SuppressWarnings("unchecked")
     public boolean sendTemplateEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap props);
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     public boolean sendBasicEmail(HashMap props);
 
+    @SuppressWarnings("unchecked")
+    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap props);
 }
