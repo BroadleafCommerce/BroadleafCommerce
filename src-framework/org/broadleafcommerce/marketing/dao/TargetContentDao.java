@@ -10,9 +10,9 @@ public interface TargetContentDao {
 
     public List<TargetContent> readTargetContents();
 
-    public TargetContent maintainTargetContent(TargetContent targetContent);
+    public TargetContent save(TargetContent targetContent);
 
-    public void deleteTargetContent(Long targetContentId);
+    public void delete(Long targetContentId);
 
     public List<TargetContent> readCurrentTargetContentsByPriority(int priority);
 

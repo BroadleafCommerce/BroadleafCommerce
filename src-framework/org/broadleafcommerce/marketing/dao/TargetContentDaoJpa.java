@@ -26,13 +26,13 @@ public class TargetContentDaoJpa implements TargetContentDao {
     protected EntityConfiguration entityConfiguration;
 
     @Override
-    public void deleteTargetContent(Long targetContentId) {
+    public void delete(Long targetContentId) {
         TargetContent tc = readTargetContentById(targetContentId);
         em.remove(tc);
     }
 
     @Override
-    public TargetContent maintainTargetContent(TargetContent targetContent) {
+    public TargetContent save(TargetContent targetContent) {
         if(targetContent.getId() == null) {
             em.persist(targetContent);
         }else {
@@ -47,6 +47,7 @@ public class TargetContentDaoJpa implements TargetContentDao {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS_BY_NAME_TYPE");
         query.setParameter("name", name);
         query.setParameter("type", type);
+        query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
     }
 
@@ -55,6 +56,7 @@ public class TargetContentDaoJpa implements TargetContentDao {
     public List<TargetContent> readCurrentTargetContentsByPriority(int priority) {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS_BY_PRIORITY");
         query.setParameter("priority", priority);
+        query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
     }
 
@@ -68,6 +70,7 @@ public class TargetContentDaoJpa implements TargetContentDao {
     @SuppressWarnings("unchecked")
     public List<TargetContent> readTargetContents() {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS");
+        query.setHint("org.hibernate.cacheable", true);
         return query.getResultList();
     }
 

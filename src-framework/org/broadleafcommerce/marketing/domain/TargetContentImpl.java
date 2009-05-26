@@ -13,9 +13,13 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
 @Table(name="BLC_TARGET_CONTENT")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class TargetContentImpl implements TargetContent, Serializable {
 
     private static final long serialVersionUID = 1L;

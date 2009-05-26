@@ -36,12 +36,12 @@ public class TargetContentServiceImpl implements TargetContentService {
 
     @Override
     public void removeTargetContent(Long targetContentId) {
-        targetContentDao.deleteTargetContent(targetContentId);
+        targetContentDao.delete(targetContentId);
     }
 
     @Override
     public TargetContent updateTargetContent(TargetContent targetContent) {
-        return targetContentDao.maintainTargetContent(targetContent);
+        return targetContentDao.save(targetContent);
     }
 
 }
