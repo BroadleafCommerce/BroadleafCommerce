@@ -88,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
         Order namedOrder = orderDao.create();
         namedOrder.setCustomer(customer);
         namedOrder.setName(name);
-        namedOrder.setStatus(OrderStatus.NAMED.toString());
+        namedOrder.setStatus(OrderStatus.NAMED.getName());
         return persistOrder(namedOrder);
     }
 
@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findOrdersForCustomer(Customer customer, String status) {
+    public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status) {
         return orderDao.readOrdersForCustomer(customer, status);
     }
 
