@@ -2,7 +2,8 @@
 <project name="Broadleaf Commerce Demo" basedir=".." default="8. Redeploy and Restart Tomcat">
 	<property name="internal.build.file" value="${basedir}/build/demo-build.xml" />
 	<property file="${basedir}/build/build.properties" />
-	<property name="lib.dir" value="${basedir}/../BroadleafCommerce/lib" />
+	<property name="framework.dir" value="${basedir}/../BroadleafCommerce" />
+	<property name="lib.dir" value="${framework.dir}/lib" />
 	<property name="build.env" value="dev"/>
 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
@@ -64,13 +65,21 @@
 	</target>
 
 	<target name="9. Load Data">
+		<copy todir="${framework.dir}/sql/0.0.0/mysql/stage">
+		    <fileset dir="${framework.dir}/sql/0.0.0/mysql">
+		    	<include name="*.load"/>
+		    </fileset>
+		</copy>
+
+		<replace file="${framework.dir}/sql/0.0.0/mysql/stage/data.load" token="@@BASE_DIR@@" value="${framework.dir}/sql/0.0.0/mysql"/>
+		
 	     <sql driver="${mysql.db.driver}"
 	          url="${mysql.db.url}"
 	          userid="${mysql.db.user}"
 	          password="${mysql.db.pw}"
 	          encoding="UTF-8"
 	          classpath="${mysql.db.classpath}">
-	     	<transaction src="${basedir}/db/customers.sql"/>
+	     	<transaction src="${framework.dir}/sql/0.0.0/mysql/stage/data.load"/>
 	     </sql>
 	</target>
 
