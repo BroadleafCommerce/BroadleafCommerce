@@ -12,7 +12,7 @@ public class OrderDataProvider {
     @DataProvider(name = "basicOrder")
     public static Object[][] provideBasicSalesOrder() {
         OrderImpl so = new OrderImpl();
-        so.setStatus(OrderStatus.IN_PROCESS);
+        so.setStatus(OrderStatus.IN_PROCESS.toString());
         so.setTotal(new Money(BigDecimal.valueOf(1000)));
         return new Object[][] { { so } };
     }

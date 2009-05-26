@@ -6,7 +6,6 @@ import java.util.List;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
-import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
 
@@ -42,9 +41,9 @@ public interface Order {
 
     public void setCustomer(Customer customer);
 
-    public OrderStatus getStatus();
+    public String getStatus();
 
-    public void setStatus(OrderStatus status);
+    public void setStatus(String status);
 
     public List<OrderItem> getOrderItems();
 

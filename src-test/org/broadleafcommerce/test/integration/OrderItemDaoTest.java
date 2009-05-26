@@ -43,7 +43,7 @@ public class OrderItemDaoTest extends BaseTest {
         orderItem.setSku(si);
         Customer customer = customerService.readCustomerByUsername(userName);
         Order so = orderDao.readCartForCustomer(customer);
-        assert so.getStatus() == OrderStatus.IN_PROCESS;
+        assert so.getStatus().toString().equals(OrderStatus.IN_PROCESS.toString());
         assert so.getId() != null;
         assert orderItem.getId() == null;
 
@@ -61,7 +61,7 @@ public class OrderItemDaoTest extends BaseTest {
         orderItem.setSku(si);
         Customer customer = customerService.readCustomerByUsername(userName);
         Order so = orderDao.readCartForCustomer(customer);
-        assert so.getStatus() == OrderStatus.IN_PROCESS;
+        assert so.getStatus().toString().equals(OrderStatus.IN_PROCESS.toString());
         assert so.getId() != null;
         assert orderItem.getId() == null;
 
