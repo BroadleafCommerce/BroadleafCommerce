@@ -1,18 +1,11 @@
 package org.broadleafcommerce.profile.web.controller;
 
-import java.util.HashMap;
-
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
-import org.broadleafcommerce.email.domain.AbstractEmailTarget;
-import org.broadleafcommerce.email.domain.EmailTarget;
-import org.broadleafcommerce.email.service.EmailService;
-import org.broadleafcommerce.email.service.info.EmailInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
-import org.broadleafcommerce.profile.web.util.RegisterCustomer;
+import org.broadleafcommerce.profile.web.form.CustomerRegistrationForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,12 +20,6 @@ public class RegisterCustomerController {
     private CustomerService customerService;
 
     @Resource
-    private EmailService emailService;
-
-    @Resource(name="blRegistrationEmailInfo")
-    EmailInfo emailInfo;
-
-    @Resource
     private RegisterCustomerValidator registerCustomerValidator;
 
     public RegisterCustomerController() { }
@@ -43,30 +30,20 @@ public class RegisterCustomerController {
     }
 
     @RequestMapping(method = { RequestMethod.POST })
-    public ModelAndView saveCustomer(@ModelAttribute("customerForm") RegisterCustomer registerCustomer,
-            BindingResult errors,
-            HttpServletRequest request) {
+    public ModelAndView saveCustomer(@ModelAttribute("customerForm") CustomerRegistrationForm registerCustomer,
+            BindingResult errors) {
         registerCustomerValidator.validate(registerCustomer, errors);
 
         if (errors.getAllErrors().isEmpty()) {
             createCustomer(registerCustomer);
-            this.sendConfirmationEmail(request, registerCustomer);
             new ModelAndView("customerRegistered");
         }
 
         return new ModelAndView("registerCustomer");
     }
 
-    private void sendConfirmationEmail(HttpServletRequest request, RegisterCustomer customer) {
-        EmailTarget target = new AbstractEmailTarget(){};
-        target.setEmailAddress(customer.getEmailAddress());
 
-        HashMap<String, Object> props = new HashMap<String, Object>();
-
-        emailService.sendTemplateEmail(emailInfo, target, props);
-    }
-
-    private void createCustomer(RegisterCustomer registerCustomer) {
+    private void createCustomer(CustomerRegistrationForm registerCustomer) {
         Customer customer = customerService.createCustomerFromId(null);
         customer.setEmailAddress(registerCustomer.getEmailAddress());
         customer.setFirstName(registerCustomer.getFirstName());
@@ -77,8 +54,8 @@ public class RegisterCustomerController {
     }
 
     @ModelAttribute("customerForm")
-    public RegisterCustomer initCustomer(WebRequest request) {
-        RegisterCustomer customer = new RegisterCustomer();
+    public CustomerRegistrationForm initCustomer(WebRequest request) {
+        CustomerRegistrationForm customer = new CustomerRegistrationForm();
         return customer;
     }
 

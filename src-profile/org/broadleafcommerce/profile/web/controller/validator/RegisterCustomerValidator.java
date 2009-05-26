@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.profile.web.util.RegisterCustomer;
+import org.broadleafcommerce.profile.web.form.CustomerRegistrationForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -29,13 +29,13 @@ public class RegisterCustomerValidator implements Validator {
     @SuppressWarnings("unchecked")
     @Override
     public boolean supports(Class clazz) {
-        return clazz.equals(RegisterCustomer.class);
+        return clazz.equals(CustomerRegistrationForm.class);
     }
 
     @Override
     public void validate(Object obj, Errors errors) {
         //TODO: need to add some more validation
-        RegisterCustomer user = (RegisterCustomer) obj;
+        CustomerRegistrationForm user = (CustomerRegistrationForm) obj;
 
         Customer customerFromDb = customerService.readCustomerByUsername(user.getUsername());
 
