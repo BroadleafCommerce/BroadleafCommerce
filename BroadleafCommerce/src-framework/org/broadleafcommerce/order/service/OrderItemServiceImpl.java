@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class OrderItemServiceImpl implements OrderItemService {
 
     @Resource
-    private OrderItemDao orderItemDao;
+    protected OrderItemDao orderItemDao;
 
     @Override
     public OrderItem readOrderItemById(Long orderItemId) {
