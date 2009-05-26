@@ -309,7 +309,7 @@ public class OrderServiceImpl implements OrderService {
             throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() +")");
         }
         OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
-        itemFromOrder.setAppliedItemOffers(item.getAppliedItemOffers());
+        itemFromOrder.setOrderItemAdjustments(item.getOrderItemAdjustments());
         itemFromOrder.setCandidateItemOffers(item.getCandidateItemOffers());
         itemFromOrder.setCategory(item.getCategory());
         itemFromOrder.setPersonalMessage(item.getPersonalMessage());
@@ -351,7 +351,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException {
-        order.getCandidateOffers().remove(offer);
+        order.getCandidateOrderOffers().remove(offer);
         offerDao.delete(offer);
         order = updateOrder(order);
         return order;
@@ -359,12 +359,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order removeAllOffersFromOrder(Order order) throws PricingException {
-        Iterator<Offer> itr = order.getCandidateOffers().iterator();
-        while(itr.hasNext()) {
-            Offer offer = itr.next();
-            itr.remove();
-            offerDao.delete(offer);
-        }
+        order.getCandidateOrderOffers().clear();
         order = updateOrder(order);
         return order;
     }

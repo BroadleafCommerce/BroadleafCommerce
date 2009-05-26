@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
-import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
@@ -26,6 +27,10 @@ public interface Order {
     public Money getSubTotal();
 
     public void setSubTotal(Money subTotal);
+
+    public void assignOrderItemsFinalPrice();
+
+    public Money calculateSubTotal();
 
     public Money getTotal();
 
@@ -49,9 +54,15 @@ public interface Order {
 
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
-    public List<Offer> getCandidateOffers();
+    public List<CandidateOrderOffer> getCandidateOrderOffers();
 
-    public void setCandidateOffers(List<Offer> offers);
+    public void setCandidateOffers(List<CandidateOrderOffer> offers);
+
+    public void addCandidateOrderOffer(CandidateOrderOffer candidateOffer);
+
+    public void removeAllCandidateOffers();
+
+    public void removeAllOrderCandidateOffers();
 
     public boolean isMarkedForOffer();
 
@@ -85,10 +96,34 @@ public interface Order {
 
     public void setTotalShipping(Money totalShipping);
 
+    public Money getAdjustmentPrice();
+
+    public void setAdjustmentPrice(Money adjustmentPrice);
+
     public List<PaymentInfo> getPaymentInfos();
 
     public void setPaymentInfos(List<PaymentInfo> paymentInfos);
 
     public boolean hasCategoryItem(String categoryName);
+
+    public List<OrderAdjustment> getOrderAdjustments();
+
+    public List<OrderAdjustment> addOrderAdjustments(OrderAdjustment orderAdjustment);
+
+    public void reapplyOrderAdjustments();
+
+    public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments);
+
+    public void removeAllAdjustments();
+
+    public void removeAllOrderAdjustments();
+
+    public void removeAllItemAdjustments();
+
+    public boolean containsNotCombinableItemOffer();
+
+    public boolean containsNotStackableOrderOffer();
+
+    public List<DiscreteOrderItem> getDiscreteOrderItems();
 
 }

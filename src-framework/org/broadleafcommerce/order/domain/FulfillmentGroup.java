@@ -2,8 +2,8 @@ package org.broadleafcommerce.order.domain;
 
 import java.util.List;
 
-import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.domain.OfferAudit;
+import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Phone;
@@ -49,6 +49,10 @@ public interface FulfillmentGroup {
 
     public void setShippingPrice(Money shippingPrice);
 
+    public Money getAdjustmentPrice();
+
+    public void setAdjustmentPrice(Money adjustmentPrice);
+
     public String getReferenceNumber();
 
     public void setReferenceNumber(String referenceNumber);
@@ -57,19 +61,21 @@ public interface FulfillmentGroup {
 
     public void setType(FulfillmentGroupType type);
 
-    public List<Offer> getCandidateOffers();
+    public List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers();
 
-    public void setCandaditeOffers(List<Offer> offers);
+    public void setCandidateFulfillmentGroupOffer(List<CandidateFulfillmentGroupOffer> candidateOffers);
 
-    public void addCandidateOffer(Offer offer);
+    public void addCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateOffer);
 
-    public List<OfferAudit> getAppliedOffers();
+    public void removeAllCandidateOffers();
 
-    public void setAppliedOffers(List<OfferAudit> offers);
+    public List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments();
 
-    public void addAppliedOffer(OfferAudit offer);
+    public List<FulfillmentGroupAdjustment> addFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment);
 
-    public void removeAllOffers();
+    public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments);
+
+    public void removeAllAdjustments();
 
     public Money getCityTax();
 

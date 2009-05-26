@@ -26,8 +26,11 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.common.domain.Auditable;
-import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.OfferImpl;
+import org.broadleafcommerce.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
+import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
@@ -87,16 +90,22 @@ public class OrderImpl implements Order, Serializable {
     @Column(name = "SUBMIT_DATE")
     private Date submitDate;
 
+    @Transient
+    private BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
+
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
     private List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
     private List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
+    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = {CascadeType.ALL})
+    private List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
+
     //TODO does this work?? MapKey is supposed to be used with the type "Map" This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
     @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class, cascade = {CascadeType.ALL})
     @MapKey(name = "id")
-    private List<Offer> candidateOffers = new ArrayList<Offer>();
+    private List<CandidateOrderOffer> candidateOffers = new ArrayList<CandidateOrderOffer>();
 
     @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
     private List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
@@ -128,7 +137,25 @@ public class OrderImpl implements Order, Serializable {
         this.subTotal = Money.toAmount(subTotal);
     }
 
-    public void setCandidateOffers(List<Offer> candidateOffers) {
+    public Money calculateSubTotal() {
+        Money calculatedSubTotal = new Money();
+        for (OrderItem orderItem : orderItems) {
+            Money currentItemPrice = orderItem.getCurrentPrice();
+            calculatedSubTotal = calculatedSubTotal.add(new Money(currentItemPrice.doubleValue() * orderItem.getQuantity()));
+        }
+        return calculatedSubTotal;
+    }
+
+    /**
+     * Assigns a final price to all the order items
+     */
+    public void assignOrderItemsFinalPrice() {
+        for (OrderItem orderItem : orderItems) {
+            orderItem.assignFinalPrice();
+        }
+    }
+
+    public void setCandidateOffers(List<CandidateOrderOffer> candidateOffers) {
         this.candidateOffers = candidateOffers;
     }
 
@@ -195,8 +222,38 @@ public class OrderImpl implements Order, Serializable {
     }
 
     @Override
-    public List<Offer> getCandidateOffers() {
+    public void addCandidateOrderOffer(CandidateOrderOffer candidateOffer) {
+        candidateOffers.add(candidateOffer);
+    }
+
+    @Override
+    public List<CandidateOrderOffer> getCandidateOrderOffers() {
         return candidateOffers;
+    }
+
+    @Override
+    public void removeAllCandidateOffers() {
+        if (candidateOffers != null) {
+            candidateOffers.clear();
+        }
+        if (getOrderItems() != null) {
+            for (OrderItem item : getOrderItems()) {
+                item.removeAllCandidateOffers();
+            }
+        }
+
+        if (getFulfillmentGroups() != null) {
+            for (FulfillmentGroup fg : getFulfillmentGroups()) {
+                fg.removeAllCandidateOffers();
+            }
+        }
+    }
+
+    @Override
+    public void removeAllOrderCandidateOffers() {
+        if (candidateOffers != null) {
+            candidateOffers.clear();
+        }
     }
 
     public boolean isMarkedForOffer() {
@@ -307,5 +364,115 @@ public class OrderImpl implements Order, Serializable {
         }
         return false;
     }
+
+    public List<OrderAdjustment> getOrderAdjustments() {
+        return this.orderAdjustments;
+    }
+
+    /*
+     * Adds the adjustment to the order item's adjustment list an discounts the order item's adjustment
+     * price by the value of the adjustment.
+     */
+    public List<OrderAdjustment> addOrderAdjustments(OrderAdjustment orderAdjustment) {
+        if (this.orderAdjustments.size() == 0) {
+            adjustmentPrice = getSubTotal().getAmount();
+        }
+        adjustmentPrice = adjustmentPrice.subtract(orderAdjustment.getValue().getAmount());
+        this.orderAdjustments.add(orderAdjustment);
+        return this.orderAdjustments;
+    }
+
+    public void reapplyOrderAdjustments(){
+        adjustmentPrice = getSubTotal().getAmount();
+        for (OrderAdjustment orderAdjustment : orderAdjustments) {
+            orderAdjustment.computeAdjustmentValue();
+            adjustmentPrice = adjustmentPrice.subtract(orderAdjustment.getValue().getAmount());
+        }
+    }
+
+    public void removeAllAdjustments() {
+        removeAllItemAdjustments();
+        removeAllFulfillmentAdjustments();
+        removeAllOrderAdjustments();
+    }
+
+    public void removeAllOrderAdjustments() {
+        if (orderAdjustments != null) {
+            orderAdjustments.clear();
+        }
+        adjustmentPrice = null;
+    }
+
+    public void removeAllItemAdjustments() {
+        for (OrderItem orderItem: orderItems) {
+            orderItem.removeAllAdjustments();
+        }
+    }
+
+    public void removeAllFulfillmentAdjustments() {
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            fulfillmentGroup.removeAllAdjustments();
+        }
+    }
+
+    public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments) {
+        this.orderAdjustments = orderAdjustments;
+    }
+
+    public Money getAdjustmentPrice() {
+        return adjustmentPrice == null ? null : new Money(adjustmentPrice);
+    }
+
+    public void setAdjustmentPrice(Money adjustmentPrice) {
+        this.adjustmentPrice = Money.toAmount(adjustmentPrice);
+    }
+
+    /*
+     * Checks to see if the orders items in this order has an adjustment with a not combinable
+     * offer.
+     */
+    public boolean containsNotCombinableItemOffer() {
+        boolean isContainsNotCombinableItemOffer = false;
+        for (OrderItem orderItem: orderItems) {
+            for (OrderItemAdjustment itemAdjustment : orderItem.getOrderItemAdjustments()) {
+                if (!itemAdjustment.getOffer().isCombinableWithOtherOffers()) {
+                    isContainsNotCombinableItemOffer = true;
+                    break;
+                }
+            }
+        }
+        return isContainsNotCombinableItemOffer;
+    }
+
+    /*
+     * Checks the order adjustment to see if it is not stackable
+     */
+    public boolean containsNotStackableOrderOffer() {
+        boolean isContainsNotStackableOrderOffer = false;
+        for (OrderAdjustment orderAdjustment: orderAdjustments) {
+            if (!orderAdjustment.getOffer().isStackable()) {
+                isContainsNotStackableOrderOffer = true;
+                break;
+            }
+        }
+        return isContainsNotStackableOrderOffer;
+    }
+
+    public List<DiscreteOrderItem> getDiscreteOrderItems() {
+        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
+        for (OrderItem orderItem : orderItems) {
+            if (orderItem instanceof BundleOrderItemImpl) {
+                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
+                for (DiscreteOrderItem descreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                    discreteOrderItems.add(descreteOrderItem);
+                }
+            } else {
+                DiscreteOrderItem descreteOrderItem = (DiscreteOrderItem)orderItem;
+                discreteOrderItems.add(descreteOrderItem);
+            }
+        }
+        return discreteOrderItems;
+    }
+
 
 }

@@ -22,7 +22,7 @@ import javax.persistence.Transient;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -58,6 +58,9 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Column(name = "QUANTITY")
     protected int quantity;
 
+    @Transient
+    private BigDecimal adjustmentPrice;  // retailPrice with adjustments
+
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     protected PersonalMessage personalMessage;
@@ -66,17 +69,13 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
-    // TODO: Add OrderItemAdjustments
-    // Make sure that when you add appliedItemOffers you add them to the adjustments.
-
-    // TODO: Need to persist this
+    // TODO: need to persist
     @Transient
-    protected List<CandidateItemOffer> candidateItemOffers;
+    private List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
-    //This does not need to be persisted since the adjustments will be persisted.
-    //It just helps keep track of offers that were applied.
+    // TODO: need to persist
     @Transient
-    protected List<Offer> appliedItemOffers;
+    protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
 
     @Transient
     protected int markedForOffer = 0;
@@ -103,6 +102,22 @@ public class OrderItemImpl implements OrderItem, Serializable {
 
     public void setPrice(Money finalPrice) {
         this.price = Money.toAmount(finalPrice);
+    }
+
+    public void assignFinalPrice() {
+        price = getCurrentPrice().getAmount();
+    }
+
+    public Money getCurrentPrice() {
+        Money currentPrice = null;
+        if (adjustmentPrice != null) {
+            currentPrice = new Money(adjustmentPrice);
+        } else if (salePrice != null) {
+            currentPrice = new Money(salePrice);
+        } else {
+            currentPrice = new Money(retailPrice);
+        }
+        return currentPrice;
     }
 
     public int getQuantity() {
@@ -133,14 +148,11 @@ public class OrderItemImpl implements OrderItem, Serializable {
         // TODO: if stacked, add all of the items to the persisted structure and
         // add just the stacked version
         // to this collection
-        if (this.candidateItemOffers == null) {
-            this.candidateItemOffers = new ArrayList<CandidateItemOffer>();
-        }
         this.candidateItemOffers.add(candidateOffer);
         return candidateItemOffers;
     }
 
-    public void setAppliedItemOffers(List<Offer> appliedOffers) {
+/*    public void setAppliedItemOffers(List<Offer> appliedOffers) {
         this.appliedItemOffers = appliedOffers;
     }
 
@@ -156,7 +168,8 @@ public class OrderItemImpl implements OrderItem, Serializable {
         return this.appliedItemOffers;
     }
 
-    public void removeAllOffers() {
+*/
+    public void removeAllCandidateOffers() {
         if (candidateItemOffers != null) {
             candidateItemOffers.clear();
         }
@@ -189,7 +202,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
         return false;
     }
 
-    public PersonalMessage getPersonalMessage() {
+     public PersonalMessage getPersonalMessage() {
         return personalMessage;
     }
 
@@ -235,6 +248,44 @@ public class OrderItemImpl implements OrderItem, Serializable {
             }
         }
         return false;
+
+    }
+
+    public List<OrderItemAdjustment> getOrderItemAdjustments() {
+        return this.orderItemAdjustments;
+    }
+
+    /*
+     * Adds the adjustment to the order item's adjustment list an discounts the order item's adjustment
+     * price by the value of the adjustment.
+     */
+    public List<OrderItemAdjustment> addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment) {
+        if (this.orderItemAdjustments.size() == 0) {
+            adjustmentPrice = retailPrice;
+        }
+        adjustmentPrice = adjustmentPrice.subtract(orderItemAdjustment.getValue().getAmount());
+        this.orderItemAdjustments.add(orderItemAdjustment);
+        return this.orderItemAdjustments;
+    }
+
+    public void removeAllAdjustments() {
+        if (orderItemAdjustments != null) {
+            orderItemAdjustments.clear();
+        }
+        adjustmentPrice = null;
+
+    }
+
+    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {
+        this.orderItemAdjustments = orderItemAdjustments;
+    }
+
+    public Money getAdjustmentPrice() {
+        return adjustmentPrice == null ? null : new Money(adjustmentPrice);
+    }
+
+    public void setAdjustmentPrice(Money adjustmentPrice) {
+        this.adjustmentPrice = Money.toAmount(adjustmentPrice);
     }
 
     public GiftWrapOrderItem getGiftWrapOrderItem() {
@@ -244,4 +295,5 @@ public class OrderItemImpl implements OrderItem, Serializable {
     public void setGiftWrapOrderItem(GiftWrapOrderItem giftWrapOrderItem) {
         this.giftWrapOrderItem = giftWrapOrderItem;
     }
+
 }

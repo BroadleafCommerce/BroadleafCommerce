@@ -18,15 +18,13 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
-import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.domain.OfferAudit;
-import org.broadleafcommerce.offer.domain.OfferAuditImpl;
-import org.broadleafcommerce.offer.domain.OfferImpl;
+import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
@@ -80,19 +78,20 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "PRICE")
     private BigDecimal shippingPrice;
 
+    @Transient
+    private BigDecimal adjustmentPrice;  // retailPrice with adjustments
+
     @Column(name = "TYPE")
     @Enumerated(EnumType.STRING)
     private FulfillmentGroupType type;
 
-    //TODO does this work?? MapKey is supposed to be used with the type "Map". This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
-    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
-    @MapKey(name = "id")
-    private List<Offer> candidateOffers = new ArrayList<Offer>();
+    // TODO: need to persist
+    @Transient
+    private List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
 
-    //TODO does this work?? MapKey is supposed to be used with the type "Map". This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
-    @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
-    @MapKey(name = "id")
-    private List<OfferAudit> appliedOffers = new ArrayList<OfferAudit>();
+    // TODO: need to persist
+    @Transient
+    private List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
 
     @Column(name = "CITY_TAX")
     private BigDecimal cityTax;
@@ -215,36 +214,55 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     }
 
     @Override
-    public void addCandidateOffer(Offer offer) {
-        candidateOffers.add(offer);
+    public void addCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateOffer) {
+        candidateOffers.add(candidateOffer);
     }
 
     @Override
-    public List<OfferAudit> getAppliedOffers() {
-        return appliedOffers;
-    }
-
-    @Override
-    public List<Offer> getCandidateOffers() {
+    public List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers() {
         return candidateOffers;
     }
 
     @Override
-    public void setAppliedOffers(List<OfferAudit> offers) {
-        this.appliedOffers = offers;
+    public void setCandidateFulfillmentGroupOffer(List<CandidateFulfillmentGroupOffer> candidateOffers) {
+        this.candidateOffers = candidateOffers;
 
     }
 
     @Override
-    public void setCandaditeOffers(List<Offer> offers) {
-        this.candidateOffers = offers;
+    public void removeAllCandidateOffers() {
+        if (candidateOffers != null) {
+            candidateOffers.clear();
+        }
+    }
+
+    public List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments() {
+        return this.fulfillmentGroupAdjustments;
+    }
+
+    /*
+     * Adds the adjustment to the order item's adjustment list an discounts the order item's adjustment
+     * price by the value of the adjustment.
+     */
+    public List<FulfillmentGroupAdjustment> addFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment) {
+        if (this.fulfillmentGroupAdjustments.size() == 0) {
+            adjustmentPrice = retailShippingPrice;
+        }
+        adjustmentPrice = adjustmentPrice.subtract(fulfillmentGroupAdjustment.getValue().getAmount());
+        this.fulfillmentGroupAdjustments.add(fulfillmentGroupAdjustment);
+        return this.fulfillmentGroupAdjustments;
+    }
+
+    public void removeAllAdjustments() {
+        if (fulfillmentGroupAdjustments != null) {
+            fulfillmentGroupAdjustments.clear();
+        }
+        adjustmentPrice = null;
 
     }
 
-    @Override
-    public void addAppliedOffer(OfferAudit offer) {
-        appliedOffers.add(offer);
-
+    public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments) {
+        this.fulfillmentGroupAdjustments = fulfillmentGroupAdjustments;
     }
 
     public Money getSaleShippingPrice() {
@@ -263,14 +281,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         this.shippingPrice = Money.toAmount(shippingPrice);
     }
 
-    public void setCandidateOffers(List<Offer> candidateOffers) {
-        this.candidateOffers = candidateOffers;
+    public Money getAdjustmentPrice() {
+        return adjustmentPrice == null ? null : new Money(adjustmentPrice);
     }
 
-    public void removeAllOffers() {
-        if (candidateOffers != null) {
-            candidateOffers.clear();
-        }
+    public void setAdjustmentPrice(Money adjustmentPrice) {
+        this.adjustmentPrice = Money.toAmount(adjustmentPrice);
     }
 
     public Money getCityTax() {
