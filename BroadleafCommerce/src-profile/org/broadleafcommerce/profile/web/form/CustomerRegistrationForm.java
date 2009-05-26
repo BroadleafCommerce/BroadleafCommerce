@@ -1,4 +1,4 @@
-package org.broadleafcommerce.profile.web.util;
+package org.broadleafcommerce.profile.web.form;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class RegisterCustomer implements Serializable {
+public class CustomerRegistrationForm implements Serializable {
     private static final long serialVersionUID = 1L;
     @Transient
     private final Log logger = LogFactory.getLog(getClass());
