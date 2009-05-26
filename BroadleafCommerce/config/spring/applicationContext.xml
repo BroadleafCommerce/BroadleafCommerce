@@ -58,7 +58,7 @@
 			</bean>
 		</property>
 	</bean>
-	
+
 	<bean id="entityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitManager" ref="persistenceUnitManager" />
 		<property name="persistenceUnitName" value="blSecurePU"/>
@@ -80,7 +80,7 @@
 	      <tx:method name="*" propagation="REQUIRED"/>
 	    </tx:attributes>
 	</tx:advice>
-	
+
 	<bean id="transactionManagerSecureInfo" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactorySecureInfo" />
 	</bean>
@@ -108,7 +108,7 @@
             <aop:around method="priceOrder" pointcut-ref="serviceMethodWithReturnValue"/>
         </aop:aspect>
 	</aop:config>
-	
+
 	<aop:config>
 		<aop:pointcut id="orderDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderDao.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="orderDaoOperation"/>
@@ -163,7 +163,7 @@
 		<aop:pointcut id="idGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="idGenerationServiceOperation"/>
 	</aop:config>
-	
+
 	<aop:config>
 		<aop:pointcut id="securePaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.payment.service.SecurePaymentInfoService.*(..))"/>
 	    <aop:advisor advice-ref="txAdviceSecureInfo" pointcut-ref="securePaymentInfoServiceOperation"/>
@@ -277,14 +277,14 @@
 	 			<entry key="truck" value="FREE" />
 	 			<entry key="pickup" value="FREE" />
 			</map>
-		</property>				
+		</property>
 		<property name="feeSubTypeMapping">
 			<map>
 				<entry key="ALL" value="ALL" />
 	 			<entry key="alsk" value="alsk" />
 	 			<entry key="hawi" value="hawi" />
 			</map>
-		</property>				
+		</property>
 	</bean>
 
 	<bean id="pricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
@@ -368,11 +368,12 @@
 			<list>
 				<bean class="org.broadleafcommerce.checkout.service.workflow.PricingServiceActivity"/>
 				<bean class="org.broadleafcommerce.checkout.service.workflow.PaymentServiceActivity"/>
+				<bean class="org.broadleafcommerce.checkout.service.workflow.CompleteOrderActivity"/>
 			</list>
 		</property>
 		<property name="defaultErrorHandler" ref="defaultErrorHandler"/>
 	</bean>
-	
+
 	<bean id="messageCreatorBLC" class="org.broadleafcommerce.email.service.message.MessageCreator">
 		<constructor-arg ref="velocityEngine"/>
 		<constructor-arg ref="mailSender"/>
