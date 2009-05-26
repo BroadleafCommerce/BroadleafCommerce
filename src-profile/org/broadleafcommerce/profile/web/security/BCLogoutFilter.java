@@ -6,6 +6,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.ui.logout.LogoutFilter;
 import org.springframework.security.ui.logout.LogoutHandler;
 
+/**
+ * Allows the logout URL to be specified dynamically in the session by setting the
+ * session value - broadleaf_commerce.logout_success_url to the destination URL.
+ * @author bpolster
+ */
 public class BCLogoutFilter extends LogoutFilter {
 
     public static final String BC_LOGOUT_SUCCESS_URL_KEY = "broadleaf_commerce.logout_success_url";
