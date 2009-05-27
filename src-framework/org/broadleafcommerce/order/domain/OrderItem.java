@@ -81,4 +81,9 @@ public interface OrderItem {
     public GiftWrapOrderItem getGiftWrapOrderItem();
 
     public void setGiftWrapOrderItem(GiftWrapOrderItem giftWrapOrderItem);
+
+    public String getOrderItemType();
+
+    public void setOrderItemType(String orderItemType);
+
 }
