@@ -1,14 +1,14 @@
 package org.broadleafcommerce.profile.domain;
 
-public interface UserRole {
+public interface CustomerRole {
 
     public Long getId();
 
     public void setId(Long id);
 
-    public User getUser();
+    public Customer getCustomer();
 
-    public void setUser(User user);
+    public void setCustomer(Customer customer);
 
     public Role getRole();
 
