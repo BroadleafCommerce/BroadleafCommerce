@@ -1,9 +1,13 @@
 package org.broadleafcommerce.profile.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.domain.CustomerRole;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.GrantedAuthority;
 import org.springframework.security.GrantedAuthorityImpl;
@@ -22,6 +26,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Resource
     private CustomerService customerService;
 
+    @Resource
+    private RoleService roleService;
+
     private boolean forcePasswordChange = false;
 
     public void setForcePasswordChange(boolean forcePasswordChange) {
@@ -38,19 +45,30 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User returnUser = null;
 
         boolean pwChangeRequired = customer.isPasswordChangeRequired();
+        List<GrantedAuthority> grantedAuthorities = createGrantedAuthorities(roleService.findCustomerRolesByCustomerId(customer.getId()));
         if (pwChangeRequired) {
             if (forcePasswordChange) {
-                returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
+                returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities.toArray(new GrantedAuthority[0]));
             } else {
-                returnUser = new User(username, customer.getPassword(), true, true, true, true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER"), new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED") });
+                grantedAuthorities.add(new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED"));
+                returnUser = new User(username, customer.getPassword(), true, true, true, true, grantedAuthorities.toArray(new GrantedAuthority[0]));
             }
         } else {
-            returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_USER") });
+            returnUser = new User(username, customer.getPassword(), true, true, !customer.isPasswordChangeRequired(), true, grantedAuthorities.toArray(new GrantedAuthority[0]));
         }
         return returnUser;
     }
 
     public void setCustomerService(CustomerService customerService) {
         this.customerService = customerService;
+    }
+
+    private List<GrantedAuthority> createGrantedAuthorities(List<CustomerRole> customerRoles) {
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        grantedAuthorities.add(new GrantedAuthorityImpl("ROLE_USER"));
+        for (CustomerRole role : customerRoles) {
+            grantedAuthorities.add(new GrantedAuthorityImpl(role.getRoleName()));
+        }
+        return grantedAuthorities;
     }
 }

@@ -17,7 +17,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -25,7 +24,6 @@ import javax.persistence.Transient;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
-import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
@@ -99,8 +97,10 @@ public class OrderImpl implements Order, Serializable {
     private List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
     //TODO does this work?? MapKey is supposed to be used with the type "Map" This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
-    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class, cascade = {CascadeType.ALL})
-    @MapKey(name = "id")
+    //@OneToMany(mappedBy = "id", targetEntity = OfferImpl.class, cascade = {CascadeType.ALL})
+    //@MapKey(name = "id")
+    // TODO temporarily remove this so order works in TCS
+    @Transient
     private List<CandidateOrderOffer> candidateOffers = new ArrayList<CandidateOrderOffer>();
 
     @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})

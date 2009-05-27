@@ -9,6 +9,8 @@ DROP TABLE blc_bundle_order_item;
 DROP TABLE blc_order_item;
 DROP TABLE blc_personal_message;
 DROP TABLE blc_order;
+DROP TABLE blc_customer_role;
+DROP TABLE blc_role;
 DROP TABLE blc_phone;
 DROP TABLE blc_customer_phone;
 DROP TABLE blc_address;
@@ -59,8 +61,8 @@ CREATE TABLE blc_customer
 CREATE UNIQUE INDEX IX1_BLC_CUSTOMER ON blc_customer (USER_NAME) USING INDEX TABLESPACE WEB_IDX1;
 
 --------------------------
---------------------------
 -- blc_address
+--------------------------
 CREATE TABLE blc_address
 (
   ADDRESS_ID NUMBER(19,0) NOT NULL,
@@ -122,6 +124,29 @@ CREATE TABLE blc_customer_phone
   PHONE_ID NUMBER(19,0) NOT NULL,
   CONSTRAINT PK_BLC_CUSTOMER_PHONE PRIMARY KEY(PHONE_ID) USING INDEX TABLESPACE WEB_IDX1,
   CONSTRAINT FK_CUSTOMER_PHONE FOREIGN KEY (PHONE_ID) REFERENCES blc_address(PHONE_ID)
+);
+
+--------------------------
+-- blc_role
+--------------------------
+CREATE TABLE blc_role
+(
+  ROLE_ID NUMBER(19,0) NOT NULL,
+  ROLE_NAME VARCHAR2(255) ,
+  CONSTRAINT PK_BLC_ROLE PRIMARY KEY(ROLE_ID) USING INDEX TABLESPACE WEB_IDX1
+);
+
+--------------------------
+-- blc_customer_role
+--------------------------
+CREATE TABLE blc_customer_role
+(
+  CUSTOMER_ROLE_ID NUMBER(19,0) NOT NULL,
+  CUSTOMER_ID NUMBER(19,0) ,
+  ROLE_ID NUMBER(19,0) ,
+  CONSTRAINT PK_BLC_CUSTOMER_ROLE PRIMARY KEY(CUSTOMER_ROLE_ID) USING INDEX TABLESPACE WEB_IDX1,
+  CONSTRAINT FK_CUSTOMER_ROLE_CUSTOMER FOREIGN KEY (CUSTOMER_ID) REFERENCES blc_customer(CUSTOMER_ID)
+  CONSTRAINT FK_CUSTOMER_ROLE_ROLE FOREIGN KEY (ROLE_ID) REFERENCES blc_role(ROLE_ID)
 );
 
 --------------------------

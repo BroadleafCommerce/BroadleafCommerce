@@ -20,19 +20,19 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "BLC_USER_ROLE")
-public class UserRoleImpl implements UserRole, Serializable {
+@Table(name = "BLC_CUSTOMER_ROLE")
+public class CustomerRoleImpl implements CustomerRole, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
-    @Column(name = "USER_ROLE_ID")
+    @Column(name = "CUSTOMER_ROLE_ID")
     private Long id;
 
-    @ManyToOne(targetEntity = UserImpl.class)
-    @JoinColumn(name = "USER_ID")
-    private User user;
+    @ManyToOne(targetEntity = CustomerImpl.class)
+    @JoinColumn(name = "CUSTOMER_ID")
+    private Customer customer;
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class)
     @JoinColumn(name = "ROLE_ID")
@@ -49,13 +49,13 @@ public class UserRoleImpl implements UserRole, Serializable {
     }
 
     @Override
-    public User getUser() {
-        return user;
+    public Customer getCustomer() {
+        return customer;
     }
 
     @Override
-    public void setUser(User user) {
-        this.user = user;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     @Override
