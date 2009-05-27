@@ -31,9 +31,9 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
-        item.setPrice(itemRequest.getSku().getSalePrice());
         item.setSalePrice(itemRequest.getSku().getSalePrice());
         item.setRetailPrice(itemRequest.getSku().getRetailPrice());
+        item.assignFinalPrice();
 
         return item;
     }
@@ -45,9 +45,9 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setProduct(itemRequest.getProduct());
-        item.setPrice(itemRequest.getSku().getSalePrice());
         item.setSalePrice(itemRequest.getSku().getSalePrice());
         item.setRetailPrice(itemRequest.getSku().getRetailPrice());
+        item.assignFinalPrice();
         item.getWrappedItems().addAll(itemRequest.getWrappedItems());
         for (OrderItem orderItem : item.getWrappedItems()) {
             orderItem.setGiftWrapOrderItem(item);
