@@ -179,8 +179,8 @@ public class OrderServiceImpl implements OrderService {
     public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException {
         removeOrderItemFromFullfillmentGroup(order, item);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
-        order = updateOrder(order);
         orderItemService.delete(itemFromOrder);
+        order = updateOrder(order);
         return order;
     }
 
