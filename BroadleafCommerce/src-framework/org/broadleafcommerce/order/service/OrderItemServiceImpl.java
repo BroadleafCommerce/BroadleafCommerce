@@ -27,6 +27,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest) {
         DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
+        item.setOrderItemType(OrderItemType.DISCRETE.getClassName());
         item.setSku(itemRequest.getSku());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
@@ -41,6 +42,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest) {
         GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
+        item.setOrderItemType(OrderItemType.GIFTWRAP.getClassName());
         item.setSku(itemRequest.getSku());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
@@ -59,6 +61,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest) {
         BundleOrderItem item = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
+        item.setOrderItemType(OrderItemType.BUNDLE.getClassName());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setName(itemRequest.getName());
