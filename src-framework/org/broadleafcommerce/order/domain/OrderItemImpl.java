@@ -231,12 +231,6 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.id = id;
     }
 
-
-    @Override
-    public boolean getIsBundle() {
-        return this instanceof BundleOrderItem;
-    }
-
     @Override
     public boolean isInCategory(String categoryName) {
         Category currentCategory = category;

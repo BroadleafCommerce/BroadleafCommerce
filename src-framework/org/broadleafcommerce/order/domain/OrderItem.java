@@ -33,7 +33,6 @@ public interface OrderItem {
 
     public void setPrice(Money price);
 
-
     public void assignFinalPrice();
 
     public Money getCurrentPrice();
@@ -75,8 +74,6 @@ public interface OrderItem {
     public void setPersonalMessage(PersonalMessage personalMessage);
 
     public boolean isInCategory(String categoryName);
-
-    public boolean getIsBundle();
 
     public GiftWrapOrderItem getGiftWrapOrderItem();
 
