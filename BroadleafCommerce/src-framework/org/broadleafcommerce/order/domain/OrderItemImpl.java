@@ -80,6 +80,9 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @Transient
     protected int markedForOffer = 0;
 
+    @Column(name = "ORDER_ITEM_TYPE")
+    protected String orderItemType;
+
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
     }
@@ -152,7 +155,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
         return candidateItemOffers;
     }
 
-/*    public void setAppliedItemOffers(List<Offer> appliedOffers) {
+    /*    public void setAppliedItemOffers(List<Offer> appliedOffers) {
         this.appliedItemOffers = appliedOffers;
     }
 
@@ -168,7 +171,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
         return this.appliedItemOffers;
     }
 
-*/
+     */
     public void removeAllCandidateOffers() {
         if (candidateItemOffers != null) {
             candidateItemOffers.clear();
@@ -202,7 +205,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
         return false;
     }
 
-     public PersonalMessage getPersonalMessage() {
+    public PersonalMessage getPersonalMessage() {
         return personalMessage;
     }
 
@@ -294,6 +297,14 @@ public class OrderItemImpl implements OrderItem, Serializable {
 
     public void setGiftWrapOrderItem(GiftWrapOrderItem giftWrapOrderItem) {
         this.giftWrapOrderItem = giftWrapOrderItem;
+    }
+
+    public String getOrderItemType() {
+        return orderItemType;
+    }
+
+    public void setOrderItemType(String orderItemType) {
+        this.orderItemType = orderItemType;
     }
 
 }
