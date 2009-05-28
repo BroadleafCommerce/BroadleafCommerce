@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-/**
+/*
  * 1) Removed showCartSummary method: method not need, populate cart page using the order object
  * 2) Add addItem method to add one item to the cart
  * 3) Renamed addItemsToCart to addItems to add one or more items to cart
@@ -56,6 +56,10 @@ public class CartController {
         this.customerState = null;
     }
 
+    /*
+     * The addItem method adds a product items with one or more quantity to the cart by adding thes
+     * item to a list and calling the addItems method.
+     */
     @SuppressWarnings("unchecked")
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public String addItem(@ModelAttribute ProductItem productItem, BindingResult errors, ModelMap model,
@@ -69,6 +73,11 @@ public class CartController {
         return "success";
     }
 
+    /*
+     * The addItems method takes a list of product items and adds each item to the cart.  The original
+     * code populated a DiscreteOrderItemRequest object, but the addSkuToOrder method will create
+     * this object for you.
+     */
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public String addItems(@ModelAttribute List<ProductItem> productItemList, BindingResult errors, ModelMap model,
             HttpServletRequest request) {

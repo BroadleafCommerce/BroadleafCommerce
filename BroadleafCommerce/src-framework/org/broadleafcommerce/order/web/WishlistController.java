@@ -97,6 +97,7 @@ public class WishlistController extends CartController {
     }
 
     // override the retreiveOrder method in CartController to return a name wishlist order
+    @Override
     protected Order retrieveOrder(HttpServletRequest request) {
         String wishlistName = request.getParameter("wishlistName");
         Order currentWishlistOrder = cartService.createNamedOrderForCustomer(wishlistName, customerState.getCustomer(request));
