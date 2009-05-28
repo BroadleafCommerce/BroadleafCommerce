@@ -1,16 +1,16 @@
 package org.broadleafcommerce.payment;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AccountNumberMask {
 
-    private int startPosition;
-    private int endPosition;
+    private List<UnmaskRange> ranges;
     private char maskCharacter;
 
-    public AccountNumberMask(int startPosition, int endPosition, char maskCharacter) {
-        this.startPosition = startPosition;
-        this.endPosition = endPosition;
+    public AccountNumberMask(List<UnmaskRange> ranges, char maskCharacter) {
+        this.ranges = ranges;
         this.maskCharacter = maskCharacter;
     }
 
@@ -18,30 +18,27 @@ public class AccountNumberMask {
         if (accountNumber == null) {
             throw new RuntimeException("account number is null");
         }
-        if (startPosition >= endPosition) {
-            throw new RuntimeException("Start position must be less than end position");
-        }
-        if (startPosition >= accountNumber.length() || endPosition > accountNumber.length()) {
-            throw new RuntimeException("startPosition must be less than account number length and end position must be less than or equal to account number length");
-        }
         char[] characters = accountNumber.toCharArray();
         char[] newCharacters = new char[characters.length];
-        //do initial phase
-        if (startPosition > 0) {
-            System.arraycopy(characters, 0, newCharacters, 0, startPosition);
-        }
         //do mask phase
-        Arrays.fill(newCharacters, startPosition, endPosition, maskCharacter);
-        //do final phase
-        if (endPosition < accountNumber.length()) {
-            System.arraycopy(characters, endPosition, newCharacters, endPosition, accountNumber.length() - endPosition);
+        Arrays.fill(newCharacters, 0, newCharacters.length, maskCharacter);
+        for (UnmaskRange range : ranges) {
+            if (range.getPositionType() == UnmaskRange.BEGINNINGTYPE) {
+                System.arraycopy(characters, 0, newCharacters, 0, range.getLength());
+            } else {
+                System.arraycopy(characters, characters.length - range.getLength(), newCharacters, newCharacters.length - range.getLength(), range.getLength());
+            }
         }
 
         return new String(newCharacters);
     }
 
     public static void main( String[] args ) {
-        AccountNumberMask mask = new AccountNumberMask(4, 12, 'X');
+        ArrayList<UnmaskRange> ranges = new ArrayList<UnmaskRange>();
+        ranges.add(new UnmaskRange(UnmaskRange.BEGINNINGTYPE, 4));
+        ranges.add(new UnmaskRange(UnmaskRange.ENDTYPE, 4));
+        AccountNumberMask mask = new AccountNumberMask(ranges, 'X');
         System.out.println("Card: " + mask.mask( "1111111111111111" ) );
+        System.out.println("Card: " + mask.mask( "111111111111111" ) );
     }
 }
