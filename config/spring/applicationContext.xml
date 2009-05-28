@@ -14,7 +14,7 @@
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
 	<context:component-scan base-package="org.broadleafcommerce" />
-	
+
 	<!--bean id="configuration"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
@@ -294,7 +294,7 @@
 		</property>
 		<property name="activities">
 			<list>
-                <bean class="org.broadleafcommerce.pricing.service.workflow.OfferActivity"/>
+<!--                <bean class="org.broadleafcommerce.pricing.service.workflow.OfferActivity"/>-->
                 <bean class="org.broadleafcommerce.pricing.service.workflow.SubtotalActivity"/>
                 <bean class="org.broadleafcommerce.pricing.service.workflow.ShippingActivity">
                     <property name="shippingModule" ref="shippingModule"/>
@@ -388,11 +388,11 @@
             </map>
         </constructor-arg>
 	</bean>
-	
+
 	<bean id="shippingService" class="org.broadleafcommerce.pricing.service.ShippingServiceImpl">
 		<property name="shippingModule" ref="shippingModule"/>
 	</bean>
-	
+
 	<bean id="accountNumberMask" class="org.broadleafcommerce.payment.AccountNumberMask">
 		<constructor-arg>
 			<list>
