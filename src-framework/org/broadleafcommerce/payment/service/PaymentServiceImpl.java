@@ -3,6 +3,7 @@ package org.broadleafcommerce.payment.service;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.module.PaymentModule;
 import org.broadleafcommerce.payment.service.module.PaymentResponseItem;
+import org.broadleafcommerce.payment.service.type.BLCTransactionType;
 
 public class PaymentServiceImpl implements PaymentService {
 
@@ -17,27 +18,39 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException  {
-        return paymentModule.authorize(paymentContext);
+        PaymentResponseItem response = paymentModule.authorize(paymentContext);
+        response.setTransactionType(BLCTransactionType.AUTHORIZE);
+        return response;
     }
 
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-        return paymentModule.authorizeAndDebit(paymentContext);
+        PaymentResponseItem response = paymentModule.authorizeAndDebit(paymentContext);
+        response.setTransactionType(BLCTransactionType.AUTHORIZEANDDEBIT);
+        return response;
     }
 
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-        return paymentModule.balance(paymentContext);
+        PaymentResponseItem response = paymentModule.balance(paymentContext);
+        response.setTransactionType(BLCTransactionType.BALANCE);
+        return response;
     }
 
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-        return paymentModule.credit(paymentContext);
+        PaymentResponseItem response = paymentModule.credit(paymentContext);
+        response.setTransactionType(BLCTransactionType.CREDIT);
+        return response;
     }
 
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-        return paymentModule.debit(paymentContext);
+        PaymentResponseItem response = paymentModule.debit(paymentContext);
+        response.setTransactionType(BLCTransactionType.DEBIT);
+        return response;
     }
 
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-        return paymentModule.voidPayment(paymentContext);
+        PaymentResponseItem response = paymentModule.voidPayment(paymentContext);
+        response.setTransactionType(BLCTransactionType.VOIDPAYMENT);
+        return response;
     }
 
     @Override
