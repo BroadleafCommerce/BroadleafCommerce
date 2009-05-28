@@ -13,20 +13,21 @@ import javax.persistence.Table;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 
+//TODO: Should rename to CustomerOfferImpl
 @Entity
 @Table(name = "OFFER_CUSTOMER")
 public class OfferCustomerImpl implements Serializable,OfferCustomer {
 	public static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "OFFER_CUSTOMER_ID")
 	private Long id;
-	
+
 	@ManyToOne(targetEntity = OfferCodeImpl.class)
 	@JoinColumn(name = "OFFER_CODE_ID")
 	private OfferCode offerCode;
-	
+
 	@ManyToOne(targetEntity = CustomerImpl.class)
 	@JoinColumn(name = "CUSTOMER_ID")
 	private Customer customer;
@@ -54,6 +55,6 @@ public class OfferCustomerImpl implements Serializable,OfferCustomer {
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
-	
-	
+
+
 }

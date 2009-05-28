@@ -294,8 +294,8 @@
 		</property>
 		<property name="activities">
 			<list>
-                <bean class="org.broadleafcommerce.pricing.service.workflow.SubtotalActivity"/>
                 <bean class="org.broadleafcommerce.pricing.service.workflow.OfferActivity"/>
+                <bean class="org.broadleafcommerce.pricing.service.workflow.SubtotalActivity"/>
                 <bean class="org.broadleafcommerce.pricing.service.workflow.ShippingActivity">
                     <property name="shippingModule" ref="shippingModule"/>
                 </bean>

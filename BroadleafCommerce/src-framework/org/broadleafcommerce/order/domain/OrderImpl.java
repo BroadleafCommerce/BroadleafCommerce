@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
@@ -96,6 +97,10 @@ public class OrderImpl implements Order, Serializable {
     @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = {CascadeType.ALL})
     private List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
+    // TODO: need to persist
+    @Transient
+    private List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
+
     //TODO does this work?? MapKey is supposed to be used with the type "Map" This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
     //@OneToMany(mappedBy = "id", targetEntity = OfferImpl.class, cascade = {CascadeType.ALL})
     //@MapKey(name = "id")
@@ -133,15 +138,19 @@ public class OrderImpl implements Order, Serializable {
         this.subTotal = Money.toAmount(subTotal);
     }
 
-    /*
-     * TODO we prob need to remove this method, as subtotal is currently
-     * handled through the pricing workflow. We do not want to handle pricing
-     * from 2 different directions.
-     */
-    public Money calculateSubTotal() {
+    public Money calculateCurrentSubTotal() {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
             Money currentItemPrice = orderItem.getCurrentPrice();
+            calculatedSubTotal = calculatedSubTotal.add(new Money(currentItemPrice.doubleValue() * orderItem.getQuantity()));
+        }
+        return calculatedSubTotal;
+    }
+
+    public Money calculateFinalSubTotal() {
+        Money calculatedSubTotal = new Money();
+        for (OrderItem orderItem : orderItems) {
+            Money currentItemPrice = orderItem.getPrice();
             calculatedSubTotal = calculatedSubTotal.add(new Money(currentItemPrice.doubleValue() * orderItem.getQuantity()));
         }
         return calculatedSubTotal;
@@ -464,15 +473,43 @@ public class OrderImpl implements Order, Serializable {
         for (OrderItem orderItem : orderItems) {
             if (orderItem instanceof BundleOrderItemImpl) {
                 BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
-                for (DiscreteOrderItem descreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
-                    discreteOrderItems.add(descreteOrderItem);
+                for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                    discreteOrderItems.add(discreteOrderItem);
                 }
             } else {
-                DiscreteOrderItem descreteOrderItem = (DiscreteOrderItem)orderItem;
-                discreteOrderItems.add(descreteOrderItem);
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+                discreteOrderItems.add(discreteOrderItem);
             }
         }
         return discreteOrderItems;
+    }
+
+    public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems() {
+        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
+        for (OrderItem orderItem : orderItems) {
+            if (orderItem instanceof BundleOrderItemImpl) {
+                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
+                for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                    if (discreteOrderItem.getSku().isDiscountable()) {
+                        discreteOrderItems.add(discreteOrderItem);
+                    }
+                }
+            } else {
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+                if (discreteOrderItem.getSku().isDiscountable()) {
+                    discreteOrderItems.add(discreteOrderItem);
+                }
+            }
+        }
+        return discreteOrderItems;
+    }
+
+    public List<OfferCode> getAddedOfferCodes() {
+        return addedOfferCodes;
+    }
+
+    public void setAddedOfferCodes(List<OfferCode> addedOfferCodes) {
+        this.addedOfferCodes = addedOfferCodes;
     }
 
 

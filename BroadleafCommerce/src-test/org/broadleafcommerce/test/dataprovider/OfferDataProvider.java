@@ -32,7 +32,7 @@ public class OfferDataProvider {
         o.setApplyDiscountToMarkedItems(false);
         o.setTargetSystem("WEB");
         o.setType(OfferType.ORDER_ITEM);
-        o.setAppliesToItemRules(
+        o.setAppliesToOrderRules(
                 "package org.broadleafcommerce.offer.service;"+
                 "import org.broadleafcommerce.offer.domain.Offer;"+
                 "import org.broadleafcommerce.order.domain.Order;"+
@@ -64,7 +64,7 @@ public class OfferDataProvider {
         o.setApplyDiscountToMarkedItems(false);
         o.setTargetSystem("WEB");
         o.setType(OfferType.FULFILLMENT_GROUP);
-        o.setAppliesToItemRules(
+        o.setAppliesToOrderRules(
                 "package org.broadleafcommerce.offer.service;"+
                 "import org.broadleafcommerce.offer.domain.Offer;"+
                 "import org.broadleafcommerce.order.domain.Order;"+

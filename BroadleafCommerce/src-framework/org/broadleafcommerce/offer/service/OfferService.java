@@ -51,4 +51,13 @@ public interface OfferService {
      * @param order the order
      */
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException;
+
+    /**
+     * Create a list of offers that applies to this order
+     * @param order
+     * @return
+     */
+    public List<Offer> buildOfferListForOrder(Order order);
+
+
 }
