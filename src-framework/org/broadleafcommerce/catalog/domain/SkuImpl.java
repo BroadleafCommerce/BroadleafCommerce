@@ -82,6 +82,10 @@ public class SkuImpl implements Sku, Serializable {
     @Column(name = "TAXABLE_FLAG")
     private Character taxable;
 
+    /** The discountable. */
+    @Column(name = "DISCOUNTABLE_FLAG")
+    private Character discountable;
+
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
     private Date activeStartDate;
@@ -243,6 +247,29 @@ public class SkuImpl implements Sku, Serializable {
             this.taxable = null;
         } else {
             this.taxable = taxable ? 'Y' : 'N';
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Sku#isDiscountable()
+     */
+    public Boolean isDiscountable() {
+        if (discountable == null)
+            return null;
+        return discountable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setDiscountable(java.lang.Boolean)
+     */
+    public void setDiscountable(Boolean discountable) {
+        if (discountable == null) {
+            this.discountable = null;
+        } else {
+            this.discountable = discountable ? 'Y' : 'N';
         }
     }
 

@@ -13,6 +13,10 @@ public interface Offer {
 
     public Long getId();
 
+    public String getCode();
+
+    public void setCode(String code);
+
     public String getName();
 
     public void setName(String name);
@@ -57,9 +61,9 @@ public interface Offer {
 
 //    public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
 
-    public String getAppliesToItemRules();
+    public String getAppliesToOrderRules();
 
-    public void setAppliesToItemRules(String appliesToRules);
+    public void setAppliesToOrderRules(String appliesToRules);
 
     public String getAppliesToCustomerRules();
 

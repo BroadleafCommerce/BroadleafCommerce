@@ -2,6 +2,7 @@ package org.broadleafcommerce.offer.domain;
 
 import org.broadleafcommerce.profile.domain.Customer;
 
+// TODO: Should rename to CustomerOffer
 public interface OfferCustomer {
 	public Long getId() ;
 
@@ -14,7 +15,7 @@ public interface OfferCustomer {
 	public Customer getCustomer() ;
 
 	public void setCustomer(Customer customer) ;
-	
-	
+
+
 
 }

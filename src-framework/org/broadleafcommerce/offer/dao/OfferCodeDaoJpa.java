@@ -1,5 +1,8 @@
 package org.broadleafcommerce.offer.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,6 +54,12 @@ public class OfferCodeDaoJpa implements OfferCodeDao {
     @SuppressWarnings("unchecked")
     public OfferCode readOfferCodeById(Long offerCodeId) {
         return (OfferCode) em.find(entityConfiguration.lookupEntityClass(beanName), offerCodeId);
+    }
+
+    @Override
+    public List<OfferCode> readGlobalOfferCodes() {
+        // TODO: add code to query database
+        return new ArrayList<OfferCode>();
     }
 
 }

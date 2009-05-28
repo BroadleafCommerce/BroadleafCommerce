@@ -29,6 +29,9 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "OFFER_ID")
     private Long id;
 
+    @Column(name = "OFFER_CODE")
+    private String code;
+
     @Column(name = "OFFER_NAME")
     private String name;
 
@@ -67,7 +70,7 @@ public class OfferImpl implements Serializable, Offer {
 //    private boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
-    private String appliesToItemRules;
+    private String appliesToOrderRules;
 
     @Column(name = "APPLIES_WHEN_RULES")
     private String appliesToCustomerRules;
@@ -87,6 +90,14 @@ public class OfferImpl implements Serializable, Offer {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getName() {
@@ -185,12 +196,12 @@ public class OfferImpl implements Serializable, Offer {
     }
 */
 
-    public String getAppliesToItemRules() {
-        return appliesToItemRules;
+    public String getAppliesToOrderRules() {
+        return appliesToOrderRules;
     }
 
-    public void setAppliesToItemRules(String appliesToItemRules) {
-        this.appliesToItemRules = appliesToItemRules;
+    public void setAppliesToOrderRules(String Order) {
+        this.appliesToOrderRules = appliesToOrderRules;
     }
 
     public String getAppliesToCustomerRules() {

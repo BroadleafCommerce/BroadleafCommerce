@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
@@ -29,7 +30,9 @@ public interface Order {
 
     public void assignOrderItemsFinalPrice();
 
-    public Money calculateSubTotal();
+    public Money calculateCurrentSubTotal();
+
+    public Money calculateFinalSubTotal();
 
     public Money getTotal();
 
@@ -124,5 +127,12 @@ public interface Order {
     public boolean containsNotStackableOrderOffer();
 
     public List<DiscreteOrderItem> getDiscreteOrderItems();
+
+    public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems();
+
+    public List<OfferCode> getAddedOfferCodes();
+
+    public void setAddedOfferCodes(List<OfferCode> addedOfferCodes);
+
 
 }

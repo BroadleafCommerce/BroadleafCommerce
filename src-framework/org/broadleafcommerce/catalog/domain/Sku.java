@@ -104,6 +104,18 @@ public interface Sku {
     public void setTaxable(Boolean taxable);
 
     /**
+     * Returns whether the Sku qualifies for discounts or not.  This field is used by the pricing engine
+     * to apply offers.
+     */
+    public Boolean isDiscountable();
+
+    /**
+     * Sets the whether the Sku qualifies for discounts or not.  This field is used by the pricing engine
+     * to apply offers.
+     */
+    public void setDiscountable(Boolean discountable);
+
+    /**
      * Returns the first date that the Sku should be available for sale.  This field is used to determine
      * whether a user can add the sku to their cart.
      */

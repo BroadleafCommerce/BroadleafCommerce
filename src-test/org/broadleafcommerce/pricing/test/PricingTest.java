@@ -49,7 +49,7 @@ public class PricingTest extends BaseTest {
         group.setShippingPrice(total);
 
         OrderItem item = new DiscreteOrderItemImpl();
-        item.setPrice(new Money(10D));
+        item.setRetailPrice(new Money(10D));
         item.setQuantity(1);
         List<OrderItem> items = new ArrayList<OrderItem>();
         items.add(item);
