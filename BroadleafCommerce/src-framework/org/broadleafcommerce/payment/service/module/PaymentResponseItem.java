@@ -1,7 +1,9 @@
 package org.broadleafcommerce.payment.service.module;
 
 import java.util.Date;
+import java.util.Map;
 
+import org.broadleafcommerce.payment.service.type.BLCTransactionType;
 import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentResponseItem {
@@ -65,5 +67,13 @@ public interface PaymentResponseItem {
     public Money getRemainingBalance();
 
     public void setRemainingBalance(Money remainingBalance);
+
+    public BLCTransactionType getTransactionType();
+
+    public void setTransactionType(BLCTransactionType transactionType);
+
+    public Map<String, Object> getAdditionalFields();
+
+    public void setAdditionalFields(Map<String, Object> additionalFields);
 
 }

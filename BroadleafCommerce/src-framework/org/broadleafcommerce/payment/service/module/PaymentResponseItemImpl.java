@@ -1,7 +1,10 @@
 package org.broadleafcommerce.payment.service.module;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.broadleafcommerce.payment.service.type.BLCTransactionType;
 import org.broadleafcommerce.util.money.Money;
 
 public class PaymentResponseItemImpl implements PaymentResponseItem {
@@ -21,6 +24,8 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected String avsCode;
     protected String cvvCode;
     protected Money remainingBalance;
+    protected BLCTransactionType transactionType;
+    protected Map<String, Object> additionalFields = new HashMap<String, Object>();
 
     public String getAuthorizationCode() {
         return authorizationCode;
@@ -140,6 +145,22 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     public void setRemainingBalance(Money remainingBalance) {
         this.remainingBalance = remainingBalance;
+    }
+
+    public BLCTransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(BLCTransactionType transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public Map<String, Object> getAdditionalFields() {
+        return additionalFields;
+    }
+
+    public void setAdditionalFields(Map<String, Object> additionalFields) {
+        this.additionalFields = additionalFields;
     }
 
     @Override
