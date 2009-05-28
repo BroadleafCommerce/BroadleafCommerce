@@ -394,8 +394,18 @@
 	</bean>
 	
 	<bean id="accountNumberMask" class="org.broadleafcommerce.payment.AccountNumberMask">
-		<constructor-arg value="4"/>
-		<constructor-arg value="12"/>
+		<constructor-arg>
+			<list>
+				<bean class="org.broadleafcommerce.payment.UnmaskRange">
+					<constructor-arg value="0"/>
+					<constructor-arg value="4"/>
+				</bean>
+				<bean class="org.broadleafcommerce.payment.UnmaskRange">
+					<constructor-arg value="1"/>
+					<constructor-arg value="4"/>
+				</bean>
+			</list>
+		</constructor-arg>
 		<constructor-arg value="X"/>
 	</bean>
 </beans>
