@@ -153,9 +153,9 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         sb.append("middleware response text: " + this.getMiddlewareResponseText() + "\n");
         sb.append("processor response code: " + this.getProcessorResponseCode() + "\n");
         sb.append("processor response text: " + this.getProcessorResponseText() + "\n");
-        sb.append("reference number: " + this.getReferenceNumber());
-        sb.append("transaction id: " + this.getTransactionId());
-        sb.append("avs code: " + this.getAvsCode());
+        sb.append("reference number: " + this.getReferenceNumber() + "\n");
+        sb.append("transaction id: " + this.getTransactionId() + "\n");
+        sb.append("avs code: " + this.getAvsCode() + "\n");
         sb.append("remaining balance: " + this.getRemainingBalance());
 
         return sb.toString();
