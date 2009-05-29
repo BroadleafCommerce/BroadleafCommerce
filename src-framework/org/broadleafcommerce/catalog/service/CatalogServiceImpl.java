@@ -51,6 +51,11 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
+    public Category findCategoryByName(String categoryName) {
+        return categoryDao.readCategoryByName(categoryName);
+    }
+
+    @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public Category saveCategory(Category category) {
         return categoryDao.save(category);

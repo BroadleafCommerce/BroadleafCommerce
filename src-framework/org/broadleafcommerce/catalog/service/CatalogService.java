@@ -20,6 +20,8 @@ public interface CatalogService {
 
     public Category findCategoryById(Long categoryId);
 
+    public Category findCategoryByName(String categoryName);
+
     public List<Category> findAllCategories();
 
     public List<Product> findAllProducts();
