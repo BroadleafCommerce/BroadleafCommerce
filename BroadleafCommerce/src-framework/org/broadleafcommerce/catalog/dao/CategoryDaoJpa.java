@@ -35,6 +35,13 @@ public class CategoryDaoJpa implements CategoryDao {
         return (Category) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Category"), categoryId);
     }
 
+    public Category readCategoryByName(String categoryName) {
+        Query query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME");
+        query.setParameter("categoryName", categoryName);
+        query.setHint("org.hibernate.cacheable", true);
+        return (Category)query.getSingleResult();
+    }
+
     @SuppressWarnings("unchecked")
     public List<Category> readAllCategories() {
         Query query = em.createNamedQuery("BC_READ_ALL_CATEGORIES");

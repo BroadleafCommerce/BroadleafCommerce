@@ -10,6 +10,8 @@ public interface CategoryDao {
 
     public Category readCategoryById(Long categoryId);
 
+    public Category readCategoryByName(String categoryId);
+
     public Category save(Category category);
 
     public List<Category> readAllCategories();
