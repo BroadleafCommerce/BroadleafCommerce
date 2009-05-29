@@ -301,4 +301,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.orderItemType = orderItemType;
     }
 
+    public boolean getIsOnSale() {
+        return getPrice() != getRetailPrice();
+    }
 }
