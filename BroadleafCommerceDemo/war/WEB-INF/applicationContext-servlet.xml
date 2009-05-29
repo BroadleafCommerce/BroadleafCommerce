@@ -59,6 +59,10 @@
         <property name="rootCategoryName" value="Store" />
         <property name="categoryTemplatePrefix" value="catalog/templates/"/>
 	</bean>
+	
+	<bean id="blCustomerPhoneController" class="org.broadleafcommerce.profile.web.controller.CustomerPhoneController">
+		<property name="deletePhoneSuccessUrl" value="my test"/>
+	</bean>
 
 	<bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
