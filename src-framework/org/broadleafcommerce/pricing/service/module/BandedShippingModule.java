@@ -59,8 +59,8 @@ public class BandedShippingModule implements ShippingModule {
             shippingPrice = sr.getBandResultQuantity();
         }
         fulfillmentGroup.setShippingPrice(new Money(shippingPrice));
-        fulfillmentGroup.setRetailShippingPrice(fulfillmentGroup.getSaleShippingPrice());
         fulfillmentGroup.setSaleShippingPrice(fulfillmentGroup.getShippingPrice());
+        fulfillmentGroup.setRetailShippingPrice(fulfillmentGroup.getSaleShippingPrice());
     }
 
     @Override
