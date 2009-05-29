@@ -84,6 +84,10 @@
             <taglib-uri>/spring-form</taglib-uri>
             <taglib-location>/WEB-INF/tld/spring-form.tld</taglib-location>
         </taglib>
+        <taglib>
+            <taglib-uri>/demo-store</taglib-uri>
+            <taglib-location>/WEB-INF/tld/demo-store.tld</taglib-location>
+        </taglib>
     </jsp-config>
 
     <resource-ref>

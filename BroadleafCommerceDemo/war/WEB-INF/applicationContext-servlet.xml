@@ -52,6 +52,14 @@
 		<property name="viewName" value="welcome" />
 	</bean>
 
+	<bean id="blCatalogController" class="org.broadleafcommerce.catalog.web.CatalogController">
+		<property name="catalogService" ref="catalogService"/>
+        <property name="defaultCategoryView" value="catalog/defaultList"/>
+        <property name="defaultProductView" value="catalog/defaultProduct"/>
+        <property name="rootCategoryName" value="Store" />
+        <property name="categoryTemplatePrefix" value="catalog/templates/"/>
+	</bean>
+
 	<bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
@@ -64,8 +72,9 @@
 		<property name="mappings">
 			<props>
 				<prop key="/welcome.htm">welcome</prop>
-				<!-- prop key="/myaccount/phone/*">blCustomerPhoneController</prop -->
+				<prop key="/myaccount/phone/*">blCustomerPhoneController</prop>
 				<prop key="/registerCustomer/*">blRegisterCustomerFormController</prop>
+				<prop key="/browse/*">blCatalogController</prop>
 			</props>
 		</property>
 	</bean>
