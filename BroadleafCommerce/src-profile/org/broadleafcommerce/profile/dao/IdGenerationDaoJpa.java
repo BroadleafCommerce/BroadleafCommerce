@@ -18,14 +18,24 @@ public class IdGenerationDaoJpa implements IdGenerationDao {
     @PersistenceContext(unitName = "blPU")
     private EntityManager em;
 
+    private String queryCacheableKey = "org.hibernate.cacheable";
+
     public IdGeneration findNextId(String idType) {
         Query query = em.createNamedQuery("BC_FIND_NEXT_ID");
         query.setParameter("idType", idType);
-        query.setHint("org.hibernate.cacheable", false);
+        query.setHint(getQueryCacheableKey(), false);
         return (IdGeneration) query.getSingleResult();
     }
 
     public IdGeneration updateNextId(IdGeneration idGeneration) {
         return em.merge(idGeneration);
+    }
+
+    public String getQueryCacheableKey() {
+        return queryCacheableKey;
+    }
+
+    public void setQueryCacheableKey(String queryCacheableKey) {
+        this.queryCacheableKey = queryCacheableKey;
     }
 }

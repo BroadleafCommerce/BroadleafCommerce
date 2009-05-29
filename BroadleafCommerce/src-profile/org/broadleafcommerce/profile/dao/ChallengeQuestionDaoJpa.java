@@ -20,10 +20,12 @@ public class ChallengeQuestionDaoJpa implements ChallengeQuestionDao {
     @PersistenceContext(unitName = "blPU")
     private EntityManager em;
 
+    private String queryCacheableKey = "org.hibernate.cacheable";
+
     @SuppressWarnings("unchecked")
     public List<ChallengeQuestion> readChallengeQuestions() {
         Query query = em.createNamedQuery("BC_READ_CHALLENGE_QUESTIONS");
-        query.setHint("org.hibernate.cacheable", true);
+        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 
@@ -32,5 +34,13 @@ public class ChallengeQuestionDaoJpa implements ChallengeQuestionDao {
         Query query = em.createNamedQuery("BC_READ_CHALLENGE_QUESTION_BY_ID");
         query.setParameter("question_id", challengeQuestionId);
         return (ChallengeQuestion) query.getSingleResult();
+    }
+
+    public String getQueryCacheableKey() {
+        return queryCacheableKey;
+    }
+
+    public void setQueryCacheableKey(String queryCacheableKey) {
+        this.queryCacheableKey = queryCacheableKey;
     }
 }

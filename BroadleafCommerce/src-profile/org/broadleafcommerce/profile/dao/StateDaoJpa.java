@@ -26,6 +26,8 @@ public class StateDaoJpa implements StateDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
+    private String queryCacheableKey = "org.hibernate.cacheable";
+
     @SuppressWarnings("unchecked")
     public State findStateByAbbreviation(String abbreviation) {
         return (State) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.State"), abbreviation);
@@ -34,7 +36,7 @@ public class StateDaoJpa implements StateDao {
     @SuppressWarnings("unchecked")
     public List<State> findStates() {
         Query query = em.createNamedQuery("BC_FIND_STATES");
-        query.setHint("org.hibernate.cacheable", true);
+        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 
@@ -46,7 +48,15 @@ public class StateDaoJpa implements StateDao {
     @SuppressWarnings("unchecked")
     public List<Country> findCountries() {
         Query query = em.createNamedQuery("BC_FIND_COUNTRIES");
-        query.setHint("org.hibernate.cacheable", true);
+        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
+    }
+
+    public String getQueryCacheableKey() {
+        return queryCacheableKey;
+    }
+
+    public void setQueryCacheableKey(String queryCacheableKey) {
+        this.queryCacheableKey = queryCacheableKey;
     }
 }

@@ -26,6 +26,8 @@ public class RoleDaoJpa implements RoleDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
+    private String queryCacheableKey = "org.hibernate.cacheable";
+
     @SuppressWarnings("unchecked")
     public Address readAddressById(Long id) {
         return (Address) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Address"), id);
@@ -36,7 +38,15 @@ public class RoleDaoJpa implements RoleDao {
     public List<CustomerRole> readCustomerRolesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_ROLES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
-        query.setHint("org.hibernate.cacheable", true);
+        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
+    }
+
+    public String getQueryCacheableKey() {
+        return queryCacheableKey;
+    }
+
+    public void setQueryCacheableKey(String queryCacheableKey) {
+        this.queryCacheableKey = queryCacheableKey;
     }
 }

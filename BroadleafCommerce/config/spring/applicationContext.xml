@@ -15,14 +15,15 @@
 
 	<context:component-scan base-package="org.broadleafcommerce" />
 	
-	<!--bean id="configuration"
+	<bean id="configuration"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:config/bc/config.properties</value>
+				<value>classpath:config/bc/configuration.properties</value>
 			</list>
 		</property>
-	</bean-->
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+	</bean>
 
 	<bean id="serverInfo" class="org.broadleafcommerce.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>
@@ -407,5 +408,41 @@
 			</list>
 		</constructor-arg>
 		<constructor-arg value="X"/>
+	</bean>
+	
+	<bean id="categoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+	<bean id="productDao" class="org.broadleafcommerce.catalog.dao.ProductDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+	<bean id="availabilityDao" class="org.broadleafcommerce.inventory.dao.AvailabilityDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+	<bean id="targetContentDao" class="org.broadleafcommerce.marketing.dao.TargetContentDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+	<bean id="challengeQuestionDao" class="org.broadleafcommerce.profile.dao.ChallengeQuestionDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+	<bean id="countryDao" class="org.broadleafcommerce.profile.dao.CountryDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+	<bean id="idGenerationDao" class="org.broadleafcommerce.profile.dao.IdGenerationDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+	<bean id="roleDao" class="org.broadleafcommerce.profile.dao.RoleDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+	<bean id="stateDao" class="org.broadleafcommerce.profile.dao.StateDaoJpa">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 </beans>

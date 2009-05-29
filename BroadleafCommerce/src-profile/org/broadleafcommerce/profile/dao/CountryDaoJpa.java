@@ -25,6 +25,8 @@ public class CountryDaoJpa implements CountryDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
+    private String queryCacheableKey = "org.hibernate.cacheable";
+
     @SuppressWarnings("unchecked")
     public Country findCountryByAbbreviation(String abbreviation) {
         return (Country) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Country"), abbreviation);
@@ -33,7 +35,15 @@ public class CountryDaoJpa implements CountryDao {
     @SuppressWarnings("unchecked")
     public List<Country> findCountries() {
         Query query = em.createNamedQuery("BC_FIND_COUNTRIES");
-        query.setHint("org.hibernate.cacheable", true);
+        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
+    }
+
+    public String getQueryCacheableKey() {
+        return queryCacheableKey;
+    }
+
+    public void setQueryCacheableKey(String queryCacheableKey) {
+        this.queryCacheableKey = queryCacheableKey;
     }
 }

@@ -15,11 +15,13 @@ public class AvailabilityDaoJpa implements AvailabilityDao {
     @PersistenceContext(unitName="blPU")
     private EntityManager em;
 
+    private String queryCacheableKey = "org.hibernate.cacheable";
+
     @SuppressWarnings("unchecked")
     public List<SkuAvailability> readSKUAvailability(List<Long> skuIds, boolean realTime) {
         Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_SKU_IDS");
         if (! realTime) {
-            query.setHint("org.hibernate.cacheable", true);
+            query.setHint(getQueryCacheableKey(), true);
         }
         query.setParameter("skuIds", skuIds);
         return query.getResultList();
@@ -29,7 +31,7 @@ public class AvailabilityDaoJpa implements AvailabilityDao {
     public List<SkuAvailability> readSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime) {
         Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_LOCATION_ID_AND_SKU_IDS");
         if (! realTime) {
-            query.setHint("org.hibernate.cacheable", true);
+            query.setHint(getQueryCacheableKey(), true);
         }
         query.setParameter("skuIds", skuIds);
         query.setParameter("locationId", locationId);
@@ -38,5 +40,13 @@ public class AvailabilityDaoJpa implements AvailabilityDao {
 
     public void save(SkuAvailability skuAvailability) {
         em.persist(skuAvailability);
+    }
+
+    public String getQueryCacheableKey() {
+        return queryCacheableKey;
+    }
+
+    public void setQueryCacheableKey(String queryCacheableKey) {
+        this.queryCacheableKey = queryCacheableKey;
     }
 }

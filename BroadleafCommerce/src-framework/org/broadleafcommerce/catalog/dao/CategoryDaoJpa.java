@@ -21,6 +21,8 @@ public class CategoryDaoJpa implements CategoryDao {
     @Resource
     private EntityConfiguration entityConfiguration;
 
+    private String queryCacheableKey = "org.hibernate.cacheable";
+
     public Category save(Category category) {
         if (category.getId() == null) {
             em.persist(category);
@@ -38,14 +40,14 @@ public class CategoryDaoJpa implements CategoryDao {
     public Category readCategoryByName(String categoryName) {
         Query query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME");
         query.setParameter("categoryName", categoryName);
-        query.setHint("org.hibernate.cacheable", true);
+        query.setHint(getQueryCacheableKey(), true);
         return (Category)query.getSingleResult();
     }
 
     @SuppressWarnings("unchecked")
     public List<Category> readAllCategories() {
         Query query = em.createNamedQuery("BC_READ_ALL_CATEGORIES");
-        query.setHint("org.hibernate.cacheable", true);
+        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 
@@ -60,5 +62,13 @@ public class CategoryDaoJpa implements CategoryDao {
         Query query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES");
         query.setParameter("defaultParentCategory", category);
         return query.getResultList();
+    }
+
+    public String getQueryCacheableKey() {
+        return queryCacheableKey;
+    }
+
+    public void setQueryCacheableKey(String queryCacheableKey) {
+        this.queryCacheableKey = queryCacheableKey;
     }
 }
