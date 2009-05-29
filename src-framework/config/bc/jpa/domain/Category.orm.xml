@@ -8,6 +8,11 @@
 		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category</query>
 	</named-query>
 
+	<named-query name="BC_READ_CATEGORY_BY_NAME">
+		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
+		WHERE name = :categoryName</query>
+	</named-query>
+
 	<named-query name="BC_READ_ALL_SUBCATEGORIES">
 		<query>SELECT category FROM org.broadleafcommerce.catalog.domain.Category category
 		WHERE category.defaultParentCategory = :defaultParentCategory</query>
