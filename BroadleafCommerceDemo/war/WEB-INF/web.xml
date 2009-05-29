@@ -70,6 +70,15 @@
         <servlet-name>bl</servlet-name>
         <url-pattern>*.htm</url-pattern>
     </servlet-mapping>
+    
+	<servlet-mapping>
+        <servlet-name>bl</servlet-name>
+        <url-pattern>/store/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>bl</servlet-name>
+        <url-pattern>/store</url-pattern>
+    </servlet-mapping>
 
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

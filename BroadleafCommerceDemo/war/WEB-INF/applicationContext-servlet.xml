@@ -74,7 +74,8 @@
 				<prop key="/welcome.htm">welcome</prop>
 				<prop key="/myaccount/phone/*">blCustomerPhoneController</prop>
 				<prop key="/registerCustomer/*">blRegisterCustomerFormController</prop>
-				<prop key="/browse/*">blCatalogController</prop>
+				<prop key="/store">blCatalogController</prop>
+				<prop key="/store/*">blCatalogController</prop>
 			</props>
 		</property>
 	</bean>
