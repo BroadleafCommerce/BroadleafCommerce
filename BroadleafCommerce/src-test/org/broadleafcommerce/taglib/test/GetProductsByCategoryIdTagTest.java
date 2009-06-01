@@ -19,7 +19,7 @@ public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
 
     public void test_GetProductsByCategoryIdTag() throws JspException {
 
-        getProductsByCategoryIdTag.setPageContext(pageContext);
+        getProductsByCategoryIdTag.setJspContext(pageContext);
         getProductsByCategoryIdTag.setCatalogService(catalogService);
 
         List<Product> productList = new ArrayList<Product>();
@@ -44,7 +44,7 @@ public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
 
         super.replayAdditionalMockObjects();
 
-        getProductsByCategoryIdTag.doStartTag();
+        getProductsByCategoryIdTag.doTag();
 
         List<Product> list = (List<Product>) pageContext.getAttribute("productListVar");
 
