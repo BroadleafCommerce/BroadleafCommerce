@@ -65,6 +65,13 @@
 	</target>
 
 	<target name="9. Load Data">
+		<delete>
+			<fileset dir="${framework.dir}/sql/0.0.0/mysql/stage">
+			    <include name="*.load"/>
+			</fileset>
+		</delete>
+
+		
 		<copy todir="${framework.dir}/sql/0.0.0/mysql/stage">
 		    <fileset dir="${framework.dir}/sql/0.0.0/mysql">
 		    	<include name="*.load"/>
