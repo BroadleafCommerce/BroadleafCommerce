@@ -1,5 +1,6 @@
 package org.broadleafcommerce.payment.service.module;
 
+import org.broadleafcommerce.order.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 

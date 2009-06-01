@@ -1,6 +1,6 @@
 package org.broadleafcommerce.payment.service.exception;
 
-import org.broadleafcommerce.payment.service.module.PaymentResponseItem;
+import org.broadleafcommerce.order.domain.PaymentResponseItem;
 
 public class PaymentProcessorException extends PaymentException {
 

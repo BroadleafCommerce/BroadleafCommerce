@@ -2,6 +2,8 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +15,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -55,6 +58,9 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     @Column(name = "PAYMENT_TYPE")
     private String type;
+
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.ALL})
+    private List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
 
     @Override
     public Money getAmount() {
@@ -112,6 +118,14 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public List<PaymentResponseItem> getPaymentResponseItems() {
+        return paymentResponseItems;
+    }
+
+    public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems) {
+        this.paymentResponseItems = paymentResponseItems;
     }
 
     @Override
