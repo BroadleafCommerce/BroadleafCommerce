@@ -7,7 +7,7 @@ import javax.servlet.jsp.tagext.TagData;
 import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.broadleafcommerce.catalog.web.taglib.CategoryBreadcrumbTag;
+import org.broadleafcommerce.catalog.web.taglib.CategoryBreadCrumbTag;
 
 public class CategoryBreadcrumbTei extends TagExtraInfo {
 
@@ -21,7 +21,7 @@ public class CategoryBreadcrumbTei extends TagExtraInfo {
         variableName = tagData.getAttributeString("categoryId");
 
         if (variableName != null) {
-            variableName = CategoryBreadcrumbTag.toVariableName(variableName);
+            variableName = CategoryBreadCrumbTag.toVariableName(variableName);
             infos.add(new VariableInfo(variableName, String.class.getName(), true, VariableInfo.NESTED));
         }
 
