@@ -1,4 +1,4 @@
-package org.broadleafcommerce.payment.service.module;
+package org.broadleafcommerce.order.domain;
 
 import java.util.Date;
 import java.util.Map;
@@ -72,8 +72,11 @@ public interface PaymentResponseItem {
 
     public void setTransactionType(BLCTransactionType transactionType);
 
-    public Map<String, Object> getAdditionalFields();
+    public Map<String, String> getAdditionalFields();
 
-    public void setAdditionalFields(Map<String, Object> additionalFields);
+    public void setAdditionalFields(Map<String, String> additionalFields);
 
+    public PaymentInfo getPaymentInfo();
+
+    public void setPaymentInfo(PaymentInfo paymentInfo);
 }

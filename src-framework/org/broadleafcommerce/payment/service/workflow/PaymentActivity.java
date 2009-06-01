@@ -4,11 +4,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.order.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.PaymentContextImpl;
 import org.broadleafcommerce.payment.service.PaymentService;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
-import org.broadleafcommerce.payment.service.module.PaymentResponseItem;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;

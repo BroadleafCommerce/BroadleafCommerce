@@ -3,6 +3,7 @@ package org.broadleafcommerce.payment.service.module;
 import java.util.Map;
 
 import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.order.domain.PaymentResponseItem;
 
 public interface PaymentResponse {
 

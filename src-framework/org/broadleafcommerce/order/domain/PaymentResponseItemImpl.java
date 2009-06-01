@@ -1,31 +1,102 @@
-package org.broadleafcommerce.payment.service.module;
+package org.broadleafcommerce.order.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.TableGenerator;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
 import org.broadleafcommerce.payment.service.type.BLCTransactionType;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.MapKey;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "BLC_PAYMENT_RESPONSE_ITEM")
 public class PaymentResponseItemImpl implements PaymentResponseItem {
 
-    protected Money amountPaid;
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(generator = "PaymentResponseItemId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "PaymentResponseItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentResponseItemImpl", allocationSize = 1)
+    @Column(name = "PAYMENT_RESPONSE_ITEM_ID")
+    private Long id;
+
+    @Column(name = "AMOUNT_PAID")
+    protected BigDecimal amountPaid;
+
+    @Column(name = "AUTHORIZATION_CODE")
     protected String authorizationCode;
+
+    @Column(name = "MIDDLEWARE_RESPONSE_CODE")
     protected String middlewareResponseCode;
+
+    @Column(name = "MIDDLEWARE_RESPONSE_TEXT")
     protected String middlewareResponseText;
+
+    @Column(name = "PROCESSOR_RESPONSE_CODE")
     protected String processorResponseCode;
+
+    @Column(name = "PROCESSOR_RESPONSE_TEXT")
     protected String processorResponseText;
+
+    @Column(name = "IMPLEMENTOR_RESPONSE_CODE")
     protected String implementorResponseCode;
+
+    @Column(name = "IMPLEMENTOR_RESPONSE_TEXT")
     protected String implementorResponseText;
+
+    @Column(name = "REFERENCE_NUMBER")
     protected String referenceNumber;
+
+    @Column(name = "TRANSACTION_SUCCESS")
     protected Boolean transactionSuccess;
+
+    @Column(name = "TRANSACTION_TIMESTAMP")
+    @Temporal(TemporalType.TIMESTAMP)
     protected Date transactionTimestamp;
+
+    @Column(name = "TRANSACTION_ID")
     protected String transactionId;
+
+    @Column(name = "AVS_CODE")
     protected String avsCode;
+
+    @Transient
     protected String cvvCode;
-    protected Money remainingBalance;
-    protected BLCTransactionType transactionType;
-    protected Map<String, Object> additionalFields = new HashMap<String, Object>();
+
+    @Column(name = "REMAINING_BALANCE")
+    protected BigDecimal remainingBalance;
+
+    @Column(name = "TRANSACTION_TYPE")
+    protected String transactionType;
+
+    @CollectionOfElements
+    @JoinTable(name = "BLC_PAYMENT_ADDITIONAL_FIELDS", joinColumns = @JoinColumn(name = "PAYMENT_RESPONSE_ITEM_ID"))
+    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 5) })
+    @Column(name = "FIELD_VALUE")
+    protected Map<String, String> additionalFields = new HashMap<String, String>();
+
+    @ManyToOne(targetEntity = PaymentInfoImpl.class)
+    @JoinColumn(name = "ORDER_PAYMENT_ID")
+    protected PaymentInfo paymentInfo;
 
     public String getAuthorizationCode() {
         return authorizationCode;
@@ -76,11 +147,11 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     public Money getAmountPaid() {
-        return amountPaid;
+        return new Money(amountPaid);
     }
 
     public void setAmountPaid(Money amountPaid) {
-        this.amountPaid = amountPaid;
+        this.amountPaid = Money.toAmount(amountPaid);
     }
 
     public Boolean getTransactionSuccess() {
@@ -140,27 +211,43 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     public Money getRemainingBalance() {
-        return remainingBalance;
+        return new Money(remainingBalance);
     }
 
     public void setRemainingBalance(Money remainingBalance) {
-        this.remainingBalance = remainingBalance;
+        this.remainingBalance = Money.toAmount(remainingBalance);
     }
 
     public BLCTransactionType getTransactionType() {
-        return transactionType;
+        return BLCTransactionType.getInstance(transactionType);
     }
 
     public void setTransactionType(BLCTransactionType transactionType) {
-        this.transactionType = transactionType;
+        this.transactionType = transactionType.getType();
     }
 
-    public Map<String, Object> getAdditionalFields() {
+    public Map<String, String> getAdditionalFields() {
         return additionalFields;
     }
 
-    public void setAdditionalFields(Map<String, Object> additionalFields) {
+    public void setAdditionalFields(Map<String, String> additionalFields) {
         this.additionalFields = additionalFields;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public PaymentInfo getPaymentInfo() {
+        return paymentInfo;
+    }
+
+    public void setPaymentInfo(PaymentInfo paymentInfo) {
+        this.paymentInfo = paymentInfo;
     }
 
     @Override
@@ -180,6 +267,31 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         sb.append("remaining balance: " + this.getRemainingBalance());
 
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((transactionId == null) ? 0 : transactionId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PaymentResponseItemImpl other = (PaymentResponseItemImpl) obj;
+        if (transactionId == null) {
+            if (other.transactionId != null)
+                return false;
+        } else if (!transactionId.equals(other.transactionId))
+            return false;
+        return true;
     }
 
 }
