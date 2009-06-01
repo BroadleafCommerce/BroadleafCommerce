@@ -16,7 +16,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-lang-2.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-logging-1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-validator-1.3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/compile/bin/servletapi-2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/test/bin/spring-test.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/test/bin/testng-5.8-jdk15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/spring-security-core-2.0.4.jar" sourcepath="lib/common/source/spring-security-core-2.0.4-sources.jar"/>
@@ -44,5 +43,7 @@
 	<classpathentry kind="lib" path="lib/test/bin/easymock.jar" sourcepath="lib/test/sources/easymock-src.zip"/>
 	<classpathentry kind="lib" path="lib/test/bin/easymockclassextension.jar" sourcepath="lib/test/sources/easymockclassextension-src.zip"/>
 	<classpathentry kind="lib" path="lib/test/bin/junit-4.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/compile/bin/servlet-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/compile/bin/jsp-api.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
