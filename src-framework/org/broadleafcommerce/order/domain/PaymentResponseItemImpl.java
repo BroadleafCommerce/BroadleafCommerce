@@ -37,7 +37,10 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @GeneratedValue(generator = "PaymentResponseItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PaymentResponseItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentResponseItemImpl", allocationSize = 1)
     @Column(name = "PAYMENT_RESPONSE_ITEM_ID")
-    private Long id;
+    protected Long id;
+
+    @Column(name = "USER_NAME")
+    protected String userName;
 
     @Column(name = "AMOUNT_PAID")
     protected BigDecimal amountPaid;
@@ -248,6 +251,14 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     public void setPaymentInfo(PaymentInfo paymentInfo) {
         this.paymentInfo = paymentInfo;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.broadleafcommerce.workflow.ProcessContext;
 public class PaymentActivity extends BaseActivity {
 
     protected PaymentService paymentService;
+    protected String userName;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
@@ -34,7 +35,7 @@ public class PaymentActivity extends BaseActivity {
              * Detailed logging is a PCI requirement.
              */
             if (paymentService.isValidCandidate(info.getType())) {
-                PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, infos.get(info));
+                PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, infos.get(info), userName);
                 PaymentResponseItem paymentResponseItem;
                 switch(seed.getActionType()) {
                 case AUTHORIZE:
@@ -78,6 +79,14 @@ public class PaymentActivity extends BaseActivity {
 
     public void setPaymentService(PaymentService paymentService) {
         this.paymentService = paymentService;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
 }

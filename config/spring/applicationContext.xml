@@ -342,12 +342,15 @@
 			<list>
 				<bean class="org.broadleafcommerce.payment.service.workflow.PaymentActivity">
 					<property name="paymentService" ref="giftCardService"/>
+					<property name="userName" value="web"/>
 				</bean>
 				<bean class="org.broadleafcommerce.payment.service.workflow.PaymentActivity">
 					<property name="paymentService" ref="bankAccountService"/>
+					<property name="userName" value="web"/>
 				</bean>
 				<bean class="org.broadleafcommerce.payment.service.workflow.PaymentActivity">
 					<property name="paymentService" ref="creditCardService"/>
+					<property name="userName" value="web"/>
 				</bean>
 			</list>
 		</property>
