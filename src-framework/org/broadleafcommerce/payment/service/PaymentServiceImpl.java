@@ -30,6 +30,8 @@ public class PaymentServiceImpl implements PaymentService {
         response.setTransactionType(BLCTransactionType.AUTHORIZE);
         response.setPaymentInfo(info);
         response.setUserName(paymentContext.getUserName());
+        response.setCustomer(info.getOrder().getCustomer());
+        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -43,6 +45,8 @@ public class PaymentServiceImpl implements PaymentService {
         response.setTransactionType(BLCTransactionType.AUTHORIZEANDDEBIT);
         response.setPaymentInfo(info);
         response.setUserName(paymentContext.getUserName());
+        response.setCustomer(info.getOrder().getCustomer());
+        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -56,6 +60,8 @@ public class PaymentServiceImpl implements PaymentService {
         response.setTransactionType(BLCTransactionType.BALANCE);
         response.setPaymentInfo(info);
         response.setUserName(paymentContext.getUserName());
+        response.setCustomer(info.getOrder().getCustomer());
+        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -69,6 +75,8 @@ public class PaymentServiceImpl implements PaymentService {
         response.setTransactionType(BLCTransactionType.CREDIT);
         response.setPaymentInfo(info);
         response.setUserName(paymentContext.getUserName());
+        response.setCustomer(info.getOrder().getCustomer());
+        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -82,6 +90,8 @@ public class PaymentServiceImpl implements PaymentService {
         response.setTransactionType(BLCTransactionType.DEBIT);
         response.setPaymentInfo(info);
         response.setUserName(paymentContext.getUserName());
+        response.setCustomer(info.getOrder().getCustomer());
+        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -95,6 +105,8 @@ public class PaymentServiceImpl implements PaymentService {
         response.setTransactionType(BLCTransactionType.VOIDPAYMENT);
         response.setPaymentInfo(info);
         response.setUserName(paymentContext.getUserName());
+        response.setCustomer(info.getOrder().getCustomer());
+        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);

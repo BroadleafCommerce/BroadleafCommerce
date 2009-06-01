@@ -22,6 +22,8 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.payment.service.type.BLCTransactionType;
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.MapKey;
@@ -100,6 +102,13 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @ManyToOne(targetEntity = PaymentInfoImpl.class)
     @JoinColumn(name = "ORDER_PAYMENT_ID")
     protected PaymentInfo paymentInfo;
+
+    @ManyToOne(targetEntity = CustomerImpl.class)
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    protected Customer customer;
+
+    @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
+    protected String paymentInfoReferenceNumber;
 
     public String getAuthorizationCode() {
         return authorizationCode;
@@ -259,6 +268,22 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public String getPaymentInfoReferenceNumber() {
+        return paymentInfoReferenceNumber;
+    }
+
+    public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber) {
+        this.paymentInfoReferenceNumber = paymentInfoReferenceNumber;
     }
 
     @Override
