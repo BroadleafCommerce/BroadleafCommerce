@@ -20,4 +20,6 @@ public interface OrderItemService {
 
     public void delete(OrderItem item);
 
+    public OrderItem saveOrderItem(OrderItem orderItem);
+
 }

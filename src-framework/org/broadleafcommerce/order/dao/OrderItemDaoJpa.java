@@ -55,4 +55,9 @@ public class OrderItemDaoJpa implements OrderItemDao {
     public OrderItem create(OrderItemType orderItemType) {
         return (OrderItem) entityConfiguration.createEntityInstance(orderItemType.getClassName());
     }
+
+    @Override
+    public OrderItem saveOrderItem(OrderItem orderItem) {
+        return em.merge(orderItem);
+    }
 }

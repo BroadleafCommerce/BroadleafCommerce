@@ -13,4 +13,6 @@ public interface OrderItemDao {
 
     public OrderItem create(OrderItemType orderItemType);
 
+    public OrderItem saveOrderItem(OrderItem orderItem);
+
 }
