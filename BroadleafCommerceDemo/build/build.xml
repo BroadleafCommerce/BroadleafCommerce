@@ -72,6 +72,7 @@
 		</copy>
 
 		<replace file="${framework.dir}/sql/0.0.0/mysql/stage/data.load" token="@@BASE_DIR@@" value="${framework.dir}/sql/0.0.0/mysql"/>
+		<replace file="${framework.dir}/sql/0.0.0/mysql/stage/data.load" token="\" value="\\"/>
 		
 	     <sql driver="${mysql.db.driver}"
 	          url="${mysql.db.url}"
