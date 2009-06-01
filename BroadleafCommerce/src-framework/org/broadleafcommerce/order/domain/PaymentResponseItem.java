@@ -79,4 +79,9 @@ public interface PaymentResponseItem {
     public PaymentInfo getPaymentInfo();
 
     public void setPaymentInfo(PaymentInfo paymentInfo);
+
+    public String getUserName();
+
+    public void setUserName(String userName);
+
 }

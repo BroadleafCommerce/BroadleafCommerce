@@ -17,4 +17,6 @@ public interface PaymentContext {
     public String getTransactionId();
 
     public void setTransactionId(String transactionId);
+
+    public String getUserName() ;
 }

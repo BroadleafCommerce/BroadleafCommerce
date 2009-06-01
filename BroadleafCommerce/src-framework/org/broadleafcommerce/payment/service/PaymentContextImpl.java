@@ -11,12 +11,14 @@ public class PaymentContextImpl implements PaymentContext {
     protected PaymentInfo paymentInfo;
     protected Referenced referencedPaymentInfo;
     protected String transactionId;
+    protected String userName;
 
-    public PaymentContextImpl(Money originalPaymentAmount, Money remainingPaymentAmount, PaymentInfo paymentInfo, Referenced referencedPaymentInfo) {
+    public PaymentContextImpl(Money originalPaymentAmount, Money remainingPaymentAmount, PaymentInfo paymentInfo, Referenced referencedPaymentInfo, String userName) {
         this.originalPaymentAmount = originalPaymentAmount;
         this.remainingPaymentAmount = remainingPaymentAmount;
         this.paymentInfo = paymentInfo;
         this.referencedPaymentInfo = referencedPaymentInfo;
+        this.userName = userName;
     }
 
     public Money getOriginalPaymentAmount() {
@@ -41,6 +43,10 @@ public class PaymentContextImpl implements PaymentContext {
 
     public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
 }
