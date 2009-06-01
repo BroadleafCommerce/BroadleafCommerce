@@ -38,7 +38,7 @@ import org.hibernate.annotations.CollectionOfElements;
  * need to make significant changes to the ProductImpl then you should implement
  * your own version of {@link Product}. <br>
  * <br>
-  * This implementation uses a Hibernate implementation of JPA configured through
+ * This implementation uses a Hibernate implementation of JPA configured through
  * annotations. The Entity references the following tables: BLC_PRODUCT,
  * BLC_PRODUCT_SKU_XREF, BLC_PRODUCT_IMAGE
  * @author btaylor
@@ -84,7 +84,6 @@ public class ProductImpl implements Product, Serializable {
     /** The all skus. */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
-    @org.hibernate.annotations.OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
     private List<Sku> allSkus;
@@ -104,7 +103,6 @@ public class ProductImpl implements Product, Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
-    @org.hibernate.annotations.OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
     private List<Category> allParentCategories;
