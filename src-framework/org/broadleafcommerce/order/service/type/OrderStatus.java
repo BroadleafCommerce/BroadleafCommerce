@@ -18,8 +18,11 @@ public class OrderStatus {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
-        return super.toString();
+        if (name != null) {
+            return name.toString();
+        } else {
+            return "null";
+        }
     }
 
 }
