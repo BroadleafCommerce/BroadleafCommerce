@@ -29,6 +29,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentResponseItem response = paymentModule.authorize(paymentContext);
         response.setTransactionType(BLCTransactionType.AUTHORIZE);
         response.setPaymentInfo(info);
+        response.setUserName(paymentContext.getUserName());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -41,6 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentResponseItem response = paymentModule.authorizeAndDebit(paymentContext);
         response.setTransactionType(BLCTransactionType.AUTHORIZEANDDEBIT);
         response.setPaymentInfo(info);
+        response.setUserName(paymentContext.getUserName());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -53,6 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentResponseItem response = paymentModule.balance(paymentContext);
         response.setTransactionType(BLCTransactionType.BALANCE);
         response.setPaymentInfo(info);
+        response.setUserName(paymentContext.getUserName());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -65,6 +68,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentResponseItem response = paymentModule.credit(paymentContext);
         response.setTransactionType(BLCTransactionType.CREDIT);
         response.setPaymentInfo(info);
+        response.setUserName(paymentContext.getUserName());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -77,6 +81,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentResponseItem response = paymentModule.debit(paymentContext);
         response.setTransactionType(BLCTransactionType.DEBIT);
         response.setPaymentInfo(info);
+        response.setUserName(paymentContext.getUserName());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
@@ -89,6 +94,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentResponseItem response = paymentModule.voidPayment(paymentContext);
         response.setTransactionType(BLCTransactionType.VOIDPAYMENT);
         response.setPaymentInfo(info);
+        response.setUserName(paymentContext.getUserName());
         info.getPaymentResponseItems().add(response);
 
         paymentInfoService.save(info);
