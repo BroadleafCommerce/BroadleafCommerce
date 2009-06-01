@@ -66,15 +66,15 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "METHOD")
     private String method;
 
-    //TODO change column name to RETAIL_SHIPPING_PRICE
+    //TODO change column name to RETAIL_SHIPPING_PRICE - No, don't fullfillment groups don't have to be shipping
     @Column(name = "RETAIL_PRICE")
     private BigDecimal retailShippingPrice;
 
-    //TODO change column name to SALE_SHIPPING_PRICE
+    //TODO change column name to SALE_SHIPPING_PRICE- No, don't fullfillment groups don't have to be shipping
     @Column(name = "SALE_PRICE")
     private BigDecimal saleShippingPrice;
 
-    //TODO change column name to SHIPPING_PRICE
+    //TODO change column name to SHIPPING_PRICE- No, don't fullfillment groups don't have to be shipping
     @Column(name = "PRICE")
     private BigDecimal shippingPrice;
 
