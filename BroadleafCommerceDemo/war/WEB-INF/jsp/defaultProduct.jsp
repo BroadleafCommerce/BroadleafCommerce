@@ -3,7 +3,10 @@
 	<tiles:putAttribute name="mainContent" type="string">
 
 <h1>Default Product View For: <c:out value="${productSkus.product.name}"/></h1>
-<sc:breadcrumb/>
+
+ <blc:breadcrumb categoryList="${breadcrumbCategories}" />
+<br />
+<br />
 <br/>
 <table border="1">
 	<tr>
@@ -11,8 +14,8 @@
 		<th>Description</th>
 	</tr>
 	<tr>
-		<td><c:out value="${productSkus.product.name}"/></td>
-		<td><c:out value="${productSkus.product.description}"/></td>
+		<td><c:out value="${currentProduct.name}"/></td>
+		<td><c:out value="${currentProduct.description}"/></td>
 	</tr>
 
 </table>
@@ -25,7 +28,7 @@
 		<th>Price</th>
 		<th>Add to Cart</th>
 	</tr>
-	<c:forEach var="item" items="${product.skus}" varStatus="status">
+	<c:forEach var="item" items="${currentProduct.skus}" varStatus="status">
 		<tr>
 			<td><c:out value="${item.name}"/></td>
 			<td><c:out value="${item.price}"/></td>

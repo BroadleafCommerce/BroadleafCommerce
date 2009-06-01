@@ -3,29 +3,54 @@
 	<tiles:putAttribute name="mainContent" type="string">
 
 	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
-	<c:set var="broadleafCommerceRequestState" value="${requestScope['org.broadleafcommerce.web.BroadleafCommerceRequestState']}" />
-	<hr/>
-	<h1>Default Category View For: <c:out value="${broadleafCommerceRequestState.category.name}"/></h1>
-	<h2>Here is a list of its sub-categories:</h2>
 
-	<sc:breadcrumb/>
-	<br/>
-	<table border="1">
-	<tr>
-		<th>Name</th>
-	</tr>
-	<c:forEach var="item" items="${subCategories}" varStatus="status">
-		<tr>
-			<td><sc:categoryLink category="${item}" link="true"/></td>
-		</tr>
-	</c:forEach>
-	</table>
+	<h1>Default Category View For: <c:out value="${currentCategory.name}"/></h1>
 
-	<h2>Items in this category</h2>
-	<sc:list objectList="${category.products}"
-		numAcross="4" objectName="item">
-		<sc:item product="${item}" layout="productList" itemName="item" />
-	</sc:list>
+	Breadcrumb: <blc:breadcrumb categoryList="${breadcrumbCategories}" />
+	<br />
+	Category: <blc:categoryLink category="${currentCategory}" />
+	
+	<c:choose>
+		<c:when test="${fn:length(currentCategory.childCategories) > 0}">
+			<h2>Here is a list of its sub-categories:</h2>
+
+			<br/>
+			
+			<table border="0">
+			<tr>
+				<th>Name</th>
+			</tr>
+			<c:forEach var="child" items="${currentCategory.childCategories}" varStatus="status">
+				<tr>
+					<td><blc:categoryLink category="${currentCategory}" /></td>
+				</tr>
+			</c:forEach>
+			</table>
+		</c:when>
+		<c:otherwise>
+			<h2>This category has no sub-categories</h2>
+		</c:otherwise>	
+	</c:choose>
+	
+	<c:choose>
+		<c:when test="${fn:length(currentProducts) > 0}">
+			<h2>Here is a list of products under this category:</h2>
+		
+			<table border="0">
+			<tr>
+				<th>Name</th>
+			</tr>
+			<c:forEach var="product" items="${currentProducts}" varStatus="status">
+				<tr>
+					<td><blc:productLink product="${product}" /></td>
+				</tr>
+			</c:forEach>
+			</table>
+		</c:when>
+		<c:otherwise>
+			<h2>This category has no products</h2>
+		</c:otherwise>	
+	</c:choose>
 
 	</tiles:putAttribute>
 </tiles:insertDefinition>
