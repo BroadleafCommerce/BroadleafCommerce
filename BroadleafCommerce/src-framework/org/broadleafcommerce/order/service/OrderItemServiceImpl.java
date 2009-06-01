@@ -25,6 +25,11 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
+    public OrderItem saveOrderItem(OrderItem orderItem) {
+        return orderItemDao.saveOrderItem(orderItem);
+    }
+
+    @Override
     public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest) {
         DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         item.setOrderItemType(OrderItemType.DISCRETE.getClassName());

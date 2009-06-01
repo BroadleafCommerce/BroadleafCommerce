@@ -9,6 +9,7 @@ DROP TABLE blc_bundle_order_item;
 DROP TABLE blc_order_item;
 DROP TABLE blc_personal_message;
 DROP TABLE blc_order;
+DROP TABLE blc_personal_message;
 DROP TABLE blc_customer_role;
 DROP TABLE blc_role;
 DROP TABLE blc_phone;
@@ -195,6 +196,18 @@ CREATE TABLE blc_gift_card_payment
 );
 
 --------------------------
+-- blc_personal_message
+--------------------------
+CREATE TABLE blc_personal_message
+(
+  PERSONAL_MESSAGE_ID NUMBER(19,0) NOT NULL,
+  MESSAGE_TO VARCHAR2(255),
+  MESSAGE_FROM VARCHAR2(255),
+  MESSAGE VARCHAR2(255)
+  CONSTRAINT PK_BLC_PERSONAL_MESSAGE PRIMARY KEY(PERSONAL_MESSAGE_ID) USING INDEX TABLESPACE WEB_IDX1
+);
+
+--------------------------
 -- blc_order
 --------------------------
 CREATE TABLE blc_order
@@ -231,6 +244,16 @@ CREATE TABLE blc_personal_message
   MESSAGE_FROM VARCHAR2(255),
   MESSAGE VARCHAR2(255),
   CONSTRAINT PK_BLC_PERSONAL_MESSAGE PRIMARY KEY(PERSONAL_MESSAGE_ID) USING INDEX TABLESPACE WEB_IDX1
+);
+
+--------------------------
+-- blc_personal_message
+--------------------------
+CREATE TABLE blc_personal_message
+(
+  QUESTION_ID NUMBER(19,0) NOT NULL,
+  QUESTION VARCHAR2(255)
+  CONSTRAINT PK_BLC_CHALLENGE_QUESTION PRIMARY KEY(QUESTION_ID) USING INDEX TABLESPACE WEB_IDX1
 );
 
 --------------------------
