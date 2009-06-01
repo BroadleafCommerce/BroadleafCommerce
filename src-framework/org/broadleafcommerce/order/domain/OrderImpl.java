@@ -178,7 +178,7 @@ public class OrderImpl implements Order, Serializable {
     }
 
     public Money getRemainingTotal() {
-        if (getPaymentInfos() == null) {
+        if (getPaymentInfos() == null || getTotal() == null) {
             return null;
         }
         Money totalPayments = new Money(BigDecimal.ZERO);
