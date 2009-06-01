@@ -24,20 +24,46 @@
     </tag>
 
     <tag>
-        <name>categoryBreadcrumb</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.CategoryBreadcrumbTag</tag-class>
+        <name>breadcrumb</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.CategoryBreadCrumbTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
-			<name>var</name>
-			<required>true</required>
+			<name>categoryList</name>
+			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
        	<attribute>
 			<name>categoryId</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
+
+	<tag>
+        <name>categoryLink</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.CategoryLinkTag</tag-class>
+        <body-content>empty</body-content>
+       	<attribute>
+			<name>category</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
     </tag>
 
+	<tag>
+        <name>productLink</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.ProductLinkTag</tag-class>
+        <body-content>empty</body-content>
+       	<attribute>
+			<name>product</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>category</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
 
 </taglib>
