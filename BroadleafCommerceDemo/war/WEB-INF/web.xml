@@ -75,6 +75,18 @@
         <servlet-name>bl</servlet-name>
         <url-pattern>/store/*</url-pattern>
     </servlet-mapping>
+
+	<servlet-mapping>
+        <servlet-name>bl</servlet-name>
+        <url-pattern>/store/*/*</url-pattern>
+    </servlet-mapping>
+
+	<servlet-mapping>
+        <servlet-name>bl</servlet-name>
+        <url-pattern>/store/*/*/*</url-pattern>
+    </servlet-mapping>
+
+
     <servlet-mapping>
         <servlet-name>bl</servlet-name>
         <url-pattern>/store</url-pattern>
@@ -95,7 +107,7 @@
         </taglib>
         <taglib>
             <taglib-uri>/demo-store</taglib-uri>
-            <taglib-location>/WEB-INF/tld/demo-store.tld</taglib-location>
+            <taglib-location>/WEB-INF/tld/broadleafcommerce.tld</taglib-location>
         </taglib>
     </jsp-config>
 
