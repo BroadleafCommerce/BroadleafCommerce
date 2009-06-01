@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.broadleafcommerce.payment.service.type.BLCTransactionType;
+import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentResponseItem {
@@ -83,5 +84,13 @@ public interface PaymentResponseItem {
     public String getUserName();
 
     public void setUserName(String userName);
+
+    public Customer getCustomer();
+
+    public void setCustomer(Customer customer);
+
+    public String getPaymentInfoReferenceNumber();
+
+    public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber);
 
 }

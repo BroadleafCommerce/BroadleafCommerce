@@ -59,7 +59,7 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @Column(name = "PAYMENT_TYPE")
     private String type;
 
-    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
 
     @Override
