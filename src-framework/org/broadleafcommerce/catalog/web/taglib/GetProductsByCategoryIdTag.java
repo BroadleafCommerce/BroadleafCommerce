@@ -19,19 +19,17 @@ public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
     private long categoryId;
 
     @Override
-    public int doStartTag() throws JspException {
-        catalogService = super.getCatalogService(pageContext);
+    public void doTag() throws JspException {
+        catalogService = super.getCatalogService();
 
         Category c = catalogService.findCategoryById(categoryId);
 
         if(c == null){
-            pageContext.setAttribute(var, null);
+            getJspContext().setAttribute(var, null);
 
             if(log.isDebugEnabled()){
                 log.debug("The category returned was null for categoryId: " + categoryId);
             }
-
-            return EVAL_PAGE;
         }
 
         List<Product> productList = catalogService.findActiveProductsByCategory(c);
@@ -40,9 +38,8 @@ public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
             log.debug("The productList returned was null for categoryId: " + categoryId);
         }
 
-        pageContext.setAttribute(var, productList);
+        getJspContext().setAttribute(var, productList);
 
-        return EVAL_PAGE;
     }
 
     public String getVar() {
@@ -61,9 +58,4 @@ public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
         this.categoryId = categoryId;
     }
 
-    @Override
-    public void release(){
-        var = null;
-        categoryId = 0L;
-    }
 }

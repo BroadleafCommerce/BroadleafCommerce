@@ -13,8 +13,8 @@ public class CategoryTag extends AbstractCatalogTag {
     private long categoryId;
 
     @Override
-    public int doStartTag() throws JspException {
-        catalogService = super.getCatalogService(pageContext);
+    public void doTag() throws JspException {
+        catalogService = super.getCatalogService();
 
         Category category = catalogService.findCategoryById(categoryId);
 
@@ -22,8 +22,7 @@ public class CategoryTag extends AbstractCatalogTag {
             log.debug("The category returned was null for categoryId: " + categoryId);
         }
 
-        pageContext.setAttribute(var, category);
-        return EVAL_PAGE;
+        getJspContext().setAttribute(var, category);
     }
 
     public String getVar() {
@@ -40,12 +39,6 @@ public class CategoryTag extends AbstractCatalogTag {
 
     public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
-    }
-
-    @Override
-    public void release(){
-        var = null;
-        categoryId = 0L;
     }
 
 }
