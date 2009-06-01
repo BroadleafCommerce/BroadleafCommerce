@@ -1,24 +1,25 @@
 package org.broadleafcommerce.taglib.test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
 
 import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.web.taglib.CategoryBreadcrumbTag;
+import org.broadleafcommerce.catalog.web.taglib.CategoryBreadCrumbTag;
 import org.easymock.classextension.EasyMock;
 
 public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
-    private CategoryBreadcrumbTag categoryBreadcrumbTag;
+    private CategoryBreadCrumbTag categoryBreadcrumbTag;
     private Category category;
 
     public void setUp() {
-        categoryBreadcrumbTag = new CategoryBreadcrumbTag();
+        categoryBreadcrumbTag = new CategoryBreadCrumbTag();
         category = EasyMock.createMock(Category.class);
     }
 
-    public void test_Breadcrumb() throws JspException {
+    public void test_Breadcrumb() throws JspException, IOException {
         List<Category> categoryList = new ArrayList<Category>();
 
         Category defaultParentCategory = EasyMock.createMock(Category.class);
@@ -34,8 +35,7 @@ public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
         EasyMock.expect(defaultParentCategory.getDefaultParentCategory()).andReturn(null);
 
         categoryBreadcrumbTag.setCategoryList(categoryList);
-        categoryBreadcrumbTag.setPageContext(pageContext);
-        categoryBreadcrumbTag.setVar("crumbVar");
+        categoryBreadcrumbTag.setJspContext(pageContext);
         categoryBreadcrumbTag.setCatalogService(catalogService);
 
         super.replayAdditionalMockObjects(category, defaultParentCategory);
@@ -43,7 +43,7 @@ public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
         assert(categoryList.get(1).equals(defaultParentCategory));
         assert(categoryList.get(0).equals(category));
 
-        categoryBreadcrumbTag.doStartTag();
+        categoryBreadcrumbTag.doTag();
 
         assert(categoryList.get(0).equals(defaultParentCategory));
         assert(categoryList.get(1).equals(category));

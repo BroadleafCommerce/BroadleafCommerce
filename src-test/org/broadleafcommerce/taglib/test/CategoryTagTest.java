@@ -16,7 +16,7 @@ public class CategoryTagTest extends BaseTagLibTest {
     }
 
     public void test_categoryTag() throws JspException {
-        categoryTag.setPageContext(pageContext);
+        categoryTag.setJspContext(pageContext);
         categoryTag.setVar("categoryVar");
         categoryTag.setCatalogService(catalogService);
 
@@ -28,7 +28,7 @@ public class CategoryTagTest extends BaseTagLibTest {
 
         super.replayAdditionalMockObjects(category);
 
-        categoryTag.doStartTag();
+        categoryTag.doTag();
 
         Category ret = (Category) pageContext.getAttribute("categoryVar");
 
