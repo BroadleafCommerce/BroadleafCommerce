@@ -26,11 +26,11 @@ import org.springframework.security.ui.logout.LogoutHandler;
  * session value - broadleaf_commerce.logout_success_url to the destination URL.
  * @author bpolster
  */
-public class BCLogoutFilter extends LogoutFilter {
+public class BroadleafLogoutFilter extends LogoutFilter {
 
     public static final String BC_LOGOUT_SUCCESS_URL_KEY = "broadleaf_commerce.logout_success_url";
 
-    public BCLogoutFilter(String logoutSuccessUrl, LogoutHandler[] handlers) {
+    public BroadleafLogoutFilter(String logoutSuccessUrl, LogoutHandler[] handlers) {
         super(logoutSuccessUrl, handlers);
     }
 
