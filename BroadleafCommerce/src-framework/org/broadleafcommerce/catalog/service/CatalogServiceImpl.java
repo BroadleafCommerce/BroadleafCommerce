@@ -115,6 +115,11 @@ public class CatalogServiceImpl implements CatalogService {
         this.skuDao = skuDao;
     }
 
+    public List<Product> findProductsForCategory(Category category) {
+        // TODO Implement this, it's being called by TCS CartController
+        return null;
+    }
+
     public void setCategoryDao(CategoryDao categoryDao) {
         this.categoryDao = categoryDao;
     }
