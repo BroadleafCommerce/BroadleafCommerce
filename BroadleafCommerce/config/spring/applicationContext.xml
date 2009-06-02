@@ -48,7 +48,7 @@
 		</property>
 	</bean>
 
-	<bean id="blEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
 		<property name="persistenceUnitName" value="blPU"/>
 		<property name="jpaVendorAdapter">
@@ -73,7 +73,7 @@
 	</bean>
 
 	<bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="blEntityManagerFactory" />
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
 
 	<tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
