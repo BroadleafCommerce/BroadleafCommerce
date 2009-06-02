@@ -127,7 +127,9 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
             response = items.toArray(response);
         } finally {
             if (reader != null) {
-                try{ reader.close(); } catch (Throwable e) {}
+                try{ reader.close(); } catch (Throwable e) {
+                    LOG.error("Unable to merge source and patch locations", e);
+                }
             }
         }
 

@@ -31,6 +31,8 @@ import javax.annotation.Resource;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.offer.dao.OfferCustomerDao;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
@@ -67,6 +69,7 @@ public class OfferServiceImpl implements OfferService {
 
     private static final LRUMap expressionCache = new LRUMap(100);
     private static final StringBuffer functions = new StringBuffer();
+    private static final Log LOG = LogFactory.getLog(OfferServiceImpl.class);
 
     // should be called outside of Offer service after Offer service is executed
     @Resource
@@ -91,7 +94,9 @@ public class OfferServiceImpl implements OfferService {
             if (is != null) {
                 try {
                     is.close();
-                } catch (Exception e){}
+                } catch (Exception e){
+                    LOG.error("Unable to get mvelFunctions", e);
+                }
             }
         }
     }
@@ -261,12 +266,12 @@ public class OfferServiceImpl implements OfferService {
                             // check to see if this offer can be applied to the order item
                             // the offer needs to be stackable or no adjustment has been applied to this line item
                             //if (doesItemOfferApply(itemOffer, order, itemAdjustments)) {
-                                applyOrderItemOffer(itemOffer);
-                                isItemAdjustmentApplied = true;
-                                if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {
-                                    // Offer applied is not combinable with other offers, ignore other offers
-                                    break;
-                                }
+                            applyOrderItemOffer(itemOffer);
+                            isItemAdjustmentApplied = true;
+                            if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                                // Offer applied is not combinable with other offers, ignore other offers
+                                break;
+                            }
                             //}
                         }
                     } else {
@@ -293,19 +298,19 @@ public class OfferServiceImpl implements OfferService {
                     if (order.getOrderAdjustments().size() == 0) {
                         if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
                             //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
-                                applyOrderOffer(orderOffer);
-                                // check to see if this not combinable offer has a greater value than all the item offers
-                                if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateCurrentSubTotal())) {
-                                    // item offers has more value; remove order offer
-                                    order.removeAllAdjustments();
-                                } else {
-                                    order.removeAllItemAdjustments();
-                                    isItemAdjustmentApplied = false;
-                                }
+                            applyOrderOffer(orderOffer);
+                            // check to see if this not combinable offer has a greater value than all the item offers
+                            if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateCurrentSubTotal())) {
+                                // item offers has more value; remove order offer
+                                order.removeAllAdjustments();
+                            } else {
+                                order.removeAllItemAdjustments();
+                                isItemAdjustmentApplied = false;
+                            }
                             //}
                         } else {
                             //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
-                                applyOrderOffer(orderOffer);
+                            applyOrderOffer(orderOffer);
                             //}
                         }
                     } else if (orderOffer.getOffer().isCombinableWithOtherOffers()) {
@@ -315,11 +320,11 @@ public class OfferServiceImpl implements OfferService {
                             // check to see if this offer can be applied to the order item
                             // the offer needs to be stackable or no adjustment has been applied to this line item
                             //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
-                                applyOrderOffer(orderOffer);
-                                if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
-                                    // Offer applied is not combinable with other offers, ignore other offers
-                                    break;
-                                }
+                            applyOrderOffer(orderOffer);
+                            if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
+                                // Offer applied is not combinable with other offers, ignore other offers
+                                break;
+                            }
                             //}
                         }
                     } else {
@@ -413,9 +418,9 @@ public class OfferServiceImpl implements OfferService {
             vars.put("doMark", Boolean.FALSE); //We never want to mark offers when we are checking if they could apply.
             vars.put("order", order);
             vars.put("offer", offer);
-//            if (fulfillmentGroup != null) {
-//                vars.put("currentfulfillmentGroup", fulfillmentGroup);
-//            }
+            //            if (fulfillmentGroup != null) {
+            //                vars.put("currentfulfillmentGroup", fulfillmentGroup);
+            //            }
             if (discreteOrderItem != null) {
                 vars.put("discreteOrderItem", discreteOrderItem);
             }
