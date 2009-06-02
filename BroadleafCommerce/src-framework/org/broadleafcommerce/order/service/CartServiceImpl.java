@@ -106,10 +106,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
      */
     @Override
     public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException {
-        /*
-         * TODO test that cart is merged properly and that the anonymous cart and all its items
-         * are deleted.
-         */
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         // reconstruct cart items (make sure they are valid)
         ReconstructCartResponse reconstructCartResponse = reconstructCart(customer);
@@ -173,10 +169,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
      */
     @Override
     public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
-        /*
-         * TODO test that cart is reconstructed properly - check removed items for both
-         * Bundle and discrete order items
-         */
         ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
         Order customerCart = findCartForCustomer(customer);
         if (customerCart != null) {
