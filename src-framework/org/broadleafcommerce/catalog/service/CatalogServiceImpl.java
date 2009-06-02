@@ -115,11 +115,6 @@ public class CatalogServiceImpl implements CatalogService {
         this.skuDao = skuDao;
     }
 
-    public List<Product> findProductsForCategory(Category category) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public void setCategoryDao(CategoryDao categoryDao) {
         this.categoryDao = categoryDao;
     }
