@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.Authentication;
 import org.springframework.security.ui.logout.SecurityContextLogoutHandler;
 
-public class BCLogoutHandler extends SecurityContextLogoutHandler {
+public class BroadleafLogoutHandler extends SecurityContextLogoutHandler {
 
     private final List<PreLogoutObserver> preLogoutListeners = new ArrayList<PreLogoutObserver>();
 

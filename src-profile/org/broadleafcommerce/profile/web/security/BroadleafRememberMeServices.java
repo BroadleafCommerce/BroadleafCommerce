@@ -28,7 +28,7 @@ import org.springframework.security.ui.rememberme.RememberMeAuthenticationExcept
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UsernameNotFoundException;
 
-public class BCRememberMeServices extends AbstractRememberMeServices {
+public class BroadleafRememberMeServices extends AbstractRememberMeServices {
 
     @Resource
     private CustomerService customerService;
