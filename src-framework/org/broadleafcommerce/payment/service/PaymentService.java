@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.payment.service;
 
-import org.broadleafcommerce.order.domain.PaymentResponseItem;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 
 public interface PaymentService {

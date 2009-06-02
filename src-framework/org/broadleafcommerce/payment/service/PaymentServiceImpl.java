@@ -15,13 +15,17 @@
  */
 package org.broadleafcommerce.payment.service;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.order.domain.PaymentResponseItem;
-import org.broadleafcommerce.order.service.PaymentInfoService;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentLog;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
+import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
 import org.broadleafcommerce.payment.service.module.PaymentModule;
+import org.broadleafcommerce.payment.service.type.BLCPaymentLogEventType;
 import org.broadleafcommerce.payment.service.type.BLCTransactionType;
 
 public class PaymentServiceImpl implements PaymentService {
@@ -40,91 +44,103 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException  {
-        PaymentInfo info = paymentContext.getPaymentInfo();
-        PaymentResponseItem response = paymentModule.authorize(paymentContext);
-        response.setTransactionType(BLCTransactionType.AUTHORIZE);
-        response.setPaymentInfo(info);
-        response.setUserName(paymentContext.getUserName());
-        response.setCustomer(info.getOrder().getCustomer());
-        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
-        info.getPaymentResponseItems().add(response);
-
-        paymentInfoService.save(info);
+        logPaymentStartEvent(paymentContext, BLCTransactionType.AUTHORIZE);
+        PaymentResponseItem response = null;
+        try {
+            response = paymentModule.authorize(paymentContext);
+        } catch (PaymentException e) {
+            if (e instanceof PaymentProcessorException) {
+                response = ((PaymentProcessorException) e).getPaymentResponseItem();
+            }
+            throw e;
+        } finally {
+            logResponseItem(paymentContext, response, BLCTransactionType.AUTHORIZE);
+        }
 
         return response;
     }
 
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-        PaymentInfo info = paymentContext.getPaymentInfo();
-        PaymentResponseItem response = paymentModule.authorizeAndDebit(paymentContext);
-        response.setTransactionType(BLCTransactionType.AUTHORIZEANDDEBIT);
-        response.setPaymentInfo(info);
-        response.setUserName(paymentContext.getUserName());
-        response.setCustomer(info.getOrder().getCustomer());
-        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
-        info.getPaymentResponseItems().add(response);
-
-        paymentInfoService.save(info);
+        logPaymentStartEvent(paymentContext, BLCTransactionType.AUTHORIZEANDDEBIT);
+        PaymentResponseItem response = null;
+        try {
+            response = paymentModule.authorizeAndDebit(paymentContext);
+        } catch (PaymentException e) {
+            if (e instanceof PaymentProcessorException) {
+                response = ((PaymentProcessorException) e).getPaymentResponseItem();
+            }
+            throw e;
+        } finally {
+            logResponseItem(paymentContext, response, BLCTransactionType.AUTHORIZEANDDEBIT);
+        }
 
         return response;
     }
 
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-        PaymentInfo info = paymentContext.getPaymentInfo();
-        PaymentResponseItem response = paymentModule.balance(paymentContext);
-        response.setTransactionType(BLCTransactionType.BALANCE);
-        response.setPaymentInfo(info);
-        response.setUserName(paymentContext.getUserName());
-        response.setCustomer(info.getOrder().getCustomer());
-        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
-        info.getPaymentResponseItems().add(response);
-
-        paymentInfoService.save(info);
+        logPaymentStartEvent(paymentContext, BLCTransactionType.BALANCE);
+        PaymentResponseItem response = null;
+        try {
+            response = paymentModule.balance(paymentContext);
+        } catch (PaymentException e) {
+            if (e instanceof PaymentProcessorException) {
+                response = ((PaymentProcessorException) e).getPaymentResponseItem();
+            }
+            throw e;
+        } finally {
+            logResponseItem(paymentContext, response, BLCTransactionType.BALANCE);
+        }
 
         return response;
     }
 
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-        PaymentInfo info = paymentContext.getPaymentInfo();
-        PaymentResponseItem response = paymentModule.credit(paymentContext);
-        response.setTransactionType(BLCTransactionType.CREDIT);
-        response.setPaymentInfo(info);
-        response.setUserName(paymentContext.getUserName());
-        response.setCustomer(info.getOrder().getCustomer());
-        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
-        info.getPaymentResponseItems().add(response);
-
-        paymentInfoService.save(info);
+        logPaymentStartEvent(paymentContext, BLCTransactionType.CREDIT);
+        PaymentResponseItem response = null;
+        try {
+            response = paymentModule.credit(paymentContext);
+        } catch (PaymentException e) {
+            if (e instanceof PaymentProcessorException) {
+                response = ((PaymentProcessorException) e).getPaymentResponseItem();
+            }
+            throw e;
+        } finally {
+            logResponseItem(paymentContext, response, BLCTransactionType.CREDIT);
+        }
 
         return response;
     }
 
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-        PaymentInfo info = paymentContext.getPaymentInfo();
-        PaymentResponseItem response = paymentModule.debit(paymentContext);
-        response.setTransactionType(BLCTransactionType.DEBIT);
-        response.setPaymentInfo(info);
-        response.setUserName(paymentContext.getUserName());
-        response.setCustomer(info.getOrder().getCustomer());
-        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
-        info.getPaymentResponseItems().add(response);
-
-        paymentInfoService.save(info);
+        logPaymentStartEvent(paymentContext, BLCTransactionType.DEBIT);
+        PaymentResponseItem response = null;
+        try {
+            response = paymentModule.debit(paymentContext);
+        } catch (PaymentException e) {
+            if (e instanceof PaymentProcessorException) {
+                response = ((PaymentProcessorException) e).getPaymentResponseItem();
+            }
+            throw e;
+        } finally {
+            logResponseItem(paymentContext, response, BLCTransactionType.DEBIT);
+        }
 
         return response;
     }
 
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-        PaymentInfo info = paymentContext.getPaymentInfo();
-        PaymentResponseItem response = paymentModule.voidPayment(paymentContext);
-        response.setTransactionType(BLCTransactionType.VOIDPAYMENT);
-        response.setPaymentInfo(info);
-        response.setUserName(paymentContext.getUserName());
-        response.setCustomer(info.getOrder().getCustomer());
-        response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
-        info.getPaymentResponseItems().add(response);
-
-        paymentInfoService.save(info);
+        logPaymentStartEvent(paymentContext, BLCTransactionType.VOIDPAYMENT);
+        PaymentResponseItem response = null;
+        try {
+            response = paymentModule.voidPayment(paymentContext);
+        } catch (PaymentException e) {
+            if (e instanceof PaymentProcessorException) {
+                response = ((PaymentProcessorException) e).getPaymentResponseItem();
+            }
+            throw e;
+        } finally {
+            logResponseItem(paymentContext, response, BLCTransactionType.VOIDPAYMENT);
+        }
 
         return response;
     }
@@ -134,4 +150,33 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentModule.isValidCandidate(paymentType);
     }
 
+    protected void logResponseItem(PaymentContext paymentContext, PaymentResponseItem response, BLCTransactionType transactionType) {
+        if (response != null) {
+            PaymentInfo info = paymentContext.getPaymentInfo();
+            response.setTransactionType(transactionType);
+            response.setPaymentInfo(info);
+            response.setCustomer(info.getOrder().getCustomer());
+            response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
+            response.setUserName(paymentContext.getUserName());
+            info.getPaymentResponseItems().add(response);
+            paymentInfoService.save(info);
+        }
+    }
+
+    protected void logPaymentStartEvent(PaymentContext paymentContext, BLCTransactionType transactionType) {
+        PaymentInfo info = paymentContext.getPaymentInfo();
+        PaymentLog log = paymentInfoService.createLog();
+        log.setLogType(BLCPaymentLogEventType.START);
+        log.setTransactionTimestamp(new Date());
+        log.setTransactionSuccess(Boolean.TRUE);
+        log.setTransactionType(transactionType);
+        log.setCustomer(info.getOrder().getCustomer());
+        log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
+        log.setUserName(paymentContext.getUserName());
+        log.setExceptionMessage(null);
+        log.setPaymentInfo(info);
+        info.getPaymentLogs().add(log);
+
+        paymentInfoService.save(info);
+    }
 }

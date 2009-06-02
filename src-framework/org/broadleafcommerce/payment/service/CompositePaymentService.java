@@ -18,7 +18,7 @@ package org.broadleafcommerce.payment.service;
 import java.util.Map;
 
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.module.PaymentResponse;

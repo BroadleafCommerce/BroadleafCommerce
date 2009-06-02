@@ -48,6 +48,8 @@ import org.broadleafcommerce.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;

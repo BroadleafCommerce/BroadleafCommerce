@@ -18,8 +18,8 @@ package org.broadleafcommerce.payment.service.module;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.order.domain.PaymentResponseItem;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 
 
 public class PaymentResponseImpl implements PaymentResponse {

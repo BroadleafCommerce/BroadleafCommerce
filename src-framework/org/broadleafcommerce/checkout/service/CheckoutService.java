@@ -20,7 +20,7 @@ import java.util.Map;
 import org.broadleafcommerce.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 
 public interface CheckoutService {

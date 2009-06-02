@@ -17,7 +17,7 @@ package org.broadleafcommerce.payment.service.workflow;
 
 import java.util.Map;
 
-import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.module.PaymentResponse;
 import org.broadleafcommerce.util.money.Money;

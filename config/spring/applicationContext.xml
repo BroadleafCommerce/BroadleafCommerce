@@ -175,7 +175,7 @@
 	</aop:config>
 
 	<aop:config>
-		<aop:pointcut id="blPaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.order.service.PaymentInfoService.*(..))"/>
+		<aop:pointcut id="blPaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.payment.service.PaymentInfoService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPaymentInfoServiceOperation"/>
 	</aop:config>
 
@@ -246,7 +246,8 @@
 	<bean id="org.broadleafcommerce.order.domain.DiscreteOrderItem" class="org.broadleafcommerce.order.domain.DiscreteOrderItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.order.domain.BundleOrderItem" class="org.broadleafcommerce.order.domain.BundleOrderItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.order.domain.PaymentInfo" class="org.broadleafcommerce.order.domain.PaymentInfoImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.payment.domain.PaymentInfo" class="org.broadleafcommerce.payment.domain.PaymentInfoImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl" scope="prototype"/>

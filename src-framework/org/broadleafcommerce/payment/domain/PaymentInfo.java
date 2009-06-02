@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.order.domain;
+package org.broadleafcommerce.payment.domain;
 
 import java.util.List;
 
+import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.util.money.Money;
@@ -54,5 +55,9 @@ public interface PaymentInfo {
     public List<PaymentResponseItem> getPaymentResponseItems();
 
     public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems);
+
+    public List<PaymentLog> getPaymentLogs();
+
+    public void setPaymentLogs(List<PaymentLog> paymentLogs);
 
 }

@@ -17,8 +17,8 @@ package org.broadleafcommerce.test.dataprovider;
 
 import java.math.BigDecimal;
 
-import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.order.domain.PaymentInfoImpl;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.DataProvider;
 

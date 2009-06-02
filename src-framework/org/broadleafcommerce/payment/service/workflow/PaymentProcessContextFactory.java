@@ -22,8 +22,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.order.service.OrderService;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.workflow.ProcessContext;

@@ -13,15 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.order.service;
+package org.broadleafcommerce.payment.service;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.dao.PaymentInfoDao;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.payment.dao.PaymentInfoDao;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentLog;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.springframework.stereotype.Service;
 
 @Service("blPaymentInfoService")
@@ -53,6 +55,16 @@ public class PaymentInfoServiceImpl implements PaymentInfoService {
     @Override
     public void delete(PaymentInfo paymentInfo) {
         paymentInfoDao.delete(paymentInfo);
+    }
+
+    @Override
+    public PaymentLog createLog() {
+        return paymentInfoDao.createLog();
+    }
+
+    @Override
+    public PaymentResponseItem createResponseItem() {
+        return paymentInfoDao.createResponseItem();
     }
 
 }
