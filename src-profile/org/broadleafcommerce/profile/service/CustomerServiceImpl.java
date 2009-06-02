@@ -52,8 +52,8 @@ public class CustomerServiceImpl implements CustomerService {
     protected EntityConfiguration entityConfiguration;
 
     /*
-     * TODO cannot reference beans defined in the spring mvc application context here.
-     * The bean visibility is in the wrong direction and spring cannot find these beans.
+     * TODO cannot reference beans defined in the spring security application context here.
+     * The bean visibility is in the wrong direction - perhaps.
      */
     /*@Resource
     protected EmailService emailService;
