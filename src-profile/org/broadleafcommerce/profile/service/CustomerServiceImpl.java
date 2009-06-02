@@ -16,7 +16,6 @@
 package org.broadleafcommerce.profile.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,23 +23,12 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.email.domain.EmailTarget;
-import org.broadleafcommerce.email.domain.EmailTargetImpl;
-import org.broadleafcommerce.email.service.EmailService;
-import org.broadleafcommerce.email.service.info.EmailInfo;
-import org.broadleafcommerce.email.service.info.NullEmailInfo;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.listener.PostRegistrationObserver;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.profile.util.PasswordChange;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.ProviderManager;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.encoding.PasswordEncoder;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +51,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource
     protected EntityConfiguration entityConfiguration;
 
-    @Resource
+    /*
+     * TODO cannot reference beans defined in the spring mvc application context here.
+     * The bean visibility is in the wrong direction and spring cannot find these beans.
+     */
+    /*@Resource
     protected EmailService emailService;
 
     @Resource
@@ -73,7 +65,7 @@ public class CustomerServiceImpl implements CustomerService {
     protected UserDetailsService userDetailsService;
 
     @Resource(name="blRegistrationEmailInfo")
-    protected EmailInfo emailInfo;
+    protected EmailInfo emailInfo;*/
 
     private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
 
@@ -108,12 +100,12 @@ public class CustomerServiceImpl implements CustomerService {
 
 
         notifyPostRegisterListeners(retCustomer);
-        this.sendConfirmationEmail(retCustomer);
+        /*this.sendConfirmationEmail(retCustomer);
 
         HashMap<String, Object> emailDataMap = new HashMap<String, Object>();
         emailDataMap.put("customer", retCustomer);
         emailService.sendTemplateEmail(retCustomer.getEmailAddress(), emailInfo, emailDataMap);
-        authenticateUser(customer.getUsername(), password);
+        authenticateUser(customer.getUsername(), password);*/
         return retCustomer;
     }
 
@@ -128,16 +120,16 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUnencodedPassword(passwordChange.getNewPassword());
         customer.setPasswordChangeRequired(passwordChange.getPasswordChangeRequired());
         customer = saveCustomer(customer);
-        authenticateUser(passwordChange.getUsername(), passwordChange.getNewPassword());
+        //authenticateUser(passwordChange.getUsername(), passwordChange.getNewPassword());
         return customer;
     }
 
-    protected void authenticateUser(String username, String password) {
+    /*protected void authenticateUser(String username, String password) {
         UserDetails principal = userDetailsService.loadUserByUsername(username);
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
         Authentication authentication = authenticationManager.authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
+    }*/
 
     public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners) {
         this.postRegisterListeners.add(postRegisterListeners);
@@ -156,7 +148,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    protected void sendConfirmationEmail(Customer customer) {
+    /*protected void sendConfirmationEmail(Customer customer) {
         if (emailInfo == null || emailInfo instanceof NullEmailInfo) {
             logger.info("Customer Registration Email not being sent because blRegistrationEmailInfo is not configured");
             return;
@@ -167,7 +159,7 @@ public class CustomerServiceImpl implements CustomerService {
         HashMap<String, Object> props = new HashMap<String, Object>();
 
         emailService.sendTemplateEmail(target, emailInfo, props);
-    }
+    }*/
 
     public Customer createCustomerFromId(Long customerId) {
         Customer customer = customerId != null ? readCustomerById(customerId) : null;
