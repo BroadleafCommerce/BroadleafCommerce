@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChallengeQuestionServiceImpl implements ChallengeQuestionService {
 
     @Resource
-    private ChallengeQuestionDao challengeQuestionDao;
+    protected ChallengeQuestionDao challengeQuestionDao;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public List<ChallengeQuestion> readChallengeQuestions() {

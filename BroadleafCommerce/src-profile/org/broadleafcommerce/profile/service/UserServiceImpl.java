@@ -40,10 +40,10 @@ public class UserServiceImpl implements UserService {
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Resource
-    private UserDao userDao;
+    protected UserDao userDao;
 
     @Resource
-    private PasswordEncoder passwordEncoder;
+    protected PasswordEncoder passwordEncoder;
 
     // @Resource(name = "saltSource")
     // private SaltSource saltSource;
