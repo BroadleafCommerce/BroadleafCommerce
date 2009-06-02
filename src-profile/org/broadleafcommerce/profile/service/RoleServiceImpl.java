@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RoleServiceImpl implements RoleService {
 
     @Resource
-    private RoleDao roleDao;
+    protected RoleDao roleDao;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)

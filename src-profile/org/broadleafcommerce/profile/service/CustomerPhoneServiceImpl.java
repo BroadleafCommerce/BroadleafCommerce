@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerPhoneServiceImpl implements CustomerPhoneService {
 
     @Resource
-    private CustomerPhoneDao customerPhoneDao;
+    protected CustomerPhoneDao customerPhoneDao;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerPhone saveCustomerPhone(CustomerPhone customerPhone) {

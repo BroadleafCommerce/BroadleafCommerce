@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PhoneServiceImpl implements PhoneService {
 
     @Resource
-    private PhoneDao phoneDao;
+    protected PhoneDao phoneDao;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Phone savePhone(Phone phone) {

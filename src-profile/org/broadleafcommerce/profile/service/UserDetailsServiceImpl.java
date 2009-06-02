@@ -39,10 +39,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Resource
-    private CustomerService customerService;
+    protected CustomerService customerService;
 
     @Resource
-    private RoleService roleService;
+    protected RoleService roleService;
 
     private boolean forcePasswordChange = false;
 

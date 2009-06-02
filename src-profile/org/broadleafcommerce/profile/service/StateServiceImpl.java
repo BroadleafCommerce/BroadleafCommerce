@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class StateServiceImpl implements StateService {
 
     @Resource
-    private StateDao stateDao;
+    protected StateDao stateDao;
 
     public List<State> findStates() {
         return stateDao.findStates();

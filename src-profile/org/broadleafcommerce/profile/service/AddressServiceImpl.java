@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AddressServiceImpl implements AddressService {
 
     @Resource
-    private AddressDao addressDao;
+    protected AddressDao addressDao;
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Address saveAddress(Address address) {
