@@ -273,6 +273,15 @@
 	<bean id="blNullEmailInfo" class="org.broadleafcommerce.email.service.info.NullEmailInfo" />
 	<bean id="blRegistrationEmailInfo" parent="blNullEmailInfo" />
 
+	<bean id="org.broadleafcommerce.offer.domain.Offer" class="org.broadleafcommerce.offer.domain.OfferImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.OfferCode" class="org.broadleafcommerce.offer.domain.OfferCodeImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.CandidateOrderOffer" class="org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.CandidateItemOffer" class="org.broadleafcommerce.offer.domain.CandidateItemOfferImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer" class="org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.OrderAdjustment" class="org.broadleafcommerce.offer.domain.OrderAdjustmentImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.OrderItemAdjustment" class="org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment" class="org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustmentImpl" scope="prototype"/>
+
 	<bean id="blTaxModule" class="org.broadleafcommerce.pricing.service.module.SimpleTaxModule">
 		<property name="factor" value="0.05"/>
 	</bean>
@@ -301,7 +310,7 @@
 		</property>
 		<property name="activities">
 			<list>
-<!--                <bean class="org.broadleafcommerce.pricing.service.workflow.OfferActivity"/>-->
+                <bean class="org.broadleafcommerce.pricing.service.workflow.OfferActivity"/>
                 <bean class="org.broadleafcommerce.pricing.service.workflow.SubtotalActivity"/>
                 <bean class="org.broadleafcommerce.pricing.service.workflow.ShippingActivity">
                     <property name="shippingModule" ref="blShippingModule"/>

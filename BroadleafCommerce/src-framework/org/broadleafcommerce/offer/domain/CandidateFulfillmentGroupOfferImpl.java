@@ -15,18 +15,42 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.util.money.Money;
 
-public class CandidateFulfillmentGroupOfferImpl implements
-		CandidateFulfillmentGroupOffer {
+@Entity
+@Table(name = "BLC_CANDIDATE_FULFILLMENT_GROUP_OFFER")
+public class CandidateFulfillmentGroupOfferImpl implements Serializable,CandidateFulfillmentGroupOffer {
+    public static final long serialVersionUID = 1L;
 
-	private Offer offer;
-	private Money discountedPrice;
-	private FulfillmentGroup fulfillmentGroup;
+    @Id
+    @GeneratedValue
+    @Column(name = "CANDIDATE_FULFILLMENT_GROUP_OFFER_ID")
+    private Long id;
+
+    @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
+    @JoinColumn(name = "FULFILLMENT_GROUP_ID")
+    private FulfillmentGroup fulfillmentGroup;
+
+    @ManyToOne(targetEntity = OfferImpl.class)
+    @JoinColumn(name = "OFFER_ID")
+    private Offer offer;
+
+    @Column(name = "DISCOUNTED_PRICE")
+    private BigDecimal discountedPrice;
 
 	public CandidateFulfillmentGroupOfferImpl(){
 
@@ -38,10 +62,17 @@ public class CandidateFulfillmentGroupOfferImpl implements
 		computeDiscountAmount();
 	}
 
-	public Offer getOffer() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+ 	public Offer getOffer() {
 		return offer;
 	}
-
 
 	public void setOffer(Offer offer) {
 		this.offer = offer;
@@ -49,7 +80,7 @@ public class CandidateFulfillmentGroupOfferImpl implements
 	}
 	public Money getDiscountedPrice() {
 		computeDiscountAmount();
-		return discountedPrice;
+        return discountedPrice == null ? null : new Money(discountedPrice);
 	}
 
 	public FulfillmentGroup getFulfillmentGroup() {
@@ -82,7 +113,7 @@ public class CandidateFulfillmentGroupOfferImpl implements
 	        if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
 	            priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
 	        }
-	        discountedPrice = priceToUse;
+            discountedPrice = priceToUse.getAmount();
 		}
 	}
 

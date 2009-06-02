@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.offer.dao;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -65,6 +68,14 @@ public class OfferDaoJpa implements OfferDao {
     @SuppressWarnings("unchecked")
     public Offer readOfferById(Long offerId) {
         return (Offer) em.find(entityConfiguration.lookupEntityClass(beanName), offerId);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Offer> readOffersByAutomaticDeliveryType() {
+        Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
+        List<Offer> result = query.getResultList();
+        return result;
     }
 
 }

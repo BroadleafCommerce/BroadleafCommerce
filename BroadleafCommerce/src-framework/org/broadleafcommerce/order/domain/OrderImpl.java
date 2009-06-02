@@ -25,14 +25,16 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -40,8 +42,9 @@ import javax.persistence.Transient;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.offer.domain.OfferCode;
-import org.broadleafcommerce.offer.domain.OfferImpl;
+import org.broadleafcommerce.offer.domain.OfferCodeImpl;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
@@ -114,13 +117,11 @@ public class OrderImpl implements Order, Serializable {
     @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = {CascadeType.ALL})
     private List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
-    // TODO: need to persist
-    @Transient
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class)
+    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"))
     private List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
-    //TODO does this work?? MapKey is supposed to be used with the type "Map" This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
-    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class, cascade = {CascadeType.ALL})
-    @MapKey(name = "id")
+    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = {CascadeType.ALL})
     private List<CandidateOrderOffer> candidateOffers = new ArrayList<CandidateOrderOffer>();
 
     @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
@@ -193,7 +194,7 @@ public class OrderImpl implements Order, Serializable {
     }
 
     public Money getRemainingTotal() {
-        if (getPaymentInfos() == null || getTotal() == null) {
+        if (getPaymentInfos() == null) {
             return null;
         }
         Money totalPayments = new Money(BigDecimal.ZERO);
@@ -236,6 +237,11 @@ public class OrderImpl implements Order, Serializable {
     @Override
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    @Override
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
     }
 
     public List<FulfillmentGroup> getFulfillmentGroups() {
@@ -519,12 +525,21 @@ public class OrderImpl implements Order, Serializable {
         return discreteOrderItems;
     }
 
+    @Override
     public List<OfferCode> getAddedOfferCodes() {
         return addedOfferCodes;
     }
 
-    public void setAddedOfferCodes(List<OfferCode> addedOfferCodes) {
-        this.addedOfferCodes = addedOfferCodes;
+    @Override
+    public void addAddedOfferCode(OfferCode addedOfferCode) {
+        addedOfferCodes.add(addedOfferCode);
+    }
+
+    @Override
+    public void removeAllAddedOfferCodes() {
+        if (addedOfferCodes != null) {
+            addedOfferCodes.clear();
+        }
     }
 
 

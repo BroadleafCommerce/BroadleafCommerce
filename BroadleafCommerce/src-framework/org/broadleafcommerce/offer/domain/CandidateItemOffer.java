@@ -19,10 +19,20 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.util.money.Money;
 
 public interface CandidateItemOffer {
+
+    public void setId(Long id);
+
+    public Long getId();
+
 	public Money getDiscountedPrice(); //transient, computed
+
 	public OrderItem getOrderItem();
+
 	public void setOrderItem(OrderItem orderItem);
+
 	public int getPriority(); // convenience offer.getPriority()
+
 	public Offer getOffer();
+
 	public void setOffer(Offer offer);
 }

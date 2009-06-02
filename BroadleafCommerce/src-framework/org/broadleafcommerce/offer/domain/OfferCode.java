@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.util.Date;
+
 public interface OfferCode {
 	public Long getId() ;
 
@@ -25,9 +27,17 @@ public interface OfferCode {
 	public void setOffer(Offer offer) ;
 
 	public String getOfferCode();
-	
+
 	public void setOfferCode(String offerCode);
-	
+
+    public Date getStartDate();
+
+    public void setStartDate(Date startDate);
+
+    public Date getEndDate();
+
+    public void setEndDate(Date endDate);
+
 	public int getMaxUses() ;
 
 	public void setMaxUses(int maxUses) ;
@@ -35,7 +45,7 @@ public interface OfferCode {
 	public int getUses() ;
 
 	public void setUses(int uses) ;
-	
-	
+
+
 
 }

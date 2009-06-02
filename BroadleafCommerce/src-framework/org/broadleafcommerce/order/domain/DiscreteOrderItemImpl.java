@@ -52,6 +52,12 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     public void setSku(Sku sku) {
         this.sku = sku;
+        if (sku.getRetailPrice() != null) {
+            this.retailPrice = sku.getRetailPrice().getAmount();
+        }
+        if (sku.getSalePrice() != null) {
+            this.salePrice = sku.getSalePrice().getAmount();
+        }
     }
 
     public Product getProduct() {

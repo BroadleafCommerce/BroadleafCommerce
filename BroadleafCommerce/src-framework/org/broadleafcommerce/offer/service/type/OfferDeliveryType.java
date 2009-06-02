@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.offer.dao;
+package org.broadleafcommerce.offer.service.type;
 
-import org.broadleafcommerce.offer.domain.OfferCode;
-
-public interface OfferCodeDao {
-
-	public OfferCode readOfferCodeById(Long offerCode);
-
-    public OfferCode readOfferCodeByCode(String code);
-
-	public OfferCode save(OfferCode offerCode);
-
-	public void delete(OfferCode offerCodeId);
-
-	public OfferCode create();
+/**
+ * Enumeration of how the offer should be applied.
+ * AUTOMATIC - will be applied to everyone's order
+ * MANUAL - offer is manually assigned to a Customer by an administrator
+ * CODE - a offer code must be supplied in order to receive this offer
+ *
+ */
+public enum OfferDeliveryType {
+    AUTOMATIC,
+    MANUAL,
+    CODE
 
 }
