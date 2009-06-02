@@ -34,7 +34,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.web.CustomerState;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
@@ -42,7 +42,7 @@ public class EmailClickTrackingFilter implements Filter {
 
     private EmailTrackingManager emailTrackingManager;
 
-    @Resource
+    @Resource(name="blCustomerState")
     protected CustomerState customerState;
 
     /* (non-Javadoc)
