@@ -54,7 +54,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource
     protected ProviderManager authenticationManager;
 
-    @Resource
+    @Resource(name="blUserDetailsService")
     protected UserDetailsService userDetailsService;
 
     @Resource(name="blRegistrationEmailInfo")
