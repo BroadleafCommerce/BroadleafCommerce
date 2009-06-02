@@ -33,13 +33,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class CatalogServiceImpl implements CatalogService {
 
     @Resource
-    private CategoryDao categoryDao;
+    protected CategoryDao categoryDao;
 
     @Resource
-    private ProductDao productDao;
+    protected ProductDao productDao;
 
     @Resource
-    private SkuDao skuDao;
+    protected SkuDao skuDao;
 
     public Product findProductById(Long productId) {
         return productDao.readProductById(productId);

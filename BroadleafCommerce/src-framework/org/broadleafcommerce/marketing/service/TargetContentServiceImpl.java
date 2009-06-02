@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class TargetContentServiceImpl implements TargetContentService {
 
     @Resource
-    private TargetContentDao targetContentDao;
+    protected TargetContentDao targetContentDao;
 
     @Override
     public TargetContent findTargetContentById(Long targetContentId) {

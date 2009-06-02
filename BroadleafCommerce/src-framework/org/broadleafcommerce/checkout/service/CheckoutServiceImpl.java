@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class CheckoutServiceImpl implements CheckoutService {
 
     @Resource(name="blCheckoutWorkflow")
-    private SequenceProcessor checkoutWorkflow;
+    protected SequenceProcessor checkoutWorkflow;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order, java.util.Map)
