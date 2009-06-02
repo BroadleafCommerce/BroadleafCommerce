@@ -119,6 +119,9 @@ public class OrderAdjustmentImpl implements Serializable, OrderAdjustment {
             if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF) {
                 value = adjustmentPrice.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()).getAmount();
             }
+            if (adjustmentPrice.lessThan(value)) {
+                value = adjustmentPrice.getAmount();
+            }
         }
     }
 

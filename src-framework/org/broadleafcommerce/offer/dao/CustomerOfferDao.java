@@ -15,18 +15,20 @@
  */
 package org.broadleafcommerce.offer.dao;
 
-import org.broadleafcommerce.offer.domain.OfferCode;
+import java.util.List;
 
-public interface OfferCodeDao {
+import org.broadleafcommerce.offer.domain.CustomerOffer;
+import org.broadleafcommerce.profile.domain.Customer;
 
-	public OfferCode readOfferCodeById(Long offerCode);
+public interface CustomerOfferDao {
 
-    public OfferCode readOfferCodeByCode(String code);
+	public CustomerOffer readCustomerOfferById(Long offerCustomerId);
 
-	public OfferCode save(OfferCode offerCode);
+    public List<CustomerOffer> readCustomerOffersByCustomer(Customer customer);
 
-	public void delete(OfferCode offerCodeId);
+	public CustomerOffer save(CustomerOffer offerCustomer);
 
-	public OfferCode create();
+	public void delete(CustomerOffer offerCustomer);
 
+	public CustomerOffer create();
 }

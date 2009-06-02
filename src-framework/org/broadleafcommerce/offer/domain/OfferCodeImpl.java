@@ -16,6 +16,7 @@
 package org.broadleafcommerce.offer.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,22 +31,28 @@ import javax.persistence.Table;
 public class OfferCodeImpl implements Serializable,OfferCode {
 
 	public static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue
 	@Column(name = "OFFER_CODE_ID")
 	private Long id;
-	
+
 	@ManyToOne(targetEntity = OfferImpl.class)
 	@JoinColumn(name = "OFFER_ID")
 	private Offer offer;
-	
+
 	@Column(name = "OFFER_CODE")
 	private String offerCode;
-	
+
+    @Column(name = "START_DATE")
+    private Date startDate;
+
+    @Column(name = "END_DATE")
+    private Date endDate;
+
 	@Column(name = "MAX_USES")
 	private int maxUses;
-	
+
 	@Column(name = "USES")
 	private int uses;
 
@@ -57,14 +64,14 @@ public class OfferCodeImpl implements Serializable,OfferCode {
 		this.id = id;
 	}
 
-	public Offer getOffer() {
+    public Offer getOffer() {
 		return offer;
 	}
 
 	public void setOffer(Offer offer) {
 		this.offer = offer;
 	}
-	
+
 	public String getOfferCode() {
 		return offerCode;
 	}
@@ -88,6 +95,22 @@ public class OfferCodeImpl implements Serializable,OfferCode {
 	public void setUses(int uses) {
 		this.uses = uses;
 	}
-	
-	
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+
 }

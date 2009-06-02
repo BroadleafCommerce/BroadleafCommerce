@@ -30,6 +30,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -37,7 +38,9 @@ import javax.persistence.Transient;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
+import org.broadleafcommerce.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -84,12 +87,10 @@ public class OrderItemImpl implements OrderItem, Serializable {
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
-    // TODO: need to persist
-    @Transient
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = {CascadeType.ALL})
     private List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
-    // TODO: need to persist
-    @Transient
+    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = {CascadeType.ALL})
     protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
 
     @Transient

@@ -13,17 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.offer.dao;
+ package org.broadleafcommerce.offer.dao;
+
+import java.util.List;
 
 import org.broadleafcommerce.offer.domain.Offer;
 
 public interface OfferDao {
 
 	public Offer readOfferById(Long offerId);
-	
+
+    public List<Offer> readOffersByAutomaticDeliveryType();
+
 	public Offer save(Offer offer);
-	
+
 	public void delete(Offer offer);
-	
+
 	public Offer create();
 }

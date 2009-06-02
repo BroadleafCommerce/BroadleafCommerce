@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.offer.dao;
+package org.broadleafcommerce.offer.domain;
 
-import org.broadleafcommerce.offer.domain.OfferCode;
+import org.broadleafcommerce.profile.domain.Customer;
 
-public interface OfferCodeDao {
+public interface CustomerOffer {
+    public Long getId() ;
 
-	public OfferCode readOfferCodeById(Long offerCode);
+    public void setId(Long id) ;
 
-    public OfferCode readOfferCodeByCode(String code);
+    public Customer getCustomer() ;
 
-	public OfferCode save(OfferCode offerCode);
+    public void setCustomer(Customer customer) ;
 
-	public void delete(OfferCode offerCodeId);
+    public Offer getOffer() ;
 
-	public OfferCode create();
+    public void setOffer(Offer offer) ;
+
 
 }

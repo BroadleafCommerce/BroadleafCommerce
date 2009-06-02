@@ -67,6 +67,8 @@ public interface Order {
 
     public void setOrderItems(List<OrderItem> orderItems);
 
+    public void addOrderItem(OrderItem orderItem);
+
     public List<FulfillmentGroup> getFulfillmentGroups();
 
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
@@ -147,7 +149,9 @@ public interface Order {
 
     public List<OfferCode> getAddedOfferCodes();
 
-    public void setAddedOfferCodes(List<OfferCode> addedOfferCodes);
+    public void addAddedOfferCode(OfferCode addedOfferCode);
+
+    public void removeAllAddedOfferCodes();
 
 
 }

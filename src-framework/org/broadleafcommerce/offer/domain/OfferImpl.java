@@ -26,10 +26,9 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
+import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.offer.service.type.OfferScopeType;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.util.money.Money;
 
@@ -44,9 +43,6 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "OFFER_ID")
     private Long id;
 
-    @Column(name = "OFFER_CODE")
-    private String code;
-
     @Column(name = "OFFER_NAME")
     private String name;
 
@@ -57,10 +53,6 @@ public class OfferImpl implements Serializable, Offer {
     @Enumerated(EnumType.STRING)
     @Column(name = "OFFER_DISCOUNT_TYPE")
     private OfferDiscountType discountType;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "OFFER_SCOPE_TYPE")
-    private OfferScopeType scopeType;
 
     @Column(name = "OFFER_VALUE")
     private BigDecimal value;
@@ -80,9 +72,8 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "TARGET_SYSTEM")
     private String targetSystem;
 
-//  Not supported in current implementation
-//    @Column(name = "APPLY_TO_SALE_PRICE")
-//    private boolean applyToSalePrice;
+    @Column(name = "APPLY_TO_SALE_PRICE")
+    private boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
     private String appliesToOrderRules;
@@ -90,14 +81,21 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "APPLIES_WHEN_RULES")
     private String appliesToCustomerRules;
 
-    @Transient
-    private Money calculatedDiscount;
-
     @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
     private boolean applyDiscountToMarkedItems;
 
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
     private boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "OFFER_DELIVERY_TYPE")
+    private OfferDeliveryType deliveryType;
+
+    @Column(name = "MAX_USES")
+    private int maxUses;
+
+    @Column(name = "USES")
+    private int uses;
 
     public Long getId() {
         return id;
@@ -105,14 +103,6 @@ public class OfferImpl implements Serializable, Offer {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getName() {
@@ -129,14 +119,6 @@ public class OfferImpl implements Serializable, Offer {
 
     public void setType(OfferType type) {
         this.type = type;
-    }
-
-    public OfferScopeType getScopeType() {
-        return scopeType;
-    }
-
-    public void setScopeType(OfferScopeType useType) {
-        this.scopeType = useType;
     }
 
     public OfferDiscountType getDiscountType() {
@@ -198,7 +180,6 @@ public class OfferImpl implements Serializable, Offer {
         this.targetSystem = targetSystem;
     }
 
-/*
     @Override
     public boolean getApplyDiscountToSalePrice() {
         return applyToSalePrice;
@@ -209,13 +190,12 @@ public class OfferImpl implements Serializable, Offer {
         this.applyToSalePrice=applyToSalePrice;
 
     }
-*/
 
     public String getAppliesToOrderRules() {
         return appliesToOrderRules;
     }
 
-    public void setAppliesToOrderRules(String Order) {
+    public void setAppliesToOrderRules(String appliesToOrderRules) {
         this.appliesToOrderRules = appliesToOrderRules;
     }
 
@@ -225,14 +205,6 @@ public class OfferImpl implements Serializable, Offer {
 
     public void setAppliesToCustomerRules(String appliesToCustomerRules) {
         this.appliesToCustomerRules = appliesToCustomerRules;
-    }
-
-    public Money getDiscountPrice() {
-        return calculatedDiscount;
-    }
-
-    public void setDiscountPrice(Money calculatedDiscount) {
-        this.calculatedDiscount = calculatedDiscount;
     }
 
     public boolean isApplyDiscountToMarkedItems() {
@@ -250,5 +222,31 @@ public class OfferImpl implements Serializable, Offer {
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers) {
         this.combinableWithOtherOffers = combinableWithOtherOffers;
     }
+
+    public OfferDeliveryType getDeliveryType() {
+        return deliveryType;
+    }
+
+    public void setDeliveryType(OfferDeliveryType deliveryType) {
+        this.deliveryType = deliveryType;
+    }
+
+    public int getMaxUses() {
+        return maxUses;
+    }
+
+    public void setMaxUses(int maxUses) {
+        this.maxUses = maxUses;
+    }
+
+    public int getUses() {
+        return uses;
+    }
+
+    public void setUses(int uses) {
+        this.uses = uses;
+    }
+
+
 
 }

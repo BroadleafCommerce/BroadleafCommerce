@@ -29,21 +29,19 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.offer.dao.OfferCodeDao;
-import org.broadleafcommerce.offer.dao.OfferCustomerDao;
+import org.broadleafcommerce.offer.dao.OfferDao;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl;
+import org.broadleafcommerce.offer.domain.CustomerOffer;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
-import org.broadleafcommerce.offer.domain.OfferCustomer;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
@@ -69,14 +67,16 @@ public class OfferServiceImpl implements OfferService {
 
     private static final LRUMap expressionCache = new LRUMap(100);
     private static final StringBuffer functions = new StringBuffer();
-    private static final Log LOG = LogFactory.getLog(OfferServiceImpl.class);
 
     // should be called outside of Offer service after Offer service is executed
     @Resource
-    protected OfferCustomerDao offerCustomerDao;
+    protected CustomerOfferDao customerOfferDao;
 
     @Resource
     protected OfferCodeDao offerCodeDao;
+
+    @Resource
+    protected OfferDao offerDao;
 
     static {
         // load static mvel functions into SB
@@ -94,9 +94,7 @@ public class OfferServiceImpl implements OfferService {
             if (is != null) {
                 try {
                     is.close();
-                } catch (Exception e){
-                    LOG.error("Unable to get mvelFunctions", e);
-                }
+                } catch (Exception e){}
             }
         }
     }
@@ -113,8 +111,12 @@ public class OfferServiceImpl implements OfferService {
 
     @Override
     public Offer lookupOfferByCode(String code) {
-        // TODO Auto-generated method stub
-        return null;
+        Offer offer = null;
+        OfferCode offerCode = offerCodeDao.readOfferCodeByCode(code);
+        if (offerCode != null) {
+            offer = offerCode.getOffer();
+        }
+        return offer;
     }
 
 
@@ -122,35 +124,36 @@ public class OfferServiceImpl implements OfferService {
     // The same offer cannot be applied more than one time
     public List<Offer> buildOfferListForOrder(Order order) {
         List<Offer> offers = new ArrayList<Offer>();
-        List<OfferCustomer> offerCustomers = lookupOfferCustomerByCustomer(order.getCustomer());
-        for (OfferCustomer customerOfferCode : offerCustomers) {
-            if (!offers.contains(customerOfferCode.getOfferCode().getOffer())) {
-                offers.add(customerOfferCode.getOfferCode().getOffer());
+        List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getCustomer());
+        for (CustomerOffer customerOffer : customerOffers) {
+            if (!offers.contains(customerOffer.getOffer())) {
+                offers.add(customerOffer.getOffer());
             }
         }
         List<OfferCode> orderOfferCodes = order.getAddedOfferCodes();
+        orderOfferCodes = removeOutOfDateOfferCodes(orderOfferCodes);
         for (OfferCode orderOfferCode : orderOfferCodes) {
             if (!offers.contains(orderOfferCode.getOffer())) {
                 offers.add(orderOfferCode.getOffer());
             }
         }
-        List<OfferCode> globalOfferCodes = lookupAllGlobalOffers();
-        for (OfferCode globalOfferCode : globalOfferCodes) {
-            if (!offers.contains(globalOfferCode.getOffer())) {
-                offers.add(globalOfferCode.getOffer());
+        List<Offer> globalOffers = lookupGlobalOffers();
+        for (Offer globalOffer : globalOffers) {
+            if (!offers.contains(globalOffer)) {
+                offers.add(globalOffer);
             }
         }
         return offers;
     }
 
 
-    private List<OfferCustomer> lookupOfferCustomerByCustomer(Customer customer) {
-        List<OfferCustomer> offerCustomers = offerCustomerDao.readOffersByCustomer(customer);
+    private List<CustomerOffer> lookupOfferCustomerByCustomer(Customer customer) {
+        List<CustomerOffer> offerCustomers = customerOfferDao.readCustomerOffersByCustomer(customer);
         return offerCustomers;
     }
 
-    private List<OfferCode> lookupAllGlobalOffers() {
-        List<OfferCode> globalOffers = offerCodeDao.readGlobalOfferCodes();
+    private List<Offer> lookupGlobalOffers() {
+        List<Offer> globalOffers = offerDao.readOffersByAutomaticDeliveryType();
         return globalOffers;
     }
 
@@ -179,6 +182,8 @@ public class OfferServiceImpl implements OfferService {
      * 2) $ off order will be created as an order offer
      * 3) Order offers applies to the best price for each item (not just retail price)
      * 4) Fulfillment offers apply to best price for each item (not just retail price)
+     * 5) Stackable only applies to the same offer type (i.e. a not stackable order offer can be used with item offers)
+     * 6) Fulfillment offers cannot be not combinable
      */
     @SuppressWarnings("unchecked")
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
@@ -211,7 +216,7 @@ public class OfferServiceImpl implements OfferService {
 
                     //TODO: change code so the computing discount only happens in the CandidateItemOffer or CandidateOrderOffer objects
                     if(offer.getType().equals(OfferType.ORDER)){
-                        if (couldOfferApply(offer, order)) {
+                        if (couldOfferApplyToOrder(offer, order)) {
                             CandidateOrderOffer candidateOffer = new CandidateOrderOfferImpl(order, offer);
                             // Why do we add offers here when we set the sorted list later
                             order.addCandidateOrderOffer(candidateOffer);
@@ -219,7 +224,7 @@ public class OfferServiceImpl implements OfferService {
                         }
                     } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
                         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                            if(couldOfferApply(offer, order, discreteOrderItem)) {
+                            if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
                                 CandidateItemOffer candidateOffer = new CandidateItemOfferImpl(discreteOrderItem, offer);
                                 discreteOrderItem.addCandidateItemOffer(candidateOffer);
                                 qualifiedItemOffers.add(candidateOffer);
@@ -229,7 +234,7 @@ public class OfferServiceImpl implements OfferService {
                         // TODO: Handle Offer calculation for offer type of fullfillment group
                         // how to verify if offer applies for fulfillment?
                         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-                            if(couldOfferApply(offer, order, fulfillmentGroup)) {
+                            if(couldOfferApplyToOrder(offer, order, fulfillmentGroup)) {
                                 CandidateFulfillmentGroupOffer candidateOffer = new CandidateFulfillmentGroupOfferImpl(fulfillmentGroup, offer);
                                 fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
                             }
@@ -240,10 +245,10 @@ public class OfferServiceImpl implements OfferService {
                 // . Create a sorted list sorted by priority asc then amount desc
                 // TODO: verify if discountPrice is the adjusted price or discount amount(not use reverse comparator)
                 //
-                Collections.sort(qualifiedOrderOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountedPrice")));
+                Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
                 Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
 
-                Collections.sort(qualifiedItemOffers, ComparatorUtils.reversedComparator(new BeanComparator("discountedPrice")));
+                Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
                 Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
                 // qualifiedItemOffers list is sorted but the candidate offer list on the item is not sorted.  what do we use?
 
@@ -266,12 +271,12 @@ public class OfferServiceImpl implements OfferService {
                             // check to see if this offer can be applied to the order item
                             // the offer needs to be stackable or no adjustment has been applied to this line item
                             //if (doesItemOfferApply(itemOffer, order, itemAdjustments)) {
-                            applyOrderItemOffer(itemOffer);
-                            isItemAdjustmentApplied = true;
-                            if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {
-                                // Offer applied is not combinable with other offers, ignore other offers
-                                break;
-                            }
+                                applyOrderItemOffer(itemOffer);
+                                isItemAdjustmentApplied = true;
+                                if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {
+                                    // Offer applied is not combinable with other offers, ignore other offers
+                                    break;
+                                }
                             //}
                         }
                     } else {
@@ -298,19 +303,19 @@ public class OfferServiceImpl implements OfferService {
                     if (order.getOrderAdjustments().size() == 0) {
                         if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
                             //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
-                            applyOrderOffer(orderOffer);
-                            // check to see if this not combinable offer has a greater value than all the item offers
-                            if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateCurrentSubTotal())) {
-                                // item offers has more value; remove order offer
-                                order.removeAllAdjustments();
-                            } else {
-                                order.removeAllItemAdjustments();
-                                isItemAdjustmentApplied = false;
-                            }
+                                applyOrderOffer(orderOffer);
+                                // check to see if this not combinable offer has a greater value than all the item offers
+                                if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateCurrentSubTotal())) {
+                                    // item offers has more value; remove order offer
+                                    order.removeAllAdjustments();
+                                } else {
+                                    order.removeAllItemAdjustments();
+                                    isItemAdjustmentApplied = false;
+                                }
                             //}
                         } else {
                             //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
-                            applyOrderOffer(orderOffer);
+                                applyOrderOffer(orderOffer);
                             //}
                         }
                     } else if (orderOffer.getOffer().isCombinableWithOtherOffers()) {
@@ -320,11 +325,11 @@ public class OfferServiceImpl implements OfferService {
                             // check to see if this offer can be applied to the order item
                             // the offer needs to be stackable or no adjustment has been applied to this line item
                             //if (doesOrderOfferApply(orderOffer, order, orderAdjustments)) {
-                            applyOrderOffer(orderOffer);
-                            if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
-                                // Offer applied is not combinable with other offers, ignore other offers
-                                break;
-                            }
+                                applyOrderOffer(orderOffer);
+                                if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
+                                    // Offer applied is not combinable with other offers, ignore other offers
+                                    break;
+                                }
                             //}
                         }
                     } else {
@@ -332,10 +337,10 @@ public class OfferServiceImpl implements OfferService {
                     }
                 }
 
-                // if order contains a non-Combinable item offer or a non-Stackable order offer, determine which offer
+                // if order contains a non-Combinable item offer determine if the order offer or item offer
                 // should apply
                 if ((order.getOrderAdjustments().size() > 0) && (isItemAdjustmentApplied)) {
-                    if ((order.containsNotCombinableItemOffer()) || (order.containsNotStackableOrderOffer())) {
+                    if (order.containsNotCombinableItemOffer()) {
                         if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateCurrentSubTotal())) {
                             // remove all order adjustments
                             order.removeAllAdjustments();
@@ -366,13 +371,23 @@ public class OfferServiceImpl implements OfferService {
         orderOffer.getOrder().addOrderAdjustments(orderAdjustment); //This is how we can tell if an item has been discounted
     }
 
+    /**
+     * Removes all out of date offers.  If an offer does not have a start date, or the start
+     * date is a later date, that offer will be removed.  Offers without a start date should
+     * not be processed.  If the offer has a end date that has already passed, that offer
+     * will be removed.  Offers without a end date will be processed if the start date
+     * is prior to the transaction date.
+     *
+     * @param offers
+     * @return
+     */
     private List<Offer> removeOutOfDateOffers(List<Offer> offers){
         Date now = new Date();
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
-            if(offer.getStartDate()!= null && offer.getStartDate().after(now)){
+            if ((offer.getStartDate() == null) || (offer.getStartDate().after(now))){
                 offersToRemove.add(offer);
-            } else if(offer.getEndDate()!= null && offer.getEndDate().before(now)){
+            } else if (offer.getEndDate() != null && offer.getEndDate().before(now)){
                 offersToRemove.add(offer);
             }
         }
@@ -381,6 +396,34 @@ public class OfferServiceImpl implements OfferService {
             offers.remove(offer);
         }
         return offers;
+    }
+
+    /**
+     * Removes all out of date offerCodes based on the offerCode and its offer's start and end
+     * date.  If an offerCode has a later start date, that offerCode will be removed.
+     * OfferCodes without a start date will still be processed. If the offerCode
+     * has a end date that has already passed, that offerCode will be removed.  OfferCodes
+     * without a end date will be processed.  The start and end dates on the offer will
+     * still need to be evaluated.
+     *
+     * @param offers
+     * @return
+     */
+    private List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes){
+        Date now = new Date();
+        List<OfferCode> offerCodesToRemove = new ArrayList<OfferCode>();
+        for (OfferCode offerCode : offerCodes) {
+            if ((offerCode.getStartDate() != null) && (offerCode.getStartDate().after(now))){
+                offerCodesToRemove.add(offerCode);
+            } else if (offerCode.getEndDate() != null && offerCode.getEndDate().before(now)){
+                offerCodesToRemove.add(offerCode);
+            }
+        }
+        // remove all offers in the offersToRemove list from original offers list
+        for (OfferCode offerCode : offerCodesToRemove) {
+            offerCodes.remove(offerCode);
+        }
+        return offerCodes;
     }
 
     private List<Offer> removeInvalidCustomerOffers(List<Offer> offers, Order order){
@@ -397,19 +440,19 @@ public class OfferServiceImpl implements OfferService {
         return offers;
     }
 
-    private boolean couldOfferApply(Offer offer, Order order) {
-        return couldOfferApply(offer, order, null, null);
+    private boolean couldOfferApplyToOrder(Offer offer, Order order) {
+        return couldOfferApplyToOrder(offer, order, null, null);
     }
 
-    private boolean couldOfferApply(Offer offer, Order order, DiscreteOrderItem discreteOrderItem) {
-        return couldOfferApply(offer, order, discreteOrderItem, null);
+    private boolean couldOfferApplyToOrder(Offer offer, Order order, DiscreteOrderItem discreteOrderItem) {
+        return couldOfferApplyToOrder(offer, order, discreteOrderItem, null);
     }
 
-    private boolean couldOfferApply(Offer offer, Order order, FulfillmentGroup fulfillmentGroup) {
-        return couldOfferApply(offer, order, null, fulfillmentGroup);
+    private boolean couldOfferApplyToOrder(Offer offer, Order order, FulfillmentGroup fulfillmentGroup) {
+        return couldOfferApplyToOrder(offer, order, null, fulfillmentGroup);
     }
 
-    private boolean couldOfferApply(Offer offer, Order order, DiscreteOrderItem discreteOrderItem, FulfillmentGroup fulfillmentGroup) {
+    private boolean couldOfferApplyToOrder(Offer offer, Order order, DiscreteOrderItem discreteOrderItem, FulfillmentGroup fulfillmentGroup) {
         boolean appliesToItem = false;
 
         if (offer.getAppliesToOrderRules() != null && offer.getAppliesToOrderRules().length() != 0) {
@@ -418,9 +461,9 @@ public class OfferServiceImpl implements OfferService {
             vars.put("doMark", Boolean.FALSE); //We never want to mark offers when we are checking if they could apply.
             vars.put("order", order);
             vars.put("offer", offer);
-            //            if (fulfillmentGroup != null) {
-            //                vars.put("currentfulfillmentGroup", fulfillmentGroup);
-            //            }
+//            if (fulfillmentGroup != null) {
+//                vars.put("currentfulfillmentGroup", fulfillmentGroup);
+//            }
             if (discreteOrderItem != null) {
                 vars.put("discreteOrderItem", discreteOrderItem);
             }

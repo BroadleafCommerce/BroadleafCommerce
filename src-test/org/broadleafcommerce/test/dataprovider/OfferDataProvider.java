@@ -23,7 +23,6 @@ import java.util.List;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
-import org.broadleafcommerce.offer.service.type.OfferScopeType;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.money.Money;
@@ -40,7 +39,6 @@ public class OfferDataProvider {
         o.setValue(new Money(new BigDecimal("5.00")));
         o.setName("Some test offer");
         o.setPriority(100);
-        o.setScopeType(OfferScopeType.ALL);
         o.setStackable(true);
         o.setStartDate(new Date(DateUtil.getNow().getTime()));
         o.setEndDate(new Date(DateUtil.getNow().getTime()+100000000));
@@ -72,7 +70,6 @@ public class OfferDataProvider {
         o.setValue(new Money(new BigDecimal("5.00")));
         o.setName("Second test offer");
         o.setPriority(100);
-        o.setScopeType(OfferScopeType.ALL);
         o.setStackable(false);
         o.setStartDate(new Date(DateUtil.getNow().getTime()));
         o.setEndDate(new Date(DateUtil.getNow().getTime()+100000000));

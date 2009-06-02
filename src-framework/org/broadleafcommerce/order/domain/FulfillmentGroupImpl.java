@@ -39,7 +39,9 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
+import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
@@ -57,7 +59,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Id
     @GeneratedValue(generator = "FulfillmentGroupId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FulfillmentGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupImpl", allocationSize = 1)
-    @Column(name = "ID")
+    @Column(name = "FULFILLMENT_GROUP_ID")
     private Long id;
 
     @ManyToOne(targetEntity = OrderImpl.class)
@@ -81,15 +83,15 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Column(name = "METHOD")
     private String method;
 
-    //TODO change column name to RETAIL_SHIPPING_PRICE - No, don't fullfillment groups don't have to be shipping
+    //TODO change column name to RETAIL_SHIPPING_PRICE
     @Column(name = "RETAIL_PRICE")
     private BigDecimal retailShippingPrice;
 
-    //TODO change column name to SALE_SHIPPING_PRICE- No, don't fullfillment groups don't have to be shipping
+    //TODO change column name to SALE_SHIPPING_PRICE
     @Column(name = "SALE_PRICE")
     private BigDecimal saleShippingPrice;
 
-    //TODO change column name to SHIPPING_PRICE- No, don't fullfillment groups don't have to be shipping
+    //TODO change column name to SHIPPING_PRICE
     @Column(name = "PRICE")
     private BigDecimal shippingPrice;
 
@@ -100,12 +102,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @Enumerated(EnumType.STRING)
     private FulfillmentGroupType type;
 
-    // TODO: need to persist
-    @Transient
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
     private List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
 
-    // TODO: need to persist
-    @Transient
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = {CascadeType.ALL})
     private List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
 
     @Column(name = "CITY_TAX")

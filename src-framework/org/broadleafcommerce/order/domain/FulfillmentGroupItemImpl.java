@@ -52,7 +52,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
     @Id
     @GeneratedValue(generator = "FulfillmentGroupItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FulfillmentGroupItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupItemImpl", allocationSize = 1)
-    @Column(name = "ID")
+    @Column(name = "FULFILLMENT_GROUP_ITEM_ID")
     private Long id;
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
