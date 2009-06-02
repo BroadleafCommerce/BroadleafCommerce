@@ -38,7 +38,7 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
 
     private static final Log LOG = LogFactory.getLog(EmailTrackingManagerImpl.class);
 
-    @Resource
+    @Resource(name="blEmailReportingDao")
     protected EmailReportingDao emailReportingDao;
 
     /* (non-Javadoc)

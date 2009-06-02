@@ -36,18 +36,18 @@ import org.springframework.stereotype.Service;
 @Service("blEmailService")
 public class EmailServiceImpl implements EmailService {
 
-    @Resource
+    @Resource(name="blEmailTrackingManager")
     protected EmailTrackingManager emailTrackingManager;
 
-    @Resource
+    @Resource(name="blServerInfo")
     protected ServerInfo serverInfo;
 
     protected EmailServiceProducer emailServiceProducer;
 
-    @Resource
+    @Resource(name="blMessageCreator")
     protected MessageCreator messageCreator;
 
-    @Resource
+    @Resource(name="blEmailReportingDao")
     protected EmailReportingDao emailReportingDao;
 
     public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String,Object> props) {
