@@ -24,27 +24,41 @@ public class IdGenerationServiceImpl implements IdGenerationService {
     private Map<String, Id> idTypeIdMap = new HashMap<String, Id>();
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public synchronized Long findNextId(String idType) {
+    public Long findNextId(String idType) {
         Id id = idTypeIdMap.get(idType);
-        if (id == null || id.batchSize.equals(0L)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("I don't have the next id, going to the database");
-            }
-            IdGeneration idGeneration = idGenerationDao.findNextId(idType);
-            Long nextId = idGeneration.getBatchStart();
-            Long batchSize = idGeneration.getBatchSize();
-            idGeneration.setBatchStart(nextId + batchSize);
-            idGenerationDao.updateNextId(idGeneration);
-            id = new Id(nextId, batchSize);
-        } else {
-            if (logger.isDebugEnabled()) {
-                logger.debug("I already have the next id");
+        IdGeneration idGeneration=null;
+        if (id == null) {
+            synchronized (idTypeIdMap) {
+                // recheck, another thread may have added this.
+                id = idTypeIdMap.get(idType);
+                if (id == null) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Getting the initial id from the database.");
+                    }
+                    idGeneration = idGenerationDao.findNextId(idType);
+                    id = new Id(idGeneration.getBatchStart(), 0L);
+                }
+                idTypeIdMap.put(idType, id);
             }
         }
-        Long retId = id.nextId++;
-        id.batchSize--;
-        idTypeIdMap.put(idType, id);
-        return retId;
+
+        // Minimize synchronization to the idType we are looking for.
+        synchronized(id) {
+            if (id.batchSize == 0L) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Updating batch size for idType " + idType);
+                }
+
+                Long prevBatchStart = idGeneration.getBatchStart();
+                Long batchSize = idGeneration.getBatchSize();
+                idGeneration.setBatchStart(prevBatchStart + batchSize);
+                idGeneration = idGenerationDao.updateNextId(idGeneration);
+                id.nextId = prevBatchStart;
+            }
+            Long retId = id.nextId++;
+            id.batchSize--;
+            return retId;
+        }
     }
 
     private class Id {

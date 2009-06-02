@@ -1,10 +1,8 @@
 package org.broadleafcommerce.email.service.info;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import org.broadleafcommerce.email.service.message.Attachment;
 
@@ -25,31 +23,6 @@ public class EmailInfo implements Serializable {
 
     private String sendEmailReliableAsync;
     private String sendAsyncPriority;
-
-    public EmailInfo() throws IOException {
-        this(null);
-    }
-
-    public EmailInfo(String[] propertiesPath) throws IOException {
-        Properties defaults = new Properties();
-        defaults.load(EmailInfo.class.getResourceAsStream("/org/broadleafcommerce/email/service/props/defaultEmail.properties"));
-        Properties props = null;
-        if (propertiesPath != null && propertiesPath.length > 0) {
-            for (int j=0;j<propertiesPath.length;j++) {
-                props = new Properties(defaults);
-                props.load(EmailInfo.class.getResourceAsStream(propertiesPath[j]));
-                defaults = props;
-            }
-        } else {
-            props = new Properties(defaults);
-        }
-        setEmailType(props.getProperty("emailType"));
-        setEmailTemplate(props.getProperty("emailTemplate"));
-        setSubject(props.getProperty("subject"));
-        setFromAddress(props.getProperty("fromAddress"));
-        setSendEmailReliableAsync(props.getProperty("sendEmailReliableAsync"));
-        setSendAsyncPriority(props.getProperty("sendAsyncPriority"));
-    }
 
     /**
      * @return the emailType

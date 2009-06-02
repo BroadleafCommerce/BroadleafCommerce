@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -25,6 +26,9 @@ public class IdGenerationImpl implements IdGeneration, Serializable {
 
     @Column(name = "BATCH_SIZE")
     private Long batchSize;
+
+    @Version
+    private Integer version;
 
     public String getType() {
         return type;
@@ -48,5 +52,9 @@ public class IdGenerationImpl implements IdGeneration, Serializable {
 
     public void setBatchSize(Long batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public Integer getVersion() {
+        return version;
     }
 }

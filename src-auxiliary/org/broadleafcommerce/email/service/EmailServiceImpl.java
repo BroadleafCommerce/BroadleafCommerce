@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.email.domain.EmailTarget;
+import org.broadleafcommerce.email.domain.EmailTargetImpl;
 import org.broadleafcommerce.email.service.info.EmailInfo;
 import org.broadleafcommerce.email.service.info.ServerInfo;
 import org.broadleafcommerce.email.service.jms.EmailServiceProducer;
@@ -16,10 +17,10 @@ import org.springframework.stereotype.Service;
  * @author jfischer
  *
  */
-@Service("emailDeliveryServiceBLC")
+@Service("blEmailService")
 public class EmailServiceImpl implements EmailService {
 
-    @Resource(name="emailTrackingManagerBLC")
+    @Resource
     protected EmailTrackingManager emailTrackingManager;
 
     @Resource
@@ -30,54 +31,35 @@ public class EmailServiceImpl implements EmailService {
     @Resource
     protected MessageCreator messageCreator;
 
-    /* (non-Javadoc)
-     * @see com.containerstore.web.task.service.EmailService#sendTemplateEmail(com.containerstore.web.task.domain.AbstractEmailTargetUser)
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public boolean sendTemplateEmail(HashMap props) {
-        props.put(EmailPropertyType.SERVERINFO.toString(), serverInfo);
-        EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.toString());
-        EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.toString());
-        Long emailId = emailTrackingManager.createTrackedEmail(emailUser.getEmailAddress(), info.getEmailType() , null);
-        props.put("emailTrackingId", emailId);
-
-        return sendBasicEmail(props);
-    }
-
-    @SuppressWarnings("unchecked")
-    public boolean sendTemplateEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap props) {
+    public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String,Object> props) {
         if (props == null) return false;
 
         props.put(EmailPropertyType.INFO.toString(), emailInfo);
         props.put(EmailPropertyType.USER.toString(), emailTarget);
 
-        return sendTemplateEmail(props);
+        return sendBasicEmail(emailInfo, emailTarget, props);
     }
 
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public boolean sendBasicEmail(HashMap props) {
-        EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.toString());
-        if (Boolean.parseBoolean(info.getSendEmailReliableAsync())) {
+    public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, HashMap<String,Object> props) {
+        EmailTarget emailTarget = new EmailTargetImpl();
+        emailTarget.setEmailAddress(emailAddress);
+        return sendTemplateEmail(emailTarget, emailInfo, props);
+    }
+
+    @Override
+    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap<String,Object> props) {
+        if (props == null) return false;
+
+        props.put(EmailPropertyType.INFO.toString(), emailInfo);
+        props.put(EmailPropertyType.USER.toString(), emailTarget);
+
+        if (Boolean.parseBoolean(emailInfo.getSendEmailReliableAsync())) {
             emailServiceProducer.send(props);
         } else {
             messageCreator.sendMessage(props);
         }
 
         return true;
-    }
-
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap props) {
-        if (props == null) return false;
-
-        props.put(EmailPropertyType.INFO.toString(), emailInfo);
-        props.put(EmailPropertyType.USER.toString(), emailTarget);
-
-        return sendBasicEmail(props);
     }
 
     /**

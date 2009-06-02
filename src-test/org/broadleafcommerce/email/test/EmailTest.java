@@ -1,11 +1,7 @@
 package org.broadleafcommerce.email.test;
 
-import java.util.HashMap;
-
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.email.domain.AbstractEmailTarget;
-import org.broadleafcommerce.email.domain.EmailTarget;
 import org.broadleafcommerce.email.service.EmailService;
 import org.broadleafcommerce.email.service.info.EmailInfo;
 import org.broadleafcommerce.test.integration.BaseTest;
@@ -16,7 +12,7 @@ import com.icegreen.greenmail.util.ServerSetup;
 
 public class EmailTest extends BaseTest {
 
-    @Resource(name="emailDeliveryServiceBLC")
+    @Resource
     EmailService emailService;
 
     @Test
@@ -28,17 +24,9 @@ public class EmailTest extends BaseTest {
         );
         greenMail.start();
 
-        EmailTarget target = new AbstractEmailTarget(){};
-        target.setEmailAddress("to@localhost");
-        EmailInfo info = new EmailInfo();
+        emailService.sendTemplateEmail("to@localhost", new EmailInfo(), null);
 
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("user", target);
-        map.put("info", info);
-
-        emailService.sendTemplateEmail(map);
-
-        assert (1 == greenMail.getReceivedMessages().length);
+        assert(greenMail.waitForIncomingEmail(10000, 1));
 
         greenMail.stop();
     }
