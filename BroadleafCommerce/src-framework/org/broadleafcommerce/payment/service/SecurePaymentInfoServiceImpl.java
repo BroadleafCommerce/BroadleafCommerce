@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
 public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
     @Resource
-    private SecurePaymentInfoDao securePaymentInfoDao;
+    protected SecurePaymentInfoDao securePaymentInfoDao;
 
     protected BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
         return securePaymentInfoDao.findBankAccountInfo(referenceNumber);

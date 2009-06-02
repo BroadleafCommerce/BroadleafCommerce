@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class PaymentInfoServiceImpl implements PaymentInfoService {
 
     @Resource
-    private PaymentInfoDao paymentInfoDao;
+    protected PaymentInfoDao paymentInfoDao;
 
     @Override
     public PaymentInfo save(PaymentInfo paymentInfo) {

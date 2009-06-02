@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class PricingServiceImpl implements PricingService {
 
     @Resource(name="blPricingWorkflow")
-    private SequenceProcessor pricingWorkflow;
+    protected SequenceProcessor pricingWorkflow;
 
     public Order executePricing(Order order) throws PricingException {
         try {

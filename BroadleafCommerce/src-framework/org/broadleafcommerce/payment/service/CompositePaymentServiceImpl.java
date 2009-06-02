@@ -41,7 +41,7 @@ import org.springframework.stereotype.Service;
 public class CompositePaymentServiceImpl implements CompositePaymentService {
 
     @Resource(name="blPaymentWorkflow")
-    SequenceProcessor paymentWorkflow;
+    protected SequenceProcessor paymentWorkflow;
 
     @Override
     public CompositePaymentResponse executePayment(Order order, Map<PaymentInfo, Referenced> payments, PaymentResponse response) throws PaymentException {

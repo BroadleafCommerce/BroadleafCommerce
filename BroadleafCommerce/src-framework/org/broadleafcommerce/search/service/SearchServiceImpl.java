@@ -47,7 +47,7 @@ import org.springframework.stereotype.Service;
 public class SearchServiceImpl implements SearchService {
 
     @Resource
-    private CatalogService catalogService;
+    protected CatalogService catalogService;
 
     public List<Sku> performSearch(String queryString) throws CorruptIndexException, IOException, ParseException {
         Analyzer analyzer = new StandardAnalyzer();
