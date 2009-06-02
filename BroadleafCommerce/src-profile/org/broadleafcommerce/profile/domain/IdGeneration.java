@@ -13,4 +13,6 @@ public interface IdGeneration {
     public Long getBatchSize();
 
     public void setBatchSize(Long batchSize);
+
+    public Integer getVersion();
 }
