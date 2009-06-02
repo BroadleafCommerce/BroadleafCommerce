@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
-@Component("defaultErrorHandler")
+@Component("blDefaultErrorHandler")
 public class DefaultErrorHandler implements ErrorHandler {
 
     private static final Log LOG = LogFactory.getLog(DefaultErrorHandler.class);

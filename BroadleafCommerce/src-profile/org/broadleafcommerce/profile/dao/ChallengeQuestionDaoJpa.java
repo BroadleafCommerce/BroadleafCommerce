@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.ChallengeQuestion;
 import org.springframework.stereotype.Repository;
 
-@Repository("challengeQuestionDao")
+@Repository("blChallengeQuestionDao")
 public class ChallengeQuestionDaoJpa implements ChallengeQuestionDao {
 
     /** Logger for this class and subclasses */

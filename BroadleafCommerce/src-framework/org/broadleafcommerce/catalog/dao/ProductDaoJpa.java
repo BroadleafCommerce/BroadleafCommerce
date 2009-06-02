@@ -26,7 +26,7 @@ import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("productDao")
+@Repository("blProductDao")
 public class ProductDaoJpa implements ProductDao {
 
     @PersistenceContext(unitName="blPU")

@@ -62,7 +62,7 @@ import org.springframework.stereotype.Service;
 /**
  * The Class OfferServiceImpl.
  */
-@Service("offerService")
+@Service("blOfferService")
 public class OfferServiceImpl implements OfferService {
 
     private static final LRUMap expressionCache = new LRUMap(100);

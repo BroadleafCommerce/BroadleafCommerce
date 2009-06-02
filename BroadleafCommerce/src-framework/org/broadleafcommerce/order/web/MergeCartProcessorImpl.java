@@ -30,7 +30,7 @@ import org.broadleafcommerce.profile.web.MergeCartProcessor;
 import org.springframework.security.Authentication;
 import org.springframework.stereotype.Service;
 
-@Service("mergeCartProcessor")
+@Service("blMergeCartProcessor")
 public class MergeCartProcessorImpl implements MergeCartProcessor {
 
     private String mergeCartItemsAddedKey = "merge_cart_items_added";

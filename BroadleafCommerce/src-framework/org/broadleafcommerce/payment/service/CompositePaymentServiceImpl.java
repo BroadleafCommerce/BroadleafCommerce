@@ -37,10 +37,10 @@ import org.springframework.stereotype.Service;
  * @author jfischer
  *
  */
-@Service("compositePaymentService")
+@Service("blCompositePaymentService")
 public class CompositePaymentServiceImpl implements CompositePaymentService {
 
-    @Resource(name="paymentWorkflow")
+    @Resource(name="blPaymentWorkflow")
     SequenceProcessor paymentWorkflow;
 
     @Override

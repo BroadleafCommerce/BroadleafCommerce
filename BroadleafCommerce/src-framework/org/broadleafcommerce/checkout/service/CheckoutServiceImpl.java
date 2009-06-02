@@ -29,10 +29,10 @@ import org.broadleafcommerce.workflow.SequenceProcessor;
 import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 
-@Service("checkoutService")
+@Service("blCheckoutService")
 public class CheckoutServiceImpl implements CheckoutService {
 
-    @Resource(name="checkoutWorkflow")
+    @Resource(name="blCheckoutWorkflow")
     private SequenceProcessor checkoutWorkflow;
 
     /* (non-Javadoc)

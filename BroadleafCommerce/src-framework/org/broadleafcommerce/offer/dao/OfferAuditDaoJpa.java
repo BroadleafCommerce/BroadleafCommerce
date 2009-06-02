@@ -25,7 +25,7 @@ import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("offerAuditDao")
+@Repository("blOfferAuditDao")
 public class OfferAuditDaoJpa implements OfferAuditDao {
 
     /** Lookup identifier for Offer bean **/

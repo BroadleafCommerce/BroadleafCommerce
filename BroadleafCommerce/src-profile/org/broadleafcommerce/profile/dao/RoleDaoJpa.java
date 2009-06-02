@@ -29,7 +29,7 @@ import org.broadleafcommerce.profile.domain.CustomerRole;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("roleDao")
+@Repository("blRoleDao")
 public class RoleDaoJpa implements RoleDao {
 
     /** Logger for this class and subclasses */

@@ -26,7 +26,7 @@ import org.broadleafcommerce.profile.web.security.PreLogoutObserver;
 import org.springframework.security.Authentication;
 import org.springframework.stereotype.Component;
 
-@Component("customerStateStore")
+@Component("blCustomerStateStore")
 public class CustomerStateStore implements PostLoginObserver, PreLogoutObserver {
 
     @Resource

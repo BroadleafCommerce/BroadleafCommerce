@@ -28,7 +28,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-@Component
+@Component("blRegisterCustomerValidator")
 public class RegisterCustomerValidator implements Validator {
     private static final String REGEX_VALID_NAME = "[A-Za-z'. ]{1,80}";
     private static final String REGEX_VALID_PASSWORD = "[0-9A-Za-z]{4,15}";

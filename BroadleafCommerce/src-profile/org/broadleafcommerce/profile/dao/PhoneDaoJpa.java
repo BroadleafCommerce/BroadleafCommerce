@@ -25,7 +25,7 @@ import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("phoneDao")
+@Repository("blPhoneDao")
 public class PhoneDaoJpa implements PhoneDao {
 
     /** Logger for this class and subclasses */

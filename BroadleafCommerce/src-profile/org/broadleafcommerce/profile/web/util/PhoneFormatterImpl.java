@@ -19,7 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.springframework.stereotype.Service;
 
-@Service("phoneFormatter")
+@Service("blPhoneFormatter")
 public class PhoneFormatterImpl implements PhoneFormatter {
     public void formatPhoneNumber(Phone phone) {
         if(phone != null && StringUtils.isNotEmpty(phone.getPhoneNumber())){

@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("phoneService")
+@Service("blPhoneService")
 public class PhoneServiceImpl implements PhoneService {
 
     @Resource

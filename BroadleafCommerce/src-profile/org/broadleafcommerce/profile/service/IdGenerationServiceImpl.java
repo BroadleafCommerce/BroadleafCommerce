@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("idGenerationService")
+@Service("blIdGenerationService")
 public class IdGenerationServiceImpl implements IdGenerationService {
 
     protected final Log logger = LogFactory.getLog(getClass());

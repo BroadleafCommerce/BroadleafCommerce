@@ -23,7 +23,7 @@ import org.broadleafcommerce.marketing.dao.TargetContentDao;
 import org.broadleafcommerce.marketing.domain.TargetContent;
 import org.springframework.stereotype.Service;
 
-@Service("targetContentService")
+@Service("blTargetContentService")
 public class TargetContentServiceImpl implements TargetContentService {
 
     @Resource

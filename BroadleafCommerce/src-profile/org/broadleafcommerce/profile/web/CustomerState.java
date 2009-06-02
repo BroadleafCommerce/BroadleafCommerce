@@ -22,7 +22,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.springframework.stereotype.Component;
 
-@Component("customerState")
+@Component("blCustomerState")
 public class CustomerState {
 
     private static final String DEFAULTSESSIONATTRIBUTENAME = "customer_session";

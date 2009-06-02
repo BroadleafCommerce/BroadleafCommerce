@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("userService")
+@Service("blUserService")
 public class UserServiceImpl implements UserService {
 
     /** Logger for this class and subclasses */

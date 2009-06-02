@@ -29,7 +29,7 @@ import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("paymentInfoDao")
+@Repository("blPaymentInfoDao")
 public class PaymentInfoDaoJpa implements PaymentInfoDao {
 
     /** Logger for this class and subclasses */

@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 7) Changed all the Error objects to BindingResult
  * 8) Override the retrieveOrder method to return a wishlist order
  */
-@Controller("wishlistController")
+@Controller("blWishlistController")
 public class WishlistController extends CartController {
 
     public WishlistController() {

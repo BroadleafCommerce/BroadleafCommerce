@@ -29,7 +29,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("fulfillmentGroupItemDao")
+@Repository("blFulfillmentGroupItemDao")
 public class FulfillmentGroupItemDaoJpa implements FulfillmentGroupItemDao {
 
     /** Logger for this class and subclasses */

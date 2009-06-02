@@ -28,7 +28,7 @@ import org.broadleafcommerce.marketing.domain.TargetContent;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("targetContentDao")
+@Repository("blTargetContentDao")
 public class TargetContentDaoJpa implements TargetContentDao {
 
     /** Logger for this class and subclasses */

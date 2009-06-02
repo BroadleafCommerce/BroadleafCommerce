@@ -24,10 +24,10 @@ import org.broadleafcommerce.workflow.SequenceProcessor;
 import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
 
-@Service("pricingService")
+@Service("blPricingService")
 public class PricingServiceImpl implements PricingService {
 
-    @Resource(name="pricingWorkflow")
+    @Resource(name="blPricingWorkflow")
     private SequenceProcessor pricingWorkflow;
 
     public Order executePricing(Order order) throws PricingException {

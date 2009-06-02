@@ -24,7 +24,7 @@ import javax.persistence.Query;
 import org.broadleafcommerce.inventory.domain.SkuAvailability;
 import org.springframework.stereotype.Repository;
 
-@Repository("availabilityDao")
+@Repository("blAvailabilityDao")
 public class AvailabilityDaoJpa implements AvailabilityDao {
 
     @PersistenceContext(unitName="blPU")

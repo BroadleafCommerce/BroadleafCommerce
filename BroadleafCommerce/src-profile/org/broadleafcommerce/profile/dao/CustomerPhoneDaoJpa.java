@@ -26,7 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.springframework.stereotype.Repository;
 
-@Repository("customerPhoneDao")
+@Repository("blCustomerPhoneDao")
 public class CustomerPhoneDaoJpa implements CustomerPhoneDao {
 
     /** Logger for this class and subclasses */

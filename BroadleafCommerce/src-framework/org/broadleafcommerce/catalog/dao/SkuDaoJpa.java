@@ -26,7 +26,7 @@ import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("skuDao")
+@Repository("blSkuDao")
 public class SkuDaoJpa implements SkuDao {
 
     @PersistenceContext(unitName="blPU")

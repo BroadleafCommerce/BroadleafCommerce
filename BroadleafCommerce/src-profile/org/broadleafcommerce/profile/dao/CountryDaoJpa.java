@@ -28,7 +28,7 @@ import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("countryDao")
+@Repository("blCountryDao")
 public class CountryDaoJpa implements CountryDao {
 
     /** Logger for this class and subclasses */
