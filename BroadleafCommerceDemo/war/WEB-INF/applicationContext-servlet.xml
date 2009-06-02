@@ -53,7 +53,7 @@
 	</bean>
 
 	<bean id="blCatalogController" class="org.broadleafcommerce.catalog.web.CatalogController">
-		<property name="catalogService" ref="catalogService"/>
+		<property name="catalogService" ref="blCatalogService"/>
         <property name="defaultCategoryView" value="defaultCatalog"/>
         <property name="defaultProductView" value="defaultProduct"/>
         <property name="rootCategoryName" value="Store" />
@@ -77,7 +77,7 @@
 			<props>
 				<prop key="/welcome.htm">welcome</prop>
 				<prop key="/myaccount/phone/*">blCustomerPhoneController</prop>
-				<prop key="/registerCustomer/*">blRegisterCustomerFormController</prop>
+				<prop key="/registerCustomer/*">blRegisterCustomerController</prop>
 				<prop key="/store">blCatalogController</prop>
 				<prop key="/store/*">blCatalogController</prop>
 				<prop key="/store/*/*">blCatalogController</prop>
