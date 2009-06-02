@@ -44,6 +44,6 @@
 	<classpathentry kind="lib" path="lib/test/bin/easymockclassextension.jar" sourcepath="lib/test/sources/easymockclassextension-src.zip"/>
 	<classpathentry kind="lib" path="lib/test/bin/junit-4.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/compile/bin/jsp-api-2.0.jar"/>
-	<classpathentry kind="lib" path="lib/compile/bin/servlet-api-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/compile/bin/servlet-api-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
