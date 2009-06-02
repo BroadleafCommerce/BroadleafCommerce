@@ -258,6 +258,7 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTracking" class="org.broadleafcommerce.email.domain.EmailTrackingImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.email.domain.EmailTarget" class="org.broadleafcommerce.email.domain.EmailTargetImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
