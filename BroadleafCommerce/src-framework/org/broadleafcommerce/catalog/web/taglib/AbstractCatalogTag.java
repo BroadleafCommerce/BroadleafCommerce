@@ -32,7 +32,7 @@ public abstract class AbstractCatalogTag extends SimpleTagSupport {
         if (catalogService == null) {
             PageContext pageContext = (PageContext)getJspContext();
             WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
-            catalogService = (CatalogService) applicationContext.getBean("catalogService");
+            catalogService = (CatalogService) applicationContext.getBean("blCatalogService");
         }
         return catalogService;
     }

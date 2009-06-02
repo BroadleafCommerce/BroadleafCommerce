@@ -47,7 +47,7 @@ public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextT
 
     public EntityManager getEntityManager() {
         if (em == null) {
-            em = ((EntityManagerFactory) applicationContext.getBean("entityManagerFactory")).createEntityManager();
+            em = ((EntityManagerFactory) applicationContext.getBean("blEntityManagerFactory")).createEntityManager();
         }
         return em;
     }

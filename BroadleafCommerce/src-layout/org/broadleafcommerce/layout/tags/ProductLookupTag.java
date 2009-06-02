@@ -38,7 +38,7 @@ public class ProductLookupTag extends BodyTagSupport {
     @Override
     public int doStartTag() throws JspException {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
-        CatalogService catalogService = (CatalogService) applicationContext.getBean("catalogService");
+        CatalogService catalogService = (CatalogService) applicationContext.getBean("blCatalogService");
         pageContext.setAttribute(var, catalogService.findProductById(productId));
         return EVAL_PAGE;
     }
