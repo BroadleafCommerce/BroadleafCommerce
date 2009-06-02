@@ -15,22 +15,26 @@
  */
 package org.broadleafcommerce.profile.test.dataprovider;
 
-import org.broadleafcommerce.profile.web.form.CustomerRegistrationForm;
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
 import org.testng.annotations.DataProvider;
 
 public class RegisterCustomerDataProvider {
 
     @DataProvider(name = "setupCustomerControllerData")
     public static Object[][] createCustomer() {
-        CustomerRegistrationForm registerCustomer = new CustomerRegistrationForm();
-        registerCustomer.setEmailAddress("testCase@test.com");
-        registerCustomer.setFirstName("TestFirstName");
-        registerCustomer.setLastName("TestLastName");
+        Customer customer = new CustomerImpl();
+        customer.setEmailAddress("testCase@test.com");
+        customer.setFirstName("TestFirstName");
+        customer.setLastName("TestLastName");
+        customer.setUsername("TestCase");
+        customer.setChallengeQuestionId(1L);
+        customer.setChallengeAnswer("Challenge Answer");
+        RegisterCustomerForm registerCustomer = new RegisterCustomerForm();
+        registerCustomer.setCustomer(customer);
         registerCustomer.setPassword("TestPassword");
         registerCustomer.setPasswordConfirm("TestPassword");
-        registerCustomer.setUsername("TestCase");
-        registerCustomer.setChallengeQuestion("Test Challenge Question");
-        registerCustomer.setChallengeAnswer("Challenge Answer");
         return new Object[][] { new Object[] { registerCustomer } };
     }
 }

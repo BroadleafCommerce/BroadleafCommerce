@@ -1,18 +1,3 @@
-/*
- * Copyright 2008-2009 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.broadleafcommerce.profile.service;
 
 import java.util.ArrayList;
@@ -32,40 +17,48 @@ import org.broadleafcommerce.email.service.info.NullEmailInfo;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.listener.PostRegistrationObserver;
-import org.broadleafcommerce.profile.service.validator.RegistrationResponse;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.profile.util.PasswordChange;
 import org.springframework.security.Authentication;
 import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.ProviderManager;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.encoding.PasswordEncoder;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("blCustomerService")
+@Service("customerService")
 public class CustomerServiceImpl implements CustomerService {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Resource
-    private CustomerDao customerDao;
+    protected CustomerDao customerDao;
 
     @Resource
-    private IdGenerationService idGenerationService;
+    protected IdGenerationService idGenerationService;
 
     @Resource
-    private PasswordEncoder passwordEncoder;
+    protected PasswordEncoder passwordEncoder;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     @Resource
-    private EmailService emailService;
+    protected EmailService emailService;
+
+    @Resource
+    protected ProviderManager authenticationManager;
+
+    @Resource
+    protected UserDetailsService userDetailsService;
 
     @Resource(name="blRegistrationEmailInfo")
-    EmailInfo emailInfo;
+    protected EmailInfo emailInfo;
 
     private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
 
@@ -86,19 +79,27 @@ public class CustomerServiceImpl implements CustomerService {
         return customerDao.save(customer);
     }
 
-    public RegistrationResponse registerCustomer(Customer customer, String password, String passwordConfirm) {
-        RegistrationResponse response = new RegistrationResponse(customer, customer.getClass().getSimpleName());
-        // registrationValidator.validate(customer, password, passwordConfirm,
-        // response.getErrors());
-        if (!response.hasErrors()) {
-            customer.setRegistered(true);
-            Customer retCustomer = saveCustomer(customer);
-            notifyPostRegisterListeners(retCustomer);
-            this.sendConfirmationEmail(retCustomer);
-            response.setCustomer(retCustomer);
+    public Customer registerCustomer(Customer customer, String password, String passwordConfirm) {
+        // TODO: Service level validation
+        customer.setRegistered(true);
 
+        // When unencodedPassword is set the save() will encode it
+        if (customer.getId() == null) {
+            customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
         }
-        return response;
+
+        customer.setUnencodedPassword(password);
+        Customer retCustomer = saveCustomer(customer);
+
+
+        notifyPostRegisterListeners(retCustomer);
+        this.sendConfirmationEmail(retCustomer);
+
+        HashMap<String, Object> emailDataMap = new HashMap<String, Object>();
+        emailDataMap.put("customer", retCustomer);
+        emailService.sendTemplateEmail(retCustomer.getEmailAddress(), emailInfo, emailDataMap);
+        authenticateUser(customer.getUsername(), password);
+        return retCustomer;
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -112,10 +113,57 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setUnencodedPassword(passwordChange.getNewPassword());
         customer.setPasswordChangeRequired(passwordChange.getPasswordChangeRequired());
         customer = saveCustomer(customer);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(passwordChange.getUsername(), passwordChange.getNewPassword(), auth.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authRequest);
-        auth.setAuthenticated(false);
+        authenticateUser(passwordChange.getUsername(), passwordChange.getNewPassword());
+        return customer;
+    }
+
+    protected void authenticateUser(String username, String password) {
+        UserDetails principal = userDetailsService.loadUserByUsername(username);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
+        Authentication authentication = authenticationManager.authenticate(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners) {
+        this.postRegisterListeners.add(postRegisterListeners);
+    }
+
+    public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners) {
+        if (this.postRegisterListeners.contains(postRegisterListeners)) {
+            this.postRegisterListeners.remove(postRegisterListeners);
+        }
+    }
+
+    protected void notifyPostRegisterListeners(Customer customer) {
+        for (Iterator<PostRegistrationObserver> iter = postRegisterListeners.iterator(); iter.hasNext();) {
+            PostRegistrationObserver listener = iter.next();
+            listener.processRegistrationEvent(customer);
+        }
+    }
+
+    protected void sendConfirmationEmail(Customer customer) {
+        if (emailInfo == null || emailInfo instanceof NullEmailInfo) {
+            logger.info("Customer Registration Email not being sent because blRegistrationEmailInfo is not configured");
+            return;
+        }
+
+        EmailTarget target = new EmailTargetImpl(){};
+        target.setEmailAddress(customer.getEmailAddress());
+        HashMap<String, Object> props = new HashMap<String, Object>();
+
+        emailService.sendTemplateEmail(target, emailInfo, props);
+    }
+
+    public Customer createCustomerFromId(Long customerId) {
+        Customer customer = customerId != null ? readCustomerById(customerId) : null;
+        if (customer == null) {
+            customer = (Customer) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Customer");
+            if (customerId != null) {
+                customer.setId(customerId);
+            } else {
+                customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
+            }
+        }
         return customer;
     }
 
@@ -135,46 +183,4 @@ public class CustomerServiceImpl implements CustomerService {
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-
-    public Customer createCustomerFromId(Long customerId) {
-        Customer customer = customerId != null ? readCustomerById(customerId) : null;
-        if (customer == null) {
-            customer = (Customer) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Customer");
-            if (customerId != null) {
-                customer.setId(customerId);
-            } else {
-                customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
-            }
-        }
-        return customer;
-    }
-
-    public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners) {
-        this.postRegisterListeners.add(postRegisterListeners);
-    }
-
-    public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners) {
-        if (this.postRegisterListeners.contains(postRegisterListeners)) {
-            this.postRegisterListeners.remove(postRegisterListeners);
-        }
-    }
-
-    public void notifyPostRegisterListeners(Customer customer) {
-        for (Iterator<PostRegistrationObserver> iter = postRegisterListeners.iterator(); iter.hasNext();) {
-            PostRegistrationObserver listener = iter.next();
-            listener.processRegistrationEvent(customer);
-        }
-    }
-
-    protected void sendConfirmationEmail(Customer customer) {
-        if (emailInfo == null || emailInfo instanceof NullEmailInfo) {
-            logger.info("Customer Registration Email not being sent because blRegistrationEmailInfo is not configured");
-            return;
-        }
-        EmailTarget target = new EmailTargetImpl(){};
-        target.setEmailAddress(customer.getEmailAddress());
-        HashMap<String, Object> props = new HashMap<String, Object>();
-        emailService.sendTemplateEmail(target, emailInfo, props);
-    }
-
 }
