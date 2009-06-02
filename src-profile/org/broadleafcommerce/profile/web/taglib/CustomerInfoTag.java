@@ -30,7 +30,7 @@ public class CustomerInfoTag extends BodyTagSupport {
 
     public int doStartTag() throws JspException {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
-        CustomerState customerState = (CustomerState) applicationContext.getBean("customerState");
+        CustomerState customerState = (CustomerState) applicationContext.getBean("blCustomerState");
         Customer customer = customerState.getCustomer((HttpServletRequest) pageContext.getRequest());
         pageContext.setAttribute(var, customer);
 

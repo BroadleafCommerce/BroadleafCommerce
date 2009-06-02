@@ -73,7 +73,7 @@ public class EmailOpenTrackingServlet extends HttpServlet {
                 LOG.debug("service() => Recording Open for Email[" + emailId + "]");
             }
             WebApplicationContext context = WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-            EmailTrackingManager emailTrackingManager = (EmailTrackingManager) context.getBean("emailTrackingManagerBLC");
+            EmailTrackingManager emailTrackingManager = (EmailTrackingManager) context.getBean("blEmailTrackingManager");
             String userAgent = request.getHeader("USER-AGENT");
             Map<String, String> extraValues = new HashMap<String, String>();
             extraValues.put("userAgent", userAgent);

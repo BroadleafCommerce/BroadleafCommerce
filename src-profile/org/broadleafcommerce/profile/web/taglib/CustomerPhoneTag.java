@@ -32,8 +32,8 @@ public class CustomerPhoneTag extends BodyTagSupport {
 
     public int doStartTag() throws JspException {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
-        CustomerState customerState = (CustomerState) applicationContext.getBean("customerState");
-        CustomerPhoneService customerPhoneService = (CustomerPhoneService) applicationContext.getBean("customerPhoneService");
+        CustomerState customerState = (CustomerState) applicationContext.getBean("blCustomerState");
+        CustomerPhoneService customerPhoneService = (CustomerPhoneService) applicationContext.getBean("blCustomerPhoneService");
 
         Customer customer = customerState.getCustomer((HttpServletRequest) pageContext.getRequest());
 

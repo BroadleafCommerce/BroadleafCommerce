@@ -62,7 +62,7 @@ public class ContentDisplayTag extends BodyTagSupport {
     @Override
     public int doStartTag() throws JspException{
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
-        TargetContentService targetContentService = (TargetContentService) applicationContext.getBean("targetContentService");
+        TargetContentService targetContentService = (TargetContentService) applicationContext.getBean("blTargetContentService");
         List<TargetContent> targetContent = targetContentService.findTargetContentsByNameType(contentKey, contentType);
         pageContext.setAttribute(varList, targetContent);
         pageContext.setAttribute(varFirstItem, (targetContent.size() > 0)?targetContent.get(0):null);
