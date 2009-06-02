@@ -30,7 +30,7 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("shippingRatesDao")
+@Repository("blShippingRatesDao")
 public class ShippingRateDaoJpa implements ShippingRateDao {
 
     /** Logger for this class and subclasses */

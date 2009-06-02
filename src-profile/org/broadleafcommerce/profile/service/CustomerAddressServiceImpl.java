@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("customerAddressService")
+@Service("blCustomerAddressService")
 public class CustomerAddressServiceImpl implements CustomerAddressService {
 
     @Resource

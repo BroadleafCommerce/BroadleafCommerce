@@ -23,7 +23,7 @@ import org.broadleafcommerce.profile.dao.StateDao;
 import org.broadleafcommerce.profile.domain.State;
 import org.springframework.stereotype.Service;
 
-@Service("stateService")
+@Service("blStateService")
 public class StateServiceImpl implements StateService {
 
     @Resource
@@ -37,3 +37,4 @@ public class StateServiceImpl implements StateService {
         return stateDao.findStateByAbbreviation(abbreviation);
     }
 }
+

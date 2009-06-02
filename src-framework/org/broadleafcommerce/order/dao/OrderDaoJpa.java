@@ -34,7 +34,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("orderDao")
+@Repository("blOrderDao")
 public class OrderDaoJpa implements OrderDao {
 
     /** Logger for this class and subclasses */

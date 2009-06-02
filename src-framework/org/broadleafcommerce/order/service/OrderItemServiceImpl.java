@@ -28,7 +28,7 @@ import org.broadleafcommerce.order.service.call.GiftWrapOrderItemRequest;
 import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
-@Service("orderItemService")
+@Service("blOrderItemService")
 public class OrderItemServiceImpl implements OrderItemService {
 
     @Resource

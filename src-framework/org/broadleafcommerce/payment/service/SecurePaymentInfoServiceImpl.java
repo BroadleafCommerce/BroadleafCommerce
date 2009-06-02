@@ -36,7 +36,7 @@ import org.springframework.stereotype.Service;
  * @author jfischer
  *
  */
-@Service("securePaymentInfoService")
+@Service("blSecurePaymentInfoService")
 public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
     @Resource

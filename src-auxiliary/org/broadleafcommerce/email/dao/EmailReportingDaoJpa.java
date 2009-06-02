@@ -35,7 +35,7 @@ import org.springframework.stereotype.Repository;
  * @author jfischer
  *
  */
-@Repository("emailReportingDao")
+@Repository("blEmailReportingDao")
 public class EmailReportingDaoJpa implements EmailReportingDao {
 
     @PersistenceContext(unitName="blPU")

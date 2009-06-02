@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 
-@Component("registrationValidator")
+@Component("blRegistrationValidator")
 public class RegistrationValidator {
 
     public static final String DEFAULT_VALID_NAME_REGEX = "[A-Za-z'. ]{1,80}";

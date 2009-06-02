@@ -32,7 +32,7 @@ import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service("userDetailsService")
+@Service("blUserDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     /** Logger for this class and subclasses */

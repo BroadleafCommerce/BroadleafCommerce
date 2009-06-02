@@ -21,7 +21,7 @@ import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.springframework.stereotype.Service;
 
-@Service("fulfillmentGroupService")
+@Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
     @Resource

@@ -25,7 +25,7 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("addressDao")
+@Repository("blAddressDao")
 public class AddressDaoJpa implements AddressDao {
 
     /** Logger for this class and subclasses */

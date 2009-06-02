@@ -57,7 +57,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 13) Removed validateProductsAndCategory method since it was not used
  * 14) All Error objects have been changed to BindingResult
  */
-@Controller("cartController")
+@Controller("blCartController")
 public class CartController {
     protected final Log logger = LogFactory.getLog(getClass());
 

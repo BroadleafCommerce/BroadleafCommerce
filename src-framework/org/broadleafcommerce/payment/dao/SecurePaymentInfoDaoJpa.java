@@ -29,7 +29,7 @@ import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("securePaymentInfoDao")
+@Repository("blSecurePaymentInfoDao")
 public class SecurePaymentInfoDaoJpa implements SecurePaymentInfoDao {
 
     @PersistenceContext(unitName = "blSecurePU")

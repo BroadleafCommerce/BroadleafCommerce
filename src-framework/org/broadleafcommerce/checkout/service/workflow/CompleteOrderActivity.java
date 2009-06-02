@@ -24,7 +24,7 @@ import org.broadleafcommerce.workflow.ProcessContext;
 
 public class CompleteOrderActivity extends BaseActivity {
 
-    @Resource(name="cartService")
+    @Resource
     private CartService cartService;
 
     @Override

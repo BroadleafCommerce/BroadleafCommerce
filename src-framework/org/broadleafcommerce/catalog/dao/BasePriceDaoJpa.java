@@ -23,7 +23,7 @@ import org.broadleafcommerce.catalog.domain.BasePrice;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("basePriceDao")
+@Repository("blBasePriceDao")
 public class BasePriceDaoJpa implements BasePriceDao {
 
     @PersistenceContext(unitName="blPU")

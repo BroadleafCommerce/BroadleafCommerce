@@ -28,7 +28,7 @@ import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("offerCodeDao")
+@Repository("blOfferCodeDao")
 public class OfferCodeDaoJpa implements OfferCodeDao {
 
     /** Lookup identifier for Offer bean **/

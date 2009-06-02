@@ -23,7 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.rules.domain.ShoppingCartPromotion;
 import org.springframework.stereotype.Repository;
 
-@Repository("ruleDao")
+@Repository("blRuleDao")
 public class RuleDaoJpa implements RuleDao {
 
     /** Logger for this class and subclasses */

@@ -43,7 +43,7 @@ import org.testng.annotations.Test;
 
 public class PricingTest extends BaseTest {
 
-    @Resource(name="pricingService")
+    @Resource
     private PricingService pricingService;
 
     @Resource

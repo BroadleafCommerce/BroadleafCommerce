@@ -28,7 +28,7 @@ import org.broadleafcommerce.profile.domain.IdGeneration;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("idGenerationDao")
+@Repository("blIdGenerationDao")
 public class IdGenerationDaoJpa implements IdGenerationDao {
 
     /** Logger for this class and subclasses */
@@ -100,6 +100,5 @@ public class IdGenerationDaoJpa implements IdGenerationDao {
 
     public void setQueryCacheableKey(String queryCacheableKey) {
         this.queryCacheableKey = queryCacheableKey;
-    }    
+    }
 }
-

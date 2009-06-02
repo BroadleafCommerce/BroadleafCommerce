@@ -30,7 +30,7 @@ import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 //TODO: should rename to CustomerOfferDaoJpa
-@Repository("offerCustomerDao")
+@Repository("blOfferCustomerDao")
 public class OfferCustomerDaoJpa implements OfferCustomerDao {
 
     /** Lookup identifier for Offer bean **/

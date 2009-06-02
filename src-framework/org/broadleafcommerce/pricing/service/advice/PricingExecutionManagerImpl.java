@@ -26,7 +26,7 @@ import org.broadleafcommerce.pricing.service.PricingService;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-@Component("pricingExecutionManager")
+@Component("blPricingExecutionManager")
 public class PricingExecutionManagerImpl implements PricingExecutionManager, Ordered {
 
     private static final Log LOG = LogFactory.getLog(PricingExecutionManagerImpl.class);
@@ -38,7 +38,7 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
     @Resource
     private PricingService pricingService;
 
-    @Resource(name="orderDao")
+    @Resource
     private OrderDao orderDao;
 
     @Override

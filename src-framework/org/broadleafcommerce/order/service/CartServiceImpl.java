@@ -33,7 +33,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.springframework.stereotype.Service;
 
-@Service("cartService")
+@Service("blCartService")
 public class CartServiceImpl extends OrderServiceImpl implements CartService {
 
     @Resource

@@ -24,7 +24,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.PaymentInfo;
 import org.springframework.stereotype.Service;
 
-@Service("paymentInfoService")
+@Service("blPaymentInfoService")
 public class PaymentInfoServiceImpl implements PaymentInfoService {
 
     @Resource

@@ -24,11 +24,11 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-@Service("customerPhoneValidator")
+@Component("blCustomerPhoneValidator")
 public class CustomerPhoneValidator implements Validator {
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());

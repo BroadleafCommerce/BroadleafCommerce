@@ -29,7 +29,7 @@ import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("stateDao")
+@Repository("blStateDao")
 public class StateDaoJpa implements StateDao {
 
     /** Logger for this class and subclasses */

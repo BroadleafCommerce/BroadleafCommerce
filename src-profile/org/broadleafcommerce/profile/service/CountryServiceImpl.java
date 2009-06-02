@@ -23,7 +23,7 @@ import org.broadleafcommerce.profile.dao.CountryDao;
 import org.broadleafcommerce.profile.domain.Country;
 import org.springframework.stereotype.Service;
 
-@Service("countryService")
+@Service("blCountryService")
 public class CountryServiceImpl implements CountryService {
 
     @Resource

@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service("challengeQuestionService")
+@Service("blChallengeQuestionService")
 public class ChallengeQuestionServiceImpl implements ChallengeQuestionService {
 
     @Resource
@@ -40,5 +40,5 @@ public class ChallengeQuestionServiceImpl implements ChallengeQuestionService {
     public ChallengeQuestion readChallengeQuestionById(long challengeQuestionId) {
         return challengeQuestionDao.readChallengeQuestionById(challengeQuestionId);
     }
-    
+
 }
