@@ -33,7 +33,7 @@ public class ChallengeQuestionDaoJpa implements ChallengeQuestionDao {
     protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName = "blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     private String queryCacheableKey = "org.hibernate.cacheable";
 

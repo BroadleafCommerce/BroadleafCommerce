@@ -33,10 +33,10 @@ import org.springframework.stereotype.Repository;
 public class SecurePaymentInfoDaoJpa implements SecurePaymentInfoDao {
 
     @PersistenceContext(unitName = "blSecurePU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     public Referenced save(Referenced securePaymentInfo) {
         securePaymentInfo = em.merge(securePaymentInfo);

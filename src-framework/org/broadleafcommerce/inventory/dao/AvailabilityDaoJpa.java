@@ -28,7 +28,7 @@ import org.springframework.stereotype.Repository;
 public class AvailabilityDaoJpa implements AvailabilityDao {
 
     @PersistenceContext(unitName="blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     private String queryCacheableKey = "org.hibernate.cacheable";
 

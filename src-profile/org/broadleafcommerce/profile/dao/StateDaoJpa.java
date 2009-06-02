@@ -36,10 +36,10 @@ public class StateDaoJpa implements StateDao {
     protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName = "blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     private String queryCacheableKey = "org.hibernate.cacheable";
 

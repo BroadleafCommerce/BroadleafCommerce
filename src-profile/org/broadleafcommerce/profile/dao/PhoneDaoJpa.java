@@ -32,10 +32,10 @@ public class PhoneDaoJpa implements PhoneDao {
     protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName="blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     public Phone save(Phone phone) {
         if (phone.getId() == null) {

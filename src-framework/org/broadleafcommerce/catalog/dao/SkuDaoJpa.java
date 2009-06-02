@@ -30,10 +30,10 @@ import org.springframework.stereotype.Repository;
 public class SkuDaoJpa implements SkuDao {
 
     @PersistenceContext(unitName="blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     public Sku save(Sku sku) {
         if (sku.getId() == null) {

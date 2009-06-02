@@ -37,10 +37,10 @@ import org.springframework.stereotype.Repository;
 public class EmailReportingDaoJpa implements EmailReportingDao {
 
     @PersistenceContext(unitName="blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     /* (non-Javadoc)
      * @see WebReportingDao#createTracking(java.lang.String, java.lang.String, java.lang.String)

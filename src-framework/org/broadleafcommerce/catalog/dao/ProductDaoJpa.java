@@ -30,10 +30,10 @@ import org.springframework.stereotype.Repository;
 public class ProductDaoJpa implements ProductDao {
 
     @PersistenceContext(unitName="blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     private String queryCacheableKey = "org.hibernate.cacheable";
 
