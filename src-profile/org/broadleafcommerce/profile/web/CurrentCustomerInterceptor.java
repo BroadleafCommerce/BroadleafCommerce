@@ -30,7 +30,7 @@ public class CurrentCustomerInterceptor extends HandlerInterceptorAdapter {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
-        CustomerState customerState = (CustomerState) applicationContext.getBean("customerState");
+        CustomerState customerState = (CustomerState) applicationContext.getBean("blCustomerState");
         Customer requestCustomer = null;
         checkSession: {
             Customer sessionCustomer = customerState.getCustomer(request);
@@ -44,7 +44,7 @@ public class CurrentCustomerInterceptor extends HandlerInterceptorAdapter {
                 cookieCustomerId = new Long(cookieCustomerIdVal);
             }
 
-            CustomerService customerService = (CustomerService) applicationContext.getBean("customerService");
+            CustomerService customerService = (CustomerService) applicationContext.getBean("blCustomerService");
             if (cookieCustomerId != null) {
                 Customer cookieCustomer = customerService.createCustomerFromId(cookieCustomerId);
                 customerState.setCustomer(cookieCustomer, request);

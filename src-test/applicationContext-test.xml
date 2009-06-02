@@ -53,7 +53,7 @@
 
 	</bean>
 
-	<bean id="blEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
 		<property name="persistenceUnitName" value="blPU"/>
 		<property name="jpaVendorAdapter">
