@@ -16,6 +16,7 @@
 package org.broadleafcommerce.profile.service;
 
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.service.listener.PostRegistrationObserver;
 import org.broadleafcommerce.profile.util.PasswordChange;
 
 public interface CustomerService {
@@ -38,4 +39,8 @@ public interface CustomerService {
      * @return either a <code>Customer</code> from the database if it exists, or a new non-persisted <code>Customer</code>
      */
     public Customer createCustomerFromId(Long customerId);
+
+    public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners);
+
+    public void removePostRegisterListener(PostRegistrationObserver postRegisterListeners);
 }
