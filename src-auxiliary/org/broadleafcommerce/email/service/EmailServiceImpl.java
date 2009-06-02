@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.email.dao.EmailReportingDao;
 import org.broadleafcommerce.email.domain.EmailTarget;
 import org.broadleafcommerce.email.service.info.EmailInfo;
+import org.broadleafcommerce.email.service.info.NullEmailInfo;
 import org.broadleafcommerce.email.service.info.ServerInfo;
 import org.broadleafcommerce.email.service.jms.EmailServiceProducer;
 import org.broadleafcommerce.email.service.message.EmailPropertyType;
@@ -39,7 +40,7 @@ public class EmailServiceImpl implements EmailService {
     protected EmailTrackingManager emailTrackingManager;
 
     @Resource
-    private ServerInfo serverInfo;
+    protected ServerInfo serverInfo;
 
     protected EmailServiceProducer emailServiceProducer;
 
@@ -64,9 +65,13 @@ public class EmailServiceImpl implements EmailService {
     }
 
     public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, HashMap<String,Object> props) {
-        EmailTarget emailTarget = emailReportingDao.createTarget();
-        emailTarget.setEmailAddress(emailAddress);
-        return sendTemplateEmail(emailTarget, emailInfo, props);
+        if (! (emailInfo instanceof NullEmailInfo)) {
+            EmailTarget emailTarget = emailReportingDao.createTarget();
+            emailTarget.setEmailAddress(emailAddress);
+            return sendTemplateEmail(emailTarget, emailInfo, props);
+        } else {
+            return true;
+        }
     }
 
     @Override
