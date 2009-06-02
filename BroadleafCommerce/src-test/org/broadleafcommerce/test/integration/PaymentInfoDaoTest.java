@@ -21,9 +21,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.dao.OrderDao;
-import org.broadleafcommerce.order.dao.PaymentInfoDao;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.payment.dao.PaymentInfoDao;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;

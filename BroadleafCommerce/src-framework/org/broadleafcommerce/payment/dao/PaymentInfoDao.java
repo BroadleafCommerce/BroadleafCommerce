@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.order.dao;
+package org.broadleafcommerce.payment.dao;
 
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentLog;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 
 public interface PaymentInfoDao {
 
@@ -31,4 +33,9 @@ public interface PaymentInfoDao {
     public PaymentInfo create();
 
     public void delete(PaymentInfo paymentInfo);
+
+    public PaymentResponseItem createResponseItem();
+
+    public PaymentLog createLog();
+
 }

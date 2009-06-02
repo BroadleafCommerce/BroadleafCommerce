@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.order.domain;
+package org.broadleafcommerce.payment.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -34,6 +34,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
@@ -76,6 +78,9 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
+
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentLogImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private List<PaymentLog> paymentLogs = new ArrayList<PaymentLog>();
 
     @Override
     public Money getAmount() {
@@ -141,6 +146,14 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
 
     public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems) {
         this.paymentResponseItems = paymentResponseItems;
+    }
+
+    public List<PaymentLog> getPaymentLogs() {
+        return paymentLogs;
+    }
+
+    public void setPaymentLogs(List<PaymentLog> paymentLogs) {
+        this.paymentLogs = paymentLogs;
     }
 
     @Override

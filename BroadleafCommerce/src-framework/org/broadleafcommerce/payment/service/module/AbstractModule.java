@@ -15,17 +15,17 @@
  */
 package org.broadleafcommerce.payment.service.module;
 
-import java.util.Map;
+import javax.annotation.Resource;
 
-import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
+import org.broadleafcommerce.payment.service.PaymentInfoService;
 
-public interface PaymentResponse {
+public abstract class AbstractModule implements PaymentModule {
 
-    public void addPaymentResponseItem(PaymentInfo paymentInfo, PaymentResponseItem paymentResponseItem);
+    @Resource
+    private PaymentInfoService paymentInfoService;
 
-    public PaymentResponseItem getPaymentResponseItem(PaymentInfo paymentInfo);
-
-    public Map<PaymentInfo, PaymentResponseItem> getResponseItems();
-
+    protected PaymentResponseItem getNewResponseItem() {
+        return paymentInfoService.createResponseItem();
+    }
 }

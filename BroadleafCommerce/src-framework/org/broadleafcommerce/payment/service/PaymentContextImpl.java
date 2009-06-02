@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.payment.service;
 
-import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.util.money.Money;
 

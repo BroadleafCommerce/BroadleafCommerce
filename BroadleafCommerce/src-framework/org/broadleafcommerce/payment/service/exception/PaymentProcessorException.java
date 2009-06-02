@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.payment.service.exception;
 
-import org.broadleafcommerce.order.domain.PaymentResponseItem;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 
 public class PaymentProcessorException extends PaymentException {
 
@@ -41,6 +41,10 @@ public class PaymentProcessorException extends PaymentException {
     public PaymentProcessorException(Throwable cause, PaymentResponseItem paymentResponseItem) {
         super(cause);
         this.paymentResponseItem = paymentResponseItem;
+    }
+
+    public PaymentResponseItem getPaymentResponseItem() {
+        return paymentResponseItem;
     }
 
 }

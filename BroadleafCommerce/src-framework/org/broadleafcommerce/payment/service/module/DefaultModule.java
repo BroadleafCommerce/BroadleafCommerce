@@ -15,11 +15,11 @@
  */
 package org.broadleafcommerce.payment.service.module;
 
-import org.broadleafcommerce.order.domain.PaymentResponseItem;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 
-public class DefaultModule implements PaymentModule {
+public class DefaultModule extends AbstractModule {
 
     @Override
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {

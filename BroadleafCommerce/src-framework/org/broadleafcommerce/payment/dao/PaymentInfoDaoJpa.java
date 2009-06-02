@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.order.dao;
+package org.broadleafcommerce.payment.dao;
 
 import java.util.List;
 
@@ -25,7 +25,9 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentLog;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -49,7 +51,7 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
     @SuppressWarnings("unchecked")
     @Override
     public PaymentInfo readPaymentInfoById(Long paymentId) {
-        return (PaymentInfo) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.PaymentInfo"), paymentId);
+        return (PaymentInfo) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.payment.domain.PaymentInfo"), paymentId);
     }
 
     @Override
@@ -62,7 +64,17 @@ public class PaymentInfoDaoJpa implements PaymentInfoDao {
 
     @Override
     public PaymentInfo create() {
-        return ((PaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.PaymentInfo"));
+        return ((PaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.PaymentInfo"));
+    }
+
+    @Override
+    public PaymentResponseItem createResponseItem() {
+        return ((PaymentResponseItem) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.PaymentResponseItem"));
+    }
+
+    @Override
+    public PaymentLog createLog() {
+        return ((PaymentLog) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.PaymentLog"));
     }
 
     @Override

@@ -143,7 +143,7 @@
 	<bean id="org.broadleafcommerce.order.domain.FulfillmentGroupItem" class="org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.Order" class="org.broadleafcommerce.order.domain.OrderImpl"/>
 	<bean id="org.broadleafcommerce.order.domain.OrderItem" class="org.broadleafcommerce.order.domain.OrderItemImpl"/>
-	<bean id="org.broadleafcommerce.order.domain.PaymentInfo" class="org.broadleafcommerce.order.domain.PaymentInfoImpl"/>
+	<bean id="org.broadleafcommerce.payment.domain.PaymentInfo" class="org.broadleafcommerce.payment.domain.PaymentInfoImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl"/>
 	<bean id="org.broadleafcommerce.profile.domain.Phone" class="org.broadleafcommerce.profile.domain.PhoneImpl"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl"/>

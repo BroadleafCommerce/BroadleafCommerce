@@ -18,8 +18,8 @@ package org.broadleafcommerce.payment.service.workflow;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.broadleafcommerce.order.domain.PaymentInfo;
-import org.broadleafcommerce.order.domain.PaymentResponseItem;
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.PaymentContextImpl;
 import org.broadleafcommerce.payment.service.PaymentService;
