@@ -213,12 +213,13 @@ public class OrderServiceImpl implements OrderService {
         payment.setOrder(order);
         order.getPaymentInfos().add(payment);
         order = persistOrder(order);
+        int paymentIndex = order.getPaymentInfos().size() - 1;
 
         if (securePaymentInfo != null) {
             securePaymentInfoService.save(securePaymentInfo);
         }
 
-        return order.getPaymentInfos().get(order.getPaymentInfos().indexOf(payment));
+        return order.getPaymentInfos().get(paymentIndex);
     }
 
     @Override
@@ -276,8 +277,9 @@ public class OrderServiceImpl implements OrderService {
         }
         fulfillmentGroup = fulfillmentGroupDao.save(fulfillmentGroup);
         order.getFulfillmentGroups().add(fulfillmentGroup);
+        int fulfillmentGroupIndex = order.getFulfillmentGroups().size() - 1;
         order = updateOrder(order);
-        return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
+        return order.getFulfillmentGroups().get(fulfillmentGroupIndex);
     }
 
     @Override
@@ -311,7 +313,7 @@ public class OrderServiceImpl implements OrderService {
         //}
         order = updateOrder(order);
 
-        return order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(fulfillmentGroup));
+        return fulfillmentGroup;
     }
 
     @Override
@@ -419,24 +421,24 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
-        OrderItem addedItem;
+        int orderItemIndex;
         List<OrderItem> orderItems = order.getOrderItems();
         boolean containsItem = orderItems.contains(newOrderItem);
         if (rollupOrderItems && containsItem) {
             OrderItem itemFromOrder = orderItems.get(orderItems.indexOf(newOrderItem));
             itemFromOrder.setQuantity(itemFromOrder.getQuantity() + newOrderItem.getQuantity());
-            addedItem = itemFromOrder;
+            orderItemIndex = orderItems.indexOf(itemFromOrder);
         } else {
             orderItems.add(newOrderItem);
             newOrderItem.setOrder(order);
-            addedItem = newOrderItem;
+            orderItemIndex = orderItems.size() - 1;
         }
 
         //don't worry about fulfillment groups, since the phase for adding items occurs before shipping arrangements
 
         order = updateOrder(order);
 
-        return order.getOrderItems().get(order.getOrderItems().indexOf(addedItem));
+        return order.getOrderItems().get(orderItemIndex);
     }
 
     protected Order updateOrder(Order order) throws PricingException {
