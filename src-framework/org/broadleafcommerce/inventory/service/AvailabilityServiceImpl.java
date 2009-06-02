@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class AvailabilityServiceImpl implements AvailabilityService {
 
     @Resource
-    private AvailabilityDao availabilityDao;
+    protected AvailabilityDao availabilityDao;
 
     /**
      * Returns the availability status for this passed in skuId.   Implementations may choose

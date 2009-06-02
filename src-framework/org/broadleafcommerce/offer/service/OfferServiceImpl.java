@@ -73,10 +73,10 @@ public class OfferServiceImpl implements OfferService {
 
     // should be called outside of Offer service after Offer service is executed
     @Resource
-    private OfferCustomerDao offerCustomerDao;
+    protected OfferCustomerDao offerCustomerDao;
 
     @Resource
-    private OfferCodeDao offerCodeDao;
+    protected OfferCodeDao offerCodeDao;
 
     static {
         // load static mvel functions into SB
