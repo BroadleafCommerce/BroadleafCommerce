@@ -23,9 +23,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.testng.annotations.BeforeClass;
 
 @ContextConfiguration(locations = { "classpath:/applicationContext.xml", "classpath:/applicationContext-test.xml"})
+@TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
 public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextTests {
 
     /*
