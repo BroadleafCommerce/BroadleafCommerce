@@ -27,10 +27,10 @@ import org.springframework.stereotype.Repository;
 public class BasePriceDaoJpa implements BasePriceDao {
 
     @PersistenceContext(unitName="blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     public BasePrice save(BasePrice basePrice) {
         if (basePrice.getId() == null) {

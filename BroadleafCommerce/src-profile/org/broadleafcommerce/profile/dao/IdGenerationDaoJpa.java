@@ -38,11 +38,11 @@ public class IdGenerationDaoJpa implements IdGenerationDao {
     private Long defaultBatchStart = 1L;
 
     @PersistenceContext(unitName = "blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
-    
+    protected EntityConfiguration entityConfiguration;
+
     private String queryCacheableKey = "org.hibernate.cacheable";
 
     public IdGeneration findNextId(String idType) {
@@ -93,7 +93,7 @@ public class IdGenerationDaoJpa implements IdGenerationDao {
     public void setDefaultBatchStart(Long defaultBatchSize) {
         this.defaultBatchStart = defaultBatchStart;
     }
-    
+
     public String getQueryCacheableKey() {
         return queryCacheableKey;
     }

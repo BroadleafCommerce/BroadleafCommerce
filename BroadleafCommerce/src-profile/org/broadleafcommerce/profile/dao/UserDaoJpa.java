@@ -37,10 +37,10 @@ public class UserDaoJpa implements UserDao {
     protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName="blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @Resource
-    private EntityConfiguration entityConfiguration;
+    protected EntityConfiguration entityConfiguration;
 
     public User readUserByUsername(String username) {
         Query query = em.createNamedQuery("BC_sREAD_USER_BY_USER_NAME");

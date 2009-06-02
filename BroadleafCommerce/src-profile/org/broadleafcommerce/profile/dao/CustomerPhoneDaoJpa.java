@@ -33,7 +33,7 @@ public class CustomerPhoneDaoJpa implements CustomerPhoneDao {
     protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName = "blPU")
-    private EntityManager em;
+    protected EntityManager em;
 
     @SuppressWarnings("unchecked")
     public List<CustomerPhone> readActiveCustomerPhonesByCustomerId(Long customerId) {
