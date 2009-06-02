@@ -41,6 +41,8 @@ public interface CatalogService {
 
     public List<Product> findAllProducts();
 
+    public List<Product> findProductsForCategory(Category category);
+
     public Sku saveSku(Sku sku);
 
     public List<Sku> findAllSkus();
