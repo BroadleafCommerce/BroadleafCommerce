@@ -49,24 +49,5 @@
           class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:/comp/env/jdbc/webSecure"/>
     </bean>
-
-    <bean id="entityManagerFactory"
-          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="persistenceUnitManager" ref="persistenceUnitManager"/>
-        <property name="persistenceUnitName" value="blPU"/>
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="showSql" value="true"/>
-                <property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect"/>
-            </bean>
-        </property>
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="hibernate.hbm2ddl.auto" value="update"/>
-                <entry key="hibernate.transaction.flush_before_completion" value="false"/>
-                <entry key="hibernate.connection.autocommit" value="false"/>
-            </map>
-        </property>
-    </bean>
     
 </beans>
