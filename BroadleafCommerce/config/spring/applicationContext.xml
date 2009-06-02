@@ -126,11 +126,6 @@
 	</aop:config>
 
 	<aop:config>
-		<aop:pointcut id="blRuleServiceOperation" expression="execution(* org.broadleafcommerce.rules.service.RuleService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRuleServiceOperation"/>
-	</aop:config>
-
-	<aop:config>
 		<aop:pointcut id="blAddressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.AddressService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAddressServiceOperation"/>
 	</aop:config>
