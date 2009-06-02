@@ -19,11 +19,13 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.test.dataprovider.RegisterCustomerDataProvider;
 import org.broadleafcommerce.profile.web.controller.RegisterCustomerController;
-import org.broadleafcommerce.profile.web.form.CustomerRegistrationForm;
+import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
 import org.broadleafcommerce.test.integration.BaseTest;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
@@ -44,9 +46,9 @@ public class RegisterCustomerControllerTest extends BaseTest {
 
     @Test(groups = "createCustomerFromController", dataProvider = "setupCustomerControllerData", dataProviderClass = RegisterCustomerDataProvider.class)
     @Rollback(false)
-    public void createCustomerFromController(CustomerRegistrationForm registerCustomer) {
+    public void createCustomerFromController(RegisterCustomerForm registerCustomer) {
         BindingResult errors = new BeanPropertyBindingResult(registerCustomer, "registerCustomer");
-        //MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
 
         GreenMail greenMail = new GreenMail(
                 new ServerSetup[] {
@@ -54,18 +56,18 @@ public class RegisterCustomerControllerTest extends BaseTest {
                 }
         );
         greenMail.start();
-        //registerCustomerController.saveCustomer(registerCustomer, errors, request);
+        registerCustomerController.registerCustomer(registerCustomer, errors, request);
         greenMail.stop();
 
         assert(errors.getErrorCount() == 0);
-        //Customer customerFromDb = customerService.readCustomerByUsername(registerCustomer.getUsername());
-        //assert(customerFromDb != null);
+        Customer customerFromDb = customerService.readCustomerByUsername(registerCustomer.getCustomer().getUsername());
+        assert(customerFromDb != null);
     }
 
     @Test(groups = "viewRegisterCustomerFromController")
     public void viewRegisterCustomerFromController() {
         String view = registerCustomerController.viewForm();
-        assert (view.equals("registerCustomer"));
+        assert (view.equals("/account/registration/registerCustomer"));
     }
 
 }

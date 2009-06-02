@@ -16,62 +16,95 @@
 package org.broadleafcommerce.profile.web.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
-import org.broadleafcommerce.profile.web.form.CustomerRegistrationForm;
+import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
-@Controller("blRegisterCustomerFormController")
+@Controller("blRegisterCustomerController")
+
+/**
+ * RegisterCustomerController is used to register a customer.
+ *
+ * This controller simply calls the RegistrationCustomerValidator which can be extended for custom validation and
+ * then calls saveCustomer.
+ */
 public class RegisterCustomerController {
+
+    // URLs For success and failure
+    private String displayRegistrationFormView = "/account/registration/registerCustomer";
+    private String registrationErrorView = displayRegistrationFormView;
+    private String registrationSuccessView = "redirect:/account/registration/registrationSuccess";
+
     @Resource
     private CustomerService customerService;
 
     @Resource
     private RegisterCustomerValidator registerCustomerValidator;
 
-    public RegisterCustomerController() { }
-
     @RequestMapping(method = { RequestMethod.GET })
     public String viewForm() {
-        return "registerCustomer";
+        return getDisplayRegistrationFormView();
     }
 
     @RequestMapping(method = { RequestMethod.POST })
-    public ModelAndView saveCustomer(@ModelAttribute("customerForm") CustomerRegistrationForm registerCustomer,
-            BindingResult errors) {
-        registerCustomerValidator.validate(registerCustomer, errors);
-
-        if (errors.getAllErrors().isEmpty()) {
-            createCustomer(registerCustomer);
-            new ModelAndView("customerRegistered");
+    public ModelAndView registerCustomer(@ModelAttribute("registerCustomerForm") RegisterCustomerForm registerCustomerForm,
+            BindingResult errors, HttpServletRequest request) {
+        registerCustomerValidator.validate(registerCustomerForm, errors);
+        if (! errors.hasErrors()) {
+            customerService.registerCustomer(registerCustomerForm.getCustomer(), registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
+            return new ModelAndView(getRegistrationSuccessView());
+        } else {
+            return new ModelAndView(getRegistrationErrorView());
         }
-
-        return new ModelAndView("registerCustomer");
     }
 
-
-    private void createCustomer(CustomerRegistrationForm registerCustomer) {
+    @ModelAttribute("registerCustomerForm")
+    public RegisterCustomerForm initCustomerRegistrationForm() {
+        RegisterCustomerForm customerRegistrationForm = new RegisterCustomerForm();
         Customer customer = customerService.createCustomerFromId(null);
-        customer.setEmailAddress(registerCustomer.getEmailAddress());
-        customer.setFirstName(registerCustomer.getFirstName());
-        customer.setLastName(registerCustomer.getLastName());
-        customer.setPassword(registerCustomer.getPassword());
-        customer.setPassword(registerCustomer.getPassword());
-        customerService.saveCustomer(customer);
+        customerRegistrationForm.setCustomer(customer);
+        return customerRegistrationForm;
     }
 
-    @ModelAttribute("customerForm")
-    public CustomerRegistrationForm initCustomer(WebRequest request) {
-        CustomerRegistrationForm customer = new CustomerRegistrationForm();
-        return customer;
+    public String getRegistrationErrorView() {
+        return registrationErrorView;
+    }
+
+    public void setRegistrationErrorView(String registrationErrorView) {
+        this.registrationErrorView = registrationErrorView;
+    }
+
+    public String getRegistrationSuccessView() {
+        return registrationSuccessView;
+    }
+
+    public void setRegistrationSuccessView(String registrationSuccessView) {
+        this.registrationSuccessView = registrationSuccessView;
+    }
+
+    public RegisterCustomerValidator getRegisterCustomerValidator() {
+        return registerCustomerValidator;
+    }
+
+    public void setRegisterCustomerValidator(RegisterCustomerValidator registerCustomerValidator) {
+        this.registerCustomerValidator = registerCustomerValidator;
+    }
+
+    public String getDisplayRegistrationFormView() {
+        return displayRegistrationFormView;
+    }
+
+    public void setDisplayRegistrationFormView(String displayRegistrationFormView) {
+        this.displayRegistrationFormView = displayRegistrationFormView;
     }
 
 }

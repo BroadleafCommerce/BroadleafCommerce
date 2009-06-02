@@ -26,7 +26,7 @@ import org.springframework.test.context.testng.AbstractTransactionalTestNGSpring
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.testng.annotations.BeforeClass;
 
-@ContextConfiguration(locations = { "classpath:/applicationContext.xml", "classpath:/applicationContext-test.xml"})
+@ContextConfiguration(locations = { "classpath:/applicationContext.xml", "classpath:/applicationContext-test.xml", "classpath:/applicationContext-test-security.xml"})
 @TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
 public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextTests {
 
