@@ -15,13 +15,11 @@
  */
 package org.broadleafcommerce.extensibility.context.merge;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,45 +49,11 @@ import org.w3c.dom.Node;
  * This class manages all xml merge interactions with callers. It is responsible for
  * not only loading the handler configurations, but also for cycling through the handlers
  * in a prioritized fashion and exporting the final merged document.
- * 
+ *
  * @author jfischer
  *
  */
 public class MergeManager {
-
-    public static void main(String[] items) {
-        try {
-            MergeManager manager = new MergeManager();
-            InputStream stream1 = MergeManager.class.getResourceAsStream("applicationContext_1.xml");
-            InputStream stream2 = MergeManager.class.getResourceAsStream("applicationContext_2.xml");
-
-            InputStream result = manager.merge(stream1, stream2);
-
-            BufferedReader reader = null;
-            try{
-                boolean eof = false;
-                reader = new BufferedReader(new InputStreamReader(result));
-                while (!eof) {
-                    String temp = reader.readLine();
-                    if (temp == null) {
-                        eof = true;
-                    } else {
-                        System.out.println(temp);
-                    }
-                }
-            } finally {
-                if (reader != null) {
-                    try{ reader.close(); } catch (Throwable e) {}
-                }
-            }
-        } catch (MergeManagerSetupException e) {
-            e.printStackTrace();
-        } catch (MergeException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Additional merge points may be added by the caller. Also default merge points
@@ -98,7 +62,7 @@ public class MergeManager {
      * with a value stating the fully qualified path of user-created property file. Please refer
      * to the default properties file located at org/broadleafcommerce/extensibility/context/merge/default.properties
      * for more details.
-     * 
+     *
      */
     public static final String MERGE_DEFINITION_SYSTEM_PROPERTY = "org.broadleafcommerce.extensibility.context.merge.handlers.merge.properties";
 
@@ -137,7 +101,7 @@ public class MergeManager {
      * Merge 2 xml document streams together into a final resulting stream. During
      * the merge, various merge business rules are followed based on configuration
      * defined for various merge points.
-     * 
+     *
      * @param stream1
      * @param stream2
      * @return the stream representing the merged document

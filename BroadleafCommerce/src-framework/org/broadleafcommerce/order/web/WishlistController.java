@@ -66,7 +66,7 @@ public class WishlistController extends CartController {
                     try {
                         cartService.addSkuToOrder(wishlistOrder.getId(), productItem.getSkuId(), productItem.getProductId(),productItem.getCategoryId(), productItem.getQuantity());
                     } catch (PricingException e) {
-                        e.printStackTrace();
+                        logger.error("An exception occured while pricing the order", e);
                         //TODO How to handle from the UI perspective???
                     }
                 }
@@ -89,10 +89,8 @@ public class WishlistController extends CartController {
         try {
             cartService.moveItemToCartFromNamedOrder(wishlistOrder, orderItem);
         } catch (Exception e) {
-            e.printStackTrace();
-            /*
-             * TODO Kenny will look at handling this properly
-             */
+            logger.error("An exception occured while pricing the order", e);
+            //TODO: handle this properly from a UI perspective
         }
         return "redirect:success";
     }
@@ -102,11 +100,9 @@ public class WishlistController extends CartController {
         Order wishlistOrder = cartService.findNamedOrderForCustomer(wishlistName, customerState.getCustomer(request));
         try {
             cartService.moveAllItemsToCartFromNamedOrder(wishlistOrder);
-        } catch (Exception e) {
-            e.printStackTrace();
-            /*
-             * TODO Kenny will look at handling this properly
-             */
+        } catch (PricingException e) {
+            logger.error("An exception occured while pricing the order", e);
+            //TODO: handle this properly from a UI perspective
         }
         return "redirect:success";
     }

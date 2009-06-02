@@ -59,7 +59,6 @@ public class SequenceProcessor extends BaseProcessor {
             try {
                 context = activity.execute(context);
             } catch (Throwable th) {
-                th.printStackTrace();
                 ErrorHandler errorHandler = activity.getErrorHandler();
                 if (errorHandler == null) {
                     logger.info("no error handler for this action, run default error" + "handler and abort processing ");

@@ -28,6 +28,7 @@ public class OrmTest extends BaseTest {
         try {
             getEntityManager();
         } catch (Exception e) {
+            logger.error(e);
             assert false;
         }
     }

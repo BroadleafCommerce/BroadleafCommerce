@@ -26,6 +26,8 @@ import java.io.Writer;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.rules.dao.RuleDao;
 import org.broadleafcommerce.rules.domain.ShoppingCartPromotion;
 import org.broadleafcommerce.util.money.Money;
@@ -45,6 +47,8 @@ public class RuleServiceImpl implements RuleService {
     @Resource
     private RuleBaseService ruleBaseService;
 
+    protected final Log logger = LogFactory.getLog(getClass());
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public ShoppingCartPromotion saveShoppingCartPromotion(
@@ -61,15 +65,15 @@ public class RuleServiceImpl implements RuleService {
         try {
             drlFileReader = new FileReader(drlFile);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("Rule file not found: " + drlFile.getName(), e);
         }
 
         try {
             pkgBuilder.addPackageFromDrl(drlFileReader);
         } catch (DroolsParserException e) {
-            e.printStackTrace();
+            logger.error("Error occurred while parsing a rule", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
         Package pkg = pkgBuilder.getPackage();
@@ -79,11 +83,10 @@ public class RuleServiceImpl implements RuleService {
     }
 
     public void mergePackageWithRuleBase(Package pkg) {
-
         try {
             ruleBaseService.getRuleBase().addPackage(pkg);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Exception occurred while adding a package to the rules base", e);
         }
 
     }
@@ -155,11 +158,7 @@ public class RuleServiceImpl implements RuleService {
             mergePackageWithRuleBase(pkg);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Error writing drools file");
-        } finally {
-
+            logger.error("Error writing drools file", e);
         }
-
     }
 }

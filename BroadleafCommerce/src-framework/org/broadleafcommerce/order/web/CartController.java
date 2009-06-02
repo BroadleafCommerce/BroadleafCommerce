@@ -104,7 +104,7 @@ public class CartController {
                     OrderItem orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), productItem.getSkuId(), productItem.getProductId(), productItem.getCategoryId(), productItem.getQuantity());
                     orderItemsAdded.add(orderItem);
                 } catch (PricingException e) {
-                    e.printStackTrace();
+                    logger.error("An exception occured while pricing the order", e);
                     //TODO Handle this exception appropriately from the UI perspective
                 }
             }

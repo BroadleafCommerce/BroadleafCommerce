@@ -57,7 +57,9 @@ public class MVELTest extends BaseTest {
             if (is != null) {
                 try {
                     is.close();
-                } catch (Exception e){}
+                } catch (Exception e){
+                    logger.error(e);
+                }
             }
         }
     }

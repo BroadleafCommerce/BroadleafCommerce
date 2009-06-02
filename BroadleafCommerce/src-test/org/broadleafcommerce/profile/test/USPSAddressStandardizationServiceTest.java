@@ -82,7 +82,7 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
                 assert true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
             assert false;
         }
     }
@@ -99,7 +99,7 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
                 assert true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
             assert false;
         }
 

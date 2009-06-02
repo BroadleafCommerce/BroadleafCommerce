@@ -34,7 +34,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
- * 
+ *
  * @author jfischer
  *
  */
@@ -97,7 +97,9 @@ public class EmailOpenTrackingServlet extends HttpServlet {
                 }
             } finally {
                 if (bis != null) {
-                    try{ bis.close(); } catch (Throwable e) {}
+                    try{ bis.close(); } catch (Throwable e) {
+                        LOG.error("Unable to close output stream in EmailOpenTrackingServlet", e);
+                    }
                 }
                 //Don't close the output stream controlled by the container. The container will
                 //handle this.

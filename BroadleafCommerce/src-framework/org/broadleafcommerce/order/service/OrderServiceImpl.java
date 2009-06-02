@@ -21,6 +21,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.dao.CategoryDao;
 import org.broadleafcommerce.catalog.dao.ProductDao;
 import org.broadleafcommerce.catalog.dao.SkuDao;
@@ -97,6 +99,8 @@ public class OrderServiceImpl implements OrderService {
     protected SecurePaymentInfoService securePaymentInfoService;
 
     protected boolean rollupOrderItems = true;
+
+    private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 
     @Override
     public Order createNamedOrderForCustomer(String name, Customer customer) {
@@ -224,7 +228,8 @@ public class OrderServiceImpl implements OrderService {
                 securePaymentInfoService.findAndRemoveSecurePaymentInfo
                 (paymentInfo.getReferenceNumber(), paymentInfo.getType());
             } catch (WorkflowException e) {
-                //do nothing--no secure payment is associated with the PaymentInfo (and that's OK)
+                //do nothing--this is an acceptable condition
+                LOG.debug("No secure payment is associated with the PaymentInfo", e);
             }
 
             paymentInfoDao.delete(paymentInfo);
