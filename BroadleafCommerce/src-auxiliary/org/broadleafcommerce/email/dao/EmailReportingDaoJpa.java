@@ -21,12 +21,10 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.broadleafcommerce.email.domain.EmailTarget;
 import org.broadleafcommerce.email.domain.EmailTracking;
 import org.broadleafcommerce.email.domain.EmailTrackingClicks;
-import org.broadleafcommerce.email.domain.EmailTrackingClicksImpl;
-import org.broadleafcommerce.email.domain.EmailTrackingImpl;
 import org.broadleafcommerce.email.domain.EmailTrackingOpens;
-import org.broadleafcommerce.email.domain.EmailTrackingOpensImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
@@ -48,7 +46,7 @@ public class EmailReportingDaoJpa implements EmailReportingDao {
      * @see WebReportingDao#createTracking(java.lang.String, java.lang.String, java.lang.String)
      */
     public Long createTracking(String emailAddress, String type, String extraValue) {
-        EmailTracking tracking = new EmailTrackingImpl();
+        EmailTracking tracking = (EmailTracking) entityConfiguration.createEntityInstance("org.broadleafcommerce.email.domain.EmailTracking");
         tracking.setDateSent(new Date());
         tracking.setEmailAddress(emailAddress);
         tracking.setType(type);
@@ -58,13 +56,18 @@ public class EmailReportingDaoJpa implements EmailReportingDao {
         return tracking.getId();
     }
 
+    public EmailTarget createTarget() {
+        EmailTarget target = (EmailTarget) entityConfiguration.createEntityInstance("org.broadleafcommerce.email.domain.EmailTarget");
+        return target;
+    }
+
     @SuppressWarnings("unchecked")
     public EmailTracking retrieveTracking(Long emailId) {
         return (EmailTracking) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.email.domain.EmailTracking"), emailId);
     }
 
     public void recordOpen(Long emailId, String userAgent) {
-        EmailTrackingOpens opens = new EmailTrackingOpensImpl();
+        EmailTrackingOpens opens = (EmailTrackingOpens) entityConfiguration.createEntityInstance("org.broadleafcommerce.email.domain.EmailTrackingOpens");
         opens.setEmailTracking(retrieveTracking(emailId));
         opens.setDateOpened(new Date());
         opens.setUserAgent(userAgent);
@@ -73,7 +76,7 @@ public class EmailReportingDaoJpa implements EmailReportingDao {
     }
 
     public void recordClick(Long emailId, Customer customer, String destinationUri, String queryString) {
-        EmailTrackingClicks clicks = new EmailTrackingClicksImpl();
+        EmailTrackingClicks clicks = (EmailTrackingClicks) entityConfiguration.createEntityInstance("org.broadleafcommerce.email.domain.EmailTrackingClicks");
         clicks.setEmailTracking(retrieveTracking(emailId));
         clicks.setDateClicked(new Date());
         clicks.setDestinationUri(destinationUri);

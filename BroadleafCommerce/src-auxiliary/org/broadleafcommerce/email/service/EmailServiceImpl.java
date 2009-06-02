@@ -19,8 +19,8 @@ import java.util.HashMap;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.email.dao.EmailReportingDao;
 import org.broadleafcommerce.email.domain.EmailTarget;
-import org.broadleafcommerce.email.domain.EmailTargetImpl;
 import org.broadleafcommerce.email.service.info.EmailInfo;
 import org.broadleafcommerce.email.service.info.ServerInfo;
 import org.broadleafcommerce.email.service.jms.EmailServiceProducer;
@@ -46,6 +46,9 @@ public class EmailServiceImpl implements EmailService {
     @Resource
     protected MessageCreator messageCreator;
 
+    @Resource
+    protected EmailReportingDao emailReportingDao;
+
     public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String,Object> props) {
         if (props == null) {
             props = new HashMap<String, Object>();
@@ -61,7 +64,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, HashMap<String,Object> props) {
-        EmailTarget emailTarget = new EmailTargetImpl();
+        EmailTarget emailTarget = emailReportingDao.createTarget();
         emailTarget.setEmailAddress(emailAddress);
         return sendTemplateEmail(emailTarget, emailInfo, props);
     }
