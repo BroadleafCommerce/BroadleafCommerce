@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * improper classes. For example, service classes should not have dependencies
  * on HttpServletRequest. In this case, one could test the service package
  * against javax.servlet (which is the containing package for HttpServletRequest).
- * 
+ *
  * @author jfischer
  *
  */
@@ -67,7 +67,6 @@ public class DependencyTest extends BaseTest {
         targetPackages.add("org.broadleafcommerce.payment");
         targetPackages.add("org.broadleafcommerce.pricing");
         //targetPackages.add("org.broadleafcommerce.promotion");
-        targetPackages.add("org.broadleafcommerce.rules");
         targetPackages.add("org.broadleafcommerce.search");
         targetPackages.add("org.broadleafcommerce.util");
         targetPackages.add("org.broadleafcommerce.workflow");
