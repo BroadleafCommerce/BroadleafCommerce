@@ -248,6 +248,7 @@
 	<bean id="org.broadleafcommerce.order.domain.GiftWrapOrderItem" class="org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.PaymentInfo" class="org.broadleafcommerce.payment.domain.PaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.payment.domain.PaymentLog" class="org.broadleafcommerce.payment.domain.PaymentLogImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl" scope="prototype"/>

@@ -174,6 +174,7 @@ public class PaymentServiceImpl implements PaymentService {
         log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         log.setUserName(paymentContext.getUserName());
         log.setExceptionMessage(null);
+        log.setAmountPaid(info.getAmount());
         log.setPaymentInfo(info);
         info.getPaymentLogs().add(log);
 
