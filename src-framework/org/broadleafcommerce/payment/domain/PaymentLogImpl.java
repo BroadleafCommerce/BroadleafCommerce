@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.payment.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -35,6 +36,7 @@ import org.broadleafcommerce.payment.service.type.BLCPaymentLogEventType;
 import org.broadleafcommerce.payment.service.type.BLCTransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -78,6 +80,9 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Column(name = "LOG_TYPE")
     protected String logType;
+
+    @Column(name = "AMOUNT_PAID")
+    protected BigDecimal amountPaid;
 
     public Long getId() {
         return id;
@@ -157,5 +162,13 @@ public class PaymentLogImpl implements PaymentLog {
 
     public void setExceptionMessage(String exceptionMessage) {
         this.exceptionMessage = exceptionMessage;
+    }
+
+    public Money getAmountPaid() {
+        return new Money(amountPaid);
+    }
+
+    public void setAmountPaid(Money amountPaid) {
+        this.amountPaid = Money.toAmount(amountPaid);
     }
 }

@@ -20,6 +20,7 @@ import java.util.Date;
 import org.broadleafcommerce.payment.service.type.BLCPaymentLogEventType;
 import org.broadleafcommerce.payment.service.type.BLCTransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentLog {
 
@@ -62,5 +63,9 @@ public interface PaymentLog {
     public BLCPaymentLogEventType getLogType();
 
     public void setLogType(BLCPaymentLogEventType logType);
+
+    public Money getAmountPaid();
+
+    public void setAmountPaid(Money amountPaid);
 
 }

@@ -42,7 +42,7 @@ public class OrderItemAdjustmentImpl implements Serializable,OrderItemAdjustment
 
     @Id
     @GeneratedValue
-    @Column(name = "ITEM_ADJUSTMENT_ID")
+    @Column(name = "ORDER_ITEM_ADJUSTMENT_ID")
     private Long id;
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
@@ -78,18 +78,18 @@ public class OrderItemAdjustmentImpl implements Serializable,OrderItemAdjustment
         return orderItem;
     }
 
-/*    public void setOrderItem(OrderItem orderItem) {
+    /*    public void setOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
     }
-*/
+     */
     public Offer getOffer() {
         return offer;
     }
 
-/*    public void setOffer(Offer offer) {
+    /*    public void setOffer(Offer offer) {
         this.offer = offer;
     }
-*/
+     */
     public String getReason() {
         return reason;
     }
