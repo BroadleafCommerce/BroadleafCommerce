@@ -156,7 +156,7 @@ public class OrderImpl implements Order, Serializable {
         this.subTotal = Money.toAmount(subTotal);
     }
 
-    public Money calculateCurrentSubTotal() {
+    public Money calculateOrderItemsCurrentPrice() {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
             Money currentItemPrice = orderItem.getCurrentPrice();
@@ -165,7 +165,7 @@ public class OrderImpl implements Order, Serializable {
         return calculatedSubTotal;
     }
 
-    public Money calculateFinalSubTotal() {
+    public Money calculateOrderItemsFinalPrice() {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
             Money currentItemPrice = orderItem.getPrice();
@@ -543,6 +543,5 @@ public class OrderImpl implements Order, Serializable {
             addedOfferCodes.clear();
         }
     }
-
 
 }

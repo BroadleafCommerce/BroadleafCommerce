@@ -15,17 +15,144 @@
  */
 package org.broadleafcommerce.offer.test;
 
-import org.broadleafcommerce.pricing.service.exception.PricingException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.catalog.domain.SkuImpl;
+import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OfferCode;
+import org.broadleafcommerce.offer.domain.OfferCodeImpl;
+import org.broadleafcommerce.offer.domain.OfferImpl;
+import org.broadleafcommerce.offer.service.OfferService;
+import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
+import org.broadleafcommerce.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.offer.service.type.OfferType;
+import org.broadleafcommerce.order.dao.OrderDao;
+import org.broadleafcommerce.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
+import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.IdGeneration;
+import org.broadleafcommerce.profile.domain.IdGenerationImpl;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.integration.BaseTest;
-import org.testng.annotations.Test;
+import org.broadleafcommerce.util.money.Money;
+import org.junit.Test;
 
 public class OfferTest extends BaseTest {
 
-    //@Resource
-    //private OfferService offerService;
+    @Resource
+    private OrderDao orderDao;
+
+    @Resource
+    private OfferService offerService;
+
+    @Resource
+    private CustomerService customerService;
 
     @Test
-    public void testXyz() throws PricingException {
+    public void testOfferUsedForPricing() throws Exception {
+        Order order = orderDao.create();
+        order.setCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
 
+        order.addOrderItem(createDiscreteOrderItem(123456L, 10D, null, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(1234567L, 20D, null, true, 1));
+
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 123456", true, true, 10));
+        order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != 123456", true, true, 10));
+        order.addAddedOfferCode(createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
+    }
+
+    @Test
+    public void testOfferNotStackableOffers() throws Exception {
+        Order order = orderDao.create();
+        order.setCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
+
+        order.addOrderItem(createDiscreteOrderItem(123456L, 100D, null, true, 2));
+
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 123456", false, true, 10));
+        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == 123456", true, true, 1));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        assert (order.getSubTotal().equals(new Money(140D)));
+    }
+
+
+    private Customer createCustomer() {
+        IdGeneration idGeneration = new IdGenerationImpl();
+        idGeneration.setType("org.broadleafcommerce.profile.domain.Customer");
+        idGeneration.setBatchStart(1L);
+        idGeneration.setBatchSize(10L);
+        em.persist(idGeneration);
+        Customer customer = customerService.createCustomerFromId(null);
+        return customer;
+    }
+
+    private List<FulfillmentGroup> createFulfillmentGroups(String method, Double shippingPrice) {
+        List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
+        FulfillmentGroup group = new FulfillmentGroupImpl();
+        group.setMethod(method);
+        groups.add(group);
+        group.setShippingPrice(new Money(shippingPrice));
+        return groups;
+    }
+
+    private DiscreteOrderItem createDiscreteOrderItem(Long skuId, Double retailPrice, Double salePrice, boolean isDiscountable, int quantity) {
+        DiscreteOrderItemImpl item = new DiscreteOrderItemImpl();
+        Sku sku = new SkuImpl();
+        sku.setId(skuId);
+        sku.setRetailPrice(new Money(retailPrice));
+        if (salePrice != null) {
+            sku.setSalePrice(new Money(salePrice));
+        }
+        sku.setDiscountable(isDiscountable);
+        item.setSku(sku);
+        item.setQuantity(quantity);
+        return item;
+    }
+
+    private OfferCode createOfferCode(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
+        OfferCode offerCode = new OfferCodeImpl();
+        Offer offer = createOffer(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
+        offerCode.setOffer(offer);
+        offerCode.setOfferCode("OPRAH");
+        return offerCode;
+    }
+
+    private Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
+        Offer offer = new OfferImpl();
+        offer.setName(offerName);
+        offer.setStartDate(new Date());
+        Calendar calendar = Calendar.getInstance();
+        calendar.roll(Calendar.DATE, -1);
+        offer.setStartDate(calendar.getTime());
+        calendar.roll(Calendar.DATE, 2);
+        offer.setEndDate(calendar.getTime());
+        offer.setType(offerType);
+        offer.setDiscountType(discountType);
+        offer.setValue(new Money(value));
+        offer.setDeliveryType(OfferDeliveryType.CODE);
+        offer.setStackable(stackable);
+        offer.setAppliesToOrderRules(orderRule);
+        offer.setAppliesToCustomerRules(customerRule);
+        offer.setCombinableWithOtherOffers(combinable);
+        offer.setPriority(priority);
+        return offer;
     }
 }

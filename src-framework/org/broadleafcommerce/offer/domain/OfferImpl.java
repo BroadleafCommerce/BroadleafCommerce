@@ -164,10 +164,21 @@ public class OfferImpl implements Serializable, Offer {
         this.endDate = endDate;
     }
 
+    /**
+     * Returns true if this offer can be stacked on top of another offer.  Stackable is evaluated
+     * against offers with the same offer type.
+     *
+     * @return true if stackable, otherwise false
+     */
     public boolean isStackable() {
         return stackable;
     }
 
+    /**
+     * Sets the stackable value for this offer.
+     *
+     * @param stackable
+     */
     public void setStackable(boolean stackable) {
         this.stackable = stackable;
     }
@@ -215,10 +226,20 @@ public class OfferImpl implements Serializable, Offer {
         this.applyDiscountToMarkedItems = applyDiscountToMarkedItems;
     }
 
+    /**
+     * Returns true if this offer can be combined with other offers in the order.
+     *
+     * @return true if combinableWithOtherOffers, otherwise false
+     */
     public boolean isCombinableWithOtherOffers() {
         return combinableWithOtherOffers;
     }
 
+    /**
+     * Sets the combinableWithOtherOffers value for this offer.
+     *
+     * @param combinableWithOtherOffers
+     */
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers) {
         this.combinableWithOtherOffers = combinableWithOtherOffers;
     }

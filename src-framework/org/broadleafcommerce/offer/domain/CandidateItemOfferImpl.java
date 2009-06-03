@@ -85,7 +85,7 @@ public class CandidateItemOfferImpl implements Serializable,CandidateItemOffer {
 
     public Money getDiscountedPrice() {
         if (discountedPrice == null) {
-            computeDiscountPrice();
+            computeDiscountedPrice();
         }
         return discountedPrice == null ? null : new Money(discountedPrice);
     }
@@ -98,7 +98,7 @@ public class CandidateItemOfferImpl implements Serializable,CandidateItemOffer {
         return offer;
     }
 
-    protected void computeDiscountPrice() {
+    protected void computeDiscountedPrice() {
         if (offer != null && orderItem != null){
 
             Money priceToUse = orderItem.getRetailPrice();
@@ -108,12 +108,9 @@ public class CandidateItemOfferImpl implements Serializable,CandidateItemOffer {
 
             if (offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ) {
                 priceToUse = priceToUse.subtract(offer.getValue());
-            }
-            if (offer.getDiscountType() == OfferDiscountType.FIX_PRICE) {
+            } else if (offer.getDiscountType() == OfferDiscountType.FIX_PRICE) {
                 priceToUse = offer.getValue();
-            }
-
-            if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF) {
+            } else if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF) {
                 priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
             }
             if (priceToUse.lessThan(new Money(0))) {

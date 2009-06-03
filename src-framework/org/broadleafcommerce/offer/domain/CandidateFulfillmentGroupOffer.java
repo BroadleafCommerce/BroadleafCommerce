@@ -34,5 +34,4 @@ public interface CandidateFulfillmentGroupOffer {
     public Offer getOffer();
 
     public void setOffer(Offer offer);
-
 }
