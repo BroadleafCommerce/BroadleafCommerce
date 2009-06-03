@@ -31,13 +31,13 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
-@Table(name = "BLC_FULFILLMENT_GROUP_ADJUSTMENT")
+@Table(name = "BLC_FG_ADJUSTMENT")
 public class FulfillmentGroupAdjustmentImpl implements Serializable, FulfillmentGroupAdjustment {
     public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
-    @Column(name = "FULFILLMENT_GROUP_ADJUSTMENT_ID")
+    @Column(name = "FG_ADJUSTMENT_ID")
     private Long id;
 
     @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class)
