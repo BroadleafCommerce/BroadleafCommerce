@@ -46,9 +46,9 @@ public interface Order {
 
     public void assignOrderItemsFinalPrice();
 
-    public Money calculateCurrentSubTotal();
+    public Money calculateOrderItemsCurrentPrice();
 
-    public Money calculateFinalSubTotal();
+    public Money calculateOrderItemsFinalPrice();
 
     public Money getTotal();
 
@@ -153,6 +153,5 @@ public interface Order {
     public void addAddedOfferCode(OfferCode addedOfferCode);
 
     public void removeAllAddedOfferCodes();
-
 
 }

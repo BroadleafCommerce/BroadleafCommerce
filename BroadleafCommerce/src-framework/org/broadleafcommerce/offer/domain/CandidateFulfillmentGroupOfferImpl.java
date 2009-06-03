@@ -52,15 +52,14 @@ public class CandidateFulfillmentGroupOfferImpl implements Serializable,Candidat
     @Column(name = "DISCOUNTED_PRICE")
     private BigDecimal discountedPrice;
 
-    public CandidateFulfillmentGroupOfferImpl(){
+	public CandidateFulfillmentGroupOfferImpl(){
 
-    }
+	}
 
-    public CandidateFulfillmentGroupOfferImpl(FulfillmentGroup fulfillmentGroup, Offer offer){
-        this.offer = offer;
-        this.fulfillmentGroup = fulfillmentGroup;
-        computeDiscountAmount();
-    }
+	public CandidateFulfillmentGroupOfferImpl(FulfillmentGroup fulfillmentGroup, Offer offer){
+		this.offer = offer;
+		this.fulfillmentGroup = fulfillmentGroup;
+	}
 
     public Long getId() {
         return id;
@@ -70,51 +69,53 @@ public class CandidateFulfillmentGroupOfferImpl implements Serializable,Candidat
         this.id = id;
     }
 
-    public Offer getOffer() {
-        return offer;
-    }
+ 	public Offer getOffer() {
+		return offer;
+	}
 
-    public void setOffer(Offer offer) {
-        this.offer = offer;
-        computeDiscountAmount();
-    }
-    public Money getDiscountedPrice() {
-        computeDiscountAmount();
-        return discountedPrice == null ? null : new Money(discountedPrice);
-    }
-
-    public FulfillmentGroup getFulfillmentGroup() {
-        return fulfillmentGroup;
-    }
-    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        this.fulfillmentGroup = fulfillmentGroup;
-        computeDiscountAmount();
-    }
-
-    public int getPriority() {
-        return offer.getPriority();
-    }
-
-
-    protected void computeDiscountAmount() {
-        if(offer != null && fulfillmentGroup != null){
-
-            Money priceToUse = fulfillmentGroup.getRetailShippingPrice();
-            //            if (offer.getApplyDiscountToSalePrice()) {
-            //                priceToUse = fulfillmentGroup.getSaleShippingPrice();
-
-            if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
-                priceToUse.subtract(offer.getValue());
-            }
-            if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
-                priceToUse = offer.getValue();
-            }
-
-            if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
-                priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
-            }
-            discountedPrice = priceToUse.getAmount();
+	public void setOffer(Offer offer) {
+		this.offer = offer;
+		discountedPrice = null;
+	}
+	public Money getDiscountedPrice() {
+        if (discountedPrice == null) {
+            computeDiscountedPrice();
         }
-    }
+        return discountedPrice == null ? null : new Money(discountedPrice);
+	}
+
+	public FulfillmentGroup getFulfillmentGroup() {
+		return fulfillmentGroup;
+	}
+	public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+		this.fulfillmentGroup = fulfillmentGroup;
+		discountedPrice = null;
+	}
+
+	public int getPriority() {
+		return offer.getPriority();
+	}
+
+
+	protected void computeDiscountedPrice() {
+		if (offer != null && fulfillmentGroup != null){
+
+		    if (fulfillmentGroup.getRetailShippingPrice() != null) {
+                Money priceToUse = fulfillmentGroup.getRetailShippingPrice();
+
+    	        if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
+    	            priceToUse.subtract(offer.getValue());
+    	        } else if (offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
+    	            priceToUse = offer.getValue();
+    	        } else if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
+    	            priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
+    	        }
+                if (priceToUse.lessThan(new Money(0))) {
+                    priceToUse = new Money(0);
+                }
+                discountedPrice = priceToUse.getAmount();
+		    }
+		}
+	}
 
 }

@@ -84,7 +84,7 @@ public class CandidateOrderOfferImpl implements Serializable,CandidateOrderOffer
 
 	public Money getDiscountedPrice() {
 	    if (discountedPrice == null) {
-	        computeDiscountAmount();
+	        computeDiscountedAmount();
 	    }
         return discountedPrice == null ? null : new Money(discountedPrice);
 	}
@@ -99,25 +99,24 @@ public class CandidateOrderOfferImpl implements Serializable,CandidateOrderOffer
         discountedPrice = null;  // price needs to be recalculated
 	}
 
-	protected void computeDiscountAmount() {
-		if(offer != null && order != null){
+	protected void computeDiscountedAmount() {
+		if (offer != null && order != null){
 
-			Money priceToUse = order.getSubTotal();
+		    if (order.getSubTotal() != null) {
+    			Money priceToUse = order.getSubTotal();
 
-	        if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
-	            priceToUse = priceToUse.subtract(offer.getValue());
-	        }
-	        if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
-	            priceToUse = offer.getValue();
-	        }
-
-	        if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
-	            priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
-	        }
-	        if (priceToUse.lessThan(new Money(0))) {
-	            priceToUse = new Money(0);
-	        }
-	        discountedPrice = priceToUse.getAmount();
+    	        if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
+    	            priceToUse = priceToUse.subtract(offer.getValue());
+    	        } else if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
+    	            priceToUse = offer.getValue();
+    	        } else if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
+    	            priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
+    	        }
+    	        if (priceToUse.lessThan(new Money(0))) {
+    	            priceToUse = new Money(0);
+    	        }
+    	        discountedPrice = priceToUse.getAmount();
+		    }
 		}
 	}
 
