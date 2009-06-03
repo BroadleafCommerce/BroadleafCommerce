@@ -2,8 +2,6 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 
-	<span id="greeting">Logged in as <b><security:authentication property="principal.username" /></b></span>
-
 	<h1>Default Category View For: <c:out value="${currentCategory.name}"/></h1>
 
 	Breadcrumb: <blc:breadcrumb categoryList="${breadcrumbCategories}" />

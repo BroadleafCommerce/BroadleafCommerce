@@ -6,7 +6,7 @@
 <%@ taglib prefix="form" uri="/spring-form"%>
 <%@ taglib prefix="security"
 	uri="http://www.springframework.org/security/tags"%>
-<jsp:include page="snippets/header.jsp" />
+<jsp:include page="snippets/navigation.jsp" />
 
 
 <form:form method="post" commandName="couponCode">
