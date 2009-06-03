@@ -32,13 +32,13 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
-@Table(name = "BLC_CANDIDATE_FULFILLMENT_GROUP_OFFER")
+@Table(name = "BLC_CANDIDATE_FG_OFFER")
 public class CandidateFulfillmentGroupOfferImpl implements Serializable,CandidateFulfillmentGroupOffer {
     public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
-    @Column(name = "CANDIDATE_FULFILLMENT_GROUP_OFFER_ID")
+    @Column(name = "CANDIDATE_FG_OFFER_ID")
     private Long id;
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
@@ -52,15 +52,15 @@ public class CandidateFulfillmentGroupOfferImpl implements Serializable,Candidat
     @Column(name = "DISCOUNTED_PRICE")
     private BigDecimal discountedPrice;
 
-	public CandidateFulfillmentGroupOfferImpl(){
+    public CandidateFulfillmentGroupOfferImpl(){
 
-	}
+    }
 
-	public CandidateFulfillmentGroupOfferImpl(FulfillmentGroup fulfillmentGroup, Offer offer){
-		this.offer = offer;
-		this.fulfillmentGroup = fulfillmentGroup;
-		computeDiscountAmount();
-	}
+    public CandidateFulfillmentGroupOfferImpl(FulfillmentGroup fulfillmentGroup, Offer offer){
+        this.offer = offer;
+        this.fulfillmentGroup = fulfillmentGroup;
+        computeDiscountAmount();
+    }
 
     public Long getId() {
         return id;
@@ -70,51 +70,51 @@ public class CandidateFulfillmentGroupOfferImpl implements Serializable,Candidat
         this.id = id;
     }
 
- 	public Offer getOffer() {
-		return offer;
-	}
+    public Offer getOffer() {
+        return offer;
+    }
 
-	public void setOffer(Offer offer) {
-		this.offer = offer;
-		computeDiscountAmount();
-	}
-	public Money getDiscountedPrice() {
-		computeDiscountAmount();
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+        computeDiscountAmount();
+    }
+    public Money getDiscountedPrice() {
+        computeDiscountAmount();
         return discountedPrice == null ? null : new Money(discountedPrice);
-	}
+    }
 
-	public FulfillmentGroup getFulfillmentGroup() {
-		return fulfillmentGroup;
-	}
-	public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-		this.fulfillmentGroup = fulfillmentGroup;
-		computeDiscountAmount();
-	}
+    public FulfillmentGroup getFulfillmentGroup() {
+        return fulfillmentGroup;
+    }
+    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+        this.fulfillmentGroup = fulfillmentGroup;
+        computeDiscountAmount();
+    }
 
-	public int getPriority() {
-		return offer.getPriority();
-	}
+    public int getPriority() {
+        return offer.getPriority();
+    }
 
 
-	protected void computeDiscountAmount() {
-		if(offer != null && fulfillmentGroup != null){
+    protected void computeDiscountAmount() {
+        if(offer != null && fulfillmentGroup != null){
 
             Money priceToUse = fulfillmentGroup.getRetailShippingPrice();
-//            if (offer.getApplyDiscountToSalePrice()) {
-//                priceToUse = fulfillmentGroup.getSaleShippingPrice();
+            //            if (offer.getApplyDiscountToSalePrice()) {
+            //                priceToUse = fulfillmentGroup.getSaleShippingPrice();
 
-	        if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
-	            priceToUse.subtract(offer.getValue());
-	        }
-	        if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
-	            priceToUse = offer.getValue();
-	        }
+            if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
+                priceToUse.subtract(offer.getValue());
+            }
+            if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
+                priceToUse = offer.getValue();
+            }
 
-	        if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
-	            priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
-	        }
+            if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
+                priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
+            }
             discountedPrice = priceToUse.getAmount();
-		}
-	}
+        }
+    }
 
 }
