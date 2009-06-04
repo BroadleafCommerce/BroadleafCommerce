@@ -58,7 +58,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             }
         }
         try {
-            CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, String>());
+            CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);
 
             return seed;
