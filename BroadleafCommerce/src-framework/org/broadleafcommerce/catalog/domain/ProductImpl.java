@@ -124,7 +124,7 @@ public class ProductImpl implements Product, Serializable {
 
     /** The skus. */
     @Transient
-    private List<Sku> skus;
+    protected List<Sku> skus;
 
     /*
      * (non-Javadoc)
