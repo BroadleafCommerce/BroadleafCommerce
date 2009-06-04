@@ -32,15 +32,13 @@ import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferType;
-import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.domain.IdGeneration;
-import org.broadleafcommerce.profile.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.integration.BaseTest;
 import org.broadleafcommerce.util.money.Money;
@@ -49,18 +47,17 @@ import org.testng.annotations.Test;
 public class OfferTest extends BaseTest {
 
     @Resource
-    private OrderDao orderDao;
-
-    @Resource
     private OfferService offerService;
 
     @Resource
     private CustomerService customerService;
 
-    @Test
+    @Resource
+    private CartService cartService;
+
+    @Test(groups =  {"offerUsedForPricing"})
     public void testOfferUsedForPricing() throws Exception {
-        Order order = orderDao.create();
-        order.setCustomer(createCustomer());
+        Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
 
         order.addOrderItem(createDiscreteOrderItem(123456L, 10D, null, true, 2));
@@ -76,10 +73,9 @@ public class OfferTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
 
-/*    @Test
+    @Test(groups =  {"offerNotStackableOffers"})
     public void testOfferNotStackableOffers() throws Exception {
-        Order order = orderDao.create();
-        order.setCustomer(createCustomer());
+        Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
 
         order.addOrderItem(createDiscreteOrderItem(123456L, 100D, null, true, 2));
@@ -92,14 +88,13 @@ public class OfferTest extends BaseTest {
 
         assert (order.getSubTotal().equals(new Money(112D)));
     }
-*/
 
     private Customer createCustomer() {
-        IdGeneration idGeneration = new IdGenerationImpl();
+        /*IdGeneration idGeneration = new IdGenerationImpl();
         idGeneration.setType("org.broadleafcommerce.profile.domain.Customer");
         idGeneration.setBatchStart(1L);
         idGeneration.setBatchSize(10L);
-        em.persist(idGeneration);
+        em.persist(idGeneration);*/
         Customer customer = customerService.createCustomerFromId(null);
         return customer;
     }
