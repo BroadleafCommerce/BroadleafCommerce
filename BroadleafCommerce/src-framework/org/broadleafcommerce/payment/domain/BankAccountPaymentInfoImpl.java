@@ -24,11 +24,11 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
+
+import org.broadleafcommerce.encryption.EncryptionModule;
 
 /**
- * TODO look at some pluggable encryption mechanism that would
- * decrypt protected fields. Something that's flexible that implementors
- * could use, or switch out with their own.
  * 
  * @author jfischer
  *
@@ -37,6 +37,9 @@ import javax.persistence.TableGenerator;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BANK_ACCOUNT_PAYMENT")
 public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
+
+    @Transient
+    private EncryptionModule encryptionModule;
 
     @Id
     @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
@@ -70,19 +73,27 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
     }
 
     public String getAccountNumber() {
-        return accountNumber;
+        return encryptionModule.decrypt(accountNumber);
     }
 
     public void setAccountNumber(String accountNumber) {
-        this.accountNumber = accountNumber;
+        this.accountNumber = encryptionModule.encrypt(accountNumber);
     }
 
     public String getRoutingNumber() {
-        return routingNumber;
+        return encryptionModule.decrypt(routingNumber);
     }
 
     public void setRoutingNumber(String routingNumber) {
-        this.routingNumber = routingNumber;
+        this.routingNumber = encryptionModule.encrypt(routingNumber);
+    }
+
+    public EncryptionModule getEncryptionModule() {
+        return encryptionModule;
+    }
+
+    public void setEncryptionModule(EncryptionModule encryptionModule) {
+        this.encryptionModule = encryptionModule;
     }
 
     @Override

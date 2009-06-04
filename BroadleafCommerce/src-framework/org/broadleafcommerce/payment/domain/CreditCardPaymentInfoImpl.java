@@ -29,9 +29,6 @@ import javax.persistence.Transient;
 import org.broadleafcommerce.encryption.EncryptionModule;
 
 /**
- * TODO look at some pluggable encryption mechanism that would
- * decrypt protected fields. Something that's flexible that implementors
- * could use, or switch out with their own.
  * 
  * @author jfischer
  *
@@ -97,14 +94,14 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
      * @see org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo#getPan()
      */
     public String getPan() {
-        return pan;
+        return encryptionModule.decrypt(pan);
     }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo#setPan(java.lang.Long)
      */
     public void setPan(String pan) {
-        this.pan = pan;
+        this.pan = encryptionModule.encrypt(pan);
     }
 
     /* (non-Javadoc)
@@ -141,6 +138,14 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
 
     public void setCvvCode(String cvvCode) {
         this.cvvCode = cvvCode;
+    }
+
+    public EncryptionModule getEncryptionModule() {
+        return encryptionModule;
+    }
+
+    public void setEncryptionModule(EncryptionModule encryptionModule) {
+        this.encryptionModule = encryptionModule;
     }
 
     @Override
@@ -190,14 +195,6 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
         } else if (!referenceNumber.equals(other.referenceNumber))
             return false;
         return true;
-    }
-
-    public EncryptionModule getEncryptionModule() {
-        return encryptionModule;
-    }
-
-    public void setEncryptionModule(EncryptionModule encryptionModule) {
-        this.encryptionModule = encryptionModule;
     }
 
 }
