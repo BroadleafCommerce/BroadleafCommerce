@@ -24,11 +24,17 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
+
+import org.broadleafcommerce.encryption.EncryptionModule;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_GIFT_CARD_PAYMENT")
 public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
+
+    @Transient
+    private EncryptionModule encryptionModule;
 
     @Id
     @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
@@ -52,12 +58,12 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
 
     @Override
     public String getPan() {
-        return pan;
+        return encryptionModule.decrypt(pan);
     }
 
     @Override
     public String getPin() {
-        return pin;
+        return encryptionModule.decrypt(pin);
     }
 
     @Override
@@ -67,12 +73,12 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
 
     @Override
     public void setPan(String pan) {
-        this.pan = pan;
+        this.pan = encryptionModule.encrypt(pan);
     }
 
     @Override
     public void setPin(String pin) {
-        this.pin = pin;
+        this.pin = encryptionModule.encrypt(pin);
     }
 
     @Override
@@ -83,6 +89,14 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     @Override
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
+    }
+
+    public EncryptionModule getEncryptionModule() {
+        return encryptionModule;
+    }
+
+    public void setEncryptionModule(EncryptionModule encryptionModule) {
+        this.encryptionModule = encryptionModule;
     }
 
     @Override

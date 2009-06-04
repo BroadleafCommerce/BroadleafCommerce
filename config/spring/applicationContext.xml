@@ -233,6 +233,8 @@
 	</bean>
 -->
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+	
+	<bean id="blEncryptionModule" class="org.broadleafcommerce.encryption.DefaultEncryptionModule"/>
 
 	<bean id="blEntityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
 
@@ -266,9 +268,15 @@
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingClicks" class="org.broadleafcommerce.email.domain.EmailTrackingClicksImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTrackingOpens" class="org.broadleafcommerce.email.domain.EmailTrackingOpensImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.email.domain.EmailTarget" class="org.broadleafcommerce.email.domain.EmailTargetImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl" scope="prototype">
+		<property name="encryptionModule" ref="blEncryptionModule"/>
+	</bean>
+	<bean id="org.broadleafcommerce.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl" scope="prototype">
+		<property name="encryptionModule" ref="blEncryptionModule"/>
+	</bean>
+	<bean id="org.broadleafcommerce.payment.domain.GiftCardPaymentInfo" class="org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl" scope="prototype">
+		<property name="encryptionModule" ref="blEncryptionModule"/>
+	</bean>
 	<bean id="org.broadleafcommerce.marketing.domain.TargetContent" class="org.broadleafcommerce.marketing.domain.TargetContentImpl" scope="prototype"/>
 
 	<bean id="blEmailInfo" class="org.broadleafcommerce.email.service.info.EmailInfo" />
