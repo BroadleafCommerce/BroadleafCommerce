@@ -26,6 +26,8 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import org.broadleafcommerce.encryption.EncryptionModule;
+
 /**
  * TODO look at some pluggable encryption mechanism that would
  * decrypt protected fields. Something that's flexible that implementors
@@ -38,6 +40,9 @@ import javax.persistence.Transient;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CREDIT_CARD_PAYMENT")
 public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
+
+    @Transient
+    private EncryptionModule encryptionModule;
 
     @Id
     @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
@@ -185,6 +190,14 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
         } else if (!referenceNumber.equals(other.referenceNumber))
             return false;
         return true;
+    }
+
+    public EncryptionModule getEncryptionModule() {
+        return encryptionModule;
+    }
+
+    public void setEncryptionModule(EncryptionModule encryptionModule) {
+        this.encryptionModule = encryptionModule;
     }
 
 }
