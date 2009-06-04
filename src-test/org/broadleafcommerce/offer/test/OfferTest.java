@@ -44,7 +44,7 @@ import org.broadleafcommerce.profile.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.integration.BaseTest;
 import org.broadleafcommerce.util.money.Money;
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 public class OfferTest extends BaseTest {
 
@@ -76,7 +76,7 @@ public class OfferTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
 
-    @Test
+/*    @Test
     public void testOfferNotStackableOffers() throws Exception {
         Order order = orderDao.create();
         order.setCustomer(createCustomer());
@@ -84,15 +84,15 @@ public class OfferTest extends BaseTest {
 
         order.addOrderItem(createDiscreteOrderItem(123456L, 100D, null, true, 2));
 
-        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 123456", false, true, 10));
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 123456", true, true, 10));
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == 123456", true, true, 1));
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
 
-        assert (order.getSubTotal().equals(new Money(140D)));
+        assert (order.getSubTotal().equals(new Money(112D)));
     }
-
+*/
 
     private Customer createCustomer() {
         IdGeneration idGeneration = new IdGenerationImpl();
