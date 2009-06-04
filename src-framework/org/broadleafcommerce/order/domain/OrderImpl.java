@@ -415,14 +415,6 @@ public class OrderImpl implements Order, Serializable {
         return this.orderAdjustments;
     }
 
-    public void reapplyOrderAdjustments(){
-        adjustmentPrice = getSubTotal().getAmount();
-        for (OrderAdjustment orderAdjustment : orderAdjustments) {
-            orderAdjustment.computeAdjustmentValue();
-            adjustmentPrice = adjustmentPrice.subtract(orderAdjustment.getValue().getAmount());
-        }
-    }
-
     public void removeAllAdjustments() {
         removeAllItemAdjustments();
         removeAllFulfillmentAdjustments();

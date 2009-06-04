@@ -130,8 +130,6 @@ public interface Order {
 
     public List<OrderAdjustment> addOrderAdjustments(OrderAdjustment orderAdjustment);
 
-    public void reapplyOrderAdjustments();
-
     public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments);
 
     public void removeAllAdjustments();

@@ -73,28 +73,64 @@ public class OfferTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
 
-    @Test(groups =  {"offerNotStackableOffers"})
-    public void testOfferNotStackableOffers() throws Exception {
+    @Test(groups =  {"testOfferNotStackableItemOffers"}, dependsOnGroups = { "offerUsedForPricing"})
+    public void testOfferNotStackableItemOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
 
-        order.addOrderItem(createDiscreteOrderItem(123456L, 100D, null, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(10L, 100D, null, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(11L, 100D, null, true, 2));
 
-        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 123456", true, true, 10));
-        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == 123456", true, true, 1));
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 10", false, true, 1));
+        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == 10", true, true, 1));
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != 10", true, true, 1));
+        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != 10", false, true, 1));
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
 
-        assert (order.getSubTotal().equals(new Money(112D)));
+        assert (order.getSubTotal().equals(new Money(252D)));
+    }
+
+    @Test(groups =  {"testOfferNotCombinableItemOffers"}, dependsOnGroups = { "testOfferNotStackableItemOffers"})
+    public void testOfferNotCombinableItemOffers() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
+
+        order.addOrderItem(createDiscreteOrderItem(20L, 100D, null, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(21L, 100D, null, true, 2));
+
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 20", true, true, 1));
+        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == 20", true, false, 1));
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != 20", true, false, 1));
+        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != 20", true, true, 1));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        assert (order.getSubTotal().equals(new Money(340D)));
+    }
+
+    @Test(groups =  {"testOfferNotStackableOrderOffers"}, dependsOnGroups = { "testOfferNotCombinableItemOffers"})
+    public void testOfferNotStackableOrderOffers() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
+
+        order.addOrderItem(createDiscreteOrderItem(30L, 100D, 50D, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(31L, 100D, null, true, 2));
+
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Order Offer", OfferType.ORDER, OfferDiscountType.PERCENT_OFF, 20, null, "order.subTotal.getAmount() >= 400", true, true, 1));
+        order.addAddedOfferCode(createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, "order.subTotal.getAmount() >= 400", false, true, 1));
+        order.addAddedOfferCode(createOfferCode("100 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 100, null, "order.subTotal.getAmount() >= 400", false, true, 1));
+        order.addAddedOfferCode(createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, "order.subTotal.getAmount() < 400", false, true, 1));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        assert (order.getAdjustmentPrice().equals(new Money(270D)));
     }
 
     private Customer createCustomer() {
-        /*IdGeneration idGeneration = new IdGenerationImpl();
-        idGeneration.setType("org.broadleafcommerce.profile.domain.Customer");
-        idGeneration.setBatchStart(1L);
-        idGeneration.setBatchSize(10L);
-        em.persist(idGeneration);*/
         Customer customer = customerService.createCustomerFromId(null);
         return customer;
     }
