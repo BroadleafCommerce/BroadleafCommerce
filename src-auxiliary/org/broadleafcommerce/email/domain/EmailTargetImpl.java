@@ -6,6 +6,8 @@ package org.broadleafcommerce.email.domain;
  */
 public class EmailTargetImpl implements EmailTarget {
 
+    private static final long serialVersionUID = 1L;
+
     private String[] bccAddresses;
     private String[] ccAddresses;
     private String emailAddress;

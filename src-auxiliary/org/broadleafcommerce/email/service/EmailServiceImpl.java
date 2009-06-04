@@ -60,6 +60,8 @@ public class EmailServiceImpl implements EmailService {
 
         props.put(EmailPropertyType.INFO.toString(), emailInfo);
         props.put(EmailPropertyType.USER.toString(), emailTarget);
+        Long emailId = emailTrackingManager.createTrackedEmail(emailTarget.getEmailAddress(), emailInfo.getEmailType(), null);
+        props.put("emailTrackingId", emailId);
 
         return sendBasicEmail(emailInfo, emailTarget, props);
     }

@@ -46,15 +46,18 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException  {
         logPaymentStartEvent(paymentContext, BLCTransactionType.AUTHORIZE);
         PaymentResponseItem response = null;
+        PaymentException paymentException = null;
         try {
             response = paymentModule.authorize(paymentContext);
         } catch (PaymentException e) {
             if (e instanceof PaymentProcessorException) {
                 response = ((PaymentProcessorException) e).getPaymentResponseItem();
             }
+            paymentException = e;
             throw e;
         } finally {
             logResponseItem(paymentContext, response, BLCTransactionType.AUTHORIZE);
+            logPaymentFinishEvent(paymentContext, BLCTransactionType.AUTHORIZE, paymentException);
         }
 
         return response;
@@ -63,15 +66,18 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, BLCTransactionType.AUTHORIZEANDDEBIT);
         PaymentResponseItem response = null;
+        PaymentException paymentException = null;
         try {
             response = paymentModule.authorizeAndDebit(paymentContext);
         } catch (PaymentException e) {
             if (e instanceof PaymentProcessorException) {
                 response = ((PaymentProcessorException) e).getPaymentResponseItem();
             }
+            paymentException = e;
             throw e;
         } finally {
             logResponseItem(paymentContext, response, BLCTransactionType.AUTHORIZEANDDEBIT);
+            logPaymentFinishEvent(paymentContext, BLCTransactionType.AUTHORIZEANDDEBIT, paymentException);
         }
 
         return response;
@@ -80,15 +86,18 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, BLCTransactionType.BALANCE);
         PaymentResponseItem response = null;
+        PaymentException paymentException = null;
         try {
             response = paymentModule.balance(paymentContext);
         } catch (PaymentException e) {
             if (e instanceof PaymentProcessorException) {
                 response = ((PaymentProcessorException) e).getPaymentResponseItem();
             }
+            paymentException = e;
             throw e;
         } finally {
             logResponseItem(paymentContext, response, BLCTransactionType.BALANCE);
+            logPaymentFinishEvent(paymentContext, BLCTransactionType.BALANCE, paymentException);
         }
 
         return response;
@@ -97,15 +106,18 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, BLCTransactionType.CREDIT);
         PaymentResponseItem response = null;
+        PaymentException paymentException = null;
         try {
             response = paymentModule.credit(paymentContext);
         } catch (PaymentException e) {
             if (e instanceof PaymentProcessorException) {
                 response = ((PaymentProcessorException) e).getPaymentResponseItem();
             }
+            paymentException = e;
             throw e;
         } finally {
             logResponseItem(paymentContext, response, BLCTransactionType.CREDIT);
+            logPaymentFinishEvent(paymentContext, BLCTransactionType.CREDIT, paymentException);
         }
 
         return response;
@@ -114,15 +126,18 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, BLCTransactionType.DEBIT);
         PaymentResponseItem response = null;
+        PaymentException paymentException = null;
         try {
             response = paymentModule.debit(paymentContext);
         } catch (PaymentException e) {
             if (e instanceof PaymentProcessorException) {
                 response = ((PaymentProcessorException) e).getPaymentResponseItem();
             }
+            paymentException = e;
             throw e;
         } finally {
             logResponseItem(paymentContext, response, BLCTransactionType.DEBIT);
+            logPaymentFinishEvent(paymentContext, BLCTransactionType.DEBIT, paymentException);
         }
 
         return response;
@@ -131,15 +146,18 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, BLCTransactionType.VOIDPAYMENT);
         PaymentResponseItem response = null;
+        PaymentException paymentException = null;
         try {
             response = paymentModule.voidPayment(paymentContext);
         } catch (PaymentException e) {
             if (e instanceof PaymentProcessorException) {
                 response = ((PaymentProcessorException) e).getPaymentResponseItem();
             }
+            paymentException = e;
             throw e;
         } finally {
             logResponseItem(paymentContext, response, BLCTransactionType.VOIDPAYMENT);
+            logPaymentFinishEvent(paymentContext, BLCTransactionType.VOIDPAYMENT, paymentException);
         }
 
         return response;
@@ -174,6 +192,24 @@ public class PaymentServiceImpl implements PaymentService {
         log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         log.setUserName(paymentContext.getUserName());
         log.setExceptionMessage(null);
+        log.setAmountPaid(info.getAmount());
+        log.setPaymentInfo(info);
+        info.getPaymentLogs().add(log);
+
+        paymentInfoService.save(info);
+    }
+
+    protected void logPaymentFinishEvent(PaymentContext paymentContext, BLCTransactionType transactionType, Exception e) {
+        PaymentInfo info = paymentContext.getPaymentInfo();
+        PaymentLog log = paymentInfoService.createLog();
+        log.setLogType(BLCPaymentLogEventType.FINISHED);
+        log.setTransactionTimestamp(new Date());
+        log.setTransactionSuccess(e==null?Boolean.TRUE:Boolean.FALSE);
+        log.setTransactionType(transactionType);
+        log.setCustomer(info.getOrder().getCustomer());
+        log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
+        log.setUserName(paymentContext.getUserName());
+        log.setExceptionMessage(e!=null?e.getMessage():null);
         log.setAmountPaid(info.getAmount());
         log.setPaymentInfo(info);
         info.getPaymentLogs().add(log);
