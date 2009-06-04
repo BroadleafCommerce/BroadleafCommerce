@@ -33,6 +33,11 @@ import org.broadleafcommerce.encryption.EncryptionModule;
 @Table(name = "BLC_GIFT_CARD_PAYMENT")
 public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
 
+    protected GiftCardPaymentInfoImpl() {
+        //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
+        //this complies with JPA specification requirements for entity construction
+    }
+
     @Transient
     private EncryptionModule encryptionModule;
 
