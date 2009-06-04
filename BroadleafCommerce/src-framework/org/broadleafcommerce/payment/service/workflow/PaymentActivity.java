@@ -45,10 +45,6 @@ public class PaymentActivity extends BaseActivity {
         Iterator<PaymentInfo> itr = infos.keySet().iterator();
         while(itr.hasNext()) {
             PaymentInfo info = itr.next();
-            /*
-             * TODO add database logging to a log table before and after each of the actions.
-             * Detailed logging is a PCI requirement.
-             */
             if (paymentService.isValidCandidate(info.getType())) {
                 PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, infos.get(info), userName);
                 PaymentResponseItem paymentResponseItem;

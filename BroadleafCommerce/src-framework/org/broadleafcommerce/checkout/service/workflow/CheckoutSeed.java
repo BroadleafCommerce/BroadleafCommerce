@@ -28,10 +28,12 @@ public class CheckoutSeed implements CheckoutResponse {
     private Map<PaymentInfo, Referenced> infos;
     private Order order;
     private PaymentResponse paymentResponse = new PaymentResponseImpl();
+    private Map<String, String> userDefinedFields;
 
-    public CheckoutSeed(Order order, Map<PaymentInfo, Referenced> infos) {
+    public CheckoutSeed(Order order, Map<PaymentInfo, Referenced> infos, Map<String, String> userDefinedFields) {
         this.order = order;
         this.infos = infos;
+        this.userDefinedFields = userDefinedFields;
     }
 
     public Map<PaymentInfo, Referenced> getInfos() {
@@ -44,5 +46,9 @@ public class CheckoutSeed implements CheckoutResponse {
 
     public PaymentResponse getPaymentResponse() {
         return paymentResponse;
+    }
+
+    public Map<String, String> getUserDefinedFields() {
+        return userDefinedFields;
     }
 }

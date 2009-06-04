@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.checkout.service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -57,7 +58,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             }
         }
         try {
-            CheckoutSeed seed = new CheckoutSeed(order, payments);
+            CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, String>());
             checkoutWorkflow.doActivities(seed);
 
             return seed;
