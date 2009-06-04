@@ -226,6 +226,9 @@ public class OfferServiceImpl implements OfferService {
      * 4) Fulfillment offers apply to best price for each item (not just retail price)
      * 5) Stackable only applies to the same offer type (i.e. a not stackable order offer can be used with item offers)
      * 6) Fulfillment offers cannot be not combinable
+     * 7) Order offers cannot be FIXED_PRICE
+     * 8) FIXED_PRICE offers cannot be stackable
+     *
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -272,38 +275,46 @@ public class OfferServiceImpl implements OfferService {
                     }
                 }
 
-                // Sort order offers by priority and discount
-                Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
-                Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
+                if (!qualifiedItemOffers.isEmpty()) {
+                    // Sort order item offers by priority and discount
+                    Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
+                    Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
 
-                // Sort order item offers by priority and discount
-                Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
-                Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
+                    int appliedItemOffersCount = applyAllItemOffers(qualifiedItemOffers);
 
-                applyAllItemOffers(qualifiedItemOffers);
-
-                // compare adjustment price to sales price
-                for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                    Money itemPrice = discreteOrderItem.getRetailPrice();
-                    if (discreteOrderItem.getSalePrice() != null) {
-                        itemPrice = discreteOrderItem.getSalePrice();
-                    }
-                    if ((discreteOrderItem.getAdjustmentPrice() != null) && (discreteOrderItem.getAdjustmentPrice().greaterThanOrEqual(itemPrice))) {
-                        // adjustment price is not best price, remove adjustments for this item
-                        discreteOrderItem.removeAllAdjustments();
+                    if (appliedItemOffersCount > 0) {
+                        // compare adjustment price to sales price
+                        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                            if (discreteOrderItem.getAdjustmentPrice() != null) {
+                                Money itemPrice = discreteOrderItem.getRetailPrice();
+                                if (discreteOrderItem.getSalePrice() != null) {
+                                    itemPrice = discreteOrderItem.getSalePrice();
+                                }
+                                if (discreteOrderItem.getAdjustmentPrice().greaterThanOrEqual(itemPrice)) {
+                                    // adjustment price is not best price, remove adjustments for this item
+                                    discreteOrderItem.removeAllAdjustments();
+                                }
+                            }
+                        }
                     }
                 }
 
-                applyAllOrderOffers(qualifiedOrderOffers, order);
+                if (!qualifiedOrderOffers.isEmpty()) {
+                    // Sort order offers by priority and discount
+                    Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
+                    Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
 
-                // if order contains a non-Combinable item offer determine if the order offer or item offer
-                // should apply
-                if ((order.getOrderAdjustments().size() > 0) && (order.containsNotCombinableItemOffer())) {
-                    if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
-                        // remove all order adjustments
-                        order.removeAllOrderAdjustments();
-                    } else {
-                        order.removeAllItemAdjustments();
+                    applyAllOrderOffers(qualifiedOrderOffers, order);
+
+                    // if order contains a non-Combinable item offer determine if the order offer or item offer
+                    // should apply
+                    if ((order.getOrderAdjustments().size() > 0) && (order.containsNotCombinableItemOffer())) {
+                        if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
+                            // remove all order adjustments
+                            order.removeAllOrderAdjustments();
+                        } else {
+                            order.removeAllItemAdjustments();
+                        }
                     }
                 }
             }
@@ -311,7 +322,17 @@ public class OfferServiceImpl implements OfferService {
         order.assignOrderItemsFinalPrice();
         order.setSubTotal(order.calculateOrderItemsFinalPrice());
         if (!order.getOrderAdjustments().isEmpty()) {
-            order.reapplyOrderAdjustments();
+            // reevaluate the Order offers based on the applied item offers
+            List<CandidateOrderOffer> finalQualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
+            order.removeAllOrderAdjustments();
+            for (CandidateOrderOffer condidateOrderOffer : qualifiedOrderOffers) {
+                if (couldOfferApplyToOrder(condidateOrderOffer.getOffer(), order)) {
+                    finalQualifiedOrderOffers.add(condidateOrderOffer);
+                }
+            }
+            if (!finalQualifiedOrderOffers.isEmpty()) {
+                applyAllOrderOffers(finalQualifiedOrderOffers, order);
+            }
         }
     }
 
@@ -399,21 +420,22 @@ public class OfferServiceImpl implements OfferService {
      * OrderItemAdjustment.
      *
      * @param itemOffers a sorted list of CandidateItemOffer
+     * @return a integer value of the number of item offers applied
      */
-    private void applyAllItemOffers(List<CandidateItemOffer> itemOffers) {
+    private int applyAllItemOffers(List<CandidateItemOffer> itemOffers) {
         // Iterate through the collection of CandiateItemOffers. Remember that each one is an offer that may apply to a
         // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
         //
         // isCombinableWithOtherOffers - not combinable with any offers in the order
         // isStackable - cannot be stack on top of an existing item offer back, other offers can be stack of top of it
         //
-        boolean isItemOfferApplied = false;
+        int appliedOffersCount = 0;
         for (CandidateItemOffer itemOffer : itemOffers) {
             OrderItem orderItem = itemOffer.getOrderItem();
-            if ((itemOffer.getOffer().isCombinableWithOtherOffers()) || (isItemOfferApplied)) {
+            if ((itemOffer.getOffer().isCombinableWithOtherOffers()) || (appliedOffersCount == 0)) {
                 if ((itemOffer.getOffer().isStackable()) || orderItem.getOrderItemAdjustments().size() == 0) {
                     applyOrderItemOffer(itemOffer);
-                    isItemOfferApplied = true;
+                    appliedOffersCount++;
                     if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {
                         // Offer applied is not combinable with other offers, ignore other offers
                         break;
@@ -423,6 +445,7 @@ public class OfferServiceImpl implements OfferService {
                 // no code here; offer cannot be combined with another offer so move to the next offer
             }
         }
+        return appliedOffersCount;
     }
 
     /**
