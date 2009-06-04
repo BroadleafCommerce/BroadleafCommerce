@@ -38,6 +38,11 @@ import org.broadleafcommerce.encryption.EncryptionModule;
 @Table(name = "BLC_CREDIT_CARD_PAYMENT")
 public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
 
+    protected CreditCardPaymentInfoImpl() {
+        //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
+        //this complies with JPA specification requirements for entity construction
+    }
+
     @Transient
     private EncryptionModule encryptionModule;
 
