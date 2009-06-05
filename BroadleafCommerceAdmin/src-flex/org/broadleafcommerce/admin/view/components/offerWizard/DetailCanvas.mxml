@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  >
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.view.events.WizardEvent;
+		]]>
+	</mx:Script>
+<mx:Metadata>
+	[Event(name="wizardNextEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
+	[Event(name="wizardPreviousEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]	
+</mx:Metadata>
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.view.events.WizardEvent;
+			private function handleNext(event:MouseEvent):void{
+				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_NEXT_EVENT));
+			}
+			
+			private function handlePrevious(event:MouseEvent):void{
+				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_PREVIOUS_EVENT));
+			}
+		]]>
+	</mx:Script>
+	<mx:RadioButtonGroup id="discountType" />
+	<mx:RadioButtonGroup id="offerPrice" />
+	<mx:RadioButtonGroup id="offerActive" />
+	<mx:Label x="10" y="9" text="How is the offer applied?"/>
+	<mx:TextInput x="107" y="35"  width="47" id="offerPriorityText" text="5" toolTip="The priority of this offer in relationship to other offers."/>
+	<mx:Label x="10" y="37" text="Offer Priority:"/>
+	<mx:TextInput x="96" y="177" width="46"/>
+	<mx:Text x="10" y="130" text="How many times can this offer be used?" width="289"/>
+	<mx:RadioButton x="29" y="156" label="Unlimited"/>
+	<mx:RadioButton x="29" y="177" label="Up to "/>
+	<mx:Text x="150" y="179" text="times"/>
+	<mx:TextInput x="29" y="245" width="164" id="codeText"/>
+	<mx:Text x="10" y="207" text="Only give the offer to Order/Items/Fulfillment Groups that meet the following condition:" height="39" width="380"/>
+	<mx:Text x="10" y="63" text="How is this offer applied with other Offers?" width="289"/>
+	<mx:CheckBox x="27" y="80" label="Stackable"/>
+	<mx:CheckBox x="27" y="100" label="Combinable"/>
+	<mx:Button x="315" y="274" label="Next" click="handleNext(event)"/>
+	<mx:Button x="10" y="274" label="Previous" click="handlePrevious(event)"/>
+	
+</mx:Canvas>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" >
+
+<mx:Script>
+	<![CDATA[
+		import org.broadleafcommerce.admin.model.AppModelLocator;
+		
+	]]>
+</mx:Script>
+
+	<mx:Binding destination="catalogDataGrid.dataProvider" source="AppModelLocator.getInstance().catalogCategories" />
+	<mx:DataGrid id="catalogDataGrid" width="100%" height="100%">
+	</mx:DataGrid>
+	
+</mx:Canvas>

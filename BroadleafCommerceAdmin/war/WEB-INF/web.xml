@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <display-name>BroadleafCommerceAdmin</display-name>
+
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>blAdmin.root</param-value>
+    </context-param>
+
+	<context-param>
+		<param-name>flex.class.path</param-name>
+		<param-value>/WEB-INF/flex/hotfixes,/WEB-INF/flex/jars</param-value>
+	</context-param>
+    <context-param>
+        <param-name>patchConfigLocation</param-name>
+        <param-value>
+            classpath*:applicationContext.xml
+            /WEB-INF/applicationContext-custom.xml
+            /WEB-INF/applicationContext-email.xml
+        </param-value>
+    </context-param>
+    <context-param>
+        <param-name>shutdownHookMethod</param-name>
+        <param-value>forceFlush</param-value>
+    </context-param>
+
+    <filter>
+        <filter-name>entityManagerInViewFilter</filter-name>
+        <filter-class>
+            org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
+        </filter-class>
+    </filter>
+    <!--  filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping-->
+    <filter-mapping>
+        <filter-name>entityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+    </listener>
+
+    <!-- The following listener and context-param are used to bootstrap our
+	Spring Application Contexts.  The web application context is loaded
+	via the scprofile servlet defined below -->
+    <listener>
+        <listener-class>org.broadleafcommerce.extensibility.web.MergeContextLoaderListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>org.springframework.security.ui.session.HttpSessionEventPublisher</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>blAdmin</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/applicationContext-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+
+    <resource-ref>
+        <description>web datasource</description>
+        <res-ref-name>jdbc/web</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+
+
+	<!-- Map all /messagbroker requests to the DispatcherServlet for handling -->
+	<servlet-mapping>
+		<servlet-name>blAdmin</servlet-name>
+		<url-pattern>/messagebroker/*</url-pattern>
+	</servlet-mapping>
+	<!-- for WebSphere deployment, please uncomment -->
+	<!--
+		<resource-ref>
+		<description>Flex Messaging WorkManager</description>
+		<res-ref-name>wm/MessagingWorkManager</res-ref-name>
+		<res-type>com.ibm.websphere.asynchbeans.WorkManager</res-type>
+		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
+	</resource-ref>
+	-->
+
+</web-app>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  >
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.view.events.WizardEvent;
+		]]>
+	</mx:Script>
+<mx:Metadata>
+	[Event(name="wizardNextEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
+	[Event(name="wizardPreviousEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]	
+</mx:Metadata>
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.view.events.WizardEvent;
+			private function handleNext(event:MouseEvent):void{
+				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_NEXT_EVENT));
+			}
+			
+			private function handlePrevious(event:MouseEvent):void{
+				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_PREVIOUS_EVENT));
+			}
+		]]>
+	</mx:Script>
+	<mx:RadioButtonGroup id="discountType" />
+	<mx:RadioButtonGroup id="offerPrice" />
+	<mx:RadioButtonGroup id="offerActive" />
+	<mx:Label x="10" y="10" text="What is the Offer?"/>
+	<mx:TextInput id="offerNameText" x="106" y="36" toolTip="The name of this offer" />
+	<mx:TextInput x="106" y="179"  width="47" id="offerPriorityText0" text="5" toolTip="The priority of this offer in relationship to other offers."/>
+	<mx:Label x="10" y="38" text="Name:"/>
+	<mx:TextInput x="106" y="64"  width="254" id="offerDescriptionText" toolTip="The description of this offer"/>
+	<mx:Label x="10" y="66" text="Description:"/>
+	<mx:RadioButton id="retailRadio" x="106" y="149" label="Retail Price" groupName="offerPrice" visible="{offerType.selectedIndex==1}"/>
+	<mx:RadioButton id="saleRadio" x="200" y="149" label="Sale Price" groupName="offerPrice" visible="{offerType.selectedIndex==1}"/>
+	<mx:ComboBox x="106" y="119" selectedIndex="0" id="offerType" toolTip="What this offer applies to; an Order, an Item or a fulfillment group.">
+		<mx:dataProvider>
+			<mx:ArrayCollection>
+				<mx:String>Order</mx:String>
+				<mx:String>Item</mx:String>
+				<mx:String>Fulfillment Group</mx:String>
+			</mx:ArrayCollection>
+		</mx:dataProvider>
+	</mx:ComboBox>
+	<mx:ComboBox x="161" y="179" selectedIndex="0" id="offerType0" toolTip="What this offer applies to; an Order, an Item or a fulfillment group.">
+		<mx:dataProvider>
+			<mx:ArrayCollection>
+				<mx:String>% Off</mx:String>
+				<mx:String>$ Off</mx:String>
+				<mx:String>(Fixed Price)</mx:String>
+			</mx:ArrayCollection>
+		</mx:dataProvider>
+	</mx:ComboBox>
+	<mx:Text x="10" y="121" text="Offer Type:"/>
+	<mx:Text x="10" y="151" text="Apply offer to " visible="{offerType.selectedIndex==1}"/>
+	<mx:DateField x="106" y="92" id="offerDateFrom" toolTip="The date this offer begins (inclusive)."/>
+	<mx:DateField x="268" y="92" id="offerDateTo" toolTip="The last day this offer can be applied."/>
+	<mx:Label x="206" y="94" text="Date To:"/>
+	<mx:Label x="10" y="94" text="Date From:"/>
+	<mx:Text x="10" y="182" text="Discount:" toolTip="What kind of discount this offer gives to the customer."/>
+	<mx:Button x="315" y="268" label="Next" click="handleNext(event)"/>
+	<mx:Button x="10" y="268" label="Cancel" click="handlePrevious(event)"/>
+	
+</mx:Canvas>

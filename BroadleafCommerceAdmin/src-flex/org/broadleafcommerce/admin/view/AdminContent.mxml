@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" xmlns:view="org.broadleafcommerce.admin.view.*"
+		>
+
+<mx:Script>
+	<![CDATA[
+		private const STATE_OFFER:String = "state_offer";
+		private const STATE_CATALOG:String = "state_catalog";
+	]]>
+</mx:Script>
+	<mx:LinkBar height="100%" width="10%"  dataProvider="contentViewStack" direction="vertical"/>
+	<mx:ViewStack id="contentViewStack" width="90%" height="100%">
+		<view:OfferCanvas label="Offers" id="offerCanvas" height="100%" width="100%" />
+		<view:CatalogCanvas id="catalogCanvas" label="Catalog" height="100%" width="100%" />	
+		<mx:Canvas label="" width="100%" height="100%">
+		</mx:Canvas>
+	</mx:ViewStack>
+<!--
+	<mx:states>
+		<mx:State name="{STATE_OFFER}">
+			<mx:SetProperty target="{offerCanvas}" name="visible" value="true" />
+		</mx:State>
+		<mx:State name="{STATE_CATALOG}">
+			<mx:SetProperty target="{catalogCanvas}" name="visible" value="true" />
+		</mx:State>
+	</mx:states>
+	-->
+</mx:HBox>

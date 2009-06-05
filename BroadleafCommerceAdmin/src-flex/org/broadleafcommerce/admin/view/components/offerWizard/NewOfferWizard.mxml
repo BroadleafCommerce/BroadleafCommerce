@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="600" height="500" xmlns:view="org.broadleafcommerce.admin.view.*"
+	backgroundColor="#ffffff"
+	currentState="{STATE_WHAT}" xmlns:wizard="org.broadleafcommerce.admin.view.components.wizard.*"
+	title="New Offer Wizard"
+	creationComplete="handleCreationComplete()"
+	showCloseButton="true"
+	modalTransparencyBlur="0"
+	modalTransparencyColor="#FFFFFF"
+	modalTransparency="0"
+	close="PopUpManager.removePopUp(this)"
+	xmlns:offerWizard="org.broadleafcommerce.admin.view.components.offerWizard.*" xmlns:offerWizardB="org.broadleafcommerce.admin.view.components.offerWizardB.*">
+	<mx:Metadata>
+		[Event(name="wizardCancelEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
+		[Event(name="wizardDoneEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
+	</mx:Metadata>
+	
+<mx:Script>
+	<![CDATA[
+		import mx.collections.ArrayCollection;
+		import org.broadleafcommerce.admin.control.events.AddUpdateOfferEvent;
+		import org.broadleafcommerce.admin.control.commands.AddUpdateOfferCommand;
+		import org.broadleafcommerce.admin.model.AppModelLocator;
+		import org.broadleafcommerce.admin.view.BlcMenu;
+		import org.broadleafcommerce.admin.model.data.Offer;
+		import mx.managers.PopUpManager;
+		import org.broadleafcommerce.admin.view.events.WizardEvent;
+		[Bindable]
+		private static var STATE_WHO:String = "state_who";
+		[Bindable]
+		private static var STATE_WHAT:String = "state_what";
+		[Bindable]
+		private static var STATE_HOW:String = "state_how";
+
+			private function handleCreationComplete():void {
+                // Center the TitleWindow container 
+                // over the control that created it.
+                PopUpManager.centerPopUp(this);
+            }
+            
+
+
+		private function handleWizardNextEvent(event:WizardEvent):void{
+			switch(currentState){
+				case STATE_WHAT:
+					currentState = STATE_HOW;
+					break;
+				case STATE_HOW:
+					currentState = STATE_WHO;
+					break;
+				case STATE_WHO:
+					dispatchEvent(new WizardEvent(WizardEvent.WIZARD_DONE_EVENT));
+					updateOffer();
+	                PopUpManager.removePopUp(this);
+					currentState = STATE_WHAT;
+					break;
+			}
+		}
+
+		private function handleWizardPreviousEvent(event:WizardEvent):void{
+			switch(currentState){
+				case STATE_WHAT:
+					dispatchEvent(new WizardEvent(WizardEvent.WIZARD_CANCEL_EVENT));
+	                PopUpManager.removePopUp(this);
+					break;
+				case STATE_HOW:
+					currentState = STATE_WHAT;
+					break;
+				case STATE_WHO:
+					currentState = STATE_HOW;
+					break;
+			}
+			
+		}
+
+		private function updateOffer():void
+		{
+//			var offer:Offer = AppModelLocator.getInstance().offerModel.currentOffer;
+//			offer.name = whatCanvas.offerNameText.text;
+//			offer.description = whatCanvas.offerDescriptionText.text;
+////			offer.type = String(whatCanvas.offerType.selectedValue);
+//			offer.applyToPrice = String(whatCanvas.offerPrice.selectedValue);
+//			offer.active = whatCanvas.offerActive.selectedValue;
+//			offer.fromDate = whenCanvas.offerDateFrom.selectedDate;
+//			offer.toDate = whenCanvas.offerDateTo.selectedDate;
+//			offer.qualifyConditions = whenCanvas.whenCondtionDisplay.conditions;
+//			offer.who = String(whoCanvas.customersRadioGroup.selectedValue);
+//
+//			
+//			var auoe:AddUpdateOfferEvent = new AddUpdateOfferEvent(offer);
+//			auoe.dispatch();
+			
+		}
+		
+	]]>
+</mx:Script>
+<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.name}" destination="whatCanvas.offerNameText.text" />
+<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.description}" destination="whatCanvas.offerDescriptionText.text" />
+<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.type}" destination="whatCanvas.discountType.selectedValue" />
+<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.applyToPrice}" destination="whatCanvas.offerPrice.selectedValue" />
+<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.active}" destination="whatCanvas.offerActive.selectedValue" />
+<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.who}" destination="whoCanvas.customersRadioGroup.selectedValue" />
+
+
+	<mx:HBox >
+		<mx:Label id="whatLabel" text="Offer" click="{currentState=STATE_WHAT}" />
+		<mx:Label text="->" />
+		<mx:Label id="howLabel" text="Detail" click="{currentState=STATE_HOW}"/>
+		<mx:Label text="->" />
+		<mx:Label id="whoLabel" text="Customer" click="{currentState=STATE_WHO}"/>
+	</mx:HBox>
+	<mx:Canvas width="100%" height="100%" backgroundAlpha="1.0" id="canvas1" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		
+	<offerWizard:NameCanvas id="whatCanvas" height="100%" width="100%" visible="false" wizardNextEvent="handleWizardNextEvent(event)" wizardPreviousEvent="handleWizardPreviousEvent(event)" />	
+	<offerWizard:DetailCanvas id="howCanvas" height="100%" width="100%" visible="false" wizardNextEvent="handleWizardNextEvent(event)" wizardPreviousEvent="handleWizardPreviousEvent(event)"/>
+	<offerWizard:CustomerCanvas id="whoCanvas" height="100%" width="100%" visible="false" wizardNextEvent="handleWizardNextEvent(event)" wizardPreviousEvent="handleWizardPreviousEvent(event)"/>
+	</mx:Canvas>
+	
+	<mx:states>
+		<mx:State name="{STATE_WHAT}" >
+			<mx:SetProperty target="{whatCanvas}" name="visible" value="true" />
+			<mx:SetProperty target="{whatCanvas}" name="height" value="429"/>
+			<mx:SetProperty target="{whatCanvas}" name="y" value="23"/>
+			<mx:SetStyle target="{whatLabel}" name="fontWeight" value="bold" />
+		</mx:State>
+		<mx:State name="{STATE_HOW}" >
+			<mx:SetProperty target="{howCanvas}" name="visible" value="true" />
+			<mx:SetStyle target="{howLabel}" name="fontWeight" value="bold" />
+		</mx:State>
+		<mx:State name="{STATE_WHO}" >
+			<mx:SetProperty target="{whoCanvas}" name="visible" value="true" />
+			<mx:SetStyle target="{whoLabel}" name="fontWeight" value="bold" />
+		</mx:State>
+	</mx:states>
+</mx:TitleWindow>

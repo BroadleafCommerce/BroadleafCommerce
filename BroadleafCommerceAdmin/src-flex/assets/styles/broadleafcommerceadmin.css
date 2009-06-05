@@ -1,0 +1,92 @@
+global
+{
+	fontFamily:					  Verdana;
+	fontSize:                     10;
+	themeColor:                   #dddddd;
+	adminLogo:		  Embed(source="/assets/images/broadleaf-commerce-300dpi-transparent.png");
+	adminLogoHeight:  60;
+	adminLogoHAlign:  right; 
+	adminLogoWidth:   160;
+	background-color: #FFFFFF;
+
+}
+
+Application
+{
+	bgColor:					  #FFFFFF;
+	backgroundColor:			  #FFFFFF;
+	background-color:			  #FFFFFF;
+}
+
+ViewStack
+{
+	background-alpha:	0;
+	width:				1400;
+}
+
+Canvas
+{
+	background-alpha:	0;
+}
+
+TabBar
+{
+	background-color: white;
+	background-disabled-color:white;
+	tabStyleName: selectedTabStyle;	
+}
+
+.selectedTabStyle
+{
+	backgroundColor:white;
+}
+
+OfferCanvas,CatalogCanvas
+{
+	background-alpha:	0;
+	radius:			  10;
+	background-color: #EFFA8F;	
+}
+
+NewOfferWizard
+{
+	background-alpha:	0;
+}
+
+OfferWhat
+{
+	background-alpha:	1;
+	background-color: 	#FFFFFF;
+	border-style:		solid;
+	cornerRadius:		10;
+	
+}
+
+OfferWhen
+{
+	background-alpha:	1;
+	background-color: 	#FFFFFF;
+	border-style:		solid;
+	cornerRadius:		10;
+	
+}
+
+OfferWhich
+{
+	background-alpha:	1;
+	background-color: 	#FFFFFF;
+	border-style:		solid;
+	cornerRadius:		10;
+	
+}
+
+OfferWho
+{
+	background-alpha:	1;
+	background-color: 	#FFFFFF;
+	border-style:		solid;
+	cornerRadius:		10;
+	
+}
+
+
