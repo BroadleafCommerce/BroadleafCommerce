@@ -34,7 +34,7 @@ import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
-import org.broadleafcommerce.payment.service.type.BLCPaymentInfoType;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.State;
@@ -85,7 +85,7 @@ public class CheckoutTest extends BaseTest {
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
 
-        CreditCardPaymentInfo cc = (CreditCardPaymentInfo) securePaymentInfoService.create(BLCPaymentInfoType.CREDIT_CARD.toString());
+        CreditCardPaymentInfo cc = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
         cc.setExpirationMonth(11);
         cc.setExpirationYear(2011);
         cc.setPan("1111111111111111");

@@ -18,7 +18,7 @@ package org.broadleafcommerce.payment.domain;
 import java.util.Date;
 import java.util.Map;
 
-import org.broadleafcommerce.payment.service.type.BLCTransactionType;
+import org.broadleafcommerce.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
 
@@ -84,9 +84,9 @@ public interface PaymentResponseItem {
 
     public void setRemainingBalance(Money remainingBalance);
 
-    public BLCTransactionType getTransactionType();
+    public TransactionType getTransactionType();
 
-    public void setTransactionType(BLCTransactionType transactionType);
+    public void setTransactionType(TransactionType transactionType);
 
     public Map<String, String> getAdditionalFields();
 

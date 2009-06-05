@@ -15,11 +15,38 @@
  */
 package org.broadleafcommerce.payment.service.workflow;
 
-public enum PaymentActionType {
-    AUTHORIZE,
-    DEBIT,
-    AUTHORIZEANDDEBIT,
-    CREDIT,
-    VOID,
-    BALANCE
+import java.util.Hashtable;
+import java.util.Map;
+
+/**
+ * An extendible enumeration of payment action types.
+ * 
+ * @author jfischer
+ *
+ */
+public class PaymentActionType {
+
+    private static final Map<String, PaymentActionType> types = new Hashtable<String, PaymentActionType>();
+
+    public static PaymentActionType AUTHORIZE = new PaymentActionType("AUTHORIZE");
+    public static PaymentActionType DEBIT = new PaymentActionType("DEBIT");
+    public static PaymentActionType AUTHORIZEANDDEBIT = new PaymentActionType("AUTHORIZEANDDEBIT");
+    public static PaymentActionType CREDIT = new PaymentActionType("CREDIT");
+    public static PaymentActionType VOID = new PaymentActionType("VOID");
+    public static PaymentActionType BALANCE = new PaymentActionType("BALANCE");
+
+    public static PaymentActionType getInstance(String type) {
+        return types.get(type);
+    }
+
+    private final String type;
+
+    protected PaymentActionType(String type) {
+        this.type = type;
+        types.put(type, this);
+    }
+
+    public String getType() {
+        return type;
+    }
 }

@@ -248,14 +248,14 @@ public class OfferServiceImpl implements OfferService {
 
             if (filteredOffers != null && !filteredOffers.isEmpty()) {
                 for (Offer offer : filteredOffers) {
-                    if(offer.getType().equals(OfferType.ORDER)){
+                    if(offer.getType() == OfferType.ORDER){
                         if (couldOfferApplyToOrder(offer, order)) {
                             CandidateOrderOffer candidateOffer = new CandidateOrderOfferImpl(order, offer);
                             // Why do we add offers here when we set the sorted list later
                             order.addCandidateOrderOffer(candidateOffer);
                             qualifiedOrderOffers.add(candidateOffer);
                         }
-                    } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
+                    } else if(offer.getType() == OfferType.ORDER_ITEM){
                         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                             if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
                                 CandidateItemOffer candidateOffer = new CandidateItemOfferImpl(discreteOrderItem, offer);
@@ -263,7 +263,7 @@ public class OfferServiceImpl implements OfferService {
                                 qualifiedItemOffers.add(candidateOffer);
                             }
                         }
-                    } else if(offer.getType().equals(OfferType.FULFILLMENT_GROUP)){
+                    } else if(offer.getType() == OfferType.FULFILLMENT_GROUP){
                         // TODO: Handle Offer calculation for offer type of fullfillment group
                         // how to verify if offer applies for fulfillment?
                         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {

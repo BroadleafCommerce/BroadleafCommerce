@@ -17,10 +17,11 @@ package org.broadleafcommerce.payment.service;
 
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 
 public interface PaymentService {
 
-    public Boolean isValidCandidate(String paymentType);
+    public Boolean isValidCandidate(PaymentInfoType paymentType);
 
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException;
 

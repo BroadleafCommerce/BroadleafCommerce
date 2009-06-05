@@ -18,6 +18,7 @@ package org.broadleafcommerce.payment.service.module;
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 
 public interface PaymentModule {
 
@@ -33,6 +34,6 @@ public interface PaymentModule {
 
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException;
 
-    public Boolean isValidCandidate(String paymentType);
+    public Boolean isValidCandidate(PaymentInfoType paymentType);
 
 }

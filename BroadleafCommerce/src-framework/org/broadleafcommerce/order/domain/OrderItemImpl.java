@@ -41,6 +41,7 @@ import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl;
+import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -309,12 +310,12 @@ public class OrderItemImpl implements OrderItem, Serializable {
         this.giftWrapOrderItem = giftWrapOrderItem;
     }
 
-    public String getOrderItemType() {
-        return orderItemType;
+    public OrderItemType getOrderItemType() {
+        return OrderItemType.getInstance(orderItemType);
     }
 
-    public void setOrderItemType(String orderItemType) {
-        this.orderItemType = orderItemType;
+    public void setOrderItemType(OrderItemType orderItemType) {
+        this.orderItemType = orderItemType.getType();
     }
 
     public boolean getIsOnSale() {

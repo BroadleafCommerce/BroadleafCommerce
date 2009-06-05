@@ -15,9 +15,33 @@
  */
 package org.broadleafcommerce.offer.service.type;
 
-public enum OfferDiscountType {
-	PERCENT_OFF,
-	AMOUNT_OFF,
-	FIX_PRICE
+import java.util.Hashtable;
+import java.util.Map;
 
+/**
+ * An extendible enumeration of discount types.
+ *
+ */
+public class OfferDiscountType {
+
+    private static final Map<String, OfferDiscountType> types = new Hashtable<String, OfferDiscountType>();
+
+    public static OfferDiscountType PERCENT_OFF = new OfferDiscountType("PERCENT_OFF");
+    public static OfferDiscountType AMOUNT_OFF = new OfferDiscountType("AMOUNT_OFF");
+    public static OfferDiscountType FIX_PRICE = new OfferDiscountType("FIX_PRICE");
+
+    public static OfferDiscountType getInstance(String type) {
+        return types.get(type);
+    }
+
+    private final String type;
+
+    protected OfferDiscountType(String type) {
+        this.type = type;
+        types.put(type, this);
+    }
+
+    public String getType() {
+        return type;
+    }
 }

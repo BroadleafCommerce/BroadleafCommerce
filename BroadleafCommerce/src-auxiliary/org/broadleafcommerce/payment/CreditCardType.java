@@ -15,12 +15,39 @@
  */
 package org.broadleafcommerce.payment;
 
-public enum CreditCardType {
-    MASTERCARD,
-    VISA,
-    AMEX,
-    DINERSCLUB_CARTEBLANCHE,
-    DISCOVER,
-    ENROUTE,
-    JCB
+import java.util.Hashtable;
+import java.util.Map;
+
+/**
+ * An extendible enumeration of credit card types.
+ * 
+ * @author jfischer
+ *
+ */
+public class CreditCardType {
+
+    private static final Map<String, CreditCardType> types = new Hashtable<String, CreditCardType>();
+
+    public static CreditCardType MASTERCARD  = new CreditCardType("MASTERCARD");
+    public static CreditCardType VISA  = new CreditCardType("VISA");
+    public static CreditCardType AMEX  = new CreditCardType("AMEX");
+    public static CreditCardType DINERSCLUB_CARTEBLANCHE  = new CreditCardType("DINERSCLUB_CARTEBLANCHE");
+    public static CreditCardType DISCOVER  = new CreditCardType("DISCOVER");
+    public static CreditCardType ENROUTE  = new CreditCardType("ENROUTE");
+    public static CreditCardType JCB  = new CreditCardType("JCB");
+
+    public static CreditCardType getInstance(String type) {
+        return types.get(type);
+    }
+
+    private final String type;
+
+    protected CreditCardType(String type) {
+        this.type = type;
+        types.put(type, this);
+    }
+
+    public String getType() {
+        return type;
+    }
 }

@@ -15,8 +15,34 @@
  */
 package org.broadleafcommerce.offer.service.type;
 
-public enum OfferType {
-    ORDER,
-    FULFILLMENT_GROUP,
-    ORDER_ITEM
+import java.util.Hashtable;
+import java.util.Map;
+
+/**
+ * An extendible enumeration of offer types.
+ *
+ */
+public class OfferType {
+
+    private static final Map<String, OfferType> types = new Hashtable<String, OfferType>();
+
+    public static OfferType ORDER = new OfferType("ORDER");
+    public static OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP");
+    public static OfferType ORDER_ITEM = new OfferType("ORDER_ITEM");
+
+    public static OfferType getInstance(String type) {
+        return types.get(type);
+    }
+
+    private final String type;
+
+    protected OfferType(String type) {
+        this.type = type;
+        types.put(type, this);
+    }
+
+    public String getType() {
+        return type;
+    }
+
 }

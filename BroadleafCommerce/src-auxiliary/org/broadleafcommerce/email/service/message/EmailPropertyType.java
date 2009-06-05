@@ -15,23 +15,35 @@
  */
 package org.broadleafcommerce.email.service.message;
 
-public enum EmailPropertyType {
-    USER{
-        @Override
-        public String toString() {
-            return "user";
-        }
-    },
-    INFO{
-        @Override
-        public String toString() {
-            return "info";
-        }
-    },
-    SERVERINFO {
-        @Override
-        public String toString() {
-            return "serverInfo";
-        }
+import java.util.Hashtable;
+import java.util.Map;
+
+/**
+ * An extendible enumeration of email property types.
+ * 
+ * @author jfischer
+ *
+ */
+public class EmailPropertyType {
+
+    private static final Map<String, EmailPropertyType> types = new Hashtable<String, EmailPropertyType>();
+
+    public static EmailPropertyType USER = new EmailPropertyType("user");
+    public static EmailPropertyType INFO = new EmailPropertyType("info");
+    public static EmailPropertyType SERVERINFO = new EmailPropertyType("serverInfo");
+
+    public static EmailPropertyType getInstance(String type) {
+        return types.get(type);
+    }
+
+    private final String type;
+
+    protected EmailPropertyType(String type) {
+        this.type = type;
+        types.put(type, this);
+    }
+
+    public String getType() {
+        return type;
     }
 }

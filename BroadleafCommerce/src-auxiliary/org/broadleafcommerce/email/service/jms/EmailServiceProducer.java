@@ -43,7 +43,7 @@ public class EmailServiceProducer {
         emailServiceTemplate.send(emailServiceDestination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
                 ObjectMessage message = session.createObjectMessage(props);
-                EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.toString());
+                EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.getType());
                 message.setJMSPriority(Integer.parseInt(info.getSendAsyncPriority()));
                 return message;
             }

@@ -16,18 +16,19 @@
 package org.broadleafcommerce.payment.service;
 
 import org.broadleafcommerce.payment.domain.Referenced;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.workflow.WorkflowException;
 
 public interface SecurePaymentInfoService {
 
-    public Referenced findSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException;
+    public Referenced findSecurePaymentInfo(String referenceNumber, PaymentInfoType paymentInfoType) throws WorkflowException;
 
     public Referenced save(Referenced securePaymentInfo);
 
-    public Referenced create(String paymentInfoType);
+    public Referenced create(PaymentInfoType paymentInfoType);
 
     public void remove(Referenced securePaymentInfo);
 
-    public void findAndRemoveSecurePaymentInfo(String referenceNumber, String paymentInfoType) throws WorkflowException;
+    public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentInfoType paymentInfoType) throws WorkflowException;
 
 }

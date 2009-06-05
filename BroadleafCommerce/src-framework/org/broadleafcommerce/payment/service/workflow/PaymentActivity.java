@@ -48,26 +48,19 @@ public class PaymentActivity extends BaseActivity {
             if (paymentService.isValidCandidate(info.getType())) {
                 PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, infos.get(info), userName);
                 PaymentResponseItem paymentResponseItem;
-                switch(seed.getActionType()) {
-                case AUTHORIZE:
+                if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
                     paymentResponseItem = paymentService.authorize(paymentContext);
-                    break;
-                case AUTHORIZEANDDEBIT:
+                } else if (seed.getActionType() == PaymentActionType.AUTHORIZEANDDEBIT) {
                     paymentResponseItem = paymentService.authorizeAndDebit(paymentContext);
-                    break;
-                case BALANCE:
+                } else if (seed.getActionType() == PaymentActionType.BALANCE) {
                     paymentResponseItem = paymentService.balance(paymentContext);
-                    break;
-                case CREDIT:
+                } else if (seed.getActionType() == PaymentActionType.CREDIT) {
                     paymentResponseItem = paymentService.credit(paymentContext);
-                    break;
-                case DEBIT:
+                } else if (seed.getActionType() == PaymentActionType.DEBIT) {
                     paymentResponseItem = paymentService.debit(paymentContext);
-                    break;
-                case VOID:
+                } else if (seed.getActionType() == PaymentActionType.VOID) {
                     paymentResponseItem = paymentService.voidPayment(paymentContext);
-                    break;
-                default:
+                } else {
                     throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
                 }
                 if (paymentResponseItem != null) {

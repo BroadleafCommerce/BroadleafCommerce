@@ -36,7 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import org.broadleafcommerce.payment.service.type.BLCTransactionType;
+import org.broadleafcommerce.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
@@ -245,11 +245,11 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         this.remainingBalance = Money.toAmount(remainingBalance);
     }
 
-    public BLCTransactionType getTransactionType() {
-        return BLCTransactionType.getInstance(transactionType);
+    public TransactionType getTransactionType() {
+        return TransactionType.getInstance(transactionType);
     }
 
-    public void setTransactionType(BLCTransactionType transactionType) {
+    public void setTransactionType(TransactionType transactionType) {
         this.transactionType = transactionType.getType();
     }
 
