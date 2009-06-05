@@ -1,4 +1,6 @@
+/* Header, top navigation and footer */
 #header {
+	margin: 10px 0;
 	background: #e20;
 	position: relative;
 }
@@ -7,15 +9,37 @@
 	margin: 14px;
 }
 
+#footer {
+	background:#e5e5e5;
+	padding:12px;
+	border-bottom:#ccc;
+}
+#footer p {
+	margin:0;
+}
+
 #searchBar {
 	position: absolute;
 	bottom: 14px;
 	right: 14px;
 }
 
+#searchBar input {
+	vertical-align: middle;
+}
+
+#searchBar .searchField {
+	font-size: 11px;
+	padding: 3px 3px 2px 3px;
+}
+
+#searchBar .imageBtn {
+	margin-left: 8px;
+}
+
 ul#userNav {
-	margin:0;
-	padding:0;
+	margin: 0;
+	padding: 0;
 	position: absolute;
 	right: 6px;
 	top: 14px;
@@ -24,16 +48,21 @@ ul#userNav {
 ul#userNav li {
 	list-style: none;
 	float: left;
-	border-right:1px solid #fff;
+	border-right: 1px solid #fff;
 }
+
 ul#userNav li.last {
-	border-right:0;
+	border-right: 0;
 }
 
 ul#userNav li a {
-	color:#fff;
-	padding:4px 8px;
-	font-weight:bold;
+	color: #fff;
+	padding: 4px 8px;
+	font-weight: bold;
+}
+
+.slogan {
+	margin: 12px 0 12px 20px;
 }
 
 ul#primaryNav {
@@ -41,7 +70,8 @@ ul#primaryNav {
 	padding: 0;
 	font-family: tahoma, sans-serif;
 	font-size: 13px;
-	background-color: #eee;
+	background: url("/broadleafdemo/images/navGradient.gif") repeat-x bottom
+		center;
 }
 
 ul#primaryNav li {
@@ -51,29 +81,24 @@ ul#primaryNav li {
 
 ul#primaryNav li a {
 	cursor: pointer;
-	background-color: #eee;
 	color: #666;
 	text-decoration: none;
 	line-height: 22px;
 	display: block;
-	padding: 5px 12px 6px;
+	padding: 6px 12px 6px;
 	text-transform: uppercase;
 }
 
 ul#primaryNav li a:hover {
-	background-color: #666;
-	color: #fff;
+	color: #05f;
 }
 
 ul#primaryNav li a.active {
-	background: #fff url("../images/navGradientGrey.gif") repeat-x;
-	color: #000;
-	border-top: 1px solid #c95d00;
-	border-right: 1px solid #c95d00;
-	border-left: 1px solid #c95d00;
-	border-bottom: 1px solid #969696;
-	padding: 4px 7px 5px;
-	margin: 0;
+	background: #fff;
+	border-top: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	padding: 5px 11px 6px;
 }
 
 ul#primaryNav li a.active:hover {

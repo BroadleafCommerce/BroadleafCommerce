@@ -10,10 +10,13 @@
 	</head>
 
 	<body>
-		<div class="bodyContent">
+		<div class="bodyWrapper">
 			<tiles:insertAttribute name="navigation" />
-			<tiles:insertAttribute name="mainContent" />
-			<div class="clearBoth"></div>
+			<div class="contentWrapper">
+				<div class="mainContent">
+					<tiles:insertAttribute name="mainContent" />
+				</div>
+			</div>
 			<tiles:insertAttribute name="footer" />
 		</div>
 	</body>

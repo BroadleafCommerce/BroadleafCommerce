@@ -1,0 +1,56 @@
+/* Global and structural styles */
+body {
+	background: url("/broadleafdemo/images/coffeeFarm.jpg");
+	background-attachment: fixed;
+	font-family: arial, helvetica, sans-serif;
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	color: #666666;
+	font-size: 12px;
+	font-family: arial, helvetica, sans-serif;
+}
+
+.bodyWrapper {
+	width: 990px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+.contentWrapper {
+	padding: 0px 8px;
+	background: #e5e5e5;
+}
+
+.navGradientBg {
+	background: url("/broadleafdemo/images/navGradientNoBtm.gif") repeat-x bottom
+		center;
+}
+
+h1,h2,h3,h4,h5 {
+	margin-top: 0;
+}
+
+.mainContent {
+	background: #fff;
+	padding: 8px;
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+img {
+	border: 0;
+}
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+input.helpTextVisible {
+	color: #666;
+}
