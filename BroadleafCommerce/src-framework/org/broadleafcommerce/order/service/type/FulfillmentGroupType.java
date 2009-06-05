@@ -28,7 +28,6 @@ public class FulfillmentGroupType {
 
     private static final Map<String, FulfillmentGroupType> types = new Hashtable<String, FulfillmentGroupType>();
 
-    public static FulfillmentGroupType DEFAULT = new FulfillmentGroupType("DEFAULT");
     public static FulfillmentGroupType PICK_UP_AT_STORE = new FulfillmentGroupType("PICK_UP_AT_STORE");
     public static FulfillmentGroupType SHIPPING = new FulfillmentGroupType("SHIPPING");
 
