@@ -32,8 +32,8 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.broadleafcommerce.payment.service.type.BLCPaymentLogEventType;
-import org.broadleafcommerce.payment.service.type.BLCTransactionType;
+import org.broadleafcommerce.payment.service.type.PaymentLogEventType;
+import org.broadleafcommerce.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
@@ -132,19 +132,19 @@ public class PaymentLogImpl implements PaymentLog {
         this.paymentInfoReferenceNumber = paymentInfoReferenceNumber;
     }
 
-    public BLCTransactionType getTransactionType() {
-        return BLCTransactionType.getInstance(transactionType);
+    public TransactionType getTransactionType() {
+        return TransactionType.getInstance(transactionType);
     }
 
-    public void setTransactionType(BLCTransactionType transactionType) {
+    public void setTransactionType(TransactionType transactionType) {
         this.transactionType = transactionType.getType();
     }
 
-    public BLCPaymentLogEventType getLogType() {
-        return BLCPaymentLogEventType.getInstance(logType);
+    public PaymentLogEventType getLogType() {
+        return PaymentLogEventType.getInstance(logType);
     }
 
-    public void setLogType(BLCPaymentLogEventType logType) {
+    public void setLogType(PaymentLogEventType logType) {
         this.logType = logType.getType();
     }
 

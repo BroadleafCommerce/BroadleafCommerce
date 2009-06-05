@@ -18,6 +18,7 @@ package org.broadleafcommerce.payment.domain;
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.util.money.Money;
@@ -48,9 +49,9 @@ public interface PaymentInfo {
 
     public void setReferenceNumber(String referenceNumber);
 
-    public String getType();
+    public PaymentInfoType getType();
 
-    public void setType(String type);
+    public void setType(PaymentInfoType type);
 
     public List<PaymentResponseItem> getPaymentResponseItems();
 

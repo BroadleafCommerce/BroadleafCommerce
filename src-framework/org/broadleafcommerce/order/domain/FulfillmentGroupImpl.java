@@ -24,8 +24,6 @@ import java.util.Vector;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -99,8 +97,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     private BigDecimal adjustmentPrice;  // retailPrice with adjustments
 
     @Column(name = "TYPE")
-    @Enumerated(EnumType.STRING)
-    private FulfillmentGroupType type;
+    private String type;
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
     private List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
@@ -220,12 +217,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
 
     @Override
     public FulfillmentGroupType getType() {
-        return type;
+        return FulfillmentGroupType.getInstance(type);
     }
 
     @Override
     public void setType(FulfillmentGroupType type) {
-        this.type = type;
+        this.type = type.getType();
     }
 
     @Override

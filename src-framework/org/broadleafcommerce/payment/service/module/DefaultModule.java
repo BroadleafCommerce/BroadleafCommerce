@@ -18,6 +18,7 @@ package org.broadleafcommerce.payment.service.module;
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 
 public class DefaultModule extends AbstractModule {
 
@@ -52,7 +53,7 @@ public class DefaultModule extends AbstractModule {
     }
 
     @Override
-    public Boolean isValidCandidate(String paymentType) {
+    public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return false;
     }
 

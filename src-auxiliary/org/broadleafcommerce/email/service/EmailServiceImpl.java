@@ -58,8 +58,8 @@ public class EmailServiceImpl implements EmailService {
             emailInfo = new EmailInfo();
         }
 
-        props.put(EmailPropertyType.INFO.toString(), emailInfo);
-        props.put(EmailPropertyType.USER.toString(), emailTarget);
+        props.put(EmailPropertyType.INFO.getType(), emailInfo);
+        props.put(EmailPropertyType.USER.getType(), emailTarget);
         Long emailId = emailTrackingManager.createTrackedEmail(emailTarget.getEmailAddress(), emailInfo.getEmailType(), null);
         props.put("emailTrackingId", emailId);
 
@@ -85,8 +85,8 @@ public class EmailServiceImpl implements EmailService {
             emailInfo = new EmailInfo();
         }
 
-        props.put(EmailPropertyType.INFO.toString(), emailInfo);
-        props.put(EmailPropertyType.USER.toString(), emailTarget);
+        props.put(EmailPropertyType.INFO.getType(), emailInfo);
+        props.put(EmailPropertyType.USER.getType(), emailTarget);
 
         if (Boolean.parseBoolean(emailInfo.getSendEmailReliableAsync())) {
             emailServiceProducer.send(props);

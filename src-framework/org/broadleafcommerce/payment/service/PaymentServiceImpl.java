@@ -25,8 +25,9 @@ import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.exception.PaymentProcessorException;
 import org.broadleafcommerce.payment.service.module.PaymentModule;
-import org.broadleafcommerce.payment.service.type.BLCPaymentLogEventType;
-import org.broadleafcommerce.payment.service.type.BLCTransactionType;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.payment.service.type.PaymentLogEventType;
+import org.broadleafcommerce.payment.service.type.TransactionType;
 
 public class PaymentServiceImpl implements PaymentService {
 
@@ -44,7 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException  {
-        logPaymentStartEvent(paymentContext, BLCTransactionType.AUTHORIZE);
+        logPaymentStartEvent(paymentContext, TransactionType.AUTHORIZE);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -56,15 +57,15 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, BLCTransactionType.AUTHORIZE);
-            logPaymentFinishEvent(paymentContext, BLCTransactionType.AUTHORIZE, paymentException);
+            logResponseItem(paymentContext, response, TransactionType.AUTHORIZE);
+            logPaymentFinishEvent(paymentContext, TransactionType.AUTHORIZE, paymentException);
         }
 
         return response;
     }
 
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, BLCTransactionType.AUTHORIZEANDDEBIT);
+        logPaymentStartEvent(paymentContext, TransactionType.AUTHORIZEANDDEBIT);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -76,15 +77,15 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, BLCTransactionType.AUTHORIZEANDDEBIT);
-            logPaymentFinishEvent(paymentContext, BLCTransactionType.AUTHORIZEANDDEBIT, paymentException);
+            logResponseItem(paymentContext, response, TransactionType.AUTHORIZEANDDEBIT);
+            logPaymentFinishEvent(paymentContext, TransactionType.AUTHORIZEANDDEBIT, paymentException);
         }
 
         return response;
     }
 
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, BLCTransactionType.BALANCE);
+        logPaymentStartEvent(paymentContext, TransactionType.BALANCE);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -96,15 +97,15 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, BLCTransactionType.BALANCE);
-            logPaymentFinishEvent(paymentContext, BLCTransactionType.BALANCE, paymentException);
+            logResponseItem(paymentContext, response, TransactionType.BALANCE);
+            logPaymentFinishEvent(paymentContext, TransactionType.BALANCE, paymentException);
         }
 
         return response;
     }
 
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, BLCTransactionType.CREDIT);
+        logPaymentStartEvent(paymentContext, TransactionType.CREDIT);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -116,15 +117,15 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, BLCTransactionType.CREDIT);
-            logPaymentFinishEvent(paymentContext, BLCTransactionType.CREDIT, paymentException);
+            logResponseItem(paymentContext, response, TransactionType.CREDIT);
+            logPaymentFinishEvent(paymentContext, TransactionType.CREDIT, paymentException);
         }
 
         return response;
     }
 
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, BLCTransactionType.DEBIT);
+        logPaymentStartEvent(paymentContext, TransactionType.DEBIT);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -136,15 +137,15 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, BLCTransactionType.DEBIT);
-            logPaymentFinishEvent(paymentContext, BLCTransactionType.DEBIT, paymentException);
+            logResponseItem(paymentContext, response, TransactionType.DEBIT);
+            logPaymentFinishEvent(paymentContext, TransactionType.DEBIT, paymentException);
         }
 
         return response;
     }
 
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-        logPaymentStartEvent(paymentContext, BLCTransactionType.VOIDPAYMENT);
+        logPaymentStartEvent(paymentContext, TransactionType.VOIDPAYMENT);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
         try {
@@ -156,19 +157,19 @@ public class PaymentServiceImpl implements PaymentService {
             paymentException = e;
             throw e;
         } finally {
-            logResponseItem(paymentContext, response, BLCTransactionType.VOIDPAYMENT);
-            logPaymentFinishEvent(paymentContext, BLCTransactionType.VOIDPAYMENT, paymentException);
+            logResponseItem(paymentContext, response, TransactionType.VOIDPAYMENT);
+            logPaymentFinishEvent(paymentContext, TransactionType.VOIDPAYMENT, paymentException);
         }
 
         return response;
     }
 
     @Override
-    public Boolean isValidCandidate(String paymentType) {
+    public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return paymentModule.isValidCandidate(paymentType);
     }
 
-    protected void logResponseItem(PaymentContext paymentContext, PaymentResponseItem response, BLCTransactionType transactionType) {
+    protected void logResponseItem(PaymentContext paymentContext, PaymentResponseItem response, TransactionType transactionType) {
         if (response != null) {
             PaymentInfo info = paymentContext.getPaymentInfo();
             response.setTransactionType(transactionType);
@@ -181,10 +182,10 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
-    protected void logPaymentStartEvent(PaymentContext paymentContext, BLCTransactionType transactionType) {
+    protected void logPaymentStartEvent(PaymentContext paymentContext, TransactionType transactionType) {
         PaymentInfo info = paymentContext.getPaymentInfo();
         PaymentLog log = paymentInfoService.createLog();
-        log.setLogType(BLCPaymentLogEventType.START);
+        log.setLogType(PaymentLogEventType.START);
         log.setTransactionTimestamp(new Date());
         log.setTransactionSuccess(Boolean.TRUE);
         log.setTransactionType(transactionType);
@@ -199,10 +200,10 @@ public class PaymentServiceImpl implements PaymentService {
         paymentInfoService.save(info);
     }
 
-    protected void logPaymentFinishEvent(PaymentContext paymentContext, BLCTransactionType transactionType, Exception e) {
+    protected void logPaymentFinishEvent(PaymentContext paymentContext, TransactionType transactionType, Exception e) {
         PaymentInfo info = paymentContext.getPaymentInfo();
         PaymentLog log = paymentInfoService.createLog();
-        log.setLogType(BLCPaymentLogEventType.FINISHED);
+        log.setLogType(PaymentLogEventType.FINISHED);
         log.setTransactionTimestamp(new Date());
         log.setTransactionSuccess(e==null?Boolean.TRUE:Boolean.FALSE);
         log.setTransactionType(transactionType);

@@ -13,32 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.order.service.type;
+package org.broadleafcommerce.payment.service.type;
 
 import java.util.Hashtable;
 import java.util.Map;
 
 /**
- * An extendible enumeration of fulfillment group types.
+ * An extendible enumeration of payment info types.
  * 
  * @author jfischer
  *
  */
-public class FulfillmentGroupType {
+public class PaymentInfoType {
 
-    private static final Map<String, FulfillmentGroupType> types = new Hashtable<String, FulfillmentGroupType>();
+    private static final Map<String, PaymentInfoType> types = new Hashtable<String, PaymentInfoType>();
 
-    public static FulfillmentGroupType DEFAULT = new FulfillmentGroupType("DEFAULT");
-    public static FulfillmentGroupType PICK_UP_AT_STORE = new FulfillmentGroupType("PICK_UP_AT_STORE");
-    public static FulfillmentGroupType SHIPPING = new FulfillmentGroupType("SHIPPING");
+    public static PaymentInfoType GIFT_CARD = new PaymentInfoType("GIFT_CARD");
+    public static PaymentInfoType CREDIT_CARD = new PaymentInfoType("CREDIT_CARD");
+    public static PaymentInfoType BANK_ACCOUNT = new PaymentInfoType("BANK_ACCOUNT");
 
-    public static FulfillmentGroupType getInstance(String type) {
+    public static PaymentInfoType getInstance(String type) {
         return types.get(type);
     }
 
     private final String type;
 
-    protected FulfillmentGroupType(String type) {
+    protected PaymentInfoType(String type) {
         this.type = type;
         types.put(type, this);
     }
@@ -46,4 +46,5 @@ public class FulfillmentGroupType {
     public String getType() {
         return type;
     }
+
 }

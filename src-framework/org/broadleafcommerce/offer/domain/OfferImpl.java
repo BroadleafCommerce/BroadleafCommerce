@@ -21,8 +21,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -46,13 +44,11 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "OFFER_NAME")
     private String name;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "OFFER_TYPE")
-    private OfferType type;
+    private String type;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "OFFER_DISCOUNT_TYPE")
-    private OfferDiscountType discountType;
+    private String discountType;
 
     @Column(name = "OFFER_VALUE")
     private BigDecimal value;
@@ -87,9 +83,8 @@ public class OfferImpl implements Serializable, Offer {
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
     private boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "OFFER_DELIVERY_TYPE")
-    private OfferDeliveryType deliveryType;
+    private String deliveryType;
 
     @Column(name = "MAX_USES")
     private int maxUses;
@@ -114,21 +109,21 @@ public class OfferImpl implements Serializable, Offer {
     }
 
     public OfferType getType() {
-        return type;
+        return OfferType.getInstance(type);
     }
 
     public void setType(OfferType type) {
-        this.type = type;
+        this.type = type.getType();
     }
 
     public OfferDiscountType getDiscountType() {
-        return discountType;
+        return OfferDiscountType.getInstance(discountType);
 
     }
 
     @Override
     public void setDiscountType(OfferDiscountType discountType) {
-        this.discountType = discountType;
+        this.discountType = discountType.getType();
 
     }
 
@@ -245,11 +240,11 @@ public class OfferImpl implements Serializable, Offer {
     }
 
     public OfferDeliveryType getDeliveryType() {
-        return deliveryType;
+        return OfferDeliveryType.getInstance(deliveryType);
     }
 
     public void setDeliveryType(OfferDeliveryType deliveryType) {
-        this.deliveryType = deliveryType;
+        this.deliveryType = deliveryType.getType();
     }
 
     public int getMaxUses() {

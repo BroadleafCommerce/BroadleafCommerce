@@ -15,16 +15,38 @@
  */
 package org.broadleafcommerce.offer.service.type;
 
+import java.util.Hashtable;
+import java.util.Map;
+
 /**
+ * An extendible enumeration of delivery types.
+ * 
  * Enumeration of how the offer should be applied.
  * AUTOMATIC - will be applied to everyone's order
  * MANUAL - offer is manually assigned to a Customer by an administrator
  * CODE - a offer code must be supplied in order to receive this offer
  *
  */
-public enum OfferDeliveryType {
-    AUTOMATIC,
-    MANUAL,
-    CODE
+public class OfferDeliveryType {
 
+    private static final Map<String, OfferDeliveryType> types = new Hashtable<String, OfferDeliveryType>();
+
+    public static OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC");
+    public static OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL");
+    public static OfferDeliveryType CODE = new OfferDeliveryType("CODE");
+
+    public static OfferDeliveryType getInstance(String type) {
+        return types.get(type);
+    }
+
+    private final String type;
+
+    protected OfferDeliveryType(String type) {
+        this.type = type;
+        types.put(type, this);
+    }
+
+    public String getType() {
+        return type;
+    }
 }

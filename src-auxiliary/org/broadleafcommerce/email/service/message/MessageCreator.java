@@ -45,8 +45,8 @@ public class MessageCreator {
     public void sendMessage(final HashMap props) throws MailException {
         MimeMessagePreparator preparator = new MimeMessagePreparator() {
             public void prepare(MimeMessage mimeMessage) throws Exception {
-                EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.toString());
-                EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.toString());
+                EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.getType());
+                EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.getType());
                 MimeMessageHelper message = new MimeMessageHelper(mimeMessage, (info.getAttachments() != null && info.getAttachments().size() > 0));
                 message.setTo(emailUser.getEmailAddress());
                 message.setFrom(info.getFromAddress());

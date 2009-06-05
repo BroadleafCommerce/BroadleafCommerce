@@ -51,7 +51,7 @@ public class OfferAuditImpl implements Serializable, OfferAudit {
     private Long customerId;
 
     @Column(name = "OFFER_TYPE")
-    private OfferDiscountType offerType;
+    private String offerType;
 
     @Column(name = "RELATED_ID")
     private Long relatedId;
@@ -101,11 +101,11 @@ public class OfferAuditImpl implements Serializable, OfferAudit {
     }
 
     public OfferDiscountType getOfferType() {
-        return offerType;
+        return OfferDiscountType.getInstance(offerType);
     }
 
     public void setOfferType(OfferDiscountType offerType) {
-        this.offerType = offerType;
+        this.offerType = offerType.getType();
     }
 
     public Long getRelatedId() {

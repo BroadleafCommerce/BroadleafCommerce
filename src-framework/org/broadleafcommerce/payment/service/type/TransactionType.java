@@ -18,21 +18,30 @@ package org.broadleafcommerce.payment.service.type;
 import java.util.Hashtable;
 import java.util.Map;
 
+/**
+ * An extendible enumeration of payment transaction types.
+ * 
+ * @author jfischer
+ *
+ */
+public class TransactionType {
 
-public class BLCPaymentLogEventType {
+    private static final Map<String, TransactionType> types = new Hashtable<String, TransactionType>();
 
-    private static final Map<String, BLCPaymentLogEventType> types = new Hashtable<String, BLCPaymentLogEventType>();
+    public static TransactionType AUTHORIZE = new TransactionType("AUTHORIZE");
+    public static TransactionType DEBIT = new TransactionType("DEBIT");
+    public static TransactionType AUTHORIZEANDDEBIT = new TransactionType("AUTHORIZEANDDEBIT");
+    public static TransactionType CREDIT = new TransactionType("CREDIT");
+    public static TransactionType VOIDPAYMENT = new TransactionType("VOIDPAYMENT");
+    public static TransactionType BALANCE = new TransactionType("BALANCE");
 
-    public static BLCPaymentLogEventType START  = new BLCPaymentLogEventType("START");
-    public static BLCPaymentLogEventType FINISHED = new BLCPaymentLogEventType("FINISHED");
-
-    public static BLCPaymentLogEventType getInstance(String type) {
+    public static TransactionType getInstance(String type) {
         return types.get(type);
     }
 
     private final String type;
 
-    protected BLCPaymentLogEventType(String type) {
+    protected TransactionType(String type) {
         this.type = type;
         types.put(type, this);
     }

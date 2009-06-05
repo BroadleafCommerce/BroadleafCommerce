@@ -36,6 +36,7 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
@@ -132,12 +133,12 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
         this.referenceNumber = referenceNumber;
     }
 
-    public String getType() {
-        return type;
+    public PaymentInfoType getType() {
+        return PaymentInfoType.getInstance(type);
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setType(PaymentInfoType type) {
+        this.type = type.getType();
     }
 
     public List<PaymentResponseItem> getPaymentResponseItems() {

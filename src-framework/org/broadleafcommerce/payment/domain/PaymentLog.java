@@ -17,8 +17,8 @@ package org.broadleafcommerce.payment.domain;
 
 import java.util.Date;
 
-import org.broadleafcommerce.payment.service.type.BLCPaymentLogEventType;
-import org.broadleafcommerce.payment.service.type.BLCTransactionType;
+import org.broadleafcommerce.payment.service.type.PaymentLogEventType;
+import org.broadleafcommerce.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
 
@@ -48,9 +48,9 @@ public interface PaymentLog {
 
     public void setPaymentInfoReferenceNumber(String paymentInfoReferenceNumber);
 
-    public BLCTransactionType getTransactionType();
+    public TransactionType getTransactionType();
 
-    public void setTransactionType(BLCTransactionType transactionType);
+    public void setTransactionType(TransactionType transactionType);
 
     public Boolean getTransactionSuccess();
 
@@ -60,9 +60,9 @@ public interface PaymentLog {
 
     public void setExceptionMessage(String exceptionMessage);
 
-    public BLCPaymentLogEventType getLogType();
+    public PaymentLogEventType getLogType();
 
-    public void setLogType(BLCPaymentLogEventType logType);
+    public void setLogType(PaymentLogEventType logType);
 
     public Money getAmountPaid();
 
