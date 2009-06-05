@@ -210,7 +210,20 @@ public class PaymentServiceImpl implements PaymentService {
         log.setCustomer(info.getOrder().getCustomer());
         log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         log.setUserName(paymentContext.getUserName());
-        log.setExceptionMessage(e!=null?e.getMessage():null);
+        String exceptionMessage;
+        if (e != null) {
+            exceptionMessage = e.getMessage();
+            if (exceptionMessage != null) {
+                if (exceptionMessage.length() >= 255) {
+                    exceptionMessage = exceptionMessage.substring(0, 254);
+                }
+            } else {
+                exceptionMessage = e.getClass().getName();
+            }
+        } else {
+            exceptionMessage = null;
+        }
+        log.setExceptionMessage(exceptionMessage);
         log.setAmountPaid(info.getAmount());
         log.setPaymentInfo(info);
         info.getPaymentLogs().add(log);

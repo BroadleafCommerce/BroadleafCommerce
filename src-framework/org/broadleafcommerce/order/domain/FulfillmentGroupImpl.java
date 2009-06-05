@@ -97,7 +97,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     private BigDecimal adjustmentPrice;  // retailPrice with adjustments
 
     @Column(name = "TYPE")
-    private String type;
+    private String type = FulfillmentGroupType.SHIPPING.getType();
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
     private List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();

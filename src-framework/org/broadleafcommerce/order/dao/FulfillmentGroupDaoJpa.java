@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -73,14 +74,17 @@ public class FulfillmentGroupDaoJpa implements FulfillmentGroupDao {
     }
 
     @Override
-    public FulfillmentGroupImpl createDefault() {
-        FulfillmentGroupImpl fg = ((FulfillmentGroupImpl) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
+    public FulfillmentGroup createDefault() {
+        FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
         fg.setPrimary(true);
+        fg.setType(FulfillmentGroupType.SHIPPING);
         return fg;
     }
 
     @Override
     public FulfillmentGroup create() {
-        return ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
+        FulfillmentGroup fg =  ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
+        fg.setType(FulfillmentGroupType.SHIPPING);
+        return fg;
     }
 }
