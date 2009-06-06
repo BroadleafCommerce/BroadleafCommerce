@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 public class OfferAuditDaoJpa implements OfferAuditDao {
 
     /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.promotion.domain.OfferAudit";
+    private static String beanName = "org.broadleafcommerce.offer.domain.OfferAudit";
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
