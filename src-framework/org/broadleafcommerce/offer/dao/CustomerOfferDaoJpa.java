@@ -33,7 +33,7 @@ import org.springframework.stereotype.Repository;
 public class CustomerOfferDaoJpa implements CustomerOfferDao {
 
     /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.promotion.domain.CustomerOffer";
+    private static String beanName = "org.broadleafcommerce.offer.domain.CustomerOffer";
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
