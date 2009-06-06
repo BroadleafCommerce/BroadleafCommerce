@@ -138,7 +138,7 @@ public interface Order {
 
     public void removeAllItemAdjustments();
 
-    public boolean containsNotCombinableItemOffer();
+    public boolean containsNotCombinableItemOfferAdjustments();
 
     public boolean containsNotStackableOrderOffer();
 

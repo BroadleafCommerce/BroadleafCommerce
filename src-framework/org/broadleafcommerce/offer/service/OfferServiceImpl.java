@@ -51,7 +51,6 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.util.money.Money;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;
@@ -233,107 +232,208 @@ public class OfferServiceImpl implements OfferService {
     @Override
     @SuppressWarnings("unchecked")
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
-        List<CandidateOrderOffer> qualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
-        List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
+        clearOffersandAdjustments(order);
+        List<Offer> filteredOffers = filterOffers(offers, order.getCustomer());
 
-        order.removeAllCandidateOffers();
-        order.removeAllAdjustments();
-
-        if (offers != null && !offers.isEmpty()) {
+        if ((filteredOffers == null) || (filteredOffers.isEmpty())) {
+            order.assignOrderItemsFinalPrice();
+            order.setSubTotal(order.calculateOrderItemsFinalPrice());
+        } else {
+            List<CandidateOrderOffer> qualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
+            List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
             // set order subtotal price to total item price without adjustments
             order.setSubTotal(order.calculateOrderItemsCurrentPrice());
-            List<Offer> filteredOffers = removeOutOfDateOffers(offers);
-            filteredOffers = removeInvalidCustomerOffers(filteredOffers, order.getCustomer());
             List<DiscreteOrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
-
-            if (filteredOffers != null && !filteredOffers.isEmpty()) {
-                for (Offer offer : filteredOffers) {
-                    if(offer.getType() == OfferType.ORDER){
-                        if (couldOfferApplyToOrder(offer, order)) {
-                            CandidateOrderOffer candidateOffer = new CandidateOrderOfferImpl(order, offer);
-                            // Why do we add offers here when we set the sorted list later
-                            order.addCandidateOrderOffer(candidateOffer);
-                            qualifiedOrderOffers.add(candidateOffer);
+            for (Offer offer : filteredOffers) {
+                if(offer.getType() == OfferType.ORDER){
+                    if (couldOfferApplyToOrder(offer, order)) {
+                        CandidateOrderOffer candidateOffer = new CandidateOrderOfferImpl(order, offer);
+                        // Why do we add offers here when we set the sorted list later
+                        order.addCandidateOrderOffer(candidateOffer);
+                        qualifiedOrderOffers.add(candidateOffer);
+                    }
+                } else if(offer.getType() == OfferType.ORDER_ITEM){
+                    for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                        if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
+                            CandidateItemOffer candidateOffer = new CandidateItemOfferImpl(discreteOrderItem, offer);
+                            discreteOrderItem.addCandidateItemOffer(candidateOffer);
+                            qualifiedItemOffers.add(candidateOffer);
                         }
-                    } else if(offer.getType() == OfferType.ORDER_ITEM){
-                        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                            if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
-                                CandidateItemOffer candidateOffer = new CandidateItemOfferImpl(discreteOrderItem, offer);
-                                discreteOrderItem.addCandidateItemOffer(candidateOffer);
-                                qualifiedItemOffers.add(candidateOffer);
-                            }
-                        }
-                    } else if(offer.getType() == OfferType.FULFILLMENT_GROUP){
-                        // TODO: Handle Offer calculation for offer type of fullfillment group
-                        // how to verify if offer applies for fulfillment?
-                        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-                            if(couldOfferApplyToOrder(offer, order, fulfillmentGroup)) {
-                                CandidateFulfillmentGroupOffer candidateOffer = new CandidateFulfillmentGroupOfferImpl(fulfillmentGroup, offer);
-                                fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
-                            }
+                    }
+                } else if(offer.getType() == OfferType.FULFILLMENT_GROUP){
+                    // TODO: Handle Offer calculation for offer type of fullfillment group
+                    // how to verify if offer applies for fulfillment?
+                    for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+                        if(couldOfferApplyToOrder(offer, order, fulfillmentGroup)) {
+                            CandidateFulfillmentGroupOffer candidateOffer = new CandidateFulfillmentGroupOfferImpl(fulfillmentGroup, offer);
+                            fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
                         }
                     }
                 }
+            }
 
+            if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
+                order.assignOrderItemsFinalPrice();
+                order.setSubTotal(order.calculateOrderItemsFinalPrice());
+            } else {
+                Offer notCombinableOrderOfferApplied = null;
                 if (!qualifiedItemOffers.isEmpty()) {
                     // Sort order item offers by priority and discount
                     Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
                     Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
-
-                    int appliedItemOffersCount = applyAllItemOffers(qualifiedItemOffers);
-
-                    if (appliedItemOffersCount > 0) {
-                        // compare adjustment price to sales price
-                        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                            if (discreteOrderItem.getAdjustmentPrice() != null) {
-                                Money itemPrice = discreteOrderItem.getRetailPrice();
-                                if (discreteOrderItem.getSalePrice() != null) {
-                                    itemPrice = discreteOrderItem.getSalePrice();
-                                }
-                                if (discreteOrderItem.getAdjustmentPrice().greaterThanOrEqual(itemPrice)) {
-                                    // adjustment price is not best price, remove adjustments for this item
-                                    discreteOrderItem.removeAllAdjustments();
-                                }
-                            }
-                        }
-                    }
+                    qualifiedItemOffers = removeTrailingNotCombinableItemOffers(qualifiedItemOffers);
+                    notCombinableOrderOfferApplied = applyAllOrderOffers(qualifiedOrderOffers, order);
                 }
 
+                Offer notCombinableItemOfferApplied = null;
                 if (!qualifiedOrderOffers.isEmpty()) {
                     // Sort order offers by priority and discount
                     Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
                     Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
+                    qualifiedOrderOffers = removeTrailingNotCombinableOrderOffers(qualifiedOrderOffers);
+                    notCombinableItemOfferApplied = applyAllItemOffers(qualifiedItemOffers);
+                }
 
-                    applyAllOrderOffers(qualifiedOrderOffers, order);
-
-                    // if order contains a non-Combinable item offer determine if the order offer or item offer
-                    // should apply
-                    if ((order.getOrderAdjustments().size() > 0) && (order.containsNotCombinableItemOffer())) {
-                        if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
-                            // remove all order adjustments
-                            order.removeAllOrderAdjustments();
-                        } else {
-                            order.removeAllItemAdjustments();
+                if ((notCombinableItemOfferApplied != null) && (notCombinableOrderOfferApplied != null)) {
+                    if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
+                        order.removeAllOrderAdjustments();
+                        qualifiedOrderOffers = removeOfferFromCandidateOrderOffers(qualifiedOrderOffers, notCombinableOrderOfferApplied);
+                        notCombinableOrderOfferApplied = null;
+                        if (!qualifiedOrderOffers.isEmpty()) {
+                            applyAllOrderOffers(qualifiedOrderOffers, order);
                         }
+                    } else {
+                        order.removeAllItemAdjustments();
+                        qualifiedItemOffers = removeOfferFromCandidateItemOffers(qualifiedItemOffers, notCombinableItemOfferApplied);
+                        notCombinableItemOfferApplied = null;
+                        if (!qualifiedItemOffers.isEmpty()) {
+                            applyAllItemOffers(qualifiedItemOffers);
+                        }
+                    }
+                }
+                if ((notCombinableItemOfferApplied != null) && (!qualifiedOrderOffers.isEmpty())){
+                    // item is not combinable
+                    if (order.getAdjustmentPrice().greaterThan(order.calculateOrderItemsCurrentPrice())) {
+                        // item is better
+                        order.removeAllOrderAdjustments();
+                        qualifiedOrderOffers.clear();
+                    } else {
+                        order.removeAllItemAdjustments();
+                        qualifiedItemOffers = removeOfferFromCandidateItemOffers(qualifiedItemOffers, notCombinableItemOfferApplied);
+                        notCombinableItemOfferApplied = null;
+                        if (!qualifiedItemOffers.isEmpty()) {
+                            applyAllItemOffers(qualifiedItemOffers);
+                        }
+                    }
+                }
+                if ((notCombinableOrderOfferApplied != null) && (!qualifiedItemOffers.isEmpty())) {
+                    // item is not combinable
+                    if (order.getAdjustmentPrice().lessThan(order.calculateOrderItemsCurrentPrice())) {
+                        // order is better
+                        order.removeAllItemAdjustments();
+                        qualifiedItemOffers.clear();
+                    } else {
+                        order.removeAllOrderAdjustments();
+                        qualifiedOrderOffers = removeOfferFromCandidateOrderOffers(qualifiedOrderOffers, notCombinableOrderOfferApplied);
+                        notCombinableOrderOfferApplied = null;
+                        if (!qualifiedOrderOffers.isEmpty()) {
+                            applyAllOrderOffers(qualifiedOrderOffers, order);
+                        }
+                    }
+                }
+                order.assignOrderItemsFinalPrice();
+                order.setSubTotal(order.calculateOrderItemsFinalPrice());
+                if ((!qualifiedOrderOffers.isEmpty()) && (!qualifiedOrderOffers.isEmpty())) {
+                    List<CandidateOrderOffer> finalQualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
+                    order.removeAllOrderAdjustments();
+                    for (CandidateOrderOffer condidateOrderOffer : qualifiedOrderOffers) {
+                        if (couldOfferApplyToOrder(condidateOrderOffer.getOffer(), order)) {
+                            finalQualifiedOrderOffers.add(condidateOrderOffer);
+                        }
+                    }
+
+                    // Sort order offers by priority and discount
+                    Collections.sort(finalQualifiedOrderOffers, new BeanComparator("discountedPrice"));
+                    Collections.sort(finalQualifiedOrderOffers, new BeanComparator("priority"));
+                    if (!finalQualifiedOrderOffers.isEmpty()) {
+                        applyAllOrderOffers(finalQualifiedOrderOffers, order);
                     }
                 }
             }
         }
-        order.assignOrderItemsFinalPrice();
-        order.setSubTotal(order.calculateOrderItemsFinalPrice());
-        if (!order.getOrderAdjustments().isEmpty()) {
-            // reevaluate the Order offers based on the applied item offers
-            List<CandidateOrderOffer> finalQualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
-            order.removeAllOrderAdjustments();
-            for (CandidateOrderOffer condidateOrderOffer : qualifiedOrderOffers) {
-                if (couldOfferApplyToOrder(condidateOrderOffer.getOffer(), order)) {
-                    finalQualifiedOrderOffers.add(condidateOrderOffer);
+    }
+
+    private List<CandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<CandidateOrderOffer> candidateOffers) {
+        List<CandidateOrderOffer> remainingCandidateOffers = new ArrayList<CandidateOrderOffer>();
+        int offerCount = 0;
+        for (CandidateOrderOffer candidateOffer : candidateOffers) {
+            if (offerCount == 0) {
+                remainingCandidateOffers.add(candidateOffer);
+            } else {
+                if (candidateOffer.getOffer().isCombinableWithOtherOffers()) {
+                    remainingCandidateOffers.add(candidateOffer);
                 }
             }
-            if (!finalQualifiedOrderOffers.isEmpty()) {
-                applyAllOrderOffers(finalQualifiedOrderOffers, order);
+            offerCount++;
+        }
+        return remainingCandidateOffers;
+    }
+
+    private List<CandidateItemOffer> removeTrailingNotCombinableItemOffers(List<CandidateItemOffer> candidateOffers) {
+        List<CandidateItemOffer> remainingCandidateOffers = new ArrayList<CandidateItemOffer>();
+        int offerCount = 0;
+        Offer notCombinableOfferApplied = null;
+        for (CandidateItemOffer candidateOffer : candidateOffers) {
+            if (offerCount == 0) {
+                remainingCandidateOffers.add(candidateOffer);
+                if (!candidateOffer.getOffer().isCombinableWithOtherOffers()) {
+                    notCombinableOfferApplied = candidateOffer.getOffer();
+                }
+            } else {
+                if (candidateOffer.getOffer().isCombinableWithOtherOffers()) {
+                    remainingCandidateOffers.add(candidateOffer);
+                } else if (candidateOffer.getOffer().equals(notCombinableOfferApplied)) {
+                    // Do not remove the same offer applied to different items
+                    remainingCandidateOffers.add(candidateOffer);
+                }
+            }
+            offerCount++;
+        }
+        return remainingCandidateOffers;
+    }
+
+    private List<CandidateOrderOffer> removeOfferFromCandidateOrderOffers(List<CandidateOrderOffer> candidateOffers, Offer offer) {
+        List<CandidateOrderOffer> remainingCandidateOffers = new ArrayList<CandidateOrderOffer>();
+        for (CandidateOrderOffer candidateOffer : candidateOffers) {
+            if (!candidateOffer.getOffer().equals(offer)) {
+                remainingCandidateOffers.add(candidateOffer);
             }
         }
+        return remainingCandidateOffers;
+    }
+
+    private List<CandidateItemOffer> removeOfferFromCandidateItemOffers(List<CandidateItemOffer> candidateOffers, Offer offer) {
+        List<CandidateItemOffer> remainingCandidateOffers = new ArrayList<CandidateItemOffer>();
+        for (CandidateItemOffer candidateOffer : candidateOffers) {
+            if (!candidateOffer.getOffer().equals(offer)) {
+                remainingCandidateOffers.add(candidateOffer);
+            }
+        }
+        return remainingCandidateOffers;
+    }
+
+    private void clearOffersandAdjustments(Order order) {
+        order.removeAllCandidateOffers();
+        order.removeAllAdjustments();
+    }
+
+    private List<Offer> filterOffers(List<Offer> offers, Customer customer) {
+        List<Offer> filteredOffers = null;
+        if (offers != null && !offers.isEmpty()) {
+            filteredOffers = removeOutOfDateOffers(offers);
+            filteredOffers = removeInvalidCustomerOffers(filteredOffers, customer);
+        }
+        return filteredOffers;
     }
 
     /**
@@ -420,32 +520,34 @@ public class OfferServiceImpl implements OfferService {
      * OrderItemAdjustment.
      *
      * @param itemOffers a sorted list of CandidateItemOffer
-     * @return a integer value of the number of item offers applied
+     * @return
      */
-    private int applyAllItemOffers(List<CandidateItemOffer> itemOffers) {
+    private Offer applyAllItemOffers(List<CandidateItemOffer> itemOffers) {
         // Iterate through the collection of CandiateItemOffers. Remember that each one is an offer that may apply to a
         // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
+        // The same offer may be applied to different Order Items
         //
         // isCombinableWithOtherOffers - not combinable with any offers in the order
         // isStackable - cannot be stack on top of an existing item offer back, other offers can be stack of top of it
         //
-        int appliedOffersCount = 0;
+        Offer notCombinableOfferApplied = null;
         for (CandidateItemOffer itemOffer : itemOffers) {
             OrderItem orderItem = itemOffer.getOrderItem();
-            if ((itemOffer.getOffer().isCombinableWithOtherOffers()) || (appliedOffersCount == 0)) {
+            if (notCombinableOfferApplied == null) {
                 if ((itemOffer.getOffer().isStackable()) || orderItem.getOrderItemAdjustments().size() == 0) {
                     applyOrderItemOffer(itemOffer);
-                    appliedOffersCount++;
                     if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {
-                        // Offer applied is not combinable with other offers, ignore other offers
-                        break;
+                        notCombinableOfferApplied = itemOffer.getOffer();
                     }
                 }
             } else {
-                // no code here; offer cannot be combined with another offer so move to the next offer
+                // only the not combinable offer can be applied to the remaining line items
+                if (itemOffer.getOffer().equals(notCombinableOfferApplied)) {
+                    applyOrderItemOffer(itemOffer);
+                }
             }
         }
-        return appliedOffersCount;
+        return notCombinableOfferApplied;
     }
 
     /**
@@ -473,36 +575,19 @@ public class OfferServiceImpl implements OfferService {
      * @param orderOffers a sorted list of CandidateOrderOffer
      * @param order the Order to apply the CandidateOrderOffers
      */
-    private void applyAllOrderOffers(List<CandidateOrderOffer> orderOffers, Order order) {
+    private Offer applyAllOrderOffers(List<CandidateOrderOffer> orderOffers, Order order) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
+        Offer notCombinableOfferApplied = null;
         for (CandidateOrderOffer orderOffer : orderOffers) {
-            if (order.getOrderAdjustments().size() == 0) {
+            if ((orderOffer.getOffer().isStackable()) || order.getOrderAdjustments().size() == 0) {
+                applyOrderOffer(orderOffer);
                 if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
-                    applyOrderOffer(orderOffer);
-                    // check to see if this not combinable offer has a greater value than all the item offers
-                    if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
-                        // item offers has more value; remove order offer
-                        order.removeAllOrderAdjustments();
-                    } else {
-                        // order offers has more value; remove item offers
-                        order.removeAllItemAdjustments();
-                        break;
-                    }
-                } else {
-                    applyOrderOffer(orderOffer);
+                    notCombinableOfferApplied = orderOffer.getOffer();
+                    break;
                 }
-            } else if (orderOffer.getOffer().isCombinableWithOtherOffers()) {                // if no offer has been applied to any of the items, or an offer has been applied but the new offer can be combined
-                if (orderOffer.getOffer().isStackable()) {
-                    applyOrderOffer(orderOffer);
-                    if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
-                        // Offer applied is not combinable with other offers, ignore other offers
-                        break;
-                    }
-                }
-            } else {
-                // no code here; offer cannot be combined with another offer so move to the next offer
             }
         }
+        return notCombinableOfferApplied;
     }
 
     /**

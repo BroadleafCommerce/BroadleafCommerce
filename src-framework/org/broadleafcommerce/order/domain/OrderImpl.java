@@ -456,7 +456,7 @@ public class OrderImpl implements Order, Serializable {
      * Checks to see if the orders items in this order has an adjustment with a not combinable
      * offer.
      */
-    public boolean containsNotCombinableItemOffer() {
+    public boolean containsNotCombinableItemOfferAdjustments() {
         boolean isContainsNotCombinableItemOffer = false;
         for (OrderItem orderItem: orderItems) {
             for (OrderItemAdjustment itemAdjustment : orderItem.getOrderItemAdjustments()) {
