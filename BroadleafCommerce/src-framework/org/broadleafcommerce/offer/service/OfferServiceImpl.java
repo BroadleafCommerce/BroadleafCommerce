@@ -276,22 +276,22 @@ public class OfferServiceImpl implements OfferService {
                 order.assignOrderItemsFinalPrice();
                 order.setSubTotal(order.calculateOrderItemsFinalPrice());
             } else {
-                Offer notCombinableOrderOfferApplied = null;
+                Offer notCombinableItemOfferApplied = null;
                 if (!qualifiedItemOffers.isEmpty()) {
                     // Sort order item offers by priority and discount
                     Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
                     Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
                     qualifiedItemOffers = removeTrailingNotCombinableItemOffers(qualifiedItemOffers);
-                    notCombinableOrderOfferApplied = applyAllOrderOffers(qualifiedOrderOffers, order);
+                    notCombinableItemOfferApplied = applyAllItemOffers(qualifiedItemOffers);
                 }
 
-                Offer notCombinableItemOfferApplied = null;
+                Offer notCombinableOrderOfferApplied = null;
                 if (!qualifiedOrderOffers.isEmpty()) {
                     // Sort order offers by priority and discount
                     Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
                     Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
                     qualifiedOrderOffers = removeTrailingNotCombinableOrderOffers(qualifiedOrderOffers);
-                    notCombinableItemOfferApplied = applyAllItemOffers(qualifiedItemOffers);
+                    notCombinableOrderOfferApplied = applyAllOrderOffers(qualifiedOrderOffers, order);
                 }
 
                 if ((notCombinableItemOfferApplied != null) && (notCombinableOrderOfferApplied != null)) {
@@ -343,7 +343,7 @@ public class OfferServiceImpl implements OfferService {
                 }
                 order.assignOrderItemsFinalPrice();
                 order.setSubTotal(order.calculateOrderItemsFinalPrice());
-                if ((!qualifiedOrderOffers.isEmpty()) && (!qualifiedOrderOffers.isEmpty())) {
+                if ((!qualifiedOrderOffers.isEmpty()) && (!qualifiedItemOffers.isEmpty())) {
                     List<CandidateOrderOffer> finalQualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
                     order.removeAllOrderAdjustments();
                     for (CandidateOrderOffer condidateOrderOffer : qualifiedOrderOffers) {

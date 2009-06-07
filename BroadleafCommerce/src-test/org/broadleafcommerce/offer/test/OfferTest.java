@@ -81,7 +81,7 @@ public class OfferTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
 
-/*    @Test(groups =  {"testOfferNotStackableItemOffers"}, dependsOnGroups = { "offerUsedForPricing"})
+    @Test(groups =  {"testOfferNotStackableItemOffers"}, dependsOnGroups = { "offerUsedForPricing"})
     public void testOfferNotStackableItemOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
@@ -164,15 +164,16 @@ public class OfferTest extends BaseTest {
         order.addOrderItem(createDiscreteOrderItem(20L, 100D, null, true, 2));
         order.addOrderItem(createDiscreteOrderItem(21L, 100D, null, true, 2));
 
-        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == 20", true, true, 1));
-        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != 20", true, true, 1));
-        order.addAddedOfferCode(createOfferCode("80 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 80, null, null, true, false, 1));
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, false, 1));
+        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 10, null, null, true, true, 1));
+        order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 15, null, null, true, true, 1));
+        order.addAddedOfferCode(createOfferCode("80 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 90, null, null, true, false, 1));
         order.addAddedOfferCode(createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, true, 1));
 
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
 
-        assert (order.getAdjustmentPrice().equals(new Money(300D)));
+        assert (order.getAdjustmentPrice().equals(new Money(250D)));
     }
 
     @Test(groups =  {"testGlobalOffers"}, dependsOnGroups = { "testOfferNotCombinableOrderOffersWithItemOffer"})
@@ -197,7 +198,7 @@ public class OfferTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
 
-    @Test(groups =  {"testCustomerAssociatedOffers"}, dependsOnGroups = { "testGlobalOffers"})
+/*    @Test(groups =  {"testCustomerAssociatedOffers"}, dependsOnGroups = { "testGlobalOffers"})
     public void testCustomerAssociatedOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
@@ -221,8 +222,8 @@ public class OfferTest extends BaseTest {
         offerService.applyOffersToOrder(offers, order);
 
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
-    }*/
-
+    }
+*/
     private Customer createCustomer() {
         Customer customer = customerService.createCustomerFromId(null);
         return customer;
