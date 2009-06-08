@@ -58,7 +58,7 @@ public class WishlistController extends CartController {
     @SuppressWarnings("unchecked")
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public String createWishlist(ModelMap model, HttpServletRequest request) {
-        Order wishlistOrder = retrieveOrder(request);
+        Order wishlistOrder = retrieveCartOrder(request);
         if (model.containsAttribute("wishlistItems")) {
             List<ProductItem> productItemList = (List<ProductItem>)model.get("productItemList");
             if (productItemList != null) {
@@ -108,8 +108,7 @@ public class WishlistController extends CartController {
     }
 
     // override the retreiveOrder method in CartController to return a name wishlist order
-    @Override
-    protected Order retrieveOrder(HttpServletRequest request) {
+    protected Order retrieveCartOrder(HttpServletRequest request) {
         String wishlistName = request.getParameter("wishlistName");
         Order currentWishlistOrder = cartService.createNamedOrderForCustomer(wishlistName, customerState.getCustomer(request));
         return currentWishlistOrder;
