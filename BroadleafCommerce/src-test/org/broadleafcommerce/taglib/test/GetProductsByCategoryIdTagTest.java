@@ -32,6 +32,7 @@ public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
         getProductsByCategoryIdTag = new GetProductsByCategoryIdTag();
     }
 
+    @SuppressWarnings("unchecked")
     public void test_GetProductsByCategoryIdTag() throws JspException {
 
         getProductsByCategoryIdTag.setJspContext(pageContext);

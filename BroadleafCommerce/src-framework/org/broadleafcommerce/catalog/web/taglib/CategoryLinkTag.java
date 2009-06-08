@@ -22,13 +22,11 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
 
-import org.apache.log4j.Logger;
 import org.broadleafcommerce.catalog.domain.Category;
 
 public class CategoryLinkTag extends AbstractCatalogTag {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(CategoryLinkTag.class);
 
     private Category category;
 
