@@ -7,91 +7,32 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.2.xsd">
 
-	<sec:global-method-security secured-annotations="enabled"/>
 
-    <sec:http entry-point-ref="myAuthenticationEntryPoint" auto-config="false">
-        <!-- Restrict URLs based on role -->
-        <sec:intercept-url pattern="/passwordChange*" access="ROLE_PASSWORD_CHANGE_REQUIRED" />
-        <sec:intercept-url pattern="/images/**" filters="none" />
-        <sec:intercept-url pattern="/login*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/logoutSuccess*" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/register*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/forgotPwd*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/challengeQuestion*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/forgotPasswordChange*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-        <sec:intercept-url pattern="/css/login.css" filters="none" />
-        <sec:intercept-url pattern="/images/favicon.ico" filters="none" />
-        <sec:intercept-url pattern="/css/main.css" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/js/jquery.js" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/js/jquery.cookie.js" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-        <sec:intercept-url pattern="/**" access="ROLE_USER" />
-        <sec:logout logout-url="/logout" logout-success-url="/login.jsp" />
-    </sec:http>
-
-	<!-- name of my authenticationManager is authenticationManager
-	<sec:authentication-manager alias="authenticationManager"/>-->
-
-    <bean id="anonymousProcessingFilter" class="org.springframework.security.providers.anonymous.AnonymousProcessingFilter">
-        <property name="key" value="anonymous"/>
-        <property name="userAttribute" value="anonymous,ROLE_ANONYMOUS"/>
-        <sec:custom-filter position="ANONYMOUS_FILTER"/>
-    </bean>
-
-	<!-- Custom login filter which replaces the default AUTHENTICATION_PROCESSING_FILTER --><!-- 
-	<bean id="bcAuthenticationProcessingFilter" class="org.broadleafcommerce.security.BCAuthenticationProcessingFilter" >
-		<sec:custom-filter position="AUTHENTICATION_PROCESSING_FILTER"/> 
-		<property name="defaultTargetUrl" value="/index.jsp"/> 
-		<property name="authenticationFailureUrl" value="/login.jsp?login_error=1" /> 
-		<property name="authenticationManager" ref="authenticationManager"/>         <property name="filterProcessesUrl" value="/loginProcess"/>
-		<property name="allowSessionCreation" value="true" /> 
-	</bean>
--->
-	<!-- My custom auth manager -->
+    <!--=============================================================================================== -->
+	<!-- Override the Spring Security authentication manager so that it authenticates the username and
+	     password against the Broadleaf Commerce customer tables. -->
+    <!--=============================================================================================== -->
     <bean id="authenticationManager" class="org.springframework.security.providers.ProviderManager">
         <property name="providers">
             <list>
                 <ref local="daoAuthenticationProvider"/>
-                <ref local="anonymousAuthenticationProvider"/>
             </list>
         </property>
     </bean>
 
-	<!-- My authentication entry point, can be replaced easily if we are doing custom commence of invalid auths.-->
-	<bean id="myAuthenticationEntryPoint" class="org.springframework.security.ui.webapp.AuthenticationProcessingFilterEntryPoint" >
-		<property name="loginFormUrl" value="/login.jsp"/>
-        <property name="forceHttps" value="false"/>
-	</bean>
 
-	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
-
-    <bean id="anonymousAuthenticationProvider" class="org.springframework.security.providers.anonymous.AnonymousAuthenticationProvider">
-        <property name="key" value="anonymous"/>
-    </bean>
-
+    <!--=============================================================================================== -->
+    <!-- This authentication service needs to use our passwordEncoder which encrypts the password.      -->
+    <!--=============================================================================================== -->
 	<bean id="daoAuthenticationProvider" class="org.springframework.security.providers.dao.DaoAuthenticationProvider">
-		<property name="userDetailsService" ref="userDetailsService"/>
+		<property name="userDetailsService" ref="blUserDetailsService"/>
 		<property name="passwordEncoder" ref="passwordEncoder"/>
 		<property name="forcePrincipalAsString" value="true"/>
 		<sec:custom-authentication-provider/>
  	</bean>
 
-	<!-- Observer pattern -->
-	<!-- bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-	    <property name="targetObject" ref="bcAuthenticationProcessingFilter"/>
-	    <property name="targetMethod" value="addListener"/>
-	    <property name="arguments">
-	    <list>
-	    	<ref bean="StateStore"/>
-	    </list>
-	    </property>
-	</bean -->
-
-	<bean id="entityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
-
-	<!-- Entity mappings - override for extensibility -->
-	<!-- 
-	<bean id="org.broadleafcommerce.profile.domain.User" class="org.broadleafcommerce.profile.domain.BroadleafUser"/>
-	<bean id="org.broadleafcommerce.profile.domain." class="org.broadleafcommerce.profile.domain.Broadleaf"/>
- 	-->
-
+    <!--=============================================================================================== -->
+	<!--  Encode the passwords using MD5PasswordEncoder                                                 -->
+    <!--=============================================================================================== -->
+    <bean id="passwordEncoder" class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/>
 </beans>
