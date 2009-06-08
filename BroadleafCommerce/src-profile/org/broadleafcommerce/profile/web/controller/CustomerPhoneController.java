@@ -63,12 +63,12 @@ public class CustomerPhoneController {
      * Will these static defaults alter their ability to be
      * overwritten via the appContext?  TODO scc: test this scenario
      * */
-    private String deletePhoneSuccessUrl = redirect;
-    private String makePhoneDefaultSuccessUrl = redirect;
-    private String savePhoneErrorUrl = prefix;
-    private String savePhoneSuccessUrl = prefix;
-    private String viewPhoneErrorUrl = prefix;
-    private String viewPhoneSuccessUrl = prefix;
+    private String deletePhoneSuccessView = redirect;
+    private String makePhoneDefaultSuccessView = redirect;
+    private String savePhoneErrorView = prefix;
+    private String savePhoneSuccessView = prefix;
+    private String viewPhoneErrorView = prefix;
+    private String viewPhoneSuccessView = prefix;
 
     /**
      * Completely deletes the customerPhone with the given customerPhoneId from the database.
@@ -87,7 +87,7 @@ public class CustomerPhoneController {
 
         request.setAttribute("phone.deletedPhone", "true");
 
-        return deletePhoneSuccessUrl + customerPhoneId;
+        return deletePhoneSuccessView + customerPhoneId;
     }
 
     /**
@@ -126,7 +126,7 @@ public class CustomerPhoneController {
 
         request.setAttribute("phone.madePhoneDefault", "true");
 
-        return makePhoneDefaultSuccessUrl;
+        return makePhoneDefaultSuccessView;
     }
 
     /**
@@ -179,9 +179,9 @@ public class CustomerPhoneController {
                 request.setAttribute("phoneId", customerPhone.getPhone().getId());
             }
 
-            return savePhoneSuccessUrl;
+            return savePhoneSuccessView;
         } else {
-            return savePhoneErrorUrl;
+            return savePhoneErrorView;
         }
     }
 
@@ -197,16 +197,16 @@ public class CustomerPhoneController {
         this.customerState = customerState;
     }
 
-    public void setDeletePhoneSuccessUrl(String deletePhoneSuccessUrl) {
-        this.deletePhoneSuccessUrl = deletePhoneSuccessUrl;
+    public void setdeletePhoneSuccessView(String deletePhoneSuccessView) {
+        this.deletePhoneSuccessView = deletePhoneSuccessView;
     }
 
     public void setEntityConfiguration(EntityConfiguration entityConfiguration) {
         this.entityConfiguration = entityConfiguration;
     }
 
-    public void setMakePhoneDefaultSuccessUrl(String makePhoneDefaultSuccessUrl) {
-        this.makePhoneDefaultSuccessUrl = makePhoneDefaultSuccessUrl;
+    public void setmakePhoneDefaultSuccessView(String makePhoneDefaultSuccessView) {
+        this.makePhoneDefaultSuccessView = makePhoneDefaultSuccessView;
     }
 
     public void setPhoneFormatter(PhoneFormatter phoneFormatter) {
@@ -217,20 +217,20 @@ public class CustomerPhoneController {
         this.phoneValidator = phoneValidator;
     }
 
-    public void setSavePhoneErrorUrl(String savePhoneErrorUrl) {
-        this.savePhoneErrorUrl = savePhoneErrorUrl;
+    public void setsavePhoneErrorView(String savePhoneErrorView) {
+        this.savePhoneErrorView = savePhoneErrorView;
     }
 
-    public void setSavePhoneSuccessUrl(String savePhoneSuccessUrl) {
-        this.savePhoneSuccessUrl = savePhoneSuccessUrl;
+    public void setsavePhoneSuccessView(String savePhoneSuccessView) {
+        this.savePhoneSuccessView = savePhoneSuccessView;
     }
 
-    public void setViewPhoneErrorUrl(String viewPhoneErrorUrl) {
-        this.viewPhoneErrorUrl = viewPhoneErrorUrl;
+    public void setviewPhoneErrorView(String viewPhoneErrorView) {
+        this.viewPhoneErrorView = viewPhoneErrorView;
     }
 
-    public void setViewPhoneSuccessUrl(String viewPhoneSuccessUrl) {
-        this.viewPhoneSuccessUrl = viewPhoneSuccessUrl;
+    public void setviewPhoneSuccessView(String viewPhoneSuccessView) {
+        this.viewPhoneSuccessView = viewPhoneSuccessView;
     }
 
     /**
@@ -251,7 +251,7 @@ public class CustomerPhoneController {
             Long customerPhoneId, HttpServletRequest request, @ModelAttribute("phoneNameForm")
             PhoneNameForm phoneNameForm, BindingResult errors) {
         if (customerPhoneId == null) {
-            return viewPhoneSuccessUrl;
+            return viewPhoneSuccessView;
         } else {
             Long currCustomerId = customerState.getCustomerId(request);
             CustomerPhone cPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, currCustomerId);
@@ -260,7 +260,7 @@ public class CustomerPhoneController {
                 // TODO: verify this is the current customers phone
                 //? - do we really need this since we read the phone with the currCustomerId?
                 if (!cPhone.getCustomerId().equals(currCustomerId)) {
-                    return viewPhoneErrorUrl;
+                    return viewPhoneErrorView;
                 }
 
                 phoneNameForm.setPhone(cPhone.getPhone());
@@ -268,9 +268,9 @@ public class CustomerPhoneController {
                 request.setAttribute("customerPhoneId", cPhone.getId());
                 request.setAttribute("phoneId", cPhone.getPhone().getId());
 
-                return viewPhoneSuccessUrl;
+                return viewPhoneSuccessView;
             } else {
-                return viewPhoneErrorUrl;
+                return viewPhoneErrorView;
             }
         }
     }
