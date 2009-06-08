@@ -85,6 +85,7 @@ public class CustomerPhoneDaoJpa implements CustomerPhoneDao {
         return customerPhones.isEmpty() ? null : customerPhones.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_ALL_CUSTOMER_PHONES_BY_CUSTOMER_ID");
