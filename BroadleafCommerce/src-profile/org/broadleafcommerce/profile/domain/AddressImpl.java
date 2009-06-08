@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.profile.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +37,9 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADDRESS")
-public class AddressImpl implements Address {
+public class AddressImpl implements Address, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(generator = "AddressId", strategy = GenerationType.TABLE)
@@ -265,21 +269,33 @@ public class AddressImpl implements Address {
 
     @Override
     public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof AddressImpl)) return false;
+        if (this == other)
+            return true;
+        if (other == null || !(other instanceof AddressImpl))
+            return false;
 
         AddressImpl item = (AddressImpl) other;
 
-        if (addressLine1 != null && item.addressLine1 != null ? !addressLine1.equals(item.addressLine1) : addressLine1 != item.addressLine1) return false;
-        if (addressLine2 != null && item.addressLine2 != null ? !addressLine2.equals(item.addressLine2) : addressLine2 != item.addressLine2) return false;
-        if (city != null && item.city != null ? !city.equals(item.city) : city != item.city) return false;
-        if (postalCode != null && item.postalCode != null ? !postalCode.equals(item.postalCode) : postalCode != item.postalCode) return false;
-        if (county != null && item.county != null ? !county.equals(item.county) : county != item.county) return false;
-        if (state != null && item.state != null ? !state.equals(item.state) : state != item.state) return false;
-        if (country != null && item.country != null ? !country.equals(item.country) : country != item.country) return false;
-        if (companyName != null && item.companyName != null ? !companyName.equals(item.companyName) : companyName != item.companyName) return false;
-        if (firstName != null && item.firstName != null ? !firstName.equals(item.firstName) : firstName != item.firstName) return false;
-        if (lastName != null && item.lastName != null ? !lastName.equals(item.lastName) : lastName != item.lastName) return false;
+        if (addressLine1 != null && item.addressLine1 != null ? !addressLine1.equals(item.addressLine1) : addressLine1 != item.addressLine1)
+            return false;
+        if (addressLine2 != null && item.addressLine2 != null ? !addressLine2.equals(item.addressLine2) : addressLine2 != item.addressLine2)
+            return false;
+        if (city != null && item.city != null ? !city.equals(item.city) : city != item.city)
+            return false;
+        if (postalCode != null && item.postalCode != null ? !postalCode.equals(item.postalCode) : postalCode != item.postalCode)
+            return false;
+        if (county != null && item.county != null ? !county.equals(item.county) : county != item.county)
+            return false;
+        if (state != null && item.state != null ? !state.equals(item.state) : state != item.state)
+            return false;
+        if (country != null && item.country != null ? !country.equals(item.country) : country != item.country)
+            return false;
+        if (companyName != null && item.companyName != null ? !companyName.equals(item.companyName) : companyName != item.companyName)
+            return false;
+        if (firstName != null && item.firstName != null ? !firstName.equals(item.firstName) : firstName != item.firstName)
+            return false;
+        if (lastName != null && item.lastName != null ? !lastName.equals(item.lastName) : lastName != item.lastName)
+            return false;
 
         return true;
     }
