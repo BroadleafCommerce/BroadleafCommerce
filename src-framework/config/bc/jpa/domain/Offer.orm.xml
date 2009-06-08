@@ -18,5 +18,8 @@
 		WHERE offerCode.offerCode = :code</query>
 	</named-query>
 
+	<named-query name="BC_READ_ALL_OFFERS" >
+		<query>SELECT offer FROM org.broadleafcommerce.offer.domain.Offer offer</query>
+	</named-query>
 
 </entity-mappings>

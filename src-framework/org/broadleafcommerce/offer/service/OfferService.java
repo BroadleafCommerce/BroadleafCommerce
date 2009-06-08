@@ -27,6 +27,19 @@ import org.broadleafcommerce.pricing.service.exception.PricingException;
 public interface OfferService {
 
     /**
+     * Returns all offers
+     * @return all offers
+     */
+    public List<Offer> findAllOffers();
+
+    /**
+     * Save a new offer or updates an existing offer
+     * @param offer
+     * @return the offer
+     */
+    public Offer save(Offer offer);
+
+    /**
      * Lookup offer by code.
      * @param code the code
      * @return the offer

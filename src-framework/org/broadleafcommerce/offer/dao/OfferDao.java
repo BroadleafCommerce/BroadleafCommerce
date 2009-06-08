@@ -21,6 +21,8 @@ import org.broadleafcommerce.offer.domain.Offer;
 
 public interface OfferDao {
 
+    public List<Offer> readAllOffers();
+
 	public Offer readOfferById(Long offerId);
 
     public List<Offer> readOffersByAutomaticDeliveryType();

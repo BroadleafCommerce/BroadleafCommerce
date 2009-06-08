@@ -64,6 +64,12 @@ public class OfferDaoJpa implements OfferDao {
 
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Offer> readAllOffers() {
+        Query query = em.createNamedQuery("BC_READ_ALL_OFFERS");
+        return query.getResultList();
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public Offer readOfferById(Long offerId) {
