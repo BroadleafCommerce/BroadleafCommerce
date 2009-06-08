@@ -96,6 +96,16 @@ public class OfferServiceImpl implements OfferService {
         }
     } */
 
+    @Override
+    public List<Offer> findAllOffers() {
+        return offerDao.readAllOffers();
+    }
+
+    @Override
+    public Offer save(Offer offer) {
+        return offerDao.save(offer);
+    }
+
     /**
      * Creates a list of offers that applies to this order.  All offers that are assigned to the customer,
      * entered during checkout, or has a delivery type of automatic are added to the list.  The same offer
