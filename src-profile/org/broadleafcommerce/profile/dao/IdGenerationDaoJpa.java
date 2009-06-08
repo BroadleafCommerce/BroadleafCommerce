@@ -90,7 +90,7 @@ public class IdGenerationDaoJpa implements IdGenerationDao {
         return defaultBatchStart;
     }
 
-    public void setDefaultBatchStart(Long defaultBatchSize) {
+    public void setDefaultBatchStart(Long defaultBatchStart) {
         this.defaultBatchStart = defaultBatchStart;
     }
 
