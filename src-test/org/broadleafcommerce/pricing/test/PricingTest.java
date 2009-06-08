@@ -116,7 +116,7 @@ public class PricingTest extends BaseTest {
 
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D)));
+        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D).add(group.getShippingPrice().multiply(0.05D))));
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping())));
     }
 
@@ -145,8 +145,8 @@ public class PricingTest extends BaseTest {
         Money total = new Money(5D);
         group1.setShippingPrice(total);
         group2.setShippingPrice(total);
-        group1.setTotalTax(new Money(1D));
-        group2.setTotalTax(new Money(1D));
+        //group1.setTotalTax(new Money(1D));
+        //group2.setTotalTax(new Money(1D));
         order.setSubTotal(total);
         order.setTotal(total);
 
@@ -169,7 +169,7 @@ public class PricingTest extends BaseTest {
         order = pricingService.executePricing(order);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D)));
+        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D).add(group1.getShippingPrice().multiply(0.05D))));
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax().add(order.getTotalShipping()))));
     }
 
