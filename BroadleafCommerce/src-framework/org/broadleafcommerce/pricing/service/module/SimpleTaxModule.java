@@ -39,7 +39,6 @@ public class SimpleTaxModule implements TaxModule {
     @Override
     public Order calculateTaxForOrder(Order order) {
         Money totalTax = order.getSubTotal().multiply(factor);
-        order.setTotalTax(totalTax);
 
         for(FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             Money fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);
@@ -47,7 +46,11 @@ public class SimpleTaxModule implements TaxModule {
             fulfillmentGroup.setCityTax(new Money(0D));
             fulfillmentGroup.setCountyTax(new Money(0D));
             fulfillmentGroup.setCountryTax(new Money(0D));
+
+            totalTax = totalTax.add(fgTotalTax);
         }
+
+        order.setTotalTax(totalTax);
 
         return order;
     }
