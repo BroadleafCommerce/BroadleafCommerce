@@ -17,8 +17,6 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -30,15 +28,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.domain.OfferAudit;
-import org.broadleafcommerce.offer.domain.OfferAuditImpl;
-import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.util.money.Money;
 
 @Entity
@@ -74,14 +67,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
 
     @Column(name = "PRICE")
     private BigDecimal price;
-
-    //TODO does this work?? id is the primary key of OfferImpl. How does this help the ORM map the association back to FulfillmentGroupItem? This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
-    @OneToMany(mappedBy = "id", targetEntity = OfferImpl.class)
-    private List<Offer> candidateOffers = new ArrayList<Offer>();
-
-    //TODO does this work?? id is the primary key of OfferAuditImpl. How does this help the ORM map the association back to FulfillmentGroupItem? This should be a many to many. Make sure to add a cascade annotation with delete_orphans as well.
-    @OneToMany(mappedBy = "id", targetEntity = OfferAuditImpl.class)
-    private List<OfferAudit> appliedOffers = new ArrayList<OfferAudit>();
 
     public Long getId() {
         return id;
@@ -137,47 +122,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
 
     public void setPrice(Money price) {
         this.price = Money.toAmount(price);
-    }
-
-    @Override
-    public void addAppliedOffer(OfferAudit offer) {
-        appliedOffers.add(offer);
-    }
-
-    @Override
-    public void addCandidateOffer(Offer offer) {
-        candidateOffers.add(offer);
-    }
-
-    @Override
-    public List<OfferAudit> getAppliedOffers() {
-        return appliedOffers;
-    }
-
-    @Override
-    public List<Offer> getCandidateOffers() {
-        return candidateOffers;
-    }
-
-    @Override
-    public void removeAppliedOffer(OfferAudit offer) {
-        appliedOffers.remove(offer);
-
-    }
-
-    @Override
-    public void removeCandidateOffer(Offer offer) {
-        candidateOffers.remove(offer);
-    }
-
-    @Override
-    public void setAppliedOffers(List<OfferAudit> offers) {
-        this.appliedOffers = offers;
-    }
-
-    @Override
-    public void setCandidateOffers(List<Offer> offers) {
-        this.candidateOffers = offers;
     }
 
     @Override

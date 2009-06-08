@@ -227,6 +227,7 @@ public class OfferServiceImpl implements OfferService {
      * 6) Fulfillment offers cannot be not combinable
      * 7) Order offers cannot be FIXED_PRICE
      * 8) FIXED_PRICE offers cannot be stackable
+     * 9) Non-combinable offers only apply to the order and order items, fulfillment group offers will always apply
      *
      */
     @Override

@@ -26,6 +26,8 @@ import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.offer.dao.OfferDao;
+import org.broadleafcommerce.offer.domain.CustomerOffer;
+import org.broadleafcommerce.offer.domain.CustomerOfferImpl;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OfferCodeImpl;
@@ -198,7 +200,7 @@ public class OfferTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
 
-/*    @Test(groups =  {"testCustomerAssociatedOffers"}, dependsOnGroups = { "testGlobalOffers"})
+    @Test(groups =  {"testCustomerAssociatedOffers"}, dependsOnGroups = { "testGlobalOffers"})
     public void testCustomerAssociatedOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
@@ -223,7 +225,7 @@ public class OfferTest extends BaseTest {
 
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
-*/
+
     private Customer createCustomer() {
         Customer customer = customerService.createCustomerFromId(null);
         return customer;

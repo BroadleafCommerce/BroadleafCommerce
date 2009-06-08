@@ -15,10 +15,6 @@
  */
 package org.broadleafcommerce.order.domain;
 
-import java.util.List;
-
-import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.util.money.Money;
 
 public interface FulfillmentGroupItem {
@@ -52,19 +48,4 @@ public interface FulfillmentGroupItem {
 
     public void setPrice(Money price);
 
-    public List<Offer> getCandidateOffers();
-
-    public void setCandidateOffers(List<Offer> offers);
-
-    public void addCandidateOffer(Offer offer);
-
-    public void removeCandidateOffer(Offer offer);
-
-    public List<OfferAudit> getAppliedOffers();
-
-    public void setAppliedOffers(List<OfferAudit> offers);
-
-    public void addAppliedOffer(OfferAudit offer);
-
-    public void removeAppliedOffer(OfferAudit offer);
 }
