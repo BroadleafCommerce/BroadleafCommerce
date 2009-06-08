@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.profile.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,7 +36,9 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
-public class CustomerPhoneImpl implements CustomerPhone{
+public class CustomerPhoneImpl implements CustomerPhone, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
