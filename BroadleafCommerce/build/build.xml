@@ -51,6 +51,11 @@
 		<ant antfile="${internal.build.file}" target="publish-jars" />
 	</target>
 
+	<target name="10. Run Tests with Coverage" description="Runs all tests, and provides Code Coverage reports">
+		<property name="code.coverage" value="true" />
+		<ant antfile="${test.build.file}" target="runall" />
+	</target>
+
 	<target name="usage">
 		<echo>
 			This is the ANT build file for the Broadleaf Commerce project.
