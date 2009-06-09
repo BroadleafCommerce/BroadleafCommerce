@@ -505,6 +505,10 @@ public class OrderServiceImpl implements OrderService {
         this.orderItemService = orderItemService;
     }
 
+    public Order findOrderByOrderNumber(Long orderNumber) {
+        return orderDao.readOrderByOrderNumber(orderNumber);
+    }
+
     protected Order updateOrder(Order order) throws PricingException {
         pricingExecutionManager.executePricing(order);
         return orderDao.save(order);

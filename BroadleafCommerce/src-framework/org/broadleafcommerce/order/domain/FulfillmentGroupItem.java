@@ -50,4 +50,8 @@ public interface FulfillmentGroupItem extends Serializable {
 
     public void setPrice(Money price);
 
+    public String getStatus();
+
+    public void setStatus(String status);
+
 }

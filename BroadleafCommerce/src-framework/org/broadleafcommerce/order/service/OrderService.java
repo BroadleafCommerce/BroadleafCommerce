@@ -99,4 +99,6 @@ public interface OrderService {
 
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException;
 
+    public Order findOrderByOrderNumber (Long orderNumber);
+
 }

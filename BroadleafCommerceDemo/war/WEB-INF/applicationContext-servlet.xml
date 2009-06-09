@@ -85,6 +85,8 @@
 				<prop key="/welcome.htm">welcome</prop>
 				<prop key="/myaccount/phone/*">customerPhoneController</prop>
 				<prop key="/registerCustomer/*">blRegisterCustomerController</prop>
+				<prop key="/orders">viewOrderController</prop>
+				<prop key="/orders/*">viewOrderController</prop>
 				<prop key="/store">catalogController</prop>
 				<prop key="/store/*">catalogController</prop>
 				<prop key="/store/*/*">catalogController</prop>

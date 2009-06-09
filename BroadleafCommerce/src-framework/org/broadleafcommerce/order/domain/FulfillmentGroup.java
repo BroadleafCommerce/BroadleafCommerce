@@ -132,4 +132,6 @@ public interface FulfillmentGroup extends Serializable {
     public Money getTotal();
 
     public void setTotal(Money orderTotal);
+
+    public String getStatus();
 }

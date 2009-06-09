@@ -6,21 +6,25 @@
 
 	<table border="1">
 	<tr>
-		<th>ID</th>
-		<th>Status</th>
+		<th>View </th>
+		<th>Order Number</th>
+		<th>Order Date</th>
 		<th>Total</th>
+		<th>Status</th>
 	</tr>
 	<c:forEach var="item" items="${orderList}" varStatus="status">
 		<tr>
-			<td><c:out value="${item.id}"/></td>
-			<td><c:out value="${item.orderStatus}"/></td>
-			<td><c:out value="${item.orderTotal}"></c:out>
+			<td><a href="viewOrderDetails.htm?orderNumber=${item.orderNumber}"> View Order Detail</a>
+			<td><c:out value="${item.orderNumber}"/></td>
+			<td><c:out value="${item.submitDate}"/></td>
+			<td><c:out value="${item.total}"/></td>
+			<td><c:out value="${item.status}"/></td>
 		</tr>
 	</c:forEach>
 
 	</table>
 
-	<a href="<c:url value="/createOrder.htm"/>">Create New Order</a>
+	<a href="<c:url value="createNewOrder.htm"/>">Create New Order</a>
 	<a href="<c:url value="/logout"/>">Logout</a>
 
 	</tiles:putAttribute>

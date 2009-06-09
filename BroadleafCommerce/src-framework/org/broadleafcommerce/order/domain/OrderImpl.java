@@ -106,6 +106,9 @@ public class OrderImpl implements Order {
     @Column(name = "SUBMIT_DATE")
     protected Date submitDate;
 
+    @Column(name = "ORDER_NUMBER")
+    private Long orderNumber;
+
     @Transient
     protected BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
 
@@ -509,6 +512,22 @@ public class OrderImpl implements Order {
     }
 
     @Override
+    public Long getOrderNumber() {
+        return orderNumber;
+    }
+
+    @Override
+    public void setOrderNumber(Long orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    @Override
+    public String getFulfillmentStatus() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -547,4 +566,5 @@ public class OrderImpl implements Order {
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
     }
+
 }
