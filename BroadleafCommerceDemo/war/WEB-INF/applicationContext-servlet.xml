@@ -65,6 +65,8 @@
         <property name="cartViewRedirect" value="false"/>
         <property name="addItemView" value="viewCart.htm"/>
         <property name="addItemViewRedirect" value="true"/>
+        <property name="removeItemView" value="viewCart.htm"/>
+        <property name="removeItemViewRedirect" value="true"/>
 	</bean>
 	
 	<bean id="customerPhoneController" class="org.broadleafcommerce.profile.web.controller.CustomerPhoneController">
