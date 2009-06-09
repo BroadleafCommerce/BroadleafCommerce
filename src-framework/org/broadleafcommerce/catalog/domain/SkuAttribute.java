@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.io.Serializable;
+
 
 /**
  * Implementations of this interface are used to hold data about a SKU's Attributes.
@@ -30,7 +32,7 @@ package org.broadleafcommerce.catalog.domain;
  * @author btaylor
  *
  */
-public interface SkuAttribute {
+public interface SkuAttribute extends Serializable {
 
     /**
      * Gets the id.

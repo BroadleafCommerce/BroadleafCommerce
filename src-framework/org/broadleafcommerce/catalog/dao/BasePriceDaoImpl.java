@@ -15,19 +15,16 @@
  */
 package org.broadleafcommerce.catalog.dao;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
-import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.catalog.domain.BasePrice;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("blSkuDao")
-public class SkuDaoJpa implements SkuDao {
+@Repository("blBasePriceDao")
+public class BasePriceDaoImpl implements BasePriceDao {
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -35,35 +32,17 @@ public class SkuDaoJpa implements SkuDao {
     @Resource
     protected EntityConfiguration entityConfiguration;
 
-    public Sku save(Sku sku) {
-        if (sku.getId() == null) {
-            em.persist(sku);
+    public BasePrice save(BasePrice basePrice) {
+        if (basePrice.getId() == null) {
+            em.persist(basePrice);
         } else {
-            sku = em.merge(sku);
+            basePrice = em.merge(basePrice);
         }
-        return sku;
+        return basePrice;
     }
 
     @SuppressWarnings("unchecked")
-    public Sku readSkuById(Long skuId) {
-        return (Sku) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Sku"), skuId);
-    }
-
-    public Sku readFirstSku() {
-        Query query = em.createNamedQuery("BC_READ_FIRST_SKU");
-        return (Sku) query.getSingleResult();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Sku> readAllSkus() {
-        Query query = em.createNamedQuery("BC_READ_ALL_SKUS");
-        return query.getResultList();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Sku> readSkusById(List<Long> ids) {
-        Query query = em.createNamedQuery("BC_READ_SKUS_BY_ID");
-        query.setParameter("skuIds", ids);
-        return query.getResultList();
+    public BasePrice readBasePriceById(Long basePriceId) {
+        return (BasePrice) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.BasePrice"), basePriceId);
     }
 }

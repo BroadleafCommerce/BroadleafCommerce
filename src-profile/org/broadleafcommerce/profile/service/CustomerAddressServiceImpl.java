@@ -34,7 +34,7 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress) {
         // if parameter address is set as default, unset all other default addresses
-        List<CustomerAddress> activeCustomerAddresses = readActiveCustomerAddressesByCustomerId(customerAddress.getCustomerId());
+        List<CustomerAddress> activeCustomerAddresses = readActiveCustomerAddressesByCustomerId(customerAddress.getCustomer().getId());
         if (activeCustomerAddresses.size() == 0) {
             customerAddress.getAddress().setDefault(true);
         } else {

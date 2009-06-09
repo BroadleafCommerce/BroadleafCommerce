@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -60,54 +59,53 @@ import org.hibernate.annotations.CollectionOfElements;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class SkuImpl implements Sku, Serializable {
+public class SkuImpl implements Sku {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-
-    protected transient final Logger log = Logger.getLogger(getClass());
+    private transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
     @GeneratedValue
     @Column(name = "SKU_ID")
-    private Long id;
+    protected Long id;
 
     /** The sale price. */
     @Column(name = "SALE_PRICE")
-    private BigDecimal salePrice;
+    protected BigDecimal salePrice;
 
     /** The retail price. */
     @Column(name = "RETAIL_PRICE")
-    private BigDecimal retailPrice;
+    protected BigDecimal retailPrice;
 
     /** The name. */
     @Column(name = "NAME")
-    private String name;
+    protected String name;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    private String description;
+    protected String description;
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
-    private String longDescription;
+    protected String longDescription;
 
     /** The taxable. */
     @Column(name = "TAXABLE_FLAG")
-    private Character taxable;
+    protected Character taxable;
 
     /** The discountable. */
     @Column(name = "DISCOUNTABLE_FLAG")
-    private Character discountable;
+    protected Character discountable;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    private Date activeStartDate;
+    protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
-    private Date activeEndDate;
+    protected Date activeEndDate;
 
     /** The sku images. */
     @CollectionOfElements
@@ -115,11 +113,11 @@ public class SkuImpl implements Sku, Serializable {
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    private Map<String, String> skuImages;
+    protected Map<String, String> skuImages;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
-    private List<Product> allParentProducts;
+    protected List<Product> allParentProducts;
 
     /*
      * (non-Javadoc)
@@ -384,22 +382,33 @@ public class SkuImpl implements Sku, Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof SkuImpl)) return false;
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SkuImpl other = (SkuImpl) obj;
 
-        SkuImpl item = (SkuImpl) other;
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
 
-        if (name != null && item.name != null ? !name.equals(item.name) : name != item.name) return false;
-
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result *= 31;
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 }

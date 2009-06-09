@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.order.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,7 +28,7 @@ import javax.persistence.TableGenerator;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PERSONAL_MESSAGE")
-public class PersonalMessageImpl implements PersonalMessage, Serializable {
+public class PersonalMessageImpl implements PersonalMessage {
 
     private static final long serialVersionUID = 1L;
 
@@ -38,16 +36,16 @@ public class PersonalMessageImpl implements PersonalMessage, Serializable {
     @GeneratedValue(generator = "PersonalMessageId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PersonalMessageId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PersonalMessageImpl", allocationSize = 1)
     @Column(name = "PERSONAL_MESSAGE_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "MESSAGE_TO")
-    private String messageTo;
+    protected String messageTo;
 
     @Column(name = "MESSAGE_FROM")
-    private String messageFrom;
+    protected String messageFrom;
 
     @Column(name = "MESSAGE")
-    private String message;
+    protected String message;
 
     public Long getId() {
         return id;
@@ -79,5 +77,48 @@ public class PersonalMessageImpl implements PersonalMessage, Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((message == null) ? 0 : message.hashCode());
+        result = prime * result + ((messageFrom == null) ? 0 : messageFrom.hashCode());
+        result = prime * result + ((messageTo == null) ? 0 : messageTo.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PersonalMessageImpl other = (PersonalMessageImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (message == null) {
+            if (other.message != null)
+                return false;
+        } else if (!message.equals(other.message))
+            return false;
+        if (messageFrom == null) {
+            if (other.messageFrom != null)
+                return false;
+        } else if (!messageFrom.equals(other.messageFrom))
+            return false;
+        if (messageTo == null) {
+            if (other.messageTo != null)
+                return false;
+        } else if (!messageTo.equals(other.messageTo))
+            return false;
+        return true;
     }
 }

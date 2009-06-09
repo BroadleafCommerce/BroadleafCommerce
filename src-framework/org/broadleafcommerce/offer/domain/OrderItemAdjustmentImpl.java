@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.offer.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -36,28 +35,32 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM_ADJUSTMENT")
-public class OrderItemAdjustmentImpl implements Serializable,OrderItemAdjustment {
+public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
     public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "ORDER_ITEM_ADJUSTMENT_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    private OrderItem orderItem;
+    protected OrderItem orderItem;
 
     @ManyToOne(targetEntity = OfferImpl.class)
     @JoinColumn(name = "OFFER_ID")
-    private Offer offer;
+    protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON")
-    private String reason;
+    protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE")
-    private BigDecimal value;
+    protected BigDecimal value;
+
+    public OrderItemAdjustmentImpl() {
+        this(null, null, null);
+    }
 
     public OrderItemAdjustmentImpl(OrderItem orderItem, Offer offer, String reason){
         this.orderItem = orderItem;
@@ -78,18 +81,10 @@ public class OrderItemAdjustmentImpl implements Serializable,OrderItemAdjustment
         return orderItem;
     }
 
-    /*    public void setOrderItem(OrderItem orderItem) {
-        this.orderItem = orderItem;
-    }
-     */
     public Offer getOffer() {
         return offer;
     }
 
-    /*    public void setOffer(Offer offer) {
-        this.offer = offer;
-    }
-     */
     public String getReason() {
         return reason;
     }
@@ -107,12 +102,10 @@ public class OrderItemAdjustmentImpl implements Serializable,OrderItemAdjustment
      */
     public void computeAdjustmentValue() {
         if (offer != null && orderItem != null) {
-
             Money adjustmentPrice = orderItem.getAdjustmentPrice(); // get the current price of the item with all adjustments
             if (adjustmentPrice == null) {
                 adjustmentPrice = orderItem.getRetailPrice();
             }
-
             if (offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ) {
                 value = offer.getValue().getAmount();
             }
@@ -126,5 +119,54 @@ public class OrderItemAdjustmentImpl implements Serializable,OrderItemAdjustment
                 value = adjustmentPrice.getAmount();
             }
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
+        result = prime * result + ((orderItem == null) ? 0 : orderItem.hashCode());
+        result = prime * result + ((reason == null) ? 0 : reason.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OrderItemAdjustmentImpl other = (OrderItemAdjustmentImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (offer == null) {
+            if (other.offer != null)
+                return false;
+        } else if (!offer.equals(other.offer))
+            return false;
+        if (orderItem == null) {
+            if (other.orderItem != null)
+                return false;
+        } else if (!orderItem.equals(other.orderItem))
+            return false;
+        if (reason == null) {
+            if (other.reason != null)
+                return false;
+        } else if (!reason.equals(other.reason))
+            return false;
+        if (value == null) {
+            if (other.value != null)
+                return false;
+        } else if (!value.equals(other.value))
+            return false;
+        return true;
     }
 }

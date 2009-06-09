@@ -36,7 +36,7 @@ public class IdGenerationServiceImpl implements IdGenerationService {
     @Resource
     protected IdGenerationDao idGenerationDao;
 
-    private Map<String, Id> idTypeIdMap = new HashMap<String, Id>();
+    protected Map<String, Id> idTypeIdMap = new HashMap<String, Id>();
 
     @Transactional(propagation = Propagation.REQUIRED)
     public Long findNextId(String idType) {

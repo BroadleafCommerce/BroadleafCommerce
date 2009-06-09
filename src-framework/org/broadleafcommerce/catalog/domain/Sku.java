@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ import org.broadleafcommerce.util.money.Money;
  * @author btaylor
  *
  */
-public interface Sku {
+public interface Sku extends Serializable {
 
     /**
      * Returns the id of this sku

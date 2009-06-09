@@ -15,9 +15,11 @@
  */
 package org.broadleafcommerce.order.domain;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.util.money.Money;
 
-public interface FulfillmentGroupItem {
+public interface FulfillmentGroupItem extends Serializable {
 
     public Long getId();
 

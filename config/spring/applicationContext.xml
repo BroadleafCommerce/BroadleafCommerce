@@ -438,39 +438,39 @@
 		<constructor-arg value="X"/>
 	</bean>
 
-	<bean id="blCategoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoJpa">
+	<bean id="blCategoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blProductDao" class="org.broadleafcommerce.catalog.dao.ProductDaoJpa">
+	<bean id="blProductDao" class="org.broadleafcommerce.catalog.dao.ProductDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blAvailabilityDao" class="org.broadleafcommerce.inventory.dao.AvailabilityDaoJpa">
+	<bean id="blAvailabilityDao" class="org.broadleafcommerce.inventory.dao.AvailabilityDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blTargetContentDao" class="org.broadleafcommerce.marketing.dao.TargetContentDaoJpa">
+	<bean id="blTargetContentDao" class="org.broadleafcommerce.marketing.dao.TargetContentDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blChallengeQuestionDao" class="org.broadleafcommerce.profile.dao.ChallengeQuestionDaoJpa">
+	<bean id="blChallengeQuestionDao" class="org.broadleafcommerce.profile.dao.ChallengeQuestionDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blCountryDao" class="org.broadleafcommerce.profile.dao.CountryDaoJpa">
+	<bean id="blCountryDao" class="org.broadleafcommerce.profile.dao.CountryDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blIdGenerationDao" class="org.broadleafcommerce.profile.dao.IdGenerationDaoJpa">
+	<bean id="blIdGenerationDao" class="org.broadleafcommerce.profile.dao.IdGenerationDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blRoleDao" class="org.broadleafcommerce.profile.dao.RoleDaoJpa">
+	<bean id="blRoleDao" class="org.broadleafcommerce.profile.dao.RoleDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blStateDao" class="org.broadleafcommerce.profile.dao.StateDaoJpa">
+	<bean id="blStateDao" class="org.broadleafcommerce.profile.dao.StateDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 </beans>

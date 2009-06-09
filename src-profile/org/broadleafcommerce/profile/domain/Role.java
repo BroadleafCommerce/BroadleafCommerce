@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-public interface Role {
+import java.io.Serializable;
+
+public interface Role extends Serializable {
 
     public Long getId();
 
@@ -24,4 +26,5 @@ public interface Role {
     public String getRoleName();
 
     public void setRoleName(String roleName);
+
 }

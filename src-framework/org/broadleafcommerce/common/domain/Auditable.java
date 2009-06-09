@@ -30,17 +30,17 @@ public class Auditable implements Serializable {
 
     @Column(name = "DATE_CREATED", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dateCreated;
+    protected Date dateCreated;
 
     @Column(name = "CREATED_BY", updatable = false)
-    private Long createdBy;
+    protected Long createdBy;
 
     @Column(name = "DATE_UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date dateUpdated;
+    protected Date dateUpdated;
 
     @Column(name = "UPDATED_BY")
-    private Long updatedBy;
+    protected Long updatedBy;
 
     public Date getDateCreated() {
         return dateCreated;

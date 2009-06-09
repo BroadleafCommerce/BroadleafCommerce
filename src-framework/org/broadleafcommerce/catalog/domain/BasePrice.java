@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.broadleafcommerce.common.domain.Auditable;
@@ -23,7 +24,7 @@ import org.broadleafcommerce.util.money.Money;
 /**
  * The Interface BasePrice.
  */
-public interface BasePrice {
+public interface BasePrice extends Serializable {
 
     /**
      * Gets the id.

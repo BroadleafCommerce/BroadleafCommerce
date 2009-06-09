@@ -24,15 +24,15 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("blOfferDao")
-public class OfferDaoJpa implements OfferDao {
+@Repository("blOfferCodeDao")
+public class OfferCodeDaoImpl implements OfferCodeDao {
 
     /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.offer.domain.Offer";
+    private static String beanName = "org.broadleafcommerce.offer.domain.OfferCode";
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
@@ -44,44 +44,44 @@ public class OfferDaoJpa implements OfferDao {
     protected EntityConfiguration entityConfiguration;
 
     @Override
-    public Offer create() {
-        return ((Offer) entityConfiguration.createEntityInstance(beanName));
+    public OfferCode create() {
+        return ((OfferCode) entityConfiguration.createEntityInstance(beanName));
     }
 
     @Override
-    public void delete(Offer offer) {
-        em.remove(offer);
+    public void delete(OfferCode offerCode) {
+        em.remove(offerCode);
     }
 
     @Override
-    public Offer save(Offer offer) {
-        if(offer.getId() == null){
-            em.persist(offer);
+    public OfferCode save(OfferCode offerCode) {
+        if(offerCode.getId()==null){
+            em.persist(offerCode);
         }else{
-            offer = em.merge(offer);
+            offerCode = em.merge(offerCode);
         }
-        return offer;
-
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Offer> readAllOffers() {
-        Query query = em.createNamedQuery("BC_READ_ALL_OFFERS");
-        return query.getResultList();
+        return offerCode;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Offer readOfferById(Long offerId) {
-        return (Offer) em.find(entityConfiguration.lookupEntityClass(beanName), offerId);
+    public OfferCode readOfferCodeById(Long offerCodeId) {
+        return (OfferCode) em.find(entityConfiguration.lookupEntityClass(beanName), offerCodeId);
     }
 
-    @SuppressWarnings("unchecked")
+
     @Override
-    public List<Offer> readOffersByAutomaticDeliveryType() {
-        Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
-        List<Offer> result = query.getResultList();
-        return result;
+    @SuppressWarnings("unchecked")
+    public OfferCode readOfferCodeByCode(String code) {
+        OfferCode offerCode = null;
+        Query query = em.createNamedQuery("BC_READ_OFFER_CODE_BY_CODE");
+        query.setParameter("code", code);
+        List<OfferCode> result = query.getResultList();
+        if (result.size() > 0) {
+            offerCode = result.get(0);
+        }
+        return offerCode;
     }
+
 
 }

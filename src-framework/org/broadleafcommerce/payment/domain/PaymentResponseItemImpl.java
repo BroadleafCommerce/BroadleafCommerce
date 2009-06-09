@@ -324,6 +324,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((transactionId == null) ? 0 : transactionId.hashCode());
         return result;
     }
@@ -337,6 +338,11 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         if (getClass() != obj.getClass())
             return false;
         PaymentResponseItemImpl other = (PaymentResponseItemImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
         if (transactionId == null) {
             if (other.transactionId != null)
                 return false;

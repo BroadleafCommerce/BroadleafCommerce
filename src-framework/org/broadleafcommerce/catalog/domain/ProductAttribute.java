@@ -15,10 +15,12 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.io.Serializable;
+
 /**
  * The Interface ProductAttribute.
  */
-public interface ProductAttribute {
+public interface ProductAttribute extends Serializable {
 
     /**
      * Gets the id.

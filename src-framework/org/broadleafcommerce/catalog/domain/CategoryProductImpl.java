@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,7 +44,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_PRODUCT_XREF")
-public class CategoryProductImpl implements CategoryProduct, Serializable {
+public class CategoryProductImpl implements CategoryProduct {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -55,21 +53,21 @@ public class CategoryProductImpl implements CategoryProduct, Serializable {
     @Id
     @GeneratedValue
     @Column(name = "ID")
-    private Long id;
+    protected Long id;
 
     /** The category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
-    private Category category;
+    protected Category category;
 
     /** The product. */
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
-    private Product product;
+    protected Product product;
 
     /** The display order. */
     @Column(name = "DISPLAY_ORDER")
-    private Integer displayOrder;
+    protected Integer displayOrder;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.CategoryProduct#getId()
@@ -125,5 +123,48 @@ public class CategoryProductImpl implements CategoryProduct, Serializable {
      */
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((category == null) ? 0 : category.hashCode());
+        result = prime * result + ((displayOrder == null) ? 0 : displayOrder.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((product == null) ? 0 : product.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CategoryProductImpl other = (CategoryProductImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (category == null) {
+            if (other.category != null)
+                return false;
+        } else if (!category.equals(other.category))
+            return false;
+        if (displayOrder == null) {
+            if (other.displayOrder != null)
+                return false;
+        } else if (!displayOrder.equals(other.displayOrder))
+            return false;
+        if (product == null) {
+            if (other.product != null)
+                return false;
+        } else if (!product.equals(other.product))
+            return false;
+        return true;
     }
 }

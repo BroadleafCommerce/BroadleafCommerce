@@ -24,16 +24,15 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.offer.domain.CustomerOffer;
-import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("blCustomerOfferDao")
-public class CustomerOfferDaoJpa implements CustomerOfferDao {
+@Repository("blOfferDao")
+public class OfferDaoImpl implements OfferDao {
 
     /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.offer.domain.CustomerOffer";
+    private static String beanName = "org.broadleafcommerce.offer.domain.Offer";
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
@@ -44,39 +43,44 @@ public class CustomerOfferDaoJpa implements CustomerOfferDao {
     @Resource
     protected EntityConfiguration entityConfiguration;
 
-
     @Override
-    public CustomerOffer create() {
-        return ((CustomerOffer) entityConfiguration.createEntityInstance(beanName));
+    public Offer create() {
+        return ((Offer) entityConfiguration.createEntityInstance(beanName));
     }
 
     @Override
-    public void delete(CustomerOffer customerOffer) {
-        em.remove(customerOffer);
+    public void delete(Offer offer) {
+        em.remove(offer);
     }
 
     @Override
-    public CustomerOffer save(CustomerOffer customerOffer) {
-        if(customerOffer.getId() == null){
-            em.persist(customerOffer);
+    public Offer save(Offer offer) {
+        if(offer.getId() == null){
+            em.persist(offer);
         }else{
-            customerOffer = em.merge(customerOffer);
+            offer = em.merge(offer);
         }
-        return customerOffer;
+        return offer;
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Offer> readAllOffers() {
+        Query query = em.createNamedQuery("BC_READ_ALL_OFFERS");
+        return query.getResultList();
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public CustomerOffer readCustomerOfferById(Long customerOfferId) {
-        return (CustomerOffer) em.find(entityConfiguration.lookupEntityClass(beanName), customerOfferId);
+    public Offer readOfferById(Long offerId) {
+        return (Offer) em.find(entityConfiguration.lookupEntityClass(beanName), offerId);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    public List<CustomerOffer> readCustomerOffersByCustomer(Customer customer) {
-        Query query = em.createNamedQuery("BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID");
-        query.setParameter("customerId", customer.getId());
-        List<CustomerOffer> result = query.getResultList();
+    @Override
+    public List<Offer> readOffersByAutomaticDeliveryType() {
+        Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
+        List<Offer> result = query.getResultList();
         return result;
     }
 

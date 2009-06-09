@@ -29,13 +29,13 @@ import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blIdGenerationDao")
-public class IdGenerationDaoJpa implements IdGenerationDao {
+public class IdGenerationDaoImpl implements IdGenerationDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    private Long defaultBatchSize = 100L;
-    private Long defaultBatchStart = 1L;
+    protected Long defaultBatchSize = 100L;
+    protected Long defaultBatchStart = 1L;
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -43,7 +43,7 @@ public class IdGenerationDaoJpa implements IdGenerationDao {
     @Resource
     protected EntityConfiguration entityConfiguration;
 
-    private String queryCacheableKey = "org.hibernate.cacheable";
+    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public IdGeneration findNextId(String idType) {
         IdGeneration idGeneration;

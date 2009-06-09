@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-public interface ChallengeQuestion {
+import java.io.Serializable;
+
+public interface ChallengeQuestion extends Serializable {
 
     public Long getId();
 

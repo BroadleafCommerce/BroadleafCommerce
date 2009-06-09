@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -41,7 +40,7 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BASE_PRICE")
-public class BasePriceImpl implements BasePrice, Serializable {
+public class BasePriceImpl implements BasePrice {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -50,30 +49,30 @@ public class BasePriceImpl implements BasePrice, Serializable {
     @Id
     @GeneratedValue
     @Column(name = "BASE_PRICE_ID")
-    private Long id;
+    protected Long id;
 
     /** The auditable. */
     @Embedded
-    private Auditable auditable;
+    protected Auditable auditable;
 
     /** The sku. */
     @ManyToOne(targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID", nullable = false)
-    private Sku sku;
+    protected Sku sku;
 
     /** The amount. */
     @Column(name = "AMOUNT")
-    private BigDecimal amount;
+    protected BigDecimal amount;
 
     /** The start date. */
     @Column(name = "START_DATE")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date startDate;
+    protected Date startDate;
 
     /** The end date. */
     @Column(name = "END_DATE")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date endDate;
+    protected Date endDate;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.BasePrice#getId()
@@ -157,5 +156,60 @@ public class BasePriceImpl implements BasePrice, Serializable {
      */
     public void setAuditable(Auditable auditable) {
         this.auditable = auditable;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((amount == null) ? 0 : amount.hashCode());
+        result = prime * result + ((auditable == null) ? 0 : auditable.hashCode());
+        result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((sku == null) ? 0 : sku.hashCode());
+        result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        BasePriceImpl other = (BasePriceImpl) obj;
+
+        if (id == null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (amount == null) {
+            if (other.amount != null)
+                return false;
+        } else if (!amount.equals(other.amount))
+            return false;
+        if (auditable == null) {
+            if (other.auditable != null)
+                return false;
+        } else if (!auditable.equals(other.auditable))
+            return false;
+        if (endDate == null) {
+            if (other.endDate != null)
+                return false;
+        } else if (!endDate.equals(other.endDate))
+            return false;
+        if (sku == null) {
+            if (other.sku != null)
+                return false;
+        } else if (!sku.equals(other.sku))
+            return false;
+        if (startDate == null) {
+            if (other.startDate != null)
+                return false;
+        } else if (!startDate.equals(other.startDate))
+            return false;
+        return true;
     }
 }

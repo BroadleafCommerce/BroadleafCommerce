@@ -30,7 +30,7 @@ import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blSecurePaymentInfoDao")
-public class SecurePaymentInfoDaoJpa implements SecurePaymentInfoDao {
+public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
 
     @PersistenceContext(unitName = "blSecurePU")
     protected EntityManager em;

@@ -31,7 +31,7 @@ import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blShippingRatesDao")
-public class ShippingRateDaoJpa implements ShippingRateDao {
+public class ShippingRateDaoImpl implements ShippingRateDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());

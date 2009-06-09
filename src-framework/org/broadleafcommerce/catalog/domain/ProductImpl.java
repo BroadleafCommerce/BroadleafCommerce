@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -63,45 +62,44 @@ import org.hibernate.annotations.CollectionOfElements;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class ProductImpl implements Product, Serializable {
+public class ProductImpl implements Product {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-
-    protected transient final Logger log = Logger.getLogger(getClass());
+    private transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
     @GeneratedValue
     @Column(name = "PRODUCT_ID")
-    private Long id;
+    protected Long id;
 
     /** The name. */
     @Column(name = "NAME")
-    private String name;
+    protected String name;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    private String description;
+    protected String description;
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
-    private String longDescription;
+    protected String longDescription;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    private Date activeStartDate;
+    protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
-    private Date activeEndDate;
+    protected Date activeEndDate;
 
     /** The all skus. */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
-    private List<Sku> allSkus;
+    protected List<Sku> allSkus;
 
     /** The product images. */
     @CollectionOfElements
@@ -109,18 +107,18 @@ public class ProductImpl implements Product, Serializable {
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    private Map<String, String> productImages;
+    protected Map<String, String> productImages;
 
     /** The default category. */
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
-    private Category defaultCategory;
+    protected Category defaultCategory;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
-    private List<Category> allParentCategories;
+    protected List<Category> allParentCategories;
 
     /** The skus. */
     @Transient
@@ -330,5 +328,42 @@ public class ProductImpl implements Product, Serializable {
 
     public void setAllParentCategories(List<Category> allParentCategories) {
         this.allParentCategories = allParentCategories;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((skus == null) ? 0 : skus.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ProductImpl other = (ProductImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (skus == null) {
+            if (other.skus != null)
+                return false;
+        } else if (!skus.equals(other.skus))
+            return false;
+        return true;
     }
 }

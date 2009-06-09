@@ -15,9 +15,10 @@
  */
 package org.broadleafcommerce.pricing.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public interface ShippingRate {
+public interface ShippingRate extends Serializable {
 
     public Long  getId();
     public void setId(Long id);

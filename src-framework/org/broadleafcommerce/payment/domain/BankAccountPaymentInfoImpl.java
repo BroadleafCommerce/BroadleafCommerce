@@ -38,34 +38,36 @@ import org.broadleafcommerce.encryption.EncryptionModule;
 @Table(name = "BLC_BANK_ACCOUNT_PAYMENT")
 public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
 
+    private static final long serialVersionUID = 1L;
+
     protected BankAccountPaymentInfoImpl() {
         //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
         //this complies with JPA specification requirements for entity construction
     }
 
     @Transient
-    private EncryptionModule encryptionModule;
+    protected EncryptionModule encryptionModule;
 
     @Id
     @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "BankAccountPaymentInfoImpl", allocationSize = 1)
     @Column(name = "PAYMENT_ID")
-    private long id;
+    protected Long id;
 
     @Column(name = "REFERENCE_NUMBER")
-    private String referenceNumber;
+    protected String referenceNumber;
 
     @Column(name = "ACCOUNT_NUMBER")
-    private String accountNumber;
+    protected String accountNumber;
 
     @Column(name = "ROUTING_NUMBER")
-    private String routingNumber;
+    protected String routingNumber;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -106,6 +108,7 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((accountNumber == null) ? 0 : accountNumber.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
         result = prime * result + ((routingNumber == null) ? 0 : routingNumber.hashCode());
         return result;
@@ -120,6 +123,11 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
         if (getClass() != obj.getClass())
             return false;
         BankAccountPaymentInfoImpl other = (BankAccountPaymentInfoImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
         if (accountNumber == null) {
             if (other.accountNumber != null)
                 return false;

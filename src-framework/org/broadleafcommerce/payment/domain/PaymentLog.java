@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.payment.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.broadleafcommerce.payment.service.type.PaymentLogEventType;
@@ -22,7 +23,7 @@ import org.broadleafcommerce.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
 
-public interface PaymentLog {
+public interface PaymentLog extends Serializable {
 
     public Long getId();
 

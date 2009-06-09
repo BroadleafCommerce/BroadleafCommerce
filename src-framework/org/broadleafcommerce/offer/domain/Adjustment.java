@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.util.money.Money;
 
-public interface Adjustment {
+public interface Adjustment extends Serializable {
+
     public Long getId();
 
     public void setId(Long id);

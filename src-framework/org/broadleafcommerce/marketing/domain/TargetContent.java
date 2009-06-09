@@ -15,9 +15,10 @@
  */
 package org.broadleafcommerce.marketing.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public interface TargetContent {
+public interface TargetContent extends Serializable {
 
 
     public Long getId();

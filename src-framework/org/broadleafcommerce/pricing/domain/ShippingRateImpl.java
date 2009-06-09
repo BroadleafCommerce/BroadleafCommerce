@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.pricing.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -33,32 +32,32 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SHIPPING_RATE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class ShippingRateImpl implements ShippingRate, Serializable {
+public class ShippingRateImpl implements ShippingRate {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "FEE_TYPE")
-    private String feeType;
+    protected String feeType;
 
     @Column(name = "FEE_SUB_TYPE")
-    private String feeSubType;
+    protected String feeSubType;
 
     @Column(name = "FEE_BAND")
-    private Integer feeBand;
+    protected Integer feeBand;
 
     @Column(name = "BAND_UNIT_QTY")
-    private BigDecimal bandUnitQuantity;
+    protected BigDecimal bandUnitQuantity;
 
     @Column(name = "BAND_RESULT_QTY")
-    private BigDecimal bandResultQuantity;
+    protected BigDecimal bandResultQuantity;
 
     @Column(name = "BAND_RESULT_PCT")
-    private Integer bandResultPercent;
+    protected Integer bandResultPercent;
 
     public Long getId() {
         return id;
@@ -119,6 +118,67 @@ public class ShippingRateImpl implements ShippingRate, Serializable {
     @Override
     public String toString() {
         return getFeeSubType() + " " + getBandResultQuantity() + " " + getBandResultPercent();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((bandResultPercent == null) ? 0 : bandResultPercent.hashCode());
+        result = prime * result + ((bandResultQuantity == null) ? 0 : bandResultQuantity.hashCode());
+        result = prime * result + ((bandUnitQuantity == null) ? 0 : bandUnitQuantity.hashCode());
+        result = prime * result + ((feeBand == null) ? 0 : feeBand.hashCode());
+        result = prime * result + ((feeSubType == null) ? 0 : feeSubType.hashCode());
+        result = prime * result + ((feeType == null) ? 0 : feeType.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ShippingRateImpl other = (ShippingRateImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (bandResultPercent == null) {
+            if (other.bandResultPercent != null)
+                return false;
+        } else if (!bandResultPercent.equals(other.bandResultPercent))
+            return false;
+        if (bandResultQuantity == null) {
+            if (other.bandResultQuantity != null)
+                return false;
+        } else if (!bandResultQuantity.equals(other.bandResultQuantity))
+            return false;
+        if (bandUnitQuantity == null) {
+            if (other.bandUnitQuantity != null)
+                return false;
+        } else if (!bandUnitQuantity.equals(other.bandUnitQuantity))
+            return false;
+        if (feeBand == null) {
+            if (other.feeBand != null)
+                return false;
+        } else if (!feeBand.equals(other.feeBand))
+            return false;
+        if (feeSubType == null) {
+            if (other.feeSubType != null)
+                return false;
+        } else if (!feeSubType.equals(other.feeSubType))
+            return false;
+        if (feeType == null) {
+            if (other.feeType != null)
+                return false;
+        } else if (!feeType.equals(other.feeType))
+            return false;
+        return true;
     }
 
 }

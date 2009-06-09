@@ -15,13 +15,14 @@
  */
 package org.broadleafcommerce.offer.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -32,27 +33,33 @@ import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Table(name = "BLC_FG_ADJUSTMENT")
-public class FulfillmentGroupAdjustmentImpl implements Serializable, FulfillmentGroupAdjustment {
+@Inheritance(strategy=InheritanceType.JOINED)
+public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustment {
+
     public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "FG_ADJUSTMENT_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
-    private FulfillmentGroup fulfillmentGroup;
+    protected FulfillmentGroup fulfillmentGroup;
 
     @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class)
     @JoinColumn(name = "OFFER_ID")
-    private Offer offer;
+    protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON")
-    private String reason;
+    protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE")
-    private BigDecimal value;
+    protected BigDecimal value;
+
+    public FulfillmentGroupAdjustmentImpl() {
+        this(null, null, null);
+    }
 
     public FulfillmentGroupAdjustmentImpl(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){
         this.fulfillmentGroup = fulfillmentGroup;
@@ -102,12 +109,10 @@ public class FulfillmentGroupAdjustmentImpl implements Serializable, Fulfillment
      */
     public void computeAdjustmentValue() {
         if (offer != null && fulfillmentGroup != null) {
-
             Money adjustmentPrice = fulfillmentGroup.getAdjustmentPrice(); // get the current price of the item with all adjustments
             if (adjustmentPrice == null) {
                 adjustmentPrice = fulfillmentGroup.getRetailShippingPrice();
             }
-
             if (offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ) {
                 value = offer.getValue().getAmount();
             }
@@ -118,6 +123,55 @@ public class FulfillmentGroupAdjustmentImpl implements Serializable, Fulfillment
                 value = adjustmentPrice.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()).getAmount();
             }
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((fulfillmentGroup == null) ? 0 : fulfillmentGroup.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
+        result = prime * result + ((reason == null) ? 0 : reason.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FulfillmentGroupAdjustmentImpl other = (FulfillmentGroupAdjustmentImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (fulfillmentGroup == null) {
+            if (other.fulfillmentGroup != null)
+                return false;
+        } else if (!fulfillmentGroup.equals(other.fulfillmentGroup))
+            return false;
+        if (offer == null) {
+            if (other.offer != null)
+                return false;
+        } else if (!offer.equals(other.offer))
+            return false;
+        if (reason == null) {
+            if (other.reason != null)
+                return false;
+        } else if (!reason.equals(other.reason))
+            return false;
+        if (value == null) {
+            if (other.value != null)
+                return false;
+        } else if (!value.equals(other.value))
+            return false;
+        return true;
     }
 
 }

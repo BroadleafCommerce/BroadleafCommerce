@@ -62,7 +62,7 @@ import org.springframework.stereotype.Service;
 public class OfferServiceImpl implements OfferService {
 
     private static final LRUMap expressionCache = new LRUMap(100);
-//    private static final StringBuffer functions = new StringBuffer();
+    //    private static final StringBuffer functions = new StringBuffer();
 
     // should be called outside of Offer service after Offer service is executed
     @Resource
@@ -74,7 +74,7 @@ public class OfferServiceImpl implements OfferService {
     @Resource
     protected OfferDao offerDao;
 
-/*  Not used for current offer discount types.  Will need to be used to support buy-one-get-one-offers.
+    /*  Not used for current offer discount types.  Will need to be used to support buy-one-get-one-offers.
     static {
         // load static mvel functions into SB
         InputStream is = OfferServiceImpl.class.getResourceAsStream("/org/broadleafcommerce/offer/service/mvelFunctions.mvel");
@@ -166,7 +166,7 @@ public class OfferServiceImpl implements OfferService {
      * @param customer
      * @return a List of offers assigned to the customer
      */
-    private List<CustomerOffer> lookupOfferCustomerByCustomer(Customer customer) {
+    protected List<CustomerOffer> lookupOfferCustomerByCustomer(Customer customer) {
         List<CustomerOffer> offerCustomers = customerOfferDao.readCustomerOffersByCustomer(customer);
         return offerCustomers;
     }
@@ -176,7 +176,7 @@ public class OfferServiceImpl implements OfferService {
      *
      * @return a List of automatic delivery offers
      */
-    private List<Offer> lookupAutomaticDeliveryOffers() {
+    protected List<Offer> lookupAutomaticDeliveryOffers() {
         List<Offer> globalOffers = offerDao.readOffersByAutomaticDeliveryType();
         return globalOffers;
     }
@@ -192,7 +192,7 @@ public class OfferServiceImpl implements OfferService {
      * @param offers
      * @return a List of non-expired offers
      */
-    private List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes){
+    protected List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes){
         Date now = new Date();
         List<OfferCode> offerCodesToRemove = new ArrayList<OfferCode>();
         for (OfferCode offerCode : offerCodes) {
@@ -374,7 +374,7 @@ public class OfferServiceImpl implements OfferService {
         }
     }
 
-    private List<CandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<CandidateOrderOffer> candidateOffers) {
+    protected List<CandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<CandidateOrderOffer> candidateOffers) {
         List<CandidateOrderOffer> remainingCandidateOffers = new ArrayList<CandidateOrderOffer>();
         int offerCount = 0;
         for (CandidateOrderOffer candidateOffer : candidateOffers) {
@@ -390,7 +390,7 @@ public class OfferServiceImpl implements OfferService {
         return remainingCandidateOffers;
     }
 
-    private List<CandidateItemOffer> removeTrailingNotCombinableItemOffers(List<CandidateItemOffer> candidateOffers) {
+    protected List<CandidateItemOffer> removeTrailingNotCombinableItemOffers(List<CandidateItemOffer> candidateOffers) {
         List<CandidateItemOffer> remainingCandidateOffers = new ArrayList<CandidateItemOffer>();
         int offerCount = 0;
         Offer notCombinableOfferApplied = null;
@@ -413,7 +413,7 @@ public class OfferServiceImpl implements OfferService {
         return remainingCandidateOffers;
     }
 
-    private List<CandidateOrderOffer> removeOfferFromCandidateOrderOffers(List<CandidateOrderOffer> candidateOffers, Offer offer) {
+    protected List<CandidateOrderOffer> removeOfferFromCandidateOrderOffers(List<CandidateOrderOffer> candidateOffers, Offer offer) {
         List<CandidateOrderOffer> remainingCandidateOffers = new ArrayList<CandidateOrderOffer>();
         for (CandidateOrderOffer candidateOffer : candidateOffers) {
             if (!candidateOffer.getOffer().equals(offer)) {
@@ -423,7 +423,7 @@ public class OfferServiceImpl implements OfferService {
         return remainingCandidateOffers;
     }
 
-    private List<CandidateItemOffer> removeOfferFromCandidateItemOffers(List<CandidateItemOffer> candidateOffers, Offer offer) {
+    protected List<CandidateItemOffer> removeOfferFromCandidateItemOffers(List<CandidateItemOffer> candidateOffers, Offer offer) {
         List<CandidateItemOffer> remainingCandidateOffers = new ArrayList<CandidateItemOffer>();
         for (CandidateItemOffer candidateOffer : candidateOffers) {
             if (!candidateOffer.getOffer().equals(offer)) {
@@ -433,12 +433,12 @@ public class OfferServiceImpl implements OfferService {
         return remainingCandidateOffers;
     }
 
-    private void clearOffersandAdjustments(Order order) {
+    protected void clearOffersandAdjustments(Order order) {
         order.removeAllCandidateOffers();
         order.removeAllAdjustments();
     }
 
-    private List<Offer> filterOffers(List<Offer> offers, Customer customer) {
+    protected List<Offer> filterOffers(List<Offer> offers, Customer customer) {
         List<Offer> filteredOffers = null;
         if (offers != null && !offers.isEmpty()) {
             filteredOffers = removeOutOfDateOffers(offers);
@@ -457,7 +457,7 @@ public class OfferServiceImpl implements OfferService {
      * @param offers
      * @return List of Offers with valid dates
      */
-    private List<Offer> removeOutOfDateOffers(List<Offer> offers){
+    protected List<Offer> removeOutOfDateOffers(List<Offer> offers){
         Date now = new Date();
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
@@ -482,7 +482,7 @@ public class OfferServiceImpl implements OfferService {
      * @param customer
      * @return List of Offers that apply to this customer
      */
-    private List<Offer> removeInvalidCustomerOffers(List<Offer> offers, Customer customer){
+    protected List<Offer> removeInvalidCustomerOffers(List<Offer> offers, Customer customer){
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
             if (!couldOfferApplyToCustomer(offer, customer)) {
@@ -504,7 +504,7 @@ public class OfferServiceImpl implements OfferService {
      * @param customer
      * @return true if offer can be applied, otherwise false
      */
-    private boolean couldOfferApplyToCustomer(Offer offer, Customer customer) {
+    protected boolean couldOfferApplyToCustomer(Offer offer, Customer customer) {
         boolean appliesToCustomer = false;
 
         if (offer.getAppliesToCustomerRules() != null && offer.getAppliesToCustomerRules().length() != 0) {
@@ -533,7 +533,7 @@ public class OfferServiceImpl implements OfferService {
      * @param itemOffers a sorted list of CandidateItemOffer
      * @return
      */
-    private Offer applyAllItemOffers(List<CandidateItemOffer> itemOffers) {
+    protected Offer applyAllItemOffers(List<CandidateItemOffer> itemOffers) {
         // Iterate through the collection of CandiateItemOffers. Remember that each one is an offer that may apply to a
         // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
         // The same offer may be applied to different Order Items
@@ -567,7 +567,7 @@ public class OfferServiceImpl implements OfferService {
      *
      * @param itemOffer a CandidateItemOffer to apply to an OrderItem
      */
-    private void applyOrderItemOffer(CandidateItemOffer itemOffer) {
+    protected void applyOrderItemOffer(CandidateItemOffer itemOffer) {
         OrderItemAdjustment itemAdjustment = new OrderItemAdjustmentImpl(itemOffer.getOrderItem(), itemOffer.getOffer(), itemOffer.getOffer().getName());
         //add to adjustment
         itemOffer.getOrderItem().addOrderItemAdjustment(itemAdjustment); //This is how we can tell if an item has been discounted
@@ -586,7 +586,7 @@ public class OfferServiceImpl implements OfferService {
      * @param orderOffers a sorted list of CandidateOrderOffer
      * @param order the Order to apply the CandidateOrderOffers
      */
-    private Offer applyAllOrderOffers(List<CandidateOrderOffer> orderOffers, Order order) {
+    protected Offer applyAllOrderOffers(List<CandidateOrderOffer> orderOffers, Order order) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
         Offer notCombinableOfferApplied = null;
         for (CandidateOrderOffer orderOffer : orderOffers) {
@@ -607,7 +607,7 @@ public class OfferServiceImpl implements OfferService {
      *
      * @param orderOffer a CandidateOrderOffer to apply to an Order
      */
-    private void applyOrderOffer(CandidateOrderOffer orderOffer) {
+    protected void applyOrderOffer(CandidateOrderOffer orderOffer) {
         OrderAdjustment orderAdjustment = new OrderAdjustmentImpl(orderOffer.getOrder(), orderOffer.getOffer(), orderOffer.getOffer().getName());
         //add to adjustment
         orderOffer.getOrder().addOrderAdjustments(orderAdjustment);
@@ -621,7 +621,7 @@ public class OfferServiceImpl implements OfferService {
      * @param order
      * @return true if offer can be applied, otherwise false
      */
-    private boolean couldOfferApplyToOrder(Offer offer, Order order) {
+    protected boolean couldOfferApplyToOrder(Offer offer, Order order) {
         return couldOfferApplyToOrder(offer, order, null, null);
     }
 
@@ -634,7 +634,7 @@ public class OfferServiceImpl implements OfferService {
      * @param discreteOrderItem
      * @return true if offer can be applied, otherwise false
      */
-    private boolean couldOfferApplyToOrder(Offer offer, Order order, DiscreteOrderItem discreteOrderItem) {
+    protected boolean couldOfferApplyToOrder(Offer offer, Order order, DiscreteOrderItem discreteOrderItem) {
         return couldOfferApplyToOrder(offer, order, discreteOrderItem, null);
     }
 
@@ -647,7 +647,7 @@ public class OfferServiceImpl implements OfferService {
      * @param fulfillmentGroup
      * @return true if offer can be applied, otherwise false
      */
-    private boolean couldOfferApplyToOrder(Offer offer, Order order, FulfillmentGroup fulfillmentGroup) {
+    protected boolean couldOfferApplyToOrder(Offer offer, Order order, FulfillmentGroup fulfillmentGroup) {
         return couldOfferApplyToOrder(offer, order, null, fulfillmentGroup);
     }
 
@@ -661,7 +661,7 @@ public class OfferServiceImpl implements OfferService {
      * @param fulfillmentGroup
      * @return true if offer can be applied, otherwise false
      */
-    private boolean couldOfferApplyToOrder(Offer offer, Order order, DiscreteOrderItem discreteOrderItem, FulfillmentGroup fulfillmentGroup) {
+    protected boolean couldOfferApplyToOrder(Offer offer, Order order, DiscreteOrderItem discreteOrderItem, FulfillmentGroup fulfillmentGroup) {
         boolean appliesToItem = false;
 
         if (offer.getAppliesToOrderRules() != null && offer.getAppliesToOrderRules().length() != 0) {
@@ -695,14 +695,14 @@ public class OfferServiceImpl implements OfferService {
      * @param vars
      * @return a Boolean object containing the result of executing the MVEL expression
      */
-    private Boolean executeExpression(String expression, Map<String, Object> vars) {
+    protected Boolean executeExpression(String expression, Map<String, Object> vars) {
         Serializable exp = (Serializable)expressionCache.get(expression);
         if (exp == null) {
             ParserContext context = new ParserContext();
             context.addImport("OfferType", OfferType.class);
             context.addImport("FulfillmentGroupType", FulfillmentGroupType.class);
-//            StringBuffer completeExpression = new StringBuffer(functions.toString());
-//            completeExpression.append(" ").append(expression);
+            //            StringBuffer completeExpression = new StringBuffer(functions.toString());
+            //            completeExpression.append(" ").append(expression);
             exp = MVEL.compileExpression(expression.toString(), context);
         }
         expressionCache.put(expression, exp);

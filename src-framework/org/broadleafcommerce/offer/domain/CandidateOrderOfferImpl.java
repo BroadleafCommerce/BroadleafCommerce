@@ -15,13 +15,14 @@
  */
 package org.broadleafcommerce.offer.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -33,35 +34,37 @@ import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ORDER_OFFER")
-public class CandidateOrderOfferImpl implements Serializable,CandidateOrderOffer {
+@Inheritance(strategy=InheritanceType.JOINED)
+public class CandidateOrderOfferImpl implements CandidateOrderOffer {
+
     public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "CANDIDATE_ORDER_OFFER_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
-    private Order order;
+    protected Order order;
 
     @ManyToOne(targetEntity = OfferImpl.class)
     @JoinColumn(name = "OFFER_ID")
-    private Offer offer;
+    protected Offer offer;
 
     @Column(name = "DISCOUNTED_PRICE")
-    private BigDecimal discountedPrice;
+    protected BigDecimal discountedPrice;
 
-	public CandidateOrderOfferImpl(){
+    public CandidateOrderOfferImpl(){
+        this(null, null);
+    }
 
-	}
+    public CandidateOrderOfferImpl(Order order, Offer offer){
+        this.order = order;
+        this.offer = offer;
+    }
 
-	public CandidateOrderOfferImpl(Order order, Offer offer){
-		this.order = order;
-		this.offer = offer;
-	}
-
-	public Long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -70,55 +73,94 @@ public class CandidateOrderOfferImpl implements Serializable,CandidateOrderOffer
     }
 
     public int getPriority() {
-		return offer.getPriority();
-	}
+        return offer.getPriority();
+    }
 
-	public Offer getOffer() {
-		return offer;
-	}
+    public Offer getOffer() {
+        return offer;
+    }
 
-	public void setOffer(Offer offer) {
-		this.offer = offer;
-		discountedPrice = null;  // price needs to be recalculated
-	}
-
-	public Money getDiscountedPrice() {
-	    if (discountedPrice == null) {
-	        computeDiscountedAmount();
-	    }
-        return discountedPrice == null ? null : new Money(discountedPrice);
-	}
-
-	public Order getOrder() {
-		return order;
-	}
-
-
-	public void setOrder(Order order) {
-		this.order = order;
+    public void setOffer(Offer offer) {
+        this.offer = offer;
         discountedPrice = null;  // price needs to be recalculated
-	}
+    }
 
-	protected void computeDiscountedAmount() {
-		if (offer != null && order != null){
+    public Money getDiscountedPrice() {
+        if (discountedPrice == null) {
+            computeDiscountedAmount();
+        }
+        return discountedPrice == null ? null : new Money(discountedPrice);
+    }
 
-		    if (order.getSubTotal() != null) {
-    			Money priceToUse = order.getSubTotal();
+    public Order getOrder() {
+        return order;
+    }
 
-    	        if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
-    	            priceToUse = priceToUse.subtract(offer.getValue());
-    	        } else if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
-    	            priceToUse = offer.getValue();
-    	        } else if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
-    	            priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
-    	        }
-    	        if (priceToUse.lessThan(new Money(0))) {
-    	            priceToUse = new Money(0);
-    	        }
-    	        discountedPrice = priceToUse.getAmount();
-		    }
-		}
-	}
+    public void setOrder(Order order) {
+        this.order = order;
+        discountedPrice = null;  // price needs to be recalculated
+    }
 
+    protected void computeDiscountedAmount() {
+        if (offer != null && order != null){
+            if (order.getSubTotal() != null) {
+                Money priceToUse = order.getSubTotal();
+                if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
+                    priceToUse = priceToUse.subtract(offer.getValue());
+                } else if(offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
+                    priceToUse = offer.getValue();
+                } else if(offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){
+                    priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
+                }
+                if (priceToUse.lessThan(new Money(0))) {
+                    priceToUse = new Money(0);
+                }
+                discountedPrice = priceToUse.getAmount();
+            }
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((discountedPrice == null) ? 0 : discountedPrice.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
+        result = prime * result + ((order == null) ? 0 : order.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CandidateOrderOfferImpl other = (CandidateOrderOfferImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (discountedPrice == null) {
+            if (other.discountedPrice != null)
+                return false;
+        } else if (!discountedPrice.equals(other.discountedPrice))
+            return false;
+        if (offer == null) {
+            if (other.offer != null)
+                return false;
+        } else if (!offer.equals(other.offer))
+            return false;
+        if (order == null) {
+            if (other.order != null)
+                return false;
+        } else if (!order.equals(other.order))
+            return false;
+        return true;
+    }
 
 }

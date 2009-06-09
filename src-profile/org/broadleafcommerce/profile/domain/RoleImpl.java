@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -32,17 +30,17 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ROLE")
-public class RoleImpl implements Role, Serializable {
+public class RoleImpl implements Role {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "ROLE_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "ROLE_NAME")
-    private String roleName;
+    protected String roleName;
 
     @Override
     public Long getId() {
@@ -62,5 +60,36 @@ public class RoleImpl implements Role, Serializable {
     @Override
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((roleName == null) ? 0 : roleName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RoleImpl other = (RoleImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (roleName == null) {
+            if (other.roleName != null)
+                return false;
+        } else if (!roleName.equals(other.roleName))
+            return false;
+        return true;
     }
 }

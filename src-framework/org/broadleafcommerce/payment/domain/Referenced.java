@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.payment.domain;
 
-public interface Referenced {
+import java.io.Serializable;
+
+public interface Referenced extends Serializable {
 
     /**
      * @return the referenceNumber

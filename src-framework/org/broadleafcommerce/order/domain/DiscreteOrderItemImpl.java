@@ -89,9 +89,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (getClass() != obj.getClass())
             return false;
         DiscreteOrderItemImpl other = (DiscreteOrderItemImpl) obj;
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
+
         if (bundleOrderItem == null) {
             if (other.bundleOrderItem != null)
                 return false;
@@ -111,6 +113,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         int result = 1;
         result = prime * result + ((bundleOrderItem == null) ? 0 : bundleOrderItem.hashCode());
         result = prime * result + ((sku == null) ? 0 : sku.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 

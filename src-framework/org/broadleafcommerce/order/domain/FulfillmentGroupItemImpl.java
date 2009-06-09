@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.order.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -38,7 +37,7 @@ import org.broadleafcommerce.util.money.Money;
 @DiscriminatorColumn(name = "TYPE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP_ITEM")
-public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializable {
+public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 
     private static final long serialVersionUID = 1L;
 
@@ -46,27 +45,27 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
     @GeneratedValue(generator = "FulfillmentGroupItemId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FulfillmentGroupItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupItemImpl", allocationSize = 1)
     @Column(name = "FULFILLMENT_GROUP_ITEM_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
-    private FulfillmentGroup fulfillmentGroup;
+    protected FulfillmentGroup fulfillmentGroup;
 
     @OneToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    private OrderItem orderItem;
+    protected OrderItem orderItem;
 
     @Column(name = "QUANTITY")
-    private int quantity;
+    protected int quantity;
 
     @Column(name = "RETAIL_PRICE")
-    private BigDecimal retailPrice;
+    protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE")
-    private BigDecimal salePrice;
+    protected BigDecimal salePrice;
 
     @Column(name = "PRICE")
-    private BigDecimal price;
+    protected BigDecimal price;
 
     public Long getId() {
         return id;
@@ -133,9 +132,11 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
         if (getClass() != obj.getClass())
             return false;
         FulfillmentGroupItemImpl other = (FulfillmentGroupItemImpl) obj;
+
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
+
         if (orderItem == null) {
             if (other.orderItem != null)
                 return false;
@@ -149,6 +150,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem, Serializa
         final int prime = 31;
         int result = 1;
         result = prime * result + ((orderItem == null) ? 0 : orderItem.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 }

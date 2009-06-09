@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.profile.domain.Customer;
 
-public interface CustomerOffer {
+public interface CustomerOffer extends Serializable {
+
     public Long getId() ;
 
     public void setId(Long id) ;
@@ -29,6 +32,5 @@ public interface CustomerOffer {
     public Offer getOffer() ;
 
     public void setOffer(Offer offer) ;
-
 
 }

@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,22 +34,22 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_ROLE")
-public class CustomerRoleImpl implements CustomerRole, Serializable {
+public class CustomerRoleImpl implements CustomerRole {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "CUSTOMER_ROLE_ID")
-    private Long id;
+    protected Long id;
 
-    @ManyToOne(targetEntity = CustomerImpl.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
-    private Customer customer;
+    protected Customer customer;
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class)
     @JoinColumn(name = "ROLE_ID")
-    private Role role;
+    protected Role role;
 
     @Override
     public Long getId() {
@@ -86,5 +84,42 @@ public class CustomerRoleImpl implements CustomerRole, Serializable {
     @Override
     public String getRoleName() {
         return role.getRoleName();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((role == null) ? 0 : role.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CustomerRoleImpl other = (CustomerRoleImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (customer == null) {
+            if (other.customer != null)
+                return false;
+        } else if (!customer.equals(other.customer))
+            return false;
+        if (role == null) {
+            if (other.role != null)
+                return false;
+        } else if (!role.equals(other.role))
+            return false;
+        return true;
     }
 }

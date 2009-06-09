@@ -51,10 +51,10 @@ public class CustomerPhoneTest extends BaseTest {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         assert customerPhone.getId() == null;
-        customerPhone.setCustomerId(customer.getId());
+        customerPhone.setCustomer(customer);
         customerPhone = customerPhoneService.saveCustomerPhone(customerPhone);
-        assert customer.getId() == customerPhone.getCustomerId();
-        userId = customerPhone.getCustomerId();
+        assert customer.equals(customerPhone.getCustomer());
+        userId = customerPhone.getCustomer().getId();
     }
 
     @Test(groups = "readCustomerPhone", dependsOnGroups = "createCustomerPhone")

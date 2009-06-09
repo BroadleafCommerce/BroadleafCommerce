@@ -27,7 +27,7 @@ import org.broadleafcommerce.profile.domain.CustomerAddress;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerAddressDao")
-public class CustomerAddressDaoJpa implements CustomerAddressDao {
+public class CustomerAddressDaoImpl implements CustomerAddressDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());

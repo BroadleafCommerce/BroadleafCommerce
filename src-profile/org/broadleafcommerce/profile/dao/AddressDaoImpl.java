@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.offer.dao;
+package org.broadleafcommerce.profile.dao;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -21,49 +21,33 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.offer.domain.OfferAudit;
+import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("blOfferAuditDao")
-public class OfferAuditDaoJpa implements OfferAuditDao {
-
-    /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.offer.domain.OfferAudit";
+@Repository("blAddressDao")
+public class AddressDaoImpl implements AddressDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     @Resource
     protected EntityConfiguration entityConfiguration;
 
-    @Override
-    public OfferAudit create() {
-        return ((OfferAudit) entityConfiguration.createEntityInstance(beanName));
-    }
-
-    @Override
-    public void delete(OfferAudit offerAudit) {
-        em.remove(offerAudit);
-    }
-
-    @Override
-    public OfferAudit save(OfferAudit offerAudit) {
-        if(offerAudit.getId() == null){
-            em.persist(offerAudit);
-        }else{
-            offerAudit = em.merge(offerAudit);
+    public Address save(Address address) {
+        if (address.getId() == null) {
+            em.persist(address);
+        } else {
+            address = em.merge(address);
         }
-        return offerAudit;
+        return address;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    public OfferAudit readAuditById(Long offerAuditId) {
-        return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(beanName), offerAuditId);
+    public Address readAddressById(Long id) {
+        return (Address) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Address"), id);
     }
-
 }

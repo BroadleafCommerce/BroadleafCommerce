@@ -32,77 +32,120 @@ import javax.persistence.Table;
 @Table(name = "BLC_EMAIL_TRACKING_OPENS")
 public class EmailTrackingOpensImpl implements EmailTrackingOpens {
 
-	/** The Constant serialVersionUID. */
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    
-	@Id
-	@Column(name = "OPEN_ID")
-	private Long id;
-	
-	@Column(name = "DATE_OPENED")
-	private Date dateOpened;
-	
-	@Column(name = "USER_AGENT")
-	private String userAgent;
-	
-	@ManyToOne(targetEntity = EmailTrackingImpl.class)
+
+    @Id
+    @Column(name = "OPEN_ID")
+    protected Long id;
+
+    @Column(name = "DATE_OPENED")
+    protected Date dateOpened;
+
+    @Column(name = "USER_AGENT")
+    protected String userAgent;
+
+    @ManyToOne(targetEntity = EmailTrackingImpl.class)
     @JoinColumn(name = "EMAIL_TRACKING_ID")
-	private EmailTracking emailTracking;
+    protected EmailTracking emailTracking;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#getId()
-	 */
-	public Long getId() {
-		return id;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#getId()
+     */
+    public Long getId() {
+        return id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setId(java.lang.Long)
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setId(java.lang.Long)
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#getDateOpened()
-	 */
-	public Date getDateOpened() {
-		return dateOpened;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#getDateOpened()
+     */
+    public Date getDateOpened() {
+        return dateOpened;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setDateOpened(java.util.Date)
-	 */
-	public void setDateOpened(Date dateOpened) {
-		this.dateOpened = dateOpened;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setDateOpened(java.util.Date)
+     */
+    public void setDateOpened(Date dateOpened) {
+        this.dateOpened = dateOpened;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#getUserAgent()
-	 */
-	public String getUserAgent() {
-		return userAgent;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#getUserAgent()
+     */
+    public String getUserAgent() {
+        return userAgent;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setUserAgent(java.lang.String)
-	 */
-	public void setUserAgent(String userAgent) {
-		this.userAgent = userAgent;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setUserAgent(java.lang.String)
+     */
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#getEmailTracking()
-	 */
-	public EmailTracking getEmailTracking() {
-		return emailTracking;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#getEmailTracking()
+     */
+    public EmailTracking getEmailTracking() {
+        return emailTracking;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setEmailTracking(org.broadleafcommerce.email.domain.EmailTrackingImpl)
-	 */
-	public void setEmailTracking(EmailTracking emailTracking) {
-		this.emailTracking = emailTracking;
-	}
-	
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setEmailTracking(org.broadleafcommerce.email.domain.EmailTrackingImpl)
+     */
+    public void setEmailTracking(EmailTracking emailTracking) {
+        this.emailTracking = emailTracking;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((dateOpened == null) ? 0 : dateOpened.hashCode());
+        result = prime * result + ((emailTracking == null) ? 0 : emailTracking.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((userAgent == null) ? 0 : userAgent.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EmailTrackingOpensImpl other = (EmailTrackingOpensImpl) obj;
+
+        if (id == null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (dateOpened == null) {
+            if (other.dateOpened != null)
+                return false;
+        } else if (!dateOpened.equals(other.dateOpened))
+            return false;
+        if (emailTracking == null) {
+            if (other.emailTracking != null)
+                return false;
+        } else if (!emailTracking.equals(other.emailTracking))
+            return false;
+        if (userAgent == null) {
+            if (other.userAgent != null)
+                return false;
+        } else if (!userAgent.equals(other.userAgent))
+            return false;
+        return true;
+    }
+
 }

@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -37,44 +36,44 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_USER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
-public class UserImpl implements User, Serializable {
+public class UserImpl implements User {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "USER_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "USER_NAME")
-    private String username;
+    protected String username;
 
     @Column(name = "PASSWORD")
-    private String password;
+    protected String password;
 
     @Column(name = "FIRST_NAME")
-    private String firstName;
+    protected String firstName;
 
     @Column(name = "LAST_NAME")
-    private String lastName;
+    protected String lastName;
 
     @Column(name = "EMAIL_ADDRESS")
-    private String emailAddress;
+    protected String emailAddress;
 
     @Column(name = "CHALLENGE_QUESTION")
-    private String challengeQuestion;
+    protected String challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
-    private String challengeAnswer;
+    protected String challengeAnswer;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", targetEntity = UserRoleImpl.class)
-    private Set<UserRole> userRoles;
+    protected Set<UserRole> userRoles;
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
-    private boolean passwordChangeRequired;
+    protected boolean passwordChangeRequired;
 
     @Transient
-    private String unencodedPassword;
+    protected String unencodedPassword;
 
     public Long getId() {
         return id;
@@ -162,5 +161,60 @@ public class UserImpl implements User, Serializable {
 
     public void setUnencodedPassword(String unencodedPassword) {
         this.unencodedPassword = unencodedPassword;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((emailAddress == null) ? 0 : emailAddress.hashCode());
+        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+        result = prime * result + ((userRoles == null) ? 0 : userRoles.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UserImpl other = (UserImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (emailAddress == null) {
+            if (other.emailAddress != null)
+                return false;
+        } else if (!emailAddress.equals(other.emailAddress))
+            return false;
+        if (firstName == null) {
+            if (other.firstName != null)
+                return false;
+        } else if (!firstName.equals(other.firstName))
+            return false;
+        if (lastName == null) {
+            if (other.lastName != null)
+                return false;
+        } else if (!lastName.equals(other.lastName))
+            return false;
+        if (userRoles == null) {
+            if (other.userRoles != null)
+                return false;
+        } else if (!userRoles.equals(other.userRoles))
+            return false;
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
+        return true;
     }
 }

@@ -42,22 +42,12 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
     @Resource
     protected SecurePaymentInfoDao securePaymentInfoDao;
 
-    protected BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
-        return securePaymentInfoDao.findBankAccountInfo(referenceNumber);
-    }
-
-    protected CreditCardPaymentInfo findCreditCardInfo(String referenceNumber) {
-        return securePaymentInfoDao.findCreditCardInfo(referenceNumber);
-    }
-
-    protected GiftCardPaymentInfo findGiftCardInfo(String referenceNumber) {
-        return securePaymentInfoDao.findGiftCardInfo(referenceNumber);
-    }
-
+    @Override
     public Referenced save(Referenced securePaymentInfo) {
         return securePaymentInfoDao.save(securePaymentInfo);
     }
 
+    @Override
     public Referenced create(PaymentInfoType paymentInfoType) {
         if (paymentInfoType == PaymentInfoType.CREDIT_CARD) {
             CreditCardPaymentInfo ccinfo = securePaymentInfoDao.createCreditCardPaymentInfo();
@@ -110,4 +100,15 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
         securePaymentInfoDao.delete(securePaymentInfo);
     }
 
+    protected BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
+        return securePaymentInfoDao.findBankAccountInfo(referenceNumber);
+    }
+
+    protected CreditCardPaymentInfo findCreditCardInfo(String referenceNumber) {
+        return securePaymentInfoDao.findCreditCardInfo(referenceNumber);
+    }
+
+    protected GiftCardPaymentInfo findGiftCardInfo(String referenceNumber) {
+        return securePaymentInfoDao.findGiftCardInfo(referenceNumber);
+    }
 }

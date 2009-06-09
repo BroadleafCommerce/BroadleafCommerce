@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-public interface State {
+import java.io.Serializable;
+
+public interface State extends Serializable {
 
     public String getAbbreviation();
 
@@ -24,4 +26,5 @@ public interface State {
     public String getName();
 
     public void setName(String name);
+
 }

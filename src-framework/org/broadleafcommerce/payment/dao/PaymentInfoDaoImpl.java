@@ -32,7 +32,7 @@ import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blPaymentInfoDao")
-public class PaymentInfoDaoJpa implements PaymentInfoDao {
+public class PaymentInfoDaoImpl implements PaymentInfoDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
