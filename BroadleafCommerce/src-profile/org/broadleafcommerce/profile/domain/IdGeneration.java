@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-public interface IdGeneration {
+import java.io.Serializable;
+
+public interface IdGeneration extends Serializable {
 
     public String getType();
 
@@ -30,4 +32,5 @@ public interface IdGeneration {
     public void setBatchSize(Long batchSize);
 
     public Integer getVersion();
+
 }

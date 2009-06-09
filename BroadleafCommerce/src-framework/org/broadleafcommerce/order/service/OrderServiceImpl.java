@@ -57,10 +57,10 @@ import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.workflow.WorkflowException;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 public class OrderServiceImpl implements OrderService {
+
+    private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 
     @Resource
     protected OrderDao orderDao;
@@ -99,8 +99,6 @@ public class OrderServiceImpl implements OrderService {
     protected SecurePaymentInfoService securePaymentInfoService;
 
     protected boolean rollupOrderItems = true;
-
-    private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 
     @Override
     public Order createNamedOrderForCustomer(String name, Customer customer) {
@@ -393,7 +391,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public Order confirmOrder(Order order) {
         // TODO Other actions needed to complete order
         // (such as calling something to make sure the order is fulfilled
@@ -412,14 +409,7 @@ public class OrderServiceImpl implements OrderService {
         return paymentInfoDao.readPaymentInfosForOrder(order);
     }
 
-    public boolean isRollupOrderItems() {
-        return rollupOrderItems;
-    }
-
-    public void setRollupOrderItems(boolean rollupOrderItems) {
-        this.rollupOrderItems = rollupOrderItems;
-    }
-
+    @Override
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
         int orderItemIndex;
         List<OrderItem> orderItems = order.getOrderItems();
@@ -441,15 +431,7 @@ public class OrderServiceImpl implements OrderService {
         return order.getOrderItems().get(orderItemIndex);
     }
 
-    protected Order updateOrder(Order order) throws PricingException {
-        pricingExecutionManager.executePricing(order);
-        return orderDao.save(order);
-    }
-
-    protected Order persistOrder(Order order) {
-        return orderDao.save(order);
-    }
-
+    @Override
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             if(fulfillmentGroup.isPrimary()) {
@@ -467,47 +449,12 @@ public class OrderServiceImpl implements OrderService {
         return newFg;
     }
 
-    protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
-        FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
-        fgi.setFulfillmentGroup(fulfillmentGroup);
-        fgi.setOrderItem(orderItem);
-        fgi.setQuantity(quantity);
-        fgi.setPrice(orderItem.getPrice());
-        fgi.setRetailPrice(orderItem.getRetailPrice());
-        fgi.setSalePrice(orderItem.getSalePrice());
-        return fgi;
+    public boolean isRollupOrderItems() {
+        return rollupOrderItems;
     }
 
-    protected void removeOrderItemFromFullfillmentGroup(Order order, OrderItem orderItem) {
-        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
-        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
-            Iterator<FulfillmentGroupItem> itr = fulfillmentGroup.getFulfillmentGroupItems().iterator();
-            while(itr.hasNext()) {
-                FulfillmentGroupItem fulfillmentGroupItem = itr.next();
-                if(fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
-                    itr.remove();
-                    fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
-                }
-            }
-        }
-    }
-
-    protected DiscreteOrderItemRequest createDiscreteOrderItemRequest(DiscreteOrderItem discreteOrderItem) {
-        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
-        itemRequest.setCategory(discreteOrderItem.getCategory());
-        itemRequest.setProduct(discreteOrderItem.getProduct());
-        itemRequest.setQuantity(discreteOrderItem.getQuantity());
-        itemRequest.setSku(discreteOrderItem.getSku());
-        return itemRequest;
-    }
-
-    protected BundleOrderItemRequest createBundleOrderItemRequest(BundleOrderItem bundleOrderItem, List<DiscreteOrderItemRequest> discreteOrderItemRequests) {
-        BundleOrderItemRequest bundleOrderItemRequest = new BundleOrderItemRequest();
-        bundleOrderItemRequest.setCategory(bundleOrderItem.getCategory());
-        bundleOrderItemRequest.setName(bundleOrderItem.getName());
-        bundleOrderItemRequest.setQuantity(bundleOrderItem.getQuantity());
-        bundleOrderItemRequest.setDiscreteOrderItems(discreteOrderItemRequests);
-        return bundleOrderItemRequest;
+    public void setRollupOrderItems(boolean rollupOrderItems) {
+        this.rollupOrderItems = rollupOrderItems;
     }
 
     public OrderDao getOrderDao() {
@@ -556,6 +503,58 @@ public class OrderServiceImpl implements OrderService {
 
     public void setOrderItemService(OrderItemService orderItemService) {
         this.orderItemService = orderItemService;
+    }
+
+    protected Order updateOrder(Order order) throws PricingException {
+        pricingExecutionManager.executePricing(order);
+        return orderDao.save(order);
+    }
+
+    protected Order persistOrder(Order order) {
+        return orderDao.save(order);
+    }
+
+    protected FulfillmentGroupItem createFulfillmentGroupItemFromOrderItem(OrderItem orderItem, FulfillmentGroup fulfillmentGroup, int quantity) {
+        FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
+        fgi.setFulfillmentGroup(fulfillmentGroup);
+        fgi.setOrderItem(orderItem);
+        fgi.setQuantity(quantity);
+        fgi.setPrice(orderItem.getPrice());
+        fgi.setRetailPrice(orderItem.getRetailPrice());
+        fgi.setSalePrice(orderItem.getSalePrice());
+        return fgi;
+    }
+
+    protected void removeOrderItemFromFullfillmentGroup(Order order, OrderItem orderItem) {
+        List<FulfillmentGroup> fulfillmentGroups = order.getFulfillmentGroups();
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            Iterator<FulfillmentGroupItem> itr = fulfillmentGroup.getFulfillmentGroupItems().iterator();
+            while(itr.hasNext()) {
+                FulfillmentGroupItem fulfillmentGroupItem = itr.next();
+                if(fulfillmentGroupItem.getOrderItem().equals(orderItem)) {
+                    itr.remove();
+                    fulfillmentGroupItemDao.delete(fulfillmentGroupItem);
+                }
+            }
+        }
+    }
+
+    protected DiscreteOrderItemRequest createDiscreteOrderItemRequest(DiscreteOrderItem discreteOrderItem) {
+        DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
+        itemRequest.setCategory(discreteOrderItem.getCategory());
+        itemRequest.setProduct(discreteOrderItem.getProduct());
+        itemRequest.setQuantity(discreteOrderItem.getQuantity());
+        itemRequest.setSku(discreteOrderItem.getSku());
+        return itemRequest;
+    }
+
+    protected BundleOrderItemRequest createBundleOrderItemRequest(BundleOrderItem bundleOrderItem, List<DiscreteOrderItemRequest> discreteOrderItemRequests) {
+        BundleOrderItemRequest bundleOrderItemRequest = new BundleOrderItemRequest();
+        bundleOrderItemRequest.setCategory(bundleOrderItem.getCategory());
+        bundleOrderItemRequest.setName(bundleOrderItem.getName());
+        bundleOrderItemRequest.setQuantity(bundleOrderItem.getQuantity());
+        bundleOrderItemRequest.setDiscreteOrderItems(discreteOrderItemRequests);
+        return bundleOrderItemRequest;
     }
 
 }

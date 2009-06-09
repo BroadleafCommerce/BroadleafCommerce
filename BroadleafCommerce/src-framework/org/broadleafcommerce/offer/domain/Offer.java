@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
@@ -22,7 +23,7 @@ import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.util.money.Money;
 
-public interface Offer {
+public interface Offer extends Serializable {
 
     public void setId(Long id);
 

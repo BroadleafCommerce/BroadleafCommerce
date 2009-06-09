@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-public interface Address {
+import java.io.Serializable;
+
+public interface Address extends Serializable {
 
     public void setId(Long id);
 

@@ -44,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Resource
     protected RoleService roleService;
 
-    private boolean forcePasswordChange = false;
+    protected boolean forcePasswordChange = false;
 
     public void setForcePasswordChange(boolean forcePasswordChange) {
         this.forcePasswordChange = forcePasswordChange;
@@ -78,7 +78,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.customerService = customerService;
     }
 
-    private List<GrantedAuthority> createGrantedAuthorities(List<CustomerRole> customerRoles) {
+    protected List<GrantedAuthority> createGrantedAuthorities(List<CustomerRole> customerRoles) {
         List<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
         grantedAuthorities.add(new GrantedAuthorityImpl("ROLE_USER"));
         for (CustomerRole role : customerRoles) {

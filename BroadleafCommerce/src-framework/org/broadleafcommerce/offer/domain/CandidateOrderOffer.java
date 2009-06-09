@@ -15,25 +15,27 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.io.Serializable;
+
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.util.money.Money;
 
-public interface CandidateOrderOffer {
+public interface CandidateOrderOffer extends Serializable {
 
     public void setId(Long id);
 
     public Long getId();
 
-	public Money getDiscountedPrice(); //transient, computed
+    public Money getDiscountedPrice(); //transient, computed
 
-	public Order getOrder();
+    public Order getOrder();
 
-	public void setOrder(Order order);
+    public void setOrder(Order order);
 
-	public int getPriority(); // convenience offer.getPriority()
+    public int getPriority(); // convenience offer.getPriority()
 
-	public Offer getOffer();
+    public Offer getOffer();
 
-	public void setOffer(Offer offer);
+    public void setOffer(Offer offer);
 
 }

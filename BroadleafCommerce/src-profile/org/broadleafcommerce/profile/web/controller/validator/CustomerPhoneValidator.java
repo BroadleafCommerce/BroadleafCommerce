@@ -53,7 +53,7 @@ public class CustomerPhoneValidator implements Validator {
 
         if (!errors.hasErrors()) {
             //check for duplicate phone number
-            List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(cPhone.getCustomerId());
+            List<CustomerPhone> phones = customerPhoneService.readAllCustomerPhonesByCustomerId(cPhone.getCustomer().getId());
 
             String phoneNum = cPhone.getPhone().getPhoneNumber();
             String phoneName = cPhone.getPhoneName();

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.inventory.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 /**
  * Implementations of this interface are used to hold data about SKU availability.
@@ -26,17 +27,17 @@ import java.util.Date;
  * @see {@link SkuAvailabilityImpl}
  * @author bpolster
  */
-public interface SkuAvailability {
+public interface SkuAvailability extends Serializable {
 
     /**
      * Returns the id of this SkuAvailability
      */
-	public Long getId();
+    public Long getId();
 
     /**
      * Sets the id of this SkuAvailability record
      */
-	public void setId(Long id);
+    public void setId(Long id);
 
     /**
      * Returns the id of this SKU associated with SkuAvailability record
@@ -75,44 +76,44 @@ public interface SkuAvailability {
      * Returns the data the SKU will be available.
      * This property may return null which has an implementation specific meaning.
      */
-	public Date getAvailabilityDate();
+    public Date getAvailabilityDate();
 
-	/**
-	 * Sets the date the SKU will be available.  Setting to null is allowed and has an
-	 * implementation specific meaning.
-	 */
-	public void setAvailabilityDate(Date availabilityDate);
+    /**
+     * Sets the date the SKU will be available.  Setting to null is allowed and has an
+     * implementation specific meaning.
+     */
+    public void setAvailabilityDate(Date availabilityDate);
 
     /**
      * Returns the number of this items that are currently in stock and available for sell.
      * Returning null has an implementation specific meaning.
      */
-	public Integer getQuantityOnHand();
+    public Integer getQuantityOnHand();
 
-	/**
-	 * Sets the quantity on hand.  Setting to null is allowed and has an
-	 * implementation specific meaning.
-	 */
-	public void setQuantityOnHand(Integer quantityOnHand);
+    /**
+     * Sets the quantity on hand.  Setting to null is allowed and has an
+     * implementation specific meaning.
+     */
+    public void setQuantityOnHand(Integer quantityOnHand);
 
     /**
      * Returns the reserve quantity.   Nulls will be treated the same as 0.
      * Implementations may want to manage a reserve quantity at each location so that the
      * available quantity for purchases is the quantityOnHand - reserveQuantity.
      */
-	public Integer getReserveQuantity();
+    public Integer getReserveQuantity();
 
     /**
      * Sets the reserve quantity.
      * Implementations may want to manage a reserve quantity at each location so that the
      * available quantity for purchases is the quantityOnHand - reserveQuantity.
      */
-	public void setReserveQuantity(Integer reserveQuantity);
+    public void setReserveQuantity(Integer reserveQuantity);
 
     /**
      * Returns the getQuantityOnHand() - getReserveQuantity().
      * Preferred implementation is to return null if getQuantityOnHand() is null and to treat
      * a null in getReserveQuantity() as ZERO.
      */
-	public Integer getAvailableQuantity();
+    public Integer getAvailableQuantity();
 }

@@ -20,7 +20,7 @@ import org.broadleafcommerce.pricing.service.module.ShippingModule;
 
 public class ShippingServiceImpl implements ShippingService {
 
-    private ShippingModule shippingModule;
+    protected ShippingModule shippingModule;
 
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         return shippingModule.calculateShippingForFulfillmentGroup(fulfillmentGroup);
@@ -33,7 +33,5 @@ public class ShippingServiceImpl implements ShippingService {
     public void setShippingModule(ShippingModule shippingModule) {
         this.shippingModule = shippingModule;
     }
-
-
 
 }

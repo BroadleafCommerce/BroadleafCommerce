@@ -47,7 +47,8 @@ import org.xml.sax.SAXException;
 
 @Service("blAddressStandardizationService")
 public class AddressStandardizationServiceImpl implements AddressStandardizationService, ServiceDownResponse {
-    protected final Log logger = LogFactory.getLog(getClass());
+
+    private static final Log logger = LogFactory.getLog(AddressStandardizationServiceImpl.class);
     private static final String HTTP_PROTOCOL = "http://";
     private static final String POST_METHOD = "POST";
     private static final String API_PARAM = "API=Verify&";
@@ -64,38 +65,16 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
     private static final String ZIP5_ELEM = "Zip5";
     private static final String ZIP4_ELEM = "Zip4";
     private static final String EMPTY_STRING = "";
-    private AddressStandardAbbreviations abbreviations;
+
+    protected AddressStandardAbbreviations abbreviations;
     // TODO: Should access these from property file.
-    private String uspsCharSet = "UTF-8";
-    private String uspsPassword = "338MC69CR570";
-    private String uspsServerName = "testing.shippingapis.com";
-    private String uspsServiceAPI = "/ShippingAPITest.dll";
-    private String uspsUserName = "482CREDE3966";
+    protected String uspsCharSet = "UTF-8";
+    protected String uspsPassword = "338MC69CR570";
+    protected String uspsServerName = "testing.shippingapis.com";
+    protected String uspsServiceAPI = "/ShippingAPITest.dll";
+    protected String uspsUserName = "482CREDE3966";
 
-    public void setAbbreviations(AddressStandardAbbreviations abbreviations) {
-        this.abbreviations = abbreviations;
-    }
-
-    public void setUspsCharSet(String uspsCharSet) {
-        this.uspsCharSet = uspsCharSet;
-    }
-
-    public void setUspsPassword(String uspsPassword) {
-        this.uspsPassword = uspsPassword;
-    }
-
-    public void setUspsServerName(String uspsServerName) {
-        this.uspsServerName = uspsServerName;
-    }
-
-    public void setUspsServiceAPI(String uspsServiceAPI) {
-        this.uspsServiceAPI = uspsServiceAPI;
-    }
-
-    public void setUspsUserName(String uspsUserName) {
-        this.uspsUserName = uspsUserName;
-    }
-
+    @Override
     public AddressStandarizationResponse standardizeAddress(Address address) {
         AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
 
@@ -130,6 +109,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         }
     }
 
+    @Override
     public void tokenizeAddress(Address addr, boolean isStandardized) {
         String addLine1 = addr.getAddressLine1();
         String addLine2 = addr.getAddressLine2();
@@ -186,7 +166,61 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         addr.setTokenizedAddress(tokenizedAddress);
     }
 
-    private InputStream callUSPSAddressStandardization(Address address) throws IOException {
+    @Override
+    public void standardizeAndTokenizeAddress(Address address) {
+        AddressStandarizationResponse standardizationResponse = standardizeAddress(address);
+
+        if (standardizationResponse.isErrorDetected()) {
+            address.setStandardized(false);
+        } else {
+            address.setStandardized(true);
+            address = standardizationResponse.getAddress();
+        }
+
+        tokenizeAddress(address, !standardizationResponse.isErrorDetected());
+    }
+
+    @Override
+    public Object getDownResponse(String method, Object[] args) {
+        AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
+        addressStandarizationResponse.setErrorDetected(true);
+
+        if ("standardizeAndTokenizeAddress".equals(method)) {
+            if (args != null && args.length > 0 && args[0] != null) {
+                addressStandarizationResponse.setAddress(((Address) args[0]));
+            }
+        } else if ("standardizeAddress".equals(method)) {
+            addressStandarizationResponse.setAddress((Address) args[0]);
+        }
+
+        return addressStandarizationResponse;
+    }
+
+    public void setAbbreviations(AddressStandardAbbreviations abbreviations) {
+        this.abbreviations = abbreviations;
+    }
+
+    public void setUspsCharSet(String uspsCharSet) {
+        this.uspsCharSet = uspsCharSet;
+    }
+
+    public void setUspsPassword(String uspsPassword) {
+        this.uspsPassword = uspsPassword;
+    }
+
+    public void setUspsServerName(String uspsServerName) {
+        this.uspsServerName = uspsServerName;
+    }
+
+    public void setUspsServiceAPI(String uspsServiceAPI) {
+        this.uspsServiceAPI = uspsServiceAPI;
+    }
+
+    public void setUspsUserName(String uspsUserName) {
+        this.uspsUserName = uspsUserName;
+    }
+
+    protected InputStream callUSPSAddressStandardization(Address address) throws IOException {
 
         URL contentURL = new URL(new StringBuffer(HTTP_PROTOCOL).append(uspsServerName).append(uspsServiceAPI).toString());
 
@@ -211,7 +245,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         return new BufferedInputStream(connection.getInputStream());
     }
 
-    private String getAddressXMLString(Address address) throws IOException {
+    protected String getAddressXMLString(Address address) throws IOException {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement(ADDRESS_VALIDATE_REQUEST_ELEM);
         root.addAttribute(USER_ID_ATTR, uspsUserName);
@@ -253,7 +287,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         }
     }
 
-    private ArrayList<AddressStandarizationResponse> parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
+    protected ArrayList<AddressStandarizationResponse> parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
         USPSAddressResponseParser addrContentHelper = new USPSAddressResponseParser();
         // FileOutputStream fos = new FileOutputStream("/temp/" + System.currentTimeMillis() + ".xml");
         // int nextChar;
@@ -264,33 +298,5 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
 
         SAXParserFactory.newInstance().newSAXParser().parse(response, addrContentHelper);
         return addrContentHelper.getAddressResponseList();
-    }
-
-    public void standardizeAndTokenizeAddress(Address address) {
-        AddressStandarizationResponse standardizationResponse = standardizeAddress(address);
-
-        if (standardizationResponse.isErrorDetected()) {
-            address.setStandardized(false);
-        } else {
-            address.setStandardized(true);
-            address = standardizationResponse.getAddress();
-        }
-
-        tokenizeAddress(address, !standardizationResponse.isErrorDetected());
-    }
-
-    public Object getDownResponse(String method, Object[] args) {
-        AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
-        addressStandarizationResponse.setErrorDetected(true);
-
-        if ("standardizeAndTokenizeAddress".equals(method)) {
-            if (args != null && args.length > 0 && args[0] != null) {
-                addressStandarizationResponse.setAddress(((Address) args[0]));
-            }
-        } else if ("standardizeAddress".equals(method)) {
-            addressStandarizationResponse.setAddress((Address) args[0]);
-        }
-
-        return addressStandarizationResponse;
     }
 }

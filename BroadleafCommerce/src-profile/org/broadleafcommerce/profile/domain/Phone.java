@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-public interface Phone {
+import java.io.Serializable;
+
+public interface Phone extends Serializable {
 
     public Long getId();
 

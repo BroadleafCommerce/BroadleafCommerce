@@ -38,19 +38,21 @@ import org.broadleafcommerce.encryption.EncryptionModule;
 @Table(name = "BLC_CREDIT_CARD_PAYMENT")
 public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
 
+    private static final long serialVersionUID = 1L;
+
     protected CreditCardPaymentInfoImpl() {
         //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
         //this complies with JPA specification requirements for entity construction
     }
 
     @Transient
-    private EncryptionModule encryptionModule;
+    protected EncryptionModule encryptionModule;
 
     @Id
     @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CreditCardPaymentInfoImpl", allocationSize = 1)
     @Column(name = "PAYMENT_ID")
-    protected long id;
+    protected Long id;
 
     @Column(name = "REFERENCE_NUMBER")
     protected String referenceNumber;
@@ -70,14 +72,14 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo#getId()
      */
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.payment.secure.domain.CreditCardPaymentInfo#setId(long)
      */
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -157,9 +159,9 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((cvvCode == null) ? 0 : cvvCode.hashCode());
         result = prime * result + ((expirationMonth == null) ? 0 : expirationMonth.hashCode());
         result = prime * result + ((expirationYear == null) ? 0 : expirationYear.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((pan == null) ? 0 : pan.hashCode());
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
         return result;
@@ -174,11 +176,11 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
         if (getClass() != obj.getClass())
             return false;
         CreditCardPaymentInfoImpl other = (CreditCardPaymentInfoImpl) obj;
-        if (cvvCode == null) {
-            if (other.cvvCode != null)
-                return false;
-        } else if (!cvvCode.equals(other.cvvCode))
-            return false;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
         if (expirationMonth == null) {
             if (other.expirationMonth != null)
                 return false;

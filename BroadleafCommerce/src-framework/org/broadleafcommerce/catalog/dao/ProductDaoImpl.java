@@ -22,13 +22,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("blCategoryDao")
-public class CategoryDaoJpa implements CategoryDao {
+@Repository("blProductDao")
+public class ProductDaoImpl implements ProductDao {
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -36,46 +35,43 @@ public class CategoryDaoJpa implements CategoryDao {
     @Resource
     protected EntityConfiguration entityConfiguration;
 
-    private String queryCacheableKey = "org.hibernate.cacheable";
+    protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    public Category save(Category category) {
-        if (category.getId() == null) {
-            em.persist(category);
+    public Product save(Product product) {
+        if (product.getId() == null) {
+            em.persist(product);
         } else {
-            category = em.merge(category);
+            product = em.merge(product);
         }
-        return category;
+        return product;
     }
 
     @SuppressWarnings("unchecked")
-    public Category readCategoryById(Long categoryId) {
-        return (Category) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Category"), categoryId);
-    }
-
-    public Category readCategoryByName(String categoryName) {
-        Query query = em.createNamedQuery("BC_READ_CATEGORY_BY_NAME");
-        query.setParameter("categoryName", categoryName);
-        query.setHint(getQueryCacheableKey(), true);
-        return (Category)query.getSingleResult();
+    public Product readProductById(Long productId) {
+        return (Product) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Product"), productId);
     }
 
     @SuppressWarnings("unchecked")
-    public List<Category> readAllCategories() {
-        Query query = em.createNamedQuery("BC_READ_ALL_CATEGORIES");
+    public List<Product> readProductsByName(String searchName) {
+        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_NAME");
+        query.setParameter("name", searchName + "%");
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Product> readAllProducts() {
-        Query query = em.createNamedQuery("BC_READ_ALL_PRODUCTS");
+    public List<Product> readActiveProductsByCategory(Long categoryId) {
+        Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY");
+        query.setParameter("categoryId", categoryId);
+        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    public List<Category> readAllSubCategories(final Category category) {
-        Query query = em.createNamedQuery("BC_READ_ALL_SUBCATEGORIES");
-        query.setParameter("defaultParentCategory", category);
+    public List<Product> readProductsBySku(Long skuId) {
+        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU");
+        query.setParameter("skuId", skuId);
+        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 

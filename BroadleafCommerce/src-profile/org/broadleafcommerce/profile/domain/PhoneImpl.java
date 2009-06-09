@@ -15,11 +15,8 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,13 +25,10 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
-
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PHONE")
-public class PhoneImpl implements Phone, Serializable {
+public class PhoneImpl implements Phone {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,16 +36,16 @@ public class PhoneImpl implements Phone, Serializable {
     @GeneratedValue(generator = "PhoneId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PhoneId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PhoneImpl", allocationSize = 1)
     @Column(name = "PHONE_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "PHONE_NUMBER")
-    private String phoneNumber;
+    protected String phoneNumber;
 
     @Column(name = "IS_DEFAULT")
-    private boolean isDefault = false;
+    protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    private boolean isActive = true;
+    protected boolean isActive = true;
 
     public Long getId() {
         return id;
@@ -83,5 +77,42 @@ public class PhoneImpl implements Phone, Serializable {
 
     public void setActive(boolean isActive) {
         this.isActive = isActive;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (isActive ? 1231 : 1237);
+        result = prime * result + (isDefault ? 1231 : 1237);
+        result = prime * result + ((phoneNumber == null) ? 0 : phoneNumber.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PhoneImpl other = (PhoneImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (isActive != other.isActive)
+            return false;
+        if (isDefault != other.isDefault)
+            return false;
+        if (phoneNumber == null) {
+            if (other.phoneNumber != null)
+                return false;
+        } else if (!phoneNumber.equals(other.phoneNumber))
+            return false;
+        return true;
     }
 }

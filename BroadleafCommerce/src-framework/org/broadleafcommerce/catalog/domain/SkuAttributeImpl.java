@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -47,7 +45,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_ATTRIBUTE")
-public class SkuAttributeImpl implements SkuAttribute, Serializable {
+public class SkuAttributeImpl implements SkuAttribute {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -56,24 +54,24 @@ public class SkuAttributeImpl implements SkuAttribute, Serializable {
     @Id
     @GeneratedValue
     @Column(name = "ID")
-    private Long id;
+    protected Long id;
 
     /** The sku. */
     @ManyToOne(targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID")
-    private Sku sku;
+    protected Sku sku;
 
     /** The name. */
     @Column(name = "NAME")
-    private String name;
+    protected String name;
 
     /** The value. */
     @Column(name = "VALUE")
-    private String value;
+    protected String value;
 
     /** The searchable. */
     @Column(name = "SEARCHABLE")
-    private Boolean searchable;
+    protected Boolean searchable;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.SkuAttribute#getId()
@@ -151,6 +149,49 @@ public class SkuAttributeImpl implements SkuAttribute, Serializable {
     @Override
     public String toString() {
         return value;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((sku == null) ? 0 : sku.hashCode());
+        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SkuAttributeImpl other = (SkuAttributeImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (sku == null) {
+            if (other.sku != null)
+                return false;
+        } else if (!sku.equals(other.sku))
+            return false;
+        if (value == null) {
+            if (other.value != null)
+                return false;
+        } else if (!value.equals(other.value))
+            return false;
+        return true;
     }
 
 }

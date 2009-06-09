@@ -34,7 +34,7 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
     private static final long serialVersionUID = 1L;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "giftWrapOrderItem", targetEntity = OrderItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private List<OrderItem> wrappedItems = new ArrayList<OrderItem>();
+    protected List<OrderItem> wrappedItems = new ArrayList<OrderItem>();
 
     public List<OrderItem> getWrappedItems() {
         return wrappedItems;
@@ -42,6 +42,37 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
 
     public void setWrappedItems(List<OrderItem> wrappedItems) {
         this.wrappedItems = wrappedItems;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((wrappedItems == null) ? 0 : wrappedItems.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GiftWrapOrderItemImpl other = (GiftWrapOrderItemImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (wrappedItems == null) {
+            if (other.wrappedItems != null)
+                return false;
+        } else if (!wrappedItems.equals(other.wrappedItems))
+            return false;
+        return true;
     }
 
 }

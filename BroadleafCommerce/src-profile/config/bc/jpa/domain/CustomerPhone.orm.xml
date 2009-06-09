@@ -5,26 +5,26 @@
 
 	<named-query name="BC_READ_ACTIVE_CUSTOMER_PHONES_BY_CUSTOMER_ID" >
 		<query>SELECT cp FROM org.broadleafcommerce.profile.domain.CustomerPhone cp
-		WHERE cp.customerId = :customerId
+		WHERE cp.customer.id = :customerId
 		AND cp.phone.isActive = TRUE
 		ORDER BY cp.id</query>
 	</named-query>
 
 	<named-query name="BC_READ_CUSTOMER_PHONE_BY_ID_AND_CUSTOMER_ID" >
 		<query>SELECT cp FROM org.broadleafcommerce.profile.domain.CustomerPhone cp
-		WHERE cp.customerId = :customerId
+		WHERE cp.customer.id = :customerId
 		AND cp.id = :customerPhoneId</query>
 	</named-query>
 
 	<named-query name="BC_FIND_DEFAULT_PHONE_BY_CUSTOMER_ID" >
 		<query>SELECT cp FROM org.broadleafcommerce.profile.domain.CustomerPhone cp
-		WHERE cp.customerId = :customerId
+		WHERE cp.customer.id = :customerId
 		AND cp.phone.isDefault = TRUE</query>
 	</named-query>
 	
 	<named-query name="BC_READ_ALL_CUSTOMER_PHONES_BY_CUSTOMER_ID" >
 		<query>SELECT cp FROM org.broadleafcommerce.profile.domain.CustomerPhone cp
-		WHERE cp.customerId = :customerId
+		WHERE cp.customer.id = :customerId
 		ORDER BY cp.id</query>
 	</named-query>
 </entity-mappings>

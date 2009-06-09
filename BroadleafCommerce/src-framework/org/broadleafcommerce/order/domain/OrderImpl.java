@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.order.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,7 +56,7 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
-public class OrderImpl implements Order, Serializable {
+public class OrderImpl implements Order {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,72 +64,72 @@ public class OrderImpl implements Order, Serializable {
     @GeneratedValue(generator = "OrderId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "OrderId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderImpl", allocationSize = 1)
     @Column(name = "ORDER_ID")
-    private Long id;
+    protected Long id;
 
     @Embedded
-    private Auditable auditable;
+    protected Auditable auditable;
 
     @Column(name = "NAME")
-    private String name;
+    protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
-    private Customer customer;
+    protected Customer customer;
 
     @Column(name = "ORDER_STATUS")
-    private String status;
+    protected String status;
 
     @Column(name = "CITY_TAX")
-    private BigDecimal cityTax;
+    protected BigDecimal cityTax;
 
     @Column(name = "COUNTY_TAX")
-    private BigDecimal countyTax;
+    protected BigDecimal countyTax;
 
     @Column(name = "STATE_TAX")
-    private BigDecimal stateTax;
+    protected BigDecimal stateTax;
 
     @Column(name = "COUNTRY_TAX")
-    private BigDecimal countryTax;
+    protected BigDecimal countryTax;
 
     @Column(name = "TOTAL_TAX")
-    private BigDecimal totalTax;
+    protected BigDecimal totalTax;
 
     @Column(name = "TOTAL_SHIPPING")
-    private BigDecimal totalShipping;
+    protected BigDecimal totalShipping;
 
     @Column(name = "ORDER_SUBTOTAL")
-    private BigDecimal subTotal;
+    protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL")
-    private BigDecimal total;
+    protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
-    private Date submitDate;
+    protected Date submitDate;
 
     @Transient
-    private BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
+    protected BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
 
     @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
-    private List<OrderItem> orderItems = new ArrayList<OrderItem>();
+    protected List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
-    private List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
+    protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
     @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    private List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
+    protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class)
     @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"))
-    private List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
+    protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
     @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = {CascadeType.ALL})
-    private List<CandidateOrderOffer> candidateOffers = new ArrayList<CandidateOrderOffer>();
+    protected List<CandidateOrderOffer> candidateOffers = new ArrayList<CandidateOrderOffer>();
 
     @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
-    private List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
+    protected List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
     @Transient
-    private boolean markedForOffer;
+    protected boolean markedForOffer;
 
     public Long getId() {
         return id;
@@ -362,33 +361,6 @@ public class OrderImpl implements Order, Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof OrderImpl)) return false;
-
-        OrderImpl item = (OrderImpl) other;
-
-        if (name != null ? !name.equals(item.name) : item.name != null) return false;
-        if (customer != null ? !customer.equals(item.customer) : item.customer != null) return false;
-
-        Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
-        Date otherDateCreated = item.auditable != null ? item.auditable.getDateCreated() : null;
-        if (myDateCreated != null ? !myDateCreated.equals(otherDateCreated) : otherDateCreated != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (customer != null ? customer.hashCode() : 0);
-        Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
-        result = 31 * result + (myDateCreated != null ? myDateCreated.hashCode() : 0);
-
-        return result;
-    }
-
-    @Override
     public boolean hasCategoryItem(String categoryName) {
         for (OrderItem orderItem : orderItems) {
             if(orderItem.isInCategory(categoryName)) {
@@ -536,4 +508,43 @@ public class OrderImpl implements Order, Serializable {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OrderImpl other = (OrderImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (customer == null) {
+            if (other.customer != null)
+                return false;
+        } else if (!customer.equals(other.customer))
+            return false;
+        Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
+        Date otherDateCreated = other.auditable != null ? other.auditable.getDateCreated() : null;
+        if (myDateCreated == null) {
+            if (otherDateCreated != null)
+                return false;
+        } else if (!myDateCreated.equals(otherDateCreated))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
+        result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
+        return result;
+    }
 }

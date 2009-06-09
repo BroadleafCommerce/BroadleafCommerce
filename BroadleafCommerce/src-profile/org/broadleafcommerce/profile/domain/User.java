@@ -15,9 +15,10 @@
  */
 package org.broadleafcommerce.profile.domain;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public interface User {
+public interface User extends Serializable {
 
     public Long getId();
 

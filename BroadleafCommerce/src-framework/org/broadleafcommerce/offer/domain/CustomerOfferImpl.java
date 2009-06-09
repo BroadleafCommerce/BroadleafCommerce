@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 package org.broadleafcommerce.offer.domain;
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -29,21 +29,23 @@ import org.broadleafcommerce.profile.domain.CustomerImpl;
 
 @Entity
 @Table(name = "BLC_CUSTOMER_OFFER_XREF")
-public class CustomerOfferImpl implements Serializable,CustomerOffer {
+@Inheritance(strategy=InheritanceType.JOINED)
+public class CustomerOfferImpl implements CustomerOffer {
+
     public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "CUSTOMER_OFFER_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
-    private Customer customer;
+    protected Customer customer;
 
     @ManyToOne(targetEntity = OfferImpl.class)
     @JoinColumn(name = "OFFER_ID")
-    private Offer offer;
+    protected Offer offer;
 
     public Long getId() {
         return id;
@@ -69,5 +71,41 @@ public class CustomerOfferImpl implements Serializable,CustomerOffer {
         this.customer = customer;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CustomerOfferImpl other = (CustomerOfferImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (customer == null) {
+            if (other.customer != null)
+                return false;
+        } else if (!customer.equals(other.customer))
+            return false;
+        if (offer == null) {
+            if (other.offer != null)
+                return false;
+        } else if (!offer.equals(other.offer))
+            return false;
+        return true;
+    }
 
 }

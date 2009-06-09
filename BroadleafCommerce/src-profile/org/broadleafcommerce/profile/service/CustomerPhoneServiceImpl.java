@@ -33,7 +33,7 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
 
     @Transactional(propagation = Propagation.REQUIRED)
     public CustomerPhone saveCustomerPhone(CustomerPhone customerPhone) {
-        List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(customerPhone.getCustomerId());
+        List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(customerPhone.getCustomer().getId());
         if (activeCustomerPhones != null && activeCustomerPhones.size() == 0) {
             customerPhone.getPhone().setDefault(true);
         } else {

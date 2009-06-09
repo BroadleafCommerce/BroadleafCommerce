@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +35,7 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADDRESS")
-public class AddressImpl implements Address, Serializable {
+public class AddressImpl implements Address {
 
     private static final long serialVersionUID = 1L;
 
@@ -45,67 +43,67 @@ public class AddressImpl implements Address, Serializable {
     @GeneratedValue(generator = "AddressId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AddressId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AddressImpl", allocationSize = 1)
     @Column(name = "ADDRESS_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "ADDRESS_LINE1")
-    private String addressLine1;
+    protected String addressLine1;
 
     @Column(name = "ADDRESS_LINE2")
-    private String addressLine2;
+    protected String addressLine2;
 
     @Column(name = "CITY")
-    private String city;
+    protected String city;
 
     @Column(name = "POSTAL_CODE")
-    private String postalCode;
+    protected String postalCode;
 
     @Column(name = "COUNTY")
-    private String county;
+    protected String county;
 
     @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = StateImpl.class)
     @JoinColumn(name = "STATE_PROV_REGION")
-    private State state;
+    protected State state;
 
     @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = CountryImpl.class)
     @JoinColumn(name = "COUNTRY")
-    private Country country;
+    protected Country country;
 
     @Column(name = "TOKENIZED_ADDRESS")
-    private String tokenizedAddress;
+    protected String tokenizedAddress;
 
     @Column(name = "STANDARDIZED")
-    private Boolean standardized = Boolean.FALSE;
+    protected Boolean standardized = Boolean.FALSE;
 
     // TODO - this field is temporary and will be removed later
     @Column(name = "ZIP_FOUR")
-    private String zipFour;
+    protected String zipFour;
 
     @Column(name = "COMPANY_NAME")
-    private String companyName;
+    protected String companyName;
 
     @Column(name = "IS_DEFAULT")
-    private boolean isDefault = false;
+    protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    private boolean isActive = true;
+    protected boolean isActive = true;
 
     @Column(name = "FIRST_NAME")
-    private String firstName;
+    protected String firstName;
 
     @Column(name = "LAST_NAME")
-    private String lastName;
+    protected String lastName;
 
     @Column(name = "PRIMARY_PHONE")
-    private String primaryPhone;
+    protected String primaryPhone;
 
     @Column(name = "SECONDARY_PHONE")
-    private String secondaryPhone;
+    protected String secondaryPhone;
 
     @Column(name = "IS_BUSINESS")
-    private boolean isBusiness = false;
+    protected boolean isBusiness = false;
 
     @Column(name = "VERIFICATION_LEVEL")
-    private String verificationLevel;
+    protected String verificationLevel;
 
     public Long getId() {
         return id;
@@ -268,51 +266,87 @@ public class AddressImpl implements Address, Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (other == null || !(other instanceof AddressImpl))
+        if (obj == null)
             return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AddressImpl other = (AddressImpl) obj;
 
-        AddressImpl item = (AddressImpl) other;
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
 
-        if (addressLine1 != null && item.addressLine1 != null ? !addressLine1.equals(item.addressLine1) : addressLine1 != item.addressLine1)
+        if (addressLine1 == null) {
+            if (other.addressLine1 != null)
+                return false;
+        } else if (!addressLine1.equals(other.addressLine1))
             return false;
-        if (addressLine2 != null && item.addressLine2 != null ? !addressLine2.equals(item.addressLine2) : addressLine2 != item.addressLine2)
+        if (addressLine2 == null) {
+            if (other.addressLine2 != null)
+                return false;
+        } else if (!addressLine2.equals(other.addressLine2))
             return false;
-        if (city != null && item.city != null ? !city.equals(item.city) : city != item.city)
+        if (city == null) {
+            if (other.city != null)
+                return false;
+        } else if (!city.equals(other.city))
             return false;
-        if (postalCode != null && item.postalCode != null ? !postalCode.equals(item.postalCode) : postalCode != item.postalCode)
+        if (companyName == null) {
+            if (other.companyName != null)
+                return false;
+        } else if (!companyName.equals(other.companyName))
             return false;
-        if (county != null && item.county != null ? !county.equals(item.county) : county != item.county)
+        if (country == null) {
+            if (other.country != null)
+                return false;
+        } else if (!country.equals(other.country))
             return false;
-        if (state != null && item.state != null ? !state.equals(item.state) : state != item.state)
+        if (county == null) {
+            if (other.county != null)
+                return false;
+        } else if (!county.equals(other.county))
             return false;
-        if (country != null && item.country != null ? !country.equals(item.country) : country != item.country)
+        if (firstName == null) {
+            if (other.firstName != null)
+                return false;
+        } else if (!firstName.equals(other.firstName))
             return false;
-        if (companyName != null && item.companyName != null ? !companyName.equals(item.companyName) : companyName != item.companyName)
+        if (lastName == null) {
+            if (other.lastName != null)
+                return false;
+        } else if (!lastName.equals(other.lastName))
             return false;
-        if (firstName != null && item.firstName != null ? !firstName.equals(item.firstName) : firstName != item.firstName)
+        if (postalCode == null) {
+            if (other.postalCode != null)
+                return false;
+        } else if (!postalCode.equals(other.postalCode))
             return false;
-        if (lastName != null && item.lastName != null ? !lastName.equals(item.lastName) : lastName != item.lastName)
+        if (state == null) {
+            if (other.state != null)
+                return false;
+        } else if (!state.equals(other.state))
             return false;
-
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = addressLine1 != null ? addressLine1.hashCode() : 0;
-        result = 31 * result + (addressLine2 != null ? addressLine2.hashCode() : 0);
-        result = 31 * result + (city != null ? city.hashCode() : 0);
-        result = 31 * result + (postalCode != null ? postalCode.hashCode() : 0);
-        result = 31 * result + (county != null ? county.hashCode() : 0);
-        result = 31 * result + (state != null ? state.hashCode() : 0);
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + (companyName != null ? companyName.hashCode() : 0);
-        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((addressLine1 == null) ? 0 : addressLine1.hashCode());
+        result = prime * result + ((addressLine2 == null) ? 0 : addressLine2.hashCode());
+        result = prime * result + ((city == null) ? 0 : city.hashCode());
+        result = prime * result + ((companyName == null) ? 0 : companyName.hashCode());
+        result = prime * result + ((country == null) ? 0 : country.hashCode());
+        result = prime * result + ((county == null) ? 0 : county.hashCode());
+        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+        result = prime * result + ((postalCode == null) ? 0 : postalCode.hashCode());
+        result = prime * result + ((state == null) ? 0 : state.hashCode());
         return result;
     }
 }

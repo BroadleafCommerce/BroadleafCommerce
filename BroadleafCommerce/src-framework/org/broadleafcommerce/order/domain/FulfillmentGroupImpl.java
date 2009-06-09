@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.order.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP")
-public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
+public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,83 +57,83 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
     @GeneratedValue(generator = "FulfillmentGroupId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FulfillmentGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupImpl", allocationSize = 1)
     @Column(name = "FULFILLMENT_GROUP_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
-    private Order order;
+    protected Order order;
 
     @Column(name = "REFERENCE_NUMBER")
-    private String referenceNumber;
+    protected String referenceNumber;
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
-    private List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
+    protected List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDRESS_ID")
-    private Address address;
+    protected Address address;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "PHONE_ID")
-    private Phone phone;
+    protected Phone phone;
 
     @Column(name = "METHOD")
-    private String method;
+    protected String method;
 
     //TODO change column name to RETAIL_SHIPPING_PRICE
     @Column(name = "RETAIL_PRICE")
-    private BigDecimal retailShippingPrice;
+    protected BigDecimal retailShippingPrice;
 
     //TODO change column name to SALE_SHIPPING_PRICE
     @Column(name = "SALE_PRICE")
-    private BigDecimal saleShippingPrice;
+    protected BigDecimal saleShippingPrice;
 
     //TODO change column name to SHIPPING_PRICE
     @Column(name = "PRICE")
-    private BigDecimal shippingPrice;
+    protected BigDecimal shippingPrice;
 
     @Transient
-    private BigDecimal adjustmentPrice;  // retailPrice with adjustments
+    protected BigDecimal adjustmentPrice;  // retailPrice with adjustments
 
     @Column(name = "TYPE")
-    private String type = FulfillmentGroupType.SHIPPING.getType();
+    protected String type = FulfillmentGroupType.SHIPPING.getType();
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
-    private List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
+    protected List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    private List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
+    protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
 
     @Column(name = "CITY_TAX")
-    private BigDecimal cityTax;
+    protected BigDecimal cityTax;
 
     @Column(name = "COUNTY_TAX")
-    private BigDecimal countyTax;
+    protected BigDecimal countyTax;
 
     @Column(name = "STATE_TAX")
-    private BigDecimal stateTax;
+    protected BigDecimal stateTax;
 
     @Column(name = "COUNTRY_TAX")
-    private BigDecimal countryTax;
+    protected BigDecimal countryTax;
 
     @Column(name = "TOTAL_TAX")
-    private BigDecimal totalTax;
+    protected BigDecimal totalTax;
 
     @Column(name = "DELIVERY_INSTRUCTION")
-    private String deliveryInstruction;
+    protected String deliveryInstruction;
 
     @Column(name = "IS_PRIMARY")
-    private boolean primary = false;
+    protected boolean primary = false;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class)
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
-    private PersonalMessage personalMessage;
+    protected PersonalMessage personalMessage;
 
     @Column(name = "MERCHANDISE_TOTAL")
-    private BigDecimal merchandiseTotal;
+    protected BigDecimal merchandiseTotal;
 
     @Column(name = "TOTAL")
-    private BigDecimal total;
+    protected BigDecimal total;
 
     public Long getId() {
         return id;
@@ -387,6 +386,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         int result = 1;
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((fulfillmentGroupItems == null) ? 0 : fulfillmentGroupItems.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
@@ -399,6 +399,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup, Serializable {
         if (getClass() != obj.getClass())
             return false;
         FulfillmentGroupImpl other = (FulfillmentGroupImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
         if (address == null) {
             if (other.address != null)
                 return false;

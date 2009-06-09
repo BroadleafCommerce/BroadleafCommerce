@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.payment.domain;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
@@ -23,7 +24,7 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.util.money.Money;
 
-public interface PaymentInfo {
+public interface PaymentInfo extends Serializable {
 
     public Long getId();
 

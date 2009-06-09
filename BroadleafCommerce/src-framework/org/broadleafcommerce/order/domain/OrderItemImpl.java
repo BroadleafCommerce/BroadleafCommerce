@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.order.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,7 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_ITEM")
-public class OrderItemImpl implements OrderItem, Serializable {
+public class OrderItemImpl implements OrderItem {
 
     private static final long serialVersionUID = 1L;
 
@@ -78,7 +77,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
     protected int quantity;
 
     @Transient
-    private BigDecimal adjustmentPrice;  // retailPrice with adjustments
+    protected BigDecimal adjustmentPrice;  // retailPrice with adjustments
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = {CascadeType.ALL})
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
@@ -89,7 +88,7 @@ public class OrderItemImpl implements OrderItem, Serializable {
     protected GiftWrapOrderItem giftWrapOrderItem;
 
     @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    private List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
+    protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
     @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = {CascadeType.ALL})
     protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
@@ -172,23 +171,6 @@ public class OrderItemImpl implements OrderItem, Serializable {
         return candidateItemOffers;
     }
 
-    /*    public void setAppliedItemOffers(List<Offer> appliedOffers) {
-        this.appliedItemOffers = appliedOffers;
-    }
-
-    public List<Offer> getAppliedItemOffers() {
-        return this.appliedItemOffers;
-    }
-
-    public List<Offer> addAppliedItemOffer(Offer appliedOffer) {
-        if (this.appliedItemOffers == null) {
-            this.appliedItemOffers = new ArrayList<Offer>();
-        }
-        this.appliedItemOffers.add(appliedOffer);
-        return this.appliedItemOffers;
-    }
-
-     */
     public void removeAllCandidateOffers() {
         if (candidateItemOffers != null) {
             candidateItemOffers.clear();
@@ -321,4 +303,102 @@ public class OrderItemImpl implements OrderItem, Serializable {
     public boolean getIsOnSale() {
         return getPrice() != getRetailPrice();
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((adjustmentPrice == null) ? 0 : adjustmentPrice.hashCode());
+        result = prime * result + ((candidateItemOffers == null) ? 0 : candidateItemOffers.hashCode());
+        result = prime * result + ((category == null) ? 0 : category.hashCode());
+        result = prime * result + ((giftWrapOrderItem == null) ? 0 : giftWrapOrderItem.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + markedForOffer;
+        result = prime * result + ((order == null) ? 0 : order.hashCode());
+        result = prime * result + ((orderItemAdjustments == null) ? 0 : orderItemAdjustments.hashCode());
+        result = prime * result + ((orderItemType == null) ? 0 : orderItemType.hashCode());
+        result = prime * result + ((personalMessage == null) ? 0 : personalMessage.hashCode());
+        result = prime * result + ((price == null) ? 0 : price.hashCode());
+        result = prime * result + quantity;
+        result = prime * result + ((retailPrice == null) ? 0 : retailPrice.hashCode());
+        result = prime * result + ((salePrice == null) ? 0 : salePrice.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OrderItemImpl other = (OrderItemImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (adjustmentPrice == null) {
+            if (other.adjustmentPrice != null)
+                return false;
+        } else if (!adjustmentPrice.equals(other.adjustmentPrice))
+            return false;
+        if (candidateItemOffers == null) {
+            if (other.candidateItemOffers != null)
+                return false;
+        } else if (!candidateItemOffers.equals(other.candidateItemOffers))
+            return false;
+        if (category == null) {
+            if (other.category != null)
+                return false;
+        } else if (!category.equals(other.category))
+            return false;
+        if (giftWrapOrderItem == null) {
+            if (other.giftWrapOrderItem != null)
+                return false;
+        } else if (!giftWrapOrderItem.equals(other.giftWrapOrderItem))
+            return false;
+        if (markedForOffer != other.markedForOffer)
+            return false;
+        if (order == null) {
+            if (other.order != null)
+                return false;
+        } else if (!order.equals(other.order))
+            return false;
+        if (orderItemAdjustments == null) {
+            if (other.orderItemAdjustments != null)
+                return false;
+        } else if (!orderItemAdjustments.equals(other.orderItemAdjustments))
+            return false;
+        if (orderItemType == null) {
+            if (other.orderItemType != null)
+                return false;
+        } else if (!orderItemType.equals(other.orderItemType))
+            return false;
+        if (personalMessage == null) {
+            if (other.personalMessage != null)
+                return false;
+        } else if (!personalMessage.equals(other.personalMessage))
+            return false;
+        if (price == null) {
+            if (other.price != null)
+                return false;
+        } else if (!price.equals(other.price))
+            return false;
+        if (quantity != other.quantity)
+            return false;
+        if (retailPrice == null) {
+            if (other.retailPrice != null)
+                return false;
+        } else if (!retailPrice.equals(other.retailPrice))
+            return false;
+        if (salePrice == null) {
+            if (other.salePrice != null)
+                return false;
+        } else if (!salePrice.equals(other.salePrice))
+            return false;
+        return true;
+    }
+
 }

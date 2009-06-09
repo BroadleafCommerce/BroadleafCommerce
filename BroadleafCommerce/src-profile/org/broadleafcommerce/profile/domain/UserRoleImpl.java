@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,22 +34,22 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_USER_ROLE")
-public class UserRoleImpl implements UserRole, Serializable {
+public class UserRoleImpl implements UserRole {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "USER_ROLE_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = UserImpl.class)
     @JoinColumn(name = "USER_ID")
-    private User user;
+    protected User user;
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class)
     @JoinColumn(name = "ROLE_ID")
-    private Role role;
+    protected Role role;
 
     @Override
     public Long getId() {
@@ -86,5 +84,42 @@ public class UserRoleImpl implements UserRole, Serializable {
     @Override
     public String getRoleName() {
         return role.getRoleName();
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((role == null) ? 0 : role.hashCode());
+        result = prime * result + ((user == null) ? 0 : user.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UserRoleImpl other = (UserRoleImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (role == null) {
+            if (other.role != null)
+                return false;
+        } else if (!role.equals(other.role))
+            return false;
+        if (user == null) {
+            if (other.user != null)
+                return false;
+        } else if (!user.equals(other.user))
+            return false;
+        return true;
     }
 }

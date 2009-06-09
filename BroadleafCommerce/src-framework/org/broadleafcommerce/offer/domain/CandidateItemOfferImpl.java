@@ -15,13 +15,14 @@
  */
 package org.broadleafcommerce.offer.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -33,27 +34,29 @@ import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_ITEM_OFFER")
-public class CandidateItemOfferImpl implements Serializable,CandidateItemOffer {
+@Inheritance(strategy=InheritanceType.JOINED)
+public class CandidateItemOfferImpl implements CandidateItemOffer {
+
     public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "CANDIDATE_ITEM_OFFER_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = OrderItemImpl.class)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    private OrderItem orderItem;
+    protected OrderItem orderItem;
 
     @ManyToOne(targetEntity = OfferImpl.class)
     @JoinColumn(name = "OFFER_ID")
-    private Offer offer;
+    protected Offer offer;
 
     @Column(name = "DISCOUNTED_PRICE")
     private BigDecimal discountedPrice;
 
     public CandidateItemOfferImpl(){
-
+        this(null, null);
     }
 
     public CandidateItemOfferImpl(OrderItem orderItem, Offer offer){
@@ -118,6 +121,49 @@ public class CandidateItemOfferImpl implements Serializable,CandidateItemOffer {
             }
             discountedPrice = priceToUse.getAmount();
         }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((discountedPrice == null) ? 0 : discountedPrice.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((offer == null) ? 0 : offer.hashCode());
+        result = prime * result + ((orderItem == null) ? 0 : orderItem.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CandidateItemOfferImpl other = (CandidateItemOfferImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (discountedPrice == null) {
+            if (other.discountedPrice != null)
+                return false;
+        } else if (!discountedPrice.equals(other.discountedPrice))
+            return false;
+        if (offer == null) {
+            if (other.offer != null)
+                return false;
+        } else if (!offer.equals(other.offer))
+            return false;
+        if (orderItem == null) {
+            if (other.orderItem != null)
+                return false;
+        } else if (!orderItem.equals(other.orderItem))
+            return false;
+        return true;
     }
 
 }

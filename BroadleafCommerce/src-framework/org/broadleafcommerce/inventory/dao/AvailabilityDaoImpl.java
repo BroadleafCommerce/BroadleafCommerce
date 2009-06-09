@@ -25,12 +25,12 @@ import org.broadleafcommerce.inventory.domain.SkuAvailability;
 import org.springframework.stereotype.Repository;
 
 @Repository("blAvailabilityDao")
-public class AvailabilityDaoJpa implements AvailabilityDao {
+public class AvailabilityDaoImpl implements AvailabilityDao {
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    private String queryCacheableKey = "org.hibernate.cacheable";
+    protected String queryCacheableKey = "org.hibernate.cacheable";
 
     @SuppressWarnings("unchecked")
     public List<SkuAvailability> readSKUAvailability(List<Long> skuIds, boolean realTime) {

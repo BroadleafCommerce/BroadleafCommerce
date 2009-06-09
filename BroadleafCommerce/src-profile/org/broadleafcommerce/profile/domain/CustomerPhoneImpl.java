@@ -15,12 +15,9 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -30,37 +27,35 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
-
 @Entity
-@EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
-public class CustomerPhoneImpl implements CustomerPhone, Serializable {
+public class CustomerPhoneImpl implements CustomerPhone{
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "CUSTOMER_PHONE_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "PHONE_NAME")
-    private String phoneName;
+    protected String phoneName;
 
-    @Column(name = "CUSTOMER_ID")
-    private Long customerId;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class)
+    @JoinColumn(name = "CUSTOMER_ID")
+    protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class)
     @JoinColumn(name = "PHONE_ID")
-    private Phone phone;
+    protected Phone phone = new PhoneImpl();
 
     public CustomerPhoneImpl() {
+        this(null);
     }
 
-    public CustomerPhoneImpl(Long customerId) {
-        this.customerId = customerId;
-        this.phone = new PhoneImpl();
+    public CustomerPhoneImpl(Customer customer) {
+        this.customer = customer;
     }
 
     public Long getId() {
@@ -79,12 +74,12 @@ public class CustomerPhoneImpl implements CustomerPhone, Serializable {
         this.phoneName = phoneName;
     }
 
-    public Long getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public Phone getPhone() {
@@ -93,5 +88,48 @@ public class CustomerPhoneImpl implements CustomerPhone, Serializable {
 
     public void setPhone(Phone phone) {
         this.phone = phone;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((phone == null) ? 0 : phone.hashCode());
+        result = prime * result + ((phoneName == null) ? 0 : phoneName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CustomerPhoneImpl other = (CustomerPhoneImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (customer == null) {
+            if (other.customer != null)
+                return false;
+        } else if (!customer.equals(other.customer))
+            return false;
+        if (phone == null) {
+            if (other.phone != null)
+                return false;
+        } else if (!phone.equals(other.phone))
+            return false;
+        if (phoneName == null) {
+            if (other.phoneName != null)
+                return false;
+        } else if (!phoneName.equals(other.phoneName))
+            return false;
+        return true;
     }
 }

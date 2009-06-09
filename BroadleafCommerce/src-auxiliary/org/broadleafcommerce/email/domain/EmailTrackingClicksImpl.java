@@ -35,114 +35,163 @@ import org.broadleafcommerce.profile.domain.CustomerImpl;
 @Entity
 @Table(name = "BLC_EMAIL_TRACKING_CLICKS")
 public class EmailTrackingClicksImpl implements EmailTrackingClicks {
-	
-	/** The Constant serialVersionUID. */
+
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    
-	@Id
-	@GeneratedValue
-	@Column(name = "CLICK_ID")
-	private Long id;
-	
-	@ManyToOne(targetEntity = EmailTrackingImpl.class)
+
+    @Id
+    @GeneratedValue
+    @Column(name = "CLICK_ID")
+    protected Long id;
+
+    @ManyToOne(targetEntity = EmailTrackingImpl.class)
     @JoinColumn(name = "EMAIL_TRACKING_ID")
-	private EmailTracking emailTracking;
-	
-	@Column(name = "DATE_CLICKED")
-	private Date dateClicked;
-	
-	@ManyToOne(targetEntity = CustomerImpl.class)
+    protected EmailTracking emailTracking;
+
+    @Column(name = "DATE_CLICKED")
+    protected Date dateClicked;
+
+    @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
-	private Customer customer;
-	
-	@Column(name = "DESTINATION_URI")
-	private String destinationUri;
-	
-	@Column(name = "QUERY_STRING")
-	private String queryString;
+    protected Customer customer;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getId()
-	 */
-	public Long getId() {
-		return id;
-	}
+    @Column(name = "DESTINATION_URI")
+    protected String destinationUri;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setId(java.lang.Long)
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Column(name = "QUERY_STRING")
+    protected String queryString;
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getDateClicked()
-	 */
-	public Date getDateClicked() {
-		return dateClicked;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getId()
+     */
+    public Long getId() {
+        return id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setDateClicked(java.util.Date)
-	 */
-	public void setDateClicked(Date dateClicked) {
-		this.dateClicked = dateClicked;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setId(java.lang.Long)
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getDestinationUri()
-	 */
-	public String getDestinationUri() {
-		return destinationUri;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getDateClicked()
+     */
+    public Date getDateClicked() {
+        return dateClicked;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setDestinationUri(java.lang.String)
-	 */
-	public void setDestinationUri(String destinationUri) {
-		this.destinationUri = destinationUri;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setDateClicked(java.util.Date)
+     */
+    public void setDateClicked(Date dateClicked) {
+        this.dateClicked = dateClicked;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getQueryString()
-	 */
-	public String getQueryString() {
-		return queryString;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getDestinationUri()
+     */
+    public String getDestinationUri() {
+        return destinationUri;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setQueryString(java.lang.String)
-	 */
-	public void setQueryString(String queryString) {
-		this.queryString = queryString;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setDestinationUri(java.lang.String)
+     */
+    public void setDestinationUri(String destinationUri) {
+        this.destinationUri = destinationUri;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getEmailTracking()
-	 */
-	public EmailTracking getEmailTracking() {
-		return emailTracking;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getQueryString()
+     */
+    public String getQueryString() {
+        return queryString;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setEmailTracking(org.broadleafcommerce.email.domain.EmailTrackingImpl)
-	 */
-	public void setEmailTracking(EmailTracking emailTracking) {
-		this.emailTracking = emailTracking;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setQueryString(java.lang.String)
+     */
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
 
-	/**
-	 * @return the customer
-	 */
-	public Customer getCustomer() {
-		return customer;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#getEmailTracking()
+     */
+    public EmailTracking getEmailTracking() {
+        return emailTracking;
+    }
 
-	/**
-	 * @param customer the customer to set
-	 */
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.email.domain.EmailTrackingClicks#setEmailTracking(org.broadleafcommerce.email.domain.EmailTrackingImpl)
+     */
+    public void setEmailTracking(EmailTracking emailTracking) {
+        this.emailTracking = emailTracking;
+    }
+
+    /**
+     * @return the customer
+     */
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * @param customer the customer to set
+     */
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((dateClicked == null) ? 0 : dateClicked.hashCode());
+        result = prime * result + ((destinationUri == null) ? 0 : destinationUri.hashCode());
+        result = prime * result + ((emailTracking == null) ? 0 : emailTracking.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EmailTrackingClicksImpl other = (EmailTrackingClicksImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (customer == null) {
+            if (other.customer != null)
+                return false;
+        } else if (!customer.equals(other.customer))
+            return false;
+        if (dateClicked == null) {
+            if (other.dateClicked != null)
+                return false;
+        } else if (!dateClicked.equals(other.dateClicked))
+            return false;
+        if (destinationUri == null) {
+            if (other.destinationUri != null)
+                return false;
+        } else if (!destinationUri.equals(other.destinationUri))
+            return false;
+        if (emailTracking == null) {
+            if (other.emailTracking != null)
+                return false;
+        } else if (!emailTracking.equals(other.emailTracking))
+            return false;
+        return true;
+    }
 
 }

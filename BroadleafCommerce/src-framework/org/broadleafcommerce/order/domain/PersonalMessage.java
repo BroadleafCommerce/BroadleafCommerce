@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.order.domain;
 
-public interface PersonalMessage {
+import java.io.Serializable;
+
+public interface PersonalMessage extends Serializable {
 
     public Long getId();
 

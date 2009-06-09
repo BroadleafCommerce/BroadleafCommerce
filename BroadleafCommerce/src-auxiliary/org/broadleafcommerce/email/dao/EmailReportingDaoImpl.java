@@ -34,7 +34,7 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository("blEmailReportingDao")
-public class EmailReportingDaoJpa implements EmailReportingDao {
+public class EmailReportingDaoImpl implements EmailReportingDao {
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;

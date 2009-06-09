@@ -31,7 +31,7 @@ import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blUserDao")
-public class UserDaoJpa implements UserDao {
+public class UserDaoImpl implements UserDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());

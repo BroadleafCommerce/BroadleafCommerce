@@ -33,31 +33,33 @@ import org.broadleafcommerce.encryption.EncryptionModule;
 @Table(name = "BLC_GIFT_CARD_PAYMENT")
 public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
 
+    private static final long serialVersionUID = 1L;
+
     protected GiftCardPaymentInfoImpl() {
         //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
         //this complies with JPA specification requirements for entity construction
     }
 
     @Transient
-    private EncryptionModule encryptionModule;
+    protected EncryptionModule encryptionModule;
 
     @Id
     @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "GiftCardPaymentInfoImpl", allocationSize = 1)
     @Column(name = "PAYMENT_ID")
-    private long id;
+    protected Long id;
 
     @Column(name = "REFERENCE_NUMBER")
-    private String referenceNumber;
+    protected String referenceNumber;
 
     @Column(name = "PAN")
-    private String pan;
+    protected String pan;
 
     @Column(name = "PIN")
-    private String pin;
+    protected String pin;
 
     @Override
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -72,7 +74,7 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     }
 
     @Override
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -108,6 +110,7 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((pan == null) ? 0 : pan.hashCode());
         result = prime * result + ((pin == null) ? 0 : pin.hashCode());
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
@@ -123,6 +126,11 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
         if (getClass() != obj.getClass())
             return false;
         GiftCardPaymentInfoImpl other = (GiftCardPaymentInfoImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
         if (pan == null) {
             if (other.pan != null)
                 return false;

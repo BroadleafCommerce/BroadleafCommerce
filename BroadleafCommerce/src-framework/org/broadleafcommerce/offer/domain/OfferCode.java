@@ -15,20 +15,22 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public interface OfferCode {
-	public Long getId() ;
+public interface OfferCode extends Serializable {
 
-	public void setId(Long id) ;
+    public Long getId() ;
 
-	public Offer getOffer() ;
+    public void setId(Long id) ;
 
-	public void setOffer(Offer offer) ;
+    public Offer getOffer() ;
 
-	public String getOfferCode();
+    public void setOffer(Offer offer) ;
 
-	public void setOfferCode(String offerCode);
+    public String getOfferCode();
+
+    public void setOfferCode(String offerCode);
 
     public Date getStartDate();
 
@@ -38,13 +40,13 @@ public interface OfferCode {
 
     public void setEndDate(Date endDate);
 
-	public int getMaxUses() ;
+    public int getMaxUses() ;
 
-	public void setMaxUses(int maxUses) ;
+    public void setMaxUses(int maxUses) ;
 
-	public int getUses() ;
+    public int getUses() ;
 
-	public void setUses(int uses) ;
+    public void setUses(int uses) ;
 
 
 

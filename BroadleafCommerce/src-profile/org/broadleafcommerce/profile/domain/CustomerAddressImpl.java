@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,31 +34,32 @@ import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 @EntityListeners(value = { TemporalTimestampListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_ADDRESS", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "ADDRESS_NAME" }))
-public class CustomerAddressImpl implements CustomerAddress, Serializable {
+public class CustomerAddressImpl implements CustomerAddress {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     @Column(name = "CUSTOMER_ADDRESS_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "ADDRESS_NAME")
-    private String addressName;
+    protected String addressName;
 
-    @Column(name = "CUSTOMER_ID")
-    private Long customerId;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class)
+    @JoinColumn(name = "CUSTOMER_ID")
+    protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
-    private Address address;
+    protected Address address = new AddressImpl();
 
     public CustomerAddressImpl() {
+        this(null);
     }
 
-    public CustomerAddressImpl(Long customerId) {
-        this.customerId = customerId;
-        this.address = new AddressImpl();
+    public CustomerAddressImpl(Customer customer) {
+        this.customer = customer;
     }
 
     public Long getId() {
@@ -79,12 +78,12 @@ public class CustomerAddressImpl implements CustomerAddress, Serializable {
         this.addressName = addressName;
     }
 
-    public Long getCustomerId() {
-        return customerId;
+    public Customer getCustomer() {
+        return customer;
     }
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public Address getAddress() {
@@ -101,7 +100,8 @@ public class CustomerAddressImpl implements CustomerAddress, Serializable {
         int result = 1;
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((addressName == null) ? 0 : addressName.hashCode());
-        result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
+        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
@@ -114,6 +114,11 @@ public class CustomerAddressImpl implements CustomerAddress, Serializable {
         if (getClass() != obj.getClass())
             return false;
         CustomerAddressImpl other = (CustomerAddressImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
         if (address == null) {
             if (other.address != null)
                 return false;
@@ -124,12 +129,13 @@ public class CustomerAddressImpl implements CustomerAddress, Serializable {
                 return false;
         } else if (!addressName.equals(other.addressName))
             return false;
-        if (customerId == null) {
-            if (other.customerId != null)
+        if (customer == null) {
+            if (other.customer != null)
                 return false;
-        } else if (!customerId.equals(other.customerId))
+        } else if (!customer.equals(other.customer))
             return false;
         return true;
     }
+
 
 }

@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-public interface CustomerPhone {
+import java.io.Serializable;
+
+public interface CustomerPhone extends Serializable {
 
     public void setId(Long id);
 
@@ -25,11 +27,12 @@ public interface CustomerPhone {
 
     public String getPhoneName();
 
-    public Long getCustomerId();
+    public Customer getCustomer();
 
-    public void setCustomerId(Long customerId);
+    public void setCustomer(Customer customer);
 
     public Phone getPhone();
 
     public void setPhone(Phone phone);
+
 }

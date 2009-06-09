@@ -122,7 +122,7 @@ public class CustomerPhoneController {
             Long customerPhoneId, HttpServletRequest request) {
         //TODO: check to see if this can be refactored to make one service call to pass in customerPhoneId to set to default
         CustomerPhone customerPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
-        customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomerId());
+        customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomer().getId());
 
         request.setAttribute("phone.madePhoneDefault", "true");
 
@@ -163,7 +163,7 @@ public class CustomerPhoneController {
 
         if (!errors.hasErrors()) {
             CustomerPhone customerPhone = (CustomerPhone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.CustomerPhone");
-            customerPhone.setCustomerId(customerState.getCustomerId(request));
+            customerPhone.setCustomer(customerState.getCustomer(request));
             customerPhone.setPhoneName(phoneNameForm.getPhoneName());
             customerPhone.setPhone(phoneNameForm.getPhone());
 
@@ -259,7 +259,7 @@ public class CustomerPhoneController {
             if (cPhone != null) {
                 // TODO: verify this is the current customers phone
                 //? - do we really need this since we read the phone with the currCustomerId?
-                if (!cPhone.getCustomerId().equals(currCustomerId)) {
+                if (!cPhone.getCustomer().getId().equals(currCustomerId)) {
                     return viewPhoneErrorView;
                 }
 

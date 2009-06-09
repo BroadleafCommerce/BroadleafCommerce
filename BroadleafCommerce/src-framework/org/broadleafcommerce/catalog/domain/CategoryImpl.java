@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -66,51 +65,50 @@ import org.hibernate.annotations.OrderBy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class CategoryImpl implements Category, Serializable {
+public class CategoryImpl implements Category {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-
-    protected transient final Logger log = Logger.getLogger(getClass());
+    private transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
     @GeneratedValue
     @Column(name = "CATEGORY_ID")
-    private Long id;
+    protected Long id;
 
     /** The name. */
     @Column(name = "NAME")
-    private String name;
+    protected String name;
 
     /** The url. */
     @Column(name = "URL")
-    private String url;
+    protected String url;
 
     /** The url key. */
     @Column(name = "URL_KEY")
-    private String urlKey;
+    protected String urlKey;
 
     /** The default parent category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
-    private Category defaultParentCategory;
+    protected Category defaultParentCategory;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    private String description;
+    protected String description;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    private Date activeStartDate;
+    protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
-    private Date activeEndDate;
+    protected Date activeEndDate;
 
     /** The display template. */
     @Column(name = "DISPLAY_TEMPLATE")
-    private String displayTemplate;
+    protected String displayTemplate;
 
     /** The all child categories. */
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
@@ -118,7 +116,7 @@ public class CategoryImpl implements Category, Serializable {
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
-    private List<Category> allChildCategories;
+    protected List<Category> allChildCategories;
 
     /** The all parent categories. */
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
@@ -126,7 +124,7 @@ public class CategoryImpl implements Category, Serializable {
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
-    private List<Category> allParentCategories;
+    protected List<Category> allParentCategories;
 
     /** The category images. */
     @CollectionOfElements
@@ -134,19 +132,19 @@ public class CategoryImpl implements Category, Serializable {
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    private Map<String, String> categoryImages;
+    protected Map<String, String> categoryImages;
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
-    private String longDescription;
+    protected String longDescription;
 
     /** The child categories. */
     @Transient
-    private List<Category> childCategories;
+    protected List<Category> childCategories;
 
     /** The cached child category url map. */
     @Transient
-    private Map<String, List<Category>> cachedChildCategoryUrlMap = new HashMap<String, List<Category>>();
+    protected Map<String, List<Category>> cachedChildCategoryUrlMap = new HashMap<String, List<Category>>();
 
     /*
      * (non-Javadoc)
@@ -482,6 +480,43 @@ public class CategoryImpl implements Category, Serializable {
 
     public void setAllParentCategories(List<Category> allParentCategories) {
         this.allParentCategories = allParentCategories;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        CategoryImpl other = (CategoryImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        return true;
     }
 
 }

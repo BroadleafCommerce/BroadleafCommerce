@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ import java.util.Map;
  * @author btaylor
  * @see {@link ProductImpl},{@link Sku}, {@link Category}
  */
-public interface Product {
+public interface Product extends Serializable {
 
     /**
      * The id of the Product.

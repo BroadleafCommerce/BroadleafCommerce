@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -33,49 +31,49 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-public class CustomerImpl implements Customer, Serializable {
+public class CustomerImpl implements Customer {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "CUSTOMER_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "USER_NAME")
-    private String username;
+    protected String username;
 
     @Column(name = "PASSWORD")
-    private String password;
+    protected String password;
 
     @Column(name = "FIRST_NAME")
-    private String firstName;
+    protected String firstName;
 
     @Column(name = "LAST_NAME")
-    private String lastName;
+    protected String lastName;
 
     @Column(name = "EMAIL_ADDRESS")
-    private String emailAddress;
+    protected String emailAddress;
 
     @Column(name = "CHALLENGE_QUESTION_ID")
-    private Long challengeQuestionId;
+    protected Long challengeQuestionId;
 
     @Column(name = "CHALLENGE_ANSWER")
-    private String challengeAnswer;
+    protected String challengeAnswer;
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
-    private boolean passwordChangeRequired = false;
+    protected boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
-    private boolean receiveEmail = true;
+    protected boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
-    private boolean registered = false;
+    protected boolean registered = false;
 
     @Transient
-    private String unencodedPassword;
+    protected String unencodedPassword;
 
     @Transient
-    private String unencodedChallengeAnswer;
+    protected String unencodedChallengeAnswer;
 
     public Long getId() {
         return id;
@@ -182,25 +180,33 @@ public class CustomerImpl implements Customer, Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other)
+    public boolean equals(Object obj) {
+        if (this == obj)
             return true;
-        if (other == null || !(other instanceof CustomerImpl))
+        if (obj == null)
             return false;
-
-        CustomerImpl item = (CustomerImpl) other;
-
-        if (username != null ? !username.equals(item.username) : item.username != null)
+        if (getClass() != obj.getClass())
             return false;
+        CustomerImpl other = (CustomerImpl) obj;
 
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (username == null) {
+            if (other.username != null)
+                return false;
+        } else if (!username.equals(other.username))
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result *= 31;
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
 }

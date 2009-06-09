@@ -15,11 +15,13 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 import org.broadleafcommerce.util.money.Money;
 
-public interface OfferAudit {
+public interface OfferAudit extends Serializable {
+
     public Long getId();
 
     public void setId(Long id);

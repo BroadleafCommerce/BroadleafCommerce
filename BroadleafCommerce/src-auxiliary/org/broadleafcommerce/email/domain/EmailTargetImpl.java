@@ -1,5 +1,7 @@
 package org.broadleafcommerce.email.domain;
 
+import java.util.Arrays;
+
 /**
  * Basic implementation of EmailTarget
  * @author bpolster
@@ -8,9 +10,9 @@ public class EmailTargetImpl implements EmailTarget {
 
     private static final long serialVersionUID = 1L;
 
-    private String[] bccAddresses;
-    private String[] ccAddresses;
-    private String emailAddress;
+    protected String[] bccAddresses;
+    protected String[] ccAddresses;
+    protected String emailAddress;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.email.domain.EmailTarget#getBCCAddresses()
@@ -58,6 +60,37 @@ public class EmailTargetImpl implements EmailTarget {
     @Override
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(bccAddresses);
+        result = prime * result + Arrays.hashCode(ccAddresses);
+        result = prime * result + ((emailAddress == null) ? 0 : emailAddress.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        EmailTargetImpl other = (EmailTargetImpl) obj;
+        if (!Arrays.equals(bccAddresses, other.bccAddresses))
+            return false;
+        if (!Arrays.equals(ccAddresses, other.ccAddresses))
+            return false;
+        if (emailAddress == null) {
+            if (other.emailAddress != null)
+                return false;
+        } else if (!emailAddress.equals(other.emailAddress))
+            return false;
+        return true;
     }
 
 }

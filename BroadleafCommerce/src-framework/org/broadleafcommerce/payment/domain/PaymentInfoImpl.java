@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.payment.domain;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +45,7 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER_PAYMENT")
-public class PaymentInfoImpl implements PaymentInfo, Serializable {
+public class PaymentInfoImpl implements PaymentInfo {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,34 +53,34 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentInfoImpl", allocationSize = 1)
     @Column(name = "PAYMENT_ID")
-    private Long id;
+    protected Long id;
 
     @ManyToOne(targetEntity = OrderImpl.class)
     @JoinColumn(name = "ORDER_ID")
-    private Order order;
+    protected Order order;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDRESS_ID")
-    private Address address;
+    protected Address address;
 
     @ManyToOne(targetEntity = PhoneImpl.class)
     @JoinColumn(name = "PHONE_ID")
-    private Phone phone;
+    protected Phone phone;
 
     @Column(name = "AMOUNT")
-    private BigDecimal amount;
+    protected BigDecimal amount;
 
     @Column(name = "REFERENCE_NUMBER")
-    private String referenceNumber;
+    protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE")
-    private String type;
+    protected String type;
 
     @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
+    protected List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
 
     @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentLogImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    private List<PaymentLog> paymentLogs = new ArrayList<PaymentLog>();
+    protected List<PaymentLog> paymentLogs = new ArrayList<PaymentLog>();
 
     @Override
     public Money getAmount() {
@@ -166,6 +165,11 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
         if (getClass() != obj.getClass())
             return false;
         PaymentInfoImpl other = (PaymentInfoImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
         if (order == null) {
             if (other.order != null)
                 return false;
@@ -188,6 +192,7 @@ public class PaymentInfoImpl implements PaymentInfo, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((order == null) ? 0 : order.hashCode());
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());

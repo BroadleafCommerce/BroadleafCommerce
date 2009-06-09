@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +32,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CHALLENGE_QUESTION")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class ChallengeQuestionImpl implements ChallengeQuestion, Serializable {
+public class ChallengeQuestionImpl implements ChallengeQuestion {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,10 +40,10 @@ public class ChallengeQuestionImpl implements ChallengeQuestion, Serializable {
     @GeneratedValue(generator = "ChallengeQuestionId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ChallengeQuestionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerImpl", allocationSize = 1)
     @Column(name = "QUESTION_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name = "QUESTION")
-    private String question;
+    protected String question;
 
     public Long getId() {
         return id;
@@ -65,5 +63,36 @@ public class ChallengeQuestionImpl implements ChallengeQuestion, Serializable {
 
     public String toString() {
         return question;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((question == null) ? 0 : question.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ChallengeQuestionImpl other = (ChallengeQuestionImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (question == null) {
+            if (other.question != null)
+                return false;
+        } else if (!question.equals(other.question))
+            return false;
+        return true;
     }
 }

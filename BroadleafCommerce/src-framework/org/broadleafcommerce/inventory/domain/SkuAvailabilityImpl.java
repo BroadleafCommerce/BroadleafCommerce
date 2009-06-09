@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.inventory.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -49,7 +48,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_AVAILABILITY")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class SkuAvailabilityImpl implements SkuAvailability, Serializable {
+public class SkuAvailabilityImpl implements SkuAvailability {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -58,99 +57,99 @@ public class SkuAvailabilityImpl implements SkuAvailability, Serializable {
     @Id
     @GeneratedValue
     @Column(name = "SKU_AVAILABILITY_ID")
-    private Long id;
+    protected Long id;
 
     /** The sale price. */
     @Column(name = "SKU_ID")
-    private Long skuId;
+    protected Long skuId;
 
     /** The retail price. */
     @Column(name = "LOCATION_ID")
-    private Long locationId;
+    protected Long locationId;
 
     /** The quantity on hand. */
     @Column(name = "QTY_ON_HAND")
-    private Integer quantityOnHand;
+    protected Integer quantityOnHand;
 
     /** The reserve quantity. */
     @Column(name = "RESERVE_QTY")
-    private Integer reserveQuantity;
+    protected Integer reserveQuantity;
 
     /** The description. */
     @Column(name = "AVAILABILITY_STATUS")
-    private String availabilityStatus;
+    protected String availabilityStatus;
 
     /** The date this product will be available. */
     @Column(name = "AVAILABILITY_DATE")
-    private Date availabilityDate;
+    protected Date availabilityDate;
 
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	@Override
-	public Long getLocationId() {
-		return locationId;
-	}
+    @Override
+    public Long getLocationId() {
+        return locationId;
+    }
 
-	@Override
-	public Integer getQuantityOnHand() {
-		return quantityOnHand;
-	}
+    @Override
+    public Integer getQuantityOnHand() {
+        return quantityOnHand;
+    }
 
-	@Override
-	public Long getSkuId() {
-		return skuId;
-	}
+    @Override
+    public Long getSkuId() {
+        return skuId;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@Override
-	public void setLocationId(Long locationId) {
-		this.locationId = locationId;
-	}
+    @Override
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
+    }
 
-	@Override
-	public void setQuantityOnHand(Integer qoh) {
-		this.quantityOnHand = qoh;
-	}
+    @Override
+    public void setQuantityOnHand(Integer qoh) {
+        this.quantityOnHand = qoh;
+    }
 
-	@Override
-	public void setSkuId(Long skuId) {
-		this.skuId = skuId;
-	}
+    @Override
+    public void setSkuId(Long skuId) {
+        this.skuId = skuId;
+    }
 
-	@Override
-	public Date getAvailabilityDate() {
-		return availabilityDate;
-	}
+    @Override
+    public Date getAvailabilityDate() {
+        return availabilityDate;
+    }
 
-	@Override
-	public void setAvailabilityDate(Date availabilityDate) {
-		this.availabilityDate = availabilityDate;
-	}
+    @Override
+    public void setAvailabilityDate(Date availabilityDate) {
+        this.availabilityDate = availabilityDate;
+    }
 
 
-	//=======================================================================>
+    //=======================================================================>
 
 
     /**
      * Returns an implementation specific availability status.   This property can return null.
      */
     public String getAvailabilityStatus() {
-    	return availabilityStatus;
+        return availabilityStatus;
     }
 
     /**
      * Sets the availability status.
      */
     public void setAvailabilityStatus(String status) {
-    	this.availabilityStatus = status;
+        this.availabilityStatus = status;
     }
 
 
@@ -160,29 +159,66 @@ public class SkuAvailabilityImpl implements SkuAvailability, Serializable {
      * Implementations may want to manage a reserve quantity at each location so that the
      * available quantity for purchases is the quantityOnHand - reserveQuantity.
      */
-	public Integer getReserveQuantity() {
-		return reserveQuantity;
-	}
+    public Integer getReserveQuantity() {
+        return reserveQuantity;
+    }
 
     /**
      * Sets the reserve quantity.
      * Implementations may want to manage a reserve quantity at each location so that the
      * available quantity for purchases is the quantityOnHand - reserveQuantity.
      */
-	public void setReserveQuantity(Integer reserveQuantity) {
-		this.reserveQuantity = reserveQuantity;
-	}
+    public void setReserveQuantity(Integer reserveQuantity) {
+        this.reserveQuantity = reserveQuantity;
+    }
 
     /**
      * Returns the getQuantityOnHand() - getReserveQuantity().
      * Preferred implementation is to return null if getQuantityOnHand() is null and to treat
      * a null in getReserveQuantity() as ZERO.
      */
-	public Integer getAvailableQuantity() {
-		if (getQuantityOnHand() == null || getReserveQuantity() == null) {
-			return getQuantityOnHand();
-		} else {
-			return getQuantityOnHand() - getReserveQuantity();
-		}
-	}
+    public Integer getAvailableQuantity() {
+        if (getQuantityOnHand() == null || getReserveQuantity() == null) {
+            return getQuantityOnHand();
+        } else {
+            return getQuantityOnHand() - getReserveQuantity();
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((locationId == null) ? 0 : locationId.hashCode());
+        result = prime * result + ((skuId == null) ? 0 : skuId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SkuAvailabilityImpl other = (SkuAvailabilityImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (locationId == null) {
+            if (other.locationId != null)
+                return false;
+        } else if (!locationId.equals(other.locationId))
+            return false;
+        if (skuId == null) {
+            if (other.skuId != null)
+                return false;
+        } else if (!skuId.equals(other.skuId))
+            return false;
+        return true;
+    }
 }

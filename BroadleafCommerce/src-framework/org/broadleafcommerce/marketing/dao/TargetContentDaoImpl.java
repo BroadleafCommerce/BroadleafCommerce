@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.dao;
+package org.broadleafcommerce.marketing.dao;
 
 import java.util.List;
 
@@ -24,13 +24,12 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.Country;
-import org.broadleafcommerce.profile.domain.State;
+import org.broadleafcommerce.marketing.domain.TargetContent;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("blStateDao")
-public class StateDaoJpa implements StateDao {
+@Repository("blTargetContentDao")
+public class TargetContentDaoImpl implements TargetContentDao {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
@@ -41,28 +40,53 @@ public class StateDaoJpa implements StateDao {
     @Resource
     protected EntityConfiguration entityConfiguration;
 
-    private String queryCacheableKey = "org.hibernate.cacheable";
+    protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @SuppressWarnings("unchecked")
-    public State findStateByAbbreviation(String abbreviation) {
-        return (State) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.State"), abbreviation);
+    @Override
+    public void delete(Long targetContentId) {
+        TargetContent tc = readTargetContentById(targetContentId);
+        em.remove(tc);
     }
 
+    @Override
+    public TargetContent save(TargetContent targetContent) {
+        if(targetContent.getId() == null) {
+            em.persist(targetContent);
+        }else {
+            targetContent = em.merge(targetContent);
+        }
+        return targetContent;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
-    public List<State> findStates() {
-        Query query = em.createNamedQuery("BC_FIND_STATES");
+    public List<TargetContent> readCurrentTargetContentByNameType(String name, String type) {
+        Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS_BY_NAME_TYPE");
+        query.setParameter("name", name);
+        query.setParameter("type", type);
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public Country findCountryByShortName(String shortName) {
-        return (Country) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Country"), shortName);
+    public List<TargetContent> readCurrentTargetContentsByPriority(int priority) {
+        Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS_BY_PRIORITY");
+        query.setParameter("priority", priority);
+        query.setHint(getQueryCacheableKey(), true);
+        return query.getResultList();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
-    public List<Country> findCountries() {
-        Query query = em.createNamedQuery("BC_FIND_COUNTRIES");
+    public TargetContent readTargetContentById(Long targetContentId) {
+        return (TargetContent) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.marketing.domain.TargetContent"), targetContentId);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<TargetContent> readTargetContents() {
+        Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS");
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }

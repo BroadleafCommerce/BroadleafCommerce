@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -31,16 +29,16 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_STATE")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class StateImpl implements State, Serializable {
+public class StateImpl implements State {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "ABBREVIATION")
-    private String abbreviation;
+    protected String abbreviation;
 
     @Column(name = "NAME")
-    private String name;
+    protected String name;
 
     public String getAbbreviation() {
         return abbreviation;
@@ -59,22 +57,33 @@ public class StateImpl implements State, Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (other == null || !(other instanceof StateImpl)) return false;
-
-        StateImpl item = (StateImpl) other;
-
-        if (name != null && item.name != null ? !name.equals(item.name) : name != item.name) return false;
-
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        StateImpl other = (StateImpl) obj;
+        if (abbreviation == null) {
+            if (other.abbreviation != null)
+                return false;
+        } else if (!abbreviation.equals(other.abbreviation))
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result *= 31;
-
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((abbreviation == null) ? 0 : abbreviation.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
 }

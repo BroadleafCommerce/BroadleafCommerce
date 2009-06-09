@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.order.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,7 @@ import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
 
-public interface Order {
+public interface Order extends Serializable {
 
     public Long getId();
 

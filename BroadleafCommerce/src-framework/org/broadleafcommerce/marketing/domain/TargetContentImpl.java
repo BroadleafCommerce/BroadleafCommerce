@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.marketing.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -35,7 +34,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Inheritance(strategy=InheritanceType.JOINED)
 @Table(name="BLC_TARGET_CONTENT")
 @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-public class TargetContentImpl implements TargetContent, Serializable {
+public class TargetContentImpl implements TargetContent {
 
     private static final long serialVersionUID = 1L;
 
@@ -43,28 +42,28 @@ public class TargetContentImpl implements TargetContent, Serializable {
     @GeneratedValue(generator="targetContentId", strategy=GenerationType.TABLE)
     @TableGenerator(name="targetContentId", table="SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "targetContentImpl", allocationSize = 1)
     @Column(name="TARGET_CONTENT_ID")
-    private Long id;
+    protected Long id;
 
     @Column(name="PRIORITY", nullable=false)
-    private int priority;
+    protected int priority;
 
     @Column(name="CONTENT_TYPE", nullable=false)
-    private String contentType;
+    protected String contentType;
 
     @Column(name="CONTENT_NAME", nullable=false)
-    private String contentName;
+    protected String contentName;
 
     @Column(name="URL")
-    private String url;
+    protected String url;
 
     @Column(name="CONTENT")
-    private String content;
+    protected String content;
 
     @Column(name="ONLINE_DATE")
-    private Date onlineDate;
+    protected Date onlineDate;
 
     @Column(name="OFFLINE_DATE")
-    private Date offlineDate;
+    protected Date offlineDate;
 
     public Long getId() {
         return id;
@@ -128,6 +127,55 @@ public class TargetContentImpl implements TargetContent, Serializable {
 
     public void setOfflineDate(Date offlineDate) {
         this.offlineDate = offlineDate;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((content == null) ? 0 : content.hashCode());
+        result = prime * result + ((contentName == null) ? 0 : contentName.hashCode());
+        result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TargetContentImpl other = (TargetContentImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (content == null) {
+            if (other.content != null)
+                return false;
+        } else if (!content.equals(other.content))
+            return false;
+        if (contentName == null) {
+            if (other.contentName != null)
+                return false;
+        } else if (!contentName.equals(other.contentName))
+            return false;
+        if (contentType == null) {
+            if (other.contentType != null)
+                return false;
+        } else if (!contentType.equals(other.contentType))
+            return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
+        return true;
     }
 
 

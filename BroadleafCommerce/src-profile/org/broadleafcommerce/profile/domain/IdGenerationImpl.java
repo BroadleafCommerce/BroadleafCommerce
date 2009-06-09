@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.domain;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -28,22 +26,22 @@ import javax.persistence.Version;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ID_GENERATION")
-public class IdGenerationImpl implements IdGeneration, Serializable {
+public class IdGenerationImpl implements IdGeneration {
 
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "ID_TYPE")
-    private String type;
+    protected String type;
 
     @Column(name = "BATCH_START")
-    private Long batchStart;
+    protected Long batchStart;
 
     @Column(name = "BATCH_SIZE")
-    private Long batchSize;
+    protected Long batchSize;
 
     @Version
-    private Integer version;
+    protected Integer version;
 
     public String getType() {
         return type;
@@ -71,5 +69,48 @@ public class IdGenerationImpl implements IdGeneration, Serializable {
 
     public Integer getVersion() {
         return version;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((batchSize == null) ? 0 : batchSize.hashCode());
+        result = prime * result + ((batchStart == null) ? 0 : batchStart.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((version == null) ? 0 : version.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        IdGenerationImpl other = (IdGenerationImpl) obj;
+        if (batchSize == null) {
+            if (other.batchSize != null)
+                return false;
+        } else if (!batchSize.equals(other.batchSize))
+            return false;
+        if (batchStart == null) {
+            if (other.batchStart != null)
+                return false;
+        } else if (!batchStart.equals(other.batchStart))
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        } else if (!type.equals(other.type))
+            return false;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        } else if (!version.equals(other.version))
+            return false;
+        return true;
     }
 }

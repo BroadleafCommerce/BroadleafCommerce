@@ -171,4 +171,59 @@ public class PaymentLogImpl implements PaymentLog {
     public void setAmountPaid(Money amountPaid) {
         this.amountPaid = Money.toAmount(amountPaid);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((customer == null) ? 0 : customer.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((paymentInfo == null) ? 0 : paymentInfo.hashCode());
+        result = prime * result + ((paymentInfoReferenceNumber == null) ? 0 : paymentInfoReferenceNumber.hashCode());
+        result = prime * result + ((transactionTimestamp == null) ? 0 : transactionTimestamp.hashCode());
+        result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        PaymentLogImpl other = (PaymentLogImpl) obj;
+
+        if (id != null && other.id != null) {
+            return id.equals(other.id);
+        }
+
+        if (customer == null) {
+            if (other.customer != null)
+                return false;
+        } else if (!customer.equals(other.customer))
+            return false;
+        if (paymentInfo == null) {
+            if (other.paymentInfo != null)
+                return false;
+        } else if (!paymentInfo.equals(other.paymentInfo))
+            return false;
+        if (paymentInfoReferenceNumber == null) {
+            if (other.paymentInfoReferenceNumber != null)
+                return false;
+        } else if (!paymentInfoReferenceNumber.equals(other.paymentInfoReferenceNumber))
+            return false;
+        if (transactionTimestamp == null) {
+            if (other.transactionTimestamp != null)
+                return false;
+        } else if (!transactionTimestamp.equals(other.transactionTimestamp))
+            return false;
+        if (userName == null) {
+            if (other.userName != null)
+                return false;
+        } else if (!userName.equals(other.userName))
+            return false;
+        return true;
+    }
 }

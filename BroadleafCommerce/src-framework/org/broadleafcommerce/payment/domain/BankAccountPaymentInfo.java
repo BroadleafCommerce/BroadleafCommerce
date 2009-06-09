@@ -20,12 +20,12 @@ public interface BankAccountPaymentInfo extends Referenced {
     /**
      * @return the id
      */
-    public long getId();
+    public Long getId();
 
     /**
      * @param id the id to set
      */
-    public void setId(long id);
+    public void setId(Long id);
 
     /**
      * @return the account number

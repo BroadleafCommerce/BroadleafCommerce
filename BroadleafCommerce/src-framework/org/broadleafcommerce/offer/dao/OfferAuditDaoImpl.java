@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.dao;
+package org.broadleafcommerce.offer.dao;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -21,12 +21,15 @@ import javax.persistence.PersistenceContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.profile.domain.Phone;
+import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
-@Repository("blPhoneDao")
-public class PhoneDaoJpa implements PhoneDao {
+@Repository("blOfferAuditDao")
+public class OfferAuditDaoImpl implements OfferAuditDao {
+
+    /** Lookup identifier for Offer bean **/
+    private static String beanName = "org.broadleafcommerce.offer.domain.OfferAudit";
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
@@ -37,17 +40,30 @@ public class PhoneDaoJpa implements PhoneDao {
     @Resource
     protected EntityConfiguration entityConfiguration;
 
-    public Phone save(Phone phone) {
-        if (phone.getId() == null) {
-            em.persist(phone);
-        } else {
-            phone = em.merge(phone);
-        }
-        return phone;
+    @Override
+    public OfferAudit create() {
+        return ((OfferAudit) entityConfiguration.createEntityInstance(beanName));
     }
 
-    @SuppressWarnings("unchecked")
-    public Phone readPhoneById(Long phoneId) {
-        return (Phone) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Phone"), phoneId);
+    @Override
+    public void delete(OfferAudit offerAudit) {
+        em.remove(offerAudit);
     }
+
+    @Override
+    public OfferAudit save(OfferAudit offerAudit) {
+        if(offerAudit.getId() == null){
+            em.persist(offerAudit);
+        }else{
+            offerAudit = em.merge(offerAudit);
+        }
+        return offerAudit;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public OfferAudit readAuditById(Long offerAuditId) {
+        return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(beanName), offerAuditId);
+    }
+
 }
