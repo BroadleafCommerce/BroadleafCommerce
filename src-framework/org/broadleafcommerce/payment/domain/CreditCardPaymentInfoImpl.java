@@ -161,7 +161,6 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
         int result = 1;
         result = prime * result + ((expirationMonth == null) ? 0 : expirationMonth.hashCode());
         result = prime * result + ((expirationYear == null) ? 0 : expirationYear.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((pan == null) ? 0 : pan.hashCode());
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
         return result;

@@ -177,7 +177,6 @@ public class PaymentLogImpl implements PaymentLog {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((paymentInfo == null) ? 0 : paymentInfo.hashCode());
         result = prime * result + ((paymentInfoReferenceNumber == null) ? 0 : paymentInfoReferenceNumber.hashCode());
         result = prime * result + ((transactionTimestamp == null) ? 0 : transactionTimestamp.hashCode());

@@ -131,7 +131,6 @@ public class CategoryProductImpl implements CategoryProduct {
         int result = 1;
         result = prime * result + ((category == null) ? 0 : category.hashCode());
         result = prime * result + ((displayOrder == null) ? 0 : displayOrder.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((product == null) ? 0 : product.hashCode());
         return result;
     }

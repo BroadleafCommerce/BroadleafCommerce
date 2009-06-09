@@ -271,7 +271,6 @@ public class OfferImpl implements Offer {
         int result = 1;
         result = prime * result + ((appliesToCustomerRules == null) ? 0 : appliesToCustomerRules.hashCode());
         result = prime * result + ((appliesToOrderRules == null) ? 0 : appliesToOrderRules.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());

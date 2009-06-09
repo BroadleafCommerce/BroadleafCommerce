@@ -165,7 +165,6 @@ public class BasePriceImpl implements BasePrice {
         result = prime * result + ((amount == null) ? 0 : amount.hashCode());
         result = prime * result + ((auditable == null) ? 0 : auditable.hashCode());
         result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((sku == null) ? 0 : sku.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         return result;

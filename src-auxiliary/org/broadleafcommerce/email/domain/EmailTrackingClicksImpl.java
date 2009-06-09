@@ -153,7 +153,6 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
         result = prime * result + ((dateClicked == null) ? 0 : dateClicked.hashCode());
         result = prime * result + ((destinationUri == null) ? 0 : destinationUri.hashCode());
         result = prime * result + ((emailTracking == null) ? 0 : emailTracking.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 

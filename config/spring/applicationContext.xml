@@ -183,6 +183,11 @@
 		<aop:pointcut id="blOrderItemDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderItemDao.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderItemDaoOperation"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blOfferServiceOperation" expression="execution(* org.broadleafcommerce.offer.service.OfferService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation"/>
+	</aop:config>
 
 	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
@@ -251,7 +256,14 @@
 	<bean id="org.broadleafcommerce.payment.domain.PaymentInfo" class="org.broadleafcommerce.payment.domain.PaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.PaymentLog" class="org.broadleafcommerce.payment.domain.PaymentLogImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.profile.domain.Address" class="org.broadleafcommerce.profile.domain.AddressImpl" scope="prototype">
+		<property name="country">
+			<bean class="org.broadleafcommerce.profile.domain.CountryImpl">
+				<property name="abbreviation" value="US"/>
+				<property name="name" value="United States"/>
+			</bean>
+		</property>
+	</bean>
 	<bean id="org.broadleafcommerce.profile.domain.ChallengeQuestion" class="org.broadleafcommerce.profile.domain.ChallengeQuestionImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.domain.Country" class="org.broadleafcommerce.profile.domain.CountryImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.profile.domain.Customer" class="org.broadleafcommerce.profile.domain.CustomerImpl" scope="prototype"/>

@@ -108,7 +108,6 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((accountNumber == null) ? 0 : accountNumber.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
         result = prime * result + ((routingNumber == null) ? 0 : routingNumber.hashCode());
         return result;

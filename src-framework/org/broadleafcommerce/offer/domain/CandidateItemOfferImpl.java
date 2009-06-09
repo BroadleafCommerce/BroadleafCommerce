@@ -128,7 +128,6 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((discountedPrice == null) ? 0 : discountedPrice.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((offer == null) ? 0 : offer.hashCode());
         result = prime * result + ((orderItem == null) ? 0 : orderItem.hashCode());
         return result;

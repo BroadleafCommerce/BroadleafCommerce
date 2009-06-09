@@ -111,7 +111,6 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
         int result = 1;
         result = prime * result + ((dateOpened == null) ? 0 : dateOpened.hashCode());
         result = prime * result + ((emailTracking == null) ? 0 : emailTracking.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((userAgent == null) ? 0 : userAgent.hashCode());
         return result;
     }

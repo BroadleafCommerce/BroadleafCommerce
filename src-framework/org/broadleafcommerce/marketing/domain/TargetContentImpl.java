@@ -136,7 +136,6 @@ public class TargetContentImpl implements TargetContent {
         result = prime * result + ((content == null) ? 0 : content.hashCode());
         result = prime * result + ((contentName == null) ? 0 : contentName.hashCode());
         result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         return result;
     }

@@ -26,6 +26,10 @@ public interface PaymentInfoService {
 
     public PaymentInfo save(PaymentInfo paymentInfo);
 
+    public PaymentResponseItem save(PaymentResponseItem paymentResponseItem);
+
+    public PaymentLog save(PaymentLog log);
+
     public PaymentInfo readPaymentInfoById(Long paymentId);
 
     public List<PaymentInfo> readPaymentInfosForOrder(Order order);

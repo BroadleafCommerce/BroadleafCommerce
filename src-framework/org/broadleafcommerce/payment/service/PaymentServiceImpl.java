@@ -171,44 +171,49 @@ public class PaymentServiceImpl implements PaymentService {
 
     protected void logResponseItem(PaymentContext paymentContext, PaymentResponseItem response, TransactionType transactionType) {
         if (response != null) {
-            PaymentInfo info = paymentContext.getPaymentInfo();
             response.setTransactionType(transactionType);
-            response.setPaymentInfo(info);
-            response.setCustomer(info.getOrder().getCustomer());
-            response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
             response.setUserName(paymentContext.getUserName());
-            info.getPaymentResponseItems().add(response);
-            paymentInfoService.save(info);
+            PaymentInfo info = paymentContext.getPaymentInfo();
+            if (info != null) {
+                response.setPaymentInfo(info);
+                response.setCustomer(info.getOrder().getCustomer());
+                response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
+                info.getPaymentResponseItems().add(response);
+                paymentInfoService.save(info);
+            } else {
+                paymentInfoService.save(response);
+            }
         }
     }
 
     protected void logPaymentStartEvent(PaymentContext paymentContext, TransactionType transactionType) {
-        PaymentInfo info = paymentContext.getPaymentInfo();
         PaymentLog log = paymentInfoService.createLog();
         log.setLogType(PaymentLogEventType.START);
         log.setTransactionTimestamp(new Date());
         log.setTransactionSuccess(Boolean.TRUE);
         log.setTransactionType(transactionType);
-        log.setCustomer(info.getOrder().getCustomer());
-        log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         log.setUserName(paymentContext.getUserName());
         log.setExceptionMessage(null);
-        log.setAmountPaid(info.getAmount());
-        log.setPaymentInfo(info);
-        info.getPaymentLogs().add(log);
 
-        paymentInfoService.save(info);
+        PaymentInfo info = paymentContext.getPaymentInfo();
+        if (info != null) {
+            log.setCustomer(info.getOrder().getCustomer());
+            log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
+            log.setAmountPaid(info.getAmount());
+            log.setPaymentInfo(info);
+            info.getPaymentLogs().add(log);
+            paymentInfoService.save(info);
+        } else {
+            paymentInfoService.save(log);
+        }
     }
 
     protected void logPaymentFinishEvent(PaymentContext paymentContext, TransactionType transactionType, Exception e) {
-        PaymentInfo info = paymentContext.getPaymentInfo();
         PaymentLog log = paymentInfoService.createLog();
         log.setLogType(PaymentLogEventType.FINISHED);
         log.setTransactionTimestamp(new Date());
         log.setTransactionSuccess(e==null?Boolean.TRUE:Boolean.FALSE);
         log.setTransactionType(transactionType);
-        log.setCustomer(info.getOrder().getCustomer());
-        log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
         log.setUserName(paymentContext.getUserName());
         String exceptionMessage;
         if (e != null) {
@@ -224,10 +229,17 @@ public class PaymentServiceImpl implements PaymentService {
             exceptionMessage = null;
         }
         log.setExceptionMessage(exceptionMessage);
-        log.setAmountPaid(info.getAmount());
-        log.setPaymentInfo(info);
-        info.getPaymentLogs().add(log);
 
-        paymentInfoService.save(info);
+        PaymentInfo info = paymentContext.getPaymentInfo();
+        if (info != null) {
+            log.setCustomer(info.getOrder().getCustomer());
+            log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
+            log.setAmountPaid(info.getAmount());
+            log.setPaymentInfo(info);
+            info.getPaymentLogs().add(log);
+            paymentInfoService.save(info);
+        } else {
+            paymentInfoService.save(log);
+        }
     }
 }

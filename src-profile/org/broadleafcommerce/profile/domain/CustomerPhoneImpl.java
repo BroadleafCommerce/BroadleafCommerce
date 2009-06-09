@@ -95,7 +95,6 @@ public class CustomerPhoneImpl implements CustomerPhone{
         final int prime = 31;
         int result = 1;
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((phone == null) ? 0 : phone.hashCode());
         result = prime * result + ((phoneName == null) ? 0 : phoneName.hashCode());
         return result;

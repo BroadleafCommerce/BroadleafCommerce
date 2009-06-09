@@ -170,11 +170,6 @@ public class PaymentInfoImpl implements PaymentInfo {
             return id.equals(other.id);
         }
 
-        if (order == null) {
-            if (other.order != null)
-                return false;
-        } else if (!order.equals(other.order))
-            return false;
         if (referenceNumber == null) {
             if (other.referenceNumber != null)
                 return false;
@@ -192,8 +187,6 @@ public class PaymentInfoImpl implements PaymentInfo {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((order == null) ? 0 : order.hashCode());
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;

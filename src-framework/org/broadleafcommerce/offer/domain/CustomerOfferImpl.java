@@ -76,7 +76,6 @@ public class CustomerOfferImpl implements CustomerOffer {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((offer == null) ? 0 : offer.hashCode());
         return result;
     }

@@ -312,7 +312,6 @@ public class OrderItemImpl implements OrderItem {
         result = prime * result + ((candidateItemOffers == null) ? 0 : candidateItemOffers.hashCode());
         result = prime * result + ((category == null) ? 0 : category.hashCode());
         result = prime * result + ((giftWrapOrderItem == null) ? 0 : giftWrapOrderItem.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + markedForOffer;
         result = prime * result + ((order == null) ? 0 : order.hashCode());
         result = prime * result + ((orderItemAdjustments == null) ? 0 : orderItemAdjustments.hashCode());

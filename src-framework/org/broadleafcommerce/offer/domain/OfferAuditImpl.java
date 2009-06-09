@@ -156,7 +156,6 @@ public class OfferAuditImpl implements OfferAudit {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((offer == null) ? 0 : offer.hashCode());
         result = prime * result + ((offerCodeId == null) ? 0 : offerCodeId.hashCode());
         result = prime * result + ((offerType == null) ? 0 : offerType.hashCode());

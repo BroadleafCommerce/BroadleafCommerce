@@ -561,7 +561,6 @@ public class OrderImpl implements Order {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
