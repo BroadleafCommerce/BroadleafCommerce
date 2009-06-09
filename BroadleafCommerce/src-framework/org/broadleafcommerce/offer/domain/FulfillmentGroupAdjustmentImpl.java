@@ -130,7 +130,6 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
         final int prime = 31;
         int result = 1;
         result = prime * result + ((fulfillmentGroup == null) ? 0 : fulfillmentGroup.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((offer == null) ? 0 : offer.hashCode());
         result = prime * result + ((reason == null) ? 0 : reason.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());

@@ -101,7 +101,6 @@ public class CustomerAddressImpl implements CustomerAddress {
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((addressName == null) ? 0 : addressName.hashCode());
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 

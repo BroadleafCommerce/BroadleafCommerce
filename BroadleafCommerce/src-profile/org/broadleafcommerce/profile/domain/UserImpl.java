@@ -169,7 +169,6 @@ public class UserImpl implements User {
         int result = 1;
         result = prime * result + ((emailAddress == null) ? 0 : emailAddress.hashCode());
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
         result = prime * result + ((userRoles == null) ? 0 : userRoles.hashCode());
         result = prime * result + ((username == null) ? 0 : username.hashCode());

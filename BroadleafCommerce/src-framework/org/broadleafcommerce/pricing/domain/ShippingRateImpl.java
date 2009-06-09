@@ -130,7 +130,6 @@ public class ShippingRateImpl implements ShippingRate {
         result = prime * result + ((feeBand == null) ? 0 : feeBand.hashCode());
         result = prime * result + ((feeSubType == null) ? 0 : feeSubType.hashCode());
         result = prime * result + ((feeType == null) ? 0 : feeType.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 

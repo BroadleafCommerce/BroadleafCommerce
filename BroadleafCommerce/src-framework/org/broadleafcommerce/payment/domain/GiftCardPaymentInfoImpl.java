@@ -110,7 +110,6 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((pan == null) ? 0 : pan.hashCode());
         result = prime * result + ((pin == null) ? 0 : pin.hashCode());
         result = prime * result + ((referenceNumber == null) ? 0 : referenceNumber.hashCode());

@@ -38,6 +38,16 @@ public class PaymentInfoServiceImpl implements PaymentInfoService {
     }
 
     @Override
+    public PaymentResponseItem save(PaymentResponseItem paymentResponseItem) {
+        return paymentInfoDao.save(paymentResponseItem);
+    }
+
+    @Override
+    public PaymentLog save(PaymentLog log) {
+        return paymentInfoDao.save(log);
+    }
+
+    @Override
     public PaymentInfo readPaymentInfoById(Long paymentId) {
         return paymentInfoDao.readPaymentInfoById(paymentId);
     }

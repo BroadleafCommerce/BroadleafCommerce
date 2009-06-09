@@ -49,7 +49,6 @@ public class GiftWrapOrderItemImpl extends DiscreteOrderItemImpl implements Gift
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((wrappedItems == null) ? 0 : wrappedItems.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 

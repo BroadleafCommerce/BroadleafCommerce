@@ -28,6 +28,10 @@ public interface PaymentInfoDao {
 
     public PaymentInfo save(PaymentInfo paymentInfo);
 
+    public PaymentResponseItem save(PaymentResponseItem paymentResponseItem);
+
+    public PaymentLog save(PaymentLog log);
+
     public List<PaymentInfo> readPaymentInfosForOrder(Order order);
 
     public PaymentInfo create();

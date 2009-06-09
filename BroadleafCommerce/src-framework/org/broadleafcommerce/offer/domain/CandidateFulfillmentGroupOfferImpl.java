@@ -128,7 +128,6 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
         int result = 1;
         result = prime * result + ((discountedPrice == null) ? 0 : discountedPrice.hashCode());
         result = prime * result + ((fulfillmentGroup == null) ? 0 : fulfillmentGroup.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((offer == null) ? 0 : offer.hashCode());
         return result;
     }

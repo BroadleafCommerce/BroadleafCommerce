@@ -386,7 +386,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         int result = 1;
         result = prime * result + ((address == null) ? 0 : address.hashCode());
         result = prime * result + ((fulfillmentGroupItems == null) ? 0 : fulfillmentGroupItems.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
@@ -417,6 +416,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return true;
     }
 
+    //TODO Remove this?
     @Override
     public String getStatus() {
         // TODO Auto-generated method stub

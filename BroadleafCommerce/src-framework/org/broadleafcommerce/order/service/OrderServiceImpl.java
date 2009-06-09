@@ -50,6 +50,8 @@ import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.PaymentLog;
+import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.pricing.service.advice.PricingExecutionManager;
@@ -230,7 +232,14 @@ public class OrderServiceImpl implements OrderService {
                 //do nothing--this is an acceptable condition
                 LOG.debug("No secure payment is associated with the PaymentInfo", e);
             }
-
+            for (PaymentLog paymentLog : paymentInfo.getPaymentLogs()) {
+                paymentLog.setPaymentInfo(null);
+                paymentInfoDao.save(paymentLog);
+            }
+            for (PaymentResponseItem paymentResponseItem : paymentInfo.getPaymentResponseItems()) {
+                paymentResponseItem.setPaymentInfo(null);
+                paymentInfoDao.save(paymentResponseItem);
+            }
             paymentInfoDao.delete(paymentInfo);
         }
         order.getPaymentInfos().clear();

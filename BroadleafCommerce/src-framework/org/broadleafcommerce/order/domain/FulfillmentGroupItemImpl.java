@@ -161,7 +161,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((orderItem == null) ? 0 : orderItem.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 }

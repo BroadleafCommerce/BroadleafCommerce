@@ -105,6 +105,13 @@ public class AddressImpl implements Address {
     @Column(name = "VERIFICATION_LEVEL")
     protected String verificationLevel;
 
+    /*public AddressImpl() {
+        CountryImpl country = new CountryImpl();
+        country.setAbbreviation("US");
+        country.setName("United States");
+        this.country = country;
+    }*/
+
     public Long getId() {
         return id;
     }
@@ -343,7 +350,6 @@ public class AddressImpl implements Address {
         result = prime * result + ((country == null) ? 0 : country.hashCode());
         result = prime * result + ((county == null) ? 0 : county.hashCode());
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
         result = prime * result + ((postalCode == null) ? 0 : postalCode.hashCode());
         result = prime * result + ((state == null) ? 0 : state.hashCode());

@@ -147,7 +147,6 @@ public class EmailTrackingImpl implements EmailTracking {
         result = prime * result + ((emailAddress == null) ? 0 : emailAddress.hashCode());
         result = prime * result + ((emailTrackingClicks == null) ? 0 : emailTrackingClicks.hashCode());
         result = prime * result + ((emailTrackingOpens == null) ? 0 : emailTrackingOpens.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
     }
