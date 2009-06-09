@@ -153,7 +153,7 @@ public class CartController {
             logger.error("An error occurred while removing an item from the cart.", e);
         }
 
-        return cartViewRedirect ? "redirect:" + cartView : cartView;
+        return removeItemViewRedirect ? "redirect:" + removeItemView : removeItemView;
     }
 
     @RequestMapping(value = "beginCheckout.htm", method = RequestMethod.GET)
