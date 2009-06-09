@@ -66,6 +66,17 @@
 	</target>
 
 	<target name="setup-war" depends="classes-jar">
+		<fail message="Build Failed. Please make sure you have updated appserver.home, mysql.db.user and mysql.db.pw in build.properties">
+			<condition>
+				<or>
+					<equals arg1="@@NOT_SET@@" arg2="${appserver.home}" />
+					<equals arg1="@@NOT_SET@@" arg2="${mysql.db.user}" />
+					<equals arg1="@@NOT_SET@@" arg2="${mysql.db.pw}" />
+				</or>
+	   		</condition>
+		</fail>
+		 			
+		
 		<mkdir dir="${stage.dir}/war" />
 		<mkdir dir="${stage.dir}/war/META-INF" />
 		<mkdir dir="${stage.dir}/war/WEB-INF" />
