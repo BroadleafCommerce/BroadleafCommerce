@@ -64,7 +64,7 @@ public class AddressImpl implements Address {
     @JoinColumn(name = "STATE_PROV_REGION")
     protected State state;
 
-    @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = CountryImpl.class)
+    @ManyToOne( targetEntity = CountryImpl.class)
     @JoinColumn(name = "COUNTRY")
     protected Country country;
 
@@ -105,12 +105,12 @@ public class AddressImpl implements Address {
     @Column(name = "VERIFICATION_LEVEL")
     protected String verificationLevel;
 
-    /*public AddressImpl() {
+    public AddressImpl() {
         CountryImpl country = new CountryImpl();
         country.setAbbreviation("US");
         country.setName("United States");
         this.country = country;
-    }*/
+    }
 
     public Long getId() {
         return id;
