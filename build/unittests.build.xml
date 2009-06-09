@@ -4,97 +4,142 @@
             Broadleaf Commerce Unit Test Execution File
     </description>
 
-	<property name="stage.dir" value="${basedir}/build/stage"/>
-	<property name="lib.dir" value="${basedir}/lib"/>
+	<property name="stage.dir" value="${basedir}/build/stage" />
+	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="compile.lib.dir" value="${lib.dir}/compile/bin" />
 	<property name="common.lib.dir" value="${lib.dir}/common" />
-	<property name="test.lib.dir" value="${lib.dir}/test/bin"/>
-	<property name="test.src.dir" value="${basedir}/src-test"/>
-    <property name="internal.build.file" value="${basedir}/build/broadleaf.build.xml" />
-	<property name="build.env" value="test"/>
+	<property name="test.lib.dir" value="${lib.dir}/test/bin" />
+	<property name="test.src.dir" value="${basedir}/src-test" />
+	<property name="internal.build.file" value="${basedir}/build/broadleaf.build.xml" />
+	<property name="cobertura.build.file" value="${basedir}/build/cobertura/cobertura.build.xml" />
+	<property name="build.env" value="test" />
 
-	<fileset id="compile.lib" dir="${compile.lib.dir}"
-        description="compile-time dependencies">
-		<include name="**/*.jar"/>
+	<property name="cobertura.lib.dir" value="${lib.dir}/cobertura/bin" />
+	<property name="cobertura.instrumented.classes" value="${stage.dir}/instrumented-classes" />
+	<property name="cobertura.reports.dir" value="${stage.dir}/cobertura_reports"/>
+
+	<fileset id="compile.lib" dir="${compile.lib.dir}" description="compile-time dependencies">
+		<include name="**/*.jar" />
 	</fileset>
 
-	<fileset id="common.lib" dir="${common.lib.dir}"
-        description="common dependencies">
-		<include name="**/*.jar"/>
+	<fileset id="common.lib" dir="${common.lib.dir}" description="common dependencies">
+		<include name="**/*.jar" />
 	</fileset>
 
-	<fileset id="test.lib" dir="${test.lib.dir}"
-        description="testing dependencies">
-		<include name="**/*.jar"/>
+	<fileset id="test.lib" dir="${test.lib.dir}" description="testing dependencies">
+		<include name="**/*.jar" />
 	</fileset>
 
-	<taskdef resource="testngtasks" >
+	<fileset id="cobertura.lib" dir="${cobertura.lib.dir}" description="code coverage dependencies">
+		<include name="**/*.jar" />
+	</fileset>
+
+	<taskdef resource="testngtasks">
 		<classpath>
-			<pathelement location="${test.lib.dir}/testng-5.8-jdk15.jar"/>
+			<pathelement location="${test.lib.dir}/testng-5.8-jdk15.jar" />
 		</classpath>
 	</taskdef>
 
-    <target name="runall" depends="buildall">
-    	<path id="test-lib-path">
-    		<fileset refid="compile.lib"/>
-    		<fileset refid="common.lib"/>
-			<fileset refid="test.lib"/>
-			<fileset dir="${stage.dir}" includes="*.jar"/>    	</path>
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	  <classpath>
+	    <pathelement location="${test.lib.dir}/ant-contrib-1.0b3.jar"/>
+	  </classpath>
+	</taskdef>
 
-    	<mkdir dir="${stage.dir}/test-output"/>
+	<target name="runall" depends="buildall">
+		<if>
+			<equals arg1="${code.coverage}" arg2="true" />
+			<then>
+				<path id="test-lib-path">
+					<fileset refid="compile.lib" />
+					<fileset refid="common.lib" />
+					<fileset refid="test.lib" />
+					<fileset refid="cobertura.lib" />
+					<fileset dir="${cobertura.instrumented.classes}" includes="*.jar"/>
+					<fileset dir="${stage.dir}" includes="*.jar"/>
+				</path>
+				
+				<path id="cobertura.classpath">
+					<fileset dir="${cobertura.instrumented.classes}">
+						<include name="*.jar*" />
+					</fileset>
+				</path>
 
-    	<testng classpathref="test-lib-path"
+				<ant antfile="${cobertura.build.file}" target="instrument" />
+			</then>
+			<else>
+				   <echo message="*************************************************************************************************" />
+				<path id="test-lib-path">
+					<fileset refid="compile.lib" />
+					<fileset refid="common.lib" />
+					<fileset refid="test.lib" />
+					<fileset dir="${stage.dir}" includes="*.jar"/>
+				</path>
+			</else>
+		</if>
+
+
+		<testng 
     		outputdir="${stage.dir}/test-output"
     		dumpcommand="yes"
 			failureProperty="test.failed"
-			reporter="org.testng.reporters.XMLReporter">
-    		<xmlfileset dir="${stage.dir}/test-folder" includes="**/*testng.xml"/>
-    	</testng>
+			reporter="org.testng.reporters.XMLReporter" 
+    		classpathref="test-lib-path">
 
-    	<mkdir dir="${stage.dir}/report"/>
+			<sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.instrumented.classes}/cobertura.ser" />
 
-    	<junitreport todir="${stage.dir}/report">
-        	<fileset dir="${stage.dir}/test-output">
-        		<include name="**/*.xml"/>
-        		<exclude name="**/testng-failed.xml"/>
-        	</fileset>
+			<xmlfileset dir="${stage.dir}/test-folder" includes="**/*testng.xml"/>
+		</testng>
+
+		<if>
+			<equals arg1="${code.coverage}" arg2="true" />
+			<then>
+				<ant antfile="${cobertura.build.file}" target="reports.generate" />
+			</then>
+		</if>
+				
+		<mkdir dir="${stage.dir}/test-output" />
+
+		<mkdir dir="${stage.dir}/report" />
+
+		<junitreport todir="${stage.dir}/report">
+			<fileset dir="${stage.dir}/test-output">
+				<include name="**/*.xml" />
+				<exclude name="**/testng-failed.xml" />
+			</fileset>
 		</junitreport>
 
-        <fail message="Tests failed: check test reports." if="test.failed" />
+		<fail message="Tests failed: check test reports." if="test.failed" />
 
-    	<echo>Report available at ${basedir}/report/index.html</echo>
-    </target>
+		<echo>Report available at ${basedir}/report/index.html</echo>
+	</target>
 
 	<target name="buildall">
 		<ant antfile="${internal.build.file}" target="clean" />
 		<ant antfile="${internal.build.file}" target="build-jars" />
 
-		<mkdir dir="${stage.dir}/test-folder"/>
+		<mkdir dir="${stage.dir}/test-folder" />
 
 		<path id="compile-lib">
-			<fileset refid="compile.lib"/>
-		    <fileset refid="common.lib"/>
-		    <fileset refid="test.lib"/>
-			<fileset file="${stage.dir}/*.jar"/>
+			<fileset refid="compile.lib" />
+			<fileset refid="common.lib" />
+			<fileset refid="test.lib" />
+			<fileset file="${stage.dir}/*.jar" />
 		</path>
 
-		<javac
-			destdir="${stage.dir}/test-folder"
-			classpathref="compile-lib"
-			srcdir="${test.src.dir}"
-			debug="true"
-        />
+		<javac destdir="${stage.dir}/test-folder" classpathref="compile-lib" srcdir="${test.src.dir}" debug="true" />
 
 		<copy todir="${stage.dir}/test-folder">
 			<fileset dir="${test.src.dir}">
-				<include name="**/*.*"/>
-				<exclude name="**/*.java"/>
+				<include name="**/*.*" />
+				<exclude name="**/*.java" />
 			</fileset>
 		</copy>
 
 		<jar destfile="${stage.dir}/broadleaf-tests.jar" basedir="${stage.dir}/test-folder">
-			<include name="**/*.*"/>
+			<include name="**/*.*" />
 		</jar>
 
 	</target>
+
 </project>
