@@ -8,6 +8,11 @@
 		WHERE order.customer.id = :customerId</query>
 	</named-query>
 	
+	<named-query name="BC_READ_ORDER_BY_ORDER_NUMBER" >
+		<query>SELECT order FROM org.broadleafcommerce.order.domain.Order order
+		WHERE order.orderNumber = :orderNumber</query>
+	</named-query>
+	
 	<named-query name="BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS">
 		<query>
 			SELECT order 

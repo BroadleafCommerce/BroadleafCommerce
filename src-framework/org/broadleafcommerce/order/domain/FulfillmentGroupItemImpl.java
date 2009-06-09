@@ -67,6 +67,9 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
     @Column(name = "PRICE")
     protected BigDecimal price;
 
+    @Column(name = "STATUS")
+    private String status;
+
     public Long getId() {
         return id;
     }
@@ -121,6 +124,14 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 
     public void setPrice(Money price) {
         this.price = Money.toAmount(price);
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

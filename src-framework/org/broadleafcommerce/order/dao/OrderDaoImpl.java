@@ -141,4 +141,21 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("orderName", name);
         return (Order) query.getSingleResult();
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Order readOrderByOrderNumber(Long orderNumber) {
+        if (orderNumber == null) {
+            return null;
+        }
+
+        Order order = null;
+        Query query = em.createNamedQuery("BC_READ_ORDER_BY_ORDER_NUMBER");
+        query.setParameter("orderNumber", orderNumber);
+        List<Order> result = query.getResultList();
+        if (result.size() > 0) {
+            order = result.get(0);
+        }
+        return order;
+    }
 }

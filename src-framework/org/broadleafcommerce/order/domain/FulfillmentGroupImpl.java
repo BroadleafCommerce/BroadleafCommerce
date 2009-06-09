@@ -417,4 +417,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return true;
     }
 
+    @Override
+    public String getStatus() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

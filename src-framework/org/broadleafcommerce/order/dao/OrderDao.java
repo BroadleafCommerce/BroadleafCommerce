@@ -43,6 +43,8 @@ public interface OrderDao {
 
     public Order createNewCartForCustomer(Customer customer);
 
+    public Order readOrderByOrderNumber(Long orderNumber);
+
     //    removed methods
     //    public List<Order> readNamedOrdersForcustomer(Customer customer);
     //

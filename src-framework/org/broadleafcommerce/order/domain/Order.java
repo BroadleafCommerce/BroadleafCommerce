@@ -153,4 +153,10 @@ public interface Order extends Serializable {
 
     public void removeAllAddedOfferCodes();
 
+    public String getFulfillmentStatus();
+
+    public Long getOrderNumber();
+
+    public void setOrderNumber(Long orderNumber);
+
 }
