@@ -39,7 +39,7 @@
 		<delete dir="${stage.dir}/${app.name}.war" quiet="true" />
 	</target>
 
-	<target name="undeploy-war" depends="prompt">
+	<target name="undeploy-war">
 		<delete dir="${set.deploy.path}/${app.name}.war" />
 		<delete dir="${set.deploy.path}/${app.name}" />
 		<delete>
@@ -229,88 +229,8 @@
 			</then>	
 		</if>
 	</target>
-	
-	<target name="prompt">
-		<if>
-			<equals arg1="@@NOT_SET@@" arg2="${appserver.home}" />
-			<then>
-				<echo message="appserver.home not yet set in build.properties"/>
-				<input message="Please enter your tomcat base directory:" addproperty="req.appserver.home" />
-				<if>
-					<equals arg1="" arg2="${req.appserver.home}" />
-					<then> 
-						<fail message="Invalid location given for tomcat directory. Cannot be blank." />
-					</then>
-					<else>
-						<propertyregex property="set.appserver.home" input="${req.appserver.home}" regexp="\\" replace="/" />
-						<available file="${set.appserver.home}" type="dir" property="test.appserver.home" />
-						<fail unless="test.appserver.home" message="Path does not exist: '${set.appserver.home}'" />						
-						<var name="apphome.var" value="appserver.home=${set.appserver.home}" />
-						<var name="deploypath.var" value="${set.appserver.home}${deploy.path}" />
-						<property name="apphome.prop" value="${apphome.var}" />
-						<property name="set.deploy.path" value="${deploypath.var}" />
-						<propertyregex property="set.deploy.path" override="true" input="${set.deploy.path}" regexp="/@@NOT_SET@@" replace="" />
-						<propertyregex property="set.deploy.path" override="true" input="${set.deploy.path}" regexp="@@NOT_SET@@" replace="" />
-						<replace file="${basedir}/build/build.properties" token="appserver.home=@@NOT_SET@@" value="${apphome.prop}"/>
-					</else>
-				</if>
-			</then>
-			<else>
-				<property name="set.appserver.home" value="${appserver.home}" />
-				<property name="set.deploy.path" value="${deploy.path}" />
-			</else>
-		</if>
 		
-		<if>
-			<equals arg1="@@NOT_SET@@" arg2="${mysql.db.user}" />
-			<then>
-				<echo message="mysql.db.user not yet set in build.properties"/>
-				<input message="Please enter your mysql username:" addproperty="set.mysql.db.user" /> 
-				<if>
-					<equals arg1="" arg2="${set.mysql.db.user}" />
-					<then> 
-						<fail message="Invalid mysql username given. Cannot be blank." />
-					</then>
-					<else>
-						<var name="mysqldb.user.var" value="mysql.db.user=${set.mysql.db.user}" />
-						<property name="mysqldb.user.prop" value="${mysqldb.user.var}" />
-						<replace file="${basedir}/build/build.properties" token="mysql.db.user=@@NOT_SET@@" value="${mysqldb.user.prop}"/>
-					</else>
-				</if>
-			</then>
-			<else>
-				<property name="set.mysql.db.user" value="${mysql.db.user}" />
-			</else>
-		</if>
-		
-		<if>
-			<equals arg1="@@NOT_SET@@" arg2="${mysql.db.pw}" />
-			<then>
-				<echo message="mysql.db.pw not yet set in build.properties"/>
-				<input message="Please enter your mysql password for account ${set.mysql.db.user}:" addproperty="set.mysql.db.pw" /> 
-				<var name="mysqldb.pw.var" value="mysql.db.pw=${set.mysql.db.pw}" />
-				<property name="mysqldb.pw.prop" value="${mysqldb.pw.var}" />
-				<replace file="${basedir}/build/build.properties" token="mysql.db.pw=@@NOT_SET@@" value="${mysqldb.pw.prop}"/>
-			</then>
-			<else>
-				<property name="set.mysql.db.pw" value="${mysql.db.pw}" />
-			</else>
-		</if>
-		
-		<fail message="Build Failed. Please make sure you have updated appserver.home, mysql.db.user and mysql.db.pw in build.properties">
-			<condition>
-				<or>
-					<equals arg1="@@NOT_SET@@" arg2="${set.appserver.home}" />
-					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.user}" />
-					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.pw}" />
-					<equals arg1="" arg2="${set.appserver.home}" />
-					<equals arg1="" arg2="${set.mysql.db.user}" />
-				</or>
-	   		</condition>
-		</fail>		
-	</target>
-	
-	<target name="clean" depends="prompt">
+	<target name="clean">
 		<delete dir="${stage.dir}" />
 		<delete dir="${test.output.dir}" />
 	</target>
@@ -359,7 +279,7 @@
 		</copy>
 	</target>
 
-	<target name="load-data" depends="prompt">
+	<target name="load-data">
 		<delete>
 			<fileset dir="${basedir}/sql/load/mysql/stage">
 			    <include name="*.sql"/>
@@ -381,7 +301,7 @@
 	          userid="${set.mysql.db.user}"
 	          password="${set.mysql.db.pw}"
 	          encoding="UTF-8"
-	          classpath="${mysql.db.classpath}">
+	          classpath="${basedir}/../BroadleafCommerce/lib/common/bin/mysql-connector-java-5.1.7-bin.jar">
 	     	<transaction src="${basedir}/sql/load/mysql/stage/load_data.sql"/>
 	     </sql>
 	</target>

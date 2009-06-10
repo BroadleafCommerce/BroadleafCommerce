@@ -13,7 +13,7 @@
 		</classpath>
 	</taskdef>
 
-	<target name="0. App Server Setup" description="Setup the Tomcat instance" depends="prompt">
+	<target name="0. App Server Setup" description="Setup the Tomcat instance" depends="verify-tomcat">
 		<ant antfile="${internal.build.file}" target="tomcat-setup" />
 	</target>
 	
@@ -21,19 +21,19 @@
 		<ant antfile="${internal.build.file}" target="clean" />
 	</target>
 
-	<target name="2. Deploy Exploded War" description="Deploys the exploded war.">
+	<target name="2. Deploy Exploded War" description="Deploys the exploded war." depends="verify-tomcat,verify-mysql">
 		<ant antfile="${internal.build.file}" target="deploy-exploded-war" />
 	</target>
 
-	<target name="3. Deploy War" description="Deploys the unexploded war.">
+	<target name="3. Deploy War" description="Deploys the unexploded war." depends="verify-tomcat,verify-mysql">
 		<ant antfile="${internal.build.file}" target="deploy-integrated-war" />
 	</target>
 
-	<target name="4. Undeploy War" description="Undeploys war file(s).">
+	<target name="4. Undeploy War" description="Undeploys war file(s)." depends="verify-tomcat">
 		<ant antfile="${internal.build.file}" target="undeploy-war" />
 	</target>
 
-	<target name="5. Start Tomcat - Debug Mode" depends="prompt">
+	<target name="5. Start Tomcat - Debug Mode" depends="verify-tomcat">
 	    <java jar="${set.appserver.home}/bin/bootstrap.jar" fork="true">
 	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
 	        <jvmarg value="-Xdebug"/>
@@ -44,7 +44,7 @@
 	    </java>
 	</target>
 
-	<target name="6. Stop Tomcat" depends="prompt">
+	<target name="6. Stop Tomcat" depends="verify-tomcat">
 	    <java jar="${set.appserver.home}/bin/bootstrap.jar" fork="true">
 	        <jvmarg value="-Dcatalina.home=${set.appserver.home}"/>
 	        <arg value="stop"/>
@@ -69,7 +69,7 @@
 		<antcall target="5. Start Tomcat - Debug Mode"/>
 	</target>
 
-	<target name="10. Load Data">
+	<target name="10. Load Data" depends="verify-mysql">
 		<ant antfile="${internal.build.file}" target="load-data" />
 	</target>
 
@@ -77,7 +77,54 @@
 		<ant antfile="${internal.build.file}" target="app.synch" />
 	</target>
 	
-	<target name="prompt" description="prompt for missing properties">
+	<target name="verify-mysql" description="Verify and Prompt for missing mysql properties">
+		<if>
+			<equals arg1="@@NOT_SET@@" arg2="${mysql.db.user}" />
+			<then>
+				<echo message="mysql.db.user not yet set in build.properties"/>
+				<input message="Please enter your mysql username:" addproperty="set.mysql.db.user" /> 
+				<if>
+					<equals arg1="" arg2="${set.mysql.db.user}" />
+					<then> 
+						<fail message="Invalid mysql username given. Cannot be blank." />
+					</then>
+					<else>
+						<var name="mysqldb.user.var" value="mysql.db.user=${set.mysql.db.user}" />
+						<property name="mysqldb.user.prop" value="${mysqldb.user.var}" />
+						<replace file="${basedir}/build/build.properties" token="mysql.db.user=@@NOT_SET@@" value="${mysqldb.user.prop}"/>
+					</else>
+				</if>
+			</then>
+			<else>
+				<property name="set.mysql.db.user" value="${mysql.db.user}" />
+			</else>
+		</if>
+		
+		<if>
+			<equals arg1="@@NOT_SET@@" arg2="${mysql.db.pw}" />
+			<then>
+				<echo message="mysql.db.pw not yet set in build.properties"/>
+				<input message="Please enter your mysql password for account ${set.mysql.db.user}:" addproperty="set.mysql.db.pw" /> 
+				<var name="mysqldb.pw.var" value="mysql.db.pw=${set.mysql.db.pw}" />
+				<property name="mysqldb.pw.prop" value="${mysqldb.pw.var}" />
+				<replace file="${basedir}/build/build.properties" token="mysql.db.pw=@@NOT_SET@@" value="${mysqldb.pw.prop}"/>
+			</then>
+			<else>
+				<property name="set.mysql.db.pw" value="${mysql.db.pw}" />
+			</else>
+		</if>
+		<fail message="Build Failed. Please make sure you have updated mysql.db.user and mysql.db.pw in build.properties">
+			<condition>
+				<or>
+					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.user}" />
+					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.pw}" />
+					<equals arg1="" arg2="${set.mysql.db.user}" />
+				</or>
+	   		</condition>
+		</fail>		
+	</target>
+	
+	<target name="verify-tomcat" description="Verify and Prompt for missing tomcat properties">
 		<if>
 			<equals arg1="@@NOT_SET@@" arg2="${appserver.home}" />
 			<then>
@@ -107,7 +154,7 @@
 				<property name="set.deploy.path" value="${deploy.path}" />
 			</else>
 		</if>
-		<fail message="Build Failed. Please make sure you have updated appserver.home, mysql.db.user and mysql.db.pw in build.properties">
+		<fail message="Build Failed. Please make sure you have updated appserver.home in build.properties">
 			<condition>
 				<or>
 					<equals arg1="@@NOT_SET@@" arg2="${set.appserver.home}" />
