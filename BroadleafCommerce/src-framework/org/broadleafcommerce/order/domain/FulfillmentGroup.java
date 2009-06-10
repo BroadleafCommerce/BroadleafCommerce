@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
+import org.broadleafcommerce.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Phone;
@@ -133,5 +134,5 @@ public interface FulfillmentGroup extends Serializable {
 
     public void setTotal(Money orderTotal);
 
-    public String getStatus();
+    public FulfillmentGroupStatusType getStatus();
 }

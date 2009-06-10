@@ -514,7 +514,7 @@ public class OrderServiceImpl implements OrderService {
         this.orderItemService = orderItemService;
     }
 
-    public Order findOrderByOrderNumber(Long orderNumber) {
+    public Order findOrderByOrderNumber(String orderNumber) {
         return orderDao.readOrderByOrderNumber(orderNumber);
     }
 

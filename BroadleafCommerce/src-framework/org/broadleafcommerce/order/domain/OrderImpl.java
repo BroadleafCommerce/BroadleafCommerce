@@ -107,7 +107,7 @@ public class OrderImpl implements Order {
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
-    private Long orderNumber;
+    private String orderNumber;
 
     @Transient
     protected BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
@@ -512,12 +512,12 @@ public class OrderImpl implements Order {
     }
 
     @Override
-    public Long getOrderNumber() {
+    public String getOrderNumber() {
         return orderNumber;
     }
 
     @Override
-    public void setOrderNumber(Long orderNumber) {
+    public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
     }
 
