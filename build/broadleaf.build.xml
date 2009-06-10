@@ -61,7 +61,7 @@
 
 		<copy todir="${stage.dir}/framework-jar">
 			<fileset dir="${spring.config.dir}">
-				<include name="applicationContext*" />
+				<include name="bl-applicationContext*" />
 			</fileset>
 		</copy>
 
