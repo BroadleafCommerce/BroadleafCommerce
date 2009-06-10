@@ -13,7 +13,7 @@
 		</classpath>
 	</taskdef>
 
-	<target name="0. App Server Setup" description="Setup the Tomcat instance">
+	<target name="0. App Server Setup" description="Setup the Tomcat instance" depends="prompt">
 		<ant antfile="${internal.build.file}" target="tomcat-setup" />
 	</target>
 	

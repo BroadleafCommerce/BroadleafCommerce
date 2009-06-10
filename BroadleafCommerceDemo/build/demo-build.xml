@@ -359,7 +359,7 @@
 		</copy>
 	</target>
 
-	<target name="load-data">
+	<target name="load-data" depends="prompt">
 		<delete>
 			<fileset dir="${basedir}/sql/load/mysql/stage">
 			    <include name="*.sql"/>
