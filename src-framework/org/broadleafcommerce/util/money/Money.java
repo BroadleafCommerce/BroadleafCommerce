@@ -15,17 +15,21 @@
  */
 package org.broadleafcommerce.util.money;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.Locale;
 
 @SuppressWarnings("unchecked")
-public final class Money implements Serializable, Cloneable, Comparable {
+public final class Money implements Serializable, Cloneable, Comparable, Externalizable {
 
     private static final long serialVersionUID = 1L;
 
-    private final BigDecimal amount;
+    private BigDecimal amount;
 
     private final Currency currency;
 
@@ -301,5 +305,17 @@ public final class Money implements Serializable, Cloneable, Comparable {
             return Currency.getInstance(locale);
         }
         return Currency.getInstance(System.getProperty("currency.default", "USD"));
+    }
+
+    public void readExternal(ObjectInput in) throws IOException,ClassNotFoundException {
+        // Read in the server properties from the client representation.
+        amount = new BigDecimal( in.readFloat());
+
+    }
+
+    public void writeExternal(ObjectOutput out) throws IOException {
+        // Write out the client properties from the server representation.
+        out.writeFloat(amount.floatValue());
+        // out.writeObject(currency);
     }
 }
