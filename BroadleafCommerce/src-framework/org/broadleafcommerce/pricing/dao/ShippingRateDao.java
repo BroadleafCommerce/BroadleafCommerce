@@ -21,12 +21,12 @@ import org.broadleafcommerce.pricing.domain.ShippingRate;
 
 public interface ShippingRateDao {
 
-    ShippingRate save(ShippingRate shippingRate);
+    public ShippingRate save(ShippingRate shippingRate);
 
-    ShippingRate readShippingRateById(Long id);
+    public ShippingRate readShippingRateById(Long id);
 
-    ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity);
+    public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity);
 
-    //List<ShippingRate> readOrdersForCustomer(Long id);
+    public ShippingRate create();
 
 }

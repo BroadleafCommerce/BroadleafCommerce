@@ -58,11 +58,7 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     @Column(name = "ADJUSTMENT_VALUE")
     protected BigDecimal value;
 
-    public OrderItemAdjustmentImpl() {
-        this(null, null, null);
-    }
-
-    public OrderItemAdjustmentImpl(OrderItem orderItem, Offer offer, String reason){
+    public void init(OrderItem orderItem, Offer offer, String reason){
         this.orderItem = orderItem;
         this.offer = offer;
         this.reason = reason;
@@ -95,6 +91,18 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
     public Money getValue() {
         return value == null ? null : new Money(value);
+    }
+
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
+    }
+
+    public void setOffer(Offer offer) {
+        this.offer = offer;
+    }
+
+    public void setValue(BigDecimal value) {
+        this.value = value;
     }
 
     /*
@@ -168,4 +176,5 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
             return false;
         return true;
     }
+
 }

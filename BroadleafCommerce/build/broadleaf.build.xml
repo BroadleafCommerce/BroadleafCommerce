@@ -59,9 +59,9 @@
 			</fileset>
 		</copy>
 
-		<copy tofile="${stage.dir}/framework-jar/applicationContext.xml">
+		<copy todir="${stage.dir}/framework-jar">
 			<fileset dir="${spring.config.dir}">
-				<include name="applicationContext.xml" />
+				<include name="applicationContext*" />
 			</fileset>
 		</copy>
 

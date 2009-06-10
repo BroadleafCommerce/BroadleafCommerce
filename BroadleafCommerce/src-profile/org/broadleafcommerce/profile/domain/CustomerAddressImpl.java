@@ -52,15 +52,15 @@ public class CustomerAddressImpl implements CustomerAddress {
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class)
     @JoinColumn(name = "ADDRESS_ID")
-    protected Address address = new AddressImpl();
+    protected Address address;
 
-    public CustomerAddressImpl() {
+    /*public CustomerAddressImpl() {
         this(null);
     }
 
     public CustomerAddressImpl(Customer customer) {
         this.customer = customer;
-    }
+    }*/
 
     public Long getId() {
         return id;

@@ -23,4 +23,6 @@ public interface OrderItemAdjustment extends Adjustment {
 
     public void computeAdjustmentValue();
 
+    public void init(OrderItem orderItem, Offer offer, String reason);
+
 }

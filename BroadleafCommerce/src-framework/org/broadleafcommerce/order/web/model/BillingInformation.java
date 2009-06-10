@@ -1,9 +1,7 @@
 package org.broadleafcommerce.order.web.model;
 
 import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
-import org.broadleafcommerce.profile.domain.CustomerAddressImpl;
 
 public class BillingInformation {
 
@@ -14,11 +12,6 @@ public class BillingInformation {
     private Integer expirationMonth;
     private String expirationMonthString;
     private Integer expirationYear;
-
-    public BillingInformation() {
-        customerAddress = new CustomerAddressImpl();
-        customerAddress.setAddress(new AddressImpl());
-    }
 
     public CustomerAddress getCustomerAddress() {
         return customerAddress;

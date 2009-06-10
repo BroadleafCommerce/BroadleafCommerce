@@ -22,4 +22,7 @@ public interface AddressDao {
     public Address save(Address address);
 
     public Address readAddressById(Long addressId);
+
+    public Address create();
+
 }

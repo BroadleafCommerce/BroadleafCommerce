@@ -55,15 +55,6 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
     @Column(name = "DISCOUNTED_PRICE")
     protected BigDecimal discountedPrice;
 
-    public CandidateOrderOfferImpl(){
-        this(null, null);
-    }
-
-    public CandidateOrderOfferImpl(Order order, Offer offer){
-        this.order = order;
-        this.offer = offer;
-    }
-
     public Long getId() {
         return id;
     }

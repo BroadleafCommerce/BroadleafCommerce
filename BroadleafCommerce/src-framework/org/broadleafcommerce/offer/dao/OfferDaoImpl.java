@@ -24,15 +24,17 @@ import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
+import org.broadleafcommerce.offer.domain.CandidateItemOffer;
+import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOfferDao")
 public class OfferDaoImpl implements OfferDao {
-
-    /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.offer.domain.Offer";
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
@@ -45,7 +47,27 @@ public class OfferDaoImpl implements OfferDao {
 
     @Override
     public Offer create() {
-        return ((Offer) entityConfiguration.createEntityInstance(beanName));
+        return ((Offer) entityConfiguration.createEntityInstance(Offer.class.getName()));
+    }
+
+    public CandidateOrderOffer createCandidateOrderOffer() {
+        return ((CandidateOrderOffer) entityConfiguration.createEntityInstance(CandidateOrderOffer.class.getName()));
+    }
+
+    public CandidateItemOffer createCandidateItemOffer() {
+        return ((CandidateItemOffer) entityConfiguration.createEntityInstance(CandidateItemOffer.class.getName()));
+    }
+
+    public CandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer() {
+        return ((CandidateFulfillmentGroupOffer) entityConfiguration.createEntityInstance(CandidateFulfillmentGroupOffer.class.getName()));
+    }
+
+    public OrderItemAdjustment createOrderItemAdjustment() {
+        return ((OrderItemAdjustment) entityConfiguration.createEntityInstance(OrderItemAdjustment.class.getName()));
+    }
+
+    public OrderAdjustment createOrderAdjustment() {
+        return ((OrderAdjustment) entityConfiguration.createEntityInstance(OrderAdjustment.class.getName()));
     }
 
     @Override
@@ -73,7 +95,7 @@ public class OfferDaoImpl implements OfferDao {
     @Override
     @SuppressWarnings("unchecked")
     public Offer readOfferById(Long offerId) {
-        return (Offer) em.find(entityConfiguration.lookupEntityClass(beanName), offerId);
+        return (Offer) em.find(entityConfiguration.lookupEntityClass(Offer.class.getName()), offerId);
     }
 
     @SuppressWarnings("unchecked")

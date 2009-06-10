@@ -2,3 +2,4 @@
 #separate each entry with a new line
 #comments may be added by placing a pound symbol '#' in front of the line
 applicationContext.xml
+applicationContext-entity.xml

@@ -55,15 +55,6 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
     @Column(name = "DISCOUNTED_PRICE")
     protected BigDecimal discountedPrice;
 
-    public CandidateFulfillmentGroupOfferImpl(){
-        this(null, null);
-    }
-
-    public CandidateFulfillmentGroupOfferImpl(FulfillmentGroup fulfillmentGroup, Offer offer){
-        this.offer = offer;
-        this.fulfillmentGroup = fulfillmentGroup;
-    }
-
     public Long getId() {
         return id;
     }

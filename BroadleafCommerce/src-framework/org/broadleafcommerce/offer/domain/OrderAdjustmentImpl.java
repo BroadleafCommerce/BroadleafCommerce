@@ -58,11 +58,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     @Column(name = "ADJUSTMENT_VALUE")
     protected BigDecimal value;
 
-    public OrderAdjustmentImpl() {
-        this(null, null, null);
-    }
-
-    public OrderAdjustmentImpl(Order order, Offer offer, String reason){
+    public void init(Order order, Offer offer, String reason){
         this.order = order;
         this.offer = offer;
         this.reason = reason;

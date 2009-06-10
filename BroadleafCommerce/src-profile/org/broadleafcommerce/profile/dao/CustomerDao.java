@@ -26,4 +26,7 @@ public interface CustomerDao {
     public Customer save(Customer customer);
 
     public Customer readCustomerByEmail(String emailAddress);
+
+    public Customer create();
+
 }

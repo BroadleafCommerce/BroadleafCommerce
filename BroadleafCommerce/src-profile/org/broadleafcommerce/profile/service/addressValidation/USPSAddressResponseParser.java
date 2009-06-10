@@ -17,17 +17,13 @@ package org.broadleafcommerce.profile.service.addressValidation;
 
 import java.util.ArrayList;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.State;
-import org.broadleafcommerce.profile.domain.StateImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class USPSAddressResponseParser extends DefaultHandler {
-    protected final Log logger = LogFactory.getLog(getClass());
+
     public static final String ADDRESS_VALIDATE_REQUEST_TAG = "AddressValidateRequest";
     public static final String ADDRESS_TAG = "Address";
     public static final String ADDRESS1_TAG = "Address1";
@@ -43,10 +39,20 @@ public class USPSAddressResponseParser extends DefaultHandler {
     public static final String DESCRIPTION_TAG = "Description";
     public static final String HELP_FILE_TAG = "HelpFile";
     public static final String HELP_CONTEXT_TAG = "HelpContext";
-    private Address address;
+
     private AddressStandarizationResponse addressStandarizationResponse;
     private ArrayList<AddressStandarizationResponse> addressResponseList = new ArrayList<AddressStandarizationResponse>();
     private StringBuffer buffer = new StringBuffer();
+
+    //@Resource(name="org.broadleafcommerce.profile.domain.Address")
+    private Address address;
+    //@Resource(name="org.broadleafcommerce.profile.domain.State")
+    private State state;
+
+    public USPSAddressResponseParser(Address address, State state) {
+        this.address = address;
+        this.state = state;
+    }
 
     public void characters(char[] ch, int start, int end) {
         buffer.append(ch, start, end);
@@ -67,7 +73,6 @@ public class USPSAddressResponseParser extends DefaultHandler {
             address.setCity(buffer.toString().trim());
             buffer = new StringBuffer();
         } else if (qName.equals(STATE_TAG)) {
-            State state = new StateImpl();
             state.setAbbreviation(buffer.toString().trim());
             address.setState(state);
             buffer = new StringBuffer();
@@ -105,7 +110,6 @@ public class USPSAddressResponseParser extends DefaultHandler {
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (qName.equals(ADDRESS_TAG)) {
             addressStandarizationResponse = new AddressStandarizationResponse();
-            address = new AddressImpl();
             addressStandarizationResponse.setAddress(address);
         }
 

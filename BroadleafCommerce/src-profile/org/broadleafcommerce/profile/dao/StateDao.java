@@ -24,4 +24,7 @@ public interface StateDao {
     public List<State> findStates();
 
     public State findStateByAbbreviation(String abbreviation);
+
+    public State create();
+
 }
