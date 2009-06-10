@@ -47,7 +47,7 @@ public class PersonalMessageImpl implements PersonalMessage {
     @Column(name = "MESSAGE")
     protected String message;
 
-    @Column(name = "OCASSION")
+    @Column(name = "OCCASION")
     protected String occasion;
 
     public Long getId() {
