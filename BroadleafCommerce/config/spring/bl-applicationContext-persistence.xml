@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+           
+    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath*:/META-INF/persistence-framework-catalog.xml</value>
+				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
+				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
+				<value>classpath*:/META-INF/persistence-profile.xml</value>
+				<value>classpath*:/META-INF/persistence-auxiliary.xml</value>
+			</list>
+		</property>
+		<property name="validPersistenceUnitNames">
+			<list>
+				<value>blPU</value>
+				<value>blSecurePU</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
+		<property name="persistenceUnitName" value="blPU"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="showSql" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
+		<property name="persistenceUnitName" value="blSecurePU"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="showSql" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+
+	<bean id="blTransactionManagerSecureInfo" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="blEntityManagerFactorySecureInfo" />
+	</bean>
+
+	<tx:advice id="blTxAdviceSecureInfo" transaction-manager="blTransactionManagerSecureInfo">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+	
+	<aop:config>
+	    <aop:pointcut id="blCatalogServiceOperation" expression="execution(* org.broadleafcommerce.catalog.service.CatalogService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogServiceOperation"/>
+	</aop:config>
+
+	<bean id="blPricingExecutionManager" class="org.broadleafcommerce.pricing.service.advice.PricingExecutionManagerImpl">
+        <property name="order" value="1"/>
+    </bean>
+
+	<aop:config>
+		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="2"/>
+	    <aop:aspect id="blPricingAspect" ref="blPricingExecutionManager">
+            <aop:pointcut id="blServiceMethodWithReturnValue" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
+            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue"/>
+        </aop:aspect>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blOrderDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderDao.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blCartServiceOperation" expression="execution(* org.broadleafcommerce.order.service.CartService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCartServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blFulfillmentGroupServiceOperation" expression="execution(* org.broadleafcommerce.order.service.FulfillmentGroupService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blFulfillmentGroupServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blAddressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.AddressService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAddressServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blCustomerAddressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerAddressService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerAddressServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blPhoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.PhoneService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPhoneServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blCustomerPhoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerPhoneService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerPhoneServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blCustomerServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blUserServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.UserService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blUserServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blIdGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blIdGenerationServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blSecurePaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.payment.service.SecurePaymentInfoService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blTargetContentServiceOperation" expression="execution(* org.broadleafcommerce.marketing.service.TargetContentService.*(..))"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blRoleServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.RoleService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRoleServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blPaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.payment.service.PaymentInfoService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPaymentInfoServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blOrderItemDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderItemDao.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderItemDaoOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blOfferServiceOperation" expression="execution(* org.broadleafcommerce.offer.service.OfferService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation"/>
+	</aop:config>
+           
+    <bean id="blCategoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blProductDao" class="org.broadleafcommerce.catalog.dao.ProductDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blAvailabilityDao" class="org.broadleafcommerce.inventory.dao.AvailabilityDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blTargetContentDao" class="org.broadleafcommerce.marketing.dao.TargetContentDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blChallengeQuestionDao" class="org.broadleafcommerce.profile.dao.ChallengeQuestionDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blCountryDao" class="org.broadleafcommerce.profile.dao.CountryDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blIdGenerationDao" class="org.broadleafcommerce.profile.dao.IdGenerationDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blRoleDao" class="org.broadleafcommerce.profile.dao.RoleDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blStateDao" class="org.broadleafcommerce.profile.dao.StateDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+	
+</beans>
