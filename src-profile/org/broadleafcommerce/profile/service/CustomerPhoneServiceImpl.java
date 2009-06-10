@@ -77,4 +77,10 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
     public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId) {
         return customerPhoneDao.readAllCustomerPhonesByCustomerId(customerId);
     }
+
+    @Override
+    public CustomerPhone create() {
+        return customerPhoneDao.create();
+    }
+
 }

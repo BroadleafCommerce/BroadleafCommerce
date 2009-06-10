@@ -15,16 +15,14 @@
  */
 package org.broadleafcommerce.extensibility.web;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.extensibility.context.MergeApplicationContextXmlConfigResource;
+import org.broadleafcommerce.extensibility.context.StandardConfigLocations;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.core.io.Resource;
@@ -84,7 +82,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
      * @see #getResourcePatternResolver
      */
     protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
-        String[] broadleafConfigLocations = getStandardConfigLocations();
+        String[] broadleafConfigLocations = StandardConfigLocations.retrieveAll();
 
         InputStream[] sources = new InputStream[broadleafConfigLocations.length];
         for (int i = 0; i < broadleafConfigLocations.length; i++) {
@@ -104,36 +102,6 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
         Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
 
         reader.loadBeanDefinitions(resources);
-    }
-
-    private String[] getStandardConfigLocations() throws IOException {
-        String[] response;
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(MergeXmlWebApplicationContext.class.getResourceAsStream("StandardConfigLocations.txt")));
-            ArrayList<String> items = new ArrayList<String>();
-            boolean eof = false;
-            while (!eof) {
-                String temp = reader.readLine();
-                if (temp == null) {
-                    eof = true;
-                } else {
-                    if (!temp.startsWith("#") && temp.trim().length() > 0) {
-                        items.add(temp.trim());
-                    }
-                }
-            }
-            response = new String[]{};
-            response = items.toArray(response);
-        } finally {
-            if (reader != null) {
-                try{ reader.close(); } catch (Throwable e) {
-                    LOG.error("Unable to merge source and patch locations", e);
-                }
-            }
-        }
-
-        return response;
     }
 
     /* (non-Javadoc)

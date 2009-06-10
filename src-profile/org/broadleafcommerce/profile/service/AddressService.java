@@ -22,4 +22,7 @@ public interface AddressService {
     public Address saveAddress(Address address);
 
     public Address readAddressById(Long addressId);
+
+    public Address create();
+
 }

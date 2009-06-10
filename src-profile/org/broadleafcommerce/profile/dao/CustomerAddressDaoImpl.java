@@ -17,6 +17,7 @@ package org.broadleafcommerce.profile.dao;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -24,6 +25,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerAddressDao")
@@ -35,6 +37,9 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
+    @Resource
+    protected EntityConfiguration entityConfiguration;
+
     @SuppressWarnings("unchecked")
     public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_ACTIVE_CUSTOMER_ADDRESSES_BY_CUSTOMER_ID");
@@ -42,13 +47,17 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         return query.getResultList();
     }
 
-    public CustomerAddress maintainCustomerAddress(CustomerAddress customerAddress) {
+    public CustomerAddress save(CustomerAddress customerAddress) {
         if (customerAddress.getId() == null) {
             em.persist(customerAddress);
         } else {
             customerAddress = em.merge(customerAddress);
         }
         return customerAddress;
+    }
+
+    public CustomerAddress create() {
+        return (CustomerAddress) entityConfiguration.createEntityInstance(CustomerAddress.class.getName());
     }
 
     @SuppressWarnings("unchecked")
