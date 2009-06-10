@@ -72,4 +72,9 @@ public class CustomerDaoImpl implements CustomerDao {
         }
         return customer;
     }
+
+    public Customer create() {
+        return (Customer) entityConfiguration.createEntityInstance(Customer.class.getName());
+    }
+
 }

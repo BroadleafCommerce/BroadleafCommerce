@@ -48,6 +48,10 @@ public class AddressDaoImpl implements AddressDao {
 
     @SuppressWarnings("unchecked")
     public Address readAddressById(Long id) {
-        return (Address) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Address"), id);
+        return (Address) em.find(entityConfiguration.lookupEntityClass(Address.class.getName()), id);
+    }
+
+    public Address create() {
+        return (Address) entityConfiguration.createEntityInstance(Address.class.getName());
     }
 }

@@ -74,4 +74,9 @@ public class StateDaoImpl implements StateDao {
     public void setQueryCacheableKey(String queryCacheableKey) {
         this.queryCacheableKey = queryCacheableKey;
     }
+
+    public State create() {
+        return (State) entityConfiguration.createEntityInstance(State.class.getName());
+    }
+
 }

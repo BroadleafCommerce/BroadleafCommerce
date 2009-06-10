@@ -48,15 +48,7 @@ public class CustomerPhoneImpl implements CustomerPhone{
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class)
     @JoinColumn(name = "PHONE_ID")
-    protected Phone phone = new PhoneImpl();
-
-    public CustomerPhoneImpl() {
-        this(null);
-    }
-
-    public CustomerPhoneImpl(Customer customer) {
-        this.customer = customer;
-    }
+    protected Phone phone;
 
     public Long getId() {
         return id;

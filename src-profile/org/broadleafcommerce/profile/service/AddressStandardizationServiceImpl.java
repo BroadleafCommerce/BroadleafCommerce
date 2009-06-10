@@ -28,11 +28,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.dao.AddressDao;
+import org.broadleafcommerce.profile.dao.StateDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.service.addressValidation.AddressStandardAbbreviations;
 import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
@@ -73,6 +76,11 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
     protected String uspsServerName = "testing.shippingapis.com";
     protected String uspsServiceAPI = "/ShippingAPITest.dll";
     protected String uspsUserName = "482CREDE3966";
+
+    @Resource
+    protected AddressDao addressDao;
+    @Resource
+    protected StateDao stateDao;
 
     @Override
     public AddressStandarizationResponse standardizeAddress(Address address) {
@@ -288,7 +296,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
     }
 
     protected ArrayList<AddressStandarizationResponse> parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
-        USPSAddressResponseParser addrContentHelper = new USPSAddressResponseParser();
+        USPSAddressResponseParser addrContentHelper = new USPSAddressResponseParser(addressDao.create(), stateDao.create());
         // FileOutputStream fos = new FileOutputStream("/temp/" + System.currentTimeMillis() + ".xml");
         // int nextChar;
         // while ((nextChar = response.read()) != -1)

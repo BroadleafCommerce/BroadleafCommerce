@@ -30,12 +30,12 @@ import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 public class USPSAddressStandardizationServiceTest extends BaseTest {
+
     @Resource
     private AddressStandardizationServiceImpl addressStandardizationService;
     boolean uspsError = true;
 
     protected void addressVerificationSetUp() throws Exception {
-        addressStandardizationService = new AddressStandardizationServiceImpl();
         addressStandardizationService.setUspsCharSet("UTF-8");
         addressStandardizationService.setUspsServiceAPI("/ShippingAPITest.dll");
         addressStandardizationService.setUspsServerName("testing.shippingapis.com");

@@ -31,18 +31,13 @@ import org.broadleafcommerce.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.offer.dao.OfferDao;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
-import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
-import org.broadleafcommerce.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
-import org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.offer.domain.CustomerOffer;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
-import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
@@ -258,7 +253,9 @@ public class OfferServiceImpl implements OfferService {
             for (Offer offer : filteredOffers) {
                 if(offer.getType() == OfferType.ORDER){
                     if (couldOfferApplyToOrder(offer, order)) {
-                        CandidateOrderOffer candidateOffer = new CandidateOrderOfferImpl(order, offer);
+                        CandidateOrderOffer candidateOffer = offerDao.createCandidateOrderOffer();
+                        candidateOffer.setOrder(order);
+                        candidateOffer.setOffer(offer);
                         // Why do we add offers here when we set the sorted list later
                         order.addCandidateOrderOffer(candidateOffer);
                         qualifiedOrderOffers.add(candidateOffer);
@@ -266,7 +263,9 @@ public class OfferServiceImpl implements OfferService {
                 } else if(offer.getType() == OfferType.ORDER_ITEM){
                     for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                         if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
-                            CandidateItemOffer candidateOffer = new CandidateItemOfferImpl(discreteOrderItem, offer);
+                            CandidateItemOffer candidateOffer = offerDao.createCandidateItemOffer();
+                            candidateOffer.setOrderItem(discreteOrderItem);
+                            candidateOffer.setOffer(offer);
                             discreteOrderItem.addCandidateItemOffer(candidateOffer);
                             qualifiedItemOffers.add(candidateOffer);
                         }
@@ -276,7 +275,9 @@ public class OfferServiceImpl implements OfferService {
                     // how to verify if offer applies for fulfillment?
                     for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
                         if(couldOfferApplyToOrder(offer, order, fulfillmentGroup)) {
-                            CandidateFulfillmentGroupOffer candidateOffer = new CandidateFulfillmentGroupOfferImpl(fulfillmentGroup, offer);
+                            CandidateFulfillmentGroupOffer candidateOffer = offerDao.createCandidateFulfillmentGroupOffer();
+                            candidateOffer.setFulfillmentGroup(fulfillmentGroup);
+                            candidateOffer.setOffer(offer);
                             fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
                         }
                     }
@@ -568,7 +569,8 @@ public class OfferServiceImpl implements OfferService {
      * @param itemOffer a CandidateItemOffer to apply to an OrderItem
      */
     protected void applyOrderItemOffer(CandidateItemOffer itemOffer) {
-        OrderItemAdjustment itemAdjustment = new OrderItemAdjustmentImpl(itemOffer.getOrderItem(), itemOffer.getOffer(), itemOffer.getOffer().getName());
+        OrderItemAdjustment itemAdjustment = offerDao.createOrderItemAdjustment();
+        itemAdjustment.init(itemOffer.getOrderItem(), itemOffer.getOffer(), itemOffer.getOffer().getName());
         //add to adjustment
         itemOffer.getOrderItem().addOrderItemAdjustment(itemAdjustment); //This is how we can tell if an item has been discounted
     }
@@ -608,7 +610,8 @@ public class OfferServiceImpl implements OfferService {
      * @param orderOffer a CandidateOrderOffer to apply to an Order
      */
     protected void applyOrderOffer(CandidateOrderOffer orderOffer) {
-        OrderAdjustment orderAdjustment = new OrderAdjustmentImpl(orderOffer.getOrder(), orderOffer.getOffer(), orderOffer.getOffer().getName());
+        OrderAdjustment orderAdjustment = offerDao.createOrderAdjustment();
+        orderAdjustment.init(orderOffer.getOrder(), orderOffer.getOffer(), orderOffer.getOffer().getName());
         //add to adjustment
         orderOffer.getOrder().addOrderAdjustments(orderAdjustment);
     }

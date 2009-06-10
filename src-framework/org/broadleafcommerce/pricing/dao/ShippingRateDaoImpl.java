@@ -81,4 +81,8 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
             return null;
         }
     }
+
+    public ShippingRate create() {
+        return (ShippingRate) entityConfiguration.createEntityInstance(ShippingRate.class.getName());
+    }
 }

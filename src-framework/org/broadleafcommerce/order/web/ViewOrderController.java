@@ -25,27 +25,29 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.order.dao.FulfillmentGroupItemDao;
 import org.broadleafcommerce.order.dao.OrderDao;
-import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
+import org.broadleafcommerce.order.dao.OrderItemDao;
+import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.order.service.OrderService;
+import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.order.web.model.FindOrderForm;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.service.PaymentInfoService;
 import org.broadleafcommerce.pricing.dao.ShippingRateDao;
-import org.broadleafcommerce.pricing.domain.ShippingRateImpl;
+import org.broadleafcommerce.pricing.domain.ShippingRate;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
+import org.broadleafcommerce.profile.dao.AddressDao;
+import org.broadleafcommerce.profile.dao.CustomerDao;
+import org.broadleafcommerce.profile.dao.StateDao;
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.State;
-import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.stereotype.Controller;
@@ -61,30 +63,40 @@ public class ViewOrderController {
     //  @Resource
     //  private CustomerState customerState;
     @Resource
-    private OrderService orderService;
+    protected OrderService orderService;
     @Resource
-    private CustomerService customerService;
+    protected CustomerService customerService;
     @Resource
-    private OrderDao orderDao;
+    protected OrderDao orderDao;
     @Resource
-    private ShippingRateDao shippingRateDao;
+    protected ShippingRateDao shippingRateDao;
     @Resource
-    private FulfillmentGroupService fulfillmentGroupService;
+    protected FulfillmentGroupService fulfillmentGroupService;
     @Resource
-    private PaymentInfoService paymentInfoService;
+    protected PaymentInfoService paymentInfoService;
     @Resource
-    private CatalogService catalogService;
+    protected CatalogService catalogService;
+    @Resource
+    protected AddressDao addressDao;
+    @Resource
+    protected StateDao stateDao;
+    @Resource
+    protected CustomerDao customerDao;
+    @Resource
+    protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
+    @Resource
+    protected OrderItemDao orderItemDao;
 
     @RequestMapping(method =  {RequestMethod.GET})
     public String createNewOrder (ModelMap model, HttpServletRequest request) throws PricingException {
-        ShippingRateImpl sr = new ShippingRateImpl();
+        ShippingRate sr = shippingRateDao.create();
         sr.setFeeType("SHIPPING");
         sr.setFeeSubType("ALL");
         sr.setFeeBand(1);
         sr.setBandUnitQuantity(BigDecimal.valueOf(29.99));
         sr.setBandResultQuantity(BigDecimal.valueOf(8.5));
         sr.setBandResultPercent(0);
-        ShippingRateImpl sr2 = new ShippingRateImpl();
+        ShippingRate sr2 = shippingRateDao.create();
         sr2.setFeeType("SHIPPING");
         sr2.setFeeSubType("ALL");
         sr2.setFeeBand(2);
@@ -95,9 +107,9 @@ public class ViewOrderController {
         shippingRateDao.save(sr);
         shippingRateDao.save(sr2);
 
-        Address addr = new AddressImpl();
+        Address addr = addressDao.create();
         addr.setCity("Dallas");
-        State state = new StateImpl();
+        State state = stateDao.create();
         state.setAbbreviation("TX");
         state.setName("Texas");
         addr.setState(state);
@@ -106,7 +118,7 @@ public class ViewOrderController {
 
         Order order = orderDao.create();
 
-        Customer customer = new CustomerImpl();
+        Customer customer = customerDao.create();
         customer.setFirstName("AJ");
         customer.setLastName("Angus");
         customer.setEmailAddress("jay@aj.com");
@@ -129,11 +141,11 @@ public class ViewOrderController {
         group2.setAddress(addr);
         group2.setShippingPrice(new Money(10D));
 
-        FulfillmentGroupItem fulfillmentGroupItem = new FulfillmentGroupItemImpl();
-        FulfillmentGroupItem fulfillmentGroupItem2 = new FulfillmentGroupItemImpl();
-        FulfillmentGroupItem fulfillmentGroupItem3 = new FulfillmentGroupItemImpl();
+        FulfillmentGroupItem fulfillmentGroupItem = fulfillmentGroupItemDao.create();
+        FulfillmentGroupItem fulfillmentGroupItem2 = fulfillmentGroupItemDao.create();
+        FulfillmentGroupItem fulfillmentGroupItem3 = fulfillmentGroupItemDao.create();
 
-        DiscreteOrderItemImpl item = new DiscreteOrderItemImpl();
+        DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         Sku sku = catalogService.findSkuById(1L);
         item.setSku(sku);
         item.setQuantity(2);
@@ -141,7 +153,7 @@ public class ViewOrderController {
         fulfillmentGroupItem.setPrice(sku.getSalePrice());
         fulfillmentGroupItem.setOrderItem(item);
 
-        item = new DiscreteOrderItemImpl();
+        item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         sku = catalogService.findSkuById(2L);
         item.setSku(sku);
         item.setQuantity(1);
@@ -149,7 +161,7 @@ public class ViewOrderController {
         fulfillmentGroupItem.setPrice(sku.getSalePrice());
         fulfillmentGroupItem2.setOrderItem(item);
 
-        item = new DiscreteOrderItemImpl();
+        item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         sku = catalogService.findSkuById(130L);
         item.setSku(sku);
         item.setQuantity(1);
