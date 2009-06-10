@@ -31,6 +31,6 @@ package org.broadleafcommerce.admin.model
 		
 		[Bindable]
 		public var catalogCategories:ArrayCollection = new ArrayCollection();
-
+		
 	}
 }

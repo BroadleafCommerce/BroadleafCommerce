@@ -4,7 +4,7 @@ package org.broadleafcommerce.admin.control.events
 	
 	import flash.display.DisplayObject;
 	
-	import org.broadleafcommerce.admin.model.data.Offer;
+	import org.broadleafcommerce.admin.model.data.remote.Offer;
 
 	public class ShowOfferWindowEvent extends CairngormEvent
 	{

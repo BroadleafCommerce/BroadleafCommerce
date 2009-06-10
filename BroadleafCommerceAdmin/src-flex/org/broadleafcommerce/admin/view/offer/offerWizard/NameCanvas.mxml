@@ -13,6 +13,8 @@
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.view.events.WizardEvent;
+			import org.broadleafcommerce.admin.model.AppModelLocator;
+			
 			private function handleNext(event:MouseEvent):void{
 				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_NEXT_EVENT));
 			}
@@ -22,35 +24,22 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:RadioButtonGroup id="discountType" />
+	
+	<mx:Binding destination="offerType.dataProvider" source="AppModelLocator.getInstance().offerModel.offerTypes" />
+	<mx:Binding destination="discountType.dataProvider" source="AppModelLocator.getInstance().offerModel.discountTypes" />
+	
+	
 	<mx:RadioButtonGroup id="offerPrice" />
-	<mx:RadioButtonGroup id="offerActive" />
 	<mx:Label x="10" y="10" text="What is the Offer?"/>
 	<mx:TextInput id="offerNameText" x="106" y="36" toolTip="The name of this offer" />
-	<mx:TextInput x="106" y="179"  width="47" id="offerPriorityText0" text="5" toolTip="The priority of this offer in relationship to other offers."/>
+	<mx:TextInput x="106" y="179"  width="47" id="discountValue"  toolTip="The priority of this offer in relationship to other offers."/>
 	<mx:Label x="10" y="38" text="Name:"/>
 	<mx:TextInput x="106" y="64"  width="254" id="offerDescriptionText" toolTip="The description of this offer"/>
 	<mx:Label x="10" y="66" text="Description:"/>
 	<mx:RadioButton id="retailRadio" x="106" y="149" label="Retail Price" groupName="offerPrice" visible="{offerType.selectedIndex==1}"/>
 	<mx:RadioButton id="saleRadio" x="200" y="149" label="Sale Price" groupName="offerPrice" visible="{offerType.selectedIndex==1}"/>
-	<mx:ComboBox x="106" y="119" selectedIndex="0" id="offerType" toolTip="What this offer applies to; an Order, an Item or a fulfillment group.">
-		<mx:dataProvider>
-			<mx:ArrayCollection>
-				<mx:String>Order</mx:String>
-				<mx:String>Item</mx:String>
-				<mx:String>Fulfillment Group</mx:String>
-			</mx:ArrayCollection>
-		</mx:dataProvider>
-	</mx:ComboBox>
-	<mx:ComboBox x="161" y="179" selectedIndex="0" id="offerType0" toolTip="What this offer applies to; an Order, an Item or a fulfillment group.">
-		<mx:dataProvider>
-			<mx:ArrayCollection>
-				<mx:String>% Off</mx:String>
-				<mx:String>$ Off</mx:String>
-				<mx:String>(Fixed Price)</mx:String>
-			</mx:ArrayCollection>
-		</mx:dataProvider>
-	</mx:ComboBox>
+	<mx:ComboBox x="106" y="119" selectedIndex="0" id="offerType" toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />
+	<mx:ComboBox x="161" y="179" selectedIndex="0" id="discountType" toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />
 	<mx:Text x="10" y="121" text="Offer Type:"/>
 	<mx:Text x="10" y="151" text="Apply offer to " visible="{offerType.selectedIndex==1}"/>
 	<mx:DateField x="106" y="92" id="offerDateFrom" toolTip="The date this offer begins (inclusive)."/>

@@ -10,7 +10,7 @@
 	modalTransparencyColor="#FFFFFF"
 	modalTransparency="0"
 	close="PopUpManager.removePopUp(this)"
-	xmlns:offerWizard="org.broadleafcommerce.admin.view.components.offerWizard.*" xmlns:offerWizardB="org.broadleafcommerce.admin.view.components.offerWizardB.*">
+	xmlns:offerWizard="org.broadleafcommerce.admin.view.offer.offerWizard.*" xmlns:offerWizardB="org.broadleafcommerce.admin.view.components.offerWizardB.*">
 	<mx:Metadata>
 		[Event(name="wizardCancelEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
 		[Event(name="wizardDoneEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
@@ -18,12 +18,13 @@
 	
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.model.data.remote.Offer;
+		import mx.controls.Alert;
 		import mx.collections.ArrayCollection;
 		import org.broadleafcommerce.admin.control.events.AddUpdateOfferEvent;
-		import org.broadleafcommerce.admin.control.commands.AddUpdateOfferCommand;
+		import org.broadleafcommerce.admin.control.commands.offers.AddUpdateOfferCommand;
 		import org.broadleafcommerce.admin.model.AppModelLocator;
 		import org.broadleafcommerce.admin.view.BlcMenu;
-		import org.broadleafcommerce.admin.model.data.Offer;
 		import mx.managers.PopUpManager;
 		import org.broadleafcommerce.admin.view.events.WizardEvent;
 		[Bindable]
@@ -32,6 +33,12 @@
 		private static var STATE_WHAT:String = "state_what";
 		[Bindable]
 		private static var STATE_HOW:String = "state_how";
+		
+		[Bindable]
+		private var currentOffer:Offer = AppModelLocator.getInstance().offerModel.currentOffer;
+		
+		[Bindable]
+		private var editOffer:Offer = new Offer();
 
 			private function handleCreationComplete():void {
                 // Center the TitleWindow container 
@@ -76,31 +83,53 @@
 
 		private function updateOffer():void
 		{
-//			var offer:Offer = AppModelLocator.getInstance().offerModel.currentOffer;
-//			offer.name = whatCanvas.offerNameText.text;
-//			offer.description = whatCanvas.offerDescriptionText.text;
-////			offer.type = String(whatCanvas.offerType.selectedValue);
-//			offer.applyToPrice = String(whatCanvas.offerPrice.selectedValue);
-//			offer.active = whatCanvas.offerActive.selectedValue;
-//			offer.fromDate = whenCanvas.offerDateFrom.selectedDate;
-//			offer.toDate = whenCanvas.offerDateTo.selectedDate;
-//			offer.qualifyConditions = whenCanvas.whenCondtionDisplay.conditions;
-//			offer.who = String(whoCanvas.customersRadioGroup.selectedValue);
-//
-//			
-//			var auoe:AddUpdateOfferEvent = new AddUpdateOfferEvent(offer);
-//			auoe.dispatch();
+			editOffer.uses = currentOffer.uses;
+			editOffer.id = currentOffer.id;			
+			var auoe:AddUpdateOfferEvent = new AddUpdateOfferEvent(editOffer);
+			auoe.dispatch();
 			
 		}
 		
 	]]>
 </mx:Script>
-<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.name}" destination="whatCanvas.offerNameText.text" />
-<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.description}" destination="whatCanvas.offerDescriptionText.text" />
-<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.type}" destination="whatCanvas.discountType.selectedValue" />
-<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.applyToPrice}" destination="whatCanvas.offerPrice.selectedValue" />
-<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.active}" destination="whatCanvas.offerActive.selectedValue" />
-<mx:Binding source="{AppModelLocator.getInstance().offerModel.currentOffer.who}" destination="whoCanvas.customersRadioGroup.selectedValue" />
+
+<mx:Binding destination="editOffer.name" source="whatCanvas.offerNameText.text" />
+<mx:Binding destination="editOffer.description" source="whatCanvas.offerDescriptionText.text" />
+<mx:Binding destination="editOffer.startDate" source="whatCanvas.offerDateFrom.selectedDate" />
+<mx:Binding destination="editOffer.endDate" source="whatCanvas.offerDateTo.selectedDate" />
+<mx:Binding destination="editOffer.typeString" source="whatCanvas.offerType.selectedItem.valueOf()" />
+<mx:Binding destination="editOffer.applyDiscountToSalePrice" source="whatCanvas.saleRadio.selected" />
+<mx:Binding destination="editOffer.valueNumber" source="Number(whatCanvas.discountValue.text)" />
+<mx:Binding destination="editOffer.discountTypeString" source="whatCanvas.discountType.selectedItem.toString()" />
+
+<mx:Binding destination="editOffer.priority" source="Number(howCanvas.offerPriorityText.text)" />
+<mx:Binding destination="editOffer.applyDiscountToMarkedItems" source="howCanvas.stackableCheckbox.selected" />
+<mx:Binding destination="editOffer.combinableWithOtherOffers" source="howCanvas.combinableCheckbox.selected" />
+<mx:Binding destination="editOffer.maxUses" source="Number(howCanvas.usesText.text) " />  
+<mx:Binding destination="editOffer.appliesToOrderRules" source="howCanvas.appliesOrderText.text" />  
+
+<mx:Binding destination="editOffer.appliesToCustomerRules" source="whoCanvas.appliesCustomerText.text" />  
+<mx:Binding destination="editOffer.deliveryTypeString" source="whoCanvas.customersRadioGroup.selectedValue.toString()" />
+
+
+<mx:Binding source="{currentOffer.name}" destination="whatCanvas.offerNameText.text" />
+<mx:Binding source="{currentOffer.description}" destination="whatCanvas.offerDescriptionText.text" />
+<mx:Binding source="{currentOffer.startDate}" destination="whatCanvas.offerDateFrom.selectedDate" />
+<mx:Binding source="{currentOffer.endDate}" destination="whatCanvas.offerDateTo.selectedDate" />
+<mx:Binding source="{currentOffer.typeString}" destination="whatCanvas.offerType.selectedItem" />
+<mx:Binding source="{currentOffer.applyDiscountToSalePrice}" destination="whatCanvas.saleRadio.selected" />
+<mx:Binding source="{!currentOffer.applyDiscountToSalePrice}" destination="whatCanvas.retailRadio.selected" />
+<mx:Binding source="{currentOffer.valueNumber.toString()}" destination="whatCanvas.discountValue.text" />
+<mx:Binding source="{currentOffer.discountTypeString}" destination="whatCanvas.discountType.selectedItem" />
+
+<mx:Binding source="{currentOffer.priority.toString()}" destination="howCanvas.offerPriorityText.text" />
+<mx:Binding source="{currentOffer.applyDiscountToMarkedItems}" destination="howCanvas.stackableCheckbox.selected" />
+<mx:Binding source="{currentOffer.combinableWithOtherOffers}" destination="howCanvas.combinableCheckbox.selected" />
+<mx:Binding source="{currentOffer.maxUses.toString()}" destination="howCanvas.usesText.text" />  
+<mx:Binding source="{currentOffer.appliesToOrderRules}" destination="howCanvas.appliesOrderText.text" />  
+
+<mx:Binding source="{currentOffer.appliesToCustomerRules}" destination="whoCanvas.appliesCustomerText.text" />  
+<mx:Binding source="{currentOffer.deliveryTypeString}" destination="whoCanvas.customersRadioGroup.selectedValue" />
 
 
 	<mx:HBox >

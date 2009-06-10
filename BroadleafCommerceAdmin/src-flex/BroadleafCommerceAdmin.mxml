@@ -6,11 +6,12 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.control.events.InitializeApplicationEvent;
 			import com.adobe.cairngorm.control.CairngormEventDispatcher;
 			import org.broadleafcommerce.admin.control.events.FindAllCatalogCategoriesEvent;
 			private function initApp():void{
-				var facce:FindAllCatalogCategoriesEvent = new FindAllCatalogCategoriesEvent();
-				CairngormEventDispatcher.getInstance().dispatchEvent(facce);
+				var iae:InitializeApplicationEvent = new InitializeApplicationEvent();
+				CairngormEventDispatcher.getInstance().dispatchEvent(iae);
 			}
 		]]>
 	</mx:Script>

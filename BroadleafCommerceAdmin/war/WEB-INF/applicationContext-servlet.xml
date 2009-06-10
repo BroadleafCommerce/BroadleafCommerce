@@ -12,11 +12,8 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context-2.5.xsd
 	   http://www.springframework.org/schema/flex
-	   http://www.springframework.org/schema/flex/spring-flex-1.0.xsd        
-       "
+	   http://www.springframework.org/schema/flex/spring-flex-1.0.xsd"
     >
-
-    <context:component-scan base-package="org.broadleafcommerce"/>
 
 	<bean id="resourceBundleExtensionPoint"
 		class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint" />
@@ -55,5 +52,6 @@
 	<!-- Expose the Service beans for BlazeDS remoting 
 	-->
 	<flex:remoting-destination ref="blCatalogService" />		
+	<flex:remoting-destination ref="blOfferService" />		
 
 </beans>

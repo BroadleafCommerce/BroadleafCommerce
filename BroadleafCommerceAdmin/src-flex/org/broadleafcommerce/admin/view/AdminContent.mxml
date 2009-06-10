@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" xmlns:view="org.broadleafcommerce.admin.view.*"
-		>
+		xmlns:offer="org.broadleafcommerce.admin.view.offer.*">
 
 <mx:Script>
 	<![CDATA[
@@ -10,7 +10,7 @@
 </mx:Script>
 	<mx:LinkBar height="100%" width="10%"  dataProvider="contentViewStack" direction="vertical"/>
 	<mx:ViewStack id="contentViewStack" width="90%" height="100%">
-		<view:OfferCanvas label="Offers" id="offerCanvas" height="100%" width="100%" />
+		<offer:OfferCanvas label="Offers" id="offerCanvas" height="100%" width="100%" />
 		<view:CatalogCanvas id="catalogCanvas" label="Catalog" height="100%" width="100%" />	
 		<mx:Canvas label="" width="100%" height="100%">
 		</mx:Canvas>

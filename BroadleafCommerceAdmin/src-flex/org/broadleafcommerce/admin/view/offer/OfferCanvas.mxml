@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns:view="org.broadleafcommerce.admin.view.*" xmlns:wizard="org.broadleafcommerce.admin.view.components.wizard.*" >
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  xmlns:view="org.broadleafcommerce.admin.view.*" xmlns:wizard="org.broadleafcommerce.admin.view.components.wizard.*" xmlns:components="org.broadleafcommerce.admin.view.components.*" xmlns:offer="org.broadleafcommerce.admin.view.offer.*">
 <mx:Script>
 	<![CDATA[
-		import org.broadleafcommerce.admin.model.data.Offer;
+		import org.broadleafcommerce.admin.model.view.OfferModel;
+		import org.broadleafcommerce.admin.model.data.remote.Offer;
 		import org.broadleafcommerce.admin.control.events.ShowOfferWindowEvent;
-		import org.broadleafcommerce.admin.view.components.offerWizard.NewOfferWizard;
+		import org.broadleafcommerce.admin.view.offer.offerWizard.NewOfferWizard;
 		import mx.containers.TitleWindow;
 		import mx.managers.PopUpManager;
 		import mx.core.IFlexDisplayObject;
@@ -15,6 +16,9 @@
 		private static var STATE_LIST:String = "state_list";
 		[Bindable]
 		private static var STATE_NEW:String = "state_new";
+
+		[Bindable]
+		private var offerModel:OfferModel = AppModelLocator.getInstance().offerModel;
 	
 		private function handleNewClick(event:Event):void{
 				var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this);
@@ -27,10 +31,14 @@
 			sowe.dispatch();
 		}
 	]]>
-</mx:Script>
+</mx:Script> 
+<mx:Binding destination="offersDataGrid.dataProvider" source="offerModel.offersList" />
+
 <mx:Binding source="{AppModelLocator.getInstance().offerModel.offersList}" destination="offersDataGrid.dataProvider" />
-	<mx:DataGrid id="offersDataGrid" x="10" y="37" width="75%" height="75%" doubleClickEnabled="true" doubleClick="handleOffersDataGridDoubleClick(event)">
+<offer:OfferDataGrid id="offersDataGrid" x="10" y="37" width="75%" height="75%" doubleClickEnabled="true" doubleClick="handleOffersDataGridDoubleClick(event)" /> 
+<!--	<mx:DataGrid id="offersDataGrid" x="10" y="37" width="75%" height="75%" doubleClickEnabled="true" doubleClick="handleOffersDataGridDoubleClick(event)">
 	</mx:DataGrid>
+	-->
 	<mx:Button x="10" y="10" label="New" click="handleNewClick(event)"/>
 
 </mx:Canvas>
