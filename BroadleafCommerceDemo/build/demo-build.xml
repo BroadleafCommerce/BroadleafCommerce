@@ -29,22 +29,22 @@
 	</fileset>
 
 	<target name="deploy-integrated-war" depends="build-integrated-war">
-		<copy todir="${deploy.path}" file="${stage.dir}/${app.name}.war" />
+		<copy todir="${set.deploy.path}" file="${stage.dir}/${app.name}.war" />
 	</target>
 
 	<target name="deploy-exploded-war" depends="build-exploded-war">
-		<copy todir="${deploy.path}/${app.name}">
+		<copy todir="${set.deploy.path}/${app.name}">
 			<fileset dir="${stage.dir}/${app.name}.war" />
 		</copy>
 		<delete dir="${stage.dir}/${app.name}.war" quiet="true" />
 	</target>
 
 	<target name="undeploy-war">
-		<delete dir="${deploy.path}/${app.name}.war" />
-		<delete dir="${deploy.path}/${app.name}" />
+		<delete dir="${set.deploy.path}/${app.name}.war" />
+		<delete dir="${set.deploy.path}/${app.name}" />
 		<delete>
-			<fileset dir="${deploy.path}" includes="${app.name}.war" />
-			<fileset dir="${deploy.path}" includes="${app.name}" />
+			<fileset dir="${set.deploy.path}" includes="${app.name}.war" />
+			<fileset dir="${set.deploy.path}" includes="${app.name}" />
 		</delete>
 	</target>
 
@@ -65,17 +65,85 @@
 		<delete dir="${stage.dir}/war" />
 	</target>
 
-	<target name="setup-war" depends="classes-jar">
+	<target name="setup-war" depends="classes-jar">	
+		<if>
+			<equals arg1="@@NOT_SET@@" arg2="${appserver.home}" />
+			<then>
+				<echo message="appserver.home not yet set in build.properties"/>
+				<input message="Please enter your tomcat base directory:" addproperty="req.appserver.home" />
+				<if>
+					<equals arg1="" arg2="${req.appserver.home}" />
+					<then> 
+						<fail message="Invalid location given for tomcat directory. Cannot be blank." />
+					</then>
+					<else>
+						<propertyregex property="set.appserver.home" input="${req.appserver.home}" regexp="\\" replace="/" />
+						<available file="${set.appserver.home}" type="dir" property="test.appserver.home" />
+						<fail unless="test.appserver.home" message="Path does not exist: '${set.appserver.home}'" />						
+						<var name="apphome.var" value="appserver.home=${set.appserver.home}" />
+						<var name="deploypath.var" value="${set.appserver.home}${deploy.path}" />
+						<property name="apphome.prop" value="${apphome.var}" />
+						<property name="set.deploy.path" value="${deploypath.var}" />
+						<propertyregex property="set.deploy.path" override="true" input="${set.deploy.path}" regexp="/@@NOT_SET@@" replace="" />
+						<propertyregex property="set.deploy.path" override="true" input="${set.deploy.path}" regexp="@@NOT_SET@@" replace="" />
+						<replace file="${basedir}/build/build.properties" token="appserver.home=@@NOT_SET@@" value="${apphome.prop}"/>
+					</else>
+				</if>
+			</then>
+			<else>
+				<property name="set.appserver.home" value="${appserver.home}" />
+				<property name="set.deploy.path" value="${deploy.path}" />
+			</else>
+		</if>
+		
+		<if>
+			<equals arg1="@@NOT_SET@@" arg2="${mysql.db.user}" />
+			<then>
+				<echo message="mysql.db.user not yet set in build.properties"/>
+				<input message="Please enter your mysql username:" addproperty="set.mysql.db.user" /> 
+				<if>
+					<equals arg1="" arg2="${set.mysql.db.user}" />
+					<then> 
+						<fail message="Invalid mysql username given. Cannot be blank." />
+					</then>
+					<else>
+						<var name="mysqldb.user.var" value="mysql.db.user=${set.mysql.db.user}" />
+						<property name="mysqldb.user.prop" value="${mysqldb.user.var}" />
+						<replace file="${basedir}/build/build.properties" token="mysql.db.user=@@NOT_SET@@" value="${mysqldb.user.prop}"/>
+					</else>
+				</if>
+			</then>
+			<else>
+				<property name="set.mysql.db.user" value="${mysql.db.user}" />
+			</else>
+		</if>
+		
+		<if>
+			<equals arg1="@@NOT_SET@@" arg2="${mysql.db.pw}" />
+			<then>
+				<echo message="mysql.db.pw not yet set in build.properties"/>
+				<input message="Please enter your mysql password for account ${set.mysql.db.user}:" addproperty="set.mysql.db.pw" /> 
+				<var name="mysqldb.pw.var" value="mysql.db.pw=${set.mysql.db.pw}" />
+				<property name="mysqldb.pw.prop" value="${mysqldb.pw.var}" />
+				<replace file="${basedir}/build/build.properties" token="mysql.db.pw=@@NOT_SET@@" value="${mysqldb.pw.prop}"/>
+			</then>
+			<else>
+				<property name="set.mysql.db.pw" value="${mysql.db.pw}" />
+			</else>
+		</if>
+		
 		<fail message="Build Failed. Please make sure you have updated appserver.home, mysql.db.user and mysql.db.pw in build.properties">
 			<condition>
 				<or>
-					<equals arg1="@@NOT_SET@@" arg2="${appserver.home}" />
-					<equals arg1="@@NOT_SET@@" arg2="${mysql.db.user}" />
-					<equals arg1="@@NOT_SET@@" arg2="${mysql.db.pw}" />
+					<equals arg1="@@NOT_SET@@" arg2="${set.appserver.home}" />
+					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.user}" />
+					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.pw}" />
+					<equals arg1="" arg2="${set.appserver.home}" />
+					<equals arg1="" arg2="${set.mysql.db.user}" />
+					<equals arg1="" arg2="${set.mysql.db.pw}" />
 				</or>
 	   		</condition>
 		</fail>
-		 			
 		
 		<mkdir dir="${stage.dir}/war" />
 		<mkdir dir="${stage.dir}/war/META-INF" />
@@ -112,12 +180,12 @@
 			</fileset>
 		</copy>
 
-		<replace file="${stage.dir}/war/META-INF/context.xml" token="@@MYSQL_USERNAME@@" value="${mysql.db.user}"/>
-		<replace file="${stage.dir}/war/META-INF/context.xml" token="@@MYSQL_PASSWORD@@" value="${mysql.db.pw}"/>
+		<replace file="${stage.dir}/war/META-INF/context.xml" token="@@MYSQL_USERNAME@@" value="${set.mysql.db.user}"/>
+		<replace file="${stage.dir}/war/META-INF/context.xml" token="@@MYSQL_PASSWORD@@" value="${set.mysql.db.pw}"/>
 		
-		<copy tofile="${appserver.home}/conf/Catalina/localhost/broadleafdemo.xml">
+		<copy tofile="${set.appserver.home}/conf/Catalina/localhost/broadleafdemo.xml">
 			<fileset dir="${stage.dir}/war/META-INF">
-			    <depend targetdir="${appserver.home}/conf/Catalina/localhost"/>
+			    <depend targetdir="${set.appserver.home}/conf/Catalina/localhost"/>
 				<include name="context.xml" />
 			</fileset>
 		</copy>
@@ -220,23 +288,23 @@
 	</target>
 
 	<target name="tomcat-setup">
-		<available file="${appserver.home}/lib/jta.jar" property="jta.jar.present"/>
+		<available file="${set.appserver.home}/lib/jta.jar" property="jta.jar.present"/>
 		<if>
 			<not>
 				<equals arg1="jta.jar.present" arg2="true" />
 			</not>
 			<then>
-				<copy todir="${appserver.home}/lib" file="${basedir}/../BroadleafCommerce/lib/common/bin/jta.jar" />
+				<copy todir="${set.appserver.home}/lib" file="${basedir}/../BroadleafCommerce/lib/common/bin/jta.jar" />
 			</then>	
 		</if>
 		
-		<available file="${appserver.home}/lib/mysql-connector-java-5.1.7-bin.jar" property="mysql.jar.present"/>
+		<available file="${set.appserver.home}/lib/mysql-connector-java-5.1.7-bin.jar" property="mysql.jar.present"/>
 		<if>
 			<not>
 				<equals arg1="mysql.jar.present" arg2="true" />
 			</not>
 			<then>
-				<copy todir="${appserver.home}/lib" file="${basedir}/../BroadleafCommerce/lib/common/bin/mysql-connector-java-5.1.7-bin.jar" />
+				<copy todir="${set.appserver.home}/lib" file="${basedir}/../BroadleafCommerce/lib/common/bin/mysql-connector-java-5.1.7-bin.jar" />
 			</then>	
 		</if>
 	</target>
@@ -264,27 +332,27 @@
 
 	<target name="app.synch">
 		<echo>Synchronizing App</echo>
-		<sync todir="${deploy.path}/${app.name}/css">
+		<sync todir="${set.deploy.path}/${app.name}/css">
 			<fileset dir="${war.dir}/css">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
-		<sync todir="${deploy.path}/${app.name}/js">
+		<sync todir="${set.deploy.path}/${app.name}/js">
 			<fileset dir="${war.dir}/js">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
-		<sync todir="${deploy.path}/${app.name}/images">
+		<sync todir="${set.deploy.path}/${app.name}/images">
 			<fileset dir="${war.dir}/images">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
-		<sync todir="${deploy.path}/${app.name}/WEB-INF/jsp">
+		<sync todir="${set.deploy.path}/${app.name}/WEB-INF/jsp">
 			<fileset dir="${war.dir}/WEB-INF/jsp">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
-		<copy todir="${deploy.path}/${app.name}">
+		<copy todir="${set.deploy.path}/${app.name}">
 			<fileset dir="${war.dir}">
 				<include name="*.jsp"/>
 			</fileset>
@@ -310,8 +378,8 @@
 		
 	     <sql driver="${mysql.db.driver}"
 	          url="${mysql.db.url}"
-	          userid="${mysql.db.user}"
-	          password="${mysql.db.pw}"
+	          userid="${set.mysql.db.user}"
+	          password="${set.mysql.db.pw}"
 	          encoding="UTF-8"
 	          classpath="${mysql.db.classpath}">
 	     	<transaction src="${basedir}/sql/load/mysql/stage/load_data.sql"/>
