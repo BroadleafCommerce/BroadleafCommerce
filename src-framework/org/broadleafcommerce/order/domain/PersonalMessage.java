@@ -34,4 +34,8 @@ public interface PersonalMessage extends Serializable {
     public String getMessage();
 
     public void setMessage(String message);
+
+    public String getOccasion();
+
+    public void setOccasion(String occasion);
 }
