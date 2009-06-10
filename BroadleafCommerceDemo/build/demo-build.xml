@@ -140,7 +140,6 @@
 					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.pw}" />
 					<equals arg1="" arg2="${set.appserver.home}" />
 					<equals arg1="" arg2="${set.mysql.db.user}" />
-					<equals arg1="" arg2="${set.mysql.db.pw}" />
 				</or>
 	   		</condition>
 		</fail>
