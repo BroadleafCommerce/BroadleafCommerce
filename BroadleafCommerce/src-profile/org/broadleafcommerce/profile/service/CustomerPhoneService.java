@@ -34,4 +34,7 @@ public interface CustomerPhoneService {
     public CustomerPhone findDefaultCustomerPhone(Long customerId);
 
     public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId);
+
+    public CustomerPhone create();
+
 }

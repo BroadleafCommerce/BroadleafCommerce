@@ -17,6 +17,7 @@ package org.broadleafcommerce.profile.dao;
 
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -24,6 +25,7 @@ import javax.persistence.Query;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerPhoneDao")
@@ -34,6 +36,9 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
+
+    @Resource
+    protected EntityConfiguration entityConfiguration;
 
     @SuppressWarnings("unchecked")
     public List<CustomerPhone> readActiveCustomerPhonesByCustomerId(Long customerId) {
@@ -91,5 +96,9 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
         Query query = em.createNamedQuery("BC_READ_ALL_CUSTOMER_PHONES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
         return query.getResultList();
+    }
+
+    public CustomerPhone create() {
+        return (CustomerPhone) entityConfiguration.createEntityInstance(CustomerPhone.class.getName());
     }
 }

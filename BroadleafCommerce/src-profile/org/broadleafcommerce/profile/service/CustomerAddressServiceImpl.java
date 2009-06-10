@@ -42,12 +42,12 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
                 for (CustomerAddress activeCustomerAddress : activeCustomerAddresses) {
                     if (activeCustomerAddress.getId() != customerAddress.getId() && activeCustomerAddress.getAddress().isDefault()) {
                         activeCustomerAddress.getAddress().setDefault(false);
-                        customerAddressDao.maintainCustomerAddress(activeCustomerAddress);
+                        customerAddressDao.save(activeCustomerAddress);
                     }
                 }
             }
         }
-        return customerAddressDao.maintainCustomerAddress(customerAddress);
+        return customerAddressDao.save(customerAddress);
     }
 
     public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId) {
@@ -71,5 +71,10 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     @Override
     public CustomerAddress findDefaultCustomerAddress(Long customerId) {
         return customerAddressDao.findDefaultCustomerAddress(customerId);
+    }
+
+    @Override
+    public CustomerAddress create() {
+        return customerAddressDao.create();
     }
 }

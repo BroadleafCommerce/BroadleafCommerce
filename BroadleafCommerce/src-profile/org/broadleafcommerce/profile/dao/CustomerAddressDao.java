@@ -23,7 +23,7 @@ public interface CustomerAddressDao {
 
     public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId);
 
-    public CustomerAddress maintainCustomerAddress(CustomerAddress customerAddress);
+    public CustomerAddress save(CustomerAddress customerAddress);
 
     public CustomerAddress readCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId);
 
@@ -32,4 +32,7 @@ public interface CustomerAddressDao {
     public void deleteCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId);
 
     public CustomerAddress findDefaultCustomerAddress(Long customerId);
+
+    public CustomerAddress create();
+
 }

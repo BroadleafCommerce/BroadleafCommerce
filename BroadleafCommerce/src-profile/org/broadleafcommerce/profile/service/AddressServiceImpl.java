@@ -38,4 +38,8 @@ public class AddressServiceImpl implements AddressService {
     public Address readAddressById(Long addressId) {
         return addressDao.readAddressById(addressId);
     }
+
+    public Address create() {
+        return addressDao.create();
+    }
 }

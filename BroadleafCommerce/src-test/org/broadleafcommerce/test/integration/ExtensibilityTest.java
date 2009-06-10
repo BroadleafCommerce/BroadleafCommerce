@@ -33,7 +33,12 @@ public class ExtensibilityTest extends BaseTest {
             /*
              * First we load the merged application context
              */
-            MergeClassPathXMLApplicationContext test = new MergeClassPathXMLApplicationContext(new String[]{"org/broadleafcommerce/test/integration/extensibility/base/applicationContext-src.xml"}, new String[]{"org/broadleafcommerce/test/integration/extensibility/override/applicationContext-patch1.xml","org/broadleafcommerce/test/integration/extensibility/override/applicationContext-patch2.xml"}, null);
+            MergeClassPathXMLApplicationContext test = new MergeClassPathXMLApplicationContext(new String[]{"org/broadleafcommerce/test/integration/extensibility/base/applicationContext-src.xml","org/broadleafcommerce/test/integration/extensibility/base/applicationContext-src2.xml"}, new String[]{"org/broadleafcommerce/test/integration/extensibility/override/applicationContext-patch1.xml","org/broadleafcommerce/test/integration/extensibility/override/applicationContext-patch2.xml"}, null);
+
+            ExtensibilityTestBean srcBean = (ExtensibilityTestBean) test.getBean("test3");
+            if (!srcBean.getTestProperty().equals("test1")) {
+                assert false;
+            }
             /*
              * Test to make sure the first patch was applied. This patch involves merging in
              * new properties (and overriding a property and attribute) for a bean
