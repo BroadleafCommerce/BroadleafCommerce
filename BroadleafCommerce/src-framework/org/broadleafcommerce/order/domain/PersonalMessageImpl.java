@@ -47,6 +47,9 @@ public class PersonalMessageImpl implements PersonalMessage {
     @Column(name = "MESSAGE")
     protected String message;
 
+    @Column(name = "OCASSION")
+    protected String occasion;
+
     public Long getId() {
         return id;
     }
@@ -77,6 +80,14 @@ public class PersonalMessageImpl implements PersonalMessage {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getOccasion() {
+        return occasion;
+    }
+
+    public void setOccasion(String occasion) {
+        this.occasion = occasion;
     }
 
     @Override
