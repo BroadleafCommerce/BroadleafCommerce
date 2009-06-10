@@ -155,8 +155,8 @@ public interface Order extends Serializable {
 
     public String getFulfillmentStatus();
 
-    public Long getOrderNumber();
+    public String getOrderNumber();
 
-    public void setOrderNumber(Long orderNumber);
+    public void setOrderNumber(String orderNumber);
 
 }

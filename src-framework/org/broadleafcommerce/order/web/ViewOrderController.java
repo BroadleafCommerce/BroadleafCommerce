@@ -190,7 +190,7 @@ public class ViewOrderController {
 
         order.setTotalShipping(new Money(0D));
         order.setStatus(OrderStatus.SUBMITTED.toString());
-        order.setOrderNumber(1234L);
+        order.setOrderNumber("1234");
         order.setSubmitDate(new Date());
         orderService.save(order);
 
@@ -207,7 +207,7 @@ public class ViewOrderController {
     }
 
     @RequestMapping(method = {RequestMethod.GET})
-    public String viewOrderDetails (ModelMap model, HttpServletRequest request, @RequestParam(required = true) Long orderNumber) {
+    public String viewOrderDetails (ModelMap model, HttpServletRequest request, @RequestParam(required = true) String orderNumber) {
         Order order = orderService.findOrderByOrderNumber(orderNumber);
 
         if (order == null){
@@ -232,7 +232,7 @@ public class ViewOrderController {
     @RequestMapping(method =  {RequestMethod.POST})
     public String processFindOrder (@ModelAttribute FindOrderForm findOrderForm, ModelMap model, HttpServletRequest request) {
         boolean zipFound = false;
-        Order order = orderService.findOrderByOrderNumber(Long.parseLong(findOrderForm.getOrderNumber()));
+        Order order = orderService.findOrderByOrderNumber(findOrderForm.getOrderNumber());
 
         if (order == null)
         {

@@ -39,6 +39,7 @@ import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustmentImpl;
+import org.broadleafcommerce.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
@@ -134,6 +135,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "TOTAL")
     protected BigDecimal total;
+
+    @Column(name = "STATUS")
+    protected String status;
 
     public Long getId() {
         return id;
@@ -416,11 +420,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return true;
     }
 
-    //TODO Remove this?
-    @Override
-    public String getStatus() {
-        // TODO Auto-generated method stub
-        return null;
+    public FulfillmentGroupStatusType getStatus() {
+        return FulfillmentGroupStatusType.getInstance(status);
+    }
+
+    public void setStatus(FulfillmentGroupStatusType status) {
+        this.status = status.getType();
     }
 
 }
