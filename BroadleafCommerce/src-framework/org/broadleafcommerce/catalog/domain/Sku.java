@@ -132,6 +132,16 @@ public interface Sku extends Serializable {
     public void setDiscountable(Boolean discountable);
 
     /**
+     * Returns whether the Sku is available.
+     */
+    public Boolean isAvailable();
+
+    /**
+     * Sets the whether the Sku is available.
+     */
+    public void setAvailable(Boolean available);
+
+    /**
      * Returns the first date that the Sku should be available for sale.  This field is used to determine
      * whether a user can add the sku to their cart.
      */

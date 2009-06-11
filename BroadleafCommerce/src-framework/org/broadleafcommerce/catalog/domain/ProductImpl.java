@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -95,6 +97,23 @@ public class ProductImpl implements Product {
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     protected Date activeEndDate;
+
+    /** The product model number */
+    @Column(name = "MODEL")
+    protected String model;
+
+    /** The manufacture name */
+    @Column(name = "MANUFACTURE")
+    protected String manufacturer;
+
+    /** The product dimensions **/
+    @Embedded
+    protected ProductDimension dimension = new ProductDimensionImpl();
+
+    //TODO: may want to create a ProductWeight object with a weight amount and weight type (POUNDS or KILOGRAMS)
+    /** The weight of the product */
+    @Column(name = "WEIGHT")
+    protected BigDecimal weight;
 
     //TODO remove the transient annotations once all SQL files have been updated.
     @Transient
@@ -343,6 +362,70 @@ public class ProductImpl implements Product {
 
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
         this.crossSaleProducts = crossSaleProducts;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getManufacturer() {
+        return manufacturer;
+    }
+
+    public void setManufacturer(String manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    public ProductDimension getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(ProductDimension dimension) {
+        this.dimension = dimension;
+    }
+
+    public BigDecimal getWidth() {
+        return dimension.getWidth();
+    }
+
+    public void setWidth(BigDecimal width) {
+        dimension.setWidth(width);
+    }
+
+    public BigDecimal getHeight() {
+        return dimension.getHeight();
+    }
+
+    public void setHeight(BigDecimal height) {
+        dimension.setHeight(height);
+    }
+
+    public BigDecimal getDepth() {
+        return dimension.getDepth();
+    }
+
+    public void setDepth(BigDecimal depth) {
+        dimension.setDepth(depth);
+    }
+
+    public BigDecimal getWeight() {
+        return weight;
+    }
+
+    public void setWeight(BigDecimal weight) {
+        this.weight = weight;
+    }
+
+    /**
+     * Returns the product dimensions as a String (assumes measurements are in inches)
+     * @return a String value of the product dimensions
+     */
+    public String getDimensionString() {
+        return dimension.getDimensionString();
     }
 
     @Override

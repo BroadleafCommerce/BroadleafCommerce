@@ -99,6 +99,10 @@ public class SkuImpl implements Sku {
     @Column(name = "DISCOUNTABLE_FLAG")
     protected Character discountable;
 
+    /** The available. */
+    @Column(name = "AVAILABLE_FLAG")
+    protected Character available;
+
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
     protected Date activeStartDate;
@@ -283,6 +287,29 @@ public class SkuImpl implements Sku {
             this.discountable = null;
         } else {
             this.discountable = discountable ? 'Y' : 'N';
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Sku#isAvailable()
+     */
+    public Boolean isAvailable() {
+        if (available == null)
+            return null;
+        return available == 'Y' ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#setAvailable(java.lang.Boolean)
+     */
+    public void setAvailable(Boolean available) {
+        if (available == null) {
+            this.available = null;
+        } else {
+            this.available = available ? 'Y' : 'N';
         }
     }
 
