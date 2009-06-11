@@ -13,7 +13,6 @@
     <context-param>
         <param-name>patchConfigLocation</param-name>
         <param-value>
-            classpath*:applicationContext.xml
             /WEB-INF/applicationContext-custom.xml
             /WEB-INF/applicationContext-email.xml
         </param-value>
