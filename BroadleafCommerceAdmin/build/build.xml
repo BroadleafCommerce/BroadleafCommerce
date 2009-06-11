@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Broadleaf Commerce Admin" basedir=".." default="8. Redeploy and Restart Tomcat">
+<project name="Broadleaf Commerce Admin" basedir=".." default="9. Redeploy and Restart Tomcat">
 	<property name="internal.build.file" value="${basedir}/build/admin-build.xml" />
 	<property file="${basedir}/build/build.properties" />
 	<property name="framework.dir" value="${basedir}/../BroadleafCommerce" />
@@ -9,27 +9,32 @@
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
 			<pathelement location="${basedir}/lib/test/bin/ant-contrib-1.0b3.jar" />
+			<pathelement location="${basedir}/lib/test/bin/catalina.jar" />
 		</classpath>
 	</taskdef>
 
-	<target name="0. Clean" description="Cleans the staging area. Does not undeploy the application(s).">
+	<target name="0. App Server Setup" description="Setup the Tomcat instance" depends="verify-tomcat">
+		<ant antfile="${internal.build.file}" target="tomcat-setup" />
+	</target>
+	
+	<target name="1. Clean" description="Cleans the staging area. Does not undeploy the application(s).">
 		<ant antfile="${internal.build.file}" target="clean" />
 	</target>
 
-	<target name="1. Deploy Exploded War" description="Deploys the exploded war.">
+	<target name="2. Deploy Exploded War" description="Deploys the exploded war." depends="verify-tomcat,verify-mysql">
 		<ant antfile="${internal.build.file}" target="deploy-exploded-war" />
 	</target>
 
-	<target name="2. Deploy War" description="Deploys the unexploded war.">
+	<target name="3. Deploy War" description="Deploys the unexploded war." depends="verify-tomcat,verify-mysql">
 		<ant antfile="${internal.build.file}" target="deploy-integrated-war" />
 	</target>
 
-	<target name="3. Undeploy War" description="Undeploys war file(s).">
+	<target name="4. Undeploy War" description="Undeploys war file(s)." depends="verify-tomcat">
 		<ant antfile="${internal.build.file}" target="undeploy-war" />
 	</target>
 
-	<target name="4. Start Tomcat - Debug Mode">
-	    <java jar="${appserver.home}/bin/bootstrap.jar" fork="true">
+	<target name="5. Start Tomcat - Debug Mode" depends="verify-tomcat">
+	    <java jar="${set.appserver.home}/bin/bootstrap.jar" fork="true">
 	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
 	        <jvmarg value="-Xdebug"/>
 	        <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
@@ -39,33 +44,124 @@
 	    </java>
 	</target>
 
-	<target name="5. Stop Tomcat">
-	    <java jar="${appserver.home}/bin/bootstrap.jar" fork="true">
-	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
+	<target name="6. Stop Tomcat" depends="verify-tomcat">
+	    <java jar="${set.appserver.home}/bin/bootstrap.jar" fork="true">
+	        <jvmarg value="-Dcatalina.home=${set.appserver.home}"/>
 	        <arg value="stop"/>
 	    </java>
 	</target>
 
-	<target name="6. Generate Java Docs" description="Generates Javadocs for the entire application.">
+	<target name="7. Generate Java Docs" description="Generates Javadocs for the entire application.">
 		<ant antfile="${internal.build.file}" target="generate-javadocs" />
 	</target>
 
-	<target name="7. Deploy and Start Tomcat" depends="0. Clean, 3. Undeploy War, 2. Deploy War, 4. Start Tomcat - Debug Mode"/>
+	<target name="8. Deploy and Start Tomcat" depends="1. Clean, 4. Undeploy War, 3. Deploy War, 5. Start Tomcat - Debug Mode"/>
 
-	<target name="8. Redeploy and Restart Tomcat">
+	<target name="9. Redeploy and Restart Tomcat">
 		<trycatch>
 			<try>
-				<antcall target="5. Stop Tomcat"/>
+				<antcall target="6. Stop Tomcat"/>
 			</try>
 		</trycatch>
 		<sleep seconds="35"/>
-		<antcall target="3. Undeploy War"/>
-		<antcall target="1. Deploy Exploded War"/>
-		<antcall target="4. Start Tomcat - Debug Mode"/>
+		<antcall target="4. Undeploy War"/>
+		<antcall target="2. Deploy Exploded War"/>
+		<antcall target="5. Start Tomcat - Debug Mode"/>
+	</target>
+
+	<target name="10. Load Data" depends="verify-mysql">
+		<ant antfile="${internal.build.file}" target="load-data" />
 	</target>
 
 	<target name="app.synch" description="Syncs the XHTML, JSP, JS, CSS, and Images of the project with a running application.">
 		<ant antfile="${internal.build.file}" target="app.synch" />
+	</target>
+	
+	<target name="verify-mysql" description="Verify and Prompt for missing mysql properties">
+		<if>
+			<equals arg1="@@NOT_SET@@" arg2="${mysql.db.user}" />
+			<then>
+				<echo message="mysql.db.user not yet set in build.properties"/>
+				<input message="Please enter your mysql username:" addproperty="set.mysql.db.user" /> 
+				<if>
+					<equals arg1="" arg2="${set.mysql.db.user}" />
+					<then> 
+						<fail message="Invalid mysql username given. Cannot be blank." />
+					</then>
+					<else>
+						<var name="mysqldb.user.var" value="mysql.db.user=${set.mysql.db.user}" />
+						<property name="mysqldb.user.prop" value="${mysqldb.user.var}" />
+						<replace file="${basedir}/build/build.properties" token="mysql.db.user=@@NOT_SET@@" value="${mysqldb.user.prop}"/>
+					</else>
+				</if>
+			</then>
+			<else>
+				<property name="set.mysql.db.user" value="${mysql.db.user}" />
+			</else>
+		</if>
+		
+		<if>
+			<equals arg1="@@NOT_SET@@" arg2="${mysql.db.pw}" />
+			<then>
+				<echo message="mysql.db.pw not yet set in build.properties"/>
+				<input message="Please enter your mysql password for account ${set.mysql.db.user}:" addproperty="set.mysql.db.pw" /> 
+				<var name="mysqldb.pw.var" value="mysql.db.pw=${set.mysql.db.pw}" />
+				<property name="mysqldb.pw.prop" value="${mysqldb.pw.var}" />
+				<replace file="${basedir}/build/build.properties" token="mysql.db.pw=@@NOT_SET@@" value="${mysqldb.pw.prop}"/>
+			</then>
+			<else>
+				<property name="set.mysql.db.pw" value="${mysql.db.pw}" />
+			</else>
+		</if>
+		<fail message="Build Failed. Please make sure you have updated mysql.db.user and mysql.db.pw in build.properties">
+			<condition>
+				<or>
+					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.user}" />
+					<equals arg1="@@NOT_SET@@" arg2="${set.mysql.db.pw}" />
+					<equals arg1="" arg2="${set.mysql.db.user}" />
+				</or>
+	   		</condition>
+		</fail>		
+	</target>
+	
+	<target name="verify-tomcat" description="Verify and Prompt for missing tomcat properties">
+		<if>
+			<equals arg1="@@NOT_SET@@" arg2="${appserver.home}" />
+			<then>
+				<echo message="appserver.home not yet set in build.properties"/>
+				<input message="Please enter your tomcat base directory:" addproperty="req.appserver.home" />
+				<if>
+					<equals arg1="" arg2="${req.appserver.home}" />
+					<then> 
+						<fail message="Invalid location given for tomcat directory. Cannot be blank." />
+					</then>
+					<else>
+						<propertyregex property="set.appserver.home" input="${req.appserver.home}" regexp="\\" replace="/" />
+						<available file="${set.appserver.home}" type="dir" property="test.appserver.home" />
+						<fail unless="test.appserver.home" message="Path does not exist: '${set.appserver.home}'" />						
+						<var name="apphome.var" value="appserver.home=${set.appserver.home}" />
+						<var name="deploypath.var" value="${set.appserver.home}${deploy.path}" />
+						<property name="apphome.prop" value="${apphome.var}" />
+						<property name="set.deploy.path" value="${deploypath.var}" />
+						<propertyregex property="set.deploy.path" override="true" input="${set.deploy.path}" regexp="/@@NOT_SET@@" replace="" />
+						<propertyregex property="set.deploy.path" override="true" input="${set.deploy.path}" regexp="@@NOT_SET@@" replace="" />
+						<replace file="${basedir}/build/build.properties" token="appserver.home=@@NOT_SET@@" value="${apphome.prop}"/>
+					</else>
+				</if>
+			</then>
+			<else>
+				<property name="set.appserver.home" value="${appserver.home}" />
+				<property name="set.deploy.path" value="${deploy.path}" />
+			</else>
+		</if>
+		<fail message="Build Failed. Please make sure you have updated appserver.home in build.properties">
+			<condition>
+				<or>
+					<equals arg1="@@NOT_SET@@" arg2="${set.appserver.home}" />
+					<equals arg1="" arg2="${set.appserver.home}" />
+				</or>
+	   		</condition>
+		</fail>	
 	</target>
 
 	<target name="usage">
