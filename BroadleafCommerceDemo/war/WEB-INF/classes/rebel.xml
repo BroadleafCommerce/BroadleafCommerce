@@ -4,12 +4,12 @@
   xmlns="http://www.zeroturnaround.com"
   xsi:schemaLocation="http://www.zeroturnaround.com/alderaan/rebel-2_0.xsd">
   <classpath>
-    <dir name="${myProject.root}\bin"/>
-	<dir name="${myProject.root}\..\BroadleafCommerce\bin"/>
+    <dir name="${myProject.root}/bin"/>
+	<dir name="${myProject.root}/../BroadleafCommerce/bin"/>
   </classpath>
   <web>
     <link target="/">
-      <dir name="${myProject.root}\war"/>
+      <dir name="${myProject.root}/war"/>
     </link>
   </web>
 </application>
