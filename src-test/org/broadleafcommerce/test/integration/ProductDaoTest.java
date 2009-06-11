@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.test.integration;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -51,6 +52,21 @@ public class ProductDaoTest extends BaseTest {
         product = productDao.save(product);
         List<Product> result = productDao.readProductsByName(name);
         assert result.contains(product);
+    }
+
+    @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
+    public void testProductAttributes(Product product) {
+        product = productDao.save(product);
+        product.setWidth(new BigDecimal(25.5));
+        product.setHeight(new BigDecimal(50D));
+        product.setDepth(new BigDecimal(75.5D));
+        product.setWeight(new BigDecimal(100.1));
+        Product result = productDao.readProductById(product.getId());
+        assert result.getWidth().doubleValue() == 25.5D;
+        assert result.getHeight().doubleValue() == 50D;
+        assert result.getDepth().doubleValue() == 75.5D;
+        assert result.getWeight().doubleValue() == 100.1D;
+        assert result.getDimensionString().equals("50Hx25.5Wx75.5D\"");
     }
 
 }
