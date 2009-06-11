@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -30,6 +31,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -93,6 +95,11 @@ public class ProductImpl implements Product {
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
     protected Date activeEndDate;
+
+    //TODO remove the transient annotations once all SQL files have been updated.
+    @Transient
+    @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+    protected List<RelatedProduct> crossSaleProducts;
 
     /** The all skus. */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
@@ -328,6 +335,14 @@ public class ProductImpl implements Product {
 
     public void setAllParentCategories(List<Category> allParentCategories) {
         this.allParentCategories = allParentCategories;
+    }
+
+    public List<RelatedProduct> getCrossSaleProducts() {
+        return crossSaleProducts;
+    }
+
+    public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
+        this.crossSaleProducts = crossSaleProducts;
     }
 
     @Override
