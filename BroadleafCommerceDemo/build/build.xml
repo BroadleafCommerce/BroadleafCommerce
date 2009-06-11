@@ -73,7 +73,7 @@
 		<ant antfile="${internal.build.file}" target="load-data" />
 	</target>
 
-	<target name="app.synch" description="Syncs the XHTML, JSP, JS, CSS, and Images of the project with a running application.">
+	<target name="app.synch" depends="verify-tomcat" description="Syncs the XHTML, JSP, JS, CSS, and Images of the project with a running application.">
 		<ant antfile="${internal.build.file}" target="app.synch" />
 	</target>
 	
