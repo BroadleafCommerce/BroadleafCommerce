@@ -35,11 +35,15 @@
 
 	<target name="5. Start Tomcat - Debug Mode" depends="verify-tomcat">
 	    <java jar="${set.appserver.home}/bin/bootstrap.jar" fork="true">
-	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
+	        <jvmarg value="-Dcatalina.home=${set.appserver.home}"/>
 	        <jvmarg value="-Xdebug"/>
 	        <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
 	    	<jvmarg value="-Xms128M" />
 	    	<jvmarg value="-Xmx512m" />
+			<jvmarg value="-Xverify:none" />
+			<jvmarg value="-javaagent:${set.appserver.home}/lib/javarebel.jar" />
+			<jvmarg value="-Drebel.spring_plugin=true" />
+			<jvmarg value="-DmyProject.root=${basedir}" />
 	    	<jvmarg value="-XX:MaxPermSize=512M" />
 	    </java>
 	</target>
@@ -73,7 +77,7 @@
 		<ant antfile="${internal.build.file}" target="load-data" />
 	</target>
 
-	<target name="app.synch" depends="verify-tomcat" description="Syncs the XHTML, JSP, JS, CSS, and Images of the project with a running application.">
+	<target name="app.synch" description="Syncs the XHTML, JSP, JS, CSS, and Images of the project with a running application." depends="verify-tomcat">
 		<ant antfile="${internal.build.file}" target="app.synch" />
 	</target>
 	

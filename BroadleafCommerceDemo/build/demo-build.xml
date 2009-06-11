@@ -228,6 +228,16 @@
 				<copy todir="${set.appserver.home}/lib" file="${basedir}/../BroadleafCommerce/lib/common/bin/mysql-connector-java-5.1.7-bin.jar" />
 			</then>	
 		</if>
+		
+		<available file="${set.appserver.home}/lib/javarebel.jar" property="javarebel.jar.present"/>
+		<if>
+			<not>
+				<equals arg1="javarebel.jar.present" arg2="true" />
+			</not>
+			<then>
+				<copy todir="${set.appserver.home}/lib" file="${basedir}/lib/test/bin/javarebel.jar" />
+			</then>	
+		</if>
 	</target>
 		
 	<target name="clean">
