@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.model.view
 		
 		public const offerTypes:ArrayCollection = new ArrayCollection(["ORDER",
 																  									   "ORDER_ITEM",
-																  									   "FULLFILLMENT_GROUP"]);
+																  									   "FULFILLMENT_GROUP"]);
 		
 		public const discountTypes:ArrayCollection = new ArrayCollection(["PERCENT_OFF",
 																  									   "AMOUNT_OFF",

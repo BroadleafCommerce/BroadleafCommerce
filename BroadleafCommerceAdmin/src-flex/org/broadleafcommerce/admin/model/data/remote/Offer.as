@@ -9,14 +9,13 @@ package org.broadleafcommerce.admin.model.data.remote
 		public var id:int;
 		public var name:String;
 		public var description:String;
-		public var type:Object;
-		public var typeString:String;
-		public var discountType:Object;
-		public var discountTypeString:String;
-		public var value:Money;
+		public var type:OfferType = new OfferType();
+		public var discountType:OfferDiscountType = new OfferDiscountType();
+		public var deliveryType:OfferDeliveryType = new OfferDeliveryType();
+		public var value:Money = new Money();
 		public var priority:Number;
 		public var startDate:Date;
-		public var  endDate:Date;
+		public var endDate:Date;
 		public var stackable:Boolean;
 		public var targetSystem:String;
 		public var applyDiscountToSalePrice:Boolean;
@@ -24,8 +23,6 @@ package org.broadleafcommerce.admin.model.data.remote
 		public var appliesToCustomerRules:String;
 		public var applyDiscountToMarkedItems:Boolean;
 		public var combinableWithOtherOffers:Boolean;
-		public var deliveryType:Object;
-		public var deliveryTypeString:String;
 		public var maxUses:Number;
 		public var uses:Number;
 		
@@ -42,5 +39,31 @@ package org.broadleafcommerce.admin.model.data.remote
 		public function set valueNumber(newValue:Number):void{
 			value.amount = newValue;
 		}
+		
+				
+		public function set deliveryTypeString(newType:String):void{
+			deliveryType.type = newType;
+		}
+		
+		public function get deliveryTypeString():String{
+			return deliveryType.type;
+		}
+		
+		public function set typeString(newType:String):void{
+			type.type = newType;
+		}
+		
+		public function get typeString():String{
+			return type.type;
+		}
+
+		public function set discountTypeString(newType:String):void{
+			discountType.type = newType;
+		}
+		
+		public function get discountTypeString():String{
+			return discountType.type;
+		}
+		
 	}
 }
