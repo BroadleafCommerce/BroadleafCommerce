@@ -19,12 +19,10 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 
 public interface FulfillmentGroupAdjustment extends Adjustment {
 
-    public void setId(Long id);
-
-    public Long getId();
-
     public FulfillmentGroup getFulfillmentGroup();
 
     public void computeAdjustmentValue();
+
+    public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason);
 
 }

@@ -62,7 +62,6 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
         this.orderItem = orderItem;
         this.offer = offer;
         this.reason = reason;
-        computeAdjustmentValue();
     }
 
     public Long getId() {
@@ -89,10 +88,6 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
         this.reason = reason;
     }
 
-    public Money getValue() {
-        return value == null ? null : new Money(value);
-    }
-
     public void setOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
     }
@@ -101,8 +96,11 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
         this.offer = offer;
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
+    public Money getValue() {
+        if (value == null) {
+            computeAdjustmentValue();
+        }
+        return value == null ? null : new Money(value);
     }
 
     /*
@@ -112,7 +110,11 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
         if (offer != null && orderItem != null) {
             Money adjustmentPrice = orderItem.getAdjustmentPrice(); // get the current price of the item with all adjustments
             if (adjustmentPrice == null) {
-                adjustmentPrice = orderItem.getRetailPrice();
+                if ((offer.getApplyDiscountToSalePrice()) && (orderItem.getSalePrice() != null)) {
+                    adjustmentPrice = orderItem.getSalePrice();
+                } else {
+                    adjustmentPrice = orderItem.getRetailPrice();
+                }
             }
             if (offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ) {
                 value = offer.getValue().getAmount();

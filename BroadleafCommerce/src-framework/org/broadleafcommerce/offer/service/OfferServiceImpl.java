@@ -34,6 +34,7 @@ import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.CustomerOffer;
+import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
@@ -529,10 +530,10 @@ public class OfferServiceImpl implements OfferService {
      * are create on the OrderItem for each applied CandidateItemOffer.  An offer with stackable equals false
      * cannot be applied to an OrderItem that already contains an OrderItemAdjustment.  An offer with combinable
      * equals false cannot be applied to an OrderItem if any of the OrderItems in the Order contains an
-     * OrderItemAdjustment.
+     * OrderItemAdjustment, unless the offer is the same offer as the OrderItemAdjustment offer.
      *
      * @param itemOffers a sorted list of CandidateItemOffer
-     * @return
+     * @return the not combinable OrderItem Offer
      */
     protected Offer applyAllItemOffers(List<CandidateItemOffer> itemOffers) {
         // Iterate through the collection of CandiateItemOffers. Remember that each one is an offer that may apply to a
@@ -580,13 +581,11 @@ public class OfferServiceImpl implements OfferService {
      * applied based on the restrictions (stackable and/or combinable) on that offer.  OrderAdjustments
      * are create on the Order for each applied CandidateOrderOffer.  An offer with stackable equals false
      * cannot be applied to an Order that already contains an OrderAdjustment.  An offer with combinable
-     * equals false cannot be applied to the Order if the Order already contains an OrderAdjustment or if
-     * all the OrderItemAdjustments have a greater discount value.  If the not combinable CandidateOrderOffers
-     * has a great discount value than all the OrderItemAdjustments, all the OrderItemAdjustments are
-     * removed from the order.
+     * equals false cannot be applied to the Order if the Order already contains an OrderAdjustment.
      *
      * @param orderOffers a sorted list of CandidateOrderOffer
      * @param order the Order to apply the CandidateOrderOffers
+     * @return the not combinable Order Offer
      */
     protected Offer applyAllOrderOffers(List<CandidateOrderOffer> orderOffers, Order order) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
@@ -713,5 +712,69 @@ public class OfferServiceImpl implements OfferService {
         return (Boolean)MVEL.executeExpression(exp, vars);
 
     }
+
+    @Override
+    public void applyFulfillmentGroupsOffers(List<FulfillmentGroup> fulfillmentGroups) {
+        for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
+            applyFulfillmentGroupOffers(fulfillmentGroup);
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void applyFulfillmentGroupOffers(FulfillmentGroup fulfillmentGroup) {
+        List<CandidateFulfillmentGroupOffer> qualifiedFulfillmentGroupOffers = fulfillmentGroup.getCandidateFulfillmentGroupOffers();
+        if (qualifiedFulfillmentGroupOffers.size() > 0) {
+            Collections.sort(qualifiedFulfillmentGroupOffers, new BeanComparator("discountedPrice"));
+            Collections.sort(qualifiedFulfillmentGroupOffers, new BeanComparator("priority"));
+            applyAllFulfillmentGroupOffers(qualifiedFulfillmentGroupOffers, fulfillmentGroup);
+        }
+        if (fulfillmentGroup.getAdjustmentPrice() != null) {
+            fulfillmentGroup.setShippingPrice(fulfillmentGroup.getAdjustmentPrice());
+        } else if (fulfillmentGroup.getSaleShippingPrice() != null) {
+            fulfillmentGroup.setShippingPrice(fulfillmentGroup.getSaleShippingPrice());
+        } else {
+            fulfillmentGroup.setShippingPrice(fulfillmentGroup.getRetailShippingPrice());
+        }
+    }
+
+
+    /**
+     * Private method that takes a list of sorted CandidateFulfillmentGroupOffer and determines if each offer can be
+     * applied based on the restrictions (stackable and/or combinable) on that offer.  FulfillmentGroupAdjustment
+     * are create on the FulfillmentGroup for each applied CandidateFulfillmentGroupOffer.  An offer with stackable equals false
+     * cannot be applied to an FulfillmentGroup that already contains an FulfillmentGroupAdjustment.  An offer with combinable
+     * equals false cannot be applied to the FulfillmentGroup if the FulfillmentGroup already contains an
+     * FulfillmentGroupAdjustment.
+     *
+     * @param fulfillmentGroupOffers a sorted list of CandidateFulfillmentGroupOffer
+     * @param fulfillmentGroup the FulfillmentGroup to apply the CandidateOrderOffers
+     */
+    protected void applyAllFulfillmentGroupOffers(List<CandidateFulfillmentGroupOffer> fulfillmentGroupOffers, FulfillmentGroup fulfillmentGroup) {
+        // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
+        for (CandidateFulfillmentGroupOffer fulfillmentGroupOffer : fulfillmentGroupOffers) {
+            if ((fulfillmentGroupOffer.getOffer().isStackable()) || fulfillmentGroup.getFulfillmentGroupAdjustments().size() == 0) {
+                applyFulfillmentGroupOffer(fulfillmentGroupOffer);
+                if (!fulfillmentGroupOffer.getOffer().isCombinableWithOtherOffers()) {
+                    break;
+                }
+            }
+        }
+   }
+
+    /**
+     * Private method used by applyAllFulfillmentGroupOffers to create an FulfillmentGroupAdjustment from a CandidateFulfillmentGroupOffer
+     * and associates the FulfillmentGroupAdjustment to the Order.
+     *
+     * @param fulfillmentGroupOffer a CandidateFulfillmentGroupOffer to apply to an Order
+     */
+    protected void applyFulfillmentGroupOffer(CandidateFulfillmentGroupOffer fulfillmentGroupOffer) {
+        FulfillmentGroupAdjustment fulfillmentGroupAdjustment = offerDao.createFulfillmentGroupAdjustment();
+        fulfillmentGroupAdjustment.init(fulfillmentGroupOffer.getFulfillmentGroup(), fulfillmentGroupOffer.getOffer(), fulfillmentGroupOffer.getOffer().getName());
+        //add to adjustment
+        fulfillmentGroupOffer.getFulfillmentGroup().addFulfillmentGroupAdjustment(fulfillmentGroupAdjustment);
+    }
+
+
 
 }

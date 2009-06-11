@@ -105,7 +105,7 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
         if (offer != null && orderItem != null){
 
             Money priceToUse = orderItem.getRetailPrice();
-            if (offer.getApplyDiscountToSalePrice()) {
+            if ((offer.getApplyDiscountToSalePrice()) && (orderItem.getSalePrice() != null)) {
                 priceToUse = orderItem.getSalePrice();
             }
 
