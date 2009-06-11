@@ -4,18 +4,17 @@
 	<property name="war.dir" value="${basedir}/war" />
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="src.java.dir" value="${basedir}/src-java" />
-	<property name="src.flex.dir" value="${basedir}/src-flex"/>
 	<property name="test.src.dir" value="${basedir}/test" />
 	<property name="compile.lib.swc.dir" value="${basedir}/lib/compile/swc"/>
 	<property name="compile.lib.dir" value="${lib.dir}/compile/bin" />
 	<property name="include.lib.dir" value="${basedir}/lib/include/bin" />
 	<property name="war.lib.dir" value="${lib.dir}/common/bin" />
+	<property name="internal.flex.build.file" value="${basedir}/build/admin-flex-build.xml" />
 	<property file="${basedir}/build/build.properties" />
 
 	<fail message="Build Failed. Please make sure you have updated Flex SDK Home, appserver.home, mysql.db.user and mysql.db.pw in build.properties">
 		<condition>
 			<or>
-				<equals arg1="@@NOT_SET@@" arg2="${flex.sdk.dir}" />
 				<equals arg1="@@NOT_SET@@" arg2="${appserver.home}" />
 				<equals arg1="@@NOT_SET@@" arg2="${mysql.db.user}" />
 				<equals arg1="@@NOT_SET@@" arg2="${mysql.db.pw}" />
@@ -24,9 +23,6 @@
 	</fail>
 	
 	
-	<taskdef resource="flexTasks.tasks" classpath="${flex.sdk.dir}/ant/lib/flexTasks.jar"/>
-	<property name="FLEX_HOME" value="${flex.sdk.dir}"/>
-	<property name="ADT.JAR" value="${flex.sdk.dir}/lib/adt.jar"/>
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
 			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
@@ -84,14 +80,15 @@
 		<delete dir="${stage.dir}/war" />
 	</target>
 
-	<target name="setup-war" depends="classes-swf,classes-jar">
-		
+	<target name="setup-war" depends="classes-jar">
 		<mkdir dir="${stage.dir}/war" />
 		<mkdir dir="${stage.dir}/war/META-INF" />
 		<mkdir dir="${stage.dir}/war/WEB-INF" />
 		<mkdir dir="${stage.dir}/war/WEB-INF/lib" />
 		<mkdir dir="${stage.dir}/war/WEB-INF/classes" />
 		<mkdir dir="${stage.dir}/war/WEB-INF/config" />
+
+		<ant antfile="${internal.flex.build.file}" target="setup-war" />
 
 		<copy todir="${stage.dir}/war" includeemptydirs="true">
 			<fileset dir="${war.dir}">
@@ -123,34 +120,6 @@
 
 	</target>
 
-	<target name="classes-swf" depends="setup">
-		<mkdir dir="${stage.dir}/classes-swf" />		
-		
-		<mxmlc file="${src.flex.dir}/${flex.swf.name}.mxml" output="${stage.dir}/classes-swf/${flex.swf.name}.swf" incremental="true"
-			services="${war.dir}/WEB-INF/flex/services-config.xml" context-root="/" >
-			<load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml"/>
-			<source-path path-element="${flex.sdk.dir}/frameworks" />
-			<include-libraries file="${compile.lib.swc.dir}/*.swc"/>
-		</mxmlc>
-	
-		<html-wrapper
-			swf="${flex.swf.name}"
-			title="${flex.app.title}"
-			file="${flex.swf.name}.html"
-			template="${flex.app.template}"
-			height="${flex.app.height}"
-			width="${flex.app.width}"
-			output="${stage.dir}/classes-swf"
-			history="true"
-		/>	
-		
-		<copy todir="${stage.dir}/war" includeemptydirs="true">
-			<fileset dir="${stage.dir}/classes-swf" />
-		</copy>
-
-		<delete dir="${stage.dir}/classes-swf" />		
-	</target>
-	
 	<target name="classes-jar" depends="setup">
 		<mkdir dir="${stage.dir}/classes-jar" />
 
@@ -222,7 +191,8 @@
 	<target name="setup" depends="clean">
 		<echo>Setting up for environment = ${build.env}</echo>
 		<mkdir dir="${stage.dir}" />
-		<mkdir dir="${stage.dir}/classes-swf/" />
+
+
 		<if>
 			<equals arg1="${build.env}" arg2="dev" />
 			<then>
@@ -239,6 +209,8 @@
 			</else>
 		</if>
 
+		<ant antfile="${internal.flex.build.file}" target="setup"/>
+
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-profile.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-profile-web.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-framework.jar" />
@@ -249,6 +221,7 @@
 	</target>
 
 	<target name="clean">
+		<ant antfile="${internal.flex.build.file}" target="clean"/>
 		<delete dir="${stage.dir}" />
 		<delete dir="${test.output.dir}" />
 	</target>
