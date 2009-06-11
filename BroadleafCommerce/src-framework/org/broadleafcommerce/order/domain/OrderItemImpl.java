@@ -77,20 +77,20 @@ public class OrderItemImpl implements OrderItem {
     protected int quantity;
 
     @Transient
-    protected BigDecimal adjustmentPrice;  // retailPrice with adjustments
+    protected BigDecimal adjustmentPrice; // retailPrice with adjustments
 
-    @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = {CascadeType.ALL})
+    @ManyToOne(targetEntity = PersonalMessageImpl.class, cascade = { CascadeType.ALL })
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
     protected PersonalMessage personalMessage;
 
-    @ManyToOne(targetEntity = GiftWrapOrderItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne(targetEntity = GiftWrapOrderItemImpl.class, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL })
     protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL })
     protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
 
     @Transient
@@ -233,12 +233,12 @@ public class OrderItemImpl implements OrderItem {
     @Override
     public boolean isInCategory(String categoryName) {
         Category currentCategory = category;
-        if(currentCategory != null) {
-            if(currentCategory.getName().equals(categoryName)){
+        if (currentCategory != null) {
+            if (currentCategory.getName().equals(categoryName)) {
                 return true;
             }
-            while((currentCategory = currentCategory.getDefaultParentCategory()) != null) {
-                if(currentCategory.getName().equals(categoryName)) {
+            while ((currentCategory = currentCategory.getDefaultParentCategory()) != null) {
+                if (currentCategory.getName().equals(categoryName)) {
                     return true;
                 }
             }
@@ -252,8 +252,8 @@ public class OrderItemImpl implements OrderItem {
     }
 
     /*
-     * Adds the adjustment to the order item's adjustment list an discounts the order item's adjustment
-     * price by the value of the adjustment.
+     * Adds the adjustment to the order item's adjustment list an discounts the
+     * order item's adjustment price by the value of the adjustment.
      */
     public List<OrderItemAdjustment> addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment) {
         if (this.orderItemAdjustments.size() == 0) {
@@ -301,7 +301,7 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public boolean getIsOnSale() {
-        return getPrice() != getRetailPrice();
+        return getPrice().equals(getRetailPrice());
     }
 
     @Override
