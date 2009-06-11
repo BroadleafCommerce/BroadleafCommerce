@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
@@ -68,6 +69,10 @@ public class OfferDaoImpl implements OfferDao {
 
     public OrderAdjustment createOrderAdjustment() {
         return ((OrderAdjustment) entityConfiguration.createEntityInstance(OrderAdjustment.class.getName()));
+    }
+
+    public FulfillmentGroupAdjustment createFulfillmentGroupAdjustment() {
+        return ((FulfillmentGroupAdjustment) entityConfiguration.createEntityInstance(FulfillmentGroupAdjustment.class.getName()));
     }
 
     @Override

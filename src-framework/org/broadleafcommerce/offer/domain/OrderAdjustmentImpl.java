@@ -62,7 +62,6 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
         this.order = order;
         this.offer = offer;
         this.reason = reason;
-        computeAdjustmentValue();
     }
 
     public Long getId() {
@@ -98,6 +97,9 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     }
 
     public Money getValue() {
+        if (value == null) {
+            computeAdjustmentValue();
+        }
         return value == null ? null : new Money(value);
     }
 

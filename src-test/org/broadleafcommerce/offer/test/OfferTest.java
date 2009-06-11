@@ -226,6 +226,25 @@ public class OfferTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
 
+    @Test(groups =  {"testFulfillmentGroupOffers"}, dependsOnGroups = { "testCustomerAssociatedOffers"})
+    public void testFulfillmentGroupOffers() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D));
+
+
+        order.addOrderItem(createDiscreteOrderItem(50L, 10D, null, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(51L, 20D, null, true, 1));
+
+        order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 10));
+        order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.AMOUNT_OFF, 3, null, null, true, true, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+        offerService.applyFulfillmentGroupOffers(order.getFulfillmentGroups().get(0));
+
+        assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(1.6D)));
+    }
+
     private Customer createCustomer() {
         Customer customer = customerService.createCustomerFromId(null);
         return customer;
@@ -236,7 +255,7 @@ public class OfferTest extends BaseTest {
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setMethod(method);
         groups.add(group);
-        group.setShippingPrice(new Money(shippingPrice));
+        group.setRetailShippingPrice(new Money(shippingPrice));
         return groups;
     }
 

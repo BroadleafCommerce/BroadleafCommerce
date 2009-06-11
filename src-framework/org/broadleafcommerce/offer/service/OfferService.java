@@ -18,6 +18,7 @@ package org.broadleafcommerce.offer.service;
 import java.util.List;
 
 import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 
@@ -59,6 +60,18 @@ public interface OfferService {
      * @return
      */
     public List<Offer> buildOfferListForOrder(Order order);
+
+    /**
+     * Apply offers for a fulfillmentGroup
+     * @param fulfillmentGroup
+     */
+    public void applyFulfillmentGroupOffers(FulfillmentGroup fulfillmentGroup);
+
+    /**
+     * Apply offers for a List of FulfillmentGroup
+     * @param fulfillmentGroups
+     */
+    public void applyFulfillmentGroupsOffers(List<FulfillmentGroup> fulfillmentGroups);
 
 
 }

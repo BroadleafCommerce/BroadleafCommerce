@@ -97,9 +97,12 @@ public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentG
 
             if (fulfillmentGroup.getRetailShippingPrice() != null) {
                 Money priceToUse = fulfillmentGroup.getRetailShippingPrice();
+                if ((offer.getApplyDiscountToSalePrice()) && (fulfillmentGroup.getSaleShippingPrice() != null)) {
+                    priceToUse = fulfillmentGroup.getSaleShippingPrice();
+                }
 
                 if(offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ){
-                    priceToUse.subtract(offer.getValue());
+                    priceToUse = priceToUse.subtract(offer.getValue());
                 } else if (offer.getDiscountType() == OfferDiscountType.FIX_PRICE){
                     priceToUse = offer.getValue();
                 } else if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF){

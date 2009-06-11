@@ -57,16 +57,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     @Column(name = "ADJUSTMENT_VALUE")
     protected BigDecimal value;
 
-    public FulfillmentGroupAdjustmentImpl() {
-        this(null, null, null);
-    }
-
-    public FulfillmentGroupAdjustmentImpl(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){
+    public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){
         this.fulfillmentGroup = fulfillmentGroup;
         this.offer = offer;
         this.reason = reason;
-        computeAdjustmentValue();
-    }
+  }
 
     public Long getId() {
         return id;
@@ -101,6 +96,9 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     }
 
     public Money getValue() {
+        if (value == null) {
+            computeAdjustmentValue();
+        }
         return value == null ? null : new Money(value);
     }
 
@@ -111,7 +109,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
         if (offer != null && fulfillmentGroup != null) {
             Money adjustmentPrice = fulfillmentGroup.getAdjustmentPrice(); // get the current price of the item with all adjustments
             if (adjustmentPrice == null) {
-                adjustmentPrice = fulfillmentGroup.getRetailShippingPrice();
+                if ((offer.getApplyDiscountToSalePrice()) && (fulfillmentGroup.getSaleShippingPrice() != null)) {
+                    adjustmentPrice = fulfillmentGroup.getSaleShippingPrice();
+                } else {
+                    adjustmentPrice = fulfillmentGroup.getRetailShippingPrice();
+                }
             }
             if (offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ) {
                 value = offer.getValue().getAmount();
@@ -121,6 +123,9 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
             }
             if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF) {
                 value = adjustmentPrice.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()).getAmount();
+            }
+            if (adjustmentPrice.lessThan(value)) {
+                value = adjustmentPrice.getAmount();
             }
         }
     }
