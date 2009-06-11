@@ -37,17 +37,9 @@ public interface Offer extends Serializable {
 
     public void setType(OfferType offerType);
 
-    public String getTypeString();
-
-    public void setTypeString(String offerType);
-
     public OfferDiscountType getDiscountType();
 
     public void setDiscountType(OfferDiscountType type);
-
-    public String getDiscountTypeString();
-
-    public void setDiscountTypeString(String discountType);
 
     public Money getValue();
 
@@ -96,10 +88,6 @@ public interface Offer extends Serializable {
     public OfferDeliveryType getDeliveryType();
 
     public void setDeliveryType(OfferDeliveryType deliveryType);
-
-    public String getDeliveryTypeString();
-
-    public void setDeliveryTypeString(String deliveryType);
 
     public int getMaxUses() ;
 

@@ -118,17 +118,6 @@ public class OfferImpl implements Offer {
         this.type = type.getType();
     }
 
-    public String getTypeString() {
-        return type;
-    }
-
-    public void setTypeString(String offerType) {
-        this.type = OfferType.getInstance(offerType).getType();
-        if(this.type == null) {
-            throw new RuntimeException("Invalid offer type of "+ offerType+" in OfferImple.setTypeString");
-        }
-    }
-
     public OfferDiscountType getDiscountType() {
         return OfferDiscountType.getInstance(discountType);
 
@@ -138,17 +127,6 @@ public class OfferImpl implements Offer {
     public void setDiscountType(OfferDiscountType discountType) {
         this.discountType = discountType.getType();
 
-    }
-
-    public String getDiscountTypeString() {
-        return this.discountType;
-    }
-
-    public void setDiscountTypeString(String discountType) {
-        this.discountType = OfferDiscountType.getInstance(discountType).getType();
-        if(this.discountType == null) {
-            throw new RuntimeException("Invalid discount type of "+ discountType+" in OfferImple.setDiscountTypeString");
-        }
     }
 
     public Money getValue() {
@@ -269,17 +247,6 @@ public class OfferImpl implements Offer {
 
     public void setDeliveryType(OfferDeliveryType deliveryType) {
         this.deliveryType = deliveryType.getType();
-    }
-
-    public String getDeliveryTypeString() {
-        return deliveryType;
-    }
-
-    public void setDeliveryTypeString(String deliveryType) {
-        this.deliveryType = OfferDeliveryType.getInstance(deliveryType).getType();
-        if(this.deliveryType == null) {
-            throw new RuntimeException("Invalid deliveryTypeString in OfferImpl");
-        }
     }
 
     public int getMaxUses() {

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.offer.service.type;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -22,7 +23,8 @@ import java.util.Map;
  * An extendible enumeration of offer types.
  *
  */
-public class OfferType {
+public class OfferType implements Serializable
+{
 
     private static final Map<String, OfferType> types = new Hashtable<String, OfferType>();
 
@@ -34,9 +36,17 @@ public class OfferType {
         return types.get(type);
     }
 
-    private final String type;
+    private String type;
 
-    protected OfferType(String type) {
+    public OfferType() {
+
+    }
+
+    public OfferType(String type) {
+        setType(type);
+    }
+
+    public void setType(String type) {
         this.type = type;
         types.put(type, this);
     }

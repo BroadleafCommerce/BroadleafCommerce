@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.offer.service.type;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -22,7 +23,8 @@ import java.util.Map;
  * An extendible enumeration of discount types.
  *
  */
-public class OfferDiscountType {
+public class OfferDiscountType implements Serializable
+{
 
     private static final Map<String, OfferDiscountType> types = new Hashtable<String, OfferDiscountType>();
 
@@ -34,9 +36,17 @@ public class OfferDiscountType {
         return types.get(type);
     }
 
-    private final String type;
+    private String type;
 
-    protected OfferDiscountType(String type) {
+    public OfferDiscountType() {
+
+    }
+
+    public OfferDiscountType(String type) {
+        setType(type);
+    }
+
+    public void setType(String type) {
         this.type = type;
         types.put(type, this);
     }
@@ -44,4 +54,5 @@ public class OfferDiscountType {
     public String getType() {
         return type;
     }
+
 }

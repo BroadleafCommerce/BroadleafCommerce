@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.offer.service.type;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -27,7 +28,8 @@ import java.util.Map;
  * CODE - a offer code must be supplied in order to receive this offer
  *
  */
-public class OfferDeliveryType {
+public class OfferDeliveryType implements Serializable
+{
 
     private static final Map<String, OfferDeliveryType> types = new Hashtable<String, OfferDeliveryType>();
 
@@ -39,9 +41,17 @@ public class OfferDeliveryType {
         return types.get(type);
     }
 
-    private final String type;
+    private String type;
 
-    protected OfferDeliveryType(String type) {
+    public OfferDeliveryType() {
+
+    }
+
+    public OfferDeliveryType(String type) {
+        setType(type);
+    }
+
+    public void setType(String type) {
         this.type = type;
         types.put(type, this);
     }
@@ -49,4 +59,5 @@ public class OfferDeliveryType {
     public String getType() {
         return type;
     }
+
 }
