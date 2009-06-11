@@ -301,7 +301,7 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public boolean getIsOnSale() {
-        return getPrice().equals(getRetailPrice());
+        return !getPrice().equals(getRetailPrice());
     }
 
     @Override
