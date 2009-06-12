@@ -210,14 +210,10 @@ public class ViewOrderController {
     public String viewOrderDetails (ModelMap model, HttpServletRequest request, @RequestParam(required = true) String orderNumber) {
         Order order = orderService.findOrderByOrderNumber(orderNumber);
 
-        if (order == null){
+        if (order == null)
+        {
             return "findOrderError";
         }
-
-        List<FulfillmentGroup> fg = order.getFulfillmentGroups();
-        List<FulfillmentGroupItem> fgis = fg.get(0).getFulfillmentGroupItems();
-
-        fgis.getClass();
 
         model.addAttribute("order", order);
         return "viewOrderDetails";

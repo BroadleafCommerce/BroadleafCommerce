@@ -146,6 +146,10 @@ public class ProductImpl implements Product {
     @BatchSize(size = 50)
     protected List<Category> allParentCategories;
 
+    @Column(name = "IS_FEATURED_PRODUCT")
+    @Transient
+    protected boolean isFeaturedProduct = false;
+
     /** The skus. */
     @Transient
     protected List<Sku> skus;
@@ -462,5 +466,13 @@ public class ProductImpl implements Product {
         } else if (!skus.equals(other.skus))
             return false;
         return true;
+    }
+
+    public boolean getIsFeaturedProduct() {
+        return isFeaturedProduct;
+    }
+
+    public void setFeaturedProduct(boolean isFeaturedProduct) {
+        this.isFeaturedProduct = isFeaturedProduct;
     }
 }

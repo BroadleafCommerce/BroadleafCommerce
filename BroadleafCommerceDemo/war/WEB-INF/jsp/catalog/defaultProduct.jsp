@@ -8,6 +8,11 @@
 <br />
 <br />
 <br/>
+
+<c:if test="${currentProduct.isFeaturedProduct == true}" >
+	<h2> FEATURED PRODUCT! </h2>
+</c:if>
+
 <table border="1">
 	<tr>
 		<th>Name</th>

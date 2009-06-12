@@ -31,7 +31,25 @@
 			<h2>This category has no sub-categories</h2>
 		</c:otherwise>	
 	</c:choose>
-	
+	<c:if test="${fn:length(currentCategory.featuredProducts) > 0 }" >
+		<h3> FEATURED PRODUCTS </h3>
+		<table border="0">
+			<tr>
+				<th>Name</th>
+			</tr>
+			<c:forEach var="featuredProduct" items="${currentCategory.featuredProducts}" varStatus="status">
+				<tr>
+					<td>
+						<blc:productLink product="${featuredProduct.product}" />
+			  			<c:if test="${featuredProduct.product.isFeaturedProduct == true}" > 
+							--FEATURED PRODUCT!-- 
+						</c:if> 
+						Promo Message: ${featuredProduct.promotionMessage}
+					</td>
+				</tr>
+			</c:forEach>
+		</table>
+	</c:if>
 	<c:choose>
 		<c:when test="${fn:length(currentProducts) > 0}">
 			<h2>Here is a list of products under this category:</h2>
@@ -42,7 +60,12 @@
 			</tr>
 			<c:forEach var="product" items="${currentProducts}" varStatus="status">
 				<tr>
-					<td><blc:productLink product="${product}" /></td>
+					<td>
+						<blc:productLink product="${product}" />
+						<c:if test="${product.isFeaturedProduct == true}" >
+							--FEATURED PRODUCT!-- 
+						</c:if>
+					</td>
 				</tr>
 			</c:forEach>
 			</table>

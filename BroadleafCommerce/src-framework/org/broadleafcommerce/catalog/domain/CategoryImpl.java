@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,6 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -137,6 +139,11 @@ public class CategoryImpl implements Category {
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
     protected String longDescription;
+
+    //TODO remove the transient annotations once all SQL files have been updated.
+    @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
+    @Transient
+    protected List<FeaturedProduct> featuredProducts;
 
     /** The child categories. */
     @Transient
@@ -480,6 +487,14 @@ public class CategoryImpl implements Category {
 
     public void setAllParentCategories(List<Category> allParentCategories) {
         this.allParentCategories = allParentCategories;
+    }
+
+    public List<FeaturedProduct> getFeaturedProducts() {
+        return featuredProducts;
+    }
+
+    public void setFeaturedProducts(List<FeaturedProduct> featuredProducts) {
+        this.featuredProducts = featuredProducts;
     }
 
     @Override
