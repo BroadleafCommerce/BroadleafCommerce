@@ -1,0 +1,125 @@
+﻿<?xml version="1.0"?>
+<!-- Main application to print a DataGrid control on multiple pages. -->
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" initialize="initData();">
+
+    <mx:Script>
+        <![CDATA[
+
+        import mx.printing.*;
+        import mx.collections.ArrayCollection;
+        import FormPrintView;
+
+        // Declare variables and initialize simple variables.
+        [Bindable]
+        public var dgProvider:ArrayCollection;
+        public var footerHeight:Number = 20;
+        public var prodIndex:Number;
+        public var prodTotal:Number = 0;
+		
+        // Data initialization.
+        public function initData():void {
+            // Create the data provider for the DataGrid control.
+            dgProvider = new ArrayCollection; 
+        }
+		
+        // Fill the dgProvider ArrayCollection with the specified items.
+        public function setdgProvider(items:int):void {	
+
+            prodIndex=1;
+            dgProvider.removeAll();
+            for (var z:int=0; z<items; z++)	
+            {
+                var prod1:Object = {};
+                prod1.数量 = prodIndex * 7;
+                prod1.インデックス = prodIndex++;
+                prodTotal += prod1.数量; 
+                dgProvider.addItem(prod1);
+            }
+        }
+
+        // The function to print the output.
+        public function doPrint():void {
+
+            var printJob:FlexPrintJob = new FlexPrintJob();
+            if (printJob.start()) {
+                // Create a FormPrintView control as a child of the current view.
+                var thePrintView:FormPrintView = new FormPrintView();
+               Application.application.addChild(thePrintView);
+				
+                //Set the print view properties.
+                thePrintView.width=printJob.pageWidth;
+                thePrintView.height=printJob.pageHeight;
+                thePrintView.prodTotal = prodTotal;
+                // Set the data provider of the FormPrintView component's data grid
+                // to be the data provider of the displayed data grid.
+                thePrintView.myDataGrid.dataProvider = myDataGrid.dataProvider;
+                // Create a single-page image.
+                thePrintView.showPage("single");
+                // If the print image's data grid can hold all the provider's rows, 
+                // add the page to the print job. 
+                if(!thePrintView.myDataGrid.validNextPage)
+                {
+                    printJob.addObject(thePrintView);
+                }
+                // Otherwise, the job requires multiple pages.
+                else
+                {
+                    // Create the first page and add it to the print job.
+                    thePrintView.showPage("first");
+                    printJob.addObject(thePrintView);
+                    thePrintView.pageNumber++;
+                    // Loop through the following code until all pages are queued.
+                    while(true)
+                    {
+                        // Move the next page of data to the top of the print grid.
+                        thePrintView.myDataGrid.nextPage();
+                        thePrintView.showPage("last");	
+                        // If the page holds the remaining data, or if the last page 
+                        // was completely filled by the last grid data, queue it for printing.
+                        // Test if there is data for another PrintDataGrid page.
+                        if(!thePrintView.myDataGrid.validNextPage) 
+                        {
+                            // This is the last page; queue it and exit the print loop.
+                            printJob.addObject(thePrintView);
+                            break;
+                        }
+                        else
+                        // This is not the last page. Queue a middle page. 
+                        {
+                            thePrintView.showPage("middle");
+                            printJob.addObject(thePrintView);
+                            thePrintView.pageNumber++;
+                        }
+                    }
+                }
+                // All pages are queued; remove the FormPrintView control to free memory.
+                Application.application.removeChild(thePrintView);
+            }
+            // Send the job to the printer.
+            printJob.send();
+        }
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="DataGrid 印刷例" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:DataGrid id="myDataGrid" dataProvider="{dgProvider}">
+            <mx:columns>
+                <mx:DataGridColumn dataField="インデックス"/>
+                <mx:DataGridColumn dataField="数量"/>
+            </mx:columns>
+        </mx:DataGrid>
+
+        <mx:Text width="100%" color="blue"
+            text="行数を指定して最初に [グリッドを表示] をクリックします。次に [印刷] をクリックします。"/>
+
+        <mx:TextInput id="dataItems" text="35"/>
+
+        <mx:HBox>
+            <mx:Button id="setDP" label="グリッドを表示" click="setdgProvider(int(dataItems.text));"/>
+            <mx:Button id="printDG" label="印刷" click="doPrint();"/>
+        </mx:HBox>
+    </mx:Panel>
+</mx:Application>

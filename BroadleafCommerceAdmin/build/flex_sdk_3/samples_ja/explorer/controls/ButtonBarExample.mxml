@@ -1,0 +1,38 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the ButtonBar control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+	    	
+            import mx.events.ItemClickEvent;	
+	    	
+            // Event handler function to print a message
+            // describing the selected Button control.        
+    		private function clickHandler(event:ItemClickEvent):void {
+    		    myTA.text="選択されたボタンのインデックス : " + String(event.index) + 
+    		        "\n" + "選択したボタンラベル : " + event.label;
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="ButtonBar コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+       <mx:Label width="100%" color="blue"
+           text="ButtonBar コントロールのボタンを選択します。"/>
+
+        <mx:TextArea id="myTA" width="100%" height="100%"/>
+
+        <mx:ButtonBar horizontalGap="5" itemClick="clickHandler(event);">
+            <mx:dataProvider>
+                <mx:Array>
+                    <mx:String>Flash</mx:String>
+                    <mx:String>Director</mx:String>
+                    <mx:String>Dreamweaver</mx:String>
+                    <mx:String>ColdFusion</mx:String>
+                </mx:Array>
+            </mx:dataProvider>
+        </mx:ButtonBar>
+    </mx:Panel>
+</mx:Application>

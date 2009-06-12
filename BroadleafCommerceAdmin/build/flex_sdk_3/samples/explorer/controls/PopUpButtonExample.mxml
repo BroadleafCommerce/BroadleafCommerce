@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the PopUpButton control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+	<mx:Script>
+		<![CDATA[
+
+			import mx.controls.*;
+			import mx.events.*;
+
+			private var myMenu:Menu;
+
+			// Initialize the Menu control, and specify it as the pop up object
+			// of the PopUpButton control. 
+			private function initMenu():void {
+				myMenu = new Menu();
+				var dp:Object = [{label: "New Folder"}, {label: "Sent Items"}, {label: "Inbox"}];        
+				myMenu.dataProvider = dp;
+				myMenu.selectedIndex = 0;       
+				myMenu.addEventListener("itemClick", itemClickHandler);
+				popB.popUp = myMenu;
+				popB.label = "Put in: " + myMenu.dataProvider[myMenu.selectedIndex].label;
+			}
+
+			// Define the event listener for the Menu control's itemClick event. 
+			private function itemClickHandler(event:MenuEvent):void {
+				var label:String = event.item.label;        
+				popTypeB.text=String("Moved to " + label);
+				popB.label = "Put in: " + label;
+				popB.close();
+				myMenu.selectedIndex = event.index;
+			}
+
+		]]>
+	</mx:Script>
+
+    <mx:Panel title="PopUpButton Control Example" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10">
+
+        <mx:Label width="100%" color="blue"
+            text="Button label contains the name of the last selected menu item." />
+        <mx:PopUpButton id="popB" label="Edit" creationComplete="initMenu();" width="135" />
+		
+        <mx:Spacer height="50" />
+        <mx:TextInput id="popTypeB" />
+		
+    </mx:Panel>		
+</mx:Application>

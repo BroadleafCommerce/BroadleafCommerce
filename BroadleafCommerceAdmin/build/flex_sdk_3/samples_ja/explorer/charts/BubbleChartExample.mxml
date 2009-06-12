@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the BubbleChart control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+        <![CDATA[        
+        import mx.collections.ArrayCollection;
+
+        [Bindable]
+        private var expensesAC:ArrayCollection = new ArrayCollection( [
+            { Month: "Jan", Profit: 2000, Expenses: 1500, Amount: 450 },
+            { Month: "Feb", Profit: 1000, Expenses: 200, Amount: 600 },
+            { Month: "Mar", Profit: 1500, Expenses: 500, Amount: 300 },
+            { Month: "Apr", Profit: 1800, Expenses: 1200, Amount: 900 },
+            { Month: "May", Profit: 2400, Expenses: 575, Amount: 500 } ]);
+        ]]>
+    </mx:Script>
+
+    <!-- Define custom color and line style for the bubbles. -->
+    <mx:SolidColor id="sc1" color="blue" alpha=".3"/>
+    <mx:Stroke id="stroke1" color="blue" weight="1"/>
+
+    <mx:Panel title="BubbleChart Control Example" height="100%" width="100%">
+        <mx:BubbleChart id="bubblechart" 
+            height="100%" width="100%"
+            paddingRight="5" paddingLeft="5" 
+            showDataTips="true" maxRadius="20"
+            dataProvider="{expensesAC}">
+            <mx:series>
+                <mx:BubbleSeries 
+                    displayName="Profit/Expenses/Amount" 
+                    xField="Profit" 
+                    yField="Expenses" 
+                    radiusField="Amount"
+                    fill="{sc1}"
+                    stroke="{stroke1}"
+                />
+            </mx:series>            
+        </mx:BubbleChart>            
+        <mx:Legend dataProvider="{bubblechart}"/>            
+    </mx:Panel>
+</mx:Application>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Canvas layout container.-->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="Canvas Container Example" height="95%" width="95%" 
+        paddingTop="5" paddingLeft="5" paddingRight="5" paddingBottom="5">
+
+        <mx:Label width="100%" color="blue" 
+            text="Use absolute positioning to place the children of a Canvas container."/>
+
+        <mx:Canvas borderStyle="solid" height="200" width="100%">
+
+            <!-- Stagger the position of the TextInput controls using absolute positioning.-->
+            <mx:TextInput width="100" x="50" y="5"/>
+            <mx:TextInput width="100" x="100" y="30"/>
+            <mx:TextInput width="100" x="150" y="55"/>
+
+            <!-- Overlap the VBox containers using layout constraints.-->
+            <mx:VBox right="115" bottom="50" width="75" height="75" backgroundColor="#0080C0"/>
+            <mx:VBox right="70" bottom="30" width="75" height="75" backgroundColor="#FFFF80"/>
+            <mx:VBox right="25" bottom="10" width="75" height="75" backgroundColor="#8080C0" alpha="0.8"/>
+
+            <mx:Text right="25" y="110"
+                text="The Canvas container lets you place components on top of each other."/>
+        </mx:Canvas>
+    
+    </mx:Panel>
+</mx:Application>

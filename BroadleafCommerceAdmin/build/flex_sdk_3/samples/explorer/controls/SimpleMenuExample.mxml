@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Menu control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+       
+            import mx.controls.Menu;
+            import mx.events.MenuEvent;
+            import mx.controls.Alert;           
+            import flash.geom.Point;
+
+            private var point1:Point = new Point();
+            private var myMenu:Menu;
+   
+            // Create and display the Menu control.
+            private function showMenu():void {
+                myMenu= Menu.createMenu(panel, myMenuData, false);
+                myMenu.labelField="@label"
+                myMenu.addEventListener("itemClick", menuHandler);
+                
+                // Calculate position of Menu in Application's coordinates. 
+                point1.x=mybutton.x;
+                point1.y=mybutton.y;                
+                point1=mybutton.localToGlobal(point1);
+
+                myMenu.show(point1.x + 25, point1.y + 25);
+            }
+       
+            // Event handler for the Menu control's change event.
+            private function menuHandler(event:MenuEvent):void  {
+                Alert.show("Label: " + event.item.@label, "Clicked menu item");
+            }    
+        ]]>
+    </mx:Script>
+
+    <mx:XML id="myMenuData">
+        <root>
+            <menuitem label="MenuItem 1" eventName="copy"/>
+            <menuitem label="MenuItem 2" eventName="paste"/>
+        </root>
+    </mx:XML>
+
+    <mx:Panel id="panel" title="Menu Control Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10">
+
+        <mx:Label width="100%" color="blue"
+           text="Click the button to open the Menu control."/>
+
+        <mx:Button id="mybutton" label="Open Menu" click="showMenu();"/>
+
+    </mx:Panel>
+</mx:Application>          

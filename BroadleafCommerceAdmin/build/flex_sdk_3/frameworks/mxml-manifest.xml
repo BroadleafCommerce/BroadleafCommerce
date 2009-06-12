@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2005-2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<componentPackage>
+
+	<!-- airframework -->
+    <component id="FileSystemComboBox" class="mx.controls.FileSystemComboBox"/>
+    <component id="FileSystemDataGrid" class="mx.controls.FileSystemDataGrid"/>
+    <component id="FileSystemHistoryButton" class="mx.controls.FileSystemHistoryButton"/>
+    <component id="FileSystemList" class="mx.controls.FileSystemList"/>
+    <component id="FileSystemTree" class="mx.controls.FileSystemTree"/>
+    <component id="HTML" class="mx.controls.HTML"/>
+	<component id="Window" class="mx.core.Window"/>
+    <component id="WindowedApplication" class="mx.core.WindowedApplication"/>
+
+	<!-- charts -->
+    <component id="AreaChart" class="mx.charts.AreaChart"/>
+    <component id="AreaRenderer" class="mx.charts.renderers.AreaRenderer"/>
+    <component id="AreaSeries" class="mx.charts.series.AreaSeries"/>
+    <component id="AreaSet" class="mx.charts.series.AreaSet"/>
+    <component id="AxisRenderer" class="mx.charts.AxisRenderer"/>
+    <component id="BarChart" class="mx.charts.BarChart"/>
+    <component id="BarSeries" class="mx.charts.series.BarSeries"/>
+    <component id="BarSet" class="mx.charts.series.BarSet"/>
+    <component id="BoxItemRenderer" class="mx.charts.renderers.BoxItemRenderer"/>
+    <component id="BubbleChart" class="mx.charts.BubbleChart"/>
+    <component id="BubbleSeries" class="mx.charts.series.BubbleSeries"/>
+    <component id="CandlestickChart" class="mx.charts.CandlestickChart"/>
+    <component id="CandlestickItemRenderer" class="mx.charts.renderers.CandlestickItemRenderer"/>
+    <component id="CandlestickSeries" class="mx.charts.series.CandlestickSeries"/>
+    <component id="CartesianChart" class="mx.charts.chartClasses.CartesianChart"/>
+    <component id="CategoryAxis" class="mx.charts.CategoryAxis"/>
+    <component id="ChartBase" class="mx.charts.chartClasses.ChartBase"/>
+    <component id="CircleItemRenderer" class="mx.charts.renderers.CircleItemRenderer"/>
+    <component id="ColumnChart" class="mx.charts.ColumnChart"/>
+    <component id="ColumnSeries" class="mx.charts.series.ColumnSeries"/>
+    <component id="ColumnSet" class="mx.charts.series.ColumnSet"/>
+    <component id="CrossItemRenderer" class="mx.charts.renderers.CrossItemRenderer"/>
+    <component id="DateTimeAxis" class="mx.charts.DateTimeAxis"/>
+    <component id="DiamondItemRenderer" class="mx.charts.renderers.DiamondItemRenderer"/>
+    <component id="GridLines" class="mx.charts.GridLines"/>
+    <component id="HLOCChart" class="mx.charts.HLOCChart"/>
+    <component id="HLOCItemRenderer" class="mx.charts.renderers.HLOCItemRenderer"/>
+    <component id="HLOCSeries" class="mx.charts.series.HLOCSeries"/>
+    <component id="Legend" class="mx.charts.Legend"/>
+    <component id="LegendItem" class="mx.charts.LegendItem"/>
+    <component id="LinearAxis" class="mx.charts.LinearAxis"/>
+    <component id="LineChart" class="mx.charts.LineChart"/>
+    <component id="LineRenderer" class="mx.charts.renderers.LineRenderer"/>
+    <component id="LineSeries" class="mx.charts.series.LineSeries"/>
+    <component id="LogAxis" class="mx.charts.LogAxis"/>
+    <component id="PieChart" class="mx.charts.PieChart"/>
+    <component id="PieSeries" class="mx.charts.series.PieSeries"/>
+    <component id="PlotChart" class="mx.charts.PlotChart"/>
+    <component id="PlotSeries" class="mx.charts.series.PlotSeries"/>
+    <component id="PolarChart" class="mx.charts.chartClasses.PolarChart"/>
+    <component id="SeriesEffect" class="mx.charts.effects.SeriesEffect"/>
+    <component id="SeriesInterpolate" class="mx.charts.effects.SeriesInterpolate"/>
+    <component id="SeriesSlide" class="mx.charts.effects.SeriesSlide"/>
+    <component id="SeriesZoom" class="mx.charts.effects.SeriesZoom"/>
+    <component id="ShadowBoxItemRenderer" class="mx.charts.renderers.ShadowBoxItemRenderer"/>
+    <component id="ShadowLineRenderer" class="mx.charts.renderers.ShadowLineRenderer"/>
+    <component id="TriangleItemRenderer" class="mx.charts.renderers.TriangleItemRenderer"/>
+    <component id="WedgeItemRenderer" class="mx.charts.renderers.WedgeItemRenderer"/>
+
+    <!-- fds -->
+    <component id="DataService" class="mx.data.mxml.DataService"/>
+
+    <!-- framework -->
+	<component id="Accordion" class="mx.containers.Accordion"/>
+    <component id="AddChild" class="mx.states.AddChild"/>
+    <component id="AddChildAction" class="mx.effects.AddChildAction"/>
+    <component id="AddItemAction" class="mx.effects.AddItemAction"/>
+	<component id="AnimateProperty" class="mx.effects.AnimateProperty"/>
+    <component id="Application" class="mx.core.Application"/>
+    <component id="ApplicationControlBar" class="mx.containers.ApplicationControlBar"/>
+    <component id="Array" class="Array" lookupOnly="true"/>
+    <component id="ArrayCollection" class="mx.collections.ArrayCollection"/>
+	<component id="BevelFilter" class="flash.filters.BevelFilter" lookupOnly="true"/>
+    <component id="BitmapFill" class="mx.graphics.BitmapFill"/>
+    <component id="Blur" class="mx.effects.Blur"/>
+	<component id="BlurFilter" class="flash.filters.BlurFilter" lookupOnly="true"/>
+    <component id="Boolean" class="Boolean" lookupOnly="true"/>
+    <component id="Box" class="mx.containers.Box"/>
+    <component id="Button" class="mx.controls.Button"/>
+    <component id="ButtonBar" class="mx.controls.ButtonBar"/>
+    <component id="Canvas" class="mx.containers.Canvas"/>
+    <component id="CheckBox" class="mx.controls.CheckBox"/>
+    <component id="Class" class="Class" lookupOnly="true"/>
+	<component id="ColorMatrixFilter" class="flash.filters.ColorMatrixFilter" lookupOnly="true"/>
+    <component id="ColorPicker" class="mx.controls.ColorPicker"/>
+    <component id="ComboBox" class="mx.controls.ComboBox"/>
+	<component id="ConstraintColumn" class="mx.containers.utilityClasses.ConstraintColumn"/>
+	<component id="ConstraintRow" class="mx.containers.utilityClasses.ConstraintRow"/>
+    <component id="Container" class="mx.core.Container"/>
+    <component id="ControlBar" class="mx.containers.ControlBar"/>
+	<component id="ConvolutionFilter" class="flash.filters.ConvolutionFilter" lookupOnly="true"/>
+    <component id="CreditCardValidator" class="mx.validators.CreditCardValidator"/>
+    <component id="CurrencyFormatter" class="mx.formatters.CurrencyFormatter"/>
+    <component id="CurrencyValidator" class="mx.validators.CurrencyValidator"/>
+    <component id="DataGrid" class="mx.controls.DataGrid"/>
+    <component id="DataGridColumn" class="mx.controls.dataGridClasses.DataGridColumn"/>
+    <component id="DataGridItemRenderer" class="mx.controls.dataGridClasses.DataGridItemRenderer"/>
+    <component id="Date" class="Date" lookupOnly="true"/>
+    <component id="DateChooser" class="mx.controls.DateChooser"/>
+    <component id="DateField" class="mx.controls.DateField"/>
+    <component id="DateFormatter" class="mx.formatters.DateFormatter"/>
+    <component id="DateValidator" class="mx.validators.DateValidator"/>
+    <component id="DefaultListEffect" class="mx.effects.DefaultListEffect"/>
+    <component id="DefaultTileListEffect" class="mx.effects.DefaultTileListEffect"/>
+	<component id="DisplacementMapFilter" class="flash.filters.DisplacementMapFilter" lookupOnly="true"/>
+    <component id="Dissolve" class="mx.effects.Dissolve"/>
+    <component id="DividedBox" class="mx.containers.DividedBox"/>
+	<component id="DropShadowFilter" class="flash.filters.DropShadowFilter" lookupOnly="true"/>
+	<component id="EffectTargetFilter" class="mx.effects.EffectTargetFilter"/>
+    <component id="EmailValidator" class="mx.validators.EmailValidator"/>
+    <component id="Fade" class="mx.effects.Fade"/>
+    <component id="Form" class="mx.containers.Form"/>
+    <component id="FormHeading" class="mx.containers.FormHeading"/>
+    <component id="FormItem" class="mx.containers.FormItem"/>
+	<component id="Function" class="Function" lookupOnly="true"/>
+    <component id="Glow" class="mx.effects.Glow"/>
+	<component id="GlowFilter" class="flash.filters.GlowFilter" lookupOnly="true"/>
+	<component id="GradientBevelFilter" class="flash.filters.GradientBevelFilter" lookupOnly="true"/>
+    <component id="GradientEntry" class="mx.graphics.GradientEntry"/>
+	<component id="GradientGlowFilter" class="flash.filters.GradientGlowFilter" lookupOnly="true"/>
+    <component id="Grid" class="mx.containers.Grid"/>
+    <component id="GridItem" class="mx.containers.GridItem"/>
+    <component id="GridRow" class="mx.containers.GridRow"/>
+    <component id="HBox" class="mx.containers.HBox"/>
+    <component id="HDividedBox" class="mx.containers.HDividedBox"/>
+    <component id="HorizontalList" class="mx.controls.HorizontalList"/>
+    <component id="HRule" class="mx.controls.HRule"/>
+    <component id="HScrollBar" class="mx.controls.HScrollBar"/>
+    <component id="HSlider" class="mx.controls.HSlider"/>
+    <component id="Image" class="mx.controls.Image"/>
+    <component id="int" class="int" lookupOnly="true"/>
+	<component id="Iris" class="mx.effects.Iris"/>
+    <component id="Label" class="mx.controls.Label"/>
+    <component id="LinearGradient" class="mx.graphics.LinearGradient"/>
+    <component id="LinearGradientStroke" class="mx.graphics.LinearGradientStroke"/>
+    <component id="LinkBar" class="mx.controls.LinkBar"/>
+    <component id="LinkButton" class="mx.controls.LinkButton"/>
+    <component id="List" class="mx.controls.List"/>
+    <component id="ListCollectionView" class="mx.collections.ListCollectionView"/>
+	<component id="MaskEffect" class="mx.effects.MaskEffect"/>
+	<component id="Matrix" class="flash.geom.Matrix" lookupOnly="true"/>
+    <component id="MenuBar" class="mx.controls.MenuBar"/>
+    <component id="MiniDebugTarget" class="mx.logging.targets.MiniDebugTarget"/>
+    <component id="Module" class="mx.modules.Module"/>
+    <component id="ModuleLoader" class="mx.modules.ModuleLoader"/>
+    <component id="Move" class="mx.effects.Move"/>
+    <component id="Number" class="Number" lookupOnly="true"/>
+    <component id="NumberFormatter" class="mx.formatters.NumberFormatter"/>
+    <component id="NumberValidator" class="mx.validators.NumberValidator"/>
+    <component id="NumericStepper" class="mx.controls.NumericStepper"/>
+	<component id="Object" class="Object" lookupOnly="true"/>
+    <component id="Panel" class="mx.containers.Panel"/>
+    <component id="Parallel" class="mx.effects.Parallel"/>
+    <component id="Pause" class="mx.effects.Pause"/>
+    <component id="PhoneFormatter" class="mx.formatters.PhoneFormatter"/>
+    <component id="PhoneNumberValidator" class="mx.validators.PhoneNumberValidator"/>
+	<component id="Point" class="flash.geom.Point" lookupOnly="true"/>
+    <component id="PopUpButton" class="mx.controls.PopUpButton"/>
+    <component id="PopUpMenuButton" class="mx.controls.PopUpMenuButton"/>
+    <component id="PrintDataGrid" class="mx.printing.PrintDataGrid"/>
+    <component id="ProgressBar" class="mx.controls.ProgressBar"/>
+    <component id="RadialGradient" class="mx.graphics.RadialGradient"/>
+    <component id="RadioButton" class="mx.controls.RadioButton"/>
+    <component id="RadioButtonGroup" class="mx.controls.RadioButtonGroup"/>
+	<component id="RegExp" class="RegExp" lookupOnly="true"/>
+	<component id="RegExpValidator" class="mx.validators.RegExpValidator"/>
+    <component id="RemoveChild" class="mx.states.RemoveChild"/>
+    <component id="RemoveChildAction" class="mx.effects.RemoveChildAction"/>
+    <component id="RemoveItemAction" class="mx.effects.RemoveItemAction"/>
+    <component id="Repeater" class="mx.core.Repeater"/>
+    <component id="Resize" class="mx.effects.Resize"/>
+    <component id="RichTextEditor" class="mx.controls.RichTextEditor"/>
+	<component id="Rotate" class="mx.effects.Rotate"/>
+    <component id="Sequence" class="mx.effects.Sequence"/>
+    <component id="SetEventHandler" class="mx.states.SetEventHandler"/>
+    <component id="SetProperty" class="mx.states.SetProperty"/>
+    <component id="SetPropertyAction" class="mx.effects.SetPropertyAction"/>
+    <component id="SetStyle" class="mx.states.SetStyle"/>
+    <component id="SetStyleAction" class="mx.effects.SetStyleAction"/>
+    <component id="SocialSecurityValidator" class="mx.validators.SocialSecurityValidator"/>
+    <component id="SolidColor" class="mx.graphics.SolidColor"/>
+    <component id="Sort" class="mx.collections.Sort"/>
+    <component id="SortField" class="mx.collections.SortField"/>
+	<component id="SoundEffect" class="mx.effects.SoundEffect"/>
+    <component id="Spacer" class="mx.controls.Spacer"/>
+    <component id="Sprite" class="flash.display.Sprite" lookupOnly="true"/>
+    <component id="State" class="mx.states.State"/>
+    <component id="String" class="String" lookupOnly="true"/>
+    <component id="StringValidator" class="mx.validators.StringValidator"/>
+    <component id="Stroke" class="mx.graphics.Stroke"/>
+    <component id="SWFLoader" class="mx.controls.SWFLoader"/>
+    <component id="TabBar" class="mx.controls.TabBar"/>
+    <component id="TabNavigator" class="mx.containers.TabNavigator"/>
+    <component id="Text" class="mx.controls.Text"/>
+    <component id="TextArea" class="mx.controls.TextArea"/>
+    <component id="TextInput" class="mx.controls.TextInput"/>
+    <component id="Tile" class="mx.containers.Tile"/>
+    <component id="TileList" class="mx.controls.TileList"/>
+    <component id="TitleWindow" class="mx.containers.TitleWindow"/>
+    <component id="ToggleButtonBar" class="mx.controls.ToggleButtonBar"/>
+    <component id="ToolBar" class="mx.controls.richTextEditorClasses.ToolBar"/>
+    <component id="TraceTarget" class="mx.logging.targets.TraceTarget"/>
+	<component id="Transform" class="geom.filters.Transform" lookupOnly="true"/>
+    <component id="Transition" class="mx.states.Transition"/>
+    <component id="Tree" class="mx.controls.Tree"/>
+    <component id="UIComponent" class="mx.core.UIComponent"/>
+    <component id="uint" class="uint" lookupOnly="true"/>
+    <component id="VBox" class="mx.containers.VBox"/>
+    <component id="VDividedBox" class="mx.containers.VDividedBox"/>
+    <component id="VideoDisplay" class="mx.controls.VideoDisplay"/>
+    <component id="ViewStack" class="mx.containers.ViewStack"/>
+    <component id="VRule" class="mx.controls.VRule"/>
+    <component id="VScrollBar" class="mx.controls.VScrollBar"/>
+    <component id="VSlider" class="mx.controls.VSlider"/>
+    <component id="Validator" class="mx.validators.Validator"/>
+    <component id="WipeDown" class="mx.effects.WipeDown"/>
+    <component id="WipeLeft" class="mx.effects.WipeLeft"/>
+    <component id="WipeRight" class="mx.effects.WipeRight"/>
+    <component id="WipeUp" class="mx.effects.WipeUp"/>
+    <component id="XMLListCollection" class="mx.collections.XMLListCollection"/>
+    <component id="ZipCodeFormatter" class="mx.formatters.ZipCodeFormatter"/>
+    <component id="ZipCodeValidator" class="mx.validators.ZipCodeValidator"/>
+    <component id="Zoom" class="mx.effects.Zoom"/>
+
+	<!-- rpc -->
+    <component id="AMFChannel" class="mx.messaging.channels.AMFChannel"/>
+    <component id="ChannelSet" class="mx.messaging.ChannelSet"/>  
+    <component id="Consumer" class="mx.messaging.Consumer"/>
+    <component id="HTTPChannel" class="mx.messaging.channels.HTTPChannel"/>
+    <component id="HTTPService" class="mx.rpc.http.mxml.HTTPService"/>
+    <component id="Producer" class="mx.messaging.Producer"/>
+    <component id="RemoteObject" class="mx.rpc.remoting.mxml.RemoteObject"/>
+    <component id="RemoteObjectOperation" class="mx.rpc.remoting.mxml.Operation"/>
+    <component id="RTMPChannel" class="mx.messaging.channels.RTMPChannel"/>
+    <component id="SecureAMFChannel" class="mx.messaging.channels.SecureAMFChannel"/>
+    <component id="SecureStreamingAMFChannel" class="mx.messaging.channels.SecureStreamingAMFChannel"/>
+    <component id="SecureHTTPChannel" class="mx.messaging.channels.SecureHTTPChannel"/>
+    <component id="SecureStreamingHTTPChannel" class="mx.messaging.channels.SecureStreamingHTTPChannel"/>
+    <component id="SecureRTMPChannel" class="mx.messaging.channels.SecureRTMPChannel"/>
+    <component id="StreamingAMFChannel" class="mx.messaging.channels.StreamingAMFChannel"/>
+    <component id="StreamingHTTPChannel" class="mx.messaging.channels.StreamingHTTPChannel"/>    
+    <component id="WebService" class="mx.rpc.soap.mxml.WebService"/>
+    <component id="WebServiceOperation" class="mx.rpc.soap.mxml.Operation"/>
+
+</componentPackage>

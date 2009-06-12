@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the LinkButton control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        import mx.controls.Alert;
+    </mx:Script>
+
+    <mx:Panel title="LinkButton コントロールの例"  
+        height="75%" width="75%" horizontalAlign="center"
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+       
+        <mx:Label width="100%" 
+            text="LinkButton コントロールを選択して Alert コントロールを開きます。"/>
+
+        <mx:LinkButton label="LinkButton コントロール" color="#0000FF" fontWeight="bold" 
+            click="Alert.show('LinkButton が選択されました!');"/>
+
+    </mx:Panel>
+</mx:Application>   
+       

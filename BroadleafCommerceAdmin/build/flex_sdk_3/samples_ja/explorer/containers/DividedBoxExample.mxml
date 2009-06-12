@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the DividedBox layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="DividedBox コンテナの例" height="95%" width="95%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue"
+            text="水平レイアウトの DividedBox コンテナです。仕切りを左右にドラッグして子のサイズを変更します。"/>
+
+        <mx:DividedBox direction="horizontal" width="100%" height="100%">
+
+            <mx:Panel title="パネル 1" width="25%" height="100%" backgroundColor="0xCCCCCC">
+            </mx:Panel>
+            
+            <mx:Panel title="パネル 2" width="25%" height="100%" backgroundColor="0xCCCCCC">
+            </mx:Panel>
+
+        </mx:DividedBox>
+
+    </mx:Panel>
+</mx:Application>

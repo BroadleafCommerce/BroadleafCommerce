@@ -1,0 +1,66 @@
+﻿<?xml version="1.0"?> 
+<!-- Simple example to demonstrate the RegExpValidator. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ValidationResultEvent;
+			import mx.validators.*;
+	
+            // Write the results to the 
+			private function handleResult(eventObj:ValidationResultEvent):void {
+				if (eventObj.type == ValidationResultEvent.VALID)
+				{
+					// For valid events, the results Array contains
+					// RegExpValidationResult objects.
+					var xResult:RegExpValidationResult;
+					reResults.text="";
+					for (var i:uint = 0; i < eventObj.results.length; i++)
+					{
+						xResult = eventObj.results[i];
+						reResults.text=reResults.text + xResult.matchedIndex + " " +
+							xResult.matchedString + "\n";
+					}
+				}
+				else
+				{
+					reResults.text="";			
+				}		
+			}
+		]]>
+	</mx:Script>
+
+	<mx:RegExpValidator id="regExpV" 
+		source="{regex_text}" property="text" 
+		flags="g" expression="{regex.text}" 
+		valid="handleResult(event)" invalid="handleResult(event)"
+		trigger="{myButton}" triggerEvent="click"/>
+	
+   <mx:Panel title="RegExpValidator の例" width="95%" height="95%" 
+        paddingTop="5" paddingLeft="5" paddingRight="5" paddingBottom="5">
+   
+        <mx:Text width="100%" text="手順 :"/>
+        <mx:Text width="100%" text="1. 検索するテキストを入力します。デフォルトでは、文字 ABC の後に数字を含む文字列を入力します。"/>
+        <mx:Text width="100%" text="2. 正規表現を入力します。デフォルトでは、ABC\d を入力します。"/>
+        <mx:Text width="100%" text="3. Button コントロールをクリックして検証をトリガします。"/>
+        <mx:Text width="100%" text="4. 検索結果には、一致パターンが開始されるテキスト内のインデックスと、一致パターンが表示されます。 "/>
+   
+        <mx:Form>
+            <mx:FormItem label="テキストを入力します : ">
+                <mx:TextInput id="regex_text" text="xxxxABC4xxx" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="正規表現を入力します : ">
+                <mx:TextInput id="regex" text="ABC\d" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="検索結果 : ">
+                <mx:TextInput id="reResults" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem >
+                <mx:Button id="myButton" label="検証"/>
+            </mx:FormItem>
+        </mx:Form>
+	</mx:Panel>
+</mx:Application>

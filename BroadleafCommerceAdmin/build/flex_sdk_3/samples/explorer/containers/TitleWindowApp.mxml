@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Main application to demonstrate TitleWindow layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+       
+            import mx.managers.PopUpManager;
+            import mx.containers.TitleWindow;
+             import flash.geom.Point;
+
+            private var point1:Point = new Point();
+      
+            // Open the TitleWindow container.
+            // Cast the return value of the createPopUp() method
+            // to SimpleTitleWindowExample, the name of the 
+            // component containing the TitleWindow container.
+            private function showWindow():void {
+                var login:SimpleTitleWindowExample=SimpleTitleWindowExample(PopUpManager.createPopUp( this, SimpleTitleWindowExample , true));
+
+                // Calculate position of TitleWindow in Application's coordinates.
+                // Position it 25 pixels down and to the right of the Button control.
+                point1.x=0;
+                point1.y=0;                
+                point1=myButton.localToGlobal(point1);
+                login.x=point1.x+25;
+                login.y=point1.y+25;
+             
+                // Pass a reference to the TextInput control
+                // to the TitleWindow container so that the 
+                // TitleWindow container can return data to the main application.
+                login.loginName=returnedName;
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="TitleWindow Container Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Button id="myButton" label="Click to open the TitleWindow container" 
+            click="showWindow();"/>
+        
+        <mx:Text id="returnedName" text="" width="100%"/>
+
+    </mx:Panel>
+</mx:Application>

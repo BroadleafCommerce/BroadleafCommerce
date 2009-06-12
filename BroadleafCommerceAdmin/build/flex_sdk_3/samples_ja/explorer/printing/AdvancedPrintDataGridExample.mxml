@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<!-- printing\ADGPrint.mxml -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+            import mx.printing.*;
+            import mx.collections.ArrayCollection;
+            import mx.printing.PrintAdvancedDataGrid;
+                    
+            // Create a PrintJob instance.
+            private function doPrint():void {
+                // Create an instance of the FlexPrintJob class.
+                var printJob:FlexPrintJob = new FlexPrintJob();
+                
+                // Initialize the PrintAdvancedDataGrid control.
+                var printADG:PrintAdvancedDataGrid = 
+                    new PrintAdvancedDataGrid();
+                // Exclude the PrintAdvancedDataGrid control from layout.
+                printADG.includeInLayout = false;
+                printADG.source = adg;
+
+                // Add the print-specific control to the application.                
+                addChild(printADG);
+                
+                // Start the print job.
+                if (printJob.start() == false) {                
+                    // User cancelled print job.
+                    // Remove the print-specific control to free memory.                
+                    removeChild(printADG);
+                    return;
+                }
+
+                // Add the object to print. Do not scale it.
+                printJob.addObject(printADG, FlexPrintJobScaleType.NONE);
+
+                // Send the job to the printer.
+                printJob.send();
+
+                // Remove the print-specific control to free memory.                
+                removeChild(printADG);
+            }
+            
+            [Bindable]
+            private var dpHierarchy:ArrayCollection = new ArrayCollection([
+              {Region:"Southwest", children: [
+                 {Region:"Arizona", children: [ 
+                    {Territory_Rep:"Barbara Jennings", Actual:38865, Estimate:40000}, 
+                    {Territory_Rep:"Dana Binn", Actual:29885, Estimate:30000}]},  
+                 {Region:"Central California", children: [ 
+                    {Territory_Rep:"Joe Smith", Actual:29134, Estimate:30000}]},  
+                 {Region:"Nevada", children: [ 
+                    {Territory_Rep:"Bethany Pittman", Actual:52888, Estimate:45000}]},  
+                 {Region:"Northern California", children: [ 
+                    {Territory_Rep:"Lauren Ipsum", Actual:38805, Estimate:40000}, 
+                    {Territory_Rep:"T.R. Smith", Actual:55498, Estimate:40000}]},  
+                 {Region:"Southern California", children: [ 
+                    {Territory_Rep:"Alice Treu", Actual:44985, Estimate:45000}, 
+                    {Territory_Rep:"Jane Grove", Actual:44913, Estimate:45000}]}
+              ]}
+            ]);
+            
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="PrintAdvancedDataGrid Control Example"
+        height="75%" width="75%" layout="horizontal"
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:AdvancedDataGrid id="adg"
+            width="100%" height="100%">
+            <mx:dataProvider>
+                <mx:HierarchicalData source="{dpHierarchy}"/>
+            </mx:dataProvider>
+            <mx:columns>
+                <mx:AdvancedDataGridColumn dataField="Region"/>
+                <mx:AdvancedDataGridColumn dataField="Territory_Rep"
+                    headerText="Territory Rep"/>
+                <mx:AdvancedDataGridColumn dataField="Actual"/>
+                <mx:AdvancedDataGridColumn dataField="Estimate"/>
+            </mx:columns>
+        </mx:AdvancedDataGrid>    
+
+        <mx:Button id="myButton" 
+            label="Print" 
+            click="doPrint();"/>
+    </mx:Panel>    
+</mx:Application>

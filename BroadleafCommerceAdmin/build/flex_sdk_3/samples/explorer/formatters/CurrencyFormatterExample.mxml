@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the CurrencyFormatter. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+              import mx.events.ValidationResultEvent;			
+              private var vResult:ValidationResultEvent;
+			
+              // Event handler to validate and format input.
+              private function Format():void {
+              
+                 	vResult = numVal.validate();
+
+    				if (vResult.type==ValidationResultEvent.VALID) {
+                        var temp:Number=Number(priceUS.text); 
+                        formattedUSPrice.text= usdFormatter.format(temp);
+                    }
+                    
+                    else {
+                       formattedUSPrice.text="";
+                    }
+              }
+        ]]>
+    </mx:Script>
+
+    <mx:CurrencyFormatter id="usdFormatter" precision="2" 
+        currencySymbol="$" decimalSeparatorFrom="."
+        decimalSeparatorTo="." useNegativeSign="true" 
+        useThousandsSeparator="true" alignSymbol="left"/>
+
+    <mx:NumberValidator id="numVal" source="{priceUS}" property="text" 
+        allowNegative="true" domain="real"/>
+
+    <mx:Panel title="CurrencyFormatter Example" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Form>
+            <mx:FormItem label="Enter U.S. dollar amount:">
+                <mx:TextInput id="priceUS" text="" width="50%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Formatted amount: ">
+                <mx:TextInput id="formattedUSPrice" text="" width="50%" editable="false"/>
+            </mx:FormItem>
+
+            <mx:FormItem>
+                <mx:Button label="Validate and Format" click="Format();"/>
+            </mx:FormItem>
+        </mx:Form>
+
+    </mx:Panel>
+</mx:Application>

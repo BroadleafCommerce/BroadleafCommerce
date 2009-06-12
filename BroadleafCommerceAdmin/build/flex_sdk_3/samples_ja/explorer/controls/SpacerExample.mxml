@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Spacer control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel id="panel" title="Spacer コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+        
+        <mx:Text width="100%" color="blue" 
+            text="Spacer コントロールは、2 つめのイメージを HBox コンテナの右端に寄せます。"/>
+
+        <mx:HBox width="100%">
+            <mx:Image source="@Embed('assets/Nokia_6630.png')"/>
+            <mx:Spacer width="100%"/>
+            <mx:Image source="@Embed('assets/Nokia_6680.png')"/>
+        </mx:HBox>
+       
+    </mx:Panel>
+</mx:Application>   
+       

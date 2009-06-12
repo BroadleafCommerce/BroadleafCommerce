@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the PlotChart control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+        <![CDATA[
+        import mx.collections.ArrayCollection;
+
+        [Bindable]
+        private var expensesAC:ArrayCollection = new ArrayCollection( [
+            { Month: "Jan", Profit: 2000, Expenses: 1500, Amount: 450 },
+            { Month: "Feb", Profit: 1000, Expenses: 200, Amount: 600 },
+            { Month: "Mar", Profit: 1500, Expenses: 500, Amount: 300 } ]);
+        ]]>
+    </mx:Script>
+
+    <!-- Define custom colors for use as plot point fills. -->
+    <mx:SolidColor id="sc1" color="blue" alpha=".3"/>
+    <mx:SolidColor id="sc2" color="red" alpha=".3"/>
+    <mx:SolidColor id="sc3" color="green" alpha=".3"/>
+
+    <!-- Define custom Strokes. -->
+    <mx:Stroke id="s1" color="blue" weight="1"/>
+    <mx:Stroke id="s2" color="red" weight="1"/>
+    <mx:Stroke id="s3" color="green" weight="1"/>
+
+    <mx:Panel title="PlotChart Control Example" height="100%" width="100%">
+        <mx:PlotChart id="plot" 
+            height="100%" 
+            width="100%"
+            paddingLeft="5" 
+            paddingRight="5" 
+            showDataTips="true" 
+            dataProvider="{expensesAC}"
+        >                
+            <mx:series>
+                <mx:PlotSeries
+                    xField="Expenses"
+                    yField="Profit"
+                    displayName="Plot 1"
+                    fill="{sc1}"
+                    stroke="{s1}"
+                />
+                <mx:PlotSeries
+                    xField="Amount"
+                    yField="Expenses"
+                    displayName="Plot 2"
+                    fill="{sc2}"
+                    stroke="{s2}"
+                />
+                <mx:PlotSeries
+                    xField="Profit"
+                    yField="Amount"
+                    displayName="Plot 3"
+                    fill="{sc3}"
+                    stroke="{s3}"
+                />
+            </mx:series>
+        </mx:PlotChart>
+        <mx:Legend dataProvider="{plot}"/>
+    </mx:Panel>
+</mx:Application>

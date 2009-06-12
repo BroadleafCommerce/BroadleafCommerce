@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<!-- Simple example to demonstrate the RichTextEditor control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+    horizontalAlign="center" verticalAlign="middle">
+
+    <mx:RichTextEditor id="rte" title="RichTextEditor" height="75%" text="RichTextEditor コントロールにテキストを入力し、ボタンを押してプレーンテキストまたは HTML 形式のテキストとして表示します。"/>
+
+    <mx:TextArea id="rteText" width="80%" height="25%"/>
+
+    <mx:HBox>
+        <mx:Button label="プレーンテキストを表示" click="rteText.text=rte.text;"/>
+        <mx:Button label="HTML マークアップを表示" click="rteText.text=rte.htmlText;"/>
+    </mx:HBox>
+
+</mx:Application>

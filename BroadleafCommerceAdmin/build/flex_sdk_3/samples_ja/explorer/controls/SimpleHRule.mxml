@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the HRule control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+	<mx:WipeLeft id="myWL"/>
+
+    <mx:Panel title="HRule コントロールの例" id="myPanel" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:HRule rollOverEffect="{myWL}" width="100%" strokeWidth="1" strokeColor="red"/>
+        <mx:Label width="100%" color="blue" 
+            text="HorizontalRule コントロールにマウスを移動し、再描画します。"/>
+
+    </mx:Panel>
+</mx:Application>
+       

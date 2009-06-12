@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- PopUpMenuButton control example. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+            import mx.events.*;
+            import mx.controls.*;
+			
+            //Event handler, invoked when you select from the menu.
+            public function itemClickHandler(event:MenuEvent):void {
+                Alert.show("メニューラベル : " + event.label
+                    + "  \n 親メニュー内にあるメニューアイテムインデックス :" + event.index);
+            }
+        ]]>
+    </mx:Script>
+	
+    <!-- A an data provider in E4X format. -->
+    <mx:XMLList id="treeDP2">
+        <node label="受信トレイ">
+            <node label="個人用フォルダ">
+                <node label="家族"/> 
+                <node label="友人"/> 
+            </node>
+            <node label="マーケティング"/>
+            <node label="やるべきこと"/>
+        </node>
+        <node label="予定表">
+            <node label="約束" data="6"/>
+            <node label="会議"/> 
+        </node>
+        <node label="削除済みアイテム"/>
+    </mx:XMLList>
+
+    <mx:Panel title="PopUpMenuButton コントロールの例" height="100%" width="100%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10">
+
+		<mx:Label width="100%" color="blue"
+		    text="下矢印をクリックしてメニューを開きます。"/>
+
+        <mx:PopUpMenuButton id="p2" 
+            dataProvider="{treeDP2}" 
+            labelField="@label"
+            itemClick="itemClickHandler(event);"/>
+
+	</mx:Panel>
+</mx:Application>

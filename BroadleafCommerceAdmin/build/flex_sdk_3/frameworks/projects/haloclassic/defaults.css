@@ -1,0 +1,1492 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2005-2007 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+/* Global style declaration */
+.global
+{
+	backgroundAlpha: 1.0;
+	backgroundSize: "auto";
+	backgroundDisabledColor: #DDDDDD;
+	bevel: true;
+	borderCapColor: #919999;
+	borderColor: #AAB3B3;		
+	borderSides: "left top right bottom";
+	borderSkin: ClassReference("haloclassic.HaloRectBorder");
+	borderStyle: "inset";
+	borderThickness: 1;
+	buttonColor: #6F7777;
+	closeDuration: 250;
+	color: #0B333C;
+	cornerRadius: 0;
+	defaultLeafIcon: Embed(source="Assets.swf",symbol="TreeNodeIcon");
+	disabledColor: #AAB3B3;
+	disclosureClosedIcon: Embed(source="Assets.swf",symbol="TreeDisclosureClosed");
+	disclosureOpenIcon: Embed(source="Assets.swf",symbol="TreeDisclosureOpen");
+	dividerAffordance: 6;
+	dividerAlpha: 0.75;
+	dividerColor: #6F7777;
+	dividerThickness: 3;
+	dropShadowEnabled: false;
+	dropShadowColor: #000000;
+	embedFonts: false;
+	errorColor: #FF0000;
+	fillColor: #FFFFFF;
+	fillColors: #E6EEEE, #FFFFFF;
+	filled: true;
+	focusAlpha: 0.3;
+	focusRoundedCorners: "tl tr bl br";
+	focusSkin: ClassReference("haloclassic.HaloFocusRect");
+	focusThickness: 2;
+	folderClosedIcon: Embed(source="Assets.swf",symbol="TreeFolderClosed");
+	folderOpenIcon: Embed(source="Assets.swf",symbol="TreeFolderOpen");
+	fontFamily: "Verdana";
+	fontSize: 10;
+	fontStyle: "normal";
+	fontWeight: "normal";
+	footerColors: #F4F5F7, #E1E5EB;
+	headerColors: #E1E5EB, #F4F5F7;
+	headerHeight: 28;
+	hGridLineColor: #F7F7F7;
+	hGridLines: false;
+	highlightColor: #C4CCCC;
+	horizontalAlign: "left";
+	horizontalGap: 8;
+	indentation: 17;
+	indicatorGap: 14;
+	labelWidth: 0 /* Number.NaN; !!!!! FIX ME */;
+	leading: 2;
+	paddingLeft: 0;
+	paddingTop: 0;
+	paddingRight: 0;
+	paddingBottom: 0;
+	modalTransparency: 0.4; 
+	openDuration: 250;
+	roundedBottomCorners: false;
+	repeatDelay: 500;
+	repeatInterval: 35;
+	selectionDisabledColor: #DDDDDD;
+	selectionDuration: 250;
+	shadowColor: #EEEEEE;
+	shadowCapColor: #D5DDDD;
+	shadowDistance: 2;
+	shadowDirection: "center";
+	stroked: false;
+	strokeColor: #C4CCCC;
+	strokeWidth: 1;
+	textAlign:  "left";
+	textDisabledColor: #C4CCCC;
+	textIndent: 0;
+	textRollOverColor: #2B333C;
+	textSelectedColor: #2B333C;
+	trackColor: #000000;
+
+	/* themeColor
+	//
+	// IMPORTANT: Theme colors must be updated in the following places:
+	//  1") In StyleManager.styles ("near the top of Defaults.as")
+	//	2") In function setThemeStyle ("near the bottom of Defaults.as")
+	//	3") In StyleManager colorNames ("in the middle of StyleManager.as")
+	//	4") In the Flex compiler CSS parser
+	//     ("in \src\java\macromedia\css\Descriptor.java")
+	*/
+	themeColor: #80FF4D;		/* haloGreen */
+	rollOverColor: #EEFEE6;		/* haloGreen */
+	selectionColor: #B7F39B;	/* haloGreen */
+	/*
+	//themeColor: #009DFF;		// haloBlue
+	//rollOverColor: #EFF4FC;	// haloBlue
+	//selectionColor: #CCE5FF;	// haloBlue
+	//themeColor: #FFB600;		// haloOrange
+	//rollOverColor: #FFF6E6;	// haloOrange
+	//selectionColor: #FFDDB3;	// haloOrange
+	//themeColor: #AECAD9;		// haloSilver
+	//rollOverColor: #EBF1F5;	// haloSilver
+	//selectionColor: #D3DBE1;	// haloSilver
+	*/
+	
+	todayColor: #2B333C;
+	useRollOver: true;
+	verticalAlign: "top";
+	verticalGap: 6;
+	vGridLineColor: #D5DDDD;
+	vGridLines: true;
+
+/* !!!!! todo
+	// Original border colors for a component showing an error state.
+	g: UIComponent.origBorderStyles: {}
+
+	borderColor: #FF0000;
+	borderCapColor: #C64444;
+	buttonColor: #AA0000;
+	highlightColor: #EE9A9A;
+	shadowColor: #EECBCB;
+	shadowCapColor: #DDAAAA;
+	dropdownBorderColor: #FF0000;
+*/
+}
+
+/*
+//------------------------------
+//  Accordion
+//------------------------------
+*/
+
+Accordion
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	headerHeight: 22;
+	paddingBottom: -1;
+	paddingLeft: -1;
+	paddingRight: -1;
+	paddingTop: -1;
+	verticalGap: -1;
+}
+
+/*
+//------------------------------
+//  AccordionHeader
+//------------------------------
+*/
+
+AccordionHeader
+{
+	fontSize: "10";
+	fontWeight: "bold";
+	textAlign: "left";
+/*	disabledIcon: null; */
+	disabledSkin: ClassReference("haloclassic.AccordionHeaderSkin");
+/*	downIcon: null; */
+	downSkin: ClassReference("haloclassic.AccordionHeaderSkin");
+	horizontalGap: 2;
+/*	overIcon: null; */
+	overSkin: ClassReference("haloclassic.AccordionHeaderSkin");
+/*	selectedDisabledIcon: null; */
+	selectedDisabledSkin: ClassReference("haloclassic.AccordionHeaderSkin");
+/*	selectedDownIcon: null; */
+	selectedDownSkin: ClassReference("haloclassic.AccordionHeaderSkin");
+/*	selectedOverIcon: null; */
+	selectedOverSkin: ClassReference("haloclassic.AccordionHeaderSkin");
+/*	selectedUpIcon: null; */
+	selectedUpSkin: ClassReference("haloclassic.AccordionHeaderSkin");
+/*	upIcon: null; */
+	upSkin: ClassReference("haloclassic.AccordionHeaderSkin");
+}
+
+/*
+//------------------------------
+//  .activeButtonStyle
+//------------------------------
+*/
+
+.activeButtonStyle
+{
+}
+
+/*
+//------------------------------
+//  .activeTabStyle
+//------------------------------
+*/
+
+.activeTabStyle
+{
+	fontWeight: "bold";
+}
+
+/*
+//------------------------------
+//  Alert
+//------------------------------
+*/
+
+Alert
+{
+	backgroundAlpha:1;
+	backgroundColor: #FFFFFF;
+	borderColor: #FFFFFF;
+	borderStyle: "default";
+	borderThickness: 0;
+	closeButtonDisabledSkin: Embed(source="Assets.swf",symbol="CloseButtonDisabled");
+	closeButtonDownSkin: Embed(source="Assets.swf",symbol="CloseButtonDown");
+	closeButtonOverSkin: Embed(source="Assets.swf",symbol="CloseButtonOver");
+	closeButtonUpSkin: Embed(source="Assets.swf",symbol="CloseButtonUp");
+	color: #0B333C;
+	cornerRadius: 8;
+	dropShadowEnabled: true;
+	paddingBottom: 4;
+	paddingLeft: 4;
+	paddingRight: 4;
+	paddingTop: 4;
+	resizeStartEffect: "Dissolve";
+	resizeEndEffect: "Dissolve";
+	titleBackgroundSkin: ClassReference("haloclassic.TitleBackground");
+}
+
+/*
+//------------------------------
+//  Application
+//------------------------------
+*/
+
+Application
+{
+	borderStyle: "none";
+	defaultBackgroundImage: Embed(source="Assets.swf",symbol="mx.skins.application.ApplicationBackground");
+	horizontalAlign: "center";
+	paddingBottom: 24;
+	paddingLeft: 24;
+	paddingRight: 24;
+	paddingTop: 24;
+}
+
+/*
+//------------------------------
+//  ApplicationControlBar
+//------------------------------
+*/
+
+ApplicationControlBar
+{
+	borderStyle: "applicationControlBar";
+	cornerRadius: 5;
+	docked: false;
+	dropShadowEnabled: true;
+	fillColors: #FFFFFF, #FFFFFF;
+	paddingBottom: 4;
+	paddingLeft: 8;
+	paddingRight: 8;
+	paddingTop: 5;
+	roundCorners: true;
+	shadowDistance: 5;
+	verticalAlign: "middle";
+}
+
+/*
+//------------------------------
+//  Box
+//------------------------------
+*/
+
+Box
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  Button
+//------------------------------
+*/
+
+Button
+{
+	fontWeight: "bold";
+	textAlign: "center";
+	borderColor: #919999;
+	borderThickness: 3;
+	cornerRadius: 5;
+/*	disabledIcon: null; */
+	disabledSkin: ClassReference("haloclassic.ButtonSkin");
+/*	downIcon: null; */
+	downSkin: ClassReference("haloclassic.ButtonSkin");
+	horizontalGap: 2;
+/*	overIcon: null; */
+	overSkin: ClassReference("haloclassic.ButtonSkin");
+/*	selectedDisabledIcon: null; */
+	selectedDisabledSkin: ClassReference("haloclassic.ButtonSkin");
+/* 	selectedDownIcon: null; */
+	selectedDownSkin: ClassReference("haloclassic.ButtonSkin");
+/*	selectedOverIcon: null; */
+	selectedOverSkin: ClassReference("haloclassic.ButtonSkin");
+/*	selectedUpIcon: null; */
+	selectedUpSkin: ClassReference("haloclassic.ButtonSkin");
+/*	upIcon: null; */
+	upSkin: ClassReference("haloclassic.ButtonSkin");
+	verticalGap: 2;
+}
+
+/*
+//------------------------------
+//  ButtonBar
+//------------------------------
+*/
+
+ButtonBar
+{
+	textAlign: "center";
+	borderStyle: "none";
+	horizontalGap: 0;
+	horizontalAlign: "center";
+	verticalGap: 0;
+	verticalAlign: "middle";
+}
+
+/*
+//------------------------------
+//  ButtonBarButton
+//------------------------------
+*/
+
+ButtonBarButton
+{
+	fontWeight: "bold";
+	/* fillColors: #FFFFFF, #E6E6E6; */
+	borderThickness: 3;
+	cornerRadius: 5;
+/*	disabledIcon: null; */
+	disabledSkin: ClassReference("haloclassic.ButtonBarButtonSkin");
+/*	downIcon: null; */
+	downSkin: ClassReference("haloclassic.ButtonBarButtonSkin");
+	horizontalGap: 2;
+/*	overIcon: null; */
+	overSkin: ClassReference("haloclassic.ButtonBarButtonSkin");
+/*	selectedDisabledIcon: null; */
+	selectedDisabledSkin: ClassReference("haloclassic.ButtonBarButtonSkin");
+/*	selectedDownIcon: null; */
+	selectedDownSkin: ClassReference("haloclassic.ButtonBarButtonSkin");
+/*	selectedOverIcon: null; */
+	selectedOverSkin: ClassReference("haloclassic.ButtonBarButtonSkin");
+/*	selectedUpIcon: null; */
+	selectedUpSkin: ClassReference("haloclassic.ButtonBarButtonSkin");
+/*	upIcon: null; */
+	upSkin: ClassReference("haloclassic.ButtonBarButtonSkin");
+	verticalGap: 2;
+}
+
+/*
+//------------------------------
+//  CalendarLayout
+//------------------------------
+*/
+
+CalendarLayout
+{
+	color: #2B333C;
+	horizontalGap: 7;
+	textAlign: "center";
+	verticalGap: 4;
+	cellWidthPadding: 6;
+	cellHeightPadding: 6;
+	paddingLeft: 9;
+	paddingRight: 9;
+	paddingBottom: 10;
+}
+
+/*
+//------------------------------
+//  Canvas
+//------------------------------
+*/
+
+Canvas
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  CheckBox
+//------------------------------
+*/
+
+CheckBox
+{
+	borderColor: #AAAAAA;
+	disabledIcon: ClassReference("haloclassic.CheckBoxIcon");
+/*	disabledSkin: null; */
+	downIcon: ClassReference("haloclassic.CheckBoxIcon");
+/*	downSkin: null; */
+	horizontalGap: 2;
+	overIcon: ClassReference("haloclassic.CheckBoxIcon");
+/*	overSkin: null; */
+	selectedDisabledIcon: ClassReference("haloclassic.CheckBoxIcon");
+/*	selectedDisabledSkin: null; */
+	selectedDownIcon: ClassReference("haloclassic.CheckBoxIcon");
+/*	selectedDownSkin: null; */
+	selectedOverIcon: ClassReference("haloclassic.CheckBoxIcon");
+/*	selectedOverSkin: null; */
+	selectedUpIcon: ClassReference("haloclassic.CheckBoxIcon");
+/*	selectedUpSkin: null; */
+	upIcon: ClassReference("haloclassic.CheckBoxIcon");
+/*	upSkin: null; */
+}		
+
+/*
+//------------------------------
+//  ColorPicker
+//------------------------------
+*/
+
+ColorPicker
+{
+	fontSize: 11;
+	shadowColor: #4D555E;
+	highlightColor: #FFFFFF;
+	backgroundColor: #E5E6E7;
+	borderColor: #A5A9AE;
+	columnCount: 20;
+	disabledSkin: ClassReference("haloclassic.ColorPickerSkin"); 
+	downSkin: ClassReference("haloclassic.ColorPickerSkin"); 
+	horizontalGap: 0;
+	paddingBottom: 5;
+	paddingLeft: 5;
+	paddingRight: 5;
+	paddingTop: 4;
+	overSkin: ClassReference("haloclassic.ColorPickerSkin"); 
+	previewHeight: 22;
+	previewWidth: 45;
+	swatchBorderColor: #000000;
+	swatchBorderSize: 1;
+	swatchGridBackgroundColor: #000000;
+	swatchGridBorderSize: 0;
+	swatchHeight: 12;
+	swatchHighlightColor: #FFFFFF;
+	swatchHighlightSize: 1;
+	swatchWidth: 12;
+	textFieldWidth: 72;
+	upSkin: ClassReference("haloclassic.ColorPickerSkin");			
+	verticalGap: 0;
+}
+
+/*
+//------------------------------
+//  ComboBox
+//------------------------------
+*/
+
+ComboBox
+{
+	borderColor: #C4CCCC;
+	cornerRadius: 5;
+	disabledSkin: ClassReference("haloclassic.ComboBoxArrowSkin");
+	downSkin: ClassReference("haloclassic.ComboBoxArrowSkin");
+	overSkin: ClassReference("haloclassic.ComboBoxArrowSkin");
+	upSkin: ClassReference("haloclassic.ComboBoxArrowSkin");
+}		
+
+/*
+//------------------------------
+//  Container
+//------------------------------
+*/
+
+Container
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  ControlBar
+//------------------------------
+*/
+
+ControlBar
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "controlBar";
+	paddingBottom: 10;
+	paddingLeft: 10;
+	paddingRight: 10;
+	paddingTop: 10;
+	verticalAlign: "middle";
+}
+
+/*
+//------------------------------
+//  CursorManager
+//------------------------------
+*/
+
+CursorManager
+{
+	busyCursor: ClassReference("haloclassic.BusyCursor");
+	busyCursorBackground: Embed(source="Assets.swf",symbol="mx.skins.cursor.BusyCursor");
+}
+
+/*
+//------------------------------
+//  DataGrid
+//------------------------------
+*/
+
+DataGrid
+{
+	alternatingRowColors: #F7F7F7, #FFFFFF;
+	headerColors: #E6EEEE, #FFFFFF;
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	columnResizeSkin: ClassReference("haloclassic.DataGridColumnResizeSkin");
+	headerSeparatorSkin: ClassReference("haloclassic.DataGridHeaderSeparator");
+	headerStyle: "dataGridStyles";
+	paddingTop: 2;
+	paddingBottom: 2;
+	sortArrowSkin: ClassReference("haloclassic.DataGridSortArrow");
+	stretchCursor: Embed(source="Assets.swf",symbol="cursorStretch");
+}
+
+/*
+//------------------------------
+//  .dataGridStyles
+//------------------------------
+*/
+
+.dataGridStyles
+{
+	fontWeight: "bold";
+}
+
+/*
+//------------------------------
+//  DateChooser
+//------------------------------
+*/
+
+DateChooser
+{
+	headerColors: #E1E5EB, #F4F5F7;
+	backgroundColor: #FFFFFF;
+	cornerRadius: 4;
+	nextMonthDisabledSkin: ClassReference("haloclassic.DateChooserFwdArrowSkin");
+	nextMonthDownSkin: ClassReference("haloclassic.DateChooserFwdArrowSkin");
+	nextMonthOverSkin: ClassReference("haloclassic.DateChooserFwdArrowSkin");
+	nextMonthUpSkin: ClassReference("haloclassic.DateChooserFwdArrowSkin");
+	prevMonthDisabledSkin: ClassReference("haloclassic.DateChooserBackArrowSkin");
+	prevMonthDownSkin: ClassReference("haloclassic.DateChooserBackArrowSkin");
+	prevMonthOverSkin: ClassReference("haloclassic.DateChooserBackArrowSkin");
+	prevMonthUpSkin: ClassReference("haloclassic.DateChooserBackArrowSkin");
+	nextYearDisabledSkin: ClassReference("haloclassic.DateChooserUpArrowSkin");
+	nextYearDownSkin: ClassReference("haloclassic.DateChooserUpArrowSkin");
+	nextYearOverSkin: ClassReference("haloclassic.DateChooserUpArrowSkin");
+	nextYearUpSkin: ClassReference("haloclassic.DateChooserUpArrowSkin");
+	prevYearDisabledSkin: ClassReference("haloclassic.DateChooserDownArrowSkin");
+	prevYearDownSkin: ClassReference("haloclassic.DateChooserDownArrowSkin");
+	prevYearOverSkin: ClassReference("haloclassic.DateChooserDownArrowSkin");
+	prevYearUpSkin: ClassReference("haloclassic.DateChooserDownArrowSkin");
+	todayStyleName: "todayStyle";
+	weekDayStyleName: "weekDayStyle";
+	headerStyleName: "headerDateText";			
+}
+
+/*
+//------------------------------
+//  DateField
+//------------------------------
+*/
+
+DateField
+{
+	/* borderColor: #C4CCCC; */
+	/* cornerRadius: 5; */
+	disabledSkin: Embed(source="Assets.swf",symbol="openDateOver"); 
+	downSkin: Embed(source="Assets.swf",symbol="openDateOver"); 
+	overSkin: Embed(source="Assets.swf",symbol="openDateOver"); 
+	upSkin: Embed(source="Assets.swf",symbol="openDateOver"); 
+}
+
+/*
+//------------------------------
+//  DividedBox
+//------------------------------
+*/
+
+DividedBox
+{
+	borderStyle: "none";
+	dividerSkin: Embed(source="Assets.swf",symbol="mx.skins.BoxDividerSkin");
+	horizontalDividerCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.HBoxDivider");
+	horizontalGap: 10;
+	verticalDividerCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.VBoxDivider");
+	verticalGap: 10;
+}
+
+/*
+//------------------------------
+//  DragManager
+//------------------------------
+*/
+
+DragManager
+{
+	copyCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.DragCopy");
+	defaultDragImageSkin: ClassReference("haloclassic.DefaultDragImage");
+	linkCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.DragLink");
+	moveCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.DragMove");
+	rejectCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.DragReject");
+}
+
+/*
+//------------------------------
+//  .ErrorTip
+//------------------------------
+*/
+
+.ErrorTip
+{
+	color: #FFFFFF;
+	fontSize: 9;
+	fontWeight: "bold";
+	shadowColor: #000000;
+	borderColor: #CE2929;
+	borderStyle: "errorTipRight";
+	paddingBottom: 4;
+	paddingLeft: 4;
+	paddingRight: 4;
+	paddingTop: 4;
+}
+
+/*
+//------------------------------
+//  Form
+//------------------------------
+*/
+
+Form
+{
+	borderStyle: "none";
+	paddingBottom: 16;
+	paddingLeft: 16;
+	paddingRight: 16;
+	paddingTop: 16;
+	verticalGap: 6;
+}
+
+/*
+//------------------------------
+//  FormHeading
+//------------------------------
+*/
+
+FormHeading
+{
+	fontSize: 12;
+	fontWeight: "bold";
+	borderStyle: "none";
+	verticalGap: 16;
+}
+
+/*
+//------------------------------
+//  FormItem
+//------------------------------
+*/
+
+FormItem
+{
+	borderStyle: "none";
+	indicatorSkin: Embed(source="Assets.swf",symbol="mx.containers.FormItem.Required");  
+}
+
+/*
+//------------------------------
+//  FormItemLabel
+//------------------------------
+*/
+
+FormItemLabel
+{
+}
+
+/*
+//------------------------------
+//  Grid
+//------------------------------
+*/
+
+Grid
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+// GridItem
+//------------------------------
+*/
+
+GridItem
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  GridRow
+//------------------------------
+*/
+
+GridRow
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  .headerDateText
+//------------------------------
+*/
+
+.headerDateText
+{
+	fontWeight: "bold";
+	textAlign: "center";
+}
+
+/*
+//------------------------------
+//  HBox
+//------------------------------
+*/
+
+HBox
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  HDividedBox
+//------------------------------
+*/
+
+HDividedBox
+{
+	borderStyle: "none";
+	dividerSkin: Embed(source="Assets.swf",symbol="mx.skins.BoxDividerSkin");		
+	horizontalDividerCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.HBoxDivider");	
+	horizontalGap: 10;
+	verticalDividerCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.VBoxDivider");
+	verticalGap: 10;
+}
+
+/*
+//------------------------------
+//  HorizontalList
+//------------------------------
+*/
+
+HorizontalList
+{
+	textAlign: "center";
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	paddingBottom: 2;
+	paddingTop: 2;
+}
+
+/*
+//------------------------------
+//  HRule
+//------------------------------
+*/
+
+HRule
+{
+	color: #C4CCCC;
+	strokeWidth: 2;
+}
+
+/*
+//------------------------------
+//  HSlider
+//------------------------------
+*/
+
+HSlider
+{
+	borderColor: #919999;
+	fillColors: #FFFFFF, #E6E6E6;
+	labelOffset: -8;
+	slideDuration: 300;
+	thumbDisabledSkin: ClassReference("haloclassic.SliderThumbSkin");
+	thumbDownSkin: ClassReference("haloclassic.SliderThumbSkin");
+	thumbOffset: 0;
+	thumbOverSkin: ClassReference("haloclassic.SliderThumbSkin");
+	thumbUpSkin: ClassReference("haloclassic.SliderThumbSkin");
+	tickColor: #6F7777;
+	tickLength: 4;
+	tickOffset: -6;
+	tickThickness: 1;
+	toolTipOffset: 16;
+	toolTipPlacement: "top";
+	toolTipPrecision: 2;
+	trackColors: #EEEEEE, #FFFFFF;
+	trackHighlight: false;
+	trackHighlightSkin: ClassReference("haloclassic.SliderHighlightSkin");
+	trackSkin: ClassReference("haloclassic.SliderTrackSkin");
+}
+
+/*
+//------------------------------
+//  Image
+//------------------------------
+*/
+
+Image
+{
+	borderStyle: "none";
+	brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage");
+}
+
+/*
+//------------------------------
+//  LinkButton
+//------------------------------
+*/
+
+LinkButton
+{
+	cornerRadius: 4;
+/*	disabledIcon: null; */
+	disabledSkin: ClassReference("haloclassic.LinkButtonSkin");
+/*	downIcon: null; */
+	downSkin: ClassReference("haloclassic.LinkButtonSkin");
+	horizontalGap: 2;
+/*	overIcon: null; */
+	overSkin: ClassReference("haloclassic.LinkButtonSkin");
+/*	selectedDisabledIcon: null; */
+	selectedDisabledSkin: ClassReference("haloclassic.LinkButtonSkin");
+/*	selectedDownIcon: null; */
+	selectedDownSkin: ClassReference("haloclassic.LinkButtonSkin");
+/*	selectedOverIcon: null; */
+	selectedOverSkin: ClassReference("haloclassic.LinkButtonSkin");
+/*	selectedUpIcon: null; */
+	selectedUpSkin: ClassReference("haloclassic.LinkButtonSkin");
+/*	upIcon: null; */
+	upSkin: ClassReference("haloclassic.LinkButtonSkin");
+	verticalGap: 2;
+}
+
+/*
+//------------------------------
+//  LinkBar
+//------------------------------
+*/
+
+LinkBar
+{
+	borderStyle: "none";
+	horizontalGap: 8;
+	paddingBottom: 2;
+	paddingLeft: 2;
+	paddingRight: 2;
+	paddingTop: 2;
+	separatorColor: #C4CCCC;
+	separatorSkin: ClassReference("haloclassic.LinkSeparator");
+	separatorWidth: 1;
+	verticalGap: 8;
+}
+
+/*
+//------------------------------
+//  ListBase
+//------------------------------
+*/
+
+ListBase
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	dropIndicatorSkin: ClassReference("haloclassic.ListDropIndicator");
+	paddingBottom: 2;
+	paddingLeft: 2;
+	paddingRight: 0;
+	paddingTop: 2;
+}
+
+/*
+//------------------------------
+//  Loader
+//------------------------------
+*/
+
+Loader
+{
+	borderStyle: "none";
+	brokenImageSkin: Embed(source="Assets.swf",symbol="__brokenImage");
+}
+
+/*
+//------------------------------
+//  Menu
+//------------------------------
+*/
+
+Menu
+{
+	/* Menu-specific styles */
+	branchIcon: Embed(source="Assets.swf",symbol="MenuBranchEnabled");
+	branchDisabledIcon: Embed(source="Assets.swf",symbol="MenuBranchDisabled");
+	checkIcon: Embed(source="Assets.swf",symbol="MenuCheckEnabled");
+	checkDisabledIcon: Embed(source="Assets.swf",symbol="MenuCheckDisabled");
+	radioIcon: Embed(source="Assets.swf",symbol="MenuRadioEnabled");
+	radioDisabledIcon: Embed(source="Assets.swf",symbol="MenuRadioDisabled");
+	separatorSkin: Embed(source="Assets.swf",symbol="MenuSeparator");
+
+	/* Stuff inherited from ScrollSelectList */
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	dropIndicatorSkin: ClassReference("haloclassic.ListDropIndicator");
+	paddingBottom: 1;
+	paddingLeft: 1;
+	paddingRight: 0;
+	paddingTop: 1;
+}
+
+/*
+//------------------------------
+//  MenuBar
+//------------------------------
+*/
+
+MenuBar
+{
+	backgroundSkin: ClassReference("haloclassic.MenuBarBackgroundSkin");
+	itemUpSkin: ClassReference("haloclassic.ActivatorSkin");
+	itemOverSkin: ClassReference("haloclassic.ActivatorSkin");
+	itemDownSkin: ClassReference("haloclassic.ActivatorSkin");
+	translucent: false;
+}
+
+/*
+//------------------------------
+//  NumericStepper
+//------------------------------
+*/
+
+NumericStepper
+{
+	borderColor: #AAAAAA;
+	cornerRadius: 5;
+	downArrowDisabledSkin: ClassReference("haloclassic.NumericStepperDownSkin");
+	downArrowDownSkin: ClassReference("haloclassic.NumericStepperDownSkin");
+	downArrowOverSkin: ClassReference("haloclassic.NumericStepperDownSkin");
+	downArrowUpSkin: ClassReference("haloclassic.NumericStepperDownSkin");
+	focusRoundedCorners: "tr br";			/* Only round the right corners of the focus rect */
+/*	trackSkin: null; */
+	upArrowDisabledSkin: ClassReference("haloclassic.NumericStepperUpSkin");
+	upArrowDownSkin: ClassReference("haloclassic.NumericStepperUpSkin");
+	upArrowOverSkin: ClassReference("haloclassic.NumericStepperUpSkin");
+	upArrowUpSkin: ClassReference("haloclassic.NumericStepperUpSkin");
+}
+
+/*
+//------------------------------
+//  Panel
+//------------------------------
+
+// Note the use of effect triggers, below.
+// For now, adding a default effect trigger is
+// ("sadly") a three step process =
+// 1") Add it to the style sheet, as shown here.  
+// 2") Create a linker dependency so that the effect class
+//    ("mx.effects.Dissolve in this case") is linked into the app.
+//    See the bottom of Panel.as.
+// 3") Register the EffectManager as an event listener.  See 
+//    Panel.createChildren("").
+*/
+
+Panel
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "default";
+	borderThickness: 0;
+	closeButtonDisabledSkin: Embed(source="Assets.swf",symbol="CloseButtonDisabled");
+	closeButtonDownSkin: Embed(source="Assets.swf",symbol="CloseButtonDown");
+	closeButtonOverSkin: Embed(source="Assets.swf",symbol="CloseButtonOver");
+	closeButtonUpSkin: Embed(source="Assets.swf",symbol="CloseButtonUp");
+	cornerRadius: 8;
+	dropShadowEnabled: true;
+	paddingBottom: 4;
+	paddingLeft: 4;
+	paddingRight: 4;
+	paddingTop: 4;
+	resizeStartEffect: "Dissolve";
+	resizeEndEffect: "Dissolve";
+	titleBackgroundSkin: ClassReference("haloclassic.TitleBackground");
+}
+
+/*
+//------------------------------
+// .plain
+//------------------------------
+
+// 'plain' is a named style that can be set on Application
+// to revert to the boring white box
+*/
+.plain
+{
+	backgroundColor: #FFFFFF;
+	horizontalAlign: "left";
+	paddingBottom: 0;
+	paddingLeft: 0;
+	paddingRight: 0;
+	paddingTop: 0;
+}
+
+/*
+//------------------------------
+//  PopUpButton
+//------------------------------
+*/
+
+PopUpButton
+{
+	fontWeight: "bold";
+	textAlign: "left";
+	arrowButtonWidth: 18;
+	borderColor: #919999;
+	borderThickness: 3;
+	cornerRadius: 5;
+/*	disabledIcon: null; */
+	disabledSkin: ClassReference("haloclassic.PopUpButtonSkin");
+/*	downIcon: null; */
+	downSkin: ClassReference("haloclassic.PopUpButtonSkin");
+	horizontalGap: 2;
+/*	overIcon: null; */
+	overSkin: ClassReference("haloclassic.PopUpButtonSkin");	
+	popUpDownSkin: ClassReference("haloclassic.PopUpButtonSkin");
+	popUpIcon: ClassReference("haloclassic.PopUpIcon");
+	popUpGap: 0;
+	popUpOverSkin: ClassReference("haloclassic.PopUpButtonSkin");			
+/*	upIcon: null; */
+	upSkin: ClassReference("haloclassic.PopUpButtonSkin");
+	verticalGap: 2;
+}
+
+/*
+//------------------------------
+//  PrintDataGrid
+//------------------------------
+*/
+
+PrintDataGrid
+{
+	alternatingRowColors: #FFFFFF, #FFFFFF;
+	headerColors: #FFFFFF, #FFFFFF;
+	vGridLineColor: 0;
+	hGridLineColor: 0;
+	backgroundColor: #FFFFFF;
+	borderColor: 0;
+	borderStyle: "solid";
+	columnResizeSkin: ClassReference("haloclassic.DataGridColumnResizeSkin");
+	headerSeparatorSkin: ClassReference("haloclassic.DataGridHeaderSeparator");
+	headerStyle: "dataGridStyles";
+	hGridLines: true;
+	paddingTop: 2;
+	paddingBottom: 2;
+	sortArrowSkin: ClassReference("haloclassic.DataGridSortArrow");
+	stretchCursor: Embed(source="Assets.swf",symbol="cursorStretch");
+}
+
+/*
+//------------------------------
+//  ProgressBar
+//------------------------------
+*/
+
+ProgressBar
+{
+	color: #AAB3B3;
+	fontWeight: "bold";
+	barSkin: ClassReference("haloclassic.ProgressBarSkin");
+	borderColor: #919999;
+	indeterminateSkin: ClassReference("haloclassic.ProgressIndeterminateSkin");
+	trackColors: #E6EEEE, #E6EEEE;
+	trackSkin: ClassReference("haloclassic.ProgressTrackSkin");
+}
+
+/*
+//------------------------------
+//  RadioButton
+//------------------------------
+*/
+
+RadioButton
+{
+	borderColor: #AAAAAA;
+	cornerRadius: 5;	/* Needed for focus drawing */
+	disabledIcon: ClassReference("haloclassic.RadioButtonIcon");
+/*	disabledSkin: null; */
+	downIcon: ClassReference("haloclassic.RadioButtonIcon");
+/*	downSkin: null; */
+	horizontalGap: 2;
+	overIcon: ClassReference("haloclassic.RadioButtonIcon");
+/*	overSkin: null; */
+	selectedDisabledIcon: ClassReference("haloclassic.RadioButtonIcon");
+/*	selectedDisabledSkin: null; */
+	selectedDownIcon: ClassReference("haloclassic.RadioButtonIcon");
+/*	selectedDownSkin: null; */
+	selectedOverIcon: ClassReference("haloclassic.RadioButtonIcon");
+/*	selectedOverSkin: null; */
+	selectedUpIcon: ClassReference("haloclassic.RadioButtonIcon");
+/*	selectedUpSkin: null; */
+	upIcon: ClassReference("haloclassic.RadioButtonIcon");
+/*	upSkin: null; */
+	verticalGap: 2;
+}
+
+/*
+//------------------------------
+//  ScrollBar
+//------------------------------
+*/
+
+ScrollBar
+{
+	borderColor: #919999;
+	cornerRadius: 4;
+	downArrowDisabledSkin: ClassReference("haloclassic.ScrollArrowDownSkin");
+	downArrowDownSkin: ClassReference("haloclassic.ScrollArrowDownSkin");
+	downArrowOverSkin: ClassReference("haloclassic.ScrollArrowDownSkin");
+	downArrowUpSkin: ClassReference("haloclassic.ScrollArrowDownSkin");
+	thumbDownSkin: ClassReference("haloclassic.ScrollThumbSkin");
+	thumbOverSkin: ClassReference("haloclassic.ScrollThumbSkin");
+	thumbUpSkin: ClassReference("haloclassic.ScrollThumbSkin");
+	trackColors: #C4CCCC, #FFFFFF;
+	trackSkin: ClassReference("haloclassic.ScrollTrackSkin");
+	upArrowDisabledSkin: ClassReference("haloclassic.ScrollArrowUpSkin");
+	upArrowDownSkin: ClassReference("haloclassic.ScrollArrowUpSkin");
+	upArrowOverSkin: ClassReference("haloclassic.ScrollArrowUpSkin");
+	upArrowUpSkin: ClassReference("haloclassic.ScrollArrowUpSkin");
+}
+
+/*
+//------------------------------
+//  Tab
+//------------------------------
+*/
+
+Tab
+{
+	cornerRadius: 6;
+/*	disabledIcon: null; */
+	disabledSkin: ClassReference("haloclassic.TabSkin");
+/*	downIcon: null; */
+	downSkin: ClassReference("haloclassic.TabSkin");
+	horizontalGap: 2;
+/*	overIcon: null; */
+	overSkin: ClassReference("haloclassic.TabSkin");
+/*	selectedDisabledIcon: null; */
+	selectedDisabledSkin: ClassReference("haloclassic.TabSkin");
+/*	selectedDownIcon: null; */
+	selectedDownSkin: ClassReference("haloclassic.TabSkin");
+/*	selectedOverIcon: null; */
+	selectedOverSkin: ClassReference("haloclassic.TabSkin");
+/*	selectedUpIcon: null; */
+	selectedUpSkin: ClassReference("haloclassic.TabSkin");
+/*	upIcon: null; */
+	upSkin: ClassReference("haloclassic.TabSkin");
+}
+
+/*
+//------------------------------
+//  TabBar
+//------------------------------
+*/
+
+TabBar
+{
+	textAlign: "center";
+	borderStyle: "none";
+	horizontalAlign: "left";
+	horizontalGap: -1;
+	selectedTabTextStyleName: "activeTabStyle";
+	tabStyleName: "Tab";
+	verticalAlign: "top";
+	verticalGap: -1;
+}
+
+/*
+//------------------------------
+//  TabNavigator
+//------------------------------
+*/
+
+TabNavigator
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	horizontalAlign: "left";
+	horizontalGap: -1;
+	paddingTop: 10;
+}
+
+/*
+//------------------------------
+//  TextArea
+//------------------------------
+*/
+
+TextArea
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+}
+
+/*
+//------------------------------
+//  TextInput
+//------------------------------
+*/
+
+TextInput
+{
+	backgroundColor: #FFFFFF;
+}
+
+/*
+//------------------------------
+//  Tile
+//------------------------------
+*/
+
+Tile
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  TileList
+//------------------------------
+*/
+
+TileList
+{
+	textAlign: "center";
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	paddingBottom: 2;
+	paddingTop: 2;
+	verticalAlign: "middle";
+}
+
+
+/*
+//------------------------------
+//  TitleWindow
+//------------------------------
+
+// Note the use of effect triggers, below.
+// For now, adding a default effect trigger is
+// ("sadly") a three step process =
+// 1") Add it to the style sheet, as shown here.  
+// 2") Create a linker dependency so that the effect class
+//    ("mx.effects.Dissolve in this case") is linked into the app.
+//    See the bottom of Panel.as.
+// 3") Register the EffectManager as an event listener.  See 
+//    Panel.createChildren("").
+*/
+
+TitleWindow
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "default";
+	borderThickness: 0;
+	closeButtonDisabledSkin: Embed(source="Assets.swf",symbol="CloseButtonDisabled");
+	closeButtonDownSkin: Embed(source="Assets.swf",symbol="CloseButtonDown");
+	closeButtonOverSkin: Embed(source="Assets.swf",symbol="CloseButtonOver");
+	closeButtonUpSkin: Embed(source="Assets.swf",symbol="CloseButtonUp");
+	cornerRadius: 8;
+	dropShadowEnabled: true;
+	paddingBottom: 4;
+	paddingLeft: 4;
+	paddingRight: 4;
+	paddingTop: 4;
+	resizeStartEffect: "Dissolve";
+	resizeEndEffect: "Dissolve";
+	titleBackgroundSkin: ClassReference("haloclassic.TitleBackground");
+}
+
+/*
+//------------------------------
+//  .todayStyle
+//------------------------------
+*/
+
+.todayStyle
+{
+	color: #FFFFFF;
+	textAlign: "center";
+}
+
+/*
+//------------------------------
+//  ToolTip
+//------------------------------
+*/
+
+ToolTip
+{
+	fontSize: 9;
+	shadowColor: #000000;
+	backgroundColor: #FFFFCC;
+	borderColor: #919999;
+	borderSkin: ClassReference("haloclassic.ToolTipBorder");
+	borderStyle: "toolTip";	
+	paddingBottom: 2;
+	paddingLeft: 4;
+	paddingRight: 4;
+	paddingTop: 2;
+}
+
+/*
+//------------------------------
+//  Tree
+//------------------------------
+*/
+
+Tree
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	paddingBottom: 2;
+	paddingLeft: 2;
+	paddingRight: 0;
+	paddingTop: 2;
+}
+
+/*
+//------------------------------
+//  VBox
+//------------------------------
+*/
+
+VBox
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  VDividedBox
+//------------------------------
+*/
+
+VDividedBox
+{
+	borderStyle: "none";
+	dividerSkin: Embed(source="Assets.swf",symbol="mx.skins.BoxDividerSkin");		
+	horizontalDividerCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.HBoxDivider");
+	horizontalGap: 10;
+	verticalDividerCursor: Embed(source="Assets.swf",symbol="mx.skins.cursor.VBoxDivider");
+	verticalGap: 10;
+}
+
+/*
+//------------------------------
+//  ViewStack
+//------------------------------
+*/
+
+ViewStack
+{
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  VRule
+//------------------------------
+*/
+
+VRule
+{
+	color: #C4CCCC;
+	strokeWidth: 2;
+}
+
+/*
+//------------------------------
+//  VSlider
+//------------------------------
+*/
+
+VSlider
+{
+	borderColor: #919999;
+	fillColors: #FFFFFF, #E6E6E6;
+	labelOffset: -8;
+	slideDuration: 300;
+	thumbDisabledSkin: ClassReference("haloclassic.SliderVThumbSkin");
+	thumbDownSkin: ClassReference("haloclassic.SliderVThumbSkin");
+	thumbOffset: 0;
+	thumbOverSkin: ClassReference("haloclassic.SliderVThumbSkin");
+	thumbUpSkin: ClassReference("haloclassic.SliderVThumbSkin");
+	toolTipOffset: 16;
+	toolTipPlacement: "left";
+	toolTipPrecision: 2;
+	tickColor: #6F7777;
+	tickLength: 3;
+	tickOffset: -6;
+	tickThickness: 1;
+	trackColors: #EEEEEE, #FFFFFF;
+	trackHighlight: false;
+	trackHighlightSkin: ClassReference("haloclassic.SliderHighlightSkin");
+	trackSkin: ClassReference("haloclassic.SliderTrackSkin");
+}
+
+/*
+//------------------------------
+//  .weekDayStyle
+//------------------------------
+*/
+
+.weekDayStyle
+{
+	fontWeight: "bold";
+	textAlign: "center";
+}
+
+/*
+//------------------------------
+//  Window
+//------------------------------
+*/
+
+Window
+{
+	closeButtonDisabledSkin: Embed(source="Assets.swf",symbol="CloseButtonDisabled");
+	closeButtonDownSkin: Embed(source="Assets.swf",symbol="CloseButtonDown");
+	closeButtonOverSkin: Embed(source="Assets.swf",symbol="CloseButtonOver");
+	closeButtonUpSkin: Embed(source="Assets.swf",symbol="CloseButtonUp");
+	cornerRadius: 8;
+	borderStyle: "default";
+}
+
+/*
+//------------------------------
+//  .windowStatus
+//------------------------------
+
+// This empty style declaration is required to make the
+// status field of Panel/Window correctly pick up global
+// default style properties.
+*/
+
+.windowStatus
+{
+}
+
+/*
+//------------------------------
+//  .windowStyles
+//------------------------------
+*/
+
+.windowStyles
+{
+	fontWeight: "bold";
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Tile layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="Tile Container Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue"
+            text="A Tile container lays out its children in a grid of equal-sized cells."/>
+
+        <mx:Tile direction="horizontal" borderStyle="inset" 
+                horizontalGap="10" verticalGap="15" 
+                paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+            <mx:Button label="1" height="50" width="75"/>
+            <mx:Button label="2" height="50" width="75"/>
+            <mx:Button label="3" height="50" width="75"/>
+            <mx:Button label="4" height="50" width="75"/>
+            <mx:Button label="5" height="50" width="75"/>
+            <mx:Button label="6" height="50" width="75"/>
+
+        </mx:Tile>
+
+    </mx:Panel>
+</mx:Application>

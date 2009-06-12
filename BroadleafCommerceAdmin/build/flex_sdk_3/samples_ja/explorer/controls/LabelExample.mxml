@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<!-- Simple example to demonstrate the Label control -->
+
+    <mx:Script>
+        <![CDATA[
+      
+            private var htmlData:String="<br>このラベルは HTML 形式の<b>太字</b>および<i>斜体</i>のテキストを表示します。";
+                                         
+            // Event handler function to change the image size.
+            private function displayHTML():void {
+                simpleLabel.htmlText= htmlData;
+            }
+          
+            // Event handler function to change the image size.
+            private function displayText():void {
+                simpleLabel.text="この Label はプレーンテキストを表示します。";
+            }         
+        ]]>
+    </mx:Script>
+
+  <mx:Panel title="Label コントロールの例" height="75%" width="75%" 
+      paddingTop="10" paddingLeft="10">
+    
+      <mx:Label id="simpleLabel" text="この Label はプレーンテキストを表示します。"/>
+      <mx:Button id="Display" label="クリックして HTML テキストを表示する" click="displayHTML();"/>
+      <mx:Button id="Clear" label="クリックしてプレーンテキストを表示する" click="displayText();"/>
+  
+  </mx:Panel>
+</mx:Application>

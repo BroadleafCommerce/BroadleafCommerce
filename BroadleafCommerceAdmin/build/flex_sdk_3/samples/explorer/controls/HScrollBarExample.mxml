@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the HScrollBar control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+ 
+     <mx:Script>
+        <![CDATA[
+    
+            import mx.events.ScrollEvent;
+    
+            // Event handler function to display the scroll location
+            // as you move the scroll thumb.
+            private function myScroll(event:ScrollEvent):void
+            {
+                showPosition.text = "HScrollBar properties summary:" + '\n' +
+                    "------------------------------------" + '\n' +
+                    "Current scroll position: " + event.currentTarget.scrollPosition  + '\n' +
+                    "The maximum scroll position: " + event.currentTarget.maxScrollPosition + '\n' +
+                    "The minimum scroll position: " + event.currentTarget.minScrollPosition ;
+            }
+        ]]>
+    </mx:Script> 
+  
+    <mx:Panel id="panel" title="HScrollBar Control Example" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+        
+        <mx:Label width="100%" color="blue"
+           text="Click on the scroll bar to view its properties."/> 
+        
+        <mx:HScrollBar id="bar" width="100%" 
+            minScrollPosition="0" maxScrollPosition="{panel.width - 20}" 
+            lineScrollSize="50" pageScrollSize="100" 
+            scroll="myScroll(event);" 
+            repeatDelay="1000" repeatInterval="500" />
+          
+        <mx:TextArea height="100%" width="100%" id="showPosition" color="blue" />
+  
+    </mx:Panel>  
+</mx:Application>

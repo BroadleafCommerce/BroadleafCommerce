@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<compTree>
+ <node label="Datavisualization Components">
+        <node label="Charts">
+          <node label="Chart Controls">
+            <node label="AreaChart" app="charts/Line_AreaChartExample"/>
+            <node label="AxisRenderer" app="charts/HLOCChartExample"/>
+            <node label="BarChart" app="charts/Column_BarChartExample"/>
+            <node label="BubbleChart" app="charts/BubbleChartExample"/>
+            <node label="CandlestickChart" app="charts/CandlestickChartExample"/>
+            <node label="CategoryAxis" app="charts/HLOCChartExample"/>
+            <node label="ColumnChart" app="charts/Column_BarChartExample"/>
+            <node label="DateTimeAxis" app="charts/DateTimeAxisExample"/>
+            <node label="GridLines" app="charts/GridLinesExample"/>
+            <node label="HLOCChart" app="charts/HLOCChartExample"/>
+            <node label="Legend" app="charts/PlotChartExample"/>
+            <node label="LinearAxis" app="charts/HLOCChartExample"/>
+            <node label="LineChart" app="charts/Line_AreaChartExample"/>
+            <node label="LogAxis" app="charts/LogAxisExample"/>
+            <node label="PieChart" app="charts/PieChartExample"/>
+            <node label="PlotChart" app="charts/PlotChartExample"/>
+           </node>
+                
+                
+          <node label="Chart Series">
+            <node label="AreaSeries" app="charts/Line_AreaChartExample"/>
+            <node label="BarSeries" app="charts/Column_BarChartExample"/>
+            <node label="BubbleSeries" app="charts/BubbleChartExample"/>
+            <node label="CandlestickSeries" app="charts/CandlestickChartExample"/>
+            <node label="ColumnSeries" app="charts/Column_BarChartExample"/>
+            <node label="HLOCSeries" app="charts/HLOCChartExample"/>
+            <node label="LineSeries" app="charts/Line_AreaChartExample"/>
+            <node label="PieSeries" app="charts/PieChartExample"/>
+            <node label="PlotSeries" app="charts/PlotChartExample"/>
+           </node>
+                
+                
+                
+          <node label="Chart Effects">
+            <node label="SeriesInterpolate" app="charts/SeriesInterpolateExample"/>
+            <node label="SeriesSlide" app="charts/SeriesSlideExample"/>
+            <node label="SeriesZoom" app="charts/SeriesZoomExample"/>
+         </node>
+         
+        </node>
+        
+        
+        <node label="AdancedDataGrid">
+             <node label="AdvancedDataGrid" app="controls/AdvancedDataGridExample"/>
+         </node>
+        
+         <node label="OLAPDataGrid">
+	     <node label="OLAPDataGrid" app="controls/OLAPDataGridExample"/>
+         </node>
+        
+         <node label="Printing">
+	      <node label="ADG Printing" app="printing/AdvancedPrintDataGridExample"/>
+         </node>
+      </node>  
+</compTree>

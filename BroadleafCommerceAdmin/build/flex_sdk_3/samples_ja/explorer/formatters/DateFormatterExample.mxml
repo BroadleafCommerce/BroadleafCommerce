@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the DateFormatter. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+            import mx.events.ValidationResultEvent;			
+            private var vResult:ValidationResultEvent;
+
+            // Event handler to validate and format input.            
+            private function Format():void
+            {
+                vResult = dateVal.validate();
+                if (vResult.type==ValidationResultEvent.VALID) {
+                    formattedDate.text=dateFormatter.format(dob.text);
+                }
+              
+                else {
+                    formattedDate.text= "";
+                }
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:DateFormatter id="dateFormatter" formatString="month: MM, day: DD, year: YYYY"/>
+
+    <mx:DateValidator id="dateVal" source="{dob}" property="text" inputFormat="mm/dd/yyyy"/>
+
+    <mx:Panel title="DateFormatter の例" width="95%" height="95%" 
+            paddingTop="10" paddingLeft="5" paddingRight="5" paddingBottom="10">
+
+        <mx:Form width="100%">
+            <mx:FormItem label="日付を入力します (mm/dd/yyyy):" width="100%">
+                <mx:TextInput id="dob" text=""/>
+            </mx:FormItem>
+
+            <mx:FormItem label="フォーマットされた日付 : " width="100%">
+                <mx:TextInput id="formattedDate" text="" editable="false"/>
+            </mx:FormItem>
+
+            <mx:FormItem>
+                <mx:Button label="検証およびフォーマット" click="Format();"/>
+            </mx:FormItem>
+        </mx:Form>
+
+    </mx:Panel>
+</mx:Application>

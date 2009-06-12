@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate ZipCodeFormatter. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+            import mx.events.ValidationResultEvent;			
+            private var vResult:ValidationResultEvent;
+
+            // Event handler to validate and format input.
+            private function Format():void 
+            {
+                vResult = zcVal.validate();
+                
+                if (vResult.type==ValidationResultEvent.VALID) {
+                    formattedZipcode.text= zipFormatter.format(zip.text);
+                }
+                
+                else {
+                    formattedZipcode.text= "";
+                }
+            }
+        ]]>      
+    </mx:Script>
+
+    <mx:ZipCodeFormatter id="zipFormatter" formatString="#####-####"/>
+
+    <mx:ZipCodeValidator id="zcVal" source="{zip}" property="text" allowedFormatChars=""/>
+
+    <mx:Panel title="ZipCodeFormatter Example" width="75%" height="75%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Form width="100%">
+            <mx:FormItem label="Enter a 5 or 9 digit U.S. ZIP code:" width="100%">
+                <mx:TextInput id="zip" text=""/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Formatted ZIP code: " width="100%">
+                <mx:TextInput id="formattedZipcode" text="" editable="false"/>
+            </mx:FormItem>
+
+            <mx:FormItem>
+                <mx:Button label="Validate and Format" click="Format();"/>
+            </mx:FormItem>
+        </mx:Form>
+
+    </mx:Panel>
+</mx:Application>

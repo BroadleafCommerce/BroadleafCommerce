@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Box layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="Box Container Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue"
+            text="A Box container with vertically aligned children."/>
+        <mx:Box direction="vertical" borderStyle="solid" 
+                paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+            <mx:Button label="Button 1"/>
+            <mx:Button label="Button 2"/>
+            <mx:Button label="Button 3"/>
+            <mx:ComboBox/>
+        </mx:Box>
+
+        <mx:Label width="100%" color="blue"
+            text="A Box container with horizontally aligned children."/>
+        <mx:Box direction="horizontal" borderStyle="solid" 
+                paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+            <mx:Button label="Button 1"/>
+            <mx:Button label="Button 2"/>
+            <mx:Button label="Button 3"/>
+            <mx:ComboBox/>
+        </mx:Box>
+
+    </mx:Panel>
+</mx:Application>

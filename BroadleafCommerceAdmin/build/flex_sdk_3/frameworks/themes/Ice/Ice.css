@@ -1,0 +1,192 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2006-2007 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+/* Global style declaration */
+global
+{
+	backgroundAlpha: 1.0; /* this runs the opacity of nearly every square piece of the components */
+	backgroundSize: "auto";
+
+	borderColor: #92A0AD;	
+	
+	fillAlphas: 0.3, 0.3, 0.85, 0.75; /* last pair are for OVER state */
+	fillColors: #6C8AA4, #BFD5E8, #5AA0C3, #A8D0E2;
+	
+	highlightAlphas: 0.08, 0.14; /* use this to control the 'light' cast on the components */
+
+	/* themeColor	*/
+	themeColor: #7AA4B9;	
+	rollOverColor: #AADEFF;
+	selectionColor: #7FCDFE;
+
+}
+
+/*
+//------------------------------
+//  Application
+//------------------------------
+*/
+
+Application
+{
+	borderStyle: "none";
+	backgroundColor: #2D374A;
+	backgroundImage: "";
+	horizontalAlign: "center";
+
+}
+
+/*
+//------------------------------
+//  ApplicationControlBar
+//------------------------------
+*/
+
+ApplicationControlBar
+{
+	borderStyle: "applicationControlBar";
+	cornerRadius: 5;
+	docked: false;
+	dropShadowEnabled: true;
+	fillColors: #64809B, #64809B;
+	fillAlphas: 0.6, 0.6;
+
+	shadowDistance: 5;
+}
+
+
+/*
+//------------------------------
+//  HScrollBar
+//------------------------------
+*/
+
+HScrollBar
+{
+	borderColor: #B7BABC;
+	cornerRadius: 4;
+	trackColors: #94999b, #e7e7e7;	/* #d6d7d8; */
+	trackSkin: ClassReference("mx.skins.halo.ScrollTrackSkin");
+}
+
+
+/*
+//------------------------------
+//  Panel
+//------------------------------
+*/
+Panel
+{
+    backgroundColor: #64809B;
+    backgroundAlpha: 0.6; /* controls the alpha of the panel content area. */
+    borderAlpha: 0.6; /* controls the alpha of the panel top, bottom and sides. */
+    headerColors : #234E64, #234E64;   
+    cornerRadius: 4;
+    dropShadowEnabled: true;
+}
+
+
+/*
+//------------------------------
+//  ScrollBar
+//------------------------------
+*/
+
+ScrollBar
+{
+	borderColor: #B7BABC;
+	cornerRadius: 4;
+	trackColors: #94999b, #e7e7e7;	/* #d6d7d8; */
+}
+
+/*
+//------------------------------
+//  Tab
+//------------------------------
+*/
+
+Tab
+{
+	cornerRadius: 4;
+	horizontalGap: 2;
+}
+
+/*
+//------------------------------
+//  TabNavigator
+//------------------------------
+*/
+
+TabNavigator
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "solid";
+	horizontalAlign: "left";
+	horizontalGap: -1;
+	paddingTop: 10;
+	borderColor: #AAB3B3;	/* used for edge of tab's content area, */	
+}
+
+/*
+//------------------------------
+//  VScrollBar
+//------------------------------
+*/
+
+VScrollBar
+{
+	borderColor: #B7BABC;
+	cornerRadius: 4;
+	trackColors: #94999b, #e7e7e7;	/* #d6d7d8; */
+}
+
+
+/*
+//------------------------------
+//  Window
+//------------------------------
+*/
+
+Window
+{
+	cornerRadius: 8;
+	borderStyle: "default";
+}
+
+/*
+//------------------------------
+//  .windowStatus
+//------------------------------
+
+// This empty style declaration is required to make the
+// status field of Panel/Window correctly pick up global
+// default style properties.
+*/
+
+.windowStatus
+{
+	color: #BDE9FA;
+
+}
+
+/*
+//------------------------------
+//  .windowStyles
+//------------------------------
+*/
+
+.windowStyles
+{
+	fontWeight: "bold";
+/*	fontSize: 12; */
+}

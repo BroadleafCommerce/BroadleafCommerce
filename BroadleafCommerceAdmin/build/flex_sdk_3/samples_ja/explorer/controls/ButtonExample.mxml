@@ -1,0 +1,45 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Button control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+        
+            import flash.events.Event;
+        
+            // Event handler function to print a message
+            // describing the selected Button control.        
+            private function printMessage(event:Event):void  {
+              message.text += event.target.label + " 押しました"  + "\n";
+            }
+      
+      ]]>
+    </mx:Script>
+
+    <mx:Panel title="Button コントロールの例" 
+        height="75%" width="75%" layout="horizontal" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:VBox>
+            <mx:Label width="100%" color="blue"
+                text="Button コントロールを選択します。"/>
+
+             <!-- The button can contain an image, as in the "Button with Icon" button -->
+             <mx:Button id="iconButton" icon="@Embed('assets/mm-icon.png')" label="アイコン付きボタン"
+                 labelPlacement="right" color="#993300" click="printMessage(event);"/>
+    
+             <!-- The size of the button and the label attributes can be customized -->
+             <mx:Button label="Customized Button" color="#993300" toggle="true" selected="true"
+                 textAlign="left" fontStyle="italic" fontSize="13" width="{iconButton.width}" 
+                 click="printMessage(event);"/>
+
+             <!-- By default, the look and feel of the customized button is 
+                 similar to the Default Button.  -->
+             <mx:Button label="デフォルトのボタン" click="printMessage(event);"/>
+        </mx:VBox>
+
+         <mx:TextArea id="message" text="" editable="false" height="100%" width="100%"
+             color="#0000FF"/>
+
+    </mx:Panel>
+</mx:Application>

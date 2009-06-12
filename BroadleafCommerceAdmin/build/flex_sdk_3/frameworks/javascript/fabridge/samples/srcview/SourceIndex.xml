@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of fabridge</title>
+	<nodes>
+		<node label="[source path] actionscript" icon="classpathIcon" expanded="true">
+			<node label="bridge" icon="packageIcon" expanded="true">
+				<node label="FABridge.as" icon="actionScriptIcon" url="source/fabridge/actionscript/bridge/FABridge.as.html"/>
+			</node>
+		</node>
+		<node label="fabridge">
+			<node label="javascript">
+				<node label="FABridge.js" url="source/fabridge/javascript/FABridge.js"/>
+			</node>
+		</node>
+		<node selected="true" label="app.mxml" icon="mxmlAppIcon" url="source/app.mxml.html"/>
+		<node label="EmptySwf.as" icon="actionScriptIcon" url="source/EmptySwf.as.html"/>
+		<node label="FABridgeSample.html" icon="htmlIcon" url="source/FABridgeSample.html"/>
+		<node label="FABridgeSample.js" url="source/FABridgeSample.js"/>
+		<node label="SimpleSample.html" icon="htmlIcon" url="source/SimpleSample.html"/>
+	</nodes>
+	<zipfile label="Download source (ZIP, 18K)" url="fabridge.zip"/>
+	<sdklink label="Download Flex 2 SDK" url="http://www.adobe.com/go/flex2_sdk"/>
+</index>

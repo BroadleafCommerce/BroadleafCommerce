@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate Panel layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+       
+            private function showProperties():void  {
+	            panelPropertyArea.text= "ステータス : " + panel.status + '\n' +
+				  "タイトル : " + panel.title + '\n' +
+				  "幅 : " + panel.width + '\n' +
+				  "高さ :  " + panel.height ;
+	        }
+        ]]>
+    </mx:Script>
+
+    <mx:Panel id="panel" title="Panel コンテナの例" status="Active" 
+            height="75%" width="75%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue"
+            text="Button コントロールをクリックしてパネルプロパティを表示します。"/>
+
+        <mx:TextArea id="panelPropertyArea" width="100%" height="100%"/>
+        <mx:Button label="クリックしてパネルプロパティを表示" click="showProperties();"/>
+
+    </mx:Panel>
+</mx:Application>

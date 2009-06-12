@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<!-- Simple example to demonstrate the Label control -->
+
+    <mx:Script>
+        <![CDATA[
+      
+            private var htmlData:String="<br>This label displays <b>bold</b> and <i>italic</i> HTML-formatted text.";
+                                         
+            // Event handler function to change the image size.
+            private function displayHTML():void {
+                simpleLabel.htmlText= htmlData;
+            }
+          
+            // Event handler function to change the image size.
+            private function displayText():void {
+                simpleLabel.text="This Label displays plain text.";
+            }         
+        ]]>
+    </mx:Script>
+
+  <mx:Panel title="Label Control Example" height="75%" width="75%" 
+      paddingTop="10" paddingLeft="10">
+    
+      <mx:Label id="simpleLabel" text="This Label displays plain text."/>
+      <mx:Button id="Display" label="Click to display HTML Text" click="displayHTML();"/>
+      <mx:Button id="Clear" label="Click to display plain text" click="displayText();"/>
+  
+  </mx:Panel>
+</mx:Application>

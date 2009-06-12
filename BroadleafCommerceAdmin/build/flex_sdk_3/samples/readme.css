@@ -1,0 +1,36 @@
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+}
+a:link {
+	color: #005fa9; 
+	text-decoration: none;
+}
+a:visited {
+	color: #005fa9; 
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+a.highlight {
+	background-color: #fff5c0; 
+	color: #cc0000; 
+	font-weight: bold;
+	text-decoration: none;
+}
+h1 {
+	font-size: 24px;
+}
+h2 {
+	font-size: 18px;
+}
+.h2sup {
+	font-size: 16px;
+}
+code {
+	font-family: "Courier New", Courier, mono;
+	font-size: 12px;
+	background-color: #F0F0F1;
+}

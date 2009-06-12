@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate Form layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Model id="checkModel">
+        <User>
+            <FirstName>{fname.text}</FirstName>
+            <DOB>{dob.text}</DOB>
+            <Email>{email.text}</Email>
+            <Age>{age.text}</Age>
+            <SSN>{ssn.text}</SSN>
+            <Zip>{zip.text}</Zip>
+            <Phone>{phone.text}</Phone>
+        </User>
+    </mx:Model>
+
+    <mx:Panel title="Form Container Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue"
+            text="Moving from one form field to another triggers the validator."/>
+
+        <mx:Form width="100%" height="100%">
+            <mx:FormHeading label="Enter values into the form."/>
+
+            <mx:FormItem label="First name">
+                <mx:TextInput id="fname" width="200"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Date of birth (mm/dd/yyyy)">
+                <mx:TextInput id="dob" width="200"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="E-mail address">
+                <mx:TextInput id="email" width="200"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Age">
+                <mx:TextInput id="age" width="200"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="SSN">
+                <mx:TextInput id="ssn" width="200"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Zip">
+                <mx:TextInput id="zip" width="200"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Phone">
+                <mx:TextInput id="phone" width="200"/>
+            </mx:FormItem>
+        </mx:Form>
+
+    </mx:Panel>
+
+    <mx:StringValidator source="{fname}" property="text" minLength="4" maxLength="12"/>
+    <mx:PhoneNumberValidator source="{phone}" property="text"/>
+    <mx:DateValidator source="{dob}" property="text"/>
+    <mx:EmailValidator source="{email}" property="text"/>
+    <mx:NumberValidator source="{age}" property="text" integerError="Enter Integer value"
+        minValue="18" maxValue="100" domain="int"/>
+    <mx:SocialSecurityValidator source="{ssn}" property="text"/>
+    <mx:ZipCodeValidator source="{zip}" property="text"/>
+
+</mx:Application>

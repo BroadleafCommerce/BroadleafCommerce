@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<application 
+	xmlns="http://ns.adobe.com/air/application/1.1"
+	minimumPatchLevel="0">
+<!-- AIR Application Descriptor File. See http://www.adobe.com/go/air_1.0_application_descriptor. -->
+	<id>com.example.ExampleApplication</id>
+	<name>
+		<text xml:lang="en">Example Co. Example Application 1.0</text>
+	</name>
+	<version>1.0</version>
+	<filename>Example Application</filename>
+	<description>
+		<text xml:lang="en">This is a sample Adobe AIR application.</text>
+		<text xml:lang="ja">これは Adobe AIR のサンプルアプリケーションです。</text>
+	</description>
+	<copyright>Copyright 2008, Example Co., Inc.</copyright>
+	<initialWindow>
+		<content>ExampleApplication.swf</content>
+		<title>Example Application</title>
+		<systemChrome>standard</systemChrome>
+		<transparent>false</transparent>
+		<visible>false</visible>
+		<minimizable>true</minimizable>
+		<maximizable>true</maximizable>
+		<resizable>true</resizable>
+		<width>500</width>
+		<height>500</height>
+		<x>150</x>
+		<y>150</y>
+		<minSize>300 300</minSize>
+		<maxSize>800 800</maxSize>
+	</initialWindow>
+	<installFolder>Example Company/Example Application</installFolder>
+	<programMenuFolder>Example Company/Example Application</programMenuFolder>
+	<icon>
+		<image16x16>icons/AIRApp_16.png</image16x16>
+		<image32x32>icons/AIRApp_32.png</image32x32>
+		<image48x48>icons/AIRApp_48.png</image48x48>
+		<image128x128>icons/AIRApp_128.png</image128x128>
+	</icon>
+	<customUpdateUI>false</customUpdateUI>
+	<allowBrowserInvocation>false</allowBrowserInvocation>
+	<fileTypes>
+		<fileType>
+			<name>com.example</name>
+			<extension>xmpl</extension>
+			<description>Example file</description>
+			<contentType>example/x-data-type</contentType>
+			<icon>
+				<image16x16>icons/AIRApp_16.png</image16x16>
+				<image32x32>icons/AIRApp_32.png</image32x32>
+				<image48x48>icons/AIRApp_48.png</image48x48>
+				<image128x128>icons/AIRApp_128.png</image128x128>
+			</icon>
+		</fileType>
+	</fileTypes>
+</application>

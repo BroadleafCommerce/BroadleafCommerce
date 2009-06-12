@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<project name="rpc_rb_en_US" default="main" basedir=".">
+
+	<property file="build.properties"/>
+
+	<target name="main" depends="clean,compile" description="Clean build of en_US version of rpc_rb.swc"/>
+
+	<target name="clean">
+		<delete file="${frameworks.dir}/locale/en_US/rpc_rb.swc"/>
+		<delete file="${frameworks.dir}/locale/en_US/rpc_rb.swc.incr"/>
+	</target>
+
+    <target name="compile">
+		<mkdir dir="${frameworks.dir}/locale/en_US"/>
+		<ant dir="${frameworks.dir}" target="bundle"/>
+	</target>
+
+</project>

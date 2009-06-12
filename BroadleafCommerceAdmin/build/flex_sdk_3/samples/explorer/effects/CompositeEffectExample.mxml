@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the Composite effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+    	import mx.effects.Move;
+    	import mx.effects.Sequence;
+    	import mx.effects.Parallel;
+	
+    	private var movesequenceA:Move;
+    	private var movesequenceB:Move;
+    	private var moveparallelbutton:Move;
+    	private var sequenceAB:Sequence;
+    	private var parallelAB:Parallel;
+
+   	private function startEffect(ax:Number, ay:Number, bx:Number, by:Number):void
+   	{
+            movesequenceA= new Move(a);
+            movesequenceB= new Move(b);
+            moveparallelbutton= new Move(button);
+            sequenceAB= new Sequence();
+            parallelAB= new Parallel();
+            
+            sequenceAB.addChild(movesequenceA);
+            sequenceAB.addChild(movesequenceB);
+            
+            parallelAB.addChild(moveparallelbutton);
+        
+            moveparallelbutton.xTo=0;
+	        moveparallelbutton.xFrom= 245;
+            moveparallelbutton.yFrom=85;
+            moveparallelbutton.duration= 4000;
+
+            movesequenceA.xTo= ax;
+            movesequenceA.xBy= 200;
+            movesequenceA.yTo= ay;
+            movesequenceA.yBy= 175;
+            movesequenceA.duration= 2000;
+            movesequenceB.yFrom =175;
+            movesequenceB.xTo= bx;
+            movesequenceB.xBy= 200;
+            movesequenceB.yTo= by;
+            movesequenceB.yBy= 200;
+            movesequenceB.duration= 2000;
+
+            sequenceAB.play();
+            parallelAB.play();
+        }
+        ]]>
+    </mx:Script>
+    
+    <mx:Panel title="Composite Effect" width="75%" height="75%">
+    <mx:Canvas id="canvas" width="100%" height="100%">
+
+        <mx:Label id="a" color="#009966" text="Sequence 1" 
+            height="{(canvas.height-20)/2}" 
+            width="{(canvas.width-20)/2}"
+            effectStart=" a.text= 'sequence 1 Running';"
+            effectEnd="a.text='sequence 1 ended!!!' "/>
+
+        <mx:Label id="b" x="0" y="175" color="#00CCFF"  
+            text="Sequence 2" 
+            height="{(canvas.height-20)/2}"
+            width="{(canvas.width-20)/2}" 
+            effectStart=" b.text= 'sequence 2 Running';"
+            effectEnd="b.text='sequence 2 ended!!'" />
+
+        <mx:Button id="button"  x="245" y="85"
+            label="Start effect" 
+            click="startEffect(200,175,200,0)"
+            effectStart="button.label='parallel effect running'"
+            effectEnd="button.label='parallel effect ended!!'"/>
+
+    </mx:Canvas>
+  
+  </mx:Panel>
+</mx:Application>

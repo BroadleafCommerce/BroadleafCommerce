@@ -1,0 +1,66 @@
+<!-- saved from url=(0014)about:internet -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>app.mxml</title>
+<link rel="stylesheet" type="text/css" href="../SourceStyles.css"/>
+</head>
+
+<body><pre><span class="mxmlCdata">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+
+<span class="mxmlComment">&lt;!--</span><span class="mxmlComment">
+Copyright 2006 Adobe Systems Incorporated
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+</span><span class="mxmlComment">--&gt;</span>
+
+
+<span class="mxmlComponent">&lt;mx:Application</span> xmlns:mx=&quot;<span class="mxmlString">http://www.adobe.com/2006/mxml</span>&quot; xmlns=&quot;<span class="mxmlString">*</span>&quot; height=&quot;<span class="mxmlString">400</span>&quot; viewSourceURL=&quot;<span class="mxmlString">srcview/index.html</span>&quot;<span class="mxmlComponent">&gt;</span>
+
+    <span class="mxmlTag">&lt;mx:Script&gt;</span>
+        <span class="asOperator">&lt;!</span><span class="asBracket">[</span>CDATA<span class="asBracket">[</span>
+            <span class="asReserved">import</span> mx.controls.dataGridClasses.DataGridColumn;
+            <span class="asReserved">import</span> mx.controls.Alert;
+            <span class="asReserved">import</span> mx.controls.<span class="asOperator">*</span>;
+            <span class="asReserved">import</span> mx.charts.<span class="asOperator">*</span>;
+            <span class="asReserved">import</span> mx.charts.series.<span class="asOperator">*</span>;
+            <span class="asReserved">import</span> mx.charts.effects.<span class="asOperator">*</span>;
+
+            <span class="asReserved">public</span> <span class="asFunction">function</span> testFunc<span class="asBracket">(</span>val1<span class="asOperator">:</span>String <span class="asOperator">=</span> <span class="asString">&quot;defaultParam&quot;</span> <span class="asBracket">)</span><span class="asOperator">:</span><span class="asReserved">void</span>
+            <span class="asBracket">{</span>
+                Alert.show<span class="asBracket">(</span>val1, <span class="asString">&quot;called remotely&quot;</span><span class="asBracket">)</span>;
+            <span class="asBracket">}</span>
+
+            <span class="asComment">// these just force datagrid to be linked into the application
+</span>            <span class="asReserved">public</span> <span class="asVar">var</span> refs<span class="asOperator">:</span>Array <span class="asOperator">=</span> <span class="asBracket">[</span>DataGrid, DataGridColumn, ColumnChart, ColumnSeries, LineSeries, CategoryAxis, SeriesInterpolate, SeriesSlide, SeriesZoom <span class="asBracket">]</span>;
+
+        <span class="asBracket">]]</span><span class="asOperator">&gt;</span>
+    <span class="mxmlTag">&lt;/mx:Script&gt;</span>
+
+    <span class="mxmlComponent">&lt;mx:Panel</span> width=&quot;<span class="mxmlString">100%</span>&quot; height=&quot;<span class="mxmlString">100%</span>&quot; id=&quot;<span class="mxmlString">panel</span>&quot; paddingLeft=&quot;<span class="mxmlString">20</span>&quot; paddingTop=&quot;<span class="mxmlString">20</span>&quot; <span class="mxmlComponent">&gt;</span>
+        <span class="mxmlComponent">&lt;mx:Text</span> width=&quot;<span class="mxmlString">100%</span>&quot; height=&quot;<span class="mxmlString">16</span>&quot;<span class="mxmlComponent">&gt;</span>
+            <span class="mxmlComponent">&lt;mx:text&gt;</span>
+                Refer to the controls below, via javascript, as slider(), check(), and button() respectively
+            <span class="mxmlComponent">&lt;/mx:text&gt;</span>
+        <span class="mxmlComponent">&lt;/mx:Text&gt;</span>
+        <span class="mxmlComponent">&lt;mx:CheckBox</span> x=&quot;<span class="mxmlString">49</span>&quot; y=&quot;<span class="mxmlString">34</span>&quot; label=&quot;<span class="mxmlString">Checkbox</span>&quot; id=&quot;<span class="mxmlString">check</span>&quot;<span class="mxmlComponent">/&gt;</span>
+        <span class="mxmlComponent">&lt;mx:HSlider</span> snapInterval=&quot;<span class="mxmlString">.01</span>&quot; id=&quot;<span class="mxmlString">slider</span>&quot; liveDragging=&quot;<span class="mxmlString">true</span>&quot;<span class="mxmlComponent">/&gt;</span>
+        <span class="mxmlComponent">&lt;mx:Button</span> id=&quot;<span class="mxmlString">button</span>&quot; label=&quot;<span class="mxmlString">generic button</span>&quot; <span class="mxmlComponent">/&gt;</span>
+    <span class="mxmlComponent">&lt;/mx:Panel&gt;</span>
+
+    <span class="mxmlComponent">&lt;fab:FABridge</span> xmlns:fab=&quot;<span class="mxmlString">bridge.*</span>&quot; <span class="mxmlComponent">/&gt;</span>
+
+<span class="mxmlComponent">&lt;/mx:Application&gt;</span></pre></body>
+</html>

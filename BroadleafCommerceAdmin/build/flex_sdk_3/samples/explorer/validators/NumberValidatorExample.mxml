@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the NumberValidator. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        import mx.controls.Alert;
+    </mx:Script>
+
+    <mx:NumberValidator source="{age}" property="text" integerError="Enter Integer value"
+        minValue="18" maxValue="50" domain="int" 
+        trigger="{myButton}" triggerEvent="click"
+        valid="Alert.show('Validation Succeeded!');"/>
+
+    <mx:Panel title="NumberValidator Example" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Form>
+            <mx:FormItem label="Enter an age between 18 and 50: ">
+                <mx:TextInput id="age" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem >
+                <mx:Button id="myButton" label="Validate" />
+            </mx:FormItem>
+        </mx:Form>
+    </mx:Panel>
+</mx:Application>

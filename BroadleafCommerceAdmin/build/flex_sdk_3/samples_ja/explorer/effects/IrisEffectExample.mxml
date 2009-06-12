@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Iris effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Iris id="irisOut" duration="1000" showTarget="true"/>
+    <mx:Iris id="irisIn" duration="1000" showTarget="false"/>
+
+    <mx:Panel title="Iris エフェクトの例" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue" 
+            text="Iris エフェクトを使用して電話のイメージを表示または非表示にします。"/>
+
+        <mx:Image id="flex" source="@Embed(source='assets/Nokia_6630.png')"  
+            visible="{cb1.selected}"
+            showEffect="{irisIn}" hideEffect="{irisOut}"/>
+
+        <mx:CheckBox id="cb1" label="表示" selected="true"/>
+
+    </mx:Panel>
+</mx:Application>

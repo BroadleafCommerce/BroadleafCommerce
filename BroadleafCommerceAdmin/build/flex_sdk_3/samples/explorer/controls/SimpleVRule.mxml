@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the VRule control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+   <mx:Panel title="VRule Control Example" id="myPanel" horizontalAlign="center" 
+       paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+      
+      <mx:VRule rollOverEffect="WipeUp" strokeWidth="1" strokeColor="red"/>        
+      <mx:Label width="100%" color="blue" 
+          text="Move mouse over VRule control to redraw it."/>
+    
+   </mx:Panel>
+</mx:Application>
+       

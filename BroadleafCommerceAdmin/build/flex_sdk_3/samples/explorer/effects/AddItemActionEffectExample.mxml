@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+            import mx.effects.easing.Elastic;
+            import mx.collections.ArrayCollection;
+            
+            [Bindable]
+            private var myDP:ArrayCollection = new ArrayCollection(
+                ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P']);
+            
+            private function deleteItem():void {
+                // As each item is removed, the index of the other items changes.
+                // So first get the items to delete, then determine their indices
+                // as you remove them.
+                var toRemove:Array = [];
+                for (var i:int = 0; i < tlist0.selectedItems.length; i++)
+                    toRemove.push(tlist0.selectedItems[i]);
+                for (i = 0; i < toRemove.length; i++)
+                    myDP.removeItemAt(myDP.getItemIndex(toRemove[i]));
+            }
+
+            private var zcount:int = 0;
+            private function addItem():void {
+                // Always add the new item after the third item,
+                // or after the last item if the length is less than 3.
+                myDP.addItemAt("Z"+zcount++,Math.min(3,myDP.length));
+            }                        
+        ]]>
+    </mx:Script>
+
+    <!-- Define a custom data effect as a Sequence effect. -->
+    <mx:Sequence id="itemsChangeEffect1">
+        <mx:Blur 
+            blurYTo="12" blurXTo="12" 
+            duration="300" 
+            perElementOffset="150"
+            filter="removeItem"/>
+        <mx:Parallel>
+            <mx:Move 
+                duration="750" 
+                easingFunction="{Elastic.easeOut}" 
+                perElementOffset="20"/>
+            <mx:RemoveItemAction 
+                startDelay="400" 
+                filter="removeItem"/>
+            <mx:AddItemAction  
+                startDelay="400" 
+                filter="addItem"/>
+            <mx:Blur 
+                startDelay="410" 
+                blurXFrom="18" blurYFrom="18" blurXTo="0" blurYTo="0" 
+                duration="300" 
+                filter="addItem"/>
+        </mx:Parallel>
+    </mx:Sequence>        
+
+    <mx:Panel title="AddItemEffect/RemoveItemEffect Example" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <!-- This TileList uses a custom data change effect -->
+        <mx:TileList id="tlist0" 
+            height="100%" width="100%" 
+            fontSize="18" fontStyle="bold"
+            columnCount="4" rowCount="4" 
+            direction="horizontal" 
+            dataProvider="{myDP}" 
+            allowMultipleSelection="true" 
+            offscreenExtraRowsOrColumns="4" 
+            itemsChangeEffect="{itemsChangeEffect1}"/>
+    
+        <mx:Button 
+            label="Delete selected item(s)" 
+            click="deleteItem();"/>
+        <mx:Button 
+            label="Add item" 
+            click="addItem();"/>
+        
+    </mx:Panel>         
+</mx:Application>

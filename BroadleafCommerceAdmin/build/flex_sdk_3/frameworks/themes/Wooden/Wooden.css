@@ -1,0 +1,191 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2006-2007 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+/* Global style declaration */
+global
+{
+    backgroundAlpha: 0.0; /* this runs the opacity of nearly every square piece of the components */
+    backgroundSize: "auto";
+    
+    borderColor: #914B41;   /* set up border colors for components */
+    
+    fillAlphas: 0.5, 0.5, 0.85, 0.75; /* last pair are for OVER state */
+    fillColors: #BA9F9A, #D7CCCA, #BA7164, #CE998F;
+    
+    headerColors: #4D2222, #BA6555;
+    
+    highlightAlphas: 0.07, 0.13; /* use this to control the 'light' cast on the components */
+    
+    shadowDistance: 2;
+
+    /* themeColor   */
+    themeColor: #AD5D4F;
+    rollOverColor: #C98F84;
+    selectionColor: #CCB8B4; 
+
+}
+
+
+/*
+//------------------------------
+//  Application
+//------------------------------
+*/
+
+Application
+{
+    borderStyle: "none";
+    /*backgroundColor: #48200C; */
+    backgroundImage: Embed(source="wooden_bg.jpg");
+    backgroundAlpha: 1.0;
+    backgroundSize: "100%";
+    horizontalAlign: "center";
+}
+
+/*
+//------------------------------
+//  ApplicationControlBar
+//------------------------------
+*/
+
+ApplicationControlBar
+{
+    borderStyle: "applicationControlBar";
+    cornerRadius: 5;
+    docked: false;
+    dropShadowEnabled: true;
+    fillColors: #4D2222, #BA6555;
+    fillAlphas: 0.6, 0.4;
+
+    shadowDistance: 5;
+
+}
+
+/*
+//------------------------------
+//  .comboDropDown
+//------------------------------
+*/
+
+.comboDropDown
+{
+    backgroundAlpha: 0.6;
+    color: #0B333C;
+}
+
+/*
+//------------------------------
+//  Panel
+//------------------------------
+*/
+
+Panel
+{
+    backgroundColor: #C98F84;
+    backgroundAlpha: 0.3; /* controls the alpha of the panel content area. */
+    borderAlpha: 0.2; /* controls the alpha of the panel top, bottom and sides. */
+    borderThickness: "1";
+    headerColors: #C98F84, #C98F84;  
+    cornerRadius: 4;
+    dropShadowEnabled: true;
+}
+
+
+/*
+//------------------------------
+//  ScrollBar
+//------------------------------
+*/
+
+ScrollBar
+{
+    backgroundColor: #4C2323; /* overrides scroll's relyance on shared background as a back-fill */
+    borderColor:#4C2323;
+    cornerRadius: 4;
+    trackColors: #4C2323, #4C2323;  /* #d6d7d8; */
+}
+
+
+/*
+//------------------------------
+//  Tab
+//------------------------------
+*/
+
+Tab
+{
+    backgroundAlpha: 1.0;   
+    cornerRadius: 4;
+    horizontalGap: 2;
+}
+
+/*
+//------------------------------
+//  TabNavigator
+//------------------------------
+*/
+
+TabNavigator
+{
+    borderColor: #914B41;   
+    backgroundAlpha: 1.0;   
+    backgroundColor: #FFFFFF;
+    borderStyle: "solid";
+    horizontalAlign: "left";
+    horizontalGap: -1;
+    paddingTop: 10;
+}
+
+
+/*
+//------------------------------
+//  VScrollBar
+//------------------------------
+*/
+
+VScrollBar
+{
+    borderColor: #B7BABC;
+    cornerRadius: 4;
+    trackColors: #94999b, #e7e7e7;  /* #d6d7d8; */
+}
+
+
+/*
+//------------------------------
+//  .windowStatus
+//------------------------------
+
+// This empty style declaration is required to make the
+// status field of Panel/Window correctly pick up global
+// default style properties.
+*/
+
+.windowStatus
+{
+    color: #FFCC99;
+
+}
+
+/*
+//------------------------------
+//  .windowStyles
+//------------------------------
+*/
+
+.windowStyles
+{
+    fontWeight: "bold";
+    color: #FFFFFF;
+/*  fontSize: 12; */
+}

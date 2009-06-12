@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Image control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel id="myPanel" title="Image コントロールの例" 
+        height="75%" width="75%" horizontalAlign="center"
+        paddingTop="10" paddingLeft="10">
+
+        <mx:Label color="blue" text="イメージがアプリケーションに埋め込まれました。"/>
+        <mx:Image source="@Embed('assets/Nokia_6630.png')"/>
+
+    </mx:Panel>
+</mx:Application>          

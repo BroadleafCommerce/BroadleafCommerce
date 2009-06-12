@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<!-- Simple example to demonstrate the RichTextEditor control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+    horizontalAlign="center" verticalAlign="middle">
+
+    <mx:RichTextEditor id="rte" title="RichTextEditor" height="75%" text="Enter text into the RichTextEditor control, then click a button to display your text as plain text, or as HTML-formatted text."/>
+
+    <mx:TextArea id="rteText" width="80%" height="25%"/>
+
+    <mx:HBox>
+        <mx:Button label="Show Plain Text" click="rteText.text=rte.text;"/>
+        <mx:Button label="Show HTML Markup" click="rteText.text=rte.htmlText;"/>
+    </mx:HBox>
+
+</mx:Application>

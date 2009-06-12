@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the SWFLoader control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="SWFLoader コントロールの例"  height="90%" width="90%"
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Label text="外側のアプリケーションの Label コントロールです。"/>
+
+        <mx:SWFLoader id="Load" source="@Embed(source='Local.swf')" height="100" width="350"/>
+
+    </mx:Panel>
+</mx:Application>
+       

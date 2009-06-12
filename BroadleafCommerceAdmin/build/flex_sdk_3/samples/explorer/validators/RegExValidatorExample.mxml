@@ -1,0 +1,66 @@
+<?xml version="1.0"?> 
+<!-- Simple example to demonstrate the RegExpValidator. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ValidationResultEvent;
+			import mx.validators.*;
+	
+            // Write the results to the 
+			private function handleResult(eventObj:ValidationResultEvent):void {
+				if (eventObj.type == ValidationResultEvent.VALID)
+				{
+					// For valid events, the results Array contains
+					// RegExpValidationResult objects.
+					var xResult:RegExpValidationResult;
+					reResults.text="";
+					for (var i:uint = 0; i < eventObj.results.length; i++)
+					{
+						xResult = eventObj.results[i];
+						reResults.text=reResults.text + xResult.matchedIndex + " " +
+							xResult.matchedString + "\n";
+					}
+				}
+				else
+				{
+					reResults.text="";			
+				}		
+			}
+		]]>
+	</mx:Script>
+
+	<mx:RegExpValidator id="regExpV" 
+		source="{regex_text}" property="text" 
+		flags="g" expression="{regex.text}" 
+		valid="handleResult(event)" invalid="handleResult(event)"
+		trigger="{myButton}" triggerEvent="click"/>
+	
+   <mx:Panel title="RegExpValidator Example" width="95%" height="95%" 
+        paddingTop="5" paddingLeft="5" paddingRight="5" paddingBottom="5">
+   
+        <mx:Text width="100%" text="Instructions:"/>
+        <mx:Text width="100%" text="1. Enter text to search. By default, enter  a string containing the letters ABC in sequence followed by any digit."/>
+        <mx:Text width="100%" text="2. Enter the regular expression. By default, enter ABC\d."/>
+        <mx:Text width="100%" text="3. Click the Button control to trigger the validation."/>
+        <mx:Text width="100%" text="4. The results show the index in the text where the matching pattern begins, and the matching pattern. "/>
+   
+        <mx:Form>
+            <mx:FormItem label="Enter text: ">
+                <mx:TextInput id="regex_text" text="xxxxABC4xxx" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Enter regular expression: ">
+                <mx:TextInput id="regex" text="ABC\d" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Results: ">
+                <mx:TextInput id="reResults" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem >
+                <mx:Button id="myButton" label="Validate"/>
+            </mx:FormItem>
+        </mx:Form>
+	</mx:Panel>
+</mx:Application>

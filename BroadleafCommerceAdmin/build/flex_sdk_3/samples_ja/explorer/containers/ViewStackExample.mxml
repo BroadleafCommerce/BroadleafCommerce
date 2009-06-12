@@ -1,0 +1,40 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the ViewStack layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+     <mx:Panel title="ViewStack コンテナの例" height="95%" width="95%" 
+         paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue"
+            text="Button コントロールを使用して ViewStack コンテナのパネルを変更します。"/>
+
+        <mx:HBox borderStyle="solid" width="100%"
+            paddingTop="5" paddingLeft="5" paddingRight="5" paddingBottom="5">
+            
+            <mx:Button id="searchButton" label="パネルを検索"
+                click="myViewStack.selectedChild=search;"/>
+            <mx:Button id="cInfoButton" label="顧客情報パネル"
+                click="myViewStack.selectedChild=custInfo;"/>
+            <mx:Button id="aInfoButton" label="アカウントパネル"
+                click="myViewStack.selectedChild=accountInfo;"/>
+        </mx:HBox>
+
+        <!-- Define the ViewStack and the three child containers and have it
+        resize up to the size of the container for the buttons. -->
+        <mx:ViewStack id="myViewStack" borderStyle="solid" width="100%" height="80%">
+
+            <mx:Canvas id="search" backgroundColor="#FFFFCC" label="検索" width="100%" height="100%">
+                <mx:Label text="検索画面" color="#000000"/>
+            </mx:Canvas>
+
+            <mx:Canvas id="custInfo" backgroundColor="#CCFFFF" label="顧客情報" width="100%" height="100%">
+                <mx:Label text="顧客情報" color="#000000"/>
+            </mx:Canvas>
+
+            <mx:Canvas id="accountInfo" backgroundColor="#FFCCFF" label="アカウント情報" width="100%" height="100%">
+                <mx:Label text="アカウント情報" color="#000000"/>
+            </mx:Canvas>
+        </mx:ViewStack>
+
+    </mx:Panel>
+</mx:Application>

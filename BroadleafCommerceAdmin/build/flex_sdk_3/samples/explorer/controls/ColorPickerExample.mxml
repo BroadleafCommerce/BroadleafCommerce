@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the ColorPicker control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="ColorPicker Control Example" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+        
+        <mx:Label width="100%" color="blue"
+           text="Select the background color of the VBox container."/>
+        <mx:ColorPicker id="cp" showTextField="true" selectedColor="0xFFFFFF"/>
+    
+        <mx:VBox width="100%" height="100%" backgroundColor="{cp.selectedColor}" borderStyle="solid"/>
+        <mx:Label color="blue" text="selectedColor: 0x{cp.selectedColor.toString(16)}"/> 
+    </mx:Panel>
+</mx:Application>

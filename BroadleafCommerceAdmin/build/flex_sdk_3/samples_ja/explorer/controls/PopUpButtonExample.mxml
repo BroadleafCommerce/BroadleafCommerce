@@ -1,0 +1,48 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the PopUpButton control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+	<mx:Script>
+		<![CDATA[
+
+			import mx.controls.*;
+			import mx.events.*;
+
+			private var myMenu:Menu;
+
+			// Initialize the Menu control, and specify it as the pop up object
+			// of the PopUpButton control. 
+			private function initMenu():void {
+				myMenu = new Menu();
+				var dp:Object = [{label:"新しいフォルダ"}, {label:"送信済みアイテム"}, {label:"受信トレイ"}];        
+				myMenu.dataProvider = dp;
+				myMenu.selectedIndex = 0;       
+				myMenu.addEventListener("itemClick", itemClickHandler);
+				popB.popUp = myMenu;
+				popB.label = "配置 : " + myMenu.dataProvider[myMenu.selectedIndex].label;
+			}
+
+			// Define the event listener for the Menu control's itemClick event. 
+			private function itemClickHandler(event:MenuEvent):void {
+				var label:String = event.item.label;        
+				popTypeB.text=String(label + "に移動しました");
+				popB.label = "配置 :" + label;
+				popB.close();
+				myMenu.selectedIndex = event.index;
+			}
+
+		]]>
+	</mx:Script>
+
+    <mx:Panel title="PopUpButton コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingRight="10" paddingLeft="10">
+
+        <mx:Label width="100%" color="blue"
+            text="ボタンラベルには最後に選択したメニューアイテム名が表示されます。" />
+        <mx:PopUpButton id="popB" label="編集" creationComplete="initMenu();" width="135" />
+		
+        <mx:Spacer height="50" />
+        <mx:TextInput id="popTypeB" />
+		
+    </mx:Panel>		
+</mx:Application>

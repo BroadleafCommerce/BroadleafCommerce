@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- Custom control for the header area of the printed page. -->
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="60%"
+    horizontalAlign="right" >
+
+    <mx:Label text="This is a placeholder for first page contents"/>
+</mx:VBox>

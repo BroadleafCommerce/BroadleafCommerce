@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate DateChooser control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+            // Event handler function to write the selected
+            // date to the Label control.        
+            private function displayDate(date:Date):void {
+                if (date == null)
+                    selection.text = "選択された日付 : ";
+                else
+                    selection.text = "選択された日付 : " + date.getFullYear().toString() +
+                        '/' + (date.getMonth()+1).toString() + '/' + date.getDate();
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:DateFormatter id="df"/>
+    
+    <mx:Panel title="DateChooser コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Label width="100%" color="blue"
+            text="DateChooser コントロールで日付を選択します。もう一度日付を選択すると選択状態をクリアします。"/>
+            
+        <mx:HBox horizontalGap="25">
+          <mx:VBox>
+              <mx:Label text="単純な DateChooser コントロールです。"/>
+              <mx:DateChooser id="dateChooser1" yearNavigationEnabled="true"    
+                  change="displayDate(DateChooser(event.target).selectedDate)"/>
+              <mx:Label id="selection"  color="blue" text="選択された日付 :"/>
+          </mx:VBox>
+
+          <mx:VBox>
+              <mx:Label text="2006 年 6 月 1 日以前の日付は無効にします。"/>
+              <mx:DateChooser id="dateChooser2" yearNavigationEnabled="true"
+                  disabledRanges="{[ {rangeEnd: new Date(2006, 5, 1)} ]}"/>
+              <mx:Label  color="blue" text="選択された日付 : {df.format(dateChooser2.selectedDate)}"/>
+          </mx:VBox>
+        </mx:HBox>
+        
+    </mx:Panel>    
+</mx:Application>
+

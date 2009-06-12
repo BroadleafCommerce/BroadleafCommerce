@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<mx:Parallel xmlns:mx="http://www.adobe.com/2006/mxml">
+
+	<mx:Metadata>
+		[Exclude(name="duration",kind="property")]
+		[Exclude(name="effectTargetHost",kind="property")]
+		[Exclude(name="perElementOffset",kind="property")]
+		[Exclude(name="filter",kind="property")]
+		[Exclude(name="children",kind="property")]
+		[Exclude(name="fadeIn1",kind="property")]
+		[Exclude(name="fadeIn2",kind="property")]
+		[Exclude(name="fadeOut1",kind="property")]
+		[Exclude(name="fadeOut2",kind="property")]
+		[Exclude(name="grow",kind="property")]
+		[Exclude(name="shrink",kind="property")]
+		[Exclude(name="wipeUp1",kind="property")]
+		[Exclude(name="dissolve1",kind="property")]
+		[Exclude(name="target",kind="property")]
+		[Exclude(name="targets",kind="property")]
+		[Exclude(name="repeatCount",kind="property")]
+		[Exclude(name="repeatDelay",kind="property")]
+		[Exclude(name="customFilter",kind="property")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+
+	    //----------------------------------------------------------------------
+	    //
+	    //  Variables
+	    //
+	    //----------------------------------------------------------------------
+
+	    /**
+	     *  @private
+	     */
+		private var _fadeOutDuration:Number = 300;
+
+	    /**
+	     *  @private
+	     */
+		private var _fadeInDuration:Number = 300;
+		
+	    /**
+	     *  @private
+	     */
+		private var _shrinkDuration:Number = 300;
+
+	    /**
+	     *  @private
+	     */
+		private var _growDuration:Number = 300;
+		
+	    /**
+	     *  @private
+	     */
+		private var _removedElementOffset:Number = 60;
+		
+	    /**
+	     *  @private
+	     */
+		private var _color:uint = 0xFFFFFF;
+
+	    //----------------------------------------------------------------------
+	    //
+	    //  Properties
+	    //
+	    //----------------------------------------------------------------------
+
+	    //----------------------------------
+	    //  fadeOutDuration
+	    //----------------------------------
+
+		[Inspectable(category="General", defaultValue="300")]
+
+	    /**
+	     *  The duration in milliseconds of the Dissolve used for 
+	     *  fading out renderers for removed and replaced items.
+	     *
+	     *  @default 300
+	     */
+		public function get fadeOutDuration():Number
+		{
+			return _fadeOutDuration;
+		}
+
+		public function set fadeOutDuration(value:Number):void
+		{
+			_fadeOutDuration = value;
+			fadeOut1.duration = value;
+			fadeOut2.duration = value;
+		}
+
+	    //----------------------------------
+	    //  fadeInDuration
+	    //----------------------------------
+
+		[Inspectable(category="General", defaultValue="300")]
+
+	    /**
+	     *  The duration in milliseconds of the Dissolve for fading
+	     *  in renderers for added and replacing items.
+	     *
+	     *  @default 300
+	     */
+		public function get fadeInDuration():Number
+		{
+			return _fadeInDuration;
+		}
+
+		public function set fadeInDuration(value:Number):void
+		{
+			_fadeInDuration = value;
+			fadeIn1.duration = value;
+			fadeIn2.duration = value;
+		}
+
+	    //----------------------------------
+	    //  shrinkDuration
+	    //----------------------------------
+
+		[Inspectable(category="General", defaultValue="300")]
+
+	    /**
+	     *  The duration in milliseconds of the Resize effect
+	     *  applied to renderers for removed or replaced items.
+	     *
+	     *  @default 300
+	     */
+		public function get shrinkDuration():Number
+		{
+			return _shrinkDuration;
+		}
+
+		public function set shrinkDuration(value:Number):void
+		{
+			_shrinkDuration = value;
+			shrink.duration = value;
+		}
+
+	    //----------------------------------
+	    //  growDuration
+	    //----------------------------------
+
+		[Inspectable(category="General", defaultValue="300")]
+
+	    /**
+	     *  The duration in milliseconds of the Resize effect
+	     *  applied to renderers for removed or replaced items.
+	     *
+	     *  @default 300
+	     */
+		public function get growDuration():Number
+		{
+			return _growDuration;
+		}
+
+		public function set growDuration(value:Number):void
+		{
+			_growDuration = value;
+			grow.duration = value;
+		}
+		
+	    //----------------------------------
+	    //  removedElementOffset
+	    //----------------------------------
+
+		[Inspectable(category="General", defaultValue="100")]
+		
+	    /**
+	     *  The offset in milliseconds between the effects applied
+	     *  to the renderers representing multiple items deleted
+	     *  at the same time. If 0, all renderers will fade and shrink
+	     *  simultaneously.
+	     *
+	     *  @default 100
+	     */
+		public function get removedElementOffset():Number
+		{
+			return _removedElementOffset;
+		}
+		
+		public function set removedElementOffset(value:Number):void
+		{
+			_removedElementOffset = value;
+			fadeOut1.perElementOffset = value;
+		}
+
+	    //----------------------------------
+	    //  color
+	    //----------------------------------
+
+		[Inspectable(category="General", format="Color", defaultValue="0xFFFFFF")]
+
+		/** 
+		 *  Hex value that represents the color used in Dissolve effects within
+		 *  the composite data effect.
+		 *
+		 *  @default 0xFFFFFF
+		 */
+		public function get color():Number
+		{
+			return _color;
+		}
+
+		public function set color(value:Number):void
+		{
+			_color = value;
+			fadeOut1.color = value;
+			fadeOut2.color = value;
+			fadeIn1.color = value;
+			fadeIn2.color = value;
+			dissolve1.color = value;
+		}
+
+	    //----------------------------------------------------------------------
+	    //
+	    //  Overridden methods: Effect
+	    //
+	    //----------------------------------------------------------------------
+
+		public override function createInstances(targets:Array = null):Array
+		{
+			// Temporary workaround for beta
+			// persistAfterEnd will become a public property after API
+			// changes are finalized.
+			fadeOut1.mx_internal::persistAfterEnd = true;
+			wipeUp1.mx_internal::persistAfterEnd = true;
+			dissolve1.mx_internal::persistAfterEnd = true;
+			return super.createInstances(targets);
+		}
+		
+		]]>
+	</mx:Script>
+
+	<mx:children>
+		<!-- Removed items fade out sequentially, then collapse down to nothing -->
+		<mx:Sequence filter="removeItem" >
+				<!-- To work with device fonts, Dissolve instead of Fade -->
+			<mx:Dissolve id="fadeOut1" alphaFrom="1.0" alphaTo="0.0" duration="300" color="0xffffff" perElementOffset="60" />
+				<!-- Resizing is tricky with device fonts...even though the Dissolve rectangle will stay in -->
+				<!-- place it will resize along with the renderer. But the resizing doesn't clip the text -->
+				<!-- in the default renderer, so we do a simultaneous Wipe -->
+			<mx:Parallel id="shrink" duration="300" >
+				<mx:Resize  heightTo="0.0" />
+				<mx:WipeUp id="wipeUp1" showTarget="false" />
+			</mx:Parallel>
+			<mx:RemoveItemAction/>
+				<!-- temporary workaround for issue in how Sequence end events are triggered -->
+			<mx:Resize duration="1"/> 
+		</mx:Sequence>
+		<!-- suspendBackgroundProcessing helps reduce flicker noticeably here -->
+		<mx:Sequence filter="addItem" suspendBackgroundProcessing="true" >
+			<mx:Dissolve id="dissolve1" alphaTo="0.0" duration="1" color="0xffffff" />
+			<mx:AddItemAction/>
+			<mx:Parallel id="grow" duration="300">
+				<mx:WipeDown/>
+				<mx:Resize heightFrom="0.0"/>
+			</mx:Parallel>
+			<mx:Dissolve id="fadeIn1" alphaFrom="0.0" alphaTo="1.0" duration="300"/>
+		</mx:Sequence>
+		<mx:Sequence>
+			<mx:Dissolve id="fadeOut2" alphaTo="0.0" duration="300" color="0xffffff" filter="replacedItem" />
+			<mx:RemoveItemAction filter="replacedItem" />
+			<mx:AddItemAction filter="replacementItem"/>
+			<mx:Dissolve id="fadeIn2" alphaTo="1.0" duration="300" color="0xffffff" filter="replacementItem"/>
+		</mx:Sequence>
+	</mx:children>
+
+</mx:Parallel>

@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the TabNavigator layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="TabNavigator コンテナの例" height="90%" width="90%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue"
+            text="タブを選択してパネルを変更します。"/>
+
+        <mx:TabNavigator id="tn"  width="100%" height="100%">
+            <!-- Define each panel using a VBox container. -->
+
+            <mx:VBox label="パネル 1">
+                <mx:Label text="TabNavigator コンテナのパネル 1"/>
+            </mx:VBox>
+
+            <mx:VBox label="パネル 2">
+                <mx:Label text="TabNavigator コンテナのパネル 2"/>
+            </mx:VBox>
+
+            <mx:VBox label="パネル 3">
+                <mx:Label text="TabNavigator コンテナのパネル 3"/>
+            </mx:VBox>
+        </mx:TabNavigator>
+
+        <mx:Label width="100%" color="blue"
+            text="プログラムで Button コントロールを使用してパネルを選択します。"/>
+
+        <mx:HBox>
+            <mx:Button label="タブ 1 を選択" click="tn.selectedIndex=0"/>
+            <mx:Button label="タブ 2 を選択" click="tn.selectedIndex=1"/>
+            <mx:Button label="タブ 3 を選択" click="tn.selectedIndex=2"/>
+        </mx:HBox>
+    
+    </mx:Panel>
+</mx:Application>

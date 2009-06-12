@@ -1,0 +1,39 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Alert control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+            import mx.controls.Alert;
+            import mx.events.CloseEvent;
+
+            // Event handler function uses a static method to show
+            // a pop-up window with the title, message, and requested buttons.        
+            private function clickHandler(event:Event):void {
+                Alert.show("変更を保存しますか?", "変更を保存する", 3, this, alertClickHandler);
+            }
+        
+            // Event handler function for displaying the selected Alert button.
+            private function alertClickHandler(event:CloseEvent):void {
+                if (event.detail==Alert.YES)
+                    status.text="「はい」を選択しました";
+                else
+                    status.text="「いいえ」を選択しました";
+            }
+
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="Alert コントロールの例" width="75%" horizontalAlign="center" paddingTop="10">
+      <mx:Text width="100%" color="blue" textAlign="center"
+          text="下のボタンをクリックして警告ウィンドウを表示します。"/>
+      <mx:Button label="ここをクリック" click="Alert.show('Hello World!', 'Message');"/>
+
+      <mx:Text width="100%" color="blue" textAlign="center"
+          text="下のボタンをクリックして警告ウィンドウを表示し、ユーザーが押すボタンをキャプチャします。"/>
+      <mx:Button label="ここをクリック" click="clickHandler(event);"/>
+      <mx:Label id="status" fontWeight="bold"/>
+    </mx:Panel>
+
+</mx:Application>

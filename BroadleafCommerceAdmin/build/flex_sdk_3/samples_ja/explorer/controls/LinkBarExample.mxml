@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the LinkBar control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+ 
+    <mx:Panel title="LinkBar コントロールの例" 
+        height="75%" width="75%" horizontalAlign="center"
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+   
+        <mx:Text width="100%" 
+            text="LinkBar コントロールにあるリンクを選択し、ViewStack コンテナのアクティブな子を設定します。"/>
+
+        <mx:LinkBar color="#0000FF" fontWeight="bold" dataProvider="{myViewStack}"/>        
+        
+        <!-- Define the ViewStack and the three child containers. -->
+        <mx:ViewStack id="myViewStack" borderStyle="solid" width="100%" height="80%">
+
+            <mx:Canvas id="search" backgroundColor="#FFFFCC" label="検索" width="100%" height="100%">
+                <mx:Label text="検索画面" color="#000000"/>
+            </mx:Canvas>
+
+            <mx:Canvas id="custInfo" backgroundColor="#CCFFFF" label="顧客情報" width="100%" height="100%">
+                <mx:Label text="顧客情報" color="#000000"/>
+            </mx:Canvas>
+
+            <mx:Canvas id="accountInfo" backgroundColor="#FFCCFF" label="アカウント情報" width="100%" height="100%">
+                <mx:Label text="アカウント情報" color="#000000"/>
+            </mx:Canvas>
+        </mx:ViewStack>
+        
+    </mx:Panel>
+</mx:Application>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Repeater class. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+		
+		    import mx.controls.Alert;
+  
+			[Bindable]
+			private var dp:Array = [1, 2, 3, 4, 5, 6, 7, 8, 9];    
+			
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="Repeater の例" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+  
+        <mx:Text width="100%" color="blue" 
+            text="Repeater クラスを使用して、3 × 3 の Tile コンテナに 9 つの Button コントロールを作成します。"/>
+
+        <mx:Tile direction="horizontal" borderStyle="inset" 
+            horizontalGap="10" verticalGap="15"
+            paddingLeft="10" paddingTop="10" paddingBottom="10" paddingRight="10">
+        
+            <mx:Repeater id="rp" dataProvider="{dp}">
+                <mx:Button height="49" width="50" 
+                    label="{String(rp.currentItem)}" 
+                    click="Alert.show(String(event.currentTarget.getRepeaterItem()) + '押し下げ時')"/>
+            </mx:Repeater>    
+        </mx:Tile>
+  
+    </mx:Panel>  
+</mx:Application>

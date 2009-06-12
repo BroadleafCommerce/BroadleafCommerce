@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2007 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<componentPackage>
+
+    <component id="HTTPService" class="mx.rpc.http.mxml.HTTPService"/>
+    <component id="Consumer" class="mx.messaging.Consumer"/>
+    <component id="Producer" class="mx.messaging.Producer"/>
+    <component id="RemoteObject" class="mx.rpc.remoting.mxml.RemoteObject"/>
+    <component id="RemoteObjectOperation" class="mx.rpc.remoting.mxml.Operation"/>
+    <component id="WebService" class="mx.rpc.soap.mxml.WebService"/>
+    <component id="WebServiceOperation" class="mx.rpc.soap.mxml.Operation"/>
+
+</componentPackage>

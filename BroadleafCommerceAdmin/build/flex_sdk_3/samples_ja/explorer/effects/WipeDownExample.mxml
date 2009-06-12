@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the WipeDown effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:WipeDown id="wipeOut" duration="1000"/>
+    <mx:WipeDown id="wipeIn" duration="1000"/>
+
+    <mx:Panel title="WipeDown エフェクトの例" width="95%" height="95%" 
+        paddingTop="5" paddingLeft="10" paddingRight="10" paddingBottom="5">
+
+        <mx:Text width="100%" color="blue" 
+            text="WipeDown エフェクトを使用してテキストおよびイメージを表示または非表示にします。"/>
+
+        <mx:Label text="Nokia 9930"  
+            fontSize="14"
+            visible="{cb1.selected}"
+            hideEffect="{wipeOut}" showEffect="{wipeIn}"/>
+			
+        <mx:Image source="@Embed(source='assets/Nokia_6630.png')" 
+            visible="{cb1.selected}"
+            hideEffect="{wipeOut}" showEffect="{wipeIn}"/>
+            
+        <mx:CheckBox id="cb1" label="表示" selected="true"/>
+
+    </mx:Panel>
+</mx:Application>

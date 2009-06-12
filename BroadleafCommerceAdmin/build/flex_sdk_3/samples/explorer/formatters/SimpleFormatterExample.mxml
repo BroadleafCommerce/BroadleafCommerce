@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Formatter class. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+            // Event handler to format the input.            
+            private function Format():void
+            {
+                // The format() method returns the formatted String,
+                // or an empty String if there is an error.
+                var formattedVal:String = numberFormatter.format(inputVal.text);
+
+                if (formattedVal.length==0) {
+                    // If there is an error, the Format.error property 
+                    // contains the reason.
+                	formattedNumber.text=numberFormatter.error;
+                }
+                
+                else {
+                    formattedNumber.text=formattedVal;
+                }
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:NumberFormatter id="numberFormatter"/>
+
+    <mx:Panel title="NumberFormatter Example" width="75%" height="75%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Form>
+            <mx:FormItem label="Enter number - a letter is invalid:">
+                <mx:TextInput id="inputVal" text="" width="75%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Formatted number: ">
+                <mx:TextInput id="formattedNumber" editable="false" width="75%"/>
+            </mx:FormItem>
+
+            <mx:FormItem>
+                <mx:Button label="Validate and Format" click="Format();"/>
+            </mx:FormItem>
+        </mx:Form>
+  
+    </mx:Panel>
+</mx:Application>

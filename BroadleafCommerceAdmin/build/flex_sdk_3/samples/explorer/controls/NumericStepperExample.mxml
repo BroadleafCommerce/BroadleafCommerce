@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the NumericStepper control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="NumericStepper Control Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10">
+
+        <mx:Text width="100%" color="blue"
+            text="Default NumericStepper control with a minimum=0, maximum=10, and stepSize=1."/>
+        <mx:NumericStepper/>
+
+        <mx:Text width="100%"  color="blue"
+            text="NumericStepper control with a minimum=10, maximum=40, stepSize=0.01, and starting value of 20."/>
+
+        <mx:NumericStepper id="ns" 
+            minimum="10.00" maximum="40.00" 
+            stepSize="0.01" 
+            value="20.00" 
+            width="65"/>
+
+        <mx:Label  color="blue" text="You selected {ns.value}"/>
+
+    </mx:Panel>
+</mx:Application>
+       

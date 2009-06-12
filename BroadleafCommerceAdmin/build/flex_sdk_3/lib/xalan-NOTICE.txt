@@ -1,0 +1,33 @@
+   =========================================================================
+   ==  NOTICE file corresponding to section 4(d) of the Apache License,   ==
+   ==  Version 2.0, in this case for the Apache Xalan distribution.       ==
+   =========================================================================
+
+   This product includes software developed by
+   The Apache Software Foundation (http://www.apache.org/).
+
+   Portions of this software was originally based on the following:
+     - software copyright (c) 1999-2002, Lotus Development Corporation.,
+       http://www.lotus.com.
+     - software copyright (c) 2001-2002, Sun Microsystems.,
+       http://www.sun.com.
+     - software copyright (c) 2003, IBM Corporation., http://www.ibm.com.
+     - voluntary contributions made by Ovidiu Predescu <ovidiu@cup.hp.com> on
+       behalf of the Apache Software Foundation that was originally developed
+       at Hewlett Packard Company. 
+       
+   This product includes software developed by the following:
+       
+     - The Apache Software Foundation (see BCEL.README.txt, ant.README.txt, 
+       regexp.README.txt, stylebook-1.0-b3_xalan-2.README.txt, 
+       xercesImpl.README.txt, xml-apis.README.txt)       
+       
+     - International Business Machines Corporation (see bsf.README.txt)   
+         
+     - World Wide Web Consortium (see jtidy.README.txt) 
+       
+     - Elliot Joel Berk and C. Scott Ananian (see JLex.README.txt)
+                 
+     - Scott Hudson, Frank Flannery, C. Scott Ananian 
+       (see java_cup.READNE.txt, runtime.README.txt)
+ 

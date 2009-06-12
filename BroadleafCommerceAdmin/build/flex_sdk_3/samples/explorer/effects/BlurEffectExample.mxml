@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the Blur effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Blur id="blurImage" duration="1000" 
+        blurXFrom="0.0" blurXTo="10.0" 
+        blurYFrom="0.0" blurYTo="10.0"/>
+    <mx:Blur id="unblurImage" duration="1000" 
+        blurXFrom="10.0" blurXTo="0.0" 
+        blurYFrom="10.0" blurYTo="0.0"/>
+
+    <mx:Panel title="Blur Effect Example" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue" 
+            text="Click and hold the mouse on the image to see blurImage effect. Release the mouse to see the unblurImage effect."/>
+
+        <mx:Image id="flex" source="@Embed(source='assets/Nokia_6630.png')"
+            mouseDownEffect="{blurImage}" 
+            mouseUpEffect="{unblurImage}"/>
+
+    </mx:Panel>
+</mx:Application>

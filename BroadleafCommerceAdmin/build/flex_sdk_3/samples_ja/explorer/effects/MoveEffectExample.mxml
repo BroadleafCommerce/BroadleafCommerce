@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Move effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+            private function moveImage():void {
+                myMove.end();
+                myMove.xTo=mouseX-60; 
+                myMove.play();
+            }
+      ]]>
+    </mx:Script>
+
+    <mx:Move id="myMove" target="{img}"/>
+
+    <mx:Panel title="Move エフェクトの例" width="95%" height="95%" 
+        paddingTop="5" paddingLeft="10" paddingRight="10" paddingBottom="5">
+
+       <mx:Text width="100%" color="blue" 
+           text="キャンバスの任意の場所をクリックして、電話をクリックした位置に水平方向に移動します"/>
+
+        <mx:Canvas id="canvas" width="100%" height="100%" mouseDown="moveImage();">
+
+            <mx:Image id="img" source="@Embed(source='assets/Nokia_6630.png')"/>
+
+        </mx:Canvas>
+    
+    </mx:Panel>
+</mx:Application>

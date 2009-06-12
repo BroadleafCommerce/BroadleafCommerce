@@ -1,0 +1,47 @@
+#!/bin/sh
+
+################################################################################
+##
+##  ADOBE SYSTEMS INCORPORATED
+##  Copyright 2007 Adobe Systems Incorporated
+##  All Rights Reserved.
+##
+##  NOTICE: Adobe permits you to use, modify, and distribute this file
+##  in accordance with the terms of the license agreement accompanying it.
+##
+################################################################################
+
+#
+# asdoc launch script for unix.  On windows, asdoc.exe is used and
+# java settings are managed in jvm.config in this directory.
+#
+
+case `uname` in
+		CYGWIN*)
+			OS="Windows"
+		;;
+		*)
+			OS=Unix
+esac
+
+if [ $OS = "Windows" ]; then
+	# set FLEX_HOME relative to asdoc if not set
+	test "$FLEX_HOME" = "" && {
+	FLEX_HOME=`dirname $0`/..
+    	FLEX_HOME=`cygpath -m $FLEX_HOME`
+	}
+
+elif [ $OS = "Unix" ]; then
+
+	# set FLEX_HOME relative to asdoc if not set
+	test "$FLEX_HOME" = "" && {
+	FLEX_HOME=`dirname "$0"`/..
+	}
+
+fi
+
+# don't use $FLEX_HOME in this variable because it may contain spaces,
+# instead put it on the java args directly, with double-quotes around it
+VMARGS="-Xmx1024m -Dsun.io.useCanonCaches=false"
+
+java $VMARGS -Xbootclasspath/p:"$FLEX_HOME/lib/xalan.jar" -classpath "$FLEX_HOME/lib/asdoc.jar" flex2.tools.ASDoc +flexlib="$FLEX_HOME/frameworks" "$@"

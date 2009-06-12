@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the PieChart control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+        <![CDATA[          
+        import mx.collections.ArrayCollection;
+
+        [Bindable]
+        private var medalsAC:ArrayCollection = new ArrayCollection( [
+            { Country: "USA", Gold: 35, Silver:39, Bronze: 29 },
+            { Country: "China", Gold: 32, Silver:17, Bronze: 14 },
+            { Country: "Russia", Gold: 27, Silver:27, Bronze: 38 } ]);
+    
+        private function displayGold(data:Object, field:String, index:Number, percentValue:Number):String {
+            var temp:String= (" " + percentValue).substr(0,6);
+            return data.Country + ": " + '\n' + "Total Gold: " + data.Gold + '\n' + temp + "%";
+        }
+        ]]>
+    </mx:Script>
+
+    <!-- Define custom colors for use as pie wedge fills. -->
+    <mx:SolidColor id="sc1" color="blue" alpha=".6"/>
+    <mx:SolidColor id="sc2" color="red" alpha=".6"/>
+    <mx:SolidColor id="sc3" color="0x663300" alpha=".6"/>
+
+    <!-- This Stroke is used for the callout lines. -->
+    <mx:Stroke id="callouts" weight="2" color="0x999999" alpha=".8" caps="square"/>
+    
+    <!-- This Stroke is used to separate the wedges in the pie. -->
+    <mx:Stroke id="radial" weight="1" color="0xFFFFCC" alpha=".3"/>
+
+    <!-- This Stroke is used for the outer border of the pie. -->
+    <mx:Stroke id="pieborder" color="0x000000" weight="2" alpha=".5"/>
+
+
+    <mx:Panel title="Olympics 2004 Medals Tally Panel" height="100%" width="100%">
+        <mx:PieChart id="chart" 
+            height="100%" 
+            width="100%"
+            paddingRight="5" 
+            paddingLeft="5" 
+            showDataTips="true" 
+            dataProvider="{medalsAC}"
+        >          
+            <!--
+            -->
+            <mx:series>
+                <mx:PieSeries 
+                    nameField="Country"
+                    labelPosition="callout" 
+                    field="Gold" 
+                    labelFunction="displayGold" 
+                    calloutStroke="{callouts}" 
+                    radialStroke="{radial}" 
+                    stroke="{pieborder}"
+                    fills="{[sc1, sc2, sc3]}"
+                >
+                    <!-- Clear the drop shadow filters from the chart. -->
+                    <mx:filters>
+                        <mx:Array/>
+                    </mx:filters>
+                </mx:PieSeries>
+            </mx:series>
+        </mx:PieChart>  
+        <mx:Legend dataProvider="{chart}"/>
+    </mx:Panel>
+</mx:Application>

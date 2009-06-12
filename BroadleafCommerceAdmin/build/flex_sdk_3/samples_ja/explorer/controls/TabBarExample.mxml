@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the TabBar control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+            import mx.events.ItemClickEvent;
+            import mx.controls.TabBar;
+
+            [Bindable]
+            public var STATE_ARRAY:Array = [{label:"Alabama", data:"Montgomery"},
+                {label:"Alaska", data:"Juneau"},
+                {label:"Arkansas", data:"LittleRock"}
+            ];
+            
+    		private function clickEvt(event:ItemClickEvent):void {
+    			// Access target TabBar control.
+    			var targetComp:TabBar = TabBar(event.currentTarget);
+    			forClick.text="ラベル : "  + event.label + ", インデックス : " + 
+    				event.index + ", 州都 : " +
+    				targetComp.dataProvider[event.index].data;
+    		}	            
+       ]]>
+    </mx:Script>
+
+    <mx:Panel title="TabBar コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Label width="100%" color="blue" 
+            text="タブを選択して現在のパネルを変更します。"/>
+
+        <mx:TabBar itemClick="clickEvt(event);">
+            <mx:dataProvider>{STATE_ARRAY}</mx:dataProvider>
+        </mx:TabBar>
+
+        <mx:TextArea id="forClick" height="100%" width="100%"/>
+
+    </mx:Panel>
+</mx:Application>

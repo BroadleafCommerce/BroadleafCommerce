@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the CandlestickChart control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+          
+        import mx.collections.ArrayCollection;
+
+        [Bindable]
+        private var companyAAC:ArrayCollection = new ArrayCollection( [
+            { Date: "25-Jul", Open: 40.75,  High: 40.75, Low: 40.24, Close:40.31},
+            { Date: "26-Jul", Open: 39.98,  High: 40.78, Low: 39.97, Close:40.34},
+            { Date: "27-Jul", Open: 40.38,  High: 40.66, Low: 40, Close:40.63},
+            { Date: "28-Jul", Open: 40.49,  High: 40.99, Low: 40.3, Close:40.98},
+            { Date: "29-Jul", Open: 40.13,  High: 40.4, Low: 39.65, Close:39.95},
+            { Date: "1-Aug", Open: 39.00,  High: 39.50, Low: 38.7, Close:38.6}, 
+            { Date: "2-Aug", Open: 38.68,  High: 39.34, Low: 37.75, Close:38.84}, 
+            { Date: "3-Aug", Open: 38.76,  High: 38.76, Low: 38.03, Close:38.12}, 
+            { Date: "4-Aug", Open: 37.98,  High: 37.98, Low: 36.56, Close:36.69},                       
+            { Date: "5-Aug", Open: 36.61,  High: 37, Low: 36.48, Close:36.86} ]);
+
+        [Bindable]
+        private var companyBAC:ArrayCollection = new ArrayCollection( [
+            { Date: "25-Jul", Open: 18.50,  High: 19, Low: 18.48, Close:18.86},
+            { Date: "26-Jul", Open: 19.56,  High: 19.98, Low: 18.6, Close:18.69},                       
+            { Date: "27-Jul", Open: 20.81,  High: 20.99, Low: 20.03, Close:20.12}, 
+            { Date: "28-Jul", Open: 20.70,  High: 21.00, Low: 19.5, Close:20.84}, 
+            { Date: "29-Jul", Open: 21.7,  High: 21.79, Low: 20.45, Close:20.6}, 
+            { Date: "1-Aug", Open: 22.45,  High: 22.65, Low: 21.65, Close:21.95},
+            { Date: "2-Aug", Open: 22.56,  High: 22.6, Low: 22.05, Close:22.98},
+            { Date: "3-Aug", Open: 22.42,  High: 22.70, Low: 22.1, Close:22.63},
+            { Date: "4-Aug", Open: 21.67,  High: 22.82, Low: 21.67, Close:22.34},
+            { Date: "5-Aug", Open: 22.44,  High: 22.85, Low: 22.12, Close:22.31} ]);
+        ]]>
+    </mx:Script>
+
+    <mx:SeriesInterpolate id="interpolateIn" duration="1000"/>
+
+    <mx:Panel title="CandlestickChart Control Example" height="100%" width="100%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:CandlestickChart id="candlestickchart" height="100%" width="100%"
+            paddingRight="5" paddingLeft="5" 
+            showDataTips="true" dataProvider="{companyAAC}">
+            
+            <mx:verticalAxis>
+                <mx:LinearAxis id="vaxis" baseAtZero="false" title="Price"/>
+            </mx:verticalAxis>
+
+            <mx:horizontalAxis>
+                <mx:CategoryAxis id="haxis" categoryField="Date" title="Date"/>
+            </mx:horizontalAxis>
+
+            <mx:horizontalAxisRenderers>
+                <mx:AxisRenderer axis="{haxis}" canDropLabels="true"/>
+            </mx:horizontalAxisRenderers>
+
+            <mx:series>
+                <mx:CandlestickSeries  
+                    openField="Open" highField="High" 
+                    lowField="Low" closeField="Close"
+                    showDataEffect="{interpolateIn}"/>
+            </mx:series>
+        </mx:CandlestickChart>
+        
+        <mx:Label width="100%" color="blue"
+            text="Choose a company to view recent stock data."/>
+
+        <mx:HBox>
+            <mx:RadioButton groupName="stocks" label="View Company A"
+                selected="true" click="candlestickchart.dataProvider=companyAAC;"/>
+            <mx:RadioButton groupName="stocks" label="View Company B"
+                click="candlestickchart.dataProvider=companyBAC;"/>
+        </mx:HBox>
+    </mx:Panel>
+</mx:Application>

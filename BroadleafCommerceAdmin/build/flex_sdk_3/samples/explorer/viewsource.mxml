@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" backgroundColor="#CCCCCC" usePreloader="false"
+		 paddingTop="0" paddingBottom="0" paddingLeft="0" paddingRight="0">
+
+	<mx:Script>
+		<![CDATA[		
+			
+			public function loadSource(appUrl:String, srcUrl:String):void
+			{
+				// delete all previously loaded source
+				tn.removeAllChildren();
+				
+				var tabs:Array = new Array();
+				if (appUrl != null && appUrl != "")
+				{
+					var files:Array = new Array();
+					// the first file shown will be the mxml source
+					files[0] = appUrl + ".mxml";
+					
+					if (srcUrl != null && srcUrl != "")
+					{
+						// other source files are shown in the subsequence tabs
+						var otherSrc:Array = srcUrl.split("&");
+						files = files.concat(otherSrc);
+					}
+
+	        		for (var i:int ; i < files.length ; i++)
+    	    		{
+						tabs[i] = new SourceTab();
+						tn.addChild(tabs[i]);
+						tabs[i].source = files[i];
+    	    		}
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<mx:TabNavigator id="tn" width="100%" height="100%" paddingTop="0"/>
+
+</mx:VBox>

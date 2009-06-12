@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the ProgressBar control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+           
+          private var j:uint=10;
+          
+          // Event handler function to set the value of the 
+          // ProgressBar control.
+          private function runit():void
+          {
+    	      if(j<=100)
+    	      {
+    	         bar.setProgress(j,100);
+        		 bar.label= "CurrentProgress" + " " + j + "%";
+        		 j+=10;
+    	      }
+    	      if(j>100)
+    	      {
+        		 j=0;
+              }
+          }
+        ]]>    
+    </mx:Script>
+
+    <mx:Panel title="ProgressBar コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Label width="100%" color="blue"
+            text="ボタンをクリックしてプログレスバーをインクリメントします。" />
+        <mx:Button id="Speed" label="実行" click="runit();"/>
+            
+        <mx:ProgressBar id="bar" labelPlacement="bottom" themeColor="#F20D7A"
+            minimum="0" visible="true" maximum="100" label="現在の進捗状況 0%"  
+            direction="right" mode="manual" width="100%"/>
+
+    </mx:Panel>
+</mx:Application>       

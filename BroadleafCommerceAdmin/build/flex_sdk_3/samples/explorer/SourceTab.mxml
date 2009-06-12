@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
+
+    <mx:Script>
+        <![CDATA[
+
+        import mx.rpc.events.ResultEvent;
+        import mx.rpc.events.FaultEvent;
+        import mx.controls.Alert;
+
+        public function set source(file:String):void
+        {
+            label = file.substring(file.lastIndexOf("/")+1);
+            srv.url = file;
+            srv.send();
+        }
+
+        private function resultHandler(event:ResultEvent):void
+        {
+            var str:String = String(event.result);
+            var r:RegExp = new RegExp("\r\n", "gs");
+            str = str.replace(r, "\r");
+            ta.text = str;
+        }
+
+        private function faultHandler(event:FaultEvent):void
+        {
+            Alert.show("Error loading source file");
+        }
+
+        ]]>
+    </mx:Script>
+
+    <mx:HTTPService id="srv" useProxy="false" resultFormat="text" result="resultHandler(event)" fault="faultHandler(event)"/>
+
+    <mx:TextArea id= "ta" color="#0000A0" fontFamily="Courier" editable="false" wordWrap="false" width="100%" height="100%"/>
+
+</mx:VBox>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the Rotate effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+    initialize="Font.registerFont(myriad_font);">
+
+    <mx:Script>
+        <![CDATA[
+
+            import flash.text.Font;
+            
+            [Embed("assets/MyriadWebPro.ttf", fontName="MyMyriad")]
+            public var myriad_font:Class;
+
+            [Bindable]
+            public var angle:int=0;
+
+            private function rotateImage():void {
+                rotate.end();
+                angle += 45;
+                rotate.play();
+            }
+      ]]>
+    </mx:Script>
+
+    <mx:Rotate id="rotate" angleFrom="{angle-45}" angleTo="{angle}" target="{myVB}"/>
+
+    <mx:Panel title="Rotate エフェクトの例" horizontalAlign="center" 
+        width="75%" height="75%" layout="horizontal"
+        paddingTop="5" paddingLeft="10" paddingRight="10" paddingBottom="5">
+
+        <mx:VBox id="myVB" width="50%" horizontalAlign="center">
+            <mx:Label text="Nokia 9930"  
+                fontFamily="MyMyriad" fontSize="14"/>
+
+            <mx:Image id="img" 
+                source="@Embed(source='assets/Nokia_6630.png')"/>
+        </mx:VBox>
+
+        <mx:Text width="50%" color="blue" 
+            text="ボタンをクリックしてイメージを 45 度回転させます。Rotate エフェクトをテキストに適用するときは埋め込みフォントを使用します。"/>
+
+        <mx:ControlBar>
+            <mx:Button label="45 度回転" click="rotateImage();"/>
+        </mx:ControlBar>
+    </mx:Panel>
+</mx:Application>

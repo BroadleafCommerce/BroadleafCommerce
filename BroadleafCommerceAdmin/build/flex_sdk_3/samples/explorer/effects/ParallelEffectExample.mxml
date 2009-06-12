@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Parallel effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+   <mx:Parallel id="expand" target="{img}">
+        <mx:Move xTo="{canvas.width/2 - 50}" yTo="{canvas.height/2 - 100}"/>
+        <mx:Resize widthTo="100" heightTo="200"/>
+    </mx:Parallel>
+
+    <mx:Parallel id="contract" target="{img}">
+        <mx:Move xTo="20" yTo="20"/>
+        <mx:Resize widthTo="30" heightTo="60"/>
+    </mx:Parallel>
+
+    <mx:Panel title="Parallel Effect Example" width="100%" height="100%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue" 
+            text="Use the Button controls to move and resize the phone image in parallel."/>
+
+        <mx:Canvas id="canvas" width="100%" height="100%">
+            <mx:Image id="img" x="20" y="20" width="30" height="60"
+                source="@Embed(source='assets/Nokia_6630.png')"/>
+        </mx:Canvas>
+
+        <mx:ControlBar>
+            <mx:Button label="Expand" click="expand.end(); expand.play();"/>
+            <mx:Button label="Contract" click="contract.end(); contract.play();"/>
+        </mx:ControlBar>
+
+    </mx:Panel>
+</mx:Application>

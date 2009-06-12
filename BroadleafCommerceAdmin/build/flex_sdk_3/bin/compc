@@ -1,0 +1,47 @@
+#!/bin/sh
+
+################################################################################
+##
+##  ADOBE SYSTEMS INCORPORATED
+##  Copyright 2007 Adobe Systems Incorporated
+##  All Rights Reserved.
+##
+##  NOTICE: Adobe permits you to use, modify, and distribute this file
+##  in accordance with the terms of the license agreement accompanying it.
+##
+################################################################################
+
+#
+# compc launch script for unix.  On windows, compc.exe is used and
+# java settings are managed in jvm.config in this directory.
+#
+
+case `uname` in
+		CYGWIN*)
+			OS="Windows"
+		;;
+		*)
+			OS=Unix
+esac
+
+if [ $OS = "Windows" ]; then
+	# set FLEX_HOME relative to compc if not set
+	test "$FLEX_HOME" = "" && {
+	FLEX_HOME=`dirname $0`/..
+    	FLEX_HOME=`cygpath -m $FLEX_HOME`
+	}
+
+elif [ $OS = "Unix" ]; then
+
+	# set FLEX_HOME relative to compc if not set
+	test "$FLEX_HOME" = "" && {
+	FLEX_HOME=`dirname "$0"`/..
+	}
+
+fi
+
+# don't use $FLEX_HOME in this variable because it may contain spaces,
+# instead put it on the java args directly, with double-quotes around it
+VMARGS="-Xmx384m -Dsun.io.useCanonCaches=false"
+
+java $VMARGS -jar "$FLEX_HOME/lib/compc.jar" +flexlib="$FLEX_HOME/frameworks" "$@"

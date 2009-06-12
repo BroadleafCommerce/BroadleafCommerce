@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate RadioButtonGroup control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+	    <![CDATA[
+	
+	    import mx.controls.Alert;
+	    import  mx.events.ItemClickEvent;
+	
+        // Event handler function to display the selected button
+        // in an Alert control.
+		private function handleCard(event:ItemClickEvent):void {
+			if (event.currentTarget.selectedValue == "AmEx") {
+					mx.controls.Alert.show("American Express を選択しました")  
+			} 
+			else {
+				if (event.currentTarget.selectedValue == "MC") {
+					Alert.show("MasterCard を選択しました")  
+				} 
+				else {
+					mx.controls.Alert.show("Visa を選択しました")  
+				}
+			} 
+		}
+	    ]]>
+    </mx:Script>
+
+    <mx:Panel title="RadioButtonGroup Control Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10">
+    
+        <mx:Label width="100%" color="blue" 
+            text="クレジットカードの種類を選択します。"/>
+
+        <mx:RadioButtonGroup id="cardtype" itemClick="handleCard(event);"/>
+        <mx:RadioButton groupName="cardtype" id="americanExpress" value="AmEx" 
+            label="American Express" width="150" />
+        <mx:RadioButton groupName="cardtype" id="masterCard" value="MC" 
+            label="MasterCard" width="150" />
+        <mx:RadioButton groupName="cardtype" id="visa" value="Visa" 
+            label="Visa" width="150" />
+		
+    </mx:Panel>		
+</mx:Application>

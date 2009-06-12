@@ -1,0 +1,22 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Text control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="Text コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Text width="100%">
+            <mx:text>
+		 これは、編集することのできない、複数行からなるテキストコンポーネントです。
+		編集可能な複数行のコンポーネントが必要な場合は、TextArea を使用してください。 
+	    </mx:text>
+        </mx:Text>
+
+        <mx:Text width="100%">
+            <mx:htmlText>
+                <![CDATA[これは、<b>Text コンポーネント</b>にある <font color="#FF0000">HTML テキスト</font>です。<font color="#008800">Text コンポーネント</font>の <u>htmlText 属性</u>を使用して、基本の HTML マークアップを使用することができます。]]>
+            </mx:htmlText>
+        </mx:Text>
+
+   </mx:Panel>
+</mx:Application>

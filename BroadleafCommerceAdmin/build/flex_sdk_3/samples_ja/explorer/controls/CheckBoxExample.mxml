@@ -1,0 +1,59 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the CheckBox control -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+           import mx.controls.Alert;         
+         
+           // This event handler adds and deletes items from the shopping cart.
+           private function modifyCart():void 
+           {
+                cartItems.text = "";
+	    	
+    	    	if(milkCB.selected == true) {	    	  
+    	    	    cartItems.text += "ミルク" + '\n' ;
+	    	    }
+	   	
+	   	        if(eggsCB.selected == true) {
+    	    	    cartItems.text += "卵" + '\n';
+	    	    }
+	    	
+	    	    if(breadCB.selected == true) { 
+    	    	    cartItems.text +="パン" + '\n';
+	    	    }
+      	    }
+      	   
+           // This event handler opens the Alert control.
+	       private function sendMessage():void 
+	       {
+                if(couponCB.selected == true) {
+		          Alert.show('クーポンは発行されません。');
+		        }
+		        else {
+		            Alert.show('クーポンが発行されます。');
+		        }
+	       }    
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="CheckBox コントロールの例" 
+        height="75%" width="75%" layout="horizontal"
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:VBox>
+            <mx:CheckBox id="milkCB" label="ミルク" click="modifyCart()"/>
+            <mx:CheckBox id="eggsCB" label="卵" click="modifyCart()"/>
+            <mx:CheckBox id="breadCB" label="パン" click="modifyCart()"/>
+        </mx:VBox>
+
+        <mx:VBox>
+            <mx:Label text="カート内のアイテム "/>
+            <mx:TextArea id="cartItems" width="300" height="50" verticalScrollPolicy="off"/>
+            <!-- Event handler sendMessages() is used to handle event click -->
+            <mx:CheckBox id="couponCB" label="カート内のアイテムのクーポンを送ってください"
+                click="sendMessage()" selected="true" color="blue"/>
+        </mx:VBox>
+    </mx:Panel>
+</mx:Application>

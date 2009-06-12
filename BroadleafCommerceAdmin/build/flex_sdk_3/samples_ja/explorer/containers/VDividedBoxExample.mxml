@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the VDividedBox layout -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="VDividedBox コンテナの例" width="90%" height="90%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue"
+            text="仕切りを上下にドラッグして子のサイズを変更します。"/>
+
+        <mx:VDividedBox width="100%" height="100%">
+
+            <mx:Canvas label="Canvas 1" width="100%" height="100%" backgroundColor="#FFFFCC">
+                <mx:Label text="コンポーネントをここに追加" fontWeight="bold"/>
+            </mx:Canvas>
+
+            <mx:Canvas label="Canvas 2" width="100%" height="100%" backgroundColor="#99CCFF">
+                <mx:Label text="コンポーネントをここに追加" fontWeight="bold"/>
+            </mx:Canvas>
+
+        </mx:VDividedBox>
+
+    </mx:Panel>
+</mx:Application>

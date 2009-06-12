@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Component Explorer Readme</title>
+<link href="../readme.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>Component Explorer Readme </h1>
+<p><a href="explorer.html" target="_blank">Run Explorer </a></p>
+<p>The Component Explorer application shows a simple usage for most of the MXML components available with the Adobe<sup>&reg;</sup> Flex<sup>&#8482;</sup> 3 framework. When you install Adobe Flex Data Visualization, you can also see examples of how you can use the charting and data visualization components. </p>
+<p>Note: You should not run the Component Explorer on a Adobe LiveCycle EnterpriseServer. The Flex WAR will attempt to compile the mxml files causing the source view of each Explorer sample to display incorrectly.</p>
+<h2>Adding Flex Data Visualization components to an existing Component Explorer application </h2>
+<ol>
+  <li> Follow the Flex Data Visualization installation instructions to install and update the Flex Component Explorer.</li>
+  <li>At a command prompt, or in a file explorer go to <code><em>flex_sdk_dir</em>/samples/explorer/charts</code>.</li>
+  <li> Run the <code>build.bat</code> batch file (Windows) or <code>build.sh</code> shell script (Mac/UNIX) to compile the examples.<br />
+  </li>
+</ol>
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> Builder<sup class="h2sup">&#8482;</sup> 3</h2>
+<p>If you are editing the Component Explorer sample code from within Flex Builder,  you must still compile the individual samples using the command-line compiler. Flex Builder does compile or run applications that live beneath the root of the source folder. </p>
+<h2>Notes for Adobe<sup class="h2sup">&reg;</sup> Flex<sup class="h2sup">&#8482;</sup> SDK</h2>
+<p>The build script for the Component Explorer assumes that you  run the application  from the local
+  file system (<code>file:///</code> in your browser).  If you plan to run the application from a web
+  server (<code>http://</code> in your browser), change the <code>-use-network</code> setting in
+the build script to <code>true</code>.</p>
+<p><a href="explorer.html" target="_blank">Run Explorer </a></p>
+</body>
+</html>

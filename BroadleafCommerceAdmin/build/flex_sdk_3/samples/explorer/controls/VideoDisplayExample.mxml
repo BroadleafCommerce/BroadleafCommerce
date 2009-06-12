@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the VideoDisplay control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="VideoDisplay Control Example" height="75%" width="75%" 
+        horizontalAlign="center" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+       <mx:Text width="75%" color="blue"
+           text="Use the buttons to control the video. The Stop button resets the video to the beginning."/>
+
+		<mx:VideoDisplay id="myVid" height="158" width="211" source="assets/phone.flv" autoPlay="false"/>
+
+		<mx:HBox>
+		    <mx:Button label="Play" click="myVid.play();"/>
+		    <mx:Button label="Pause" click="myVid.pause();"/>
+		    <mx:Button label="Stop" click="myVid.stop();"/>
+		</mx:HBox>
+
+	</mx:Panel>
+</mx:Application>

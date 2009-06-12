@@ -1,0 +1,99 @@
+// helper classes
+include "../src/mx/automation/Automation.as";
+include "../src/mx/automation/AutomationID.as";
+include "../src/mx/automation/AutomationIDPart.as";
+include "../src/mx/automation/AutomationError.as";
+
+// interfaces
+include "../src/mx/automation/IAutomationClass.as";
+include "../src/mx/automation/IAutomationEnvironment.as";
+include "../src/mx/automation/IAutomationEventDescriptor.as";
+include "../src/mx/automation/IAutomationManager.as";
+include "../src/mx/automation/IAutomationMethodDescriptor.as";
+include "../src/mx/automation/IAutomationMouseSimulator.as";
+// uncomment out this line if building ASDoc just for automation.
+//include "../src/mx/automation/IAutomationObject.as";
+include "../src/mx/automation/IAutomationObjectHelper.as";
+include "../src/mx/automation/IAutomationPropertyDescriptor.as";
+include "../src/mx/automation/IAutomationTabularData.as";
+
+// TextField helper class
+include "../src/mx/automation/delegates/TextFieldAutomationHelper.as";
+
+// events
+include "../src/mx/automation/events/AdvancedDataGridItemSelectEvent.as";
+include "../src/mx/automation/events/AdvancedDataGridHeaderShiftEvent.as";
+include "../src/mx/automation/events/AutomationDragEvent.as";
+include "../src/mx/automation/events/AutomationDragEventWithPositionInfo.as";
+include "../src/mx/automation/events/AutomationEvent.as";
+include "../src/mx/automation/events/AutomationRecordEvent.as";
+include "../src/mx/automation/events/AutomationReplayEvent.as";
+include "../src/mx/automation/events/ChartSelectionChangeEvent.as";
+include "../src/mx/automation/events/ListItemSelectEvent.as";
+include "../src/mx/automation/events/MenuShowEvent.as";
+include "../src/mx/automation/events/TextSelectionEvent.as";
+
+
+// delegates
+include "../src/mx/automation/delegates/DragManagerAutomationImpl.as";
+
+include "../src/mx/automation/delegates/containers/AccordionAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/ApplicationAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/BoxAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/CanvasAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/DividedBoxAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/FormAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/FormItemAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/PanelAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/TabNavigatorAutomationImpl.as";
+include "../src/mx/automation/delegates/containers/ViewStackAutomationImpl.as";
+
+include "../src/mx/automation/delegates/controls/AlertAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/AlertFormAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ButtonAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ButtonBarAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/CheckBoxAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ColorPickerAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ComboBaseAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ComboBoxAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/DataGridAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/DataGridItemRendererAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/DateChooserAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/DateFieldAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/LabelAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/LinkBarAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ListAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ListBaseAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ListBaseContentHolderAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ListItemRendererAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/MenuAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/MenuBarAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/MenuBarItemAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/MenuItemRendererAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/NavBarAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/NumericStepperAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/PopUpButtonAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ProgressBarAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/RadioButtonAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ScrollBarAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/SliderAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/SWFLoaderAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/TextAreaAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/TextInputAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/TileBaseAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/TileListItemRendererAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ToggleButtonBarAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/ToolTipAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/TreeAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/TreeItemRendererAutomationImpl.as";
+include "../src/mx/automation/delegates/controls/VideoDisplayAutomationImpl.as";
+
+include "../src/mx/automation/delegates/core/ContainerAutomationImpl.as";
+include "../src/mx/automation/delegates/core/RepeaterAutomationImpl.as";
+include "../src/mx/automation/delegates/core/ScrollControlBaseAutomationImpl.as";
+include "../src/mx/automation/delegates/core/UIComponentAutomationImpl.as";
+include "../src/mx/automation/delegates/core/UITextFieldAutomationImpl.as";
+
+include "../src/mx/automation/tabularData/AdvancedListBaseTabularData.as";
+include "../src/mx/automation/tabularData/AdvancedDataGridTabularData.as";
+include "../src/mx/automation/tabularData/OLAPDataGridTabularData.as";

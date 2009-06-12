@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the List Control -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+        	[Bindable]
+            public var selectedItem:Object;
+       ]]>
+    </mx:Script>
+
+
+    <mx:Model id="mystates">
+      <states>
+        <state label="Alabama" data="AL"/>
+        <state label="Alaska" data="AK"/>
+        <state label="Arizona" data="AZ"/>
+        <state label="Arkansas" data="AR"/>
+        <state label="California" data="CA"/>
+        <state label="Colorado" data="CO"/>
+        <state label="Connecticut" data="CT"/>
+      </states>
+    </mx:Model>
+
+    <mx:Panel title="List コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Label text="略語を表示する州を選択します。"/>
+
+        <mx:List id="source" width="100%" color="blue"
+            dataProvider="{mystates.state}"
+            change="this.selectedItem=List(event.target).selectedItem"/>
+
+        <mx:VBox width="100%">
+            <mx:Label text="選択した州 : {selectedItem.label}"/>
+            <mx:Label text="州の略語 : {selectedItem.data}"/>
+        </mx:VBox>
+
+    </mx:Panel>
+</mx:Application>       

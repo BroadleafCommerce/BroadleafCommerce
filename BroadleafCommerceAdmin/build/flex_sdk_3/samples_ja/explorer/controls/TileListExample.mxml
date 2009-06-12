@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the TileList Control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+             
+             [Bindable]
+             [Embed(source="assets/Nokia_6630.png")]
+             public var phone1:Class;
+             
+             [Bindable]
+             [Embed(source="assets/Nokia_6680.png")]
+             public var phone2:Class;
+             
+             [Bindable]
+             [Embed(source="assets/Nokia_7610.png")]
+             public var phone3:Class;
+	     
+             [Bindable]
+	         [Embed(source="assets/Nokia_lg_v_keypad.png")]
+             public var phone4:Class;
+
+             [Bindable]
+	         [Embed(source="assets/Nokia_sm_v_keypad.png")]
+             public var phone5:Class;
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="TileList コントロールの例" height="100%" width="100%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Label width="100%" color="blue" 
+            text="TileList コントロールは行および列内にアイテムを表示します。"/>
+
+        <mx:TileList id="CameraSelection" height="250" width="300" 
+            maxColumns="2" rowHeight="225" columnWidth="125">
+            <mx:dataProvider>
+                <mx:Array>
+                    <mx:Object label="Nokia 6630" icon="{phone1}"/>
+                    <mx:Object label="Nokia 6680" icon="{phone2}"/>
+                    <mx:Object label="Nokia 7610" icon="{phone3}"/>
+                    <mx:Object label="Nokia LGV" icon="{phone4}"/>
+                    <mx:Object label="Nokia LMV" icon="{phone5}"/>
+                </mx:Array>
+            </mx:dataProvider>
+        </mx:TileList>
+
+    </mx:Panel>
+</mx:Application>
+       

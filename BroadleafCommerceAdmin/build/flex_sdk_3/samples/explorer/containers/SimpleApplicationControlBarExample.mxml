@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the ApplicationControlBar container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+    paddingLeft="10" paddingRight="10" paddingBottom="10" 
+    backgroundColor="0xCCCCCC">
+
+    <mx:ApplicationControlBar dock="true" paddingTop="0" paddingBottom="0">
+        <mx:Label text="Docked" color="blue"/>
+
+        <mx:MenuBar id="myMenuBar" labelField="@label">
+            <mx:XMLList>
+                <menuitem label="MenuItem A" >
+                    <menuitem label="SubMenuItem A-1" type="check"/>
+                    <menuitem label="SubMenuItem A-2" type="check"/>
+                </menuitem>
+                <menuitem label="MenuItem B"/>
+                <menuitem label="MenuItem C"/>
+                <menuitem label="MenuItem D" >
+                    <menuitem label="SubMenuItem D-1" type="radio" groupName="one"/>
+                    <menuitem label="SubMenuItem D-2" type="radio" groupName="one"/>
+                    <menuitem label="SubMenuItem D-3" type="radio" groupName="one"/>
+                </menuitem>
+            </mx:XMLList>
+        </mx:MenuBar>
+    </mx:ApplicationControlBar>
+	
+    <mx:Label text="A docked ApplicationControlBar appears at the top of the application window."/>
+    <mx:Spacer height="100%" />
+
+    <mx:ApplicationControlBar width="80%">
+        <mx:Label text="Normal" color="blue"/>
+        <mx:Label text="Search:" />
+        <mx:TextInput width="100%" maxWidth="200" />
+        <mx:Spacer width="100%" />
+        <mx:Button label="Go adobe.com" />
+    </mx:ApplicationControlBar>
+
+    <mx:Label text="A normal ApplicationControlBar can appear anywhere in the application."/>
+
+</mx:Application>

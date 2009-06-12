@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the NumericStepper control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="NumericStepper コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10">
+
+        <mx:Text width="100%" color="blue"
+            text="NumericStepper コントロールのデフォルト値は、最小値=0、最大値=10、増分単位=1 です。"/>
+        <mx:NumericStepper/>
+
+        <mx:Text width="100%"  color="blue"
+            text="NumericStepper コントロールのデフォルト値は、最小値10、最大値=40、増分単位=0.01 です。開始値は 20 です。"/>
+
+        <mx:NumericStepper id="ns" 
+            minimum="10.00" maximum="40.00" 
+            stepSize="0.01" 
+            value="20.00" 
+            width="65"/>
+
+        <mx:Label  color="blue" text="{ns.value} を選択しました"/>
+
+    </mx:Panel>
+</mx:Application>
+       

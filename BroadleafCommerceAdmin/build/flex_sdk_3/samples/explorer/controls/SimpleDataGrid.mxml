@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!-- DataGrid control example. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:XMLList id="employees">
+        <employee>
+            <name>Christina Coenraets</name>
+            <phone>555-219-2270</phone>
+            <email>ccoenraets@fictitious.com</email>
+            <active>true</active>
+        </employee>
+        <employee>
+            <name>Joanne Wall</name>
+            <phone>555-219-2012</phone>
+            <email>jwall@fictitious.com</email>
+            <active>true</active>
+        </employee>
+        <employee>
+            <name>Maurice Smith</name>
+            <phone>555-219-2012</phone>
+            <email>maurice@fictitious.com</email>
+            <active>false</active>
+        </employee>
+        <employee>
+            <name>Mary Jones</name>
+            <phone>555-219-2000</phone>
+            <email>mjones@fictitious.com</email>
+            <active>true</active>
+        </employee>
+    </mx:XMLList>
+
+    <mx:Panel title="DataGrid Control Example" height="100%" width="100%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Label width="100%" color="blue"
+            text="Select a row in the DataGrid control."/>
+
+        <mx:DataGrid id="dg" width="100%" height="100%" rowCount="5" dataProvider="{employees}">
+            <mx:columns>
+                <mx:DataGridColumn dataField="name" headerText="Name"/>
+                <mx:DataGridColumn dataField="phone" headerText="Phone"/>
+                <mx:DataGridColumn dataField="email" headerText="Email"/>
+            </mx:columns>
+        </mx:DataGrid>
+
+        <mx:Form width="100%" height="100%">
+            <mx:FormItem label="Name">
+                <mx:Label text="{dg.selectedItem.name}"/>
+            </mx:FormItem>
+            <mx:FormItem label="Email">
+                <mx:Label text="{dg.selectedItem.email}"/>
+            </mx:FormItem>
+            <mx:FormItem label="Phone">
+                <mx:Label text="{dg.selectedItem.phone}"/>
+            </mx:FormItem>
+        </mx:Form>
+        
+    </mx:Panel>
+</mx:Application>        

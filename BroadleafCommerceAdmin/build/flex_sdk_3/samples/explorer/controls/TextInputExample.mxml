@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the TextInput control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="TextInput Control Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10">
+        
+        <mx:TextInput id="src" text="Hello World!"/>
+
+        <mx:Button label="Copy Text" click="dest.text = src.text"/>
+
+        <mx:TextInput id="dest"/>
+
+    </mx:Panel>
+</mx:Application>

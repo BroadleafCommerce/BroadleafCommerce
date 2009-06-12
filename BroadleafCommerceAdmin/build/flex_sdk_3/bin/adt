@@ -1,0 +1,3 @@
+#!/bin/sh
+here=$(dirname "$0")
+java -jar "$here/../lib/adt.jar" "$@"

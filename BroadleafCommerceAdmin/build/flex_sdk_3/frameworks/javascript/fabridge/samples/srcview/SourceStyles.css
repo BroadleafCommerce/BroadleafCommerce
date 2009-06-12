@@ -1,0 +1,156 @@
+body {
+	font-family: Courier New, Courier, monospace;
+}
+
+.asBracket {
+}
+
+.asClass {
+	color: #9900cc;
+	font-weight: bold;
+}
+
+.asComment {
+	color: #009900;
+	font-style: italic;
+}
+
+.asDoc {
+	color: #3f5fbf;
+}
+
+.asFunction {
+	color: #339966;
+	font-weight: bold;
+}
+
+.asIdent {
+}
+
+.asInterface {
+	color: #9900cc;
+	font-weight: bold;
+}
+
+.asMetadata {
+	color: #0033ff;
+	font-weight: bold;
+}
+
+.asNumber {
+}
+
+.asOperator {
+}
+
+.asPackage {
+	color: #9900cc;
+	font-weight: bold;
+}
+
+.asReserved {
+	color: #0033ff;
+	font-weight: bold;
+}
+
+.asString {
+	color: #990000;
+	font-weight: bold;
+}
+
+.asTagProp {
+	color: #0000ff;
+}
+
+.asTrace {
+	color: #cc6666;
+	font-weight: bold;
+}
+
+.asType {
+	color: #636563;
+}
+
+.asVar {
+	color: #6699cc;
+	font-weight: bold;
+}
+
+.cssComment {
+	color: #999999;
+}
+
+.cssFontFace {
+	color: #990000;
+	font-weight: bold;
+}
+
+.cssImport {
+	color: #006666;
+	font-weight: bold;
+}
+
+.cssKeyword {
+	color: #ff00ff;
+	font-weight: bold;
+}
+
+.cssMedia {
+	color: #663333;
+	font-weight: bold;
+}
+
+.cssPropName {
+	color: #330099;
+}
+
+.cssPropValue {
+	color: #3333cc;
+}
+
+.cssSelector {
+	color: #ff00ff;
+}
+
+.cssString {
+	color: #006600;
+}
+
+.cssSymbol {
+}
+
+.mxmlCdata {
+}
+
+.mxmlComment {
+	color: #800000;
+}
+
+.mxmlComponent {
+	color: #0000ff;
+}
+
+.mxmlEventAttr {
+	color: #ff6600;
+}
+
+.mxmlNamespace {
+	color: #cc9933;
+}
+
+.mxmlProcInstr {
+	color: #808080;
+}
+
+.mxmlString {
+	color: #990000;
+}
+
+.mxmlTag {
+	color: #006633;
+}
+
+.mxmlTagText {
+	color: #990099;
+}
+

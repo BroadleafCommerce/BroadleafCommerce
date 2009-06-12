@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the ComboBox control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+            [Bindable]
+            public var cards: Array = [ {label:"Visa", data:1}, 
+                {label:"MasterCard", data:2}, {label:"American Express", data:3} ];
+		
+            [Bindable]
+            public var selectedItem:Object;        
+        ]]>
+    </mx:Script>
+
+    <mx:Panel title="ComboBox コントロールの例" 
+        height="75%" width="75%" layout="horizontal"
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+
+        <mx:ComboBox dataProvider="{cards}" width="150" 
+            close="selectedItem=ComboBox(event.target).selectedItem"/>
+
+        <mx:VBox width="250">
+            <mx:Text  width="200" color="blue" text="クレジットカードの種類を選択します。"/>
+            <mx:Label text="選択したアイテム : {selectedItem.label}"/>
+            <mx:Label text="データ : {selectedItem.data}"/>
+        </mx:VBox>         
+
+    </mx:Panel>    
+</mx:Application>       

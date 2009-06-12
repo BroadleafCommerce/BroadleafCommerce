@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<project name="automation" default="main" basedir=".">
+
+        <!-- this file is used for compiling the automation source under the Flex Builder -->
+        <!-- This file is expected to be under sdk/3.0.0/frameworks/projects/automation
+             When using this file, sdk/3.0.0/frameworks/libs  and sdk/3.0.0/frameworks/locale is expected to have the swcs referred in this file
+             and sdk/3.0.0/frameworks/projects is expected to have the required projects referred in this file
+                -->
+             
+        <!-- for using this file use the ant command as 'ant -file automation_build.xml'  or for 
+             running specific target (e.g  automation) give the command as 
+             'ant automation -file automation_build.xml' -->   
+             
+	<echo message="Please set the environment variable ANT_OPTS to -Xmx256m"/>
+
+	<property name="FLEX_HOME" value="${basedir}/../"/>
+	<property name="automation.dir" value="${basedir}/projects/automation"/>
+	<property name="framework.dir" value="${basedir}/projects/framework"/>
+	
+	
+	
+	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+
+	<target name="main" depends="clean,automation"/>
+	
+	
+	<target name="automation" description="Builds automation.swc and its resource bundles">
+		<compc accessible="true"
+			   output="${FLEX_HOME}/frameworks/libs/automation.swc"
+			   include-classes="AutomationClasses "
+			   locale="en_US">
+			<source-path path-element="${automation.dir}/src"/>
+			<source-path path-element="${automation.dir}/bundles/{locale}/src"/>
+			<library-path/>
+			<external-library-path dir="${FLEX_HOME}/frameworks/libs" includes="framework.swc"/>
+			<external-library-path dir="${FLEX_HOME}/frameworks/libs" includes="automation_agent.swc"/>
+			<external-library-path dir="${FLEX_HOME}/frameworks/locale/en_US" includes="automation_agent_rb.swc"/>
+			<external-library-path dir="${FLEX_HOME}/frameworks/libs/player" includes="playerglobal.swc"/>
+		</compc>
+	</target>
+	
+	
+	<target name="clean" description="Cleans all SWCs and their resource bundles">
+		<delete failonerror="false">
+			<fileset dir="${FLEX_HOME}/frameworks/libs" includes="automation.swc"/>
+		</delete>
+	</target>
+</project>

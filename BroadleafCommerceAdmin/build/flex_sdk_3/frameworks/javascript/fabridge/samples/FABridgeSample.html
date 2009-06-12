@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+Copyright 2006 Adobe Systems Incorporated
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-->
+<html>
+<head>
+	<title>Flex-AJAX Bridge Example</title>
+	<style>
+	
+	body {
+		margin: 0px;
+		overflow: hidden;
+		font-size: .9em;
+	}
+	
+	#container {
+		width: 1024px;
+	}
+
+	#controls {
+		margin-bottom: 20px; 
+		float: left; 
+		padding: 20px;
+	}
+
+	#flashoutput {
+		margin-top: 20px; 
+		width: auto;
+	}
+
+	textarea {
+		font-size: 1em;
+	}
+	
+	</style>
+	<script src="../src/bridge/FABridge.js" ></script>
+	<script src="FABridgeSample.js" ></script>
+</head>
+<body scroll="no">
+	<div id="container">
+		<div id="controls">
+			<textarea id="expr" cols="60" rows="20">type in javascript code here.  use the radio buttons below to view sample FABridge code</textarea>
+			<br />
+			<input type="button" onClick="testEval();return false;" value="execute" />
+			<div style="margin-left: 20px">
+				<p>Sample Code:<br />
+					<input id="get_slider" onClick="updateCode('get_slider')" name="code" type="radio">
+					<label for="get_slider">get slider value</label>
+					
+					<input id="set_check" onClick="updateCode('set_check')" name="code" type="radio">
+					<label for="set_check">set checkbox value</label>
+					<br />
+					
+					<input id="invoke_as" onClick="updateCode('invoke_as')" name="code" type="radio">
+					<label for="invoke_as">invoke actionscript function</label>
+					
+					<input id="button_event_handler" onClick="updateCode('button_event_handler')" name="code" type="radio">
+					<label for="button_event_handler">call javascript from AS button</label>
+					
+					<br />
+					<input id="slider_event_handler" onClick="updateCode('slider_event_handler')" name="code" type="radio">
+					<label for="slider_event_handler">listen for slider changes</label>
+					
+					<input id="create_datagrid" onClick="updateCode('create_datagrid')" name="code" type="radio">
+					<label for="create_datagrid">create and populate a datagrid</label>
+				</p>
+				<p>Charts:<br />
+					<input id="make_chart" onClick="updateCode('make_chart')" name="code" type="radio">
+					<label for="make_chart">create a chart</label>
+					
+					<input id="make_data" onClick="updateCode('make_data')" name="code" type="radio">
+					<label for="make_data">generate data</label>
+					<br>
+					<input id="make_interpolate" onClick="updateCode('make_interpolate')" name="code" type="radio">
+					<label for="make_interpolate">interpolate changes</label>
+
+					<input id="make_zoom" onClick="updateCode('make_zoom')" name="code" type="radio">
+					<label for="make_zoom">zoom changes</label>
+				</p>
+			</div>
+			Trace Output:<br />
+			<textarea id="output" cols="60" rows="10"></textarea><br />
+		</div>
+		<div id="flashoutput">
+			<noscript>
+				<object id="flexApp" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,5,0,0" height="400" width="400">
+				<param name="flashvars" value="bridgeName=example"/>
+				<param name="src" value="app.swf"/>
+				<embed name="flexApp" pluginspage="http://www.macromedia.com/go/getflashplayer" src="app.swf" height="400" width="400" flashvars="bridgeName=example"/>
+				</object>
+			</noscript>
+			<script language="javascript" charset="utf-8">
+				document.write('<object id="flexApp" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=8,5,0,0" height="400" width="400">');
+				document.write('<param name="flashvars" value="bridgeName=example"/>');
+				document.write('<param name="src" value="app.swf"/>');
+				document.write('<embed name="flexApp" pluginspage="http://www.macromedia.com/go/getflashplayer" src="app.swf" height="400" width="400" flashvars="bridgeName=example"/>');
+				document.write('</object>');
+			</script>
+			<br>
+			<br>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the DateField control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+      <![CDATA[
+
+         // Event handler for the DateField change event.
+         private function dateChanged(date:Date):void {
+            if (date == null)
+                selection.text = "選択された日付 : ";                
+            else
+                selection.text = "選択された日付 : " + date.getFullYear().toString() + 
+                    '/' + (date.getMonth()+1).toString() + '/' + date.getDate();
+         }
+      ]]>
+    </mx:Script>
+ 
+ <mx:DateFormatter id="df"/>
+
+    <mx:Panel title="DateField コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Label width="100%"  color="blue"
+            text="DateField コントロールで日付を選択します。もう一度日付を選択すると選択状態をクリアします。"/>
+
+        <mx:Label text="基本の DateField:"/>
+        <mx:DateField id="dateField1" yearNavigationEnabled="true" 
+            change="dateChanged(DateField(event.target).selectedDate)" />
+        <mx:Label id="selection"  color="blue" text="選択された日付 :" />
+
+        <mx:Label text="2006 年 6 月 1 日以前の日付は無効にします。"/>
+        <mx:DateField id="dateField2" yearNavigationEnabled="true" 
+            disabledRanges="{[ {rangeEnd: new Date(2006, 5, 1)} ]}" />
+        <mx:Label  color="blue" text="選択された日付 : {df.format(dateField2.selectedDate)}"/>
+
+    </mx:Panel>
+</mx:Application>

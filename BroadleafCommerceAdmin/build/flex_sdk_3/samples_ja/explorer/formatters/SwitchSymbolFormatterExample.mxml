@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate SwitchSymbolFormatter. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+        
+            import mx.formatters.SwitchSymbolFormatter;                
+            import mx.events.ValidationResultEvent;			
+            
+            private var vResult:ValidationResultEvent;
+
+            // Event handler to validate and format input.            
+            private function Format():void
+            {
+                vResult = scVal.validate();
+
+                if (vResult.type==ValidationResultEvent.VALID) {
+                    var switcher:SwitchSymbolFormatter=new SwitchSymbolFormatter('#');
+
+                    formattedSCNumber.text = 
+                        switcher.formatValue("フォーマットした社会保障番号 : ###-##-####" , scNum.text);
+                }
+
+                else {
+                    formattedSCNumber.text= "";
+                }
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:SocialSecurityValidator id="scVal" source="{scNum}" property="text"/>
+
+    <mx:Panel title="SwitchSymbolFormatter の例" width="75%" height="75%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label text="9 桁の社会保障番号を区切り文字を含めずに入力します :"/>
+        <mx:TextInput id="scNum" text="" maxChars="9" width="50%"/>
+
+        <mx:Button label="検証およびフォーマット" click="Format();"/>
+        <mx:TextInput id="formattedSCNumber" editable="false" width="75%"/>
+
+    </mx:Panel>
+</mx:Application>

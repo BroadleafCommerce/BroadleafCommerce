@@ -1,0 +1,78 @@
+<?xml version="1.0" ?>
+<!-- Simple example to demonstrate the Transition class. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <!-- Define one view state, in addition to the base state.-->
+    <mx:states>
+        <mx:State name="Register">
+            <mx:AddChild relativeTo="{loginForm}" position="lastChild">
+                <mx:target>
+                    <mx:FormItem id="confirm" label="確認 :">
+                        <mx:TextInput/>
+                    </mx:FormItem>
+                </mx:target>
+            </mx:AddChild>
+            <mx:SetProperty target="{loginPanel}" name="title" value="登録"/>
+            <mx:SetProperty target="{loginButton}" name="label" value="登録"/>
+            <mx:SetStyle target="{loginButton}" 
+                name="color" value="blue"/>
+            <mx:RemoveChild target="{registerLink}"/>
+            <mx:AddChild relativeTo="{spacer1}" position="before">
+                <mx:target>
+                    <mx:LinkButton id="loginLink" label="ログインに戻る" click="currentState=''"/>
+                </mx:target>
+            </mx:AddChild>
+        </mx:State>
+    </mx:states>
+
+    <mx:transitions>
+        <!-- Define the transition from the base state to the Register state.-->
+        <mx:Transition id="toRegister" fromState="*" toState="Register">
+            <mx:Sequence targets="{[loginPanel, registerLink, confirm, loginLink, spacer1]}">
+                <mx:RemoveChildAction/>
+                <mx:SetPropertyAction target="{loginPanel}" name="title"/>
+                <mx:SetPropertyAction target="{loginButton}" name="label"/>
+                <mx:SetStyleAction target="{loginButton}" name="color"/>
+                <mx:Resize target="{loginPanel}"/>
+                <mx:AddChildAction/>
+            </mx:Sequence>
+        </mx:Transition>
+
+        <!-- Define the transition from the Register state to the base state.-->
+        <mx:Transition id="toDefault" fromState="Register" toState="*">
+            <mx:Sequence targets="{[loginPanel, registerLink, 
+                    confirm, loginLink, spacer1]}">
+                <mx:RemoveChildAction/>
+                <mx:SetPropertyAction target="{loginPanel}" name="title"/>
+                <mx:SetPropertyAction  target="{loginButton}" name="label"/>
+                <mx:SetStyleAction target="{loginButton}" name="color"/>
+                <mx:Resize target="{loginPanel}"/>
+                <mx:AddChildAction/>
+            </mx:Sequence>
+        </mx:Transition>
+	</mx:transitions>
+
+    <!-- Define a Panel container that defines the login form.-->
+    <mx:Panel title="ログイン" id="loginPanel" 
+        horizontalScrollPolicy="off" verticalScrollPolicy="off"
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+	
+        <mx:Text width="100%" color="blue"
+            text="'登録が必要ですか?' リンクをクリックして状態を変更します。'ログインに戻る' リンクをクリックしてベースステートに戻ります。"/>
+
+        <mx:Form id="loginForm" >
+            <mx:FormItem label="ユーザー名 : ">
+                <mx:TextInput/>
+            </mx:FormItem>
+            <mx:FormItem label="パスワード : ">
+                <mx:TextInput/>
+            </mx:FormItem>
+        </mx:Form>
+        <mx:ControlBar>
+            <mx:LinkButton id="registerLink"  label="登録が必要ですか?"
+                click="currentState='Register'"/>
+            <mx:Spacer width="100%" id="spacer1"/>
+            <mx:Button label="ログイン" id="loginButton"/>
+        </mx:ControlBar>
+    </mx:Panel>
+</mx:Application>

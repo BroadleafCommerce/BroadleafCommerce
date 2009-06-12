@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Resize effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Resize id="expand" target="{img}" widthTo="100" heightTo="200"/>
+    <mx:Resize id="contract" target="{img}" widthTo="30" heightTo="60"/>
+
+    <mx:Panel title="Resize エフェクトの例" width="100%" height="100%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue" 
+            text="Button コントロールを使用してイメージのサイズを変更します。"/>
+
+        <mx:Image id="img" width="30" height="60"
+            source="@Embed(source='assets/Nokia_6630.png')"/>
+
+        <mx:ControlBar>
+            <mx:Button label="拡大" click="expand.end(); expand.play();"/>
+            <mx:Button label="縮小" click="contract.end(); contract.play();"/>
+        </mx:ControlBar>
+
+    </mx:Panel>
+</mx:Application>

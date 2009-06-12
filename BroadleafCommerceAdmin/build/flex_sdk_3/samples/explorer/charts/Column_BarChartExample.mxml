@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the ColumnChart and BarChart controls. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+    <mx:Script>
+        <![CDATA[          
+        import mx.collections.ArrayCollection;
+
+        [Bindable]
+        private var medalsAC:ArrayCollection = new ArrayCollection( [
+            { Country: "USA", Gold: 35, Silver:39, Bronze: 29 },
+            { Country: "China", Gold: 32, Silver:17, Bronze: 14 },
+            { Country: "Russia", Gold: 27, Silver:27, Bronze: 38 } ]);
+        ]]>
+    </mx:Script>
+
+    <!-- Define custom colors for use as fills. -->
+    <mx:SolidColor id="sc1" color="yellow" alpha=".8"/>
+    <mx:SolidColor id="sc2" color="0xCCCCCC" alpha=".6"/>
+    <mx:SolidColor id="sc3" color="0xFFCC66" alpha=".6"/>
+
+    <!-- Define custom Strokes for the columns. -->
+    <mx:Stroke id="s1" color="yellow" weight="2"/>
+    <mx:Stroke id="s2" color="0xCCCCCC" weight="2"/>
+    <mx:Stroke id="s3" color="0xFFCC66" weight="2"/>
+
+    <mx:Panel title="ColumnChart and BarChart Controls Example" 
+        height="100%" width="100%" layout="horizontal">
+        <mx:ColumnChart id="column" 
+            height="100%" 
+            width="45%" 
+            paddingLeft="5" 
+            paddingRight="5" 
+            showDataTips="true" 
+            dataProvider="{medalsAC}"
+        >                
+            <mx:horizontalAxis>
+                <mx:CategoryAxis categoryField="Country"/>
+            </mx:horizontalAxis>
+                
+            <mx:series>
+                <mx:ColumnSeries 
+                    xField="Country" 
+                    yField="Gold" 
+                    displayName="Gold"
+                    fill="{sc1}"
+                    stroke="{s1}"
+                />
+                <mx:ColumnSeries 
+                    xField="Country" 
+                    yField="Silver" 
+                    displayName="Silver"
+                    fill="{sc2}"
+                    stroke="{s2}"
+                />
+                <mx:ColumnSeries 
+                    xField="Country" 
+                    yField="Bronze" 
+                    displayName="Bronze"
+                    fill="{sc3}"
+                    stroke="{s3}"
+                />
+            </mx:series>
+        </mx:ColumnChart>
+
+        <mx:Legend dataProvider="{column}"/>
+
+         <mx:BarChart id="bar" height="100%" width="45%" 
+            paddingLeft="5" paddingRight="5" 
+            showDataTips="true" dataProvider="{medalsAC}">
+                
+            <mx:verticalAxis>
+                <mx:CategoryAxis categoryField="Country"/>
+            </mx:verticalAxis>
+                
+            <mx:series>
+                <mx:BarSeries 
+                    yField="Country" 
+                    xField="Gold" 
+                    displayName="Gold"
+                    fill="{sc1}"
+                    stroke="{s1}"
+                />
+                <mx:BarSeries 
+                    yField="Country" 
+                    xField="Silver" 
+                    displayName="Silver"
+                    fill="{sc2}"
+                    stroke="{s2}"
+                />
+                <mx:BarSeries 
+                    yField="Country" 
+                    xField="Bronze" 
+                    displayName="Bronze"
+                    fill="{sc3}"
+                    stroke="{s3}"
+                />
+            </mx:series>
+        </mx:BarChart>
+
+        <mx:Legend dataProvider="{bar}"/>
+
+    </mx:Panel>
+</mx:Application>

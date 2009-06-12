@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Grid layout container.-->
+<mx:Application borderStyle="none" xmlns:mx="http://www.adobe.com/2006/mxml">
+    
+    <mx:Panel title="Grid Container Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue" 
+            text="A 3 by 3 Grid container of Button controls."/>
+
+        <mx:Grid>
+            <mx:GridRow>
+                <mx:GridItem>
+                    <mx:Button label="Row 1 Col 1" width="100"/>
+                </mx:GridItem>
+                <mx:GridItem>
+                    <mx:Button label="Row 1 Col 2" width="100"/>
+                </mx:GridItem>
+                <mx:GridItem>
+                    <mx:Button label="Row 1 Col 3" width="100"/>
+                </mx:GridItem>
+            </mx:GridRow>
+
+            <mx:GridRow>
+                <mx:GridItem>
+                    <mx:Button label="Row 2 Col 1" width="100"/>
+                </mx:GridItem>
+                <mx:GridItem>
+                    <mx:Button label="Row 2 Col 2" width="100"/>
+                </mx:GridItem>
+                <mx:GridItem>
+                    <mx:Button label="Row 2 Col 3" width="100"/>
+                </mx:GridItem>
+            </mx:GridRow>
+
+            <mx:GridRow>
+                <mx:GridItem>
+                    <mx:Button label="Row 3 Col 1" width="100"/>
+                </mx:GridItem>
+                <mx:GridItem>
+                    <mx:Button label="Row 3 Col 2" width="100"/>
+                </mx:GridItem>
+                <mx:GridItem>
+                    <mx:Button label="Row 3 Col 3" width="100"/>
+                </mx:GridItem>
+            </mx:GridRow>
+        </mx:Grid>
+
+    </mx:Panel>		
+</mx:Application>

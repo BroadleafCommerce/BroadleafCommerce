@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate the Application container. -->
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" 
+    backgroundGradientColors="[0xCCCCCC, 0x66CCFF]"
+    backgroundColor="0xCCCCCC"
+    horizontalAlign="center" verticalAlign="center"
+    applicationComplete="appComplete();">
+
+    <mx:Script>
+        <![CDATA[
+            
+            // Event handlers for the components.
+            private function appComplete():void {
+                myTA.text+="Application creation complete" + "\n";
+            }
+
+            private function panelCreationComplete():void {
+                myTA.text+="Panel creation complete" + "\n";
+            }
+
+            private function textAreaCreationComplete():void {
+                myTA.text+="\n" + "TextArea creation complete" + "\n";
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:ApplicationControlBar dock="true">
+        <mx:Button label="Set Solid Fill" 
+            click="this.setStyle('backgroundGradientColors', [0xCCCCCC, 0xCCCCCC]);"/>
+        <mx:Button label="Set Gradient Fill" 
+            click="this.setStyle('backgroundGradientColors', [0xCCCCCC, 0x66CCFF]);"/>
+    </mx:ApplicationControlBar> 
+
+    <mx:Panel title="Application Container Example" backgroundColor="0x9CB0BA"
+        width="75%" height="75%" 
+        creationComplete="panelCreationComplete();">
+        
+        <mx:TextArea id="myTA" height="100%" width="100%" 
+            text="Event order: "
+            creationComplete="textAreaCreationComplete();"/>
+
+    </mx:Panel>
+</mx:Application>

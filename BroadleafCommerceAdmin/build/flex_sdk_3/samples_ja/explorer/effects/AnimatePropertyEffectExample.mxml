@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the AnimateProperty effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Sequence id="animateScaleXUpDown" >
+        <mx:AnimateProperty property="scaleX" fromValue="1" toValue="1.5" duration="1000" />
+        <mx:AnimateProperty property="scaleX" fromValue="1.5" toValue="1" duration="1000" />	
+    </mx:Sequence>
+
+    <mx:Panel title="AnimateProperty エフェクトの例" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Text width="100%" color="blue" 
+            text="イメージをクリックして、scaleX プロパティで AnimateProperty エフェクトを使用します。"/>
+
+        <mx:Image id="flex" source="@Embed(source='assets/Nokia_6630.png')"
+            mouseDownEffect="{animateScaleXUpDown}"/>
+
+    </mx:Panel>
+</mx:Application>

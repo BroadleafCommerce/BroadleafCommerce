@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate PhoneFormatter. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+                
+            import mx.events.ValidationResultEvent;			
+            private var vResult:ValidationResultEvent;
+
+            // Event handler to validate and format input.            
+            private function Format():void
+            {
+                vResult = pnVal.validate();
+                if (vResult.type==ValidationResultEvent.VALID) {
+                    formattedPhone.text= phoneFormatter.format(phone.text);
+                }
+              
+                else {
+                    formattedPhone.text= "";
+                }
+            }
+        ]]>
+    </mx:Script>
+
+    <mx:PhoneFormatter id="phoneFormatter" 
+        formatString="(###) ###-####" validPatternChars="#-() "/>
+
+    <mx:PhoneNumberValidator id="pnVal" source="{phone}" property="text" 
+            allowedFormatChars=""/>
+
+    <mx:Panel title="PhoneFormatter Example" width="75%" height="75%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Form>
+            <mx:FormItem label="Enter a 10-digit phone number:">
+                <mx:TextInput id="phone" text="" width="75%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Formatted phone number: ">
+                <mx:TextInput id="formattedPhone" text="" width="75%" editable="false"/>
+            </mx:FormItem>
+
+            <mx:FormItem>
+                <mx:Button label="Validate and Format" click="Format();"/>
+            </mx:FormItem>
+        </mx:Form>
+
+    </mx:Panel>
+</mx:Application>

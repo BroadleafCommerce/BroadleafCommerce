@@ -1,0 +1,50 @@
+<!--
+
+	ADOBE SYSTEMS INCORPORATED
+	Copyright 2006 Adobe Systems Incorporated
+	All Rights Reserved.
+
+	NOTICE: Adobe permits you to use, modify, and distribute this file
+	in accordance with the terms of the license agreement accompanying it.
+
+-->
+
+<!-- this file normally should not be edited.  Use the command-line
+     parameters for ASDoc instead -->
+<asDocConfig>
+  <options buildNum="asd3_0_b2_1" docversion="3" standalone="false" livedocs="false" includePrivate="false" verbose="false" splitIndex="true" showVersions="false" showMXMLOnly="false" showConventions="false" showReview="true" />
+  <keywords show="false" num="500" />
+  <!--
+  <feedback show="true" type="email">
+	<feedbackEmail>
+		<label>Submit Feedback</label>
+		<address>foo@foo.com</address>
+	</feedbackEmail>
+  </feedback>
+  -->
+  <warnings langversion="false" playerversion="false"/>
+  <!-- <includeExamplesDirectory></includeExamplesDirectory> -->
+  <title>API Documentation</title> 
+  <windowTitle>API Documentation</windowTitle>
+  <footer> </footer>
+  <!-- <footer><![CDATA[ &copy; 2004-2006 Adobe Systems Incorporated. All rights reserved. ]]></footer> -->
+  <languageElements show="false" functions="false" operators="false" statements="false" />
+  <namespaces hideAll="true">
+   	<namespace hide="true">mx_internal</namespace>
+	<namespace hide="false" summaryDisplay="protected">flash_proxy</namespace>
+	<namespace hide="false" summaryDisplay="protected">object_proxy</namespace>
+	<namespace hide="false">mx_inner</namespace>
+  </namespaces>
+  <!--
+  <packages hideAll="false">
+  	<package hide="true">mx.messaging.channels.amfx</package>
+  </packages>
+  -->
+  <!--
+  <annotate>
+	<item type="package" name="mx.charts">
+		<annotation type="text">(Adobe Flex Charting 2 components only)</annotation>
+	</item>
+  </annotate>
+  -->
+</asDocConfig>

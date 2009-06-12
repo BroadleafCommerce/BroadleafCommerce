@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the SoundEffect effect. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:SoundEffect id="mySounds" source="@Embed(source='assets/jazz.mp3')"/>
+
+    <mx:Panel title="Sound Effect Example" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue" 
+            text="Click on the phone to hear the sound effect."/>
+
+        <mx:Image id="flex" source="@Embed(source='assets/Nokia_6630.png')" 
+            mouseDownEffect="{mySounds}"/>
+
+    </mx:Panel>
+</mx:Application>

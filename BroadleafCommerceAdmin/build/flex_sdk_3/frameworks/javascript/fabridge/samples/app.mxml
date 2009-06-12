@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Copyright 2006 Adobe Systems Incorporated
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-->
+
+
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" height="400" viewSourceURL="srcview/index.html">
+
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.controls.Alert;
+			import mx.controls.*;
+			import mx.charts.*;
+			import mx.charts.series.*;
+			import mx.charts.effects.*;
+
+			public function testFunc(val1:String = "defaultParam" ):void
+            {
+				Alert.show(val1, "called remotely");
+			}
+
+			// these just force datagrid to be linked into the application
+			public var refs:Array = [DataGrid, DataGridColumn, ColumnChart, ColumnSeries, LineSeries, CategoryAxis, SeriesInterpolate, SeriesSlide, SeriesZoom ];
+
+		]]>
+	</mx:Script>
+
+	<mx:Panel width="100%" height="100%" id="panel" paddingLeft="20" paddingTop="20" >
+		<mx:Text width="100%" height="16">
+			<mx:text>
+				Refer to the controls below, via javascript, as slider(), check(), and button() respectively
+			</mx:text>
+		</mx:Text>
+		<mx:CheckBox x="49" y="34" label="Checkbox" id="check"/>
+		<mx:HSlider snapInterval=".01" id="slider" liveDragging="true"/>
+		<mx:Button id="button" label="generic button" />
+	</mx:Panel>
+
+	<fab:FABridge xmlns:fab="bridge.*" />
+
+</mx:Application>

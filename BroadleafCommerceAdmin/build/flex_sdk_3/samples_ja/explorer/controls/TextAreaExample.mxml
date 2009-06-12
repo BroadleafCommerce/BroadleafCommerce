@@ -1,0 +1,20 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the TextArea control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="TextArea コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10">
+        
+        <mx:TextArea width="400" height="100">
+            <mx:text>
+ 		これは、編集可能な複数行の TextArea コントロールです。
+		編集ができない複数行のコントロールが必要な場合は、Text コントロールを使用してください。 
+            </mx:text>
+        </mx:TextArea>
+
+        <mx:TextArea width="400" height="100">
+            <mx:htmlText><![CDATA[これは、<b>TextArea コントロール</b>の <font color="#FF0000">HTML テキスト</font>です。<font color="#008800">TextArea コントロール</font>の <u>htmlText プロパティ</u>を使用して、基本の HTML マークアップをテキストに含めます。]]></mx:htmlText>
+        </mx:TextArea>
+               
+    </mx:Panel>
+</mx:Application>

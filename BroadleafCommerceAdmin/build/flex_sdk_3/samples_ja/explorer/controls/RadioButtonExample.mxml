@@ -1,0 +1,25 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate RadioButton control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        import mx.controls.Alert;
+    </mx:Script>
+
+    <mx:Panel title="RadioButton コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10">
+
+       <mx:Label width="100%" color="blue"
+           text="ボストンマラソンに最初に女性の出場が認められたのは何年ですか?"/>
+
+        <mx:RadioButton groupName="year" id="option1" label="1942"/>
+        <mx:RadioButton groupName="year" id="option2" label="1952"/>
+        <mx:RadioButton groupName="year" id="option3" label="1962"/>
+        <mx:RadioButton groupName="year" id="option4" label="1972"/>
+
+        <mx:Button label="解答を確認する"
+		 click="Alert.show(option4.selected?'正解!':'不正解', '結果')"/>
+
+    
+    </mx:Panel>
+</mx:Application>

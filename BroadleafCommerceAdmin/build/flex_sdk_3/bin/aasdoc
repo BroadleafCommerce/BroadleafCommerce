@@ -1,0 +1,21 @@
+#!/bin/sh
+
+################################################################################
+##
+##  ADOBE SYSTEMS INCORPORATED
+##  Copyright 2007 Adobe Systems Incorporated
+##  All Rights Reserved.
+##
+##  NOTICE: Adobe permits you to use, modify, and distribute this file
+##  in accordance with the terms of the license agreement accompanying it.
+##
+################################################################################
+
+# aasdoc script for Unix.
+# This simply executes the asdoc script in the same directory,
+# inserting the option +configname=air, which makes
+# asdoc use air-config.xml rather than flex-config.xml.
+# On Windows, aasdoc.bat is used instead.
+
+asdoc=`dirname "$0"`/asdoc
+"$asdoc" +configname=air "$@"

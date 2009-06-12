@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:explorer="*" 
+    width="100%" height="100%" pageTitle="Adobe Flex 3 Component Explorer" 
+    initialize="sdk.send();">
+
+    <mx:Script>
+        <![CDATA[
+
+        private function treeChanged(event:Event):void
+        {
+            var nodeApp:String = compLibTree.selectedItem.@app;
+            if (nodeApp != null && nodeApp != "")
+            {
+                swfLoader.loadApp(nodeApp + ".swf");
+                vs.loadSource(nodeApp, compLibTree.selectedItem.@src);
+            }
+            else
+            {
+                compLibTree.expandItem(compLibTree.selectedItem, true, true);
+            }
+        }
+
+        private function sdkLoaded():void
+        {
+            explorerTree = XML(sdk.lastResult.node);
+            charts.send();
+        }
+
+        private function chartsLoaded():void
+        {
+            explorerTree.appendChild(charts.lastResult.node);
+            populateTree()
+        }
+
+        //we don't use data binding because the timing of the charts loading can be off
+        private function populateTree():void
+        {
+            compLibTree.dataProvider = explorerTree;
+        }
+        ]]>
+    </mx:Script>
+
+    <mx:XML id="explorerTree"/>
+
+    <mx:HTTPService id="sdk" url="explorer.xml" resultFormat="e4x" result="sdkLoaded();" fault="//do nothing" />
+
+    <mx:HTTPService id="charts" url="charts_explorer.xml" resultFormat="e4x" result="chartsLoaded();" fault="populateTree()" />
+
+    <mx:HDividedBox width="100%" height="100%">
+        <mx:Panel width="30%" height="100%" title="Adobe Flex 3 Component Explorer">
+            <mx:Tree id="compLibTree" width="100%" height="100%" showRoot="false" labelField="@label"
+                     change="treeChanged(event);"/>
+        </mx:Panel>
+        <mx:VDividedBox width="100%" height="100%">
+            <explorer:loaderPanel id="swfLoader" width="100%" height="50%"/>
+            <mx:VBox width="100%" height="50%" backgroundColor="#FFFFFF">
+                <explorer:viewsource id="vs" width="100%" height="100%"/>
+            </mx:VBox>
+        </mx:VDividedBox>
+    </mx:HDividedBox>
+</mx:Application>

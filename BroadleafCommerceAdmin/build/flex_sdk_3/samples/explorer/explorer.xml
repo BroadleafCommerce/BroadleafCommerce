@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<compTree>
+    <node label="FrameWork Components">
+
+    <node label="Visual Components">
+        <node label="General Controls">
+            <node label="Alert" app="controls/SimpleAlert"/>
+            <node label="ColorPicker" app="controls/ColorPickerExample"/>
+            <node label="ComboBox" app="controls/SimpleComboBox"/>
+            <node label="DataGrid" app="controls/SimpleDataGrid"/>
+            <node label="HorizontalList" app="controls/HorizontalListExample"/>
+            <node label="HRule" app="controls/SimpleHRule"/>
+            <node label="HScrollBar" app="controls/HScrollBarExample"/>
+            <node label="HSlider" app="controls/SimpleImageHSlider"/>
+            <node label="List" app="controls/SimpleList"/>
+            <node label="NumericStepper" app="controls/NumericStepperExample"/>
+            <node label="ProgressBar" app="controls/SimpleProgressBar"/>
+            <node label="Spacer" app="controls/SpacerExample"/>
+            <node label="TabBar" app="controls/TabBarExample"/>
+            <node label="TileList" app="controls/TileListExample"/>
+            <node label="Tree" app="controls/TreeExample"/>
+            <node label="VRule" app="controls/SimpleVRule"/>
+            <node label="VScrollBar" app="controls/VScrollBarExample"/>
+            <node label="VSlider" app="controls/SimpleImageVSlider"/>
+        </node>
+        <node label="Button Controls">
+            <node label="Button" app="controls/ButtonExample"/>
+            <node label="ButtonBar" app="controls/ButtonBarExample"/>
+            <node label="CheckBox" app="controls/CheckBoxExample"/>
+            <node label="LinkBar" app="controls/LinkBarExample"/>
+            <node label="LinkButton" app="controls/LinkButtonExample"/>
+            <node label="PopUpButton" app="controls/PopUpButtonExample"/>
+            <node label="RadioButton" app="controls/RadioButtonExample"/>
+            <node label="RadioButtonGroup" app="controls/RadioButtonGroupExample"/>
+            <node label="ToggleButtonBar" app="controls/ToggleButtonBarExample"/>
+        </node>
+        <node label="Date Controls">
+            <node label="DateChooser" app="controls/DateChooserExample"/>
+            <node label="DateField" app="controls/DateFieldExample"/>
+        </node>
+        <node label="Loader Controls">
+            <node label="Image" app="controls/SimpleImage"/>
+            <node label="SWFLoader" app="controls/SimpleLoader" src="controls/Local.mxml"/>
+            <node label="VideoDisplay" app="controls/VideoDisplayExample"/>
+        </node>
+        <node label="Menu Controls">
+            <node label="Menu" app="controls/SimpleMenuExample"/>
+            <node label="MenuBar" app="controls/MenuBarExample"/>
+            <node label="PopUpMenuButton" app="controls/PopUpButtonMenuExample"/>
+        </node>
+        <node label="Text Controls">
+            <node label="Label" app="controls/LabelExample"/>
+            <node label="RichTextEditor" app="controls/RichTextEditorExample"/>
+            <node label="Text" app="controls/TextExample"/>
+            <node label="TextArea" app="controls/TextAreaExample"/>
+            <node label="TextInput" app="controls/TextInputExample"/>
+        </node>
+        <node label="Containers">
+            <node label="Application" app="core/SimpleApplicationExample"/>
+            <node label="Accordion" app="containers/AccordionExample"/>
+            <node label="ApplicationControlBar" app="containers/SimpleApplicationControlBarExample"/>
+            <node label="Box" app="containers/SimpleBoxExample"/>
+            <node label="Canvas" app="containers/SimpleCanvasExample"/>
+            <node label="ControlBar" app="containers/SimpleControlBarExample"/>
+            <node label="DividedBox" app="containers/DividedBoxExample"/>
+            <node label="Form, FormHeading, FormItem" app="containers/FormExample"/>
+            <node label="Grid, GridItem, GridRow" app="containers/GridLayoutExample"/>
+            <node label="HBox" app="containers/HBoxExample"/>
+            <node label="HDividedBox" app="containers/HDividedBoxExample"/>
+            <node label="Panel" app="containers/SimplePanelExample"/>
+            <node label="TabNavigator" app="containers/TabNavigatorExample"/>
+            <node label="Tile" app="containers/TileLayoutExample"/>
+            <node label="TitleWindow" app="containers/TitleWindowApp" src="containers/SimpleTitleWindowExample.mxml"/>
+            <node label="VBox" app="containers/VBoxExample"/>
+            <node label="VDividedBox" app="containers/VDividedBoxExample"/>
+            <node label="ViewStack" app="containers/ViewStackExample"/>
+        </node>
+        <node label="Repeater Control">
+            <node label="Repeater" app="core/RepeaterExample"/>
+        </node>
+    </node>
+    <node label="Print Controls">
+        <node label="FlexPrintJob, PrintDataGrid" app="printing/PrintDataGridExample" src="printing/FormPrintView.mxml&amp;printing/FormPrintHeader.mxml&amp;printing/FormPrintFooter.mxml"/>
+    </node>
+    <node label="Validators and Formatters">
+        <node label="Validators">
+            <node label="CreditCardValidator" app="validators/CreditCardValidatorExample"/>
+            <node label="CurrencyValidator" app="validators/CurrencyValidatorExample"/>
+            <node label="DateValidator" app="validators/DateValidatorExample"/>
+            <node label="EmailValidator" app="validators/EmailValidatorExample"/>
+            <node label="NumberValidator" app="validators/NumberValidatorExample"/>
+            <node label="PhoneNumberValidator" app="validators/PhoneNumberValidatorExample"/>
+            <node label="RegExpValidator" app="validators/RegExValidatorExample"/>
+            <node label="SocialSecurityValidator" app="validators/SocialSecurityValidatorExample"/>
+            <node label="StringValidator" app="validators/StringValidatorExample"/>
+            <node label="Validator" app="validators/SimpleValidatorExample"/>
+            <node label="ZipCodeValidator" app="validators/ZipCodeValidatorExample"/>
+        </node>
+        <node label="Formatters">
+            <node label="CurrencyFormatter" app="formatters/CurrencyFormatterExample"/>
+            <node label="DateFormatter" app="formatters/DateFormatterExample"/>
+            <node label="Formatter" app="formatters/SimpleFormatterExample"/>
+            <node label="NumberFormatter" app="formatters/NumberFormatterExample"/>
+            <node label="PhoneFormatter" app="formatters/PhoneFormatterExample"/>
+            <node label="SwitchSymbolFormatter" app="formatters/SwitchSymbolFormatterExample"/>
+            <node label="ZipCodeFormatter" app="formatters/ZipCodeFormatterExample"/>
+        </node>
+    </node>
+    <node label="Effects, View States, and Transitions">
+        <node label="Effects">
+            <node label="AddItemActionEffect" app="effects/AddItemActionEffectExample"/>
+            <node label="AnimateProperty" app="effects/AnimatePropertyEffectExample"/>
+            <node label="Blur" app="effects/BlurEffectExample"/>
+            <node label="Dissolve" app="effects/DissolveEffectExample"/>
+            <node label="Effect" app="effects/SimpleEffectExample"/>
+            <node label="Fade" app="effects/FadeEffectExample"/>
+            <node label="Glow" app="effects/GlowEffectExample"/>
+            <node label="Iris" app="effects/IrisEffectExample"/>
+            <node label="Move" app="effects/MoveEffectExample"/>
+            <node label="Parallel" app="effects/ParallelEffectExample"/>
+            <node label="Pause" app="effects/PauseEffectExample"/>
+            <node label="RemoveItemActionEffect" app="effects/AddItemActionEffectExample"/>
+            <node label="Resize" app="effects/ResizeEffectExample"/>
+            <node label="Rotate" app="effects/RotateEffectExample"/>
+            <node label="Sequence" app="effects/SequenceEffectExample"/>
+            <node label="SoundEffect" app="effects/SoundEffectExample"/>
+            <node label="WipeDown" app="effects/WipeDownExample"/>
+            <node label="WipeLeft" app="effects/WipeLeftExample"/>
+            <node label="WipeRight" app="effects/WipeRightExample"/>
+            <node label="WipeUp" app="effects/WipeUpExample"/>
+            <node label="Zoom" app="effects/ZoomEffectExample"/>
+        </node>
+        <node label="View States">
+            <node label="State" app="states/StatesExample"/>
+        </node>
+        <node label="Transitions">
+            <node label="Transition" app="states/TransitionExample"/>
+        </node>
+    </node>
+    </node>
+</compTree>

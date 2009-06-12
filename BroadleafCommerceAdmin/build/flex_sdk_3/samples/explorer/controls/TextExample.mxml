@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Text control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="Text Control Example" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10">
+
+        <mx:Text width="100%">
+            <mx:text>
+                This is a multiline, non-editable text component. 
+                If you need an editable multiline component, use TextArea.
+            </mx:text>
+        </mx:Text>
+
+        <mx:Text width="100%">
+            <mx:htmlText>
+                <![CDATA[This is <font color="#FF0000">HTML text</font> in a <b>Text component</b>. Using the <u>htmlText attribute</u> of the <font color="#008800">Text component</font> you can use basic HTML markup.]]>
+            </mx:htmlText>
+        </mx:Text>
+
+   </mx:Panel>
+</mx:Application>

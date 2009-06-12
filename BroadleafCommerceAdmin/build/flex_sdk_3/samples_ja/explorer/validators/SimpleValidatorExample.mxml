@@ -1,0 +1,57 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Validator class. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+			// Import necessary classes.
+            import mx.controls.Alert;
+			import mx.events.ValidationResultEvent;
+			
+			// Event listener for the valid and invalid events.
+			private function handleValid(eventObj:ValidationResultEvent):void {
+				if(eventObj.type==ValidationResultEvent.VALID)	
+				    // Enable Submit button.
+					submitButton.enabled = true;
+				else
+					submitButton.enabled = false;
+			}
+
+			// Submit form is everything is valid. 
+			private function submitForm():void {
+				Alert.show("フォームが送信されました!");
+			}
+
+        ]]>
+    </mx:Script>
+
+    <!-- The Validator class defines the required property and the validator events
+         used by all validator subclasses. -->
+    <mx:Validator id="reqValid" required="true"
+        source="{fname}" property="text" 
+        valid="handleValid(event)" invalid="handleValid(event)"/>
+        
+    <mx:Panel title="Validator の例" width="100%" height="100%" 
+            paddingTop="5" paddingLeft="5" paddingRight="5" paddingBottom="5">
+
+        <mx:Form>
+            <mx:Text width="100%" color="blue"
+                text="送信する前に [名前] フィールドに値を入力します。[電子メール] フィールドの入力はオプションです。"/>
+
+            <mx:FormItem label="名前 : " required="true">
+                <mx:TextInput id="fname" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="電子メールアドレス : " required="false">
+                <mx:TextInput id="email" width="100%"/>
+            </mx:FormItem>
+            
+            <mx:FormItem>
+                <mx:Button id="submitButton" enabled="false" 
+                    label="送信" click="submitForm();"/>
+            </mx:FormItem>
+        </mx:Form>
+
+    </mx:Panel>
+</mx:Application>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<project name="automation_rb_ja_JP" default="main" basedir=".">
+
+	<property file="build.properties"/>
+
+	<target name="main" depends="clean,compile" description="Clean build of ja_JP version of automation_rb.swc"/>
+
+	<target name="clean">
+		<delete file="${DMV_auto.dir}/locale/ja_JP/automation_rb.swc"/>
+		<delete file="${DMV_auto.dir}/locale/ja_JP/automation_rb.swc.incr"/>
+	</target>
+
+    <target name="compile">
+		<mkdir dir="${DMV_auto.dir}/locale/ja_JP"/>
+		<ant dir="${DMV_auto.dir}" target="bundle"/>
+	</target>
+
+</project>

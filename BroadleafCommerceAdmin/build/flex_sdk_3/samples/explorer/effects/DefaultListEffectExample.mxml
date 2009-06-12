@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+            import mx.effects.DefaultListEffect;
+            import mx.collections.ArrayCollection;
+            
+            [Bindable]
+            private var myDP:ArrayCollection = new ArrayCollection(
+                ['A','B','C','D','E','F','G','H']);
+            
+            private function deleteItem():void {
+                // As each item is removed, the index of the other items changes.
+                // So first get the items to delete, then determine their indices
+                // as you remove them.
+                var toRemove:Array = [];
+                for (var i:int = 0; i < list0.selectedItems.length; i++)
+                    toRemove.push(list0.selectedItems[i]);
+                for (i = 0; i < toRemove.length; i++)
+                    myDP.removeItemAt(myDP.getItemIndex(toRemove[i]));
+            }
+
+            private var zcount:int = 0;
+            private function addItem():void {
+                // Always add the new item after the third item,
+                // or after the last item if the length is less than 3.
+                myDP.addItemAt("Z"+zcount++,Math.min(3,myDP.length));
+            }            
+        ]]>
+    </mx:Script>
+
+    <!-- Define an instance of the DefaultListEffect effect, 
+         and set its fadeOutDuration and color properties. -->
+    <mx:DefaultListEffect id="myDLE" 
+        fadeOutDuration="1000" 
+        color="0x0000ff"/>
+
+    <mx:Panel title="DefaultListEffect Example" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:List id="list0" 
+            width="150"
+            dataProvider="{myDP}" 
+            variableRowHeight="true" 
+            fontSize="18" 
+            allowMultipleSelection="true" 
+            itemsChangeEffect="{myDLE}"/>
+    
+        <mx:Button 
+            label="Delete item" 
+            click="deleteItem();"/>
+        <mx:Button 
+            label="Add item" 
+            click="addItem();"/>
+
+    </mx:Panel> 
+</mx:Application>

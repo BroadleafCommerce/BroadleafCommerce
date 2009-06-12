@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate NumberFormatter. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+
+          import mx.events.ValidationResultEvent;			
+          private var vResult:ValidationResultEvent;
+
+          // Event handler to validate and format input.            
+          private function Format():void
+          {
+             vResult = numVal.validate();
+			 if (vResult.type==ValidationResultEvent.VALID) {
+			 
+                formattedNumber.text= numberFormatter.format(inputVal.text);
+             }
+             
+             else {
+                formattedNumber.text= "";
+             }
+          }
+      ]]>      
+    </mx:Script>
+
+    <mx:NumberFormatter id="numberFormatter" precision="4" 
+        useThousandsSeparator="true" useNegativeSign="true"/>
+
+    <mx:NumberValidator id="numVal" source="{inputVal}" property="text" 
+        allowNegative="true" domain="real"/>
+
+    <mx:Panel title="NumberFormatter Example" width="75%" height="75%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Form>
+            <mx:FormItem label="Enter number:">
+                <mx:TextInput id="inputVal" text="" width="50%"/>
+            </mx:FormItem>
+
+            <mx:FormItem label="Formatted number (precision=4): ">
+                <mx:TextInput id="formattedNumber" editable="false" width="50%"/>
+            </mx:FormItem>
+
+            <mx:FormItem>
+                <mx:Button label="Validate and Format" click="Format();"/>
+            </mx:FormItem>
+        </mx:Form>
+        
+    </mx:Panel>
+</mx:Application>

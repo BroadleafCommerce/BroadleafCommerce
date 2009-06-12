@@ -1,0 +1,277 @@
+/*
+////////////////////////////////////////////////////////////////////////////////
+//
+//  ADOBE SYSTEMS INCORPORATED
+//  Copyright 2007 Adobe Systems Incorporated
+//  All Rights Reserved.
+//
+//  NOTICE: Adobe permits you to use, modify, and distribute this file
+//  in accordance with the terms of the license agreement accompanying it.
+//
+////////////////////////////////////////////////////////////////////////////////
+*/
+
+/*
+//------------------------------
+//  FileSystemComboBox
+//------------------------------
+*/
+
+FileSystemComboBox
+{
+	computerIcon: Embed(source="ComputerIcon.swf", symbol="ComputerIcon");
+	directoryIcon: Embed(source="Assets.swf", symbol="TreeFolderOpen");
+}
+
+/*
+//------------------------------
+//  FileSystemDataGrid
+//------------------------------
+*/
+
+FileSystemDataGrid
+{
+	directoryIcon: Embed(source="Assets.swf", symbol="TreeFolderClosed");
+	fileIcon: Embed(source="Assets.swf", symbol="TreeNodeIcon");
+}
+
+/*
+//------------------------------
+//  FileSystemList
+//------------------------------
+*/
+
+FileSystemList
+{
+	directoryIcon: Embed(source="Assets.swf", symbol="TreeFolderClosed");
+	fileIcon: Embed(source="Assets.swf", symbol="TreeNodeIcon");
+}
+
+/*
+//------------------------------
+//  FileSystemTree
+//------------------------------
+*/
+
+FileSystemTree
+{
+	directoryIcon: Embed(source="Assets.swf", symbol="TreeFolderClosed");
+	fileIcon: Embed(source="Assets.swf", symbol="TreeNodeIcon");
+}
+
+/*
+//------------------------------
+//  .gripperSkin
+//------------------------------
+*/
+
+.gripperSkin
+{
+	downSkin: Embed("gripper_up.png");
+	overSkin: Embed("gripper_up.png");
+	upSkin: Embed("gripper_up.png");
+}
+
+/*
+//------------------------------
+//  HTML
+//------------------------------
+*/
+
+HTML
+{
+	backgroundColor: #FFFFFF;
+	borderStyle: "none";
+}
+
+/*
+//------------------------------
+//  .macCloseButton
+//------------------------------
+*/
+
+.macCloseButton
+{
+	downSkin: Embed("mac_close_down.png");
+	overSkin: Embed("mac_close_over.png");
+	upSkin: Embed("mac_close_up.png");
+}
+
+/*
+//------------------------------
+//  .macMaxButton
+//------------------------------
+*/
+
+.macMaxButton
+{
+	disabledSkin: Embed("mac_max_dis.png");
+	downSkin: Embed("mac_max_down.png");
+	overSkin: Embed("mac_max_over.png");
+	upSkin: Embed("mac_max_up.png");
+}
+
+/*
+//------------------------------
+//  .macMinButton
+//------------------------------
+*/
+
+.macMinButton
+{
+	alpha: 0.5;
+	disabledSkin: Embed("mac_min_dis.png");
+	downSkin: Embed("mac_min_down.png");
+	overSkin: Embed("mac_min_over.png");
+	upSkin: Embed("mac_min_up.png");
+}
+
+/*
+//------------------------------
+//  .statusTextStyle
+//------------------------------
+*/
+
+.statusTextStyle
+{
+	alpha: 0.6;
+	color: #585858;
+	fontSize: 10;
+}
+
+/*
+//------------------------------
+//  .titleTextStyle
+//------------------------------
+*/
+
+.titleTextStyle
+{
+	alpha: 0.6;
+	color: #585858;
+	fontSize: 9;
+}
+
+/*
+//------------------------------
+//  .winCloseButton
+//------------------------------
+*/
+
+.winCloseButton
+{
+	downSkin: Embed("win_close_down.png");
+	overSkin: Embed("win_close_over.png");
+	upSkin: Embed("win_close_up.png");
+}
+
+/*
+//------------------------------
+//  Window
+//------------------------------
+*/
+
+Window
+{
+	borderColor: #A6A6A6;
+	borderStyle: "solid";
+	borderThickness: 1;
+	buttonPadding: 2;
+	closeButtonSkin: ClassReference("mx.skins.halo.WindowCloseButtonSkin");
+	cornerRadius: 8;
+	backgroundColor: #C0C0C0;
+	backgroundImage: ClassReference("mx.skins.halo.WindowBackground");
+	buttonAlignment: "auto";
+	gripperPadding: 3;
+	gripperStyleName: "gripperSkin";
+	highlightAlphas: 1.0, 1.0;
+	maximizeButtonSkin: ClassReference("mx.skins.halo.WindowMaximizeButtonSkin");       
+	minimizeButtonSkin: ClassReference("mx.skins.halo.WindowMinimizeButtonSkin");     
+	restoreButtonSkin: ClassReference("mx.skins.halo.WindowRestoreButtonSkin");  
+	roundedBottomCorners: false;
+	showFlexChrome: true;
+	statusBarBackgroundSkin: ClassReference("mx.skins.halo.StatusBarBackgroundSkin");
+	statusBarBackgroundColor: #CCCCCC;
+	statusTextStyleName: "statusTextStyle";
+	titleAlignment: "auto";
+	titleBarBackgroundSkin: ClassReference("mx.skins.halo.ApplicationTitleBarBackgroundSkin");
+	titleBarButtonPadding: 5;
+	titleBarColors: #FFFFFF, #BABABA;
+	titleTextStyleName: "titleTextStyle";
+}
+
+/*
+//------------------------------
+//  WindowedApplication
+//------------------------------
+*/
+
+WindowedApplication
+{
+	borderColor: #A6A6A6;
+	borderStyle: "solid";
+	borderThickness: 1;
+	buttonPadding: 2;
+	closeButtonSkin: ClassReference("mx.skins.halo.WindowCloseButtonSkin");
+	cornerRadius: 8;
+	backgroundColor: #C0C0C0;
+	backgroundImage: ClassReference("mx.skins.halo.WindowBackground");
+	buttonAlignment: "auto";
+	gripperPadding: 3;
+	gripperStyleName: "gripperSkin";
+	highlightAlphas: 1.0, 1.0;
+	maximizeButtonSkin: ClassReference("mx.skins.halo.WindowMaximizeButtonSkin");       
+	minimizeButtonSkin: ClassReference("mx.skins.halo.WindowMinimizeButtonSkin");                
+	restoreButtonSkin: ClassReference("mx.skins.halo.WindowRestoreButtonSkin");  
+	roundedBottomCorners: false;
+	showFlexChrome: true;
+	statusBarBackgroundSkin: ClassReference("mx.skins.halo.StatusBarBackgroundSkin");
+	statusBarBackgroundColor: #CCCCCC;
+	statusTextStyleName: "statusTextStyle";
+	titleAlignment: "auto";
+	titleBarBackgroundSkin: ClassReference("mx.skins.halo.ApplicationTitleBarBackgroundSkin");
+	titleBarButtonPadding: 5;
+	titleBarColors: #FFFFFF, #BABABA;
+	titleTextStyleName: "titleTextStyle";
+}
+
+/*
+//------------------------------
+//  .winMaxButton
+//------------------------------
+*/
+
+.winMaxButton
+{
+	upSkin: Embed("win_max_up.png");
+	overSkin: Embed("win_max_over.png");
+	downSkin: Embed("win_max_down.png");
+	disabledSkin: Embed("win_max_dis.png");
+}
+
+/*
+//------------------------------
+//  .winMinButton
+//------------------------------
+*/
+
+.winMinButton
+{
+	upSkin: Embed("win_min_up.png");
+	overSkin: Embed("win_min_over.png");
+	downSkin: Embed("win_min_down.png");
+	disabledSkin: Embed("win_min_dis.png");
+}
+
+/*
+//------------------------------
+//  .winRestoreButton
+//------------------------------
+*/
+
+.winRestoreButton
+{
+	upSkin: Embed("win_restore_up.png");
+	overSkin: Embed("win_restore_over.png");
+	downSkin: Embed("win_restore_down.png");
+}

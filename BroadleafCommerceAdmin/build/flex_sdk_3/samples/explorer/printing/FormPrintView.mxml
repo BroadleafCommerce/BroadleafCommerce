@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!-- Custom control to print the DataGrid control on multiple pages. -->
+
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*" backgroundColor="#FFFFFF"
+    paddingTop="50" paddingBottom="50" paddingLeft="50">
+
+    <mx:Script>
+        <![CDATA[
+            import mx.core.*
+            // Declare and initialize the variables used in the component.
+            // The application sets the actual prodTotal value.
+            [Bindable]
+            public var pageNumber:Number = 1;
+            [Bindable]
+            public var prodTotal:Number = 0;
+
+            // Control the page contents by selectively hiding the header and
+            // footer based on the page type.
+            public function showPage(pageType:String):void {
+                if(pageType == "first" || pageType == "middle") {
+                    // Hide the footer.
+                    footer.includeInLayout=false;
+                    footer.visible = false;
+                }
+                if(pageType == "middle" || pageType == "last") {
+                    // The header won't be used again; hide it.
+                    header.includeInLayout=false;
+                    header.visible = false;
+                }
+                if(pageType == "last") {
+                    // Show the footer.
+                    footer.includeInLayout=true;
+                    footer.visible = true;
+                }
+                //Update the DataGrid layout to reflect the results.
+                validateNow();
+            }        
+        ]]>
+    </mx:Script>
+
+    <!-- The template for the printed page, with the contents for all pages. -->
+    <mx:VBox width="80%" horizontalAlign="left">
+        <mx:Label text="Page {pageNumber}"/>
+    </mx:VBox>
+
+    <FormPrintHeader id="header" />
+    <!-- The data grid. The sizeToPage property is true by default, so the last
+        page has only as many grid rows as are needed for the data. -->
+    <mx:PrintDataGrid id="myDataGrid" width="60%" height="100%">
+    <!-- Specify the columns to ensure that their order is correct. -->
+        <mx:columns>
+            <mx:DataGridColumn dataField="Index" />
+            <mx:DataGridColumn dataField="Qty" />
+        </mx:columns>
+    </mx:PrintDataGrid>
+
+    <!-- Create a FormPrintFooter control and set its prodTotal variable. -->
+    <FormPrintFooter id="footer" pTotal="{prodTotal}" />
+
+</mx:VBox>

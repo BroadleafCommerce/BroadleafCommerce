@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate Panel layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+       
+            private function showProperties():void  {
+	            panelPropertyArea.text= "Status: " + panel.status + '\n' +
+				  "Title: " + panel.title + '\n' +
+				  "Width: " + panel.width + '\n' +
+				  "Height: " + panel.height ;
+	        }
+        ]]>
+    </mx:Script>
+
+    <mx:Panel id="panel" title="Panel Container Example" status="Active" 
+            height="75%" width="75%" 
+            paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue"
+            text="Click the Button control to see panel properties."/>
+
+        <mx:TextArea id="panelPropertyArea" width="100%" height="100%"/>
+        <mx:Button label="Click to view Panel properties" click="showProperties();"/>
+
+    </mx:Panel>
+</mx:Application>

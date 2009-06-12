@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the TabNavigator layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="TabNavigator Container Example" height="90%" width="90%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue"
+            text="Select the tabs to change the panel."/>
+
+        <mx:TabNavigator id="tn"  width="100%" height="100%">
+            <!-- Define each panel using a VBox container. -->
+
+            <mx:VBox label="Panel 1">
+                <mx:Label text="TabNavigator container panel 1"/>
+            </mx:VBox>
+
+            <mx:VBox label="Panel 2">
+                <mx:Label text="TabNavigator container panel 2"/>
+            </mx:VBox>
+
+            <mx:VBox label="Panel 3">
+                <mx:Label text="TabNavigator container panel 3"/>
+            </mx:VBox>
+        </mx:TabNavigator>
+
+        <mx:Label width="100%" color="blue"
+            text="Programmatically select the panel using a Button control."/>
+
+        <mx:HBox>
+            <mx:Button label="Select Tab 1" click="tn.selectedIndex=0"/>
+            <mx:Button label="Select Tab 2" click="tn.selectedIndex=1"/>
+            <mx:Button label="Select Tab 3" click="tn.selectedIndex=2"/>
+        </mx:HBox>
+    
+    </mx:Panel>
+</mx:Application>

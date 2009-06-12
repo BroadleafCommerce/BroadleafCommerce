@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- Simple example to demonstrate the Accordion layout container. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Panel title="Accordion コンテナの例" height="90%" width="90%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+        <mx:Label width="100%" color="blue"
+            text="Accordion ナビゲータボタンを選択してパネルを変更します。"/>
+
+        <mx:Accordion id="accordion" width="100%" height="100%">
+            <!-- Define each panel using a VBox container. -->
+            <mx:VBox label="パネル 1 の Accordion ボタン">
+                <mx:Label text="Accordion コンテナのパネル 1"/>
+            </mx:VBox>
+
+            <mx:VBox label="パネル 2 の Accordion ボタン">
+                <mx:Label text="Accordion コンテナのパネル 2"/>
+            </mx:VBox>
+
+            <mx:VBox label="パネル 3 の Accordion ボタン">
+                <mx:Label text="Accordion コンテナのパネル 3"/>
+            </mx:VBox>
+        </mx:Accordion>
+
+        <mx:Label width="100%" color="blue"
+            text="プログラムで Button コントロールを使用してパネルを選択します。"/>
+
+        <mx:HBox>
+            <mx:Button label="パネル 1 を選択" click="accordion.selectedIndex=0;"/>
+            <mx:Button label="パネル 2 を選択" click="accordion.selectedIndex=1;"/>
+            <mx:Button label="パネル 3 を選択" click="accordion.selectedIndex=2;"/>
+        </mx:HBox>
+    
+    </mx:Panel>
+</mx:Application>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate SocialSecurityValidator. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        import mx.controls.Alert;
+    </mx:Script>
+
+    <mx:SocialSecurityValidator source="{ssn}" property="text" 
+        trigger="{myButton}" triggerEvent="click"
+        valid="Alert.show('検証が成功しました!');"/>
+
+    <mx:Panel title="社会保障バリデータパネル" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+        
+        <mx:Form>
+            <mx:FormItem label="社会保障番号を入力します : ">
+                <mx:TextInput id="ssn" width="100%"/>
+            </mx:FormItem>
+
+            <mx:FormItem >
+                <mx:Button id="myButton" label="検証" />
+            </mx:FormItem>
+        </mx:Form>
+    </mx:Panel>
+</mx:Application>

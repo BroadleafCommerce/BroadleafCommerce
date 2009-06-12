@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PopUpMenuButton control example. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        <![CDATA[
+            import mx.events.*;
+            import mx.controls.*;
+			
+            //Event handler, invoked when you select from the menu.
+            public function itemClickHandler(event:MenuEvent):void {
+                Alert.show("Menu label: " + event.label
+                    + "  \n menu item index within parent menu: " + event.index);
+            }
+        ]]>
+    </mx:Script>
+	
+    <!-- A an data provider in E4X format. -->
+    <mx:XMLList id="treeDP2">
+        <node label="Inbox"/>
+        <node label="Calendar"/>
+        <node label="Deleted Items"/>
+    </mx:XMLList>
+
+    <mx:Panel title="PopUpMenuButton Control Example" height="100%" width="100%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10">
+
+		<mx:Label width="100%" color="blue"
+		    text="Click the down arrow to open the menu."/>
+
+        <mx:PopUpMenuButton id="p2" 
+            dataProvider="{treeDP2}" 
+            labelField="@label"
+            itemClick="itemClickHandler(event);"/>
+
+	</mx:Panel>
+</mx:Application>

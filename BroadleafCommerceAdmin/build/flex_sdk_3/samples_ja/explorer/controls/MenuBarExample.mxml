@@ -1,0 +1,56 @@
+﻿<?xml version="1.0"?>
+<!-- Simple example to demonstrate the MenuBar control. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initCollections();" >
+
+    <mx:Script>
+        <![CDATA[
+
+            import mx.events.MenuEvent;
+            import mx.controls.Alert;
+            import mx.collections.*;
+
+            [Bindable]
+            public var menuBarCollection:XMLListCollection;
+    
+            private var menubarXML:XMLList =
+        	    <>
+                    <menuitem label="メニュー1">
+                        <menuitem label="メニューアイテム 1-A" data="1A"/>
+                        <menuitem label="メニューアイテム 1-B" data="1B"/>
+                    </menuitem>
+                    <menuitem label="メニュー2">
+                        <menuitem label="メニューアイテム 2-A" type="check"  data="2A"/>
+                        <menuitem type="separator" />
+                        <menuitem label="メニューアイテム 2-B" >
+                             <menuitem label="サブメニューアイテム 3-A" type="radio"
+                                groupName="one" data="3A"/>
+                            <menuitem label="サブメニューアイテム 3-B" type="radio"
+                                groupName="one" data="3B"/>
+                        </menuitem>
+                    </menuitem>
+                </>;
+
+            // Event handler for the MenuBar control's itemClick event.
+            private function menuHandler(event:MenuEvent):void  {
+                Alert.show("ラベル : " + event.item.@label + "\n" + 
+                    "データ : " + event.item.@data, "クリックされたメニューアイテム");
+            }
+
+            // Event handler to initialize the MenuBar control.
+            private function initCollections():void {
+        		menuBarCollection = new XMLListCollection(menubarXML);
+            }
+         ]]>
+    </mx:Script>
+
+    <mx:Panel title="MenuBar コントロールの例" height="75%" width="75%" 
+        paddingTop="10" paddingLeft="10">
+
+        <mx:Label width="100%" color="blue"
+           text="メニューアイテムを選択します。"/>
+
+        <mx:MenuBar labelField="@label" itemClick="menuHandler(event);" 
+            dataProvider="{menuBarCollection}" />
+            
+    </mx:Panel>
+</mx:Application>

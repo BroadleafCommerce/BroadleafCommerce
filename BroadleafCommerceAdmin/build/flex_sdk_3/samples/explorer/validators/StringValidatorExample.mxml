@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Simple example to demonstrate StringValidator. -->
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <mx:Script>
+        import mx.controls.Alert;
+    </mx:Script>
+
+    <mx:StringValidator source="{fname}" property="text" 
+    	tooShortError="This string is shorter than the minimum allowed length of 4. " 
+    	tooLongError="This string is longer than the maximum allowed length of 20." 
+    	minLength="4" maxLength="20"  
+    	trigger="{myButton}" triggerEvent="click" 
+    	valid="Alert.show('Validation Succeeded!');"/>
+
+    <mx:Panel title="StringValidator Example" width="75%" height="75%" 
+        paddingTop="10" paddingLeft="10" paddingRight="10" paddingBottom="10">
+
+            <mx:Form>               
+			    <mx:FormItem label="Enter a name between 4 and 20 characters: ">
+                    <mx:TextInput id="fname" width="100%"/>
+                </mx:FormItem>
+
+                <mx:FormItem >
+                    <mx:Button id="myButton" label="Validate" />
+                </mx:FormItem>
+            </mx:Form>	
+    </mx:Panel>
+</mx:Application>
