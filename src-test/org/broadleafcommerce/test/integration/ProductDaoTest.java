@@ -69,4 +69,14 @@ public class ProductDaoTest extends BaseTest {
         assert result.getDimensionString().equals("50Hx25.5Wx75.5D\"");
     }
 
+    @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
+    public void testFeaturedProduct(Product product) {
+        product = productDao.save(product);
+        Long productId = product.getId();
+        product.setFeaturedProduct(true);
+        productDao.save(product);
+        Product testProduct = productDao.readProductById(productId);
+        assert (testProduct.getIsFeaturedProduct() == true);
+    }
+
 }

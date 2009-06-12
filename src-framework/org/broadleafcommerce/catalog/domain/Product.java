@@ -272,4 +272,16 @@ public interface Product extends Serializable {
      */
     public String getDimensionString();
 
+    /**
+     * Returns whether or not the product is featured
+     * @return isFeaturedProduct as Boolean
+     */
+    public boolean getIsFeaturedProduct();
+
+    /**
+     * Sets whether or not the product is featured
+     * @param isFeaturedProduct
+     */
+    public void setFeaturedProduct(boolean isFeaturedProduct);
+
 }

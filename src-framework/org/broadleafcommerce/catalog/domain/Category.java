@@ -241,4 +241,18 @@ public interface Category extends Serializable {
      * @param longDescription the new long description
      */
     public void setLongDescription(String longDescription);
+
+    /**
+     * Gets the featured products.
+     * 
+     * @return the featured products
+     */
+    public List<FeaturedProduct> getFeaturedProducts();
+
+    /**
+     * Sets the featured products.
+     * 
+     * @param featuredProducts the featured products
+     */
+    public void setFeaturedProducts(List<FeaturedProduct> featuredProducts);
 }
