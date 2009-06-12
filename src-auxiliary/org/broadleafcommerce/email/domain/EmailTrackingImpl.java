@@ -21,9 +21,11 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * @author jfischer
@@ -37,7 +39,8 @@ public class EmailTrackingImpl implements EmailTracking {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "EmailTrackingId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "EmailTrackingId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "EmailTrackingImpl", allocationSize = 50)
     @Column(name = "EMAIL_TRACKING_ID")
     protected Long id;
 

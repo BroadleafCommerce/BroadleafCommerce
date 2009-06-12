@@ -28,7 +28,7 @@ public class Auditable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "DATE_CREATED", updatable = false)
+    @Column(name = "DATE_CREATED", updatable = false, nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
     protected Date dateCreated;
 

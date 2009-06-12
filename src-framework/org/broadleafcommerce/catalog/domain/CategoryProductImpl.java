@@ -56,12 +56,12 @@ public class CategoryProductImpl implements CategoryProduct {
     protected Long id;
 
     /** The category. */
-    @ManyToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
     @JoinColumn(name = "CATEGORY_ID")
     protected Category category;
 
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product;
 

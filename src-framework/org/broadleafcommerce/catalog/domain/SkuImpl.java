@@ -24,6 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -31,6 +32,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.apache.log4j.Logger;
 import org.broadleafcommerce.util.DateUtil;
@@ -67,7 +69,8 @@ public class SkuImpl implements Sku {
 
     /** The id. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "SkuId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "SkuId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuImpl", allocationSize = 50)
     @Column(name = "SKU_ID")
     protected Long id;
 

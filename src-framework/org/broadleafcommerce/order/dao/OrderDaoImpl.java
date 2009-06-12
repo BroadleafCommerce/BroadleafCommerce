@@ -52,6 +52,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order save(Order order) {
+        order.getAuditable().setDateUpdated(new Date());
         if (order.getId() == null) {
             em.persist(order);
         } else {

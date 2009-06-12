@@ -22,12 +22,14 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -47,7 +49,8 @@ public class BasePriceImpl implements BasePrice {
 
     /** The id. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "BasePriceId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "BasePriceId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "BasePriceImpl", allocationSize = 50)
     @Column(name = "BASE_PRICE_ID")
     protected Long id;
 
@@ -61,7 +64,7 @@ public class BasePriceImpl implements BasePrice {
     protected Sku sku;
 
     /** The amount. */
-    @Column(name = "AMOUNT")
+    @Column(name = "AMOUNT", nullable=false)
     protected BigDecimal amount;
 
     /** The start date. */
