@@ -16,6 +16,7 @@
 package org.broadleafcommerce.email.domain;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -54,10 +55,10 @@ public class EmailTrackingImpl implements EmailTracking {
     protected String type;
 
     @OneToMany(mappedBy = "emailTracking", targetEntity = EmailTrackingClicksImpl.class)
-    protected Set<EmailTrackingClicks> emailTrackingClicks;
+    protected Set<EmailTrackingClicks> emailTrackingClicks = new HashSet<EmailTrackingClicks>();
 
     @OneToMany(mappedBy = "emailTracking", targetEntity = EmailTrackingOpensImpl.class)
-    protected Set<EmailTrackingOpens> emailTrackingOpens;
+    protected Set<EmailTrackingOpens> emailTrackingOpens = new HashSet<EmailTrackingOpens>();
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.email.domain.EmailTracking#getId()

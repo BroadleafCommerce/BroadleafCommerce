@@ -49,21 +49,21 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     protected EncryptionModule encryptionModule;
 
     @Id
-    @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CreditCardPaymentInfoImpl", allocationSize = 1)
+    @GeneratedValue(generator = "CreditCardPaymentId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CreditCardPaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CreditCardPaymentInfoImpl", allocationSize = 50)
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER")
     protected String referenceNumber;
 
-    @Column(name = "PAN")
+    @Column(name = "PAN", nullable=false)
     protected String pan;
 
-    @Column(name = "EXPIRATION_MONTH")
+    @Column(name = "EXPIRATION_MONTH", nullable=false)
     protected Integer expirationMonth;
 
-    @Column(name = "EXPIRATION_YEAR")
+    @Column(name = "EXPIRATION_YEAR", nullable=false)
     protected Integer expirationYear;
 
     @Transient

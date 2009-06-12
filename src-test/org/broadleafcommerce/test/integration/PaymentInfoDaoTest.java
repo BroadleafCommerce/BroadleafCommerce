@@ -24,6 +24,7 @@ import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -63,6 +64,7 @@ public class PaymentInfoDaoTest extends BaseTest {
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);
+        paymentInfo.setType(PaymentInfoType.CREDIT_CARD);
 
         assert paymentInfo.getId() == null;
         paymentInfo = paymentInfoDao.save(paymentInfo);

@@ -50,12 +50,12 @@ public class PaymentInfoImpl implements PaymentInfo {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentInfoImpl", allocationSize = 1)
+    @GeneratedValue(generator = "PaymentInfoId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "PaymentInfoId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentInfoImpl", allocationSize = 50)
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class)
+    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
@@ -73,7 +73,7 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Column(name = "REFERENCE_NUMBER")
     protected String referenceNumber;
 
-    @Column(name = "PAYMENT_TYPE")
+    @Column(name = "PAYMENT_TYPE", nullable=false)
     protected String type;
 
     @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})

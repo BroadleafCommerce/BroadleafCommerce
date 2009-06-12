@@ -38,6 +38,7 @@ public class SkuDaoTest extends BaseTest {
     public void createSku(Sku sku) {
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
+        sku.setName("test sku");
         assert sku.getId() == null;
         sku = skuDao.save(sku);
         assert sku.getId() != null;

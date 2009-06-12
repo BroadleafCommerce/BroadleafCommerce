@@ -19,12 +19,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
 
 @Entity
@@ -35,18 +37,19 @@ public class CustomerPhoneImpl implements CustomerPhone{
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "CustomerPhoneId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CustomerPhoneId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerPhoneImpl", allocationSize = 50)
     @Column(name = "CUSTOMER_PHONE_ID")
     protected Long id;
 
     @Column(name = "PHONE_NAME")
     protected String phoneName;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)
     @JoinColumn(name = "PHONE_ID")
     protected Phone phone;
 

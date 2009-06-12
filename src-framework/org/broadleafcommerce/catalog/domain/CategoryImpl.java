@@ -26,6 +26,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -35,6 +36,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.apache.commons.validator.GenericValidator;
@@ -75,7 +77,8 @@ public class CategoryImpl implements Category {
 
     /** The id. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "CategoryId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CategoryId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategoryImpl", allocationSize = 50)
     @Column(name = "CATEGORY_ID")
     protected Long id;
 
@@ -118,7 +121,7 @@ public class CategoryImpl implements Category {
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
-    protected List<Category> allChildCategories;
+    protected List<Category> allChildCategories = new ArrayList<Category>();
 
     /** The all parent categories. */
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
@@ -126,7 +129,7 @@ public class CategoryImpl implements Category {
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
-    protected List<Category> allParentCategories;
+    protected List<Category> allParentCategories = new ArrayList<Category>();
 
     /** The category images. */
     @CollectionOfElements
@@ -134,7 +137,7 @@ public class CategoryImpl implements Category {
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    protected Map<String, String> categoryImages;
+    protected Map<String, String> categoryImages = new HashMap<String, String>();
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
@@ -147,7 +150,7 @@ public class CategoryImpl implements Category {
 
     /** The child categories. */
     @Transient
-    protected List<Category> childCategories;
+    protected List<Category> childCategories = new ArrayList<Category>();
 
     /** The cached child category url map. */
     @Transient

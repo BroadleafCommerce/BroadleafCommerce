@@ -44,15 +44,15 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     protected EncryptionModule encryptionModule;
 
     @Id
-    @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "GiftCardPaymentInfoImpl", allocationSize = 1)
+    @GeneratedValue(generator = "GiftCardPaymentId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "GiftCardPaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "GiftCardPaymentInfoImpl", allocationSize = 50)
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER")
     protected String referenceNumber;
 
-    @Column(name = "PAN")
+    @Column(name = "PAN", nullable=false)
     protected String pan;
 
     @Column(name = "PIN")

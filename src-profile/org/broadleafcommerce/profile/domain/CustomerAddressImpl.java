@@ -20,12 +20,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
@@ -39,28 +41,21 @@ public class CustomerAddressImpl implements CustomerAddress {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "CustomerAddressId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CustomerAddressId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerAddressImpl", allocationSize = 50)
     @Column(name = "CUSTOMER_ADDRESS_ID")
     protected Long id;
 
     @Column(name = "ADDRESS_NAME")
     protected String addressName;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class, optional=false)
     @JoinColumn(name = "ADDRESS_ID")
     protected Address address;
-
-    /*public CustomerAddressImpl() {
-        this(null);
-    }
-
-    public CustomerAddressImpl(Customer customer) {
-        this.customer = customer;
-    }*/
 
     public Long getId() {
         return id;

@@ -49,18 +49,18 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
     protected EncryptionModule encryptionModule;
 
     @Id
-    @GeneratedValue(generator = "PaymentId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "BankAccountPaymentInfoImpl", allocationSize = 1)
+    @GeneratedValue(generator = "BankPaymentId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "BankPaymentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "BankAccountPaymentInfoImpl", allocationSize = 50)
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
-    @Column(name = "REFERENCE_NUMBER")
+    @Column(name = "REFERENCE_NUMBER", nullable=false)
     protected String referenceNumber;
 
-    @Column(name = "ACCOUNT_NUMBER")
+    @Column(name = "ACCOUNT_NUMBER", nullable=false)
     protected String accountNumber;
 
-    @Column(name = "ROUTING_NUMBER")
+    @Column(name = "ROUTING_NUMBER", nullable=false)
     protected String routingNumber;
 
     public Long getId() {

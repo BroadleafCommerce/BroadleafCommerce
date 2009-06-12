@@ -37,7 +37,7 @@ public class StateImpl implements State {
     @Column(name = "ABBREVIATION")
     protected String abbreviation;
 
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable=false)
     protected String name;
 
     public String getAbbreviation() {

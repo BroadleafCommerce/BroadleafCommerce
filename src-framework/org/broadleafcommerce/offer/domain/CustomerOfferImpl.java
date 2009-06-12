@@ -17,12 +17,14 @@ package org.broadleafcommerce.offer.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
@@ -35,15 +37,16 @@ public class CustomerOfferImpl implements CustomerOffer {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "CustomerOfferId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CustomerOfferId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerOfferImpl", allocationSize = 50)
     @Column(name = "CUSTOMER_OFFER_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CustomerImpl.class)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @ManyToOne(targetEntity = OfferImpl.class)
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 

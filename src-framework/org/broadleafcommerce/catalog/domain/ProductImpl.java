@@ -18,6 +18,7 @@ package org.broadleafcommerce.catalog.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -36,6 +38,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
@@ -74,12 +77,13 @@ public class ProductImpl implements Product {
 
     /** The id. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "ProductId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "ProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ProductImpl", allocationSize = 50)
     @Column(name = "PRODUCT_ID")
     protected Long id;
 
     /** The name. */
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable=false)
     protected String name;
 
     /** The description. */
@@ -118,14 +122,14 @@ public class ProductImpl implements Product {
     //TODO remove the transient annotations once all SQL files have been updated.
     @Transient
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
-    protected List<RelatedProduct> crossSaleProducts;
+    protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     /** The all skus. */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
-    protected List<Sku> allSkus;
+    protected List<Sku> allSkus = new ArrayList<Sku>();
 
     /** The product images. */
     @CollectionOfElements
@@ -133,7 +137,7 @@ public class ProductImpl implements Product {
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    protected Map<String, String> productImages;
+    protected Map<String, String> productImages = new HashMap<String, String>();
 
     /** The default category. */
     @OneToOne(targetEntity = CategoryImpl.class)
@@ -144,7 +148,7 @@ public class ProductImpl implements Product {
     @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     @BatchSize(size = 50)
-    protected List<Category> allParentCategories;
+    protected List<Category> allParentCategories = new ArrayList<Category>();
 
     @Column(name = "IS_FEATURED_PRODUCT")
     @Transient
@@ -152,7 +156,7 @@ public class ProductImpl implements Product {
 
     /** The skus. */
     @Transient
-    protected List<Sku> skus;
+    protected List<Sku> skus = new ArrayList<Sku>();
 
     /*
      * (non-Javadoc)

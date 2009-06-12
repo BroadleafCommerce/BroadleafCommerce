@@ -99,8 +99,8 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         newFG.setAddress(address);
         newFG.setRetailShippingPrice(fulfillmentGroup.getRetailShippingPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
-        // newFG.setOrderId(salesOrder.getId());
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
+        newFG.setOrder(salesOrder);
 
         assert newFG.getId() == null;
         fulfillmentGroup = fulfillmentGroupDao.save(newFG);

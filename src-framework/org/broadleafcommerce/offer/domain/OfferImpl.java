@@ -21,10 +21,12 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
@@ -39,20 +41,21 @@ public class OfferImpl implements Offer {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "OfferId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "OfferId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferImpl", allocationSize = 50)
     @Column(name = "OFFER_ID")
     protected Long id;
 
-    @Column(name = "OFFER_NAME")
+    @Column(name = "OFFER_NAME", nullable=false)
     protected String name;
 
-    @Column(name = "OFFER_TYPE")
+    @Column(name = "OFFER_TYPE", nullable=false)
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     protected String discountType;
 
-    @Column(name = "OFFER_VALUE")
+    @Column(name = "OFFER_VALUE", nullable=false)
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
@@ -85,7 +88,7 @@ public class OfferImpl implements Offer {
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
     protected boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
 
-    @Column(name = "OFFER_DELIVERY_TYPE")
+    @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
     protected String deliveryType;
 
     @Column(name = "MAX_USES")

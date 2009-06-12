@@ -44,6 +44,7 @@ public class CategoryDaoTest extends BaseTest {
         Product product = new ProductImpl();
         product.setModel("KGX200");
         product.setDescription("This thing will change your life");
+        product.setName("Test Product");
         product = productDao.save(product);
 
         FeaturedProduct featuredProduct = new FeaturedProductImpl();

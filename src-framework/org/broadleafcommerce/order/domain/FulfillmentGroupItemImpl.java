@@ -43,19 +43,19 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 
     @Id
     @GeneratedValue(generator = "FulfillmentGroupItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FulfillmentGroupItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupItemImpl", allocationSize = 1)
+    @TableGenerator(name = "FulfillmentGroupItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupItemImpl", allocationSize = 50)
     @Column(name = "FULFILLMENT_GROUP_ITEM_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = FulfillmentGroupImpl.class)
+    @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional=false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     protected FulfillmentGroup fulfillmentGroup;
 
-    @OneToOne(targetEntity = OrderItemImpl.class)
+    @OneToOne(targetEntity = OrderItemImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 
-    @Column(name = "QUANTITY")
+    @Column(name = "QUANTITY", nullable=false)
     protected int quantity;
 
     @Column(name = "RETAIL_PRICE")

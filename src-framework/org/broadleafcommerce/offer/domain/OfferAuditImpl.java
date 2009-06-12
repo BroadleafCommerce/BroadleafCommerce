@@ -21,12 +21,14 @@ import java.sql.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.util.money.Money;
@@ -39,7 +41,8 @@ public class OfferAuditImpl implements OfferAudit {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "OfferAuditId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "OfferAuditId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferAuditImpl", allocationSize = 50)
     @Column(name = "OFFER_AUDIT_ID")
     protected Long id;
 

@@ -34,7 +34,7 @@ public class PersonalMessageImpl implements PersonalMessage {
 
     @Id
     @GeneratedValue(generator = "PersonalMessageId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PersonalMessageId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PersonalMessageImpl", allocationSize = 1)
+    @TableGenerator(name = "PersonalMessageId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PersonalMessageImpl", allocationSize = 50)
     @Column(name = "PERSONAL_MESSAGE_ID")
     protected Long id;
 

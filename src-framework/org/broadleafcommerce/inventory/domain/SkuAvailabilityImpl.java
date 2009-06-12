@@ -20,10 +20,12 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.hibernate.annotations.Cache;
@@ -55,7 +57,8 @@ public class SkuAvailabilityImpl implements SkuAvailability {
 
     /** The id. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "SkuAvailabilityId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "SkuAvailabilityId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAvailabilityImpl", allocationSize = 50)
     @Column(name = "SKU_AVAILABILITY_ID")
     protected Long id;
 
@@ -82,7 +85,6 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     /** The date this product will be available. */
     @Column(name = "AVAILABILITY_DATE")
     protected Date availabilityDate;
-
 
     @Override
     public Long getId() {

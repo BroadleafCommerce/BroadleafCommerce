@@ -41,30 +41,30 @@ public class AddressImpl implements Address {
 
     @Id
     @GeneratedValue(generator = "AddressId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "AddressId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AddressImpl", allocationSize = 1)
+    @TableGenerator(name = "AddressId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AddressImpl", allocationSize = 50)
     @Column(name = "ADDRESS_ID")
     protected Long id;
 
-    @Column(name = "ADDRESS_LINE1")
+    @Column(name = "ADDRESS_LINE1", nullable=false)
     protected String addressLine1;
 
     @Column(name = "ADDRESS_LINE2")
     protected String addressLine2;
 
-    @Column(name = "CITY")
+    @Column(name = "CITY", nullable=false)
     protected String city;
 
-    @Column(name = "POSTAL_CODE")
+    @Column(name = "POSTAL_CODE", nullable=false)
     protected String postalCode;
 
     @Column(name = "COUNTY")
     protected String county;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = StateImpl.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = StateImpl.class, optional=false)
     @JoinColumn(name = "STATE_PROV_REGION")
     protected State state;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CountryImpl.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CountryImpl.class, optional=false)
     @JoinColumn(name = "COUNTRY")
     protected Country country;
 

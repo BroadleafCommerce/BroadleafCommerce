@@ -20,12 +20,14 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.OrderItem;
@@ -40,22 +42,23 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "OrderItemAdjustmentId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "OrderItemAdjustmentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemAdjustmentImpl", allocationSize = 50)
     @Column(name = "ORDER_ITEM_ADJUSTMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderItemImpl.class)
+    @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ITEM_ID")
     protected OrderItem orderItem;
 
-    @ManyToOne(targetEntity = OfferImpl.class)
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
-    @Column(name = "ADJUSTMENT_REASON")
+    @Column(name = "ADJUSTMENT_REASON", nullable=false)
     protected String reason;
 
-    @Column(name = "ADJUSTMENT_VALUE")
+    @Column(name = "ADJUSTMENT_VALUE", nullable=false)
     protected BigDecimal value;
 
     public void init(OrderItem orderItem, Offer offer, String reason){

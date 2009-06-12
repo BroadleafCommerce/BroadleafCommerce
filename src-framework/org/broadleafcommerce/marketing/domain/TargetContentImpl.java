@@ -40,7 +40,7 @@ public class TargetContentImpl implements TargetContent {
 
     @Id
     @GeneratedValue(generator="targetContentId", strategy=GenerationType.TABLE)
-    @TableGenerator(name="targetContentId", table="SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "targetContentImpl", allocationSize = 1)
+    @TableGenerator(name="targetContentId", table="SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "targetContentImpl", allocationSize = 50)
     @Column(name="TARGET_CONTENT_ID")
     protected Long id;
 

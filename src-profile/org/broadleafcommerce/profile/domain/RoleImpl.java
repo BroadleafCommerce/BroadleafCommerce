@@ -19,10 +19,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 
@@ -35,11 +37,12 @@ public class RoleImpl implements Role {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "RoleId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "RoleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "RoleImpl", allocationSize = 50)
     @Column(name = "ROLE_ID")
     protected Long id;
 
-    @Column(name = "ROLE_NAME")
+    @Column(name = "ROLE_NAME", nullable=false)
     protected String roleName;
 
     @Override

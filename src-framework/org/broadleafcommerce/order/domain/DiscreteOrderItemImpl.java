@@ -34,7 +34,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(targetEntity = SkuImpl.class)
+    @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     protected Sku sku;
 

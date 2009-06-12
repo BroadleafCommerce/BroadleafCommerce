@@ -56,11 +56,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Id
     @GeneratedValue(generator = "FulfillmentGroupId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "FulfillmentGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupImpl", allocationSize = 1)
+    @TableGenerator(name = "FulfillmentGroupId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupImpl", allocationSize = 50)
     @Column(name = "FULFILLMENT_GROUP_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class)
+    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
