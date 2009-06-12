@@ -54,6 +54,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         item.setSalePrice(itemRequest.getSku().getSalePrice());
         item.setRetailPrice(itemRequest.getSku().getRetailPrice());
         item.assignFinalPrice();
+        item.setPersonalMessage(itemRequest.getPersonalMessage());
 
         return item;
     }

@@ -558,6 +558,7 @@ public class OrderServiceImpl implements OrderService {
         itemRequest.setProduct(discreteOrderItem.getProduct());
         itemRequest.setQuantity(discreteOrderItem.getQuantity());
         itemRequest.setSku(discreteOrderItem.getSku());
+        itemRequest.setPersonalMessage(discreteOrderItem.getPersonalMessage());
         return itemRequest;
     }
 
