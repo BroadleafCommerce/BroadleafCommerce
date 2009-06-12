@@ -18,12 +18,14 @@ package org.broadleafcommerce.catalog.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * The Class SkuAttributeImpl is the default implentation of {@link SkuAttribute}.
@@ -52,21 +54,22 @@ public class SkuAttributeImpl implements SkuAttribute {
 
     /** The id. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "SkuAttributeId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "SkuAttributeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAttributeImpl", allocationSize = 50)
     @Column(name = "ID")
     protected Long id;
 
     /** The sku. */
-    @ManyToOne(targetEntity = SkuImpl.class)
+    @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID")
     protected Sku sku;
 
     /** The name. */
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable=false)
     protected String name;
 
     /** The value. */
-    @Column(name = "VALUE")
+    @Column(name = "VALUE", nullable=false)
     protected String value;
 
     /** The searchable. */

@@ -33,6 +33,7 @@ public class CustomerAddressDataProvider {
         address1.setCity("Bozeman");
         State state = new StateImpl();
         state.setAbbreviation("MO");
+        state.setName("Michigan");
         address1.setState(state);
         address1.setPostalCode("75251");
         ca1.setAddress(address1);
@@ -43,6 +44,7 @@ public class CustomerAddressDataProvider {
         address2.setCity("Portland");
         state = new StateImpl();
         state.setAbbreviation("OR");
+        state.setName("Oregon");
         address2.setState(state);
         address2.setPostalCode("75251");
         ca2.setAddress(address2);

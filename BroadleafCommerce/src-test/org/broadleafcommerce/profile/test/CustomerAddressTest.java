@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
+import org.broadleafcommerce.profile.service.CountryService;
 import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.test.dataprovider.CustomerAddressDataProvider;
@@ -45,13 +46,17 @@ public class CustomerAddressTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = "readCustomer1")
+    @Resource
+    private CountryService countryService;
+
+    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer1", "createCountry"})
     @Rollback(false)
     public void createCustomerAddress(CustomerAddress customerAddress) {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         assert customerAddress.getId() == null;
         customerAddress.setCustomer(customer);
+        customerAddress.getAddress().setCountry(countryService.findCountryByAbbreviation("US"));
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
         assert customer.equals(customerAddress.getCustomer());
         userId = customerAddress.getCustomer().getId();

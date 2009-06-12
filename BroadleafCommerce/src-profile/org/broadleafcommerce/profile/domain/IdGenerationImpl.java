@@ -31,13 +31,13 @@ public class IdGenerationImpl implements IdGeneration {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "ID_TYPE")
+    @Column(name = "ID_TYPE", nullable=false)
     protected String type;
 
-    @Column(name = "BATCH_START")
+    @Column(name = "BATCH_START", nullable=false)
     protected Long batchStart;
 
-    @Column(name = "BATCH_SIZE")
+    @Column(name = "BATCH_SIZE", nullable=false)
     protected Long batchSize;
 
     @Version

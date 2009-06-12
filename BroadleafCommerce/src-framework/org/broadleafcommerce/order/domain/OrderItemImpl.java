@@ -52,7 +52,7 @@ public class OrderItemImpl implements OrderItem {
 
     @Id
     @GeneratedValue(generator = "OrderItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 1)
+    @TableGenerator(name = "OrderItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderItemImpl", allocationSize = 50)
     @Column(name = "ORDER_ITEM_ID")
     protected Long id;
 
@@ -73,7 +73,7 @@ public class OrderItemImpl implements OrderItem {
     @Column(name = "PRICE")
     protected BigDecimal price;
 
-    @Column(name = "QUANTITY")
+    @Column(name = "QUANTITY", nullable=false)
     protected int quantity;
 
     @Transient

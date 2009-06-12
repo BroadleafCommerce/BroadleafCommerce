@@ -20,6 +20,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -27,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 
@@ -39,15 +41,16 @@ public class CustomerRoleImpl implements CustomerRole {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "CustomerRoleId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "CustomerRoleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CustomerRoleImpl", allocationSize = 50)
     @Column(name = "CUSTOMER_ROLE_ID")
     protected Long id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class)
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional=false)
     @JoinColumn(name = "ROLE_ID")
     protected Role role;
 

@@ -52,11 +52,11 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
 
     @Id
     @GeneratedValue(generator = "PaymentResponseItemId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentResponseItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentResponseItemImpl", allocationSize = 1)
+    @TableGenerator(name = "PaymentResponseItemId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentResponseItemImpl", allocationSize = 50)
     @Column(name = "PAYMENT_RESPONSE_ITEM_ID")
     protected Long id;
 
-    @Column(name = "USER_NAME")
+    @Column(name = "USER_NAME", nullable=false)
     protected String userName;
 
     @Column(name = "AMOUNT_PAID")
@@ -89,7 +89,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "TRANSACTION_SUCCESS")
     protected Boolean transactionSuccess;
 
-    @Column(name = "TRANSACTION_TIMESTAMP")
+    @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
     protected Date transactionTimestamp;
 
@@ -105,7 +105,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "REMAINING_BALANCE")
     protected BigDecimal remainingBalance;
 
-    @Column(name = "TRANSACTION_TYPE")
+    @Column(name = "TRANSACTION_TYPE", nullable=false)
     protected String transactionType;
 
     @CollectionOfElements
@@ -119,7 +119,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected PaymentInfo paymentInfo;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
-    @JoinColumn(name = "CUSTOMER_ID")
+    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     protected Customer customer;
 
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")

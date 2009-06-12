@@ -20,10 +20,12 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -37,26 +39,27 @@ public class ShippingRateImpl implements ShippingRate {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "ShippingRateId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "ShippingRateId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ShippingRateImpl", allocationSize = 50)
     @Column(name = "ID")
     protected Long id;
 
-    @Column(name = "FEE_TYPE")
+    @Column(name = "FEE_TYPE", nullable=false)
     protected String feeType;
 
     @Column(name = "FEE_SUB_TYPE")
     protected String feeSubType;
 
-    @Column(name = "FEE_BAND")
+    @Column(name = "FEE_BAND", nullable=false)
     protected Integer feeBand;
 
-    @Column(name = "BAND_UNIT_QTY")
+    @Column(name = "BAND_UNIT_QTY", nullable=false)
     protected BigDecimal bandUnitQuantity;
 
-    @Column(name = "BAND_RESULT_QTY")
+    @Column(name = "BAND_RESULT_QTY", nullable=false)
     protected BigDecimal bandResultQuantity;
 
-    @Column(name = "BAND_RESULT_PCT")
+    @Column(name = "BAND_RESULT_PCT", nullable=false)
     protected Integer bandResultPercent;
 
     public Long getId() {

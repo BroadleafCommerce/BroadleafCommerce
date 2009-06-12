@@ -47,14 +47,14 @@ public class PaymentLogImpl implements PaymentLog {
 
     @Id
     @GeneratedValue(generator = "PaymentLogId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PaymentLogId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentLogImpl", allocationSize = 1)
+    @TableGenerator(name = "PaymentLogId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PaymentLogImpl", allocationSize = 50)
     @Column(name = "PAYMENT_LOG_ID")
     protected Long id;
 
-    @Column(name = "USER_NAME")
+    @Column(name = "USER_NAME", nullable=false)
     protected String userName;
 
-    @Column(name = "TRANSACTION_TIMESTAMP")
+    @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
     protected Date transactionTimestamp;
 
@@ -69,7 +69,7 @@ public class PaymentLogImpl implements PaymentLog {
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
     protected String paymentInfoReferenceNumber;
 
-    @Column(name = "TRANSACTION_TYPE")
+    @Column(name = "TRANSACTION_TYPE", nullable=false)
     protected String transactionType;
 
     @Column(name = "TRANSACTION_SUCCESS")
@@ -78,7 +78,7 @@ public class PaymentLogImpl implements PaymentLog {
     @Column(name = "EXCEPTION_MESSAGE")
     protected String exceptionMessage;
 
-    @Column(name = "LOG_TYPE")
+    @Column(name = "LOG_TYPE", nullable=false)
     protected String logType;
 
     @Column(name = "AMOUNT_PAID")

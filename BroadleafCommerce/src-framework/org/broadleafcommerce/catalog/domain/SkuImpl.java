@@ -16,7 +16,9 @@
 package org.broadleafcommerce.catalog.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -79,11 +81,11 @@ public class SkuImpl implements Sku {
     protected BigDecimal salePrice;
 
     /** The retail price. */
-    @Column(name = "RETAIL_PRICE")
+    @Column(name = "RETAIL_PRICE", nullable=false)
     protected BigDecimal retailPrice;
 
     /** The name. */
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable=false)
     protected String name;
 
     /** The description. */
@@ -120,11 +122,11 @@ public class SkuImpl implements Sku {
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    protected Map<String, String> skuImages;
+    protected Map<String, String> skuImages = new HashMap<String, String>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
-    protected List<Product> allParentProducts;
+    protected List<Product> allParentProducts = new ArrayList<Product>();
 
     /*
      * (non-Javadoc)

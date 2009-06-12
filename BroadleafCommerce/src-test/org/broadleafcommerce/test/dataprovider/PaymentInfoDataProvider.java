@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.DataProvider;
 
@@ -29,6 +30,7 @@ public class PaymentInfoDataProvider {
         PaymentInfo sop = new PaymentInfoImpl();
         sop.setAmount(new Money(BigDecimal.valueOf(10.99)));
         sop.setReferenceNumber("987654321");
+        sop.setType(PaymentInfoType.CREDIT_CARD);
         return new Object[][] { { sop } };
     }
 }

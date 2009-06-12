@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.profile.domain;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -22,11 +23,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
@@ -41,14 +44,15 @@ public class UserImpl implements User {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "UserId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "UserId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "UserImpl", allocationSize = 50)
     @Column(name = "USER_ID")
     protected Long id;
 
-    @Column(name = "USER_NAME")
+    @Column(name = "USER_NAME", nullable=false)
     protected String username;
 
-    @Column(name = "PASSWORD")
+    @Column(name = "PASSWORD", nullable=false)
     protected String password;
 
     @Column(name = "FIRST_NAME")
@@ -67,7 +71,7 @@ public class UserImpl implements User {
     protected String challengeAnswer;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", targetEntity = UserRoleImpl.class)
-    protected Set<UserRole> userRoles;
+    protected Set<UserRole> userRoles = new HashSet<UserRole>();
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
     protected boolean passwordChangeRequired;

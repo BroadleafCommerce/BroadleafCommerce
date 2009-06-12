@@ -24,6 +24,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
+import org.broadleafcommerce.profile.domain.Phone;
+import org.broadleafcommerce.profile.domain.PhoneImpl;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.test.dataprovider.CustomerPhoneDataProvider;
@@ -52,6 +54,9 @@ public class CustomerPhoneTest extends BaseTest {
         Customer customer = customerService.readCustomerByUsername(userName);
         assert customerPhone.getId() == null;
         customerPhone.setCustomer(customer);
+        Phone phone = new PhoneImpl();
+        phone.setPhoneNumber("214-214-2134");
+        customerPhone.setPhone(phone);
         customerPhone = customerPhoneService.saveCustomerPhone(customerPhone);
         assert customer.equals(customerPhone.getCustomer());
         userId = customerPhone.getCustomer().getId();

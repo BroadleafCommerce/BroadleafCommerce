@@ -20,12 +20,14 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
@@ -35,15 +37,16 @@ public class OfferCodeImpl implements OfferCode {
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "OfferCodeId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "OfferCodeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OfferCodeImpl", allocationSize = 50)
     @Column(name = "OFFER_CODE_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OfferImpl.class)
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
-    @Column(name = "OFFER_CODE")
+    @Column(name = "OFFER_CODE", nullable=false)
     protected String offerCode;
 
     @Column(name = "START_DATE")

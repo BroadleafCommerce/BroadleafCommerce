@@ -34,11 +34,11 @@ public class PhoneImpl implements Phone {
 
     @Id
     @GeneratedValue(generator = "PhoneId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "PhoneId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PhoneImpl", allocationSize = 1)
+    @TableGenerator(name = "PhoneId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "PhoneImpl", allocationSize = 50)
     @Column(name = "PHONE_ID")
     protected Long id;
 
-    @Column(name = "PHONE_NUMBER")
+    @Column(name = "PHONE_NUMBER", nullable=false)
     protected String phoneNumber;
 
     @Column(name = "IS_DEFAULT")

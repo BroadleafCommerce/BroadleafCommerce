@@ -62,7 +62,7 @@ public class OrderImpl implements Order {
 
     @Id
     @GeneratedValue(generator = "OrderId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "OrderId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderImpl", allocationSize = 1)
+    @TableGenerator(name = "OrderId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "OrderImpl", allocationSize = 50)
     @Column(name = "ORDER_ID")
     protected Long id;
 
@@ -72,7 +72,7 @@ public class OrderImpl implements Order {
     @Column(name = "NAME")
     protected String name;
 
-    @ManyToOne(targetEntity = CustomerImpl.class)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     protected Customer customer;
 

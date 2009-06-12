@@ -20,12 +20,14 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
@@ -39,29 +41,30 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     public static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "FGAdjustmentId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "FGAdjustmentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FulfillmentGroupAdjustmentImpl", allocationSize = 50)
     @Column(name = "FG_ADJUSTMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class)
+    @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class, optional=false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     protected FulfillmentGroup fulfillmentGroup;
 
-    @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class)
+    @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
-    @Column(name = "ADJUSTMENT_REASON")
+    @Column(name = "ADJUSTMENT_REASON", nullable=false)
     protected String reason;
 
-    @Column(name = "ADJUSTMENT_VALUE")
+    @Column(name = "ADJUSTMENT_VALUE", nullable=false)
     protected BigDecimal value;
 
     public void init(FulfillmentGroup fulfillmentGroup, Offer offer, String reason){
         this.fulfillmentGroup = fulfillmentGroup;
         this.offer = offer;
         this.reason = reason;
-  }
+    }
 
     public Long getId() {
         return id;
