@@ -18,6 +18,7 @@ package org.broadleafcommerce.order.service.call;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.order.domain.PersonalMessage;
 
 public class DiscreteOrderItemRequest {
 
@@ -25,6 +26,7 @@ public class DiscreteOrderItemRequest {
     private Category category;
     private Product product;
     private int quantity;
+    private PersonalMessage personalMessage;
 
     public Sku getSku() {
         return sku;
@@ -82,4 +84,11 @@ public class DiscreteOrderItemRequest {
         return result;
     }
 
+    public PersonalMessage getPersonalMessage() {
+        return personalMessage;
+    }
+
+    public void setPersonalMessage(PersonalMessage personalMessage) {
+        this.personalMessage = personalMessage;
+    }
 }
