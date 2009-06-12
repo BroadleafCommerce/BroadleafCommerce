@@ -108,7 +108,7 @@
 		<replace file="${stage.dir}/war/META-INF/context.xml" token="@@MYSQL_USERNAME@@" value="${set.mysql.db.user}"/>
 		<replace file="${stage.dir}/war/META-INF/context.xml" token="@@MYSQL_PASSWORD@@" value="${set.mysql.db.pw}"/>
 		
-		<copy tofile="${set.appserver.home}/conf/Catalina/localhost/broadleafdemo.xml">
+		<copy tofile="${set.appserver.home}/conf/Catalina/localhost/broadleafadmin.xml">
 			<fileset dir="${stage.dir}/war/META-INF">
 			    <depend targetdir="${set.appserver.home}/conf/Catalina/localhost"/>
 				<include name="context.xml" />
