@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="flex" basedir=".." default="usage">
+
+	<property name="src.flex.dir" value="${basedir}/src-flex"/>
+	<property name="compile.lib.swc.dir" value="${basedir}/lib/compile/swc"/>
+
+
+	<fail message="Build Failed. Please make sure you have updated Flex SDK Home, appserver.home, mysql.db.user and mysql.db.pw in build.properties">
+		<condition>
+			<or>
+				<equals arg1="@@NOT_SET@@" arg2="${flex.sdk.dir}" />
+			</or>
+   		</condition>
+	</fail>
+		
+	<taskdef resource="flexTasks.tasks" classpath="${flex.sdk.dir}/ant/lib/flexTasks.jar"/>
+	
+	<property name="FLEX_HOME" value="${flex.sdk.dir}"/>
+	<property name="ADT.JAR" value="${flex.sdk.dir}/lib/adt.jar"/>
+
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${lib.dir}/test/bin/ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+	
+	
+
+	<target name="setup-war" depends="classes-swf">
+		
+	</target>
+
+	<target name="classes-swf" depends="setup">
+		<mkdir dir="${stage.dir}/classes-swf" />		
+		
+		<mxmlc file="${src.flex.dir}/${flex.swf.name}.mxml" output="${stage.dir}/classes-swf/${flex.swf.name}.swf" incremental="true"
+			services="${war.dir}/WEB-INF/flex/services-config.xml" context-root="/" >
+			<load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml"/>
+			<source-path path-element="${flex.sdk.dir}/frameworks" />
+			<include-libraries file="${compile.lib.swc.dir}/*.swc"/>
+		</mxmlc>
+	
+		<html-wrapper
+			swf="${flex.swf.name}"
+			title="${flex.app.title}"
+			file="${flex.swf.name}.html"
+			template="${flex.app.template}"
+			height="${flex.app.height}"
+			width="${flex.app.width}"
+			output="${stage.dir}/classes-swf"
+			history="true"
+		/>	
+		
+		<copy todir="${stage.dir}/war" includeemptydirs="true">
+			<fileset dir="${stage.dir}/classes-swf" />
+		</copy>
+
+		<delete dir="${stage.dir}/classes-swf" />		
+	</target>
+	
+
+	<target name="setup" >
+		<echo>Setting up for environment = ${build.env}</echo>
+		<mkdir dir="${stage.dir}/classes-swf/" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${stage.dir}/class-swf" />
+	</target>
+
+	<target name="usage">
+		<echo>This is the internal build file for BroadleafCommerceDemo.</echo>
+		<echo>Please use build.xml</echo>
+	</target>
+
+</project>
