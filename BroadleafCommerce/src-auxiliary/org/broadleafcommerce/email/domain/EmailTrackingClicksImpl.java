@@ -20,10 +20,12 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
@@ -40,18 +42,19 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "ClickId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "ClickId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "EmailTrackingClicksImpl", allocationSize = 50)
     @Column(name = "CLICK_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = EmailTrackingImpl.class)
+    @ManyToOne(optional=false, targetEntity = EmailTrackingImpl.class)
     @JoinColumn(name = "EMAIL_TRACKING_ID")
     protected EmailTracking emailTracking;
 
-    @Column(name = "DATE_CLICKED")
+    @Column(nullable=false, name = "DATE_CLICKED")
     protected Date dateClicked;
 
-    @ManyToOne(targetEntity = CustomerImpl.class)
+    @ManyToOne(optional=false, targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 

@@ -43,16 +43,16 @@ public class ProductAttributeImpl implements ProductAttribute {
     protected Long id;
 
     /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class)
+    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
     protected Product product;
 
     /** The name. */
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable=false)
     protected String name;
 
     /** The value. */
-    @Column(name = "VALUE")
+    @Column(name = "VALUE", nullable=false)
     protected String value;
 
     /** The searchable. */

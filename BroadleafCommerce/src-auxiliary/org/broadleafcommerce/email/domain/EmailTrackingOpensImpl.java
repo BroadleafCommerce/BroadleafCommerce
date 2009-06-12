@@ -19,10 +19,13 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 /**
  * @author jfischer
@@ -36,6 +39,8 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(generator = "OpenId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "OpenId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "EmailTrackingOpensImpl", allocationSize = 50)
     @Column(name = "OPEN_ID")
     protected Long id;
 

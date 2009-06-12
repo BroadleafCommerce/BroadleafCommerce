@@ -78,7 +78,7 @@ public class CategoryImpl implements Category {
     protected Long id;
 
     /** The name. */
-    @Column(name = "NAME")
+    @Column(name = "NAME", nullable=false)
     protected String name;
 
     /** The url. */
