@@ -27,6 +27,7 @@ import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerAddress;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.PaymentInfoDataProvider;
 import org.springframework.test.annotation.Rollback;
@@ -54,7 +55,10 @@ public class PaymentInfoDaoTest extends BaseTest {
     public void createPaymentInfo(PaymentInfo paymentInfo){
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
-        Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
+        List<CustomerAddress> addresses = customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId());
+        Address address = null;
+        if (!addresses.isEmpty())
+            address = addresses.get(0).getAddress();
         Order salesOrder = orderDao.readCartForCustomer(customer);
 
         paymentInfo.setAddress(address);
