@@ -159,4 +159,7 @@ public interface Order extends Serializable {
 
     public void setOrderNumber(String orderNumber);
 
+    public String getEmailAddress();
+
+    public void setEmailAddress(String emailAddress);
 }
