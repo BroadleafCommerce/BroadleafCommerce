@@ -17,6 +17,8 @@ package org.broadleafcommerce.order.domain;
 
 import java.util.List;
 
+import org.broadleafcommerce.util.money.Money;
+
 
 public interface BundleOrderItem extends OrderItem {
 
@@ -27,5 +29,7 @@ public interface BundleOrderItem extends OrderItem {
     public List<DiscreteOrderItem> getDiscreteOrderItems();
 
     public void setDiscreteOrderItems(List<DiscreteOrderItem> discreteOrderItems);
+
+    public Money getTaxablePrice();
 
 }

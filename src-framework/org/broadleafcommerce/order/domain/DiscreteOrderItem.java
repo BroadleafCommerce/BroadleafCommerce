@@ -17,6 +17,7 @@ package org.broadleafcommerce.order.domain;
 
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.util.money.Money;
 
 public interface DiscreteOrderItem extends OrderItem {
 
@@ -33,5 +34,7 @@ public interface DiscreteOrderItem extends OrderItem {
     public void setBundleOrderItem(BundleOrderItem bundleOrderItem);
 
     public String getName();
+
+    public Money getTaxablePrice();
 
 }

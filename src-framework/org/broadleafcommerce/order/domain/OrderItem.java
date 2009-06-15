@@ -100,4 +100,6 @@ public interface OrderItem extends Serializable {
 
     public void setOrderItemType(OrderItemType orderItemType);
 
+    public Money getTaxablePrice();
+
 }

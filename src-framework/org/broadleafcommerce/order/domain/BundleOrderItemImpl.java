@@ -80,6 +80,16 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
+    public Money getTaxablePrice() {
+        Money currentBundleTaxablePrice = new Money();
+        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+            Money currentItemTaxablePrice = discreteOrderItem.getTaxablePrice();
+            currentBundleTaxablePrice = currentBundleTaxablePrice.add(new Money(currentItemTaxablePrice.doubleValue() * discreteOrderItem.getQuantity()));
+        }
+        return currentBundleTaxablePrice;
+    }
+
+    @Override
     public Money getRetailPrice() {
         Money bundleRetailPrice = new Money();
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
