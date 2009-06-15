@@ -108,6 +108,7 @@ public class OrderDaoImpl implements OrderDao {
             customer = customerDao.save(customer);
         }
         order.setCustomer(customer);
+        order.setEmailAddress(customer.getEmailAddress());
         order.setStatus(OrderStatus.IN_PROCESS.getName());
 
         order = save(order);
