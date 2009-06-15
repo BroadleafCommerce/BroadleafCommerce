@@ -371,8 +371,7 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
-        if (childCategories == null) {
-            childCategories = new ArrayList<Category>();
+        if (childCategories.size() == 0) {
             List<Category> allChildCategories = getAllChildCategories();
             for (Category category : allChildCategories) {
                 if (category.isActive()) {

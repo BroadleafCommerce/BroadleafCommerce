@@ -127,6 +127,10 @@ public class OrderItemImpl implements OrderItem {
         price = getCurrentPrice().getAmount();
     }
 
+    public Money getTaxablePrice() {
+        return getPrice();
+    }
+
     public Money getCurrentPrice() {
         Money currentPrice = null;
         if (adjustmentPrice != null) {

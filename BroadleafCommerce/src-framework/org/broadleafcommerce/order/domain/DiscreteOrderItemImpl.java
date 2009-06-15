@@ -26,6 +26,7 @@ import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
+import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -58,6 +59,14 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (sku.getSalePrice() != null) {
             this.salePrice = sku.getSalePrice().getAmount();
         }
+    }
+
+    public Money getTaxablePrice() {
+        Money taxablePrice = new Money(0D);
+        if (sku.isTaxable()) {
+            taxablePrice = getPrice();
+        }
+        return taxablePrice;
     }
 
     public Product getProduct() {
