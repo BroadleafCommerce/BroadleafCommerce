@@ -109,6 +109,9 @@ public class OrderImpl implements Order {
     @Column(name = "ORDER_NUMBER")
     private String orderNumber;
 
+    @Column(name = "EMAIL_ADDRESS")
+    protected String emailAddress;
+
     @Transient
     protected BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
 
@@ -527,6 +530,14 @@ public class OrderImpl implements Order {
         return null;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -565,5 +576,4 @@ public class OrderImpl implements Order {
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
     }
-
 }
