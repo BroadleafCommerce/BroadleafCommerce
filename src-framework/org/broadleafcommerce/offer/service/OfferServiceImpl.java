@@ -102,6 +102,8 @@ public class OfferServiceImpl implements OfferService {
         return offerDao.save(offer);
     }
 
+
+
     /**
      * Creates a list of offers that applies to this order.  All offers that are assigned to the customer,
      * entered during checkout, or has a delivery type of automatic are added to the list.  The same offer
@@ -760,7 +762,7 @@ public class OfferServiceImpl implements OfferService {
                 }
             }
         }
-   }
+    }
 
     /**
      * Private method used by applyAllFulfillmentGroupOffers to create an FulfillmentGroupAdjustment from a CandidateFulfillmentGroupOffer

@@ -33,6 +33,10 @@ public interface Offer extends Serializable {
 
     public void setName(String name);
 
+    public String getDescription();
+
+    public void setDescription(String description);
+
     public OfferType getType();
 
     public void setType(OfferType offerType);

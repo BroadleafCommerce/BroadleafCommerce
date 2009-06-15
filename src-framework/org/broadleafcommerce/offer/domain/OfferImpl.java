@@ -49,6 +49,9 @@ public class OfferImpl implements Offer {
     @Column(name = "OFFER_NAME", nullable=false)
     protected String name;
 
+    @Column(name = "OFFER_DESCRIPTION")
+    protected String description;
+
     @Column(name = "OFFER_TYPE", nullable=false)
     protected String type;
 
@@ -111,6 +114,14 @@ public class OfferImpl implements Offer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public OfferType getType() {
