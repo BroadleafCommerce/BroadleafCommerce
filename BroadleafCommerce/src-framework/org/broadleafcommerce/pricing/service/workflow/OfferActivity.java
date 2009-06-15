@@ -34,10 +34,6 @@ public class OfferActivity extends BaseActivity {
     public ProcessContext execute(ProcessContext context) throws Exception {
 
         Order order = ((PricingContext)context).getSeedData();
-        /*
-         * I commented this out -- there seems to be some problems in the control
-         * flow of this call. Mike or Brian - maybe you can take a look.
-         */
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
         context.setSeedData(order);
