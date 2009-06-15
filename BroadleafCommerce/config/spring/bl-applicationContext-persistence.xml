@@ -81,12 +81,12 @@
 	</aop:config>
 
 	<bean id="blPricingExecutionManager" class="org.broadleafcommerce.pricing.service.advice.PricingExecutionManagerImpl">
-        <property name="order" value="1"/>
+        <property name="order" value="2"/>
     </bean>
 
 	<aop:config>
 		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="2"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="1"/>
 	    <aop:aspect id="blPricingAspect" ref="blPricingExecutionManager">
             <aop:pointcut id="blServiceMethodWithReturnValue" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
             <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue"/>
