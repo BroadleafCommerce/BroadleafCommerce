@@ -15,6 +15,8 @@ package org.broadleafcommerce.admin.model.view
 
 		public var offersList:ArrayCollection = new ArrayCollection();
 		
+		public var offersListFiltered:ArrayCollection = new ArrayCollection();
+		
 		public const offerTypes:ArrayCollection = new ArrayCollection(["ORDER",
 																  									   "ORDER_ITEM",
 																  									   "FULFILLMENT_GROUP"]);
