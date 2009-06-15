@@ -56,7 +56,7 @@ public class BasePriceImpl implements BasePrice {
 
     /** The auditable. */
     @Embedded
-    protected Auditable auditable;
+    protected Auditable auditable = new Auditable();
 
     /** The sku. */
     @ManyToOne(targetEntity = SkuImpl.class)
