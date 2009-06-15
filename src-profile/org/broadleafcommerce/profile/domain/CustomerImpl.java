@@ -16,6 +16,7 @@
 package org.broadleafcommerce.profile.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -24,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.broadleafcommerce.common.domain.Auditable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -38,6 +40,9 @@ public class CustomerImpl implements Customer {
     @Id
     @Column(name = "CUSTOMER_ID")
     protected Long id;
+
+    @Embedded
+    protected Auditable auditable = new Auditable();
 
     @Column(name = "USER_NAME")
     protected String username;
@@ -179,6 +184,14 @@ public class CustomerImpl implements Customer {
         this.unencodedChallengeAnswer = unencodedChallengeAnswer;
     }
 
+    public Auditable getAuditable() {
+        return auditable;
+    }
+
+    public void setAuditable(Auditable auditable) {
+        this.auditable = auditable;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -208,4 +221,5 @@ public class CustomerImpl implements Customer {
         result = prime * result + ((username == null) ? 0 : username.hashCode());
         return result;
     }
+
 }

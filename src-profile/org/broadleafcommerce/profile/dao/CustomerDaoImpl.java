@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.profile.dao;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -65,6 +67,9 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     public Customer save(Customer customer) {
+        if (customer.getAuditable() != null) {
+            customer.getAuditable().setDateUpdated(new Date());
+        }
         if (customer.getId() == null) {
             em.persist(customer);
         } else {
@@ -74,7 +79,9 @@ public class CustomerDaoImpl implements CustomerDao {
     }
 
     public Customer create() {
-        return (Customer) entityConfiguration.createEntityInstance(Customer.class.getName());
+        Customer customer =  (Customer) entityConfiguration.createEntityInstance(Customer.class.getName());
+        customer.getAuditable().setDateCreated(new Date());
+        return customer;
     }
 
 }

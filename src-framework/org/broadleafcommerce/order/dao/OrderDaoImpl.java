@@ -23,7 +23,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.service.type.OrderStatus;
@@ -52,7 +51,9 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order save(Order order) {
-        order.getAuditable().setDateUpdated(new Date());
+        if (order.getAuditable() != null) {
+            order.getAuditable().setDateUpdated(new Date());
+        }
         if (order.getId() == null) {
             em.persist(order);
         } else {
@@ -128,9 +129,7 @@ public class OrderDaoImpl implements OrderDao {
 
     public Order create() {
         Order order = ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order"));
-        Auditable auditable = new Auditable();
-        auditable.setDateCreated(new Date());
-        order.setAuditable(auditable);
+        order.getAuditable().setDateCreated(new Date());
 
         return order;
     }

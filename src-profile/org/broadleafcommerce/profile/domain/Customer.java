@@ -17,6 +17,8 @@ package org.broadleafcommerce.profile.domain;
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.common.domain.Auditable;
+
 public interface Customer extends Serializable {
 
     public Long getId();
@@ -70,4 +72,9 @@ public interface Customer extends Serializable {
     public String getUnencodedChallengeAnswer();
 
     public void setUnencodedChallengeAnswer(String unencodedChallengeAnswer);
+
+    public Auditable getAuditable();
+
+    public void setAuditable(Auditable auditable);
+
 }

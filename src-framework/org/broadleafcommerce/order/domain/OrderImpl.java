@@ -67,7 +67,7 @@ public class OrderImpl implements Order {
     protected Long id;
 
     @Embedded
-    protected Auditable auditable;
+    protected Auditable auditable = new Auditable();
 
     @Column(name = "NAME")
     protected String name;

@@ -164,7 +164,7 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer createCustomerFromId(Long customerId) {
         Customer customer = customerId != null ? readCustomerById(customerId) : null;
         if (customer == null) {
-            customer = (Customer) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Customer");
+            customer = customerDao.create();
             if (customerId != null) {
                 customer.setId(customerId);
             } else {
