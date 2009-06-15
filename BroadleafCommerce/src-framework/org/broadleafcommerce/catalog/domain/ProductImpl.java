@@ -289,8 +289,7 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.catalog.domain.Product#getSkus()
      */
     public List<Sku> getSkus() {
-        if (skus == null) {
-            skus = new ArrayList<Sku>();
+        if (skus.size() == 0) {
             List<Sku> allSkus = getAllSkus();
             for (Sku sku : allSkus) {
                 if (sku.isActive()) {
