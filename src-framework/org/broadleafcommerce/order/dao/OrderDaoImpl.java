@@ -146,7 +146,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     @SuppressWarnings("unchecked")
     public Order readOrderByOrderNumber(String orderNumber) {
-        if (orderNumber == null) {
+        if (orderNumber == null || orderNumber.isEmpty()) {
             return null;
         }
 
