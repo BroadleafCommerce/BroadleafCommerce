@@ -56,7 +56,7 @@ public class CategoryDaoTest extends BaseTest {
         category.setFeaturedProducts(featuredProducts);
         category = categoryDao.save(category);
 
-        Category categoryTest = categoryDao.readCategoryById(1L);
+        Category categoryTest = categoryDao.readCategoryById(category.getId());
         FeaturedProduct featuredProductTest = categoryTest.getFeaturedProducts().get(0);
 
         assert (featuredProductTest.getPromotionMessage() == "BUY ME NOW!!!!");
