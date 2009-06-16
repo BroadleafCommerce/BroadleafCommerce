@@ -12,9 +12,12 @@ package org.broadleafcommerce.admin.control.commands.offers
 	import org.broadleafcommerce.admin.model.AppModelLocator;
 	import org.broadleafcommerce.admin.model.business.BroadleafCommerceAdminServiceDelegate;
 	import org.broadleafcommerce.admin.model.data.remote.Offer;
+	import org.broadleafcommerce.admin.model.view.OfferModel;
 
 	public class FindAllOffersCommand implements Command, IResponder
 	{
+		private var offerModel:OfferModel = AppModelLocator.getInstance().offerModel;
+		
 		public function execute(event:CairngormEvent):void
 		{
 			var delegate:BroadleafCommerceAdminServiceDelegate = new BroadleafCommerceAdminServiceDelegate(this);
@@ -24,7 +27,11 @@ package org.broadleafcommerce.admin.control.commands.offers
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			AppModelLocator.getInstance().offerModel.offersList = ArrayCollection(event.result);
+			this.offerModel.offersList = ArrayCollection(event.result);
+			// populate array collection of offers to be filtered
+			for each(var offerToBeFiltered:Offer in this.offerModel.offersList){
+				this.offerModel.offersListFiltered.addItem(offerToBeFiltered);
+			}
 		}			
 		
 		

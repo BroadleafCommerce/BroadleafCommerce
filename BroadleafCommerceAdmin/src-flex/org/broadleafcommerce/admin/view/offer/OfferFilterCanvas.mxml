@@ -1,79 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
-	
-	<mx:Metadata>
-		[Event(name="offerListFilteredEvent", type="flash.events.Event")]
-	</mx:Metadata>
-	
 	<mx:Script>
 		<![CDATA[
+			import mx.utils.StringUtil;
 			import org.broadleafcommerce.admin.model.data.remote.Offer;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			import org.broadleafcommerce.admin.model.view.OfferModel;
-			import mx.controls.Alert;
 			
 			private var offerModel:OfferModel = AppModelLocator.getInstance().offerModel;
+			private var filterTextInputLastChangedDate:Date;
 			
-			private function handleFilterCheckBoxChange(event:Event):void{
+			private function handleFilterChange():void{
 				var now:Date = new Date();
-				offerModel.offersListFiltered.removeAll();
-				if(this.notStartedCheckBox.selected && !this.inProgressCheckBox.selected && !this.completeCheckBox.selected){
-					for each(var offer:Offer in offerModel.offersList){
-						if(offer.startDate > now){
-							offerModel.offersListFiltered.addItem(offer);
+				var filterText:String = StringUtil.trim(this.filterTextInput.text);
+				this.offerModel.offersListFiltered.removeAll();
+				if(this.notStartedCheckBox.selected && filterText == ""){
+					for each(var offerFilteredByNotStarted:Offer in this.offerModel.offersList){
+						if(offerFilteredByNotStarted.startDate > now){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByNotStarted);
 						}
 					}
-				}else if(!this.notStartedCheckBox.selected && !this.inProgressCheckBox.selected && this.completeCheckBox.selected){
-					for each(var offer:Offer in offerModel.offersList){
-						if(offer.endDate < now){
-							offerModel.offersListFiltered.addItem(offer);
+				}else if(this.completeCheckBox.selected && filterText == ""){
+					for each(var offerFilteredByCompleted:Offer in this.offerModel.offersList){
+						if(offerFilteredByCompleted.endDate < now){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByCompleted);
 						}
 					}					
-				}else if(!this.notStartedCheckBox.selected && this.inProgressCheckBox.selected && !this.completeCheckBox.selected){
-					for each(var offer:Offer in offerModel.offersList){
-						if(offer.startDate < now && offer.endDate > now){
-							offerModel.offersListFiltered.addItem(offer);
+				}else if(this.inProgressCheckBox.selected && filterText == ""){
+					for each(var offerFilteredByInProgress:Offer in this.offerModel.offersList){
+						if(offerFilteredByInProgress.startDate < now && offerFilteredByInProgress.endDate > now){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByInProgress);
 						}
 					}					
-				}else if(!this.notStartedCheckBox.selected && !this.inProgressCheckBox.selected && !this.completeCheckBox.selected){
-					for each(var offer:Offer in offerModel.offersList){
-						offerModel.offersListFiltered.addItem(offer);
+				}else if(!this.notStartedCheckBox.selected && !this.inProgressCheckBox.selected && !this.completeCheckBox.selected  && filterText == ""){
+					for each(var offerNotFilteredByDateOrName:Offer in this.offerModel.offersList){
+						this.offerModel.offersListFiltered.addItem(offerNotFilteredByDateOrName);
 					}					
+				}else if(this.notStartedCheckBox.selected && filterText != ""){
+					for each(var offerFilteredByNotStartedAndName:Offer in this.offerModel.offersList){
+						if(offerFilteredByNotStartedAndName.startDate > now && offerFilteredByNotStartedAndName.name.match(filterText)){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByNotStartedAndName);
+						}
+					}					
+				}else if(this.completeCheckBox.selected && filterText != ""){
+					for each(var offerFilteredByCompletedAndName:Offer in this.offerModel.offersList){
+						if(offerFilteredByCompletedAndName.endDate < now && offerFilteredByCompletedAndName.name.match(filterText)){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByCompletedAndName);
+						}
+					}					
+				}else if(this.inProgressCheckBox.selected && filterText != ""){
+					for each(var offerFilteredByInProgressAndName:Offer in this.offerModel.offersList){
+						if(offerFilteredByInProgressAndName.startDate < now && offerFilteredByInProgressAndName.endDate > now && offerFilteredByInProgressAndName.name.match(filterText)){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByInProgressAndName);
+						}
+					}					
+				}else if(!this.notStartedCheckBox.selected && !this.inProgressCheckBox.selected && !this.completeCheckBox.selected  && filterText != ""){
+					for each(var offerNotFilteredByDateOnlyName:Offer in this.offerModel.offersList){
+						if(offerNotFilteredByDateOnlyName.name.match(filterText)){
+							this.offerModel.offersListFiltered.addItem(offerNotFilteredByDateOnlyName);
+						}
+					}						
 				}
-				dispatchEvent(new Event("offerListFilteredEvent", event.bubbles, event.cancelable));
 			}
 			
-			private function handleNotStartedCheckBoxChange(event:Event):void{
-				if(CheckBox(event.target).selected){
+			// handler for the 'Not Started' filter
+			private function handleNotStartedCheckBoxChange():void{
+				if(this.notStartedCheckBox.selected){
 					this.inProgressCheckBox.enabled = false;
 					this.completeCheckBox.enabled = false;
 				}else{
 					this.inProgressCheckBox.enabled = true;
 					this.completeCheckBox.enabled = true;
 				}
-				this.handleFilterCheckBoxChange(event);
+				this.handleFilterChange();
 			}
 			
-			private function handleInProgressCheckBoxChange(event:Event):void{
-				if(CheckBox(event.target).selected){
+			// handler for the 'In Progress' filter
+			private function handleInProgressCheckBoxChange():void{
+				if(this.inProgressCheckBox.selected){
 					this.notStartedCheckBox.enabled = false;
 					this.completeCheckBox.enabled = false;
 				}else{
 					this.notStartedCheckBox.enabled = true;
 					this.completeCheckBox.enabled = true;
 				}
-				this.handleFilterCheckBoxChange(event);
+				this.handleFilterChange();
 			}
 			
-			private function handleCompleteCheckBoxChange(event:Event):void{
-				if(CheckBox(event.target).selected){
+			// handler for the 'Complete' filter
+			private function handleCompleteCheckBoxChange():void{
+				if(this.completeCheckBox.selected){
 					this.notStartedCheckBox.enabled = false;
 					this.inProgressCheckBox.enabled = false;
 				}else{
 					this.notStartedCheckBox.enabled = true;
 					this.inProgressCheckBox.enabled = true;
 				}
-				this.handleFilterCheckBoxChange(event);
+				this.handleFilterChange();
+			}
+			
+			// handles a change in the filter for the offer name
+			private function handleFilterTextInputChange():void{
+				this.filterTextInputLastChangedDate = new Date();
+				this.waitOnUserInput();
+			}
+			
+			// waits a predetermined amount of time before calling the function that filters through the list of offers
+			private function waitOnUserInput():void{
+				var millisecondsToWait:Number = 200;
+				if((this.filterTextInputLastChangedDate.getTime() + millisecondsToWait) < (new Date().getTime())){
+					this.handleFilterChange();
+				}else{
+					// if the predetermined amount of time has not elapsed, call this function again until it does
+					callLater(this.waitOnUserInput);
+				}			
 			}
 		]]>
 	</mx:Script>
@@ -82,12 +122,13 @@
 			<mx:GridItem horizontalAlign="right"
 				verticalAlign="middle">
 				<mx:Label id="filterLabel"
-					text="Filter:"/>
+					text="Filter By Name:"/>
 			</mx:GridItem>
 			<mx:GridItem verticalAlign="middle">
 				<mx:TextInput id="filterTextInput"
 					x="50"
-					width="160"/>
+					width="160"
+					change="handleFilterTextInputChange()"/>
 			</mx:GridItem>
 			<mx:GridItem>
 				<mx:Spacer width="40"/>
@@ -96,15 +137,15 @@
 					<mx:CheckBox id="notStartedCheckBox"
 						label="Not Started"
 						labelPlacement="right"
-						change="handleNotStartedCheckBoxChange(event)"/>
+						change="handleNotStartedCheckBoxChange()"/>
 					<mx:CheckBox id="inProgressCheckBox"
 						label="In Progress"
 						labelPlacement="right"
-						change="handleInProgressCheckBoxChange(event)"/>
+						change="handleInProgressCheckBoxChange()"/>
 					<mx:CheckBox id="completeCheckBox"
 						label="Complete"
 						labelPlacement="right"
-						change="handleCompleteCheckBoxChange(event)"/>
+						change="handleCompleteCheckBoxChange()"/>
 				</mx:HBox>
 			</mx:GridItem>
 		</mx:GridRow>
