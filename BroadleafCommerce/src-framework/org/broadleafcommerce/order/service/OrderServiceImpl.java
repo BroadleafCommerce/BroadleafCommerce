@@ -519,8 +519,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected Order updateOrder(Order order) throws PricingException {
+        order = orderDao.save(order);
         pricingExecutionManager.executePricing(order);
-        return orderDao.save(order);
+        return order;
     }
 
     protected Order persistOrder(Order order) {
