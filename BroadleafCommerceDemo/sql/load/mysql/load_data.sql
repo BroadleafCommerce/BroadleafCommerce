@@ -67,6 +67,25 @@ INTO TABLE broadleafcommerce.BLC_PRODUCT_IMAGE
 FIELDS TERMINATED BY '|' ENCLOSED BY ""
 (PRODUCT_ID, URL, NAME);
 
+DELETE FROM broadleafcommerce.SEQUENCE_GENERATOR;
+
+LOAD DATA INFILE '@@BASE_DIR@@/sequence_generator.txt' 
+INTO TABLE broadleafcommerce.SEQUENCE_GENERATOR
+FIELDS TERMINATED BY '|' ENCLOSED BY "";
+
+DELETE FROM broadleafcommerce.BLC_COUNTRY;
+
+LOAD DATA INFILE '@@BASE_DIR@@/country.txt' 
+INTO TABLE broadleafcommerce.BLC_COUNTRY
+FIELDS TERMINATED BY '|' ENCLOSED BY "";
+
+DELETE FROM broadleafcommerce.BLC_STATE;
+
+LOAD DATA INFILE '@@BASE_DIR@@/state.txt' 
+INTO TABLE broadleafcommerce.BLC_STATE
+FIELDS TERMINATED BY '|' ENCLOSED BY ""
+(NAME, ABBREVIATION);
+
 SET foreign_key_checks = 1;
 
 
