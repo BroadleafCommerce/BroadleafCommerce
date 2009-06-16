@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * An extendible enumeration of delivery types.
- * 
+ *
  * Enumeration of how the offer should be applied.
  * AUTOMATIC - will be applied to everyone's order
  * MANUAL - offer is manually assigned to a Customer by an administrator
@@ -30,6 +30,7 @@ import java.util.Map;
  */
 public class OfferDeliveryType implements Serializable
 {
+    private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferDeliveryType> types = new Hashtable<String, OfferDeliveryType>();
 

@@ -25,6 +25,7 @@ import java.util.Map;
  */
 public class OfferDiscountType implements Serializable
 {
+    private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferDiscountType> types = new Hashtable<String, OfferDiscountType>();
 
