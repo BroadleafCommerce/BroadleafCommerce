@@ -66,7 +66,7 @@ public class CheckoutController {
     CustomerAddressService customerAddressService;
     @Resource
     protected CustomerPhoneService customerPhoneService;
-    @Resource(name="blPaymentService")
+    @Resource(name="blCreditCardService")
     protected PaymentService paymentService;
     @Resource
     protected OrderService orderService;
