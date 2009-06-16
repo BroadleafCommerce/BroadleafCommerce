@@ -12,8 +12,11 @@
 	<li><a href="#">My Account</a></li>
 	<li class="last"><a href="#">View Cart</a></li>
 </ul>
-<div id="searchBar"><input class="searchField" type="text" size="30" helpText="Search the store..." /><input type="image"
-	class="imageBtn" src="/broadleafdemo/images/goButton.gif" alt="Search" /></div>
+<div id="searchBar">
+<form id="search" method="post" action="/broadleafdemo/search/results.htm">
+<input class="searchField" type="text" name="queryString" id="queryString" size="30" helpText="Search the store..." /><input type="image"
+	class="imageBtn" src="/broadleafdemo/images/goButton.gif" alt="Search" />
+	</form></div>
 </div>
 <div class="slogan"><img src="/broadleafdemo/images/slogan.gif" /></div>
 <div class="contentWrapper navGradientBg">
