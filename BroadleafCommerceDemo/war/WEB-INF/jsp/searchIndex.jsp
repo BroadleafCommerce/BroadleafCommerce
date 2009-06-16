@@ -9,9 +9,3 @@
 </form:form>
 	</tiles:putAttribute>
 </tiles:insertDefinition>
-
-
-<%
-System.out.println("testing the debug console");
-
-%>

@@ -33,27 +33,13 @@ public class SearchIndexController {
 	@RequestMapping(method = {RequestMethod.GET})
 	public String index (ModelMap model, HttpServletRequest request)
 	{
-		System.out.println("------------------------ Index Creation Page;");
 		return "searchIndex";
 	}
 	
 	@RequestMapping(method = {RequestMethod.POST})
-	public String build (ModelMap model, HttpServletRequest request)
+	public String build (ModelMap model, HttpServletRequest request) throws CorruptIndexException, LockObtainFailedException, IOException
 	{
-		System.out.println("------------------------ Creating Index;");
-		try {
-			searchService.rebuildSkuIndex();
-		} catch (CorruptIndexException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (LockObtainFailedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		System.out.println("------------------------ Finished Creating Index;");
+		searchService.rebuildSkuIndex();
 
 		return "searchIndex";
 	}

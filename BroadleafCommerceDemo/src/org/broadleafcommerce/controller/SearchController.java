@@ -47,16 +47,10 @@ public class SearchController {
 
 		SearchQuery input = new SearchQuery();
 		input.setQueryString(queryString);
-		System.out.println("------------------------ Searching Index;");
 		List<Sku> skus = null;
 		
 		skus = searchService.performSearch(input.getQueryString());
-
-		System.out.println("------------------------ Finished Searching Index;");
 		
-        Map<Object, Object> modelz = new HashMap<Object, Object>();
-        modelz.put("skus", skus);
-
         model.addAttribute("skus", skus);
 
 		return "search";
