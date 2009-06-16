@@ -136,7 +136,7 @@
 	                    <a href="<c:url value="/store" />">Continue Shopping</a>
 	                  </td>
 	                  <td align="right" width="180">
-	                    <input type="submit" value="Checkout" name="beginCheckout" />
+	                    <a href="<c:url value="/checkout/checkout.htm" />">Checkout</a>
 	                  </td>
 	                </tr>
 	              </table>

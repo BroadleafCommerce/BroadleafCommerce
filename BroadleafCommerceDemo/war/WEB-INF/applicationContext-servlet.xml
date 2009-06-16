@@ -69,6 +69,10 @@
         <property name="removeItemViewRedirect" value="true"/>
 	</bean>
 	
+	<bean id="checkoutController" class="org.broadleafcommerce.checkout.web.CheckoutController">
+		<property name="checkoutView" value="checkout/checkout"/>
+	</bean>
+	
 	<bean id="customerPhoneController" class="org.broadleafcommerce.profile.web.controller.CustomerPhoneController">
 		<property name="deletePhoneSuccessView" value="myAccount/phone/customerPhones"/>
 	</bean>
@@ -94,6 +98,7 @@
 				<prop key="/store/*/*">catalogController</prop>
 				<prop key="/store/*/*/*">catalogController</prop>
 				<prop key="/basket/*">cartController</prop>
+				<prop key="/checkout/*">checkoutController</prop>
 			</props>
 		</property>
 	</bean>
