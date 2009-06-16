@@ -65,6 +65,7 @@
 	</bean>
 	<bean id="org.broadleafcommerce.marketing.domain.TargetContent" class="org.broadleafcommerce.marketing.domain.TargetContentImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.offer.domain.Offer" class="org.broadleafcommerce.offer.domain.OfferImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.CustomerOffer" class="org.broadleafcommerce.offer.domain.CustomerOfferImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.offer.domain.OfferCode" class="org.broadleafcommerce.offer.domain.OfferCodeImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.offer.domain.CandidateOrderOffer" class="org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.offer.domain.CandidateItemOffer" class="org.broadleafcommerce.offer.domain.CandidateItemOfferImpl" scope="prototype"/>
@@ -72,4 +73,5 @@
 	<bean id="org.broadleafcommerce.offer.domain.OrderAdjustment" class="org.broadleafcommerce.offer.domain.OrderAdjustmentImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.offer.domain.OrderItemAdjustment" class="org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment" class="org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustmentImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.pricing.domain.ShippingRate" class="org.broadleafcommerce.pricing.domain.ShippingRateImpl" scope="prototype"/>
 </beans>
