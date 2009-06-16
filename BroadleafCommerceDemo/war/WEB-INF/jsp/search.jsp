@@ -2,7 +2,7 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 
-<form:form method="post" commandName="search">
+<form:form method="post" commandName="doSearch">
 
 	<table class="formTable">
 		<tr>
@@ -29,7 +29,7 @@
 		<tr>
 			<td><c:out value="${item.id}"/></td>
 			<td><c:out value="${item.name}"/></td>
-			<td><c:out value="${item.price}"/></td>
+			<td><c:out value="${item.salePrice}"/></td>
 		</tr>
 	</c:forEach>
 </table>
