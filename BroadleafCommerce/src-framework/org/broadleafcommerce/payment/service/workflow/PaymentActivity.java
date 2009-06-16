@@ -48,17 +48,17 @@ public class PaymentActivity extends BaseActivity {
             if (paymentService.isValidCandidate(info.getType())) {
                 PaymentContextImpl paymentContext = new PaymentContextImpl(orderTotal, remainingTotal, info, infos.get(info), userName);
                 PaymentResponseItem paymentResponseItem;
-                if (seed.getActionType() == PaymentActionType.AUTHORIZE) {
+                if (seed.getActionType().equals(PaymentActionType.AUTHORIZE)) {
                     paymentResponseItem = paymentService.authorize(paymentContext);
-                } else if (seed.getActionType() == PaymentActionType.AUTHORIZEANDDEBIT) {
+                } else if (seed.getActionType().equals(PaymentActionType.AUTHORIZEANDDEBIT)) {
                     paymentResponseItem = paymentService.authorizeAndDebit(paymentContext);
-                } else if (seed.getActionType() == PaymentActionType.BALANCE) {
+                } else if (seed.getActionType().equals(PaymentActionType.BALANCE)) {
                     paymentResponseItem = paymentService.balance(paymentContext);
-                } else if (seed.getActionType() == PaymentActionType.CREDIT) {
+                } else if (seed.getActionType().equals(PaymentActionType.CREDIT)) {
                     paymentResponseItem = paymentService.credit(paymentContext);
-                } else if (seed.getActionType() == PaymentActionType.DEBIT) {
+                } else if (seed.getActionType().equals(PaymentActionType.DEBIT)) {
                     paymentResponseItem = paymentService.debit(paymentContext);
-                } else if (seed.getActionType() == PaymentActionType.VOID) {
+                } else if (seed.getActionType().equals(PaymentActionType.VOID)) {
                     paymentResponseItem = paymentService.voidPayment(paymentContext);
                 } else {
                     throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());

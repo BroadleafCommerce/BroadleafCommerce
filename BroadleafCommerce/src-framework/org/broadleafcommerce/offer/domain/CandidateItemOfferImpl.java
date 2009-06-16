@@ -112,11 +112,11 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
                 priceToUse = orderItem.getSalePrice();
             }
 
-            if (offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ) {
+            if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
                 priceToUse = priceToUse.subtract(offer.getValue());
-            } else if (offer.getDiscountType() == OfferDiscountType.FIX_PRICE) {
+            } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
                 priceToUse = offer.getValue();
-            } else if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF) {
+            } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                 priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
             }
             if (priceToUse.lessThan(new Money(0))) {

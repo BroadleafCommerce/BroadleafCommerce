@@ -119,13 +119,13 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
                     adjustmentPrice = orderItem.getRetailPrice();
                 }
             }
-            if (offer.getDiscountType() == OfferDiscountType.AMOUNT_OFF ) {
+            if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
                 value = offer.getValue().getAmount();
             }
-            if (offer.getDiscountType() == OfferDiscountType.FIX_PRICE) {
+            if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
                 value = adjustmentPrice.subtract(offer.getValue()).getAmount();
             }
-            if (offer.getDiscountType() == OfferDiscountType.PERCENT_OFF) {
+            if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
                 value = adjustmentPrice.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()).getAmount();
             }
             if (adjustmentPrice.lessThan(value)) {

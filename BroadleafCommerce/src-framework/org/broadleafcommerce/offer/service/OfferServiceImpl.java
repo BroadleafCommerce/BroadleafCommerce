@@ -254,7 +254,7 @@ public class OfferServiceImpl implements OfferService {
             order.setSubTotal(order.calculateOrderItemsCurrentPrice());
             List<DiscreteOrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
             for (Offer offer : filteredOffers) {
-                if(offer.getType() == OfferType.ORDER){
+                if(offer.getType().equals(OfferType.ORDER)){
                     if (couldOfferApplyToOrder(offer, order)) {
                         CandidateOrderOffer candidateOffer = offerDao.createCandidateOrderOffer();
                         candidateOffer.setOrder(order);
@@ -263,7 +263,7 @@ public class OfferServiceImpl implements OfferService {
                         order.addCandidateOrderOffer(candidateOffer);
                         qualifiedOrderOffers.add(candidateOffer);
                     }
-                } else if(offer.getType() == OfferType.ORDER_ITEM){
+                } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
                     for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                         if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
                             CandidateItemOffer candidateOffer = offerDao.createCandidateItemOffer();
@@ -273,7 +273,7 @@ public class OfferServiceImpl implements OfferService {
                             qualifiedItemOffers.add(candidateOffer);
                         }
                     }
-                } else if(offer.getType() == OfferType.FULFILLMENT_GROUP){
+                } else if(offer.getType().equals(OfferType.FULFILLMENT_GROUP)){
                     // TODO: Handle Offer calculation for offer type of fullfillment group
                     // how to verify if offer applies for fulfillment?
                     for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
