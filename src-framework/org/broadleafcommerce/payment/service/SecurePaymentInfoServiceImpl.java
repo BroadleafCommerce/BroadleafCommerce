@@ -49,13 +49,13 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
     @Override
     public Referenced create(PaymentInfoType paymentInfoType) {
-        if (paymentInfoType == PaymentInfoType.CREDIT_CARD) {
+        if (paymentInfoType.equals(PaymentInfoType.CREDIT_CARD)) {
             CreditCardPaymentInfo ccinfo = securePaymentInfoDao.createCreditCardPaymentInfo();
             return ccinfo;
-        } else if (paymentInfoType == PaymentInfoType.BANK_ACCOUNT) {
+        } else if (paymentInfoType.equals(PaymentInfoType.BANK_ACCOUNT)) {
             BankAccountPaymentInfo bankinfo = securePaymentInfoDao.createBankAccountPaymentInfo();
             return bankinfo;
-        } else if (paymentInfoType == PaymentInfoType.GIFT_CARD) {
+        } else if (paymentInfoType.equals(PaymentInfoType.GIFT_CARD)) {
             GiftCardPaymentInfo gcinfo = securePaymentInfoDao.createGiftCardPaymentInfo();
             return gcinfo;
         }

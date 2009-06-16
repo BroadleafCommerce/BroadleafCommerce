@@ -28,9 +28,7 @@ import org.broadleafcommerce.payment.service.module.PaymentModule;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.payment.service.type.PaymentLogEventType;
 import org.broadleafcommerce.payment.service.type.TransactionType;
-import org.springframework.stereotype.Service;
 
-@Service("blPaymentService")
 public class PaymentServiceImpl implements PaymentService {
 
     protected PaymentModule paymentModule;
