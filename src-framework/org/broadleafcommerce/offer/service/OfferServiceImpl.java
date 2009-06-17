@@ -47,6 +47,7 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.util.money.Money;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;
@@ -297,7 +298,7 @@ public class OfferServiceImpl implements OfferService {
                     Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
                     Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
                     qualifiedItemOffers = removeTrailingNotCombinableItemOffers(qualifiedItemOffers);
-                    notCombinableItemOfferApplied = applyAllItemOffers(qualifiedItemOffers);
+                    notCombinableItemOfferApplied = applyAllItemOffers(qualifiedItemOffers, discreteOrderItems);
                 }
 
                 Offer notCombinableOrderOfferApplied = null;
@@ -322,7 +323,7 @@ public class OfferServiceImpl implements OfferService {
                         qualifiedItemOffers = removeOfferFromCandidateItemOffers(qualifiedItemOffers, notCombinableItemOfferApplied);
                         notCombinableItemOfferApplied = null;
                         if (!qualifiedItemOffers.isEmpty()) {
-                            applyAllItemOffers(qualifiedItemOffers);
+                            applyAllItemOffers(qualifiedItemOffers, discreteOrderItems);
                         }
                     }
                 }
@@ -337,7 +338,7 @@ public class OfferServiceImpl implements OfferService {
                         qualifiedItemOffers = removeOfferFromCandidateItemOffers(qualifiedItemOffers, notCombinableItemOfferApplied);
                         notCombinableItemOfferApplied = null;
                         if (!qualifiedItemOffers.isEmpty()) {
-                            applyAllItemOffers(qualifiedItemOffers);
+                            applyAllItemOffers(qualifiedItemOffers, discreteOrderItems);
                         }
                     }
                 }
@@ -537,7 +538,7 @@ public class OfferServiceImpl implements OfferService {
      * @param itemOffers a sorted list of CandidateItemOffer
      * @return the not combinable OrderItem Offer
      */
-    protected Offer applyAllItemOffers(List<CandidateItemOffer> itemOffers) {
+    protected Offer applyAllItemOffers(List<CandidateItemOffer> itemOffers, List<DiscreteOrderItem> discreteOrderItems) {
         // Iterate through the collection of CandiateItemOffers. Remember that each one is an offer that may apply to a
         // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
         // The same offer may be applied to different Order Items
@@ -546,11 +547,13 @@ public class OfferServiceImpl implements OfferService {
         // isStackable - cannot be stack on top of an existing item offer back, other offers can be stack of top of it
         //
         Offer notCombinableOfferApplied = null;
+        int appliedItemOffersCount = 0;
         for (CandidateItemOffer itemOffer : itemOffers) {
             OrderItem orderItem = itemOffer.getOrderItem();
             if (notCombinableOfferApplied == null) {
                 if ((itemOffer.getOffer().isStackable()) || orderItem.getOrderItemAdjustments().size() == 0) {
                     applyOrderItemOffer(itemOffer);
+                    appliedItemOffersCount++;
                     if (!itemOffer.getOffer().isCombinableWithOtherOffers()) {
                         notCombinableOfferApplied = itemOffer.getOffer();
                     }
@@ -559,6 +562,31 @@ public class OfferServiceImpl implements OfferService {
                 // only the not combinable offer can be applied to the remaining line items
                 if (itemOffer.getOffer().equals(notCombinableOfferApplied)) {
                     applyOrderItemOffer(itemOffer);
+                    appliedItemOffersCount++;
+                }
+            }
+        }
+        if (appliedItemOffersCount > 0) {
+            // compare adjustment price to sales price and remove adjustments if sales price is better
+            for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+                if (discreteOrderItem.getAdjustmentPrice() != null) {
+                    Money itemPrice = discreteOrderItem.getRetailPrice();
+                    if (discreteOrderItem.getSalePrice() != null) {
+                        itemPrice = discreteOrderItem.getSalePrice();
+                    }
+                    if (discreteOrderItem.getAdjustmentPrice().greaterThanOrEqual(itemPrice)) {
+                        // adjustment price is not best price, remove adjustments for this item
+                        int offersApplied = discreteOrderItem.getOrderItemAdjustments().size();
+                        discreteOrderItem.removeAllAdjustments();
+                        appliedItemOffersCount = appliedItemOffersCount - offersApplied;
+                    }
+                }
+            }
+            if ((notCombinableOfferApplied != null) && (appliedItemOffersCount == 0)) {
+                itemOffers = removeOfferFromCandidateItemOffers(itemOffers, notCombinableOfferApplied);
+                notCombinableOfferApplied = null;
+                if (!itemOffers.isEmpty()) {
+                    applyAllItemOffers(itemOffers, discreteOrderItems);
                 }
             }
         }
