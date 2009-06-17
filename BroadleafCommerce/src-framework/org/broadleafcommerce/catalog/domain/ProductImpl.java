@@ -119,8 +119,6 @@ public class ProductImpl implements Product {
     @Column(name = "WEIGHT")
     protected BigDecimal weight;
 
-    //TODO remove the transient annotations once all SQL files have been updated.
-    @Transient
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 

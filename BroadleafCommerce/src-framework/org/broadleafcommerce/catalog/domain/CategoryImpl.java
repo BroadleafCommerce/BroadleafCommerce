@@ -143,10 +143,8 @@ public class CategoryImpl implements Category {
     @Column(name = "LONG_DESCRIPTION")
     protected String longDescription;
 
-    //TODO remove the transient annotations once all SQL files have been updated.
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
-    @Transient
-    protected List<FeaturedProduct> featuredProducts;
+    protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
 
     /** The child categories. */
     @Transient
