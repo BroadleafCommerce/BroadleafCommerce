@@ -1,53 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  >
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%"
+	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
-			import org.broadleafcommerce.admin.view.events.WizardEvent;
-		]]>
-	</mx:Script>
-<mx:Metadata>
-	[Event(name="wizardNextEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
-	[Event(name="wizardPreviousEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]	
-</mx:Metadata>
-
-	<mx:Script>
-		<![CDATA[
-			import org.broadleafcommerce.admin.view.events.WizardEvent;
+			import org.broadleafcommerce.admin.model.view.OfferModel;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			
-			private function handleNext(event:MouseEvent):void{
-				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_NEXT_EVENT));
-			}
+			[Bindable]
+			private var offerModel:OfferModel = AppModelLocator.getInstance().offerModel;
 			
-			private function handlePrevious(event:MouseEvent):void{
-				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_PREVIOUS_EVENT));
+			private function handleCreationComplete():void{
+				this.discountType.selectedIndex = 0;
+				this.offerType.selectedIndex = 0;
 			}
 		]]>
 	</mx:Script>
 	
-	<mx:Binding destination="offerType.dataProvider" source="AppModelLocator.getInstance().offerModel.offerTypes" />
-	<mx:Binding destination="discountType.dataProvider" source="AppModelLocator.getInstance().offerModel.discountTypes" />
+	<mx:Binding destination="offerType.dataProvider" source="this.offerModel.offerTypes" />
+	<mx:Binding destination="discountType.dataProvider" source="this.offerModel.discountTypes" />
 	
-	
-	<mx:RadioButtonGroup id="offerPrice" />
-	<mx:Label x="10" y="10" text="What is the Offer?"/>
-	<mx:TextInput id="offerNameText" x="106" y="36" toolTip="The name of this offer" />
-	<mx:TextInput x="106" y="179"  width="47" id="discountValue"  toolTip="The priority of this offer in relationship to other offers."/>
-	<mx:Label x="10" y="38" text="Name:"/>
-	<mx:TextInput x="106" y="64"  width="254" id="offerDescriptionText" toolTip="The description of this offer"/>
-	<mx:Label x="10" y="66" text="Description:"/>
-	<mx:RadioButton id="retailRadio" x="106" y="149" label="Retail Price" groupName="offerPrice" visible="{offerType.selectedIndex==1}"/>
-	<mx:RadioButton id="saleRadio" x="200" y="149" label="Sale Price" groupName="offerPrice" visible="{offerType.selectedIndex==1}"/>
-	<mx:ComboBox x="106" y="119" selectedIndex="0" id="offerType" toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />
-	<mx:ComboBox x="161" y="179" selectedIndex="0" id="discountType" toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />
-	<mx:Text x="10" y="121" text="Offer Type:"/>
-	<mx:Text x="10" y="151" text="Apply offer to " visible="{offerType.selectedIndex==1}"/>
-	<mx:DateField x="106" y="92" id="offerDateFrom" toolTip="The date this offer begins (inclusive)."/>
-	<mx:DateField x="268" y="92" id="offerDateTo" toolTip="The last day this offer can be applied."/>
-	<mx:Label x="206" y="94" text="Date To:"/>
-	<mx:Label x="10" y="94" text="Date From:"/>
-	<mx:Text x="10" y="182" text="Discount:" toolTip="What kind of discount this offer gives to the customer."/>
-	<mx:Button x="315" y="268" label="Next" click="handleNext(event)"/>
-	<mx:Button x="10" y="268" label="Cancel" click="handlePrevious(event)"/>
-	
+	<mx:RadioButtonGroup id="offerPrice"/>
+	<mx:VBox paddingLeft="10"
+		paddingRight="10"
+		paddingTop="10"
+		width="100%"
+		verticalGap="5">
+		<mx:Label text="Offer"
+			fontWeight="bold"/>
+		<!--text="What is the offer?"-->
+		<mx:HRule strokeColor="#94B12D"
+			width="100%"/>
+		<mx:Grid>
+			<mx:GridRow styleName="offerEditorFormGridRow">
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Label text="Name:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="offerNameText" 
+						toolTip="The name of this offer"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow styleName="offerEditorFormGridRow">
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Label text="Description:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="offerDescriptionText"
+						width="254"  
+						toolTip="The description of this offer"/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow styleName="offerEditorFormGridRow">
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Label text="Date From:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:DateField id="offerDateFrom"
+						toolTip="The date this offer begins (inclusive)."/>
+					<mx:Label text="Date To:"/>
+					<mx:DateField id="offerDateTo"
+						toolTip="The last day this offer can be applied."/>
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow styleName="offerEditorFormGridRow">
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Text text="Offer Type:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:ComboBox id="offerType"
+						fontWeight="normal"
+						toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />					
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow styleName="offerEditorFormGridRow"
+				includeInLayout="{offerType.selectedIndex == 1}">
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Text text="Apply To: " 
+						visible="{offerType.selectedIndex == 1}"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:RadioButton id="retailRadio" 
+						label="Retail Price" 
+						groupName="offerPrice" 
+						visible="{offerType.selectedIndex==1}"/>
+					<mx:RadioButton id="saleRadio" 
+						label="Sale Price" 
+						groupName="offerPrice" 
+						visible="{offerType.selectedIndex==1}"/>					
+				</mx:GridItem>
+			</mx:GridRow>
+			<mx:GridRow styleName="offerEditorFormGridRow">
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Text text="Discount:" 
+						toolTip="What kind of discount this offer gives to the customer."/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="discountValue"
+						width="47"   
+						toolTip="The priority of this offer in relationship to other offers."/>					
+					<mx:ComboBox id="discountType"
+						width="160"
+						selectedIndex="0"  
+						fontWeight="normal"
+						toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />					
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>
+	</mx:VBox>
 </mx:Canvas>

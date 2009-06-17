@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
-	width="100%" height="100%" xmlns:local="*" xmlns:view="org.broadleafcommerce.admin.view.*"
-	 xmlns:control="org.broadleafcommerce.admin.control.*" xmlns:business="org.broadleafcommerce.admin.model.business.*"
+	 xmlns:local="*" xmlns:view="org.broadleafcommerce.admin.view.*"
+	 xmlns:control="org.broadleafcommerce.admin.control.*" 
+	 xmlns:business="org.broadleafcommerce.admin.model.business.*"
+	 width="100%" 
+	 height="100%"
 	 creationComplete="initApp()">
 	
 	<mx:Script>
@@ -9,6 +12,7 @@
 			import org.broadleafcommerce.admin.control.events.InitializeApplicationEvent;
 			import com.adobe.cairngorm.control.CairngormEventDispatcher;
 			import org.broadleafcommerce.admin.control.events.FindAllCatalogCategoriesEvent;
+			
 			private function initApp():void{
 				var iae:InitializeApplicationEvent = new InitializeApplicationEvent();
 				CairngormEventDispatcher.getInstance().dispatchEvent(iae);
@@ -22,13 +26,18 @@
 	<business:Services id="blcAdminServices" />
 	
 	
-	<mx:VBox height="100%" width="100%" minHeight="700" minWidth="1000" >
-		<mx:HBox width="100%" horizontalAlign="{getStyle('adminLogoHAlign')}" >
+	<mx:VBox height="100%" 
+		width="100%" 
+		minHeight="700" 
+		minWidth="1000" >
+		<mx:HBox width="100%" 
+			horizontalAlign="{getStyle('adminLogoHAlign')}" >
 			<mx:Image source="{getStyle('adminLogo')}"
 				height="{getStyle('adminLogoHeight')}"
 				width="{getStyle('adminLogoWidth')}"/> 
 		</mx:HBox>
-		<view:AdminContent width="100%" height="100%" />
+		<view:AdminContent width="100%" 
+			height="100%" />
 	</mx:VBox>
 	
 </mx:Application>

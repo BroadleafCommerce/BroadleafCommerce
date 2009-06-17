@@ -8,7 +8,6 @@ global
 	adminLogoHAlign:  right; 
 	adminLogoWidth:   160;
 	background-color: #FFFFFF;
-
 }
 
 Application
@@ -48,10 +47,10 @@ OfferCanvas,CatalogCanvas
 	background-color: #EFFA8F;	
 }
 
-NewOfferWizard
+/* NewOfferWizard
 {
 	background-alpha:	0;
-}
+} */
 
 OfferWhat
 {
@@ -77,16 +76,70 @@ OfferWhich
 	background-color: 	#FFFFFF;
 	border-style:		solid;
 	cornerRadius:		10;
-	
 }
-
 OfferWho
 {
 	background-alpha:	1;
 	background-color: 	#FFFFFF;
 	border-style:		solid;
 	cornerRadius:		10;
-	
+}
+TitleWindow
+{
+	alpha: 1.0;
+	backgroundAlpha: 1.0;
+	/* backgroundColor: #94B12D; */
+	borderAlpha: 100;
+	borderColor: #3F3F3F;
+	borderStyle: solid;
+	borderThickness: 3;
+	dropShadowColor: #000000; 
+	dropShadowEnabled: true;
+	modalTransparencyBlur: 0;
+	modalTransparencyColor: #FFFFFF;
+	/* modal-transparency: 0; */
+	rounded-bottom-corners: true;
+	shadowDirection: right;
+	shadowDistance: 5;
+	color: #000000;
 }
 
+.fieldLabel
+{
+	horizontal-align: left;	
+}
 
+GridRow
+{
+	vertical-align: middle;	
+}
+
+GridItem
+{
+	vertical-align: middle;
+}
+
+.offerEditorFormGridRow
+{
+	padding-top: 10;	
+}
+
+TextInput
+{
+	theme-color: #94B12D;	
+}
+
+ComboBox
+{
+	theme-color: #94B12D;	
+}
+
+Button
+{
+	theme-color: #94B12D;	
+}
+
+DateField
+{
+	theme-color: #94B12D;	
+}

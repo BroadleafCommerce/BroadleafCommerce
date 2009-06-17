@@ -1,39 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  >
-<mx:Metadata>
-	[Event(name="wizardNextEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
-	[Event(name="wizardPreviousEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]	
-</mx:Metadata>
-<mx:Script>
-	<![CDATA[
-		import org.broadleafcommerce.admin.model.AppModelLocator;
-		import mx.collections.ArrayCollection;
-		import org.broadleafcommerce.admin.view.events.WizardEvent;
-		
-		[Bindable]
-		private var customerRulesArray:ArrayCollection = AppModelLocator.getInstance().offerModel.deliveryTypes;
-		
-			private function handleNext(event:MouseEvent):void{
-				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_NEXT_EVENT));
-			}
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  
+	width="100%">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.model.AppModelLocator;
+			import mx.collections.ArrayCollection;
 			
-			private function handlePrevious(event:MouseEvent):void{
-				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_PREVIOUS_EVENT));
-			}
-			
-	]]>
-</mx:Script>
-	<mx:RadioButtonGroup id="customersRadioGroup" enabled="true" />
-	<mx:Label x="9" y="12" text="Who do you want to distribute this offer to?"/>
-	<mx:RadioButton x="27" y="38" id="allRadio" value="{customerRulesArray.getItemAt(0)}" label="All Customers Automatically" groupName="customersRadioGroup"/>
-	<mx:RadioButton x="27" y="61" id="codeRadio" value="{customerRulesArray.getItemAt(1)}" label="Any Customer who enters global offer code" groupName="customersRadioGroup"/>
-	<mx:RadioButton x="27" y="116" id="manualRadio" value="{customerRulesArray.getItemAt(2)}" label="Customers set Manually " groupName="customersRadioGroup"/>
-	<mx:RadioButton x="27" y="141" enabled="false" label="Any Customer who enters one of many codes" groupName="customersRadioGroup"/>
-	<mx:Text x="54" y="159" text="Codes will be entered on a following screen" fontStyle="italic"/>
-	<mx:TextInput x="30" y="206" width="164" id="appliesCustomerText"/>
-	<mx:Text x="9" y="179" text="Only give offer to customers who meet the following condition"/>
-	<mx:Button x="315" y="274" label="Done" click="handleNext(event)"/>
-	<mx:Button x="10" y="274" label="Previous" click="handlePrevious(event)"/>
-	<mx:TextInput x="47" y="86" id="offerCodeText" enabled="{codeRadio.selected}"/>
-	
+			[Bindable]
+			private var customerRulesArray:ArrayCollection = AppModelLocator.getInstance().offerModel.deliveryTypes;
+		]]>
+	</mx:Script>
+	<mx:RadioButtonGroup id="customersRadioGroup" 
+		enabled="true" />
+	<mx:VBox verticalGap="15"
+		paddingLeft="10"
+		paddingRight="10"
+		paddingTop="10"
+		width="100%">
+		<mx:VBox verticalGap="5" 
+			width="100%">
+			<mx:Label 
+				fontWeight="bold"
+				text="Customers"/>
+			<mx:HRule strokeColor="#94B12D"
+				width="100%"/>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Label text="Who do you want to distribute this offer to?"/>
+			<mx:VBox paddingLeft="15">
+				<mx:RadioButton id="allRadio" 
+					value="{customerRulesArray.getItemAt(0)}"
+					label="All Customers Automatically" 
+					groupName="customersRadioGroup"/>
+				<mx:RadioButton id="codeRadio" 
+					value="{customerRulesArray.getItemAt(1)}" 
+					label="Any Customer who enters global offer code" 
+					groupName="customersRadioGroup"/>
+				<mx:RadioButton id="manualRadio"
+					value="{customerRulesArray.getItemAt(2)}" 
+					label="Customers set Manually " 
+					groupName="customersRadioGroup"/>
+				<mx:RadioButton enabled="false" 
+					label="Any Customer who enters one of many codes" groupName="customersRadioGroup"/>
+			</mx:VBox>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Text text="Codes will be entered on a following screen" 
+				fontStyle="italic"/>
+			<mx:Canvas>
+				<mx:TextInput id="appliesCustomerText"
+					x="15"
+					width="164"/>
+			</mx:Canvas>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Text text="Only give offer to customers who meet the following condition:"/>
+			<mx:Canvas>
+				<mx:TextInput id="offerCodeText"
+					x="15"
+					enabled="{codeRadio.selected}"/>
+			</mx:Canvas>
+		</mx:VBox>		
+	</mx:VBox>
 </mx:Canvas>

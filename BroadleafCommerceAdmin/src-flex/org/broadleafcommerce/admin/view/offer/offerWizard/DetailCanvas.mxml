@@ -1,44 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  >
-	<mx:Script>
-		<![CDATA[
-			import org.broadleafcommerce.admin.view.events.WizardEvent;
-		]]>
-	</mx:Script>
-<mx:Metadata>
-	[Event(name="wizardNextEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
-	[Event(name="wizardPreviousEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]	
-</mx:Metadata>
-
-	<mx:Script>
-		<![CDATA[
-			import org.broadleafcommerce.admin.view.events.WizardEvent;
-			private function handleNext(event:MouseEvent):void{
-				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_NEXT_EVENT));
-			}
-			
-			private function handlePrevious(event:MouseEvent):void{
-				dispatchEvent(new WizardEvent(WizardEvent.WIZARD_PREVIOUS_EVENT));
-			}
-		]]>
-	</mx:Script>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  
+	width="100%">
 	<mx:RadioButtonGroup id="discountType" />
 	<mx:RadioButtonGroup id="offerPrice" />
 	<mx:RadioButtonGroup id="offerActive" />
-	<mx:Label x="10" y="9" text="How is the offer applied?"/>
-	<mx:TextInput x="107" y="35"  width="47" id="offerPriorityText"  toolTip="The priority of this offer in relationship to other offers."/>
-	<mx:Label x="10" y="37" text="Offer Priority:"/>
-	<mx:TextInput x="96" y="177" width="46" id="usesText"/>
-	<mx:Text x="10" y="130" text="How many times can this offer be used?" width="289"/>
-	<mx:RadioButton x="29" y="156" id="usesUnlimtedRadio" label="Unlimited" selected="{Number(usesText.text)==0}" />
-	<mx:RadioButton x="29" y="177" id="usesRadio" label="Up to " selected="{Number(usesText.text)>0}"/>
-	<mx:Text x="150" y="179"  text="times"/>
-	<mx:TextInput x="29" y="245" width="164" id="appliesOrderText"/>
-	<mx:Text x="10" y="207" text="Only give the offer to Order/Items/Fulfillment Groups that meet the following condition:" height="39" width="380"/>
-	<mx:Text x="10" y="63" text="How is this offer applied with other Offers?" width="289"/>
-	<mx:CheckBox x="27" y="80" id="stackableCheckbox" label="Stackable"/>
-	<mx:CheckBox x="27" y="100" id="combinableCheckbox" label="Combinable"/>
-	<mx:Button x="315" y="274" label="Next" click="handleNext(event)"/>
-	<mx:Button x="10" y="274" label="Previous" click="handlePrevious(event)"/>
-	
+	<mx:VBox verticalGap="15"
+		paddingLeft="10"
+		paddingRight="10"
+		paddingTop="10"
+		width="100%">
+		<mx:VBox verticalGap="5"
+			width="100%">
+			<mx:Label fontWeight="bold"
+				text="Details"/>
+			<!--text="How is the offer applied?"-->
+			<mx:HRule strokeColor="#94B12D"
+				width="100%"/>
+		</mx:VBox>
+		<mx:Grid>
+			<mx:GridRow verticalAlign="middle">
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Label text="Offer Priority:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="offerPriorityText"
+						width="47" 
+						toolTip="The priority of this offer in relationship to other offers."/>
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>
+		<mx:VBox>
+			<mx:Label text="Number Of Uses:"/>	
+			<mx:VBox paddingLeft="15">
+				<mx:RadioButton id="usesUnlimtedRadio"
+					label="Unlimited" 
+					selected="{Number(usesText.text)==0}"/>
+				<mx:HBox verticalAlign="middle">
+					<mx:RadioButton id="usesRadio"
+						label="Up to" 
+						selected="{Number(usesText.text)>0}"/>	
+					<mx:TextInput id="usesText"
+						width="46"/>
+					<mx:Label text="times"/>							
+				</mx:HBox>
+			</mx:VBox>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Text text="How is this offer applied with other offers?" 
+				width="289"/>
+			<mx:VBox paddingLeft="15">
+				<mx:CheckBox id="stackableCheckbox"
+					label="Stackable"/>
+				<mx:CheckBox id="combinableCheckbox"
+					label="Combinable"/>				
+			</mx:VBox>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Text text="Only give the offer to Order/Items/Fulfillment Groups that meet the following condition:" 
+				height="39" 
+				width="380"/>
+			<mx:Canvas>
+				<mx:TextInput id="appliesOrderText"
+					x="15"
+					width="160"/>
+			</mx:Canvas>
+		</mx:VBox>
+	</mx:VBox>
 </mx:Canvas>

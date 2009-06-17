@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
-	width="600" height="500" xmlns:view="org.broadleafcommerce.admin.view.*"
-	backgroundColor="#ffffff"
-	currentState="{STATE_WHAT}" xmlns:wizard="org.broadleafcommerce.admin.view.components.wizard.*"
-	title="New Offer Wizard"
+	xmlns:offerWizard="org.broadleafcommerce.admin.view.offer.offerWizard.*" 
+	xmlns:offerWizardB="org.broadleafcommerce.admin.view.components.offerWizardB.*"
+	xmlns:view="org.broadleafcommerce.admin.view.*"
+	xmlns:wizard="org.broadleafcommerce.admin.view.components.wizard.*"
+	width="550" 
+	height="500" 
+	currentState="{STATE_WHAT}" 
 	creationComplete="handleCreationComplete()"
 	showCloseButton="true"
-	modalTransparencyBlur="0"
-	modalTransparencyColor="#FFFFFF"
-	modalTransparency="0"
-	close="PopUpManager.removePopUp(this)"
-	xmlns:offerWizard="org.broadleafcommerce.admin.view.offer.offerWizard.*" xmlns:offerWizardB="org.broadleafcommerce.admin.view.components.offerWizardB.*">
+	headerColors="[#9F9F98, #000000]"
+	title="New Offer Wizard"
+	color="white"
+	fontSize="14"
+	close="PopUpManager.removePopUp(this)">
+	
 	<mx:Metadata>
 		[Event(name="wizardCancelEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
 		[Event(name="wizardDoneEvent", type="org.broadleafcommerce.admin.view.events.WizardEvent")]
 	</mx:Metadata>
-	
+
 <mx:Script>
 	<![CDATA[
+		import mx.events.ItemClickEvent;
 		import org.broadleafcommerce.admin.model.data.remote.Offer;
 		import mx.controls.Alert;
 		import mx.collections.ArrayCollection;
@@ -36,25 +41,24 @@
 		
 		[Bindable]
 		private var currentOffer:Offer = AppModelLocator.getInstance().offerModel.currentOffer;
-		
 		[Bindable]
 		private var editOffer:Offer = new Offer();
 
-			private function handleCreationComplete():void {
-                // Center the TitleWindow container 
-                // over the control that created it.
-                PopUpManager.centerPopUp(this);
-            }
-            
+		private function handleCreationComplete():void {
+            // Center the TitleWindow container 
+            // over the control that created it.
+            PopUpManager.centerPopUp(this);
+        }
 
-
-		private function handleWizardNextEvent(event:WizardEvent):void{
+		private function handleNextButtonClick(event:Event):void{
 			switch(currentState){
 				case STATE_WHAT:
 					currentState = STATE_HOW;
+					this.offerEditorToggleButtonBar.selectedIndex = 1;
 					break;
 				case STATE_HOW:
 					currentState = STATE_WHO;
+					this.offerEditorToggleButtonBar.selectedIndex = 2;
 					break;
 				case STATE_WHO:
 					dispatchEvent(new WizardEvent(WizardEvent.WIZARD_DONE_EVENT));
@@ -65,7 +69,7 @@
 			}
 		}
 
-		private function handleWizardPreviousEvent(event:WizardEvent):void{
+		private function handlePreviousButtonClick(event:Event):void{
 			switch(currentState){
 				case STATE_WHAT:
 					dispatchEvent(new WizardEvent(WizardEvent.WIZARD_CANCEL_EVENT));
@@ -73,21 +77,30 @@
 					break;
 				case STATE_HOW:
 					currentState = STATE_WHAT;
+					this.offerEditorToggleButtonBar.selectedIndex = 0;
 					break;
 				case STATE_WHO:
 					currentState = STATE_HOW;
+					this.offerEditorToggleButtonBar.selectedIndex = 1;
 					break;
 			}
-			
 		}
 
-		private function updateOffer():void
-		{
+		private function updateOffer():void{
 			editOffer.uses = currentOffer.uses;
 			editOffer.id = currentOffer.id;			
 			var auoe:AddUpdateOfferEvent = new AddUpdateOfferEvent(editOffer);
 			auoe.dispatch();
-			
+		}
+		
+		private function handleToggleButtonBarClick(event:ItemClickEvent):void{
+			if(event.label == "Offer"){
+				currentState = STATE_WHAT;
+			}else if(event.label == "Detail"){
+				currentState = STATE_HOW;
+			}else if(event.label == "Customer"){
+				currentState = STATE_WHO;			
+			}
 		}
 		
 	]]>
@@ -131,35 +144,78 @@
 <mx:Binding source="{currentOffer.appliesToCustomerRules}" destination="whoCanvas.appliesCustomerText.text" />  
 <mx:Binding source="{currentOffer.deliveryTypeString}" destination="whoCanvas.customersRadioGroup.selectedValue" />
 
-
-	<mx:HBox >
-		<mx:Label id="whatLabel" text="Offer" click="{currentState=STATE_WHAT}" />
-		<mx:Label text="->" />
-		<mx:Label id="howLabel" text="Detail" click="{currentState=STATE_HOW}"/>
-		<mx:Label text="->" />
-		<mx:Label id="whoLabel" text="Customer" click="{currentState=STATE_WHO}"/>
-	</mx:HBox>
-	<mx:Canvas width="100%" height="100%" backgroundAlpha="1.0" id="canvas1" horizontalScrollPolicy="off" verticalScrollPolicy="off">
-		
-	<offerWizard:NameCanvas id="whatCanvas" height="100%" width="100%" visible="false" wizardNextEvent="handleWizardNextEvent(event)" wizardPreviousEvent="handleWizardPreviousEvent(event)" />	
-	<offerWizard:DetailCanvas id="howCanvas" height="100%" width="100%" visible="false" wizardNextEvent="handleWizardNextEvent(event)" wizardPreviousEvent="handleWizardPreviousEvent(event)"/>
-	<offerWizard:CustomerCanvas id="whoCanvas" height="100%" width="100%" visible="false" wizardNextEvent="handleWizardNextEvent(event)" wizardPreviousEvent="handleWizardPreviousEvent(event)"/>
+	<mx:ToggleButtonBar id="offerEditorToggleButtonBar"
+		direction="horizontal" 
+		paddingLeft="10"
+		paddingTop="10"
+		color="black"
+		fontSize="10"
+		itemClick="handleToggleButtonBarClick(event)">
+		<mx:dataProvider>
+			<mx:String>Offer</mx:String>
+			<mx:String>Detail</mx:String>
+			<mx:String>Customer</mx:String>
+		</mx:dataProvider>
+	</mx:ToggleButtonBar>
+	<mx:Canvas id="canvas1" 
+		width="100%" 
+		height="100%" 
+		color="black"
+		fontSize="10"
+		backgroundAlpha="1.0" 
+		horizontalScrollPolicy="off" 
+		verticalScrollPolicy="off">
+	<offerWizard:NameCanvas id="whatCanvas" 
+		height="100%" 
+		width="100%" 
+		visible="false"/> 
+	<offerWizard:DetailCanvas id="howCanvas" 
+		height="100%" 
+		width="100%" 
+		visible="false"/> 
+	<offerWizard:CustomerCanvas id="whoCanvas" 
+		height="100%" 
+		width="100%" 
+		visible="false"/> 
+	<mx:Button id="nextButton"
+		label="Next"
+		right="10"
+		bottom="10"
+		click="handleNextButtonClick(event)"/>
+	<mx:Button id="previousButton"
+		label="Previous"
+		left="10"
+		bottom="10"
+		click="handlePreviousButtonClick(event)"
+		visible="false"/>
 	</mx:Canvas>
-	
 	<mx:states>
-		<mx:State name="{STATE_WHAT}" >
-			<mx:SetProperty target="{whatCanvas}" name="visible" value="true" />
-			<mx:SetProperty target="{whatCanvas}" name="height" value="429"/>
-			<mx:SetProperty target="{whatCanvas}" name="y" value="23"/>
-			<mx:SetStyle target="{whatLabel}" name="fontWeight" value="bold" />
+		<mx:State name="{STATE_WHAT}">
+			<mx:SetProperty target="{whatCanvas}" 
+				name="visible" 
+				value="true"/>
+			<mx:SetProperty target="{this.previousButton}"
+				name="visible"
+				value="false"/>
 		</mx:State>
-		<mx:State name="{STATE_HOW}" >
-			<mx:SetProperty target="{howCanvas}" name="visible" value="true" />
-			<mx:SetStyle target="{howLabel}" name="fontWeight" value="bold" />
+		<mx:State name="{STATE_HOW}">
+			<mx:SetProperty target="{howCanvas}" 
+				name="visible" 
+				value="true"/>
+			<mx:SetProperty target="{this.previousButton}"
+				name="visible"
+				value="true"/>
 		</mx:State>
-		<mx:State name="{STATE_WHO}" >
-			<mx:SetProperty target="{whoCanvas}" name="visible" value="true" />
-			<mx:SetStyle target="{whoLabel}" name="fontWeight" value="bold" />
+		<mx:State name="{STATE_WHO}">
+			<mx:SetProperty target="{whoCanvas}" 
+				name="visible" 
+				value="true"/>
+			<mx:SetProperty target="{this.nextButton}"
+				name="label"
+				value="Done"/>
+			<mx:SetProperty target="{this.previousButton}"
+				name="visible"
+				value="true"/>
 		</mx:State>
 	</mx:states>
 </mx:TitleWindow>

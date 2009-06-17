@@ -121,7 +121,7 @@
 		<mx:GridRow verticalAlign="middle">
 			<mx:GridItem horizontalAlign="right"
 				verticalAlign="middle">
-				<mx:Label id="filterLabel"
+				<mx:Label id="filterByNameLabel"
 					text="Filter By Name:"/>
 			</mx:GridItem>
 			<mx:GridItem verticalAlign="middle">
@@ -130,10 +130,15 @@
 					width="160"
 					change="handleFilterTextInputChange()"/>
 			</mx:GridItem>
-			<mx:GridItem>
-				<mx:Spacer width="40"/>
+			<mx:GridItem textAlign="right"
+				verticalAlign="middle"
+				paddingLeft="40">
+					<mx:Label id="filterByDateLabel" 
+						text="Filter By Date:"/>
+			</mx:GridItem>
+			<mx:GridItem verticalAlign="middle">
 				<mx:HBox horizontalGap="20"
-					x="200">
+					verticalAlign="middle">
 					<mx:CheckBox id="notStartedCheckBox"
 						label="Not Started"
 						labelPlacement="right"

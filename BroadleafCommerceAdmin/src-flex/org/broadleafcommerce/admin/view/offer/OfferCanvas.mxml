@@ -37,17 +37,17 @@
 	</mx:Script> 
 	<mx:VBox verticalGap="20"
 		width="100%">
-		<offer:OfferFilterCanvas/>	
 		<mx:Button x="10" 
 			y="10" 
-			label="New" 
+			label="New Offer" 
 			click="handleNewClick(event)"/>
+		<offer:OfferFilterCanvas/>	
 		<offer:OfferDataGrid id="offersDataGrid"
 			dataProvider="{this.offerModel.offersListFiltered}" 
 			width="75%" 
 			height="75%" 
 			doubleClickEnabled="true" 
-			doubleClick="handleOffersDataGridDoubleClick(event)" /> 
+			doubleClick="handleOffersDataGridDoubleClick(event)"/> 
 	</mx:VBox>
 	<!--	<mx:DataGrid id="offersDataGrid" x="10" y="37" width="75%" height="75%" doubleClickEnabled="true" doubleClick="handleOffersDataGridDoubleClick(event)">
 		</mx:DataGrid>
