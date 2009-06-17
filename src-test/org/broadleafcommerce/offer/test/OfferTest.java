@@ -272,7 +272,6 @@ public class OfferTest extends BaseTest {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
 
-
         order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 2));
         order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1));
 
@@ -284,6 +283,88 @@ public class OfferTest extends BaseTest {
         offerService.applyFulfillmentGroupOffers(order.getFulfillmentGroups().get(0));
 
         assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(1.6D)));
+    }
+
+    @Test(groups =  {"testOfferDelete"}, dependsOnGroups = { "testFulfillmentGroupOffers"})
+    public void testOfferDelete() throws Exception {
+        CustomerOffer customerOffer = customerOfferDao.create();
+        Customer customer = createCustomer();
+        Long customerId = customer.getId();
+        customerOffer.setCustomer(customerService.saveCustomer(customer));
+
+        Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        offer = offerService.save(offer);
+        Long offerId = offer.getId();
+        offerDao.delete(offer);
+        Offer deletedOffer = offerDao.readOfferById(offerId);
+        assert deletedOffer == null;
+
+        offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        offer = offerService.save(offer);
+
+        customerOffer.setOffer(offer);
+        customerOffer = customerOfferDao.save(customerOffer);
+        Long customerOfferId = customerOffer.getId();
+        customerOffer = customerOfferDao.readCustomerOfferById(customerOfferId);
+        assert(customerOffer != null);
+
+        Customer customer2 = createCustomer();
+        customerOffer.setCustomer(customerService.saveCustomer(customer2));
+        customerOffer = customerOfferDao.save(customerOffer);
+
+        assert !customerOffer.getCustomer().getId().equals(customerId);
+
+        customerOfferDao.delete(customerOffer);
+        customerOffer = customerOfferDao.readCustomerOfferById(customerOfferId);
+
+        assert(customerOffer == null);
+    }
+
+    @Test(groups =  {"testReadAllOffers"}, dependsOnGroups = { "testOfferDelete"})
+    public void testReadAllOffers() throws Exception {
+        Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        offer.setDeliveryType(OfferDeliveryType.MANUAL);
+        offerService.save(offer);
+        List<Offer> allOffers = offerService.findAllOffers();
+        assert allOffers != null && allOffers.isEmpty() == false;
+    }
+
+    @Test(groups =  {"testOfferCodeDao"}, dependsOnGroups = { "testReadAllOffers"})
+    public void testOfferCodeDao() throws Exception {
+        String offerCodeString = "AJ's Code";
+        OfferCode offerCode = createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        offerCode.setOfferCode(offerCodeString);
+        offerCode = offerCodeDao.save(offerCode);
+        Long offerCodeId = offerCode.getId();
+        assert offerCode.getOfferCode().equals(offerCodeString);
+
+        Offer offer = offerCode.getOffer();
+        Offer storedOffer = offerService.lookupOfferByCode(offerCodeString);
+        assert offer.getId().equals(storedOffer.getId());
+
+        OfferCode newOfferCode = offerCodeDao.readOfferCodeById(offerCodeId);
+        assert newOfferCode.getOfferCode().equals(offerCode.getOfferCode());
+
+        newOfferCode = offerCodeDao.readOfferCodeByCode(offerCodeString);
+        assert newOfferCode.getOfferCode().equals(offerCode.getOfferCode());
+        offerCodeId = newOfferCode.getId();
+        offerCodeDao.delete(newOfferCode);
+
+        OfferCode deletedOfferCode = offerCodeDao.readOfferCodeById(offerCodeId);
+        assert deletedOfferCode == null;
+    }
+
+    @Test(groups =  {"testCustomerOffers"}, dependsOnGroups = { "testOfferCodeDao"})
+    public void testCustomerOffers() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
+        CustomerOffer customerOffer = new CustomerOfferImpl();
+        customerOffer.setCustomer(order.getCustomer());
+        customerOffer.setOffer(offer);
+        customerOffer = customerOfferDao.save(customerOffer);
+        CustomerOffer customerOfferTest = customerOfferDao.readCustomerOfferById(customerOffer.getId());
+
+        assert (customerOffer.getId().equals(customerOfferTest.getId()));
     }
 
     private Customer createCustomer() {
