@@ -49,7 +49,7 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
-    @Column(name = "REFERENCE_NUMBER")
+    @Column(name = "REFERENCE_NUMBER", nullable=false)
     protected String referenceNumber;
 
     @Column(name = "PAN", nullable=false)
