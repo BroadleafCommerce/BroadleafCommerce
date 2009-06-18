@@ -18,6 +18,7 @@ package org.broadleafcommerce.offer.service;
 import java.util.List;
 
 import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
@@ -41,11 +42,24 @@ public interface OfferService {
     public Offer save(Offer offer);
 
     /**
+     * Saves a new Offer or updates an existing Offer that belongs to an OfferCode, then saves or updates the OfferCode
+     * @param offerCode
+     * @return the offerCode
+     */
+    public OfferCode saveOfferCode(OfferCode offerCode);
+    /**
      * Lookup offer by code.
      * @param code the code
      * @return the offer
      */
     public Offer lookupOfferByCode(String code);
+
+    /**
+     * Lookup OfferCode by code.
+     * @param code the code
+     * @return the offer
+     */
+    public OfferCode lookupOfferCodeByCode(String code);
 
     /**
      * Apply offers to order.
@@ -72,6 +86,8 @@ public interface OfferService {
      * @param fulfillmentGroups
      */
     public void applyFulfillmentGroupsOffers(List<FulfillmentGroup> fulfillmentGroups);
+
+
 
 
 }
