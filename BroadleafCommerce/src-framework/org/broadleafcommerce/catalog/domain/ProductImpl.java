@@ -305,7 +305,7 @@ public class ProductImpl implements Product {
      */
     public void setAllSkus(List<Sku> skus) {
         this.allSkus = skus;
-        this.skus = null;
+        this.skus.clear();
     }
 
     /*
