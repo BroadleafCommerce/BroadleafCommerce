@@ -103,6 +103,12 @@ public class OfferServiceImpl implements OfferService {
         return offerDao.save(offer);
     }
 
+    @Override
+    public OfferCode saveOfferCode(OfferCode offerCode) {
+        offerCode.setOffer(offerDao.save(offerCode.getOffer()));
+        return offerCodeDao.save(offerCode);
+    }
+
 
 
     /**
@@ -806,5 +812,8 @@ public class OfferServiceImpl implements OfferService {
     }
 
 
+    public OfferCode lookupOfferCodeByCode(String code){
+        return offerCodeDao.readOfferCodeByCode(code);
+    }
 
 }
