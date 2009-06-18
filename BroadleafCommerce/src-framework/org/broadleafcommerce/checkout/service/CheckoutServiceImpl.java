@@ -24,8 +24,11 @@ import org.broadleafcommerce.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.checkout.service.workflow.CheckoutSeed;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
+import org.broadleafcommerce.pricing.service.exception.PricingException;
+import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.workflow.SequenceProcessor;
 import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 
     @Resource(name="blCheckoutWorkflow")
     protected SequenceProcessor checkoutWorkflow;
+
+    @Resource(name="blCartService")
+    protected CartService cartService;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order, java.util.Map)
@@ -57,11 +63,17 @@ public class CheckoutServiceImpl implements CheckoutService {
                 throw new CheckoutException("Referenced reference number cannot be null");
             }
         }
+
         try {
+            order.setSubmitDate(DateUtil.getNow());
+            cartService.save(order);
+
             CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);
 
             return seed;
+        } catch (PricingException e) {
+            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e);
         } catch (WorkflowException e) {
             Throwable cause = e;
             while (e.getCause() != null) {
