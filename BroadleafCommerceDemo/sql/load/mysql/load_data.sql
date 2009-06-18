@@ -1,7 +1,6 @@
 SET foreign_key_checks = 0;
 set sql_mode = '';
 
-
 DELETE FROM broadleafcommerce.BLC_CATEGORY;
 
 LOAD DATA INFILE '@@BASE_DIR@@/category.txt' 
@@ -86,6 +85,14 @@ INTO TABLE broadleafcommerce.BLC_STATE
 FIELDS TERMINATED BY '|' ENCLOSED BY ""
 (NAME, ABBREVIATION);
 
+DELETE FROM broadleafcommerce.BLC_SHIPPING_RATE;
+
+LOAD DATA INFILE '@@BASE_DIR@@/shipping_rate.txt' 
+INTO TABLE broadleafcommerce.BLC_SHIPPING_RATE
+FIELDS TERMINATED BY '|' ENCLOSED BY ""
+(ID, FEE_TYPE, FEE_SUB_TYPE, FEE_BAND, BAND_UNIT_QTY, BAND_RESULT_QTY, BAND_RESULT_PCT);
+
 SET foreign_key_checks = 1;
+
 
 
