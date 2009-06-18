@@ -8,7 +8,7 @@ package org.broadleafcommerce.admin.control.commands.offers
 	
 	import org.broadleafcommerce.admin.control.events.ShowOfferWindowEvent;
 	import org.broadleafcommerce.admin.model.AppModelLocator;
-	import org.broadleafcommerce.admin.model.data.remote.Offer;
+	import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 	import org.broadleafcommerce.admin.view.offer.offerWizard.NewOfferWizard;
 
 	public class ShowOfferWindowCommand implements Command

@@ -2,8 +2,9 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 			import mx.utils.StringUtil;
-			import org.broadleafcommerce.admin.model.data.remote.Offer;
+			import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			import org.broadleafcommerce.admin.model.view.OfferModel;
 			

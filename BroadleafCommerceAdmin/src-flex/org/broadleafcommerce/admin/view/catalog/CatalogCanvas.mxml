@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="800"
+	height="800">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.model.AppModelLocator;
+			
+			[Bindable]
+			private var appModel:AppModelLocator = AppModelLocator.getInstance();
+			
+			private function handleCreateNewCategoryButtonClick(event:MouseEvent):void{
+				if(this.newCategoryEntryGrid.visible == true){
+					this.newCategoryEntryGrid.visible = false;					
+				}else{
+					this.newCategoryEntryGrid.visible = true;
+				}
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox>
+		<mx:Button id="createNewCategory"
+			label="New Category"
+			click="handleCreateNewCategoryButtonClick(event)"/>
+<!--		<mx:DataGrid id="catalogDataGrid" 
+			width="50%" 
+			height="10%"
+			dataProvider="{this.appModel.catalogCategories}">
+		</mx:DataGrid>-->
+		<mx:Grid id="newCategoryEntryGrid"
+			visible="false">
+			<mx:GridRow>
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Label text="Name:"/>					
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="categoryNameTextInput"
+						width="160"/>
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>
+	</mx:VBox>
+</mx:Canvas>

@@ -2,7 +2,7 @@ package org.broadleafcommerce.admin.control.events
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
-	import org.broadleafcommerce.admin.model.data.remote.Offer;
+	import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 
 	public class AddUpdateOfferEvent extends CairngormEvent
 	{

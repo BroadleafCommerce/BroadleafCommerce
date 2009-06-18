@@ -11,7 +11,7 @@ package org.broadleafcommerce.admin.control.commands.offers
 	
 	import org.broadleafcommerce.admin.model.AppModelLocator;
 	import org.broadleafcommerce.admin.model.business.BroadleafCommerceAdminServiceDelegate;
-	import org.broadleafcommerce.admin.model.data.remote.Offer;
+	import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 	import org.broadleafcommerce.admin.model.view.OfferModel;
 
 	public class FindAllOffersCommand implements Command, IResponder

@@ -6,8 +6,9 @@
 	xmlns:offer="org.broadleafcommerce.admin.view.offer.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 			import org.broadleafcommerce.admin.model.view.OfferModel;
-			import org.broadleafcommerce.admin.model.data.remote.Offer;
+			import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 			import org.broadleafcommerce.admin.control.events.ShowOfferWindowEvent;
 			import org.broadleafcommerce.admin.view.offer.offerWizard.NewOfferWizard;
 			import mx.containers.TitleWindow;

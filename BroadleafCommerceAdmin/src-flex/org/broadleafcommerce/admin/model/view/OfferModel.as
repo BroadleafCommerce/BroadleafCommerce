@@ -6,7 +6,7 @@ package org.broadleafcommerce.admin.model.view
 	import org.broadleafcommerce.admin.model.data.conditions.FulfillmentGroupAttributeCondition;
 	import org.broadleafcommerce.admin.model.data.conditions.OrderAttributeCondition;
 	import org.broadleafcommerce.admin.model.data.conditions.OrderContainsCondition;
-	import org.broadleafcommerce.admin.model.data.remote.Offer;
+	import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 	
 	[Bindable]
 	public class OfferModel

@@ -12,7 +12,7 @@ package org.broadleafcommerce.admin.control.commands.offers
 	import org.broadleafcommerce.admin.control.events.FindAllOffersEvent;
 	import org.broadleafcommerce.admin.model.AppModelLocator;
 	import org.broadleafcommerce.admin.model.business.BroadleafCommerceAdminServiceDelegate;
-	import org.broadleafcommerce.admin.model.data.remote.Offer;
+	import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 
 	public class AddUpdateOfferCommand implements Command, IResponder
 	{

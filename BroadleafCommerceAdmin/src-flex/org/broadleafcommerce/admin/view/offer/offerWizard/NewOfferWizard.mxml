@@ -23,7 +23,7 @@
 <mx:Script>
 	<![CDATA[
 		import mx.events.ItemClickEvent;
-		import org.broadleafcommerce.admin.model.data.remote.Offer;
+		import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 		import mx.controls.Alert;
 		import mx.collections.ArrayCollection;
 		import org.broadleafcommerce.admin.control.events.AddUpdateOfferEvent;

@@ -1,4 +1,4 @@
-package org.broadleafcommerce.admin.model.data.remote
+package org.broadleafcommerce.admin.model.data.remote.offer
 {
 	import mx.collections.ArrayCollection;
 	
@@ -6,14 +6,14 @@ package org.broadleafcommerce.admin.model.data.remote
 	[RemoteClass(alias="org.broadleafcommerce.offer.domain.OfferImpl")]
 	public class Offer
 	{
-		public var id:int;
+		public var id:Number;
 		public var name:String;
 		public var description:String;
 		public var type:OfferType = new OfferType();
 		public var discountType:OfferDiscountType = new OfferDiscountType();
 		public var deliveryType:OfferDeliveryType = new OfferDeliveryType();
 		public var value:Money = new Money();
-		public var priority:Number;
+		public var priority:int;
 		public var startDate:Date;
 		public var endDate:Date;
 		public var stackable:Boolean;
@@ -23,8 +23,8 @@ package org.broadleafcommerce.admin.model.data.remote
 		public var appliesToCustomerRules:String;
 		public var applyDiscountToMarkedItems:Boolean;
 		public var combinableWithOtherOffers:Boolean;
-		public var maxUses:Number;
-		public var uses:Number;
+		public var maxUses:int;
+		public var uses:int;
 		
 		public function get valueNumber():Number{
 			if(value && value.amount){

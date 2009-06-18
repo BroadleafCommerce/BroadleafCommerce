@@ -5,7 +5,7 @@ package org.broadleafcommerce.admin.model.business
 	import mx.rpc.AsyncToken;
 	import mx.rpc.IResponder;
 	
-	import org.broadleafcommerce.admin.model.data.remote.Offer;
+	import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 	
 	public class BroadleafCommerceAdminServiceDelegate
 	{
