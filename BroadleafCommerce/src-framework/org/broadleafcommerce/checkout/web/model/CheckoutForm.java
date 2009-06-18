@@ -18,23 +18,45 @@ package org.broadleafcommerce.checkout.web.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.payment.CreditCardType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
-import org.broadleafcommerce.profile.domain.Customer;
 
 public class CheckoutForm {
-    private List<OrderItem> orderItems;
+    private String firstName;
+    private String lastName;
+    private String emailAddress;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
     private Address shippingAddress;
     private Address billingAddress;
-    private Order order;
     private String creditCardNumber;
     private String creditCardCvvCode;
     private String creditCardExpMonth;
     private String creditCardExpYear;
-    private Customer customer;
     private String primaryPhoneNumber;
     private String secondaryPhoneNumber;
     private String selectedCreditCardType;
@@ -117,30 +139,6 @@ public class CheckoutForm {
 
     public void setCreditCardExpYear(String creditCardExpYear) {
         this.creditCardExpYear = creditCardExpYear;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public List<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
     }
 
 }
