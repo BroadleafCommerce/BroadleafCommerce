@@ -15,16 +15,20 @@
  */
 package org.broadleafcommerce.checkout.web;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.checkout.service.CheckoutService;
+import org.broadleafcommerce.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.checkout.web.model.CheckoutForm;
-import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl;
@@ -35,19 +39,18 @@ import org.broadleafcommerce.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.PaymentInfoService;
 import org.broadleafcommerce.payment.service.PaymentService;
-import org.broadleafcommerce.pricing.dao.ShippingRateDao;
-import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.domain.CustomerPhoneImpl;
-import org.broadleafcommerce.profile.domain.State;
-import org.broadleafcommerce.profile.domain.StateImpl;
+import org.broadleafcommerce.profile.service.CountryService;
 import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
+import org.broadleafcommerce.profile.service.StateService;
 import org.broadleafcommerce.profile.web.CustomerState;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -68,16 +71,19 @@ public class CheckoutController {
     protected CustomerPhoneService customerPhoneService;
     @Resource(name="blCreditCardService")
     protected PaymentService paymentService;
+
     @Resource
     protected OrderService orderService;
     @Resource
+    protected CheckoutService checkoutService;
+    @Resource
     protected CatalogService catalogService;
     @Resource
+    protected StateService stateService;
+    @Resource
+    protected CountryService countryService;
+    @Resource
     protected FulfillmentGroupService fulfillmentGroupService;
-    @Resource
-    protected OrderDao orderDao;
-    @Resource
-    protected ShippingRateDao shippingRateDao;
     @Resource
     protected PaymentInfoService paymentInfoService;
     protected String checkoutView;
@@ -91,22 +97,21 @@ public class CheckoutController {
         this.checkoutView = checkoutView;
     }
 
-    @RequestMapping(value = "processCheckout.htm", method = {RequestMethod.POST})
+    @RequestMapping(value = "checkout.htm", method = {RequestMethod.POST})
     public String processCheckout(@ModelAttribute CheckoutForm checkoutForm,
             BindingResult errors,
             ModelMap model,
             HttpServletRequest request) {
 
         Address addr = new AddressImpl();
+        addr.setAddressLine1("12700 Merit Drive Way");
         addr.setCity("Dallas");
-        State state = new StateImpl();
-        state.setAbbreviation("TX");
-        state.setName("Texas");
-        addr.setState(state);
-        addr.setAddressLine1("5657 Amesbury Drive");
-        addr.setPostalCode("75206");
+        addr.setState(stateService.findStateByAbbreviation("TX"));
+        addr.setPostalCode("75251");
+        addr.setCountry(countryService.findCountryByAbbreviation("US"));
 
         Order order = retrieveCartOrder(request, model);
+        order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(new Date()));
 
         FulfillmentGroup group = fulfillmentGroupService.createEmptyFulfillmentGroup();
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
@@ -120,36 +125,35 @@ public class CheckoutController {
         for (OrderItem item:order.getOrderItems()) {
             FulfillmentGroupItem fulfillmentGroupItem = new FulfillmentGroupItemImpl();
             fulfillmentGroupItem.setOrderItem(item);
+            fulfillmentGroupItem.setFulfillmentGroup(group);
             group.getFulfillmentGroupItems().add(fulfillmentGroupItem);
         }
 
         PaymentInfo paymentInfo = paymentInfoService.create();
         paymentInfo.setAddress(addr);
         paymentInfo.setOrder(order);
-        List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
-        paymentInfos.add(paymentInfo);
-        order.setPaymentInfos(paymentInfos);
-
+        Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
         order.setStatus(OrderStatus.SUBMITTED.toString());
         order.setSubmitDate(new Date());
 
         try {
-            orderService.save(order);
-        } catch (PricingException e) {
+            checkoutService.performCheckout(order, payments);
+        } catch (CheckoutException e) {
             e.printStackTrace();
         }
 
-        return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderDetails?orderNumber" + order.getOrderNumber();
+        return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderDetails?orderNumber=" + order.getOrderNumber();
     }
 
-    @RequestMapping(value = "checkout.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "checkout.htm", method = {RequestMethod.GET})
     public String checkout(@ModelAttribute CheckoutForm checkoutForm,
             BindingResult errors,
             ModelMap model,
             HttpServletRequest request) {
 
         Customer currentCustomer = customerState.getCustomer(request);
-        checkoutForm.setCustomer(currentCustomer);
+        model.addAttribute("customer", currentCustomer);
+
         List<CustomerPhone> customerPhones = customerPhoneService.readAllCustomerPhonesByCustomerId(currentCustomer.getId());
         while(customerPhones.size() < 2) {
             customerPhones.add(new CustomerPhoneImpl());
@@ -157,9 +161,7 @@ public class CheckoutController {
 
         customerAddressService.readActiveCustomerAddressesByCustomerId(currentCustomer.getId());
 
-        //checkoutForm.setCustomerPhones(customerPhones);
-
-        checkoutForm.setOrder(retrieveCartOrder(request, model));
+        model.addAttribute("order", retrieveCartOrder(request, model));
 
         return checkoutView;
     }
