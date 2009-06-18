@@ -102,4 +102,5 @@ public interface OrderItem extends Serializable {
 
     public Money getTaxablePrice();
 
+    public boolean getIsOnSale();
 }
