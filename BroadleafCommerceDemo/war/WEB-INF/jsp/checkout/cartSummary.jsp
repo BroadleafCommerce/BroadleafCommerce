@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 	
-	<h3 style="margin-bottom:10px;">Your Shopping Cart (<c:out value="${fn:length(checkoutForm.order.orderItems)}" />)</h3>
+	<h3 style="margin-bottom:10px;">Your Shopping Cart (<c:out value="${fn:length(order.orderItems)}" />)</h3>
 	<table>
 		<thead>
 			<tr valign="bottom">
@@ -11,7 +11,7 @@
 			</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${checkoutForm.order.orderItems}" var="orderItem" varStatus="status">
+		<c:forEach items="${order.orderItems}" var="orderItem" varStatus="status">
 		    <c:set var="item" value="${orderItem.sku}"/>
 			<c:url var="itemUrl" value="/${orderItem.category.generatedUrl}">
 				<c:param name="productId" value="${orderItem.product.id}"/>
@@ -58,24 +58,24 @@
 		                <tr valign="top" align="right">
 		                  <td width="20">&nbsp;</td>
 		                  <td width="200">Subtotal:</td>
-		                  <td width="70"><span class="price"><c:out value="${checkoutForm.order.subTotal}" /></span></td>
+		                  <td width="70"><span class="price"><c:out value="${order.subTotal}" /></span></td>
 		                </tr>
 						<tr valign="top" align="right">
 		                  <td width="20">&nbsp;</td>
 		                  <td width="200">Tax:</td>
-		                  <td width="70"><span class="price"><c:out value="${checkoutForm.order.totalTax}" /></span></td>
+		                  <td width="70"><span class="price"><c:out value="${order.totalTax}" /></span></td>
 		                </tr>
 				        <tr align="right">
 				          <td width="20">&nbsp;</td>
 		                  <td width="200">Shipping:</td>
-				          <td><span class="price"><c:out value="${checkoutForm.order.totalShipping}" /></span></td>
+				          <td><span class="price"><c:out value="${order.totalShipping}" /></span></td>
 				        </tr>
 			           
        				    <tr align="right">
 		                  <td></td>
 		                  <td>Total:</td>
 		                  <td>
-		                    <span class="price"><c:out value="${checkoutForm.order.total}" /></span>
+		                    <span class="price"><c:out value="${order.total}" /></span>
 		                  </td>
 
 		                </tr>
