@@ -1,4 +1,4 @@
-package org.broadleafcommerce.admin.model.data.remote
+package org.broadleafcommerce.admin.model.data.remote.category
 {
 	import flash.utils.Dictionary;
 	

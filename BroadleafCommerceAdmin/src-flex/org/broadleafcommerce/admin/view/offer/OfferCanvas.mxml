@@ -48,7 +48,11 @@
 			width="75%" 
 			height="75%" 
 			doubleClickEnabled="true" 
-			doubleClick="handleOffersDataGridDoubleClick(event)"/> 
+			doubleClick="handleOffersDataGridDoubleClick(event)"
+			headerColors="[#666666, #000000]"
+			headerStyleName="dataGridHeaderStyle"
+			rollOverColor="#9AB12A"
+			textRollOverColor="#000000"/> 
 	</mx:VBox>
 	<!--	<mx:DataGrid id="offersDataGrid" x="10" y="37" width="75%" height="75%" doubleClickEnabled="true" doubleClick="handleOffersDataGridDoubleClick(event)">
 		</mx:DataGrid>

@@ -15,6 +15,8 @@ Application
 	bgColor:					  #FFFFFF;
 	backgroundColor:			  #FFFFFF;
 	background-color:			  #FFFFFF;
+	font-family: Arial;
+	font-size: 12;
 }
 
 ViewStack
@@ -106,7 +108,7 @@ TitleWindow
 
 .fieldLabel
 {
-	horizontal-align: left;	
+	horizontal-align: right;	
 }
 
 GridRow
@@ -122,6 +124,11 @@ GridItem
 .offerEditorFormGridRow
 {
 	padding-top: 10;	
+}
+
+.gridRowSpacing
+{
+	padding-top:10;	
 }
 
 TextInput
@@ -142,4 +149,44 @@ Button
 DateField
 {
 	theme-color: #94B12D;	
+}
+
+.dataGridHeaderStyle
+{
+	color: #FFFFFF;	
+	font-weight: bold;
+}
+
+.catalogHeading
+{
+	font-weight: bold;
+	font-size: 16;
+}
+
+LinkButton
+{
+	font-weight: normal;
+	text-decoration: underline;	
+}
+Panel
+{
+	corner-radius: 0;
+	border-thickness-left: 1;
+	border-thickness-right: 1;
+	border-thickness-bottom: 1;
+	header-height: 30;
+	drop-shadow-enabled: true;
+	shadow-direction: right;
+	shadow-distance: 5;
+	border-alpha: 1;
+	header-colors: #666666, #000000;
+	footer-colors: #000000, #666666;
+	title-style-name: "panelTitle";
+}
+
+.panelTitle
+{
+	color: #FFFFFF;
+	font-weight: bold;
+	font-size: 16;
 }

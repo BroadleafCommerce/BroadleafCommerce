@@ -9,7 +9,7 @@
 	currentState="{STATE_WHAT}" 
 	creationComplete="handleCreationComplete()"
 	showCloseButton="true"
-	headerColors="[#9F9F98, #000000]"
+	headerColors="[#666666, #000000]"
 	title="New Offer Wizard"
 	color="white"
 	fontSize="14"
@@ -150,7 +150,8 @@
 		paddingTop="10"
 		color="black"
 		fontSize="10"
-		itemClick="handleToggleButtonBarClick(event)">
+		itemClick="handleToggleButtonBarClick(event)"
+		includeInLayout="false">
 		<mx:dataProvider>
 			<mx:String>Offer</mx:String>
 			<mx:String>Detail</mx:String>

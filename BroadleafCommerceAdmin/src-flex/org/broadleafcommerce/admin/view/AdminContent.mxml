@@ -2,6 +2,8 @@
 <mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:catalog="org.broadleafcommerce.admin.view.catalog.*"
 	xmlns:offer="org.broadleafcommerce.admin.view.offer.*"
+	xmlns:category="org.broadleafcommerce.admin.view.catalog.category.*"
+	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*" 
 	width="100%" 
 	height="100%">
 	<mx:Script>

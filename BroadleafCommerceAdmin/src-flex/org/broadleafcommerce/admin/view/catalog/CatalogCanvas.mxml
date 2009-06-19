@@ -1,43 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:category="org.broadleafcommerce.admin.view.catalog.category.*" 
+	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*"
+	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" 
 	width="800"
-	height="800">
+	height="800"
+	creationComplete="creationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.view.catalog.sku.CreateSkuCanvas;
+			import org.broadleafcommerce.admin.view.catalog.category.CreateCategoryCanvas;
+			import org.broadleafcommerce.admin.view.catalog.product.CreateProductCanvas;
+			import org.broadleafcommerce.admin.model.data.FakeCategory;
+			import mx.collections.ArrayCollection;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			
 			[Bindable]
 			private var appModel:AppModelLocator = AppModelLocator.getInstance();
+			[Bindable]
+			private var categories:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			private var categoriesToShow:ArrayCollection = new ArrayCollection();
 			
-			private function handleCreateNewCategoryButtonClick(event:MouseEvent):void{
-				if(this.newCategoryEntryGrid.visible == true){
-					this.newCategoryEntryGrid.visible = false;					
-				}else{
-					this.newCategoryEntryGrid.visible = true;
+			
+			private function creationComplete():void{
+				var category1:FakeCategory = new FakeCategory();
+				var category2:FakeCategory = new FakeCategory();
+				var category3:FakeCategory = new FakeCategory();
+				var category4:FakeCategory = new FakeCategory();
+				var category5:FakeCategory = new FakeCategory();
+				var category6:FakeCategory = new FakeCategory();
+				var category7:FakeCategory = new FakeCategory();
+				var category8:FakeCategory = new FakeCategory();
+				category1.name = "Clothing";
+				category2.name = "Shirts";
+				category3.name = "Pants";
+				category4.name = "Shoes";
+				category5.name = "Socks";
+				category6.name = "T-Shirts";
+				category7.name = "Button-Down Shirts";
+				category8.name = "Polos";
+				category1.children = new ArrayCollection();
+				category2.children = new ArrayCollection();
+				category1.children.addItem(category2);
+				category1.children.addItem(category3);
+				category1.children.addItem(category4);
+				category1.children.addItem(category5);
+				category2.children.addItem(category6);
+				category2.children.addItem(category7);
+				category2.children.addItem(category8);
+				categories.addItem(category1);
+				categories.addItem(category2);
+				categories.addItem(category3);
+				categories.addItem(category4);
+				categories.addItem(category5);
+				categories.addItem(category6);
+				categories.addItem(category7);
+				categories.addItem(category8);
+				for each(var fakeCategory:FakeCategory in this.categories){
+					if(fakeCategory.children != null){
+						this.categoriesToShow.addItem(fakeCategory);
+					}
 				}
+				
+			}
+			
+			private function handleCreateNewCategoryButtonClick(event:Event):void{
+				this.workingAreaCanvas.removeAllChildren();
+				this.workingAreaCanvas.addChild(new CreateCategoryCanvas());
+			}
+
+			private function handleCreateNewProductButtonClick(event:Event):void{
+				this.workingAreaCanvas.removeAllChildren();
+				this.workingAreaCanvas.addChild(new CreateProductCanvas());
+			}
+			
+			private function handleCreateNewSkuButtonClick(event:Event):void{
+				this.workingAreaCanvas.removeAllChildren();
+				this.workingAreaCanvas.addChild(new CreateSkuCanvas());
 			}
 		]]>
 	</mx:Script>
-	<mx:VBox>
-		<mx:Button id="createNewCategory"
-			label="New Category"
-			click="handleCreateNewCategoryButtonClick(event)"/>
-<!--		<mx:DataGrid id="catalogDataGrid" 
-			width="50%" 
-			height="10%"
-			dataProvider="{this.appModel.catalogCategories}">
-		</mx:DataGrid>-->
-		<mx:Grid id="newCategoryEntryGrid"
-			visible="false">
-			<mx:GridRow>
-				<mx:GridItem styleName="fieldLabel">
-					<mx:Label text="Name:"/>					
-				</mx:GridItem>
-				<mx:GridItem>
-					<mx:TextInput id="categoryNameTextInput"
-						width="160"/>
-				</mx:GridItem>
-			</mx:GridRow>
-		</mx:Grid>
+	<mx:VBox verticalGap="20"
+		width="100%">
+		<mx:HBox>
+			<mx:Button id="createNewCategoryButton"
+				label="New Category"
+				click="this.handleCreateNewCategoryButtonClick(event)"/>
+			<mx:Button id="createNewProductButton"
+				label="New Product"
+				click="this.handleCreateNewProductButtonClick(event)"/>
+			<mx:Button id="createNewSkuButton"
+				label="New Sku"
+				click="this.handleCreateNewSkuButtonClick(event)"/>
+		</mx:HBox>
+		<mx:Canvas id="workingAreaCanvas" 
+			width="100%"
+			height="100%"/>
 	</mx:VBox>
 </mx:Canvas>
