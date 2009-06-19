@@ -66,7 +66,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         try {
             order.setSubmitDate(DateUtil.getNow());
-            cartService.save(order);
+            order = cartService.save(order);
 
             CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);
