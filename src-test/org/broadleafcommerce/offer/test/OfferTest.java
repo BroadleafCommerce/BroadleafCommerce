@@ -35,6 +35,7 @@ import org.broadleafcommerce.offer.domain.CustomerOffer;
 import org.broadleafcommerce.offer.domain.CustomerOfferImpl;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
+import org.broadleafcommerce.offer.domain.OfferInfo;
 import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
@@ -196,6 +197,35 @@ public class OfferTest extends BaseTest {
         offerService.applyOffersToOrder(offers, order);
 
         assert (order.getSubTotal().equals(new Money(240D)));
+    }
+
+    @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOfferAndInformation"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer"})
+    public void testOfferLowerSalePriceWithNotCombinableOfferAndInformation() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 100D, 50D, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 2));
+
+        OfferCode offerCode1 = createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1);
+        OfferCode offerCode2 = createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1);
+
+        order.addAddedOfferCode(offerCode1);
+        order.addAddedOfferCode(offerCode2);
+
+        OfferInfo info1 = offerDao.createOfferInfo();
+        info1.getFieldValues().put("key1", "value1");
+        order.getAdditionalOfferInformation().put(offerCode1.getOffer(), info1);
+        OfferInfo info2 = offerDao.createOfferInfo();
+        info2.getFieldValues().put("key2", "value2");
+        order.getAdditionalOfferInformation().put(offerCode2.getOffer(), info2);
+
+        cartService.save(order);
+
+        assert (order.getSubTotal().equals(new Money(240D)));
+
+        order = cartService.findOrderById(order.getId());
+        assert(order.getAdditionalOfferInformation().get(offerCode1.getOffer()).equals(info1));
     }
 
     @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOffer2"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer"})

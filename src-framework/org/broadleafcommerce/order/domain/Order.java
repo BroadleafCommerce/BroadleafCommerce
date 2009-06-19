@@ -18,10 +18,13 @@ package org.broadleafcommerce.order.domain;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
+import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
+import org.broadleafcommerce.offer.domain.OfferInfo;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -162,4 +165,9 @@ public interface Order extends Serializable {
     public String getEmailAddress();
 
     public void setEmailAddress(String emailAddress);
+
+    public Map<Offer, OfferInfo> getAdditionalOfferInformation();
+
+    public void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation);
+
 }

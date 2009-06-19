@@ -396,7 +396,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void removeNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = findNamedOrderForCustomer(name, customer);
-        orderDao.delete(namedOrder);
+        cancelOrder(namedOrder);
     }
 
     @Override

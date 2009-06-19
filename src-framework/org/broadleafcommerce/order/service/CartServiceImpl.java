@@ -84,7 +84,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         if (moveNamedOrderItems) {
             Order updatedNamedOrder = removeItemFromOrder(namedOrder, orderItem);
             if (updatedNamedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
-                orderDao.delete(updatedNamedOrder);
+                cancelOrder(updatedNamedOrder);
             }
         }
         return addOrderItemToOrder(cartOrder, orderItem);
@@ -94,7 +94,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
         Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder);
         if (deleteEmptyNamedOrders) {
-            orderDao.delete(namedOrder);
+            cancelOrder(namedOrder);
         }
         return cartOrder;
     }
@@ -154,7 +154,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         }
                     }
                 }
-                orderDao.delete(anonymousCart);
+                cancelOrder(anonymousCart);
             }
         }
         mergeCartResponse.setOrder(customerCart);
