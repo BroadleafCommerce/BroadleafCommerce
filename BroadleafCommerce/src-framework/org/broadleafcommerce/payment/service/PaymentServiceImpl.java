@@ -175,14 +175,11 @@ public class PaymentServiceImpl implements PaymentService {
             response.setUserName(paymentContext.getUserName());
             PaymentInfo info = paymentContext.getPaymentInfo();
             if (info != null) {
-                response.setPaymentInfo(info);
+                response.setPaymentInfoId(info.getId());
                 response.setCustomer(info.getOrder().getCustomer());
                 response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
-                info.getPaymentResponseItems().add(response);
-                paymentInfoService.save(info);
-            } else {
-                paymentInfoService.save(response);
             }
+            paymentInfoService.save(response);
         }
     }
 
@@ -200,12 +197,9 @@ public class PaymentServiceImpl implements PaymentService {
             log.setCustomer(info.getOrder().getCustomer());
             log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
             log.setAmountPaid(info.getAmount());
-            log.setPaymentInfo(info);
-            info.getPaymentLogs().add(log);
-            paymentInfoService.save(info);
-        } else {
-            paymentInfoService.save(log);
+            log.setPaymentInfoId(info.getId());
         }
+        paymentInfoService.save(log);
     }
 
     protected void logPaymentFinishEvent(PaymentContext paymentContext, TransactionType transactionType, Exception e) {
@@ -235,11 +229,8 @@ public class PaymentServiceImpl implements PaymentService {
             log.setCustomer(info.getOrder().getCustomer());
             log.setPaymentInfoReferenceNumber(info.getReferenceNumber());
             log.setAmountPaid(info.getAmount());
-            log.setPaymentInfo(info);
-            info.getPaymentLogs().add(log);
-            paymentInfoService.save(info);
-        } else {
-            paymentInfoService.save(log);
+            log.setPaymentInfoId(info.getId());
         }
+        paymentInfoService.save(log);
     }
 }

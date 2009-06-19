@@ -114,9 +114,8 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "FIELD_VALUE")
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
-    @ManyToOne(targetEntity = PaymentInfoImpl.class)
-    @JoinColumn(name = "ORDER_PAYMENT_ID")
-    protected PaymentInfo paymentInfo;
+    @Column(name = "ORDER_PAYMENT_ID")
+    protected Long paymentInfoId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
@@ -269,12 +268,12 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         this.id = id;
     }
 
-    public PaymentInfo getPaymentInfo() {
-        return paymentInfo;
+    public Long getPaymentInfoId() {
+        return paymentInfoId;
     }
 
-    public void setPaymentInfo(PaymentInfo paymentInfo) {
-        this.paymentInfo = paymentInfo;
+    public void setPaymentInfoId(Long paymentInfoId) {
+        this.paymentInfoId = paymentInfoId;
     }
 
     public String getUserName() {
