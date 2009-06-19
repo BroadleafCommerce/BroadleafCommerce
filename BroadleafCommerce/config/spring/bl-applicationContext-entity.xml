@@ -74,4 +74,5 @@
 	<bean id="org.broadleafcommerce.offer.domain.OrderItemAdjustment" class="org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment" class="org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustmentImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.pricing.domain.ShippingRate" class="org.broadleafcommerce.pricing.domain.ShippingRateImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.offer.domain.OfferInfo" class="org.broadleafcommerce.offer.domain.OfferInfoImpl" scope="prototype"/>
 </beans>

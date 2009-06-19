@@ -18,7 +18,9 @@ package org.broadleafcommerce.order.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -42,8 +44,12 @@ import javax.persistence.Transient;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl;
+import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OfferCodeImpl;
+import org.broadleafcommerce.offer.domain.OfferImpl;
+import org.broadleafcommerce.offer.domain.OfferInfo;
+import org.broadleafcommerce.offer.domain.OfferInfoImpl;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
@@ -52,6 +58,8 @@ import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.MapKeyManyToMany;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -133,6 +141,12 @@ public class OrderImpl implements Order {
 
     @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
     protected List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
+
+    @ManyToMany(targetEntity=OfferInfoImpl.class)
+    @JoinTable(name = "BLC_ADDITIONAL_OFFER_INFO", inverseJoinColumns = @JoinColumn(name = "OFFER_INFO_ID", referencedColumnName = "OFFER_INFO_ID"))
+    @MapKeyManyToMany(joinColumns = {@JoinColumn(name = "OFFER_ID") }, targetEntity=OfferImpl.class)
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<Offer, OfferInfo>();
 
     @Transient
     protected boolean markedForOffer;
@@ -538,6 +552,14 @@ public class OrderImpl implements Order {
         this.emailAddress = emailAddress;
     }
 
+    public Map<Offer, OfferInfo> getAdditionalOfferInformation() {
+        return additionalOfferInformation;
+    }
+
+    public void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation) {
+        this.additionalOfferInformation = additionalOfferInformation;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -576,4 +598,5 @@ public class OrderImpl implements Order {
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
     }
+
 }

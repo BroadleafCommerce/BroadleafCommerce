@@ -29,6 +29,7 @@ import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OfferInfo;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
@@ -49,6 +50,10 @@ public class OfferDaoImpl implements OfferDao {
     @Override
     public Offer create() {
         return ((Offer) entityConfiguration.createEntityInstance(Offer.class.getName()));
+    }
+
+    public OfferInfo createOfferInfo() {
+        return ((OfferInfo) entityConfiguration.createEntityInstance(OfferInfo.class.getName()));
     }
 
     public CandidateOrderOffer createCandidateOrderOffer() {
@@ -81,6 +86,11 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     @Override
+    public void delete(OfferInfo offerInfo) {
+        em.remove(offerInfo);
+    }
+
+    @Override
     public Offer save(Offer offer) {
         if(offer.getId() == null){
             em.persist(offer);
@@ -88,6 +98,17 @@ public class OfferDaoImpl implements OfferDao {
             offer = em.merge(offer);
         }
         return offer;
+
+    }
+
+    @Override
+    public OfferInfo save(OfferInfo offerInfo) {
+        if(offerInfo.getId() == null){
+            em.persist(offerInfo);
+        }else{
+            offerInfo = em.merge(offerInfo);
+        }
+        return offerInfo;
 
     }
 
