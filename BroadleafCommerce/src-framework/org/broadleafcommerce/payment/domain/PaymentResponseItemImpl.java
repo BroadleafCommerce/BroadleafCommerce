@@ -314,7 +314,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         sb.append("reference number: " + this.getReferenceNumber() + "\n");
         sb.append("transaction id: " + this.getTransactionId() + "\n");
         sb.append("avs code: " + this.getAvsCode() + "\n");
-        sb.append("remaining balance: " + this.getRemainingBalance());
+        if (remainingBalance != null) sb.append("remaining balance: " + this.getRemainingBalance());
 
         return sb.toString();
     }
