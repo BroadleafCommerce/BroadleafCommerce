@@ -16,8 +16,6 @@
 package org.broadleafcommerce.payment.domain;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -29,7 +27,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -75,12 +72,6 @@ public class PaymentInfoImpl implements PaymentInfo {
 
     @Column(name = "PAYMENT_TYPE", nullable=false)
     protected String type;
-
-    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentResponseItemImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    protected List<PaymentResponseItem> paymentResponseItems = new ArrayList<PaymentResponseItem>();
-
-    @OneToMany(mappedBy = "paymentInfo", targetEntity = PaymentLogImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    protected List<PaymentLog> paymentLogs = new ArrayList<PaymentLog>();
 
     @Override
     public Money getAmount() {
@@ -138,22 +129,6 @@ public class PaymentInfoImpl implements PaymentInfo {
 
     public void setType(PaymentInfoType type) {
         this.type = type.getType();
-    }
-
-    public List<PaymentResponseItem> getPaymentResponseItems() {
-        return paymentResponseItems;
-    }
-
-    public void setPaymentResponseItems(List<PaymentResponseItem> paymentResponseItems) {
-        this.paymentResponseItems = paymentResponseItems;
-    }
-
-    public List<PaymentLog> getPaymentLogs() {
-        return paymentLogs;
-    }
-
-    public void setPaymentLogs(List<PaymentLog> paymentLogs) {
-        this.paymentLogs = paymentLogs;
     }
 
     @Override

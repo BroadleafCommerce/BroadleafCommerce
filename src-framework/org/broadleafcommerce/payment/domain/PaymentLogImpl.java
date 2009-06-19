@@ -58,9 +58,8 @@ public class PaymentLogImpl implements PaymentLog {
     @Temporal(TemporalType.TIMESTAMP)
     protected Date transactionTimestamp;
 
-    @ManyToOne(targetEntity = PaymentInfoImpl.class)
-    @JoinColumn(name = "ORDER_PAYMENT_ID")
-    protected PaymentInfo paymentInfo;
+    @Column(name = "ORDER_PAYMENT_ID")
+    protected Long paymentInfoId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
@@ -108,12 +107,12 @@ public class PaymentLogImpl implements PaymentLog {
         this.transactionTimestamp = transactionTimestamp;
     }
 
-    public PaymentInfo getPaymentInfo() {
-        return paymentInfo;
+    public Long getPaymentInfoId() {
+        return paymentInfoId;
     }
 
-    public void setPaymentInfo(PaymentInfo paymentInfo) {
-        this.paymentInfo = paymentInfo;
+    public void setPaymentInfoId(Long paymentInfoId) {
+        this.paymentInfoId = paymentInfoId;
     }
 
     public Customer getCustomer() {
@@ -177,7 +176,7 @@ public class PaymentLogImpl implements PaymentLog {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((customer == null) ? 0 : customer.hashCode());
-        result = prime * result + ((paymentInfo == null) ? 0 : paymentInfo.hashCode());
+        result = prime * result + ((paymentInfoId == null) ? 0 : paymentInfoId.hashCode());
         result = prime * result + ((paymentInfoReferenceNumber == null) ? 0 : paymentInfoReferenceNumber.hashCode());
         result = prime * result + ((transactionTimestamp == null) ? 0 : transactionTimestamp.hashCode());
         result = prime * result + ((userName == null) ? 0 : userName.hashCode());
@@ -203,10 +202,10 @@ public class PaymentLogImpl implements PaymentLog {
                 return false;
         } else if (!customer.equals(other.customer))
             return false;
-        if (paymentInfo == null) {
-            if (other.paymentInfo != null)
+        if (paymentInfoId == null) {
+            if (other.paymentInfoId != null)
                 return false;
-        } else if (!paymentInfo.equals(other.paymentInfo))
+        } else if (!paymentInfoId.equals(other.paymentInfoId))
             return false;
         if (paymentInfoReferenceNumber == null) {
             if (other.paymentInfoReferenceNumber != null)

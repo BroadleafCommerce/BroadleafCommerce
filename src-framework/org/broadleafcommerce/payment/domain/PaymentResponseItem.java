@@ -93,9 +93,9 @@ public interface PaymentResponseItem extends Serializable {
 
     public void setAdditionalFields(Map<String, String> additionalFields);
 
-    public PaymentInfo getPaymentInfo();
+    public Long getPaymentInfoId();
 
-    public void setPaymentInfo(PaymentInfo paymentInfo);
+    public void setPaymentInfoId(Long paymentInfoId);
 
     public String getUserName();
 

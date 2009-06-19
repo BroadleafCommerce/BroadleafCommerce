@@ -37,9 +37,9 @@ public interface PaymentLog extends Serializable {
 
     public void setTransactionTimestamp(Date transactionTimestamp);
 
-    public PaymentInfo getPaymentInfo();
+    public Long getPaymentInfoId();
 
-    public void setPaymentInfo(PaymentInfo paymentInfo);
+    public void setPaymentInfoId(Long paymentInfoId);
 
     public Customer getCustomer();
 
