@@ -42,6 +42,7 @@ import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -87,10 +88,12 @@ public class OrderItemImpl implements OrderItem {
     @JoinColumn(name = "GIFT_WRAP_ITEM_ID", nullable = true)
     protected GiftWrapOrderItem giftWrapOrderItem;
 
-    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "orderItem", targetEntity = OrderItemAdjustmentImpl.class, cascade = { CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected List<OrderItemAdjustment> orderItemAdjustments = new ArrayList<OrderItemAdjustment>();
 
     @OneToMany(mappedBy = "orderItem", targetEntity = CandidateItemOfferImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected List<CandidateItemOffer> candidateItemOffers = new ArrayList<CandidateItemOffer>();
 
     @Transient
@@ -273,7 +276,6 @@ public class OrderItemImpl implements OrderItem {
             orderItemAdjustments.clear();
         }
         adjustmentPrice = null;
-
     }
 
     public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {
