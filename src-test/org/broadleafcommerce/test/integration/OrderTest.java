@@ -16,6 +16,7 @@
 package org.broadleafcommerce.test.integration;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -31,9 +32,11 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.order.service.OrderItemService;
+import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
@@ -68,6 +71,9 @@ public class OrderTest extends BaseTest {
 
     @Resource
     private SkuDao skuDao;
+
+    @Resource
+    private OrderService orderService;
 
     @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer1", "createPhone" })
     @Rollback(false)
@@ -374,6 +380,79 @@ public class OrderTest extends BaseTest {
         Order newOrder = cartService.findOrderById(orderId);
         assert newOrder != null;
         assert newOrder.getCustomer() != null;
+    }
+
+    @Test(groups = { "findOrderByOrderNumber" }, dependsOnGroups = { "findCartForAnonymousCustomer" })
+    public void findOrderByOrderNumber() throws PricingException {
+        Customer customer = customerService.createCustomerFromId(null);
+        Order order = cartService.createNewCartForCustomer(customer);
+        order.setOrderNumber("3456");
+        order = orderService.save(order);
+        Long orderId = order.getId();
+
+        Order newOrder = orderService.findOrderByOrderNumber("3456");
+        assert newOrder.getId().equals(orderId);
+
+        Order nullOrder = orderService.findOrderByOrderNumber(null);
+        assert nullOrder == null;
+
+        nullOrder = orderService.findOrderByOrderNumber("");
+        assert nullOrder == null;
+    }
+
+    @Test(groups = { "findNamedOrderForCustomer" }, dependsOnGroups = { "findOrderByOrderNumber" })
+    public void findNamedOrderForCustomer() throws PricingException {
+        Customer customer = customerService.createCustomerFromId(null);
+        Order order = cartService.createNewCartForCustomer(customer);
+        order.setStatus(OrderStatus.NAMED.getName());
+        order.setName("COOL ORDER");
+        order = orderService.save(order);
+        Long orderId = order.getId();
+
+        Order newOrder = orderService.findNamedOrderForCustomer("COOL ORDER", customer);
+        assert newOrder.getId().equals(orderId);
+    }
+
+    @Test(groups = { "testReadOrdersForCustomer" }, dependsOnGroups = { "findNamedOrderForCustomer" })
+    public void testReadOrdersForCustomer() throws PricingException {
+        Customer customer = customerService.createCustomerFromId(null);
+        Order order = cartService.createNewCartForCustomer(customer);
+        order.setStatus(OrderStatus.IN_PROCESS.getName());
+        order = orderService.save(order);
+
+        List<Order> newOrders = orderService.findOrdersForCustomer(customer, OrderStatus.IN_PROCESS);
+        boolean containsOrder = false;
+
+        if (newOrders.contains(order))
+        {
+            containsOrder = true;
+        }
+
+        assert containsOrder == true;
+
+        containsOrder = false;
+        newOrders = orderService.findOrdersForCustomer(customer, null);
+
+        if (newOrders.contains(order))
+        {
+            containsOrder = true;
+        }
+
+        assert containsOrder == true;
+    }
+
+    @Test(groups = { "testOrderProperties" }, dependsOnGroups = { "testReadOrdersForCustomer" })
+    public void testOrderProperties() throws PricingException {
+        Customer customer = customerService.createCustomerFromId(null);
+        Order order = cartService.createNewCartForCustomer(customer);
+
+        assert order.getSubTotal() == null;
+        assert order.getTotal() == null;
+        assert order.getRemainingTotal() == null;
+
+        Calendar testCalendar = Calendar.getInstance();
+        order.setSubmitDate(testCalendar.getTime());
+        assert order.getSubmitDate().equals(testCalendar.getTime());
     }
 
     @Test
