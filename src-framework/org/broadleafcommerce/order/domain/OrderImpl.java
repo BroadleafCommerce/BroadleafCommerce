@@ -215,7 +215,7 @@ public class OrderImpl implements Order {
     }
 
     public Money getRemainingTotal() {
-        if (getPaymentInfos() == null) {
+        if (getPaymentInfos().size() == 0) {
             return null;
         }
         Money totalPayments = new Money(BigDecimal.ZERO);
