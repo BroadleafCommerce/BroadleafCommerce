@@ -220,7 +220,7 @@ public class OfferTest extends BaseTest {
         info2.getFieldValues().put("key2", "value2");
         order.getAdditionalOfferInformation().put(offerCode2.getOffer(), info2);
 
-        cartService.save(order);
+        cartService.save(order, true);
 
         assert (order.getSubTotal().equals(new Money(240D)));
 
