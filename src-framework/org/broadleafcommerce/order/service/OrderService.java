@@ -37,7 +37,7 @@ public interface OrderService {
 
     public Order createNamedOrderForCustomer(String name, Customer customer);
 
-    public Order save(Order order) throws PricingException;
+    public Order save(Order order, Boolean priceOrder) throws PricingException;
 
     public Order findOrderById(Long orderId);
 

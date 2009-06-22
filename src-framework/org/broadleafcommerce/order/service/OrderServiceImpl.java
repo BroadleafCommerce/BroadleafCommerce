@@ -110,8 +110,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order save(Order order) throws PricingException {
-        return updateOrder(order);
+    public Order save(Order order, Boolean priceOrder) throws PricingException {
+        return updateOrder(order, priceOrder);
     }
 
     @Override
@@ -197,7 +197,7 @@ public class OrderServiceImpl implements OrderService {
         removeOrderItemFromFullfillmentGroup(order, item);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
         orderItemService.delete(itemFromOrder);
-        order = updateOrder(order);
+        order = updateOrder(order, true);
         return order;
     }
 
@@ -275,7 +275,7 @@ public class OrderServiceImpl implements OrderService {
         fulfillmentGroup = fulfillmentGroupDao.save(fulfillmentGroup);
         order.getFulfillmentGroups().add(fulfillmentGroup);
         int fulfillmentGroupIndex = order.getFulfillmentGroups().size() - 1;
-        order = updateOrder(order);
+        order = updateOrder(order, true);
         return order.getFulfillmentGroups().get(fulfillmentGroupIndex);
     }
 
@@ -308,7 +308,7 @@ public class OrderServiceImpl implements OrderService {
         //if (fulfillmentGroup.getType() == null) {
         fulfillmentGroup.addFulfillmentGroupItem(fgi);
         //}
-        order = updateOrder(order);
+        order = updateOrder(order, true);
 
         return fulfillmentGroup;
     }
@@ -334,7 +334,7 @@ public class OrderServiceImpl implements OrderService {
         itemFromOrder.setPersonalMessage(item.getPersonalMessage());
         itemFromOrder.setQuantity(item.getQuantity());
 
-        order = updateOrder(order);
+        order = updateOrder(order, true);
 
         return itemFromOrder;
     }
@@ -357,7 +357,7 @@ public class OrderServiceImpl implements OrderService {
                 iterator.remove();
                 fulfillmentGroupDao.delete(fulfillmentGroup);
             }
-            updateOrder(order);
+            updateOrder(order, true);
         }
     }
 
@@ -365,21 +365,21 @@ public class OrderServiceImpl implements OrderService {
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
         order.getFulfillmentGroups().remove(fulfillmentGroup);
         fulfillmentGroupDao.delete(fulfillmentGroup);
-        updateOrder(order);
+        updateOrder(order, true);
     }
 
     @Override
     public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException {
         order.getCandidateOrderOffers().remove(offer);
         offerDao.delete(offer);
-        order = updateOrder(order);
+        order = updateOrder(order, true);
         return order;
     }
 
     @Override
     public Order removeAllOffersFromOrder(Order order) throws PricingException {
         order.getCandidateOrderOffers().clear();
-        order = updateOrder(order);
+        order = updateOrder(order, true);
         return order;
     }
 
@@ -425,7 +425,7 @@ public class OrderServiceImpl implements OrderService {
 
         //don't worry about fulfillment groups, since the phase for adding items occurs before shipping arrangements
 
-        order = updateOrder(order);
+        order = updateOrder(order, true);
 
         return order.getOrderItems().get(orderItemIndex);
     }
@@ -508,9 +508,12 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.readOrderByOrderNumber(orderNumber);
     }
 
-    protected Order updateOrder(Order order) throws PricingException {
-        order = orderDao.save(order);
-        pricingExecutionManager.executePricing(order);
+    protected Order updateOrder(Order order, Boolean priceOrder) throws PricingException {
+        if (priceOrder) {
+            pricingExecutionManager.executePricing(order);
+        } else {
+            order = persistOrder(order);
+        }
         return order;
     }
 

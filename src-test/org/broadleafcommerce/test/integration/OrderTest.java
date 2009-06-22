@@ -387,7 +387,7 @@ public class OrderTest extends BaseTest {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);
         order.setOrderNumber("3456");
-        order = orderService.save(order);
+        order = orderService.save(order, false);
         Long orderId = order.getId();
 
         Order newOrder = orderService.findOrderByOrderNumber("3456");
@@ -406,7 +406,7 @@ public class OrderTest extends BaseTest {
         Order order = cartService.createNewCartForCustomer(customer);
         order.setStatus(OrderStatus.NAMED.getName());
         order.setName("COOL ORDER");
-        order = orderService.save(order);
+        order = orderService.save(order, false);
         Long orderId = order.getId();
 
         Order newOrder = orderService.findNamedOrderForCustomer("COOL ORDER", customer);
@@ -418,7 +418,7 @@ public class OrderTest extends BaseTest {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);
         order.setStatus(OrderStatus.IN_PROCESS.getName());
-        order = orderService.save(order);
+        order = orderService.save(order, false);
 
         List<Order> newOrders = orderService.findOrdersForCustomer(customer, OrderStatus.IN_PROCESS);
         boolean containsOrder = false;

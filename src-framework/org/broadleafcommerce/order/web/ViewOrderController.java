@@ -192,7 +192,7 @@ public class ViewOrderController {
         order.setStatus(OrderStatus.SUBMITTED.toString());
         order.setOrderNumber("1234");
         order.setSubmitDate(new Date());
-        orderService.save(order);
+        orderService.save(order, true);
 
         return viewOrders(model, request);
     }
