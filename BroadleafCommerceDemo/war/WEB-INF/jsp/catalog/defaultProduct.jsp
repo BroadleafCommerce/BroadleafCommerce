@@ -1,50 +1,56 @@
-<%@ include file="/WEB-INF/jsp/include.jsp" %>
+<%@ include file="/WEB-INF/jsp/include.jsp"%>
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 
-<h1>Default Product View For: <c:out value="${productSkus.product.name}"/></h1>
 
- <blc:breadcrumb categoryList="${breadcrumbCategories}" />
-<br />
-<br />
-<br/>
+		<blc:breadcrumb categoryList="${breadcrumbCategories}" />
 
-<c:if test="${currentProduct.isFeaturedProduct == true}" >
-	<h2> FEATURED PRODUCT! </h2>
-</c:if>
+		<br />
+		<br />
+		<div class="columns">
+		<div class="column" style="width: 350px; text-align:center;"><c:choose>
+			<c:when test="${!empty currentProduct.productImages.large}">
+				<a href="${contextPath}${currentProduct.productImages.large}" class="thickbox"><img src="/broadleafdemo${currentProduct.productImages.large}" width="250" />
+				<p>View larger image</p>
+				</a>
+			</c:when>
+			<c:otherwise>
+					Image not available
+					</c:otherwise>
+		</c:choose></div>
+		<div class="column" style="width: 400px;"><c:if test="${!empty currentProduct.manufacturer}">
+			<h1>${currentProduct.manufacturer}</h1>
+		</c:if>
+		<h2>${currentProduct.name}</h2>
+		<c:if test="${currentProduct.isFeaturedProduct}">
+			<h3>Featured</h3>
+		</c:if>
+		<p>${currentProduct.longDescription}</p>
+		</div>
+		</div>
 
-<table border="1">
-	<tr>
-		<th>Name</th>
-		<th>Description</th>
-	</tr>
-	<tr>
-		<td><c:out value="${currentProduct.name}"/></td>
-		<td><c:out value="${currentProduct.description}"/></td>
-	</tr>
 
-</table>
 
-<h2>SKUs</h2>
+		<h2>SKUs</h2>
 
-<table border="1">
-	<tr>
-		<th>Name</th>
-		<th>Price</th>
-		<th>Add to Cart</th>
-	</tr>
-	<c:forEach var="item" items="${currentProduct.skus}" varStatus="status">
-		<tr>
-			<td><c:out value="${item.name}"/></td>
-			<td><c:out value="${item.salePrice}"/></td>
-			<td><a href="<c:url value="/basket/addItem.htm">
+		<table border="1">
+			<tr>
+				<th>Name</th>
+				<th>Price</th>
+				<th>Add to Cart</th>
+			</tr>
+			<c:forEach var="item" items="${currentProduct.skus}" varStatus="status">
+				<tr>
+					<td>${item.name}</td>
+					<td>${item.salePrice}</td>
+					<td><a href="<c:url value="/basket/addItem.htm">
 				<c:param name="skuId" value="${item.id}"/>
 				<c:param name="quantity" value="1"/>
-				</c:url>">Add to Basket</td>
-		</tr>
-	</c:forEach>
+				</c:url>">Add to Cart</td>
+				</tr>
+			</c:forEach>
 
-</table>
+		</table>
 
 	</tiles:putAttribute>
 </tiles:insertDefinition>
