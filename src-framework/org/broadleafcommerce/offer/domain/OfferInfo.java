@@ -15,9 +15,10 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public interface OfferInfo {
+public interface OfferInfo extends Serializable{
 
     public Long getId();
 
