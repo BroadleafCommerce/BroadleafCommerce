@@ -307,6 +307,10 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public boolean getIsOnSale() {
+        return !getSalePrice().equals(getRetailPrice());
+    }
+
+    public boolean getIsDiscounted() {
         return !getPrice().equals(getRetailPrice());
     }
 
