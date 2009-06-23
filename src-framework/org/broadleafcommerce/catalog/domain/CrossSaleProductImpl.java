@@ -43,7 +43,7 @@ public class CrossSaleProductImpl implements RelatedProduct {
     private Product product;
 
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
-    @JoinColumn(name = "RELATED_SALE_PRODUCT_ID")
+    @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     private Product relatedSaleProduct;
 
     @Column(name = "PROMOTION_MESSAGE")
