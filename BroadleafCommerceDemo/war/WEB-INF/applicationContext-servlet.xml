@@ -47,10 +47,9 @@
 		<property name="suffix" value=".jsp"></property>
 	</bean>
 
-	<bean id="welcome"
-		class="org.springframework.web.servlet.mvc.ParameterizableViewController">
-		<property name="viewName" value="welcome" />
-	</bean>
+	<bean id="store" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
+		<property name="viewName" value="catalog/store" />
+	</bean>	
 
 	<bean id="catalogController" class="org.broadleafcommerce.catalog.web.CatalogController">
 		<property name="catalogService" ref="blCatalogService"/>
@@ -96,12 +95,12 @@
 		</property -->
 		<property name="mappings">
 			<props>
-				<prop key="/welcome.htm">welcome</prop>
+				<prop key="/welcome.htm">store</prop>
 				<prop key="/myaccount/phone/*">customerPhoneController</prop>
 				<prop key="/registerCustomer/*">blRegisterCustomerController</prop>
 				<prop key="/orders">viewOrderController</prop>
 				<prop key="/orders/*">viewOrderController</prop>
-				<prop key="/store">catalogController</prop>
+				<prop key="/store">store</prop>
 				<prop key="/store/*">catalogController</prop>
 				<prop key="/store/*/*">catalogController</prop>
 				<prop key="/store/*/*/*">catalogController</prop>
