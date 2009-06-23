@@ -404,7 +404,7 @@ public class OrderTest extends BaseTest {
     public void findNamedOrderForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);
-        order.setStatus(OrderStatus.NAMED.getName());
+        order.setStatus(OrderStatus.NAMED);
         order.setName("COOL ORDER");
         order = orderService.save(order, false);
         Long orderId = order.getId();
@@ -417,7 +417,7 @@ public class OrderTest extends BaseTest {
     public void testReadOrdersForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);
-        order.setStatus(OrderStatus.IN_PROCESS.getName());
+        order.setStatus(OrderStatus.IN_PROCESS);
         order = orderService.save(order, false);
 
         List<Order> newOrders = orderService.findOrdersForCustomer(customer, OrderStatus.IN_PROCESS);

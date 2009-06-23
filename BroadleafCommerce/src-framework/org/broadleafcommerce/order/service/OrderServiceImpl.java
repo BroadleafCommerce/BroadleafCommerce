@@ -105,7 +105,7 @@ public class OrderServiceImpl implements OrderService {
         Order namedOrder = orderDao.create();
         namedOrder.setCustomer(customer);
         namedOrder.setName(name);
-        namedOrder.setStatus(OrderStatus.NAMED.getName());
+        namedOrder.setStatus(OrderStatus.NAMED);
         return persistOrder(namedOrder);
     }
 

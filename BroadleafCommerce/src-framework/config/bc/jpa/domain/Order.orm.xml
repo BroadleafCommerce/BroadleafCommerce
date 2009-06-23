@@ -42,12 +42,6 @@
 		AND order.name is null</query>
 	</named-query>
 
-	<named-query name="BC_UPDATE_CART_ORDER_TO_SUBMITTED">
-		<query>UPDATE org.broadleafcommerce.order.domain.Order blcOrder
-		SET blcOrder.status = 'SUBMITTED'
-		WHERE blcOrder.id = :id</query>
-	</named-query>
-
 	<named-query name="BC_READ_NAMED_ORDER_FOR_CUSTOMER">
 		<query>
 			SELECT order 

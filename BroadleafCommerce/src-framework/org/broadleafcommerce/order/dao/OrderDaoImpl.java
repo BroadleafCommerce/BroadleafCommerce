@@ -24,7 +24,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -75,7 +74,7 @@ public class OrderDaoImpl implements OrderDao {
         } else {
             Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS");
             query.setParameter("customerId", customer.getId());
-            query.setParameter("orderStatus", orderStatus.getName());
+            query.setParameter("orderStatus", orderStatus.getType());
             return query.getResultList();
         }
     }
@@ -94,7 +93,7 @@ public class OrderDaoImpl implements OrderDao {
         Order order = null;
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
-        query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getName());
+        query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
         List<Order> result = query.getResultList();
         if (result.size() > 0) {
             order = result.get(0);
@@ -110,7 +109,7 @@ public class OrderDaoImpl implements OrderDao {
         }
         order.setCustomer(customer);
         order.setEmailAddress(customer.getEmailAddress());
-        order.setStatus(OrderStatus.IN_PROCESS.getName());
+        order.setStatus(OrderStatus.IN_PROCESS);
 
         order = save(order);
 
@@ -119,12 +118,8 @@ public class OrderDaoImpl implements OrderDao {
 
     @Override
     public Order submitOrder(Order cartOrder) {
-        Order order = create();
-        order.setId(cartOrder.getId());
-        Query query = em.createNamedQuery("BC_UPDATE_CART_ORDER_TO_SUBMITTED");
-        query.setParameter("id", cartOrder.getId());
-        query.executeUpdate();
-        return em.find(OrderImpl.class, order.getId());
+        cartOrder.setStatus(OrderStatus.SUBMITTED);
+        return save(cartOrder);
     }
 
     public Order create() {
@@ -138,7 +133,7 @@ public class OrderDaoImpl implements OrderDao {
     public Order readNamedOrderForCustomer(Customer customer, String name) {
         Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", customer.getId());
-        query.setParameter("orderStatus", OrderStatus.NAMED.getName());
+        query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
         return (Order) query.getSingleResult();
     }

@@ -32,7 +32,7 @@ public class OrderDataProvider {
         Auditable auditable = new Auditable();
         auditable.setDateCreated(new Date());
         so.setAuditable(auditable);
-        so.setStatus(OrderStatus.IN_PROCESS.getName());
+        so.setStatus(OrderStatus.IN_PROCESS);
         so.setTotal(new Money(BigDecimal.valueOf(1000)));
         return new Object[][] { { so } };
     }

@@ -189,7 +189,7 @@ public class ViewOrderController {
         order.setPaymentInfos(paymentInfos);
 
         order.setTotalShipping(new Money(0D));
-        order.setStatus(OrderStatus.SUBMITTED.toString());
+        order.setStatus(OrderStatus.SUBMITTED);
         order.setOrderNumber("1234");
         order.setSubmitDate(new Date());
         orderService.save(order, true);
