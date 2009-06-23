@@ -50,7 +50,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller("blCartController")
 public class CartController {
-    protected final Log logger = LogFactory.getLog(getClass());
+
+    private static final Log LOG = LogFactory.getLog(CartController.class);
 
     @Resource
     protected final CartService cartService;
@@ -124,7 +125,7 @@ public class CartController {
                 OrderItem orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity());
                 orderItemsAdded.add(orderItem);
             } catch (PricingException e) {
-                e.printStackTrace();
+                LOG.error("Unable to price the order: ("+currentCartOrder.getId()+")", e);
             }
         }
 
@@ -150,7 +151,7 @@ public class CartController {
             currentCartOrder = cartService.removeItemFromOrder(currentCartOrder.getId(), orderItemId);
         } catch (PricingException e) {
             model.addAttribute("error", "remove");
-            logger.error("An error occurred while removing an item from the cart.", e);
+            LOG.error("An error occurred while removing an item from the cart: ("+orderItemId+")", e);
         }
 
         return removeItemViewRedirect ? "redirect:" + removeItemView : removeItemView;
@@ -187,16 +188,16 @@ public class CartController {
                     try {
                         cartService.updateItemInOrder(currentCartOrder, orderItem);
                     } catch (ItemNotFoundException e) {
-                        e.printStackTrace();
+                        LOG.error("Item not found in order: ("+orderItem.getId()+")", e);
                     } catch (PricingException e) {
-                        e.printStackTrace();
+                        LOG.error("Unable to price the order: ("+currentCartOrder.getId()+")", e);
                     }
                 } else {
                     try {
                         cartService.removeItemFromOrder(currentCartOrder, orderItem);
                     } catch (Exception e) {
                         // TODO: handle exception gracefully
-                        e.printStackTrace();
+                        LOG.error("Unable to remove item from the order: ("+currentCartOrder.getId()+")");
                     }
                 }
             }
@@ -206,7 +207,7 @@ public class CartController {
 
     @RequestMapping(value = "viewCart.htm", method = RequestMethod.GET)
     public String viewCart(ModelMap model, HttpServletRequest request) {
-        logger.debug("Processing View Cart!");
+        LOG.debug("Processing View Cart!");
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
 

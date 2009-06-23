@@ -19,6 +19,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.type.OrderStatus;
@@ -44,6 +46,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller("blWishlistController")
 public class WishlistController extends CartController {
 
+    private static final Log LOG = LogFactory.getLog(WishlistController.class);
+
     public WishlistController() {
         super();
     }
@@ -66,7 +70,7 @@ public class WishlistController extends CartController {
                     try {
                         cartService.addSkuToOrder(wishlistOrder.getId(), productItem.getSkuId(), productItem.getProductId(),productItem.getCategoryId(), productItem.getQuantity());
                     } catch (PricingException e) {
-                        logger.error("An exception occured while pricing the order", e);
+                        LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
                         //TODO How to handle from the UI perspective???
                     }
                 }
@@ -89,7 +93,7 @@ public class WishlistController extends CartController {
         try {
             cartService.moveItemToCartFromNamedOrder(wishlistOrder, orderItem);
         } catch (Exception e) {
-            logger.error("An exception occured while pricing the order", e);
+            LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
             //TODO: handle this properly from a UI perspective
         }
         return "redirect:success";
@@ -101,7 +105,7 @@ public class WishlistController extends CartController {
         try {
             cartService.moveAllItemsToCartFromNamedOrder(wishlistOrder);
         } catch (PricingException e) {
-            logger.error("An exception occured while pricing the order", e);
+            LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
             //TODO: handle this properly from a UI perspective
         }
         return "redirect:success";

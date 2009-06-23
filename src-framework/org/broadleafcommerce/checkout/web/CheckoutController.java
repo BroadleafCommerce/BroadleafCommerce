@@ -25,6 +25,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.checkout.service.CheckoutService;
 import org.broadleafcommerce.checkout.service.exception.CheckoutException;
@@ -61,6 +63,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller("blCheckoutController")
 public class CheckoutController {
+
+    private static final Log LOG = LogFactory.getLog(CheckoutController.class);
+
     @Resource
     protected CartService cartService;
     @Resource
@@ -139,7 +144,7 @@ public class CheckoutController {
         try {
             checkoutService.performCheckout(order, payments);
         } catch (CheckoutException e) {
-            e.printStackTrace();
+            LOG.error("Cannot perform checkout", e);
         }
 
         return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderDetails?orderNumber=" + order.getOrderNumber();
