@@ -273,6 +273,30 @@ public interface Product extends Serializable {
     public String getDimensionString();
 
     /**
+     * Returns a List of this product's related Cross Sales
+     * @return
+     */
+    public List<RelatedProduct> getCrossSaleProducts();
+
+    /**
+     * Sets the related Cross Sales
+     * @param crossSaleProducts
+     */
+    public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
+
+    /**
+     * Returns a List of this product's related Up Sales
+     * @return
+     */
+    public List<RelatedProduct> getUpSaleProducts();
+
+    /**
+     * Sets the related Up Sales
+     * @param upSaleProducts
+     */
+    public void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
+
+    /**
      * Returns whether or not the product is featured
      * @return isFeaturedProduct as Boolean
      */
