@@ -219,13 +219,17 @@ public class OrderImpl implements Order {
     }
 
     public Money getRemainingTotal() {
+        Money myTotal = getTotal();
+        if (myTotal == null) {
+            return null;
+        }
         Money totalPayments = new Money(BigDecimal.ZERO);
         for (PaymentInfo pi : getPaymentInfos()) {
             if (pi.getAmount() != null) {
                 totalPayments = totalPayments.add(pi.getAmount());
             }
         }
-        return getTotal().subtract(totalPayments);
+        return myTotal.subtract(totalPayments);
     }
 
     public Date getSubmitDate() {
