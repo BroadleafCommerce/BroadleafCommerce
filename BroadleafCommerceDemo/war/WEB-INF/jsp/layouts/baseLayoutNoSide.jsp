@@ -10,14 +10,18 @@
 	</head>
 
 	<body>
-		<div class="bodyWrapper">
-			<tiles:insertAttribute name="navigation" />
-			<div class="contentWrapper">
-				<div class="mainContent">
-					<tiles:insertAttribute name="mainContent" />
-				</div>
+		<div class="container">
+			<div class="span-24 last">
+				<tiles:insertAttribute name="navigation" />
 			</div>
-			<tiles:insertAttribute name="footer" />
+			<div class="span-24 last">
+				<tiles:insertAttribute name="mainContent" />
+			</div>
+			<div class="span-24 last">
+				<tiles:insertAttribute name="footer" />
+			</div>
 		</div>
 	</body>
+	
+
 </html>
