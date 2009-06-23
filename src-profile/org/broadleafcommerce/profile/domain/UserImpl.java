@@ -34,6 +34,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
+import org.hibernate.annotations.Cascade;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -71,6 +72,7 @@ public class UserImpl implements User {
     protected String challengeAnswer;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", targetEntity = UserRoleImpl.class)
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected Set<UserRole> userRoles = new HashSet<UserRole>();
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
