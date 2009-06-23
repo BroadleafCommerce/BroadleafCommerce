@@ -156,7 +156,6 @@ public class ProductImpl implements Product {
     protected List<Category> allParentCategories = new ArrayList<Category>();
 
     @Column(name = "IS_FEATURED_PRODUCT")
-    @Transient
     protected boolean isFeaturedProduct = false;
 
     /** The skus. */
