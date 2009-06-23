@@ -40,7 +40,7 @@ public class UpSaleProductImpl implements RelatedProduct {
     private Product product;
 
     @ManyToOne(targetEntity = ProductImpl.class)
-    @JoinColumn(name = "RELATED_SALE_PRODUCT_ID")
+    @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     private Product relatedSaleProduct;
 
     @Column(name = "PROMOTION_MESSAGE")
