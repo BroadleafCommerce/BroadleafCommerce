@@ -53,6 +53,7 @@ import org.broadleafcommerce.offer.domain.OfferInfoImpl;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -243,12 +244,12 @@ public class OrderImpl implements Order {
         this.customer = customer;
     }
 
-    public String getStatus() {
-        return status;
+    public OrderStatus getStatus() {
+        return OrderStatus.getInstance(status);
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatus(OrderStatus status) {
+        this.status = status.getType();
     }
 
     public List<OrderItem> getOrderItems() {

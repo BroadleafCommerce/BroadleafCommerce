@@ -133,7 +133,7 @@ public class CheckoutController {
         paymentInfo.setAddress(addr);
         paymentInfo.setOrder(order);
         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-        order.setStatus(OrderStatus.SUBMITTED.toString());
+        order.setStatus(OrderStatus.SUBMITTED);
         order.setSubmitDate(new Date());
 
         try {

@@ -26,6 +26,7 @@ import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OfferInfo;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.util.money.Money;
@@ -64,9 +65,9 @@ public interface Order extends Serializable {
 
     public void setCustomer(Customer customer);
 
-    public String getStatus();
+    public OrderStatus getStatus();
 
-    public void setStatus(String status);
+    public void setStatus(OrderStatus status);
 
     public List<OrderItem> getOrderItems();
 
