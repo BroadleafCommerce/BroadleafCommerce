@@ -22,6 +22,13 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.dao.ProductDao;
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.order.dao.OrderDao;
+import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.profile.dao.CustomerAddressDao;
+import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerAddress;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.ProductDataProvider;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
@@ -30,6 +37,15 @@ public class ProductDaoTest extends BaseTest {
 
     @Resource
     private ProductDao productDao;
+
+    @Resource
+    private CustomerService customerService;
+
+    @Resource
+    private CustomerAddressDao customerAddressDao;
+
+    @Resource
+    private OrderDao orderDao;
 
     @Test(groups={"createProduct"},dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
     @Rollback(false)
@@ -67,6 +83,82 @@ public class ProductDaoTest extends BaseTest {
         assert result.getDepth().doubleValue() == 75.5D;
         assert result.getWeight().doubleValue() == 100.1D;
         assert result.getDimensionString().equals("50Hx25.5Wx75.5D\"");
+    }
+    /*
+    @Test(groups="readUpSaleValues", dataProvider="basicUpSaleValue", dataProviderClass=ProductDataProvider.class, dependsOnGroups="createUpSaleValues")
+    public void testReadProductsWithUpSaleValues(Product product) {
+        Product result = productDao.readProductById(product.getId());
+
+        List<RelatedProduct> related = result.getUpSaleProducts();
+
+        assert(related != null);
+        assert(!related.isEmpty());
+        assert(related.size() == 2 || related.size() == 3);
+
+        for(RelatedProduct rp : related){
+            assert(rp instanceof UpSaleProductImpl);
+        }
+    }
+
+    @Test(groups="createUpSaleValues", dataProvider="basicUpSaleValue", dataProviderClass=ProductDataProvider.class, dependsOnGroups="createProducts")
+    @Rollback(false)
+    public void createUpSaleValues(Product product){
+        System.out.println("#######product.getUpSaleProducts().size() - " + product.getUpSaleProducts().size());
+
+        productDao.save(product);
+        assert(product.getId() != null);
+    }
+
+    @Test(groups="createProducts", dataProvider="setupProducts", dataProviderClass=ProductDataProvider.class)
+    @Rollback(false)
+    public void createProducts(Product product){
+        productDao.save(product);
+        assert(product.getId() != null);
+    }
+     */
+    @Test(groups="myAssertTrue")
+    public void myAssertTrue(){
+        assert(true);
+    }
+    /*
+
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////
+
+    @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class, dependsOnGroups="createCrossSaleValues")
+    public void testReadProductsWithCrossSaleValues(Product product) {
+        //TODO
+    }
+
+    @Test(groups={"createCrossSaleValues"}, dataProvider="basicCrossSaleValue", dataProviderClass=ProductDataProvider.class)
+    @Rollback(false)
+    public void createCrossSaleValues(Product product){
+        //        productDao.save(product);
+    }*/
+
+
+    public void retrieveAddressInfoForCustomer(){
+        String userName = "customer1";
+        Customer customer = customerService.readCustomerByUsername(userName);
+        System.out.println("@@@@@ - " + customer.getId());
+
+        List<CustomerAddress> cAddress = customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId());
+
+        System.out.println("@@@@@ - " + cAddress.size());
+        System.out.println("@@@@@ - " + cAddress.get(0));
+        System.out.println("@@@@@ - " + cAddress.get(0).getAddressName());
+        System.out.println("@@@@@ - " + cAddress.get(0).getId());
+        System.out.println("@@@@@ - " + cAddress.get(0).getAddressName());
+
+        Address address = cAddress.get(0).getAddress();
+        Order salesOrder = orderDao.readCartForCustomer(customer);
+
+        System.out.println("@@@@@ - " + address.getId());
+        System.out.println("@@@@@ - " + salesOrder.getId());
+
     }
 
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
