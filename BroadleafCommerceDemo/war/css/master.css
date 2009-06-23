@@ -71,6 +71,12 @@ img {
 	margin: 0;
 }
 
+#border {
+	border-width: 1px;
+	border-style: solid;
+	border-color: #C9E1F4; 
+}
+
 input.helpTextVisible {
 	color: #666;
 }
