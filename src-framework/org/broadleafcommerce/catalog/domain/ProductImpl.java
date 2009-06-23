@@ -37,6 +37,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -121,6 +122,12 @@ public class ProductImpl implements Product {
 
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
+
+    /*    //TODO remove the transient annotations once all SQL files have been updated.*/
+    @Transient
+    @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @OrderBy(value="sequence")
+    protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
 
     /** The all skus. */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
@@ -431,6 +438,14 @@ public class ProductImpl implements Product {
      */
     public String getDimensionString() {
         return dimension.getDimensionString();
+    }
+
+    public List<RelatedProduct> getUpSaleProducts() {
+        return upSaleProducts;
+    }
+
+    public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
+        this.upSaleProducts = upSaleProducts;
     }
 
     @Override
