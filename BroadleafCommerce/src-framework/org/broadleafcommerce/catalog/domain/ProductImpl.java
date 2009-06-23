@@ -155,7 +155,7 @@ public class ProductImpl implements Product {
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
 
-    @Column(name = "IS_FEATURED_PRODUCT")
+    @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
     protected boolean isFeaturedProduct = false;
 
     /** The skus. */
@@ -447,6 +447,14 @@ public class ProductImpl implements Product {
         this.upSaleProducts = upSaleProducts;
     }
 
+    public boolean getIsFeaturedProduct() {
+        return isFeaturedProduct;
+    }
+
+    public void setFeaturedProduct(boolean isFeaturedProduct) {
+        this.isFeaturedProduct = isFeaturedProduct;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -483,11 +491,4 @@ public class ProductImpl implements Product {
         return true;
     }
 
-    public boolean getIsFeaturedProduct() {
-        return isFeaturedProduct;
-    }
-
-    public void setFeaturedProduct(boolean isFeaturedProduct) {
-        this.isFeaturedProduct = isFeaturedProduct;
-    }
 }
