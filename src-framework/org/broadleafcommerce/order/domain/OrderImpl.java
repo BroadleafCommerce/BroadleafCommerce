@@ -219,9 +219,6 @@ public class OrderImpl implements Order {
     }
 
     public Money getRemainingTotal() {
-        if (getPaymentInfos().size() == 0) {
-            return null;
-        }
         Money totalPayments = new Money(BigDecimal.ZERO);
         for (PaymentInfo pi : getPaymentInfos()) {
             if (pi.getAmount() != null) {
