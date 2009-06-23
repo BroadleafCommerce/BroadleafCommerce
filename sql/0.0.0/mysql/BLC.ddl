@@ -377,6 +377,7 @@ CREATE TABLE BLC_PRODUCT (
   NAME                varchar(255) NOT NULL, 
   WEIGHT              decimal(19, 2), 
   DEFAULT_CATEGORY_ID bigint(19), 
+  IS_FEATURED_PRODUCT tinyint DEFAULT 0 NOT NULL, 
   PRIMARY KEY (PRODUCT_ID));
 CREATE TABLE BLC_PRODUCT_ATTRIBUTE (
   ID         bigint(19) NOT NULL, 
