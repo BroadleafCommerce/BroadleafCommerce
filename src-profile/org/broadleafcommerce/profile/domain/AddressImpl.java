@@ -74,7 +74,6 @@ public class AddressImpl implements Address {
     @Column(name = "STANDARDIZED")
     protected Boolean standardized = Boolean.FALSE;
 
-    // TODO - this field is temporary and will be removed later
     @Column(name = "ZIP_FOUR")
     protected String zipFour;
 
