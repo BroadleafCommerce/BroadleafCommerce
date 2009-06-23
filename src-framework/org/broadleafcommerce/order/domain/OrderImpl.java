@@ -144,7 +144,6 @@ public class OrderImpl implements Order {
     protected List<CandidateOrderOffer> candidateOffers = new ArrayList<CandidateOrderOffer>();
 
     @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     protected List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
     @ManyToMany(targetEntity=OfferInfoImpl.class)
