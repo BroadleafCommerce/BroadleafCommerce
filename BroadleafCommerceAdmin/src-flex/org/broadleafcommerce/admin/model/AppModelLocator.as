@@ -9,14 +9,13 @@ package org.broadleafcommerce.admin.model
 	import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
+	import org.broadleafcommerce.admin.model.view.CategoryModel;
 	import org.broadleafcommerce.admin.model.view.OfferModel;
 
 	public class AppModelLocator implements IModelLocator
 	{
 		private static var modelLocator:AppModelLocator;
 
-		[Bindable]
-		public var offerModel:OfferModel = new OfferModel(); 
 
 		public static function getInstance():AppModelLocator
 		{
@@ -31,6 +30,13 @@ package org.broadleafcommerce.admin.model
 			if(modelLocator != null)
 				throw new CairngormError(CairngormMessageCodes.SINGLETON_EXCEPTION, "BlcAdminModelLocator");				
 		}
+		
+		
+		[Bindable]
+		public var offerModel:OfferModel = new OfferModel(); 
+
+		[Bindable]
+		public var categoryModel:CategoryModel = new CategoryModel();
 		
 		[Bindable]
 		public var catalogCategories:ArrayCollection = new ArrayCollection();

@@ -11,9 +11,10 @@ package org.broadleafcommerce.admin.control.events.catalog.category
 		
 		public var category:Category;
 		
-		public function EditCatalogCategoryEvent()
+		public function EditCatalogCategoryEvent(category:Category)
 		{
 			super(EVENT_EDIT_CATALOG_CATEGORY);
+			this.category = category;
 		}
 
 	}

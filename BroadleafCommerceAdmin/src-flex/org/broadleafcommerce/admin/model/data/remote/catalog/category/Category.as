@@ -22,5 +22,13 @@ package org.broadleafcommerce.admin.model.data.remote.catalog.category
 		public var featuredProducts:ArrayCollection = new ArrayCollection();
 		public var childCategories:ArrayCollection = new ArrayCollection();
 		public var cachedChildCategoryUrlMap:Array;
+		
+		public function get children():ArrayCollection{
+			return allChildCategories;
+		}
+		
+		public function set children(newChildren:ArrayCollection):void{
+			this.allChildCategories = newChildren;
+		}
 	}
 }

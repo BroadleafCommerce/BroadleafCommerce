@@ -18,12 +18,17 @@
 			private function handleCreationComplete():void{
 			}
 			
+			[Bindable]
+			public var selectedItem:Category = null;
+			
 			private function handleItemClick(event:ListEvent):void{
-				dispatchEvent(new ListEvent("categorySelected", event.bubbles, event.cancelable, event.columnIndex, event.rowIndex));
+				selectedItem = Category(categoryTree.selectedItem); 
+				dispatchEvent(new ListEvent("categorySelected", event.bubbles, event.cancelable));
 			}
 		]]>
 	</mx:Script>
 	<mx:Tree
+		id="categoryTree"
 		dataProvider="{this.appModel.catalogCategories}"
 		labelField="name"
 		width="300"
