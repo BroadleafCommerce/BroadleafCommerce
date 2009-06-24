@@ -68,7 +68,7 @@ import org.hibernate.annotations.OrderBy;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class CategoryImpl implements Category {
 
     /** The Constant serialVersionUID. */
@@ -119,7 +119,7 @@ public class CategoryImpl implements Category {
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected List<Category> allChildCategories = new ArrayList<Category>();
 
@@ -127,7 +127,7 @@ public class CategoryImpl implements Category {
     @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
     @OrderBy(clause = "DISPLAY_ORDER")
-    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
 
@@ -136,7 +136,7 @@ public class CategoryImpl implements Category {
     @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, String> categoryImages = new HashMap<String, String>();
 
     /** The long description. */
@@ -452,6 +452,10 @@ public class CategoryImpl implements Category {
      */
     public Map<String, List<Category>> getChildCategoryURLMap() {
         // TODO: Add expiration logic to the Map
+        /*
+         * TODO utilize a cache event listener
+         * http://ehcache.sourceforge.net/documentation/cache_event_listeners.html
+         */
         if (cachedChildCategoryUrlMap.isEmpty()) {
             synchronized (cachedChildCategoryUrlMap) {
                 if (cachedChildCategoryUrlMap.isEmpty()) {

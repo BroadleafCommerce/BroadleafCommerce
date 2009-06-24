@@ -62,7 +62,7 @@ import org.hibernate.annotations.CollectionOfElements;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SkuImpl implements Sku {
 
     /** The Constant serialVersionUID. */
@@ -121,7 +121,7 @@ public class SkuImpl implements Sku {
     @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, String> skuImages = new HashMap<String, String>();
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)

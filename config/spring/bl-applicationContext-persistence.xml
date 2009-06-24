@@ -4,6 +4,7 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
            http://www.springframework.org/schema/context
@@ -11,8 +12,45 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
            http://www.springframework.org/schema/aop
-           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
-           
+           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/util 
+           http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+       
+    <bean class="org.springframework.jmx.export.MBeanExporter">
+        <property name="autodetect" value="false" />
+        <property name="assembler">
+            <bean id="jmxAssembler"
+                class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+                <property name="attributeSource">
+                    <bean
+                        class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
+                </property>
+            </bean>
+        </property>
+        <property name="beans">
+            <map>
+                <entry key="org.hibernate:name=statistics">
+                    <bean class="org.hibernate.jmx.StatisticsService">
+                        <property name="statisticsEnabled" value="true" />
+                        <property name="sessionFactory">
+                            <util:property-path
+                                path="entityManagerFactory.sessionFactory" />
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+	
+	<bean id="blCacheManager" class="org.broadleafcommerce.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
+		<property name="shared" value="true"/>
+		<property name="configLocations">
+			<list>
+				<value>classpath:bl-ehcache.xml</value>
+			</list>
+		</property>
+	</bean>
+    
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
@@ -32,7 +70,7 @@
 	</bean>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
+		<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
 		<property name="persistenceUnitName" value="blPU"/>
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -41,6 +79,17 @@
 				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
 			</bean>
 		</property>
+		<property name="jpaPropertyMap">
+            <map>
+            	<entry key="hibernate.show_sql" value="false"/>
+                <entry key="hibernate.transaction.flush_before_completion" value="false"/>
+                <entry key="hibernate.connection.autocommit" value="false"/>
+                <entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
+                <entry key="hibernate.cache.use_second_level_cache" value="true"/>
+                <entry key="hibernate.cache.use_query_cache" value="true"/>
+                <entry key="hibernate.generate_statistics" value="true" />
+            </map>
+        </property>
 	</bean>
 
 	<bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -53,6 +102,15 @@
 				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
 			</bean>
 		</property>
+		<property name="jpaPropertyMap">
+            <map>
+            	<entry key="hibernate.show_sql" value="false"/>
+                <entry key="hibernate.transaction.flush_before_completion" value="false"/>
+                <entry key="hibernate.connection.autocommit" value="false"/>
+                <entry key="hibernate.cache.use_second_level_cache" value="false"/>
+                <entry key="hibernate.cache.use_query_cache" value="false"/>
+            </map>
+        </property>
 	</bean>
 
 	<bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
