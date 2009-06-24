@@ -76,7 +76,7 @@
 			label="Default Parent Category:">
 			<mx:ComboBox 
 				id="defaultParentCategoryComboBox"
-				selectedIndex="{this.appModel.catalogCategories.getItemIndex(this.category.defaultParentCategory)}"
+				selectedIndex="{appModel.catalogCategories.getItemIndex(this.category.defaultParentCategory)}"
 				labelField="name"
 				width="160"/>
 		</mx:FormItem>

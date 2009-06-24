@@ -1,7 +1,5 @@
 package org.broadleafcommerce.admin.model.data.remote.catalog.category
 {
-	import flash.utils.Dictionary;
-	
 	import mx.collections.ArrayCollection;
 	
 	[Bindable]
@@ -19,10 +17,10 @@ package org.broadleafcommerce.admin.model.data.remote.catalog.category
 		public var displayTemplate:String;
 		public var allChildCategories:ArrayCollection = new ArrayCollection();
 		public var allParentCategories:ArrayCollection = new ArrayCollection();
-		public var categoryImages:Object;
+		public var categoryImages:Array;
 		public var longDescription:String;
 		public var featuredProducts:ArrayCollection = new ArrayCollection();
 		public var childCategories:ArrayCollection = new ArrayCollection();
-		public var cachedChildCategoryUrlMap:Object;
+		public var cachedChildCategoryUrlMap:Array;
 	}
 }

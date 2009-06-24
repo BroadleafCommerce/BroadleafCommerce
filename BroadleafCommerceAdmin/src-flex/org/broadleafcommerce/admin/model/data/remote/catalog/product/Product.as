@@ -18,7 +18,8 @@ package org.broadleafcommerce.admin.model.data.remote.catalog.product
  		public var manufacturer:String;
 		public var dimension:ProductDimension;
 		public var weight:String;
-		public var crossSaleProduct:ArrayCollection = new ArrayCollection();
+		public var crossSaleProducts:ArrayCollection = new ArrayCollection();
+		public var upSaleProducts:ArrayCollection = new ArrayCollection();
 		public var allSkus:ArrayCollection = new ArrayCollection();
 		public var productImages:Object;
 		public var defaultCategory:Category;
