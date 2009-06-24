@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:view="org.broadleafcommerce.admin.view.*"
+	width="100%">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.control.events.catalog.product.SaveCatalogProductEvent;
+			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
+		
+			[Bindable]
+			public var product:Product;
+		]]>
+	</mx:Script>	
+	<mx:DateFormatter
+		id="dateFormatter"/>
+	<mx:Form 
+		id="newProductForm">
+		<mx:FormItem 
+			label="Name:">
+			<mx:Label
+				id="nameLabel"
+				text="{this.product.name}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Description:">
+			<mx:Label
+				id="descriptionLabel"
+				text="{this.product.description}"
+				styleName="formLabel"/>			
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Long Description:">
+			<mx:Label
+				id="longDescriptionLabel"
+				text="{this.product.longDescription}"
+				styleName="formLabel"/>				
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Active Start Date:">
+			<mx:Label
+				id="activeStartDateLabel"
+				text="{dateFormatter.format(this.product.activeStartDate)}"
+				styleName="formLabel"/>				
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Active End Date:">
+			<mx:Label
+				id="activeEndDateLabel"
+				text="{dateFormatter.format(this.product.activeEndDate)}"
+				styleName="formLabel"/>				
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Model:">
+			<mx:Label
+				id="modelLabel"
+				text="{this.product.model}"
+				styleName="formLabel"/>				
+		</mx:FormItem>
+	</mx:Form>	
+</mx:Canvas>

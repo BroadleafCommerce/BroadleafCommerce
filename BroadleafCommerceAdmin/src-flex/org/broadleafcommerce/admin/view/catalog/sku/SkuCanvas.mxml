@@ -5,9 +5,8 @@
 		<![CDATA[
 			private function handleNewSku(event:Event):void{
 				this.workingAreaHBox.removeAllChildren();
-				var sfc:SkuFormCanvas = new SkuFormCanvas();
-				sfc.editingMode = true;
-				this.workingAreaHBox.addChild(sfc);
+				var esfc:EditSkuFormCanvas = new EditSkuFormCanvas();
+				this.workingAreaHBox.addChild(esfc);
 			}			
 			
 			private function handleViewSkus(event:Event):void{

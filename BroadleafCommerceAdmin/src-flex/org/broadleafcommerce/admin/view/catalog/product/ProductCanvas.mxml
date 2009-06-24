@@ -6,9 +6,8 @@
 		<![CDATA[
 			private function handleNewProduct(event:Event):void{
 				this.workingAreaHBox.removeAllChildren();
-				var pdc:ProductFormCanvas = new ProductFormCanvas();
-				pdc.editingMode = true;
-				this.workingAreaHBox.addChild(pdc);
+				var epfc:EditProductFormCanvas = new EditProductFormCanvas();
+				this.workingAreaHBox.addChild(epfc);
 			}
 			
 			private function handleViewProducts(event:Event):void{

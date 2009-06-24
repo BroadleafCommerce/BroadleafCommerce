@@ -19,7 +19,7 @@
 			}
 			
 			private function handleItemClick(event:ListEvent):void{
-				dispatchEvent(new ListEvent("categorySelected", event.bubbles, event.cancelable));
+				dispatchEvent(new ListEvent("categorySelected", event.bubbles, event.cancelable, event.columnIndex, event.rowIndex));
 			}
 		]]>
 	</mx:Script>

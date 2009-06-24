@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%"
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.control.events.catalog.sku.SaveCatalogSkuEvent;
+			import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
+			
+			[Bindable]
+			public var sku:Sku;
+		]]>
+	</mx:Script>
+	<mx:DateFormatter
+		id="dateFormatter"/>
+	<mx:StringValidator
+		id="retailPriceStringValidator"
+		property="text"
+		source="{this.retailPriceTextInput}"
+		required="true"/>
+	<mx:StringValidator
+		id="nameStringValidator"
+		property="text"
+		source="{this.nameTextInput}"
+		required="true"/>
+	<mx:Form
+		id="newSkuForm">
+		<mx:FormItem
+			label="Name:">
+			<mx:Label
+				id="nameLabel"
+				text="{this.sku.name}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Description:">
+			<mx:Label
+				id="descriptionLabel"
+				text="{this.sku.description}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Long Description:">
+			<mx:Label
+				id="longDescriptionLabel"
+				text="{this.sku.longDescription}"
+				styleName="formLabel"/>					
+		</mx:FormItem>
+		<mx:FormItem
+			label="Sale Price:">
+			<mx:Label
+				id="salePriceLabel"
+				text="{this.sku.salePrice}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Retail Price:">
+			<mx:Label
+				id="retailPriceLabel"
+				text="{this.sku.retailPrice}"
+				styleName="formLabel"/>					
+		</mx:FormItem>
+		<mx:FormItem
+			label="Taxable:">
+			<mx:Label
+				id="taxableLabel"
+				text="{this.sku.taxable}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Discountable:">
+			<mx:Label
+				id="discountableLabel"
+				text="{this.sku.discountable}"
+				styleName="formLabel"/>					
+		</mx:FormItem>
+		<mx:FormItem
+			label="Available:">
+			<mx:Label
+				id="availableLabel"
+				text="{this.sku.available}"
+				styleName="formLabel"/>					
+		</mx:FormItem>
+		<mx:FormItem
+			label="Active Start Date:">
+			<mx:Label
+				id="activeStartDateLabel"
+				text="{dateFormatter.format(this.sku.activeStartDate)}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem
+			label="Active End Date:">
+			<mx:Label
+				id="activeEndDateLabel"
+				text="{dateFormatter.format(this.sku.activeEndDate)}"
+				styleName="formLabel"/>		
+		</mx:FormItem>
+		<mx:FormItem>
+			<mx:Button 
+				id="saveButton"
+				label="Save"
+				click="handleSave(event)"/>
+		</mx:FormItem>
+	</mx:Form>
+</mx:Canvas>

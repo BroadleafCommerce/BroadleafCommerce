@@ -15,7 +15,6 @@
 			private var appModel:AppModelLocator = AppModelLocator.getInstance();
 			
 			private function handleCreationComplete():void{
-				this.defaultParentCategoryComboBox.dataProvider = this.appModel.catalogCategories;
 				this.nameTextInput.setFocus();
 			}	
 			
@@ -44,8 +43,8 @@
 		]]>
 	</mx:Script>
 	<mx:Binding 
-		source="this.appModel.catalogCategories"
-		destination="this.defaultParentCategoryComboBox.dataProvider"/>
+		source="appModel.catalogCategories"
+		destination="defaultParentCategoryComboBox.dataProvider"/>
 	<mx:DateFormatter 
 		id="dateFormatter"/>
 	<mx:StringValidator 
@@ -78,7 +77,8 @@
 			<mx:ComboBox 
 				id="defaultParentCategoryComboBox"
 				selectedIndex="{this.appModel.catalogCategories.getItemIndex(this.category.defaultParentCategory)}"
-				labelField="name"/>
+				labelField="name"
+				width="160"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Active Start Date:">
