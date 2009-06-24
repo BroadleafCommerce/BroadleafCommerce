@@ -33,7 +33,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SHIPPING_RATE")
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ShippingRateImpl implements ShippingRate {
 
     private static final long serialVersionUID = 1L;

@@ -61,7 +61,7 @@
 
 		<copy todir="${stage.dir}/framework-jar">
 			<fileset dir="${spring.config.dir}">
-				<include name="bl-applicationContext*" />
+				<include name="bl-*" />
 			</fileset>
 		</copy>
 
@@ -70,24 +70,6 @@
 				<include name="jdbc.properties" />
 			</fileset>
 		</copy>
-
-		<if>
-			<equals arg1="${hibernate.hbm2ddl.auto}" arg2="false" />
-			<then>
-				<replace file="${stage.dir}/framework-jar/META-INF/persistence-framework-catalog.xml">
-					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
-					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
-				</replace>
-				<replace file="${stage.dir}/framework-jar/META-INF/persistence-framework-user.xml">
-					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
-					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
-				</replace>
-				<replace file="${stage.dir}/framework-jar/META-INF/persistence-framework-secure.xml">
-					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
-					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
-				</replace>
-			</then>
-		</if>
 
 		<jar jarfile="${stage.dir}/broadleaf-framework.jar">
 			<fileset dir="${stage.dir}/framework-jar">
@@ -290,16 +272,6 @@
 			</fileset>
 		</copy>
 
-		<if>
-			<equals arg1="${hibernate.hbm2ddl.auto}" arg2="false" />
-			<then>
-				<replace file="${stage.dir}/profile-jar/META-INF/persistence-profile.xml">
-					<replacetoken><![CDATA[<property name="hibernate.hbm2ddl.auto" value="update"/>]]></replacetoken>
-					<replacevalue><![CDATA[<!-- <property name="hibernate.hbm2ddl.auto" value="update"/>-->]]></replacevalue>
-				</replace>
-			</then>
-		</if>
-
 		<jar jarfile="${stage.dir}/broadleaf-profile.jar">
 			<fileset dir="${stage.dir}/profile-jar">
 				<include name="**/*.class" />
@@ -360,20 +332,13 @@
        	<copy file="${stage.dir}/broadleaf-profile-sources.jar" todir="${basedir}/../org.broadleafcommerce/profile/0.0.0/sources" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-profile-sources-web.jar" todir="${basedir}/../org.broadleafcommerce/profile-web/0.0.0/sources" overwrite="true"/>
     	
-    	<copy file="${stage.dir}/broadleaf-auxiliary.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary-web/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/auxiliary-web/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework-web/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/framework-web/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-layout.jar" todir="${basedir}/../libraries/org.broadleafcommerce/layout/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-layout-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/layout/0.0.0/sources" overwrite="true"/>
-       	<copy file="${stage.dir}/broadleaf-profile.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-profile-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile-web/0.0.0/jars" overwrite="true"/>
-       	<copy file="${stage.dir}/broadleaf-profile-sources.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-profile-sources-web.jar" todir="${basedir}/../libraries/org.broadleafcommerce/profile-web/0.0.0/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-auxiliary.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/auxiliary/jars/broadleaf-auxiliary-0.0.0.jar" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-auxiliary-web.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/auxiliary-web/jars/broadleaf-auxiliary-web-0.0.0.jar" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/framework/jars/broadleaf-framework-0.0.0.jar" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework-web.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/framework-web/jars/broadleaf-framework-web-0.0.0.jar" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-layout.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/layout/jars/broadleaf-layout-0.0.0.jar" overwrite="true"/>
+       	<copy file="${stage.dir}/broadleaf-profile.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/profile/jars/broadleaf-profile-0.0.0.jar" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-profile-web.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/profile-web/jars/broadleaf-profile-web-0.0.0.jar" overwrite="true"/>
     </target>
 
 	<target name="clean">

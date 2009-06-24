@@ -15,16 +15,5 @@
 		<mapping-file>config/bc/jpa/domain/Role.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/State.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/User.orm.xml</mapping-file>
-
-        <properties>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.connection.autocommit" value="false"/>
-
-            <!-- This stuff is for caching... -->
-            <property name="hibernate.cache.use_second_level_cache" value="false"/>
-            <property name="hibernate.cache.use_query_cache" value="false"/>
-        </properties>
     </persistence-unit>
 </persistence>
