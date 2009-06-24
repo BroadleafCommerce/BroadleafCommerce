@@ -9,7 +9,7 @@
 			import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 			import org.broadleafcommerce.admin.model.view.OfferModel;
 			import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
-			import org.broadleafcommerce.admin.control.events.ShowOfferWindowEvent;
+			import org.broadleafcommerce.admin.control.events.offer.ShowOfferWindowEvent;
 			import org.broadleafcommerce.admin.view.offer.offerWizard.NewOfferWizard;
 			import mx.containers.TitleWindow;
 			import mx.managers.PopUpManager;
@@ -36,23 +36,24 @@
 			}
 		]]>
 	</mx:Script> 
-	<mx:VBox verticalGap="20"
+	<mx:Binding
+		source="this.offerModel.offersListFiltered"
+		destination="this.offersDataGrid.dataProvider"/>
+	<mx:VBox 
+		verticalGap="20"
 		width="100%">
-		<mx:Button x="10" 
+		<mx:Button 
+			x="10" 
 			y="10" 
 			label="New Offer" 
 			click="handleNewClick(event)"/>
 		<offer:OfferFilterCanvas/>	
-		<offer:OfferDataGrid id="offersDataGrid"
-			dataProvider="{this.offerModel.offersListFiltered}" 
+		<offer:OfferDataGrid 
+			id="offersDataGrid"
 			width="75%" 
 			height="75%" 
 			doubleClickEnabled="true" 
-			doubleClick="handleOffersDataGridDoubleClick(event)"
-			headerColors="[#666666, #000000]"
-			headerStyleName="dataGridHeaderStyle"
-			rollOverColor="#9AB12A"
-			textRollOverColor="#000000"/> 
+			doubleClick="handleOffersDataGridDoubleClick(event)"/> 
 	</mx:VBox>
 	<!--	<mx:DataGrid id="offersDataGrid" x="10" y="37" width="75%" height="75%" doubleClickEnabled="true" doubleClick="handleOffersDataGridDoubleClick(event)">
 		</mx:DataGrid>

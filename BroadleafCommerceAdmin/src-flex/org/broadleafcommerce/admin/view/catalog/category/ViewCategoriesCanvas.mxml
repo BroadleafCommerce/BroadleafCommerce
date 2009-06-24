@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="handleCreationComplete()"
+	width="100%">
+	<mx:Metadata>
+		[Event(name="categorySelected", type="mx.events.ListEvent")]
+	</mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ListEvent;
+			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
+			import mx.events.ItemClickEvent;
+			import org.broadleafcommerce.admin.model.AppModelLocator;
+			
+			[Bindable]
+			private var appModel:AppModelLocator = AppModelLocator.getInstance(); 
+			
+			private function handleCreationComplete():void{
+			}
+			
+			private function handleItemClick(event:ListEvent):void{
+				dispatchEvent(new ListEvent("categorySelected", event.bubbles, event.cancelable));
+			}
+		]]>
+	</mx:Script>
+	<mx:Tree
+		dataProvider="{this.appModel.catalogCategories}"
+		labelField="name"
+		width="300"
+		height="400"
+		borderStyle="none"
+		dragEnabled="true"
+		dropEnabled="true"
+		itemClick="handleItemClick(event)"/>
+</mx:Canvas>

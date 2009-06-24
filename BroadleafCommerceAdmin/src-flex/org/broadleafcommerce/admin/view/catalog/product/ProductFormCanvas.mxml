@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:view="org.broadleafcommerce.admin.view.*"
+	defaultButton="{this.saveButton}"
+	creationComplete="handleCreationComplete()"
+	width="100%">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.control.events.catalog.product.SaveCatalogProductEvent;
+			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
+			import org.broadleafcommerce.admin.model.AppModelLocator;
+		
+			[Bindable]
+			public var product:Product;
+			[Bindable]
+			public var editingMode:Boolean;
+			[Bindable]
+			private var appModel:AppModelLocator = AppModelLocator.getInstance();
+		
+			private function handleCreationComplete():void{
+				this.renderCategoryPanel();
+			}
+			
+			private function renderCategoryPanel():void{
+				if(this.editingMode && this.product == null){
+					this.nameTextInput.setFocus();
+				}else if(this.editingMode && this.product != null){
+					this.nameTextInput.setFocus();
+				}				
+			}
+			
+			private function handleSave(event:Event):void{
+				if(this.product == null){
+					this.saveProduct(this.bindFieldsToCategory(new Product()));
+				}else{
+					this.saveProduct(this.bindFieldsToCategory(this.product));
+				}
+			}
+			
+			private function bindFieldsToCategory(product:Product):Product{
+				product.name = this.nameTextInput.text;
+				product.description = this.descriptionTextInput.text;
+				product.longDescription = this.longDescriptionTextInput.text;
+				product.activeStartDate = this.activeStartDateDateField.selectedDate;
+				product.activeEndDate = this.activeEndDateDateField.selectedDate;
+				product.model = this.modelTextInput.text;
+				return product;
+			}
+			
+			private function saveProduct(product:Product):void{
+				var scce:SaveCatalogProductEvent = new SaveCatalogProductEvent(product);
+				scce.dispatch();
+			}
+		]]>
+	</mx:Script>	
+	<mx:DateFormatter
+		id="dateFormatter"/>
+	<mx:Form 
+		id="newProductForm">
+		<mx:FormItem 
+			label="Name:">
+			<mx:TextInput
+				id="nameTextInput"
+				text="{this.product.name}"
+				includeInLayout="{this.editingMode}"
+				visible="{this.editingMode}"/>
+			<mx:Label
+				id="nameLabel"
+				text="{this.product.name}"
+				includeInLayout="{!this.editingMode}"
+				visible="{!this.editingMode}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Description:">
+			<mx:TextInput
+				id="descriptionTextInput"
+				text="{this.product.description}"
+				includeInLayout="{this.editingMode}"
+				visible="{this.editingMode}"/>
+			<mx:Label
+				id="descriptionLabel"
+				text="{this.product.description}"
+				includeInLayout="{!this.editingMode}"
+				visible="{!this.editingMode}"
+				styleName="formLabel"/>			
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Long Description:">
+			<mx:TextInput
+				id="longDescriptionTextInput"
+				text="{this.product.longDescription}"
+				includeInLayout="{this.editingMode}"
+				visible="{this.editingMode}"/>
+			<mx:Label
+				id="longDescriptionLabel"
+				text="{this.product.longDescription}"
+				includeInLayout="{!this.editingMode}"
+				visible="{!this.editingMode}"
+				styleName="formLabel"/>				
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Active Start Date:">
+			<mx:DateField
+				id="activeStartDateDateField"
+				selectedDate="{this.product.activeStartDate}"
+				includeInLayout="{this.editingMode}"
+				visible="{this.editingMode}"/>
+			<mx:Label
+				id="activeStartDateLabel"
+				text="{dateFormatter.format(this.product.activeStartDate)}"
+				includeInLayout="{!this.editingMode}"
+				visible="{!this.editingMode}"
+				styleName="formLabel"/>				
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Active End Date:">
+			<mx:DateField
+				id="activeEndDateDateField"
+				selectedDate="{this.product.activeEndDate}"
+				includeInLayout="{this.editingMode}"
+				visible="{this.editingMode}"/>
+			<mx:Label
+				id="activeEndDateLabel"
+				text="{dateFormatter.format(this.product.activeEndDate)}"
+				includeInLayout="{!this.editingMode}"
+				visible="{!this.editingMode}"
+				styleName="formLabel"/>				
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Model:">
+			<mx:TextInput
+				id="modelTextInput"
+				text="{this.product.model}"
+				includeInLayout="{this.editingMode}"
+				visible="{this.editingMode}"/>
+			<mx:Label
+				id="modelLabel"
+				text="{this.product.model}"
+				includeInLayout="{!this.editingMode}"
+				visible="{!this.editingMode}"
+				styleName="formLabel"/>				
+		</mx:FormItem>
+		<mx:FormItem>
+			<mx:Button 
+				id="saveButton"
+				label="Save"
+				click="handleSave(event)"
+				visible="{this.editingMode}"/>
+		</mx:FormItem>
+	</mx:Form>	
+</mx:Canvas>

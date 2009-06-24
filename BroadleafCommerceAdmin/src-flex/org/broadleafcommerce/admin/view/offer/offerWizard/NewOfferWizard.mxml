@@ -22,12 +22,12 @@
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.control.events.offer.AddUpdateOfferEvent;
 		import mx.events.ItemClickEvent;
 		import org.broadleafcommerce.admin.model.data.remote.offer.Offer;
 		import mx.controls.Alert;
 		import mx.collections.ArrayCollection;
-		import org.broadleafcommerce.admin.control.events.AddUpdateOfferEvent;
-		import org.broadleafcommerce.admin.control.commands.offers.AddUpdateOfferCommand;
+		import org.broadleafcommerce.admin.control.commands.offer.AddUpdateOfferCommand;
 		import org.broadleafcommerce.admin.model.AppModelLocator;
 		import org.broadleafcommerce.admin.view.BlcMenu;
 		import mx.managers.PopUpManager;

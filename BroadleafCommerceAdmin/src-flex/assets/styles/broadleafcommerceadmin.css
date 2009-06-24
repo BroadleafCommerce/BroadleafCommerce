@@ -138,6 +138,7 @@ TextInput
 
 ComboBox
 {
+	font-weight: normal;
 	theme-color: #94B12D;	
 }
 
@@ -149,6 +150,19 @@ Button
 DateField
 {
 	theme-color: #94B12D;	
+}
+
+DataGrid
+{
+	header-colors: #666666, #000000;
+	header-style-name: "dataGridHeaderStyle";	
+	roll-over-color: #9AB12A;
+	text-roll-over-color: #000000;
+}
+
+List
+{
+	roll-over-color: #9AB12A;	
 }
 
 .dataGridHeaderStyle
@@ -174,8 +188,8 @@ Panel
 	border-thickness-left: 1;
 	border-thickness-right: 1;
 	border-thickness-bottom: 1;
-	header-height: 30;
 	drop-shadow-enabled: true;
+	header-height: 23;
 	shadow-direction: right;
 	shadow-distance: 5;
 	border-alpha: 1;
@@ -188,5 +202,28 @@ Panel
 {
 	color: #FFFFFF;
 	font-weight: bold;
-	font-size: 16;
+}
+
+BroadleafCommerceDateField
+{
+	header-colors: #666666, #000000;
+	header-style-name: "broadleafCommerceHeaderStyle";	
+}
+
+DateChooser
+{
+	header-colors: #666666, #000000;
+	header-style-name: "broadleafCommerceHeaderStyle";
+}
+
+.broadleafCommerceHeaderStyle
+{
+	color: #FFFFFF;	
+	font-weight: bold;
+}
+
+.formLabel
+{
+	padding-left: 1;
+	padding-top: 2;	
 }

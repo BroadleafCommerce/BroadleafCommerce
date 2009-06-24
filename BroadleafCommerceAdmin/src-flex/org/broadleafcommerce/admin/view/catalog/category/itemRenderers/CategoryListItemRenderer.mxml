@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	rollOver="handleRollOver(event)"
+	rollOut="handleRollOut(event)">
+	<mx:Script>
+		<![CDATA[
+			private function handleRollOver(event:Event):void{
+				this.setStyle("backgroundColor", "#9AB12A");
+			}
+			
+			private function handleRollOut(event:Event):void{
+				this.setStyle("backgroundColor", "#FFFFFF");
+			}
+			
+			private function handleEdit(event:Event):void{
+				
+			}
+			
+			private function handleView(event:Event):void{
+				
+			}
+		]]>
+	</mx:Script>
+	<mx:HBox
+		verticalAlign="middle">
+		<mx:Label
+			text="{data.name}"
+			width="160"/>
+		<mx:LinkButton
+			id="editCategory"
+			label="Edit"
+			click="handleEdit(event)"/>
+		<mx:LinkButton
+			id="viewCategory"
+			label="View"
+			click="handleView(event)"/>
+	</mx:HBox>
+</mx:Canvas>

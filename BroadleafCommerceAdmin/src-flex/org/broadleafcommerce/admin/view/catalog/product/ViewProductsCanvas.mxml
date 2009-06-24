@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="handleCreationComplete()"
+	width="100%">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.model.AppModelLocator;
+			
+			[Bindable]
+			private var appModel:AppModelLocator = AppModelLocator.getInstance(); 
+			
+			private function handleCreationComplete():void{
+				this.productDataGrid.dataProvider = this.appModel.catalogProducts;
+			}
+		]]>
+	</mx:Script>
+	<mx:DataGrid
+		id="productDataGrid"
+		borderStyle="none"
+		width="100%">
+		<mx:columns>
+			<mx:DataGridColumn
+				dataField="name"
+				headerText="Name"
+				width="160"/>
+			<mx:DataGridColumn/>
+			<mx:DataGridColumn/>
+		</mx:columns>
+	</mx:DataGrid>
+</mx:Canvas>
