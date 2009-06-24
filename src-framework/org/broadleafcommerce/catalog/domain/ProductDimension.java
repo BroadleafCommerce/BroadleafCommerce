@@ -17,21 +17,53 @@ package org.broadleafcommerce.catalog.domain;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
-public interface ProductDimension {
+@Embeddable
+public class ProductDimension {
 
-    public BigDecimal getWidth();
+    @Column(name = "WIDTH")
+    protected BigDecimal width;
 
-    public void setWidth(BigDecimal width);
+    @Column(name = "HEIGHT")
+    protected BigDecimal height;
 
-    public BigDecimal getHeight();
+    @Column(name = "DEPTH")
+    protected BigDecimal depth;
 
-    public void setHeight(BigDecimal height);
+    //TODO: may add measurement enum with values (CENTIMETER, INCH, FEET, METER) for this class
 
-    public BigDecimal getDepth();
+    public BigDecimal getWidth() {
+        return width;
+    }
 
-    public void setDepth(BigDecimal depth);
+    public void setWidth(BigDecimal width) {
+        this.width = width;
+    }
 
-    public String getDimensionString();
+    public BigDecimal getHeight() {
+        return height;
+    }
+
+    public void setHeight(BigDecimal height) {
+        this.height = height;
+    }
+
+    public BigDecimal getDepth() {
+        return depth;
+    }
+
+    public void setDepth(BigDecimal depth) {
+        this.depth = depth;
+    }
+
+    /**
+     * Returns the product dimensions as a String (assumes measurements are in inches)
+     * @return a String value of the product dimensions
+     */
+    public String getDimensionString() {
+        return height + "Hx" + width + "Wx" + depth + "D\"";
+    }
 
 }

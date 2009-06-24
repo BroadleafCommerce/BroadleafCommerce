@@ -36,6 +36,28 @@ public class ProductDataProvider {
         return new Object[][]{{ci}};
     }
 
+    @DataProvider(name="setupProducts")
+    public static Object[][] createProducts() {
+        Product p1 = getProduct(null);
+        Product p2 = getProduct(null);
+        Product p3 = getProduct(null);
+        Product p4 = getProduct(null);
+        Product p5 = getProduct(null);
+        Product p6 = getProduct(null);
+        Product p7 = getProduct(null);
+
+        Object[][] objs = new Object[7][1];
+        objs[0] = new Object[]{p1};
+        objs[1] = new Object[]{p2};
+        objs[2] = new Object[]{p3};
+        objs[3] = new Object[]{p4};
+        objs[4] = new Object[]{p5};
+        objs[5] = new Object[]{p6};
+        objs[6] = new Object[]{p7};
+
+        return objs;
+    }
+
     @DataProvider(name="basicCrossSaleValue")
     public static Object[][] provideBasicCrossSale() {
         Product p1 = getProduct(1L);
@@ -52,13 +74,13 @@ public class ProductDataProvider {
         getRelatedCrossProduct(p1, rel1, p1UpSales);
         getRelatedCrossProduct(p1, rel2, p1UpSales);
         getRelatedCrossProduct(p1, rel3, p1UpSales);
-        p1.setUpSaleProducts(p1UpSales);
+        p1.setCrossSaleProducts(p1UpSales);
 
         //p2 associated RelatedProducts
         List<RelatedProduct> p2UpSales = new ArrayList<RelatedProduct>();
         getRelatedCrossProduct(p2, rel4, p2UpSales);
         getRelatedCrossProduct(p2, rel5, p2UpSales);
-        p2.setUpSaleProducts(p2UpSales);
+        p2.setCrossSaleProducts(p2UpSales);
 
         Object[][] objs = new Object[2][1];
         objs[0] = new Object[]{p1};
@@ -98,28 +120,6 @@ public class ProductDataProvider {
         return objs;
     }
 
-    @DataProvider(name="setupProducts")
-    public static Object[][] createProducts() {
-        Product p1 = getProduct(null);
-        Product p2 = getProduct(null);
-        Product p3 = getProduct(null);
-        Product p4 = getProduct(null);
-        Product p5 = getProduct(null);
-        Product p6 = getProduct(null);
-        Product p7 = getProduct(null);
-
-        Object[][] objs = new Object[7][1];
-        objs[0] = new Object[]{p1};
-        objs[1] = new Object[]{p2};
-        objs[2] = new Object[]{p3};
-        objs[3] = new Object[]{p4};
-        objs[4] = new Object[]{p5};
-        objs[5] = new Object[]{p6};
-        objs[6] = new Object[]{p7};
-
-        return objs;
-    }
-
     private static RelatedProduct getRelatedUpSaleProduct(Product prod, Product prodToRelate, List<RelatedProduct> upSales){
         RelatedProduct rp1 = new UpSaleProductImpl();
         rp1.setProduct(prod);
@@ -142,10 +142,13 @@ public class ProductDataProvider {
 
     private static Product getProduct(Long id){
         if(id == null){
-            return new ProductImpl();
+            Product product = new ProductImpl();
+            product.setName("productNameTest");
+            return product;
         }
         Product p = new ProductImpl();
         p.setId(id);
+        p.setName(id.toString());
         return p;
     }
 }
