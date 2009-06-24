@@ -16,13 +16,20 @@
 package org.broadleafcommerce.test.integration;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.dao.SkuDao;
+import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.catalog.domain.SkuImpl;
+import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.order.domain.BundleOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
@@ -59,21 +66,18 @@ public class OrderTest extends BaseTest {
 
     @Resource
     private CustomerAddressService customerAddressService;
-
     @Resource
     private CartService cartService;
-
     @Resource
     private OrderItemService orderItemService;
-
     @Resource
     private CustomerService customerService;
-
     @Resource
     private SkuDao skuDao;
-
     @Resource
     private OrderService orderService;
+    @Resource
+    private CatalogService catalogService;
 
     @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer1", "createPhone" })
     @Rollback(false)
@@ -453,6 +457,111 @@ public class OrderTest extends BaseTest {
         Calendar testCalendar = Calendar.getInstance();
         order.setSubmitDate(testCalendar.getTime());
         assert order.getSubmitDate().equals(testCalendar.getTime());
+    }
+
+    @Test(groups = { "testNamedOrderForCustomer" }, dependsOnGroups = { "testOrderProperties" })
+    public void testNamedOrderForCustomer() throws PricingException {
+        Customer customer = customerService.createCustomerFromId(null);
+        customer = customerService.saveCustomer(customer);
+        Order order = orderService.createNamedOrderForCustomer("Birthday Order", customer);
+        Long orderId = order.getId();
+        assert order != null;
+        assert order.getName().equals("Birthday Order");
+        assert order.getCustomer().equals(customer);
+
+        orderService.removeNamedOrderForCustomer("Birthday Order", customer);
+        assert orderService.findOrderById(orderId) == null;
+
+    }
+
+    @Test(groups = { "testAddSkuToOrder" }, dependsOnGroups = { "testNamedOrderForCustomer" })
+    public void testAddSkuToOrder() throws PricingException {
+        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+
+        Category category = new CategoryImpl();
+        category.setName("Pants");
+        category = catalogService.saveCategory(category);
+        Product newProduct = new ProductImpl();
+
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+        newProduct.setActiveStartDate(activeStartCal.getTime());
+
+        newProduct.setDefaultCategory(category);
+        newProduct.setName("Leather Pants");
+        newProduct = catalogService.saveProduct(newProduct);
+
+        Sku newSku = new SkuImpl();
+        newSku.setName("Red Leather Pants");
+        newSku.setRetailPrice(new Money(44.99));
+        newSku.setActiveStartDate(activeStartCal.getTime());
+        List<Sku> allSkus = new ArrayList<Sku>();
+        allSkus.add(newSku);
+        newProduct.setAllSkus(allSkus);
+        newSku = catalogService.saveSku(newSku);
+        newProduct = catalogService.saveProduct(newProduct);
+
+        Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
+
+        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), category.getId(), null);
+        OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
+                newProduct.getId(), category.getId(), 2);
+        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                null, category.getId(), 2);
+        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), null, 2);
+
+        assert orderItem != null;
+        assert skuNullOrderItem == null;
+        assert quantityNullOrderItem == null;
+        assert orderNullOrderItem == null;
+        assert productNullOrderItem != null;
+        assert categoryNullOrderItem != null;
+    }
+
+    @Test(groups = { "testOrderPaymentInfos" }, dependsOnGroups = { "testAddSkuToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
+    public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
+        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+        Order order = cartService.createNewCartForCustomer(customer);
+        orderService.addPaymentToOrder(order, info);
+
+        boolean foundInfo = false;
+        assert order.getPaymentInfos() != null;
+        for (PaymentInfo testInfo : order.getPaymentInfos())
+        {
+            if (testInfo.equals(info))
+            {
+                foundInfo = true;
+            }
+        }
+        assert foundInfo == true;
+        assert orderService.readPaymentInfosForOrder(order) != null;
+
+        //DOESN'T WORK
+        //        orderService.removeAllPaymentsFromOrder(order);
+        //        assert order.getPaymentInfos().size() == 0;
+    }
+
+    @Test(groups = { "testSubmitOrder" }, dependsOnGroups = { "findNamedOrderForCustomer" })
+    public void testSubmitOrder() throws PricingException {
+        Customer customer = customerService.createCustomerFromId(null);
+        Order order = cartService.createNewCartForCustomer(customer);
+        order.setStatus(OrderStatus.IN_PROCESS);
+        order = orderService.save(order, false);
+        Long orderId = order.getId();
+
+        Order confirmedOrder = orderService.confirmOrder(order);
+
+        confirmedOrder = orderService.findOrderById(confirmedOrder.getId());
+        Long confirmedOrderId = confirmedOrder.getId();
+
+        assert orderId.equals(confirmedOrderId);
+        assert confirmedOrder.getStatus().equals(OrderStatus.SUBMITTED);
     }
 
     @Test

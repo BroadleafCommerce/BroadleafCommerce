@@ -113,7 +113,7 @@ public class ProductImpl implements Product {
 
     /** The product dimensions **/
     @Embedded
-    protected ProductDimension dimension = new ProductDimensionImpl();
+    protected ProductDimension dimension = new ProductDimension();
 
     //TODO: may want to create a ProductWeight object with a weight amount and weight type (POUNDS or KILOGRAMS)
     /** The weight of the product */
@@ -124,7 +124,6 @@ public class ProductImpl implements Product {
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
     /*    //TODO remove the transient annotations once all SQL files have been updated.*/
-    @Transient
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @OrderBy(value="sequence")
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();

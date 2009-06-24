@@ -18,14 +18,12 @@ package org.broadleafcommerce.catalog.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.TableGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -33,8 +31,7 @@ import javax.persistence.TableGenerator;
 public class CrossSaleProductImpl implements RelatedProduct {
 
     @Id
-    @GeneratedValue(generator = "CrossSaleProductId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CrossSaleProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CrossSaleProductImpl", allocationSize = 50)
+    @GeneratedValue
     @Column(name = "CROSS_SALE_PRODUCT_ID")
     private Long id;
 

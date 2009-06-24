@@ -131,7 +131,7 @@ public class CatalogTest extends BaseTest {
         foundProduct = false;
         List<Product> findProducts = productDao.readProductsBySku(newProduct.getSkus().get(0).getId());
         for (Product findProduct : findProducts) {
-            if (findProduct.getId().equals(newProduct.getSkus().get(0).getId())) {
+            if (findProduct.getId().equals(newProduct.getId())) {
                 foundProduct = true;
             }
         }

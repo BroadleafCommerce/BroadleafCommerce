@@ -143,8 +143,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
+        if (orderId == null || skuId == null || quantity == null) {
+            return null;
+        }
+
         Order order = findOrderById(orderId);
         Sku sku = skuDao.readSkuById(skuId);
+
         Product product;
         if (productId != null) {
             product = productDao.readProductById(productId);
