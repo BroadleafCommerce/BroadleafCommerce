@@ -1,43 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:view="org.broadleafcommerce.admin.view.*"
-	defaultButton="{this.saveButton}"
+	defaultButton="{saveButton}"
 	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import mx.managers.ToolTipManager;
+			import mx.validators.ValidationResult;
+			import mx.controls.Alert;
+			import mx.events.ValidationResultEvent;
+			import mx.messaging.messages.ErrorMessage;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			import org.broadleafcommerce.admin.control.events.catalog.category.SaveCatalogCategoryEvent;
 			
 			[Bindable]
-			public var category:Category;
-			[Bindable]
 			private var appModel:AppModelLocator = AppModelLocator.getInstance();
 			
 			private function handleCreationComplete():void{
-				this.nameTextInput.setFocus();
+				nameTextInput.setFocus();
 			}	
 			
-			private function handleSave(event:Event):void{
-				if(this.category == null){
-					this.saveCategory(this.bindFieldsToCategory(new Category()));
-				}else{
-					this.saveCategory(this.bindFieldsToCategory(this.category));
-				}
-			}
-			
-			private function bindFieldsToCategory(category:Category):Category{
-				category.name = this.nameTextInput.text;
-				category.description = this.descriptionTextInput.text;
-				category.longDescription = this.descriptionTextInput.text;
-				category.defaultParentCategory = Category(this.defaultParentCategoryComboBox.selectedItem);
-				category.activeStartDate = this.activeStartDateDateField.selectedDate;
-				category.activeEndDate = this.activeEndDateDateField.selectedDate;
-				return category;
-			}
-			
-			private function saveCategory(category:Category):void{
-				var scce:SaveCatalogCategoryEvent = new SaveCatalogCategoryEvent(category);
+			private function handleSaveCategory(event:Event):void{
+				appModel.currentCategory.name = nameTextInput.text;
+				appModel.currentCategory.description = descriptionTextInput.text;
+				appModel.currentCategory.longDescription = longDescriptionTextInput.text;
+				appModel.currentCategory.defaultParentCategory = Category(defaultParentCategoryComboBox.selectedItem);
+				appModel.currentCategory.activeStartDate = activeStartDateDateField.selectedDate;
+				appModel.currentCategory.activeEndDate = activeEndDateDateField.selectedDate;
+				var scce:SaveCatalogCategoryEvent = new SaveCatalogCategoryEvent(appModel.currentCategory);
 				scce.dispatch();
 			}
 		]]>
@@ -45,11 +36,29 @@
 	<mx:Binding 
 		source="appModel.catalogCategories"
 		destination="defaultParentCategoryComboBox.dataProvider"/>
+	<mx:Binding
+		source="appModel.currentCategory.name"
+		destination="nameTextInput.text"/>
+	<mx:Binding
+		source="appModel.currentCategory.description"
+		destination="descriptionTextInput.text"/>
+	<mx:Binding
+		source="appModel.currentCategory.longDescription"
+		destination="longDescriptionTextInput.text"/>
+	<mx:Binding
+		source="appModel.catalogCategories.getItemIndex(appModel.currentCategory.defaultParentCategory)"
+		destination="defaultParentCategoryComboBox.selectedIndex"/>
+	<mx:Binding
+		source="appModel.currentCategory.activeStartDate"
+		destination="activeEndDateDateField.selectedDate"/>
+	<mx:Binding
+		source="appModel.currentCategory.activeEndDate"
+		destination="activeEndDateDateField.selectedDate"/>
 	<mx:DateFormatter 
 		id="dateFormatter"/>
 	<mx:StringValidator 
 		id="nameTextInputStringValidator"
-		source="{this.nameTextInput}"
+		source="{nameTextInput}"
 		property="text"
 		required="true"/>
 	<mx:Form
@@ -57,46 +66,40 @@
 		<mx:FormItem 
 			label="Name:">
 			<mx:TextInput 
-				id="nameTextInput"
-				text="{this.category.name}"/>
+				id="nameTextInput"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Description:">
 			<mx:TextInput 
-				id="descriptionTextInput"
-				text="{this.category.description}"/>
+				id="descriptionTextInput"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Long Description:">
 			<mx:TextInput 
-				id="longDescriptionTextInput"
-				text="{this.category.longDescription}"/>
+				id="longDescriptionTextInput"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Default Parent Category:">
 			<mx:ComboBox 
 				id="defaultParentCategoryComboBox"
-				selectedIndex="{appModel.catalogCategories.getItemIndex(this.category.defaultParentCategory)}"
 				labelField="name"
 				width="160"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Active Start Date:">
 			<view:BroadleafCommerceDateField 
-				id="activeStartDateDateField"
-				selectedDate="{this.category.activeStartDate}"/>
+				id="activeStartDateDateField"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Active End Date:">
 			<view:BroadleafCommerceDateField 
-				id="activeEndDateDateField"
-				selectedDate="{this.category.activeEndDate}"/>
+				id="activeEndDateDateField"/>
 		</mx:FormItem>
 		<mx:FormItem>
 			<mx:Button 
 				id="saveButton"
 				label="Save"
-				click="handleSave(event)"/>
+				click="handleSaveCategory(event)"/>
 		</mx:FormItem>
 	</mx:Form>
 </mx:Canvas>

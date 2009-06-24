@@ -28,8 +28,8 @@
 		labelField="name"
 		width="300"
 		height="400"
-		borderStyle="none"
 		dragEnabled="true"
 		dropEnabled="true"
+		cornerRadius="4"
 		itemClick="handleItemClick(event)"/>
 </mx:Canvas>

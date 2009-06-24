@@ -30,7 +30,7 @@
 			private function handleItemClicked(event:ListEvent):void{
 				this.workingAreaHBox.removeAllChildren();
 				var ecfc:EditCategoryFormCanvas = new EditCategoryFormCanvas();
-				ecfc.category = Category(appModel.catalogCategories.getItemAt(event.rowIndex));
+				appModel.currentCategory = Category(appModel.catalogCategories.getItemAt(event.rowIndex));
 				this.workingAreaHBox.addChild(ecfc);
 			}
 		]]>

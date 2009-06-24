@@ -7,40 +7,46 @@
 	width="100%">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.AppModelLocator;
 			import org.broadleafcommerce.admin.control.events.catalog.product.SaveCatalogProductEvent;
-			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 		
 			[Bindable]
-			public var product:Product;
-		
+			private var appModel:AppModelLocator = AppModelLocator.getInstance();
+			
 			private function handleCreationComplete():void{
-				this.nameTextInput.setFocus();
+				nameTextInput.setFocus();
 			}
 			
-			private function handleSave(event:Event):void{
-				if(this.product == null){
-					this.saveProduct(this.bindFieldsToCategory(new Product()));
-				}else{
-					this.saveProduct(this.bindFieldsToCategory(this.product));
-				}
-			}
-			
-			private function bindFieldsToCategory(product:Product):Product{
-				product.name = this.nameTextInput.text;
-				product.description = this.descriptionTextInput.text;
-				product.longDescription = this.longDescriptionTextInput.text;
-				product.activeStartDate = this.activeStartDateDateField.selectedDate;
-				product.activeEndDate = this.activeEndDateDateField.selectedDate;
-				product.model = this.modelTextInput.text;
-				return product;
-			}
-			
-			private function saveProduct(product:Product):void{
-				var scce:SaveCatalogProductEvent = new SaveCatalogProductEvent(product);
+			private function handleSaveProduct(event:Event):void{
+				appModel.currentProduct.name = nameTextInput.text;
+				appModel.currentProduct.description = descriptionTextInput.text;
+				appModel.currentProduct.longDescription = longDescriptionTextInput.text;
+				appModel.currentProduct.activeStartDate = activeStartDateDateField.selectedDate;
+				appModel.currentProduct.activeEndDate = activeEndDateDateField.selectedDate;
+				appModel.currentProduct.model = modelTextInput.text;
+				var scce:SaveCatalogProductEvent = new SaveCatalogProductEvent(appModel.currentProduct);
 				scce.dispatch();
 			}
 		]]>
 	</mx:Script>	
+	<mx:Binding
+		source="appModel.currentProduct.name"
+		destination="nameTextInput.text"/>
+	<mx:Binding
+		source="appModel.currentProduct.description"
+		destination="descriptionTextInput.text"/>
+	<mx:Binding
+		source="appModel.currentProduct.longDescription"
+		destination="longDescriptionTextInput.text"/>
+	<mx:Binding
+		source="appModel.currentProduct.activeStartDate"
+		destination="activeStartDateDateField.selectedDate"/>
+	<mx:Binding
+		source="appModel.currentProduct.activeEndDate"
+		destination="activeEndDateDateField.selectedDate"/>
+	<mx:Binding
+		source="appModel.currentProduct.model"
+		destination="modelTextInput.text"/>
 	<mx:DateFormatter
 		id="dateFormatter"/>
 	<mx:Form 
@@ -48,44 +54,38 @@
 		<mx:FormItem 
 			label="Name:">
 			<mx:TextInput
-				id="nameTextInput"
-				text="{this.product.name}"/>
+				id="nameTextInput"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Description:">
 			<mx:TextInput
-				id="descriptionTextInput"
-				text="{this.product.description}"/>
+				id="descriptionTextInput"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Long Description:">
 			<mx:TextInput
-				id="longDescriptionTextInput"
-				text="{this.product.longDescription}"/>
+				id="longDescriptionTextInput"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Active Start Date:">
 			<mx:DateField
-				id="activeStartDateDateField"
-				selectedDate="{this.product.activeStartDate}"/>
+				id="activeStartDateDateField"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Active End Date:">
 			<mx:DateField
-				id="activeEndDateDateField"
-				selectedDate="{this.product.activeEndDate}"/>
+				id="activeEndDateDateField"/>
 		</mx:FormItem>
 		<mx:FormItem 
 			label="Model:">
 			<mx:TextInput
-				id="modelTextInput"
-				text="{this.product.model}"/>
+				id="modelTextInput"/>
 		</mx:FormItem>
 		<mx:FormItem>
 			<mx:Button 
 				id="saveButton"
 				label="Save"
-				click="handleSave(event)"/>
+				click="handleSaveProduct(event)"/>
 		</mx:FormItem>
 	</mx:Form>	
 </mx:Canvas>
