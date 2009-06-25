@@ -69,7 +69,7 @@
 		</property>
 	</bean>
 
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
 		<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
 		<property name="persistenceUnitName" value="blPU"/>
 		<property name="jpaVendorAdapter">
@@ -92,7 +92,7 @@
         </property>
 	</bean>
 
-	<bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+	<bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
 		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
 		<property name="persistenceUnitName" value="blSecurePU"/>
 		<property name="jpaVendorAdapter">
