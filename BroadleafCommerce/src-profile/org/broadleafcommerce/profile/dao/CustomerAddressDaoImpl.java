@@ -55,8 +55,9 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         return (CustomerAddress) entityConfiguration.createEntityInstance(CustomerAddress.class.getName());
     }
 
+    @SuppressWarnings("unchecked")
     public CustomerAddress readCustomerAddressById(Long customerAddressId) {
-        return em.find(CustomerAddress.class, customerAddressId);
+        return (CustomerAddress) em.find(entityConfiguration.lookupEntityClass(CustomerAddress.class.getName()), customerAddressId);
     }
 
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId) {
@@ -69,7 +70,9 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
 
     public void deleteCustomerAddressById(Long customerAddressId) {
         CustomerAddress customerAddress = readCustomerAddressById(customerAddressId);
-        em.remove(customerAddress);
+        if (customerAddress != null) {
+            em.remove(customerAddress);
+        }
     }
 
     @SuppressWarnings("unchecked")

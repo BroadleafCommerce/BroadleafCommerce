@@ -38,7 +38,7 @@ public class CustomerPhoneTag extends BodyTagSupport {
         Customer customer = customerState.getCustomer((HttpServletRequest) pageContext.getRequest());
 
         if(customerPhoneId != null){
-            pageContext.setAttribute(var, customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customer.getId()));
+            pageContext.setAttribute(var, customerPhoneService.readCustomerPhoneById(customerPhoneId));
         }else{
             pageContext.setAttribute(var, customerPhoneService.readActiveCustomerPhonesByCustomerId(customer.getId()));
         }

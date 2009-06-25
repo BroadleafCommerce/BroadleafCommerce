@@ -52,12 +52,8 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
     }
 
     @SuppressWarnings("unchecked")
-    public CustomerPhone readCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId) {
-        Query query = em.createNamedQuery("BC_READ_CUSTOMER_PHONE_BY_ID_AND_CUSTOMER_ID");
-        query.setParameter("customerId", customerId);
-        query.setParameter("customerPhoneId", customerPhoneId);
-        List<CustomerPhone> customerPhones = query.getResultList();
-        return customerPhones.isEmpty() ? null : customerPhones.get(0);
+    public CustomerPhone readCustomerPhoneById(Long customerPhoneId) {
+        return (CustomerPhone) em.find(entityConfiguration.lookupEntityClass(CustomerPhone.class.getName()), customerPhoneId);
     }
 
     public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId) {
@@ -68,12 +64,11 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
         }
     }
 
-    public void deleteCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId) {
-        //         TODO: determine if hard delete or deactivate, and consider throwing exception if read fails
-        CustomerPhone customerPhone = readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerId);
-
-        //TODO: what do we do if the phone does not exist?
-        em.remove(customerPhone);
+    public void deleteCustomerPhoneById(Long customerPhoneId) {
+        CustomerPhone customerPhone = readCustomerPhoneById(customerPhoneId);
+        if (customerPhone != null) {
+            em.remove(customerPhone);
+        }
     }
 
     @SuppressWarnings("unchecked")

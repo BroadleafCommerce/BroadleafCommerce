@@ -10,12 +10,6 @@
 		ORDER BY cp.id</query>
 	</named-query>
 
-	<named-query name="BC_READ_CUSTOMER_PHONE_BY_ID_AND_CUSTOMER_ID" >
-		<query>SELECT cp FROM org.broadleafcommerce.profile.domain.CustomerPhone cp
-		WHERE cp.customer.id = :customerId
-		AND cp.id = :customerPhoneId</query>
-	</named-query>
-
 	<named-query name="BC_FIND_DEFAULT_PHONE_BY_CUSTOMER_ID" >
 		<query>SELECT cp FROM org.broadleafcommerce.profile.domain.CustomerPhone cp
 		WHERE cp.customer.id = :customerId
