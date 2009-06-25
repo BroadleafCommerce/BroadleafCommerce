@@ -19,8 +19,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
@@ -30,8 +28,6 @@ import org.springframework.validation.Validator;
 
 @Component("blCustomerPhoneValidator")
 public class CustomerPhoneValidator implements Validator {
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @Resource
     private final CustomerPhoneService customerPhoneService;

@@ -28,7 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class OrderLookupTag extends BodyTagSupport {
-    // private Logger log = Logger.getLogger(this.getClass());
+
     private static final long serialVersionUID = 1L;
     private Long orderId;
     private String orderName;

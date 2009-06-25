@@ -55,8 +55,8 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerAddress readCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId) {
-        return customerAddressDao.readCustomerAddressByIdAndCustomerId(customerAddressId, customerId);
+    public CustomerAddress readCustomerAddressById(Long customerAddressId) {
+        return customerAddressDao.readCustomerAddressById(customerAddressId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -64,8 +64,8 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
         customerAddressDao.makeCustomerAddressDefault(customerAddressId, customerId);
     }
 
-    public void deleteCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId){
-        customerAddressDao.deleteCustomerAddressByIdAndCustomerId(customerAddressId, customerId);
+    public void deleteCustomerAddressById(Long customerAddressId){
+        customerAddressDao.deleteCustomerAddressById(customerAddressId);
     }
 
     @Override

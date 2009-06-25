@@ -23,11 +23,13 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.domain.Category;
 
 public class CategoryBreadCrumbTag extends CategoryLinkTag {
-    private Logger log = Logger.getLogger(this.getClass());
+
+    private static final Log LOG = LogFactory.getLog(CategoryBreadCrumbTag.class);
     private static final long serialVersionUID = 1L;
 
     private Long categoryId;
@@ -42,8 +44,8 @@ public class CategoryBreadCrumbTag extends CategoryLinkTag {
         if (categoryId != null) {
             Category category = this.getCatalogService().findCategoryById(categoryId);
 
-            if (category == null && log.isDebugEnabled()){
-                log.debug("The category returned was null for categoryId: " + categoryId);
+            if (category == null && LOG.isDebugEnabled()){
+                LOG.debug("The category returned was null for categoryId: " + categoryId);
             }
 
             while (category != null) {

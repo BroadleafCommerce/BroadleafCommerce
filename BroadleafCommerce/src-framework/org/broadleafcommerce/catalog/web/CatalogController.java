@@ -23,8 +23,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
@@ -33,7 +31,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.util.UrlPathHelper;
 
 public class CatalogController extends AbstractController {
-    protected final Log logger = LogFactory.getLog(getClass());
+
     private final UrlPathHelper pathHelper = new UrlPathHelper();
     private CatalogService catalogService;
     private String defaultCategoryView;

@@ -42,7 +42,8 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.DateUtil;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -72,9 +73,9 @@ import org.hibernate.annotations.CollectionOfElements;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ProductImpl implements Product {
 
+    private static final Log LOG = LogFactory.getLog(ProductImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    private transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
@@ -123,7 +124,6 @@ public class ProductImpl implements Product {
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
-    /*    //TODO remove the transient annotations once all SQL files have been updated.*/
     @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
     @OrderBy(value="sequence")
     protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
@@ -271,9 +271,9 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.catalog.domain.Product#isActive()
      */
     public boolean isActive() {
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
-                log.debug("product, " + id + ", inactive due to date");
+                LOG.debug("product, " + id + ", inactive due to date");
             }
         }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);

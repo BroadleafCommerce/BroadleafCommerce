@@ -119,7 +119,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                 if (customerCart == null) {
                     customerCart = createNewCartForCustomer(customer);
                 }
-                // TODO improve merge algorithm to support various requirements
                 // currently we'll just add items
                 for (OrderItem orderItem : anonymousCart.getOrderItems()) {
                     if (orderItem instanceof DiscreteOrderItem) {

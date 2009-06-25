@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("blIdGenerationService")
 public class IdGenerationServiceImpl implements IdGenerationService {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    private static final Log LOG = LogFactory.getLog(IdGenerationServiceImpl.class);
 
     @Resource
     protected IdGenerationDao idGenerationDao;
@@ -47,8 +47,8 @@ public class IdGenerationServiceImpl implements IdGenerationService {
                 // recheck, another thread may have added this.
                 id = idTypeIdMap.get(idType);
                 if (id == null) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Getting the initial id from the database.");
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Getting the initial id from the database.");
                     }
                     idGeneration = idGenerationDao.findNextId(idType);
                     id = new Id(idGeneration.getBatchStart(), 0L);
@@ -60,8 +60,8 @@ public class IdGenerationServiceImpl implements IdGenerationService {
         // Minimize synchronization to the idType we are looking for.
         synchronized(id) {
             if (id.batchSize == 0L) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Updating batch size for idType " + idType);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Updating batch size for idType " + idType);
                 }
 
                 Long prevBatchStart = idGeneration.getBatchStart();

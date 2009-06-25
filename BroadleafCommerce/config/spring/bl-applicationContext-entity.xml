@@ -13,7 +13,7 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
            
-	<!-- Entity mappings - override for extensibility -->
+    <!-- Entity mappings - override for extensibility -->
 	<bean id="org.broadleafcommerce.catalog.domain.BasePrice" class="org.broadleafcommerce.catalog.domain.BasePriceImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Category" class="org.broadleafcommerce.catalog.domain.CategoryImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.catalog.domain.CategoryProduct" class="org.broadleafcommerce.catalog.domain.CategoryProductImpl" scope="prototype"/>

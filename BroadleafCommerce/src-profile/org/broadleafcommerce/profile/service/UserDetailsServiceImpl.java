@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.CustomerRole;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.GrantedAuthority;
@@ -34,9 +32,6 @@ import org.springframework.stereotype.Service;
 
 @Service("blUserDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @Resource
     protected CustomerService customerService;

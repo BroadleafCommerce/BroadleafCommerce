@@ -22,8 +22,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentLog;
@@ -33,9 +31,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blPaymentInfoDao")
 public class PaymentInfoDaoImpl implements PaymentInfoDao {
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;

@@ -23,8 +23,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
@@ -32,9 +30,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blUserDao")
 public class UserDaoImpl implements UserDao {
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;

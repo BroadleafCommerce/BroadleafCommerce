@@ -25,11 +25,11 @@ public interface CustomerAddressService {
 
     public List<CustomerAddress> readActiveCustomerAddressesByCustomerId(Long customerId);
 
-    public CustomerAddress readCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId);
+    public CustomerAddress readCustomerAddressById(Long customerAddressId);
 
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId);
 
-    public void deleteCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId);
+    public void deleteCustomerAddressById(Long customerAddressId);
 
     public CustomerAddress findDefaultCustomerAddress(Long customerId);
 

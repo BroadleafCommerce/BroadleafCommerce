@@ -31,8 +31,7 @@ import org.springframework.stereotype.Repository;
 @Repository("blIdGenerationDao")
 public class IdGenerationDaoImpl implements IdGenerationDao {
 
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
+    private static final Log LOG = LogFactory.getLog(IdGenerationDaoImpl.class);
 
     protected Long defaultBatchSize = 100L;
     protected Long defaultBatchStart = 1L;
@@ -55,8 +54,8 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
             idGeneration =  (IdGeneration) query.getSingleResult();
         } catch (NoResultException nre) {
             // No result not found.
-            if (logger.isDebugEnabled()) {
-                logger.debug("No row found in idGenerator table for " + idType + " creating row.");
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("No row found in idGenerator table for " + idType + " creating row.");
             }
             idGeneration =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.IdGeneration");
             idGeneration.setType(idType);
@@ -65,8 +64,8 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
             try {
                 em.persist(idGeneration);
             } catch (EntityExistsException e) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("Error inserting row id generation for idType " + idType + ".  Requerying table.");
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Error inserting row id generation for idType " + idType + ".  Requerying table.");
                 }
                 return findNextId(idType);
             }

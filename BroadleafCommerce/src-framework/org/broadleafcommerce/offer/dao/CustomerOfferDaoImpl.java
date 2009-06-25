@@ -22,8 +22,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.offer.domain.CustomerOffer;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
@@ -31,12 +29,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerOfferDao")
 public class CustomerOfferDaoImpl implements CustomerOfferDao {
-
-    /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.offer.domain.CustomerOffer";
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -47,7 +39,7 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
 
     @Override
     public CustomerOffer create() {
-        return ((CustomerOffer) entityConfiguration.createEntityInstance(beanName));
+        return ((CustomerOffer) entityConfiguration.createEntityInstance(CustomerOffer.class.getName()));
     }
 
     @Override
@@ -68,7 +60,7 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
     @Override
     @SuppressWarnings("unchecked")
     public CustomerOffer readCustomerOfferById(Long customerOfferId) {
-        return (CustomerOffer) em.find(entityConfiguration.lookupEntityClass(beanName), customerOfferId);
+        return (CustomerOffer) em.find(entityConfiguration.lookupEntityClass(CustomerOffer.class.getName()), customerOfferId);
     }
 
     @Override
