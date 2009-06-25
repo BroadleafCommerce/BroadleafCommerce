@@ -75,14 +75,6 @@
 	<bean id="customerPhoneController" class="org.broadleafcommerce.profile.web.controller.CustomerPhoneController">
 		<property name="deletePhoneSuccessView" value="myAccount/phone/customerPhones"/>
 	</bean>
-	
-	<bean id="searchController" class="org.broadleafcommerce.controller.SearchController">
-		<property name="searchService" ref="blSearchService"/>
-	</bean>
-	
-	<bean id="searchIndexController" class="org.broadleafcommerce.controller.SearchIndexController">
-		<property name="searchService" ref="blSearchService"/>
-	</bean>
 
 	<bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -105,10 +97,6 @@
 				<prop key="/store/*/*">catalogController</prop>
 				<prop key="/store/*/*/*">catalogController</prop>
 				<prop key="/basket/*">cartController</prop>
-				<prop key="/search">searchController</prop>
-				<prop key="/search/*">searchController</prop>
-				<prop key="/searchindex">searchIndexController</prop>
-				<prop key="/searchindex/*">searchIndexController</prop>
 				<prop key="/checkout/*">checkoutController</prop>
 			</props>
 		</property>
