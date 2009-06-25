@@ -23,6 +23,8 @@ public interface CustomerService {
 
     public Customer saveCustomer(Customer customer);
 
+    public Customer saveCustomer(Customer customer, boolean register);
+
     public Customer registerCustomer(Customer customer, String password, String passwordConfirm);
 
     public Customer readCustomerByUsername(String customerName);
