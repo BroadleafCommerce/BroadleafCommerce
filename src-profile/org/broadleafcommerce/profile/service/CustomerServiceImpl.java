@@ -70,7 +70,11 @@ public class CustomerServiceImpl implements CustomerService {
     private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
 
     public Customer saveCustomer(Customer customer) {
-        if (!customer.isRegistered()) {
+        return saveCustomer(customer, true);
+    }
+
+    public Customer saveCustomer(Customer customer, boolean register) {
+        if (register && !customer.isRegistered()) {
             customer.setRegistered(true);
         }
         if (customer.getUnencodedPassword() != null) {

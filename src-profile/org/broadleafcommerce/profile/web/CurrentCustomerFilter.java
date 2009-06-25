@@ -15,51 +15,70 @@
  */
 package org.broadleafcommerce.profile.web;
 
+import java.io.IOException;
+
+import javax.annotation.Resource;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-public class CurrentCustomerInterceptor extends HandlerInterceptorAdapter {
+public class CurrentCustomerFilter implements Filter  {
 
     private final static String CUSTOMER_REQUEST_ATTR_NAME = "customer";
 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(request.getSession().getServletContext());
-        CustomerState customerState = (CustomerState) applicationContext.getBean("blCustomerState");
+    @Resource(name="blCustomerState")
+    protected CustomerState customerState;
+
+    @Resource(name="blCustomerService")
+    protected CustomerService customerService;
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // do nothing
+    }
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         Customer requestCustomer = null;
         checkSession: {
-            Customer sessionCustomer = customerState.getCustomer(request);
+            Customer sessionCustomer = customerState.getCustomer((HttpServletRequest) request);
             if (sessionCustomer != null) {
                 requestCustomer = sessionCustomer;
                 break checkSession;
             }
-            String cookieCustomerIdVal = CookieUtils.getCookieValue(request, CookieUtils.CUSTOMER_COOKIE_NAME);
+            String cookieCustomerIdVal = CookieUtils.getCookieValue((HttpServletRequest) request, CookieUtils.CUSTOMER_COOKIE_NAME);
             Long cookieCustomerId = null;
             if (cookieCustomerIdVal != null) {
                 cookieCustomerId = new Long(cookieCustomerIdVal);
             }
 
-            CustomerService customerService = (CustomerService) applicationContext.getBean("blCustomerService");
             if (cookieCustomerId != null) {
                 Customer cookieCustomer = customerService.createCustomerFromId(cookieCustomerId);
-                customerState.setCustomer(cookieCustomer, request);
+                customerState.setCustomer(cookieCustomer, (HttpServletRequest) request);
                 requestCustomer = cookieCustomer;
                 break checkSession;
             } else {
                 // if no customer in session or cookie, create a new one
                 Customer firstTimeCustomer = customerService.createCustomerFromId(null);
-                CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "", "/", 604800);
-                customerState.setCustomer(firstTimeCustomer, request);
+                CookieUtils.setCookieValue((HttpServletResponse) response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "", "/", 604800);
+                customerState.setCustomer(firstTimeCustomer, (HttpServletRequest) request);
                 requestCustomer = firstTimeCustomer;
                 break checkSession;
             }
         }
         request.setAttribute(CUSTOMER_REQUEST_ATTR_NAME, requestCustomer);
-        return true;
+        chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
     }
 }
