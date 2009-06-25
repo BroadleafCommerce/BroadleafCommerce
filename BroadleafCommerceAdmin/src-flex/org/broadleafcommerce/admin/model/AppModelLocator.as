@@ -39,13 +39,9 @@ package org.broadleafcommerce.admin.model
 		public var categoryModel:CategoryModel = new CategoryModel();
 		
 		[Bindable]
-		public var catalogCategories:ArrayCollection = new ArrayCollection();
-		[Bindable]
 		public var catalogProducts:ArrayCollection = new ArrayCollection();
 		[Bindable]
 		public var catalogSkus:ArrayCollection = new ArrayCollection();
-		[Bindable]
-		public var currentCategory:Category;
 		[Bindable]
 		public var currentProduct:Product;
 		[Bindable]

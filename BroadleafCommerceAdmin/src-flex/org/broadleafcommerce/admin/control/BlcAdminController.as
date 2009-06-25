@@ -7,6 +7,7 @@ package org.broadleafcommerce.admin.control
 	import org.broadleafcommerce.admin.control.commands.catalog.category.FindAllCatalogCategoriesCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.category.NewCatalogCategoryCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.category.SaveCatalogCategoryCommand;
+	import org.broadleafcommerce.admin.control.commands.catalog.product.AddProductsToCatalogTreeCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.product.FindAllCatalogProductsCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.product.SaveCatalogProductCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.sku.FindAllCatalogSkusCommand;
@@ -19,6 +20,7 @@ package org.broadleafcommerce.admin.control
 	import org.broadleafcommerce.admin.control.events.catalog.category.FindAllCatalogCategoriesEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.category.NewCatalogCategoryEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.category.SaveCatalogCategoryEvent;
+	import org.broadleafcommerce.admin.control.events.catalog.product.AddProductsToCatalogTreeEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.product.FindAllCatalogProductsEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.product.SaveCatalogProductEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.FindAllCatalogSkusEvent;
@@ -44,6 +46,7 @@ package org.broadleafcommerce.admin.control
 			addCommand(SaveCatalogSkuEvent.EVENT_SAVE_CATALOG_SKU, SaveCatalogSkuCommand);
 			addCommand(EditCatalogCategoryEvent.EVENT_EDIT_CATALOG_CATEGORY, EditCatalogCategoryCommand);
 			addCommand(NewCatalogCategoryEvent.EVENT_NEW_CATALOG_CATEGORY, NewCatalogCategoryCommand);
+			addCommand(AddProductsToCatalogTreeEvent.EVENT_ADD_PRODUCTS_TO_CATALOG_TREE, AddProductsToCatalogTreeCommand);
 		}
 		
 	}

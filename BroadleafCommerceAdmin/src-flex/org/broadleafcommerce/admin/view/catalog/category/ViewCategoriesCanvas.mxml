@@ -7,13 +7,14 @@
 	</mx:Metadata>
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.view.CategoryModel;
 			import mx.events.ListEvent;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 			import mx.events.ItemClickEvent;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			
 			[Bindable]
-			private var appModel:AppModelLocator = AppModelLocator.getInstance(); 
+			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel; 
 			
 			private function handleCreationComplete():void{
 			}
@@ -27,9 +28,10 @@
 			}
 		]]>
 	</mx:Script>
+	<mx:Binding source="categoryModel.categoryTree"
+						destination="categoryTree.dataProvider" />
 	<mx:Tree
 		id="categoryTree"
-		dataProvider="{this.appModel.catalogCategories}"
 		labelField="name"
 		width="300"
 		height="400"

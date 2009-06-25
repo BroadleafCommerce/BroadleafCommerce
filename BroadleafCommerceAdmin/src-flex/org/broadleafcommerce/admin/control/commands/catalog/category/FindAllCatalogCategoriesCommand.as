@@ -27,7 +27,6 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 			var rawCats:ArrayCollection = ArrayCollection(event.result);
 			var rootCats:ArrayCollection = new ArrayCollection();
 			var subCatIds:ArrayCollection = new ArrayCollection();
-			var categoryTree:ArrayCollection = rawCats;
 			for (var i:String  in rawCats){
 				var category:Category = rawCats[i];
 				if(category.defaultParentCategory != null){
@@ -44,7 +43,8 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 					rootCats.addItem(category);
 				}
 			}
-			AppModelLocator.getInstance().catalogCategories = rootCats;
+			AppModelLocator.getInstance().categoryModel.categoryTree = rootCats;
+			AppModelLocator.getInstance().categoryModel.categoryArray = rawCats;
 		}
 		
 		public function fault(info:Object):void

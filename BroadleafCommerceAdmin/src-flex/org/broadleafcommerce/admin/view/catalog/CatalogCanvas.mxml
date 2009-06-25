@@ -5,9 +5,11 @@
 	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" 
 	width="800"
 	height="800"
-	creationComplete="creationComplete()">
+	creationComplete="creationComplete()"
+	show="buildTree()">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.control.events.catalog.product.AddProductsToCatalogTreeEvent;
 			import org.broadleafcommerce.admin.view.catalog.category.CategoryCanvas;
 			import org.broadleafcommerce.admin.view.catalog.sku.SkuCanvas;
 			import org.broadleafcommerce.admin.view.catalog.product.ProductCanvas;
@@ -22,6 +24,11 @@
 			private var appModel:AppModelLocator = AppModelLocator.getInstance();
 			
 			private function creationComplete():void{
+			}
+			
+			private function buildTree():void{
+				var aptct:AddProductsToCatalogTreeEvent = new AddProductsToCatalogTreeEvent();
+				aptct.dispatch();
 			}
 			
 			private function handleView(event:Event):void{
