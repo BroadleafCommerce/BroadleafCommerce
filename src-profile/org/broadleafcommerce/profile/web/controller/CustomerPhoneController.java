@@ -83,7 +83,7 @@ public class CustomerPhoneController {
     )
     public String deletePhone(@RequestParam(required = true)
             Long customerPhoneId, HttpServletRequest request) {
-        customerPhoneService.deleteCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
+        customerPhoneService.deleteCustomerPhoneById(customerPhoneId);
 
         request.setAttribute("phone.deletedPhone", "true");
 
@@ -120,8 +120,7 @@ public class CustomerPhoneController {
     )
     public String makePhoneDefault(@RequestParam(required = true)
             Long customerPhoneId, HttpServletRequest request) {
-        //TODO: check to see if this can be refactored to make one service call to pass in customerPhoneId to set to default
-        CustomerPhone customerPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerState.getCustomerId(request));
+        CustomerPhone customerPhone = customerPhoneService.readCustomerPhoneById(customerPhoneId);
         customerPhoneService.makeCustomerPhoneDefault(customerPhone.getId(), customerPhone.getCustomer().getId());
 
         request.setAttribute("phone.madePhoneDefault", "true");
@@ -254,7 +253,7 @@ public class CustomerPhoneController {
             return viewPhoneSuccessView;
         } else {
             Long currCustomerId = customerState.getCustomerId(request);
-            CustomerPhone cPhone = customerPhoneService.readCustomerPhoneByIdAndCustomerId(customerPhoneId, currCustomerId);
+            CustomerPhone cPhone = customerPhoneService.readCustomerPhoneById(customerPhoneId);
 
             if (cPhone != null) {
                 // TODO: verify this is the current customers phone

@@ -55,8 +55,8 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerPhone readCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId) {
-        return customerPhoneDao.readCustomerPhoneByIdAndCustomerId(customerPhoneId, customerId);
+    public CustomerPhone readCustomerPhoneById(Long customerPhoneId) {
+        return customerPhoneDao.readCustomerPhoneById(customerPhoneId);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
@@ -64,8 +64,8 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
         customerPhoneDao.makeCustomerPhoneDefault(customerPhoneId, customerId);
     }
 
-    public void deleteCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId){
-        customerPhoneDao.deleteCustomerPhoneByIdAndCustomerId(customerPhoneId, customerId);
+    public void deleteCustomerPhoneById(Long customerPhoneId){
+        customerPhoneDao.deleteCustomerPhoneById(customerPhoneId);
     }
 
     @Override

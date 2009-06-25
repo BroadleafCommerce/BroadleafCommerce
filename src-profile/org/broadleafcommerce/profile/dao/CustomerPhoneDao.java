@@ -25,11 +25,11 @@ public interface CustomerPhoneDao {
 
     public CustomerPhone save(CustomerPhone customerPhone);
 
-    public CustomerPhone readCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId);
+    public CustomerPhone readCustomerPhoneById(Long customerPhoneId);
 
     public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId);
 
-    public void deleteCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId);
+    public void deleteCustomerPhoneById(Long customerPhoneId);
 
     public CustomerPhone findDefaultCustomerPhone(Long customerId);
 

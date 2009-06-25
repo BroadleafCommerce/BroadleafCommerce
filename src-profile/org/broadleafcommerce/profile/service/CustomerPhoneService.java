@@ -25,11 +25,11 @@ public interface CustomerPhoneService {
 
     public List<CustomerPhone> readActiveCustomerPhonesByCustomerId(Long customerId);
 
-    public CustomerPhone readCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId);
+    public CustomerPhone readCustomerPhoneById(Long customerPhoneId);
 
     public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId);
 
-    public void deleteCustomerPhoneByIdAndCustomerId(Long customerPhoneId, Long customerId);
+    public void deleteCustomerPhoneById(Long customerPhoneId);
 
     public CustomerPhone findDefaultCustomerPhone(Long customerId);
 
