@@ -20,7 +20,8 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 
@@ -28,7 +29,8 @@ import org.broadleafcommerce.catalog.domain.Product;
  * Was referred to as the ProductsTag.  Class name changed to be more descriptive
  */
 public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
-    private Logger log = Logger.getLogger(this.getClass());
+
+    private static final Log LOG = LogFactory.getLog(GetProductsByCategoryIdTag.class);
     private static final long serialVersionUID = 1L;
     private String var;
     private long categoryId;
@@ -42,15 +44,15 @@ public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
         if(c == null){
             getJspContext().setAttribute(var, null);
 
-            if(log.isDebugEnabled()){
-                log.debug("The category returned was null for categoryId: " + categoryId);
+            if(LOG.isDebugEnabled()){
+                LOG.debug("The category returned was null for categoryId: " + categoryId);
             }
         }
 
         List<Product> productList = catalogService.findActiveProductsByCategory(c);
 
-        if(CollectionUtils.isEmpty(productList) && log.isDebugEnabled()){
-            log.debug("The productList returned was null for categoryId: " + categoryId);
+        if(CollectionUtils.isEmpty(productList) && LOG.isDebugEnabled()){
+            LOG.debug("The productList returned was null for categoryId: " + categoryId);
         }
 
         getJspContext().setAttribute(var, productList);

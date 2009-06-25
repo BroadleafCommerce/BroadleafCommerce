@@ -10,12 +10,6 @@
 		ORDER BY ca.id</query>
 	</named-query>
 
-	<named-query name="BC_READ_CUSTOMER_ADDRESS_BY_ID_AND_CUSTOMER_ID" >
-		<query>SELECT ca FROM org.broadleafcommerce.profile.domain.CustomerAddress ca
-		WHERE ca.customer.id = :customerId
-		AND ca.id = :customerAddressId</query>
-	</named-query>
-
 	<named-query name="BC_FIND_DEFAULT_ADDRESS_BY_CUSTOMER_ID" >
 		<query>SELECT ca FROM org.broadleafcommerce.profile.domain.CustomerAddress ca
 		WHERE ca.customer.id = :customerId

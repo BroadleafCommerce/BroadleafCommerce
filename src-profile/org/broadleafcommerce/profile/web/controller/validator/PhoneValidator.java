@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.profile.web.controller.validator;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -25,8 +23,6 @@ import org.springframework.validation.Validator;
 
 @Component("blPhoneValidator")
 public class PhoneValidator implements Validator {
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @SuppressWarnings("unchecked")
     @Override

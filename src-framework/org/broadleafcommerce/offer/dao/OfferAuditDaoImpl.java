@@ -19,20 +19,12 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.offer.domain.OfferAudit;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOfferAuditDao")
 public class OfferAuditDaoImpl implements OfferAuditDao {
-
-    /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.offer.domain.OfferAudit";
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -42,7 +34,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
 
     @Override
     public OfferAudit create() {
-        return ((OfferAudit) entityConfiguration.createEntityInstance(beanName));
+        return ((OfferAudit) entityConfiguration.createEntityInstance(OfferAudit.class.getName()));
     }
 
     @Override
@@ -63,7 +55,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Override
     @SuppressWarnings("unchecked")
     public OfferAudit readAuditById(Long offerAuditId) {
-        return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(beanName), offerAuditId);
+        return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(OfferAudit.class.getName()), offerAuditId);
     }
 
 }

@@ -22,20 +22,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOfferCodeDao")
 public class OfferCodeDaoImpl implements OfferCodeDao {
-
-    /** Lookup identifier for Offer bean **/
-    private static String beanName = "org.broadleafcommerce.offer.domain.OfferCode";
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -45,7 +37,7 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
 
     @Override
     public OfferCode create() {
-        return ((OfferCode) entityConfiguration.createEntityInstance(beanName));
+        return ((OfferCode) entityConfiguration.createEntityInstance(OfferCode.class.getName()));
     }
 
     @Override
@@ -66,7 +58,7 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     @Override
     @SuppressWarnings("unchecked")
     public OfferCode readOfferCodeById(Long offerCodeId) {
-        return (OfferCode) em.find(entityConfiguration.lookupEntityClass(beanName), offerCodeId);
+        return (OfferCode) em.find(entityConfiguration.lookupEntityClass(OfferCode.class.getName()), offerCodeId);
     }
 
 

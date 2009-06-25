@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.CountryImpl;
 import org.broadleafcommerce.profile.domain.State;
@@ -33,8 +31,6 @@ import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 public class AddressTest extends BaseTest {
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     List<Long> addressIds = new ArrayList<Long>();
     String userName = new String();

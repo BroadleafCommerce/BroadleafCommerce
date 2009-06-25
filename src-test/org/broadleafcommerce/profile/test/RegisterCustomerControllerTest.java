@@ -17,8 +17,6 @@ package org.broadleafcommerce.profile.test;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.test.dataprovider.RegisterCustomerDataProvider;
@@ -35,8 +33,6 @@ import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
 public class RegisterCustomerControllerTest extends BaseTest {
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @Resource
     private RegisterCustomerController registerCustomerController;

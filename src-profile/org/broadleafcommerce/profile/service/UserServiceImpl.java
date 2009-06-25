@@ -19,8 +19,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.UserDao;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
@@ -35,9 +33,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("blUserService")
 public class UserServiceImpl implements UserService {
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @Resource
     protected UserDao userDao;

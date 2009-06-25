@@ -36,7 +36,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
@@ -65,9 +66,9 @@ import org.hibernate.annotations.CollectionOfElements;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SkuImpl implements Sku {
 
+    private static final Log LOG = LogFactory.getLog(SkuImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    private transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
@@ -358,9 +359,9 @@ public class SkuImpl implements Sku {
      * @see org.broadleafcommerce.catalog.domain.Sku#isActive()
      */
     public boolean isActive() {
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
-                log.debug("sku, " + id + ", inactive due to date");
+                LOG.debug("sku, " + id + ", inactive due to date");
             }
         }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
@@ -368,13 +369,13 @@ public class SkuImpl implements Sku {
 
     @Override
     public boolean isActive(Product product, Category category) {
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
-                log.debug("sku, " + id + ", inactive due to date");
+                LOG.debug("sku, " + id + ", inactive due to date");
             } else if (!product.isActive()) {
-                log.debug("sku, " + id + ", inactive due to product being inactive");
+                LOG.debug("sku, " + id + ", inactive due to product being inactive");
             } else if (!category.isActive()) {
-                log.debug("sku, " + id + ", inactive due to category being inactive");
+                LOG.debug("sku, " + id + ", inactive due to category being inactive");
             }
         }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false) || !product.isActive() || !category.isActive();

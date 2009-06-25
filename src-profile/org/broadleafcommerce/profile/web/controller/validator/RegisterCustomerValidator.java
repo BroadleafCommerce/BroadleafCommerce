@@ -17,8 +17,6 @@ package org.broadleafcommerce.profile.web.controller.validator;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
@@ -30,10 +28,8 @@ import org.springframework.validation.Validator;
 
 @Component("blRegisterCustomerValidator")
 public class RegisterCustomerValidator implements Validator {
-    private static final String REGEX_VALID_PASSWORD = "[0-9A-Za-z]{4,15}";
 
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
+    private static final String REGEX_VALID_PASSWORD = "[0-9A-Za-z]{4,15}";
 
     @Resource
     private CustomerService customerService;

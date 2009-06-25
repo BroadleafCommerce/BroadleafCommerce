@@ -22,8 +22,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
@@ -31,9 +29,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blStateDao")
 public class StateDaoImpl implements StateDao {
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;

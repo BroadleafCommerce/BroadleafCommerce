@@ -22,8 +22,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.CustomerRole;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
@@ -31,9 +29,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blRoleDao")
 public class RoleDaoImpl implements RoleDao {
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;

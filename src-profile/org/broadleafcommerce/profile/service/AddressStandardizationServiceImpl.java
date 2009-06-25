@@ -51,7 +51,8 @@ import org.xml.sax.SAXException;
 @Service("blAddressStandardizationService")
 public class AddressStandardizationServiceImpl implements AddressStandardizationService, ServiceDownResponse {
 
-    private static final Log logger = LogFactory.getLog(AddressStandardizationServiceImpl.class);
+    private static final Log LOG = LogFactory.getLog(AddressStandardizationServiceImpl.class);
+
     private static final String HTTP_PROTOCOL = "http://";
     private static final String POST_METHOD = "POST";
     private static final String API_PARAM = "API=Verify&";
@@ -98,20 +99,20 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
             }
             return addressStandarizationResponse;
         } catch (IOException e) {
-            logger.error("IOException", e);
+            LOG.error("IOException", e);
             return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
         } catch (SAXException e) {
-            logger.error("SAXException", e);
+            LOG.error("SAXException", e);
             return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
         } catch (ParserConfigurationException e) {
-            logger.error("ParserConfigurationException", e);
+            LOG.error("ParserConfigurationException", e);
             return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
         } finally {
             if (response != null) {
                 try {
                     response.close();
                 } catch (IOException e) {
-                    logger.error("IOException while closing the InputStream", e);
+                    LOG.error("IOException while closing the InputStream", e);
                 }
             }
         }
@@ -247,7 +248,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
             osw.close();
         } catch (IOException e) {
             // We'll try to avoid stopping processing and just log the error if the OutputStream doesn't close
-            logger.error("Problem closing the OuputStream to the USPS Service", e);
+            LOG.error("Problem closing the OuputStream to the USPS Service", e);
         }
 
         return new BufferedInputStream(connection.getInputStream());
@@ -272,7 +273,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
 
         try {
             writer.write(document);
-            logger.debug("strWriter.toString(): " + strWriter.toString());
+            LOG.debug("strWriter.toString(): " + strWriter.toString());
             return URLEncoder.encode(strWriter.toString(), uspsCharSet);
         } finally {
             document = null;
@@ -281,7 +282,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
                 try {
                     writer.close();
                 } catch (IOException e) {
-                    logger.warn("There was an unexpected error closing the Dom4J XMLWriter", e);
+                    LOG.warn("There was an unexpected error closing the Dom4J XMLWriter", e);
                 }
             }
 
@@ -289,7 +290,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
                 try {
                     strWriter.close();
                 } catch (IOException e) {
-                    logger.warn("There was an unexpected error closing a java.io.StringWriter associated with the Dom4J XMLWriter", e);
+                    LOG.warn("There was an unexpected error closing a java.io.StringWriter associated with the Dom4J XMLWriter", e);
                 }
             }
         }

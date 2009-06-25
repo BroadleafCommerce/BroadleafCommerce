@@ -19,8 +19,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -47,10 +45,6 @@ public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextT
      * specifying every test class in xml. Not a priority, but will come up later as we add test cases that involve
      * any of the secure payment info classes (i.e. CreditCardPaymentInfo).
      */
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
-
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 

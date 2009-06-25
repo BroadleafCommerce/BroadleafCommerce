@@ -22,17 +22,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerAddressDao")
 public class CustomerAddressDaoImpl implements CustomerAddressDao {
-
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -60,13 +55,8 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         return (CustomerAddress) entityConfiguration.createEntityInstance(CustomerAddress.class.getName());
     }
 
-    @SuppressWarnings("unchecked")
-    public CustomerAddress readCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId) {
-        Query query = em.createNamedQuery("BC_READ_CUSTOMER_ADDRESS_BY_ID_AND_CUSTOMER_ID");
-        query.setParameter("customerId", customerId);
-        query.setParameter("customerAddressId", customerAddressId);
-        List<CustomerAddress> customerAddresses = query.getResultList();
-        return customerAddresses.isEmpty() ? null : customerAddresses.get(0);
+    public CustomerAddress readCustomerAddressById(Long customerAddressId) {
+        return em.find(CustomerAddress.class, customerAddressId);
     }
 
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId) {
@@ -77,10 +67,9 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         }
     }
 
-    public void deleteCustomerAddressByIdAndCustomerId(Long customerAddressId, Long customerId) {
-        // TODO: determine if hard delete or deactivate, and consider throwing exception if read fails
-        CustomerAddress customerAddress = readCustomerAddressByIdAndCustomerId(customerAddressId, customerId);
-        em.remove(customerAddress.getId());
+    public void deleteCustomerAddressById(Long customerAddressId) {
+        CustomerAddress customerAddress = readCustomerAddressById(customerAddressId);
+        em.remove(customerAddress);
     }
 
     @SuppressWarnings("unchecked")

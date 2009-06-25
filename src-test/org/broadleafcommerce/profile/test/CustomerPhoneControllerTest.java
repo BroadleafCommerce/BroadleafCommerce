@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
 import org.broadleafcommerce.profile.test.dataprovider.CustomerPhoneControllerTestDataProvider;
@@ -35,8 +33,7 @@ import org.springframework.validation.BindingResult;
 import org.testng.annotations.Test;
 
 public class CustomerPhoneControllerTest extends BaseTest {
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
+
     @Resource
     private CustomerPhoneController customerPhoneController;
     @Resource

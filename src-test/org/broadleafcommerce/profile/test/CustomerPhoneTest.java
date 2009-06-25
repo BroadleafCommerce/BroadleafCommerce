@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.domain.Phone;
@@ -34,8 +32,6 @@ import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 public class CustomerPhoneTest extends BaseTest {
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
 
     List<Long> customerPhoneIds = new ArrayList<Long>();
     String userName = new String();

@@ -309,10 +309,7 @@ public class OrderServiceImpl implements OrderService {
         fgi = fulfillmentGroupItemDao.save(fgi);
 
         // 3) add the item to the new fulfillment group
-        //TODO why are we only adding when the fulfillmentgroup type is null???
-        //if (fulfillmentGroup.getType() == null) {
         fulfillmentGroup.addFulfillmentGroupItem(fgi);
-        //}
         order = updateOrder(order, true);
 
         return fulfillmentGroup;

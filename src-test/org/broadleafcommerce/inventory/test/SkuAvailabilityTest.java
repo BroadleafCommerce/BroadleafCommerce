@@ -20,8 +20,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.inventory.dao.AvailabilityDao;
 import org.broadleafcommerce.inventory.domain.SkuAvailability;
 import org.broadleafcommerce.inventory.service.AvailabilityService;
@@ -31,10 +29,9 @@ import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 public class SkuAvailabilityTest extends BaseTest {
-    /** Logger for this class and subclasses */
-    protected final Log logger = LogFactory.getLog(getClass());
-	protected final Long[] skuIDs = {1L, 2L, 3L, 4L, 5L};
-	protected final List<Long> skuIdList = Arrays.asList(skuIDs);
+
+    protected final Long[] skuIDs = {1L, 2L, 3L, 4L, 5L};
+    protected final List<Long> skuIdList = Arrays.asList(skuIDs);
 
     @Resource
     private AvailabilityService availabilityService;
@@ -45,7 +42,7 @@ public class SkuAvailabilityTest extends BaseTest {
     @Test(groups = { "createSkuAvailability" }, dataProvider = "setupSkuAvailability", dataProviderClass = SkuAvailabilityDataProvider.class)
     @Rollback(false)
     public void createSkuAvailability(SkuAvailability skuAvailability) {
-    	availabilityDao.save(skuAvailability);
+        availabilityDao.save(skuAvailability);
     }
 
     @Test(dependsOnGroups = { "createSkuAvailability" })
@@ -56,13 +53,13 @@ public class SkuAvailabilityTest extends BaseTest {
         int backorderCount=0;
         int availableCount=0;
         for (SkuAvailability skuAvailability : skuAvailabilityList) {
-			if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals("backordered")) {
-				backorderCount++;
-			}
-			if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals("available")) {
-				availableCount++;
-			}
-		}
+            if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals("backordered")) {
+                backorderCount++;
+            }
+            if (skuAvailability.getAvailabilityStatus() != null && skuAvailability.getAvailabilityStatus().equals("available")) {
+                availableCount++;
+            }
+        }
         assert(backorderCount == 1);
         assert(availableCount == 1);
     }

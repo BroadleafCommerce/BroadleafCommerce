@@ -23,7 +23,8 @@ import org.apache.commons.logging.LogFactory;
 
 public class SequenceProcessor extends BaseProcessor {
 
-    private Log logger = LogFactory.getLog(SequenceProcessor.class);
+    private static final Log LOG = LogFactory.getLog(SequenceProcessor.class);
+
     private ProcessContextFactory processContextFactory;
 
     /*
@@ -40,8 +41,8 @@ public class SequenceProcessor extends BaseProcessor {
     }
 
     public ProcessContext doActivities(Object seedData) throws WorkflowException {
-        if (logger.isDebugEnabled()) {
-            logger.debug(getBeanName() + " processor is running..");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(getBeanName() + " processor is running..");
         }
 
         //retrieve injected by Spring
@@ -52,8 +53,8 @@ public class SequenceProcessor extends BaseProcessor {
 
         for (Iterator<Activity> it = activities.iterator(); it.hasNext();) {
             Activity activity = it.next();
-            if (logger.isDebugEnabled()) {
-                logger.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("running activity:" + activity.getBeanName() + " using arguments:" + context);
             }
 
             try {
@@ -61,11 +62,11 @@ public class SequenceProcessor extends BaseProcessor {
             } catch (Throwable th) {
                 ErrorHandler errorHandler = activity.getErrorHandler();
                 if (errorHandler == null) {
-                    logger.info("no error handler for this action, run default error" + "handler and abort processing ");
+                    LOG.info("no error handler for this action, run default error" + "handler and abort processing ");
                     getDefaultErrorHandler().handleError(context, th);
                     break;
                 } else {
-                    logger.info("run error handler and continue");
+                    LOG.info("run error handler and continue");
                     errorHandler.handleError(context, th);
                 }
             }
@@ -75,7 +76,7 @@ public class SequenceProcessor extends BaseProcessor {
                 break;
             }
         }
-        logger.debug(getBeanName() + " processor is done.");
+        LOG.debug(getBeanName() + " processor is done.");
 
         return context;
     }
@@ -90,7 +91,7 @@ public class SequenceProcessor extends BaseProcessor {
      */
     private boolean processShouldStop(ProcessContext context, Activity activity) {
         if (context != null && context.isStopped()) {
-            logger.info("Interrupted workflow as requested by:" + activity.getBeanName());
+            LOG.info("Interrupted workflow as requested by:" + activity.getBeanName());
             return true;
         }
         return false;

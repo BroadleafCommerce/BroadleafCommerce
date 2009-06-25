@@ -39,8 +39,9 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.BatchSize;
@@ -71,9 +72,9 @@ import org.hibernate.annotations.OrderBy;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class CategoryImpl implements Category {
 
+    private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    private transient final Logger log = Logger.getLogger(getClass());
 
     /** The id. */
     @Id
@@ -330,9 +331,9 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#isActive()
      */
     public boolean isActive() {
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
-                log.debug("category, " + id + ", inactive due to date");
+                LOG.debug("category, " + id + ", inactive due to date");
             }
         }
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
@@ -451,11 +452,6 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
     public Map<String, List<Category>> getChildCategoryURLMap() {
-        // TODO: Add expiration logic to the Map
-        /*
-         * TODO utilize a cache event listener
-         * http://ehcache.sourceforge.net/documentation/cache_event_listeners.html
-         */
         if (cachedChildCategoryUrlMap.isEmpty()) {
             synchronized (cachedChildCategoryUrlMap) {
                 if (cachedChildCategoryUrlMap.isEmpty()) {
