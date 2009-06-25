@@ -7,6 +7,8 @@
 
 <!-- Blueprint Framework CSS -->
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/reset.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/plugins/fancy-type/screen.css" />
 
 <!--[if lt IE 8]>
 <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection">

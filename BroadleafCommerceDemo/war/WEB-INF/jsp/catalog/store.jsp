@@ -9,11 +9,11 @@
 		<img src="/broadleafdemo/images/promos/store-splash-600x300.png" />
 	</div>		
 	<div class="span-8 last">
-		<div id="border">
+		<div class="blueBorder">
 			<img src="/broadleafdemo/images/promos/cups-300x100.png" />
 		</div>
 		<div>&nbsp;</div>
-		<div id="border">
+		<div class="blueBorder">
 			<img src="/broadleafdemo/images/promos/coffee-300x100.png" />
 		</div>
 	</div>

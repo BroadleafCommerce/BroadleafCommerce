@@ -27,10 +27,6 @@ body {
 		bottom center;
 }
 
-h1,h2,h3,h4,h5 {
-	margin-top: 0;
-}
-
 .mainContent {
 	background: #fff;
 	padding: 8px;
@@ -51,30 +47,10 @@ img {
 	visibility: hidden;
 }
 
-.columns {
-	padding: 0;
-	margin: 0;
-	clear: both;
-}
-
-.column {
-	float: left;
-	display: inline;
-	padding: 0;
-	margin: 0;
-}
-
-.columnRight {
-	float: right;
-	display: inline;
-	padding: 0;
-	margin: 0;
-}
-
-#border {
+.blueBorder {
 	border-width: 1px;
 	border-style: solid;
-	border-color: #C9E1F4; 
+	border-color: #C9E1F4;
 }
 
 input.helpTextVisible {
