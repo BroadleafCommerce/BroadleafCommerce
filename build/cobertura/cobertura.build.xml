@@ -12,11 +12,6 @@
 	<!-- All reports go into this directory -->
 	<property name="reports.dir" value="${stage.dir}/cobertura_reports"/>
 
-	<!--  Coverage reports are deposited into these directories -->
-	<property name="coverage.xml.dir" value="${reports.dir}/cobertura-xml"/>
-	<property name="coverage.summaryxml.dir" value="${reports.dir}/cobertura-summary-xml"/>
-	<property name="coverage.html.dir" value="${reports.dir}/cobertura-html"/>
-
 	<fileset id="cobertura.lib" dir="${cobertura.lib.dir}"
         description="cobertura dependencies">
 		<include name="**/*.jar"/>
@@ -50,9 +45,6 @@
 
 	<target name="init">
 		<mkdir dir="${cobertura.instrumented.classes}" />
-		<mkdir dir="${coverage.xml.dir}" />
-		<mkdir dir="${coverage.summaryxml.dir}" />
-		<mkdir dir="${coverage.html.dir}" />
 	</target>
 
 	<target name="instrument" depends="clean, init">
