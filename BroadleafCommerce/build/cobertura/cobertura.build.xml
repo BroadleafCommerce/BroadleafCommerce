@@ -12,11 +12,6 @@
 	<!-- All reports go into this directory -->
 	<property name="reports.dir" value="${stage.dir}/cobertura_reports"/>
 
-	<fileset id="cobertura.lib" dir="${cobertura.lib.dir}"
-        description="cobertura dependencies">
-		<include name="**/*.jar"/>
-	</fileset>
-
 	<path id="jars.dir">
 		<fileset dir="${cobertura.lib.dir}">
 			<include name="cobertura.jar"/>
@@ -48,7 +43,10 @@
 	</target>
 
 	<target name="instrument" depends="clean, init">
-		<cobertura-instrument todir="${cobertura.instrumented.classes}" datafile="${cobertura.instrumented.classes}/cobertura.ser" classpathref="common.lib">
+		<cobertura-instrument todir="${cobertura.instrumented.classes}"
+			datafile="${cobertura.instrumented.classes}/cobertura.ser"
+			classpathref="common.lib">
+
 			<ignore regex="org.apache.log4j.*" />
 
 			<fileset dir="${stage.dir}">
