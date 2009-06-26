@@ -50,8 +50,6 @@
 
 	<target name="init">
 		<mkdir dir="${cobertura.instrumented.classes}" />
-		<!-- mkdir dir="${reports.xml.dir}" / -->
-		<!-- mkdir dir="${reports.html.dir}" / -->
 		<mkdir dir="${coverage.xml.dir}" />
 		<mkdir dir="${coverage.summaryxml.dir}" />
 		<mkdir dir="${coverage.html.dir}" />
@@ -95,7 +93,7 @@
             </fileset>
         </cobertura-report>
 
-        <cobertura-report format="xml" destdir="${reports.dir}" srcdir="${src.dir}"
+        <cobertura-report format="xml" destdir="${reports.dir}"
             datafile="${cobertura.instrumented.classes}/cobertura.ser">
             <fileset dir="src-auxiliary">
                 <include name="**/*.java" />
