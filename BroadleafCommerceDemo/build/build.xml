@@ -45,6 +45,10 @@
 			<jvmarg value="-Drebel.spring_plugin=true" />
 			<jvmarg value="-DmyProject.root=${basedir}" />
 	    	<jvmarg value="-XX:MaxPermSize=512M" />
+	    	<jvmarg value="-Dcom.sun.management.jmxremote=true" />
+	    	<jvmarg value="-Dcom.sun.management.jmxremote.port=1616" />
+	    	<jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
+	    	<jvmarg value="-Dcom.sun.management.jmxremote.ssl=false" />
 	    </java>
 	</target>
 
