@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.pricing.service.workflow;
 
+import javax.annotation.Resource;
+
+import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.service.module.ShippingModule;
@@ -23,6 +26,9 @@ import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
 public class ShippingActivity extends BaseActivity {
+
+    @Resource
+    private OfferService offerService;
 
     private ShippingModule shippingModule;
 
@@ -43,6 +49,7 @@ public class ShippingActivity extends BaseActivity {
         Money totalShipping = new Money(0D);
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             fulfillmentGroup = shippingModule.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+            offerService.applyFulfillmentGroupOffers(fulfillmentGroup);
             totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
         }
         order.setTotalShipping(totalShipping);
