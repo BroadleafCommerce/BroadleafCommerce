@@ -26,5 +26,13 @@ package org.broadleafcommerce.admin.model.data.remote.catalog.product
 		public var allParentCategories:ArrayCollection = new ArrayCollection();
 		public var isFeaturedProduct:Boolean;
 		public var skus:ArrayCollection = new ArrayCollection();
+		
+		public function get children():ArrayCollection{
+			return allSkus;
+		}
+		
+		public function set children(children:ArrayCollection):void{
+			allSkus = children;
+		}
 	}
 }

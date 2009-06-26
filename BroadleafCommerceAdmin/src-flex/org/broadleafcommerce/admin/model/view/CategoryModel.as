@@ -16,7 +16,7 @@ package org.broadleafcommerce.admin.model.view
 		public var currentCategory:Category = new Category();
 
 		public var categoryTree:ArrayCollection = new ArrayCollection();
-		
+
 		public var categoryArray:ArrayCollection = new ArrayCollection();
 	}
 }

@@ -7,11 +7,16 @@
 	</mx:Metadata>
 	<mx:Script>
 		<![CDATA[
+			import mx.events.DragEvent;
+			import mx.collections.ArrayCollection;
 			import org.broadleafcommerce.admin.model.view.CategoryModel;
 			import mx.events.ListEvent;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 			import mx.events.ItemClickEvent;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
+			
+			[Bindable]
+			private var catalogTree:ArrayCollection = AppModelLocator.getInstance().catalogTree;
 			
 			[Bindable]
 			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel; 
@@ -26,9 +31,13 @@
 				selectedItem = Category(categoryTree.selectedItem); 
 				dispatchEvent(new ListEvent("categorySelected", event.bubbles, event.cancelable));
 			}
+			
+			private function handleDragDrop(event:DragEvent):void{
+				
+			}
 		]]>
 	</mx:Script>
-	<mx:Binding source="categoryModel.categoryTree"
+	<mx:Binding source="catalogTree"
 						destination="categoryTree.dataProvider" />
 	<mx:Tree
 		id="categoryTree"
@@ -38,5 +47,7 @@
 		dragEnabled="true"
 		dropEnabled="true"
 		cornerRadius="4"
-		itemClick="handleItemClick(event)"/>
+		dragDrop="handleDragDrop(event)"
+		itemClick="handleItemClick(event)"
+		dataDescriptor="{new CategoryTreeDataDescriptor()}"/>
 </mx:Canvas>

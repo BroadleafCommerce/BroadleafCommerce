@@ -9,6 +9,7 @@ package org.broadleafcommerce.admin.control.commands.catalog.product
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
+	import org.broadleafcommerce.admin.control.events.catalog.BuildCatalogTreeEvent;
 	import org.broadleafcommerce.admin.model.AppModelLocator;
 	import org.broadleafcommerce.admin.model.business.BroadleafCommerceAdminServiceDelegate;
 	
@@ -24,6 +25,8 @@ package org.broadleafcommerce.admin.control.commands.catalog.product
 		{
 			var event:ResultEvent = ResultEvent(data);
 			AppModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
+			var bcte:BuildCatalogTreeEvent = new BuildCatalogTreeEvent();
+			bcte.dispatch()
 		}
 		
 		public function fault(info:Object):void

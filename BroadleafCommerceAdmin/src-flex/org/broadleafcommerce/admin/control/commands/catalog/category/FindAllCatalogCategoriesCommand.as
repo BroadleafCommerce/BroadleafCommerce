@@ -9,9 +9,9 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
+	import org.broadleafcommerce.admin.control.events.catalog.BuildCatalogTreeEvent;
 	import org.broadleafcommerce.admin.model.AppModelLocator;
 	import org.broadleafcommerce.admin.model.business.BroadleafCommerceAdminServiceDelegate;
-	import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 
 	public class FindAllCatalogCategoriesCommand implements Command, IResponder
 	{
@@ -24,27 +24,9 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			var rawCats:ArrayCollection = ArrayCollection(event.result);
-			var rootCats:ArrayCollection = new ArrayCollection();
-			var subCatIds:ArrayCollection = new ArrayCollection();
-			for (var i:String  in rawCats){
-				var category:Category = rawCats[i];
-				if(category.defaultParentCategory != null){
-					for each(var category2:Category in rawCats){
-						if(category.defaultParentCategory.id == category2.id){
-							if(category2.allChildCategories == null){
-								category2.allChildCategories = new ArrayCollection();								
-							}
-							category2.allChildCategories.addItem(category);
-						}
-					}			
-					subCatIds.addItem(int(i));
-				}else{
-					rootCats.addItem(category);
-				}
-			}
-			AppModelLocator.getInstance().categoryModel.categoryTree = rootCats;
-			AppModelLocator.getInstance().categoryModel.categoryArray = rawCats;
+			AppModelLocator.getInstance().categoryModel.categoryArray = ArrayCollection(event.result);
+			var bcte:BuildCatalogTreeEvent = new BuildCatalogTreeEvent();
+			bcte.dispatch()
 		}
 		
 		public function fault(info:Object):void

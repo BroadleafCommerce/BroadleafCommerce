@@ -5,6 +5,8 @@ package org.broadleafcommerce.admin.control.commands.catalog.product
 	
 	import mx.collections.ArrayCollection;
 	
+	import org.broadleafcommerce.admin.control.events.catalog.product.AddProductsToCatalogTreeEvent;
+	import org.broadleafcommerce.admin.control.events.catalog.sku.AddSkusToCatalogTreeEvent;
 	import org.broadleafcommerce.admin.model.AppModelLocator;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
@@ -17,8 +19,9 @@ package org.broadleafcommerce.admin.control.commands.catalog.product
 
 		public function execute(event:CairngormEvent):void
 		{
-			var categoryArray:ArrayCollection = AppModelLocator.getInstance().categoryModel.categoryArray;
-			var productArray:ArrayCollection = AppModelLocator.getInstance().productModel.catalogProducts;
+			var aptcte:AddProductsToCatalogTreeEvent = AddProductsToCatalogTreeEvent(event);
+			var categoryArray:ArrayCollection = aptcte.categoryArray;
+			var productArray:ArrayCollection = aptcte.productsArray;
 			for (var i:String in productArray){
 				var product:Product = productArray[i];
 				for each(var category:Category in categoryArray){

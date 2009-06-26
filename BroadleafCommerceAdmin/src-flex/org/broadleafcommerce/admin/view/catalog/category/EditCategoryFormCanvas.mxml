@@ -2,9 +2,12 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:view="org.broadleafcommerce.admin.view.*"
 	defaultButton="{saveButton}"
-	creationComplete="handleCreationComplete()">
+	creationComplete="handleCreationComplete()"  >
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.Tree;
+			import mx.managers.DragManager;
+			import mx.events.DragEvent;
 			import mx.utils.ObjectUtil;
 			import org.broadleafcommerce.admin.model.view.CategoryModel;
 			import mx.managers.ToolTipManager;
@@ -40,10 +43,20 @@
 				var scce:SaveCatalogCategoryEvent = new SaveCatalogCategoryEvent(editCategory);
 				scce.dispatch();
 			}
+			
+			private function handleChildDrop(event:DragEvent):void{
+				var cat:Category = Category(Tree(event.dragInitiator).selectedItem);
+					categoryModel.currentCategory.allChildCategories.addItem(Category(cat));
+			}
+			
+			private function handleChildDragEnter(event:DragEvent):void{
+				if(event.dragInitiator is Tree && Tree(event.dragInitiator).selectedItem is Category)
+					DragManager.acceptDragDrop(List(event.currentTarget));
+			}
 		]]>
 	</mx:Script>
 	<mx:Binding 
-		source="categoryModel.categoryArray"
+		source="categoryModel.currentCategory.allParentCategories"
 		destination="defaultParentCategoryComboBox.dataProvider"/>
 	<mx:Binding
 		source="categoryModel.currentCategory.name"
@@ -62,7 +75,14 @@
 		destination="activeStartDateDateField.selectedDate"/>
 	<mx:Binding
 		source="categoryModel.currentCategory.activeEndDate"
-		destination="activeEndDateDateField.selectedDate"/>
+		destination="activeEndDateDateField.selectedDate"/>		
+	<mx:Binding
+		source="categoryModel.currentCategory.children"
+		destination="childList.dataProvider" />
+	<mx:Binding
+		source="categoryModel.currentCategory.allParentCategories"
+		destination="parentList.dataProvider" />
+
 	<mx:DateFormatter 
 		id="dateFormatter"/>
 	<mx:StringValidator 
@@ -111,4 +131,23 @@
 				click="handleSaveCategory(event)"/>
 		</mx:FormItem>
 	</mx:Form>
+	<mx:FormItem
+		label="Child Categories" x="368" y="211">
+		<mx:List
+			id="childList"
+			labelField="name"
+			width="200"
+			dropEnabled="true"
+			dragDrop="handleChildDrop(event)"
+			dragEnter="handleChildDragEnter(event)"
+			/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Parent Categories" x="360" y="10">
+		<mx:List
+			id="parentList"
+			labelField="name"
+			width="200"
+			/>
+	</mx:FormItem>
 </mx:Canvas>

@@ -6,6 +6,7 @@ package org.broadleafcommerce.admin.model
 	
 	import mx.collections.ArrayCollection;
 	
+	import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
 	import org.broadleafcommerce.admin.model.view.CategoryModel;
@@ -34,6 +35,9 @@ package org.broadleafcommerce.admin.model
 		
 		[Bindable]
 		public var offerModel:OfferModel = new OfferModel(); 
+
+		[Bindable]
+		public var catalogTree:ArrayCollection = new ArrayCollection();
 
 		[Bindable]
 		public var categoryModel:CategoryModel = new CategoryModel();
