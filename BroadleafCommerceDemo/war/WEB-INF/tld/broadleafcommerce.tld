@@ -66,4 +66,20 @@
 		</attribute>
     </tag>
 
+	<tag>
+        <name>productsForCategory</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.GetProductsByCategoryIdTag</tag-class>
+        <body-content>empty</body-content>
+       	<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>categoryId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
+
 </taglib>
