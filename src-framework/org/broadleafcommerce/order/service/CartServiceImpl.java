@@ -31,9 +31,12 @@ import org.broadleafcommerce.order.service.call.ReconstructCartResponse;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
+import org.springframework.jmx.export.annotation.ManagedAttribute;
+import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.stereotype.Service;
 
 @Service("blCartService")
+@ManagedResource(objectName="org.broadleafcommerce:name=CartService", description="Cart Service", currencyTimeLimit=15)
 public class CartServiceImpl extends OrderServiceImpl implements CartService {
 
     @Resource
@@ -201,18 +204,22 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         return reconstructCartResponse;
     }
 
+    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
     public boolean isMoveNamedOrderItems() {
         return moveNamedOrderItems;
     }
 
+    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
     public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
         this.moveNamedOrderItems = moveNamedOrderItems;
     }
 
+    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
     public boolean isDeleteEmptyNamedOrders() {
         return deleteEmptyNamedOrders;
     }
 
+    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
     public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
         this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }

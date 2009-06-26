@@ -13,6 +13,7 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+	<context:mbean-export default-domain="myDomain"/>
 	<context:component-scan base-package="org.broadleafcommerce" />
 	
 	<bean id="blConfiguration"
@@ -24,8 +25,22 @@
 		</property>
 		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
+	
+	<!--<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
+		<property name="propertyLocation" value="classpath:config/bc"/>
+		<property name="environments">
+			<set>
+				<value>production</value>
+				<value>staging</value>
+				<value>integration</value>
+				<value>development</value>
+			</set>
+		</property>
+		<property name="defaultEnvironment" value="development"/>
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+	</bean>
 
-	<bean id="blServerInfo" class="org.broadleafcommerce.email.service.info.ServerInfo">
+	--><bean id="blServerInfo" class="org.broadleafcommerce.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>
 		<property name="serverPort" value="8080"/>
 	</bean>
