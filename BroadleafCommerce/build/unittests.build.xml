@@ -16,7 +16,6 @@
 
 	<property name="cobertura.lib.dir" value="${lib.dir}/cobertura/bin" />
 	<property name="cobertura.instrumented.classes" value="${stage.dir}/instrumented-classes" />
-	<property name="cobertura.reports.dir" value="${stage.dir}/cobertura_reports"/>
 
 	<fileset id="compile.lib" dir="${compile.lib.dir}" description="compile-time dependencies">
 		<include name="**/*.jar" />
@@ -51,20 +50,21 @@
 			<equals arg1="${code.coverage}" arg2="true" />
 			<then>
 				<path id="test-lib-path">
+                    <fileset dir="${cobertura.instrumented.classes}" includes="*.jar"/>
 					<fileset refid="compile.lib" />
 					<fileset refid="common.lib" />
 					<fileset refid="test.lib" />
 					<fileset refid="cobertura.lib" />
-					<fileset dir="${cobertura.instrumented.classes}" includes="*.jar"/>
 					<fileset dir="${stage.dir}" includes="*.jar"/>
 				</path>
-				
+
 				<path id="cobertura.classpath">
 					<fileset dir="${cobertura.instrumented.classes}">
 						<include name="*.jar*" />
 					</fileset>
 				</path>
 
+			    <echo message="*** running cobertura instrument target ***" />
 				<ant antfile="${cobertura.build.file}" target="instrument" />
 			</then>
 			<else>
@@ -79,11 +79,11 @@
 		</if>
 
 
-		<testng 
+		<testng
     		outputdir="${stage.dir}/test-output"
     		dumpcommand="yes"
 			failureProperty="test.failed"
-			reporter="org.testng.reporters.XMLReporter" 
+			reporter="org.testng.reporters.XMLReporter"
     		classpathref="test-lib-path">
 
 			<sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.instrumented.classes}/cobertura.ser" />
@@ -94,10 +94,11 @@
 		<if>
 			<equals arg1="${code.coverage}" arg2="true" />
 			<then>
+				<echo message="*** running cobertura reports.generate target ***" />
 				<ant antfile="${cobertura.build.file}" target="reports.generate" />
 			</then>
 		</if>
-				
+
 		<mkdir dir="${stage.dir}/test-output" />
 
 		<mkdir dir="${stage.dir}/report" />
