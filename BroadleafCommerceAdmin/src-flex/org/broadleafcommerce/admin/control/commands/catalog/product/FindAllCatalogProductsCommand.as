@@ -23,7 +23,7 @@ package org.broadleafcommerce.admin.control.commands.catalog.product
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			AppModelLocator.getInstance().catalogProducts = ArrayCollection(event.result);
+			AppModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
 		}
 		
 		public function fault(info:Object):void

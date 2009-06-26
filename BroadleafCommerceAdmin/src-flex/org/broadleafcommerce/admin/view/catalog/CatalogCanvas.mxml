@@ -16,7 +16,6 @@
 			import org.broadleafcommerce.admin.view.catalog.category.ViewCategoriesCanvas;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
-			import org.broadleafcommerce.admin.model.data.FakeCategory;
 			import mx.collections.ArrayCollection;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			

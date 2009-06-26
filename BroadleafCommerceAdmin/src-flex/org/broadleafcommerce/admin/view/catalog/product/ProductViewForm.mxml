@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Form 
+	xmlns:mx="http://www.adobe.com/2006/mxml"/>
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			private var productModel:ProductModel = AppModelLocator().getInstance().productModel;			
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="productModel.currentProduct.name"
+		destination="nameLabel.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.description"
+		destination="descriptionLabel.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.longDescription"
+		destination="longDescriptionLabel.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.activeStartDate"
+		destination="activeStartDateLabel.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.activeEndDate"
+		destination="activeEndDateLabel.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.model"
+		destination="modelLabel.text"/>
+	<mx:FormItem 
+		label="Name:">
+		<mx:Label
+			id="nameLabel"
+			styleName="formLabel"/>
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Description:">
+		<mx:Label
+			id="descriptionLabel"
+			styleName="formLabel"/>			
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Long Description:">
+		<mx:Label
+			id="longDescriptionLabel"
+			styleName="formLabel"/>				
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Active Start Date:">
+		<mx:Label
+			id="activeStartDateLabel"
+			styleName="formLabel"/>				
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Active End Date:">
+		<mx:Label
+			id="activeEndDateLabel"
+			styleName="formLabel"/>				
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Model:">
+		<mx:Label
+			id="modelLabel"
+			styleName="formLabel"/>				
+	</mx:FormItem>
+</mx:Form>

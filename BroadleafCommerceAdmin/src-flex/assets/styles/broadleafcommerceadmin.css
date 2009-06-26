@@ -162,6 +162,8 @@ DataGrid
 	header-style-name: "dataGridHeaderStyle";	
 	roll-over-color: #9AB12A;
 	text-roll-over-color: #000000;
+	horizontal-grid-lines: true;
+	vertical-grid-lines: false;
 }
 
 GridRow

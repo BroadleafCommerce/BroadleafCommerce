@@ -18,7 +18,7 @@ package org.broadleafcommerce.admin.control.commands.catalog.product
 		public function execute(event:CairngormEvent):void
 		{
 			var categoryArray:ArrayCollection = AppModelLocator.getInstance().categoryModel.categoryArray;
-			var productArray = AppModelLocator.getInstance().catalogProducts;
+			var productArray:ArrayCollection = AppModelLocator.getInstance().productModel.catalogProducts;
 			for (var i:String in productArray){
 				var product:Product = productArray[i];
 				for each(var category:Category in categoryArray){

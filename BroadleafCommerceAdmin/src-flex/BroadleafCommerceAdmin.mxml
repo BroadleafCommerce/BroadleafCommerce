@@ -27,8 +27,8 @@
 	
 	<mx:VBox height="100%" 
 		width="100%" 
-		minHeight="700" 
-		minWidth="1000" >
+		minHeight="500" 
+		minWidth="200" >
 		<mx:HBox width="100%" 
 			horizontalAlign="{getStyle('adminLogoHAlign')}" >
 			<mx:Image source="{getStyle('adminLogo')}"

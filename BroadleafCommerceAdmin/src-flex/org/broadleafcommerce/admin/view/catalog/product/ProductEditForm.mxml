@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Form
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:view="org.broadleafcommerce.admin.view.*"
+	defaultButton="{saveButton}">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
+			import mx.utils.ObjectUtil;
+			import org.broadleafcommerce.admin.control.events.catalog.product.SaveCatalogProductEvent;
+			import org.broadleafcommerce.admin.model.AppModelLocator;
+			import org.broadleafcommerce.admin.model.view.ProductModel;
+			
+			[Bindable]
+			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;			
+		
+			private function handleSaveProduct(event:Event):void{
+				var product:Product = Product(ObjectUtil.copy(productModel.currentProduct));
+				product.name = nameTextInput.text;
+				product.description = descriptionTextInput.text;
+				product.longDescription = longDescriptionTextInput.text;
+				product.activeStartDate = activeStartDateDateField.selectedDate;
+				product.activeEndDate = activeEndDateDateField.selectedDate;
+				product.model = modelTextInput.text;
+				product.manufacturer = modelTextInput.text;
+				product.weight = weightTextInput.text;
+				product.dimension.depth = depthTextInput.text;
+				product.dimension.width = widthTextInput.text;
+				product.dimension.height = heightTextInput.text;
+				new SaveCatalogProductEvent(product).dispatch();
+			}
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="productModel.currentProduct.name"
+		destination="nameTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.description"
+		destination="descriptionTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.longDescription"
+		destination="longDescriptionTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.activeStartDate"
+		destination="activeStartDateDateField.selectedDate"/>
+	<mx:Binding
+		source="productModel.currentProduct.activeEndDate"
+		destination="activeEndDateDateField.selectedDate"/>
+	<mx:Binding
+		source="productModel.currentProduct.model"
+		destination="modelTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.manufacturer"
+		destination="manufacturerTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.weight"
+		destination="weightTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.dimension.depth"
+		destination="depthTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.dimension.width"
+		destination="widthTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.dimension.height"
+		destination="heightTextInput.text"/>
+	<mx:FormItem 
+		label="Name:">
+		<mx:TextInput
+			id="nameTextInput"/>
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Description:">
+		<mx:TextInput
+			id="descriptionTextInput"/>
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Long Description:">
+		<mx:TextInput
+			id="longDescriptionTextInput"/>
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Active Start Date:">
+		<view:BroadleafCommerceDateField
+			id="activeStartDateDateField"/>
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Active End Date:">
+		<view:BroadleafCommerceDateField
+			id="activeEndDateDateField"/>
+	</mx:FormItem>
+	<mx:FormItem 
+		label="Model:">
+		<mx:TextInput
+			id="modelTextInput"/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Manufacturer:">
+		<mx:TextInput
+			id="manufacturerTextInput"/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Depth:">
+		<mx:TextInput
+			id="depthTextInput"/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Width:">
+			<mx:TextInput
+				id="widthTextInput"/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Height:">
+			<mx:TextInput
+				id="heightTextInput"/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Weight:">
+		<mx:TextInput
+			id="weightTextInput"/>		
+	</mx:FormItem>
+	<mx:FormItem>
+		<mx:Button 
+			id="saveButton"
+			label="Save"
+			click="handleSaveProduct(event)"/>
+	</mx:FormItem>
+</mx:Form>

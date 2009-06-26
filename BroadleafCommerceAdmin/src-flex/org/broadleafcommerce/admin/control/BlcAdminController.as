@@ -9,7 +9,9 @@ package org.broadleafcommerce.admin.control
 	import org.broadleafcommerce.admin.control.commands.catalog.category.SaveCatalogCategoryCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.product.AddProductsToCatalogTreeCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.product.FindAllCatalogProductsCommand;
+	import org.broadleafcommerce.admin.control.commands.catalog.product.NewCatalogProductCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.product.SaveCatalogProductCommand;
+	import org.broadleafcommerce.admin.control.commands.catalog.product.ViewCatalogProductCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.sku.FindAllCatalogSkusCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.sku.SaveCatalogSkuCommand;
 	import org.broadleafcommerce.admin.control.commands.offer.AddUpdateOfferCommand;
@@ -22,7 +24,9 @@ package org.broadleafcommerce.admin.control
 	import org.broadleafcommerce.admin.control.events.catalog.category.SaveCatalogCategoryEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.product.AddProductsToCatalogTreeEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.product.FindAllCatalogProductsEvent;
+	import org.broadleafcommerce.admin.control.events.catalog.product.NewCatalogProductEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.product.SaveCatalogProductEvent;
+	import org.broadleafcommerce.admin.control.events.catalog.product.ViewCatalogProductEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.FindAllCatalogSkusEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.SaveCatalogSkuEvent;
 	import org.broadleafcommerce.admin.control.events.offer.AddUpdateOfferEvent;
@@ -46,6 +50,8 @@ package org.broadleafcommerce.admin.control
 			addCommand(SaveCatalogSkuEvent.EVENT_SAVE_CATALOG_SKU, SaveCatalogSkuCommand);
 			addCommand(EditCatalogCategoryEvent.EVENT_EDIT_CATALOG_CATEGORY, EditCatalogCategoryCommand);
 			addCommand(NewCatalogCategoryEvent.EVENT_NEW_CATALOG_CATEGORY, NewCatalogCategoryCommand);
+			addCommand(NewCatalogProductEvent.EVENT_NEW_CATALOG_PRODUCT, NewCatalogProductCommand);
+			addCommand(ViewCatalogProductEvent.EVENT_VIEW_CATALOG_PRODUCT, ViewCatalogProductCommand);
 			addCommand(AddProductsToCatalogTreeEvent.EVENT_ADD_PRODUCTS_TO_CATALOG_TREE, AddProductsToCatalogTreeCommand);
 		}
 		
