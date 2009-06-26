@@ -21,7 +21,7 @@
         description="cobertura dependencies">
 		<include name="**/*.jar"/>
 	</fileset>
-	
+
 	<path id="jars.dir">
 		<fileset dir="${cobertura.lib.dir}">
 			<include name="cobertura.jar"/>
@@ -37,8 +37,16 @@
 			<include name="**/*.jar"/>
 		</fileset>
 	</path>
-		
+
 	<taskdef classpathref="jars.dir" resource="tasks.properties"/>
+
+	<target name="clean" description="Remove all files created by the build/test process.">
+        <delete dir="${classes.dir}" />
+        <delete dir="${cobertura.instrumented.classes}" />
+        <delete dir="${reports.dir}" />
+        <delete file="cobertura.log" />
+        <delete file="cobertura.ser" />
+    </target>
 
 	<target name="init">
 		<mkdir dir="${cobertura.instrumented.classes}" />
@@ -48,12 +56,11 @@
 		<mkdir dir="${coverage.summaryxml.dir}" />
 		<mkdir dir="${coverage.html.dir}" />
 	</target>
-	
-	<target name="instrument" depends="clean, init">
 
+	<target name="instrument" depends="clean, init">
 		<cobertura-instrument todir="${cobertura.instrumented.classes}" datafile="${cobertura.instrumented.classes}/cobertura.ser" classpathref="common.lib">
 			<ignore regex="org.apache.log4j.*" />
-			
+
 			<fileset dir="${stage.dir}">
 				<exclude name="*test*.jar"/>
 				<include name="broadleaf-auxiliary-web.jar" />
@@ -67,68 +74,46 @@
 		</cobertura-instrument>
 	</target>
 
-	<target name="coverage-check">
-		<cobertura-check branchrate="34" totallinerate="100" />
-	</target>
+   <target name="reports.generate">
+        <cobertura-report format="html" destdir="${reports.dir}"
+        	datafile="${cobertura.instrumented.classes}/cobertura.ser">
+            <fileset dir="src-auxiliary">
+                <include name="**/*.java" />
+                <exclude name="**/*.xml" />
+            </fileset>
+            <fileset dir="src-framework">
+                <include name="**/*.java" />
+                <exclude name="**/*.xml" />
+            </fileset>
+            <fileset dir="src-layout">
+                <include name="**/*.java" />
+                <exclude name="**/*.xml" />
+            </fileset>
+            <fileset dir="src-profile">
+                <include name="**/*.java" />
+                <exclude name="**/*.xml" />
+            </fileset>
+        </cobertura-report>
 
-	<target name="coverage-report">
-		<!--
-			Generate an XML file containing the coverage data using
-			the "srcdir" attribute.
-		-->
-		<cobertura-report srcdir="${src.dir}" destdir="${coverage.xml.dir}" format="xml" />
-	</target>
-
-	<target name="summary-coverage-report">
-		<!--
-			Generate an summary XML file containing the coverage data using
-			the "srcdir" attribute.
-		-->
-		<cobertura-report srcdir="${src.dir}" destdir="${coverage.summaryxml.dir}" format="summaryXml" />
-	</target>
-
-	<target name="alternate-coverage-report">
-		<!--
-			Generate a series of HTML files containing the coverage
-			data in a user-readable form using nested source filesets.
-		-->
-		<cobertura-report destdir="${coverage.html.dir}">
-			<fileset dir="${src.dir}">
-				<include name="**/*.java"/>
-			</fileset>
-		</cobertura-report>
-	</target>
-
-	<target name="clean" description="Remove all files created by the build/test process.">
-		<delete dir="${classes.dir}" />
-		<delete dir="${cobertura.instrumented.classes}" />
-		<delete dir="${reports.dir}" />
-		<delete file="cobertura.log" />
-		<delete file="cobertura.ser" />
-	</target>
-
-	<target name="reports.generate">
-		<cobertura-report format="html" destdir="${reports.dir}" datafile="${cobertura.instrumented.classes}/cobertura.ser">
-		    <fileset dir="src-auxiliary">
-		        <include name="**/*.java" />
-		        <exclude name="**/*.xml" />
-		    </fileset>    		    
-			<fileset dir="src-framework">
-	        	<include name="**/*.java" />
-	        	<exclude name="**/*.xml" />
-	    	</fileset>
-		    <fileset dir="src-layout">
-		        <include name="**/*.java" />
-		        <exclude name="**/*.xml" />
-		    </fileset>    		    
-			<fileset dir="src-profile">
-	        	<include name="**/*.java" />
-	        	<exclude name="**/*.xml" />
-	    	</fileset>    			
-		</cobertura-report>
-
-	</target>
-	
-	<target name="coverage" depends="instrument,coverage-report,summary-coverage-report,alternate-coverage-report" description="Compile, instrument ourself, run the tests and generate JUnit and coverage reports."/>
+        <cobertura-report format="xml" destdir="${reports.dir}" srcdir="${src.dir}"
+            datafile="${cobertura.instrumented.classes}/cobertura.ser">
+            <fileset dir="src-auxiliary">
+                <include name="**/*.java" />
+                <exclude name="**/*.xml" />
+            </fileset>
+            <fileset dir="src-framework">
+                <include name="**/*.java" />
+                <exclude name="**/*.xml" />
+            </fileset>
+            <fileset dir="src-layout">
+                <include name="**/*.java" />
+                <exclude name="**/*.xml" />
+            </fileset>
+            <fileset dir="src-profile">
+                <include name="**/*.java" />
+                <exclude name="**/*.xml" />
+            </fileset>
+        </cobertura-report>
+    </target>
 
 </project>
