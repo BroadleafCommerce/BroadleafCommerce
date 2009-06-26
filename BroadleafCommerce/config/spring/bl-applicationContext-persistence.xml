@@ -29,7 +29,7 @@
         </property>
         <property name="beans">
             <map>
-                <entry key="org.hibernate:name=statistics">
+                <entry key="org.broadleafcommerce:name=hibernate.statistics">
                     <bean class="org.hibernate.jmx.StatisticsService">
                         <property name="statisticsEnabled" value="true" />
                         <property name="sessionFactory">
@@ -156,8 +156,8 @@
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation"/>
 	</aop:config>
 
-	<aop:config>
-		<aop:pointcut id="blCartServiceOperation" expression="execution(* org.broadleafcommerce.order.service.CartService.*(..))"/>
+	<aop:config proxy-target-class="true">
+		<aop:pointcut id="blCartServiceOperation" expression="execution(* org.broadleafcommerce.order.service.CartServiceImpl.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCartServiceOperation"/>
 	</aop:config>
 

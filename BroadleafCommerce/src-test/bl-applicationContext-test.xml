@@ -73,6 +73,7 @@
                 <entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
                 <entry key="hibernate.cache.use_second_level_cache" value="true"/>
                 <entry key="hibernate.cache.use_query_cache" value="true"/>
+                <entry key="hibernate.generate_statistics" value="true" />
             </map>
         </property>
 	</bean>
