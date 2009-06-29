@@ -20,7 +20,7 @@
         <property name="autodetect" value="false" />
         <property name="assembler">
             <bean id="jmxAssembler"
-                class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+                class="org.broadleafcommerce.config.MetadataMBeanInfoAssembler">
                 <property name="attributeSource">
                     <bean
                         class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
@@ -133,7 +133,7 @@
 	    </tx:attributes>
 	</tx:advice>
 	
-	<aop:config proxy-target-class="true">
+	<aop:config>
 	    <aop:pointcut id="blCatalogServiceOperation" expression="execution(* org.broadleafcommerce.catalog.service.CatalogService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogServiceOperation"/>
 	</aop:config>
@@ -142,7 +142,7 @@
         <property name="order" value="2"/>
     </bean>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="1"/>
 	    <aop:aspect id="blPricingAspect" ref="blPricingExecutionManager">
@@ -151,81 +151,81 @@
         </aop:aspect>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blOrderDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderDao.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blCartServiceOperation" expression="execution(* org.broadleafcommerce.order.service.CartService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCartServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blFulfillmentGroupServiceOperation" expression="execution(* org.broadleafcommerce.order.service.FulfillmentGroupService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blFulfillmentGroupServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blAddressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.AddressService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAddressServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blCustomerAddressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerAddressService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerAddressServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blPhoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.PhoneService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPhoneServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blCustomerPhoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerPhoneService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerPhoneServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blCustomerServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blUserServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.UserService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blUserServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blIdGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blIdGenerationServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blSecurePaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.payment.service.SecurePaymentInfoService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdviceSecureInfo" pointcut-ref="blSecurePaymentInfoServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blTargetContentServiceOperation" expression="execution(* org.broadleafcommerce.marketing.service.TargetContentService.*(..))"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blRoleServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.RoleService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRoleServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blPaymentInfoServiceOperation" expression="execution(* org.broadleafcommerce.payment.service.PaymentInfoService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPaymentInfoServiceOperation"/>
 	</aop:config>
 
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blOrderItemDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderItemDao.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderItemDaoOperation"/>
 	</aop:config>
 	
-	<aop:config proxy-target-class="true">
+	<aop:config>
 		<aop:pointcut id="blOfferServiceOperation" expression="execution(* org.broadleafcommerce.offer.service.OfferService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation"/>
 	</aop:config>
