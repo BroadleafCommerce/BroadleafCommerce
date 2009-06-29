@@ -48,9 +48,6 @@ import org.springframework.core.io.Resource;
  * @author <a href="mailto:chris.lee.9@gmail.com">Chris Lee</a>
  *
  */
-/*
- * TODO this should be supported directly in Spring 3.0.
- */
 public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderConfigurer implements
 InitializingBean
 {
@@ -62,7 +59,7 @@ InitializingBean
 
     private Set<String> m_environments = Collections.emptySet();
 
-    private Resource m_propertyLocation;
+    private Set<Resource> m_propertyLocations;
 
     public RuntimeEnvironmentPropertiesConfigurer()
     {
@@ -84,21 +81,18 @@ InitializingBean
 
         String environment = determineEnvironment();
 
-        Resource propertiesLocation = createPropertiesResource( environment );
-
-        setLocation( propertiesLocation );
+        Resource[] propertiesLocation = createPropertiesResource( environment );
+        Resource[] commonLocation = createCommonResource();
+        Resource[] allLocations = new Resource[propertiesLocation.length + commonLocation.length];
+        System.arraycopy(commonLocation, 0, allLocations, 0, commonLocation.length);
+        System.arraycopy(propertiesLocation, 0, allLocations, commonLocation.length, propertiesLocation.length);
+        setLocations(allLocations);
 
         validateProperties();
     }
 
-    private boolean compareProperties( Resource resource1, Resource resource2 ) throws IOException
+    private boolean compareProperties( Properties props1, Properties props2 ) throws IOException
     {
-        Properties props1 = new Properties();
-        props1.load( resource1.getInputStream() );
-
-        Properties props2 = new Properties();
-        props2.load( resource2.getInputStream() );
-
         Set<Object> outerKeys = props1.keySet();
 
         boolean missingKeys = false;
@@ -109,18 +103,33 @@ InitializingBean
             {
                 missingKeys = true;
                 getLog().error(
-                        "Property file mismatch: " + resource1.toString() + " contains key '" + key
-                        + "', missing from " + resource2.toString() );
+                        "Property file mismatch: " + key + " missing");
             }
         }
 
         return missingKeys;
     }
 
-    private Resource createPropertiesResource( String environment ) throws IOException
+    private Resource[] createPropertiesResource( String environment ) throws IOException
     {
         String fileName = environment.toString().toLowerCase() + ".properties";
-        return m_propertyLocation.createRelative( fileName );
+        Resource[] resources = new Resource[m_propertyLocations.size()];
+        int index = 0;
+        for (Resource resource : m_propertyLocations) {
+            resources[index] = resource.createRelative(fileName);
+            index++;
+        }
+        return resources;
+    }
+
+    private Resource[] createCommonResource() throws IOException {
+        Resource[] resources = new Resource[m_propertyLocations.size()];
+        int index = 0;
+        for (Resource resource : m_propertyLocations) {
+            resources[index] = resource.createRelative("common.properties");
+            index++;
+        }
+        return resources;
     }
 
     private String determineEnvironment()
@@ -155,9 +164,9 @@ InitializingBean
      * Sets the directory from which to read environment-specific properties files; note
      * that it must end with a '/'
      */
-    public void setPropertyLocation( Resource propertyLocation )
+    public void setPropertyLocations( Set<Resource> propertyLocations )
     {
-        m_propertyLocation = propertyLocation;
+        m_propertyLocations = propertyLocations;
     }
 
     private void validateProperties() throws IOException
@@ -169,9 +178,9 @@ InitializingBean
             {
                 if( !envOuter.equals( envInner ) )
                 {
-                    Resource resource1 = createPropertiesResource( envOuter );
+                    Properties resource1 = mergeProperties(createPropertiesResource( envOuter ));
 
-                    Resource resource2 = createPropertiesResource( envInner );
+                    Properties resource2 = mergeProperties(createPropertiesResource( envInner ));
 
                     missingKeys |= compareProperties( resource1, resource2 );
                 }
@@ -183,6 +192,15 @@ InitializingBean
             throw new AssertionError(
             "Missing runtime properties keys (log entries above have details)" );
         }
+    }
+
+    private Properties mergeProperties(Resource[] locations) throws IOException {
+        Properties props = new Properties();
+        for (Resource resource : locations) {
+            props = new Properties(props);
+            props.load(resource.getInputStream());
+        }
+        return props;
     }
 
     /**

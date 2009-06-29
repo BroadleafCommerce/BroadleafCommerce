@@ -55,4 +55,11 @@ public interface CartService extends OrderService {
      */
     public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
 
+    public boolean isMoveNamedOrderItems();
+
+    public void setMoveNamedOrderItems(boolean moveNamedOrderItems);
+
+    public boolean isDeleteEmptyNamedOrders();
+
+    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
 }
