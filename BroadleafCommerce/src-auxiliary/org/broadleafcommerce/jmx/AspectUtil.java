@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.config;
+package org.broadleafcommerce.jmx;
 
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
