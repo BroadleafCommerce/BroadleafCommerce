@@ -19,10 +19,10 @@
 	    <property name="namingStrategy" ref="namingStrategy"/>
 	</bean>
 	<bean id="attributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
-	<bean id="assembler" class="org.broadleafcommerce.config.MetadataMBeanInfoAssembler">
+	<bean id="assembler" class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
 	    <property name="attributeSource" ref="attributeSource"/>
 	</bean>
-	<bean id="namingStrategy" class="org.broadleafcommerce.config.MetadataNamingStrategy">
+	<bean id="namingStrategy" class="org.broadleafcommerce.jmx.MetadataNamingStrategy">
 	    <property name="attributeSource" ref="attributeSource"/>
 	</bean>
 	
