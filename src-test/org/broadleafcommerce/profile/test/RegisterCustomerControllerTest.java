@@ -27,6 +27,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.icegreen.greenmail.util.GreenMail;
@@ -40,21 +42,29 @@ public class RegisterCustomerControllerTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Test(groups = "createCustomerFromController", dataProvider = "setupCustomerControllerData", dataProviderClass = RegisterCustomerDataProvider.class)
-    @Rollback(false)
-    public void createCustomerFromController(RegisterCustomerForm registerCustomer) {
-        BindingResult errors = new BeanPropertyBindingResult(registerCustomer, "registerCustomer");
-        MockHttpServletRequest request = new MockHttpServletRequest();
+    private GreenMail greenMail;
 
-        GreenMail greenMail = new GreenMail(
+    @BeforeClass
+    protected void setupControllerTest() {
+        greenMail = new GreenMail(
                 new ServerSetup[] {
                         new ServerSetup(30000, "127.0.0.1", ServerSetup.PROTOCOL_SMTP)
                 }
         );
         greenMail.start();
-        registerCustomerController.registerCustomer(registerCustomer, errors, request);
-        greenMail.stop();
+    }
 
+    @AfterClass
+    protected void tearDownControllerTest() {
+        greenMail.stop();
+    }
+
+    @Test(groups = "createCustomerFromController", dataProvider = "setupCustomerControllerData", dataProviderClass = RegisterCustomerDataProvider.class)
+    @Rollback(false)
+    public void createCustomerFromController(RegisterCustomerForm registerCustomer) {
+        BindingResult errors = new BeanPropertyBindingResult(registerCustomer, "registerCustomer");
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        registerCustomerController.registerCustomer(registerCustomer, errors, request);
         assert(errors.getErrorCount() == 0);
         Customer customerFromDb = customerService.readCustomerByUsername(registerCustomer.getCustomer().getUsername());
         assert(customerFromDb != null);

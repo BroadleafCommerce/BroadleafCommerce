@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.broadleafcommerce.vendor.service.monitor.handler.LogStatusHandler;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
 public class ServiceMonitor {

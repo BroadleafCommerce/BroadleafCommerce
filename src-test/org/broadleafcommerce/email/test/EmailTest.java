@@ -20,6 +20,8 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.email.service.EmailService;
 import org.broadleafcommerce.email.service.info.EmailInfo;
 import org.broadleafcommerce.test.integration.BaseTest;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.icegreen.greenmail.util.GreenMail;
@@ -30,15 +32,25 @@ public class EmailTest extends BaseTest {
     @Resource
     EmailService emailService;
 
-    @Test
-    public void testSynchronousEmail() throws Exception {
-        GreenMail greenMail = new GreenMail(
+    private GreenMail greenMail;
+
+    @BeforeClass
+    protected void setupEmailTest() {
+        greenMail = new GreenMail(
                 new ServerSetup[] {
                         new ServerSetup(30000, "127.0.0.1", ServerSetup.PROTOCOL_SMTP)
                 }
         );
         greenMail.start();
+    }
 
+    @AfterClass
+    protected void tearDownEmailTest() {
+        greenMail.stop();
+    }
+
+    @Test
+    public void testSynchronousEmail() throws Exception {
         EmailInfo info = new EmailInfo();
         info.setFromAddress("me@test.com");
         info.setSubject("test");
@@ -48,8 +60,6 @@ public class EmailTest extends BaseTest {
         emailService.sendTemplateEmail("to@localhost", info, null);
 
         assert(greenMail.waitForIncomingEmail(10000, 1));
-
-        greenMail.stop();
     }
 
 }

@@ -131,4 +131,50 @@
 		<property name="defaultEnvironment" value="development"/>
 		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
+	
+	<bean id="baseEmailInfo" abstract="true">
+        <property name="sendEmailReliableAsync" value="false"/>
+        <property name="fromAddress" value="test@broadleafcommerce.org"/>
+        <property name="sendAsyncPriority" value="8"/>
+    </bean>
+
+    <bean id="serviceStatusEmail"
+          class="org.broadleafcommerce.email.service.info.EmailInfo"
+          parent="baseEmailInfo">
+    </bean>
+    
+    <bean id="compositeStatusHandler" class="org.broadleafcommerce.vendor.service.monitor.handler.CompositeStatusHandler">
+    	<property name="handlers">
+	    	<list>
+	    		<bean class="org.broadleafcommerce.vendor.service.monitor.handler.LogStatusHandler"/>
+	    		<bean class="org.broadleafcommerce.vendor.service.monitor.handler.EmailStatusHandler">
+	    			<property name="emailInfo" ref="serviceStatusEmail"/>
+	    			<property name="emailTarget">
+	    				<bean class="org.broadleafcommerce.email.domain.EmailTargetImpl">
+	    					<property name="emailAddress" value="test@broadleafcommerce.org"/>
+	    				</bean>
+	    			</property>
+	    		</bean>
+	    	</list>
+	   	</property>
+    </bean>
+    
+    <bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init">
+    	<property name="defaultHandler" ref="compositeStatusHandler"/>
+    </bean>
+    
+    <bean id="blAddressStandardizationService" class="org.broadleafcommerce.vendor.usps.service.AddressStandardizationServiceImpl">
+		<property name="uspsCharSet" value="${usps.charset}"/>
+		<property name="uspsPassword" value="${usps.password}"/>
+		<property name="uspsServerName" value="${usps.server.name}"/>
+		<property name="uspsServiceAPI" value="${usps.service.api}"/>
+		<property name="uspsUserName" value="${usps.user.name}"/>
+		<property name="abbreviations">
+			<bean class="org.broadleafcommerce.vendor.usps.service.module.AddressStandardAbbreviations">
+				<property name="abbreviationPropertyFile" value="classpath:org/broadleafcommerce/vendor/usps/service/module/address.abbreviations.properties"/>
+			</bean>
+		</property>
+		<property name="failureReportingThreshold" value="1"/>
+		<property name="httpProtocol" value="${usps.http.protocol}"/>
+	</bean>
 </beans>

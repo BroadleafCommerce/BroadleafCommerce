@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.service.monitor;
+package org.broadleafcommerce.vendor.service.monitor.handler;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.vendor.service.monitor.StatusHandler;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
 public class LogStatusHandler implements StatusHandler {

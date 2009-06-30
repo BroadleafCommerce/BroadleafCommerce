@@ -124,4 +124,17 @@ public class EmailInfo implements Serializable {
         this.attachments = attachments;
     }
 
+    public synchronized EmailInfo clone() {
+        EmailInfo info = new EmailInfo();
+        info.setAttachments(attachments);
+        info.setEmailTemplate(emailTemplate);
+        info.setEmailType(emailType);
+        info.setFromAddress(fromAddress);
+        info.setMessageBody(messageBody);
+        info.setSendAsyncPriority(sendAsyncPriority);
+        info.setSendEmailReliableAsync(sendEmailReliableAsync);
+        info.setSubject(subject);
+
+        return info;
+    }
 }
