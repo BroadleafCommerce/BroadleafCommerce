@@ -24,7 +24,7 @@ import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.test.integration.BaseTest;
-import org.broadleafcommerce.vendor.usps.service.AddressStandardizationServiceImpl;
+import org.broadleafcommerce.vendor.usps.service.AddressStandardizationService;
 import org.broadleafcommerce.vendor.usps.service.connection.AddressStandarizationResponse;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 public class USPSAddressStandardizationServiceTest extends BaseTest {
 
     @Resource
-    private AddressStandardizationServiceImpl addressStandardizationService;
+    private AddressStandardizationService addressStandardizationService;
     boolean uspsError = true;
 
     protected void addressVerificationSetUp() throws Exception {

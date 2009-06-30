@@ -17,8 +17,8 @@ package org.broadleafcommerce.vendor.service.monitor;
 
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
-public interface ServiceStatus {
+public interface StatusHandler {
 
-    public ServiceStatusType getServiceStatus();
+    public void handleStatus(String serviceName, ServiceStatusType status);
 
 }
