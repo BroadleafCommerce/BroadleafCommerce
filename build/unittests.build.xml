@@ -13,6 +13,7 @@
 	<property name="internal.build.file" value="${basedir}/build/broadleaf.build.xml" />
 	<property name="cobertura.build.file" value="${basedir}/build/cobertura/cobertura.build.xml" />
 	<property name="build.env" value="test" />
+	<property name="confidential.properties" location="${basedir}/../BroadleafCommerceConfig/src"/>
 
 	<property name="cobertura.lib.dir" value="${lib.dir}/cobertura/bin" />
 	<property name="cobertura.instrumented.classes" value="${stage.dir}/instrumented-classes" />
@@ -136,6 +137,19 @@
 				<exclude name="**/*.java" />
 			</fileset>
 		</copy>
+		
+		<available file="${confidential.properties}" property="config.props.present"/>
+		<if>
+			<isset property="config.props.present"/>
+			<then>
+				<copy todir="${stage.dir}/test-folder">
+					<fileset dir="${confidential.properties}">
+						<include name="**/*.*" />
+						<exclude name="**/*.java" />
+					</fileset>
+				</copy>
+			</then>
+		</if>
 
 		<jar destfile="${stage.dir}/broadleaf-tests.jar" basedir="${stage.dir}/test-folder">
 			<include name="**/*.*" />

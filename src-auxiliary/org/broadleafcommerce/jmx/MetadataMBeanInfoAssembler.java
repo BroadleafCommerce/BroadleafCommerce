@@ -22,7 +22,7 @@ import javax.management.modelmbean.ModelMBeanNotificationInfo;
 import javax.management.modelmbean.ModelMBeanOperationInfo;
 
 /**
- * The MetadataMBeanInfoAssembler provided by Spring does allow allow the usage of JDK dynamic proxies. However, several
+ * The MetadataMBeanInfoAssembler provided by Spring does not allow the usage of JDK dynamic proxies. However, several
  * of our services are AOP proxied for the sake of transactions, and the default behavior is to use JDK dynamic proxies for this.
  * It is possible to cause Spring to use CGLIB proxies instead via configuration, but this causes problems when it is desireable
  * or necessary to use constructor injection for the service definition, since CGLIB proxies require a default, no argument
