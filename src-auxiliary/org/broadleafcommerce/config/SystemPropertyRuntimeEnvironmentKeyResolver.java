@@ -7,7 +7,7 @@ package org.broadleafcommerce.config;
  */
 public class SystemPropertyRuntimeEnvironmentKeyResolver implements RuntimeEnvironmentKeyResolver {
 
-    private String environmentKey = "runtime.environment";
+    protected String environmentKey = "runtime.environment";
 
     public SystemPropertyRuntimeEnvironmentKeyResolver() {
         // EMPTY
