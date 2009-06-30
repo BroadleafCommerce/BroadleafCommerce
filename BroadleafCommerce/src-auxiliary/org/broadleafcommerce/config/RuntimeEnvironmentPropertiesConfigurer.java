@@ -134,7 +134,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         return environment.toLowerCase();
     }
 
-    private void validateProperties() throws IOException {
+    protected void validateProperties() throws IOException {
         boolean missingKeys = false;
         for (String envOuter : environments) {
             for (String envInner : environments) {
@@ -153,7 +153,7 @@ public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderC
         }
     }
 
-    private Properties mergeProperties(Resource[] locations) throws IOException {
+    protected Properties mergeProperties(Resource[] locations) throws IOException {
         Properties props = new Properties();
         for (Resource resource : locations) {
             if (resource.exists()) {
