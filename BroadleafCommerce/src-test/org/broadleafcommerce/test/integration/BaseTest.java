@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 @ContextConfiguration(
@@ -58,5 +59,10 @@ public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextT
     @BeforeClass
     public void setup() {
         getEntityManager();
+    }
+
+    @AfterClass
+    public void tearDown() {
+        //do nothing
     }
 }

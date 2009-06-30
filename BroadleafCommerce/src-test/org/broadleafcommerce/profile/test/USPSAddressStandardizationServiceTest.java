@@ -27,16 +27,34 @@ import org.broadleafcommerce.test.integration.BaseTest;
 import org.broadleafcommerce.vendor.usps.service.AddressStandardizationService;
 import org.broadleafcommerce.vendor.usps.service.connection.AddressStandarizationResponse;
 import org.springframework.test.annotation.Rollback;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.ServerSetup;
 
 public class USPSAddressStandardizationServiceTest extends BaseTest {
 
     @Resource
     private AddressStandardizationService addressStandardizationService;
-    boolean uspsError = true;
+    private GreenMail greenMail;
 
+    @BeforeClass
     protected void addressVerificationSetUp() throws Exception {
         super.setup();
+        greenMail = new GreenMail(
+                new ServerSetup[] {
+                        new ServerSetup(30000, "127.0.0.1", ServerSetup.PROTOCOL_SMTP)
+                }
+        );
+        greenMail.start();
+    }
+
+    @AfterClass
+    protected void addressVerificationTearDown() throws Exception {
+        super.tearDown();
+        greenMail.stop();
     }
 
     private Address getValidAddress() {
@@ -57,47 +75,43 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
 
     @Test(groups = { "testBadAddress" })
     @Rollback(false)
-    public void testBadAddress() {
+    public void testBadAddress() throws Exception {
         if (addressStandardizationService.getUspsUserName().equals("?")) {
             return;
         }
-        try {
-            addressVerificationSetUp();
-            Address testAddress = getValidAddress();
-            testAddress.setPostalCode("70057");
-            State state = new StateImpl();
-            state.setAbbreviation("CL");
-            testAddress.setState(state);
+        Address testAddress = getValidAddress();
+        testAddress.setPostalCode("70057");
+        State state = new StateImpl();
+        state.setAbbreviation("CL");
+        testAddress.setState(state);
 
-            AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
-            if (standardizedResponse.isErrorDetected()) {
-                logger.debug("USPS address verification Failed. Please check the address and try again");
-                assert true;
-            }
-        } catch (Exception e) {
-            logger.error(e);
-            assert false;
-        }
+        AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
+        assert(standardizedResponse.isErrorDetected());
+        assert(greenMail.waitForIncomingEmail(10000, 1));
+        assert(greenMail.getReceivedMessages()[0].getSubject().contains("is reporting a status"));
     }
 
-    @Test(groups = { "testSuccessfulAddress" })
+    @Test(groups = { "testException" }, dependsOnGroups="testBadAddress")
     @Rollback(false)
-    public void testSuccessfulAddress() {
+    public void testException() throws Exception {
         if (addressStandardizationService.getUspsUserName().equals("?")) {
             return;
         }
-        try {
-            addressVerificationSetUp();
-            Address testAddress = getValidAddress();
-            AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
-            logger.debug("Get ZipCode: " + standardizedResponse.getAddress().getPostalCode());
-            if (!standardizedResponse.isErrorDetected()) {
-                assert true;
-            }
-        } catch (Exception e) {
-            logger.error(e);
-            assert false;
-        }
+        AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(null);
+        assert(standardizedResponse.isErrorDetected());
+    }
 
+    @Test(groups = { "testSuccessfulAddress" }, dependsOnGroups="testException")
+    @Rollback(false)
+    public void testSuccessfulAddress() throws Exception {
+        if (addressStandardizationService.getUspsUserName().equals("?")) {
+            return;
+        }
+        Address testAddress = getValidAddress();
+        AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
+        logger.debug("Get ZipCode: " + standardizedResponse.getAddress().getPostalCode());
+        assert(!standardizedResponse.isErrorDetected());
+        assert(greenMail.waitForIncomingEmail(10000, 1));
+        assert(greenMail.getReceivedMessages()[0].getSubject().contains("is reporting a status"));
     }
 }
