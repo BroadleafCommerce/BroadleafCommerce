@@ -26,4 +26,24 @@ public interface AddressStandardizationService extends ServiceDownResponse {
     public void standardizeAndTokenizeAddress(Address address);
 
     public void tokenizeAddress(Address addr, boolean isStandardized);
+
+    public String getUspsCharSet();
+
+    public void setUspsCharSet(String uspsCharSet);
+
+    public String getUspsPassword();
+
+    public void setUspsPassword(String uspsPassword);
+
+    public String getUspsServerName();
+
+    public void setUspsServerName(String uspsServerName);
+
+    public String getUspsServiceAPI();
+
+    public void setUspsServiceAPI(String uspsServiceAPI);
+
+    public String getUspsUserName();
+
+    public void setUspsUserName(String uspsUserName);
 }

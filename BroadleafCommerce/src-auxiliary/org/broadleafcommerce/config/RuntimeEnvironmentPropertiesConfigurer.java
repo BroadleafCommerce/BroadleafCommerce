@@ -1,6 +1,7 @@
 package org.broadleafcommerce.config;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
@@ -51,7 +52,7 @@ import org.springframework.core.io.Resource;
 public class RuntimeEnvironmentPropertiesConfigurer extends PropertyPlaceholderConfigurer implements
 InitializingBean
 {
-    private Log m_log = LogFactory.getLog( getClass() );
+    private static final Log LOG = LogFactory.getLog(RuntimeEnvironmentPropertiesConfigurer.class);
 
     private String m_defaultEnvironment;
 
@@ -83,10 +84,18 @@ InitializingBean
 
         Resource[] propertiesLocation = createPropertiesResource( environment );
         Resource[] commonLocation = createCommonResource();
-        Resource[] allLocations = new Resource[propertiesLocation.length + commonLocation.length];
-        System.arraycopy(commonLocation, 0, allLocations, 0, commonLocation.length);
-        System.arraycopy(propertiesLocation, 0, allLocations, commonLocation.length, propertiesLocation.length);
-        setLocations(allLocations);
+        ArrayList<Resource> allLocations = new ArrayList<Resource>();
+        for (Resource resource : propertiesLocation) {
+            if (resource.exists()) {
+                allLocations.add(resource);
+            }
+        }
+        for (Resource resource : commonLocation) {
+            if (resource.exists()) {
+                allLocations.add(resource);
+            }
+        }
+        setLocations(allLocations.toArray(new Resource[]{}));
 
         validateProperties();
     }
@@ -102,7 +111,7 @@ InitializingBean
             if( !props2.containsKey( key ) )
             {
                 missingKeys = true;
-                getLog().error(
+                LOG.error(
                         "Property file mismatch: " + key + " missing");
             }
         }
@@ -138,18 +147,13 @@ InitializingBean
 
         if( environment == null )
         {
-            getLog().warn(
+            LOG.warn(
                     "Unable to determine runtime environment, using default environment '"
                     + m_defaultEnvironment + "'" );
             return m_defaultEnvironment;
         }
 
         return environment.toLowerCase();
-    }
-
-    protected final Log getLog()
-    {
-        return m_log;
     }
 
     /**
@@ -197,8 +201,12 @@ InitializingBean
     private Properties mergeProperties(Resource[] locations) throws IOException {
         Properties props = new Properties();
         for (Resource resource : locations) {
-            props = new Properties(props);
-            props.load(resource.getInputStream());
+            if (resource.exists()) {
+                props = new Properties(props);
+                props.load(resource.getInputStream());
+            } else {
+                LOG.warn("Unable to locate resource: " + resource.getFilename());
+            }
         }
         return props;
     }

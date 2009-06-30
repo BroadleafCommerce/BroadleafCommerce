@@ -71,12 +71,11 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
     private static final String EMPTY_STRING = "";
 
     protected AddressStandardAbbreviations abbreviations;
-    // TODO: Should access these from property file.
-    protected String uspsCharSet = "UTF-8";
-    protected String uspsPassword = "338MC69CR570";
-    protected String uspsServerName = "testing.shippingapis.com";
-    protected String uspsServiceAPI = "/ShippingAPITest.dll";
-    protected String uspsUserName = "482CREDE3966";
+    protected String uspsCharSet;
+    protected String uspsPassword;
+    protected String uspsServerName;
+    protected String uspsServiceAPI;
+    protected String uspsUserName;
 
     @Resource
     protected AddressDao addressDao;
@@ -86,14 +85,10 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
     @Override
     public AddressStandarizationResponse standardizeAddress(Address address) {
         AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
-
         InputStream response = null;
-
         try {
             response = callUSPSAddressStandardization(address);
-
             ArrayList<AddressStandarizationResponse> AddressResponseList = parseUSPSResponse(response);
-
             if ((AddressResponseList != null) && !AddressResponseList.isEmpty()) {
                 addressStandarizationResponse = AddressResponseList.get(0);
             }
@@ -209,26 +204,6 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         this.abbreviations = abbreviations;
     }
 
-    public void setUspsCharSet(String uspsCharSet) {
-        this.uspsCharSet = uspsCharSet;
-    }
-
-    public void setUspsPassword(String uspsPassword) {
-        this.uspsPassword = uspsPassword;
-    }
-
-    public void setUspsServerName(String uspsServerName) {
-        this.uspsServerName = uspsServerName;
-    }
-
-    public void setUspsServiceAPI(String uspsServiceAPI) {
-        this.uspsServiceAPI = uspsServiceAPI;
-    }
-
-    public void setUspsUserName(String uspsUserName) {
-        this.uspsUserName = uspsUserName;
-    }
-
     protected InputStream callUSPSAddressStandardization(Address address) throws IOException {
 
         URL contentURL = new URL(new StringBuffer(HTTP_PROTOCOL).append(uspsServerName).append(uspsServiceAPI).toString());
@@ -307,5 +282,55 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
 
         SAXParserFactory.newInstance().newSAXParser().parse(response, addrContentHelper);
         return addrContentHelper.getAddressResponseList();
+    }
+
+    @Override
+    public String getUspsCharSet() {
+        return uspsCharSet;
+    }
+
+    @Override
+    public void setUspsCharSet(String uspsCharSet) {
+        this.uspsCharSet = uspsCharSet;
+    }
+
+    @Override
+    public String getUspsPassword() {
+        return uspsPassword;
+    }
+
+    @Override
+    public void setUspsPassword(String uspsPassword) {
+        this.uspsPassword = uspsPassword;
+    }
+
+    @Override
+    public String getUspsServerName() {
+        return uspsServerName;
+    }
+
+    @Override
+    public void setUspsServerName(String uspsServerName) {
+        this.uspsServerName = uspsServerName;
+    }
+
+    @Override
+    public String getUspsServiceAPI() {
+        return uspsServiceAPI;
+    }
+
+    @Override
+    public void setUspsServiceAPI(String uspsServiceAPI) {
+        this.uspsServiceAPI = uspsServiceAPI;
+    }
+
+    @Override
+    public String getUspsUserName() {
+        return uspsUserName;
+    }
+
+    @Override
+    public void setUspsUserName(String uspsUserName) {
+        this.uspsUserName = uspsUserName;
     }
 }

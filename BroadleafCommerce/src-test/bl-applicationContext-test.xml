@@ -113,4 +113,22 @@
 		</property>
 	</bean>
 
+	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
+		<property name="propertyLocations">
+			<set>
+				<value>classpath:config/bc/</value>
+				<value>classpath:config/bc/test/</value>
+			</set>
+		</property>
+		<property name="environments">
+			<set>
+				<value>production</value>
+				<value>staging</value>
+				<value>integration</value>
+				<value>development</value>
+			</set>
+		</property>
+		<property name="defaultEnvironment" value="development"/>
+		<property name="ignoreUnresolvablePlaceholders" value="true"/>
+	</bean>
 </beans>

@@ -36,16 +36,6 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
     boolean uspsError = true;
 
     protected void addressVerificationSetUp() throws Exception {
-        addressStandardizationService.setUspsCharSet("UTF-8");
-        addressStandardizationService.setUspsServiceAPI("/ShippingAPITest.dll");
-        addressStandardizationService.setUspsServerName("testing.shippingapis.com");
-        // TODO: Testing server user name and password
-        addressStandardizationService.setUspsUserName("482CREDE3966");
-        addressStandardizationService.setUspsPassword("338MC69CR570");
-
-        /*
-         * AddressStandardAbbreviations abbr = new AddressStandardAbbreviations(); abbr.setAbbreviationPropertyFile(new ClassPathResource("address.abbreviations.properties", USPSAddressStandardizationServiceTest.class)); uspsService.setAbbreviations(abbr);
-         */
         super.setup();
     }
 
@@ -68,6 +58,9 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
     @Test(groups = { "testBadAddress" })
     @Rollback(false)
     public void testBadAddress() {
+        if (addressStandardizationService.getUspsUserName().equals("?")) {
+            return;
+        }
         try {
             addressVerificationSetUp();
             Address testAddress = getValidAddress();
@@ -90,6 +83,9 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
     @Test(groups = { "testSuccessfulAddress" })
     @Rollback(false)
     public void testSuccessfulAddress() {
+        if (addressStandardizationService.getUspsUserName().equals("?")) {
+            return;
+        }
         try {
             addressVerificationSetUp();
             Address testAddress = getValidAddress();
