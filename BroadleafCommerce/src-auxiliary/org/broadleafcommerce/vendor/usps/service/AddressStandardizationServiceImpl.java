@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.service;
+package org.broadleafcommerce.vendor.usps.service;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -37,10 +34,11 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.StateDao;
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.service.addressValidation.AddressStandardAbbreviations;
-import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
-import org.broadleafcommerce.profile.service.addressValidation.ServiceDownResponse;
-import org.broadleafcommerce.profile.service.addressValidation.USPSAddressResponseParser;
+import org.broadleafcommerce.vendor.service.AbstractVendorService;
+import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
+import org.broadleafcommerce.vendor.usps.service.connection.AddressStandarizationResponse;
+import org.broadleafcommerce.vendor.usps.service.connection.USPSAddressResponseParser;
+import org.broadleafcommerce.vendor.usps.service.module.AddressStandardAbbreviations;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -49,14 +47,10 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 @Service("blAddressStandardizationService")
-public class AddressStandardizationServiceImpl implements AddressStandardizationService, ServiceDownResponse {
+public class AddressStandardizationServiceImpl extends AbstractVendorService implements AddressStandardizationService {
 
     private static final Log LOG = LogFactory.getLog(AddressStandardizationServiceImpl.class);
 
-    private static final String HTTP_PROTOCOL = "http://";
-    private static final String POST_METHOD = "POST";
-    private static final String API_PARAM = "API=Verify&";
-    private static final String XML_PARAM = "XML=";
     private static final String USER_ID_ATTR = "USERID";
     private static final String PASSWORD_ATTR = "PASSWORD";
     private static final String ID_ATTR = "ID";
@@ -76,6 +70,10 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
     protected String uspsServerName;
     protected String uspsServiceAPI;
     protected String uspsUserName;
+    protected String httpProtocol;
+    protected Integer failureReportingThreshold;
+    protected Integer failureCount = 0;
+    protected Boolean isUp = true;
 
     @Resource
     protected AddressDao addressDao;
@@ -92,16 +90,12 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
             if ((AddressResponseList != null) && !AddressResponseList.isEmpty()) {
                 addressStandarizationResponse = AddressResponseList.get(0);
             }
+            clearStatus();
             return addressStandarizationResponse;
-        } catch (IOException e) {
-            LOG.error("IOException", e);
-            return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
-        } catch (SAXException e) {
-            LOG.error("SAXException", e);
-            return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
-        } catch (ParserConfigurationException e) {
-            LOG.error("ParserConfigurationException", e);
-            return (AddressStandarizationResponse) getDownResponse("standardizeAddress", new Object[] { address });
+        } catch (Exception e) {
+            LOG.error("Exception", e);
+            incrementFailure();
+            return getDownResponse("standardizeAddress", new Object[] { address });
         } finally {
             if (response != null) {
                 try {
@@ -113,8 +107,24 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         }
     }
 
-    @Override
-    public void tokenizeAddress(Address addr, boolean isStandardized) {
+    protected void clearStatus() {
+        synchronized(failureCount) {
+            isUp = true;
+            failureCount = 0;
+        }
+    }
+
+    protected void incrementFailure() {
+        synchronized(failureCount) {
+            if (failureCount >= failureReportingThreshold) {
+                isUp = false;
+            } else {
+                failureCount++;
+            }
+        }
+    }
+
+    protected void tokenizeAddress(Address addr, boolean isStandardized) {
         String addLine1 = addr.getAddressLine1();
         String addLine2 = addr.getAddressLine2();
         String appendedAddress = "";
@@ -170,8 +180,7 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         addr.setTokenizedAddress(tokenizedAddress);
     }
 
-    @Override
-    public void standardizeAndTokenizeAddress(Address address) {
+    protected void standardizeAndTokenizeAddress(Address address) {
         AddressStandarizationResponse standardizationResponse = standardizeAddress(address);
 
         if (standardizationResponse.isErrorDetected()) {
@@ -184,49 +193,12 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
         tokenizeAddress(address, !standardizationResponse.isErrorDetected());
     }
 
-    @Override
-    public Object getDownResponse(String method, Object[] args) {
-        AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
-        addressStandarizationResponse.setErrorDetected(true);
-
-        if ("standardizeAndTokenizeAddress".equals(method)) {
-            if (args != null && args.length > 0 && args[0] != null) {
-                addressStandarizationResponse.setAddress(((Address) args[0]));
-            }
-        } else if ("standardizeAddress".equals(method)) {
-            addressStandarizationResponse.setAddress((Address) args[0]);
-        }
-
-        return addressStandarizationResponse;
-    }
-
-    public void setAbbreviations(AddressStandardAbbreviations abbreviations) {
-        this.abbreviations = abbreviations;
-    }
-
     protected InputStream callUSPSAddressStandardization(Address address) throws IOException {
-
-        URL contentURL = new URL(new StringBuffer(HTTP_PROTOCOL).append(uspsServerName).append(uspsServiceAPI).toString());
-
-        HttpURLConnection connection = (HttpURLConnection) contentURL.openConnection();
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-        connection.setRequestMethod(POST_METHOD);
-
-        OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
-        osw.write(API_PARAM);
-        osw.write(XML_PARAM);
-        osw.write(getAddressXMLString(address));
-        osw.flush();
-
-        try {
-            osw.close();
-        } catch (IOException e) {
-            // We'll try to avoid stopping processing and just log the error if the OutputStream doesn't close
-            LOG.error("Problem closing the OuputStream to the USPS Service", e);
-        }
-
-        return new BufferedInputStream(connection.getInputStream());
+        URL contentURL = new URL(new StringBuffer(getHttpProtocol()).append("://").append(uspsServerName).append(uspsServiceAPI).toString());
+        Map<String, String> content = new HashMap<String, String>();
+        content.put("API", "Verify");
+        content.put("XML", getAddressXMLString(address));
+        return postMessage(content, contentURL, uspsCharSet);
     }
 
     protected String getAddressXMLString(Address address) throws IOException {
@@ -248,8 +220,10 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
 
         try {
             writer.write(document);
-            LOG.debug("strWriter.toString(): " + strWriter.toString());
-            return URLEncoder.encode(strWriter.toString(), uspsCharSet);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("strWriter.toString(): " + strWriter.toString());
+            }
+            return strWriter.toString();
         } finally {
             document = null;
 
@@ -273,15 +247,38 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
 
     protected ArrayList<AddressStandarizationResponse> parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
         USPSAddressResponseParser addrContentHelper = new USPSAddressResponseParser(addressDao.create(), stateDao.create());
-        // FileOutputStream fos = new FileOutputStream("/temp/" + System.currentTimeMillis() + ".xml");
-        // int nextChar;
-        // while ((nextChar = response.read()) != -1)
-        // fos.write(Character.toUpperCase((char) nextChar));
-        // fos.write('\n');
-        // fos.flush();
-
         SAXParserFactory.newInstance().newSAXParser().parse(response, addrContentHelper);
         return addrContentHelper.getAddressResponseList();
+    }
+
+    protected AddressStandarizationResponse getDownResponse(String method, Object[] args) {
+        AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
+        addressStandarizationResponse.setErrorDetected(true);
+
+        if ("standardizeAndTokenizeAddress".equals(method)) {
+            if (args != null && args.length > 0 && args[0] != null) {
+                addressStandarizationResponse.setAddress(((Address) args[0]));
+            }
+        } else if ("standardizeAddress".equals(method)) {
+            addressStandarizationResponse.setAddress((Address) args[0]);
+        }
+
+        return addressStandarizationResponse;
+    }
+
+    @Override
+    public ServiceStatusType getServiceStatus() {
+        synchronized(failureCount) {
+            if (isUp) {
+                return ServiceStatusType.UP;
+            } else {
+                return ServiceStatusType.DOWN;
+            }
+        }
+    }
+
+    public void setAbbreviations(AddressStandardAbbreviations abbreviations) {
+        this.abbreviations = abbreviations;
     }
 
     @Override
@@ -332,5 +329,25 @@ public class AddressStandardizationServiceImpl implements AddressStandardization
     @Override
     public void setUspsUserName(String uspsUserName) {
         this.uspsUserName = uspsUserName;
+    }
+
+    @Override
+    public String getHttpProtocol() {
+        return httpProtocol;
+    }
+
+    @Override
+    public void setHttpProtocol(String httpProtocol) {
+        this.httpProtocol = httpProtocol;
+    }
+
+    @Override
+    public Integer getFailureReportingThreshold() {
+        return failureReportingThreshold;
+    }
+
+    @Override
+    public void setFailureReportingThreshold(Integer failureReportingThreshold) {
+        this.failureReportingThreshold = failureReportingThreshold;
     }
 }

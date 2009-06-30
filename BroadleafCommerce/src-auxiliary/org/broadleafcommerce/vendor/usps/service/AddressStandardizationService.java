@@ -13,19 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.service;
+package org.broadleafcommerce.vendor.usps.service;
 
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
-import org.broadleafcommerce.profile.service.addressValidation.ServiceDownResponse;
+import org.broadleafcommerce.vendor.service.monitor.ServiceStatus;
+import org.broadleafcommerce.vendor.usps.service.connection.AddressStandarizationResponse;
 
-public interface AddressStandardizationService extends ServiceDownResponse {
+public interface AddressStandardizationService extends ServiceStatus {
 
     public AddressStandarizationResponse standardizeAddress(Address addr);
-
-    public void standardizeAndTokenizeAddress(Address address);
-
-    public void tokenizeAddress(Address addr, boolean isStandardized);
 
     public String getUspsCharSet();
 
@@ -46,4 +42,13 @@ public interface AddressStandardizationService extends ServiceDownResponse {
     public String getUspsUserName();
 
     public void setUspsUserName(String uspsUserName);
+
+    public String getHttpProtocol();
+
+    public void setHttpProtocol(String httpProtocol);
+
+    public Integer getFailureReportingThreshold();
+
+    public void setFailureReportingThreshold(Integer failureReportingThreshold);
+
 }

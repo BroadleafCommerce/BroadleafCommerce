@@ -124,11 +124,18 @@
 		<constructor-arg value="X"/>
 	</bean>
 	
-	<bean id="blAddressStandardizationService" class="org.broadleafcommerce.profile.service.AddressStandardizationServiceImpl">
+	<bean id="blAddressStandardizationService" class="org.broadleafcommerce.vendor.usps.service.AddressStandardizationServiceImpl">
 		<property name="uspsCharSet" value="${usps.charset}"/>
 		<property name="uspsPassword" value="${usps.password}"/>
 		<property name="uspsServerName" value="${usps.server.name}"/>
 		<property name="uspsServiceAPI" value="${usps.service.api}"/>
 		<property name="uspsUserName" value="${usps.user.name}"/>
+		<property name="abbreviations">
+			<bean class="org.broadleafcommerce.vendor.usps.service.module.AddressStandardAbbreviations">
+				<property name="abbreviationPropertyFile" value="classpath:org/broadleafcommerce/vendor/usps/service/module/address.abbreviations.properties"/>
+			</bean>
+		</property>
+		<property name="failureReportingThreshold" value="10"/>
+		<property name="httpProtocol" value="${usps.http.protocol}"/>
 	</bean>
 </beans>

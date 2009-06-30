@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.service.addressValidation;
+package org.broadleafcommerce.vendor.service.monitor;
 
+import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
+public interface ServiceStatus {
 
-/**
-* The purpose of this interface is to allow services to define a behavior when they are down.  It is used in conjuntion with ServiceMonitorAdvice and provides
-* a way for a service to return a valid "I'm down" response even when it  encounters a ServiceMonitorException.
- */
-public interface ServiceDownResponse {
+    public ServiceStatusType getServiceStatus();
 
-    public Object getDownResponse(String method, Object[] args)
-                           throws Exception;
 }

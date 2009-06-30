@@ -23,9 +23,9 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
-import org.broadleafcommerce.profile.service.AddressStandardizationServiceImpl;
-import org.broadleafcommerce.profile.service.addressValidation.AddressStandarizationResponse;
 import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.vendor.usps.service.AddressStandardizationServiceImpl;
+import org.broadleafcommerce.vendor.usps.service.connection.AddressStandarizationResponse;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
