@@ -138,4 +138,13 @@
 		<property name="failureReportingThreshold" value="10"/>
 		<property name="httpProtocol" value="${usps.http.protocol}"/>
 	</bean>
+	
+	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>
+
+	<aop:config>
+	    <aop:aspect id="blServiceMonitorAspect" ref="blServiceMonitor">
+            <aop:pointcut id="blServiceCheckMethod" expression="execution(* org.broadleafcommerce.vendor.usps.service.AddressStandardizationService.standardizeAddress(..))"/>
+            <aop:around method="checkServiceAOP" pointcut-ref="blServiceCheckMethod"/>
+        </aop:aspect>
+	</aop:config>
 </beans>

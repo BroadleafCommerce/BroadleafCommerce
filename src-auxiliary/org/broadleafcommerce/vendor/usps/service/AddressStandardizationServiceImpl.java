@@ -35,6 +35,7 @@ import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.StateDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.vendor.service.AbstractVendorService;
+import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 import org.broadleafcommerce.vendor.usps.service.connection.AddressStandarizationResponse;
 import org.broadleafcommerce.vendor.usps.service.connection.USPSAddressResponseParser;
@@ -47,7 +48,7 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 @Service("blAddressStandardizationService")
-public class AddressStandardizationServiceImpl extends AbstractVendorService implements AddressStandardizationService {
+public class AddressStandardizationServiceImpl extends AbstractVendorService implements AddressStandardizationService, ServiceStatusDetectable {
 
     private static final Log LOG = LogFactory.getLog(AddressStandardizationServiceImpl.class);
 
@@ -194,7 +195,7 @@ public class AddressStandardizationServiceImpl extends AbstractVendorService imp
     }
 
     protected InputStream callUSPSAddressStandardization(Address address) throws IOException {
-        URL contentURL = new URL(new StringBuffer(getHttpProtocol()).append("://").append(uspsServerName).append(uspsServiceAPI).toString());
+        URL contentURL = new URL(new StringBuffer(httpProtocol).append("://").append(uspsServerName).append(uspsServiceAPI).toString());
         Map<String, String> content = new HashMap<String, String>();
         content.put("API", "Verify");
         content.put("XML", getAddressXMLString(address));
@@ -349,5 +350,10 @@ public class AddressStandardizationServiceImpl extends AbstractVendorService imp
     @Override
     public void setFailureReportingThreshold(Integer failureReportingThreshold) {
         this.failureReportingThreshold = failureReportingThreshold;
+    }
+
+    @Override
+    public String getServiceName() {
+        return getClass().getName();
     }
 }
