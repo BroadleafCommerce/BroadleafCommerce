@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.service.addressValidation;
+package org.broadleafcommerce.vendor.usps.service.connection;
 
 import org.broadleafcommerce.profile.domain.Address;
 

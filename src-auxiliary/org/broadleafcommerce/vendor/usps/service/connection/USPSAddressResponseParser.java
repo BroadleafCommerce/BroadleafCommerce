@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.service.addressValidation;
+package org.broadleafcommerce.vendor.usps.service.connection;
 
 import java.util.ArrayList;
 
@@ -44,9 +44,7 @@ public class USPSAddressResponseParser extends DefaultHandler {
     private ArrayList<AddressStandarizationResponse> addressResponseList = new ArrayList<AddressStandarizationResponse>();
     private StringBuffer buffer = new StringBuffer();
 
-    //@Resource(name="org.broadleafcommerce.profile.domain.Address")
     private Address address;
-    //@Resource(name="org.broadleafcommerce.profile.domain.State")
     private State state;
 
     public USPSAddressResponseParser(Address address, State state) {

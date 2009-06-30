@@ -208,6 +208,7 @@
 
 	<aop:config>
 		<aop:pointcut id="blTargetContentServiceOperation" expression="execution(* org.broadleafcommerce.marketing.service.TargetContentService.*(..))"/>
+		<aop:advisor advice-ref="blTxAdvice" pointcut-ref="blTargetContentServiceOperation"/>
 	</aop:config>
 
 	<aop:config>
