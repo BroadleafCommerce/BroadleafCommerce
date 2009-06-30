@@ -168,6 +168,7 @@
 168|/images/products/large/spidem-villa.jpg|large
 169|/images/products/large/13442.jpg|large
 170|/images/products/large/13423.jpg|large
+171|/images/products/large/impressa-J5.jpg|large
 172|/images/products/large/13339.jpg|large
 173|/images/products/large/13422.jpg|large
 174|/images/products/large/13299.jpg|large
@@ -346,6 +347,7 @@
 168|/images/products/small/spidem-villa.jpg|small
 169|/images/products/small/13442.jpg|small
 170|/images/products/small/13423.jpg|small
+171|/images/products/small/impressa-J5.jpg|small
 172|/images/products/small/13339.jpg|small
 173|/images/products/small/13422.jpg|small
 174|/images/products/small/13299.jpg|small
