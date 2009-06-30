@@ -199,9 +199,9 @@ public class PricingTest extends BaseTest {
         offer.setName(offerName);
         offer.setStartDate(new Date());
         Calendar calendar = Calendar.getInstance();
-        calendar.roll(Calendar.DATE, -1);
+        calendar.add(Calendar.DATE, -1);
         offer.setStartDate(calendar.getTime());
-        calendar.roll(Calendar.DATE, 2);
+        calendar.add(Calendar.DATE, 2);
         offer.setEndDate(calendar.getTime());
         offer.setType(offerType);
         offer.setDiscountType(discountType);
