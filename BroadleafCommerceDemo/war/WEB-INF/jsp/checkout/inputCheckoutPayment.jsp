@@ -3,15 +3,15 @@
 	<h4 class="formSectionHeader">Payment Information</h4>
 	<spring:hasBindErrors name="checkout">
 		  <spring:bind path="checkout.*">
-           			<c:forEach var="error" items="${status.errorMessages}">
-             			<tr><td><font color="red"><c:out value="${error}"/></font></td></tr><br />
-           			</c:forEach>
-           		 </spring:bind>
-         	</spring:hasBindErrors>
+          	<c:forEach var="error" items="${status.errorMessages}">
+            	<tr><td><font color="red"><c:out value="${error}"/></font></td></tr><br />
+            </c:forEach>
+    	 </spring:bind>
+    </spring:hasBindErrors>
      		
 	<table class="formTable">
 		<tr>
-			<td style="text-align:right"><label for="ccNumber"><b>CC Number:</b></label></td>
+			<td style="text-align:right"><label for="creditCardNumber"><b>CC Number:</b></label></td>
 			<td><form:input maxlength="16" size="16" path="creditCardNumber" /></td>
 			<td style="text-align:right"><label for="ccNumber"><b>CC Type:</b></label></td>
 			<td><form:select path="selectedCreditCardType">
@@ -23,6 +23,10 @@
    		<tr>
 			<td style="text-align:right"><label for="ccNumber"><b>Expiry Month/Year</b></label></td>
 			<td><form:input maxlength="2" size="2" path="creditCardExpMonth" />/<form:input maxlength="4" size="4" path="creditCardExpYear" /></td>
+   		</tr>
+   		<tr>
+			<td style="text-align:right"><label for="cvv"><b>CVV Code</b></label></td>
+			<td><form:input maxlength="4" size="4" path="creditCardCvvCode" /></td>
    		</tr>
 		<tr>
 			<td style="text-align:right"><label for="addressLine1">Address Line1:</b></label></td>
