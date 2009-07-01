@@ -22,6 +22,8 @@ import org.broadleafcommerce.payment.CreditCardType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 
+
+
 public class CheckoutForm {
     private String firstName;
     private String lastName;
@@ -51,8 +53,8 @@ public class CheckoutForm {
         this.emailAddress = emailAddress;
     }
 
-    private Address shippingAddress;
-    private Address billingAddress;
+    private Address shippingAddress = new AddressImpl();
+    private Address billingAddress = new AddressImpl();
     private String creditCardNumber;
     private String creditCardCvvCode;
     private String creditCardExpMonth;
@@ -60,6 +62,7 @@ public class CheckoutForm {
     private String primaryPhoneNumber;
     private String secondaryPhoneNumber;
     private String selectedCreditCardType;
+
 
     public String getSelectedCreditCardType() {
         return selectedCreditCardType;

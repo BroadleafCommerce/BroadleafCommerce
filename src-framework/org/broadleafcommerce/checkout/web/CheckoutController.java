@@ -17,6 +17,7 @@ package org.broadleafcommerce.checkout.web;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,12 +41,13 @@ import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.order.service.type.OrderStatus;
+import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.PaymentInfoService;
 import org.broadleafcommerce.payment.service.PaymentService;
-import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.AddressImpl;
+import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.domain.CustomerPhoneImpl;
@@ -71,12 +73,11 @@ public class CheckoutController {
     @Resource
     protected CustomerState customerState;
     @Resource
-    CustomerAddressService customerAddressService;
+    protected CustomerAddressService customerAddressService;
     @Resource
     protected CustomerPhoneService customerPhoneService;
     @Resource(name="blCreditCardService")
     protected PaymentService paymentService;
-
     @Resource
     protected OrderService orderService;
     @Resource
@@ -91,6 +92,9 @@ public class CheckoutController {
     protected FulfillmentGroupService fulfillmentGroupService;
     @Resource
     protected PaymentInfoService paymentInfoService;
+    @Resource
+    private SecurePaymentInfoService securePaymentInfoService;
+
     protected String checkoutView;
     protected String receiptView;
 
@@ -108,12 +112,10 @@ public class CheckoutController {
             ModelMap model,
             HttpServletRequest request) {
 
-        Address addr = new AddressImpl();
-        addr.setAddressLine1("12700 Merit Drive Way");
-        addr.setCity("Dallas");
-        addr.setState(stateService.findStateByAbbreviation("TX"));
-        addr.setPostalCode("75251");
-        addr.setCountry(countryService.findCountryByAbbreviation("US"));
+        checkoutForm.getBillingAddress().setCountry(countryService.findCountryByAbbreviation("US"));
+        checkoutForm.getBillingAddress().setState(stateService.findStateByAbbreviation("TX"));
+        checkoutForm.getShippingAddress().setCountry(countryService.findCountryByAbbreviation("US"));
+        checkoutForm.getShippingAddress().setState(stateService.findStateByAbbreviation("TX"));
 
         Order order = retrieveCartOrder(request, model);
         order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(new Date()));
@@ -122,7 +124,7 @@ public class CheckoutController {
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         group.setMethod("standard");
         group.setOrder(order);
-        group.setAddress(addr);
+        group.setAddress(checkoutForm.getShippingAddress());
         group.setShippingPrice(order.getTotalShipping());
         groups.add(group);
         order.setFulfillmentGroups(groups);
@@ -134,12 +136,28 @@ public class CheckoutController {
             group.getFulfillmentGroupItems().add(fulfillmentGroupItem);
         }
 
-        PaymentInfo paymentInfo = paymentInfoService.create();
-        paymentInfo.setAddress(addr);
-        paymentInfo.setOrder(order);
         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
+
+        CreditCardPaymentInfo creditCardPaymentInfo = ((CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD));
+
+        creditCardPaymentInfo.setCvvCode(checkoutForm.getCreditCardCvvCode());
+        creditCardPaymentInfo.setExpirationMonth(Integer.parseInt(checkoutForm.getCreditCardExpMonth()));
+        creditCardPaymentInfo.setExpirationYear(Integer.parseInt(checkoutForm.getCreditCardExpYear()));
+        creditCardPaymentInfo.setPan(checkoutForm.getCreditCardNumber());
+        creditCardPaymentInfo.setReferenceNumber(checkoutForm.getCreditCardNumber());
+
+        PaymentInfo paymentInfo = paymentInfoService.create();
+        paymentInfo.setAddress(checkoutForm.getBillingAddress());
+        paymentInfo.setOrder(order);
+        paymentInfo.setType(PaymentInfoType.CREDIT_CARD);
+        paymentInfo.setReferenceNumber(checkoutForm.getCreditCardNumber());
+        payments.put(paymentInfo, creditCardPaymentInfo);
+        List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
+        paymentInfos.add(paymentInfo);
+        order.setPaymentInfos(paymentInfos);
+
         order.setStatus(OrderStatus.SUBMITTED);
-        order.setSubmitDate(new Date());
+        order.setSubmitDate(Calendar.getInstance().getTime());
 
         try {
             checkoutService.performCheckout(order, payments);
@@ -147,7 +165,7 @@ public class CheckoutController {
             LOG.error("Cannot perform checkout", e);
         }
 
-        return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderDetails?orderNumber=" + order.getOrderNumber();
+        return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderDetails.htm?orderNumber=" + order.getOrderNumber();
     }
 
     @RequestMapping(value = "checkout.htm", method = {RequestMethod.GET})
@@ -165,9 +183,7 @@ public class CheckoutController {
         }
 
         customerAddressService.readActiveCustomerAddressesByCustomerId(currentCustomer.getId());
-
         model.addAttribute("order", retrieveCartOrder(request, model));
-
         return checkoutView;
     }
 
