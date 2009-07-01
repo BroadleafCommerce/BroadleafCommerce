@@ -6,7 +6,6 @@
 	<blc:breadcrumb categoryList="${breadcrumbCategories}" />
 	<h2>${currentCategory.name}</h2>
 
-
     <div class="span-6 blueBorder">
       	Search Options
     </div>
