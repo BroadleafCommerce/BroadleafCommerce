@@ -18,11 +18,15 @@ package org.broadleafcommerce.vendor.service.monitor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.broadleafcommerce.vendor.service.monitor.handler.LogStatusHandler;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
 public class ServiceMonitor {
+
+    private static final Log LOG = LogFactory.getLog(ServiceMonitor.class);
 
     protected Map<ServiceStatusDetectable, StatusHandler> serviceHandlers = new HashMap<ServiceStatusDetectable, StatusHandler>();
     protected StatusHandler defaultHandler = new LogStatusHandler();
@@ -35,13 +39,12 @@ public class ServiceMonitor {
     }
 
     public Object checkServiceAOP(ProceedingJoinPoint call) throws Throwable {
-        Object returnValue;
         try {
-            returnValue = call.proceed();
-        } finally {
             checkService((ServiceStatusDetectable) call.getThis());
+        } catch (Throwable e) {
+            LOG.error("Could not check service status", e);
         }
-        return returnValue;
+        return call.proceed();
     }
 
     public void checkService(ServiceStatusDetectable statusDetectable) {

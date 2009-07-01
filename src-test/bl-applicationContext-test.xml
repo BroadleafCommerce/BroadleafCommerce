@@ -163,7 +163,7 @@
     	<property name="defaultHandler" ref="compositeStatusHandler"/>
     </bean>
     
-    <bean id="blAddressStandardizationService" class="org.broadleafcommerce.vendor.usps.service.AddressStandardizationServiceImpl">
+    <bean id="blAddressStandardizationService" class="org.broadleafcommerce.vendor.usps.service.USPSServiceImpl">
 		<property name="uspsCharSet" value="${usps.charset}"/>
 		<property name="uspsPassword" value="${usps.password}"/>
 		<property name="uspsServerName" value="${usps.server.name}"/>

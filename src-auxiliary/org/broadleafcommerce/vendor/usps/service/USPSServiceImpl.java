@@ -48,9 +48,9 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 @Service("blAddressStandardizationService")
-public class AddressStandardizationServiceImpl extends AbstractVendorService implements AddressStandardizationService, ServiceStatusDetectable {
+public class USPSServiceImpl extends AbstractVendorService implements USPSService, ServiceStatusDetectable {
 
-    private static final Log LOG = LogFactory.getLog(AddressStandardizationServiceImpl.class);
+    private static final Log LOG = LogFactory.getLog(USPSServiceImpl.class);
 
     private static final String USER_ID_ATTR = "USERID";
     private static final String PASSWORD_ATTR = "PASSWORD";

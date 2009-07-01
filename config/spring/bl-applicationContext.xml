@@ -124,7 +124,7 @@
 		<constructor-arg value="X"/>
 	</bean>
 	
-	<bean id="blAddressStandardizationService" class="org.broadleafcommerce.vendor.usps.service.AddressStandardizationServiceImpl">
+	<bean id="blAddressStandardizationService" class="org.broadleafcommerce.vendor.usps.service.USPSServiceImpl">
 		<property name="uspsCharSet" value="${usps.charset}"/>
 		<property name="uspsPassword" value="${usps.password}"/>
 		<property name="uspsServerName" value="${usps.server.name}"/>
@@ -143,7 +143,7 @@
 
 	<aop:config>
 	    <aop:aspect id="blServiceMonitorAspect" ref="blServiceMonitor">
-            <aop:pointcut id="blServiceCheckMethod" expression="execution(* org.broadleafcommerce.vendor.usps.service.AddressStandardizationService.standardizeAddress(..))"/>
+            <aop:pointcut id="blServiceCheckMethod" expression="execution(* org.broadleafcommerce.vendor.usps.service.USPSService.standardizeAddress(..))"/>
             <aop:around method="checkServiceAOP" pointcut-ref="blServiceCheckMethod"/>
         </aop:aspect>
 	</aop:config>

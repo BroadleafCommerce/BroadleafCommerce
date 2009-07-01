@@ -18,7 +18,7 @@ package org.broadleafcommerce.vendor.usps.service;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.vendor.usps.service.connection.AddressStandarizationResponse;
 
-public interface AddressStandardizationService {
+public interface USPSService {
 
     public AddressStandarizationResponse standardizeAddress(Address addr);
 
