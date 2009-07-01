@@ -12,8 +12,9 @@
 		<h2>Billing Information</h2>
 		<h3> Billing Address </h3>
 		<c:forEach var="info" items="${order.paymentInfos}" varStatus="status">
+			<c:out value="${info.address.firstName }" /> &nbsp; <c:out value="${info.address.lastName }" /> <br/>
 			<c:out value="${info.address.addressLine1}"/> <br/>
-			<c:if test="${info.address.addressLine2 != null}" >		
+			<c:if test="${info.address.addressLine2 != null && !(empty info.address.addressLine2)}" >		
 				<c:out value="${info.address.addressLine2}"/> <br/>
 			</c:if>
 			<c:out value="${info.address.city}"/>, &nbsp;
@@ -26,8 +27,9 @@
 	<c:forEach var="fg" items="${order.fulfillmentGroups}" varStatus="status">
 		<br/>
 		<h3>Shipping Address #${status.index+1}</h3>
+		<c:out value="${fg.address.firstName }" /> &nbsp; <c:out value="${fg.address.lastName }" /> <br/>
 		<c:out value="${fg.address.addressLine1}"/> <br/>
-		<c:if test="${fg.address.addressLine2 != null}" >	
+		<c:if test="${fg.address.addressLine2 != null && !(empty fg.address.addressLine2)}" >	
 			<c:out value="${fg.address.addressLine2}"/> <br/>
 		</c:if>
 		<c:out value="${fg.address.city}"/>, &nbsp;

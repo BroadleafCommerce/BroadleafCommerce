@@ -1,8 +1,9 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 	<h4 class="formSectionHeader">Shipping Information</h4>
 	<table class="formTable">
+		<tr>
 			<td style="text-align:right"><label for="contactInfo.name"><b>Name</b></label></td>
-			<td><form:input path="firstName"/> <form:input path="lastName"/></td>
+			<td><form:input path="shippingAddress.firstName"/> <form:input path="shippingAddress.lastName"/></td>
    		</tr>
 		<tr>
 			<td style="text-align:right"><label for="contactInfo.primaryPhone"><b>Primary Phone Number</b></label></td>
