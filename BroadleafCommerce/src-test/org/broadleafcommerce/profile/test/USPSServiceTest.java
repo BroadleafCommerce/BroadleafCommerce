@@ -24,8 +24,8 @@ import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.test.integration.BaseTest;
-import org.broadleafcommerce.vendor.usps.service.USPSService;
-import org.broadleafcommerce.vendor.usps.service.connection.AddressStandarizationResponse;
+import org.broadleafcommerce.vendor.usps.service.USPSAddressVerificationService;
+import org.broadleafcommerce.vendor.usps.service.message.AddressStandarizationResponse;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -34,10 +34,10 @@ import org.testng.annotations.Test;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
-public class USPSAddressStandardizationServiceTest extends BaseTest {
+public class USPSServiceTest extends BaseTest {
 
     @Resource
-    private USPSService addressStandardizationService;
+    private USPSAddressVerificationService addressStandardizationService;
     private GreenMail greenMail;
 
     @BeforeClass
@@ -58,7 +58,6 @@ public class USPSAddressStandardizationServiceTest extends BaseTest {
     }
 
     private Address getValidAddress() {
-        // TODO: For USPS test server, only certain addresses would work. Rest will throw an error
         Customer customer = new CustomerImpl();
         customer.setId(new Long(7427));
         customer.setUsername("customer1");

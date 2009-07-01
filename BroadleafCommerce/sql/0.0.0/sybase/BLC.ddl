@@ -421,6 +421,13 @@ CREATE TABLE BLC_PRODUCT (
   WEIGHT              decimal(19, 2) NULL, 
   DEFAULT_CATEGORY_ID numeric(19) NULL, 
   IS_FEATURED_PRODUCT bit DEFAULT '0' NOT NULL, 
+  WIDTH               decimal(19, 2) NULL, 
+  DEPTH               decimal(19, 2) NULL, 
+  HEIGHT              decimal(19, 2) NULL, 
+  GIRTH               decimal(19, 2) NULL, 
+  CONTAINER_SIZE      varchar(150) NULL, 
+  CONTAINER_SHAPE     varchar(150) NULL, 
+  IS_FRAGILE          bit NULL, 
   PRIMARY KEY (PRODUCT_ID));
 GO
 CREATE TABLE BLC_PRODUCT_ATTRIBUTE (

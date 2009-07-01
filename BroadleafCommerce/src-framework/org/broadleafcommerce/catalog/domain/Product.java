@@ -21,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
+import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
+
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description
  * of an item that can be sold (for example: a hat).  Products are not sold or added to a cart.  {@link Sku}s
@@ -308,4 +311,19 @@ public interface Product extends Serializable {
      */
     public void setFeaturedProduct(boolean isFeaturedProduct);
 
+    public boolean isMachineSortable();
+
+    public void setMachineSortable(boolean isMachineSortable);
+
+    public void setGirth(BigDecimal girth);
+
+    public BigDecimal getGirth();
+
+    public ContainerSizeType getSize();
+
+    public void setSize(ContainerSizeType size);
+
+    public ContainerShapeType getContainer();
+
+    public void setContainer(ContainerShapeType container);
 }
