@@ -45,6 +45,8 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
+import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -156,6 +158,9 @@ public class ProductImpl implements Product {
 
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
     protected boolean isFeaturedProduct = false;
+
+    @Column(name = "IS_MACHINE_SORTABLE")
+    protected boolean isMachineSortable = true;
 
     /** The skus. */
     @Transient
@@ -422,6 +427,30 @@ public class ProductImpl implements Product {
         dimension.setDepth(depth);
     }
 
+    public void setGirth(BigDecimal girth) {
+        dimension.setGirth(girth);
+    }
+
+    public BigDecimal getGirth() {
+        return dimension.getGirth();
+    }
+
+    public ContainerSizeType getSize() {
+        return dimension.getSize();
+    }
+
+    public void setSize(ContainerSizeType size) {
+        dimension.setSize(size);
+    }
+
+    public ContainerShapeType getContainer() {
+        return dimension.getContainer();
+    }
+
+    public void setContainer(ContainerShapeType container) {
+        dimension.setContainer(container);
+    }
+
     public BigDecimal getWeight() {
         return weight;
     }
@@ -452,6 +481,14 @@ public class ProductImpl implements Product {
 
     public void setFeaturedProduct(boolean isFeaturedProduct) {
         this.isFeaturedProduct = isFeaturedProduct;
+    }
+
+    public boolean isMachineSortable() {
+        return isMachineSortable;
+    }
+
+    public void setMachineSortable(boolean isMachineSortable) {
+        this.isMachineSortable = isMachineSortable;
     }
 
     @Override

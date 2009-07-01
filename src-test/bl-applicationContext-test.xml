@@ -163,15 +163,15 @@
     	<property name="defaultHandler" ref="compositeStatusHandler"/>
     </bean>
     
-    <bean id="blAddressStandardizationService" class="org.broadleafcommerce.vendor.usps.service.USPSServiceImpl">
+    <bean id="blAddressStandardizationService" class="org.broadleafcommerce.vendor.usps.service.USPSAddressVerificationServiceImpl">
 		<property name="uspsCharSet" value="${usps.charset}"/>
 		<property name="uspsPassword" value="${usps.password}"/>
 		<property name="uspsServerName" value="${usps.server.name}"/>
 		<property name="uspsServiceAPI" value="${usps.service.api}"/>
 		<property name="uspsUserName" value="${usps.user.name}"/>
 		<property name="abbreviations">
-			<bean class="org.broadleafcommerce.vendor.usps.service.module.AddressStandardAbbreviations">
-				<property name="abbreviationPropertyFile" value="classpath:org/broadleafcommerce/vendor/usps/service/module/address.abbreviations.properties"/>
+			<bean class="org.broadleafcommerce.vendor.usps.service.message.AddressStandardAbbreviations">
+				<property name="abbreviationPropertyFile" value="classpath:org/broadleafcommerce/vendor/usps/service/message/address.abbreviations.properties"/>
 			</bean>
 		</property>
 		<property name="failureReportingThreshold" value="1"/>

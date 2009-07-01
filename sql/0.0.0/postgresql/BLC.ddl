@@ -378,6 +378,13 @@ CREATE TABLE BLC_PRODUCT (
   WEIGHT              numeric(19, 2), 
   DEFAULT_CATEGORY_ID int8, 
   IS_FEATURED_PRODUCT bool DEFAULT '0' NOT NULL, 
+  WIDTH               numeric(19, 2), 
+  DEPTH               numeric(19, 2), 
+  HEIGHT              numeric(19, 2), 
+  GIRTH               numeric(19, 2), 
+  CONTAINER_SIZE      varchar(150), 
+  CONTAINER_SHAPE     varchar(150), 
+  IS_FRAGILE          bool, 
   PRIMARY KEY (PRODUCT_ID));
 CREATE TABLE BLC_PRODUCT_ATTRIBUTE (
   ID         int8 NOT NULL, 
