@@ -38,25 +38,29 @@ public abstract class AbstractVendorService {
         connection.setDoOutput(true);
         connection.setRequestMethod(POST_METHOD);
 
-        OutputStreamWriter osw = new OutputStreamWriter(connection.getOutputStream());
-        boolean isFirst = true;
-        for (String key : content.keySet()) {
-            if (!isFirst) {
-                osw.write("&");
-            }
-            isFirst = false;
-            String value = content.get(key);
-            osw.write(URLEncoder.encode(key, encodeCharset));
-            osw.write("=");
-            osw.write(URLEncoder.encode(value, encodeCharset));
-        }
-        osw.flush();
-
+        OutputStreamWriter osw = null;
         try {
+            osw = new OutputStreamWriter(connection.getOutputStream());
+            boolean isFirst = true;
+            for (String key : content.keySet()) {
+                if (!isFirst) {
+                    osw.write("&");
+                }
+                isFirst = false;
+                String value = content.get(key);
+                osw.write(URLEncoder.encode(key, encodeCharset));
+                osw.write("=");
+                osw.write(URLEncoder.encode(value, encodeCharset));
+            }
+            osw.flush();
             osw.close();
         } catch (IOException e) {
             // We'll try to avoid stopping processing and just log the error if the OutputStream doesn't close
-            LOG.error("Problem closing the OuputStream to the USPS Service", e);
+            LOG.error("Problem closing the OuputStream to destination: " + destination.toExternalForm(), e);
+        } finally {
+            if (osw != null) {
+                try { osw.close(); } catch (Throwable e) {}
+            }
         }
 
         return new BufferedInputStream(connection.getInputStream());
