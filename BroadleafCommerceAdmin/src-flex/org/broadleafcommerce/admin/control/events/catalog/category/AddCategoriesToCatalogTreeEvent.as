@@ -9,13 +9,13 @@ package org.broadleafcommerce.admin.control.events.catalog.category
 		public static const EVENT_ADD_CATEGORIES_TO_CATALOG_TREE:String = "add_categories_to_catalog_tree_event";
 		
 		public var catalogTree:ArrayCollection;
-		public var categoriesArray:ArrayCollection;
+		public var categoryArray:ArrayCollection;
 
-		public function AddCategoriesToCatalogTreeEvent(catalogTree:ArrayCollection, categoriesArray:ArrayCollection)
+		public function AddCategoriesToCatalogTreeEvent(catalogTree:ArrayCollection, categoryArray:ArrayCollection)
 		{
 			super(EVENT_ADD_CATEGORIES_TO_CATALOG_TREE);
 			this.catalogTree = catalogTree;
-			this.categoriesArray = categoriesArray;
+			this.categoryArray = categoryArray;
 		}
 		
 	}

@@ -8,11 +8,11 @@
 	creationComplete="creationComplete()">
 	<mx:Script>
 		<![CDATA[
-			import org.broadleafcommerce.admin.control.events.catalog.product.AddProductsToCatalogTreeEvent;
+			import org.broadleafcommerce.admin.control.events.catalog.product.AddProductsToCategoriesEvent;
 			import org.broadleafcommerce.admin.view.catalog.category.CategoryCanvas;
 			import org.broadleafcommerce.admin.view.catalog.sku.SkuCanvas;
 			import org.broadleafcommerce.admin.view.catalog.product.ProductCanvas;
-			import org.broadleafcommerce.admin.view.catalog.category.ViewCategoriesCanvas;
+			import org.broadleafcommerce.admin.view.catalog.category.CategoryTreeCanvas;
 			import org.broadleafcommerce.admin.view.catalog.CatalogTreeCanvas;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;

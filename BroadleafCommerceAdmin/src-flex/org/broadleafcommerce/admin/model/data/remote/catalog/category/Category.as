@@ -30,5 +30,9 @@ package org.broadleafcommerce.admin.model.data.remote.catalog.category
 		public function set children(newChildren:ArrayCollection):void{
 			this.allChildCategories = newChildren;
 		}
+		
+		public function get uid():String{
+			return "Category_"+id;
+		}
 	}
 }

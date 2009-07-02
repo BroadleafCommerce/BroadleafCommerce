@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%" xmlns:components="org.broadleafcommerce.admin.view.catalog.category.components.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.control.events.catalog.category.EditCategoryEvent;
+			import mx.events.DragEvent;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.model.view.CategoryModel;
+			import mx.events.ListEvent;
+			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
+			import mx.events.ItemClickEvent;
+			import org.broadleafcommerce.admin.model.AppModelLocator;
+			
+			[Bindable]
+			private var catalogTree:ArrayCollection = AppModelLocator.getInstance().catalogTree;
+			
+			[Bindable]
+			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel; 
+			
+		]]>
+	</mx:Script>
+	<mx:Binding source="catalogTree"
+						destination="categoryTree.dataProvider" />
+	<components:CategoryTree
+		id="categoryTree"
+		width="300"
+		height="400"
+		cornerRadius="4"/>
+</mx:Canvas>

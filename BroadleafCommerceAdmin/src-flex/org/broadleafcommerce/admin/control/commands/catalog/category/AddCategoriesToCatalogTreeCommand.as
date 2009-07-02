@@ -4,6 +4,7 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
 	import mx.collections.ArrayCollection;
+	import mx.utils.ObjectUtil;
 	
 	import org.broadleafcommerce.admin.control.events.catalog.category.AddCategoriesToCatalogTreeEvent;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
@@ -18,9 +19,12 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 		public function execute(event:CairngormEvent):void
 		{
 			var actce:AddCategoriesToCatalogTreeEvent = AddCategoriesToCatalogTreeEvent(event);
-			var rawCats:ArrayCollection = actce.categoriesArray;
+			var rawCats:ArrayCollection = actce.categoryArray;
 			var rootCats:ArrayCollection = actce.catalogTree;
 			var subCatIds:ArrayCollection = new ArrayCollection();
+			
+			rootCats.removeAll();
+			
 			for (var i:String  in rawCats){
 				var category:Category = rawCats[i];
 				if(category.defaultParentCategory != null){
@@ -33,7 +37,7 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 								category2.allChildCategories.addItem(category);
 							}
 						}			
-						subCatIds.addItem(int(i));
+						subCatIds.addItem(category.id);
 					}
 				}else{
 					rootCats.addItem(category);

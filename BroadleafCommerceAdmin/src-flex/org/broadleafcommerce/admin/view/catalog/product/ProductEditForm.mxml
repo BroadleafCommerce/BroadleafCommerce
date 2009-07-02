@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Form
-	xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:view="org.broadleafcommerce.admin.view.*"
-	defaultButton="{saveButton}">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:view="org.broadleafcommerce.admin.view.*" width="100%" height="100%"
+	defaultButton="{saveButton}"
+	  xmlns:ProductParentsList="org.broadleafcommerce.admin.view.components.ProductParentsList.*" xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.view.CategoryModel;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 			import mx.utils.ObjectUtil;
-			import org.broadleafcommerce.admin.control.events.catalog.product.SaveCatalogProductEvent;
+			import org.broadleafcommerce.admin.control.events.catalog.product.SaveProductEvent;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			import org.broadleafcommerce.admin.model.view.ProductModel;
 			
 			[Bindable]
-			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;			
+			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;	
+			
+			[Bindable]
+			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel;		
 		
 			private function handleSaveProduct(event:Event):void{
 				var product:Product = Product(ObjectUtil.copy(productModel.currentProduct));
@@ -27,7 +31,7 @@
 				product.dimension.depth = depthTextInput.text;
 				product.dimension.width = widthTextInput.text;
 				product.dimension.height = heightTextInput.text;
-				new SaveCatalogProductEvent(product).dispatch();
+				new SaveProductEvent(product).dispatch();
 			}
 		]]>
 	</mx:Script>
@@ -63,7 +67,18 @@
 		destination="widthTextInput.text"/>
 	<mx:Binding
 		source="productModel.currentProduct.dimension.height"
-		destination="heightTextInput.text"/>
+		destination="heightTextInput.text"/>		
+	<mx:Binding
+		source="productModel.currentProduct.allSkus"
+		destination="childList.dataProvider" />
+	<mx:Binding
+		source="categoryModel.categoryArray"
+		destination="parentList.dataProvider" />
+	<mx:Binding
+		source="productModel.currentProduct.allParentCategoriesArray"
+		destination="parentList.selectedItems"/>
+<mx:Form>
+		
 	<mx:FormItem 
 		label="Name:">
 		<mx:TextInput
@@ -126,3 +141,18 @@
 			click="handleSaveProduct(event)"/>
 	</mx:FormItem>
 </mx:Form>
+	<mx:FormItem
+		label="SKUs" x="387" y="276" width="223" height="86">
+		<mx:List
+			id="childList"
+			labelField="name"
+			width="200"
+			dropEnabled="true"
+			/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Parent Categories" x="316" y="10">
+		<components:ProductParentsList id="parentList" labelField="name" 
+			allowMultipleSelection="true"  width="175" height="252"/>
+	</mx:FormItem>
+</mx:Canvas>

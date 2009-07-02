@@ -11,7 +11,7 @@
 			private var appModel:AppModelLocator = AppModelLocator.getInstance(); 
 			
 			private function handleCreationComplete():void{
-				this.skuDataGrid.dataProvider = this.appModel.catalogSkus;
+				this.skuDataGrid.dataProvider = this.appModel.skuModel.catalogSkus;
 			}
 		]]>
 	</mx:Script>

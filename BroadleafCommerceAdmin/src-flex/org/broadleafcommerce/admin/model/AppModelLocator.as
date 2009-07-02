@@ -6,12 +6,10 @@ package org.broadleafcommerce.admin.model
 	
 	import mx.collections.ArrayCollection;
 	
-	import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
-	import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
-	import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
 	import org.broadleafcommerce.admin.model.view.CategoryModel;
 	import org.broadleafcommerce.admin.model.view.OfferModel;
 	import org.broadleafcommerce.admin.model.view.ProductModel;
+	import org.broadleafcommerce.admin.model.view.SkuModel;
 
 	public class AppModelLocator implements IModelLocator
 	{
@@ -46,10 +44,6 @@ package org.broadleafcommerce.admin.model
 		public var productModel:ProductModel = new ProductModel();
 		
 		[Bindable]
-		public var catalogSkus:ArrayCollection = new ArrayCollection();
-
-		[Bindable]
-		public var currentSku:Sku;
-		
+		public var skuModel:SkuModel = new SkuModel();		
 	}
 }

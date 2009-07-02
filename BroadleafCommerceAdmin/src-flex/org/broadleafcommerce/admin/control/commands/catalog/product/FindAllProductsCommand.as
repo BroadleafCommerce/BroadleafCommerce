@@ -1,4 +1,4 @@
-package org.broadleafcommerce.admin.control.commands.catalog.category
+package org.broadleafcommerce.admin.control.commands.catalog.product
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
@@ -12,20 +12,21 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 	import org.broadleafcommerce.admin.control.events.catalog.BuildCatalogEvent;
 	import org.broadleafcommerce.admin.model.AppModelLocator;
 	import org.broadleafcommerce.admin.model.business.BroadleafCommerceAdminServiceDelegate;
-
-	public class FindAllCatalogCategoriesCommand implements Command, IResponder
+	
+	public class FindAllProductsCommand implements Command, IResponder
 	{
 		public function execute(event:CairngormEvent):void
 		{
 			var delegate:BroadleafCommerceAdminServiceDelegate = new BroadleafCommerceAdminServiceDelegate(this);
-			delegate.findAllCategories();
+			delegate.findAllProducts();
 		}
 		
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			AppModelLocator.getInstance().categoryModel.categoryArray = ArrayCollection(event.result);
+			AppModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
 			var bcte:BuildCatalogEvent = new BuildCatalogEvent();
+			var x:ArrayCollection = ArrayCollection(event.result);
 			bcte.dispatch()
 		}
 		
@@ -34,6 +35,6 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 			var event:FaultEvent = FaultEvent(info);
 			Alert.show("Error: "+ event);
 		}
-		
+
 	}
 }

@@ -1,30 +1,29 @@
-package org.broadleafcommerce.admin.control.commands.catalog.sku
+package org.broadleafcommerce.admin.control.commands.catalog.product
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
-	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
-	import mx.rpc.events.ResultEvent;
 	
-	import org.broadleafcommerce.admin.control.events.catalog.BuildCatalogEvent;
-	import org.broadleafcommerce.admin.model.AppModelLocator;
+	import org.broadleafcommerce.admin.control.events.catalog.product.FindAllProductsEvent;
+	import org.broadleafcommerce.admin.control.events.catalog.product.SaveProductEvent;
 	import org.broadleafcommerce.admin.model.business.BroadleafCommerceAdminServiceDelegate;
+	import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 	
-	public class FindAllCatalogSkusCommand implements Command, IResponder
+	public class SaveProductCommand implements Command, IResponder
 	{
 		public function execute(event:CairngormEvent):void{
+			var scpe:SaveProductEvent = SaveProductEvent(event);
+			var product:Product = scpe.product;
 			var delegate:BroadleafCommerceAdminServiceDelegate = new BroadleafCommerceAdminServiceDelegate(this);
-			delegate.findAllSkus();
+			delegate.saveProduct(product);			
 		}
 		
 		public function result(data:Object):void{
-			var event:ResultEvent = ResultEvent(data);
-			AppModelLocator.getInstance().skuModel.catalogSkus = ArrayCollection(event.result);
-			var bcte:BuildCatalogEvent = new BuildCatalogEvent();
-			bcte.dispatch()
+			var facpe:FindAllProductsEvent = new FindAllProductsEvent();
+			facpe.dispatch();
 		}
 		
 		public function fault(info:Object):void{

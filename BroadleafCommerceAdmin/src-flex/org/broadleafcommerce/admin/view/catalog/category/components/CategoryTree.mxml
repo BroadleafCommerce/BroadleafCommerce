@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Tree xmlns:mx="http://www.adobe.com/2006/mxml"
+		labelField="name"
+		dragEnabled="true"
+		dropEnabled="true"
+		itemClick="handleItemClick(event)"
+		dataDescriptor="{new CategoryTreeDataDescriptor()}">
+		<mx:Script>
+			<![CDATA[
+				import org.broadleafcommerce.admin.control.events.catalog.category.EditCategoryEvent;
+				import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
+				import mx.events.ListEvent;
+
+				private function handleItemClick(event:ListEvent):void{
+					var selectedItem:Category = Category(this.selectedItem); 
+					var ecce:EditCategoryEvent = new EditCategoryEvent(selectedItem);
+					ecce.dispatch();
+				}
+				
+			]]>
+		</mx:Script>
+	
+</mx:Tree>

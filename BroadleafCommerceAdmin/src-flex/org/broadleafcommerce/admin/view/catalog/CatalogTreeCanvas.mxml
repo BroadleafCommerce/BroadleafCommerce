@@ -7,8 +7,8 @@
 	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
-			import org.broadleafcommerce.admin.control.events.catalog.category.NewCatalogCategoryEvent;
-			import org.broadleafcommerce.admin.control.events.catalog.category.EditCatalogCategoryEvent;
+			import org.broadleafcommerce.admin.control.events.catalog.category.NewCategoryEvent;
+			import org.broadleafcommerce.admin.control.events.catalog.category.EditCategoryEvent;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			import org.broadleafcommerce.admin.model.view.CategoryModel;
@@ -22,7 +22,7 @@
 			}
 		
 			private function handleNewCategory(event:Event):void{
-				var ncce:NewCatalogCategoryEvent = new NewCatalogCategoryEvent();
+				var ncce:NewCategoryEvent = new NewCategoryEvent();
 				ncce.dispatch();
 //				this.workingAreaHBox.removeAllChildren();
 //				this.workingAreaHBox.addChild(new EditCategoryFormCanvas());
@@ -34,7 +34,7 @@
 //			}
 			
 			private function handleItemClicked(event:ListEvent):void{
-				var ecce:EditCatalogCategoryEvent = new EditCatalogCategoryEvent(viewCategoriesCanvas.selectedItem);
+				var ecce:EditCategoryEvent = new EditCategoryEvent(viewCategoriesCanvas.selectedItem);
 				ecce.dispatch();
 //				this.workingAreaHBox.removeAllChildren();
 //				var ecfc:EditCategoryFormCanvas = new EditCategoryFormCanvas();
@@ -57,7 +57,7 @@
 				id="newCategoryLinkButton"
 				label="New Category"
 				click="handleNewCategory(event)"/>
-			<category:ViewCategoriesCanvas id="viewCategoriesCanvas"
+			<category:CategoriesTreeCanvas id="viewCategoriesCanvas"
 				categorySelected="handleItemClicked(event)"/>
 		</mx:VBox>
 		<mx:HBox
@@ -70,7 +70,7 @@
 			paddingLeft="10"
 			paddingRight="10"
 			paddingTop="10">
-			<category:EditCategoryFormCanvas id="editCategoryCanvas" visible="false" />
+			<category:CategoryEditFormCanvas id="editCategoryCanvas" visible="false" />
 		</mx:HBox>		
 	</mx:HBox>
 	<mx:states>

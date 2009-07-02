@@ -6,42 +6,43 @@
 	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.view.SkuModel;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
-			import org.broadleafcommerce.admin.control.events.catalog.sku.SaveCatalogSkuEvent;
+			import org.broadleafcommerce.admin.control.events.catalog.sku.SaveSkuEvent;
 			
 			[Bindable]
-			private var appModel:AppModelLocator = AppModelLocator.getInstance();
+			private var skuModel:SkuModel = AppModelLocator.getInstance().skuModel;
 			
 			private function handleCreationComplete():void{
 				this.nameTextInput.setFocus();
 			}
 			
 			private function handleSaveSku(event:Event):void{
-				appModel.currentSku.name = nameTextInput.text;
-				appModel.currentSku.description = descriptionTextInput.text;
-				appModel.currentSku.longDescription = descriptionTextInput.text;
-				appModel.currentSku.activeStartDate = activeStartDateDateField.selectedDate;
-				appModel.currentSku.activeEndDate = activeEndDateDateField.selectedDate;
-				appModel.currentSku.retailPrice.amount = Number(retailPriceTextInput.text);
-				var scse:SaveCatalogSkuEvent = new SaveCatalogSkuEvent(appModel.currentSku);
+				skuModel.currentSku.name = nameTextInput.text;
+				skuModel.currentSku.description = descriptionTextInput.text;
+				skuModel.currentSku.longDescription = descriptionTextInput.text;
+				skuModel.currentSku.activeStartDate = activeStartDateDateField.selectedDate;
+				skuModel.currentSku.activeEndDate = activeEndDateDateField.selectedDate;
+				skuModel.currentSku.retailPrice.amount = Number(retailPriceTextInput.text);
+				var scse:SaveSkuEvent = new SaveSkuEvent(skuModel.currentSku);
 				scse.dispatch();
 			}
 		]]>
 	</mx:Script>
 	<mx:Binding
-		source="appModel.currentSku.name"
+		source="skuModel.currentSku.name"
 		destination="nameTextInput.text"/>
 	<mx:Binding
-		source="appModel.currentSku.description"
+		source="skuModel.currentSku.description"
 		destination="descriptionTextInput.text"/>
 	<mx:Binding
-		source="appModel.currentSku.longDescription"
+		source="skuModel.currentSku.longDescription"
 		destination="longDescriptionTextInput.text"/>
 	<mx:Binding
-		source="appModel.currentSku.activeStartDate"
+		source="skuModel.currentSku.activeStartDate"
 		destination="activeStartDateDateField.selectedDate"/>
 	<mx:Binding
-		source="appModel.currentSku.activeEndDate"
+		source="skuModel.currentSku.activeEndDate"
 		destination="activeEndDateDateField.selectedDate"/>
 	<mx:DateFormatter
 		id="dateFormatter"/>

@@ -4,7 +4,7 @@
 	width="100%"
 	<mx:Script>
 		<![CDATA[
-			import org.broadleafcommerce.admin.control.events.catalog.sku.SaveCatalogSkuEvent;
+			import org.broadleafcommerce.admin.control.events.catalog.sku.SaveSkuEvent;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
 			
 			[Bindable]

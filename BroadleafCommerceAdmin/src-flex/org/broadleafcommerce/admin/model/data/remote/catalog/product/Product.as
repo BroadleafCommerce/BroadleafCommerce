@@ -1,12 +1,13 @@
 package org.broadleafcommerce.admin.model.data.remote.catalog.product
 {
 	import mx.collections.ArrayCollection;
+	import mx.core.IUID;
 	
 	import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 	
 	[Bindable]
 	[RemoteClass(alias="org.broadleafcommerce.catalog.domain.ProductImpl")]
-	public class Product
+	public class Product 
 	{
 		public var id:Number;
 		public var name:String;
@@ -34,5 +35,10 @@ package org.broadleafcommerce.admin.model.data.remote.catalog.product
 		public function set children(children:ArrayCollection):void{
 			allSkus = children;
 		}
+		
+		public function get allParentCategoriesArray():Array{
+			return allParentCategories.toArray();
+		}
+		
 	}
 }

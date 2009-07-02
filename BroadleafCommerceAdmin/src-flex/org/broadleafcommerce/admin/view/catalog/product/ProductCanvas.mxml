@@ -6,9 +6,8 @@
 	width="95%">
 	<mx:Script>
 		<![CDATA[
-			import org.broadleafcommerce.admin.control.events.catalog.product.ViewCatalogProductEvent;
-			import org.broadleafcommerce.admin.control.events.catalog.product.EditCatalogProductEvent;
-			import org.broadleafcommerce.admin.control.events.catalog.product.NewCatalogProductEvent;
+			import org.broadleafcommerce.admin.control.events.catalog.product.EditProductEvent;
+			import org.broadleafcommerce.admin.control.events.catalog.product.NewProductEvent;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			import org.broadleafcommerce.admin.model.view.ProductModel;
 			
@@ -16,18 +15,15 @@
 			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;
 		
 			private function handleNewProduct(event:Event):void{
-				new NewCatalogProductEvent().dispatch();
+				new NewProductEvent().dispatch();
 			}
 			
-			private function handleViewProducts(event:Event):void{
-				new ViewCatalogProductEvent().dispatch();
-			}			
 		]]>
 	</mx:Script>
 	<mx:Binding
 		source="productModel.viewState"
 		destination="currentState"/>
-	<mx:HBox 
+	<mx:VBox 
 		width="100%"
 		height="100%"
 		horizontalGap="20">
@@ -37,10 +33,6 @@
 				id="newProductLinkButton"
 				label="New Product"
 				click="handleNewProduct(event)"/>
-			<mx:LinkButton
-				id="viewProductsLinkButton"
-				label="View Products"
-				click="handleViewProducts(event)"/>
 		</mx:VBox>
 		<mx:Canvas
 			id="workingAreaHBox"
@@ -48,58 +40,30 @@
 			height="500"
 			borderStyle="solid"
 			cornerRadius="4">
-			<product:ProductEditForm
-				id="productEditForm"
-				visible="false"/>
-			<product:ProductView
-				id="productView"
-				visible="false"/>
+			<product:ProductsView id="productsView"  width="490" height="445"/>
+			<mx:TabNavigator x="498" y="10" width="740" height="436">
+				<product:ProductEditForm id="productEditForm" label="General" width="100%" height="100%" />
+				<mx:Canvas label="Media" width="100%" height="100%">
+				</mx:Canvas>
+				<mx:Canvas label="Skus" width="100%" height="100%" visible="false">
+				</mx:Canvas>				
+			</mx:TabNavigator>
+			
+			
 		</mx:Canvas>		
-	</mx:HBox>
+	</mx:VBox>
 	<mx:states>
 		<mx:State
 			name="{ProductModel.STATE_NONE}">
-			<mx:SetProperty
-				target="{productEditForm}"
-				name="visible"
-				value="false"/>
-			<mx:SetProperty
-				target="{productView}"
-				name="visible"
-				value="false"/>
 		</mx:State>
 		<mx:State
 			name="{ProductModel.STATE_NEW}">
-			<mx:SetProperty
-				target="{productView}"
-				name="visible"
-				value="false"/>
-			<mx:SetProperty
-				target="{productEditForm}"
-				name="visible"
-				value="true"/>
 		</mx:State>
 		<mx:State
 			name="{ProductModel.STATE_EDIT}">
-			<mx:SetProperty
-				target="{productView}"
-				name="visible"
-				value="false"/>
-			<mx:SetProperty
-				target="{productEditForm}"
-				name="visible"
-				value="true"/>
 		</mx:State>
 		<mx:State
 			name="{ProductModel.STATE_VIEW}">
-			<mx:SetProperty
-				target="{productView}"
-				name="visible"
-				value="true"/>
-			<mx:SetProperty
-				target="{productEditForm}"
-				name="visible"
-				value="false"/>
 		</mx:State>
 	</mx:states>
 </mx:Canvas>
