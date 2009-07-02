@@ -35,6 +35,7 @@ import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.StateDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.vendor.service.AbstractVendorService;
+import org.broadleafcommerce.vendor.service.exception.AddressStandardizationException;
 import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 import org.broadleafcommerce.vendor.usps.service.message.AddressStandardAbbreviations;
@@ -82,7 +83,7 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
     protected StateDao stateDao;
 
     @Override
-    public AddressStandarizationResponse standardizeAddress(Address address) {
+    public AddressStandarizationResponse standardizeAddress(Address address) throws AddressStandardizationException {
         AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
         InputStream response = null;
         try {
@@ -94,9 +95,8 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
             clearStatus();
             return addressStandarizationResponse;
         } catch (Exception e) {
-            LOG.error("Exception", e);
             incrementFailure();
-            return getDownResponse("standardizeAddress", new Object[] { address });
+            throw new AddressStandardizationException(e);
         } finally {
             if (response != null) {
                 try {
@@ -125,7 +125,8 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
         }
     }
 
-    protected void tokenizeAddress(Address addr, boolean isStandardized) {
+    @Override
+    public Address tokenizeAddress(Address addr, boolean isStandardized) {
         String addLine1 = addr.getAddressLine1();
         String addLine2 = addr.getAddressLine2();
         String appendedAddress = "";
@@ -179,10 +180,18 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
         }
 
         addr.setTokenizedAddress(tokenizedAddress);
+        return addr;
     }
 
-    protected void standardizeAndTokenizeAddress(Address address) {
-        AddressStandarizationResponse standardizationResponse = standardizeAddress(address);
+    @Override
+    public Address standardizeAndTokenizeAddress(Address address) {
+        AddressStandarizationResponse standardizationResponse;
+        try {
+            standardizationResponse = standardizeAddress(address);
+        } catch (AddressStandardizationException e) {
+            LOG.error("Exception", e);
+            standardizationResponse = getDownResponse("standardizeAddress", new Object[] { address });
+        }
 
         if (standardizationResponse.isErrorDetected()) {
             address.setStandardized(false);
@@ -191,7 +200,7 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
             address = standardizationResponse.getAddress();
         }
 
-        tokenizeAddress(address, !standardizationResponse.isErrorDetected());
+        return tokenizeAddress(address, !standardizationResponse.isErrorDetected());
     }
 
     protected InputStream callUSPSAddressStandardization(Address address) throws IOException {

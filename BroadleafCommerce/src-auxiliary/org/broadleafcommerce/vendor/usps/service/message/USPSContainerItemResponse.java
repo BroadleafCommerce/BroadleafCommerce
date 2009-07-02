@@ -15,19 +15,19 @@
  */
 package org.broadleafcommerce.vendor.usps.service.message;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
-public class USPSShippingPriceRequest {
+import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
 
-    protected List<USPSContainerItemRequest> containerItems = new ArrayList<USPSContainerItemRequest>();
+public interface USPSContainerItemResponse {
 
-    public List<USPSContainerItemRequest> getContainerItems() {
-        return containerItems;
-    }
+    public String getPackageId();
 
-    public void setContainerItems(List<USPSContainerItemRequest> containerItems) {
-        this.containerItems = containerItems;
-    }
+    public void setPackageId(String packageId);
+
+    public Map<USPSShippingMethodType, Money> getRates();
+
+    public void setRates(Map<USPSShippingMethodType, Money> rates);
 
 }

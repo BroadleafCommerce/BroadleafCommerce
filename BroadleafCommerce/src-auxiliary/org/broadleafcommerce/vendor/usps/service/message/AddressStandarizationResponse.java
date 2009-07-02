@@ -18,6 +18,7 @@ package org.broadleafcommerce.vendor.usps.service.message;
 import org.broadleafcommerce.profile.domain.Address;
 
 public class AddressStandarizationResponse {
+
     private Address address;
     private String returnText;
     private boolean errorDetected = false;

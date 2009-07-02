@@ -13,21 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.usps.service.message;
+package org.broadleafcommerce.vendor.service.exception;
 
-import java.util.ArrayList;
-import java.util.List;
+public class AddressStandardizationException extends Exception {
 
-public class USPSShippingPriceRequest {
+    private static final long serialVersionUID = 1L;
 
-    protected List<USPSContainerItemRequest> containerItems = new ArrayList<USPSContainerItemRequest>();
-
-    public List<USPSContainerItemRequest> getContainerItems() {
-        return containerItems;
+    public AddressStandardizationException() {
+        super();
     }
 
-    public void setContainerItems(List<USPSContainerItemRequest> containerItems) {
-        this.containerItems = containerItems;
+    public AddressStandardizationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public AddressStandardizationException(String message) {
+        super(message);
+    }
+
+    public AddressStandardizationException(Throwable cause) {
+        super(cause);
     }
 
 }

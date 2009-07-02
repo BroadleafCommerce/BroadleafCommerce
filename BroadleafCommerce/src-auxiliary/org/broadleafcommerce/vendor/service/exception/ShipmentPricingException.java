@@ -13,21 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.usps.service.message;
+package org.broadleafcommerce.vendor.service.exception;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ShipmentPricingException extends Exception {
 
-public class USPSShippingPriceRequest {
+    private static final long serialVersionUID = 1L;
 
-    protected List<USPSContainerItemRequest> containerItems = new ArrayList<USPSContainerItemRequest>();
-
-    public List<USPSContainerItemRequest> getContainerItems() {
-        return containerItems;
+    public ShipmentPricingException() {
+        super();
     }
 
-    public void setContainerItems(List<USPSContainerItemRequest> containerItems) {
-        this.containerItems = containerItems;
+    public ShipmentPricingException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ShipmentPricingException(String message) {
+        super(message);
+    }
+
+    public ShipmentPricingException(Throwable cause) {
+        super(cause);
     }
 
 }
