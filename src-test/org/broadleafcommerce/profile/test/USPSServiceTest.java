@@ -96,8 +96,12 @@ public class USPSServiceTest extends BaseTest {
         if (addressStandardizationService.getUspsUserName().equals("?")) {
             return;
         }
-        AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(null);
-        assert(standardizedResponse.isErrorDetected());
+        try {
+            addressStandardizationService.standardizeAddress(null);
+            assert(false);
+        } catch (Exception e) {
+            assert(true);
+        }
     }
 
     @Test(groups = { "testSuccessfulAddress" }, dependsOnGroups="testException")

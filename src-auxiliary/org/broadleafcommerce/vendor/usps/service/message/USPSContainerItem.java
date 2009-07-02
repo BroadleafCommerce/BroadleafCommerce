@@ -17,11 +17,15 @@ package org.broadleafcommerce.vendor.usps.service.message;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
 
-public class USPSContainerItem {
+public class USPSContainerItem implements USPSContainerItemRequest, USPSContainerItemResponse {
 
     protected ContainerSizeType containerSize;
     protected ContainerShapeType containerShape;
@@ -32,6 +36,10 @@ public class USPSContainerItem {
     protected BigDecimal girth;
     protected BigDecimal weight;
     protected Date shipDate;
+    protected String packageId;
+    protected Map<USPSShippingMethodType, Money> rates = new HashMap<USPSShippingMethodType, Money>();
+    protected String zipOrigination;
+    protected String zipDestination;
 
     public ContainerSizeType getContainerSize() {
         return containerSize;
@@ -103,6 +111,38 @@ public class USPSContainerItem {
 
     public void setShipDate(Date shipDate) {
         this.shipDate = shipDate;
+    }
+
+    public String getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(String packageId) {
+        this.packageId = packageId;
+    }
+
+    public Map<USPSShippingMethodType, Money> getRates() {
+        return rates;
+    }
+
+    public void setRates(Map<USPSShippingMethodType, Money> rates) {
+        this.rates = rates;
+    }
+
+    public String getZipOrigination() {
+        return zipOrigination;
+    }
+
+    public void setZipOrigination(String zipOrigination) {
+        this.zipOrigination = zipOrigination;
+    }
+
+    public String getZipDestination() {
+        return zipDestination;
+    }
+
+    public void setZipDestination(String zipDestination) {
+        this.zipDestination = zipDestination;
     }
 
 }

@@ -18,16 +18,16 @@ package org.broadleafcommerce.vendor.usps.service.message;
 import java.util.ArrayList;
 import java.util.List;
 
-public class USPSShippingPriceRequest {
+public class USPSShippingPriceResponse {
 
-    protected List<USPSContainerItemRequest> containerItems = new ArrayList<USPSContainerItemRequest>();
+    List<USPSContainerItemResponse> responses = new ArrayList<USPSContainerItemResponse>();
 
-    public List<USPSContainerItemRequest> getContainerItems() {
-        return containerItems;
+    public List<USPSContainerItemResponse> getResponses() {
+        return responses;
     }
 
-    public void setContainerItems(List<USPSContainerItemRequest> containerItems) {
-        this.containerItems = containerItems;
+    public void setResponses(List<USPSContainerItemResponse> responses) {
+        this.responses = responses;
     }
 
 }
