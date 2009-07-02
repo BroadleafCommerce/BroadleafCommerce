@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class RepeatSubmitProtectionFilter implements Filter {
 
@@ -47,6 +48,7 @@ public class RepeatSubmitProtectionFilter implements Filter {
             requestURI = ((HttpServletRequest) request).getRequestURI();
             if (requests.containsKey(sessionId) && requests.get(sessionId).contains(requestURI)) {
                 //we are currently already processing this request
+                ((HttpServletResponse) response).setStatus(HttpServletResponse.SC_NO_CONTENT);
                 return;
             }
             List<String> myRequests = requests.get(sessionId);
