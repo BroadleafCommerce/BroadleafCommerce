@@ -45,36 +45,45 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public IdGeneration findNextId(String idType) {
-        IdGeneration idGeneration;
-
+        IdGeneration response;
         Query query = em.createNamedQuery("BC_FIND_NEXT_ID");
         query.setParameter("idType", idType);
         query.setHint(getQueryCacheableKey(), false);
         try {
-            idGeneration =  (IdGeneration) query.getSingleResult();
+            IdGeneration idGeneration =  (IdGeneration) query.getSingleResult();
+            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.IdGeneration");
+            response.setBatchSize(idGeneration.getBatchSize());
+            response.setBatchStart(idGeneration.getBatchStart());
+            response.setType(idGeneration.getType());
+            idGeneration.setBatchStart(idGeneration.getBatchStart() + idGeneration.getBatchSize());
+            em.merge(idGeneration);
+            em.flush();
         } catch (NoResultException nre) {
             // No result not found.
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No row found in idGenerator table for " + idType + " creating row.");
             }
-            idGeneration =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.IdGeneration");
-            idGeneration.setType(idType);
-            idGeneration.setBatchStart(getDefaultBatchStart());
-            idGeneration.setBatchSize(getDefaultBatchSize());
+            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.IdGeneration");
+            response.setType(idType);
+            response.setBatchStart(getDefaultBatchStart());
+            response.setBatchSize(getDefaultBatchSize());
             try {
-                em.persist(idGeneration);
+                em.persist(response);
+                em.flush();
             } catch (EntityExistsException e) {
                 if (LOG.isWarnEnabled()) {
                     LOG.warn("Error inserting row id generation for idType " + idType + ".  Requerying table.");
                 }
                 return findNextId(idType);
             }
+        } catch (Exception e) {
+            em.clear();
+            if (LOG.isWarnEnabled()) {
+                LOG.warn("Error saving batch start for " + idType + ".  Requerying table.");
+            }
+            return findNextId(idType);
         }
-        return idGeneration;
-    }
-
-    public IdGeneration updateNextId(IdGeneration idGeneration) {
-        return em.merge(idGeneration);
+        return response;
     }
 
     public Long getDefaultBatchSize() {
