@@ -36,7 +36,6 @@ package org.broadleafcommerce.admin.control
 	import org.broadleafcommerce.admin.control.events.catalog.product.FindAllProductsEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.product.NewProductEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.product.SaveProductEvent;
-	import org.broadleafcommerce.admin.control.events.catalog.product.ViewProductEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.AddSkusToProductsEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.FindAllSkusEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.SaveSkuEvent;
