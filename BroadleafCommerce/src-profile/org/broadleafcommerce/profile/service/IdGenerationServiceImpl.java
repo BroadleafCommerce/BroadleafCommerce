@@ -25,8 +25,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.profile.dao.IdGenerationDao;
 import org.broadleafcommerce.profile.domain.IdGeneration;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blIdGenerationService")
 public class IdGenerationServiceImpl implements IdGenerationService {
@@ -38,40 +36,36 @@ public class IdGenerationServiceImpl implements IdGenerationService {
 
     protected Map<String, Id> idTypeIdMap = new HashMap<String, Id>();
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public Long findNextId(String idType) {
-        Id id = idTypeIdMap.get(idType);
-        IdGeneration idGeneration=null;
-        if (id == null) {
-            synchronized (idTypeIdMap) {
+        Id id;
+        synchronized (idTypeIdMap) {
+            id = idTypeIdMap.get(idType);
+            if (id == null) {
                 // recheck, another thread may have added this.
                 id = idTypeIdMap.get(idType);
                 if (id == null) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Getting the initial id from the database.");
                     }
-                    idGeneration = idGenerationDao.findNextId(idType);
-                    id = new Id(idGeneration.getBatchStart(), 0L);
+                    IdGeneration idGeneration = idGenerationDao.findNextId(idType);
+                    id = new Id(idGeneration.getBatchStart(), idGeneration.getBatchSize());
                 }
                 idTypeIdMap.put(idType, id);
             }
         }
 
-        // Minimize synchronization to the idType we are looking for.
         synchronized(id) {
             if (id.batchSize == 0L) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Updating batch size for idType " + idType);
                 }
-
-                Long prevBatchStart = idGeneration.getBatchStart();
-                Long batchSize = idGeneration.getBatchSize();
-                idGeneration.setBatchStart(prevBatchStart + batchSize);
-                idGeneration = idGenerationDao.updateNextId(idGeneration);
-                id.nextId = prevBatchStart;
+                IdGeneration idGeneration = idGenerationDao.findNextId(idType);
+                id.nextId = idGeneration.getBatchStart();
+                id.batchSize = idGeneration.getBatchSize();
             }
             Long retId = id.nextId++;
             id.batchSize--;
+
             return retId;
         }
     }
