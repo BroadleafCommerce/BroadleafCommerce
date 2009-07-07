@@ -84,10 +84,10 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
     @Override
     protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
         super.onSuccessfulAuthentication(request, response, authResult);
-        notifyPostLoginListeners(request, response, authResult);
         if (mergeCartProcessor != null) {
             mergeCartProcessor.execute(request, response, authResult);
         }
+        notifyPostLoginListeners(request, response, authResult);
     }
 
     @Override
