@@ -24,8 +24,9 @@ import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.vendor.service.exception.AddressStandardizationException;
 import org.broadleafcommerce.vendor.usps.service.USPSAddressVerificationService;
-import org.broadleafcommerce.vendor.usps.service.message.AddressStandarizationResponse;
+import org.broadleafcommerce.vendor.usps.service.message.USPSAddressStandardizationResponse;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -84,8 +85,12 @@ public class USPSServiceTest extends BaseTest {
         state.setAbbreviation("CL");
         testAddress.setState(state);
 
-        AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
-        assert(standardizedResponse.isErrorDetected());
+        try {
+            addressStandardizationService.standardizeAddress(testAddress);
+            assert(false);
+        } catch (AddressStandardizationException e) {
+            assert(e.getStandardizationResponse().isErrorDetected());
+        }
         assert(greenMail.waitForIncomingEmail(10000, 1));
         assert(greenMail.getReceivedMessages()[0].getSubject().contains("is reporting a status"));
     }
@@ -111,7 +116,7 @@ public class USPSServiceTest extends BaseTest {
             return;
         }
         Address testAddress = getValidAddress();
-        AddressStandarizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
+        USPSAddressStandardizationResponse standardizedResponse = addressStandardizationService.standardizeAddress(testAddress);
         logger.debug("Get ZipCode: " + standardizedResponse.getAddress().getPostalCode());
         assert(!standardizedResponse.isErrorDetected());
         assert(greenMail.waitForIncomingEmail(10000, 1));

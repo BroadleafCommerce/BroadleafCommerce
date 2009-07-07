@@ -15,36 +15,25 @@
  */
 package org.broadleafcommerce.vendor.service.exception;
 
-import org.broadleafcommerce.vendor.usps.service.message.USPSAddressStandardizationResponse;
 
-
-public class AddressStandardizationException extends Exception {
+public class AddressStandardizationHostException extends AddressStandardizationException {
 
     private static final long serialVersionUID = 1L;
 
-    protected USPSAddressStandardizationResponse standardizationResponse;
-
-    public AddressStandardizationException() {
+    public AddressStandardizationHostException() {
         super();
     }
 
-    public AddressStandardizationException(String message, Throwable cause) {
+    public AddressStandardizationHostException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public AddressStandardizationException(String message) {
+    public AddressStandardizationHostException(String message) {
         super(message);
     }
 
-    public AddressStandardizationException(Throwable cause) {
+    public AddressStandardizationHostException(Throwable cause) {
         super(cause);
     }
 
-    public USPSAddressStandardizationResponse getStandardizationResponse() {
-        return standardizationResponse;
-    }
-
-    public void setStandardizationResponse(USPSAddressStandardizationResponse standardizationResponse) {
-        this.standardizationResponse = standardizationResponse;
-    }
 }

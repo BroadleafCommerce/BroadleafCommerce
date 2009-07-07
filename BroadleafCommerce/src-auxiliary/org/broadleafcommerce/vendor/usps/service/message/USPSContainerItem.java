@@ -29,7 +29,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
 
     protected ContainerSizeType containerSize;
     protected ContainerShapeType containerShape;
-    protected boolean isMachineSortable;
+    protected boolean isMachineSortable = true;
     protected BigDecimal width;
     protected BigDecimal height;
     protected BigDecimal depth;
@@ -118,7 +118,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     }
 
     public void setPackageId(String packageId) {
-        this.packageId = packageId;
+        this.packageId = packageId.trim();
     }
 
     public Map<USPSShippingMethodType, Money> getRates() {
@@ -134,7 +134,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     }
 
     public void setZipOrigination(String zipOrigination) {
-        this.zipOrigination = zipOrigination;
+        this.zipOrigination = zipOrigination.trim();
     }
 
     public String getZipDestination() {
@@ -142,7 +142,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     }
 
     public void setZipDestination(String zipDestination) {
-        this.zipDestination = zipDestination;
+        this.zipDestination = zipDestination.trim();
     }
 
 }

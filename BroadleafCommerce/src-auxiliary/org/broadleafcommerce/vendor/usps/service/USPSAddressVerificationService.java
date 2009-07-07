@@ -17,13 +17,13 @@ package org.broadleafcommerce.vendor.usps.service;
 
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.vendor.service.exception.AddressStandardizationException;
-import org.broadleafcommerce.vendor.usps.service.message.AddressStandarizationResponse;
+import org.broadleafcommerce.vendor.usps.service.message.USPSAddressStandardizationResponse;
 
 public interface USPSAddressVerificationService {
 
-    public AddressStandarizationResponse standardizeAddress(Address addr) throws AddressStandardizationException;
+    public USPSAddressStandardizationResponse standardizeAddress(Address addr) throws AddressStandardizationException;
 
-    public Address standardizeAndTokenizeAddress(Address address);
+    public Address standardizeAndTokenizeAddress(Address address) throws AddressStandardizationException;
 
     public Address tokenizeAddress(Address addr, boolean isStandardized);
 

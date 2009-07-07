@@ -23,9 +23,11 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.catalog.dao.ProductDao;
 import org.broadleafcommerce.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.ProductWeight;
 import org.broadleafcommerce.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.test.dataprovider.ProductDataProvider;
+import org.broadleafcommerce.vendor.service.type.UnitOfMeasureType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
@@ -114,12 +116,15 @@ public class ProductDaoTest extends BaseTest {
         product.setWidth(new BigDecimal(25.5));
         product.setHeight(new BigDecimal(50D));
         product.setDepth(new BigDecimal(75.5D));
-        product.setWeight(new BigDecimal(100.1));
+        ProductWeight weight = new ProductWeight();
+        weight.setUnitOfMeasure(UnitOfMeasureType.POUNDS);
+        weight.setWeight(new BigDecimal(100.1));
+        product.setWeight(weight);
         Product result = productDao.readProductById(product.getId());
         assert result.getWidth().doubleValue() == 25.5D;
         assert result.getHeight().doubleValue() == 50D;
         assert result.getDepth().doubleValue() == 75.5D;
-        assert result.getWeight().doubleValue() == 100.1D;
+        assert result.getWeight().getWeight().doubleValue() == 100.1D;
         //   assert result.getDimensionString().equals("50Hx25.5Wx75.5D\"");
     }
 

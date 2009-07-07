@@ -118,10 +118,9 @@ public class ProductImpl implements Product {
     @Embedded
     protected ProductDimension dimension = new ProductDimension();
 
-    //TODO: may want to create a ProductWeight object with a weight amount and weight type (POUNDS or KILOGRAMS)
-    /** The weight of the product */
-    @Column(name = "WEIGHT")
-    protected BigDecimal weight;
+    /** The product weight **/
+    @Embedded
+    protected ProductWeight weight = new ProductWeight();
 
     @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
@@ -451,14 +450,6 @@ public class ProductImpl implements Product {
         dimension.setContainer(container);
     }
 
-    public BigDecimal getWeight() {
-        return weight;
-    }
-
-    public void setWeight(BigDecimal weight) {
-        this.weight = weight;
-    }
-
     /**
      * Returns the product dimensions as a String (assumes measurements are in inches)
      * @return a String value of the product dimensions
@@ -489,6 +480,14 @@ public class ProductImpl implements Product {
 
     public void setMachineSortable(boolean isMachineSortable) {
         this.isMachineSortable = isMachineSortable;
+    }
+
+    public ProductWeight getWeight() {
+        return weight;
+    }
+
+    public void setWeight(ProductWeight weight) {
+        this.weight = weight;
     }
 
     @Override

@@ -40,8 +40,8 @@ public class USPSAddressResponseParser extends DefaultHandler {
     public static final String HELP_FILE_TAG = "HelpFile";
     public static final String HELP_CONTEXT_TAG = "HelpContext";
 
-    private AddressStandarizationResponse addressStandarizationResponse;
-    private ArrayList<AddressStandarizationResponse> addressResponseList = new ArrayList<AddressStandarizationResponse>();
+    private USPSAddressStandardizationResponse addressStandarizationResponse;
+    private ArrayList<USPSAddressStandardizationResponse> addressResponseList = new ArrayList<USPSAddressStandardizationResponse>();
     private StringBuffer buffer = new StringBuffer();
 
     private Address address;
@@ -82,7 +82,7 @@ public class USPSAddressResponseParser extends DefaultHandler {
             buffer = new StringBuffer();
         } else if (qName.equals(RETURN_TEXT_TAG)) {
             addressStandarizationResponse.setErrorDetected(true);
-            addressStandarizationResponse.setReturnText(buffer.toString().trim());
+            addressStandarizationResponse.setErrorText(buffer.toString().trim());
             buffer = new StringBuffer();
         } else if (qName.equals(NUMBER_TAG)) {
             buffer = new StringBuffer();
@@ -97,7 +97,7 @@ public class USPSAddressResponseParser extends DefaultHandler {
         }
     }
 
-    public ArrayList<AddressStandarizationResponse> getAddressResponseList() {
+    public ArrayList<USPSAddressStandardizationResponse> getAddressResponseList() {
         return addressResponseList;
     }
 
@@ -107,7 +107,7 @@ public class USPSAddressResponseParser extends DefaultHandler {
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (qName.equals(ADDRESS_TAG)) {
-            addressStandarizationResponse = new AddressStandarizationResponse();
+            addressStandarizationResponse = new USPSAddressStandardizationResponse();
             addressStandarizationResponse.setAddress(address);
         }
 

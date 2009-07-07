@@ -25,9 +25,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.Resource;
 
-public class AddressStandardAbbreviations {
+public class USPSAddressStandardAbbreviations {
 
-    private static final Log LOG = LogFactory.getLog(AddressStandardAbbreviations.class);
+    private static final Log LOG = LogFactory.getLog(USPSAddressStandardAbbreviations.class);
 
     private Map<Object,Object> abbreviationMap;
 
@@ -41,7 +41,7 @@ public class AddressStandardAbbreviations {
             props.load(abbreviationPropertyFile.getInputStream());
             abbreviationMap = Collections.unmodifiableMap(props);
         } catch (IOException e) {
-            LOG.error("Error loading AddressStandardAbbreviations properties file using Resource: " + abbreviationPropertyFile, e);
+            LOG.error("Error loading USPSAddressStandardAbbreviations properties file using Resource: " + abbreviationPropertyFile, e);
             throw new UnhandledException(e);
         }
     }
