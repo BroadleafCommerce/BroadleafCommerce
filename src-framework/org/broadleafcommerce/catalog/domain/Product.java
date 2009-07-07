@@ -261,13 +261,13 @@ public interface Product extends Serializable {
      * Returns the weight of the product
      * @return weight of product
      */
-    public BigDecimal getWeight();
+    public ProductWeight getWeight();
 
     /**
      * Sets the product weight
      * @param weight
      */
-    public void setWeight(BigDecimal weight);
+    public void setWeight(ProductWeight weight);
 
     /**
      * Returns a String representation of the product dimension

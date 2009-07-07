@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.service.exception;
+package org.broadleafcommerce.util;
 
-public class ShipmentPricingException extends Exception {
+import java.math.BigDecimal;
 
-    private static final long serialVersionUID = 1L;
+public class UnitOfMeasureUtil {
 
-    public ShipmentPricingException() {
-        super();
+    public static BigDecimal convertKilogramsToPounds(BigDecimal kilograms) {
+        return kilograms.multiply(BigDecimal.valueOf(0.45359237));
     }
 
-    public ShipmentPricingException(String message, Throwable cause) {
-        super(message, cause);
+    public static BigDecimal convertPoundsToKilograms(BigDecimal pounds) {
+        return pounds.multiply(BigDecimal.valueOf(2.20462262185));
     }
 
-    public ShipmentPricingException(String message) {
-        super(message);
+    public static BigDecimal convertPoundsToOunces(BigDecimal pounds) {
+        return pounds.multiply(BigDecimal.valueOf(16));
     }
 
-    public ShipmentPricingException(Throwable cause) {
-        super(cause);
+    public static BigDecimal convertOuncesToPounds(BigDecimal ounces) {
+        return ounces.multiply(BigDecimal.valueOf(0.0625));
     }
 
 }

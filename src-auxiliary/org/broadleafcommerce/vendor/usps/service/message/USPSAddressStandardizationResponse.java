@@ -17,18 +17,15 @@ package org.broadleafcommerce.vendor.usps.service.message;
 
 import org.broadleafcommerce.profile.domain.Address;
 
-public class AddressStandarizationResponse {
+public class USPSAddressStandardizationResponse {
 
-    private Address address;
-    private String returnText;
-    private boolean errorDetected = false;
+    protected Address address;
+    protected boolean errorDetected = false;
+    protected String errorText;
+    protected String errorCode;
 
     public Address getAddress() {
         return address;
-    }
-
-    public String getReturnText() {
-        return returnText;
     }
 
     public boolean isErrorDetected() {
@@ -43,7 +40,19 @@ public class AddressStandarizationResponse {
         this.errorDetected = errorDetected;
     }
 
-    public void setReturnText(String returnText) {
-        this.returnText = returnText;
+    public String getErrorText() {
+        return errorText;
+    }
+
+    public void setErrorText(String errorText) {
+        this.errorText = errorText;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
     }
 }

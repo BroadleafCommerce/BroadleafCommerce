@@ -131,7 +131,7 @@
 		<property name="uspsServiceAPI" value="${usps.service.api}"/>
 		<property name="uspsUserName" value="${usps.user.name}"/>
 		<property name="abbreviations">
-			<bean class="org.broadleafcommerce.vendor.usps.service.message.AddressStandardAbbreviations">
+			<bean class="org.broadleafcommerce.vendor.usps.service.message.USPSAddressStandardAbbreviations">
 				<property name="abbreviationPropertyFile" value="classpath:org/broadleafcommerce/vendor/usps/service/message/address.abbreviations.properties"/>
 			</bean>
 		</property>

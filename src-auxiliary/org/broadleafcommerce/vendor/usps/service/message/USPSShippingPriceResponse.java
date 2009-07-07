@@ -20,7 +20,10 @@ import java.util.List;
 
 public class USPSShippingPriceResponse {
 
-    List<USPSContainerItemResponse> responses = new ArrayList<USPSContainerItemResponse>();
+    protected List<USPSContainerItemResponse> responses = new ArrayList<USPSContainerItemResponse>();
+    protected boolean isErrorDetected = false;
+    protected String errorCode;
+    protected String errorText;
 
     public List<USPSContainerItemResponse> getResponses() {
         return responses;
@@ -28,6 +31,30 @@ public class USPSShippingPriceResponse {
 
     public void setResponses(List<USPSContainerItemResponse> responses) {
         this.responses = responses;
+    }
+
+    public boolean isErrorDetected() {
+        return isErrorDetected;
+    }
+
+    public void setErrorDetected(boolean isErrorDetected) {
+        this.isErrorDetected = isErrorDetected;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorText() {
+        return errorText;
+    }
+
+    public void setErrorText(String errorText) {
+        this.errorText = errorText;
     }
 
 }

@@ -36,11 +36,12 @@ import org.broadleafcommerce.profile.dao.StateDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.vendor.service.AbstractVendorService;
 import org.broadleafcommerce.vendor.service.exception.AddressStandardizationException;
+import org.broadleafcommerce.vendor.service.exception.AddressStandardizationHostException;
 import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
-import org.broadleafcommerce.vendor.usps.service.message.AddressStandardAbbreviations;
-import org.broadleafcommerce.vendor.usps.service.message.AddressStandarizationResponse;
 import org.broadleafcommerce.vendor.usps.service.message.USPSAddressResponseParser;
+import org.broadleafcommerce.vendor.usps.service.message.USPSAddressStandardAbbreviations;
+import org.broadleafcommerce.vendor.usps.service.message.USPSAddressStandardizationResponse;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -66,7 +67,7 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
     private static final String ZIP4_ELEM = "Zip4";
     private static final String EMPTY_STRING = "";
 
-    protected AddressStandardAbbreviations abbreviations;
+    protected USPSAddressStandardAbbreviations abbreviations;
     protected String uspsCharSet;
     protected String uspsPassword;
     protected String uspsServerName;
@@ -83,17 +84,15 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
     protected StateDao stateDao;
 
     @Override
-    public AddressStandarizationResponse standardizeAddress(Address address) throws AddressStandardizationException {
-        AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
+    public USPSAddressStandardizationResponse standardizeAddress(Address address) throws AddressStandardizationException {
+        USPSAddressStandardizationResponse addressStandardizationResponse = new USPSAddressStandardizationResponse();
         InputStream response = null;
         try {
             response = callUSPSAddressStandardization(address);
-            ArrayList<AddressStandarizationResponse> AddressResponseList = parseUSPSResponse(response);
+            ArrayList<USPSAddressStandardizationResponse> AddressResponseList = parseUSPSResponse(response);
             if ((AddressResponseList != null) && !AddressResponseList.isEmpty()) {
-                addressStandarizationResponse = AddressResponseList.get(0);
+                addressStandardizationResponse = AddressResponseList.get(0);
             }
-            clearStatus();
-            return addressStandarizationResponse;
         } catch (Exception e) {
             incrementFailure();
             throw new AddressStandardizationException(e);
@@ -106,6 +105,14 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
                 }
             }
         }
+        clearStatus();
+        if (addressStandardizationResponse.isErrorDetected()) {
+            AddressStandardizationHostException e = new AddressStandardizationHostException();
+            e.setStandardizationResponse(addressStandardizationResponse);
+            throw e;
+        }
+        addressStandardizationResponse.getAddress().setStandardized(true);
+        return addressStandardizationResponse;
     }
 
     protected void clearStatus() {
@@ -184,23 +191,9 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
     }
 
     @Override
-    public Address standardizeAndTokenizeAddress(Address address) {
-        AddressStandarizationResponse standardizationResponse;
-        try {
-            standardizationResponse = standardizeAddress(address);
-        } catch (AddressStandardizationException e) {
-            LOG.error("Exception", e);
-            standardizationResponse = getDownResponse("standardizeAddress", new Object[] { address });
-        }
-
-        if (standardizationResponse.isErrorDetected()) {
-            address.setStandardized(false);
-        } else {
-            address.setStandardized(true);
-            address = standardizationResponse.getAddress();
-        }
-
-        return tokenizeAddress(address, !standardizationResponse.isErrorDetected());
+    public Address standardizeAndTokenizeAddress(Address address) throws AddressStandardizationException {
+        USPSAddressStandardizationResponse standardizationResponse = standardizeAddress(address);
+        return tokenizeAddress(standardizationResponse.getAddress(), !standardizationResponse.isErrorDetected());
     }
 
     protected InputStream callUSPSAddressStandardization(Address address) throws IOException {
@@ -255,14 +248,14 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
         }
     }
 
-    protected ArrayList<AddressStandarizationResponse> parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
+    protected ArrayList<USPSAddressStandardizationResponse> parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
         USPSAddressResponseParser addrContentHelper = new USPSAddressResponseParser(addressDao.create(), stateDao.create());
         SAXParserFactory.newInstance().newSAXParser().parse(response, addrContentHelper);
         return addrContentHelper.getAddressResponseList();
     }
 
-    protected AddressStandarizationResponse getDownResponse(String method, Object[] args) {
-        AddressStandarizationResponse addressStandarizationResponse = new AddressStandarizationResponse();
+    protected USPSAddressStandardizationResponse getDownResponse(String method, Object[] args) {
+        USPSAddressStandardizationResponse addressStandarizationResponse = new USPSAddressStandardizationResponse();
         addressStandarizationResponse.setErrorDetected(true);
 
         if ("standardizeAndTokenizeAddress".equals(method)) {
@@ -287,7 +280,7 @@ public class USPSAddressVerificationServiceImpl extends AbstractVendorService im
         }
     }
 
-    public void setAbbreviations(AddressStandardAbbreviations abbreviations) {
+    public void setAbbreviations(USPSAddressStandardAbbreviations abbreviations) {
         this.abbreviations = abbreviations;
     }
 
