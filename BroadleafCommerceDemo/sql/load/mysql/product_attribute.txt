@@ -41,7 +41,7 @@
 41|132|Model|471|1
 42|132|Image Name|471.jpg|1
 43|133|Manufacturer|Bodum|1
-44|133|Product Name|Bodum - Café Solo - Filtre Belgique|1
+44|133|Product Name|Bodum - Cafe Solo - Filtre Belgique|1
 45|133|Description|The design of the Filter Belgique is itself done with a "silent attitude", but the product incorporates a high content of design details which make it simple to use and nice to look at. In this way, it stands out from most of the same type of mass-market products. The Filter Belgique design came from the same honest work that so many scarcely noticed everyday essentials emerge from. |1
 46|133|Dimensions|4.5 x 3.8 x 7.4|1
 47|133|Weight|1 lb|1
