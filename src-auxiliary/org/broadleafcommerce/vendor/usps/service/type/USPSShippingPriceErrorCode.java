@@ -30,6 +30,7 @@ public class USPSShippingPriceErrorCode implements Serializable {
 
     private static final Map<String, USPSShippingPriceErrorCode> types = new Hashtable<String, USPSShippingPriceErrorCode>();
 
+    public static USPSShippingPriceErrorCode TOOMANYCONTAINERITEMS  = new USPSShippingPriceErrorCode("bl_items", "No more than 25 packages may be included in the request.");
     public static USPSShippingPriceErrorCode WEIGHTNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_wns", "The package weight must be specified for this request.");
     public static USPSShippingPriceErrorCode OVERWEIGHT  = new USPSShippingPriceErrorCode("bl_ow", "Package exceeds weight limit specified by carrier.");
     public static USPSShippingPriceErrorCode SHAPENOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_sns", "The package shape must be specified for this request.");
@@ -37,6 +38,9 @@ public class USPSShippingPriceErrorCode implements Serializable {
     public static USPSShippingPriceErrorCode GIRTHNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_dns", "The package girth must be specified for this request.");
     public static USPSShippingPriceErrorCode PACKAGEIDNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_pkid", "The package id must be specified.");
     public static USPSShippingPriceErrorCode ZIPNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_zip", "The origin and destination zip codes must be specified.");
+    public static USPSShippingPriceErrorCode UNITTYPENOTSUPPORTED  = new USPSShippingPriceErrorCode("bl_unit", "The unit of measure type specified is not supported.");
+    public static USPSShippingPriceErrorCode UNITTYPENOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_type", "The dimension and weight unit of measure types must be specified for this request.");
+    public static USPSShippingPriceErrorCode SHIPDATETOOFAR  = new USPSShippingPriceErrorCode("bl_shipdate", "The ship date may only be 0 to 3 days in advance.");
 
     public static USPSShippingPriceErrorCode getInstance(String type) {
         return types.get(type);

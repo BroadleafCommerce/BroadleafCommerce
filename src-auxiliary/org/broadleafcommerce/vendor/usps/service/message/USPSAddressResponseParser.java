@@ -24,7 +24,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class USPSAddressResponseParser extends DefaultHandler {
 
-    public static final String ADDRESS_VALIDATE_REQUEST_TAG = "AddressValidateRequest";
     public static final String ADDRESS_TAG = "Address";
     public static final String ADDRESS1_TAG = "Address1";
     public static final String ADDRESS2_TAG = "Address2";

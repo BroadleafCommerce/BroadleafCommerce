@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.vendor.service.type.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
@@ -40,6 +42,9 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     protected Map<USPSShippingMethodType, Money> rates = new HashMap<USPSShippingMethodType, Money>();
     protected String zipOrigination;
     protected String zipDestination;
+    protected WeightUnitOfMeasureType weightUnitOfMeasureType;
+    protected DimensionUnitOfMeasureType dimensionUnitOfMeasureType;
+    protected String restrictions;
 
     public ContainerSizeType getContainerSize() {
         return containerSize;
@@ -143,6 +148,30 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
 
     public void setZipDestination(String zipDestination) {
         this.zipDestination = zipDestination.trim();
+    }
+
+    public WeightUnitOfMeasureType getWeightUnitOfMeasureType() {
+        return weightUnitOfMeasureType;
+    }
+
+    public void setWeightUnitOfMeasureType(WeightUnitOfMeasureType weightUnitOfMeasureType) {
+        this.weightUnitOfMeasureType = weightUnitOfMeasureType;
+    }
+
+    public DimensionUnitOfMeasureType getDimensionUnitOfMeasureType() {
+        return dimensionUnitOfMeasureType;
+    }
+
+    public void setDimensionUnitOfMeasureType(DimensionUnitOfMeasureType dimensionUnitOfMeasureType) {
+        this.dimensionUnitOfMeasureType = dimensionUnitOfMeasureType;
+    }
+
+    public String getRestrictions() {
+        return restrictions;
+    }
+
+    public void setRestrictions(String restrictions) {
+        this.restrictions = restrictions;
     }
 
 }

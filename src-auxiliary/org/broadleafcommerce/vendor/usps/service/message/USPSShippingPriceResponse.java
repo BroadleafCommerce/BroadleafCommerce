@@ -15,21 +15,20 @@
  */
 package org.broadleafcommerce.vendor.usps.service.message;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 public class USPSShippingPriceResponse {
 
-    protected List<USPSContainerItemResponse> responses = new ArrayList<USPSContainerItemResponse>();
+    protected Stack<USPSContainerItemResponse> responses = new Stack<USPSContainerItemResponse>();
     protected boolean isErrorDetected = false;
     protected String errorCode;
     protected String errorText;
 
-    public List<USPSContainerItemResponse> getResponses() {
+    public Stack<USPSContainerItemResponse> getResponses() {
         return responses;
     }
 
-    public void setResponses(List<USPSContainerItemResponse> responses) {
+    public void setResponses(Stack<USPSContainerItemResponse> responses) {
         this.responses = responses;
     }
 

@@ -18,6 +18,8 @@ package org.broadleafcommerce.vendor.usps.service.message;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.broadleafcommerce.vendor.service.type.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
 
@@ -71,4 +73,11 @@ public interface USPSContainerItemRequest {
 
     public void setZipDestination(String zipDestination);
 
+    public WeightUnitOfMeasureType getWeightUnitOfMeasureType();
+
+    public void setWeightUnitOfMeasureType(WeightUnitOfMeasureType weightUnitOfMeasureType);
+
+    public DimensionUnitOfMeasureType getDimensionUnitOfMeasureType();
+
+    public void setDimensionUnitOfMeasureType(DimensionUnitOfMeasureType dimensionUnitOfMeasureType);
 }
