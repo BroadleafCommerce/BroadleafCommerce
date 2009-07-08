@@ -30,4 +30,8 @@ public interface USPSContainerItemResponse {
 
     public void setRates(Map<USPSShippingMethodType, Money> rates);
 
+    public String getRestrictions();
+
+    public void setRestrictions(String restrictions);
+
 }

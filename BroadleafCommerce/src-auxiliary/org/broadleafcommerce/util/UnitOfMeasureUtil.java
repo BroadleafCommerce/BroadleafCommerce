@@ -35,4 +35,19 @@ public class UnitOfMeasureUtil {
         return ounces.multiply(BigDecimal.valueOf(0.0625));
     }
 
+    public static BigDecimal convertFeetToMeters(BigDecimal feet) {
+        return feet.multiply(BigDecimal.valueOf(0.3048));
+    }
+
+    public static BigDecimal convertMetersToFeet(BigDecimal meters) {
+        return meters.multiply(BigDecimal.valueOf(3.28084));
+    }
+
+    public static BigDecimal convertInchesToFeet(BigDecimal inches) {
+        return inches.multiply(BigDecimal.valueOf(0.083333));
+    }
+
+    public static BigDecimal convertFeetToInches(BigDecimal feet) {
+        return feet.multiply(BigDecimal.valueOf(12));
+    }
 }
