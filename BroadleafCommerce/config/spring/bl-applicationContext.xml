@@ -99,6 +99,27 @@
                 <entry key="number">
                 	<bean class="org.apache.velocity.tools.generic.NumberTool" scope="prototype"/>
                 </entry>
+                <entry key="date">
+                	<bean class="org.apache.velocity.tools.generic.ComparisonDateTool" scope="prototype"/>
+                </entry>
+                <entry key="list">
+                	<bean class="org.apache.velocity.tools.generic.ListTool" scope="prototype"/>
+                </entry>
+                <entry key="math">
+                	<bean class="org.apache.velocity.tools.generic.MathTool" scope="prototype"/>
+                </entry>
+                <entry key="iterator">
+                	<bean class="org.apache.velocity.tools.generic.IteratorTool" scope="prototype"/>
+                </entry>
+                <entry key="alternator">
+                	<bean class="org.apache.velocity.tools.generic.AlternatorTool" scope="prototype"/>
+                </entry>
+                <entry key="sorter">
+                	<bean class="org.apache.velocity.tools.generic.SortTool" scope="prototype"/>
+                </entry>
+                <entry key="esc">
+                	<bean class="org.apache.velocity.tools.generic.EscapeTool" scope="prototype"/>
+                </entry>
                 <entry key="serverInfo" value-ref="blServerInfo"/>
             </map>
         </constructor-arg>
