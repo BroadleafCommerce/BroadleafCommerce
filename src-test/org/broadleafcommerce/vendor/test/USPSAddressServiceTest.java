@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.test;
+package org.broadleafcommerce.vendor.test;
 
 import javax.annotation.Resource;
 
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.ServerSetup;
 
-public class USPSServiceTest extends BaseTest {
+public class USPSAddressServiceTest extends BaseTest {
 
     @Resource
     private USPSAddressVerificationService addressStandardizationService;

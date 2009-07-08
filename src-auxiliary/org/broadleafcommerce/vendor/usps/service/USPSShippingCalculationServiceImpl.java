@@ -52,13 +52,14 @@ import org.dom4j.Element;
 import org.dom4j.io.XMLWriter;
 import org.xml.sax.SAXException;
 
-public class USPSShippingCalculationServiceImpl extends AbstractVendorService implements ServiceStatusDetectable {
+public class USPSShippingCalculationServiceImpl extends AbstractVendorService implements ServiceStatusDetectable, USPSShippingCalculationService {
 
     private static final Log LOG = LogFactory.getLog(USPSShippingCalculationServiceImpl.class);
 
     private static final String USER_ID_ATTR = "USERID";
     private static final String PASSWORD_ATTR = "PASSWORD";
-    private static final String RATE_REQUEST_ELEM = "RateV3Request";
+    //TODO this element should come in from environment properties
+    private static final String RATE_REQUEST_ELEM = "RateV2Request";
     private static final String PACKAGE_ELEM = "Package";
     private static final String ID_ATTR = "ID";
     private static final String SERVICE_ELEM = "Service";
@@ -85,6 +86,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
     protected Integer failureReportingThreshold;
     protected Integer failureCount = 0;
     protected Boolean isUp = true;
+    protected String uspsShippingAPI;
 
     public USPSShippingPriceResponse retrieveShippingRates(USPSShippingPriceRequest request) throws ShippingPriceException {
         validateRequest(request);
@@ -148,7 +150,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
             if (itemRequest.getWeight().doubleValue() > 70D) {
                 throw buildException(USPSShippingPriceErrorCode.OVERWEIGHT.getType(), USPSShippingPriceErrorCode.OVERWEIGHT.getMessage());
             }
-            if (itemRequest.getContainerSize().equals(ContainerSizeType.REGULAR) && itemRequest.getContainerShape() == null) {
+            if (itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && itemRequest.getContainerShape() == null) {
                 throw buildException(USPSShippingPriceErrorCode.SHAPENOTSPECIFIED.getType(), USPSShippingPriceErrorCode.SHAPENOTSPECIFIED.getMessage());
             }
             if (
@@ -213,7 +215,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
     protected InputStream callUSPSPricingCalculation(USPSShippingPriceRequest request) throws IOException {
         URL contentURL = new URL(new StringBuffer(httpProtocol).append("://").append(uspsServerName).append(uspsServiceAPI).toString());
         Map<String, String> content = new HashMap<String, String>();
-        content.put("API", "RateV3");
+        content.put("API", uspsShippingAPI);
         content.put("XML", getShippingPriceXMLString(request));
         return postMessage(content, contentURL, uspsCharSet);
     }
@@ -232,7 +234,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
         }
         double fractionalPounds = weight.doubleValue() - Math.floor(weight.doubleValue());
         BigDecimal ounces = UnitOfMeasureUtil.convertPoundsToOunces(BigDecimal.valueOf(fractionalPounds));
-        DecimalFormat format = new DecimalFormat("0.0000");
+        DecimalFormat format = new DecimalFormat("0.#");
         return format.format(ounces.doubleValue());
     }
 
@@ -246,7 +248,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
         if (type.equals(DimensionUnitOfMeasureType.FEET)) {
             dimension = UnitOfMeasureUtil.convertFeetToInches(dimension);
         }
-        DecimalFormat format = new DecimalFormat("0.0000");
+        DecimalFormat format = new DecimalFormat("0.#");
         return format.format(dimension.doubleValue());
     }
 
@@ -385,5 +387,13 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
 
     public String getServiceName() {
         return getClass().getName();
+    }
+
+    public String getUspsShippingAPI() {
+        return uspsShippingAPI;
+    }
+
+    public void setUspsShippingAPI(String uspsShippingAPI) {
+        this.uspsShippingAPI = uspsShippingAPI;
     }
 }

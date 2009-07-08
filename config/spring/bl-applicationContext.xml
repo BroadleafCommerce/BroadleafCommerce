@@ -160,12 +160,30 @@
 		<property name="httpProtocol" value="${usps.http.protocol}"/>
 	</bean>
 	
+	<bean id="blShippingCalculationService" class="org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationServiceImpl">
+		<property name="uspsCharSet" value="${usps.charset}"/>
+		<property name="uspsPassword" value="${usps.password}"/>
+		<property name="uspsServerName" value="${usps.server.name}"/>
+		<property name="uspsServiceAPI" value="${usps.service.api}"/>
+		<property name="uspsUserName" value="${usps.user.name}"/>
+		<property name="failureReportingThreshold" value="10"/>
+		<property name="httpProtocol" value="${usps.http.protocol}"/>
+		<property name="uspsShippingAPI" value="${usps.shipping.api}"/>
+	</bean>
+	
 	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>
 
 	<aop:config>
-	    <aop:aspect id="blServiceMonitorAspect" ref="blServiceMonitor">
-            <aop:pointcut id="blServiceCheckMethod" expression="execution(* org.broadleafcommerce.vendor.usps.service.USPSAddressVerificationService.standardizeAddress(..))"/>
-            <aop:around method="checkServiceAOP" pointcut-ref="blServiceCheckMethod"/>
+	    <aop:aspect id="blServiceMonitorAspectAddress" ref="blServiceMonitor">
+            <aop:pointcut id="blServiceCheckMethodAddress" expression="execution(* org.broadleafcommerce.vendor.usps.service.USPSAddressVerificationService.standardizeAddress(..))"/>
+            <aop:around method="checkServiceAOP" pointcut-ref="blServiceCheckMethodAddress"/>
+        </aop:aspect>
+	</aop:config>
+	
+	<aop:config>
+	    <aop:aspect id="blServiceMonitorAspectShipping" ref="blServiceMonitor">
+            <aop:pointcut id="blServiceCheckMethodShipping" expression="execution(* org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationService.retrieveShippingRates(..))"/>
+            <aop:around method="checkServiceAOP" pointcut-ref="blServiceCheckMethodShipping"/>
         </aop:aspect>
 	</aop:config>
 </beans>
