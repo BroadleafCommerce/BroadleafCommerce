@@ -38,5 +38,3 @@
 			<td><form:input path="shippingAddress.postalCode" /></td>
    		</tr>
 	</table> 
-
-    	

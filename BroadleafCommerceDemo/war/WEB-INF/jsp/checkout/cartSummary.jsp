@@ -13,17 +13,18 @@
 		<tbody>
 		<c:forEach items="${order.orderItems}" var="orderItem" varStatus="status">
 		    <c:set var="item" value="${orderItem.sku}"/>
-			<c:url var="itemUrl" value="/${orderItem.category.generatedUrl}">
-				<c:param name="productId" value="${orderItem.product.id}"/>
+			<c:set var="product" value="${item.allParentProducts[0]}"/>
+			<c:url var="itemUrl" value="/${product.defaultCategory.generatedUrl}">
+				<c:param name="productId" value="${product.id}"/>
 			</c:url>
 				<tr valign="top">
 					<td class="item">
-							<a href="${itemUrl}">
-			      				imageUrl
-							</a>
-							<p class="description">
-								<a href="${itemUrl}">${item.name}</a>
-							</p>
+						<a href="${itemUrl}">
+							<img border="0" title="${product.name}" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" />
+						</a>
+						<p class="description">
+							<a href="${itemUrl}">${item.name}</a>
+						</p>
 					</td>
 		  		  	<td align="center" style="padding: 8px 0px 0px 8px;">
 						<c:out value="${orderItem.quantity}" /><br/>
@@ -42,12 +43,10 @@
 				    </span>
 				  </td>
 				  <td align="right">
-				    <span class="price"><fmt:formatNumber type="currency" value="${orderItem.price.amount}" /></span>
+				    <span class="price"><fmt:formatNumber type="currency" value="${orderItem.price.amount * orderItem.quantity}" /></span>
 				  </td>
 		     </tr>
 			</c:forEach>
-
-
 	        <tr valign="top">
          		  <td id="cartSummary" colspan="7" style="padding:0;">
 		        <table id="cartTotals" border="0" width="100%" cellspacing="0" cellpadding="0">

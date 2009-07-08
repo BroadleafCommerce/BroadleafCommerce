@@ -17,6 +17,8 @@
 		<tr>
 			<td style="text-align:right"><label for="creditCardNumber"><b>CC Number:</b></label></td>
 			<td><form:input maxlength="16" size="16" path="creditCardNumber" /></td>
+		</tr>
+		<tr>
 			<td style="text-align:right"><label for="ccNumber"><b>CC Type:</b></label></td>
 			<td><form:select path="selectedCreditCardType">
 				<c:forEach var="ccType" items="${checkoutForm.approvedCreditCardTypes}">
@@ -53,4 +55,3 @@
 			<td><form:input path="billingAddress.postalCode" /></td>
    		</tr>
   	</table>
-	
