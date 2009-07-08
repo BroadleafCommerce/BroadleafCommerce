@@ -29,27 +29,16 @@ public class USPSShippingPriceResponseParser extends DefaultHandler {
 
     private static final Log LOG = LogFactory.getLog(USPSShippingPriceResponseParser.class);
 
-    public static final String RESPONSE_TAG = "RateV3Response";
+    //TODO this element should come in from environment properties
+    public static final String RESPONSE_TAG = "RateV2Response";
     public static final String PACKAGE_TAG = "Package";
     public static final String POSTAGE_TAG = "Postage";
     public static final String RATE_TAG = "Rate";
     public static final String RESTRICTIONS_TAG = "Restrictions";
-
-    public static final String ADDRESS1_TAG = "Address1";
-    public static final String ADDRESS2_TAG = "Address2";
-    public static final String CITY_TAG = "City";
-    public static final String STATE_TAG = "State";
-    public static final String ZIP5_TAG = "Zip5";
-    public static final String ZIP4_TAG = "Zip4";
-    public static final String RETURN_TEXT_TAG = "ReturnText";
-    public static final String ERROR_TAG = "Error";
-    public static final String NUMBER_TAG = "Number";
-    public static final String SOURCE_TAG = "Source";
     public static final String DESCRIPTION_TAG = "Description";
-    public static final String HELP_FILE_TAG = "HelpFile";
-    public static final String HELP_CONTEXT_TAG = "HelpContext";
+    public static final String ERROR_TAG = "Error";
 
-    private USPSShippingPriceResponse shippingPriceResponse;
+    private USPSShippingPriceResponse shippingPriceResponse = new USPSShippingPriceResponse();
     private StringBuffer buffer = new StringBuffer();
     private USPSShippingMethodType shippingMethod = null;
 
@@ -65,9 +54,8 @@ public class USPSShippingPriceResponseParser extends DefaultHandler {
             }
         } else if (qName.equals(RESTRICTIONS_TAG)) {
             shippingPriceResponse.getResponses().peek().setRestrictions(buffer.toString());
-        } else if (qName.equals(RETURN_TEXT_TAG)) {
+        } else if (qName.equals(DESCRIPTION_TAG)) {
             shippingPriceResponse.setErrorText(buffer.toString().trim());
-            buffer = new StringBuffer();
         }
         reset();
     }
@@ -81,9 +69,6 @@ public class USPSShippingPriceResponseParser extends DefaultHandler {
     }
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        if (qName.equals(RESPONSE_TAG)) {
-            shippingPriceResponse = new USPSShippingPriceResponse();
-        }
         if (qName.equals(PACKAGE_TAG)) {
             shippingPriceResponse.getResponses().add(new USPSContainerItem());
             shippingPriceResponse.getResponses().peek().setPackageId(attributes.getValue("ID"));
