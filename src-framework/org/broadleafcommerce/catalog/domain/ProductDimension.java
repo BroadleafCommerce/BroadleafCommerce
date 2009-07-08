@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.broadleafcommerce.vendor.service.type.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
 
@@ -44,7 +45,16 @@ public class ProductDimension {
     @Column(name = "CONTAINER_SHAPE")
     protected String container;
 
-    //TODO: may add measurement enum with values (CENTIMETER, INCH, FEET, METER) for this class
+    @Column(name = "DIMENSION_UNIT_OF_MEASURE")
+    protected String dimensionUnitOfMeasure;
+
+    public DimensionUnitOfMeasureType getDimensionUnitOfMeasure() {
+        return DimensionUnitOfMeasureType.getInstance(dimensionUnitOfMeasure);
+    }
+
+    public void setDimensionUnitOfMeasure(DimensionUnitOfMeasureType dimensionUnitOfMeasure) {
+        this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
+    }
 
     public BigDecimal getWidth() {
         return width;
