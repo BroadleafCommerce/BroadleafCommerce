@@ -30,6 +30,26 @@ public class ServerInfo implements Serializable {
     private Integer securePort;
     private String appName;
 
+    public String getSecureHost() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(serverName);
+        if (!securePort.equals("443")) {
+            sb.append(":");
+            sb.append(securePort);
+        }
+        return sb.toString();
+    }
+
+    public String getHost() {
+        StringBuffer sb = new StringBuffer();
+        sb.append(serverName);
+        if (!serverPort.equals("80")) {
+            sb.append(":");
+            sb.append(serverPort);
+        }
+        return sb.toString();
+    }
+
     /**
      * @return the serverName
      */
