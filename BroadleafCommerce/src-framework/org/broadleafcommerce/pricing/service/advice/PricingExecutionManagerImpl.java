@@ -77,6 +77,12 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
             Order orderItem = getLatestItem();
             clearCache();
             if (orderItem != null) {
+                /*
+                 * We need to save the order before pricing, because it is sometimes
+                 * possible for transient items to exist in the order hierarchy that will
+                 * cause problems downstream during pricing.
+                 */
+                orderDao.save(orderItem);
                 orderItem = pricingService.executePricing(orderItem);
                 orderDao.save(orderItem);
                 LOG.debug("Context order priced : order id " + orderItem.getId());
