@@ -36,8 +36,8 @@ import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.dao.AddressDao;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.dao.StateDao;
-import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
+import org.broadleafcommerce.profile.web.CustomerState;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -48,8 +48,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller("viewOrderController")
 public class ViewOrderController {
 
-    //  @Resource
-    //  private CustomerState customerState;
+    @Resource
+    private CustomerState customerState;
     @Resource
     protected OrderService orderService;
     @Resource
@@ -77,9 +77,7 @@ public class ViewOrderController {
 
     @RequestMapping(method =  {RequestMethod.GET})
     public String viewOrders (ModelMap model, HttpServletRequest request) throws PricingException {
-        Customer customer = customerService.readCustomerById(1L);
-        // List<Order> orders = orderService.findOrdersForCustomer(customerState.getCustomer(request), OrderStatus.SUBMITTED);
-        List<Order> orders = orderService.findOrdersForCustomer(customer, OrderStatus.SUBMITTED);
+        List<Order> orders = orderService.findOrdersForCustomer(customerState.getCustomer(request), OrderStatus.SUBMITTED);
         model.addAttribute("orderList", orders);
         return "listOrders";
     }
@@ -87,9 +85,7 @@ public class ViewOrderController {
     @RequestMapping(method = {RequestMethod.GET})
     public String viewOrderDetails (ModelMap model, HttpServletRequest request, @RequestParam(required = true) String orderNumber) {
         Order order = orderService.findOrderByOrderNumber(orderNumber);
-
-        if (order == null)
-        {
+        if (order == null) {
             return "findOrderError";
         }
 
@@ -98,7 +94,7 @@ public class ViewOrderController {
     }
 
     @RequestMapping(method =  {RequestMethod.GET})
-    public String showFindOrder (ModelMap model, HttpServletRequest request) {
+    public String findOrder (ModelMap model, HttpServletRequest request) {
         model.addAttribute("findOrderForm", new FindOrderForm());
         return "findOrder";
     }
@@ -108,15 +104,13 @@ public class ViewOrderController {
         boolean zipFound = false;
         Order order = orderService.findOrderByOrderNumber(findOrderForm.getOrderNumber());
 
-        if (order == null)
-        {
+        if (order == null) {
             return "findOrderError";
         }
 
         List<FulfillmentGroup> orderFulfillmentGroups = order.getFulfillmentGroups();
         if (orderFulfillmentGroups != null ) {
-            orderLoop: for (FulfillmentGroup fulfillmentGroup : orderFulfillmentGroups)
-            {
+            orderLoop: for (FulfillmentGroup fulfillmentGroup : orderFulfillmentGroups)  {
                 if (fulfillmentGroup.getAddress().getPostalCode().equals(findOrderForm.getPostalCode())) {
                     zipFound = true;
                     break orderLoop;
@@ -130,8 +124,4 @@ public class ViewOrderController {
 
         return "findOrderError";
     }
-
-    //    public void setCustomerState(CustomerState customerState) {
-    //        this.customerState = customerState;
-    //    }
 }

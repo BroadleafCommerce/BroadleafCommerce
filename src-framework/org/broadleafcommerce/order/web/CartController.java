@@ -46,9 +46,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 
 @Controller("blCartController")
+@SessionAttributes("cartSummary")
 public class CartController {
 
     private static final Log LOG = LogFactory.getLog(CartController.class);
@@ -180,7 +182,7 @@ public class CartController {
         List<OrderItem> orderItems = currentCartOrder.getOrderItems();
         for (CartOrderItem cartOrderItem : cartSummary.getRows()) {
             OrderItem orderItem = (OrderItem)CollectionUtils.find(orderItems,
-                    new BeanPropertyValueEqualsPredicate("id", cartOrderItem.getOrderItemId()));
+                    new BeanPropertyValueEqualsPredicate("id", cartOrderItem.getOrderItem().getId()));
             //in case the item was removed from the cart from another browser tab
             if (orderItem != null) {
                 if (cartOrderItem.getQuantity() > 0) {
@@ -202,7 +204,8 @@ public class CartController {
                 }
             }
         }
-        return cartViewRedirect ? "redirect:" + removeItemView : removeItemView;
+        // return cartViewRedirect ? "redirect:" + removeItemView : removeItemView;
+        return viewCart(model,request);
     }
 
     @RequestMapping(value = "viewCart.htm", method = RequestMethod.GET)
@@ -213,7 +216,7 @@ public class CartController {
 
         for (OrderItem orderItem : cart.getOrderItems()) {
             CartOrderItem cartOrderItem = new CartOrderItem();
-            cartOrderItem.setOrderItemId(orderItem.getId());
+            cartOrderItem.setOrderItem(orderItem);
             cartOrderItem.setQuantity(orderItem.getQuantity());
             cartSummary.getRows().add(cartOrderItem);
         }

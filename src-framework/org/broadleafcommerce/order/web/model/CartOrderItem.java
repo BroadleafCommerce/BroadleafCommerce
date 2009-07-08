@@ -1,7 +1,9 @@
 package org.broadleafcommerce.order.web.model;
 
+import org.broadleafcommerce.order.domain.OrderItem;
+
 public class CartOrderItem {
-    private long orderItemId;
+    private OrderItem orderItem;
     private long addressId;
     private int quantity;
 
@@ -11,16 +13,16 @@ public class CartOrderItem {
     public void setAddressId(long addressId) {
         this.addressId = addressId;
     }
-    public long getOrderItemId() {
-        return orderItemId;
-    }
-    public void setOrderItemId(long orderItemId) {
-        this.orderItemId = orderItemId;
-    }
     public int getQuantity() {
         return quantity;
     }
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+    public OrderItem getOrderItem() {
+        return orderItem;
+    }
+    public void setOrderItem(OrderItem orderItem) {
+        this.orderItem = orderItem;
     }
 }
