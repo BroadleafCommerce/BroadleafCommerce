@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.broadleafcommerce.vendor.service.type.UnitOfMeasureType;
+import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
 
 @Embeddable
 public class ProductWeight {
@@ -28,15 +28,15 @@ public class ProductWeight {
     @Column(name = "WEIGHT")
     protected BigDecimal weight;
 
-    @Column(name = "UNIT_OF_MEASURE")
-    protected String unitOfMeasure;
+    @Column(name = "WEIGHT_UNIT_OF_MEASURE")
+    protected String weightUnitOfMeasure;
 
-    public UnitOfMeasureType getUnitOfMeasure() {
-        return UnitOfMeasureType.getInstance(unitOfMeasure);
+    public WeightUnitOfMeasureType getWeightUnitOfMeasure() {
+        return WeightUnitOfMeasureType.getInstance(weightUnitOfMeasure);
     }
 
-    public void setUnitOfMeasure(UnitOfMeasureType unitOfMeasure) {
-        this.unitOfMeasure = unitOfMeasure.getType();
+    public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure) {
+        this.weightUnitOfMeasure = weightUnitOfMeasure.getType();
     }
 
     public BigDecimal getWeight() {

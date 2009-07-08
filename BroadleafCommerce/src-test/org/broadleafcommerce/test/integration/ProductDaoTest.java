@@ -27,7 +27,7 @@ import org.broadleafcommerce.catalog.domain.ProductWeight;
 import org.broadleafcommerce.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.test.dataprovider.ProductDataProvider;
-import org.broadleafcommerce.vendor.service.type.UnitOfMeasureType;
+import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
@@ -117,7 +117,7 @@ public class ProductDaoTest extends BaseTest {
         product.setHeight(new BigDecimal(50D));
         product.setDepth(new BigDecimal(75.5D));
         ProductWeight weight = new ProductWeight();
-        weight.setUnitOfMeasure(UnitOfMeasureType.POUNDS);
+        weight.setWeightUnitOfMeasure(WeightUnitOfMeasureType.POUNDS);
         weight.setWeight(new BigDecimal(100.1));
         product.setWeight(weight);
         Product result = productDao.readProductById(product.getId());

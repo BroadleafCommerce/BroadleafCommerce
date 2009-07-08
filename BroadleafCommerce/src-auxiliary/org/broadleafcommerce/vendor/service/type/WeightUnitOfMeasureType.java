@@ -25,26 +25,26 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class UnitOfMeasureType implements Serializable {
+public class WeightUnitOfMeasureType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, UnitOfMeasureType> types = new Hashtable<String, UnitOfMeasureType>();
+    private static final Map<String, WeightUnitOfMeasureType> types = new Hashtable<String, WeightUnitOfMeasureType>();
 
-    public static UnitOfMeasureType POUNDS  = new UnitOfMeasureType("POUNDS");
-    public static UnitOfMeasureType KILOGRAMS  = new UnitOfMeasureType("KILOGRAMS");
+    public static WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS");
+    public static WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS");
 
-    public static UnitOfMeasureType getInstance(String type) {
+    public static WeightUnitOfMeasureType getInstance(String type) {
         return types.get(type);
     }
 
     private String type;
 
-    public UnitOfMeasureType() {
+    public WeightUnitOfMeasureType() {
         //do nothing
     }
 
-    public UnitOfMeasureType(String type) {
+    public WeightUnitOfMeasureType(String type) {
         setType(type);
     }
 
@@ -75,7 +75,7 @@ public class UnitOfMeasureType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        UnitOfMeasureType other = (UnitOfMeasureType) obj;
+        WeightUnitOfMeasureType other = (WeightUnitOfMeasureType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;
