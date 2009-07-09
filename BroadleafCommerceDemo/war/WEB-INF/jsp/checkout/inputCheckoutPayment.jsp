@@ -1,14 +1,5 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-	
-	<h4 class="formSectionHeader">Payment Information</h4>
-	<spring:hasBindErrors name="checkout">
-		  <spring:bind path="checkout.*">
-          	<c:forEach var="error" items="${status.errorMessages}">
-            	<tr><td><font color="red"><c:out value="${error}"/></font></td></tr><br />
-            </c:forEach>
-    	 </spring:bind>
-    </spring:hasBindErrors>
-     		
+	<h4 class="formSectionHeader">Payment Information</h4>    		
 	<table class="formTable">
 		<tr>
 			<td style="text-align:right"><label for="contactInfo.firstName"><b>First Name</b></label></td>
@@ -22,6 +13,13 @@
 			<td colspan="2">
 			 	<form:input path="billingAddress.lastName"/>
 				<form:errors path="billingAddress.lastName" cssClass="errorInputText"/>
+			</td>
+   		</tr>
+		<tr>
+			<td style="text-align:right"><label for="contactInfo.primaryPhone"><b>Primary Phone Number</b></label></td>
+			<td colspan="2">
+			 	<form:input path="billingAddress.primaryPhone"/>
+				<form:errors path="billingAddress.primaryPhone" cssClass="errorInputText"/>
 			</td>
    		</tr>
 		<tr>
