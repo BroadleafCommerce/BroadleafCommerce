@@ -65,3 +65,9 @@
 	width: 125px;
 	font-size:8px;
 }
+.errorInputText {
+	padding: 5px;
+	background: #FFE6BF;
+	margin: 0 0 10px 0;
+	border: 1px solid #FF5F00;
+}

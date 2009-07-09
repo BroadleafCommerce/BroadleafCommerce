@@ -25,25 +25,14 @@ import org.broadleafcommerce.profile.domain.AddressImpl;
 
 
 public class CheckoutForm {
-    private String firstName;
-    private String lastName;
     private String emailAddress;
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+    private Address shippingAddress = new AddressImpl();
+    private Address billingAddress = new AddressImpl();
+    private String creditCardNumber;
+    private String creditCardCvvCode;
+    private String creditCardExpMonth;
+    private String creditCardExpYear;
+    private String selectedCreditCardType;
 
     public String getEmailAddress() {
         return emailAddress;
@@ -52,17 +41,6 @@ public class CheckoutForm {
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
-
-    private Address shippingAddress = new AddressImpl();
-    private Address billingAddress = new AddressImpl();
-    private String creditCardNumber;
-    private String creditCardCvvCode;
-    private String creditCardExpMonth;
-    private String creditCardExpYear;
-    private String primaryPhoneNumber;
-    private String secondaryPhoneNumber;
-    private String selectedCreditCardType;
-
 
     public String getSelectedCreditCardType() {
         return selectedCreditCardType;
@@ -94,22 +72,6 @@ public class CheckoutForm {
 
     public void setBillingAddress(Address billingAddress) {
         this.billingAddress = billingAddress;
-    }
-
-    public String getPrimaryPhoneNumber() {
-        return primaryPhoneNumber;
-    }
-
-    public void setPrimaryPhoneNumber(String primaryPhoneNumber) {
-        this.primaryPhoneNumber = primaryPhoneNumber;
-    }
-
-    public String getSecondaryPhoneNumber() {
-        return secondaryPhoneNumber;
-    }
-
-    public void setSecondaryPhoneNumber(String secondaryPhoneNumber) {
-        this.secondaryPhoneNumber = secondaryPhoneNumber;
     }
 
     public String getCreditCardNumber() {

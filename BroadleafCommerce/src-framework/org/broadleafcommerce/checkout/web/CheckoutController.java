@@ -32,6 +32,7 @@ import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.checkout.service.CheckoutService;
 import org.broadleafcommerce.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.checkout.web.model.CheckoutForm;
+import org.broadleafcommerce.checkout.web.validator.CheckoutFormValidator;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl;
@@ -94,6 +95,8 @@ public class CheckoutController {
     protected PaymentInfoService paymentInfoService;
     @Resource
     private SecurePaymentInfoService securePaymentInfoService;
+    @Resource
+    private CheckoutFormValidator checkoutFormValidator;
 
     protected String checkoutView;
     protected String receiptView;
@@ -112,10 +115,11 @@ public class CheckoutController {
             ModelMap model,
             HttpServletRequest request) {
 
-        checkoutForm.getBillingAddress().setCountry(countryService.findCountryByAbbreviation("US"));
-        checkoutForm.getBillingAddress().setState(stateService.findStateByAbbreviation("TX"));
-        checkoutForm.getShippingAddress().setCountry(countryService.findCountryByAbbreviation("US"));
-        checkoutForm.getShippingAddress().setState(stateService.findStateByAbbreviation("TX"));
+        checkoutFormValidator.validate(checkoutForm, errors);
+
+        if (errors.hasErrors()) {
+            return checkout(checkoutForm, errors, model, request);
+        }
 
         Order order = retrieveCartOrder(request, model);
         order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(new Date()));
@@ -137,7 +141,6 @@ public class CheckoutController {
         }
 
         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
-
         CreditCardPaymentInfo creditCardPaymentInfo = ((CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD));
 
         creditCardPaymentInfo.setCvvCode(checkoutForm.getCreditCardCvvCode());
@@ -173,6 +176,9 @@ public class CheckoutController {
             BindingResult errors,
             ModelMap model,
             HttpServletRequest request) {
+
+        model.addAttribute("stateList", stateService.findStates());
+        model.addAttribute("countryList", countryService.findCountries());
 
         Customer currentCustomer = customerState.getCustomer(request);
         model.addAttribute("customer", currentCustomer);
