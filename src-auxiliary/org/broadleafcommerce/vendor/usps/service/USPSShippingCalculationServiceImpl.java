@@ -58,8 +58,6 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
 
     private static final String USER_ID_ATTR = "USERID";
     private static final String PASSWORD_ATTR = "PASSWORD";
-    //TODO this element should come in from environment properties
-    private static final String RATE_REQUEST_ELEM = "RateV2Request";
     private static final String PACKAGE_ELEM = "Package";
     private static final String ID_ATTR = "ID";
     private static final String SERVICE_ELEM = "Service";
@@ -87,6 +85,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
     protected Integer failureCount = 0;
     protected Boolean isUp = true;
     protected String uspsShippingAPI;
+    protected String rateRequestElement;
 
     public USPSShippingPriceResponse retrieveShippingRates(USPSShippingPriceRequest request) throws ShippingPriceException {
         validateRequest(request);
@@ -94,7 +93,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
         InputStream response = null;
         try {
             response = callUSPSPricingCalculation(request);
-            shippingPriceResponse = parseUSPSResponse(response);
+            shippingPriceResponse = parseUSPSResponse(request, response);
         } catch (Exception e) {
             incrementFailure();
             throw new ShippingPriceException(e);
@@ -116,8 +115,8 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
         return shippingPriceResponse;
     }
 
-    protected USPSShippingPriceResponse parseUSPSResponse(InputStream response) throws IOException, SAXException, ParserConfigurationException {
-        USPSShippingPriceResponseParser shippingContentHelper = new USPSShippingPriceResponseParser();
+    protected USPSShippingPriceResponse parseUSPSResponse(USPSShippingPriceRequest request, InputStream response) throws IOException, SAXException, ParserConfigurationException {
+        USPSShippingPriceResponseParser shippingContentHelper = new USPSShippingPriceResponseParser(request);
         SAXParserFactory.newInstance().newSAXParser().parse(response, shippingContentHelper);
         return shippingContentHelper.getResponse();
     }
@@ -150,11 +149,8 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
             if (itemRequest.getWeight().doubleValue() > 70D) {
                 throw buildException(USPSShippingPriceErrorCode.OVERWEIGHT.getType(), USPSShippingPriceErrorCode.OVERWEIGHT.getMessage());
             }
-            if (itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && itemRequest.getContainerShape() == null) {
-                throw buildException(USPSShippingPriceErrorCode.SHAPENOTSPECIFIED.getType(), USPSShippingPriceErrorCode.SHAPENOTSPECIFIED.getMessage());
-            }
             if (
-                    itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && (
+                    itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && itemRequest.getContainerShape() != null && (
                             itemRequest.getContainerShape().equals(ContainerShapeType.RECTANGULAR) ||
                             itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR)
                     )
@@ -175,7 +171,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
                 }
             }
             if (
-                    itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) &&
+                    itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && itemRequest.getContainerShape() != null &&
                     itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR) &&
                     itemRequest.getGirth() == null
             ) {
@@ -254,7 +250,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
 
     protected String getShippingPriceXMLString(USPSShippingPriceRequest request) throws IOException {
         Document document = DocumentHelper.createDocument();
-        Element root = document.addElement(RATE_REQUEST_ELEM);
+        Element root = document.addElement(rateRequestElement);
         root.addAttribute(USER_ID_ATTR, uspsUserName);
         root.addAttribute(PASSWORD_ATTR, uspsPassword);
 
@@ -266,20 +262,23 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
             dom.addElement(POUNDS_ELEMENT).setText(findPounds(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()));
             dom.addElement(OUNCES_ELEMENT).setText(findOunces(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()));
             dom.addElement(SIZE_ELEMENT).setText(itemRequest.getContainerSize().getType());
-            if (itemRequest.getContainerSize().equals(ContainerSizeType.LARGE)) {
+            if (itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && itemRequest.getContainerShape() != null) {
                 dom.addElement(CONTAINER_ELEMENT).setText(itemRequest.getContainerShape().getType());
             }
             dom.addElement(MACHINABLE_ELEMENT).setText(Boolean.toString(itemRequest.isMachineSortable()));
             if (itemRequest.getContainerSize().equals(ContainerSizeType.LARGE)){
                 if (
-                        itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR) ||
-                        itemRequest.getContainerShape().equals(ContainerShapeType.RECTANGULAR)
+                        itemRequest.getContainerShape() != null &&
+                        (
+                                itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR) ||
+                                itemRequest.getContainerShape().equals(ContainerShapeType.RECTANGULAR)
+                        )
                 ) {
                     dom.addElement(WIDTH_ELEMENT).setText(findInches(itemRequest.getWidth(), itemRequest.getDimensionUnitOfMeasureType()));
                     dom.addElement(HEIGHT_ELEMENT).setText(findInches(itemRequest.getHeight(), itemRequest.getDimensionUnitOfMeasureType()));
                     dom.addElement(LENGTH_ELEMENT).setText(findInches(itemRequest.getDepth(), itemRequest.getDimensionUnitOfMeasureType()));
                 }
-                if (itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR)) {
+                if (itemRequest.getContainerShape() != null && itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR)) {
                     dom.addElement(GIRTH_ELEMENT).setText(findInches(itemRequest.getGirth(), itemRequest.getDimensionUnitOfMeasureType()));
                 }
             }
@@ -395,5 +394,13 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
 
     public void setUspsShippingAPI(String uspsShippingAPI) {
         this.uspsShippingAPI = uspsShippingAPI;
+    }
+
+    public String getRateRequestElement() {
+        return rateRequestElement;
+    }
+
+    public void setRateRequestElement(String rateRequestElement) {
+        this.rateRequestElement = rateRequestElement;
     }
 }

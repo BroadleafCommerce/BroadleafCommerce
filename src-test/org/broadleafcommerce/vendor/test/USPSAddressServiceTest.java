@@ -91,8 +91,6 @@ public class USPSAddressServiceTest extends BaseTest {
         } catch (AddressStandardizationException e) {
             assert(e.getStandardizationResponse().isErrorDetected());
         }
-        assert(greenMail.waitForIncomingEmail(10000, 1));
-        assert(greenMail.getReceivedMessages()[0].getSubject().contains("is reporting a status"));
     }
 
     @Test(groups = { "testException" }, dependsOnGroups="testBadAddress")
@@ -107,6 +105,20 @@ public class USPSAddressServiceTest extends BaseTest {
         } catch (Exception e) {
             assert(true);
         }
+        try {
+            addressStandardizationService.standardizeAddress(null);
+            assert(false);
+        } catch (Exception e) {
+            assert(true);
+        }
+        try {
+            addressStandardizationService.standardizeAddress(null);
+            assert(false);
+        } catch (Exception e) {
+            assert(true);
+        }
+        assert(greenMail.waitForIncomingEmail(10000, 1));
+        assert(greenMail.getReceivedMessages()[0].getSubject().contains("is reporting a status"));
     }
 
     @Test(groups = { "testSuccessfulAddress" }, dependsOnGroups="testException")

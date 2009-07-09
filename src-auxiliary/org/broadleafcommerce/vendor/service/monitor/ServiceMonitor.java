@@ -49,7 +49,13 @@ public class ServiceMonitor {
 
     public void checkService(ServiceStatusDetectable statusDetectable) {
         ServiceStatusType type = statusDetectable.getServiceStatus();
-        if (!statusMap.containsKey(statusDetectable) || !statusMap.get(statusDetectable).equals(type)) {
+        if (!statusMap.containsKey(statusDetectable)) {
+            statusMap.put(statusDetectable, type);
+            if (type.equals(ServiceStatusType.DOWN)) {
+                handleStatusChange(statusDetectable, type);
+            }
+        }
+        if (!statusMap.get(statusDetectable).equals(type)) {
             handleStatusChange(statusDetectable, type);
             statusMap.put(statusDetectable, type);
         }

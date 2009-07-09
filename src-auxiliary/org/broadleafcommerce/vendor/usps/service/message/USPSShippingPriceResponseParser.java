@@ -29,18 +29,23 @@ public class USPSShippingPriceResponseParser extends DefaultHandler {
 
     private static final Log LOG = LogFactory.getLog(USPSShippingPriceResponseParser.class);
 
-    //TODO this element should come in from environment properties
-    public static final String RESPONSE_TAG = "RateV2Response";
     public static final String PACKAGE_TAG = "Package";
     public static final String POSTAGE_TAG = "Postage";
     public static final String RATE_TAG = "Rate";
     public static final String RESTRICTIONS_TAG = "Restrictions";
     public static final String DESCRIPTION_TAG = "Description";
     public static final String ERROR_TAG = "Error";
+    public static final String MAILSERVICE_TAG = "MailService";
 
-    private USPSShippingPriceResponse shippingPriceResponse = new USPSShippingPriceResponse();
-    private StringBuffer buffer = new StringBuffer();
-    private USPSShippingMethodType shippingMethod = null;
+    private final USPSShippingPriceRequest request;
+
+    protected USPSShippingPriceResponse shippingPriceResponse = new USPSShippingPriceResponse();
+    protected StringBuffer buffer = new StringBuffer();
+    protected USPSShippingMethodType shippingMethod = null;
+
+    public USPSShippingPriceResponseParser(USPSShippingPriceRequest request) {
+        this.request = request;
+    }
 
     public void characters(char[] ch, int start, int end) {
         buffer.append(ch, start, end);
@@ -55,7 +60,19 @@ public class USPSShippingPriceResponseParser extends DefaultHandler {
         } else if (qName.equals(RESTRICTIONS_TAG)) {
             shippingPriceResponse.getResponses().peek().setRestrictions(buffer.toString());
         } else if (qName.equals(DESCRIPTION_TAG)) {
-            shippingPriceResponse.setErrorText(buffer.toString().trim());
+            if (shippingPriceResponse.getResponses().empty()) {
+                shippingPriceResponse.setErrorText(buffer.toString().trim());
+            } else {
+                shippingPriceResponse.getResponses().peek().setErrorDetected(true);
+                shippingPriceResponse.getResponses().peek().setErrorText(buffer.toString().trim());
+            }
+        } else if (qName.equals(MAILSERVICE_TAG)) {
+            if (shippingMethod == null) {
+                shippingMethod = USPSShippingMethodType.getInstanceByDescription(buffer.toString().trim());
+                if (shippingMethod == null) {
+                    LOG.warn("Shipping method with description ("+buffer.toString().trim()+") not recognized. Not including in results.");
+                }
+            }
         }
         reset();
     }
@@ -70,13 +87,21 @@ public class USPSShippingPriceResponseParser extends DefaultHandler {
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (qName.equals(PACKAGE_TAG)) {
-            shippingPriceResponse.getResponses().add(new USPSContainerItem());
-            shippingPriceResponse.getResponses().peek().setPackageId(attributes.getValue("ID"));
+            String id = attributes.getValue("ID");
+            USPSContainerItem key = new USPSContainerItem();
+            key.setPackageId(id);
+            USPSContainerItem originalItem = (USPSContainerItem) request.getContainerItems().get(request.getContainerItems().indexOf(key));
+            shippingPriceResponse.getResponses().push(originalItem);
         }
         if (qName.equals(POSTAGE_TAG)) {
-            shippingMethod = USPSShippingMethodType.getInstance(attributes.getValue("CLASSID"));
-            if (shippingMethod == null) {
-                LOG.warn("Shipping method with class id ("+attributes.getValue("CLASSID")+") not recognized. Not including in results.");
+            String classId = attributes.getValue("CLASSID");
+            if (classId != null) {
+                shippingMethod = USPSShippingMethodType.getInstance(classId);
+                if (shippingMethod == null) {
+                    LOG.warn("Shipping method with class id ("+attributes.getValue("CLASSID")+") not recognized. Not including in results.");
+                }
+            } else {
+                shippingMethod = null;
             }
         }
         if (qName.equals(ERROR_TAG)) {

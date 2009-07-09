@@ -60,4 +60,8 @@ public interface USPSShippingCalculationService {
 
     public void setUspsShippingAPI(String uspsShippingAPI);
 
+    public String getRateRequestElement();
+
+    public void setRateRequestElement(String rateRequestElement);
+
 }
