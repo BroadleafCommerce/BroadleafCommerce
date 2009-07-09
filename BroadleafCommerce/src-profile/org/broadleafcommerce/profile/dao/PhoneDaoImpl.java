@@ -45,4 +45,8 @@ public class PhoneDaoImpl implements PhoneDao {
     public Phone readPhoneById(Long phoneId) {
         return (Phone) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Phone"), phoneId);
     }
+
+    public Phone create() {
+        return (Phone) entityConfiguration.createEntityInstance(Phone.class.getName());
+    }
 }

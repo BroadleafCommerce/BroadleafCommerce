@@ -37,4 +37,8 @@ public class PhoneServiceImpl implements PhoneService {
     public Phone readPhoneById(Long phoneId) {
         return phoneDao.readPhoneById(phoneId);
     }
+
+    public Phone create() {
+        return phoneDao.create();
+    }
 }
