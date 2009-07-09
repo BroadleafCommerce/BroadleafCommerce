@@ -5,7 +5,7 @@
 
 	<named-query name="BC_FIND_STATES" >
 		<query>SELECT state FROM org.broadleafcommerce.profile.domain.State state
-		ORDER BY state.abbreviation</query>
+		ORDER BY state.name</query>
 	</named-query>
 
 </entity-mappings>
