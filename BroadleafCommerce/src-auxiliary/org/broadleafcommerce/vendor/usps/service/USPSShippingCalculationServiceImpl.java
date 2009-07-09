@@ -22,7 +22,6 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,21 +30,20 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.util.UnitOfMeasureUtil;
+import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.service.AbstractVendorService;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceHostException;
 import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
-import org.broadleafcommerce.vendor.service.type.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
-import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponseParser;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSShippingPriceErrorCode;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -139,20 +137,13 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
     }
 
     protected void validateRequest(USPSShippingPriceRequest request) throws ShippingPriceException {
-        if (request.getContainerItems().size() > 25) {
-            throw buildException(USPSShippingPriceErrorCode.TOOMANYCONTAINERITEMS.getType(), USPSShippingPriceErrorCode.TOOMANYCONTAINERITEMS.getMessage());
-        }
-        for (USPSContainerItemRequest itemRequest : request.getContainerItems()) {
-            if (itemRequest.getWeight() == null) {
-                throw buildException(USPSShippingPriceErrorCode.WEIGHTNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.WEIGHTNOTSPECIFIED.getMessage());
-            }
-            if (itemRequest.getWeight().doubleValue() > 70D) {
-                throw buildException(USPSShippingPriceErrorCode.OVERWEIGHT.getType(), USPSShippingPriceErrorCode.OVERWEIGHT.getMessage());
-            }
+        /*for (USPSContainerItemRequest itemRequest : request.getContainerItems()) {
+
+
             if (
-                    itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && itemRequest.getContainerShape() != null && (
-                            itemRequest.getContainerShape().equals(ContainerShapeType.RECTANGULAR) ||
-                            itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR)
+                    itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE) && itemRequest.getContainerShape() != null && (
+                            itemRequest.getContainerShape().equals(USPSContainerShapeType.RECTANGULAR) ||
+                            itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR)
                     )
             ) {
                 if (itemRequest.getDepth() == null || itemRequest.getHeight() == null || itemRequest.getWidth() == null) {
@@ -171,8 +162,8 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
                 }
             }
             if (
-                    itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && itemRequest.getContainerShape() != null &&
-                    itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR) &&
+                    itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE) && itemRequest.getContainerShape() != null &&
+                    itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR) &&
                     itemRequest.getGirth() == null
             ) {
                 throw buildException(USPSShippingPriceErrorCode.GIRTHNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.GIRTHNOTSPECIFIED.getMessage());
@@ -194,19 +185,10 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
             if (itemRequest.getShipDate() != null && itemRequest.getShipDate().getTime() > maxAdvance.getTime().getTime()) {
                 throw buildException(USPSShippingPriceErrorCode.SHIPDATETOOFAR.getType(), USPSShippingPriceErrorCode.SHIPDATETOOFAR.getMessage());
             }
-        }
+        }*/
     }
 
-    protected ShippingPriceException buildException(String errorCode, String errorText) {
-        USPSShippingPriceResponse response = new USPSShippingPriceResponse();
-        response.setErrorDetected(true);
-        response.setErrorCode(errorCode);
-        response.setErrorText(errorText);
-        ShippingPriceException e = new ShippingPriceException();
-        e.setShippingPriceResponse(response);
 
-        return e;
-    }
 
     protected InputStream callUSPSPricingCalculation(USPSShippingPriceRequest request) throws IOException {
         URL contentURL = new URL(new StringBuffer(httpProtocol).append("://").append(uspsServerName).append(uspsServiceAPI).toString());
@@ -216,37 +198,7 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
         return postMessage(content, contentURL, uspsCharSet);
     }
 
-    protected String findPounds(BigDecimal weight, WeightUnitOfMeasureType type) {
-        if (type.equals(WeightUnitOfMeasureType.KILOGRAMS)) {
-            weight = UnitOfMeasureUtil.convertKilogramsToPounds(weight);
-        }
-        int pounds = Double.valueOf(Math.floor(weight.doubleValue())).intValue();
-        return String.valueOf(pounds);
-    }
 
-    protected String findOunces(BigDecimal weight, WeightUnitOfMeasureType type) {
-        if (type.equals(WeightUnitOfMeasureType.KILOGRAMS)) {
-            weight = UnitOfMeasureUtil.convertKilogramsToPounds(weight);
-        }
-        double fractionalPounds = weight.doubleValue() - Math.floor(weight.doubleValue());
-        BigDecimal ounces = UnitOfMeasureUtil.convertPoundsToOunces(BigDecimal.valueOf(fractionalPounds));
-        DecimalFormat format = new DecimalFormat("0.#");
-        return format.format(ounces.doubleValue());
-    }
-
-    protected String findInches(BigDecimal dimension, DimensionUnitOfMeasureType type) {
-        if (type.equals(DimensionUnitOfMeasureType.CENTIMETERS)) {
-            dimension = UnitOfMeasureUtil.convertFeetToInches(UnitOfMeasureUtil.convertMetersToFeet(dimension.multiply(BigDecimal.valueOf(0.01))));
-        }
-        if (type.equals(DimensionUnitOfMeasureType.METERS)) {
-            dimension = UnitOfMeasureUtil.convertFeetToInches(UnitOfMeasureUtil.convertMetersToFeet(dimension));
-        }
-        if (type.equals(DimensionUnitOfMeasureType.FEET)) {
-            dimension = UnitOfMeasureUtil.convertFeetToInches(dimension);
-        }
-        DecimalFormat format = new DecimalFormat("0.#");
-        return format.format(dimension.doubleValue());
-    }
 
     protected String getShippingPriceXMLString(USPSShippingPriceRequest request) throws IOException {
         Document document = DocumentHelper.createDocument();
@@ -262,23 +214,23 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
             dom.addElement(POUNDS_ELEMENT).setText(findPounds(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()));
             dom.addElement(OUNCES_ELEMENT).setText(findOunces(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()));
             dom.addElement(SIZE_ELEMENT).setText(itemRequest.getContainerSize().getType());
-            if (itemRequest.getContainerSize().equals(ContainerSizeType.LARGE) && itemRequest.getContainerShape() != null) {
+            if (itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE) && itemRequest.getContainerShape() != null) {
                 dom.addElement(CONTAINER_ELEMENT).setText(itemRequest.getContainerShape().getType());
             }
             dom.addElement(MACHINABLE_ELEMENT).setText(Boolean.toString(itemRequest.isMachineSortable()));
-            if (itemRequest.getContainerSize().equals(ContainerSizeType.LARGE)){
+            if (itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE)){
                 if (
                         itemRequest.getContainerShape() != null &&
                         (
-                                itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR) ||
-                                itemRequest.getContainerShape().equals(ContainerShapeType.RECTANGULAR)
+                                itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR) ||
+                                itemRequest.getContainerShape().equals(USPSContainerShapeType.RECTANGULAR)
                         )
                 ) {
                     dom.addElement(WIDTH_ELEMENT).setText(findInches(itemRequest.getWidth(), itemRequest.getDimensionUnitOfMeasureType()));
                     dom.addElement(HEIGHT_ELEMENT).setText(findInches(itemRequest.getHeight(), itemRequest.getDimensionUnitOfMeasureType()));
                     dom.addElement(LENGTH_ELEMENT).setText(findInches(itemRequest.getDepth(), itemRequest.getDimensionUnitOfMeasureType()));
                 }
-                if (itemRequest.getContainerShape() != null && itemRequest.getContainerShape().equals(ContainerShapeType.NONRECTANGULAR)) {
+                if (itemRequest.getContainerShape() != null && itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR)) {
                     dom.addElement(GIRTH_ELEMENT).setText(findInches(itemRequest.getGirth(), itemRequest.getDimensionUnitOfMeasureType()));
                 }
             }
@@ -316,6 +268,23 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
                 }
             }
         }
+    }
+
+    public String findPounds(BigDecimal weight, WeightUnitOfMeasureType type) {
+        int pounds = UnitOfMeasureUtil.findWholePounds(weight, type);
+        return String.valueOf(pounds);
+    }
+
+    public String findOunces(BigDecimal weight, WeightUnitOfMeasureType type) {
+        BigDecimal ounces = UnitOfMeasureUtil.findRemainingOunces(weight, type);
+        DecimalFormat format = new DecimalFormat("0.#");
+        return format.format(ounces.doubleValue());
+    }
+
+    public String findInches(BigDecimal dimension, DimensionUnitOfMeasureType type) {
+        dimension = UnitOfMeasureUtil.findInches(dimension, type);
+        DecimalFormat format = new DecimalFormat("0.#");
+        return format.format(dimension.doubleValue());
     }
 
     public ServiceStatusType getServiceStatus() {

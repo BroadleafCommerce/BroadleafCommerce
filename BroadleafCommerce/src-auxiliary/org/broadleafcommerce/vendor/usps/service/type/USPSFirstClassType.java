@@ -20,31 +20,31 @@ import java.util.Hashtable;
 import java.util.Map;
 
 /**
- * An extendible enumeration of container size types.
+ * An extendible enumeration of first class types.
  * 
  * @author jfischer
  */
-public class ContainerSizeType implements Serializable {
+public class USPSFirstClassType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ContainerSizeType> types = new Hashtable<String, ContainerSizeType>();
+    private static final Map<String, USPSFirstClassType> types = new Hashtable<String, USPSFirstClassType>();
 
-    public static ContainerSizeType REGULAR  = new ContainerSizeType("REGULAR");
-    public static ContainerSizeType LARGE = new ContainerSizeType("LARGE");
-    public static ContainerSizeType OVERSIZE = new ContainerSizeType("OVERSIZE");
+    public static USPSFirstClassType LETTER  = new USPSFirstClassType("LETTER");
+    public static USPSFirstClassType FLAT = new USPSFirstClassType("FLAT");
+    public static USPSFirstClassType PARCEL = new USPSFirstClassType("PARCEL");
 
-    public static ContainerSizeType getInstance(String type) {
+    public static USPSFirstClassType getInstance(String type) {
         return types.get(type);
     }
 
     private String type;
 
-    public ContainerSizeType() {
+    public USPSFirstClassType() {
         //do nothing
     }
 
-    public ContainerSizeType(String type) {
+    public USPSFirstClassType(String type) {
         setType(type);
     }
 
@@ -75,7 +75,7 @@ public class ContainerSizeType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ContainerSizeType other = (ContainerSizeType) obj;
+        USPSFirstClassType other = (USPSFirstClassType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

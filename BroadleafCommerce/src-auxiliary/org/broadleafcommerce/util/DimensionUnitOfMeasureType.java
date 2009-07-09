@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.service.type;
+package org.broadleafcommerce.util;
 
 import java.io.Serializable;
 import java.util.Hashtable;
@@ -25,26 +25,28 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class WeightUnitOfMeasureType implements Serializable {
+public class DimensionUnitOfMeasureType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, WeightUnitOfMeasureType> types = new Hashtable<String, WeightUnitOfMeasureType>();
+    private static final Map<String, DimensionUnitOfMeasureType> types = new Hashtable<String, DimensionUnitOfMeasureType>();
 
-    public static WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS");
-    public static WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS");
+    public static DimensionUnitOfMeasureType CENTIMETERS  = new DimensionUnitOfMeasureType("CENTIMETERS");
+    public static DimensionUnitOfMeasureType METERS  = new DimensionUnitOfMeasureType("METERS");
+    public static DimensionUnitOfMeasureType INCHES  = new DimensionUnitOfMeasureType("INCHES");
+    public static DimensionUnitOfMeasureType FEET  = new DimensionUnitOfMeasureType("FEET");
 
-    public static WeightUnitOfMeasureType getInstance(String type) {
+    public static DimensionUnitOfMeasureType getInstance(String type) {
         return types.get(type);
     }
 
     private String type;
 
-    public WeightUnitOfMeasureType() {
+    public DimensionUnitOfMeasureType() {
         //do nothing
     }
 
-    public WeightUnitOfMeasureType(String type) {
+    public DimensionUnitOfMeasureType(String type) {
         setType(type);
     }
 
@@ -75,7 +77,7 @@ public class WeightUnitOfMeasureType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        WeightUnitOfMeasureType other = (WeightUnitOfMeasureType) obj;
+        DimensionUnitOfMeasureType other = (DimensionUnitOfMeasureType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

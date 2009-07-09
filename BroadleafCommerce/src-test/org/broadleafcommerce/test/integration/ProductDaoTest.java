@@ -27,7 +27,7 @@ import org.broadleafcommerce.catalog.domain.ProductWeight;
 import org.broadleafcommerce.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.catalog.domain.UpSaleProductImpl;
 import org.broadleafcommerce.test.dataprovider.ProductDataProvider;
-import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
+import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

@@ -20,9 +20,9 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.broadleafcommerce.vendor.service.type.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
+import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 
 @Embeddable
 public class ProductDimension {
@@ -96,19 +96,19 @@ public class ProductDimension {
         this.girth = girth;
     }
 
-    public ContainerSizeType getSize() {
-        return ContainerSizeType.getInstance(size);
+    public USPSContainerSizeType getSize() {
+        return USPSContainerSizeType.getInstance(size);
     }
 
-    public void setSize(ContainerSizeType size) {
+    public void setSize(USPSContainerSizeType size) {
         this.size = size.getType();
     }
 
-    public ContainerShapeType getContainer() {
-        return ContainerShapeType.getInstance(container);
+    public USPSContainerShapeType getContainer() {
+        return USPSContainerShapeType.getInstance(container);
     }
 
-    public void setContainer(ContainerShapeType container) {
+    public void setContainer(USPSContainerShapeType container) {
         this.container = container.getType();
     }
 

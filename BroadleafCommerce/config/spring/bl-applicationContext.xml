@@ -172,10 +172,6 @@
 		<property name="rateRequestElement" value="${usps.rate.request.tag}"/>
 	</bean>
 	
-	<bean id="blShippingPriceResponseParser" class="org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponseParser" scope="prototype">
-		<property name="rateResponseTag" value="${usps.rate.response.tag}"/>
-	</bean>
-	
 	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>
 
 	<aop:config>

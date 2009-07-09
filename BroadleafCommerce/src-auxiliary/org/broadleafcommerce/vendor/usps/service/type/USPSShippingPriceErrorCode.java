@@ -41,6 +41,8 @@ public class USPSShippingPriceErrorCode implements Serializable {
     public static USPSShippingPriceErrorCode UNITTYPENOTSUPPORTED  = new USPSShippingPriceErrorCode("bl_unit", "The unit of measure type specified is not supported.");
     public static USPSShippingPriceErrorCode UNITTYPENOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_type", "The dimension and weight unit of measure types must be specified for this request.");
     public static USPSShippingPriceErrorCode SHIPDATETOOFAR  = new USPSShippingPriceErrorCode("bl_shipdate", "The ship date may only be 0 to 3 days in advance.");
+    public static USPSShippingPriceErrorCode SERVICENOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_service", "The service must be specified for this request.");
+    public static USPSShippingPriceErrorCode FIRSTCLASSNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_firstclass", "The first class container type must be specified for this request.");
 
     public static USPSShippingPriceErrorCode getInstance(String type) {
         return types.get(type);
