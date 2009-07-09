@@ -19,32 +19,39 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.broadleafcommerce.util.TypeEnumeration;
+
 /**
- * An extendible enumeration of container shape types.
+ * An extendible enumeration of V2 service types.
  * 
  * @author jfischer
  */
-public class ContainerShapeType implements Serializable {
+public class USPSServiceV2Type implements Serializable, TypeEnumeration {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ContainerShapeType> types = new Hashtable<String, ContainerShapeType>();
+    private static final Map<String, USPSServiceV2Type> types = new Hashtable<String, USPSServiceV2Type>();
 
-    public static ContainerShapeType RECTANGULAR  = new ContainerShapeType("RECTANGULAR");
-    public static ContainerShapeType NONRECTANGULAR = new ContainerShapeType("NONRECTANGULAR");
-    public static ContainerShapeType VARIABLE = new ContainerShapeType("VARIABLE");
+    public static USPSServiceV2Type ALL  = new USPSServiceV2Type("ALL");
+    public static USPSServiceV2Type FIRSTCLASS = new USPSServiceV2Type("FIRST CLASS");
+    public static USPSServiceV2Type PRIORITY = new USPSServiceV2Type("PRIORITY");
+    public static USPSServiceV2Type EXPRESS = new USPSServiceV2Type("EXPRESS");
+    public static USPSServiceV2Type BPM = new USPSServiceV2Type("BPM");
+    public static USPSServiceV2Type PARCEL = new USPSServiceV2Type("PARCEL");
+    public static USPSServiceV2Type MEDIA = new USPSServiceV2Type("MEDIA");
+    public static USPSServiceV2Type LIBRARY = new USPSServiceV2Type("LIBRARY");
 
-    public static ContainerShapeType getInstance(String type) {
+    public static USPSServiceV2Type getInstance(String type) {
         return types.get(type);
     }
 
     private String type;
 
-    public ContainerShapeType() {
+    public USPSServiceV2Type() {
         //do nothing
     }
 
-    public ContainerShapeType(String type) {
+    public USPSServiceV2Type(String type) {
         setType(type);
     }
 
@@ -75,7 +82,7 @@ public class ContainerShapeType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ContainerShapeType other = (ContainerShapeType) obj;
+        USPSServiceV2Type other = (USPSServiceV2Type) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

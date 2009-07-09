@@ -18,20 +18,22 @@ package org.broadleafcommerce.vendor.usps.service.message;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.broadleafcommerce.vendor.service.type.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
+import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.util.TypeEnumeration;
+import org.broadleafcommerce.util.WeightUnitOfMeasureType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
 
 public interface USPSContainerItemRequest {
 
-    public ContainerSizeType getContainerSize();
+    public USPSContainerSizeType getContainerSize();
 
-    public void setContainerSize(ContainerSizeType containerSize);
+    public void setContainerSize(USPSContainerSizeType containerSize);
 
-    public ContainerShapeType getContainerShape();
+    public USPSContainerShapeType getContainerShape();
 
-    public void setContainerShape(ContainerShapeType containerShape);
+    public void setContainerShape(USPSContainerShapeType containerShape);
 
     public boolean isMachineSortable();
 
@@ -80,4 +82,13 @@ public interface USPSContainerItemRequest {
     public DimensionUnitOfMeasureType getDimensionUnitOfMeasureType();
 
     public void setDimensionUnitOfMeasureType(DimensionUnitOfMeasureType dimensionUnitOfMeasureType);
+
+    public TypeEnumeration getService();
+
+    public void setService(TypeEnumeration service);
+
+    public USPSFirstClassType getFirstClassType();
+
+    public void setFirstClassType(USPSFirstClassType firstClassType);
+
 }

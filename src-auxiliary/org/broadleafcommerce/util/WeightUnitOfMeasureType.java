@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.service.type;
+package org.broadleafcommerce.util;
 
 import java.io.Serializable;
 import java.util.Hashtable;
@@ -25,28 +25,26 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class DimensionUnitOfMeasureType implements Serializable {
+public class WeightUnitOfMeasureType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, DimensionUnitOfMeasureType> types = new Hashtable<String, DimensionUnitOfMeasureType>();
+    private static final Map<String, WeightUnitOfMeasureType> types = new Hashtable<String, WeightUnitOfMeasureType>();
 
-    public static DimensionUnitOfMeasureType CENTIMETERS  = new DimensionUnitOfMeasureType("CENTIMETERS");
-    public static DimensionUnitOfMeasureType METERS  = new DimensionUnitOfMeasureType("METERS");
-    public static DimensionUnitOfMeasureType INCHES  = new DimensionUnitOfMeasureType("INCHES");
-    public static DimensionUnitOfMeasureType FEET  = new DimensionUnitOfMeasureType("FEET");
+    public static WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS");
+    public static WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS");
 
-    public static DimensionUnitOfMeasureType getInstance(String type) {
+    public static WeightUnitOfMeasureType getInstance(String type) {
         return types.get(type);
     }
 
     private String type;
 
-    public DimensionUnitOfMeasureType() {
+    public WeightUnitOfMeasureType() {
         //do nothing
     }
 
-    public DimensionUnitOfMeasureType(String type) {
+    public WeightUnitOfMeasureType(String type) {
         setType(type);
     }
 
@@ -77,7 +75,7 @@ public class DimensionUnitOfMeasureType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DimensionUnitOfMeasureType other = (DimensionUnitOfMeasureType) obj;
+        WeightUnitOfMeasureType other = (WeightUnitOfMeasureType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

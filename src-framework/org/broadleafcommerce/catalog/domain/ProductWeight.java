@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
+import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 
 @Embeddable
 public class ProductWeight {

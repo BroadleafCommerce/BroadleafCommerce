@@ -17,6 +17,7 @@ package org.broadleafcommerce.util;
 
 import java.math.BigDecimal;
 
+
 public class UnitOfMeasureUtil {
 
     public static BigDecimal convertKilogramsToPounds(BigDecimal kilograms) {
@@ -49,5 +50,48 @@ public class UnitOfMeasureUtil {
 
     public static BigDecimal convertFeetToInches(BigDecimal feet) {
         return feet.multiply(BigDecimal.valueOf(12));
+    }
+
+    public static int findWholePounds(BigDecimal weight, WeightUnitOfMeasureType type) {
+        weight = findPounds(weight, type);
+        int pounds = Double.valueOf(Math.floor(weight.doubleValue())).intValue();
+        return pounds;
+    }
+
+    public static BigDecimal findPounds(BigDecimal weight, WeightUnitOfMeasureType type) {
+        if (type.equals(WeightUnitOfMeasureType.KILOGRAMS)) {
+            weight = UnitOfMeasureUtil.convertKilogramsToPounds(weight);
+        }
+        return weight;
+    }
+
+    public static BigDecimal findRemainingOunces(BigDecimal weight, WeightUnitOfMeasureType type) {
+        if (type.equals(WeightUnitOfMeasureType.KILOGRAMS)) {
+            weight = UnitOfMeasureUtil.convertKilogramsToPounds(weight);
+        }
+        double fractionalPounds = weight.doubleValue() - Math.floor(weight.doubleValue());
+        BigDecimal ounces = UnitOfMeasureUtil.convertPoundsToOunces(BigDecimal.valueOf(fractionalPounds));
+        return ounces;
+    }
+
+    public static BigDecimal findOunces(BigDecimal weight, WeightUnitOfMeasureType type) {
+        if (type.equals(WeightUnitOfMeasureType.KILOGRAMS)) {
+            weight = UnitOfMeasureUtil.convertKilogramsToPounds(weight);
+        }
+        BigDecimal ounces = UnitOfMeasureUtil.convertPoundsToOunces(weight);
+        return ounces;
+    }
+
+    public static BigDecimal findInches(BigDecimal dimension, DimensionUnitOfMeasureType type) {
+        if (type.equals(DimensionUnitOfMeasureType.CENTIMETERS)) {
+            dimension = UnitOfMeasureUtil.convertFeetToInches(UnitOfMeasureUtil.convertMetersToFeet(dimension.multiply(BigDecimal.valueOf(0.01))));
+        }
+        if (type.equals(DimensionUnitOfMeasureType.METERS)) {
+            dimension = UnitOfMeasureUtil.convertFeetToInches(UnitOfMeasureUtil.convertMetersToFeet(dimension));
+        }
+        if (type.equals(DimensionUnitOfMeasureType.FEET)) {
+            dimension = UnitOfMeasureUtil.convertFeetToInches(dimension);
+        }
+        return dimension;
     }
 }

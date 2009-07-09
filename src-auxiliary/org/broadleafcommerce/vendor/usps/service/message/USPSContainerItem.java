@@ -20,17 +20,21 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.util.TypeEnumeration;
+import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.util.money.Money;
-import org.broadleafcommerce.vendor.service.type.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
 
 public class USPSContainerItem implements USPSContainerItemRequest, USPSContainerItemResponse {
 
-    protected ContainerSizeType containerSize;
-    protected ContainerShapeType containerShape;
+    //input
+    protected TypeEnumeration service;
+    protected USPSContainerSizeType containerSize;
+    protected USPSContainerShapeType containerShape;
     protected boolean isMachineSortable = true;
     protected BigDecimal width;
     protected BigDecimal height;
@@ -39,29 +43,32 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     protected BigDecimal weight;
     protected Date shipDate;
     protected String packageId;
-    protected Map<USPSShippingMethodType, Money> rates = new HashMap<USPSShippingMethodType, Money>();
     protected String zipOrigination;
     protected String zipDestination;
     protected WeightUnitOfMeasureType weightUnitOfMeasureType;
     protected DimensionUnitOfMeasureType dimensionUnitOfMeasureType;
+    protected USPSFirstClassType firstClassType;
+
+    //output
+    protected Map<USPSShippingMethodType, Money> rates = new HashMap<USPSShippingMethodType, Money>();
     protected String restrictions;
     protected boolean isErrorDetected = false;
     protected String errorCode;
     protected String errorText;
 
-    public ContainerSizeType getContainerSize() {
+    public USPSContainerSizeType getContainerSize() {
         return containerSize;
     }
 
-    public void setContainerSize(ContainerSizeType containerSize) {
+    public void setContainerSize(USPSContainerSizeType containerSize) {
         this.containerSize = containerSize;
     }
 
-    public ContainerShapeType getContainerShape() {
+    public USPSContainerShapeType getContainerShape() {
         return containerShape;
     }
 
-    public void setContainerShape(ContainerShapeType containerShape) {
+    public void setContainerShape(USPSContainerShapeType containerShape) {
         this.containerShape = containerShape;
     }
 
@@ -199,6 +206,22 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
 
     public void setErrorDetected(boolean isErrorDetected) {
         this.isErrorDetected = isErrorDetected;
+    }
+
+    public TypeEnumeration getService() {
+        return service;
+    }
+
+    public void setService(TypeEnumeration service) {
+        this.service = service;
+    }
+
+    public USPSFirstClassType getFirstClassType() {
+        return firstClassType;
+    }
+
+    public void setFirstClassType(USPSFirstClassType firstClassType) {
+        this.firstClassType = firstClassType;
     }
 
     @Override

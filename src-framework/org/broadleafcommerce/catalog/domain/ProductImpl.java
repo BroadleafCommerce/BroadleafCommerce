@@ -45,8 +45,8 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.DateUtil;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -434,19 +434,19 @@ public class ProductImpl implements Product {
         return dimension.getGirth();
     }
 
-    public ContainerSizeType getSize() {
+    public USPSContainerSizeType getSize() {
         return dimension.getSize();
     }
 
-    public void setSize(ContainerSizeType size) {
+    public void setSize(USPSContainerSizeType size) {
         dimension.setSize(size);
     }
 
-    public ContainerShapeType getContainer() {
+    public USPSContainerShapeType getContainer() {
         return dimension.getContainer();
     }
 
-    public void setContainer(ContainerShapeType container) {
+    public void setContainer(USPSContainerShapeType container) {
         dimension.setContainer(container);
     }
 
