@@ -1,0 +1,8 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="BroadleafCommerce">
+  <test verbose="2" name="org.broadleafcommerce.vendor.test.USPSAddressServiceTest" annotations="JDK">
+    <classes>
+      <class name="org.broadleafcommerce.vendor.test.USPSAddressServiceTest"/>
+    </classes>
+  </test>
+</suite>

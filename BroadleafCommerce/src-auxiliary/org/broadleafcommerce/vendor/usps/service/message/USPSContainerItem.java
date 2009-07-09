@@ -45,6 +45,9 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     protected WeightUnitOfMeasureType weightUnitOfMeasureType;
     protected DimensionUnitOfMeasureType dimensionUnitOfMeasureType;
     protected String restrictions;
+    protected boolean isErrorDetected = false;
+    protected String errorCode;
+    protected String errorText;
 
     public ContainerSizeType getContainerSize() {
         return containerSize;
@@ -172,6 +175,55 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
 
     public void setRestrictions(String restrictions) {
         this.restrictions = restrictions;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public String getErrorText() {
+        return errorText;
+    }
+
+    public void setErrorText(String errorText) {
+        this.errorText = errorText;
+    }
+
+    public boolean isErrorDetected() {
+        return isErrorDetected;
+    }
+
+    public void setErrorDetected(boolean isErrorDetected) {
+        this.isErrorDetected = isErrorDetected;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((packageId == null) ? 0 : packageId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        USPSContainerItem other = (USPSContainerItem) obj;
+        if (packageId == null) {
+            if (other.packageId != null)
+                return false;
+        } else if (!packageId.equals(other.packageId))
+            return false;
+        return true;
     }
 
 }

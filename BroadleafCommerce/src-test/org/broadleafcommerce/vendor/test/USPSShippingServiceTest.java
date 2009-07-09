@@ -15,10 +15,19 @@
  */
 package org.broadleafcommerce.vendor.test;
 
+import java.math.BigDecimal;
+
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.util.UnitOfMeasureUtil;
+import org.broadleafcommerce.vendor.service.type.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationService;
+import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItem;
+import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
+import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
+import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
+import org.broadleafcommerce.vendor.usps.service.type.ContainerSizeType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
@@ -33,10 +42,10 @@ public class USPSShippingServiceTest extends BaseTest {
         if (shippingCalculationService.getUspsUserName().equals("?")) {
             return;
         }
-        /*USPSShippingPriceRequest request = new USPSShippingPriceRequest();
+        USPSShippingPriceRequest request = new USPSShippingPriceRequest();
         USPSContainerItemRequest itemRequest = new USPSContainerItem();
-        itemRequest.setContainerSize(ContainerSizeType.REGULAR);
-        itemRequest.setPackageId("1ST");
+        itemRequest.setContainerSize(ContainerSizeType.LARGE);
+        itemRequest.setPackageId("0");
         itemRequest.setWeight(BigDecimal.valueOf(10L).add(UnitOfMeasureUtil.convertOuncesToPounds(BigDecimal.valueOf(5L))));
         itemRequest.setWeightUnitOfMeasureType(WeightUnitOfMeasureType.POUNDS);
         itemRequest.setZipDestination("20008");
@@ -44,8 +53,7 @@ public class USPSShippingServiceTest extends BaseTest {
         request.getContainerItems().add(itemRequest);
 
         USPSShippingPriceResponse response = shippingCalculationService.retrieveShippingRates(request);
-        assert(response.getResponses().peek().getRates().size() > 0);*/
-        //TODO finish test
+        assert(response.getResponses().peek().getRates().size() > 0);
     }
 
 }

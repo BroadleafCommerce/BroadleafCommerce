@@ -34,4 +34,16 @@ public interface USPSContainerItemResponse {
 
     public void setRestrictions(String restrictions);
 
+    public String getErrorCode();
+
+    public void setErrorCode(String errorCode);
+
+    public String getErrorText();
+
+    public void setErrorText(String errorText);
+
+    public boolean isErrorDetected();
+
+    public void setErrorDetected(boolean isErrorDetected);
+
 }

@@ -169,6 +169,11 @@
 		<property name="failureReportingThreshold" value="10"/>
 		<property name="httpProtocol" value="${usps.http.protocol}"/>
 		<property name="uspsShippingAPI" value="${usps.shipping.api}"/>
+		<property name="rateRequestElement" value="${usps.rate.request.tag}"/>
+	</bean>
+	
+	<bean id="blShippingPriceResponseParser" class="org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponseParser" scope="prototype">
+		<property name="rateResponseTag" value="${usps.rate.response.tag}"/>
 	</bean>
 	
 	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>
