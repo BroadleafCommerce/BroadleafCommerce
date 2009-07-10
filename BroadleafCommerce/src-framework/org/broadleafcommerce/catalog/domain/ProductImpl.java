@@ -287,7 +287,7 @@ public class ProductImpl implements Product {
      * Gets the all skus.
      * @return the all skus
      */
-    private List<Sku> getAllSkus() {
+    public List<Sku> getAllSkus() {
         return allSkus;
     }
 
