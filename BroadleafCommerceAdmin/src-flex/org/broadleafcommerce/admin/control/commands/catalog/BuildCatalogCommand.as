@@ -7,7 +7,7 @@ package org.broadleafcommerce.admin.control.commands.catalog
 	
 	import org.broadleafcommerce.admin.control.events.catalog.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.category.AddCategoriesToCatalogTreeEvent;
-	import org.broadleafcommerce.admin.control.events.catalog.sku.AddSkusToProductsEvent;
+	import org.broadleafcommerce.admin.control.events.catalog.product.AddProductsToCategoriesEvent;
 	import org.broadleafcommerce.admin.model.AppModelLocator;
 
 	public class BuildCatalogCommand implements Command
@@ -23,8 +23,8 @@ package org.broadleafcommerce.admin.control.commands.catalog
 			eventChain.addItem(new StandardizeCatalogObjectsEvent(categoryArray, productsArray, skusArray));
 			eventChain.addItem(new AddCategoriesToCatalogTreeEvent(catalogTree, categoryArray));		
 			// The following events add products and skus to the tree	 
-			//eventChain.addItem(new AddProductsToCatalogTreeEvent(categoryArray, productsArray));
-			eventChain.addItem(new AddSkusToProductsEvent(productsArray, skusArray));
+			eventChain.addItem(new AddProductsToCategoriesEvent(categoryArray, productsArray));
+			// eventChain.addItem(new AddSkusToProductsEvent(productsArray, skusArray));
 																					  
 		}
 

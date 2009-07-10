@@ -18,6 +18,7 @@
 			private var appModel:AppModelLocator = AppModelLocator.getInstance();
 		
 			private function handleCreationComplete():void{
+				
 			}
 		
 			private function handleNewCategory(event:Event):void{

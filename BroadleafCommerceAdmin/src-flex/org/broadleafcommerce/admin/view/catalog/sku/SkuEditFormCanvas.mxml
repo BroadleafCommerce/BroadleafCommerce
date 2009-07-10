@@ -19,11 +19,11 @@
 			
 			private function handleSaveSku(event:Event):void{
 				skuModel.currentSku.name = nameTextInput.text;
-				skuModel.currentSku.description = descriptionTextInput.text;
-				skuModel.currentSku.longDescription = descriptionTextInput.text;
-				skuModel.currentSku.activeStartDate = activeStartDateDateField.selectedDate;
-				skuModel.currentSku.activeEndDate = activeEndDateDateField.selectedDate;
-				skuModel.currentSku.retailPrice.amount = Number(retailPriceTextInput.text);
+//				skuModel.currentSku.description = descriptionTextInput.text;
+//				skuModel.currentSku.longDescription = descriptionTextInput.text;
+//				skuModel.currentSku.activeStartDate = activeStartDateDateField.selectedDate;
+//				skuModel.currentSku.activeEndDate = activeEndDateDateField.selectedDate;
+//				skuModel.currentSku.retailPrice.amount = Number(retailPriceTextInput.text);
 				var scse:SaveSkuEvent = new SaveSkuEvent(skuModel.currentSku);
 				scse.dispatch();
 			}
@@ -32,7 +32,7 @@
 	<mx:Binding
 		source="skuModel.currentSku.name"
 		destination="nameTextInput.text"/>
-	<mx:Binding
+	<!--mx:Binding
 		source="skuModel.currentSku.description"
 		destination="descriptionTextInput.text"/>
 	<mx:Binding
@@ -43,7 +43,7 @@
 		destination="activeStartDateDateField.selectedDate"/>
 	<mx:Binding
 		source="skuModel.currentSku.activeEndDate"
-		destination="activeEndDateDateField.selectedDate"/>
+		destination="activeEndDateDateField.selectedDate"/-->
 	<mx:DateFormatter
 		id="dateFormatter"/>
 	<mx:StringValidator
@@ -57,7 +57,7 @@
 		allowNegative="false"
 		source="{retailPriceTextInput}"
 		required="true"/>
-	<mx:Form
+	<mx:Form paddingTop="0" paddingBottom="0"
 		id="newSkuForm">
 		<mx:FormItem
 			label="Name:">

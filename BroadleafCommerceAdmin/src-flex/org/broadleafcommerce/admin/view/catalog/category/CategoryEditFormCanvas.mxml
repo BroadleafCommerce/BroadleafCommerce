@@ -5,6 +5,8 @@
 	creationComplete="handleCreationComplete()"  >
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
+			import org.broadleafcommerce.admin.control.events.catalog.product.EditProductEvent;
 			import mx.controls.Tree;
 			import mx.managers.DragManager;
 			import mx.events.DragEvent;
@@ -53,6 +55,11 @@
 				if(event.dragInitiator is Tree && Tree(event.dragInitiator).selectedItem is Category)
 					DragManager.acceptDragDrop(List(event.currentTarget));
 			}
+			
+			private function handleProductClick(event:MouseEvent):void{				
+				var epe:EditProductEvent = new EditProductEvent(Product(List(event.currentTarget).selectedItem), true);
+				epe.dispatch();			
+			}
 		]]>
 	</mx:Script>
 	<mx:Binding 
@@ -78,10 +85,7 @@
 		destination="activeEndDateDateField.selectedDate"/>		
 	<mx:Binding
 		source="categoryModel.currentCategory.children"
-		destination="childList.dataProvider" />
-	<mx:Binding
-		source="categoryModel.currentCategory.allParentCategories"
-		destination="parentList.dataProvider" />
+		destination="productList.dataProvider" />
 
 	<mx:DateFormatter 
 		id="dateFormatter"/>
@@ -132,22 +136,13 @@
 		</mx:FormItem>
 	</mx:Form>
 	<mx:FormItem
-		label="Child Categories" x="368" y="211">
+		label="Products" x="360" y="10">
 		<mx:List
-			id="childList"
+			id="productList"
 			labelField="name"
 			width="200"
-			dropEnabled="true"
-			dragDrop="handleChildDrop(event)"
-			dragEnter="handleChildDragEnter(event)"
-			/>
-	</mx:FormItem>
-	<mx:FormItem
-		label="Parent Categories" x="360" y="10">
-		<mx:List
-			id="parentList"
-			labelField="name"
-			width="200"
+			itemRenderer="org.broadleafcommerce.admin.view.catalog.product.components.ProductListItemRenderer"
+			click="handleProductClick(event)"
 			/>
 	</mx:FormItem>
 </mx:Canvas>

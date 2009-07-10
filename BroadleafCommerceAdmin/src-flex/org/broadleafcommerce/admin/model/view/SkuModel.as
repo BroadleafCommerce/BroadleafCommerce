@@ -14,6 +14,8 @@ package org.broadleafcommerce.admin.model.view
 		public var catalogSkus:ArrayCollection = new ArrayCollection();
 
 		public var currentSku:Sku;	
+		
+		public var viewSkus:ArrayCollection = new ArrayCollection();
 
 	}
 }

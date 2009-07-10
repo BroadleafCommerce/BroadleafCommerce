@@ -13,7 +13,7 @@ package org.broadleafcommerce.admin.control.commands.catalog.product
 		public function execute(event:CairngormEvent):void
 		{
 			AppModelLocator.getInstance().productModel.currentProduct = new Product();
-			AppModelLocator.getInstance().productModel.viewState = ProductModel.STATE_NEW;
+			AppModelLocator.getInstance().productModel.viewState = ProductModel.STATE_VIEW_EDIT;
 		}
 		
 	}

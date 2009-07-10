@@ -6,7 +6,6 @@ package org.broadleafcommerce.admin.control.commands.catalog.sku
 	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.control.events.catalog.sku.AddSkusToProductsEvent;
-	import org.broadleafcommerce.admin.model.AppModelLocator;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 	import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
 
@@ -26,7 +25,10 @@ package org.broadleafcommerce.admin.control.commands.catalog.sku
 				for each(var product:Product in productsArray){
 					for each(var skuParent:Product in sku.allParentProducts){
 						if(product.id == skuParent.id){
-							product.children.addItem(sku);
+							if(product.allSkus == null){
+								product.allSkus = new ArrayCollection();
+							}
+							product.allSkus.addItem(sku);
 						}
 					}
 				}

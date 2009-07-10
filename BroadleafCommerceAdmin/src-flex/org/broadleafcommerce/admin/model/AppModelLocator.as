@@ -6,6 +6,7 @@ package org.broadleafcommerce.admin.model
 	
 	import mx.collections.ArrayCollection;
 	
+	import org.broadleafcommerce.admin.model.view.CatalogModel;
 	import org.broadleafcommerce.admin.model.view.CategoryModel;
 	import org.broadleafcommerce.admin.model.view.OfferModel;
 	import org.broadleafcommerce.admin.model.view.ProductModel;
@@ -36,6 +37,9 @@ package org.broadleafcommerce.admin.model
 
 		[Bindable]
 		public var catalogTree:ArrayCollection = new ArrayCollection();
+		
+		[Bindable]
+		public var catalogModel:CatalogModel = new CatalogModel();
 
 		[Bindable]
 		public var categoryModel:CategoryModel = new CategoryModel();

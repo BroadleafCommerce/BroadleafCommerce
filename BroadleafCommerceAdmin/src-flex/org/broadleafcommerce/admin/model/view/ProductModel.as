@@ -7,14 +7,15 @@ package org.broadleafcommerce.admin.model.view
 	[Bindable]
 	public class ProductModel
 	{
-		public static const STATE_NONE:String = "none";
-		public static const STATE_NEW:String = "new_category";
-		public static const STATE_EDIT:String = "edit_category";
-		public static const STATE_VIEW:String = "view";
+		public static const STATE_VIEW_MEDIA:String = "product_media_view";
+		public static const STATE_VIEW_EDIT:String = "product_edit_view";
+		public static const STATE_VIEW_SKUS:String = "product_sku_view";
 		
-		public var viewState:String = STATE_NONE;
+		public var viewState:String = STATE_VIEW_EDIT;
 
 		public var currentProduct:Product = new Product();
+
+		public var currentProductChanged:Boolean = false;
 		
 		public var catalogProducts:ArrayCollection = new ArrayCollection();
 	}

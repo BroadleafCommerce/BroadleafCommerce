@@ -51,7 +51,7 @@
 	
 	<!-- Expose the Service beans for BlazeDS remoting 
 	-->
-	<flex:remoting-destination ref="blCatalogService" />		
+	<flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />		
 	<flex:remoting-destination ref="blOfferService" />		
 
 </beans>

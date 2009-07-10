@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src-java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/BroadleafCommerce"/>
+	<classpathentry kind="src" path="src-java"/>
+	<classpathentry kind="lib" path="lib/include/bin/backport-util-concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/cfgatewayadapter.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/com.springsource.org.codehaus.jackson-1.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-httpclient-3.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/concurrent.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/flex-messaging-common.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/flex-messaging-core.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/flex-messaging-opt.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/flex-messaging-proxy.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/flex-messaging-remoting.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/org.springframework.flex-1.0.0.RC2.jar"/>
+	<classpathentry kind="lib" path="lib/include/bin/xalan.jar"/>
 	<classpathentry kind="output" path="bin/java"/>
 </classpath>

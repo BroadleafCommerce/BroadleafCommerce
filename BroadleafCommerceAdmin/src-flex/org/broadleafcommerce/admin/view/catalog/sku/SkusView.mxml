@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas 
+<mx:VBox
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	creationComplete="handleCreationComplete()"
-	width="100%">
+	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*">
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.model.AppModelLocator;
@@ -15,10 +15,10 @@
 			}
 		]]>
 	</mx:Script>
+	<product:ProductSimpleSearchGrid/>	
 	<mx:DataGrid
 		id="skuDataGrid"
-		borderStyle="none"
-		width="100%">
+		borderStyle="none" height="100%">
 		<mx:columns>
 			<mx:DataGridColumn
 				dataField="name"
@@ -27,5 +27,10 @@
 			<mx:DataGridColumn/>
 			<mx:DataGridColumn/>
 		</mx:columns>
-	</mx:DataGrid>	
-</mx:Canvas>
+	</mx:DataGrid>
+		<mx:HBox>
+		<mx:Label text="Filter: " />			
+		<mx:TextInput id="filterText" />
+		</mx:HBox>
+	
+</mx:VBox>

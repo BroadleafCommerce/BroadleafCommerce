@@ -5,7 +5,7 @@
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="src.dir" value="${basedir}/src-java" />
 	<property name="test.src.dir" value="${basedir}/test" />
-	<property name="compile.lib.dir" value="${lib.dir}/compile/bin" />
+	<property name="compile.lib.dir" value="${basedir}/lib/compile/bin" />
 	<property name="include.lib.dir" value="${basedir}/lib/include/bin" />
 	<property name="war.lib.dir" value="${lib.dir}/common/bin" />
 	<property file="${basedir}/build/build.properties" />

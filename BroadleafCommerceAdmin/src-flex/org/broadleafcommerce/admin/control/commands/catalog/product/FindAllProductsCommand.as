@@ -27,7 +27,7 @@ package org.broadleafcommerce.admin.control.commands.catalog.product
 			AppModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
 			var bcte:BuildCatalogEvent = new BuildCatalogEvent();
 			var x:ArrayCollection = ArrayCollection(event.result);
-			bcte.dispatch()
+			bcte.dispatch();
 		}
 		
 		public function fault(info:Object):void

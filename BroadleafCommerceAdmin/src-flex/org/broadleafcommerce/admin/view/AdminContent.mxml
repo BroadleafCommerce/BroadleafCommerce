@@ -7,12 +7,6 @@
 	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*" 
 	width="100%" 
 	height="100%">
-	<mx:Script>
-		<![CDATA[
-			private const STATE_OFFER:String = "state_offer";
-			private const STATE_CATALOG:String = "state_catalog";
-		]]>
-	</mx:Script>
 	<mx:LinkBar 
 		height="100%" 
 		width="10%"  
@@ -22,30 +16,15 @@
 		id="contentViewStack" 
 		width="90%" 
 		height="100%">
-		<offer:OfferCanvas 
-			id="offerCanvas"
-			label="Offers" 
-			height="100%" 
-			width="100%" />
 		<catalog:CatalogCanvas
 			id="catalogCanvas" 
 			label="Catalog" 
 			height="100%" 
 			width="100%"/>	
-		<mx:Canvas 
-			label="" 
-			width="100%" 
-			height="100%">
-		</mx:Canvas>
+		<offer:OfferCanvas 
+			id="offerCanvas"
+			label="Offers" 
+			height="100%" 
+			width="100%" />
 	</mx:ViewStack>
-<!--
-	<mx:states>
-		<mx:State name="{STATE_OFFER}">
-			<mx:SetProperty target="{offerCanvas}" name="visible" value="true" />
-		</mx:State>
-		<mx:State name="{STATE_CATALOG}">
-			<mx:SetProperty target="{catalogCanvas}" name="visible" value="true" />
-		</mx:State>
-	</mx:states>
-	-->
 </mx:HBox>

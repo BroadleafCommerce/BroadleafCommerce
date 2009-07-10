@@ -5,6 +5,13 @@
 	  xmlns:ProductParentsList="org.broadleafcommerce.admin.view.components.ProductParentsList.*" xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
+			import org.broadleafcommerce.admin.control.events.catalog.sku.EditSkuEvent;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.model.data.remote.catalog.product.ProductDimension;
+			import org.broadleafcommerce.admin.model.data.remote.catalog.product.ProductWeight;
+			import org.broadleafcommerce.admin.control.events.catalog.product.UpdateParentsOfProductEvent;
+			import mx.events.ListEvent;
 			import org.broadleafcommerce.admin.model.view.CategoryModel;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
 			import mx.utils.ObjectUtil;
@@ -27,11 +34,26 @@
 				product.activeEndDate = activeEndDateDateField.selectedDate;
 				product.model = modelTextInput.text;
 				product.manufacturer = modelTextInput.text;
-				product.weight = weightTextInput.text;
-				product.dimension.depth = depthTextInput.text;
-				product.dimension.width = widthTextInput.text;
-				product.dimension.height = heightTextInput.text;
+				if(product.weight == null)
+					product.weight = new ProductWeight();
+				product.weight.weight = uint(weightTextInput.text);
+				if(product.dimension == null) product.dimension = new ProductDimension();
+				product.dimension.depth = Number(depthTextInput.text);
+				product.dimension.width = Number(widthTextInput.text);
+				product.dimension.height = Number(heightTextInput.text);
 				new SaveProductEvent(product).dispatch();
+			}
+			
+			private function handleProductParentsListClick(event:MouseEvent):void{
+				// call add parent to product event
+				var aptpe:UpdateParentsOfProductEvent = new UpdateParentsOfProductEvent(productModel.currentProduct, new ArrayCollection(ProductParentsList(event.currentTarget).selectedItems));
+				aptpe.dispatch();
+			}
+			
+			private function handleSkuClick(event:MouseEvent):void{
+				var sku:Sku = Sku(List(event.currentTarget).selectedItem);
+				var ese:EditSkuEvent = new EditSkuEvent(sku, true);
+				ese.dispatch();
 			}
 		]]>
 	</mx:Script>
@@ -57,16 +79,16 @@
 		source="productModel.currentProduct.manufacturer"
 		destination="manufacturerTextInput.text"/>
 	<mx:Binding
-		source="productModel.currentProduct.weight"
+		source="productModel.currentProduct.weight.weight.toString()"
 		destination="weightTextInput.text"/>
 	<mx:Binding
-		source="productModel.currentProduct.dimension.depth"
+		source="productModel.currentProduct.depth.toString()"
 		destination="depthTextInput.text"/>
 	<mx:Binding
-		source="productModel.currentProduct.dimension.width"
+		source="productModel.currentProduct.width.toString()"
 		destination="widthTextInput.text"/>
 	<mx:Binding
-		source="productModel.currentProduct.dimension.height"
+		source="productModel.currentProduct.height.toString()"
 		destination="heightTextInput.text"/>		
 	<mx:Binding
 		source="productModel.currentProduct.allSkus"
@@ -75,7 +97,7 @@
 		source="categoryModel.categoryArray"
 		destination="parentList.dataProvider" />
 	<mx:Binding
-		source="productModel.currentProduct.allParentCategoriesArray"
+		source="productModel.currentProduct.allParentCategories.toArray()"
 		destination="parentList.selectedItems"/>
 <mx:Form>
 		
@@ -147,12 +169,12 @@
 			id="childList"
 			labelField="name"
 			width="200"
-			dropEnabled="true"
+			click="handleSkuClick(event)"
 			/>
 	</mx:FormItem>
 	<mx:FormItem
 		label="Parent Categories" x="316" y="10">
 		<components:ProductParentsList id="parentList" labelField="name" 
-			allowMultipleSelection="true"  width="175" height="252"/>
+			allowMultipleSelection="true"  width="175" height="252" click="handleProductParentsListClick(event)"/>
 	</mx:FormItem>
 </mx:Canvas>

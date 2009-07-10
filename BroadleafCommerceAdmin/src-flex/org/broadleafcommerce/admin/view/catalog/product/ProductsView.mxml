@@ -21,7 +21,7 @@
 			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;
 			
 			private function handleDataGridClick(event:MouseEvent):void{
-				var vcpe:EditProductEvent = new EditProductEvent(Product(ProductsDataGrid(event.currentTarget).selectedItem));
+				var vcpe:EditProductEvent = new EditProductEvent(Product(ProductsDataGrid(event.currentTarget).selectedItem), false);
 				vcpe.dispatch();
 			}
 		]]>

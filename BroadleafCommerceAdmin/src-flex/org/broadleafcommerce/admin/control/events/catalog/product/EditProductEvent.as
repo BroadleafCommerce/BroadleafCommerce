@@ -9,11 +9,13 @@ package org.broadleafcommerce.admin.control.events.catalog.product
 		public static const EVENT_EDIT_CATALOG_PRODUCT:String = "event_edit_catalog_product";
 
 		public var product:Product;
+		public var switchView:Boolean;
 		
-		public function EditProductEvent(product:Product)
+		public function EditProductEvent(product:Product, switchToProductView:Boolean)
 		{
 			super(EVENT_EDIT_CATALOG_PRODUCT);
 			this.product = product;
+			this.switchView = switchToProductView;
 		}
 	}
 }

@@ -2,8 +2,8 @@
 <mx:Canvas 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*"
-	currentState="none"
-	width="95%">
+	currentState="view"
+	width="95%" xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*">
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.control.events.catalog.product.EditProductEvent;
@@ -16,6 +16,18 @@
 		
 			private function handleNewProduct(event:Event):void{
 				new NewProductEvent().dispatch();
+			}
+			
+			private function handleNavigatorClick(event:MouseEvent):void{
+				if(tabNavigator.selectedChild == productEditForm){
+					productModel.viewState = ProductModel.STATE_VIEW_EDIT;
+				}
+				if(tabNavigator.selectedChild == productMediaForm){
+					productModel.viewState = ProductModel.STATE_VIEW_MEDIA;
+				}
+				if(tabNavigator.selectedChild == productSkuForm){
+					productModel.viewState = ProductModel.STATE_VIEW_SKUS;
+				}
 			}
 			
 		]]>
@@ -41,12 +53,10 @@
 			borderStyle="solid"
 			cornerRadius="4">
 			<product:ProductsView id="productsView"  width="490" height="445"/>
-			<mx:TabNavigator x="498" y="10" width="740" height="436">
+			<mx:TabNavigator id="tabNavigator" x="498" y="10" width="740" height="436" click="handleNavigatorClick(event)">
 				<product:ProductEditForm id="productEditForm" label="General" width="100%" height="100%" />
-				<mx:Canvas label="Media" width="100%" height="100%">
-				</mx:Canvas>
-				<mx:Canvas label="Skus" width="100%" height="100%" visible="false">
-				</mx:Canvas>				
+				<product:ProductMediaCanvas  id="productMediaForm" label="Media" width="100%" height="100%" />
+				<sku:SkuCanvas id="productSkuForm" label="Skus" width="100%" height="100%"  />
 			</mx:TabNavigator>
 			
 			
@@ -54,16 +64,16 @@
 	</mx:VBox>
 	<mx:states>
 		<mx:State
-			name="{ProductModel.STATE_NONE}">
+			name="{ProductModel.STATE_VIEW_EDIT}">
+			<mx:SetProperty target="{tabNavigator}" name="selectedChild" value="{productEditForm}" />
 		</mx:State>
 		<mx:State
-			name="{ProductModel.STATE_NEW}">
+			name="{ProductModel.STATE_VIEW_MEDIA}">
+			<mx:SetProperty target="{tabNavigator}" name="selectedChild" value="{productMediaForm}" />
 		</mx:State>
 		<mx:State
-			name="{ProductModel.STATE_EDIT}">
-		</mx:State>
-		<mx:State
-			name="{ProductModel.STATE_VIEW}">
+			name="{ProductModel.STATE_VIEW_SKUS}">
+			<mx:SetProperty target="{tabNavigator}" name="selectedChild" value="{productSkuForm}" />
 		</mx:State>
 	</mx:states>
 </mx:Canvas>
