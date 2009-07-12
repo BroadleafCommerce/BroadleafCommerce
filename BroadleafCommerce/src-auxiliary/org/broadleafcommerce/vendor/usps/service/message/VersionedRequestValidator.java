@@ -13,15 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.usps.service;
+package org.broadleafcommerce.vendor.usps.service.message;
 
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
-import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 
 public interface VersionedRequestValidator {
 
     public void validateWeight(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
 
     public void validateService(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
+
+    public void validateContainer(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
+
+    public void validateSize(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
+
+    public void validateMachinable(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
 
 }

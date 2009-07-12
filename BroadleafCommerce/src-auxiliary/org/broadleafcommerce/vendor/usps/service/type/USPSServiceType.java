@@ -19,39 +19,44 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.broadleafcommerce.util.TypeEnumeration;
-
 /**
- * An extendible enumeration of V2 service types.
+ * An extendible enumeration of service types.
  * 
  * @author jfischer
  */
-public class USPSServiceV2Type implements Serializable, TypeEnumeration {
+public class USPSServiceType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, USPSServiceV2Type> types = new Hashtable<String, USPSServiceV2Type>();
+    private static final Map<String, USPSServiceType> types = new Hashtable<String, USPSServiceType>();
 
-    public static USPSServiceV2Type ALL  = new USPSServiceV2Type("ALL");
-    public static USPSServiceV2Type FIRSTCLASS = new USPSServiceV2Type("FIRST CLASS");
-    public static USPSServiceV2Type PRIORITY = new USPSServiceV2Type("PRIORITY");
-    public static USPSServiceV2Type EXPRESS = new USPSServiceV2Type("EXPRESS");
-    public static USPSServiceV2Type BPM = new USPSServiceV2Type("BPM");
-    public static USPSServiceV2Type PARCEL = new USPSServiceV2Type("PARCEL");
-    public static USPSServiceV2Type MEDIA = new USPSServiceV2Type("MEDIA");
-    public static USPSServiceV2Type LIBRARY = new USPSServiceV2Type("LIBRARY");
+    public static USPSServiceType ALL  = new USPSServiceType("ALL");
+    public static USPSServiceType ONLINE = new USPSServiceType("ONLINE");
+    public static USPSServiceType FIRSTCLASS = new USPSServiceType("FIRST CLASS");
+    public static USPSServiceType PRIORITY = new USPSServiceType("PRIORITY");
+    public static USPSServiceType PRIORITYCOMMERCIAL = new USPSServiceType("PRIORITY COMMERCIAL");
+    public static USPSServiceType EXPRESS = new USPSServiceType("EXPRESS");
+    public static USPSServiceType EXPRESS_SH = new USPSServiceType("EXPRESS SH");
+    public static USPSServiceType EXPRESS_HFP = new USPSServiceType("EXPRESS HFP");
+    public static USPSServiceType EXPRESSCOMMERCIAL = new USPSServiceType("EXPRESS COMMERCIAL");
+    public static USPSServiceType EXPRESS_SH_COMMERCIAL = new USPSServiceType("EXPRESS SH COMMERCIAL");
+    public static USPSServiceType EXPRESS_HFP_COMMERCIAL = new USPSServiceType("EXPRESS HFP COMMERCIAL");
+    public static USPSServiceType BPM = new USPSServiceType("BPM");
+    public static USPSServiceType PARCEL = new USPSServiceType("PARCEL");
+    public static USPSServiceType MEDIA = new USPSServiceType("MEDIA");
+    public static USPSServiceType LIBRARY = new USPSServiceType("LIBRARY");
 
-    public static USPSServiceV2Type getInstance(String type) {
+    public static USPSServiceType getInstance(String type) {
         return types.get(type);
     }
 
     private String type;
 
-    public USPSServiceV2Type() {
+    public USPSServiceType() {
         //do nothing
     }
 
-    public USPSServiceV2Type(String type) {
+    public USPSServiceType(String type) {
         setType(type);
     }
 
@@ -82,7 +87,7 @@ public class USPSServiceV2Type implements Serializable, TypeEnumeration {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        USPSServiceV2Type other = (USPSServiceV2Type) obj;
+        USPSServiceType other = (USPSServiceType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

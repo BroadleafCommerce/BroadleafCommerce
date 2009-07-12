@@ -19,11 +19,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.util.TypeEnumeration;
 import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 
 public interface USPSContainerItemRequest {
 
@@ -35,9 +35,9 @@ public interface USPSContainerItemRequest {
 
     public void setContainerShape(USPSContainerShapeType containerShape);
 
-    public boolean isMachineSortable();
+    public Boolean isMachineSortable();
 
-    public void setMachineSortable(boolean isMachineSortable);
+    public void setMachineSortable(Boolean isMachineSortable);
 
     public BigDecimal getWidth();
 
@@ -83,9 +83,9 @@ public interface USPSContainerItemRequest {
 
     public void setDimensionUnitOfMeasureType(DimensionUnitOfMeasureType dimensionUnitOfMeasureType);
 
-    public TypeEnumeration getService();
+    public USPSServiceType getService();
 
-    public void setService(TypeEnumeration service);
+    public void setService(USPSServiceType service);
 
     public USPSFirstClassType getFirstClassType();
 

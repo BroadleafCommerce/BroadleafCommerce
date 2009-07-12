@@ -34,15 +34,21 @@ public class USPSShippingPriceErrorCode implements Serializable {
     public static USPSShippingPriceErrorCode WEIGHTNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_wns", "The package weight must be specified for this request.");
     public static USPSShippingPriceErrorCode OVERWEIGHT  = new USPSShippingPriceErrorCode("bl_ow", "Package exceeds weight limit specified by carrier.");
     public static USPSShippingPriceErrorCode SHAPENOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_sns", "The package shape must be specified for this request.");
+    public static USPSShippingPriceErrorCode SHAPENOTSUPPORTED  = new USPSShippingPriceErrorCode("bl_shapesupport", "The package shape type specified is not supported.");
     public static USPSShippingPriceErrorCode DIMENSIONSNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_dns", "The package dimensions must be specified for this request.");
     public static USPSShippingPriceErrorCode GIRTHNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_dns", "The package girth must be specified for this request.");
     public static USPSShippingPriceErrorCode PACKAGEIDNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_pkid", "The package id must be specified.");
     public static USPSShippingPriceErrorCode ZIPNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_zip", "The origin and destination zip codes must be specified.");
+    public static USPSShippingPriceErrorCode ZIPLENGTH  = new USPSShippingPriceErrorCode("bl_ziplength", "The origin and destination zip codes must be 5 digits in length.");
     public static USPSShippingPriceErrorCode UNITTYPENOTSUPPORTED  = new USPSShippingPriceErrorCode("bl_unit", "The unit of measure type specified is not supported.");
     public static USPSShippingPriceErrorCode UNITTYPENOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_type", "The dimension and weight unit of measure types must be specified for this request.");
     public static USPSShippingPriceErrorCode SHIPDATETOOFAR  = new USPSShippingPriceErrorCode("bl_shipdate", "The ship date may only be 0 to 3 days in advance.");
     public static USPSShippingPriceErrorCode SERVICENOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_service", "The service must be specified for this request.");
+    public static USPSShippingPriceErrorCode SERVICENOTSUPPORTED  = new USPSShippingPriceErrorCode("bl_servicesupported", "The service type specified is not compatible with this version of the USPS api.");
     public static USPSShippingPriceErrorCode FIRSTCLASSNOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_firstclass", "The first class container type must be specified for this request.");
+    public static USPSShippingPriceErrorCode SIZENOTSPECIFIED  = new USPSShippingPriceErrorCode("bl_size", "The container size type must be specified for this request.");
+    public static USPSShippingPriceErrorCode SIZENOTSUPPORTED  = new USPSShippingPriceErrorCode("bl_sizesupported", "The container size type specified is not supported.");
+    public static USPSShippingPriceErrorCode MACHINABLESPECIFIED = new USPSShippingPriceErrorCode("bl_machinable", "The machine sortable value must be specified for this request.");
 
     public static USPSShippingPriceErrorCode getInstance(String type) {
         return types.get(type);
