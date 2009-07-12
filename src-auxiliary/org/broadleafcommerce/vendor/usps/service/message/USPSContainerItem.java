@@ -21,21 +21,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.util.TypeEnumeration;
 import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
 
 public class USPSContainerItem implements USPSContainerItemRequest, USPSContainerItemResponse {
 
     //input
-    protected TypeEnumeration service;
+    protected USPSServiceType service;
     protected USPSContainerSizeType containerSize;
     protected USPSContainerShapeType containerShape;
-    protected boolean isMachineSortable = true;
+    protected Boolean isMachineSortable;
     protected BigDecimal width;
     protected BigDecimal height;
     protected BigDecimal depth;
@@ -72,11 +72,11 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
         this.containerShape = containerShape;
     }
 
-    public boolean isMachineSortable() {
+    public Boolean isMachineSortable() {
         return isMachineSortable;
     }
 
-    public void setMachineSortable(boolean isMachineSortable) {
+    public void setMachineSortable(Boolean isMachineSortable) {
         this.isMachineSortable = isMachineSortable;
     }
 
@@ -208,11 +208,11 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
         this.isErrorDetected = isErrorDetected;
     }
 
-    public TypeEnumeration getService() {
+    public USPSServiceType getService() {
         return service;
     }
 
-    public void setService(TypeEnumeration service) {
+    public void setService(USPSServiceType service) {
         this.service = service;
     }
 
