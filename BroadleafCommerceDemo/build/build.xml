@@ -41,8 +41,8 @@
 	    	<jvmarg value="-Xms128M" />
 	    	<jvmarg value="-Xmx512m" />
 			<jvmarg value="-Xverify:none" />
-			<jvmarg value="-javaagent:${set.appserver.home}/lib/javarebel.jar" />
-			<jvmarg value="-Drebel.spring_plugin=true" />
+			<!--<jvmarg value="-javaagent:${set.appserver.home}/lib/javarebel.jar" />-->
+			<!--<jvmarg value="-Drebel.spring_plugin=true" /> -->
 			<jvmarg value="-DmyProject.root=${basedir}" />
 	    	<jvmarg value="-XX:MaxPermSize=512M" />
 	    	<jvmarg value="-Dcom.sun.management.jmxremote=true" />
