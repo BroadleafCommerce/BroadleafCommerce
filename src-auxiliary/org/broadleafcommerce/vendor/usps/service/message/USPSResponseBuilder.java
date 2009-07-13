@@ -15,10 +15,10 @@
  */
 package org.broadleafcommerce.vendor.usps.service.message;
 
-import org.apache.xmlbeans.XmlTokenSource;
+import java.io.InputStream;
 
-public interface USPSRequestBuilder {
+public interface USPSResponseBuilder {
 
-    public XmlTokenSource buildRequest(USPSShippingPriceRequest request, String username, String password);
+    public USPSShippingPriceResponse buildResponse(InputStream input, USPSShippingPriceRequest request);
 
 }

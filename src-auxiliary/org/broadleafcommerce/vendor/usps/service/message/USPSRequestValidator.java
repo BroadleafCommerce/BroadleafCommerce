@@ -17,7 +17,6 @@ package org.broadleafcommerce.vendor.usps.service.message;
 
 import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
-import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingPriceErrorCode;
 
 public class USPSRequestValidator {
@@ -64,9 +63,7 @@ public class USPSRequestValidator {
     }
 
     protected void validateMachinable(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
-        if ((itemRequest.getService().equals(USPSServiceType.ALL) || itemRequest.getService().equals(USPSServiceType.ONLINE) || itemRequest.getService().equals(USPSServiceType.PARCEL)) && itemRequest.isMachineSortable() == null) {
-            throw buildException(USPSShippingPriceErrorCode.MACHINABLESPECIFIED.getType(), USPSShippingPriceErrorCode.MACHINABLESPECIFIED.getMessage());
-        }
+        versionedValidator.validateMachinable(itemRequest);
     }
 
     protected void validateSize(USPSContainerItemRequest itemRequest) throws ShippingPriceException {

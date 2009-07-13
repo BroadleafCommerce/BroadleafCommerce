@@ -17,6 +17,8 @@ package org.broadleafcommerce.vendor.usps.service;
 
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
+import org.broadleafcommerce.vendor.usps.service.message.USPSRequestBuilder;
+import org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
 
@@ -64,4 +66,11 @@ public interface USPSShippingCalculationService {
 
     public void setRateRequestElement(String rateRequestElement);
 
+    public USPSRequestValidator getUspsRequestValidator();
+
+    public void setUspsRequestValidator(USPSRequestValidator uspsRequestValidator);
+
+    public USPSRequestBuilder getUspsRequestBuilder();
+
+    public void setUspsRequestBuilder(USPSRequestBuilder uspsRequestBuilder);
 }

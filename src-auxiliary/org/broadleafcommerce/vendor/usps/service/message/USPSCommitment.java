@@ -15,10 +15,29 @@
  */
 package org.broadleafcommerce.vendor.usps.service.message;
 
-import org.apache.xmlbeans.XmlTokenSource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-public interface USPSRequestBuilder {
+public class USPSCommitment {
 
-    public XmlTokenSource buildRequest(USPSShippingPriceRequest request, String username, String password);
+    private Date commitmentDateAndTime;
+    private List<USPSLocation> locations = new ArrayList<USPSLocation>();
+
+    public List<USPSLocation> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<USPSLocation> locations) {
+        this.locations = locations;
+    }
+
+    public Date getCommitmentDateAndTime() {
+        return commitmentDateAndTime;
+    }
+
+    public void setCommitmentDateAndTime(Date commitmentDateAndTime) {
+        this.commitmentDateAndTime = commitmentDateAndTime;
+    }
 
 }

@@ -35,12 +35,14 @@ public class USPSShippingServiceTest extends BaseTest {
         }
         /*USPSShippingPriceRequest request = new USPSShippingPriceRequest();
         USPSContainerItemRequest itemRequest = new USPSContainerItem();
+        itemRequest.setService(USPSServiceType.ALL);
         itemRequest.setContainerSize(USPSContainerSizeType.LARGE);
         itemRequest.setPackageId("0");
         itemRequest.setWeight(BigDecimal.valueOf(10L).add(UnitOfMeasureUtil.convertOuncesToPounds(BigDecimal.valueOf(5L))));
         itemRequest.setWeightUnitOfMeasureType(WeightUnitOfMeasureType.POUNDS);
         itemRequest.setZipDestination("20008");
         itemRequest.setZipOrigination("10022");
+        itemRequest.setMachineSortable(true);
         request.getContainerItems().add(itemRequest);
 
         USPSShippingPriceResponse response = shippingCalculationService.retrieveShippingRates(request);

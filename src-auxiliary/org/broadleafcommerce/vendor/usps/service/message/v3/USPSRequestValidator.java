@@ -85,7 +85,22 @@ public class USPSRequestValidator implements VersionedRequestValidator {
 
     @Override
     public void validateMachinable(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
-        //do nothing
+        if (
+                (
+                        itemRequest.getService().equals(USPSServiceType.ALL) ||
+                        itemRequest.getService().equals(USPSServiceType.ONLINE) ||
+                        itemRequest.getService().equals(USPSServiceType.PARCEL) ||
+                        (
+                                itemRequest.getService().equals(USPSServiceType.FIRSTCLASS) &&
+                                (
+                                        itemRequest.getFirstClassType().equals(USPSFirstClassType.LETTER) ||
+                                        itemRequest.getFirstClassType().equals(USPSFirstClassType.FLAT)
+                                )
+                        )
+                ) && itemRequest.isMachineSortable() == null
+        ) {
+            throw org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator.buildException(USPSShippingPriceErrorCode.MACHINABLESPECIFIED.getType(), USPSShippingPriceErrorCode.MACHINABLESPECIFIED.getMessage());
+        }
     }
 
     @Override
@@ -150,5 +165,4 @@ public class USPSRequestValidator implements VersionedRequestValidator {
     public void validateOther(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
         //do nothing
     }
-
 }
