@@ -121,6 +121,11 @@ public class CheckoutController {
             return checkout(checkoutForm, errors, model, request);
         }
 
+        checkoutForm.getBillingAddress().setCountry(countryService.findCountryByAbbreviation(checkoutForm.getBillingAddress().getCountry().getAbbreviation()));
+        checkoutForm.getBillingAddress().setState(stateService.findStateByAbbreviation(checkoutForm.getBillingAddress().getState().getAbbreviation()));
+        checkoutForm.getShippingAddress().setCountry(countryService.findCountryByAbbreviation(checkoutForm.getShippingAddress().getCountry().getAbbreviation()));
+        checkoutForm.getShippingAddress().setState(stateService.findStateByAbbreviation(checkoutForm.getShippingAddress().getState().getAbbreviation()));
+
         Order order = retrieveCartOrder(request, model);
         order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(new Date()));
 

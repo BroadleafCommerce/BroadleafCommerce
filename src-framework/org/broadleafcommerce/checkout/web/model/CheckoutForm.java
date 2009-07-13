@@ -21,8 +21,8 @@ import java.util.List;
 import org.broadleafcommerce.payment.CreditCardType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
-
-
+import org.broadleafcommerce.profile.domain.CountryImpl;
+import org.broadleafcommerce.profile.domain.StateImpl;
 
 public class CheckoutForm {
     private String emailAddress;
@@ -33,6 +33,15 @@ public class CheckoutForm {
     private String creditCardExpMonth;
     private String creditCardExpYear;
     private String selectedCreditCardType;
+
+    public CheckoutForm() {
+        shippingAddress = new AddressImpl();
+        billingAddress = new AddressImpl();
+        shippingAddress.setCountry(new CountryImpl());
+        billingAddress.setCountry(new CountryImpl());
+        shippingAddress.setState(new StateImpl());
+        billingAddress.setState(new StateImpl());
+    }
 
     public String getEmailAddress() {
         return emailAddress;
