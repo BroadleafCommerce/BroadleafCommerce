@@ -61,60 +61,57 @@
 
 		<br />
 		<br />
-
-		<h2>Cross Sales</h2>
-
-		<table border="1">
-			<tr>
-				<th>Name</th>
-				<th>Price</th>
-				<th>Add to Cart</th>
-			</tr>
-			<c:forEach var="item" items="${currentProduct.crossSaleProducts}"
-				varStatus="status">
+		
+		<c:if test="${(currentProduct.crossSaleProducts != null) && !(empty currentProduct.crossSaleProducts) }" >
+			<h2>Cross Sales</h2>
+			<table border="1">
 				<tr>
-					<td><c:out value="${item.relatedSaleProduct.name}" /></td>
-					<td><c:out
-						value="${item.relatedSaleProduct.skus[0].salePrice}" /></td>
-					<td><a
-						href="<c:url value="/basket/addItem.htm">
-				<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
-				<c:param name="quantity" value="1"/>
-				</c:url>">Add
-					to Basket</td>
+					<th>Name</th>
+					<th>Price</th>
+					<th>Add to Cart</th>
 				</tr>
-			</c:forEach>
-
-		</table>
-
-
+				<c:forEach var="item" items="${currentProduct.crossSaleProducts}" varStatus="status">
+					<tr>
+						<td><c:out value="${item.relatedSaleProduct.name}" /></td>
+						<td><c:out value="${item.relatedSaleProduct.skus[0].salePrice}" /></td>
+						<td>
+							<a href="<c:url value="/basket/addItem.htm">
+								<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
+								<c:param name="quantity" value="1"/>
+								</c:url>">
+							Add to Basket
+						</td>
+					</tr>
+				</c:forEach>
+			</table>
+		</c:if>
 		<br />
 		<br />
 
-		<h2>Up Sales</h2>
-
-		<table border="1">
-			<tr>
-				<th>Name</th>
-				<th>Price</th>
-				<th>Add to Cart</th>
-			</tr>
-			<c:forEach var="item" items="${currentProduct.upSaleProducts}"
-				varStatus="status">
+		<c:if test="${(currentProduct.upSaleProducts != null) && !(empty currentProduct.upSaleProducts) }" >
+			<h2>Up Sales</h2>
+			<table border="1">
 				<tr>
-					<td><c:out value="${item.relatedSaleProduct.name}" /></td>
-					<td><c:out
-						value="${item.relatedSaleProduct.skus[0].salePrice}" /></td>
-					<td><a
-						href="<c:url value="/basket/addItem.htm">
-				<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
-				<c:param name="quantity" value="1"/>
-				</c:url>">Add
-					to Basket</td>
+					<th>Name</th>
+					<th>Price</th>
+					<th>Add to Cart</th>
 				</tr>
-			</c:forEach>
-
-		</table>
+				<c:forEach var="item" items="${currentProduct.upSaleProducts}"
+					varStatus="status">
+					<tr>
+						<td><c:out value="${item.relatedSaleProduct.name}" /></td>
+						<td><c:out
+							value="${item.relatedSaleProduct.skus[0].salePrice}" /></td>
+						<td><a
+							href="<c:url value="/basket/addItem.htm">
+					<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
+					<c:param name="quantity" value="1"/>
+					</c:url>">Add
+						to Basket</td>
+					</tr>
+				</c:forEach>
+			</table>
+		</c:if>
 
 	</tiles:putAttribute>
 </tiles:insertDefinition>
