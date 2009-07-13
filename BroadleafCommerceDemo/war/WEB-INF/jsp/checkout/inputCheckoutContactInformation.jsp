@@ -61,7 +61,7 @@
    		<tr>
 			<td style="text-align:right"><label for="state">State:</b></label></td>
 			<td>
-				<form:select path="shippingAddress.state">
+				<form:select path="shippingAddress.state.abbreviation">
 					<form:options items="${stateList}" itemValue="abbreviation" itemLabel="name" />
 				</form:select>
 			</td>
@@ -75,7 +75,7 @@
    		<tr>
 			<td style="text-align:right"><label for="country">Country:</b></label></td>
 			<td>
-				<form:select path="shippingAddress.country">
+				<form:select path="shippingAddress.country.abbreviation">
 					<form:options items="${countryList}" itemValue="abbreviation" itemLabel="name" />
 				</form:select>
 			</td>
