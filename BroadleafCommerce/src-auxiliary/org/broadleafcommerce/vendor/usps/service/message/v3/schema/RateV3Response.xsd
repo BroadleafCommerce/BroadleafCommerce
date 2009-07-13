@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://broadleafcommerce.org/vendor/usps/service/message/v3" xmlns="http://broadleafcommerce.org/vendor/usps/service/message/v3" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="RateV3Response" type="RateV3ResponseType"/>
   <xs:complexType name="RateV3ResponseType">
     <xs:sequence>
-      <xs:element type="ResponsePackageType" name="Package" maxOccurs="unbounded"/>
-      <xs:element type="ErrorType" name="Error" minOccurs="0"/>
+      <xs:element type="ResponsePackageV3Type" name="Package" maxOccurs="unbounded" minOccurs="1"/>
+      <xs:element type="ErrorV3Type" name="Error" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
-  <xs:complexType name="PostageType">
+  <xs:complexType name="PostageV3Type">
     <xs:sequence>
-      <xs:element type="xs:string" name="MailService"/>
-      <xs:element type="xs:float" name="Rate"/>
-      <xs:element type="xs:float" name="CommercialRate" minOccurs="0"/>
+      <xs:element type="xs:string" name="MailService" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:float" name="Rate" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:float" name="CommercialRate" minOccurs="0" maxOccurs="1"/>
       <xs:element type="xs:string" name="CommitmentDate" minOccurs="1" maxOccurs="1"/>
-  	  <xs:element type="LocationType" name="Location" minOccurs="0" maxOccurs="200"/>
-  	  <xs:element type="CommitmentType" name="Commitment" minOccurs="0" maxOccurs="5"/>
+  	  <xs:element type="LocationV3Type" name="Location" minOccurs="0" maxOccurs="200"/>
+  	  <xs:element type="CommitmentV3Type" name="Commitment" minOccurs="0" maxOccurs="5"/>
     </xs:sequence>
     <xs:attribute type="xs:int" name="CLASSID" use="optional"/>
   </xs:complexType>
-  <xs:complexType name="ErrorType">
+  <xs:complexType name="ErrorV3Type">
   	<xs:sequence>
   		<xs:element type="xs:int" name="Number" minOccurs="1" maxOccurs="1"/>
   		<xs:element type="xs:string" name="Source" minOccurs="1" maxOccurs="1"/>
@@ -27,14 +27,14 @@
   		<xs:element type="xs:string" name="HelpContext" minOccurs="0" maxOccurs="1"/>
   	</xs:sequence>
   </xs:complexType>
-  <xs:complexType name="CommitmentType">
+  <xs:complexType name="CommitmentV3Type">
   	<xs:sequence>
   		<xs:element type="xs:string" name="CommitmentDate" minOccurs="1" maxOccurs="1"/>
   		<xs:element type="xs:string" name="CommitmentTime" minOccurs="1" maxOccurs="1"/>
-  		<xs:element type="LocationType" name="Location" minOccurs="0" maxOccurs="200"/>
+  		<xs:element type="LocationV3Type" name="Location" minOccurs="0" maxOccurs="200"/>
   	</xs:sequence>
   </xs:complexType>
-  <xs:complexType name="LocationType">
+  <xs:complexType name="LocationV3Type">
   	<xs:sequence>
   		<xs:element type="xs:string" name="CutOff" minOccurs="1" maxOccurs="1"/>
   		<xs:element type="xs:string" name="Facility" minOccurs="1" maxOccurs="1"/>
@@ -44,13 +44,13 @@
   		<xs:element type="xs:string" name="Zip" minOccurs="1" maxOccurs="1"/>
   	</xs:sequence>
   </xs:complexType>
-  <xs:complexType name="ResponsePackageType">
+  <xs:complexType name="ResponsePackageV3Type">
     <xs:sequence>
-      <xs:element type="xs:int" name="ZipOrigination"/>
- 	  <xs:element type="xs:int" name="ZipDestination"/>
-      <xs:element type="xs:int" name="Pounds"/>
-      <xs:element type="xs:float" name="Ounces"/>
-      <xs:element name="FirstClassMailType" minOccurs="0">
+      <xs:element type="xs:int" name="ZipOrigination" minOccurs="1" maxOccurs="1"/>
+ 	  <xs:element type="xs:int" name="ZipDestination" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:int" name="Pounds" minOccurs="1" maxOccurs="1"/>
+      <xs:element type="xs:float" name="Ounces" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="FirstClassMailType" minOccurs="0" maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:enumeration value="LETTER"/>
@@ -59,7 +59,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
-      <xs:element name="Container" minOccurs="0">
+      <xs:element name="Container" minOccurs="0" maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:enumeration value="RECTANGULAR"/>
@@ -71,7 +71,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
-      <xs:element name="Size" minOccurs="0">
+      <xs:element name="Size" minOccurs="0" maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
             <xs:enumeration value="REGULAR"/>
@@ -80,15 +80,15 @@
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
-      <xs:element type="xs:boolean" name="Machinable" minOccurs="0"/>
-      <xs:element type="xs:float" name="Width" minOccurs="0"/>
-      <xs:element type="xs:float" name="Length" minOccurs="0"/>
-      <xs:element type="xs:float" name="Height" minOccurs="0"/>
-      <xs:element type="xs:float" name="Girth" minOccurs="0"/>
-      <xs:element type="xs:string" name="Zone"/>
-      <xs:element type="PostageType" name="Postage" maxOccurs="1"/>
-      <xs:element type="xs:string" name="Restrictions" minOccurs="0"/>
-      <xs:element type="ErrorType" name="Error" minOccurs="0"/>
+      <xs:element type="xs:boolean" name="Machinable" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="xs:float" name="Width" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="xs:float" name="Length" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="xs:float" name="Height" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="xs:float" name="Girth" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="xs:string" name="Zone" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="PostageV3Type" name="Postage" minOccurs="1" maxOccurs="unbounded"/>
+      <xs:element type="xs:string" name="Restrictions" minOccurs="0" maxOccurs="1"/>
+      <xs:element type="ErrorV3Type" name="Error" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="ID" use="optional"/>
   </xs:complexType>

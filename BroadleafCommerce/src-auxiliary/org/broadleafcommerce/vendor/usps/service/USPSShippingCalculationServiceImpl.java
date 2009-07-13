@@ -17,19 +17,15 @@ package org.broadleafcommerce.vendor.usps.service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlbeans.XmlTokenSource;
 import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.util.UnitOfMeasureUtil;
 import org.broadleafcommerce.util.WeightUnitOfMeasureType;
@@ -38,41 +34,15 @@ import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceHostException;
 import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
-import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
+import org.broadleafcommerce.vendor.usps.service.message.USPSRequestBuilder;
 import org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
-import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponseParser;
-import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.io.XMLWriter;
-import org.xml.sax.SAXException;
+import org.broadleafcommerce.vendor.usps.service.message.v3.USPSResponseBuilder;
 
 public class USPSShippingCalculationServiceImpl extends AbstractVendorService implements ServiceStatusDetectable, USPSShippingCalculationService {
 
     private static final Log LOG = LogFactory.getLog(USPSShippingCalculationServiceImpl.class);
-
-    private static final String USER_ID_ATTR = "USERID";
-    private static final String PASSWORD_ATTR = "PASSWORD";
-    private static final String PACKAGE_ELEM = "Package";
-    private static final String ID_ATTR = "ID";
-    private static final String SERVICE_ELEM = "Service";
-    private static final String SERVICE_TEXT = "ALL";
-    private static final String ZIP_ORIGIN_ELEMENT = "ZipOrigination";
-    private static final String ZIP_DESTINATION_ELEMENT = "ZipDestination";
-    private static final String POUNDS_ELEMENT = "Pounds";
-    private static final String OUNCES_ELEMENT = "Ounces";
-    private static final String SIZE_ELEMENT = "Size";
-    private static final String CONTAINER_ELEMENT = "Container";
-    private static final String MACHINABLE_ELEMENT = "Machinable";
-    private static final String WIDTH_ELEMENT = "Width";
-    private static final String LENGTH_ELEMENT = "Length";
-    private static final String HEIGHT_ELEMENT = "Height";
-    private static final String GIRTH_ELEMENT = "Girth";
-    private static final String SHIP_DATE_ELEMENT = "ShipDate";
 
     protected String uspsCharSet;
     protected String uspsPassword;
@@ -85,15 +55,17 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
     protected Boolean isUp = true;
     protected String uspsShippingAPI;
     protected String rateRequestElement;
-    protected USPSRequestValidator uspsValidator;
+    protected USPSRequestValidator uspsRequestValidator;
+    protected USPSRequestBuilder uspsRequestBuilder;
+    protected USPSResponseBuilder uspsResponseBuilder;
 
     public USPSShippingPriceResponse retrieveShippingRates(USPSShippingPriceRequest request) throws ShippingPriceException {
-        uspsValidator.validateRequest(request);
+        uspsRequestValidator.validateRequest(request);
         USPSShippingPriceResponse shippingPriceResponse = new USPSShippingPriceResponse();
         InputStream response = null;
         try {
             response = callUSPSPricingCalculation(request);
-            shippingPriceResponse = parseUSPSResponse(request, response);
+            shippingPriceResponse = uspsResponseBuilder.buildResponse(response, request);
         } catch (Exception e) {
             incrementFailure();
             throw new ShippingPriceException(e);
@@ -113,12 +85,6 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
             throw e;
         }
         return shippingPriceResponse;
-    }
-
-    protected USPSShippingPriceResponse parseUSPSResponse(USPSShippingPriceRequest request, InputStream response) throws IOException, SAXException, ParserConfigurationException {
-        USPSShippingPriceResponseParser shippingContentHelper = new USPSShippingPriceResponseParser(request);
-        SAXParserFactory.newInstance().newSAXParser().parse(response, shippingContentHelper);
-        return shippingContentHelper.getResponse();
     }
 
     protected void clearStatus() {
@@ -142,80 +108,13 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
         URL contentURL = new URL(new StringBuffer(httpProtocol).append("://").append(uspsServerName).append(uspsServiceAPI).toString());
         Map<String, String> content = new HashMap<String, String>();
         content.put("API", uspsShippingAPI);
-        content.put("XML", getShippingPriceXMLString(request));
+        XmlTokenSource doc = uspsRequestBuilder.buildRequest(request, uspsUserName, uspsPassword);
+        String text = doc.xmlText();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("xml request source: " + text);
+        }
+        content.put("XML", text);
         return postMessage(content, contentURL, uspsCharSet);
-    }
-
-
-
-    protected String getShippingPriceXMLString(USPSShippingPriceRequest request) throws IOException {
-        Document document = DocumentHelper.createDocument();
-        Element root = document.addElement(rateRequestElement);
-        root.addAttribute(USER_ID_ATTR, uspsUserName);
-        root.addAttribute(PASSWORD_ATTR, uspsPassword);
-
-        for (USPSContainerItemRequest itemRequest : request.getContainerItems()) {
-            Element dom = root.addElement(PACKAGE_ELEM).addAttribute(ID_ATTR, itemRequest.getPackageId());
-            dom.addElement(SERVICE_ELEM).setText(SERVICE_TEXT);
-            dom.addElement(ZIP_ORIGIN_ELEMENT).setText(itemRequest.getZipOrigination());
-            dom.addElement(ZIP_DESTINATION_ELEMENT).setText(itemRequest.getZipDestination());
-            dom.addElement(POUNDS_ELEMENT).setText(findPounds(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()));
-            dom.addElement(OUNCES_ELEMENT).setText(findOunces(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()));
-            dom.addElement(SIZE_ELEMENT).setText(itemRequest.getContainerSize().getType());
-            if (itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE) && itemRequest.getContainerShape() != null) {
-                dom.addElement(CONTAINER_ELEMENT).setText(itemRequest.getContainerShape().getType());
-            }
-            dom.addElement(MACHINABLE_ELEMENT).setText(Boolean.toString(itemRequest.isMachineSortable()));
-            if (itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE)){
-                if (
-                        itemRequest.getContainerShape() != null &&
-                        (
-                                itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR) ||
-                                itemRequest.getContainerShape().equals(USPSContainerShapeType.RECTANGULAR)
-                        )
-                ) {
-                    dom.addElement(WIDTH_ELEMENT).setText(findInches(itemRequest.getWidth(), itemRequest.getDimensionUnitOfMeasureType()));
-                    dom.addElement(HEIGHT_ELEMENT).setText(findInches(itemRequest.getHeight(), itemRequest.getDimensionUnitOfMeasureType()));
-                    dom.addElement(LENGTH_ELEMENT).setText(findInches(itemRequest.getDepth(), itemRequest.getDimensionUnitOfMeasureType()));
-                }
-                if (itemRequest.getContainerShape() != null && itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR)) {
-                    dom.addElement(GIRTH_ELEMENT).setText(findInches(itemRequest.getGirth(), itemRequest.getDimensionUnitOfMeasureType()));
-                }
-            }
-            if (itemRequest.getShipDate() != null) {
-                SimpleDateFormat format = new SimpleDateFormat("dd-MMM-yyyy");
-                dom.addElement(SHIP_DATE_ELEMENT).setText(format.format(itemRequest.getShipDate()));
-            }
-        }
-
-        StringWriter strWriter = new StringWriter();
-        XMLWriter writer = new XMLWriter(strWriter);
-
-        try {
-            writer.write(document);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("strWriter.toString(): " + strWriter.toString());
-            }
-            return strWriter.toString();
-        } finally {
-            document = null;
-
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    LOG.warn("There was an unexpected error closing the Dom4J XMLWriter", e);
-                }
-            }
-
-            if (strWriter != null) {
-                try {
-                    strWriter.close();
-                } catch (IOException e) {
-                    LOG.warn("There was an unexpected error closing a java.io.StringWriter associated with the Dom4J XMLWriter", e);
-                }
-            }
-        }
     }
 
     public String findPounds(BigDecimal weight, WeightUnitOfMeasureType type) {
@@ -319,5 +218,29 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
 
     public void setRateRequestElement(String rateRequestElement) {
         this.rateRequestElement = rateRequestElement;
+    }
+
+    public USPSRequestValidator getUspsRequestValidator() {
+        return uspsRequestValidator;
+    }
+
+    public void setUspsRequestValidator(USPSRequestValidator uspsRequestValidator) {
+        this.uspsRequestValidator = uspsRequestValidator;
+    }
+
+    public USPSRequestBuilder getUspsRequestBuilder() {
+        return uspsRequestBuilder;
+    }
+
+    public void setUspsRequestBuilder(USPSRequestBuilder uspsRequestBuilder) {
+        this.uspsRequestBuilder = uspsRequestBuilder;
+    }
+
+    public USPSResponseBuilder getUspsResponseBuilder() {
+        return uspsResponseBuilder;
+    }
+
+    public void setUspsResponseBuilder(USPSResponseBuilder uspsResponseBuilder) {
+        this.uspsResponseBuilder = uspsResponseBuilder;
     }
 }

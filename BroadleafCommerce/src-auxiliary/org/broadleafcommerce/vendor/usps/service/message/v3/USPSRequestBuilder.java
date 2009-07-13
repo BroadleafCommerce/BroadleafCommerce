@@ -15,31 +15,83 @@
  */
 package org.broadleafcommerce.vendor.usps.service.message.v3;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+
+import noNamespace.RateV3RequestDocument;
+import noNamespace.RateV3RequestType;
+import noNamespace.RequestPackageV3Type;
+import noNamespace.ShipDateV3Type;
+
+import org.apache.xmlbeans.XmlTokenSource;
 import org.broadleafcommerce.util.UnitOfMeasureUtil;
-import org.broadleafcommerce.vendor.usps.service.message.AbstractUSPSRequestBuilder;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 
-public class USPSRequestBuilder extends AbstractUSPSRequestBuilder {
+public class USPSRequestBuilder implements org.broadleafcommerce.vendor.usps.service.message.USPSRequestBuilder {
 
     @Override
-    public String buildRequest(USPSShippingPriceRequest request) {
+    public XmlTokenSource buildRequest(USPSShippingPriceRequest request, String username, String password) {
         RateV3RequestDocument doc = RateV3RequestDocument.Factory.newInstance();
         RateV3RequestType v3Request = doc.addNewRateV3Request();
+        v3Request.setUSERID(username);
+        v3Request.setPASSWORD(password);
         for (USPSContainerItemRequest itemRequest : request.getContainerItems()) {
-            RequestPackageType requestPackage = v3Request.addNewPackage();
-            requestPackage.setContainer(RequestPackageType.Container.Enum.forString(itemRequest.getContainerShape().getType()));
-            requestPackage.setFirstClassMailType(RequestPackageType.FirstClassMailType.Enum.forString(itemRequest.getFirstClassType().getType()));
-            requestPackage.setGirth(itemRequest.getGirth().floatValue());
-            requestPackage.setHeight(itemRequest.getHeight().floatValue());
-            requestPackage.setID(itemRequest.getPackageId());
-            requestPackage.setLength(itemRequest.getDepth().floatValue());
-            requestPackage.setMachinable(itemRequest.isMachineSortable());
-            requestPackage.setOunces(UnitOfMeasureUtil.findRemainingOunces(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()).floatValue());
-            requestPackage.setPounds(UnitOfMeasureUtil.findWholePounds(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()));
-            requestPackage.setReturnLocations(itemRequest.isReturnLocations());
+            RequestPackageV3Type requestPackage = v3Request.addNewPackage();
+            if (itemRequest.getContainerShape() != null) {
+                requestPackage.setContainer(RequestPackageV3Type.Container.Enum.forString(itemRequest.getContainerShape().getType()));
+            }
+            if (itemRequest.getFirstClassType() != null) {
+                requestPackage.setFirstClassMailType(RequestPackageV3Type.FirstClassMailType.Enum.forString(itemRequest.getFirstClassType().getType()));
+            }
+            DecimalFormat format = new DecimalFormat("0.#");
+            if (itemRequest.getGirth() != null) {
+                requestPackage.setGirth(format.format(UnitOfMeasureUtil.findInches(itemRequest.getGirth(), itemRequest.getDimensionUnitOfMeasureType()).doubleValue()));
+            }
+            if (itemRequest.getHeight() != null) {
+                requestPackage.setHeight(format.format(UnitOfMeasureUtil.findInches(itemRequest.getHeight(), itemRequest.getDimensionUnitOfMeasureType()).doubleValue()));
+            }
+            if (itemRequest.getPackageId() != null) {
+                requestPackage.setID(itemRequest.getPackageId());
+            }
+            if (itemRequest.getDepth() != null) {
+                requestPackage.setLength(format.format(UnitOfMeasureUtil.findInches(itemRequest.getDepth(), itemRequest.getDimensionUnitOfMeasureType()).doubleValue()));
+            }
+            if (itemRequest.isMachineSortable() != null) {
+                requestPackage.setMachinable(itemRequest.isMachineSortable());
+            }
+            if (itemRequest.getWeight() != null) {
+                requestPackage.setOunces(format.format(UnitOfMeasureUtil.findRemainingOunces(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()).doubleValue()));
+                requestPackage.setPounds(UnitOfMeasureUtil.findWholePounds(itemRequest.getWeight(), itemRequest.getWeightUnitOfMeasureType()));
+            }
+            if (itemRequest.isReturnLocations() != null) {
+                requestPackage.setReturnLocations(itemRequest.isReturnLocations());
+            }
+            if (itemRequest.getService() != null) {
+                requestPackage.setService(RequestPackageV3Type.Service.Enum.forString(itemRequest.getService().getType()));
+            }
+            if (itemRequest.getShipDate() != null) {
+                ShipDateV3Type shipDate = requestPackage.addNewShipDate();
+                if (itemRequest.getShipDateOption() != null) {
+                    shipDate.setOption(itemRequest.getShipDateOption().getType());
+                }
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+                shipDate.setStringValue(dateFormat.format(itemRequest.getShipDate()));
+            }
+            if (itemRequest.getContainerSize() != null) {
+                requestPackage.setSize(RequestPackageV3Type.Size.Enum.forString(itemRequest.getContainerSize().getType()));
+            }
+            if (itemRequest.getWidth() != null) {
+                requestPackage.setWidth(format.format(UnitOfMeasureUtil.findInches(itemRequest.getWidth(), itemRequest.getDimensionUnitOfMeasureType()).doubleValue()));
+            }
+            if (itemRequest.getZipDestination() != null) {
+                requestPackage.setZipDestination(Integer.valueOf(itemRequest.getZipDestination()));
+            }
+            if (itemRequest.getZipOrigination() != null) {
+                requestPackage.setZipOrigination(Integer.valueOf(itemRequest.getZipOrigination()));
+            }
         }
-        return null;
+        return doc;
     }
 
 }

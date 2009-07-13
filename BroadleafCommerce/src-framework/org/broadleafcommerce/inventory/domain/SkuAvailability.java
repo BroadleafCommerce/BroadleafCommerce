@@ -50,14 +50,14 @@ public interface SkuAvailability extends Serializable {
     public void setSkuId(Long id);
 
     /**
-     * Returns the Location id of this skuAvailability.   SKU availability records may or may not be location specific and
+     * Returns the USPSLocation id of this skuAvailability.   SKU availability records may or may not be location specific and
      * using null locations are a common implementation model.
      *
      */
     public Long getLocationId();
 
     /**
-     * Sets the Location id of this skuAvailability.  SKU availability records may or may not be location specific and
+     * Sets the USPSLocation id of this skuAvailability.  SKU availability records may or may not be location specific and
      * using null locations are a common implementation model.
      */
     public void setLocationId(Long id);

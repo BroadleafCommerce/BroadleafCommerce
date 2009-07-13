@@ -24,6 +24,7 @@ import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSShipDateOptionType;
 
 public interface USPSContainerItemRequest {
 
@@ -94,4 +95,9 @@ public interface USPSContainerItemRequest {
     public Boolean isReturnLocations();
 
     public void setReturnLocations(Boolean isReturnLocations);
+
+    public USPSShipDateOptionType getShipDateOption();
+
+    public void setShipDateOption(USPSShipDateOptionType shipDateOption);
+
 }

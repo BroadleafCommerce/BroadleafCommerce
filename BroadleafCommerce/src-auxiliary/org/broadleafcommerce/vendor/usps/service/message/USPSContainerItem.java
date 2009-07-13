@@ -22,11 +22,11 @@ import java.util.Map;
 
 import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.util.WeightUnitOfMeasureType;
-import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSShipDateOptionType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
 
 public class USPSContainerItem implements USPSContainerItemRequest, USPSContainerItemResponse {
@@ -42,6 +42,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     protected BigDecimal girth;
     protected BigDecimal weight;
     protected Date shipDate;
+    protected USPSShipDateOptionType shipDateOption;
     protected String packageId;
     protected String zipOrigination;
     protected String zipDestination;
@@ -51,7 +52,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     protected Boolean isReturnLocations;
 
     //output
-    protected Map<USPSShippingMethodType, Money> rates = new HashMap<USPSShippingMethodType, Money>();
+    protected Map<USPSShippingMethodType, USPSPostage> postage = new HashMap<USPSShippingMethodType, USPSPostage>();
     protected String restrictions;
     protected boolean isErrorDetected = false;
     protected String errorCode;
@@ -137,12 +138,12 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
         this.packageId = packageId.trim();
     }
 
-    public Map<USPSShippingMethodType, Money> getRates() {
-        return rates;
+    public Map<USPSShippingMethodType, USPSPostage> getPostage() {
+        return postage;
     }
 
-    public void setRates(Map<USPSShippingMethodType, Money> rates) {
-        this.rates = rates;
+    public void setPostage(Map<USPSShippingMethodType, USPSPostage> postage) {
+        this.postage = postage;
     }
 
     public String getZipOrigination() {
@@ -231,6 +232,14 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
 
     public void setReturnLocations(Boolean isReturnLocations) {
         this.isReturnLocations = isReturnLocations;
+    }
+
+    public USPSShipDateOptionType getShipDateOption() {
+        return shipDateOption;
+    }
+
+    public void setShipDateOption(USPSShipDateOptionType shipDateOption) {
+        this.shipDateOption = shipDateOption;
     }
 
     @Override

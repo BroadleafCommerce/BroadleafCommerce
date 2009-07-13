@@ -47,5 +47,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/compile/bin/servlet-api-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/USPSV3ShippingRates.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/USPSV2ShippingRates.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
