@@ -91,4 +91,7 @@ public interface USPSContainerItemRequest {
 
     public void setFirstClassType(USPSFirstClassType firstClassType);
 
+    public Boolean isReturnLocations();
+
+    public void setReturnLocations(Boolean isReturnLocations);
 }

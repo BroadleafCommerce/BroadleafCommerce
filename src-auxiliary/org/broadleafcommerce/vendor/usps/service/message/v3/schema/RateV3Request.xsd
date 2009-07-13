@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema targetNamespace="http://broadleafcommerce.org/vendor/usps/service/message/v3" xmlns="http://broadleafcommerce.org/vendor/usps/service/message/v3" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:element name="RateV3Request" type="RateV3RequestType"/>
   <xs:complexType name="RateV3RequestType">
     <xs:sequence>
-      <xs:element type="PackageType" name="Package" maxOccurs="25"/>
+      <xs:element type="RequestPackageType" name="Package" maxOccurs="25"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="USERID"/>
     <xs:attribute type="xs:string" name="PASSWORD"/>
   </xs:complexType>
-  <xs:complexType name="PackageType">
+  <xs:complexType name="ShipDateType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="Option" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="RequestPackageType">
     <xs:sequence>
       <xs:element name="Service">
         <xs:simpleType>
@@ -70,22 +77,9 @@
       <xs:element type="xs:float" name="Length" minOccurs="0"/>
       <xs:element type="xs:float" name="Height" minOccurs="0"/>
       <xs:element type="xs:float" name="Girth" minOccurs="0"/>
-      <xs:element type="xs:boolean" name="ReturnLocations" minOccurs="0"/>
       <xs:element type="ShipDateType" name="ShipDate" minOccurs="0"/>
+      <xs:element type="xs:boolean" name="ReturnLocations" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="ID" use="optional"/>
-  </xs:complexType>
-  <xs:complexType name="ShipDateType">
-  	<xs:simpleContent>
-  		<xs:restriction base="xs:string"/>
-  	</xs:simpleContent>
-    <xs:attribute type="xs:string" name="Option">
-    	<xs:simpleType>
-          <xs:restriction base="xs:string">
-            <xs:enumeration value="EMSH"/>
-            <xs:enumeration value="HFP"/>
-          </xs:restriction>
-        </xs:simpleType>
-    </xs:attribute>
   </xs:complexType>
 </xs:schema>

@@ -29,4 +29,12 @@ public interface VersionedRequestValidator {
 
     public void validateMachinable(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
 
+    public void validateDimensions(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
+
+    public void validateGirth(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
+
+    public void validateShipDate(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
+
+    public void validateOther(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
+
 }
