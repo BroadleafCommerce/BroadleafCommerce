@@ -65,6 +65,8 @@ public interface OrderService {
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException;
 
+    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException;
+
     public Order addOfferToOrder(Order order, String offerCode);
 
     public OrderItem updateItemInOrder(Order order, OrderItem item) throws ItemNotFoundException, PricingException;
@@ -100,5 +102,4 @@ public interface OrderService {
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException;
 
     public Order findOrderByOrderNumber (String orderNumber);
-
 }
