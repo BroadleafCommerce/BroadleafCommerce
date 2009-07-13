@@ -16,11 +16,15 @@
 package org.broadleafcommerce.vendor.usps.service.message.v3;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 
+import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.util.UnitOfMeasureUtil;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 import org.broadleafcommerce.vendor.usps.service.message.VersionedRequestValidator;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingPriceErrorCode;
@@ -81,6 +85,69 @@ public class USPSRequestValidator implements VersionedRequestValidator {
 
     @Override
     public void validateMachinable(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        //do nothing
+    }
+
+    @Override
+    public void validateDimensions(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        if (
+                (
+                        itemRequest.getService().equals(USPSServiceType.ALL) ||
+                        itemRequest.getService().equals(USPSServiceType.ONLINE) ||
+                        itemRequest.getService().equals(USPSServiceType.PRIORITY) ||
+                        itemRequest.getService().equals(USPSServiceType.PRIORITYCOMMERCIAL)
+                ) &&
+                itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE) && itemRequest.getContainerShape() != null &&
+                (
+                        itemRequest.getContainerShape().equals(USPSContainerShapeType.RECTANGULAR) ||
+                        itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR)
+                )
+        ) {
+            if (itemRequest.getDepth() == null || itemRequest.getHeight() == null || itemRequest.getWidth() == null) {
+                throw org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator.buildException(USPSShippingPriceErrorCode.DIMENSIONSNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.DIMENSIONSNOTSPECIFIED.getMessage());
+            }
+            if (itemRequest.getDimensionUnitOfMeasureType() == null) {
+                throw org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator.buildException(USPSShippingPriceErrorCode.UNITTYPENOTSPECIFIED.getType(), USPSShippingPriceErrorCode.UNITTYPENOTSPECIFIED.getMessage());
+            }
+            if (
+                    !itemRequest.getDimensionUnitOfMeasureType().equals(DimensionUnitOfMeasureType.METERS) &&
+                    !itemRequest.getDimensionUnitOfMeasureType().equals(DimensionUnitOfMeasureType.FEET) &&
+                    !itemRequest.getDimensionUnitOfMeasureType().equals(DimensionUnitOfMeasureType.CENTIMETERS) &&
+                    !itemRequest.getDimensionUnitOfMeasureType().equals(DimensionUnitOfMeasureType.INCHES)
+            ) {
+                throw org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator.buildException(USPSShippingPriceErrorCode.UNITTYPENOTSUPPORTED.getType(), USPSShippingPriceErrorCode.UNITTYPENOTSUPPORTED.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void validateGirth(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        if (
+                (
+                        itemRequest.getService().equals(USPSServiceType.ALL) ||
+                        itemRequest.getService().equals(USPSServiceType.ONLINE) ||
+                        itemRequest.getService().equals(USPSServiceType.PRIORITY) ||
+                        itemRequest.getService().equals(USPSServiceType.PRIORITYCOMMERCIAL)
+                ) &&
+                itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE) && itemRequest.getContainerShape() != null &&
+                itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR) &&
+                itemRequest.getGirth() == null
+        ) {
+            throw org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator.buildException(USPSShippingPriceErrorCode.GIRTHNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.GIRTHNOTSPECIFIED.getMessage());
+        }
+    }
+
+    @Override
+    public void validateShipDate(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        Calendar maxAdvance = Calendar.getInstance();
+        maxAdvance.add(Calendar.DATE, 3);
+        if (itemRequest.getShipDate() != null && itemRequest.getShipDate().getTime() > maxAdvance.getTime().getTime()) {
+            throw org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator.buildException(USPSShippingPriceErrorCode.SHIPDATETOOFAR.getType(), USPSShippingPriceErrorCode.SHIPDATETOOFAR.getMessage());
+        }
+    }
+
+    @Override
+    public void validateOther(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
         //do nothing
     }
 

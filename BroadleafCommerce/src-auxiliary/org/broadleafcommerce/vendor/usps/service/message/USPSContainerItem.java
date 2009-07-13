@@ -48,6 +48,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     protected WeightUnitOfMeasureType weightUnitOfMeasureType;
     protected DimensionUnitOfMeasureType dimensionUnitOfMeasureType;
     protected USPSFirstClassType firstClassType;
+    protected Boolean isReturnLocations;
 
     //output
     protected Map<USPSShippingMethodType, Money> rates = new HashMap<USPSShippingMethodType, Money>();
@@ -222,6 +223,14 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
 
     public void setFirstClassType(USPSFirstClassType firstClassType) {
         this.firstClassType = firstClassType;
+    }
+
+    public Boolean isReturnLocations() {
+        return isReturnLocations;
+    }
+
+    public void setReturnLocations(Boolean isReturnLocations) {
+        this.isReturnLocations = isReturnLocations;
     }
 
     @Override

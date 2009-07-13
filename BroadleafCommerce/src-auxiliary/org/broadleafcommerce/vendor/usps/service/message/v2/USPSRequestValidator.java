@@ -78,4 +78,24 @@ public class USPSRequestValidator implements VersionedRequestValidator {
         //do nothing
     }
 
+    @Override
+    public void validateDimensions(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        //do nothing
+    }
+
+    @Override
+    public void validateGirth(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        //do nothing
+    }
+
+    @Override
+    public void validateShipDate(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        //do nothing
+    }
+
+    @Override
+    public void validateOther(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        //do nothing
+    }
+
 }

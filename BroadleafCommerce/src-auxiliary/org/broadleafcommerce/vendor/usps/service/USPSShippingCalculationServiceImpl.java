@@ -39,6 +39,7 @@ import org.broadleafcommerce.vendor.service.exception.ShippingPriceHostException
 import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
+import org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponseParser;
@@ -84,9 +85,10 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
     protected Boolean isUp = true;
     protected String uspsShippingAPI;
     protected String rateRequestElement;
+    protected USPSRequestValidator uspsValidator;
 
     public USPSShippingPriceResponse retrieveShippingRates(USPSShippingPriceRequest request) throws ShippingPriceException {
-        validateRequest(request);
+        uspsValidator.validateRequest(request);
         USPSShippingPriceResponse shippingPriceResponse = new USPSShippingPriceResponse();
         InputStream response = null;
         try {
@@ -135,60 +137,6 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
             }
         }
     }
-
-    protected void validateRequest(USPSShippingPriceRequest request) throws ShippingPriceException {
-        /*for (USPSContainerItemRequest itemRequest : request.getContainerItems()) {
-
-
-            if (
-                    itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE) && itemRequest.getContainerShape() != null && (
-                            itemRequest.getContainerShape().equals(USPSContainerShapeType.RECTANGULAR) ||
-                            itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR)
-                    )
-            ) {
-                if (itemRequest.getDepth() == null || itemRequest.getHeight() == null || itemRequest.getWidth() == null) {
-                    throw buildException(USPSShippingPriceErrorCode.DIMENSIONSNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.DIMENSIONSNOTSPECIFIED.getMessage());
-                }
-                if (itemRequest.getDimensionUnitOfMeasureType() == null) {
-                    throw buildException(USPSShippingPriceErrorCode.UNITTYPENOTSPECIFIED.getType(), USPSShippingPriceErrorCode.UNITTYPENOTSPECIFIED.getMessage());
-                }
-                if (
-                        !itemRequest.getDimensionUnitOfMeasureType().equals(DimensionUnitOfMeasureType.METERS) &&
-                        !itemRequest.getDimensionUnitOfMeasureType().equals(DimensionUnitOfMeasureType.FEET) &&
-                        !itemRequest.getDimensionUnitOfMeasureType().equals(DimensionUnitOfMeasureType.CENTIMETERS) &&
-                        !itemRequest.getDimensionUnitOfMeasureType().equals(DimensionUnitOfMeasureType.INCHES)
-                ) {
-                    throw buildException(USPSShippingPriceErrorCode.UNITTYPENOTSUPPORTED.getType(), USPSShippingPriceErrorCode.UNITTYPENOTSUPPORTED.getMessage());
-                }
-            }
-            if (
-                    itemRequest.getContainerSize().equals(USPSContainerSizeType.LARGE) && itemRequest.getContainerShape() != null &&
-                    itemRequest.getContainerShape().equals(USPSContainerShapeType.NONRECTANGULAR) &&
-                    itemRequest.getGirth() == null
-            ) {
-                throw buildException(USPSShippingPriceErrorCode.GIRTHNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.GIRTHNOTSPECIFIED.getMessage());
-            }
-            if (itemRequest.getPackageId() == null) {
-                throw buildException(USPSShippingPriceErrorCode.PACKAGEIDNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.PACKAGEIDNOTSPECIFIED.getMessage());
-            }
-            if (itemRequest.getZipDestination() == null || itemRequest.getZipOrigination() == null) {
-                throw buildException(USPSShippingPriceErrorCode.ZIPNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.ZIPNOTSPECIFIED.getMessage());
-            }
-            if (itemRequest.getWeightUnitOfMeasureType() == null) {
-                throw buildException(USPSShippingPriceErrorCode.UNITTYPENOTSPECIFIED.getType(), USPSShippingPriceErrorCode.UNITTYPENOTSPECIFIED.getMessage());
-            }
-            if (!itemRequest.getWeightUnitOfMeasureType().equals(WeightUnitOfMeasureType.KILOGRAMS) && !itemRequest.getWeightUnitOfMeasureType().equals(WeightUnitOfMeasureType.POUNDS)) {
-                throw buildException(USPSShippingPriceErrorCode.UNITTYPENOTSUPPORTED.getType(), USPSShippingPriceErrorCode.UNITTYPENOTSUPPORTED.getMessage());
-            }
-            Calendar maxAdvance = Calendar.getInstance();
-            maxAdvance.add(Calendar.DATE, 3);
-            if (itemRequest.getShipDate() != null && itemRequest.getShipDate().getTime() > maxAdvance.getTime().getTime()) {
-                throw buildException(USPSShippingPriceErrorCode.SHIPDATETOOFAR.getType(), USPSShippingPriceErrorCode.SHIPDATETOOFAR.getMessage());
-            }
-        }*/
-    }
-
-
 
     protected InputStream callUSPSPricingCalculation(USPSShippingPriceRequest request) throws IOException {
         URL contentURL = new URL(new StringBuffer(httpProtocol).append("://").append(uspsServerName).append(uspsServiceAPI).toString());

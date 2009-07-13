@@ -37,8 +37,30 @@ public class USPSRequestValidator {
             validateSize(itemRequest);
             validateContainer(itemRequest);
             validateMachinable(itemRequest);
-            //validateDimensions(itemRequest);
+            validateDimensions(itemRequest);
+            validateGirth(itemRequest);
+            validateShipDate(itemRequest);
+            validateOther(itemRequest);
         }
+    }
+
+    protected void validateOther(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        if (itemRequest.getPackageId() == null) {
+            throw buildException(USPSShippingPriceErrorCode.PACKAGEIDNOTSPECIFIED.getType(), USPSShippingPriceErrorCode.PACKAGEIDNOTSPECIFIED.getMessage());
+        }
+        versionedValidator.validateOther(itemRequest);
+    }
+
+    protected void validateShipDate(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        versionedValidator.validateShipDate(itemRequest);
+    }
+
+    protected void validateGirth(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        versionedValidator.validateGirth(itemRequest);
+    }
+
+    protected void validateDimensions(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
+        versionedValidator.validateDimensions(itemRequest);
     }
 
     protected void validateMachinable(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
