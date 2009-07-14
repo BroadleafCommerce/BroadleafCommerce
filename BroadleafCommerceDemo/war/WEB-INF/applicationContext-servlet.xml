@@ -80,6 +80,10 @@
 		<property name="searchService" ref="blSearchService"/>
 	</bean>
 	
+	<bean id="searchIndexController" class="org.broadleafcommerce.search.web.SearchIndexController">
+		<property name="searchService" ref="blSearchService"/>
+	</bean>
+	
 	<bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
@@ -103,6 +107,8 @@
 				<prop key="/basket/*">cartController</prop>
 				<prop key="/search">searchController</prop>
 				<prop key="/search/*">searchController</prop>
+				<prop key="/searchIndex">searchIndexController</prop>
+				<prop key="/searchIndex/*">searchIndexController</prop>
 				<prop key="/checkout/*">checkoutController</prop>
 				<prop key="/storeLocator/*">storeController</prop>
 				<prop key="/account/*">myAccountController</prop>
