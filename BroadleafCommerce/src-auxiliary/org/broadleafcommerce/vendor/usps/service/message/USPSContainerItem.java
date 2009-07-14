@@ -57,6 +57,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     protected boolean isErrorDetected = false;
     protected String errorCode;
     protected String errorText;
+    protected String zone;
 
     public USPSContainerSizeType getContainerSize() {
         return containerSize;
@@ -240,6 +241,14 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
 
     public void setShipDateOption(USPSShipDateOptionType shipDateOption) {
         this.shipDateOption = shipDateOption;
+    }
+
+    public String getZone() {
+        return zone;
+    }
+
+    public void setZone(String zone) {
+        this.zone = zone;
     }
 
     @Override

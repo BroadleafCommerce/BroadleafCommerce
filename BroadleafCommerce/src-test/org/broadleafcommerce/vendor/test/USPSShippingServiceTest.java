@@ -15,10 +15,21 @@
  */
 package org.broadleafcommerce.vendor.test;
 
+import java.math.BigDecimal;
+
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.util.UnitOfMeasureUtil;
+import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationService;
+import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItem;
+import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
+import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
+import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
@@ -33,7 +44,7 @@ public class USPSShippingServiceTest extends BaseTest {
         if (shippingCalculationService.getUspsUserName().equals("?")) {
             return;
         }
-        /*USPSShippingPriceRequest request = new USPSShippingPriceRequest();
+        USPSShippingPriceRequest request = new USPSShippingPriceRequest();
         USPSContainerItemRequest itemRequest = new USPSContainerItem();
         itemRequest.setService(USPSServiceType.ALL);
         itemRequest.setContainerSize(USPSContainerSizeType.LARGE);
@@ -46,7 +57,24 @@ public class USPSShippingServiceTest extends BaseTest {
         request.getContainerItems().add(itemRequest);
 
         USPSShippingPriceResponse response = shippingCalculationService.retrieveShippingRates(request);
-        assert(response.getResponses().peek().getRates().size() > 0);*/
+        assert(response.getResponses().peek().getPostage().size() == 6);
+        assert(response.getResponses().peek().getPostage().get(USPSShippingMethodType.PARCELPOST).getRate().getAmount().doubleValue()>0D);
+
+        /*USPSShippingPriceRequest request2 = new USPSShippingPriceRequest();
+        USPSContainerItemRequest itemRequest2 = new USPSContainerItem();
+        itemRequest2.setService(USPSServiceType.PRIORITY);
+        itemRequest2.setContainerSize(USPSContainerSizeType.REGULAR);
+        itemRequest2.setContainerShape(USPSContainerShapeType.FLATRATEBOX);
+        itemRequest2.setPackageId("0");
+        itemRequest2.setWeight(BigDecimal.valueOf(10L).add(UnitOfMeasureUtil.convertOuncesToPounds(BigDecimal.valueOf(5L))));
+        itemRequest2.setWeightUnitOfMeasureType(WeightUnitOfMeasureType.POUNDS);
+        itemRequest2.setZipDestination("20008");
+        itemRequest2.setZipOrigination("10022");
+        request2.getContainerItems().add(itemRequest2);
+
+        USPSShippingPriceResponse response2 = shippingCalculationService.retrieveShippingRates(request2);
+        assert(response2.getResponses().peek().getPostage().size() == 2);
+        assert(response2.getResponses().peek().getPostage().get(USPSShippingMethodType.PRIORITYMAILFLATRATEBOX).getRate().getAmount().doubleValue()>0D);*/
     }
 
 }

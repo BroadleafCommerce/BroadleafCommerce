@@ -145,18 +145,6 @@
 		<constructor-arg value="X"/>
 	</bean>
 	
-	<bean id="blShippingCalculationService" class="org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationServiceImpl">
-		<property name="uspsCharSet" value="${usps.charset}"/>
-		<property name="uspsPassword" value="${usps.password}"/>
-		<property name="uspsServerName" value="${usps.server.name}"/>
-		<property name="uspsServiceAPI" value="${usps.service.api}"/>
-		<property name="uspsUserName" value="${usps.user.name}"/>
-		<property name="failureReportingThreshold" value="10"/>
-		<property name="httpProtocol" value="${usps.http.protocol}"/>
-		<property name="uspsShippingAPI" value="${usps.shipping.api}"/>
-		<property name="rateRequestElement" value="${usps.rate.request.tag}"/>
-	</bean>
-	
 	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>
 	
 	<aop:config>
