@@ -60,7 +60,7 @@ public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.se
                     ErrorDocument error = ErrorDocument.Factory.parse(xml);
                     ErrorV2Type errorType = error.getError();
                     shippingPriceResponse.setErrorDetected(true);
-                    shippingPriceResponse.setErrorCode(errorType.getSource());
+                    shippingPriceResponse.setErrorCode(String.valueOf(errorType.getNumber()));
                     shippingPriceResponse.setErrorText(errorType.getDescription());
                     return shippingPriceResponse;
                 } catch (XmlException e1) {

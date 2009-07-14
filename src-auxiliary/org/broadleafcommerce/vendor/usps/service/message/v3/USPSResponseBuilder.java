@@ -75,7 +75,7 @@ public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.se
                 if (packageItem.getError() != null) {
                     shippingPriceResponse.setErrorDetected(true);
                     originalItem.setErrorDetected(true);
-                    originalItem.setErrorCode(packageItem.getError().getSource());
+                    originalItem.setErrorCode(String.valueOf(packageItem.getError().getNumber()));
                     originalItem.setErrorText(packageItem.getError().getDescription());
                 }
                 originalItem.setZone(packageItem.getZone());
