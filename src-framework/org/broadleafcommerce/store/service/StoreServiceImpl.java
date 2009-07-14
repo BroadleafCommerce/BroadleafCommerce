@@ -49,7 +49,7 @@ public class StoreServiceImpl implements StoreService {
         Map<Store,Double> matchingStores = new HashMap<Store,Double>();
         for (Store store : readAllStores()) {
             Double storeDistance = findStoreDistance(store, Integer.parseInt(searchAddress.getPostalCode()));
-            if (storeDistance <= distance) {
+            if (storeDistance != null && storeDistance <= distance) {
                 matchingStores.put(store, storeDistance);
             }
         }
@@ -57,8 +57,11 @@ public class StoreServiceImpl implements StoreService {
         return matchingStores;
     }
 
-    private double findStoreDistance(Store store, Integer zip) {
+    private Double findStoreDistance(Store store, Integer zip) {
         ZipCode zipCode = zipCodeService.findZipCodeByZipCode(zip);
+        if (zipCode == null) {
+            return null;
+        }
         // A constant used to convert from degrees to radians.
         double degreesToRadians = 57.3;
         double storeDistance = 3959 * Math.acos((Math.sin(zipCode.getZipLatitude() / degreesToRadians) * Math.sin(store.getLatitude() / degreesToRadians))
