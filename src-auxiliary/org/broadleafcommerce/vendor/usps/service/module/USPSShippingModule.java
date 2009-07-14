@@ -15,27 +15,9 @@
  */
 package org.broadleafcommerce.vendor.usps.service.module;
 
-import org.broadleafcommerce.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.pricing.service.module.ShippingModule;
 
-public class USPSShippingModule implements ShippingModule {
+public class USPSShippingModule {
 
-    private String moduleName = "USPSShippingModule";
 
-    @Override
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getName() {
-        return moduleName;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.moduleName = name;
-    }
 
 }
