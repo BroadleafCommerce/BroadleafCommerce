@@ -23,4 +23,5 @@ public interface FulfillmentGroupService {
 
     public FulfillmentGroup createEmptyFulfillmentGroup();
 
+    public FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId);
 }
