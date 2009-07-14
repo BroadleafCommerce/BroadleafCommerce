@@ -31,8 +31,8 @@
       <xs:element name="Container" minOccurs="0" maxOccurs="1">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="FLAT RATE BOX"/>
-            <xs:enumeration value="FLAT RATE ENVELOPE"/>
+            <xs:enumeration value="Flat Rate Box"/>
+            <xs:enumeration value="Flat Rate Envelope"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:element>
