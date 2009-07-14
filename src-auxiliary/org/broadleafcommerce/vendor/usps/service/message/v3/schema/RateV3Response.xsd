@@ -4,7 +4,6 @@
   <xs:complexType name="RateV3ResponseType">
     <xs:sequence>
       <xs:element type="ResponsePackageV3Type" name="Package" maxOccurs="unbounded" minOccurs="1"/>
-      <xs:element type="ErrorV3Type" name="Error" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="PostageV3Type">

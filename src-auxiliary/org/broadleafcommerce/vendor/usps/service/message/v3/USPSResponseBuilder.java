@@ -15,20 +15,23 @@
  */
 package org.broadleafcommerce.vendor.usps.service.message.v3;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
 import noNamespace.CommitmentV3Type;
-import noNamespace.ErrorV3Type;
 import noNamespace.LocationV3Type;
 import noNamespace.PostageV3Type;
 import noNamespace.RateV3ResponseDocument;
 import noNamespace.RateV3ResponseType;
 import noNamespace.ResponsePackageV3Type;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlException;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.usps.service.message.USPSCommitment;
@@ -41,21 +44,27 @@ import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
 
 public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.service.message.USPSResponseBuilder {
 
-    public USPSShippingPriceResponse buildResponse(InputStream input, USPSShippingPriceRequest request) {
-        USPSShippingPriceResponse shippingPriceResponse;
+    private static final Log LOG = LogFactory.getLog(USPSResponseBuilder.class);
+
+    public USPSShippingPriceResponse buildResponse(InputStream hostInput, USPSShippingPriceRequest request) {
+        USPSShippingPriceResponse shippingPriceResponse = new USPSShippingPriceResponse();
+        RateV3ResponseDocument doc;
+        String xml = null;
+        try {
+            xml = generateXml(hostInput);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Host Response: " + xml);
+            }
+            doc = RateV3ResponseDocument.Factory.parse(xml);
+        } catch (XmlException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
             SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("dd-MMM-yyyy h:mm a");
-            shippingPriceResponse = new USPSShippingPriceResponse();
-            RateV3ResponseDocument doc = RateV3ResponseDocument.Factory.parse(input);
             RateV3ResponseType responseType = doc.getRateV3Response();
-            ErrorV3Type[] mainErrors = responseType.getErrorArray();
-            if (mainErrors != null && mainErrors.length > 0) {
-                shippingPriceResponse.setErrorDetected(true);
-                shippingPriceResponse.setErrorCode(mainErrors[0].getSource());
-                shippingPriceResponse.setErrorText(mainErrors[0].getDescription());
-                return shippingPriceResponse;
-            }
             ResponsePackageV3Type[] packages = responseType.getPackageArray();
             for (ResponsePackageV3Type packageItem : packages) {
                 String id = packageItem.getID();
@@ -69,16 +78,20 @@ public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.se
                     originalItem.setErrorCode(packageItem.getError().getSource());
                     originalItem.setErrorText(packageItem.getError().getDescription());
                 }
+                originalItem.setZone(packageItem.getZone());
+                if (packageItem.xgetRestrictions()!=null) {
+                    originalItem.setRestrictions(packageItem.getRestrictions());
+                }
                 PostageV3Type[] postages = packageItem.getPostageArray();
                 for (PostageV3Type postage : postages) {
                     int classId = postage.getCLASSID();
                     USPSShippingMethodType shippingMethod = USPSShippingMethodType.getInstance(String.valueOf(classId));
                     USPSPostage uspsPostage = new USPSPostage();
-                    if (!postage.xgetCommercialRate().isNil()) {
+                    if (postage.xgetCommercialRate()!=null) {
                         uspsPostage.setCommercialRate(new Money(postage.getCommercialRate()));
                     }
                     uspsPostage.setRate(new Money(postage.getRate()));
-                    if (!postage.xgetCommitmentDate().isNil()) {
+                    if (postage.xgetCommitmentDate()!=null) {
                         uspsPostage.setCommitmentDate(dateFormat.parse(postage.getCommitmentDate()));
                     }
                     buildLocations(uspsPostage.getLocations(), postage.getLocationArray());
@@ -90,15 +103,34 @@ public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.se
                     originalItem.getPostage().put(shippingMethod, uspsPostage);
                 }
             }
-        } catch (XmlException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
 
         return shippingPriceResponse;
+    }
+
+    private String generateXml(InputStream hostInput) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        boolean eof = false;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(hostInput));
+            while (!eof) {
+                String temp = reader.readLine();
+                if (temp == null) {
+                    eof = true;
+                } else {
+                    sb.append(temp);
+                    sb.append("\n");
+                }
+            }
+        } finally {
+            if (reader != null) {
+                try{ reader.close(); } catch (Throwable e) {}
+            }
+        }
+        return sb.toString();
     }
 
     public void buildLocations(List<USPSLocation> uspsLocations, LocationV3Type[] locations) {

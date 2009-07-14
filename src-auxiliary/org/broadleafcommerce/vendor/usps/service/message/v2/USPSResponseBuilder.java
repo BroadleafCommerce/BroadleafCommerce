@@ -15,23 +15,24 @@
  */
 package org.broadleafcommerce.vendor.usps.service.message.v2;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.io.InputStreamReader;
 import java.util.List;
 
-import noNamespace.CommitmentV3Type;
-import noNamespace.ErrorV3Type;
+import noNamespace.ErrorDocument;
+import noNamespace.ErrorV2Type;
 import noNamespace.LocationV3Type;
-import noNamespace.PostageV3Type;
-import noNamespace.RateV3ResponseDocument;
-import noNamespace.RateV3ResponseType;
-import noNamespace.ResponsePackageV3Type;
+import noNamespace.PostageV2Type;
+import noNamespace.RateV2ResponseDocument;
+import noNamespace.RateV2ResponseType;
+import noNamespace.ResponsePackageV2Type;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlException;
 import org.broadleafcommerce.util.money.Money;
-import org.broadleafcommerce.vendor.usps.service.message.USPSCommitment;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItem;
 import org.broadleafcommerce.vendor.usps.service.message.USPSLocation;
 import org.broadleafcommerce.vendor.usps.service.message.USPSPostage;
@@ -41,64 +42,91 @@ import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
 
 public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.service.message.USPSResponseBuilder {
 
-    public USPSShippingPriceResponse buildResponse(InputStream input, USPSShippingPriceRequest request) {
-        USPSShippingPriceResponse shippingPriceResponse;
+    private static final Log LOG = LogFactory.getLog(USPSResponseBuilder.class);
+
+    public USPSShippingPriceResponse buildResponse(InputStream hostInput, USPSShippingPriceRequest request) {
+        USPSShippingPriceResponse shippingPriceResponse = new USPSShippingPriceResponse();
+        RateV2ResponseDocument doc;
+        String xml = null;
         try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-            SimpleDateFormat dateAndTimeFormat = new SimpleDateFormat("dd-MMM-yyyy h:mm a");
-            shippingPriceResponse = new USPSShippingPriceResponse();
-            RateV3ResponseDocument doc = RateV3ResponseDocument.Factory.parse(input);
-            RateV3ResponseType responseType = doc.getRateV3Response();
-            ErrorV3Type[] mainErrors = responseType.getErrorArray();
-            if (mainErrors != null && mainErrors.length > 0) {
-                shippingPriceResponse.setErrorDetected(true);
-                shippingPriceResponse.setErrorCode(mainErrors[0].getSource());
-                shippingPriceResponse.setErrorText(mainErrors[0].getDescription());
-                return shippingPriceResponse;
+            xml = generateXml(hostInput);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Host Response: " + xml);
             }
-            ResponsePackageV3Type[] packages = responseType.getPackageArray();
-            for (ResponsePackageV3Type packageItem : packages) {
-                String id = packageItem.getID();
-                USPSContainerItem key = new USPSContainerItem();
-                key.setPackageId(id);
-                USPSContainerItem originalItem = (USPSContainerItem) request.getContainerItems().get(request.getContainerItems().indexOf(key));
-                shippingPriceResponse.getResponses().push(originalItem);
-                if (packageItem.getError() != null) {
-                    shippingPriceResponse.setErrorDetected(true);
-                    originalItem.setErrorDetected(true);
-                    originalItem.setErrorCode(packageItem.getError().getSource());
-                    originalItem.setErrorText(packageItem.getError().getDescription());
-                }
-                PostageV3Type[] postages = packageItem.getPostageArray();
-                for (PostageV3Type postage : postages) {
-                    int classId = postage.getCLASSID();
-                    USPSShippingMethodType shippingMethod = USPSShippingMethodType.getInstance(String.valueOf(classId));
-                    USPSPostage uspsPostage = new USPSPostage();
-                    if (!postage.xgetCommercialRate().isNil()) {
-                        uspsPostage.setCommercialRate(new Money(postage.getCommercialRate()));
-                    }
-                    uspsPostage.setRate(new Money(postage.getRate()));
-                    if (!postage.xgetCommitmentDate().isNil()) {
-                        uspsPostage.setCommitmentDate(dateFormat.parse(postage.getCommitmentDate()));
-                    }
-                    buildLocations(uspsPostage.getLocations(), postage.getLocationArray());
-                    for (CommitmentV3Type commitment : postage.getCommitmentArray()) {
-                        USPSCommitment uspsCommitment = new USPSCommitment();
-                        uspsCommitment.setCommitmentDateAndTime(dateAndTimeFormat.parse(commitment.getCommitmentDate() + " " + commitment.getCommitmentTime()));
-                        buildLocations(uspsCommitment.getLocations(), commitment.getLocationArray());
-                    }
-                    originalItem.getPostage().put(shippingMethod, uspsPostage);
-                }
-            }
+            doc = RateV2ResponseDocument.Factory.parse(xml);
         } catch (XmlException e) {
-            throw new RuntimeException(e);
+            if (xml != null) {
+                try {
+                    ErrorDocument error = ErrorDocument.Factory.parse(xml);
+                    ErrorV2Type errorType = error.getError();
+                    shippingPriceResponse.setErrorDetected(true);
+                    shippingPriceResponse.setErrorCode(errorType.getSource());
+                    shippingPriceResponse.setErrorText(errorType.getDescription());
+                    return shippingPriceResponse;
+                } catch (XmlException e1) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new RuntimeException(e);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
+        }
+        RateV2ResponseType responseType = doc.getRateV2Response();
+        ResponsePackageV2Type[] packages = responseType.getPackageArray();
+        for (ResponsePackageV2Type packageItem : packages) {
+            String id = packageItem.getID();
+            USPSContainerItem key = new USPSContainerItem();
+            key.setPackageId(id);
+            USPSContainerItem originalItem = (USPSContainerItem) request.getContainerItems().get(request.getContainerItems().indexOf(key));
+            shippingPriceResponse.getResponses().push(originalItem);
+            if (packageItem.getError() != null) {
+                shippingPriceResponse.setErrorDetected(true);
+                originalItem.setErrorDetected(true);
+                originalItem.setErrorCode(packageItem.getError().getSource());
+                originalItem.setErrorText(packageItem.getError().getDescription());
+            }
+            originalItem.setZone(packageItem.getZone());
+            if (packageItem.xgetRestrictions()!=null) {
+                originalItem.setRestrictions(packageItem.getRestrictions());
+            }
+            PostageV2Type[] postages = packageItem.getPostageArray();
+            for (PostageV2Type postage : postages) {
+                USPSShippingMethodType shippingMethod = USPSShippingMethodType.getInstanceByDescription(postage.getMailService());
+                if (shippingMethod == null) {
+                    LOG.warn("Unable to identify shipping method based on description: " + postage.getMailService() + ". Skipping this postage element.");
+                    continue;
+                }
+                USPSPostage uspsPostage = new USPSPostage();
+                uspsPostage.setRate(new Money(postage.getRate()));
+                originalItem.getPostage().put(shippingMethod, uspsPostage);
+            }
         }
 
         return shippingPriceResponse;
+    }
+
+    private String generateXml(InputStream hostInput) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        boolean eof = false;
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(hostInput));
+            while (!eof) {
+                String temp = reader.readLine();
+                if (temp == null) {
+                    eof = true;
+                } else {
+                    sb.append(temp);
+                    sb.append("\n");
+                }
+            }
+        } finally {
+            if (reader != null) {
+                try{ reader.close(); } catch (Throwable e) {}
+            }
+        }
+        return sb.toString();
     }
 
     public void buildLocations(List<USPSLocation> uspsLocations, LocationV3Type[] locations) {

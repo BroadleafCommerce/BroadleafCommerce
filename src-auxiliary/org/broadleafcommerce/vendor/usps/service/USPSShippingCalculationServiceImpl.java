@@ -17,18 +17,13 @@ package org.broadleafcommerce.vendor.usps.service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlTokenSource;
-import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.util.UnitOfMeasureUtil;
-import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.service.AbstractVendorService;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceHostException;
@@ -36,9 +31,9 @@ import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
 import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 import org.broadleafcommerce.vendor.usps.service.message.USPSRequestBuilder;
 import org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator;
+import org.broadleafcommerce.vendor.usps.service.message.USPSResponseBuilder;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
-import org.broadleafcommerce.vendor.usps.service.message.v3.USPSResponseBuilder;
 
 public class USPSShippingCalculationServiceImpl extends AbstractVendorService implements ServiceStatusDetectable, USPSShippingCalculationService {
 
@@ -115,23 +110,6 @@ public class USPSShippingCalculationServiceImpl extends AbstractVendorService im
         }
         content.put("XML", text);
         return postMessage(content, contentURL, uspsCharSet);
-    }
-
-    public String findPounds(BigDecimal weight, WeightUnitOfMeasureType type) {
-        int pounds = UnitOfMeasureUtil.findWholePounds(weight, type);
-        return String.valueOf(pounds);
-    }
-
-    public String findOunces(BigDecimal weight, WeightUnitOfMeasureType type) {
-        BigDecimal ounces = UnitOfMeasureUtil.findRemainingOunces(weight, type);
-        DecimalFormat format = new DecimalFormat("0.#");
-        return format.format(ounces.doubleValue());
-    }
-
-    public String findInches(BigDecimal dimension, DimensionUnitOfMeasureType type) {
-        dimension = UnitOfMeasureUtil.findInches(dimension, type);
-        DecimalFormat format = new DecimalFormat("0.#");
-        return format.format(dimension.doubleValue());
     }
 
     public ServiceStatusType getServiceStatus() {

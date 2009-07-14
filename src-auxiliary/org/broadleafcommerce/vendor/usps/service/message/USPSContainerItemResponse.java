@@ -45,4 +45,8 @@ public interface USPSContainerItemResponse {
 
     public void setErrorDetected(boolean isErrorDetected);
 
+    public String getZone();
+
+    public void setZone(String zone);
+
 }
