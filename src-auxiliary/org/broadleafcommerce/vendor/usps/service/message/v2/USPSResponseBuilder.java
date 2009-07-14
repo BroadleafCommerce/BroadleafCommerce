@@ -38,7 +38,7 @@ import org.broadleafcommerce.vendor.usps.service.message.USPSLocation;
 import org.broadleafcommerce.vendor.usps.service.message.USPSPostage;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
-import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceResponseType;
 
 public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.service.message.USPSResponseBuilder {
 
@@ -92,7 +92,7 @@ public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.se
             }
             PostageV2Type[] postages = packageItem.getPostageArray();
             for (PostageV2Type postage : postages) {
-                USPSShippingMethodType shippingMethod = USPSShippingMethodType.getInstanceByDescription(postage.getMailService());
+                USPSServiceResponseType shippingMethod = USPSServiceResponseType.getInstanceByDescription(postage.getMailService());
                 if (shippingMethod == null) {
                     LOG.warn("Unable to identify shipping method based on description: " + postage.getMailService() + ". Skipping this postage element.");
                     continue;

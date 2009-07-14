@@ -40,7 +40,7 @@ import org.broadleafcommerce.vendor.usps.service.message.USPSLocation;
 import org.broadleafcommerce.vendor.usps.service.message.USPSPostage;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
-import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceResponseType;
 
 public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.service.message.USPSResponseBuilder {
 
@@ -85,7 +85,7 @@ public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.se
                 PostageV3Type[] postages = packageItem.getPostageArray();
                 for (PostageV3Type postage : postages) {
                     int classId = postage.getCLASSID();
-                    USPSShippingMethodType shippingMethod = USPSShippingMethodType.getInstance(String.valueOf(classId));
+                    USPSServiceResponseType shippingMethod = USPSServiceResponseType.getInstance(String.valueOf(classId));
                     USPSPostage uspsPostage = new USPSPostage();
                     if (postage.xgetCommercialRate()!=null) {
                         uspsPostage.setCommercialRate(new Money(postage.getCommercialRate()));

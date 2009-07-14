@@ -30,7 +30,7 @@ import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRespon
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceResponseType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
@@ -59,7 +59,7 @@ public class USPSShippingServiceTest extends BaseTest {
 
         USPSShippingPriceResponse response = shippingCalculationService.retrieveShippingRates(request);
         assert(response.getResponses().peek().getPostage().size() == 6);
-        assert(response.getResponses().peek().getPostage().get(USPSShippingMethodType.PARCELPOST).getRate().getAmount().doubleValue()>0D);
+        assert(response.getResponses().peek().getPostage().get(USPSServiceResponseType.PARCELPOST).getRate().getAmount().doubleValue()>0D);
 
         USPSShippingPriceRequest request2 = new USPSShippingPriceRequest();
         USPSContainerItemRequest itemRequest2 = new USPSContainerItem();
