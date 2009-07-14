@@ -27,7 +27,7 @@ import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShipDateOptionType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceResponseType;
 
 public class USPSContainerItem implements USPSContainerItemRequest, USPSContainerItemResponse {
 
@@ -52,7 +52,7 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
     protected Boolean isReturnLocations;
 
     //output
-    protected Map<USPSShippingMethodType, USPSPostage> postage = new HashMap<USPSShippingMethodType, USPSPostage>();
+    protected Map<USPSServiceResponseType, USPSPostage> postage = new HashMap<USPSServiceResponseType, USPSPostage>();
     protected String restrictions;
     protected boolean isErrorDetected = false;
     protected String errorCode;
@@ -139,11 +139,11 @@ public class USPSContainerItem implements USPSContainerItemRequest, USPSContaine
         this.packageId = packageId.trim();
     }
 
-    public Map<USPSShippingMethodType, USPSPostage> getPostage() {
+    public Map<USPSServiceResponseType, USPSPostage> getPostage() {
         return postage;
     }
 
-    public void setPostage(Map<USPSShippingMethodType, USPSPostage> postage) {
+    public void setPostage(Map<USPSServiceResponseType, USPSPostage> postage) {
         this.postage = postage;
     }
 

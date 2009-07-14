@@ -17,7 +17,7 @@ package org.broadleafcommerce.vendor.usps.service.message;
 
 import java.util.Map;
 
-import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceResponseType;
 
 public interface USPSContainerItemResponse {
 
@@ -25,9 +25,9 @@ public interface USPSContainerItemResponse {
 
     public void setPackageId(String packageId);
 
-    public Map<USPSShippingMethodType, USPSPostage> getPostage();
+    public Map<USPSServiceResponseType, USPSPostage> getPostage();
 
-    public void setPostage(Map<USPSShippingMethodType, USPSPostage> postage);
+    public void setPostage(Map<USPSServiceResponseType, USPSPostage> postage);
 
     public String getRestrictions();
 
