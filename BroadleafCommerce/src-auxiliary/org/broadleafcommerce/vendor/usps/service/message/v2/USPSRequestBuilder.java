@@ -37,7 +37,18 @@ public class USPSRequestBuilder implements org.broadleafcommerce.vendor.usps.ser
         for (USPSContainerItemRequest itemRequest : request.getContainerItems()) {
             RequestPackageV2Type requestPackage = v2Request.addNewPackage();
             if (itemRequest.getContainerShape() != null) {
-                requestPackage.setContainer(RequestPackageV2Type.Container.Enum.forString(itemRequest.getContainerShape().getType()));
+                //for some reason, in version 2, the container name must start with a capital letter with lower-case letters following for each word
+                String containerShape = itemRequest.getContainerShape().getType();
+                String[] tokens = containerShape.split(" ");
+                StringBuffer sb = new StringBuffer();
+                for (String token : tokens) {
+                    if (sb.length() > 0) {
+                        sb.append(" ");
+                    }
+                    sb.append(token.substring(0,1));
+                    sb.append(token.substring(1,token.length()).toLowerCase());
+                }
+                requestPackage.setContainer(RequestPackageV2Type.Container.Enum.forString(sb.toString()));
             }
             if (itemRequest.getPackageId() != null) {
                 requestPackage.setID(itemRequest.getPackageId());

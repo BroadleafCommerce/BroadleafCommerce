@@ -56,6 +56,8 @@ public class USPSShippingMethodType implements Serializable {
     }
 
     public static USPSShippingMethodType getInstanceByDescription(String description) {
+        //remove any dimension callouts
+        description = description.replaceAll("\\(.*?\\)", "");
         USPSShippingMethodType closestMatch = null;
         Double closestChecksumDeviation = null;
         for (USPSShippingMethodType type : types.values()) {

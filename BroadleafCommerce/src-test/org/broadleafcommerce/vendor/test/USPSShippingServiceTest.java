@@ -27,6 +27,7 @@ import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItem;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingMethodType;
@@ -60,7 +61,7 @@ public class USPSShippingServiceTest extends BaseTest {
         assert(response.getResponses().peek().getPostage().size() == 6);
         assert(response.getResponses().peek().getPostage().get(USPSShippingMethodType.PARCELPOST).getRate().getAmount().doubleValue()>0D);
 
-        /*USPSShippingPriceRequest request2 = new USPSShippingPriceRequest();
+        USPSShippingPriceRequest request2 = new USPSShippingPriceRequest();
         USPSContainerItemRequest itemRequest2 = new USPSContainerItem();
         itemRequest2.setService(USPSServiceType.PRIORITY);
         itemRequest2.setContainerSize(USPSContainerSizeType.REGULAR);
@@ -73,8 +74,7 @@ public class USPSShippingServiceTest extends BaseTest {
         request2.getContainerItems().add(itemRequest2);
 
         USPSShippingPriceResponse response2 = shippingCalculationService.retrieveShippingRates(request2);
-        assert(response2.getResponses().peek().getPostage().size() == 2);
-        assert(response2.getResponses().peek().getPostage().get(USPSShippingMethodType.PRIORITYMAILFLATRATEBOX).getRate().getAmount().doubleValue()>0D);*/
+        assert(response2.getResponses().peek().getPostage().size() > 0);
     }
 
 }
