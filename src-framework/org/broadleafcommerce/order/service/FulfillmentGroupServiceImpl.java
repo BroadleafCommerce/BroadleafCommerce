@@ -37,5 +37,8 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
         return fulfillmentGroupDao.create();
     }
 
-
+    @Override
+    public FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId) {
+        return fulfillmentGroupDao.readFulfillmentGroupById(fulfillmentGroupId);
+    }
 }
