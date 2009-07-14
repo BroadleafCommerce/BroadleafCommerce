@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
 import org.broadleafcommerce.catalog.domain.Product;
@@ -43,7 +44,8 @@ public class SearchController {
     public String search (ModelMap model,
             HttpServletRequest request,
             @RequestParam(required = true) String queryString,
-            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String originalQueryString,
+            @RequestParam(required = false) Long[] categoryId,
             @RequestParam(required = false) String minPrice,
             @RequestParam(required = false) String maxPrice,
             @RequestParam(required = false) Boolean ajax) throws CorruptIndexException, IOException, ParseException {
@@ -54,29 +56,31 @@ public class SearchController {
 
         skus = searchService.performSearch(input.getQueryString());
 
-        if (categoryId != null) {
-            for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();) {
-                Sku sku = itr.next();
-                List<Product> parents = sku.getAllParentProducts();
-                boolean found = false;
-                for(Product parent : parents) {
-                    if (parent.getDefaultCategory().getId().equals(categoryId)) {
-                        found = true;
-                        break;
+        if(queryString.equals(originalQueryString)) {
+            if (categoryId != null) {
+                for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();) {
+                    Sku sku = itr.next();
+                    List<Product> parents = sku.getAllParentProducts();
+                    boolean found = false;
+                    for(Product parent : parents) {
+                        if (ArrayUtils.contains(categoryId, parent.getDefaultCategory().getId())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        itr.remove();
                     }
                 }
-                if (!found) {
-                    itr.remove();
-                }
             }
-        }
-        if (minPrice != null && maxPrice != null) {
-            Money minimumPrice = new Money(minPrice.replaceAll("[^0-9.]", ""));
-            Money maximumPrice = new Money(maxPrice.replaceAll("[^0-9.]", ""));
-            for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();) {
-                Sku sku = itr.next();
-                if (sku.getSalePrice().lessThan(minimumPrice) || sku.getSalePrice().greaterThan(maximumPrice)) {
-                    itr.remove();
+            if (minPrice != null && maxPrice != null) {
+                Money minimumPrice = new Money(minPrice.replaceAll("[^0-9.]", ""));
+                Money maximumPrice = new Money(maxPrice.replaceAll("[^0-9.]", ""));
+                for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();) {
+                    Sku sku = itr.next();
+                    if (sku.getSalePrice().lessThan(minimumPrice) || sku.getSalePrice().greaterThan(maximumPrice)) {
+                        itr.remove();
+                    }
                 }
             }
         }

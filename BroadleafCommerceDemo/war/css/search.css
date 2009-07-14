@@ -14,11 +14,16 @@
 }
 
 .skuFilterCategories li {
+	
 	list-style-type: none;
 }
 
 .skuFilterCategoryCheckbox {
 	display:none;
+}
+
+.disabledCategory {
+	color:#AAAAAA;
 }
 
 .grayedOut {

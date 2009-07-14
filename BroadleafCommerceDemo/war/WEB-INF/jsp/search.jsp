@@ -14,20 +14,40 @@
 <div clear="both"> </div>
 
 <script>
-	$('.skuFilterCategories li').click(function() {
+	function updateSearchFilterResults() {
 		$('#searchResults').prepend("<div class='grayedOut'><img style='margin-top:25px' src='/broadleafdemo/images/ajaxLoading.gif'/></div>");
 		var postData = $('#refineSearch').serializeArray();
 		postData.push({name:'ajax',value:'true'});
-		postData.push({name:'categoryId',value:$(this).attr('value')});
 		$('#searchResults').load($('#refineSearch').attr('action'), postData);
+	}
+	
+	var categoriesChecked = 0;
+	
+	$('.skuFilterCategories li').click(function() {
+		var categoryId = $(this).attr('value');
+		var checkbox = $('.skuFilterCategoryCheckbox[value="'+categoryId+'"]');
+		if (categoriesChecked == 0) {
+			$('.skuFilterCategories li').each(function(){$(this).addClass('disabledCategory')});
+			$(this).removeClass('disabledCategory');
+			checkbox.attr('checked',true);
+			categoriesChecked++;
+		} else if (checkbox.attr('checked') == true) {
+			$(this).addClass('disabledCategory');
+			if (categoriesChecked == 1) {
+				// unchecking the only checked category, so reactivate all categories
+				$('.skuFilterCategories li').each(function(){$(this).removeClass('disabledCategory')});
+			} 
+			checkbox.attr('checked',false);
+			categoriesChecked--;
+		} else {
+			$(this).removeClass('disabledCategory');
+			checkbox.attr('checked',true);
+			categoriesChecked++;
+		}
+		updateSearchFilterResults();
 	} );
 	
-	$('#skuFilterPrice').bind('slidechange', function(event, ui) {
-		$('#searchResults').prepend("<div class='grayedOut'><img style='margin-top:25px' src='/broadleafdemo/images/ajaxLoading.gif'/></div>");
-		var postData = $('#refineSearch').serializeArray();
-		postData.push({name:'ajax',value:'true'});
-		$('#searchResults').load($('#refineSearch').attr('action'), postData);
-	});
+	$('#skuFilterPrice').bind('slidechange',  updateSearchFilterResults);
 </script>
 
 	</tiles:putAttribute>
