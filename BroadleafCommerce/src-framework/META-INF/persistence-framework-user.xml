@@ -10,5 +10,7 @@
 		<mapping-file>config/bc/jpa/domain/Offer.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/FulfillmentGroup.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/FulfillmentGroupItem.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
 	</persistence-unit>
 </persistence>

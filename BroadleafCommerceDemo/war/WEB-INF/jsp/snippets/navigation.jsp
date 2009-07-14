@@ -8,9 +8,12 @@
 
 <div id="header"><a href="/broadleafdemo"><img class="logo" src="/broadleafdemo/images/demoLogo.gif" /></a>
 <ul id="userNav" class="clearfix">
+	<li><a href="/broadleafdemo/registerCustomer/registerCustomer.htm">Login</a></li>
 	<li><a href="#">Help</a></li>
-	<li><a href="#">My Account</a></li>
-	<li class="last"><a href="#">View Cart</a></li>
+	<li><a href="/broadleafdemo/account/myAccount.htm">My Account</a></li>
+	<li><a href="/broadleafdemo/storeLocator/findStores.htm">Store Locator</a></li>
+	<li class="last"><a href="/broadleafdemo/basket/viewCart.htm">View Cart</a></li>
+
 </ul>
 <div id="searchBar">
 <form id="search" method="post" action="/broadleafdemo/search/results.htm">

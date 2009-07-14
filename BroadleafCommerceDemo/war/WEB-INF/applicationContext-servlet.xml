@@ -98,6 +98,8 @@
 				<prop key="/store/*/*/*">catalogController</prop>
 				<prop key="/basket/*">cartController</prop>
 				<prop key="/checkout/*">checkoutController</prop>
+				<prop key="/storeLocator/*">storeController</prop>
+				<prop key="/account/*">myAccountController</prop>
 			</props>
 		</property>
 	</bean>
