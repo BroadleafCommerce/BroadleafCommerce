@@ -56,6 +56,7 @@ public class SkuFilterTag extends AbstractCatalogTag {
         }
         out.println("<h3>Your Search</h3>");
         out.println("<input type=\"text\" size=\"30\" class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
+        out.println("<input type=\"hidden\" size=\"30\" name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
         out.println("<h3>Categories</h3>");
         out.println("<ul class='skuFilterCategories'>");
         for (Category category : categories.keySet()) {
