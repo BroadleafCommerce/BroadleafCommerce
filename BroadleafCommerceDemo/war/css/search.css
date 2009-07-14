@@ -1,0 +1,47 @@
+
+#searchFilter {
+	background-color: #E5E5E5 ;
+	float:left;
+	width: 260px;
+	margin-right: 20px;
+	padding: 10px;
+	margin-bottom:10px;
+}
+
+#searchResults {
+	float: left;
+	width: 650px;
+}
+
+.skuFilterCategories li {
+	list-style-type: none;
+}
+
+.skuFilterCategoryCheckbox {
+	display:none;
+}
+
+.grayedOut {
+	position:absolute;
+	overflow:hidden;
+	width:inherit;
+	height:100%;
+	background-color:#FFFFFF;
+	opacity:0.8;
+	MozOpacity:0.8;
+	zIndex:50;
+	filter:alpha(opacity=80);
+	text-align:center;
+}
+
+.overlay {
+	position:absolute;
+	text-align:center;
+}
+
+#minPrice, #maxPrice {
+	border:0;
+	background-color:#E5E5E5;
+	font-weight:bold;
+	width:60px;
+}

@@ -1,38 +1,34 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
-
-<form:form method="post" commandName="doSearch">
-
-	<table class="formTable">
-		<tr>
-			<td style="text-align:right"><label for="searchQuery">Search:</b></label></td>
-			<td><input type="text" size="30" class="searchQuery" name="queryString" id="queryString" value="${queryString}" /></td>
-   		</tr>
-  	</table>
-  	<div class="formButtonFooter">
-		<input type="submit" value="Search"/>
-	</div>
-</form:form>
-
 <br/>
-<h2>
-	Search Results
-</h2>
-<table border="1">
-	<tr>
-		<th>ID</th>
-		<th>Name</th>
-		<th>Price</th>
-	</tr>
-	<c:forEach var="item" items="${skus}" varStatus="status">
-		<tr>
-			<td><c:out value="${item.id}"/></td>
-			<td><c:out value="${item.name}"/></td>
-			<td><c:out value="${item.salePrice}"/></td>
-		</tr>
-	</c:forEach>
-</table>
+<div id="searchFilter">
+	<form:form method="post" id="refineSearch" commandName="doSearch">
+		<blc:skuFilter skus="${skus}" queryString="${queryString}"/>
+		<input type="submit" value="Search"/>
+	</form:form>
+</div>
+<div id="searchResults">
+	<jsp:include page="searchAjax.jsp"/>
+</div>
+<div clear="both"> </div>
+
+<script>
+	$('.skuFilterCategories li').click(function() {
+		$('#searchResults').prepend("<div class='grayedOut'><img style='margin-top:25px' src='/broadleafdemo/images/ajaxLoading.gif'/></div>");
+		var postData = $('#refineSearch').serializeArray();
+		postData.push({name:'ajax',value:'true'});
+		postData.push({name:'categoryId',value:$(this).attr('value')});
+		$('#searchResults').load($('#refineSearch').attr('action'), postData);
+	} );
+	
+	$('#skuFilterPrice').bind('slidechange', function(event, ui) {
+		$('#searchResults').prepend("<div class='grayedOut'><img style='margin-top:25px' src='/broadleafdemo/images/ajaxLoading.gif'/></div>");
+		var postData = $('#refineSearch').serializeArray();
+		postData.push({name:'ajax',value:'true'});
+		$('#searchResults').load($('#refineSearch').attr('action'), postData);
+	});
+</script>
 
 	</tiles:putAttribute>
 </tiles:insertDefinition>

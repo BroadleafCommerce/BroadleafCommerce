@@ -82,4 +82,20 @@
 		</attribute>
     </tag>
 
+	<tag>
+        <name>skuFilter</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.SkuFilterTag</tag-class>
+        <body-content>empty</body-content>
+       	<attribute>
+			<name>skus</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>queryString</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
+
 </taglib>

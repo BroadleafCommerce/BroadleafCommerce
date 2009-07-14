@@ -146,10 +146,12 @@ public final class Money implements Serializable, Cloneable, Comparable, Externa
     }
 
     public Money min(Money other) {
+        if (other == null) { return this; }
         return lessThan(other) ? this : other;
     }
 
     public Money max(Money other) {
+        if (other == null) { return this; }
         return greaterThan(other) ? this : other;
     }
 
