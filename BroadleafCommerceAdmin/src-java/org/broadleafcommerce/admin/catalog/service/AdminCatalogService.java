@@ -56,6 +56,18 @@ public class AdminCatalogService {
     }
 
     public Category saveCategory(Category category) {
+        ASObject asObjectCategoryImages = (ASObject)category.getCategoryImages();
+        Map<String, String> categoryImages = new HashMap<String, String>();        
+        for(Object key : asObjectCategoryImages.keySet()) {
+            if(String.class.equals(key.getClass())) {                
+                Object test = asObjectCategoryImages.get(key);
+                if(String.class.equals(test.getClass())) {
+                    categoryImages.put((String)key, (String)asObjectCategoryImages.get(key));                
+                }
+            }
+        }
+        category.setCategoryImages(categoryImages);
+        
         return catalogService.saveCategory(category);
     }
 

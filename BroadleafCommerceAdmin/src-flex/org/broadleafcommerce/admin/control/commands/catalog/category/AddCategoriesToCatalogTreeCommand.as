@@ -27,7 +27,7 @@ package org.broadleafcommerce.admin.control.commands.catalog.category
 			
 			for (var i:String  in rawCats){
 				var category:Category = rawCats[i];
-				category.allChildCategories.removeAll();
+//				category.allChildCategories.removeAll();
 				if(category.defaultParentCategory != null){
 					for each(var parentCategory:Category in category.allParentCategories){
 						for each(var category2:Category in rawCats){

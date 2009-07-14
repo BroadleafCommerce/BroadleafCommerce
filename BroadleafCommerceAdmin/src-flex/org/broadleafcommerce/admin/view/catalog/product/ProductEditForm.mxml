@@ -5,6 +5,7 @@
 	  xmlns:ProductParentsList="org.broadleafcommerce.admin.view.components.ProductParentsList.*" xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.data.remote.catalog.category.Category;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
 			import org.broadleafcommerce.admin.control.events.catalog.sku.EditSkuEvent;
 			import mx.collections.ArrayCollection;
@@ -27,6 +28,7 @@
 		
 			private function handleSaveProduct(event:Event):void{
 				var product:Product = Product(ObjectUtil.copy(productModel.currentProduct));
+				product.id = -1;
 				product.name = nameTextInput.text;
 				product.description = descriptionTextInput.text;
 				product.longDescription = longDescriptionTextInput.text;
@@ -41,6 +43,8 @@
 				product.dimension.depth = Number(depthTextInput.text);
 				product.dimension.width = Number(widthTextInput.text);
 				product.dimension.height = Number(heightTextInput.text);
+				product.allParentCategories = new ArrayCollection(parentList.selectedItems);
+				product.defaultCategory = Category(product.allParentCategories.getItemAt(0));
 				new SaveProductEvent(product).dispatch();
 			}
 			

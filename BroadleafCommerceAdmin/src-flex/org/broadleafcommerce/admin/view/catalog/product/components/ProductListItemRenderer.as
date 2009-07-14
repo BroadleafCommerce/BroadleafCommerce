@@ -14,6 +14,8 @@ package org.broadleafcommerce.admin.view.catalog.product.components
 		override public function set data(value:Object):void{
 			if(value is Product){
 				super.data = value;
+			}else{
+				super.data = null;
 			}
 		}
 			

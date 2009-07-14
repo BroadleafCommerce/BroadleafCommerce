@@ -141,7 +141,7 @@
 			id="productList"
 			labelField="name"
 			width="200"
-			itemRenderer="org.broadleafcommerce.admin.view.catalog.product.components.ProductListItemRenderer"
+			itemRenderer="org.broadleafcommerce.admin.view.catalog.product.components.ProductListItemRenderer" 
 			click="handleProductClick(event)"
 			/>
 	</mx:FormItem>

@@ -22,7 +22,14 @@
 			}
 		
 			private function handleNewCategory(event:Event):void{
-				var ncce:NewCategoryEvent = new NewCategoryEvent();
+				var ncce:NewCategoryEvent;
+				var parentCategory:Category = null;
+				if(appModel.categoryModel.currentCategory.allParentCategories != null &&
+				   appModel.categoryModel.currentCategory.allParentCategories.length > 0){
+				   	ncce = new NewCategoryEvent(Category(appModel.categoryModel.currentCategory.allParentCategories.getItemAt(0)));
+				   }else{
+				   	ncce = new NewCategoryEvent();
+				   }
 				ncce.dispatch();
 			}
 			
