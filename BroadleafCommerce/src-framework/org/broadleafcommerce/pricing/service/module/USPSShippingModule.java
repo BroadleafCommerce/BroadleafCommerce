@@ -13,11 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.usps.service.module;
+package org.broadleafcommerce.pricing.service.module;
 
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
 
-public class USPSShippingModule {
+public class USPSShippingModule implements ShippingModule {
 
+    private String name = "USPSShippingPriceModule";
 
+    @Override
+    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

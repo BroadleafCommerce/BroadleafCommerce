@@ -15,25 +15,19 @@
  */
 package org.broadleafcommerce.pricing.service.workflow;
 
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.pricing.service.module.ShippingModule;
+import org.broadleafcommerce.pricing.service.ShippingService;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 
 public class ShippingActivity extends BaseActivity {
 
-    @Resource
-    private OfferService offerService;
+    private ShippingService shippingService;
 
-    private ShippingModule shippingModule;
-
-    public void setShippingModule(ShippingModule shippingModule) {
-        this.shippingModule = shippingModule;
+    public void setShippingService(ShippingService shippingService) {
+        this.shippingService = shippingService;
     }
 
     @Override
@@ -48,8 +42,7 @@ public class ShippingActivity extends BaseActivity {
 
         Money totalShipping = new Money(0D);
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            fulfillmentGroup = shippingModule.calculateShippingForFulfillmentGroup(fulfillmentGroup);
-            offerService.applyFulfillmentGroupOffers(fulfillmentGroup);
+            fulfillmentGroup = shippingService.calculateShippingForFulfillmentGroup(fulfillmentGroup);
             totalShipping = totalShipping.add(fulfillmentGroup.getShippingPrice());
         }
         order.setTotalShipping(totalShipping);

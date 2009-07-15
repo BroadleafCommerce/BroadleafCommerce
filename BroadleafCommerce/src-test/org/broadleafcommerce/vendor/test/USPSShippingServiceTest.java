@@ -74,8 +74,9 @@ public class USPSShippingServiceTest extends BaseTest {
         USPSShippingPriceResponse response2 = shippingCalculationService.retrieveShippingRates(request2);
         assert(response2.getResponses().peek().getPostage().size() > 0);
 
-        /*USPSShippingPriceRequest request3 = new USPSShippingPriceRequest();
+        //the following are only compatible with the v3 schema - production
 
+        /*USPSShippingPriceRequest request3 = new USPSShippingPriceRequest();
         USPSContainerItemRequest itemRequest3_1 = new USPSContainerItem();
         itemRequest3_1.setService(USPSServiceType.FIRSTCLASS);
         itemRequest3_1.setFirstClassType(USPSFirstClassType.LETTER);
@@ -86,7 +87,6 @@ public class USPSShippingServiceTest extends BaseTest {
         itemRequest3_1.setZipDestination("20770");
         itemRequest3_1.setZipOrigination("44106");
         itemRequest3_1.setMachineSortable(true);
-
         request3.getContainerItems().add(itemRequest3_1);
 
         USPSContainerItemRequest itemRequest3_2 = new USPSContainerItem();
@@ -98,13 +98,11 @@ public class USPSShippingServiceTest extends BaseTest {
         itemRequest3_2.setWeightUnitOfMeasureType(WeightUnitOfMeasureType.POUNDS);
         itemRequest3_2.setZipDestination("20770");
         itemRequest3_2.setZipOrigination("44106");
-        itemRequest3_2.setMachineSortable(true);
         itemRequest3_2.setWidth(BigDecimal.valueOf(15));
         itemRequest3_2.setHeight(BigDecimal.valueOf(15));
         itemRequest3_2.setDepth(BigDecimal.valueOf(30));
         itemRequest3_2.setGirth(BigDecimal.valueOf(55));
         itemRequest3_2.setDimensionUnitOfMeasureType(DimensionUnitOfMeasureType.INCHES);
-
         request3.getContainerItems().add(itemRequest3_2);
 
         USPSContainerItemRequest itemRequest3_3 = new USPSContainerItem();
@@ -116,11 +114,29 @@ public class USPSShippingServiceTest extends BaseTest {
         itemRequest3_3.setZipDestination("96698");
         itemRequest3_3.setZipOrigination("90210");
         itemRequest3_3.setMachineSortable(true);
-
         request3.getContainerItems().add(itemRequest3_3);
 
         USPSShippingPriceResponse response3 = shippingCalculationService.retrieveShippingRates(request3);
-        assert(response3.getResponses().peek().getPostage().size() > 0);*/
+        assert(response3.getResponses().peek().getPostage().size() > 0);
+
+        USPSShippingPriceRequest request4 = new USPSShippingPriceRequest();
+        USPSContainerItemRequest itemRequest4_1 = new USPSContainerItem();
+        itemRequest4_1.setService(USPSServiceType.ALL);
+        itemRequest4_1.setContainerSize(USPSContainerSizeType.REGULAR);
+        itemRequest4_1.setPackageId("0");
+        itemRequest4_1.setWeight(UnitOfMeasureUtil.convertOuncesToPounds(BigDecimal.valueOf(3.5)));
+        itemRequest4_1.setWeightUnitOfMeasureType(WeightUnitOfMeasureType.POUNDS);
+        itemRequest4_1.setZipDestination("20770");
+        itemRequest4_1.setZipOrigination("44106");
+        itemRequest4_1.setMachineSortable(true);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 2);
+        itemRequest4_1.setShipDate(cal.getTime());
+        itemRequest4_1.setReturnLocations(true);
+
+        request4.getContainerItems().add(itemRequest4_1);
+        USPSShippingPriceResponse response4 = shippingCalculationService.retrieveShippingRates(request4);
+        assert(response4.getResponses().peek().getPostage().size() > 0);*/
     }
 
 }

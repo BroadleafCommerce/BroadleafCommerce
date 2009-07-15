@@ -44,7 +44,7 @@
                 <bean class="org.broadleafcommerce.pricing.service.workflow.OfferActivity"/>
                 <bean class="org.broadleafcommerce.pricing.service.workflow.FulfillmentGroupTotalActivity"/>
                 <bean class="org.broadleafcommerce.pricing.service.workflow.ShippingActivity">
-                    <property name="shippingModule" ref="blShippingModule"/>
+                    <property name="shippingService" ref="blShippingService"/>
                 </bean>
 				<bean class="org.broadleafcommerce.pricing.service.workflow.TaxActivity">
 					<property name="taxModule" ref="blTaxModule"/>

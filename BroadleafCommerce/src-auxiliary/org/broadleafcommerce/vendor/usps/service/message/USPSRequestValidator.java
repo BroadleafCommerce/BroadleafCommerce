@@ -21,9 +21,9 @@ import org.broadleafcommerce.vendor.usps.service.type.USPSShippingPriceErrorCode
 
 public class USPSRequestValidator {
 
-    private final VersionedRequestValidator versionedValidator;
+    private final USPSVersionedRequestValidator versionedValidator;
 
-    public USPSRequestValidator(VersionedRequestValidator versionedValidator) {
+    public USPSRequestValidator(USPSVersionedRequestValidator versionedValidator) {
         this.versionedValidator = versionedValidator;
     }
 

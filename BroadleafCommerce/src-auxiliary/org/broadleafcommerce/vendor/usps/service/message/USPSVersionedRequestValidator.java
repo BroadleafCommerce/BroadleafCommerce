@@ -17,7 +17,7 @@ package org.broadleafcommerce.vendor.usps.service.message;
 
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 
-public interface VersionedRequestValidator {
+public interface USPSVersionedRequestValidator {
 
     public void validateWeight(USPSContainerItemRequest itemRequest) throws ShippingPriceException;
 
