@@ -15,15 +15,23 @@
  */
 package org.broadleafcommerce.pricing.service;
 
+import javax.annotation.Resource;
+
+import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.pricing.service.module.ShippingModule;
 
 public class ShippingServiceImpl implements ShippingService {
 
+    @Resource
+    private OfferService offerService;
+
     protected ShippingModule shippingModule;
 
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        return shippingModule.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+        FulfillmentGroup group = shippingModule.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+        offerService.applyFulfillmentGroupOffers(fulfillmentGroup);
+        return group;
     }
 
     public ShippingModule getShippingModule() {

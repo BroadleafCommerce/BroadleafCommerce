@@ -20,11 +20,11 @@ import java.math.BigDecimal;
 import org.broadleafcommerce.util.UnitOfMeasureUtil;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
-import org.broadleafcommerce.vendor.usps.service.message.VersionedRequestValidator;
+import org.broadleafcommerce.vendor.usps.service.message.USPSVersionedRequestValidator;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingPriceErrorCode;
 
-public class USPSRequestValidator implements VersionedRequestValidator {
+public class USPSRequestValidator implements USPSVersionedRequestValidator {
 
     public void validateService(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
         //validate the type is compatible with the v2 schema

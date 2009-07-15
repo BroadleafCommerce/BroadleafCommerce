@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import noNamespace.CommitmentV3Type;
+import noNamespace.ErrorDocument;
+import noNamespace.ErrorV2Type;
 import noNamespace.LocationV3Type;
 import noNamespace.PostageV3Type;
 import noNamespace.RateV3ResponseDocument;
@@ -57,7 +59,20 @@ public class USPSResponseBuilder implements org.broadleafcommerce.vendor.usps.se
             }
             doc = RateV3ResponseDocument.Factory.parse(xml);
         } catch (XmlException e) {
-            throw new RuntimeException(e);
+            if (xml != null) {
+                try {
+                    ErrorDocument error = ErrorDocument.Factory.parse(xml);
+                    ErrorV2Type errorType = error.getError();
+                    shippingPriceResponse.setErrorDetected(true);
+                    shippingPriceResponse.setErrorCode(String.valueOf(errorType.getNumber()));
+                    shippingPriceResponse.setErrorText(errorType.getDescription());
+                    return shippingPriceResponse;
+                } catch (XmlException e1) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new RuntimeException(e);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

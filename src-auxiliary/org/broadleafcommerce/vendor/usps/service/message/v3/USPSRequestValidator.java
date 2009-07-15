@@ -22,14 +22,14 @@ import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.util.UnitOfMeasureUtil;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
-import org.broadleafcommerce.vendor.usps.service.message.VersionedRequestValidator;
+import org.broadleafcommerce.vendor.usps.service.message.USPSVersionedRequestValidator;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingPriceErrorCode;
 
-public class USPSRequestValidator implements VersionedRequestValidator {
+public class USPSRequestValidator implements USPSVersionedRequestValidator {
 
     public void validateService(USPSContainerItemRequest itemRequest) throws ShippingPriceException {
         USPSServiceType service = itemRequest.getService();
