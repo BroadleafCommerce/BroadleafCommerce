@@ -31,9 +31,9 @@ import org.springframework.stereotype.Service;
 public class StoreServiceImpl implements StoreService {
 
     //   private final static int MAXIMUM_DISTANCE = Integer.valueOf(25);
-    @Resource
+    @Resource(name="blStoreDao")
     private StoreDao storeDao;
-    @Resource
+    @Resource(name="blZipCodeService")
     private ZipCodeService zipCodeService;
 
     public Store readStoreByStoreCode(String storeCode) {

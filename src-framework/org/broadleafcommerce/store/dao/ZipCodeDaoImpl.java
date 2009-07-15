@@ -17,7 +17,7 @@ public class ZipCodeDaoImpl implements ZipCodeDao {
 
     @SuppressWarnings("unchecked")
     public ZipCode findZipCodeByZipCode(Integer zipCode) {
-        Query query = em.createNamedQuery("FIND_ZIP_CODE_BY_ZIP_CODE");
+        Query query = em.createNamedQuery("BC_FIND_ZIP_CODE_BY_ZIP_CODE");
         query.setHint("org.hibernate.cacheable", true);
         query.setParameter("zipCode", zipCode);
         List<ZipCode> result = query.getResultList();

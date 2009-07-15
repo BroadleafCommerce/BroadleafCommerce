@@ -25,7 +25,7 @@ public class StoreController {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    @Resource
+    @Resource(name="blStoreService")
     private StoreService storeService;
     @Resource
     protected StateService stateService;

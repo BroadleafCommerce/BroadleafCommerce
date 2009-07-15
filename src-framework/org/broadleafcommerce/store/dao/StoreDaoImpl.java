@@ -19,6 +19,7 @@ public class StoreDaoImpl implements StoreDao {
     public Store readStoreByStoreCode(final String storeCode) {
         Query query = em.createNamedQuery("FIND_STORE_BY_STORE_CODE");
         query.setParameter("abbreviation", storeCode.toUpperCase());
+        //TODO use the property injection for "org.hibernate.cacheable" like the other daos
         query.setHint("org.hibernate.cacheable", true);
         List result = query.getResultList();
         return (result.size() > 0) ? (Store) result.get(0) : null;

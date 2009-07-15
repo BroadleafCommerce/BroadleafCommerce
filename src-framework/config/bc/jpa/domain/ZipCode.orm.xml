@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd"
 	version="1.0">
 
-	<named-query name="FIND_ZIP_CODE_BY_ZIP_CODE" >
+	<named-query name="BC_FIND_ZIP_CODE_BY_ZIP_CODE" >
 		<query>SELECT zip FROM org.broadleafcommerce.store.domain.ZipCode zip WHERE zip.zipcode = :zipCode</query>
 	</named-query>
 
