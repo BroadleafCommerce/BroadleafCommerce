@@ -15,28 +15,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class SearchIndexController {
-	@Resource
-	private SearchService searchService;
+    @Resource
+    private SearchService searchService;
 
-	public SearchService getSearchService() {
-		return searchService;
-	}
+    public SearchService getSearchService() {
+        return searchService;
+    }
 
-	public void setSearchService(SearchService searchService) {
-		this.searchService = searchService;
-	}
+    public void setSearchService(SearchService searchService) {
+        this.searchService = searchService;
+    }
 
-	@RequestMapping(method = {RequestMethod.GET})
-	public String index (ModelMap model, HttpServletRequest request)
-	{
-		return "searchIndex";
-	}
-	
-	@RequestMapping(method = {RequestMethod.POST})
-	public String build (ModelMap model, HttpServletRequest request) throws CorruptIndexException, LockObtainFailedException, IOException
-	{
-		searchService.rebuildSkuIndex();
+    @RequestMapping(method = {RequestMethod.GET})
+    public String index (ModelMap model, HttpServletRequest request)
+    {
+        return "searchIndex";
+    }
 
-		return "searchIndex";
-	}
+    @RequestMapping(method = {RequestMethod.POST})
+    public String build (ModelMap model, HttpServletRequest request) throws CorruptIndexException, LockObtainFailedException, IOException
+    {
+        searchService.rebuildProductIndex();
+
+        return "searchIndex";
+    }
 }

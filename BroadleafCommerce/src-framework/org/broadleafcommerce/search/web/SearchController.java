@@ -53,23 +53,15 @@ public class SearchController {
 
         SearchQuery input = new SearchQuery();
         input.setQueryString(queryString);
-        List<Sku> skus = null;
+        List<Product> products = null;
 
-        skus = searchService.performSearch(input.getQueryString());
+        products = searchService.performSearch(input.getQueryString());
 
         if(queryString.equals(originalQueryString)) {
             if (categoryId != null) {
-                for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();) {
-                    Sku sku = itr.next();
-                    List<Product> parents = sku.getAllParentProducts();
-                    boolean found = false;
-                    for(Product parent : parents) {
-                        if (ArrayUtils.contains(categoryId, parent.getDefaultCategory().getId())) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
+                for (Iterator<Product> itr = products.iterator(); itr.hasNext();) {
+                    Product product = itr.next();
+                    if (!ArrayUtils.contains(categoryId, product.getDefaultCategory().getId())) {
                         itr.remove();
                     }
                 }
@@ -77,9 +69,18 @@ public class SearchController {
             if (minPrice != null && maxPrice != null) {
                 Money minimumPrice = new Money(minPrice.replaceAll("[^0-9.]", ""));
                 Money maximumPrice = new Money(maxPrice.replaceAll("[^0-9.]", ""));
-                for (Iterator<Sku> itr = skus.iterator(); itr.hasNext();) {
-                    Sku sku = itr.next();
-                    if (sku.getSalePrice().lessThan(minimumPrice) || sku.getSalePrice().greaterThan(maximumPrice)) {
+                for (Iterator<Product> itr = products.iterator(); itr.hasNext();) {
+                    Product product = itr.next();
+                    boolean found = false;
+                    for (Iterator<Sku> skuItr = product.getSkus().iterator(); skuItr.hasNext();) {
+                        Sku sku = skuItr.next();
+                        if (sku.getSalePrice().lessThan(minimumPrice) || sku.getSalePrice().greaterThan(maximumPrice)) {
+                            continue;
+                        }
+                        found = true;
+                        break;
+                    }
+                    if (!found) {
                         itr.remove();
                     }
                 }
@@ -87,7 +88,7 @@ public class SearchController {
         }
 
         model.addAttribute("queryString", input.getQueryString());
-        model.addAttribute("skus", skus);
+        model.addAttribute("products", products);
 
         if (ajax == null || !ajax.booleanValue()) {
             return "search";

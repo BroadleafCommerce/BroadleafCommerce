@@ -27,31 +27,30 @@ import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.util.money.Money;
 
-public class SkuFilterTag extends AbstractCatalogTag {
+public class SearchFilterTag extends AbstractCatalogTag {
 
-    private List<Sku> skus;
+    private List<Product> products;
     private String queryString;
 
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
         Hashtable<Category, Integer> categories = new Hashtable<Category, Integer>();
-        if (skus == null) { return; }
+        if (products == null || products.size() == 0) { return; }
         Money minPrice = null;
         Money maxPrice = null;
-        for (Sku sku : skus) {
-            if (sku.getSalePrice() != null) {
-                minPrice = sku.getSalePrice().min(minPrice);
-                maxPrice = sku.getSalePrice().max(maxPrice);
-            }
-            List<Product> products = sku.getAllParentProducts();
-            for (Product product : products) {
-                Integer integer = categories.get(product.getDefaultCategory());
-                if (integer == null) {
-                    categories.put(product.getDefaultCategory(), new Integer(1));
-                } else {
-                    categories.put(product.getDefaultCategory(), new Integer(integer + 1));
+        for (Product product : products) {
+            for (Sku sku : product.getSkus()) {
+                if (sku.getSalePrice() != null) {
+                    minPrice = sku.getSalePrice().min(minPrice);
+                    maxPrice = sku.getSalePrice().max(maxPrice);
                 }
+            }
+            Integer integer = categories.get(product.getDefaultCategory());
+            if (integer == null) {
+                categories.put(product.getDefaultCategory(), new Integer(1));
+            } else {
+                categories.put(product.getDefaultCategory(), new Integer(integer + 1));
             }
         }
         out.println("<h3>Your Search</h3>");
@@ -90,12 +89,12 @@ public class SkuFilterTag extends AbstractCatalogTag {
 
     }
 
-    public List<Sku> getSkus() {
-        return skus;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setSkus(List<Sku> skus) {
-        this.skus = skus;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public String getQueryString() {

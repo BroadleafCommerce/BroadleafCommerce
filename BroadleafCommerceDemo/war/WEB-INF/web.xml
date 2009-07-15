@@ -15,6 +15,7 @@
         <param-value>
             /WEB-INF/applicationContext-custom.xml
             /WEB-INF/applicationContext-email.xml
+            /WEB-INF/applicationContext-search.xml
         </param-value>
     </context-param>
     <context-param>

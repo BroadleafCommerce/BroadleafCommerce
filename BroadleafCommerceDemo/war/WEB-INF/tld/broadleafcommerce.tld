@@ -83,11 +83,11 @@
     </tag>
 
 	<tag>
-        <name>skuFilter</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.SkuFilterTag</tag-class>
+        <name>searchFilter</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.SearchFilterTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
-			<name>skus</name>
+			<name>products</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>

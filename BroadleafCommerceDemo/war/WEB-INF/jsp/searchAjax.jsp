@@ -6,13 +6,11 @@
 	<tr>
 		<th>ID</th>
 		<th>Name</th>
-		<th>Price</th>
 	</tr>
-	<c:forEach var="item" items="${skus}" varStatus="status">
+	<c:forEach var="item" items="${products}" varStatus="status">
 		<tr>
 			<td><c:out value="${item.id}"/></td>
-			<td><a href="/broadleafdemo/${item.allParentProducts[0].defaultCategory.generatedUrl}?productId=${item.allParentProducts[0].id}"><c:out value="${item.name}"/></a></td>
-			<td><c:out value="${item.salePrice}"/></td>
+			<td><a href="/broadleafdemo/${item.defaultCategory.generatedUrl}?productId=${item.id}"><c:out value="${item.name}"/></a></td>
 		</tr>
 	</c:forEach>
 </table>

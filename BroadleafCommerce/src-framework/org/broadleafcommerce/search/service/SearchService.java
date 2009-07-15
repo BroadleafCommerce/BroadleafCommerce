@@ -21,11 +21,11 @@ import java.util.List;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.store.LockObtainFailedException;
-import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.catalog.domain.Product;
 
 public interface SearchService {
 
-    public void rebuildSkuIndex() throws CorruptIndexException, LockObtainFailedException, IOException;
+    public void rebuildProductIndex() throws CorruptIndexException, LockObtainFailedException, IOException;
 
-    public List<Sku> performSearch(String input) throws CorruptIndexException, IOException, ParseException;
+    public List<Product> performSearch(String input) throws CorruptIndexException, IOException, ParseException;
 }

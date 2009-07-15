@@ -4,7 +4,7 @@
 <br/>
 <div id="searchFilter">
 	<form:form method="post" id="refineSearch" commandName="doSearch">
-		<blc:skuFilter skus="${skus}" queryString="${queryString}"/>
+		<blc:searchFilter products="${products}" queryString="${queryString}"/>
 		<input type="submit" value="Search"/>
 	</form:form>
 </div>

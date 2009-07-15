@@ -40,6 +40,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.money.Money;
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.CollectionOfElements;
@@ -64,6 +67,7 @@ import org.hibernate.annotations.CollectionOfElements;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Searchable
 public class SkuImpl implements Sku {
 
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
@@ -75,6 +79,7 @@ public class SkuImpl implements Sku {
     @GeneratedValue(generator = "SkuId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SkuId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuImpl", allocationSize = 50)
     @Column(name = "SKU_ID")
+    @SearchableId
     protected Long id;
 
     /** The sale price. */
@@ -87,6 +92,7 @@ public class SkuImpl implements Sku {
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @SearchableProperty
     protected String name;
 
     /** The description. */
