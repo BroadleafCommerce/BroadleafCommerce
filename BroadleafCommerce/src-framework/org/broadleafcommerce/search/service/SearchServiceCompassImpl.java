@@ -15,15 +15,11 @@
  */
 package org.broadleafcommerce.search.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.store.LockObtainFailedException;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.compass.core.Compass;
@@ -44,7 +40,7 @@ public class SearchServiceCompassImpl implements SearchService {
     protected CatalogService catalogService;
 
     @Override
-    public List<Product> performSearch(String input) throws CorruptIndexException, IOException, ParseException {
+    public List<Product> performSearch(String input) {
         CompassSearchSession session = compass.openSearchSession();
         CompassDetachedHits hits = session.find(input).detach();
         session.close();
@@ -57,7 +53,7 @@ public class SearchServiceCompassImpl implements SearchService {
     }
 
     @Override
-    public void rebuildProductIndex() throws CorruptIndexException, LockObtainFailedException, IOException {
+    public void rebuildProductIndex() {
         SearchEngineIndexManager manager = compass.getSearchEngineIndexManager();
         manager.createIndex();
         CompassIndexSession session = compass.openIndexSession();

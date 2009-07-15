@@ -1,12 +1,8 @@
 package org.broadleafcommerce.search.web;
 
-import java.io.IOException;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.store.LockObtainFailedException;
 import org.broadleafcommerce.search.service.SearchService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -34,10 +30,9 @@ public class SearchIndexController {
     }
 
     @RequestMapping(method = {RequestMethod.POST})
-    public String build (ModelMap model, HttpServletRequest request) throws CorruptIndexException, LockObtainFailedException, IOException
-    {
-        searchService.rebuildProductIndex();
+    public String build (ModelMap model, HttpServletRequest request) {
 
+        searchService.rebuildProductIndex();
         return "searchIndex";
     }
 }
