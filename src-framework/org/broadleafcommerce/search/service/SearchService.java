@@ -15,17 +15,14 @@
  */
 package org.broadleafcommerce.search.service;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.store.LockObtainFailedException;
 import org.broadleafcommerce.catalog.domain.Product;
 
 public interface SearchService {
 
-    public void rebuildProductIndex() throws CorruptIndexException, LockObtainFailedException, IOException;
+    public void rebuildProductIndex();
 
-    public List<Product> performSearch(String input) throws CorruptIndexException, IOException, ParseException;
+    public List<Product> performSearch(String input);
+
 }

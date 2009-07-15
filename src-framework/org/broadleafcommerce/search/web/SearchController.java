@@ -1,6 +1,5 @@
 package org.broadleafcommerce.search.web;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,8 +7,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.queryParser.ParseException;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.search.domain.SearchQuery;
@@ -49,7 +46,7 @@ public class SearchController {
             @RequestParam(required = false) Long[] categoryId,
             @RequestParam(required = false) String minPrice,
             @RequestParam(required = false) String maxPrice,
-            @RequestParam(required = false) Boolean ajax) throws CorruptIndexException, IOException, ParseException {
+            @RequestParam(required = false) Boolean ajax) {
 
         SearchQuery input = new SearchQuery();
         input.setQueryString(queryString);
