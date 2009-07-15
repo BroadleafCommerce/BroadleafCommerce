@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service("blZipCodeService")
 public class ZipCodeServiceImpl implements ZipCodeService {
 
-    @Resource
+    @Resource(name="blZipCodeDao")
     private ZipCodeDao zipCodeDao;
 
     @Override

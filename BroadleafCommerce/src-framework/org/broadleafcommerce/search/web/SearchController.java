@@ -23,7 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class SearchController {
-    @Resource
+
+    @Resource(name="blSearchService")
     private SearchService searchService;
 
     public SearchService getSearchService() {
