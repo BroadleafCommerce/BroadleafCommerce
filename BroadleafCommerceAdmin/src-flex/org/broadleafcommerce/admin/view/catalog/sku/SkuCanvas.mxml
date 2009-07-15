@@ -3,6 +3,8 @@
 	width="95%" height="95%" xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.data.remote.catalog.product.Product;
+			import org.broadleafcommerce.admin.control.events.catalog.sku.NewSkuEvent;
 			import org.broadleafcommerce.admin.control.events.catalog.sku.EditSkuEvent;
 			import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
 			import org.broadleafcommerce.admin.model.view.ProductModel;
@@ -13,6 +15,9 @@
 			private var skuModel:SkuModel = AppModelLocator.getInstance().skuModel;
 	
 			private function handleNewSku(event:Event):void{
+				var parentProduct:Product = AppModelLocator.getInstance().productModel.currentProduct;
+				var nse:NewSkuEvent = new NewSkuEvent(parentProduct);
+				nse.dispatch();
 			}			
 			
 			private function handleSkuListClick(event:MouseEvent):void{

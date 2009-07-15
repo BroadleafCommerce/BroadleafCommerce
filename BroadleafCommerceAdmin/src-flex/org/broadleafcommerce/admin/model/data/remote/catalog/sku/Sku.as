@@ -9,20 +9,26 @@ package org.broadleafcommerce.admin.model.data.remote.catalog.sku
 	public class Sku
 	{
 		public var id:Number;
-		public var salePrice:Money;
-		public var retailPrice:Money;
-		public var listPrice:Money;
+		public var salePrice:Money = new Money();
+		public var retailPrice:Money = new Money();
+		public var listPrice:Money = new Money();
 		public var name:String;
 		public var description:String;
 		public var longDescription:String;
 		public var taxable:String;
 		public var discountable:String;
 		public var available:String;
-		public var activeStartDate:Date;
-		public var activeEndDate:Date;
+		public var activeStartDate:Date = new Date();
+		public var activeEndDate:Date = new Date();
 		public var active:Boolean;
-		private var _skuImages:Object;
+//		private var _skuImages:Object;
 		public var allParentProducts:ArrayCollection = new ArrayCollection();
+		
+		public function Sku(){
+			salePrice.amount = 0;
+			listPrice.amount = 0;
+			retailPrice.amount = 0;
+		}
 
 		public function set skuImages(x:Object):void{
 			// do nothing

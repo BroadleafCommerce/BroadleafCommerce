@@ -6,6 +6,7 @@
 	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.model.data.remote.catalog.sku.Sku;
 			import org.broadleafcommerce.admin.model.view.SkuModel;
 			import org.broadleafcommerce.admin.model.AppModelLocator;
 			import org.broadleafcommerce.admin.control.events.catalog.sku.SaveSkuEvent;
@@ -18,13 +19,17 @@
 			}
 			
 			private function handleSaveSku(event:Event):void{
-				skuModel.currentSku.name = nameTextInput.text;
-//				skuModel.currentSku.description = descriptionTextInput.text;
-//				skuModel.currentSku.longDescription = descriptionTextInput.text;
-//				skuModel.currentSku.activeStartDate = activeStartDateDateField.selectedDate;
-//				skuModel.currentSku.activeEndDate = activeEndDateDateField.selectedDate;
-//				skuModel.currentSku.retailPrice.amount = Number(retailPriceTextInput.text);
-				var scse:SaveSkuEvent = new SaveSkuEvent(skuModel.currentSku);
+				var updatedSku:Sku = skuModel.currentSku;
+				updatedSku.name = nameTextInput.text;
+				updatedSku.description = descriptionTextInput.text;
+				updatedSku.longDescription = descriptionTextInput.text;
+				updatedSku.activeStartDate = activeStartDateDateField.selectedDate;
+				updatedSku.activeEndDate = activeEndDateDateField.selectedDate;
+				updatedSku.retailPrice.amount = Number(retailPriceTextInput.text);
+				updatedSku.listPrice.amount = Number(salePriceTextInput.text);
+				updatedSku.available = availableTextInput.text;
+				updatedSku.discountable = discountableTextInput.text;				 
+				var scse:SaveSkuEvent = new SaveSkuEvent(updatedSku);
 				scse.dispatch();
 			}
 		]]>

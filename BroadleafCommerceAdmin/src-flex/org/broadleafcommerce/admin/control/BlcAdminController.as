@@ -22,6 +22,7 @@ package org.broadleafcommerce.admin.control
 	import org.broadleafcommerce.admin.control.commands.catalog.sku.AddSkusToProductsCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.sku.EditSkuCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.sku.FindAllCatalogSkusCommand;
+	import org.broadleafcommerce.admin.control.commands.catalog.sku.NewSkuCommand;
 	import org.broadleafcommerce.admin.control.commands.catalog.sku.SaveCatalogSkuCommand;
 	import org.broadleafcommerce.admin.control.commands.offer.AddUpdateOfferCommand;
 	import org.broadleafcommerce.admin.control.commands.offer.FindAllOffersCommand;
@@ -46,6 +47,7 @@ package org.broadleafcommerce.admin.control
 	import org.broadleafcommerce.admin.control.events.catalog.sku.AddSkusToProductsEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.EditSkuEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.FindAllSkusEvent;
+	import org.broadleafcommerce.admin.control.events.catalog.sku.NewSkuEvent;
 	import org.broadleafcommerce.admin.control.events.catalog.sku.SaveSkuEvent;
 	import org.broadleafcommerce.admin.control.events.offer.AddUpdateOfferEvent;
 	import org.broadleafcommerce.admin.control.events.offer.FindAllOffersEvent;
@@ -84,6 +86,7 @@ package org.broadleafcommerce.admin.control
 			addCommand(FindAllSkusEvent.EVENT_FIND_ALL_CATALOG_SKUS, FindAllCatalogSkusCommand);
 			addCommand(EditSkuEvent.EVENT_EDIT_SKU, EditSkuCommand);
 			addCommand(SaveSkuEvent.EVENT_SAVE_CATALOG_SKU, SaveCatalogSkuCommand);
+			addCommand(NewSkuEvent.EVENT_NEW_SKU, NewSkuCommand);
 
 
 
