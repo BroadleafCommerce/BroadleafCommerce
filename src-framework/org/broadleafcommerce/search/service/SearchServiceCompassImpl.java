@@ -54,10 +54,12 @@ public class SearchServiceCompassImpl implements SearchService {
 
     @Override
     public void rebuildProductIndex() {
-        SearchEngineIndexManager manager = compass.getSearchEngineIndexManager();
-        manager.createIndex();
-        CompassIndexSession session = compass.openIndexSession();
         List<Product> products = catalogService.findAllProducts();
+        SearchEngineIndexManager manager = compass.getSearchEngineIndexManager();
+        if (!manager.indexExists()) {
+            manager.createIndex();
+        }
+        CompassIndexSession session = compass.openIndexSession();
         for (Product product : products) {
             session.save(product);
         }
