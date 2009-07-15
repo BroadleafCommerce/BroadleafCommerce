@@ -47,6 +47,10 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
+import org.compass.annotations.Searchable;
+import org.compass.annotations.SearchableId;
+import org.compass.annotations.SearchableProperty;
+import org.compass.annotations.SupportUnmarshall;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -73,6 +77,7 @@ import org.hibernate.annotations.CollectionOfElements;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
 public class ProductImpl implements Product {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
@@ -84,10 +89,12 @@ public class ProductImpl implements Product {
     @GeneratedValue(generator = "ProductId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ProductImpl", allocationSize = 50)
     @Column(name = "PRODUCT_ID")
+    @SearchableId
     protected Long id;
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @SearchableProperty(name="productName")
     protected String name;
 
     /** The description. */
@@ -96,6 +103,7 @@ public class ProductImpl implements Product {
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
+    @SearchableProperty(name="productDescription")
     protected String longDescription;
 
     /** The active start date. */
@@ -108,10 +116,12 @@ public class ProductImpl implements Product {
 
     /** The product model number */
     @Column(name = "MODEL")
+    @SearchableProperty(name="productModel")
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
+    @SearchableProperty(name="productManufacturer")
     protected String manufacturer;
 
     /** The product dimensions **/
