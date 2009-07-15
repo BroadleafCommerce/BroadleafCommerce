@@ -32,7 +32,7 @@ public class ProductDaoImpl implements ProductDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";

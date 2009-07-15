@@ -34,7 +34,7 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public Address save(Address address) {
@@ -65,7 +65,7 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
     @SuppressWarnings("unchecked")
     @Override
     public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity) {
-        Query query = em.createNamedQuery("READ_FIRST_SHIPPING_RATE_BY_FEE_TYPES");
+        Query query = em.createNamedQuery("BC_READ_FIRST_SHIPPING_RATE_BY_FEE_TYPES");
         query.setParameter("feeType", feeType);
         query.setParameter("feeSubType", feeSubType);
         query.setParameter("bandUnitQuantity", unitQuantity);

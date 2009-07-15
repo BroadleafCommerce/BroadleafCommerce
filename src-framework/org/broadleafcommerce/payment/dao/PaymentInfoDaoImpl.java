@@ -35,7 +35,7 @@ public class PaymentInfoDaoImpl implements PaymentInfoDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override

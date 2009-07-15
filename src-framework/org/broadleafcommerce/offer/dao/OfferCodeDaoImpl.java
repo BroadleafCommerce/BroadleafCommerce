@@ -32,7 +32,7 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Service("blStateService")
 public class StateServiceImpl implements StateService {
 
-    @Resource
+    @Resource(name="blStateDao")
     protected StateDao stateDao;
 
     public List<State> findStates() {

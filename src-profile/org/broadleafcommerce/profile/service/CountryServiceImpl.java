@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Service("blCountryService")
 public class CountryServiceImpl implements CountryService {
 
-    @Resource
+    @Resource(name="blCountryDao")
     protected CountryDao countryDao;
 
     public List<Country> findCountries() {

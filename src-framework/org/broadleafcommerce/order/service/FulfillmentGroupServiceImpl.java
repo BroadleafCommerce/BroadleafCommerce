@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 @Service("blFulfillmentGroupService")
 public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
 
-    @Resource
+    @Resource(name="blFulfillmentGroupDao")
     protected FulfillmentGroupDao fulfillmentGroupDao;
 
     @Override

@@ -27,7 +27,7 @@ import org.broadleafcommerce.workflow.ProcessContext;
 
 public class OfferActivity extends BaseActivity {
 
-    @Resource
+    @Resource(name="blOfferService")
     private OfferService offerService;
 
     @Override

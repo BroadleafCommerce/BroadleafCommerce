@@ -23,7 +23,7 @@ import org.broadleafcommerce.pricing.service.module.ShippingModule;
 
 public class ShippingServiceImpl implements ShippingService {
 
-    @Resource
+    @Resource(name="blOfferService")
     private OfferService offerService;
 
     protected ShippingModule shippingModule;

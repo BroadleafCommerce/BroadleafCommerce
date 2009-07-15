@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 @Service("blPaymentInfoService")
 public class PaymentInfoServiceImpl implements PaymentInfoService {
 
-    @Resource
+    @Resource(name="blPaymentInfoDao")
     protected PaymentInfoDao paymentInfoDao;
 
     @Override

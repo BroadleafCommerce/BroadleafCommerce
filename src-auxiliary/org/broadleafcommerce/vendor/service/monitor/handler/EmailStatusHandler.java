@@ -25,7 +25,7 @@ import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
 public class EmailStatusHandler implements StatusHandler {
 
-    @Resource
+    @Resource(name="blEmailService")
     protected EmailService emailService;
 
     protected EmailInfo emailInfo;

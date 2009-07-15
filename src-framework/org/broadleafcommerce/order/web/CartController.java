@@ -55,11 +55,11 @@ public class CartController {
 
     private static final Log LOG = LogFactory.getLog(CartController.class);
 
-    @Resource
+    @Resource(name="blCartService")
     protected final CartService cartService;
-    @Resource
+    @Resource(name="blCustomerState")
     protected final CustomerState customerState;
-    @Resource
+    @Resource(name="blCatalogService")
     protected final CatalogService catalogService;
     protected String cartView;
     protected boolean cartViewRedirect;

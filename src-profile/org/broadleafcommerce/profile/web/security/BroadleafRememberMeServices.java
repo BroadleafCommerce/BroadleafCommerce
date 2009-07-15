@@ -30,7 +30,7 @@ import org.springframework.security.userdetails.UsernameNotFoundException;
 
 public class BroadleafRememberMeServices extends AbstractRememberMeServices {
 
-    @Resource
+    @Resource(name="blCustomerService")
     private CustomerService customerService;
 
     @Override

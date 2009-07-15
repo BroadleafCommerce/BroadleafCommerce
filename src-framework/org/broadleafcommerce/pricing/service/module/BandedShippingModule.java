@@ -34,8 +34,9 @@ public class BandedShippingModule implements ShippingModule {
 
     protected String name = MODULENAME;
 
-    @Resource
+    @Resource(name="blShippingRatesDao")
     private ShippingRateDao shippingRateDao;
+
     private Map<String, String> feeTypeMapping;
     private Map<String, String> feeSubTypeMapping;
 

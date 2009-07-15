@@ -27,9 +27,9 @@ public class StoreController {
 
     @Resource(name="blStoreService")
     private StoreService storeService;
-    @Resource
+    @Resource(name="blStateService")
     protected StateService stateService;
-    @Resource
+    @Resource(name="blCountryService")
     protected CountryService countryService;
 
     @RequestMapping(method = RequestMethod.GET)

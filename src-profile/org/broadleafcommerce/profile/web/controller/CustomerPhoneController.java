@@ -46,17 +46,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class CustomerPhoneController {
     private static final String prefix = "myAccount/phone/customerPhones";
     private static final String redirect = "redirect:/myaccount/phone/viewPhone.htm";
-    @Resource
+
+    @Resource(name="blCustomerPhoneService")
     private CustomerPhoneService customerPhoneService;
-    @Resource
+    @Resource(name="blCustomerPhoneValidator")
     private CustomerPhoneValidator customerPhoneValidator;
-    @Resource
+    @Resource(name="blCustomerState")
     private CustomerState customerState;
-    @Resource
+    @Resource(name="blEntityConfiguration")
     private EntityConfiguration entityConfiguration;
-    @Resource
+    @Resource(name="blPhoneFormatter")
     private PhoneFormatter phoneFormatter;
-    @Resource
+    @Resource(name="blPhoneValidator")
     private PhoneValidator phoneValidator;
 
     /* ??? -

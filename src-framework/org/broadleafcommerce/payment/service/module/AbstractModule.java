@@ -22,7 +22,7 @@ import org.broadleafcommerce.payment.service.PaymentInfoService;
 
 public abstract class AbstractModule implements PaymentModule {
 
-    @Resource
+    @Resource(name="blPaymentInfoService")
     private PaymentInfoService paymentInfoService;
 
     protected PaymentResponseItem getNewResponseItem() {

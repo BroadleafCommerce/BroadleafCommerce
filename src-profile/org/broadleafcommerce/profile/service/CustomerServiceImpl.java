@@ -24,43 +24,21 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.listener.PostRegistrationObserver;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.profile.util.PasswordChange;
 import org.springframework.security.providers.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blCustomerService")
 public class CustomerServiceImpl implements CustomerService {
 
-    @Resource
+    @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
-    @Resource
+    @Resource(name="blIdGenerationService")
     protected IdGenerationService idGenerationService;
 
-    @Resource
+    @Resource(name="passwordEncoder")
     protected PasswordEncoder passwordEncoder;
-
-    @Resource
-    protected EntityConfiguration entityConfiguration;
-
-    /*
-     * TODO cannot reference beans defined in the spring security application context here.
-     * The bean visibility is in the wrong direction - perhaps.
-     */
-    /*@Resource
-    protected EmailService emailService;
-
-    @Resource
-    protected ProviderManager authenticationManager;
-
-    @Resource(name="blUserDetailsService")
-    protected UserDetailsService userDetailsService;
-
-    @Resource(name="blRegistrationEmailInfo")
-    protected EmailInfo emailInfo;*/
 
     private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
 
@@ -93,42 +71,23 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getId() == null) {
             customer.setId(idGenerationService.findNextId("org.broadleafcommerce.profile.domain.Customer"));
         }
-
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
-
-
         notifyPostRegisterListeners(retCustomer);
-        /*this.sendConfirmationEmail(retCustomer);
-
-        HashMap<String, Object> emailDataMap = new HashMap<String, Object>();
-        emailDataMap.put("customer", retCustomer);
-        emailService.sendTemplateEmail(retCustomer.getEmailAddress(), emailInfo, emailDataMap);
-        authenticateUser(customer.getUsername(), password);*/
         return retCustomer;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public Customer readCustomerByEmail(String emailAddress) {
         return customerDao.readCustomerByEmail(emailAddress);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public Customer changePassword(PasswordChange passwordChange) {
         Customer customer = readCustomerByUsername(passwordChange.getUsername());
         customer.setUnencodedPassword(passwordChange.getNewPassword());
         customer.setPasswordChangeRequired(passwordChange.getPasswordChangeRequired());
         customer = saveCustomer(customer);
-        //authenticateUser(passwordChange.getUsername(), passwordChange.getNewPassword());
         return customer;
     }
-
-    /*protected void authenticateUser(String username, String password) {
-        UserDetails principal = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, password, principal.getAuthorities());
-        Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }*/
 
     public void addPostRegisterListener(PostRegistrationObserver postRegisterListeners) {
         this.postRegisterListeners.add(postRegisterListeners);
@@ -147,19 +106,6 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-    /*protected void sendConfirmationEmail(Customer customer) {
-        if (emailInfo == null || emailInfo instanceof NullEmailInfo) {
-            logger.info("Customer Registration Email not being sent because blRegistrationEmailInfo is not configured");
-            return;
-        }
-
-        EmailTarget target = new EmailTargetImpl(){};
-        target.setEmailAddress(customer.getEmailAddress());
-        HashMap<String, Object> props = new HashMap<String, Object>();
-
-        emailService.sendTemplateEmail(target, emailInfo, props);
-    }*/
-
     public Customer createCustomerFromId(Long customerId) {
         Customer customer = customerId != null ? readCustomerById(customerId) : null;
         if (customer == null) {
@@ -173,7 +119,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public Customer readCustomerByUsername(String username) {
         return customerDao.readCustomerByUsername(username);
     }

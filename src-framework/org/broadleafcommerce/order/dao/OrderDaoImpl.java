@@ -36,10 +36,10 @@ public class OrderDaoImpl implements OrderDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Resource
+    @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
     @Override

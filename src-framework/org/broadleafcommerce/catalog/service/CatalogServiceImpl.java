@@ -26,36 +26,31 @@ import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blCatalogService")
 public class CatalogServiceImpl implements CatalogService {
 
-    @Resource
+    @Resource(name="blCategoryDao")
     protected CategoryDao categoryDao;
 
-    @Resource
+    @Resource(name="blProductDao")
     protected ProductDao productDao;
 
-    @Resource
+    @Resource(name="blSkuDao")
     protected SkuDao skuDao;
 
     public Product findProductById(Long productId) {
         return productDao.readProductById(productId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<Product> findProductsByName(String searchName) {
         return productDao.readProductsByName(searchName);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<Product> findActiveProductsByCategory(Category category) {
         return productDao.readActiveProductsByCategory(category.getId());
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public Product saveProduct(Product product) {
         return productDao.save(product);
     }
@@ -71,7 +66,6 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public Category saveCategory(Category category) {
         return categoryDao.save(category);
     }
@@ -97,7 +91,6 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
     public Sku saveSku(Sku sku) {
         return skuDao.save(sku);
     }

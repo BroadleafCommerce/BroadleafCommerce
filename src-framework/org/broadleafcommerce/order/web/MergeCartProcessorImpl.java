@@ -37,13 +37,13 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
 
     private String mergeCartItemsRemovedKey = "merge_cart_items_removed";
 
-    @Resource
+    @Resource(name="blCustomerService")
     private CustomerService customerService;
 
-    @Resource
+    @Resource(name="blCartService")
     private CartService cartService;
 
-    @Resource
+    @Resource(name="blCustomerState")
     private CustomerState customerState;
 
     public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {

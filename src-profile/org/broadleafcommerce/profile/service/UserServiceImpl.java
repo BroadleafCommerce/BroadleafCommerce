@@ -28,22 +28,16 @@ import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
 import org.springframework.security.providers.encoding.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blUserService")
 public class UserServiceImpl implements UserService {
 
-    @Resource
+    @Resource(name="blUserDao")
     protected UserDao userDao;
 
-    @Resource
+    @Resource(name="passwordEncoder")
     protected PasswordEncoder passwordEncoder;
 
-    // @Resource(name = "saltSource")
-    // private SaltSource saltSource;
-
-    @Transactional(propagation = Propagation.REQUIRED)
     public User saveUser(User user) {
         if (user.getUnencodedPassword() != null) {
             user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), null));
@@ -51,17 +45,14 @@ public class UserServiceImpl implements UserService {
         return userDao.save(user);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<UserRole> readUserRolesByUserId(Long userId) {
         return userDao.readUserRolesByUserId(userId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public User readUserByEmail(String emailAddress) {
         return userDao.readUserByEmail(emailAddress);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public User changePassword(PasswordChange passwordChange) {
         User user = readUserByUsername(passwordChange.getUsername());
         user.setUnencodedPassword(passwordChange.getNewPassword());
@@ -74,7 +65,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public User readUserByUsername(String username) {
         return userDao.readUserByUsername(username);
     }

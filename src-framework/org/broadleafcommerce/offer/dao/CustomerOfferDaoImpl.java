@@ -33,7 +33,7 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
 

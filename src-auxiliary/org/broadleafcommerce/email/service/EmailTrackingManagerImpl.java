@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.email.dao.EmailReportingDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author jfischer
@@ -44,7 +43,6 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
     /* (non-Javadoc)
      * @see com.containerstore.web.task.service.EmailTrackingManager#createTrackedEmail(java.lang.String, java.lang.String, java.lang.String)
      */
-    @Transactional
     public Long createTrackedEmail(String emailAddress, String type, String extraValue) {
         return emailReportingDao.createTracking(emailAddress, type, extraValue);
     }
@@ -91,7 +89,6 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
     /* (non-Javadoc)
      * @see com.containerstore.web.task.service.EmailTrackingManager#recordOpen(java.lang.String, javax.servlet.http.HttpServletRequest)
      */
-    @Transactional
     public void recordOpen(Long emailId, Map<String, String> extraValues) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Recording open for email id: " + emailId);

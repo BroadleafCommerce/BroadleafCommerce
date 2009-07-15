@@ -62,13 +62,13 @@ public class OfferServiceImpl implements OfferService {
     //    private static final StringBuffer functions = new StringBuffer();
 
     // should be called outside of Offer service after Offer service is executed
-    @Resource
+    @Resource(name="blCustomerOfferDao")
     protected CustomerOfferDao customerOfferDao;
 
-    @Resource
+    @Resource(name="blOfferCodeDao")
     protected OfferCodeDao offerCodeDao;
 
-    @Resource
+    @Resource(name="blOfferDao")
     protected OfferDao offerDao;
 
     /*  Not used for current offer discount types.  Will need to be used to support buy-one-get-one-offers.

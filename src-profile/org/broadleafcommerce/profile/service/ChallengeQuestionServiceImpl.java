@@ -22,16 +22,13 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.profile.dao.ChallengeQuestionDao;
 import org.broadleafcommerce.profile.domain.ChallengeQuestion;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blChallengeQuestionService")
 public class ChallengeQuestionServiceImpl implements ChallengeQuestionService {
 
-    @Resource
+    @Resource(name="blChallengeQuestionDao")
     protected ChallengeQuestionDao challengeQuestionDao;
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public List<ChallengeQuestion> readChallengeQuestions() {
         return challengeQuestionDao.readChallengeQuestions();
     }

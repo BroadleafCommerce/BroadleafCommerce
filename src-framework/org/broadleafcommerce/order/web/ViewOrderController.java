@@ -26,8 +26,8 @@ import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.dao.OrderItemDao;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.order.service.FulfillmentGroupService;
-import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.order.web.model.FindOrderForm;
 import org.broadleafcommerce.payment.service.PaymentInfoService;
@@ -48,43 +48,43 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller("viewOrderController")
 public class ViewOrderController {
 
-    @Resource
+    @Resource(name="blCustomerState")
     private CustomerState customerState;
-    @Resource
-    protected OrderService orderService;
-    @Resource
+    @Resource(name="blCartService")
+    protected CartService cartService;
+    @Resource(name="blCustomerService")
     protected CustomerService customerService;
-    @Resource
+    @Resource(name="blOrderDao")
     protected OrderDao orderDao;
-    @Resource
+    @Resource(name="blShippingRatesDao")
     protected ShippingRateDao shippingRateDao;
-    @Resource
+    @Resource(name="blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
-    @Resource
+    @Resource(name="blPaymentInfoService")
     protected PaymentInfoService paymentInfoService;
-    @Resource
+    @Resource(name="blCatalogService")
     protected CatalogService catalogService;
-    @Resource
+    @Resource(name="blAddressDao")
     protected AddressDao addressDao;
-    @Resource
+    @Resource(name="blStateDao")
     protected StateDao stateDao;
-    @Resource
+    @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
-    @Resource
+    @Resource(name="blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
-    @Resource
+    @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
 
     @RequestMapping(method =  {RequestMethod.GET})
     public String viewOrders (ModelMap model, HttpServletRequest request) throws PricingException {
-        List<Order> orders = orderService.findOrdersForCustomer(customerState.getCustomer(request), OrderStatus.SUBMITTED);
+        List<Order> orders = cartService.findOrdersForCustomer(customerState.getCustomer(request), OrderStatus.SUBMITTED);
         model.addAttribute("orderList", orders);
         return "listOrders";
     }
 
     @RequestMapping(method = {RequestMethod.GET})
     public String viewOrderDetails (ModelMap model, HttpServletRequest request, @RequestParam(required = true) String orderNumber) {
-        Order order = orderService.findOrderByOrderNumber(orderNumber);
+        Order order = cartService.findOrderByOrderNumber(orderNumber);
         if (order == null) {
             return "findOrderError";
         }
@@ -102,7 +102,7 @@ public class ViewOrderController {
     @RequestMapping(method =  {RequestMethod.POST})
     public String processFindOrder (@ModelAttribute FindOrderForm findOrderForm, ModelMap model, HttpServletRequest request) {
         boolean zipFound = false;
-        Order order = orderService.findOrderByOrderNumber(findOrderForm.getOrderNumber());
+        Order order = cartService.findOrderByOrderNumber(findOrderForm.getOrderNumber());
 
         if (order == null) {
             return "findOrderError";

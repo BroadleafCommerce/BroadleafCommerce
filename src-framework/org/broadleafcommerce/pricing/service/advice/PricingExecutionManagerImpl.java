@@ -35,10 +35,10 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
 
     private int order;
 
-    @Resource
+    @Resource(name="blPricingService")
     private PricingService pricingService;
 
-    @Resource
+    @Resource(name="blOrderDao")
     private OrderDao orderDao;
 
     @Override

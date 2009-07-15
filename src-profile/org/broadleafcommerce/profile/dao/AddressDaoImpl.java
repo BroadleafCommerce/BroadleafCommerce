@@ -29,7 +29,7 @@ public class AddressDaoImpl implements AddressDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public Address save(Address address) {

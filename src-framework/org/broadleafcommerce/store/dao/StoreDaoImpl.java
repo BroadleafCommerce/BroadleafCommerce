@@ -27,7 +27,7 @@ public class StoreDaoImpl implements StoreDao {
 
     @SuppressWarnings("unchecked")
     public List<Store> readAllStores() {
-        Query query = em.createNamedQuery("FIND_ALL_STORES");
+        Query query = em.createNamedQuery("BC_FIND_ALL_STORES");
         query.setHint("org.hibernate.cacheable", true);
         List results = query.getResultList();
         return results;

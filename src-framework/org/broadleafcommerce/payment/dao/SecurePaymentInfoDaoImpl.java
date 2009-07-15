@@ -35,7 +35,7 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     @PersistenceContext(unitName = "blSecurePU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public Referenced save(Referenced securePaymentInfo) {
@@ -58,7 +58,7 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     @SuppressWarnings("unchecked")
     @Override
     public BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
-        Query query = em.createNamedQuery("READ_BANK_ACCOUNT_BY_REFERENCE_NUMBER");
+        Query query = em.createNamedQuery("BC_READ_BANK_ACCOUNT_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<BankAccountPaymentInfo> infos = query.getResultList();
         return (infos==null || infos.size()==0)?null:infos.get(0);
@@ -67,7 +67,7 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     @SuppressWarnings("unchecked")
     @Override
     public CreditCardPaymentInfo findCreditCardInfo(String referenceNumber) {
-        Query query = em.createNamedQuery("READ_CREDIT_CARD_BY_REFERENCE_NUMBER");
+        Query query = em.createNamedQuery("BC_READ_CREDIT_CARD_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<CreditCardPaymentInfo> infos = query.getResultList();
         return (infos==null || infos.size()==0)?null:infos.get(0);
@@ -76,7 +76,7 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     @SuppressWarnings("unchecked")
     @Override
     public GiftCardPaymentInfo findGiftCardInfo(String referenceNumber) {
-        Query query = em.createNamedQuery("READ_GIFT_CARD_BY_REFERENCE_NUMBER");
+        Query query = em.createNamedQuery("BC_READ_GIFT_CARD_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<GiftCardPaymentInfo> infos = query.getResultList();
         return (infos==null || infos.size()==0)?null:infos.get(0);

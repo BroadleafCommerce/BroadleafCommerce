@@ -20,16 +20,13 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.profile.dao.PhoneDao;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blPhoneService")
 public class PhoneServiceImpl implements PhoneService {
 
-    @Resource
+    @Resource(name="blPhoneDao")
     protected PhoneDao phoneDao;
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public Phone savePhone(Phone phone) {
         return phoneDao.save(phone);
     }

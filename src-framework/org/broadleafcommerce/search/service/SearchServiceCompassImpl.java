@@ -40,7 +40,7 @@ public class SearchServiceCompassImpl implements SearchService {
     @CompassContext
     protected Compass compass;
 
-    @Resource
+    @Resource(name="blCatalogService")
     protected CatalogService catalogService;
 
     @Override

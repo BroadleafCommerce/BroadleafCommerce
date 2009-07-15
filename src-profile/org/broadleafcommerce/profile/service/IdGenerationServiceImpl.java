@@ -31,7 +31,7 @@ public class IdGenerationServiceImpl implements IdGenerationService {
 
     private static final Log LOG = LogFactory.getLog(IdGenerationServiceImpl.class);
 
-    @Resource
+    @Resource(name="blIdGenerationDao")
     protected IdGenerationDao idGenerationDao;
 
     protected Map<String, Id> idTypeIdMap = new HashMap<String, Id>();

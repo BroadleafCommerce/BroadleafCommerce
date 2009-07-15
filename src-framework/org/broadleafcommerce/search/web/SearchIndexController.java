@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class SearchIndexController {
-    @Resource
+
+    @Resource(name="blSearchService")
     private SearchService searchService;
 
     public SearchService getSearchService() {

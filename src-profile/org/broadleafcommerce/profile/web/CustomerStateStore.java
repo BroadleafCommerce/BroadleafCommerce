@@ -29,10 +29,10 @@ import org.springframework.stereotype.Component;
 @Component("blCustomerStateStore")
 public class CustomerStateStore implements PostLoginObserver, PreLogoutObserver {
 
-    @Resource
+    @Resource(name="blCustomerService")
     private CustomerService customerService;
 
-    @Resource
+    @Resource(name="blCustomerState")
     private CustomerState customerState;
 
     public void processPostLogin(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {

@@ -44,10 +44,10 @@ public class RegisterCustomerController {
     private String registrationErrorView = displayRegistrationFormView;
     private String registrationSuccessView = "redirect:/account/registration/registrationSuccess";
 
-    @Resource
+    @Resource(name="blCustomerService")
     private CustomerService customerService;
 
-    @Resource
+    @Resource(name="blRegisterCustomerValidator")
     private RegisterCustomerValidator registerCustomerValidator;
 
     @RequestMapping(method = { RequestMethod.GET })
