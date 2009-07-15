@@ -32,7 +32,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override

@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.service.OrderService;
+import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
@@ -32,11 +32,11 @@ import org.broadleafcommerce.workflow.WorkflowException;
 
 public class PaymentProcessContextFactory implements ProcessContextFactory {
 
-    @Resource
+    @Resource(name="blSecurePaymentInfoService")
     private SecurePaymentInfoService securePaymentInfoService;
 
-    @Resource
-    private OrderService orderService;
+    @Resource(name="blCartService")
+    private CartService cartService;
 
     private PaymentActionType paymentActionType;
 
@@ -51,7 +51,7 @@ public class PaymentProcessContextFactory implements ProcessContextFactory {
         Map<PaymentInfo, Referenced> secureMap = paymentSeed.getInfos();
         if (secureMap == null) {
             secureMap = new HashMap<PaymentInfo, Referenced>();
-            List<PaymentInfo> paymentInfoList = orderService.readPaymentInfosForOrder(paymentSeed.getOrder());
+            List<PaymentInfo> paymentInfoList = cartService.readPaymentInfosForOrder(paymentSeed.getOrder());
             if (paymentInfoList == null || paymentInfoList.size() == 0) {
                 throw new WorkflowException("No payment info instances associated with the order -- id: " + paymentSeed.getOrder().getId());
             }

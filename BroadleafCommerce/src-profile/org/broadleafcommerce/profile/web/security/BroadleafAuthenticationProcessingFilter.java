@@ -41,7 +41,7 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
 
     private final List<PostLoginObserver> postLoginListeners = new ArrayList<PostLoginObserver>();
 
-    @Resource
+    @Resource(name="blMergeCartProcessor")
     private MergeCartProcessor mergeCartProcessor;
 
     private String passwordChangeUri = "/passwordChange.htm";

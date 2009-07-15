@@ -23,7 +23,7 @@ import org.broadleafcommerce.workflow.ProcessContext;
 
 public class PaymentServiceActivity extends BaseActivity {
 
-    @Resource
+    @Resource(name="blCompositePaymentService")
     private CompositePaymentService compositePaymentService;
 
     @Override

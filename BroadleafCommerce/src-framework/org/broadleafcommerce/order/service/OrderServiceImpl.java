@@ -62,40 +62,40 @@ public class OrderServiceImpl implements OrderService {
 
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 
-    @Resource
+    @Resource(name="blOrderDao")
     protected OrderDao orderDao;
 
-    @Resource
+    @Resource(name="blPaymentInfoDao")
     protected PaymentInfoDao paymentInfoDao;
 
-    @Resource
+    @Resource(name="blFulfillmentGroupDao")
     protected FulfillmentGroupDao fulfillmentGroupDao;
 
-    @Resource
+    @Resource(name="blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
-    @Resource
+    @Resource(name="blOfferDao")
     protected OfferDao offerDao;
 
-    @Resource
+    @Resource(name="blPricingExecutionManager")
     protected PricingExecutionManager pricingExecutionManager;
 
-    @Resource
+    @Resource(name="blOrderItemService")
     protected OrderItemService orderItemService;
 
-    @Resource
+    @Resource(name="blSkuDao")
     protected SkuDao skuDao;
 
-    @Resource
+    @Resource(name="blProductDao")
     protected ProductDao productDao;
 
-    @Resource
+    @Resource(name="blCategoryDao")
     protected CategoryDao categoryDao;
 
-    @Resource
+    @Resource(name="blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
 
-    @Resource
+    @Resource(name="blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
 
     protected boolean rollupOrderItems = true;

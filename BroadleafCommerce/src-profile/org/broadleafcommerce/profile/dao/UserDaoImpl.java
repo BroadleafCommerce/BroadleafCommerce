@@ -34,7 +34,7 @@ public class UserDaoImpl implements UserDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public User readUserByUsername(String username) {

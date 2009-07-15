@@ -31,7 +31,7 @@ public class RegisterCustomerValidator implements Validator {
 
     private static final String REGEX_VALID_PASSWORD = "[0-9A-Za-z]{4,15}";
 
-    @Resource
+    @Resource(name="blCustomerService")
     private CustomerService customerService;
 
     public RegisterCustomerValidator() {}

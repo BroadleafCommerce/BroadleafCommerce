@@ -29,7 +29,7 @@ public class PhoneDaoImpl implements PhoneDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public Phone save(Phone phone) {

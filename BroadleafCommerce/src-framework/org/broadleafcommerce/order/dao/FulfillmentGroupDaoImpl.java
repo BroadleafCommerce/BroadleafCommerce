@@ -34,7 +34,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @Override

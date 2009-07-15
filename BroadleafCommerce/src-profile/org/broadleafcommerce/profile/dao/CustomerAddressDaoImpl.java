@@ -32,7 +32,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @SuppressWarnings("unchecked")

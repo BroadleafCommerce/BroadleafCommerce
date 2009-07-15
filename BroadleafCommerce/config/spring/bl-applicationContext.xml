@@ -84,8 +84,6 @@
 	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 	
 	<bean id="blEncryptionModule" class="org.broadleafcommerce.encryption.DefaultEncryptionModule"/>
-
-	<bean id="blEntityConfiguration" class="org.broadleafcommerce.profile.util.EntityConfiguration"/>
 	
 	<bean id="blEmailInfo" class="org.broadleafcommerce.email.service.info.EmailInfo" />
 	<bean id="blNullEmailInfo" class="org.broadleafcommerce.email.service.info.NullEmailInfo" />

@@ -9,7 +9,7 @@
 		WHERE store.id = :id</query>
 	</named-query>
 	
-		<named-query name="FIND_ALL_STORES" >
+		<named-query name="BC_FIND_ALL_STORES" >
 		<query>SELECT store FROM org.broadleafcommerce.store.domain.Store store </query>
 	</named-query>
 

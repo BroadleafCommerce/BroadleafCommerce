@@ -39,7 +39,7 @@ import org.springframework.stereotype.Service;
 @Service("blSecurePaymentInfoService")
 public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
-    @Resource
+    @Resource(name="blSecurePaymentInfoDao")
     protected SecurePaymentInfoDao securePaymentInfoDao;
 
     @Override

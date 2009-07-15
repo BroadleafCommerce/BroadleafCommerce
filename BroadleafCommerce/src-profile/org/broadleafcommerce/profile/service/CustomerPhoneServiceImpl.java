@@ -22,16 +22,13 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.profile.dao.CustomerPhoneDao;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blCustomerPhoneService")
 public class CustomerPhoneServiceImpl implements CustomerPhoneService {
 
-    @Resource
+    @Resource(name="blCustomerPhoneDao")
     protected CustomerPhoneDao customerPhoneDao;
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerPhone saveCustomerPhone(CustomerPhone customerPhone) {
         List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(customerPhone.getCustomer().getId());
         if (activeCustomerPhones != null && activeCustomerPhones.size() == 0) {
@@ -54,12 +51,10 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
         return customerPhoneDao.readActiveCustomerPhonesByCustomerId(customerId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerPhone readCustomerPhoneById(Long customerPhoneId) {
         return customerPhoneDao.readCustomerPhoneById(customerPhoneId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public void makeCustomerPhoneDefault(Long customerPhoneId, Long customerId) {
         customerPhoneDao.makeCustomerPhoneDefault(customerPhoneId, customerId);
     }

@@ -40,7 +40,6 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.order.service.FulfillmentGroupService;
-import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
@@ -69,33 +68,31 @@ public class CheckoutController {
 
     private static final Log LOG = LogFactory.getLog(CheckoutController.class);
 
-    @Resource
+    @Resource(name="blCartService")
     protected CartService cartService;
-    @Resource
+    @Resource(name="blCustomerState")
     protected CustomerState customerState;
-    @Resource
+    @Resource(name="blCustomerAddressService")
     protected CustomerAddressService customerAddressService;
-    @Resource
+    @Resource(name="blCustomerPhoneService")
     protected CustomerPhoneService customerPhoneService;
     @Resource(name="blCreditCardService")
     protected PaymentService paymentService;
-    @Resource
-    protected OrderService orderService;
-    @Resource
+    @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
-    @Resource
+    @Resource(name="blCatalogService")
     protected CatalogService catalogService;
-    @Resource
+    @Resource(name="blStateService")
     protected StateService stateService;
-    @Resource
+    @Resource(name="blCountryService")
     protected CountryService countryService;
-    @Resource
+    @Resource(name="blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
-    @Resource
+    @Resource(name="blPaymentInfoService")
     protected PaymentInfoService paymentInfoService;
-    @Resource
+    @Resource(name="blSecurePaymentInfoService")
     private SecurePaymentInfoService securePaymentInfoService;
-    @Resource
+    @Resource(name="blCheckoutFormValidator")
     private CheckoutFormValidator checkoutFormValidator;
 
     protected String checkoutView;

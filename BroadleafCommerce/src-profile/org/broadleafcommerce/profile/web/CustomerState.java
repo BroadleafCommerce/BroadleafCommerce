@@ -28,7 +28,7 @@ public class CustomerState {
     private static final String DEFAULTSESSIONATTRIBUTENAME = "customer_session";
     private static final String SERIALIZEDSESSIONATTRIBUTENAME = "customer_session_serialized";
 
-    @Resource
+    @Resource(name="blCustomerService")
     private CustomerService customerService;
 
     public Customer getCustomer(HttpServletRequest request) {

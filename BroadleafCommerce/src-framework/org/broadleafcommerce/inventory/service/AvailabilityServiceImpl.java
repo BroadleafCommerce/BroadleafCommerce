@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Service("blAvailabilityService")
 public class AvailabilityServiceImpl implements AvailabilityService {
 
-    @Resource
+    @Resource(name="blAvailabilityDao")
     protected AvailabilityDao availabilityDao;
 
     /**

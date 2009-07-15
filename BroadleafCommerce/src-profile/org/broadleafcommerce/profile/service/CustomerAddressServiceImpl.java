@@ -22,16 +22,13 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service("blCustomerAddressService")
 public class CustomerAddressServiceImpl implements CustomerAddressService {
 
-    @Resource
+    @Resource(name="blCustomerAddressDao")
     protected CustomerAddressDao customerAddressDao;
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress) {
         // if parameter address is set as default, unset all other default addresses
         List<CustomerAddress> activeCustomerAddresses = readActiveCustomerAddressesByCustomerId(customerAddress.getCustomer().getId());
@@ -54,12 +51,10 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
         return customerAddressDao.readActiveCustomerAddressesByCustomerId(customerId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public CustomerAddress readCustomerAddressById(Long customerAddressId) {
         return customerAddressDao.readCustomerAddressById(customerAddressId);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     public void makeCustomerAddressDefault(Long customerAddressId, Long customerId) {
         customerAddressDao.makeCustomerAddressDefault(customerAddressId, customerId);
     }

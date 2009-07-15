@@ -33,10 +33,10 @@ import org.springframework.stereotype.Service;
 @Service("blUserDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Resource
+    @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
-    @Resource
+    @Resource(name="blRoleService")
     protected RoleService roleService;
 
     protected boolean forcePasswordChange = false;

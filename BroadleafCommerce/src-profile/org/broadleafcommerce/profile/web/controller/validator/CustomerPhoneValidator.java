@@ -29,7 +29,7 @@ import org.springframework.validation.Validator;
 @Component("blCustomerPhoneValidator")
 public class CustomerPhoneValidator implements Validator {
 
-    @Resource
+    @Resource(name="blCustomerPhoneService")
     private final CustomerPhoneService customerPhoneService;
 
     public CustomerPhoneValidator(){

@@ -29,7 +29,7 @@ public class BasePriceDaoImpl implements BasePriceDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public BasePrice save(BasePrice basePrice) {

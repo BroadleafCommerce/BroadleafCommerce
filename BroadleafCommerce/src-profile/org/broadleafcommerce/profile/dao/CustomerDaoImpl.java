@@ -33,7 +33,7 @@ public class CustomerDaoImpl implements CustomerDao {
     @PersistenceContext(unitName="blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @SuppressWarnings("unchecked")

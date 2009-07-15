@@ -24,7 +24,7 @@ import org.broadleafcommerce.workflow.ProcessContext;
 
 public class PricingServiceActivity extends BaseActivity {
 
-    @Resource
+    @Resource(name="blPricingService")
     private PricingService pricingService;
 
     @Override

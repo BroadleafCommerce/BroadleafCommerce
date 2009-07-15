@@ -33,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     protected PaymentModule paymentModule;
 
-    @Resource
+    @Resource(name="blPaymentInfoService")
     protected PaymentInfoService paymentInfoService;
 
     public PaymentModule getPaymentModule() {

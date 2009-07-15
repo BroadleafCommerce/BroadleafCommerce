@@ -43,7 +43,7 @@ import org.springframework.stereotype.Service;
 @ManagedResource(objectName="org.broadleafcommerce:name=CartService", description="Cart Service", currencyTimeLimit=15)
 public class CartServiceImpl extends OrderServiceImpl implements CartService {
 
-    @Resource
+    @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
     protected boolean moveNamedOrderItems = true;

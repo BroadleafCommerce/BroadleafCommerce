@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 @Service("blTargetContentService")
 public class TargetContentServiceImpl implements TargetContentService {
 
-    @Resource
+    @Resource(name="blTargetContentDao")
     protected TargetContentDao targetContentDao;
 
     @Override
