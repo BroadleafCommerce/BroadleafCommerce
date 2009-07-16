@@ -107,8 +107,6 @@
 				<prop key="/basket/*">cartController</prop>
 				<prop key="/search">searchController</prop>
 				<prop key="/search/*">searchController</prop>
-				<prop key="/searchIndex">searchIndexController</prop>
-				<prop key="/searchIndex/*">searchIndexController</prop>
 				<prop key="/checkout/*">checkoutController</prop>
 				<prop key="/storeLocator/*">storeController</prop>
 				<prop key="/account/*">myAccountController</prop>
