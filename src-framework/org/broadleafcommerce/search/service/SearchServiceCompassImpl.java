@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.compass.core.Compass;
@@ -39,6 +40,8 @@ public class SearchServiceCompassImpl implements SearchService {
     @Resource(name="blCatalogService")
     protected CatalogService catalogService;
 
+    private Logger logger = Logger.getLogger(this.getClass());
+
     @Override
     public List<Product> performSearch(String input) {
         CompassSearchSession session = compass.openSearchSession();
@@ -54,6 +57,7 @@ public class SearchServiceCompassImpl implements SearchService {
 
     @Override
     public void rebuildProductIndex() {
+        logger.info("Rebuilding product index");
         List<Product> products = catalogService.findAllProducts();
         SearchEngineIndexManager manager = compass.getSearchEngineIndexManager();
         if (!manager.indexExists()) {
