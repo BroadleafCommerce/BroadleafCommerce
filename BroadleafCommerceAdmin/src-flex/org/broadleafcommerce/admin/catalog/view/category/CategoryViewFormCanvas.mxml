@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:view="org.broadleafcommerce.admin.view.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.vo.category.Category;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
+			
+			[Bindable]
+			public var category:Category;
+		]]>
+	</mx:Script>
+	<mx:DateFormatter 
+		id="dateFormatter"/>
+	<mx:Form
+		id="categoryForm">
+		<mx:FormItem 
+			label="Name:">
+			<mx:Label
+				id="nameLabel"
+				text="{this.category.name}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Description:">
+			<mx:Label 
+				id="descriptionLabel"
+				text="{this.category.description}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Long Description:">
+			<mx:Label
+				id="longDescriptionLabel"
+				text="{this.category.longDescription}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Default Parent Category:">
+			<mx:Label
+				id="defaultParentCategoryLabel"
+				text="{this.category.defaultParentCategory.name}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Active Start Date:">
+			<mx:Label
+				id="activeStartDateLabel"
+				text="{dateFormatter.format(this.category.activeStartDate)}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+		<mx:FormItem 
+			label="Active End Date:">
+			<mx:Label
+				id="activeEndDateLabel"
+				text="{this.category.activeEndDate.toDateString()}"
+				styleName="formLabel"/>
+		</mx:FormItem>
+	</mx:Form>
+</mx:Canvas>

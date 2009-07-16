@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*"
+	paddingBottom="10"
+	paddingTop="10"
+	paddingLeft="10"
+	paddingRight="10"
+	verticalGap="20" 
+	xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*" xmlns:product1="org.broadleafcommerce.admin.catalog.view.product.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.view.product.components.ProductsDataGrid;
+			import org.broadleafcommerce.admin.catalog.model.ProductModel;
+			import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
+			import org.broadleafcommerce.admin.catalog.vo.product.Product;
+			import mx.controls.DataGrid;
+			import mx.events.ListEvent;
+			import mx.events.DataGridEvent;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			
+			[Bindable]
+			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;
+			
+			private function handleDataGridClick(event:MouseEvent):void{
+				var vcpe:EditProductEvent = new EditProductEvent(Product(ProductsDataGrid(event.currentTarget).selectedItem), false);
+				vcpe.dispatch();
+			}
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="productModel.catalogProducts"
+		destination="productsDataGrid.dataProvider"/>
+		<product1:ProductSimpleSearchGrid/>
+		<components1:ProductsDataGrid
+			id="productsDataGrid" width="100%" height="100%" click="handleDataGridClick(event)"/>
+		<mx:HBox>
+		<mx:Label text="Filter: " />			
+		<mx:TextInput id="filterText" />
+		</mx:HBox>
+</mx:VBox>
