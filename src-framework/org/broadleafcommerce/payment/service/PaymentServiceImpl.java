@@ -176,7 +176,9 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentInfo info = paymentContext.getPaymentInfo();
             if (info != null) {
                 response.setPaymentInfoId(info.getId());
-                response.setCustomer(info.getOrder().getCustomer());
+                if (info.getOrder() != null && info.getOrder().getCustomer() != null) {
+                    response.setCustomer(info.getOrder().getCustomer());
+                }
                 response.setPaymentInfoReferenceNumber(info.getReferenceNumber());
             }
             paymentInfoService.save(response);

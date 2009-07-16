@@ -118,7 +118,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected Long paymentInfoId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
-    @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
