@@ -17,6 +17,8 @@ package org.broadleafcommerce.payment.domain;
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.encryption.EncryptionModule;
+
 public interface Referenced extends Serializable {
 
     /**
@@ -28,5 +30,9 @@ public interface Referenced extends Serializable {
      * @param referenceNumber the referenceNumber to set
      */
     public void setReferenceNumber(String referenceNumber);
+
+    public EncryptionModule getEncryptionModule();
+
+    public void setEncryptionModule(EncryptionModule encryptionModule);
 
 }
