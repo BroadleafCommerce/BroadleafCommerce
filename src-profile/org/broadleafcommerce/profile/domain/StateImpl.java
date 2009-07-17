@@ -44,7 +44,7 @@ public class StateImpl implements State {
     protected String name;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
-    @JoinColumn(name = "COUNTRY_ID")
+    @JoinColumn(name = "COUNTRY")
     protected Country country;
 
     public String getAbbreviation() {
