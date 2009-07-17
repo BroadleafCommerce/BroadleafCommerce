@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
 import org.broadleafcommerce.profile.service.CountryService;
@@ -52,7 +53,9 @@ public class CustomerAddressTest extends BaseTest {
         Customer customer = customerService.readCustomerByUsername(userName);
         assert customerAddress.getId() == null;
         customerAddress.setCustomer(customer);
-        customerAddress.getAddress().setCountry(countryService.findCountryByAbbreviation("US"));
+        Country country = countryService.findCountryByAbbreviation("US");
+        customerAddress.getAddress().getState().setCountry(country);
+        customerAddress.getAddress().setCountry(country);
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
         assert customer.equals(customerAddress.getCustomer());
         userId = customerAddress.getCustomer().getId();

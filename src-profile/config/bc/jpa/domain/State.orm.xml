@@ -8,4 +8,11 @@
 		ORDER BY state.name</query>
 	</named-query>
 
+	<named-query name="BC_FIND_STATES_BY_COUNTRY_ABBREVIATION" >
+		<query>SELECT state FROM org.broadleafcommerce.profile.domain.State state
+		WHERE state.country.abbreviation = :countryAbbreviation
+		ORDER BY state.name</query>
+	</named-query>
+
+
 </entity-mappings>

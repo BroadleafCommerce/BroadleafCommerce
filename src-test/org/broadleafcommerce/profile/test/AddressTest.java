@@ -42,27 +42,6 @@ public class AddressTest extends BaseTest {
     @Resource
     private CountryService countryService;
 
-    @Test(groups = "createState")
-    @Rollback(false)
-    public void createState() {
-        State state = new StateImpl();
-        state.setAbbreviation("KY");
-        state.setName("Kentucky");
-        em.persist(state);
-    }
-
-    @Test(groups = "findStates", dependsOnGroups = "createState")
-    public void findStates() {
-        List<State> states = stateService.findStates();
-        assert states.size() > 0;
-    }
-
-    @Test(groups = "findStateByAbbreviation", dependsOnGroups = "findStates")
-    public void findStateByAbbreviation() {
-        State state = stateService.findStateByAbbreviation("KY");
-        assert state != null;
-    }
-
     @Test(groups = "createCountry")
     @Rollback(false)
     public void createCountry() {
@@ -83,13 +62,34 @@ public class AddressTest extends BaseTest {
         Country country = countryService.findCountryByAbbreviation("US");
         assert country != null;
     }
-    /*
-    @Test(groups = "createAddress", dataProvider = "setupAddress", dataProviderClass = AddressDataProvider.class)
+
+    @Test(groups = "createState", dependsOnGroups = "createCountry")
     @Rollback(false)
-    public void createAddress(Address address) {
-        assert address.getId() == null;
-        address = addressService.saveAddress(address);
-        assert address.getId() != null;
+    public void createState() {
+        State state = new StateImpl();
+        state.setAbbreviation("KY");
+        state.setName("Kentucky");
+        state.setCountry(countryService.findCountryByAbbreviation("US"));
+        em.persist(state);
     }
+
+    @Test(groups = "findStates", dependsOnGroups = "createState")
+    public void findStates() {
+        List<State> states = stateService.findStates();
+        assert states.size() > 0;
+    }
+
+    @Test(groups = "findStateByAbbreviation", dependsOnGroups = "findStates")
+    public void findStateByAbbreviation() {
+        State state = stateService.findStateByAbbreviation("KY");
+        assert state != null;
+    }
+
+    /*
+     * @Test(groups = "createAddress", dataProvider = "setupAddress",
+     * dataProviderClass = AddressDataProvider.class)
+     * @Rollback(false) public void createAddress(Address address) { assert
+     * address.getId() == null; address = addressService.saveAddress(address);
+     * assert address.getId() != null; }
      */
 }

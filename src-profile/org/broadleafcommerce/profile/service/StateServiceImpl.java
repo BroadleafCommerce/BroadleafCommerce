@@ -33,6 +33,10 @@ public class StateServiceImpl implements StateService {
         return stateDao.findStates();
     }
 
+    public List<State> findStates(String countryAbbreviation) {
+        return stateDao.findStates(countryAbbreviation);
+    }
+
     public State findStateByAbbreviation(String abbreviation) {
         return stateDao.findStateByAbbreviation(abbreviation);
     }

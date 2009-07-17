@@ -45,26 +45,26 @@ public class AddressImpl implements Address {
     @Column(name = "ADDRESS_ID")
     protected Long id;
 
-    @Column(name = "ADDRESS_LINE1", nullable=false)
+    @Column(name = "ADDRESS_LINE1", nullable = false)
     protected String addressLine1;
 
     @Column(name = "ADDRESS_LINE2")
     protected String addressLine2;
 
-    @Column(name = "CITY", nullable=false)
+    @Column(name = "CITY", nullable = false)
     protected String city;
 
-    @Column(name = "POSTAL_CODE", nullable=false)
+    @Column(name = "POSTAL_CODE", nullable = false)
     protected String postalCode;
 
     @Column(name = "COUNTY")
     protected String county;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = StateImpl.class, optional=false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class, optional = false)
     @JoinColumn(name = "STATE_PROV_REGION")
     protected State state;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CountryImpl.class, optional=false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
     @JoinColumn(name = "COUNTRY")
     protected Country country;
 
