@@ -15,11 +15,14 @@
  */
 package org.broadleafcommerce.profile.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
@@ -37,8 +40,12 @@ public class StateImpl implements State {
     @Column(name = "ABBREVIATION")
     protected String abbreviation;
 
-    @Column(name = "NAME", nullable=false)
+    @Column(name = "NAME", nullable = false)
     protected String name;
+
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
+    @JoinColumn(name = "COUNTRY_ID")
+    protected Country country;
 
     public String getAbbreviation() {
         return abbreviation;
@@ -56,6 +63,24 @@ public class StateImpl implements State {
         this.name = name;
     }
 
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((abbreviation == null) ? 0 : abbreviation.hashCode());
+        result = prime * result + ((country == null) ? 0 : country.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        return result;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -70,20 +95,16 @@ public class StateImpl implements State {
                 return false;
         } else if (!abbreviation.equals(other.abbreviation))
             return false;
+        if (country == null) {
+            if (other.country != null)
+                return false;
+        } else if (!country.equals(other.country))
+            return false;
         if (name == null) {
             if (other.name != null)
                 return false;
         } else if (!name.equals(other.name))
             return false;
         return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((abbreviation == null) ? 0 : abbreviation.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        return result;
     }
 }

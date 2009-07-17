@@ -51,6 +51,15 @@ public class StateDaoImpl implements StateDao {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
+    public List<State> findStates(String countryAbbreviation) {
+        Query query = em.createNamedQuery("BC_FIND_STATES_BY_COUNTRY_ABBREVIATION");
+        query.setParameter("countryAbbreviation", countryAbbreviation);
+        query.setHint(getQueryCacheableKey(), true);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
     public Country findCountryByShortName(String shortName) {
         return (Country) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Country"), shortName);
     }
@@ -73,5 +82,4 @@ public class StateDaoImpl implements StateDao {
     public State create() {
         return (State) entityConfiguration.createEntityInstance(State.class.getName());
     }
-
 }

@@ -27,4 +27,7 @@ public interface State extends Serializable {
 
     public void setName(String name);
 
+    public Country getCountry();
+
+    public void setCountry(Country country);
 }
