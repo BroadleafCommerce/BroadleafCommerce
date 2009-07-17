@@ -142,6 +142,7 @@ public class CheckoutController {
             group.getFulfillmentGroupItems().add(fulfillmentGroupItem);
         }
 
+        //TODO this controller needs to handle the other payment types as well, not just credit card.
         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
         CreditCardPaymentInfo creditCardPaymentInfo = ((CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD));
 

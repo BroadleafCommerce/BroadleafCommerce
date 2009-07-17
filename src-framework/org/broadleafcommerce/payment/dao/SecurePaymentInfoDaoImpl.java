@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.encryption.EncryptionModule;
 import org.broadleafcommerce.payment.domain.BankAccountPaymentInfo;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.GiftCardPaymentInfo;
@@ -35,6 +36,9 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     @PersistenceContext(unitName = "blSecurePU")
     protected EntityManager em;
 
+    @Resource(name="blEncryptionModule")
+    protected EncryptionModule encryptionModule;
+
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
@@ -44,15 +48,21 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     }
 
     public BankAccountPaymentInfo createBankAccountPaymentInfo() {
-        return (BankAccountPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.BankAccountPaymentInfo");
+        BankAccountPaymentInfo response = (BankAccountPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.BankAccountPaymentInfo");
+        response.setEncryptionModule(encryptionModule);
+        return response;
     }
 
     public GiftCardPaymentInfo createGiftCardPaymentInfo() {
-        return (GiftCardPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.GiftCardPaymentInfo");
+        GiftCardPaymentInfo response = (GiftCardPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.GiftCardPaymentInfo");
+        response.setEncryptionModule(encryptionModule);
+        return response;
     }
 
     public CreditCardPaymentInfo createCreditCardPaymentInfo() {
-        return (CreditCardPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.CreditCardPaymentInfo");
+        CreditCardPaymentInfo response = (CreditCardPaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.CreditCardPaymentInfo");
+        response.setEncryptionModule(encryptionModule);
+        return response;
     }
 
     @SuppressWarnings("unchecked")
@@ -61,7 +71,11 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
         Query query = em.createNamedQuery("BC_READ_BANK_ACCOUNT_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<BankAccountPaymentInfo> infos = query.getResultList();
-        return (infos==null || infos.size()==0)?null:infos.get(0);
+        BankAccountPaymentInfo response = (infos==null || infos.size()==0)?null:infos.get(0);
+        if (response != null) {
+            response.setEncryptionModule(encryptionModule);
+        }
+        return response;
     }
 
     @SuppressWarnings("unchecked")
@@ -70,7 +84,11 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
         Query query = em.createNamedQuery("BC_READ_CREDIT_CARD_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<CreditCardPaymentInfo> infos = query.getResultList();
-        return (infos==null || infos.size()==0)?null:infos.get(0);
+        CreditCardPaymentInfo response = (infos==null || infos.size()==0)?null:infos.get(0);
+        if (response != null) {
+            response.setEncryptionModule(encryptionModule);
+        }
+        return response;
     }
 
     @SuppressWarnings("unchecked")
@@ -79,11 +97,16 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
         Query query = em.createNamedQuery("BC_READ_GIFT_CARD_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<GiftCardPaymentInfo> infos = query.getResultList();
-        return (infos==null || infos.size()==0)?null:infos.get(0);
+        GiftCardPaymentInfo response = (infos==null || infos.size()==0)?null:infos.get(0);
+        if (response != null) {
+            response.setEncryptionModule(encryptionModule);
+        }
+        return response;
     }
 
     @Override
     public void delete(Referenced securePaymentInfo) {
         em.remove(securePaymentInfo);
     }
+
 }
