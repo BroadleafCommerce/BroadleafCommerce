@@ -13,16 +13,16 @@
 	width: 650px;
 }
 
-.skuFilterCategories li {
+.searchFilter-defaultCategory li {
 	
 	list-style-type: none;
 }
 
-.skuFilterCategoryCheckbox {
+.searchFilter-defaultCategoryCheckbox {
 	display:none;
 }
 
-.disabledCategory {
+.searchFilterDisabledSelect {
 	color:#AAAAAA;
 }
 

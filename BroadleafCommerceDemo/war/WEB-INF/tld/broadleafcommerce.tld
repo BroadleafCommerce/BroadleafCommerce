@@ -85,7 +85,7 @@
 	<tag>
         <name>searchFilter</name>
         <tag-class>org.broadleafcommerce.catalog.web.taglib.SearchFilterTag</tag-class>
-        <body-content>empty</body-content>
+        <body-content>JSP</body-content>
        	<attribute>
 			<name>products</name>
 			<required>true</required>
@@ -94,6 +94,37 @@
        	<attribute>
 			<name>queryString</name>
 			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
+
+	<tag>
+        <name>searchFilterItem</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.SearchFilterItemTag</tag-class>
+        <body-content>empty</body-content>
+       	<attribute>
+			<name>property</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>propertyDisplay</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>propertyValue</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>displayTitle</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>displayType</name>
+			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
     </tag>

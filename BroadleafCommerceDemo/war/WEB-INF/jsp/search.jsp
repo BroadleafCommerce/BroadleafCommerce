@@ -4,7 +4,9 @@
 <br/>
 <div id="searchFilter">
 	<form:form method="post" id="refineSearch" commandName="doSearch">
-		<blc:searchFilter products="${products}" queryString="${queryString}"/>
+		<blc:searchFilter products="${products}" queryString="${queryString}">
+			<blc:searchFilterItem property="defaultCategory" propertyDisplay="name" propertyValue="id" displayTitle="Categories"/>
+		</blc:searchFilter>
 		<input type="submit" value="Search"/>
 	</form:form>
 </div>
@@ -20,32 +22,6 @@
 		postData.push({name:'ajax',value:'true'});
 		$('#searchResults').load($('#refineSearch').attr('action'), postData);
 	}
-	
-	var categoriesChecked = 0;
-	
-	$('.skuFilterCategories li').click(function() {
-		var categoryId = $(this).attr('value');
-		var checkbox = $('.skuFilterCategoryCheckbox[value="'+categoryId+'"]');
-		if (categoriesChecked == 0) {
-			$('.skuFilterCategories li').each(function(){$(this).addClass('disabledCategory')});
-			$(this).removeClass('disabledCategory');
-			checkbox.attr('checked',true);
-			categoriesChecked++;
-		} else if (checkbox.attr('checked') == true) {
-			$(this).addClass('disabledCategory');
-			if (categoriesChecked == 1) {
-				// unchecking the only checked category, so reactivate all categories
-				$('.skuFilterCategories li').each(function(){$(this).removeClass('disabledCategory')});
-			} 
-			checkbox.attr('checked',false);
-			categoriesChecked--;
-		} else {
-			$(this).removeClass('disabledCategory');
-			checkbox.attr('checked',true);
-			categoriesChecked++;
-		}
-		updateSearchFilterResults();
-	} );
 	
 	$('#skuFilterPrice').bind('slidechange',  updateSearchFilterResults);
 </script>
