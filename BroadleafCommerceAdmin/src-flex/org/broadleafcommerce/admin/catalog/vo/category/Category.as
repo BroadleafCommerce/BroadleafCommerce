@@ -2,6 +2,8 @@ package org.broadleafcommerce.admin.catalog.vo.category
 {
 	import mx.collections.ArrayCollection;
 	
+	import org.broadleafcommerce.admin.catalog.vo.product.Product;
+	
 	[Bindable]
 	[RemoteClass(alias="org.broadleafcommerce.catalog.domain.CategoryImpl")]
 	public class Category
@@ -29,6 +31,16 @@ package org.broadleafcommerce.admin.catalog.vo.category
 		
 		public function set children(newChildren:ArrayCollection):void{
 			this.allChildCategories = newChildren;
+		}
+		
+		public function get allProducts():ArrayCollection{
+			var products:ArrayCollection = new ArrayCollection();
+			for each(var child:Object in allChildCategories){
+				if(child is Product){
+					products.addItem(child);
+				}
+			}
+			return products;
 		}
 		
 		public function get uid():String{

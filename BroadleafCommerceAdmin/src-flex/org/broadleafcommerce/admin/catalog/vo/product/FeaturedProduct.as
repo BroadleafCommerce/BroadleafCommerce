@@ -1,5 +1,7 @@
 package org.broadleafcommerce.admin.catalog.vo.product
 {
+	import org.broadleafcommerce.admin.catalog.vo.category.Category;
+	
 	[Bindable]
 	[RemoteClass(alias="org.broadleafcommerce.catalog.domain.FeaturedProductImpl")]	
 	public class FeaturedProduct

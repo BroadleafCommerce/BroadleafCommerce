@@ -51,15 +51,15 @@
 					categoryModel.currentCategory.allChildCategories.addItem(Category(cat));
 			}
 			
-			private function handleChildDragEnter(event:DragEvent):void{
-				if(event.dragInitiator is Tree && Tree(event.dragInitiator).selectedItem is Category)
-					DragManager.acceptDragDrop(List(event.currentTarget));
-			}
-			
-			private function handleProductClick(event:MouseEvent):void{				
-				var epe:EditProductEvent = new EditProductEvent(Product(List(event.currentTarget).selectedItem), true);
-				epe.dispatch();			
-			}
+//			private function handleChildDragEnter(event:DragEvent):void{
+//				if(event.dragInitiator is Tree && Tree(event.dragInitiator).selectedItem is Category)
+//					DragManager.acceptDragDrop(List(event.currentTarget));
+//			}
+//			
+//			private function handleProductClick(event:MouseEvent):void{				
+//				var epe:EditProductEvent = new EditProductEvent(Product(List(event.currentTarget).selectedItem), true);
+//				epe.dispatch();			
+//			}
 		]]>
 	</mx:Script>
 	<mx:Binding 
@@ -83,9 +83,9 @@
 	<mx:Binding
 		source="categoryModel.currentCategory.activeEndDate"
 		destination="activeEndDateDateField.selectedDate"/>		
-	<mx:Binding
+	<!--mx:Binding
 		source="categoryModel.currentCategory.children"
-		destination="productList.dataProvider" />
+		destination="productList.dataProvider" /-->
 
 	<mx:DateFormatter 
 		id="dateFormatter"/>
@@ -135,7 +135,7 @@
 				click="handleSaveCategory(event)"/>
 		</mx:FormItem>
 	</mx:Form>
-	<mx:FormItem
+	<!-- mx:FormItem
 		label="Products" x="360" y="10">
 		<mx:List
 			id="productList"
@@ -144,5 +144,5 @@
 			itemRenderer="org.broadleafcommerce.admin.catalog.view.product.components.ProductListItemRenderer" 
 			click="handleProductClick(event)"
 			/>
-	</mx:FormItem>
+	</mx:FormItem-->
 </mx:Canvas>

@@ -4,7 +4,7 @@
 	xmlns:category="org.broadleafcommerce.admin.view.catalog.category.*"
 	width="90%"	
 	currentState="none"
-	creationComplete="handleCreationComplete()" xmlns:category1="org.broadleafcommerce.admin.catalog.view.category.*">
+	creationComplete="handleCreationComplete()" xmlns:category1="org.broadleafcommerce.admin.catalog.view.category.*" xmlns:components="org.broadleafcommerce.admin.catalog.view.category.components.*">
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
@@ -15,7 +15,7 @@
 			import mx.events.ListEvent;
 		
 			[Bindable]
-			private var appModel:AppModelLocator = AppModelLocator.getInstance();
+			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel;
 		
 			private function handleCreationComplete():void{
 				
@@ -24,9 +24,9 @@
 			private function handleNewCategory(event:Event):void{
 				var ncce:NewCategoryEvent;
 				var parentCategory:Category = null;
-				if(appModel.categoryModel.currentCategory.allParentCategories != null &&
-				   appModel.categoryModel.currentCategory.allParentCategories.length > 0){
-				   	ncce = new NewCategoryEvent(Category(appModel.categoryModel.currentCategory.allParentCategories.getItemAt(0)));
+				if(categoryModel.currentCategory.allParentCategories != null &&
+				   categoryModel.currentCategory.allParentCategories.length > 0){
+				   	ncce = new NewCategoryEvent(Category(categoryModel.currentCategory.allParentCategories.getItemAt(0)));
 				   }else{
 				   	ncce = new NewCategoryEvent();
 				   }
@@ -36,7 +36,7 @@
 		]]>
 	</mx:Script>
 	
-	<mx:Binding source="appModel.categoryModel.viewState"
+	<mx:Binding source="categoryModel.viewState"
 					   destination="this.currentState" />
 					   
 	<mx:VBox 
@@ -63,13 +63,17 @@
 			horizontalAlign="left">
 			<category1:CategoryTreeCanvas id="viewCategoriesCanvas"
 				 width="300"/>
-			<category1:CategoryEditFormCanvas id="editCategoryCanvas" visible="false"  />
-			<mx:Spacer width="100%"/>
+			<mx:TabNavigator id="categoryTabNavigator" width="100%" height="100%">
+				<category1:CategoryEditFormCanvas id="editCategoryCanvas"  label="General" width="100%" height="100%" />
+				<mx:Canvas label="Media" />
+				<category1:CategoryProductsCanvas id="productsCanvas" label="Products" width="100%" height="100%" />
+				<category1:CategoryProductsCanvas id="featuredProductsCanvas" label="Featured Products" width="100%" height="100%" /> 
+			</mx:TabNavigator>
 		</mx:HBox>		
 	</mx:VBox>
 	<mx:states>
 		<mx:State name="{CategoryModel.STATE_NONE}">
-			<mx:SetProperty target="{editCategoryCanvas}" name="visible" value="false" />
+			<mx:SetProperty target="{editCategoryCanvas}" name="visible" value="true" />
 		</mx:State>	
 		<mx:State name="{CategoryModel.STATE_NEW}">
 			<mx:SetProperty target="{editCategoryCanvas}" name="visible" value="true" />

@@ -57,7 +57,7 @@
 		<mx:Canvas id="workingAreaCanvas" 
 			width="100%"
 			height="100%">
-				<category:CategoryCanvas id="categoryCanvas" />
+				<category:CategoryCanvas id="categoryCanvas" width="100%" height="100%" />
 				<product:ProductCanvas  id="productCanvas" />
 			</mx:Canvas>
 	</mx:VBox>

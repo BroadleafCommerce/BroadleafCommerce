@@ -13,11 +13,12 @@ package org.broadleafcommerce.admin.catalog.commands.category
 		public function execute(event:CairngormEvent):void{
 			var nce:NewCategoryEvent = NewCategoryEvent(event);
 			AppModelLocator.getInstance().categoryModel.currentCategory = new Category();
-			if(nce.parentCategory == null){
-				AppModelLocator.getInstance().categoryModel.currentCategory.allParentCategories.addItem(AppModelLocator.getInstance().catalogTree.getItemAt(0));
-			}else{
+			if(nce.parentCategory != null){
 				AppModelLocator.getInstance().categoryModel.currentCategory.allParentCategories.addItem(nce.parentCategory);				
 			}
+//			else{
+//				AppModelLocator.getInstance().categoryModel.currentCategory.allParentCategories.addItem(AppModelLocator.getInstance().catalogTree.getItemAt(0));
+//			}
 			
 			AppModelLocator.getInstance().categoryModel.viewState = CategoryModel.STATE_NEW;
 		}
