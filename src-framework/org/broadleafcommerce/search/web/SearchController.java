@@ -43,7 +43,7 @@ public class SearchController {
             HttpServletRequest request,
             @RequestParam(required = true) String queryString,
             @RequestParam(required = false) String originalQueryString,
-            @RequestParam(required = false) Long[] categoryId,
+            @RequestParam(required = false, value="defaultCategory") Long[] categoryId,
             @RequestParam(required = false) String minPrice,
             @RequestParam(required = false) String maxPrice,
             @RequestParam(required = false) Boolean ajax) {
