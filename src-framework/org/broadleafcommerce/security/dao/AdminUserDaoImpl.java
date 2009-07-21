@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.security.dao;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.security.domain.AdminUser;
@@ -54,4 +57,15 @@ public class AdminUserDaoImpl implements AdminUserDao {
         return user;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public AdminUser readAdminUserByUserName(String userName) {
+        Query query = em.createNamedQuery("BC_READ_ADMIN_USER_BY_USERNAME");
+        query.setParameter("userName", userName);
+        List<AdminUser> users = query.getResultList();
+        if (users != null && ! users.isEmpty()) {
+            return users.get(0);
+        }
+        return null;
+    }
 }
