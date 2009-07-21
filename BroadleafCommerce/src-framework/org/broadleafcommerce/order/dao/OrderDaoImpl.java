@@ -94,9 +94,9 @@ public class OrderDaoImpl implements OrderDao {
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
-        List<Order> result = query.getResultList();
-        if (result.size() > 0) {
-            order = result.get(0);
+        List temp = query.getResultList();
+        if (temp.size() > 0) {
+            order = (Order) temp.get(0);
         }
         return order;
     }

@@ -32,10 +32,13 @@ import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "BLC_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 public class OfferImpl implements Offer {
 
     public static final long serialVersionUID = 1L;

@@ -33,10 +33,13 @@ import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "BLC_ORDER_ADJUSTMENT")
 @Inheritance(strategy=InheritanceType.JOINED)
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 public class OrderAdjustmentImpl implements OrderAdjustment {
 
     public static final long serialVersionUID = 1L;

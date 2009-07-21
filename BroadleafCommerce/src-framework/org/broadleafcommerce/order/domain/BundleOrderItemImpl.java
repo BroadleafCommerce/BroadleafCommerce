@@ -27,10 +27,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BUNDLE_ORDER_ITEM")
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderItem {
 
     private static final long serialVersionUID = 1L;
@@ -39,6 +42,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     protected String name;
 
     @OneToMany(mappedBy = "bundleOrderItem", targetEntity = DiscreteOrderItemImpl.class, cascade = {CascadeType.ALL})
+    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
 
     public String getName() {
