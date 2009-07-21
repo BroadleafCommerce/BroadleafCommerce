@@ -33,10 +33,13 @@ import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "BLC_CANDIDATE_FG_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 public class CandidateFulfillmentGroupOfferImpl implements CandidateFulfillmentGroupOffer {
 
     public static final long serialVersionUID = 1L;

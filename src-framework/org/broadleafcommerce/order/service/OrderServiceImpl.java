@@ -373,13 +373,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException {
+        removeAllFulfillmentGroupsFromOrder(order, false);
+    }
+
+    public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException {
         if (order.getFulfillmentGroups() != null) {
             for (Iterator<FulfillmentGroup> iterator = order.getFulfillmentGroups().iterator(); iterator.hasNext();) {
                 FulfillmentGroup fulfillmentGroup = iterator.next();
                 iterator.remove();
                 fulfillmentGroupDao.delete(fulfillmentGroup);
             }
-            updateOrder(order, true);
+            updateOrder(order, priceOrder);
         }
     }
 

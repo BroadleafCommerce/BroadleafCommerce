@@ -90,6 +90,8 @@ public interface OrderService {
 
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException;
 
+    public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException;
+
     public List<PaymentInfo> readPaymentInfosForOrder(Order order);
 
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException;
