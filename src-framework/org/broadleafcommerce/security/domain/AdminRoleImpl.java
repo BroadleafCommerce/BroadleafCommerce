@@ -62,6 +62,17 @@ public class AdminRoleImpl implements AdminRole {
     @BatchSize(size = 50)
     protected Set<AdminUser> allUsers = new HashSet<AdminUser>();
 
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminPermissionImpl.class)
+    @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
+    protected Set<AdminPermission> allPermissions= new HashSet<AdminPermission>();
+
+
+    public Set<AdminPermission> getAllPermissions() {
+        return allPermissions;
+    }
+
     public Long getId() {
         return id;
     }
