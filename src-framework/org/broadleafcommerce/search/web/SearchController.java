@@ -44,8 +44,8 @@ public class SearchController {
             @RequestParam(required = true) String queryString,
             @RequestParam(required = false) String originalQueryString,
             @RequestParam(required = false, value="defaultCategory") Long[] categoryId,
-            @RequestParam(required = false) String minPrice,
-            @RequestParam(required = false) String maxPrice,
+            @RequestParam(required = false, value="min-money") String minPrice,
+            @RequestParam(required = false, value="max-money") String maxPrice,
             @RequestParam(required = false) Boolean ajax) {
 
         SearchQuery input = new SearchQuery();

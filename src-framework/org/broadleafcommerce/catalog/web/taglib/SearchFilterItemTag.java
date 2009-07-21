@@ -25,6 +25,7 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.util.money.Money;
 
 public class SearchFilterItemTag extends SimpleTagSupport {
 
@@ -40,7 +41,6 @@ public class SearchFilterItemTag extends SimpleTagSupport {
 
         JspWriter out = getJspContext().getOut();
         out.println("<h3>"+getDisplayTitle()+"</h3>");
-
 
         if (displayType.equals("multiSelect")) {
             doMultiSelect(out);
@@ -134,30 +134,56 @@ public class SearchFilterItemTag extends SimpleTagSupport {
                 "        updateSearchFilterResults();\r\n" +
                 "    } );" +
         "</script>");
-
     }
 
     private void doSliderRange(JspWriter out)  throws JspException, IOException {
+        List<Product> products = ((SearchFilterTag) getParent()).getProducts();
+        Class<Product> productClass = Product.class;
+
+        Method propertyMethod;
+        try {
+            propertyMethod = productClass.getMethod(getterName(property), (Class[])null);
+        } catch (NoSuchMethodException e1) {
+            throw new JspException(e1);
+        }
+        Class<?> propertyClass = propertyMethod.getReturnType();
+        if (!propertyClass.equals(Money.class)) {
+            throw new JspException ("invalid property specified for SearchFilterItemTag, must be of type Money");
+        }
+
+        Money min = null;
+        Money max = null;
+
+        for (Product product : products) {
+            Money propertyObject;
+            try {
+                propertyObject = (Money)propertyMethod.invoke(product, (Object[])null);
+            } catch (Exception e) {
+                throw new JspException("Invalid propertyValue", e);
+            }
+            min = propertyObject.min(min);
+            max = propertyObject.max(max);
+        }
+
         out.println("<div id='searchFilter-"+property+"'></div>");
         out.println("Range:");
-        /*
-        out.println("<input type=\"text\" id=\"minPrice\" name='minPrice' value='$"+minPrice.getAmount().toPlainString()+"'/> - ");
-        out.println("<input type=\"text\" id=\"maxPrice\" name='maxPrice' value='$"+maxPrice.getAmount().toPlainString()+"'/> <br/>");
+        out.println("<input type=\"text\" id=\"min-" + property + "\" name='min-" + property + "' value='$"+min.getAmount().toPlainString()+"'/> - ");
+        out.println("<input type=\"text\" id=\"max-" + property + "\" name='max-" + property + "' value='$"+max.getAmount().toPlainString()+"'/> <br/>");
 
         out.println("        <script type=\"text/javascript\">\r\n" +
                 "        $(function() {\r\n" +
-                "            $(\"#skuFilterPrice\").slider({\r\n" +
+                "            $(\"#searchFilter-" + property + "\").slider({\r\n" +
                 "                range: true,\r\n" +
-                "                min: "+ minPrice.getAmount().toPlainString() +", max: "+ maxPrice.getAmount().toPlainString() + "," +
-                "                values: ["+ minPrice.getAmount().toPlainString() +","+ maxPrice.getAmount().toPlainString() +"]," +
+                "                min: "+ min.getAmount().toPlainString() +", max: "+ max.getAmount().toPlainString() + "," +
+                "                values: ["+ min.getAmount().toPlainString() +","+ max.getAmount().toPlainString() +"]," +
                 "                slide: function(event, ui) {\r\n" +
-                "                    $(\"#minPrice\").val('$' + ui.values[0] );\r\n" +
-                "                    $(\"#maxPrice\").val('$' + ui.values[1]);\r\n" +
+                "                    $(\"#min-" + property + "\").val('$' + ui.values[0] );\r\n" +
+                "                    $(\"#max-" + property + "\").val('$' + ui.values[1]);\r\n" +
                 "                }\r\n" +
                 "            });\r\n" +
                 "        });\r\n" +
+                "        $('#searchFilter-"+property+"').bind('slidechange',  updateSearchFilterResults); \r\n" +
         "        </script>");
-         */
     }
 
     private String getterName(String propertyName) {
