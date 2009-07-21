@@ -82,4 +82,8 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
         return adminUserDao.saveAdminUser(user);
     }
 
+    @Override
+    public AdminUser readAdminUserByUserName(String userName) {
+        return adminUserDao.readAdminUserByUserName(userName);
+    }
 }

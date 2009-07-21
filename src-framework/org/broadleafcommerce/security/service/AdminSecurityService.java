@@ -22,6 +22,7 @@ import org.broadleafcommerce.security.domain.AdminUser;
 public interface AdminSecurityService {
 
     public AdminUser readAdminUserById(Long id);
+    public AdminUser readAdminUserByUserName(String userName);
     public AdminUser saveAdminUser(AdminUser user);
     public void deleteAdminUser(AdminUser user);
 
