@@ -29,6 +29,7 @@ import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -102,4 +103,6 @@ public interface OrderService {
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException;
 
     public Order findOrderByOrderNumber (String orderNumber);
+
+    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
 }
