@@ -52,6 +52,7 @@ import org.broadleafcommerce.payment.dao.PaymentInfoDao;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
+import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.pricing.service.advice.PricingExecutionManager;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
@@ -227,16 +228,28 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void removeAllPaymentsFromOrder(Order order) {
+        removePaymentsFromOrder(order, null);
+    }
+
+    @Override
+    public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType) {
+        List<PaymentInfo> infos = new ArrayList<PaymentInfo>();
         for (PaymentInfo paymentInfo : order.getPaymentInfos()) {
+            if (paymentInfoType == null || paymentInfoType.equals(paymentInfo.getType())) {
+                infos.add(paymentInfo);
+            }
+        }
+        order.getPaymentInfos().removeAll(infos);
+        for (PaymentInfo paymentInfo : infos) {
             try {
                 securePaymentInfoService.findAndRemoveSecurePaymentInfo(paymentInfo.getReferenceNumber(), paymentInfo.getType());
             } catch (WorkflowException e) {
                 // do nothing--this is an acceptable condition
                 LOG.debug("No secure payment is associated with the PaymentInfo", e);
             }
+            order.getPaymentInfos().remove(paymentInfo);
             paymentInfoDao.delete(paymentInfo);
         }
-        order.getPaymentInfos().clear();
     }
 
     @Override
