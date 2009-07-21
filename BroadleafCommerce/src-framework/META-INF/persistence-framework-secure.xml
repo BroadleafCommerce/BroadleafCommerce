@@ -7,5 +7,6 @@
 		<mapping-file>config/bc/jpa/domain/GiftCardPaymentInfo.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/CreditCardPaymentInfo.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/BankAccountPaymentInfo.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
 	</persistence-unit>
 </persistence>
