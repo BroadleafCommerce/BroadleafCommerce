@@ -60,7 +60,7 @@ public class PaymentInfoImpl implements PaymentInfo {
     @JoinColumn(name = "ADDRESS_ID")
     protected Address address;
 
-    @ManyToOne(targetEntity = PhoneImpl.class)
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "PHONE_ID")
     protected Phone phone;
 
