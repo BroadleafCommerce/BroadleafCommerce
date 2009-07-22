@@ -20,11 +20,13 @@ import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.Phone;
 
 public class FulfillmentGroupRequest {
 
     protected Address address;
     protected Order order;
+    protected Phone phone;
     protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
 
     public Address getAddress() {
@@ -41,6 +43,14 @@ public class FulfillmentGroupRequest {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public Phone getPhone() {
+        return phone;
+    }
+
+    public void setPhone(Phone phone) {
+        this.phone = phone;
     }
 
     public List<FulfillmentGroupItemRequest> getFulfillmentGroupItemRequests() {

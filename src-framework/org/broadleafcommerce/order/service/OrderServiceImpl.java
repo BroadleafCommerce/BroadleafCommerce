@@ -257,6 +257,7 @@ public class OrderServiceImpl implements OrderService {
         FulfillmentGroup fg = fulfillmentGroupDao.create();
         fg.setAddress(fulfillmentGroupRequest.getAddress());
         fg.setOrder(fulfillmentGroupRequest.getOrder());
+        fg.setPhone(fulfillmentGroupRequest.getPhone());
         for (FulfillmentGroupItemRequest request : fulfillmentGroupRequest.getFulfillmentGroupItemRequests()) {
             fg = addItemToFulfillmentGroup(request.getOrderItem(), fg, request.getQuantity());
         }
