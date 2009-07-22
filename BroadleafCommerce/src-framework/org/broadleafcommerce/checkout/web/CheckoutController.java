@@ -126,8 +126,8 @@ public class CheckoutController {
         Order order = retrieveCartOrder(request, model);
         order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(new Date()));
 
-        FulfillmentGroup group = fulfillmentGroupService.createEmptyFulfillmentGroup();
-        List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
+        List<FulfillmentGroup> groups = order.getFulfillmentGroups();
+        FulfillmentGroup group = groups.get(0);
         group.setMethod("standard");
         group.setOrder(order);
         group.setAddress(checkoutForm.getShippingAddress());
