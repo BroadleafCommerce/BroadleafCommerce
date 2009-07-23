@@ -30,7 +30,18 @@ package org.broadleafcommerce.admin.catalog.view.category.components
 		
 		public function isBranch(node:Object, model:Object=null):Boolean
 		{
-			return (node is Category);
+			var result:Boolean = false;
+			
+			if(node is Category){
+				 for each(var cat:Object in Category(node).allChildCategories){
+				 	if(cat is Category){
+				 		result = true;
+				 		break;
+				 	}
+				 }
+				
+			} 
+			return result;
 		}
 		
 		public function getData(node:Object, model:Object=null):Object
