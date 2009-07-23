@@ -23,5 +23,7 @@ public interface StateService {
 
     public List<State> findStates();
 
+    public List<State> findStates(String countryAbbreviation);
+
     public State findStateByAbbreviation(String abbreviation);
 }
