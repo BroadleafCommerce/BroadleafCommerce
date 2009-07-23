@@ -89,7 +89,12 @@
 						         <tr align="right">
 						           <td style="background: #DDF0F6;">
 						             <input type="radio" name="isStorePickup" /></td>
-						           <td style="background: #DDF0F6;">I would like to <b style="font-size: 14px;">Ship</b> my order</td>
+						           <td style="background: #DDF0F6;">
+										I would like to <b style="font-size: 14px;">Ship</b> my order
+										<form:select path="fulfillmentGroups[0].method">
+											<form:options items="${cartSummary.fulfillmentGroups}" itemValue="method" itemLabel="method" />
+										</form:select>
+								   </td>
 						           <td style="background: #DDF0F6;">
 						             <span class="price"><c:out value="${currentCartOrder.totalShipping}" /></span>
 						           </td>
@@ -125,7 +130,7 @@
 	                    <a href="<c:url value="/store" />">Continue Shopping</a>
 	                  </td>
 	                  <td align="right" width="180">
-	                    <a href="<c:url value="/checkout/checkout.htm" />">Checkout</a>
+						<input type="submit" name="checkout" id="checkout" value="Checkout" />
 	                  </td>
 	                </tr>
 	              </table>

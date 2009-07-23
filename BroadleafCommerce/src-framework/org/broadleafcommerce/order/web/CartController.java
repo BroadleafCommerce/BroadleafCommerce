@@ -26,9 +26,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.CartService;
+import org.broadleafcommerce.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.web.model.AddToCartItem;
 import org.broadleafcommerce.order.web.model.AddToCartItems;
@@ -61,6 +63,8 @@ public class CartController {
     protected final CustomerState customerState;
     @Resource(name="blCatalogService")
     protected final CatalogService catalogService;
+    @Resource(name="blFulfillmentGroupService")
+    protected final FulfillmentGroupService fulfillmentGroupService;
     protected String cartView;
     protected boolean cartViewRedirect;
     protected String addItemView;
@@ -72,6 +76,7 @@ public class CartController {
         this.cartService = null;
         this.customerState = null;
         this.catalogService = null;
+        this.fulfillmentGroupService = null;
     }
 
     public void setCartView(String cartView) {
@@ -173,7 +178,7 @@ public class CartController {
     }
 
     @RequestMapping(value = "viewCart.htm", params="updateItemQuantity", method = RequestMethod.POST)
-    public String updateItemQuantity(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) {
+    public String updateItemQuantity(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
         if (errors.hasErrors()) {
             model.addAttribute("cartSummary", cartSummary);
             return cartView;
@@ -208,11 +213,33 @@ public class CartController {
         return viewCart(model,request);
     }
 
+    @RequestMapping(value = "viewCart.htm", params="checkout", method = RequestMethod.POST)
+    public String checkout(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
+
+        Order currentCartOrder = retrieveCartOrder(request, model);
+        currentCartOrder.getFulfillmentGroups().set(0, cartSummary.getFulfillmentGroups().get(0));
+        cartService.save(currentCartOrder, true);
+        return "redirect:/checkout/checkout.htm";
+    }
+
     @RequestMapping(value = "viewCart.htm", method = RequestMethod.GET)
-    public String viewCart(ModelMap model, HttpServletRequest request) {
+    public String viewCart(ModelMap model, HttpServletRequest request) throws PricingException {
         LOG.debug("Processing View Cart!");
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
+
+        FulfillmentGroup standardGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
+        FulfillmentGroup expeditedGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
+        standardGroup.setMethod("standard");
+        expeditedGroup.setMethod("expedited");
+        standardGroup.setOrder(cart);
+        expeditedGroup.setOrder(cart);
+        List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
+        fulfillmentGroups.add(standardGroup);
+        fulfillmentGroups.add(expeditedGroup);
+        if (cart.getFulfillmentGroups() == null || cart.getFulfillmentGroups().isEmpty()) {
+            cart.getFulfillmentGroups().add(standardGroup);
+        }
 
         for (OrderItem orderItem : cart.getOrderItems()) {
             CartOrderItem cartOrderItem = new CartOrderItem();
@@ -221,6 +248,8 @@ public class CartController {
             cartSummary.getRows().add(cartOrderItem);
         }
 
+        cart = cartService.save(cart, true);
+        cartSummary.setFulfillmentGroups(fulfillmentGroups);
         model.addAttribute("cartSummary", cartSummary);
 
         return cartViewRedirect ? "redirect:" + cartView : cartView;
