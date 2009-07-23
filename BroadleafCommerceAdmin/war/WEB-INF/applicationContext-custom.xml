@@ -34,7 +34,6 @@
         <property name="dataSources">
             <map>
                 <entry key="jdbc/web" value-ref="webDS"/>
-                <entry key="jdbc/webSecure" value-ref="webSecureDS"/>
             </map>
         </property>
         <property name="defaultDataSource" ref="webDS"/>
@@ -43,11 +42,6 @@
     <bean id="webDS"
           class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:/comp/env/jdbc/web"/>
-    </bean>
-    
-    <bean id="webSecureDS"
-          class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/comp/env/jdbc/webSecure"/>
     </bean>
     
 </beans>
