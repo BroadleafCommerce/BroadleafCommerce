@@ -1,0 +1,4 @@
+<xml>
+	<menuitem label="Catalog" swf="modules/CatalogModule.swf" displayOrder="2" />
+	<menuitem label="Offers" swf="modules/OfferModule.swf" displayOrder="5"/>
+</xml>

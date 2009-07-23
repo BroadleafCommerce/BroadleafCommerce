@@ -2,7 +2,7 @@
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
 	 width="100%" 
 	 height="100%"
-	 creationComplete="initApp()" xmlns:business="org.broadleafcommerce.admin.core.business.*" xmlns:control="org.broadleafcommerce.admin.core.control.*" xmlns:view="org.broadleafcommerce.admin.core.view.*"> 
+	 applicationComplete="initApp()" xmlns:business="org.broadleafcommerce.admin.core.business.*" xmlns:control="org.broadleafcommerce.admin.core.control.*" xmlns:view="org.broadleafcommerce.admin.core.view.*"> 
 	
 	<mx:Script>
 		<![CDATA[
@@ -19,7 +19,7 @@
 	<mx:Style source="/assets/styles/broadleafcommerceadmin.css" /> 
 		
 	<control:BlcAdminController />
-	<business:Services id="blcAdminServices" />
+	<business:BlcAdminServices />
 	
 	
 	<mx:VBox height="100%" 
