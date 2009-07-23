@@ -9,18 +9,18 @@ package org.broadleafcommerce.admin.offers.commands
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
-	import org.broadleafcommerce.admin.core.business.BroadleafCommerceAdminServiceDelegate;
-	import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	import org.broadleafcommerce.admin.offers.business.BroadleafCommerceAdminOfferServiceDelegate;
 	import org.broadleafcommerce.admin.offers.model.OfferModel;
+	import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 	import org.broadleafcommerce.admin.offers.vo.Offer;
 
 	public class FindAllOffersCommand implements Command, IResponder
 	{
-		private var offerModel:OfferModel = AppModelLocator.getInstance().offerModel;
+		private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
 		
 		public function execute(event:CairngormEvent):void
 		{
-			var delegate:BroadleafCommerceAdminServiceDelegate = new BroadleafCommerceAdminServiceDelegate(this);
+			var delegate:BroadleafCommerceAdminOfferServiceDelegate = new BroadleafCommerceAdminOfferServiceDelegate(this);
 			delegate.findAllOffers();
 		}
 		

@@ -3,11 +3,11 @@
 	width="100%">
 	<mx:Script>
 		<![CDATA[
-			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 			import mx.collections.ArrayCollection;
 			
 			[Bindable]
-			private var customerRulesArray:ArrayCollection = AppModelLocator.getInstance().offerModel.deliveryTypes;
+			private var customerRulesArray:ArrayCollection = OfferModelLocator.getInstance().offerModel.deliveryTypes;
 		]]>
 	</mx:Script>
 	<mx:RadioButtonGroup id="customersRadioGroup" 

@@ -4,11 +4,11 @@
 	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 			import org.broadleafcommerce.admin.offers.model.OfferModel;
-			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			
 			[Bindable]
-			private var offerModel:OfferModel = AppModelLocator.getInstance().offerModel;
+			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
 			
 			private function handleCreationComplete():void{
 				this.discountType.selectedIndex = 0;

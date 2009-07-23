@@ -6,8 +6,8 @@ package org.broadleafcommerce.admin.offers.commands
 	import mx.containers.TitleWindow;
 	import mx.managers.PopUpManager;
 	
-	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.offers.control.events.ShowOfferWindowEvent;
+	import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 	import org.broadleafcommerce.admin.offers.view.offerWizard.NewOfferWizard;
 	import org.broadleafcommerce.admin.offers.vo.Offer;
 
@@ -17,10 +17,10 @@ package org.broadleafcommerce.admin.offers.commands
 		{
 			var sowe:ShowOfferWindowEvent = ShowOfferWindowEvent(event);
 			if(sowe.offer != null){
-				AppModelLocator.getInstance().offerModel.currentOffer = sowe.offer;
+				OfferModelLocator.getInstance().offerModel.currentOffer = sowe.offer;
 			}else{
 				var offer:Offer = new Offer(); 
-				AppModelLocator.getInstance().offerModel.currentOffer = offer;
+				OfferModelLocator.getInstance().offerModel.currentOffer = offer;
 			}
 			
 			var newOfferWizard:TitleWindow = 

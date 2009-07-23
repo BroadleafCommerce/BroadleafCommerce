@@ -8,10 +8,10 @@ package org.broadleafcommerce.admin.offers.commands
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	
-	import org.broadleafcommerce.admin.core.business.BroadleafCommerceAdminServiceDelegate;
-	import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	import org.broadleafcommerce.admin.offers.business.BroadleafCommerceAdminOfferServiceDelegate;
 	import org.broadleafcommerce.admin.offers.control.events.AddUpdateOfferEvent;
 	import org.broadleafcommerce.admin.offers.control.events.FindAllOffersEvent;
+	import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 	import org.broadleafcommerce.admin.offers.vo.Offer;
 
 	public class AddUpdateOfferCommand implements Command, IResponder
@@ -20,13 +20,13 @@ package org.broadleafcommerce.admin.offers.commands
 		{
 			var auoe:AddUpdateOfferEvent = AddUpdateOfferEvent(event);
 			var offer:Offer = auoe.offer;
-			var offersList:ArrayCollection = AppModelLocator.getInstance().offerModel.offersList;
+			var offersList:ArrayCollection = OfferModelLocator.getInstance().offerModel.offersList;
 //				var currentOffer:Offer = AppModelLocator.getInstance().offerModel.currentOffer;
 //				var index:int = offersList.getItemIndex(currentOffer);
 //				offersList.removeItemAt(index);
 //				offersList.addItemAt(offer,index);
 //			}
-			var delegate:BroadleafCommerceAdminServiceDelegate = new BroadleafCommerceAdminServiceDelegate(this);
+			var delegate:BroadleafCommerceAdminOfferServiceDelegate = new BroadleafCommerceAdminOfferServiceDelegate(this);
 			delegate.saveOffer(offer);
 			
 		}

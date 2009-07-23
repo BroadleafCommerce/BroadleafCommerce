@@ -6,6 +6,7 @@
 	xmlns:offer="org.broadleafcommerce.admin.view.offer.*" xmlns:view1="org.broadleafcommerce.admin.offers.view.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 			import org.broadleafcommerce.admin.offers.model.OfferModel;
 			import org.broadleafcommerce.admin.offers.vo.Offer;
 			import org.broadleafcommerce.admin.offers.model.OfferModel;
@@ -23,7 +24,7 @@
 			private static var STATE_NEW:String = "state_new";
 	
 			[Bindable]
-			private var offerModel:OfferModel = AppModelLocator.getInstance().offerModel;
+			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
 		
 			private function handleNewClick(event:Event):void{
 					var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this);

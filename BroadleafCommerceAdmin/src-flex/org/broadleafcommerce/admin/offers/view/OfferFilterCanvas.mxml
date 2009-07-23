@@ -2,13 +2,14 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 			import org.broadleafcommerce.admin.offers.vo.Offer;
 			import mx.utils.StringUtil;
 			import org.broadleafcommerce.admin.offers.vo.Offer;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.offers.model.OfferModel;
 			
-			private var offerModel:OfferModel = AppModelLocator.getInstance().offerModel;
+			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
 			private var filterTextInputLastChangedDate:Date;
 			
 			private function handleFilterChange():void{

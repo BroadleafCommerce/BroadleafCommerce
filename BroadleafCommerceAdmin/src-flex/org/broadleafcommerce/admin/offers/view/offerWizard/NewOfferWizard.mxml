@@ -18,6 +18,7 @@
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 		import org.broadleafcommerce.admin.offers.control.events.AddUpdateOfferEvent;
 		import mx.events.ItemClickEvent;
 		import org.broadleafcommerce.admin.offers.vo.Offer;
@@ -35,7 +36,7 @@
 		private static var STATE_HOW:String = "state_how";
 		
 		[Bindable]
-		private var currentOffer:Offer = AppModelLocator.getInstance().offerModel.currentOffer;
+		private var currentOffer:Offer = OfferModelLocator.getInstance().offerModel.currentOffer;
 		[Bindable]
 		private var editOffer:Offer = new Offer();
 
