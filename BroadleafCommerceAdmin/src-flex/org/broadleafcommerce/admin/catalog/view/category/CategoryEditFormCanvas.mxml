@@ -5,6 +5,7 @@
 	creationComplete="handleCreationComplete()"  xmlns:view1="org.broadleafcommerce.admin.core.view.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 			import org.broadleafcommerce.admin.catalog.vo.product.Product;
 			import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
@@ -22,7 +23,7 @@
 			import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 			
 			[Bindable]
-			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel;
+			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
 			
 			private function handleCreationComplete():void{
 				nameTextInput.setFocus();

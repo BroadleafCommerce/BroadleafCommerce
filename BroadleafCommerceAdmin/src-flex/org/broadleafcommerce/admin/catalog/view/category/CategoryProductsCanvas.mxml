@@ -3,6 +3,7 @@
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 		import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
 		import org.broadleafcommerce.admin.catalog.vo.product.Product;
 		import org.broadleafcommerce.admin.catalog.model.CatalogModel;
@@ -12,7 +13,7 @@
 		import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 
 		[Bindable]
-		private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel; 
+		private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel; 
 		 
 		 
 		 private function handleProductsDataGridClick(event:MouseEvent):void{

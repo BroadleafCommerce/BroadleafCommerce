@@ -4,6 +4,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
 	import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
+	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
@@ -12,15 +13,15 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	{
 		public function execute(event:CairngormEvent):void{
 			var nce:NewCategoryEvent = NewCategoryEvent(event);
-			AppModelLocator.getInstance().categoryModel.currentCategory = new Category();
+			CatalogModelLocator.getInstance().categoryModel.currentCategory = new Category();
 			if(nce.parentCategory != null){
-				AppModelLocator.getInstance().categoryModel.currentCategory.allParentCategories.addItem(nce.parentCategory);				
+				CatalogModelLocator.getInstance().categoryModel.currentCategory.allParentCategories.addItem(nce.parentCategory);				
 			}
 //			else{
 //				AppModelLocator.getInstance().categoryModel.currentCategory.allParentCategories.addItem(AppModelLocator.getInstance().catalogTree.getItemAt(0));
 //			}
 			
-			AppModelLocator.getInstance().categoryModel.viewState = CategoryModel.STATE_NEW;
+			CatalogModelLocator.getInstance().categoryModel.viewState = CategoryModel.STATE_NEW;
 		}
 	}
 }

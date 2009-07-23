@@ -6,6 +6,7 @@
 	  xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*" xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 			import org.broadleafcommerce.admin.catalog.model.ProductModel;
 			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
@@ -22,10 +23,10 @@
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			
 			[Bindable]
-			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;	
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;	
 			
 			[Bindable]
-			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel;		
+			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;		
 		
 			private function handleSaveProduct(event:Event):void{
 				var product:Product = Product(ObjectUtil.copy(productModel.currentProduct));

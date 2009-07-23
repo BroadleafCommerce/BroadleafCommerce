@@ -7,9 +7,9 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	
+	import org.broadleafcommerce.admin.catalog.business.BroadleafCommerceAdminCatalogServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.control.events.category.FindAllCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
-	import org.broadleafcommerce.admin.core.business.BroadleafCommerceAdminServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 	
 	public class SaveCategoryCommand implements Command, IResponder{
@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 		public function execute(event:CairngormEvent):void{
 			var scce:SaveCategoryEvent = SaveCategoryEvent(event);
 			var category:Category = scce.category;
-			var delegate:BroadleafCommerceAdminServiceDelegate = new BroadleafCommerceAdminServiceDelegate(this);
+			var delegate:BroadleafCommerceAdminCatalogServiceDelegate = new BroadleafCommerceAdminCatalogServiceDelegate(this);
 			delegate.saveCategory(category);
 		}
 		

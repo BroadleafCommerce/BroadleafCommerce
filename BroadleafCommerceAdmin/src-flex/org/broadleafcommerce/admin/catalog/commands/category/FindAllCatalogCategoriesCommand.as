@@ -9,22 +9,22 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
+	import org.broadleafcommerce.admin.catalog.business.BroadleafCommerceAdminCatalogServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
-	import org.broadleafcommerce.admin.core.business.BroadleafCommerceAdminServiceDelegate;
-	import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 
 	public class FindAllCatalogCategoriesCommand implements Command, IResponder
 	{
 		public function execute(event:CairngormEvent):void
 		{
-			var delegate:BroadleafCommerceAdminServiceDelegate = new BroadleafCommerceAdminServiceDelegate(this);
+			var delegate:BroadleafCommerceAdminCatalogServiceDelegate = new BroadleafCommerceAdminCatalogServiceDelegate(this);
 			delegate.findAllCategories();
 		}
 		
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			AppModelLocator.getInstance().categoryModel.categoryArray = ArrayCollection(event.result);
+			CatalogModelLocator.getInstance().categoryModel.categoryArray = ArrayCollection(event.result);
 			var bcte:BuildCatalogEvent = new BuildCatalogEvent();
 			bcte.dispatch()
 		}

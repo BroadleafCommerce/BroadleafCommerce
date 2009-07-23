@@ -4,6 +4,7 @@
 	xmlns:components1="org.broadleafcommerce.admin.catalog.view.category.components.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 			import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
 			import mx.events.DragEvent;
@@ -14,10 +15,10 @@
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			
 			[Bindable]
-			private var catalogTree:ArrayCollection = AppModelLocator.getInstance().catalogTree;
+			private var catalogTree:ArrayCollection = CatalogModelLocator.getInstance().catalogTree;
 			
 			[Bindable]
-			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel; 
+			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel; 
 			
 		]]>
 	</mx:Script>

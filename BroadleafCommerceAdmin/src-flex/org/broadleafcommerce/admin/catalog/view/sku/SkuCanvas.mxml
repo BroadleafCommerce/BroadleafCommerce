@@ -3,6 +3,7 @@
 	width="95%" height="95%" xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" xmlns:sku1="org.broadleafcommerce.admin.catalog.view.sku.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.SkuModel;
 			import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 			import org.broadleafcommerce.admin.catalog.vo.product.Product;
@@ -11,10 +12,10 @@
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			
 			[Bindable]
-			private var skuModel:SkuModel = AppModelLocator.getInstance().skuModel;
+			private var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;
 	
 			private function handleNewSku(event:Event):void{
-				var parentProduct:Product = AppModelLocator.getInstance().productModel.currentProduct;
+				var parentProduct:Product = CatalogModelLocator.getInstance().productModel.currentProduct;
 				var nse:NewSkuEvent = new NewSkuEvent(parentProduct);
 				nse.dispatch();
 			}			

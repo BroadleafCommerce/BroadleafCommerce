@@ -6,13 +6,14 @@
 	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.SkuModel;
 			import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.catalog.control.events.sku.SaveSkuEvent;
 			
 			[Bindable]
-			private var skuModel:SkuModel = AppModelLocator.getInstance().skuModel;
+			private var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;
 			
 			private function handleCreationComplete():void{
 				this.nameTextInput.setFocus();

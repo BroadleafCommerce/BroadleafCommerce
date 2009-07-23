@@ -3,13 +3,14 @@
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 		import org.broadleafcommerce.admin.catalog.model.ProductModel;
 		import org.broadleafcommerce.admin.catalog.view.product.components.ProductImageRenderer;
 
 		import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 			[Bindable]
-			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;	
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;	
 	
 	]]>
 </mx:Script>

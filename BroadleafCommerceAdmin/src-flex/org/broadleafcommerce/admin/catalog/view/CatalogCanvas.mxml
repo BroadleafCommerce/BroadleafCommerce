@@ -6,6 +6,7 @@
 	xmlns:category="org.broadleafcommerce.admin.catalog.view.category.*" xmlns:product="org.broadleafcommerce.admin.catalog.view.product.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 			import org.broadleafcommerce.admin.catalog.control.events.category.ViewCategoriesEvent;
 			import org.broadleafcommerce.admin.catalog.control.events.product.ViewCurrentProductEvent;
@@ -16,7 +17,7 @@
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			
 			[Bindable]
-			private var catalogModel:CatalogModel = AppModelLocator.getInstance().catalogModel;
+			private var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
 			
 			private function creationComplete():void{
 			}

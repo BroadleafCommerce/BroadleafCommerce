@@ -6,17 +6,17 @@
 				dataField="id"
 				headerText="Id" />
 			<mx:DataGridColumn
-				dataField="name"
+				dataField="product.name"
 				headerText="Name"/>
 			<mx:DataGridColumn
-				dataField="description"
-				headerText="Description"/>
+				dataField="category"
+				headerText="Category"/>
 			<mx:DataGridColumn
-				dataField="activeStartDate"
-				headerText="Start Date"/>
+				dataField="sequence"
+				headerText="Sequence"/>
 			<mx:DataGridColumn
-				dataField="activeEndDate"
-				headerText="End Date"/>
+				dataField="promotionMessage"
+				headerText="promotionMessage"/>
 			<!--mx:DataGridColumn
 				dataField="model"
 				headerText="Model"/>

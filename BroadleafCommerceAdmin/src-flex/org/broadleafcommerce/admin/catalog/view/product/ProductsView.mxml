@@ -10,6 +10,7 @@
 	xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*" xmlns:product1="org.broadleafcommerce.admin.catalog.view.product.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.view.product.components.ProductsDataGrid;
 			import org.broadleafcommerce.admin.catalog.model.ProductModel;
 			import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
@@ -20,7 +21,7 @@
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			
 			[Bindable]
-			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 			
 			private function handleDataGridClick(event:MouseEvent):void{
 				var vcpe:EditProductEvent = new EditProductEvent(Product(ProductsDataGrid(event.currentTarget).selectedItem), false);

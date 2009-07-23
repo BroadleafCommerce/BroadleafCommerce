@@ -7,6 +7,7 @@
 	creationComplete="handleCreationComplete()" xmlns:category1="org.broadleafcommerce.admin.catalog.view.category.*" xmlns:components="org.broadleafcommerce.admin.catalog.view.category.components.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 			import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
 			import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
@@ -15,7 +16,7 @@
 			import mx.events.ListEvent;
 		
 			[Bindable]
-			private var categoryModel:CategoryModel = AppModelLocator.getInstance().categoryModel;
+			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
 		
 			private function handleCreationComplete():void{
 				

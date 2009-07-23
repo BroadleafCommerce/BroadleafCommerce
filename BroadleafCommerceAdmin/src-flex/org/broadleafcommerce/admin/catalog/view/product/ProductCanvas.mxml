@@ -6,13 +6,14 @@
 	width="95%" xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" xmlns:product1="org.broadleafcommerce.admin.catalog.view.product.*" xmlns:sku1="org.broadleafcommerce.admin.catalog.view.sku.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.ProductModel;
 			import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
 			import org.broadleafcommerce.admin.catalog.control.events.product.NewProductEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			
 			[Bindable]
-			private var productModel:ProductModel = AppModelLocator.getInstance().productModel;
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 		
 			private function handleNewProduct(event:Event):void{
 				new NewProductEvent().dispatch();

@@ -7,6 +7,8 @@ package org.broadleafcommerce.admin.catalog.model
 		public function CatalogModel()
 		{
 		}
+		
+		public static const SERVICE_ID:String = "blCatalogService";
 
 		public static const STATE_VIEW_CATEGORY:String = "view_category_state";
 		public static const STATE_VIEW_PRODUCT:String = "view_product_state";
