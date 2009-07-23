@@ -33,7 +33,9 @@
 	<flex:message-broker services-config-path="classpath*:services-config.xml" />
 	-->
 	
-	<flex:message-broker/>
+	<flex:message-broker>
+		<flex:secured />
+	</flex:message-broker>
 	
 	<!-- Maps request paths at /* to the BlazeDS MessageBroker -->
 	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">

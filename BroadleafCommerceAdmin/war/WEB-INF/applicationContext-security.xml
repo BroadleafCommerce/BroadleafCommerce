@@ -7,10 +7,16 @@
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.2.xsd">
 
 
-	<sec:http auto-config="true">
+	<sec:http >
+	    <sec:intercept-url pattern="/**" filters="none" />
+	    <sec:anonymous />
+	    <sec:http-basic />
+	    <sec:logout />
+    	    <!-- sec:anonymous/ -->
 		<!-- sec:intercept-url pattern="/secure/extreme/**" access="ROLE_SUPERVISOR" />
 		<sec:intercept-url pattern="/secure/**" access="ROLE_USER" />
-		<sec:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" /-->
+		<sec:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" / -->
+		<!--  sec:intercept-url pattern="/**" filters="none"/-->
 	</sec:http>
 	
 	<sec:authentication-manager alias="authManager"/>
