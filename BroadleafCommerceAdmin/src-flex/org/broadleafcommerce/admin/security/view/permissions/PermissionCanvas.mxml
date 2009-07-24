@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"	
+	xmlns:permission="org.broadleafcommerce.admin.security.view.permissions.*"
+	width="800" height="800">
+	<mx:Script>
+		<![CDATA[
+			private function handleSaveClick(event:Event):void{
+					//var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this);
+					//sowe.dispatch()
+			}
+		]]>
+	</mx:Script>
+	
+    <mx:TabNavigator id="tnPermissionCanvas"  width="100%" height="100%" paddingLeft="20" paddingBottom="20" paddingTop="20" paddingRight="20">
+
+	    <mx:VBox label="Search">
+			<permission:PermissionDataGrid
+				id="permissionDataGrid"
+				width="100%" 
+				height="100%" 
+				doubleClickEnabled="true" />
+	    </mx:VBox>
+	
+	    <mx:VBox label="Permission Details">
+	        <mx:VBox width="100%">
+	        	<mx:FormHeading label="New Permission"/>	            	
+	        	<mx:HBox width="50%">
+	                <mx:Form>
+	                    <mx:FormItem label="Name">
+	                        <mx:TextInput/>
+	                    </mx:FormItem>
+	                    <mx:FormItem label="Description">
+	                        <mx:TextInput/>
+	                    </mx:FormItem>
+	                </mx:Form>
+	        	</mx:HBox>
+	        </mx:VBox>
+	        
+	     	<mx:Button label="Save" click="handleSaveClick(event)"/>
+	    </mx:VBox>
+	    
+	</mx:TabNavigator>
+</mx:Canvas>

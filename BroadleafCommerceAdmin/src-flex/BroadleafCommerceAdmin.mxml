@@ -10,8 +10,8 @@
 			import com.adobe.cairngorm.control.CairngormEventDispatcher;
 			
 			private function initApp():void{
-				var iae:InitializeApplicationEvent = new InitializeApplicationEvent();
-				CairngormEventDispatcher.getInstance().dispatchEvent(iae);
+				//var iae:InitializeApplicationEvent = new InitializeApplicationEvent();
+				//CairngormEventDispatcher.getInstance().dispatchEvent(iae);
 			}
 		]]>
 	</mx:Script>

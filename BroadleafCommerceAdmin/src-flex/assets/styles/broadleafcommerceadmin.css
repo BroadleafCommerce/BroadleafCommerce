@@ -153,7 +153,9 @@ DateChooser
 LinkButton
 {
 	font-weight: normal;
-	text-decoration: underline;	
+	text-decoration: underline;
+	selectionColor: #00cc66;;
+	skin: ClassReference("org.broadleafcommerce.util.ToggleLinkButtonSkin");	
 }
 
 DataGrid
@@ -164,6 +166,7 @@ DataGrid
 	text-roll-over-color: #000000;
 	horizontal-grid-lines: true;
 	vertical-grid-lines: false;
+	selectionColor: #9AB12A;
 }
 
 GridRow

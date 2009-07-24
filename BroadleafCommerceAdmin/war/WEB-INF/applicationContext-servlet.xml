@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:flex="http://www.springframework.org/schema/flex"	
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:flex="http://www.springframework.org/schema/flex"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
@@ -28,15 +28,15 @@
 		</constructor-arg>
 		<constructor-arg ref="resourceBundleExtensionPoint" />
 	</bean>
-			
-	<!--  If you want to change the location of the services-config.xml uncomment the following bean 
+
+	<!--  If you want to change the location of the services-config.xml uncomment the following bean
 	<flex:message-broker services-config-path="classpath*:services-config.xml" />
 	-->
-	
+
 	<flex:message-broker>
 		<flex:secured />
 	</flex:message-broker>
-	
+
 	<!-- Maps request paths at /* to the BlazeDS MessageBroker -->
 	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
@@ -48,12 +48,13 @@
 
 	<!-- Dispatches requests mapped to a MessageBroker -->
 	<bean class="org.springframework.flex.servlet.MessageBrokerHandlerAdapter"/>
-	
 
-	
-	<!-- Expose the Service beans for BlazeDS remoting 
+
+
+	<!-- Expose the Service beans for BlazeDS remoting
 	-->
-	<flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />		
-	<flex:remoting-destination ref="blOfferService" />		
+	<flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />
+	<flex:remoting-destination ref="blAdminSecurityService" />
+	<flex:remoting-destination ref="blOfferService" />
 
 </beans>
