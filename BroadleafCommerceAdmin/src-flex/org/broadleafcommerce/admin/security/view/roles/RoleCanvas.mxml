@@ -4,6 +4,7 @@
 	width="800" height="800">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
 			private function handleSaveClick(event:Event):void{
 					//var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this);
 					//sowe.dispatch()
@@ -41,7 +42,7 @@
 	
 	                <mx:VBox height="100%">
 		                <mx:Label text="Permissions"/>
-		                <mx:List></mx:List>
+		                <mx:List id="roleList" dataProvider="{SecurityModelLocator.getInstance().adminPermissions}" labelField="name"></mx:List>
 		               	<mx:Button
 	                        label="Add New Permission" 
 	                        click="handleNewPermissionClick(event)"/>

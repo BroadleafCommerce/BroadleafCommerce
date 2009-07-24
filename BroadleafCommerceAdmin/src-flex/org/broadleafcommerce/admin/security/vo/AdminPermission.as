@@ -4,7 +4,7 @@ package org.broadleafcommerce.admin.security.vo
 	[RemoteClass(alias="org.broadleafcommerce.security.domain.AdminPermissionImpl")]
 	public class AdminPermission
 	{
-		public var id:int;
+		public var id:String;
 	    public var name:String;
 	    public var description:String;
 	}

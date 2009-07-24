@@ -3,6 +3,8 @@ package org.broadleafcommerce.admin.security.business
 	import mx.rpc.AsyncToken;
 	import mx.rpc.IResponder;
 
+	import org.broadleafcommerce.admin.security.vo.AdminPermission;
+
 	public class BroadleafCommerceAdminSecurityServiceDelegate
 	{
         private var responder : IResponder;
@@ -31,6 +33,11 @@ package org.broadleafcommerce.admin.security.business
 
 		public function findAdminUserById(id:int):void{
 			var call:AsyncToken = adminSecurityService.readAdminUserById(id);
+			call.addResponder(responder);
+		}
+
+		public function saveAdminPermission(permission:AdminPermission):void{
+			var call:AsyncToken = adminSecurityService.saveAdminPermission(permission);
 			call.addResponder(responder);
 		}
 
