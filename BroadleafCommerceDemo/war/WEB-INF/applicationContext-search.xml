@@ -23,7 +23,7 @@
 
     <compass:compass name="compass" txManager="blTransactionManager" >
         <compass:connection>
-        	<compass:mmap path="/compass-index" />
+        	<compass:ram path="/compass-index" />
         	<!-- Using an in memory map is fast and easily configurable  -->
         	<!-- Using something on the filesystem is probably better in real circumstances (storing a large index
         			in memory is less than ideal on the same machine as the app server
