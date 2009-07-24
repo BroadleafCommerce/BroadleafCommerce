@@ -13,9 +13,9 @@
            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
-           http://www.springframework.org/schema/util 
+           http://www.springframework.org/schema/util
            http://www.springframework.org/schema/util/spring-util-2.0.xsd">
-       
+
     <bean class="org.springframework.jmx.export.MBeanExporter">
         <property name="autodetect" value="false" />
         <property name="assembler">
@@ -41,7 +41,7 @@
             </map>
         </property>
     </bean>
-	
+
 	<bean id="blCacheManager" class="org.broadleafcommerce.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
 		<property name="shared" value="true"/>
 		<property name="configLocations">
@@ -50,7 +50,7 @@
 			</list>
 		</property>
 	</bean>
-    
+
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
@@ -132,7 +132,7 @@
 	      <tx:method name="*" propagation="REQUIRED"/>
 	    </tx:attributes>
 	</tx:advice>
-	
+
 	<aop:config>
 	    <aop:pointcut id="blCatalogServiceOperation" expression="execution(* org.broadleafcommerce.catalog.service.CatalogService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogServiceOperation"/>
@@ -225,12 +225,17 @@
 		<aop:pointcut id="blOrderItemDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderItemDao.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderItemDaoOperation"/>
 	</aop:config>
-	
+
 	<aop:config>
 		<aop:pointcut id="blOfferServiceOperation" expression="execution(* org.broadleafcommerce.offer.service.OfferService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation"/>
 	</aop:config>
-           
+
+	<aop:config>
+		<aop:pointcut id="blAdminSecurityServiceOperation" expression="execution(* org.broadleafcommerce.security.service.AdminSecurityService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceOperation"/>
+	</aop:config>
+
     <bean id="blCategoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
@@ -266,5 +271,5 @@
 	<bean id="blStateDao" class="org.broadleafcommerce.profile.dao.StateDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
-	
+
 </beans>
