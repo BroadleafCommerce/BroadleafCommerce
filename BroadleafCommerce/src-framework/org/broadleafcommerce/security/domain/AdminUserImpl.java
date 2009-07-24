@@ -66,13 +66,6 @@ public class AdminUserImpl implements AdminUser {
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
 
-    /** All permissions that this user has */
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminPermissionImpl.class)
-    @JoinTable(name = "BLC_ADMIN_USER_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @BatchSize(size = 50)
-    protected Set<AdminPermission> allPermissions = new HashSet<AdminPermission>();
-
     public Long getId() {
         return id;
     }
@@ -119,14 +112,6 @@ public class AdminUserImpl implements AdminUser {
 
     public void setAllRoles(Set<AdminRole> allRoles) {
         this.allRoles = allRoles;
-    }
-
-    public Set<AdminPermission> getAllPermissions() {
-        return allPermissions;
-    }
-
-    public void setAllPermissions(Set<AdminPermission> allPermissions) {
-        this.allPermissions = allPermissions;
     }
 
 }

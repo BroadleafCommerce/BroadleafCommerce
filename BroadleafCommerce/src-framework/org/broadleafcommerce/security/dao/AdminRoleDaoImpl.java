@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.security.dao;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.security.domain.AdminRole;
@@ -54,4 +57,11 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
         return role;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<AdminRole> readAllAdminRoles() {
+        Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_ROLES");
+        List<AdminRole> roles = query.getResultList();
+        return roles;
+    }
 }

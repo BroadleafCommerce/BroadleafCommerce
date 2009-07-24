@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.security.dao;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.security.domain.AdminPermission;
@@ -54,4 +57,11 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         return permission;
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<AdminPermission> readAllAdminPermissions() {
+        Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_PERMISSIONS");
+        List<AdminPermission> permissions = query.getResultList();
+        return permissions;
+    }
 }

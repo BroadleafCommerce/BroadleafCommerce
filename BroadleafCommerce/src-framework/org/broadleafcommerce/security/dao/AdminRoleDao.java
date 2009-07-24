@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.security.dao;
 
+import java.util.List;
+
 import org.broadleafcommerce.security.domain.AdminRole;
 
 public interface AdminRoleDao {
+    public List<AdminRole> readAllAdminRoles();
     public AdminRole readAdminRoleById(Long id);
     public AdminRole saveAdminRole(AdminRole role);
     public void deleteAdminRole(AdminRole role);
