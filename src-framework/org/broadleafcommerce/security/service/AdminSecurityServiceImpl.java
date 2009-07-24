@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.security.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.security.dao.AdminPermissionDao;
@@ -85,5 +87,20 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Override
     public AdminUser readAdminUserByUserName(String userName) {
         return adminUserDao.readAdminUserByUserName(userName);
+    }
+
+    @Override
+    public List<AdminUser> readAllAdminUsers() {
+        return adminUserDao.readAllAdminUsers();
+    }
+
+    @Override
+    public List<AdminRole> readAllAdminRoles() {
+        return adminRoleDao.readAllAdminRoles();
+    }
+
+    @Override
+    public List<AdminPermission> readAllAdminPermissions() {
+        return adminPermissionDao.readAllAdminPermissions();
     }
 }

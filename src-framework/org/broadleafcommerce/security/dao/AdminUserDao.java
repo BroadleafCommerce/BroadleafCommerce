@@ -15,9 +15,12 @@
  */
 package org.broadleafcommerce.security.dao;
 
+import java.util.List;
+
 import org.broadleafcommerce.security.domain.AdminUser;
 
 public interface AdminUserDao {
+    public List<AdminUser> readAllAdminUsers();
     public AdminUser readAdminUserById(Long id);
     public AdminUser readAdminUserByUserName(String userName);
     public AdminUser saveAdminUser(AdminUser user);

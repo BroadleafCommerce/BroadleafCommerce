@@ -15,21 +15,26 @@
  */
 package org.broadleafcommerce.security.service;
 
+import java.util.List;
+
 import org.broadleafcommerce.security.domain.AdminPermission;
 import org.broadleafcommerce.security.domain.AdminRole;
 import org.broadleafcommerce.security.domain.AdminUser;
 
 public interface AdminSecurityService {
 
+    public List<AdminUser> readAllAdminUsers();
     public AdminUser readAdminUserById(Long id);
     public AdminUser readAdminUserByUserName(String userName);
     public AdminUser saveAdminUser(AdminUser user);
     public void deleteAdminUser(AdminUser user);
 
+    public List<AdminRole> readAllAdminRoles();
     public AdminRole readAdminRoleById(Long id);
     public AdminRole saveAdminRole(AdminRole role);
     public void deleteAdminRole(AdminRole role);
 
+    public List<AdminPermission> readAllAdminPermissions();
     public AdminPermission readAdminPermissionById(Long id);
     public AdminPermission saveAdminPermission(AdminPermission permission);
     public void deleteAdminPermission(AdminPermission permission);

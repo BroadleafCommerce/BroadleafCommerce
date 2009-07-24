@@ -68,4 +68,12 @@ public class AdminUserDaoImpl implements AdminUserDao {
         }
         return null;
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<AdminUser> readAllAdminUsers() {
+        Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_USERS");
+        List<AdminUser> users = query.getResultList();
+        return users;
+    }
 }
