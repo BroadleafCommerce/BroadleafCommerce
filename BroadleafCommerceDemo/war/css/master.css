@@ -56,3 +56,7 @@ img {
 input.helpTextVisible {
 	color: #666;
 }
+
+.strikethrough {
+	text-decoration: line-through;
+}

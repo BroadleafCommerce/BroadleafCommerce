@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/pagination.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/thickbox.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/search.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/product.css" />
 
 <!-- Blueprint Framework CSS -->
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />
