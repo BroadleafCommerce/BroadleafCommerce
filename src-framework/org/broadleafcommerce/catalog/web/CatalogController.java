@@ -88,6 +88,10 @@ public class CatalogController extends AbstractController {
         }
 
         List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(url);
+
+        for (Category category : categoryList) {
+            category = catalogService.findCategoryById(category.getId());
+        }
         addCategoryListToModel(categoryList, rootCategory, url, model);
         model.put("rootCategory", rootCategory);
     }
