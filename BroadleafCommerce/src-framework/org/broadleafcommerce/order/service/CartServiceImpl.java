@@ -159,6 +159,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                             mergeCartResponse.getRemovedItems().add(orderItem);
                         }
                     }
+                    mergeCartResponse.setMerged(true);
                 }
                 cancelOrder(anonymousCart);
             }

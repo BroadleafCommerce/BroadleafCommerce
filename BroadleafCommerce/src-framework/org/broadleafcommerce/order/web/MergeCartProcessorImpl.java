@@ -33,9 +33,7 @@ import org.springframework.stereotype.Service;
 @Service("blMergeCartProcessor")
 public class MergeCartProcessorImpl implements MergeCartProcessor {
 
-    private String mergeCartItemsAddedKey = "merge_cart_items_added";
-
-    private String mergeCartItemsRemovedKey = "merge_cart_items_removed";
+    private String mergeCartResponseKey = "bl_merge_cart_response";
 
     @Resource(name="blCustomerService")
     private CustomerService customerService;
@@ -62,27 +60,16 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }
-        if (!mergeCartResponse.getAddedItems().isEmpty()) {
-            request.getSession().setAttribute(mergeCartItemsAddedKey, mergeCartResponse.getAddedItems());
-        }
-        if (!mergeCartResponse.getRemovedItems().isEmpty()) {
-            request.getSession().setAttribute(mergeCartItemsRemovedKey, mergeCartResponse.getRemovedItems());
-        }
+
+        request.getSession().setAttribute(mergeCartResponseKey, mergeCartResponse);
     }
 
-    public String getMergeCartItemsAddedKey() {
-        return mergeCartItemsAddedKey;
+    public String getMergeCartResponseKey() {
+        return mergeCartResponseKey;
     }
 
-    public void setMergeCartItemsAddedKey(String mergeCartItemsAddedKey) {
-        this.mergeCartItemsAddedKey = mergeCartItemsAddedKey;
+    public void setMergeCartResponseKey(String mergeCartResponseKey) {
+        this.mergeCartResponseKey = mergeCartResponseKey;
     }
 
-    public String getMergeCartItemsRemovedKey() {
-        return mergeCartItemsRemovedKey;
-    }
-
-    public void setMergeCartItemsRemovedKey(String mergeCartItemsRemovedKey) {
-        this.mergeCartItemsRemovedKey = mergeCartItemsRemovedKey;
-    }
 }

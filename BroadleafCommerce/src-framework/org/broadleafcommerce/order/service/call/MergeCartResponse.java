@@ -29,6 +29,8 @@ public class MergeCartResponse {
 
     private List<OrderItem> removedItems = new ArrayList<OrderItem>();;
 
+    private boolean merged;
+
     public Order getOrder() {
         return order;
     }
@@ -52,4 +54,13 @@ public class MergeCartResponse {
     public void setRemovedItems(List<OrderItem> removedItems) {
         this.removedItems = removedItems;
     }
+
+    public boolean isMerged() {
+        return merged;
+    }
+
+    public void setMerged(boolean merged) {
+        this.merged = merged;
+    }
+
 }
