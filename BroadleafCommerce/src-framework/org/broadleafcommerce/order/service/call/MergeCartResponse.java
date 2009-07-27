@@ -15,13 +15,15 @@
  */
 package org.broadleafcommerce.order.service.call;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 
-public class MergeCartResponse {
+public class MergeCartResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Order order;
 
