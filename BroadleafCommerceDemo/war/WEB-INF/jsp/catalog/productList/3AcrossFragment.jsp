@@ -6,7 +6,7 @@
 			<div class="span-13 columns productResults">
 				<div class="span-2 column productResultsImage" align="center">
 					<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
-						<img border="0" title="${product.name}" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" width="80"/>
+						<img border="0" title="${product.name}" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" width="75"/>
 					</a>
 				</div>
 				<div class="span-6 column productResultsInfo">
