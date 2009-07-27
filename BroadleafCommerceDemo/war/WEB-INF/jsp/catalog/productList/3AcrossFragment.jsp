@@ -2,30 +2,38 @@
 
 <c:choose>
 	<c:when test="${!empty currentProducts}">
-		
 	 	<c:forEach var="product" items="${currentProducts}" varStatus="status">
-			<c:if test="${(status.first == true) || (status.index + 1) % 3 == 1}">
-				<div class="span-13">
-			</c:if>      
-			<div class="span-4 <c:if test="${status.index != 0 && (status.index + 1) % 3 == 0}">last</c:if>" align="center">
-				<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
-					<img border="0" title="${product.name}" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" />
-				</a><br />
-				<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
-					${product.name} 
-				</a>
-				<a href="<c:url value="/basket/addItem.htm"> <c:param name="skuId" value="${product.skus[0].id}"/>
-					<c:param name="quantity" value="1"/> </c:url>">
-					<img src="/broadleafdemo/images/addToCart-160x25.png"/>
-				</a>
-			</div>
-			<c:if test="${status.index != 0 && (status.index + 1) % 3 == 0}">
+			<div class="span-13 columns productResults">
+				<div class="span-2 column productResultsImage" align="center">
+					<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
+						<img border="0" title="${product.name}" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" width="80"/>
+					</a>
 				</div>
-				<div class="span-13">&nbsp;</div>
-			</c:if>
+				<div class="span-6 column productResultsInfo">
+					<blc:productLink product="${product}" />  <br/>
+					<span> <b>Manufacturer:</b> ${product.manufacturer} </span> <br/>
+					<span> <b>Model:</b> ${product.model} </span> <br/>
+				</div>
+				<div class="span-3 column productResultsRightCol" style="float:right;">
+					<span class="productPrice"> 
+						<c:choose>
+							<c:when test="${product.skus[0].salePrice != null}" >
+								<span class="strikethrough">$<c:out value="${product.skus[0].retailPrice}" /></span>
+								$<c:out value="${product.skus[0].salePrice}" />
+							</c:when>			
+							<c:otherwise>
+								$<c:out value="${product.skus[0].retailPrice}" />
+							</c:otherwise>
+						</c:choose>
+					</span> <br/><br/>
+					<a href="<c:url value="/basket/addItem.htm"> <c:param name="skuId" value="${product.skus[0].id}"/>
+						<c:param name="quantity" value="1"/> </c:url>">
+						<img src="/broadleafdemo/images/addToCart-160x25.png"/>
+					</a>
+				</div>
+			</div>
 		</c:forEach>
 	</c:when>
 	<c:otherwise>
-		<h2>This category has no products</h2>
 	</c:otherwise>	
 </c:choose>

@@ -1,22 +1,38 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 
-Featured Products
 <c:if test="${fn:length(currentCategory.featuredProducts) > 0 }" >
-	<h3> FEATURED PRODUCTS </h3>
-	<table border="0">
-		<tr>
-			<th>Name</th>
-		</tr>
-		<c:forEach var="featuredProduct" items="${currentCategory.featuredProducts}" varStatus="status">
-			<tr>
-				<td>
-					<blc:productLink product="${featuredProduct.product}" />
-		  			<c:if test="${featuredProduct.product.isFeaturedProduct == true}" > 
-						--FEATURED PRODUCT!-- 
-					</c:if> 
-					Promo Message: ${featuredProduct.promotionMessage}
-				</td>
-			</tr>
-		</c:forEach>
-	</table>
+	<c:forEach var="featuredProduct" items="${currentCategory.featuredProducts}" varStatus="status">
+		<div class="span-13 columns productResults featuredProduct">
+			<div class="span-2 column productResultsImage" align="center">
+				<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
+					<img border="0" title="${featuredProduct.product.name}" alt="${featuredProduct.product.name}" src="/broadleafdemo${featuredProduct.product.productImages.small}" width="80"/>
+				</a>
+			</div>
+			<div class="span-6 column productResultsInfo">
+				<blc:productLink product="${featuredProduct.product}" /> <br/>
+				<span> <b>Manufacturer:</b> ${featuredProduct.product.manufacturer} </span> <br/>
+				<span> <b>Model:</b> ${featuredProduct.product.model} </span> <br/>
+			</div>
+			<div class="span-3 column productResultsRightCol" style="float:right;">
+				<span class="productPrice"> 
+					<c:choose>
+						<c:when test="${featuredProduct.product.skus[0].salePrice != null}" >
+							<span class="strikethrough">$<c:out value="${featuredProduct.product.skus[0].retailPrice}" /></span>
+							$<c:out value="${featuredProduct.product.skus[0].salePrice}" />
+						</c:when>			
+						<c:otherwise>
+							$<c:out value="${featuredProduct.product.skus[0].retailPrice}" />
+						</c:otherwise>
+					</c:choose>
+				</span> <br/><br/>
+				<a href="<c:url value="/basket/addItem.htm"> <c:param name="skuId" value="${featuredProduct.product.skus[0].id}"/>
+					<c:param name="quantity" value="1"/> </c:url>">
+					<img src="/broadleafdemo/images/addToCart-160x25.png"/>
+				</a>
+			</div>
+			<div class="span-13">
+				<span class="featuredProductPromo"> <b>${featuredProduct.promotionMessage} </b></span>
+			</div>	
+		</div>
+	</c:forEach>
 </c:if>

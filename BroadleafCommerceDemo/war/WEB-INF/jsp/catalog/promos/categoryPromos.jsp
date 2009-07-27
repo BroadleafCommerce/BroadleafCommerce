@@ -5,3 +5,4 @@
 	Broadleaf Commerce - leading open source e-commerce framework
 	
 	<li class="promo"><h3><a href="">Coffee Demo Store</a></h3>Voted #1 demo store! Shop now!	
+</ol>

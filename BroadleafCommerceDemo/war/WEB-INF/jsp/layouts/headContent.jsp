@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/thickbox.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/search.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/product.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/category.css" />
 
 <!-- Blueprint Framework CSS -->
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />

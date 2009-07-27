@@ -60,3 +60,15 @@ input.helpTextVisible {
 .strikethrough {
 	text-decoration: line-through;
 }
+
+.breadcrumb {
+	margin: 10px 0px 10px 0px; 
+}
+
+.body {
+	margin: 5px 5px 15px 5px; 
+} 
+
+.noTextUnderline {
+	text-decoration: none;
+}

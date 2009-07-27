@@ -8,13 +8,12 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<tiles:insertAttribute name="headContent" />
 	</head>
-
 	<body>
 		<div class="container">
 			<div class="span-24 last">
 				<tiles:insertAttribute name="navigation" />
 			</div>
-			<div class="span-24 last">
+			<div class="span-24 last" style="margin-bottom: 10px;">
 				<tiles:insertAttribute name="mainContent" />
 			</div>
 			<div class="span-24 last">
@@ -22,6 +21,4 @@
 			</div>
 		</div>
 	</body>
-	
-
 </html>

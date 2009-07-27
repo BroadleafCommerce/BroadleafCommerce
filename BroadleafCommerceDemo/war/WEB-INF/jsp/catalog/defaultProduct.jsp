@@ -1,8 +1,9 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
 <tiles:insertDefinition name="baseNoSide">
 <tiles:putAttribute name="mainContent" type="string">
-	<blc:breadcrumb categoryList="${breadcrumbCategories}" />
-		
+	<div class="breadcrumb">
+		<blc:breadcrumb categoryList="${breadcrumbCategories}" />
+	</div>
 	<div id="productContainer" class="productContainer">
 		<div class="columns">
 			<div class="column productImage span-5">
@@ -59,7 +60,7 @@
 							<c:param name="quantity" value="1"/>
 							</c:url>"><img src="/broadleafdemo/images/addToCart-160x25.png"/>
 					</a><br/> <br/>
-					<a href="" > Add To Wish List </a>
+					<a href="" > Add To Wishlist </a>
 				</div>
 			</div>
 			<div class="relatedProducts column last span-6">

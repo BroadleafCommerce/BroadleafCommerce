@@ -2,14 +2,14 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 
+	<div class="breadcrumb">
+		<blc:breadcrumb categoryList="${breadcrumbCategories}" />
+	</div>
 
-	<blc:breadcrumb categoryList="${breadcrumbCategories}" />
-	<h2>${currentCategory.name}</h2>
-
-    <div class="span-6 blueBorder">
+    <div class="span-5 blueBorder">
       	Search Options
     </div>
-    <div class="span-13 blueBorder">
+    <div class="span-14 blueBorder">
         <jsp:include page="/WEB-INF/jsp/catalog/categoryView/mainContentFragment.jsp" />
     </div>
     <div class="span-4 blueBorder last">
