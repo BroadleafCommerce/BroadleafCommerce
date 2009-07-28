@@ -26,7 +26,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.service.CatalogService;
-import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.CartService;
@@ -223,23 +222,10 @@ public class CartController {
     }
 
     @RequestMapping(value = "viewCart.htm", method = RequestMethod.GET)
-    public String viewCart(ModelMap model, HttpServletRequest request) throws PricingException {
+    public String viewCart(ModelMap model, HttpServletRequest request) {
         LOG.debug("Processing View Cart!");
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
-
-        FulfillmentGroup standardGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
-        FulfillmentGroup expeditedGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
-        standardGroup.setMethod("standard");
-        expeditedGroup.setMethod("expedited");
-        standardGroup.setOrder(cart);
-        expeditedGroup.setOrder(cart);
-        List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
-        fulfillmentGroups.add(standardGroup);
-        fulfillmentGroups.add(expeditedGroup);
-        if (cart.getFulfillmentGroups() == null || cart.getFulfillmentGroups().isEmpty()) {
-            cart.getFulfillmentGroups().add(standardGroup);
-        }
 
         for (OrderItem orderItem : cart.getOrderItems()) {
             CartOrderItem cartOrderItem = new CartOrderItem();
@@ -248,8 +234,6 @@ public class CartController {
             cartSummary.getRows().add(cartOrderItem);
         }
 
-        cart = cartService.save(cart, true);
-        cartSummary.setFulfillmentGroups(fulfillmentGroups);
         model.addAttribute("cartSummary", cartSummary);
 
         return cartViewRedirect ? "redirect:" + cartView : cartView;
