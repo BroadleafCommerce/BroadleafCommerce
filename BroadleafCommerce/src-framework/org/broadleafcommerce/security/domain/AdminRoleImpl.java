@@ -101,4 +101,8 @@ public class AdminRoleImpl implements AdminRole {
         this.description = description;
     }
 
+    public void setAllPermissions(Set<AdminPermission> allPermissions) {
+        this.allPermissions = allPermissions;
+    }
+
 }
