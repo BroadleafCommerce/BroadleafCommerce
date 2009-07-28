@@ -72,3 +72,6 @@ input.helpTextVisible {
 .noTextUnderline {
 	text-decoration: none;
 }
+.displayNone {
+	display: none;
+}

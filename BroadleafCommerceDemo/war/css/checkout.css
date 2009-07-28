@@ -1,0 +1,24 @@
+.checkoutTitle {
+	margin-bottom:5px;
+	padding:2px 7px;
+	background:#C3D9FF none repeat scroll 0 0;
+}
+
+.checkoutBorder {
+	border-style: solid;
+	border-color: #CCCCCC;
+	border-width: 1px;
+	padding: 5px 5px 5px 5px;
+}
+
+.lg {
+	font-size: 14px;
+}
+
+.small {
+	font-size: 11px;
+}
+
+.creditCardPayment {
+	margin: 20px 0px 20px 0px;
+}

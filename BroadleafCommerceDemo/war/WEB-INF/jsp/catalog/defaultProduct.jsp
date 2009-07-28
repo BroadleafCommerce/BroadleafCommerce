@@ -139,8 +139,7 @@
 			</div>
 		</div>
 		<div>
-			<blc:share />
-
+			Share this Product: <blc:share />
 		</div>
 	</div>
 	</tiles:putAttribute>

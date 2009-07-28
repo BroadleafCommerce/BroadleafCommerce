@@ -7,6 +7,7 @@
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/search.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/product.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/category.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/checkout.css" />
 
 <!-- Blueprint Framework CSS -->
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />
@@ -31,4 +32,5 @@
 <script type="text/javascript" src="/broadleafdemo/js/ui.slider.js"></script>
 <script type="text/javascript" src="/broadleafdemo/js/thickbox-compressed.js"></script>
 <script type="text/javascript" src="/broadleafdemo/js/product.js"></script>
+<script type="text/javascript" src="/broadleafdemo/js/checkout.js"></script>
 <c:set scope="request" var="contextPath" value="${pageContext.request.contextPath}" />

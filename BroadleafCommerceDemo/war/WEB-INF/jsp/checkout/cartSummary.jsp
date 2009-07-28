@@ -1,6 +1,5 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-	
-	<h3 style="margin-bottom:10px;">Your Shopping Cart (<c:out value="${fn:length(order.orderItems)}" />)</h3>
+	<h3 style="margin-bottom:10px;">Your Shopping Cart (<c:out value="${fn:length(order.orderItems)}" /> item(s))</h3>
 	<table>
 		<thead>
 			<tr valign="bottom">
@@ -84,10 +83,8 @@
       			  <tr><td colspan="3"><img src="/images/etc/dot_clear.gif" width="1" height="24"></td></tr>
      			  <tr><td colspan="3" style="padding:0;"><img src="/images/etc/dot_clear.gif" width="1" height="24"></td></tr>
   			 </table>
-
             </td>
           </tr>
-
           <tr><td colspan="2"><img src="/images/etc/dot_clear.gif" width="1" height="40"></td></tr>
         </table>
 	</td>

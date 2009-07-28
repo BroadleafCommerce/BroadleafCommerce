@@ -38,7 +38,6 @@ public class ShareTag extends SimpleTagSupport {
         //  PageContext pageContext = (PageContext)getJspContext();
         //  HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
         StringBuffer sb = new StringBuffer();
-        sb.append("Share this Product: ");
         sb.append("<a id=\"fbLink\" href=\"\">");
         sb.append("<img src=\"/broadleafdemo/images/share/link-facebook.gif\" />");
         sb.append("</a>");
