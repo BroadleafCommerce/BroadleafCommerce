@@ -248,6 +248,7 @@ public class OrderServiceImpl implements OrderService {
                 LOG.debug("No secure payment is associated with the PaymentInfo", e);
             }
             order.getPaymentInfos().remove(paymentInfo);
+            paymentInfo = paymentInfoDao.readPaymentInfoById(paymentInfo.getId());
             paymentInfoDao.delete(paymentInfo);
         }
     }
