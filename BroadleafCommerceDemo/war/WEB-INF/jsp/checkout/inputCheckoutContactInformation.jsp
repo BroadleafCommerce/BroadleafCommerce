@@ -3,13 +3,20 @@
 		<div class="checkoutTitle" > Shipping Information </div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
 		<div>
-			<form:errors path="shippingAddress.firstName" cssClass="errorInputText"/> <br/>
-			<form:errors path="shippingAddress.lastName" cssClass="errorInputText"/> <br/>
-			<form:errors path="shippingAddress.primaryPhone" cssClass="errorInputText"/> <br/>
-			<form:errors path="shippingAddress.addressLine1" cssClass="errorInputText"/> <br/>
-			<form:errors path="shippingAddress.city" cssClass="errorInputText"/> <br/>
-			<form:errors path="shippingAddress.postalCode" cssClass="errorInputText"/> <br/>
-			<form:errors path="emailAddress" cssClass="errorInputText"/> <br/>
+			<form:errors path="shippingAddress.firstName" cssClass="errorInputText"><br/>
+			</form:errors> 
+			<form:errors path="shippingAddress.lastName" cssClass="errorInputText"><br/>	
+			</form:errors>
+			<form:errors path="shippingAddress.primaryPhone" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="shippingAddress.addressLine1" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="shippingAddress.city" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="shippingAddress.postalCode" cssClass="errorInputText" ><br/>
+			</form:errors>
+			<form:errors path="emailAddress" cssClass="errorInputText"><br/>	
+			</form:errors>
 		</div>
 		<div>
 			<br/>
@@ -51,11 +58,7 @@
 			</span>
 		</div>
 		<div>
-			<label for="contactInfo.primaryPhone"><b>* Phone Number</b></label>
-			<label style="margin-left: 70px" for="contactInfo.email">Email Address</b></label> 
-		</div>
-		<div>
+			<label for="contactInfo.primaryPhone"><b>* Phone Number</b></label><br/>
 			<form:input path="shippingAddress.primaryPhone"/>	
-			<span style="margin-left: 20px" ><form:input path="emailAddress"/></span>
 		</div>
 	</div>

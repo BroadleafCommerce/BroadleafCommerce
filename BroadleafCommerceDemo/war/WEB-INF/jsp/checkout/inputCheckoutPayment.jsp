@@ -4,17 +4,28 @@
 		<div class="checkoutTitle" > Payment Information </div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
 		<div>
-			<form:errors path="billingAddress.firstName" cssClass="errorInputText"/> <br/>	
-			<form:errors path="billingAddress.lastName" cssClass="errorInputText"/> <br/>
-			<form:errors path="billingAddress.primaryPhone" cssClass="errorInputText"/> <br/>
-			<form:errors path="creditCardNumber" cssClass="errorInputText"/> <br/>
-			<form:errors path="creditCardExpMonth" cssClass="errorInputText"/> <br/>
-			<form:errors path="creditCardExpYear" cssClass="errorInputText"/> <br/>
-			<form:errors path="creditCardCvvCode" cssClass="errorInputText"/> <br/>
-			<form:errors path="billingAddress.addressLine1" cssClass="errorInputText"/> <br/>
-			<form:errors path="billingAddress.addressLine2" cssClass="errorInputText"/>	 <br/>
-			<form:errors path="billingAddress.city" cssClass="errorInputText"/> <br/>
-			<form:errors path="billingAddress.postalCode" cssClass="errorInputText"/> <br/>
+			<form:errors path="billingAddress.firstName" cssClass="errorInputText"><br/>
+			</form:errors>	
+			<form:errors path="billingAddress.lastName" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="billingAddress.primaryPhone" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="creditCardNumber" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="creditCardExpMonth" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="creditCardExpYear" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="creditCardCvvCode" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="billingAddress.addressLine1" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="billingAddress.addressLine2" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="billingAddress.city" cssClass="errorInputText"><br/>
+			</form:errors>
+			<form:errors path="billingAddress.postalCode" cssClass="errorInputText"><br/> 
+			</form:errors>
 		</div>
 		<div>
 			<br/>
@@ -56,14 +67,19 @@
 			</span>
 		</div>
 		<div>
-			<label for="contactInfo.primaryPhone"><b>* Phone Number</b></label> <br/>
+			<label for="contactInfo.primaryPhone"><b>* Phone Number</b></label>
+			<label style="margin-left: 70px" for="contactInfo.email">Email Address</b></label> 
+		</div>
+		<div>
 			<form:input path="billingAddress.primaryPhone"/>	
+			<span style="margin-left: 20px" ><form:input path="emailAddress"/></span>
 		</div>
 		<div>
 			<form:checkbox path="isSameAddress" id="sameShippingInfo"  /> 
 			<span style="padding-left:4px"> Yes, my <b>Billing</b> and <b>Shipping</b> addresses are the same </span>
 		</div>
 	</div>
+
 	<div class="span-10 creditCardPayment checkoutBorder">
 		<div class="checkoutTitle" > Credit Card Information </div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
