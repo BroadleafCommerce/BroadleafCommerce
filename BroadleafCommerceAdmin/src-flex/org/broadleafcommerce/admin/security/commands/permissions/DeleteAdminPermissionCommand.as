@@ -9,24 +9,22 @@ package org.broadleafcommerce.admin.security.commands.permissions
 	import mx.rpc.events.ResultEvent;
 
 	import org.broadleafcommerce.admin.security.business.BroadleafCommerceAdminSecurityServiceDelegate;
+	import org.broadleafcommerce.admin.security.control.events.DeleteAdminPermissionEvent;
 	import org.broadleafcommerce.admin.security.control.events.FindAllPermissionsEvent;
-	import org.broadleafcommerce.admin.security.control.events.SaveAdminPermissionEvent;
 	import org.broadleafcommerce.admin.core.vo.security.AdminPermission;
 
 
-	public class SaveAdminPermissionCommand implements ICommand, IResponder
+	public class DeleteAdminPermissionCommand implements ICommand, IResponder
 	{
 		public function execute(event:CairngormEvent):void
 		{
-			var se:SaveAdminPermissionEvent = event as SaveAdminPermissionEvent;
+			var de:DeleteAdminPermissionEvent = event as DeleteAdminPermissionEvent;
 			var delegate:BroadleafCommerceAdminSecurityServiceDelegate = new BroadleafCommerceAdminSecurityServiceDelegate(this);
-			delegate.saveAdminPermission(se.permission);
+			delegate.deleteAdminPermission(de.permission);
 		}
 
 		public function result(data:Object):void
 		{
-			var event:ResultEvent = ResultEvent(data);
-			var permission:AdminPermission = event.result as AdminPermission;
 			var reloadPermissions:FindAllPermissionsEvent = new FindAllPermissionsEvent();
 			reloadPermissions.dispatch();
 		}

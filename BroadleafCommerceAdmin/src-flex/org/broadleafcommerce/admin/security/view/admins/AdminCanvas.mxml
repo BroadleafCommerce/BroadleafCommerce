@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:admins="org.broadleafcommerce.admin.security.view.admins.*"
+	xmlns:components="org.broadleafcommerce.util.components.*"
 	width="800" height="800"
 	creationComplete="creationComplete();">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.security.control.events.SaveAdminUserEvent;
+			import org.broadleafcommerce.admin.core.vo.security.AdminUser;
 			import org.broadleafcommerce.admin.security.control.events.FindAllRolesEvent;
 			import org.broadleafcommerce.admin.security.model.SecurityModel;
 			import org.broadleafcommerce.admin.security.control.events.FindAllAdminUsersEvent;
@@ -20,13 +23,30 @@
 			}
 			
 			private function handleSaveClick(event:Event):void{
-					//var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this);
-					//sowe.dispatch()
+				var adminUser:AdminUser = new AdminUser();
+				adminUser.id = null;
+				adminUser.name = this.txtName.text;
+				adminUser.login = this.txtLogin.text;
+				adminUser.email = this.txtEmail.text;
+				adminUser.password = this.txtPassword.text;
+				var roles:ArrayCollection = new ArrayCollection(this.roleList.selectedItems);
+				adminUser.allRoles = roles;
+				
+				var saveAdmin:SaveAdminUserEvent = new SaveAdminUserEvent(adminUser);
+				saveAdmin.dispatch();
 			}
 			
 			private function handleNewRoleClick(event:Event):void{
-					//var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this);
-					//sowe.dispatch()
+
+			}
+
+			private function handleViewEditButtonClick(event:Event):void{
+				
+			}
+			
+			private function handleRemoveButtonClick(event:Event):void{
+				//var deletePermission:DeleteAdminPermissionEvent = new DeleteAdminPermissionEvent(this.permissionDataGrid.selectedItem as AdminPermission);
+				//deletePermission.dispatch();
 			}
 		]]>
 	</mx:Script>
@@ -36,12 +56,18 @@
 	
 	        <mx:VBox label="Search">
 	        	<admins:AdminSimpleSearchGrid />
-				<admins:AdminUsersDataGrid
-					id="adminUsersDataGrid"
-					width="100%" 
-					height="100%" 
-					doubleClickEnabled="true" 
-					dataProvider="{SecurityModelLocator.getInstance().adminUsers}" />
+	        	<mx:HBox width="100%">
+					<admins:AdminUsersDataGrid
+						id="adminUsersDataGrid"
+						width="90%" 
+						height="100%" 
+						doubleClickEnabled="true" />
+					<mx:VBox width="10%">
+						<mx:Button id="addButton" label="Add"/>
+						<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" />
+						<mx:Button id="removeButton" label="Remove" click="handleRemoveButtonClick(event)"/>
+					</mx:VBox>	        		
+	        	</mx:HBox>
 	        </mx:VBox>
 	
 	        <mx:VBox label="Administrator Details">
@@ -68,9 +94,11 @@
 
 		                <mx:VBox height="100%">
 			                <mx:Label text="Roles"/>
-			                <mx:List id="roleList" dataProvider="{SecurityModelLocator.getInstance().adminRoles}" labelField="name"></mx:List>
+				            <components:CheckBoxList id="roleList" allowMultipleSelection="true" dataProvider="{SecurityModelLocator.getInstance().adminRoles}" labelField="name" 
+			       				width="400">
+			                </components:CheckBoxList>
 			               	<mx:Button
-		                        label="Add New Role" 
+		                        label="Create New Role" 
 		                        click="handleNewRoleClick(event)"/>
 			            </mx:VBox>
 		            

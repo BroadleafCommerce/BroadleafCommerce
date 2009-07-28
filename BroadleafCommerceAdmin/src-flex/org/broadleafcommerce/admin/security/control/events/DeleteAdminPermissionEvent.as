@@ -4,14 +4,14 @@ package org.broadleafcommerce.admin.security.control.events
 
 	import org.broadleafcommerce.admin.core.vo.security.AdminPermission;
 
-	public class SaveAdminPermissionEvent extends CairngormEvent
+	public class DeleteAdminPermissionEvent extends CairngormEvent
 	{
-		public static const EVENT_SAVE_ADMIN_PERMISSION:String = "save_admin_permission_event";
+		public static const EVENT_DELETE_ADMIN_PERMISSION:String = "delete_admin_permission";
 		public var permission:AdminPermission;
 
-		public function SaveAdminPermissionEvent(permission:AdminPermission)
+		public function DeleteAdminPermissionEvent(permission:AdminPermission)
 		{
-			super(EVENT_SAVE_ADMIN_PERMISSION);
+			super(EVENT_DELETE_ADMIN_PERMISSION);
 			this.permission = permission;
 		}
 

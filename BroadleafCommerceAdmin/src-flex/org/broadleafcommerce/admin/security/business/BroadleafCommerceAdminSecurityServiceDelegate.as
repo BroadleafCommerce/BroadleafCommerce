@@ -3,7 +3,9 @@ package org.broadleafcommerce.admin.security.business
 	import mx.rpc.AsyncToken;
 	import mx.rpc.IResponder;
 
-	import org.broadleafcommerce.admin.security.vo.AdminPermission;
+	import org.broadleafcommerce.admin.core.vo.security.AdminPermission;
+	import org.broadleafcommerce.admin.core.vo.security.AdminRole;
+	import org.broadleafcommerce.admin.core.vo.security.AdminUser;
 
 	public class BroadleafCommerceAdminSecurityServiceDelegate
 	{
@@ -36,10 +38,29 @@ package org.broadleafcommerce.admin.security.business
 			call.addResponder(responder);
 		}
 
+		public function findAdminUserByUsername(username:String):void{
+			var call:AsyncToken = adminSecurityService.readAdminUserByUserName(username);
+			call.addResponder(responder);
+		}
+
 		public function saveAdminPermission(permission:AdminPermission):void{
 			var call:AsyncToken = adminSecurityService.saveAdminPermission(permission);
 			call.addResponder(responder);
 		}
 
+		public function deleteAdminPermission(permission:AdminPermission):void{
+			var call:AsyncToken = adminSecurityService.deleteAdminPermission(permission);
+			call.addResponder(responder);
+		}
+
+		public function saveRole(role:AdminRole):void{
+			var call:AsyncToken = adminSecurityService.saveAdminRole(role);
+			call.addResponder(responder);
+		}
+
+		public function saveAdminUser(adminUser:AdminUser):void{
+			var call:AsyncToken = adminSecurityService.saveAdminUser(adminUser);
+			call.addResponder(responder);
+		}
 	}
 }

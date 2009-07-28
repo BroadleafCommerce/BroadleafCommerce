@@ -1,10 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml">
-	<mx:columns>
-		<mx:DataGridColumn dataField="id"  headerText="Admin User ID"/>		
-		<mx:DataGridColumn dataField="name"  headerText="Name"/>
-		<mx:DataGridColumn dataField="login"  headerText="Login"/>
-		<mx:DataGridColumn dataField="email"  headerText="Email"/>
-		<mx:DataGridColumn dataField="password"  headerText="Password"/>
-	</mx:columns>
-</mx:DataGrid>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+	    <![CDATA[
+	    	import org.broadleafcommerce.admin.core.vo.security.AdminUser;
+	    	import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
+	    	import org.broadleafcommerce.admin.core.vo.security.AdminRole;
+	        import mx.controls.dataGridClasses.DataGridColumn;
+	        import mx.utils.ObjectUtil;
+	        
+	        private function role_labelFunc(item:Object, column:DataGridColumn):String {
+	        	var roleString:String = "";
+	        	var user:AdminUser = item as AdminUser;
+	        	trace(user.allRoles);
+				//if (roles != null){
+	        	//	for(var i:int=0; i<roles.length; i++){ 
+	        	//		roleString = roleString + (roles[i] as AdminRole).name + " ";
+	        	//	}
+	        	//}
+	        	
+	            return roleString;
+	        }
+
+	    ]]>
+	</mx:Script>
+	<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml" dataProvider="{SecurityModelLocator.getInstance().adminUsers}" width="100%">
+		<mx:columns>
+			<mx:DataGridColumn dataField="id"  headerText="Admin User ID"/>		
+			<mx:DataGridColumn dataField="name"  headerText="Name"/>
+			<mx:DataGridColumn dataField="login"  headerText="Login"/>
+			<mx:DataGridColumn dataField="email"  headerText="Email"/>
+		</mx:columns>
+	</mx:DataGrid>
+</mx:Canvas>

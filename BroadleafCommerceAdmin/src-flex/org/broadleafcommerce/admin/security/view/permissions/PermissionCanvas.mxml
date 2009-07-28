@@ -5,9 +5,10 @@
 	creationComplete="creationComplete();">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.security.control.events.DeleteAdminPermissionEvent;
 			import org.broadleafcommerce.admin.security.control.events.FindAllPermissionsEvent;
 			import org.broadleafcommerce.admin.security.control.events.SaveAdminPermissionEvent;
-			import org.broadleafcommerce.admin.security.vo.AdminPermission;
+			import org.broadleafcommerce.admin.core.vo.security.AdminPermission;
 			import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
 			
 			private function creationComplete():void{
@@ -17,12 +18,32 @@
 			
 			private function handleSaveClick(event:Event):void{
 				var permission:AdminPermission = new AdminPermission();
-				permission.id = null;
+				permission.id = this.hiddenId.text;
 				permission.description = this.txtDescription.text;
 				permission.name = this.txtName.text;
 				
 				var savePermission:SaveAdminPermissionEvent = new SaveAdminPermissionEvent(permission);
 				savePermission.dispatch();
+			}
+			
+			private function handleViewEditButtonClick(event:Event):void{
+				clearInputs();
+				this.hiddenId.text = (this.permissionDataGrid.selectedItem as AdminPermission).id;
+				this.txtName.text = (this.permissionDataGrid.selectedItem as AdminPermission).name;
+				this.txtDescription.text = (this.permissionDataGrid.selectedItem as AdminPermission).description;
+				
+				this.tnPermissionCanvas.selectedIndex = 1;
+			}
+			
+			private function handleRemoveButtonClick(event:Event):void{
+				var deletePermission:DeleteAdminPermissionEvent = new DeleteAdminPermissionEvent(this.permissionDataGrid.selectedItem as AdminPermission);
+				deletePermission.dispatch();
+			}
+			
+			private function clearInputs():void{
+				this.hiddenId.text = null;
+				this.txtName.text = null;
+				this.txtDescription.text = null;
 			}
 		]]>
 	</mx:Script>
@@ -38,15 +59,22 @@
         property="text"
         minLength="2"
     />	
-    <mx:TabNavigator id="tnPermissionCanvas"  width="100%" height="100%" paddingLeft="20" paddingBottom="20" paddingTop="20" paddingRight="20">
+    <mx:TabNavigator id="tnPermissionCanvas"  width="100%" height="100%" paddingLeft="20" paddingBottom="20" paddingTop="20" paddingRight="20" change="clearInputs">
 
 	    <mx:VBox label="Search">
-			<permission:PermissionDataGrid
-				id="permissionDataGrid"
-				width="100%" 
-				height="100%" 
-				doubleClickEnabled="true"
-				dataProvider="{SecurityModelLocator.getInstance().adminPermissions}" />
+	    	<mx:HBox width="100%">
+				<permission:PermissionDataGrid
+					id="permissionDataGrid"
+					width="90%" 
+					height="100%" 
+					doubleClickEnabled="true"
+					dataProvider="{SecurityModelLocator.getInstance().adminPermissions}" />
+				<mx:VBox width="10%">
+					<mx:Button id="addButton" label="Add"/>
+					<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" />
+					<mx:Button id="removeButton" label="Remove" click="handleRemoveButtonClick(event)"/>
+				</mx:VBox>
+	    	</mx:HBox>
 	    </mx:VBox>
 	
 	    <mx:VBox label="Permission Details">
@@ -54,6 +82,7 @@
 	        	<mx:FormHeading label="New Permission"/>	            	
 	        	<mx:HBox width="50%">
 	                <mx:Form>
+	                	<mx:Text id="hiddenId" includeInLayout="false"/>
 	                    <mx:FormItem label="Name">
 	                        <mx:TextInput id="txtName" />
 	                    </mx:FormItem>
