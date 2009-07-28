@@ -9,9 +9,12 @@ package org.broadleafcommerce.admin.catalog.vo.sku
 	public class Sku
 	{
 		public var id:Number;
-		public var salePrice:Money = new Money();
-		public var retailPrice:Money = new Money();
-		public var listPrice:Money = new Money();
+//		public var salePrice:Money = new Money();
+//		public var retailPrice:Money = new Money();
+//		public var listPrice:Money = new Money();
+		public var salePrice:Number;
+		public var retailPrice:Number;
+		public var listPrice:Number;
 		public var name:String;
 		public var description:String;
 		public var longDescription:String;
@@ -25,9 +28,6 @@ package org.broadleafcommerce.admin.catalog.vo.sku
 		public var allParentProducts:ArrayCollection = new ArrayCollection();
 		
 		public function Sku(){
-			salePrice.amount = 0;
-			listPrice.amount = 0;
-			retailPrice.amount = 0;
 		}
 
 		public function set skuImages(x:Object):void{

@@ -4,6 +4,8 @@ package org.broadleafcommerce.admin.core.model
 	import com.adobe.cairngorm.CairngormMessageCodes;
 	import com.adobe.cairngorm.model.IModelLocator;
 	
+	import org.broadleafcommerce.admin.core.vo.security.AdminUser;
+	
 
 	public class AppModelLocator implements IModelLocator
 	{
@@ -24,6 +26,9 @@ package org.broadleafcommerce.admin.core.model
 				throw new CairngormError(CairngormMessageCodes.SINGLETON_EXCEPTION, "BlcAdminModelLocator");				
 		}
 		
+		public var authModel:AuthenticationModel = new AuthenticationModel();
+		
 		public var configModel:ConfigModel = new ConfigModel();
+		
 	}
 }

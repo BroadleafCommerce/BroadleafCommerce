@@ -1,4 +1,4 @@
 <xml>
-	<menuitem label="Catalog" swf="modules/CatalogModule.swf" displayOrder="2" />
-	<menuitem label="Offers" swf="modules/OfferModule.swf" displayOrder="5"/>
+	<menuitem label="Catalog" swf="modules/CatalogModule.swf" displayOrder="2" authRoles="ROLE_ADMIN,asdfsdf" />
+	<menuitem label="Offers" swf="modules/OfferModule.swf" displayOrder="5" authRoles="ROLE_ADMIN" />
 </xml>

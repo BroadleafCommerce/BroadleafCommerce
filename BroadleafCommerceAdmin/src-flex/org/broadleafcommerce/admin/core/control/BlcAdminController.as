@@ -4,10 +4,12 @@ package org.broadleafcommerce.admin.core.control
 	
 	import org.broadleafcommerce.admin.core.commands.AddModulesToViewCommand;
 	import org.broadleafcommerce.admin.core.commands.GetAdminConfigCommand;
+	import org.broadleafcommerce.admin.core.commands.GetAuthenticationCommand;
 	import org.broadleafcommerce.admin.core.commands.InitializeApplicationCommand;
 	import org.broadleafcommerce.admin.core.commands.LoadModulesCommand;
 	import org.broadleafcommerce.admin.core.control.events.AddModulesToViewEvent;
 	import org.broadleafcommerce.admin.core.control.events.GetAdminConfigEvent;
+	import org.broadleafcommerce.admin.core.control.events.GetAuthenticationEvent;
 	import org.broadleafcommerce.admin.core.control.events.InitializeApplicationEvent;
 	import org.broadleafcommerce.admin.core.control.events.LoadModulesEvent;
 	
@@ -21,6 +23,7 @@ package org.broadleafcommerce.admin.core.control
 			addCommand(GetAdminConfigEvent.EVENT_READ_ADMIN_CONFIG, GetAdminConfigCommand);
 			addCommand(LoadModulesEvent.EVENT_LOAD_MODULES, LoadModulesCommand);
 			addCommand(AddModulesToViewEvent.EVENT_ADD_MODULES_TO_VIEW, AddModulesToViewCommand);
+			addCommand(GetAuthenticationEvent.EVENT_GET_AUTHENTICATION, GetAuthenticationCommand);
 		}
 		
 	}

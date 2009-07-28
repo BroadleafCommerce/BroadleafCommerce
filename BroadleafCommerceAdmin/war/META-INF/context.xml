@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
   
-<Context path="/broadleafdemo"
+<Context path="/broadleafadmin"
             useNaming="true" antiJARLocking="true">
     <Resource name="jdbc/web" auth="Container" type="javax.sql.DataSource"
               username="@@MYSQL_USERNAME@@" password="@@MYSQL_PASSWORD@@" driverClassName="com.mysql.jdbc.Driver"

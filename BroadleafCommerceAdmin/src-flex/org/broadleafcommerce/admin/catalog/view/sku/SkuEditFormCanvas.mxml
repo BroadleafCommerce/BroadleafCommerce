@@ -26,8 +26,8 @@
 				updatedSku.longDescription = descriptionTextInput.text;
 				updatedSku.activeStartDate = activeStartDateDateField.selectedDate;
 				updatedSku.activeEndDate = activeEndDateDateField.selectedDate;
-				updatedSku.retailPrice.amount = Number(retailPriceTextInput.text);
-				updatedSku.listPrice.amount = Number(salePriceTextInput.text);
+				updatedSku.retailPrice = Number(retailPriceTextInput.text);
+				updatedSku.listPrice = Number(salePriceTextInput.text);
 				updatedSku.available = availableTextInput.text;
 				updatedSku.discountable = discountableTextInput.text;				 
 				var scse:SaveSkuEvent = new SaveSkuEvent(updatedSku);

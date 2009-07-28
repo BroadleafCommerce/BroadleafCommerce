@@ -13,5 +13,6 @@ package org.broadleafcommerce.admin.core.vo
 		public var swf:String;
 		public var displayOrder:int;
 		public var loadedModule:Module;
+		public var authenticatedRoles:String;
 	}
 }

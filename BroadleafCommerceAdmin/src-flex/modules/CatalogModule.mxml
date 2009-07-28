@@ -20,5 +20,5 @@
 </mx:Script>
 	<control:BlcAdminCatalogController />
 	
-	<view:CatalogCanvas label="Catalog" width="100%" height="100%" />
+	<view:CatalogCanvas label="Catalog"  width="100%" height="100%" />
 </mx:Module>

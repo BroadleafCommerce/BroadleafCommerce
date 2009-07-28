@@ -19,15 +19,15 @@ package org.broadleafcommerce.admin.core.commands
 
 		public function execute(event:CairngormEvent):void
 		{
-			var modulesLoaded:ArrayCollection = AppModelLocator.getInstance().configModel.modules;
-			var modules:ArrayCollection = AppModelLocator.getInstance().configModel.modules;
+			var modulesLoaded:ArrayCollection = AppModelLocator.getInstance().configModel.modulesLoaded;
+			var modules:ArrayCollection = AppModelLocator.getInstance().authModel.authenticatedModules;
 			if(modulesLoaded.length == modules.length){
 				for (var index:String in modulesLoaded){
 					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).addModuleToView(ModuleConfig(modules[index]).loadedModule);
 					//Application.application.adminContent.contentViewStack.addChildAt(ModuleConfig(modules[index]).loadedModule,index);
 				}
 			}else{
-				Alert.show("Not done yet");
+				Alert.show("Error loading all modules");
 			}
 		}
 		

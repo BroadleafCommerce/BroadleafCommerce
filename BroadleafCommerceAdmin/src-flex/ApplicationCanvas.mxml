@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" xmlns:view="org.broadleafcommerce.admin.core.view.*">
+	<mx:VBox height="100%" 
+		width="100%" 
+		minHeight="500" 
+		minWidth="200" >
+		<mx:HBox width="100%" 
+			horizontalAlign="{getStyle('adminLogoHAlign')}" >
+			<mx:Image source="{getStyle('adminLogo')}"
+				height="{getStyle('adminLogoHeight')}"
+				width="{getStyle('adminLogoWidth')}"/> 
+		</mx:HBox>
+		<view:AdminContent 
+			id="adminContent"
+			width="100%" 
+			height="100%" />
+	</mx:VBox>	
+</mx:Canvas>

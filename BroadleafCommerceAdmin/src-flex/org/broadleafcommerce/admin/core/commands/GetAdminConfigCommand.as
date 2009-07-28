@@ -11,7 +11,6 @@ package org.broadleafcommerce.admin.core.commands
 	import mx.collections.Sort;
 	import mx.collections.SortField;
 	
-	import org.broadleafcommerce.admin.core.control.events.LoadModulesEvent;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.vo.ModuleConfig;
 
@@ -41,6 +40,7 @@ package org.broadleafcommerce.admin.core.commands
 				mc.label = module.@label;
 				mc.swf = module.@swf;
 				mc.displayOrder = module.@displayOrder;
+				mc.authenticatedRoles = module.@authRoles;
 				modules.addItem(mc);
 			}		
 			var dataSortField:SortField = new SortField();
@@ -53,8 +53,9 @@ package org.broadleafcommerce.admin.core.commands
 
 			modules.sort = numericDataSort;
 			modules.refresh();
-			var lme:LoadModulesEvent = new LoadModulesEvent(modules);
-			lme.dispatch();	
+			AppModelLocator.getInstance().configModel.modules = modules;
+//			var lme:LoadModulesEvent = new LoadModulesEvent(modules);
+//			lme.dispatch();	
 		}
 		
 	}

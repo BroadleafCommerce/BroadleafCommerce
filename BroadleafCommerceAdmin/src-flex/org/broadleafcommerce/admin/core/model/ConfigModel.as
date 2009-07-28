@@ -9,8 +9,7 @@ package org.broadleafcommerce.admin.core.model
 		{
 		}
 
-		public var urlPrefix:String = Application.application.loaderInfo.url.substr(0,
-			                                          	  Application.application.loaderInfo.url.lastIndexOf("/"))+"/";
+		public var urlPrefix:String;
 		
 		public var modulesLoaded:ArrayCollection = new ArrayCollection();
 		
