@@ -91,7 +91,9 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
     @Override
     public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentInfoType paymentInfoType) throws WorkflowException {
         Referenced referenced = findSecurePaymentInfo(referenceNumber, paymentInfoType);
-        remove(referenced);
+        if (referenced != null) {
+            remove(referenced);
+        }
 
     }
 
