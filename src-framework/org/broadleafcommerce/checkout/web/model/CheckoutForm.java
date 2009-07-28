@@ -33,6 +33,7 @@ public class CheckoutForm {
     private String creditCardExpMonth;
     private String creditCardExpYear;
     private String selectedCreditCardType;
+    private boolean isSameAddress;
 
     public CheckoutForm() {
         shippingAddress = new AddressImpl();
@@ -41,6 +42,7 @@ public class CheckoutForm {
         billingAddress.setCountry(new CountryImpl());
         shippingAddress.setState(new StateImpl());
         billingAddress.setState(new StateImpl());
+        isSameAddress = true;
     }
 
     public String getEmailAddress() {
@@ -113,6 +115,14 @@ public class CheckoutForm {
 
     public void setCreditCardExpYear(String creditCardExpYear) {
         this.creditCardExpYear = creditCardExpYear;
+    }
+
+    public boolean getIsSameAddress() {
+        return isSameAddress;
+    }
+
+    public void setIsSameAddress(boolean isSameAddress) {
+        this.isSameAddress = isSameAddress;
     }
 
 }

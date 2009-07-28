@@ -106,11 +106,29 @@ public class CheckoutController {
         this.checkoutView = checkoutView;
     }
 
+    private CheckoutForm copyAddress (CheckoutForm checkoutForm) {
+        checkoutForm.getShippingAddress().setFirstName(checkoutForm.getBillingAddress().getFirstName());
+        checkoutForm.getShippingAddress().setLastName(checkoutForm.getBillingAddress().getLastName());
+        checkoutForm.getShippingAddress().setAddressLine1(checkoutForm.getBillingAddress().getAddressLine1());
+        checkoutForm.getShippingAddress().setAddressLine2(checkoutForm.getBillingAddress().getAddressLine2());
+        checkoutForm.getShippingAddress().setCity(checkoutForm.getBillingAddress().getCity());
+        checkoutForm.getShippingAddress().setState(checkoutForm.getBillingAddress().getState());
+        checkoutForm.getShippingAddress().setPostalCode(checkoutForm.getBillingAddress().getPostalCode());
+        checkoutForm.getShippingAddress().setCountry(checkoutForm.getBillingAddress().getCountry());
+        checkoutForm.getShippingAddress().setPrimaryPhone(checkoutForm.getBillingAddress().getPrimaryPhone());
+
+        return checkoutForm;
+    }
+
     @RequestMapping(value = "checkout.htm", method = {RequestMethod.POST})
     public String processCheckout(@ModelAttribute CheckoutForm checkoutForm,
             BindingResult errors,
             ModelMap model,
             HttpServletRequest request) {
+
+        if (checkoutForm.getIsSameAddress()) {
+            copyAddress(checkoutForm);
+        }
 
         checkoutFormValidator.validate(checkoutForm, errors);
 
