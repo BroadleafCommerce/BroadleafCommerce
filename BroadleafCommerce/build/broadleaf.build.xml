@@ -185,10 +185,29 @@
 			<fileset refid="common.lib" />
 		</path>
 
-		<javadoc packagenames="org.broadleafcommerce.*" destdir="${stage.dir}/javadocs" classpathref="compile-lib" useexternalfile="true">
-			<fileset dir="${framework.src.dir}">
-				<include name="**/*.java" />
-			</fileset>
+		<javadoc packagenames="org.broadleafcommerce.*" destdir="${stage.dir}/javadoc-api" classpathref="compile-lib" useexternalfile="true">
+
+         <!-- Build Java docs for all of BLC: 
+              Framework
+              Profile
+              Auxiliary
+              Layout -->
+         <fileset dir="${framework.src.dir}">
+            <include name="**/*.java" />
+         </fileset>
+         
+         <fileset dir="${auxiliary.src.dir}">
+            <include name="**/*.java" />
+         </fileset>
+         
+         <fileset dir="${layout.src.dir}">
+            <include name="**/*.java" />
+         </fileset>
+         
+         <fileset dir="${profile.src.dir}">
+            <include name="**/*.java" />
+         </fileset>
+         
 		</javadoc>
 	</target>
 	
