@@ -11,8 +11,12 @@
 				</div>
 				<div class="span-6 column productResultsInfo">
 					<blc:productLink product="${product}" />  <br/>
-					<span> <b>Manufacturer:</b> ${product.manufacturer} </span> <br/>
-					<span> <b>Model:</b> ${product.model} </span> <br/>
+					<c:if test="${!(empty product.manufacturer) }" >
+						<span> <b>Manufacturer:</b> ${product.manufacturer} </span> <br/>
+					</c:if>
+					<c:if test="${!(empty product.model) }" >
+						<span> <b>Model:</b> ${product.model} </span> <br/>
+					</c:if>
 				</div>
 				<div class="span-3 column productResultsRightCol" style="float:right;">
 					<span class="productPrice"> 

@@ -27,10 +27,16 @@
 					<c:if test="${currentProduct.isFeaturedProduct == false}">
 						<h3 class="productName">${currentProduct.name} </h3> 	
 					</c:if>
-					<span> <b>Manufacturer:</b> ${currentProduct.manufacturer} </span> <br/>
-					<span> <b>Model:</b> ${currentProduct.model} </span> <br/>
+					<c:if test="${!(empty currentProduct.manufacturer) }" >
+						<span> <b>Manufacturer:</b> ${currentProduct.manufacturer} </span> <br/>
+					</c:if>
+					<c:if test="${!(empty currentProduct.model) }" >
+						<span> <b>Model:</b> ${currentProduct.model} </span> <br/>
+					</c:if>
 					<span> <b>SKU:</b> ${currentProduct.skus[0].id} </span> <br/>
-					<span> <b>Description:</b> ${currentProduct.longDescription} </span> <br/>
+					<c:if test="${!(empty currentProduct.longDescription) }" >
+						<span> <b>Description:</b> ${currentProduct.longDescription} </span> <br/>		
+					</c:if>
 				</div>
 				<div class="productLeftCol column span-7">	
 					<c:if test="${!(empty currentProduct.weight.weight)}" >
@@ -131,6 +137,10 @@
 					</c:if>
 				</div>
 			</div>
+		</div>
+		<div>
+			<blc:share />
+
 		</div>
 	</div>
 	</tiles:putAttribute>

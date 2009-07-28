@@ -22,6 +22,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
     </tag>
+    
+      <tag>
+        <name>share</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.ShareTag</tag-class>
+        <body-content>empty</body-content>
+    </tag>
 
     <tag>
         <name>breadcrumb</name>
