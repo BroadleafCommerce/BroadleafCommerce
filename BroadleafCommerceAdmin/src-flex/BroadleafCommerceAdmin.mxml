@@ -17,6 +17,13 @@
 			import org.broadleafcommerce.admin.core.control.events.InitializeApplicationEvent;
 			import com.adobe.cairngorm.control.CairngormEventDispatcher;
 			
+			  import mx.managers.HistoryManager;
+			  import mx.managers.DragManager;
+			  import mx.managers.CursorManager;
+			  public var __dm:DragManager;
+			  public var __cm:CursorManager;
+			  public var __hm:HistoryManager;			
+			
 			[Bindable]
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
 			
