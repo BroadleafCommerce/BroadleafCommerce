@@ -23,7 +23,7 @@
 
 	    ]]>
 	</mx:Script>
-	<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml" dataProvider="{SecurityModelLocator.getInstance().adminUsers}" width="100%">
+	<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml" id="adminDataGrid" dataProvider="{SecurityModelLocator.getInstance().adminUsers}" width="100%">
 		<mx:columns>
 			<mx:DataGridColumn dataField="id"  headerText="Admin User ID"/>		
 			<mx:DataGridColumn dataField="name"  headerText="Name"/>

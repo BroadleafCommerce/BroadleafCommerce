@@ -43,13 +43,23 @@ package org.broadleafcommerce.admin.security.business
 			call.addResponder(responder);
 		}
 
-		public function saveAdminPermission(permission:AdminPermission):void{
-			var call:AsyncToken = adminSecurityService.saveAdminPermission(permission);
+		public function deleteAdminPermission(permission:AdminPermission):void{
+			var call:AsyncToken = adminSecurityService.deleteAdminPermission(permission);
 			call.addResponder(responder);
 		}
 
-		public function deleteAdminPermission(permission:AdminPermission):void{
-			var call:AsyncToken = adminSecurityService.deleteAdminPermission(permission);
+		public function deleteAdminRole(role:AdminRole):void{
+			var call:AsyncToken = adminSecurityService.deleteAdminRole(role);
+			call.addResponder(responder);
+		}
+
+		public function deleteAdminUser(adminUser:AdminUser):void{
+			var call:AsyncToken = adminSecurityService.deleteAdminUser(adminUser);
+			call.addResponder(responder);
+		}
+
+		public function saveAdminPermission(permission:AdminPermission):void{
+			var call:AsyncToken = adminSecurityService.saveAdminPermission(permission);
 			call.addResponder(responder);
 		}
 

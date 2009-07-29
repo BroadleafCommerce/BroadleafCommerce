@@ -16,7 +16,7 @@
 			import org.broadleafcommerce.admin.security.control.events.ViewAdminsEvent;
 			import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
 			import org.broadleafcommerce.admin.security.model.SecurityModel;
-			//import com.flexspy.FlexSpy;
+			//import com.adobeflexspy.FlexSpy;
 			
 			[Bindable]
 			private var securityModel:SecurityModel = SecurityModelLocator.getInstance().securityModel;
@@ -79,7 +79,7 @@
 		<mx:Canvas id="workingAreaCanvas" 
 			width="100%"
 			height="100%">
-				<admins:AdminCanvas id="adminCanvas" width="100%" height="100%" />
+				<admins:AdminCanvas id="adminCanvas"/>
 				<roles:RoleCanvas id="roleCanvas"/>
 				<permissions:PermissionCanvas id="permissionCanvas"/>
 		</mx:Canvas>
