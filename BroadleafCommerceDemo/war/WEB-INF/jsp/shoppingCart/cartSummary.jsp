@@ -26,7 +26,7 @@
 						<c:url var="itemUrl" value="/${product.defaultCategory.generatedUrl}">
 							<c:param name="productId" value="${product.id}"/>
 						</c:url>
-		          		<tr valign="top">
+		          		<tr class="product">
 		          			<td class="thumbnail"><a href="${itemUrl}">
 									<img border="0" title="${product.name}" width="80" alt="${product.name}" src="/broadleafdemo${product.productImages.small}" />
 								</a></td>
@@ -102,7 +102,7 @@
 					<div class="alert" style="line-height: 20px; margin-top: 16px;">
 	                	<b>Your shopping cart is currently empty</b><br>
 						&bull; &nbsp;  <a href="<c:out value="${storeUrl}" />" class="link">Click here</a>
-	                    to shop from our thousands of space- and time-saving solutions.
+	                    to shop from our selection of fine coffees and brewing equipment.
 	                    <c:if test="${customer.firstName eq null}">
 		                    <br>&bull; &nbsp; If you are a registered user,
 		                    <a href="/profile/login.htm" class="link">sign in</a>

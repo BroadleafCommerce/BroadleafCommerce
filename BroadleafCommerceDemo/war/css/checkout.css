@@ -3,10 +3,14 @@
 	line-height:1.2;
 }
 .cartTable th {
-	border-top:1px solid #888;
+	border-top:1px solid #9bc;
+	border-bottom:1px solid #9bc;
 	}
-.cartTable td, .cartTable th {
-	padding:5px 4px;
+.cartTable th,.cartTable td {
+	padding:4px;
+}
+.cartTable tr.product td {
+	padding:6px 4px;
 }
 input.cartButton {
 	font-size:11px;	
@@ -63,6 +67,8 @@ select.shipMethod {
 }
 tr.highlight td {
 	background:#efc;
+	border-bottom:1px solid #deb;
+	border-top:1px solid #deb;
 }
 
 /* Checkout Styles */
