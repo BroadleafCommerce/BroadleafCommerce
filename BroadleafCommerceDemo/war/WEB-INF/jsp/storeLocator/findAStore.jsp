@@ -49,5 +49,4 @@
 	</c:if>
 
 	</tiles:putAttribute>
-
 </tiles:insertDefinition>

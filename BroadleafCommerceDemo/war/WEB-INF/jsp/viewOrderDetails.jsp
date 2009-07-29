@@ -3,7 +3,7 @@
 	<tiles:putAttribute name="mainContent" type="string">
 	<h3 class="pageTitle" ><b>Order Details</b></h3>
 
-	<div class="orderBorder columns span-8" style="margin-top:0px;" >
+	<div class="orderBorder columns span-9" style="margin-top:0px;" >
 		<div class="orderTitle" > <b>Order Summary </b></div>
 		<div class="column span-4">
 			Order Number: <br/>
