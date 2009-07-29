@@ -56,11 +56,6 @@
 				aptpe.dispatch();
 			}
 			
-			private function handleSkuClick(event:MouseEvent):void{
-				var sku:Sku = Sku(List(event.currentTarget).selectedItem);
-				var ese:EditSkuEvent = new EditSkuEvent(sku, true);
-				ese.dispatch();
-			}
 		]]>
 	</mx:Script>
 	<mx:Binding
@@ -97,14 +92,14 @@
 		source="productModel.currentProduct.height.toString()"
 		destination="heightTextInput.text"/>		
 	<mx:Binding
-		source="productModel.currentProduct.allSkus"
-		destination="childList.dataProvider" />
-	<mx:Binding
 		source="categoryModel.categoryArray"
 		destination="parentList.dataProvider" />
 	<mx:Binding
-		source="productModel.currentProduct.allParentCategories.toArray()"
-		destination="parentList.selectedItems"/>
+		source="productModel.selectedCategories"
+		destination="parentList.selectedItems" />
+	<!--mx:Binding
+		source="productModel.currentProduct.allParentCategoriesArray"
+		destination="parentList.selectedItems"/-->
 <mx:Form>
 		
 	<mx:FormItem 
@@ -169,15 +164,6 @@
 			click="handleSaveProduct(event)"/>
 	</mx:FormItem>
 </mx:Form>
-	<mx:FormItem
-		label="SKUs" x="387" y="276" width="223" height="86">
-		<mx:List
-			id="childList"
-			labelField="name"
-			width="200"
-			click="handleSkuClick(event)"
-			/>
-	</mx:FormItem>
 	<mx:FormItem
 		label="Parent Categories" x="316" y="10">
 		<components1:ProductParentsList id="parentList" labelField="name" 

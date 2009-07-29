@@ -38,9 +38,9 @@ package org.broadleafcommerce.admin.catalog.vo.product
 			return machineSortable;
 		}
 		
-//		public function get allParentCategoriesArray():Array{
-//			return allParentCategories.toArray();
-//		}
+		public function get allParentCategoriesArray():Array{
+			return allParentCategories.toArray();
+		}
 //
 		
 //    public function readExternal(input:IDataInput):void {

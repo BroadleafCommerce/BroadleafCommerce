@@ -10,23 +10,26 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import mx.rpc.events.ResultEvent;
 	
 	import org.broadleafcommerce.admin.catalog.business.BroadleafCommerceAdminCatalogServiceDelegate;
-	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.product.FindProductsByCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
-	
-	public class FindAllProductsCommand implements Command, IResponder
+
+	public class FindProductsByCategoryCommand implements Command, IResponder
 	{
+		public function FindProductsByCategoryCommand()
+		{
+		}
+
 		public function execute(event:CairngormEvent):void
 		{
+			var fpfce:FindProductsByCategoryEvent = FindProductsByCategoryEvent(event);
 			var delegate:BroadleafCommerceAdminCatalogServiceDelegate = new BroadleafCommerceAdminCatalogServiceDelegate(this);
-			delegate.findAllProducts();
+			delegate.findActiveProductsByCategory(fpfce.category);
 		}
-		
+
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
 			CatalogModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
-			var bcte:BuildCatalogEvent = new BuildCatalogEvent();
-			bcte.dispatch();
 		}
 		
 		public function fault(info:Object):void
@@ -35,5 +38,6 @@ package org.broadleafcommerce.admin.catalog.commands.product
 			Alert.show("Error: "+ event);
 		}
 
+		
 	}
 }

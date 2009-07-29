@@ -26,9 +26,6 @@
 				if(tabNavigator.selectedChild == productMediaForm){
 					productModel.viewState = ProductModel.STATE_VIEW_MEDIA;
 				}
-				if(tabNavigator.selectedChild == productSkuForm){
-					productModel.viewState = ProductModel.STATE_VIEW_SKUS;
-				}
 			}
 			
 		]]>
@@ -36,6 +33,11 @@
 	<mx:Binding
 		source="productModel.viewState"
 		destination="currentState"/>
+		
+	<mx:Binding
+		source="productModel.catalogProducts.length == 0"
+		destination="warningText.visible" />
+			
 	<mx:VBox 
 		width="100%"
 		height="100%"
@@ -53,12 +55,12 @@
 			height="500"
 			borderStyle="solid"
 			cornerRadius="4">
-			<product1:ProductsView id="productsView"  width="490" height="445"/>
-			<mx:TabNavigator id="tabNavigator" x="498" y="10" width="740" height="436" click="handleNavigatorClick(event)">
+			<product1:ProductsView id="productsView"  width="490" height="446"/>
+			<mx:TabNavigator id="tabNavigator" x="498" y="10" width="740" height="426" click="handleNavigatorClick(event)">
 				<product1:ProductEditForm id="productEditForm" label="General" width="100%" height="100%" />
 				<product1:ProductMediaCanvas  id="productMediaForm" label="Media" width="100%" height="100%" />
-				<sku1:SkuCanvas id="productSkuForm" label="Skus" width="100%" height="100%"  />
 			</mx:TabNavigator>
+			<mx:Text id="warningText" x="20" y="190" text="No Products in Category" width="458" height="60" fontSize="36" fontWeight="normal" color="#872211"/>
 			
 			
 		</mx:Canvas>		
@@ -71,10 +73,6 @@
 		<mx:State
 			name="{ProductModel.STATE_VIEW_MEDIA}">
 			<mx:SetProperty target="{tabNavigator}" name="selectedChild" value="{productMediaForm}" />
-		</mx:State>
-		<mx:State
-			name="{ProductModel.STATE_VIEW_SKUS}">
-			<mx:SetProperty target="{tabNavigator}" name="selectedChild" value="{productSkuForm}" />
 		</mx:State>
 	</mx:states>
 </mx:Canvas>

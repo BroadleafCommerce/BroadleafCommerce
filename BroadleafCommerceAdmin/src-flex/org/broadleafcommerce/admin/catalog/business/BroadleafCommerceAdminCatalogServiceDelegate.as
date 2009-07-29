@@ -42,6 +42,11 @@ package org.broadleafcommerce.admin.catalog.business
 			call.addResponder(responder);
 		}
 		
+		public function findActiveProductsByCategory(category:Category):void{
+			var call:AsyncToken = catalogService.findActiveProductsByCategory(category);
+			call.addResponder(responder);
+		}
+		
 		public function findAllSkus():void{
 			var call:AsyncToken = catalogService.findAllSkus();
 			call.addResponder(responder);

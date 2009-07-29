@@ -8,10 +8,7 @@
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 			import org.broadleafcommerce.admin.catalog.vo.product.Product;
-			import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
 			import mx.controls.Tree;
-			import mx.managers.DragManager;
-			import mx.events.DragEvent;
 			import mx.utils.ObjectUtil;
 			import mx.managers.ToolTipManager;
 			import mx.validators.ValidationResult;
@@ -47,10 +44,10 @@
 				scce.dispatch();
 			}
 			
-			private function handleChildDrop(event:DragEvent):void{
-				var cat:Category = Category(Tree(event.dragInitiator).selectedItem);
-					categoryModel.currentCategory.allChildCategories.addItem(Category(cat));
-			}
+//			private function handleChildDrop(event:DragEvent):void{
+//				var cat:Category = Category(Tree(event.dragInitiator).selectedItem);
+//					categoryModel.currentCategory.allChildCategories.addItem(Category(cat));
+//			}
 			
 //			private function handleChildDragEnter(event:DragEvent):void{
 //				if(event.dragInitiator is Tree && Tree(event.dragInitiator).selectedItem is Category)

@@ -7,7 +7,6 @@
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 			import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
-			import mx.events.DragEvent;
 			import mx.collections.ArrayCollection;
 			import mx.events.ListEvent;
 			import org.broadleafcommerce.admin.catalog.vo.category.Category;

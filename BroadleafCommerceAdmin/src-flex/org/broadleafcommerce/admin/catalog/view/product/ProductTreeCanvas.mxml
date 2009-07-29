@@ -32,8 +32,6 @@
 		labelField="name"
 		width="300"
 		height="400"
-		dragEnabled="true"
-		dropEnabled="true"
 		cornerRadius="4"
 		itemClick="handleItemClick(event)"
 		dataDescriptor="{new ProductTreeDataDescriptor()}"/>	

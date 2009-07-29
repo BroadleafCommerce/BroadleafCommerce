@@ -7,13 +7,17 @@
 		import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
 		import org.broadleafcommerce.admin.catalog.vo.product.Product;
 		import org.broadleafcommerce.admin.catalog.model.CatalogModel;
+		import org.broadleafcommerce.admin.catalog.model.ProductModel;
 		import org.broadleafcommerce.admin.catalog.vo.product.FeaturedProduct;
 		import mx.collections.ArrayCollection;
 		import org.broadleafcommerce.admin.core.model.AppModelLocator;
 		import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 
 		[Bindable]
-		private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel; 
+		private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+		
+		[Bindable]
+		private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel; 
 		 
 		 
 		 private function handleProductsDataGridClick(event:MouseEvent):void{
@@ -34,12 +38,20 @@
 	]]>
 </mx:Script>
 
-<mx:Binding source="categoryModel.currentCategory.allProducts"
-                   destination="categoryProductDataGrid.dataProvider" />
+<!-- mx:Binding source="categoryModel.currentCategory.allProducts"
+                   destination="categoryProductDataGrid.dataProvider" /-->
+<mx:Binding source="productModel.catalogProducts"
+            destination="categoryProductDataGrid.dataProvider" />                   
 
 	<mx:HBox height="100%" width="100%">
-		<components1:ProductsDataGrid id="categoryProductDataGrid" click="handleProductsDataGridClick(event)" 
-			height="100%" width="100%"/>
+		<mx:VBox height="100%">
+			<components1:ProductsDataGrid id="categoryProductDataGrid" click="handleProductsDataGridClick(event)" 
+				height="100%" width="100%"/>
+			<mx:HBox>
+				<mx:Label text="Filter: " />			
+				<mx:TextInput id="filterText" />
+			</mx:HBox>			
+		</mx:VBox>
 		<mx:VBox >
 			<mx:Button id="addButton" label="Add"/>
 			<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" />

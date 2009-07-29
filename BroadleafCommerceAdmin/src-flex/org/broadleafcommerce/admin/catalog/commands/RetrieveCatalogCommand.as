@@ -16,8 +16,8 @@ package org.broadleafcommerce.admin.catalog.commands
 		public function RetrieveCatalogCommand()
 		{
 			eventChain.addItem(new FindAllCategoriesEvent());
-			eventChain.addItem(new FindAllProductsEvent());
-			eventChain.addItem(new FindAllSkusEvent());
+			//eventChain.addItem(new FindAllProductsEvent());
+			//eventChain.addItem(new FindAllSkusEvent());
 		}
 
 		public function execute(event:CairngormEvent):void

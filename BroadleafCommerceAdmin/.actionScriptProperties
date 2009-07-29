@@ -12,8 +12,8 @@
     <application path="BroadleafCommerceAdmin.mxml"/>
   </applications>
   <modules>
-    <module application="src-flex/BroadleafCommerceAdmin.mxml" destPath="modules/CatalogModule.swf" optimize="true" sourcePath="src-flex/modules/CatalogModule.mxml"/>
-    <module application="src-flex/BroadleafCommerceAdmin.mxml" destPath="modules/OfferModule.swf" optimize="true" sourcePath="src-flex/modules/OfferModule.mxml"/>
+    <module application="src-flex/BroadleafCommerceAdmin.mxml" destPath="modules/catalog/CatalogModule.swf" optimize="true" sourcePath="src-flex/modules/catalog/CatalogModule.mxml"/>
+    <module application="src-flex/BroadleafCommerceAdmin.mxml" destPath="modules/offers/OfferModule.swf" optimize="true" sourcePath="src-flex/modules/offers/OfferModule.mxml"/>
   </modules>
   <buildCSSFiles/>
 </actionScriptProperties>

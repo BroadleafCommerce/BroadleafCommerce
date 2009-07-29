@@ -11,13 +11,13 @@
 			<mx:DataGridColumn
 				dataField="description"
 				headerText="Description"/>
-			<mx:DataGridColumn
+			<!--mx:DataGridColumn
 				dataField="activeStartDate"
 				headerText="Start Date"/>
 			<mx:DataGridColumn
 				dataField="activeEndDate"
 				headerText="End Date"/>
-			<!--mx:DataGridColumn
+			<mx:DataGridColumn
 				dataField="model"
 				headerText="Model"/>
 			<mx:DataGridColumn

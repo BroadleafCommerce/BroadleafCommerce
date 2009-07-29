@@ -24,7 +24,7 @@ package org.broadleafcommerce.admin.catalog.commands
 			eventChain.addItem(new StandardizeCatalogObjectsEvent(categoryArray, productsArray, skusArray));
 			eventChain.addItem(new AddCategoriesToCatalogTreeEvent(catalogTree, categoryArray));		
 			// The following events add products and skus to the tree	 
-			eventChain.addItem(new AddProductsToCategoriesEvent(categoryArray, productsArray));
+			// eventChain.addItem(new AddProductsToCategoriesEvent(categoryArray, productsArray));
 			// eventChain.addItem(new AddSkusToProductsEvent(productsArray, skusArray));
 																					  
 		}
@@ -35,7 +35,10 @@ package org.broadleafcommerce.admin.catalog.commands
 			var productsArray:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;
 			var skusArray:ArrayCollection = CatalogModelLocator.getInstance().skuModel.catalogSkus;					
 
-			if(categoriesArray.length > 0 && productsArray.length > 0 && skusArray.length > 0)
+			if(categoriesArray.length > 0 
+//				&& productsArray.length > 0 
+//				&& skusArray.length > 0
+				)
 			{			
 				for each(var event:CairngormEvent in eventChain){
 					event.dispatch();
