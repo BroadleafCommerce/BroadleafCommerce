@@ -151,6 +151,4 @@
             <aop:around method="checkServiceAOP" pointcut-ref="blServiceCheckMethodShipping"/>
         </aop:aspect>
 	</aop:config>
-	
-	<bean id="blOrderState" class="org.broadleafcommerce.order.web.OrderState" scope="request"/>
 </beans>

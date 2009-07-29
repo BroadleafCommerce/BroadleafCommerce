@@ -15,10 +15,13 @@
  */
 package org.broadleafcommerce.order.web;
 
+import java.util.HashMap;
+
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.profile.domain.Customer;
 
 /**
  * This class is used as a request-scope container for the current
@@ -32,21 +35,21 @@ import org.broadleafcommerce.order.domain.Order;
  */
 public class OrderState {
 
-    private Long orderId;
+    private HashMap<Long, Long> orders = new HashMap<Long, Long>();
 
     @Resource(name="blOrderDao")
     private OrderDao orderDao;
 
-    public Order getOrder() {
-        if (orderId == null) {
+    public Order getOrder(Customer customer) {
+        if (orders.get(customer.getId()) == null) {
             return null;
         }
-        return orderDao.readOrderById(orderId);
+        return orderDao.readOrderById(orders.get(customer.getId()));
     }
 
-    public void setOrder(Order order) {
-        if (order != null) {
-            this.orderId = order.getId();
+    public void setOrder(Customer customer, Order order) {
+        if (customer != null && order != null) {
+            orders.put(customer.getId(), order.getId());
         }
     }
 
