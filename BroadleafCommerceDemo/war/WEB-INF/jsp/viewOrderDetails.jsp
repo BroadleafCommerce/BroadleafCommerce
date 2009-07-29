@@ -73,7 +73,7 @@
 				</c:forEach>
 				<tr> <th colspan="4"> </tr>
 			</table>
-			<div class="columns span-4" style="float:right;">
+			<div class="columns span-5" style="float:right;">
 				<div class="column alignRight" >
 					<label>Subtotal:</label> <br/>
 					<label> Shipping: </label> <br/>

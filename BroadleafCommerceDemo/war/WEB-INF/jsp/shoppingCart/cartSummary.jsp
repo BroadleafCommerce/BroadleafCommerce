@@ -75,9 +75,10 @@
 						<td style="text-align:right">Estimated Tax:</td>
 						<td style="text-align:right"><span class="price">${currentCartOrder.totalTax}</span></td>
 					</tr>
-					<tr class="totals"><td colspan="3" style="text-align:right;">Shipping Method:
-							<form:select cssClass="shipMethod" path="fulfillmentGroups[0].method">
-								<form:options items="${cartSummary.fulfillmentGroups}" itemValue="method" itemLabel="method" />
+					<tr class="totals">
+						<td colspan="3" style="text-align:right;">Shipping Method:
+							<form:select cssClass="shipMethod" path="fulfillmentGroup.method">
+								<form:options items="${fulfillmentGroups}" itemValue="method" itemLabel="method" />
 							</form:select>
 						</td>
 						<td style="text-align:right">Estimated Shipping:</td>
