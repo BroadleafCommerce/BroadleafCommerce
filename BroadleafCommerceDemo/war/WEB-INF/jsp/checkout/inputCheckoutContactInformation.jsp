@@ -32,7 +32,7 @@
 			<form:input path="shippingAddress.addressLine1" size="65" />
 		</div>
 		<div>
-			<label for="addressLine2">Address Line2</b></label> <br/>
+			<label for="addressLine2">Address Line 2</b></label> <br/>
 			<form:input path="shippingAddress.addressLine2"  size="65"/>
 		</div>
 		<div>
