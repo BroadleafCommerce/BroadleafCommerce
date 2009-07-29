@@ -1,6 +1,6 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 	<div id="checkoutContactInfo" class="span-11 column checkoutBorder displayNone">
-		<div class="checkoutTitle" > Shipping Information </div>
+		<div class="checkoutTitle" ><b> Shipping Information </b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
 		<div>
 			<form:errors path="shippingAddress.firstName" cssClass="errorInputText"><br/>

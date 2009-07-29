@@ -75,3 +75,11 @@ input.helpTextVisible {
 .displayNone {
 	display: none;
 }
+
+.alignRight {
+	text-align: right;
+}
+
+.alignCenter {
+	text-align: center;
+}

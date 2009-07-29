@@ -1,108 +1,93 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
-	
-	<h1>View Order Details</h1>
+	<h3 style="margin-top: 10px;" ><b>Order Details</b></h3>
 
-	Order Number - <c:out value="${order.orderNumber}" /> <br/>
-	Order Placed - <fmt:formatDate type="date" dateStyle="full" value="${order.submitDate}" />
+	<div class="orderBorder columns span-8" style="margin-top:0px;" >
+		<div class="orderTitle" > <b>Order Summary </b></div>
+		<div class="column span-4">
+			Order Number: <br/>
+			Order Placed: <br/> <br/>
+			Subtotal: <br/>
+			Total Shipping: <br/>
+			Total Tax: <br/>
+			<label> Order Total: </label>  
+		</div>
+		<div class="column ">
+			${order.orderNumber} <br/>
+			<fmt:formatDate type="date" dateStyle="full" value="${order.submitDate}" /> <br/><br/>
+			$${order.subTotal} <br/>
+			$${order.totalShipping} <br/>
+			$${order.totalTax} <br/>
+			<b>$${order.total}</b>
+		</div>
+	</div>
 
-	<div>
-		<br/>
-		<h2>Billing Information</h2>
-		<h3> Billing Address </h3>
+	<div class="orderBorder columns span-23">
+		<div class="orderTitle" > <b>Billing Information </b></div>
 		<c:forEach var="info" items="${order.paymentInfos}" varStatus="status">
-			<c:out value="${info.address.firstName }" /> &nbsp; <c:out value="${info.address.lastName }" /> <br/>
-			<c:out value="${info.address.addressLine1}"/> <br/>
-			<c:if test="${info.address.addressLine2 != null && !(empty info.address.addressLine2)}" >		
-				<c:out value="${info.address.addressLine2}"/> <br/>
-			</c:if>
-			<c:out value="${info.address.city}"/>, &nbsp;
-			<c:out value="${info.address.state.name}"/>, &nbsp; 
-			<c:out value="${info.address.postalCode}"/> <br/>
+			<div class="column span-17">
+				<span class="small"> <b>Billing Address #${status.index+1 }: </b> </span>  <br/>
+				${info.address.firstName } &nbsp; ${info.address.lastName} <br/>
+				${info.address.addressLine1} <br/>
+				<c:if test="${info.address.addressLine2 != null && !(empty info.address.addressLine2)}" >		
+					${info.address.addressLine2} <br/>
+				</c:if>
+				${info.address.city}, &nbsp; ${info.address.state.name}, &nbsp; ${info.address.postalCode} <br/>
+				${info.address.country.name} <br/>
+			</div>
+			<div class="column span-5">
+				<label> Payment Total: </label> ${info.amount } <br/>
+				<label> Payment Type: </label> ${info.type.type } <br/>
+			</div>
 		</c:forEach>
 	</div>
-	<br/>
-	<h2>Shipping Information</h2>
+	
 	<c:forEach var="fg" items="${order.fulfillmentGroups}" varStatus="status">
-		<br/>
-		<h3>Shipping Address #${status.index+1}</h3>
-		<c:out value="${fg.address.firstName }" /> &nbsp; <c:out value="${fg.address.lastName }" /> <br/>
-		<c:out value="${fg.address.addressLine1}"/> <br/>
-		<c:if test="${fg.address.addressLine2 != null && !(empty fg.address.addressLine2)}" >	
-			<c:out value="${fg.address.addressLine2}"/> <br/>
-		</c:if>
-		<c:out value="${fg.address.city}"/>, &nbsp;
-		<c:out value="${fg.address.state.name}"/>, &nbsp;
-		<c:out value="${fg.address.postalCode}"/> <br/><br/>
-		
-	<h3> Shipping Group #${status.index+1} Items </h3>
-	
-	<table border="1">
-		<tr>
-			<th>Item Name </th>
-			<th>Quantity </th>
-			<th>Unit Price</th>
-			<th>Total Price</th>
-		</tr>
-		<c:forEach var="fgi" items="${fg.fulfillmentGroupItems}">
-			<tr>
-				<td><c:out value="${fgi.orderItem.sku.name}"/></td>
-				<td><c:out value="${fgi.orderItem.quantity}"/></td>
-				<td><c:out value="${fgi.orderItem.price}"/></td>		
-				<td><c:out value="${fgi.orderItem.quantity * fgi.orderItem.price.amount}" /> </td>
-			</tr>
-		</c:forEach>
-		<tr/>
-		<tr>
-			<td> Subtotal </td> 
-			<td/> <td/> 
-			<td> <c:out value="${fg.merchandiseTotal}"/> </td>
-		</tr>
-		<tr>
-			<td> Shipping </td> 
-			<td/> <td/> 
-			<td> <c:out value="${fg.shippingPrice}"/> </td>
-		</tr>
-		<tr>
-			<td> Tax </td> 
-			<td/> <td/>
-			<td> <c:out value="${fg.totalTax}"/> </td>
-		</tr>
-		<tr>
-			<td> Shipping Group Total </td> 
-			<td/> <td/>
-			<td> <c:out value="${fg.total}"/> </td>
-		</tr>
-		
-	</table>
+		<div class="orderBorder columns span-23">
+			<div class="orderTitle" > <b>Shipment #${status.index+1} Information </b></div>
+			<div>
+				<span class="small"> <b>Ship To:</b> </span>  <br/>
+				${fg.address.firstName } &nbsp; ${fg.address.lastName } <br/>
+				${fg.address.addressLine1} <br/>
+				<c:if test="${fg.address.addressLine2 != null && !(empty fg.address.addressLine2)}" >	
+					${fg.address.addressLine2} <br/>
+				</c:if>
+				${fg.address.city}, &nbsp; ${fg.address.state.name}, &nbsp; ${fg.address.postalCode} <br/>
+				${info.address.country.name} <br/>
+			</div>
+			<table class="cartTable" border="1">
+				<tr>
+					<th>Item Name </th>
+					<th class="alignCenter">Quantity </th>
+					<th class="alignCenter">Unit Price</th>
+					<th class="alignCenter" >Total Price</th>
+				</tr>
+				<c:forEach var="fgi" items="${fg.fulfillmentGroupItems}">
+					<tr>
+						<td><c:out value="${fgi.orderItem.sku.name}"/></td>
+						<td class="alignCenter">${fgi.orderItem.quantity}</td>
+						<td class="alignCenter">${fgi.orderItem.price}</td>		
+						<td class="alignCenter">${fgi.orderItem.quantity * fgi.orderItem.price.amount} </td>
+					</tr>
+				</c:forEach>
+				<tr> <th colspan="4"> </tr>
+			</table>
+			<div class="columns span-4" style="float:right;">
+				<div class="column alignRight" >
+					<label>Subtotal:</label> <br/>
+					<label> Shipping: </label> <br/>
+					<label> Tax: </label> <br/>
+					<label> Shipment Total: </label> <br/>
+				</div>
+				<div class="column" >
+					$${fg.merchandiseTotal} <br/>
+					$${fg.shippingPrice} <br/>
+					$${fg.totalTax} <br/>
+					$${fg.total} <br/>
+				</div>
+			</div>
+		</div>
 	</c:forEach>
-	
-	<br/>
-	<h3> Order Totals </h3>
-	<table border="1">
-		<tr>
-			<th> </th>
-			<th>Price</th>
-		</tr>
-		<tr>
-			<td> Subtotal </td>
-			<td>${order.subTotal} </td>
-		</tr>
-		<tr>
-			<td> Total Shipping</td>
-			<td>${order.totalShipping} </td>
-		</tr>
-		<tr>
-			<td> Total Tax</td>
-			<td>${order.totalTax} </td>
-		</tr>
-		<tr>
-			<td> Order Total</td>
-			<td>${order.total} </td>
-		</tr>
-
-	</table>
-
 	</tiles:putAttribute>
 </tiles:insertDefinition>

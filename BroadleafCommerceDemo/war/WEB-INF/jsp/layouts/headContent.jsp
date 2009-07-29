@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/product.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/category.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/checkout.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/order.css" />
 
 <!-- Blueprint Framework CSS -->
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />

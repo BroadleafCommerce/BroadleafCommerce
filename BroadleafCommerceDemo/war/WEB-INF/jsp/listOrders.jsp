@@ -2,28 +2,26 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 	
-	<h1>Manage Orders </h1>
-
-	<table border="1">
-		<tr>
-			<th>View </th>
-			<th>Order Number</th>
-			<th>Order Date</th>
-			<th>Total</th>
-			<th>Status</th>
-		</tr>
+	<h3 style="margin-top: 10px;" ><b>Manage Orders </b></h3>
+	<table class="cartTable" border="1">
+		<thead>
+			<tr>
+				<th class="alignCenter"></th>
+				<th class="alignCenter">Order Number</th>
+				<th class="alignCenter">Order Date</th>
+				<th class="alignCenter">Total</th>
+				<th class="alignCenter">Status</th>
+			</tr>
+		</thead>
 		<c:forEach var="item" items="${orderList}" varStatus="status">
 			<tr>
-				<td><a href="viewOrderDetails.htm?orderNumber=${item.orderNumber}"> View Order Detail</a>
-				<td><c:out value="${item.orderNumber}"/></td>
-				<td><c:out value="${item.submitDate}"/></td>
-				<td><c:out value="${item.total}"/></td>
-				<td><c:out value="${item.status.type}"/></td>
+				<td class="alignCenter"><a class="noTextUnderline" href="viewOrderDetails.htm?orderNumber=${item.orderNumber}"> View Order</a>
+				<td class="alignCenter">${item.orderNumber}</td>
+				<td class="alignCenter"><fmt:formatDate type="date" dateStyle="full" value="${item.submitDate}" /></td>
+				<td class="alignCenter">$${item.total}</td>
+				<td class="alignCenter">${item.status.type}</td>
 			</tr>
 		</c:forEach>
 	</table>
-
-	<a href="<c:url value="/logout"/>">Logout</a>
-
 	</tiles:putAttribute>
 </tiles:insertDefinition>

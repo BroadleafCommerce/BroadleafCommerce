@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <div class="span-11 column">
 	<div class="checkoutBorder">
-		<div class="checkoutTitle" > Payment Information </div>
+		<div class="checkoutTitle" > <b>Payment Information </b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
 		<div>
 			<form:errors path="billingAddress.firstName" cssClass="errorInputText"><br/>
@@ -81,7 +81,7 @@
 	</div>
 
 	<div class="span-10 creditCardPayment checkoutBorder">
-		<div class="checkoutTitle" > Credit Card Information </div>
+		<div class="checkoutTitle" > <b> Credit Card Information </b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
 		<div> 
 			<br/>
