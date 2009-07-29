@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -23,7 +24,9 @@ import javax.persistence.Embeddable;
 import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 
 @Embeddable
-public class ProductWeight {
+public class ProductWeight implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "WEIGHT")
     protected BigDecimal weight;

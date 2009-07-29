@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 import javax.persistence.Column;
@@ -25,7 +26,9 @@ import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 
 @Embeddable
-public class ProductDimension {
+public class ProductDimension implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "WIDTH")
     protected BigDecimal width;
@@ -81,7 +84,8 @@ public class ProductDimension {
     }
 
     /**
-     * Returns the product dimensions as a String (assumes measurements are in inches)
+     * Returns the product dimensions as a String (assumes measurements are in
+     * inches)
      * @return a String value of the product dimensions
      */
     public String getDimensionString() {
