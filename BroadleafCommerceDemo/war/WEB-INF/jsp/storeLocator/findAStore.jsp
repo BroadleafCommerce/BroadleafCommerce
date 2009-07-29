@@ -3,22 +3,25 @@
 	<tiles:putAttribute name="mainContent" type="string">
 	<h3 class="pageTitle" ><b>Store Locator</b></h3>
 
+	<div class="span-24">
 	<form:form method="post" action="findStores.htm" commandName="findAStoreForm" >
-		<div class="column span-24" style="margin-top:0px;" >
+		<div class="orderBorder column span-7" style="margin-top:0px;" >
+			<div class="orderTitle" > <b>Address Information</b></div>
 			<div class="column span-3" style="height:150px; line-height:25px;">
 				<b>Postal Code:</b> <br/><br/>
 				<b>Radius (miles):</b> <br/> <br/>
 				<input type="submit" name="Find" value="Find"/>
 			</div>
-			<div class="column span-5" >
+			<div class="column span-3" >
 				<form:input path="postalCode" /> <br/><br/>
 				<form:input path="distance" /> 
 			</div>
 		</div>
 	</form:form>
+	</div>
 
 	<c:if test="${(findAStoreForm.storeDistanceMap != null) && !(empty findAStoreForm.storeDistanceMap)}" >
-		<div>
+		<div style="margin-top:15px;" class="span-24">
 			<h4 style="margin-top: 10px;" ><b>Search Results </b></h4>
 			<table class="cartTable">
 				<thead>
