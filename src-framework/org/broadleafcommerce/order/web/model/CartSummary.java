@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.collections.FactoryUtils;
 import org.apache.commons.collections.list.LazyList;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 
 public class CartSummary {
 
@@ -13,7 +14,7 @@ public class CartSummary {
     private List<CartOrderItem> rows =  LazyList.decorate(
             new ArrayList<CartOrderItem>(),
             FactoryUtils.instantiateFactory(CartOrderItem.class));
-    private List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
+    private FulfillmentGroup fulfillmentGroup = new FulfillmentGroupImpl();
 
     public List<CartOrderItem> getRows() {
         return rows;
@@ -23,12 +24,12 @@ public class CartSummary {
         this.rows = rows;
     }
 
-    public List<FulfillmentGroup> getFulfillmentGroups() {
-        return fulfillmentGroups;
+    public FulfillmentGroup getFulfillmentGroup() {
+        return fulfillmentGroup;
     }
 
-    public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups) {
-        this.fulfillmentGroups = fulfillmentGroups;
+    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+        this.fulfillmentGroup = fulfillmentGroup;
     }
 
 }

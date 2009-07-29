@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.CartService;
@@ -215,9 +216,12 @@ public class CartController {
 
     @RequestMapping(value = "viewCart.htm", params="checkout", method = RequestMethod.POST)
     public String checkout(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
-
         Order currentCartOrder = retrieveCartOrder(request, model);
-        currentCartOrder.setFulfillmentGroups(cartSummary.getFulfillmentGroups());
+        List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
+        cartSummary.getFulfillmentGroup().setOrder(currentCartOrder);
+        fulfillmentGroups.add(cartSummary.getFulfillmentGroup());
+        currentCartOrder.setFulfillmentGroups(fulfillmentGroups);
+
         cartService.save(currentCartOrder, true);
         return "redirect:/checkout/checkout.htm";
     }
@@ -228,15 +232,6 @@ public class CartController {
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
 
-        FulfillmentGroup standardGroup = fulfillmentGroupService.createEmptyFulfillmentGroup();
-        standardGroup.setMethod("standard");
-        standardGroup.setOrder(cart);
-        List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
-        fulfillmentGroups.add(standardGroup);
-        if (cart.getFulfillmentGroups() == null || cart.getFulfillmentGroups().isEmpty()) {
-            cart.getFulfillmentGroups().add(standardGroup);
-        }
-
         for (OrderItem orderItem : cart.getOrderItems()) {
             CartOrderItem cartOrderItem = new CartOrderItem();
             cartOrderItem.setOrderItem(orderItem);
@@ -244,10 +239,20 @@ public class CartController {
             cartSummary.getRows().add(cartOrderItem);
         }
 
-        cartSummary.setFulfillmentGroups(fulfillmentGroups);
         model.addAttribute("cartSummary", cartSummary);
-
+        model.addAttribute("fulfillmentGroups", createFulfillmentGroups());
         return cartViewRedirect ? "redirect:" + cartView : cartView;
+    }
+
+    private List<FulfillmentGroup> createFulfillmentGroups () {
+        List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
+        FulfillmentGroup standardGroup = new FulfillmentGroupImpl();
+        FulfillmentGroup expeditedGroup = new FulfillmentGroupImpl();
+        standardGroup.setMethod("standard");
+        expeditedGroup.setMethod("expedited");
+        fulfillmentGroups.add(standardGroup);
+        fulfillmentGroups.add(expeditedGroup);
+        return fulfillmentGroups;
     }
 
     protected Order retrieveCartOrder(HttpServletRequest request, ModelMap model) {
