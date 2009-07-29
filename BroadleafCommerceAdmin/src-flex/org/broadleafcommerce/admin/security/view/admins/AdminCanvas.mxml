@@ -50,8 +50,7 @@
 				<admins:AdminUsersDataGrid
 					id="adminUsersDataGrid"
 					width="90%" 
-					height="100%" 
-					doubleClickEnabled="true" />
+					height="100%" />
 				<mx:VBox width="10%">
 					<mx:Button id="addButton" label="Add" width="80" click="handleAddClick(event)"/>
 					<mx:Button id="viewEditButton" label="View/Edit" width="80" click="handleViewEditButtonClick(event)" />

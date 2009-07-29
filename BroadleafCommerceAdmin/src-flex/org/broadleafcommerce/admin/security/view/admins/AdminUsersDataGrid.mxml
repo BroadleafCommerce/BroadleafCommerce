@@ -2,6 +2,8 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 	    <![CDATA[
+	    	import mx.managers.PopUpManager;
+	    	import mx.containers.TitleWindow;
 	    	import org.broadleafcommerce.admin.core.vo.security.AdminUser;
 	    	import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
 	    	import org.broadleafcommerce.admin.core.vo.security.AdminRole;
@@ -21,10 +23,20 @@
 	        	}
 	            return roleString;
 	        }
+	        
+	       	private function handleViewEditButtonClick(event:Event):void{
+				var editUserModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, AdminAddEditModal , true));
+				AdminAddEditModal(editUserModal).editAdminUser = AdminUser(this.adminDataGrid.selectedItem);
+			}
 
 	    ]]>
 	</mx:Script>
-	<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml" id="adminDataGrid" dataProvider="{SecurityModelLocator.getInstance().adminUsers}" width="100%">
+	<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml" 
+		id="adminDataGrid" 
+		dataProvider="{SecurityModelLocator.getInstance().adminUsers}" 
+		doubleClickEnabled="true"
+		itemDoubleClick="handleViewEditButtonClick(event)"
+		width="100%">
 		<mx:columns>
 			<mx:DataGridColumn dataField="id"  headerText="Admin User ID"/>		
 			<mx:DataGridColumn dataField="name"  headerText="Name"/>
