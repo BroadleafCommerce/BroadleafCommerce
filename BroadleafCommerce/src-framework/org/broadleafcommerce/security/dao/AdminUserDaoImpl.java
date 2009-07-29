@@ -37,8 +37,10 @@ public class AdminUserDaoImpl implements AdminUserDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     @Override
+    @SuppressWarnings("unchecked")
     public void deleteAdminUser(AdminUser user) {
-        em.remove(user);
+        AdminUser persisted = (AdminUser) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminUser"), user.getId());
+        em.remove(persisted);
     }
 
     @Override
