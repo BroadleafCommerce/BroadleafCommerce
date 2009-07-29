@@ -2,7 +2,7 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 	
-	<h3 style="margin-top: 10px;" ><b>Manage Orders </b></h3>
+	<h3 class="pageTitle" ><b>Manage Orders </b></h3>
 	<table class="cartTable" border="1">
 		<thead>
 			<tr>

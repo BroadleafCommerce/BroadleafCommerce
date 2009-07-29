@@ -2,9 +2,11 @@
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
 	
-	<h1>Order Search Error </h1>
+	<h3 class="pageTitle" ><b>Error</b></h3>
 
-	The order you specified is incorrect. Please try again.
+	The order information you specified is incorrect. Please try again. <br/><br/>
+
+	<a href="showFindOrder.htm"> Back </a>
 
 	</tiles:putAttribute>
 </tiles:insertDefinition>

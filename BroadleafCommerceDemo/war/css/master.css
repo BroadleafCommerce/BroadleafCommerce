@@ -83,3 +83,7 @@ input.helpTextVisible {
 .alignCenter {
 	text-align: center;
 }
+
+.pageTitle {
+	margin-top: 10px;
+}

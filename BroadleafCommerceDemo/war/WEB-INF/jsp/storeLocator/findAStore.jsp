@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
-	<h3 style="margin-top: 10px;" ><b>Store Locator</b></h3>
+	<h3 class="pageTitle" ><b>Store Locator</b></h3>
 
 	<form:form method="post" action="findStores.htm" commandName="findAStoreForm" >
 		<div class="column span-24" style="margin-top:0px;" >
