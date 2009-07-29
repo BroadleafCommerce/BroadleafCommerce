@@ -1,3 +1,71 @@
+/* Cart Styles */
+.cartTable {
+	line-height:1.2;
+}
+.cartTable th {
+	border-top:1px solid #888;
+	}
+.cartTable td, .cartTable th {
+	padding:5px 4px;
+}
+input.cartButton {
+	font-size:11px;	
+}
+a.cartLinkBtn {
+	font-size:11px;
+}
+.cartTable td {
+	vertical-align:top; 
+}
+.cartTable .price {
+	color:#333;
+	font-weight:bold;
+	font-size:14px;
+}
+.cartTable .price .salePrice {
+	color:#8DA351;
+	font-weight:bold;
+	font-size:14px;
+}
+.cartTable .price .originalPrice {
+	color:#444;
+	font-weight:normal;
+	font-size:12px;
+	text-decoration:line-through;
+}
+button#checkout {
+	border:0;
+	background: url("/broadleafdemo/images/greenBtnGradient.gif") repeat-x bottom center;
+	font-weight:bold;
+	font-size:18px;
+	color:#fff;
+	font-family:arial,sans-serif;
+	padding:6px;
+	cursor:pointer;
+	margin-left:18px;
+}
+button#checkout:hover {
+	background-position:top center;
+}
+select.shipMethod {
+	margin:0;
+}
+.cartTable input.quantityInput {
+	margin:0 0 4px 0;
+	padding:3px 6px;
+	font-size:14px;
+	font-weight:bold;
+	font-family:arial,sans-serif;
+	color:#444;
+}
+.cartTable tr.totals td {
+	vertical-align:baseline;
+}
+tr.highlight td {
+	background:#efc;
+}
+
+/* Checkout Styles */
 .checkoutTitle {
 	margin-bottom:5px;
 	padding:2px 7px;
