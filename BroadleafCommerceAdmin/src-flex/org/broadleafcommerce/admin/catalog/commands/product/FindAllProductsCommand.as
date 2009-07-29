@@ -25,6 +25,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		{
 			var event:ResultEvent = ResultEvent(data);
 			CatalogModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
+			CatalogModelLocator.getInstance().productModel.filteredCatalogProducts = ArrayCollection(event.result);
 			var bcte:BuildCatalogEvent = new BuildCatalogEvent();
 			bcte.dispatch();
 		}

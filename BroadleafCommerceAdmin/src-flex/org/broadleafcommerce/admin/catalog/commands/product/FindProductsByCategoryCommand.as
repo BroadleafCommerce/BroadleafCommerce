@@ -30,6 +30,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		{
 			var event:ResultEvent = ResultEvent(data);
 			CatalogModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
+			CatalogModelLocator.getInstance().productModel.filteredCatalogProducts = ArrayCollection(event.result);
 		}
 		
 		public function fault(info:Object):void

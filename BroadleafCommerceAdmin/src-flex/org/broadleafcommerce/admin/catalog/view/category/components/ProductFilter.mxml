@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="100%" height="100%"
+	creationComplete="initComponent()">
+	
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.control.events.product.FilterProductsEvent;
+			import mx.controls.Alert;
+		
+		private var filterTimer:Timer = new Timer(1500); 
+		private var filterChanged:Boolean = false;
+		
+		private function initComponent():void{
+			filterTimer.addEventListener(TimerEvent.TIMER, handleFilterTimer);
+			filterTimer.start();
+		}
+		
+		private function handleFilterTimer(tEvent:Event):void{
+			if(filterChanged){				
+				var fpe:FilterProductsEvent = new FilterProductsEvent(filterText.text);
+				fpe.dispatch();
+				filterChanged = false;
+			}
+		}
+		
+		private function handleKeyDown(event:Event):void{
+			filterTimer.reset();
+			filterTimer.start();
+			filterChanged = true;
+		}
+		]]>
+	</mx:Script>
+	
+		<mx:Label text="Filter: " />			
+		<mx:TextInput id="filterText" keyDown="handleKeyDown(event)" />	
+	
+</mx:HBox>

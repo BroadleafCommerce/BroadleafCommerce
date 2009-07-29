@@ -40,17 +40,14 @@
 
 <!-- mx:Binding source="categoryModel.currentCategory.allProducts"
                    destination="categoryProductDataGrid.dataProvider" /-->
-<mx:Binding source="productModel.catalogProducts"
+<mx:Binding source="productModel.filteredCatalogProducts"
             destination="categoryProductDataGrid.dataProvider" />                   
 
 	<mx:HBox height="100%" width="100%">
 		<mx:VBox height="100%">
 			<components1:ProductsDataGrid id="categoryProductDataGrid" click="handleProductsDataGridClick(event)" 
 				height="100%" width="100%"/>
-			<mx:HBox>
-				<mx:Label text="Filter: " />			
-				<mx:TextInput id="filterText" />
-			</mx:HBox>			
+			<components:ProductFilter />
 		</mx:VBox>
 		<mx:VBox >
 			<mx:Button id="addButton" label="Add"/>

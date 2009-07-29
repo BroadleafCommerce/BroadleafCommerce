@@ -18,7 +18,10 @@ package org.broadleafcommerce.admin.catalog.model
 		public var currentProductChanged:Boolean = false;
 		
 		public var catalogProducts:ArrayCollection = new ArrayCollection();
+
+		public var filteredCatalogProducts:ArrayCollection = catalogProducts;
 		
 		public var selectedCategories:Array = new Array();
+		
 	}
 }
