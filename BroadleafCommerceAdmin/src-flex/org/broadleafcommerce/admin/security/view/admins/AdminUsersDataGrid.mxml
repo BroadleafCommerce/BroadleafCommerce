@@ -11,13 +11,14 @@
 	        private function role_labelFunc(item:Object, column:DataGridColumn):String {
 	        	var roleString:String = "";
 	        	var user:AdminUser = item as AdminUser;
-	        	trace(user.allRoles);
-				//if (roles != null){
-	        	//	for(var i:int=0; i<roles.length; i++){ 
-	        	//		roleString = roleString + (roles[i] as AdminRole).name + " ";
-	        	//	}
-	        	//}
-	        	
+	        	if (user.allRoles != null){
+	        		for (var i:int=0; i<user.allRoles.length; i++){
+	        			roleString += AdminRole(user.allRoles.getItemAt(i)).name;
+	        			if (i != user.allRoles.length-1){
+	        				roleString += ", ";
+	        			}
+	        		}
+	        	}
 	            return roleString;
 	        }
 
@@ -29,6 +30,7 @@
 			<mx:DataGridColumn dataField="name"  headerText="Name"/>
 			<mx:DataGridColumn dataField="login"  headerText="Login"/>
 			<mx:DataGridColumn dataField="email"  headerText="Email"/>
+			<mx:DataGridColumn dataField="allRoles"  headerText="Roles" labelFunction="role_labelFunc"/>
 		</mx:columns>
 	</mx:DataGrid>
 </mx:Canvas>
