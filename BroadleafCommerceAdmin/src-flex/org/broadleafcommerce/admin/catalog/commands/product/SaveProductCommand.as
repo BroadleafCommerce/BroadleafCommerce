@@ -8,7 +8,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import mx.rpc.events.FaultEvent;
 	
 	import org.broadleafcommerce.admin.catalog.business.BroadleafCommerceAdminCatalogServiceDelegate;
-	import org.broadleafcommerce.admin.catalog.control.events.product.FindAllProductsEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.product.FindProductsByCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.vo.product.Product;
@@ -26,8 +26,10 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		
 		public function result(data:Object):void{
 			CatalogModelLocator.getInstance().productModel.currentProductChanged = false;
-			var facpe:FindAllProductsEvent = new FindAllProductsEvent();
-			facpe.dispatch();
+//			var facpe:FindAllProductsEvent = new FindAllProductsEvent();
+//			facpe.dispatch();
+			var fpbce:FindProductsByCategoryEvent = new FindProductsByCategoryEvent(CatalogModelLocator.getInstance().categoryModel.currentCategory);
+			fpbce.dispatch();
 		}
 		
 		public function fault(info:Object):void{

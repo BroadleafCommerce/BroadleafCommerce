@@ -30,14 +30,16 @@
 		
 			private function handleSaveProduct(event:Event):void{
 				var product:Product = Product(ObjectUtil.copy(productModel.currentProduct));
-				product.id = -1;
+				if( product.id == 0){
+					product.id = -1;
+				}
 				product.name = nameTextInput.text;
 				product.description = descriptionTextInput.text;
 				product.longDescription = longDescriptionTextInput.text;
 				product.activeStartDate = activeStartDateDateField.selectedDate;
 				product.activeEndDate = activeEndDateDateField.selectedDate;
 				product.model = modelTextInput.text;
-				product.manufacturer = modelTextInput.text;
+				product.manufacturer = manufacturerTextInput.text;
 				if(product.weight == null)
 					product.weight = new ProductWeight();
 				product.weight.weight = uint(weightTextInput.text);
@@ -45,8 +47,8 @@
 				product.dimension.depth = Number(depthTextInput.text);
 				product.dimension.width = Number(widthTextInput.text);
 				product.dimension.height = Number(heightTextInput.text);
+				product.defaultCategory = Category(defaultParentCategoryComboBox.selectedItem);
 				product.allParentCategories = new ArrayCollection(parentList.selectedItems);
-				product.defaultCategory = Category(product.allParentCategories.getItemAt(0));
 				new SaveProductEvent(product).dispatch();
 			}
 			
@@ -97,9 +99,12 @@
 	<mx:Binding
 		source="productModel.selectedCategories"
 		destination="parentList.selectedItems" />
-	<!--mx:Binding
-		source="productModel.currentProduct.allParentCategoriesArray"
-		destination="parentList.selectedItems"/-->
+	<mx:Binding
+		source="productModel.currentProduct.allParentCategories"
+		destination="defaultParentCategoryComboBox.dataProvider"  />
+	<mx:Binding
+		source="productModel.currentProduct.allParentCategories.getItemIndex(productModel.currentProduct.defaultCategory)"
+		destination="defaultParentCategoryComboBox.selectedIndex" />
 <mx:Form>
 		
 	<mx:FormItem 
@@ -164,8 +169,14 @@
 			click="handleSaveProduct(event)"/>
 	</mx:FormItem>
 </mx:Form>
+	<mx:FormItem label="Default Category Parent:" x="316" y="10">
+		<mx:ComboBox 
+			id="defaultParentCategoryComboBox"
+			labelField="name"
+			width="160"/>		
+	</mx:FormItem>
 	<mx:FormItem
-		label="Parent Categories" x="316" y="10">
+		label="Parent Categories" x="316" y="40" width="318">
 		<components1:ProductParentsList id="parentList" labelField="name" 
 			allowMultipleSelection="true"  width="175" height="252" click="handleProductParentsListClick(event)"/>
 	</mx:FormItem>
