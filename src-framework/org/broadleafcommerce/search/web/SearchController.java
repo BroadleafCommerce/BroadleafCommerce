@@ -1,17 +1,14 @@
 package org.broadleafcommerce.search.web;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.search.domain.SearchQuery;
 import org.broadleafcommerce.search.service.SearchService;
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.search.util.SearchFilterUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,9 +40,6 @@ public class SearchController {
             HttpServletRequest request,
             @RequestParam(required = true) String queryString,
             @RequestParam(required = false) String originalQueryString,
-            @RequestParam(required = false, value="defaultCategory") Long[] categoryId,
-            @RequestParam(required = false, value="min-money") String minPrice,
-            @RequestParam(required = false, value="max-money") String maxPrice,
             @RequestParam(required = false) Boolean ajax) {
 
         SearchQuery input = new SearchQuery();
@@ -53,41 +47,12 @@ public class SearchController {
         List<Product> products = null;
 
         products = searchService.performSearch(input.getQueryString());
-
-        if(queryString.equals(originalQueryString)) {
-            if (categoryId != null) {
-                for (Iterator<Product> itr = products.iterator(); itr.hasNext();) {
-                    Product product = itr.next();
-                    if (!ArrayUtils.contains(categoryId, product.getDefaultCategory().getId())) {
-                        itr.remove();
-                    }
-                }
-            }
-            if (minPrice != null && maxPrice != null) {
-                Money minimumPrice = new Money(minPrice.replaceAll("[^0-9.]", ""));
-                Money maximumPrice = new Money(maxPrice.replaceAll("[^0-9.]", ""));
-                for (Iterator<Product> itr = products.iterator(); itr.hasNext();) {
-                    Product product = itr.next();
-                    boolean found = false;
-                    for (Iterator<Sku> skuItr = product.getSkus().iterator(); skuItr.hasNext();) {
-                        Sku sku = skuItr.next();
-                        if (sku.getSalePrice().lessThan(minimumPrice) || sku.getSalePrice().greaterThan(maximumPrice)) {
-                            continue;
-                        }
-                        found = true;
-                        break;
-                    }
-                    if (!found) {
-                        itr.remove();
-                    }
-                }
-            }
-        }
+        SearchFilterUtil.filterProducts(products, request.getParameterMap(), new String[]{"manufacturer","defaultCategory.id","sku[0].salePrice"});
 
         model.addAttribute("queryString", input.getQueryString());
         model.addAttribute("products", products);
 
-        if (ajax == null || !ajax.booleanValue()) {
+        if (ajax == null || !ajax.booleanValue() || (originalQueryString != null && !originalQueryString.equals(queryString))) {
             return "search";
         } else {
             return "searchAjax";

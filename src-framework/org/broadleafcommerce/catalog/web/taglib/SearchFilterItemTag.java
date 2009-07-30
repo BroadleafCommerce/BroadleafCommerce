@@ -16,7 +16,6 @@
 package org.broadleafcommerce.catalog.web.taglib;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,6 +23,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.util.money.Money;
 
@@ -52,84 +52,62 @@ public class SearchFilterItemTag extends SimpleTagSupport {
 
     private void doMultiSelect(JspWriter out) throws JspException, IOException {
         List<Product> products = ((SearchFilterTag) getParent()).getProducts();
-        Class<Product> productClass = Product.class;
 
-        Method propertyMethod;
-        try {
-            propertyMethod = productClass.getMethod(getterName(property), (Class[])null);
-        } catch (NoSuchMethodException e1) {
-            throw new JspException(e1);
+        BeanToPropertyValueTransformer valueTransformer = new BeanToPropertyValueTransformer(property, true);
+        BeanToPropertyValueTransformer displayTransformer;
+        if (propertyDisplay != null) {
+            displayTransformer = new BeanToPropertyValueTransformer(propertyDisplay, true);
+        } else {
+            displayTransformer = valueTransformer;
         }
-        Class<?> propertyClass = propertyMethod.getReturnType();
 
         HashMap<Object, Integer> countMap = new HashMap<Object, Integer>();
+        HashMap<Object, Object> valueDisplayMap = new HashMap<Object, Object>();
         for (Product product : products) {
-            Object propertyObject;
-            try {
-                propertyObject = propertyMethod.invoke(product, (Object[])null);
-            } catch (Exception e) {
-                throw new JspException("Invalid propertyValue", e);
-            }
-            Integer integer = countMap.get(propertyObject);
+            Object value = valueTransformer.transform(product);
+            Object display = displayTransformer.transform(product);
+            valueDisplayMap.put(value, display);
+            Integer integer = countMap.get(value);
             if (integer == null) {
-                countMap.put(propertyObject, new Integer(1));
+                countMap.put(value, new Integer(1));
             } else {
-                countMap.put(propertyObject, new Integer(integer + 1));
+                countMap.put(value, new Integer(integer + 1));
             }
         }
 
-        Method displayMethod = null;
-        Method valueMethod = null;
-        try {
-            displayMethod = propertyClass.getMethod(getterName(propertyDisplay), (Class[])null);
-        } catch (NoSuchMethodException e) {
-            throw new JspException("Invalid propertyDisplay", e);
-        }
-        try {
-            valueMethod = propertyClass.getMethod(getterName(propertyValue), (Class[])null);
-        } catch (NoSuchMethodException e) {
-            throw new JspException("Invalid propertyValue", e);
-        }
-        out.println("<ul class='searchFilter-"+property+"'>");
-        for (Object propertyObject : countMap.keySet()) {
-            String display;
-            String value;
-            try {
-                display = displayMethod.invoke(propertyObject, (Object[])null).toString();
-                value = valueMethod.invoke(propertyObject, (Object[])null).toString();
-            } catch (Exception e) {
-                // This would happen if either a getter method or toString were to actually take an argument
-                throw new JspException(e);
-            }
-
-            out.println("<li value='"+ value +"'><input type='checkbox' class='searchFilter-"+property+"Checkbox' name='"+property+"' value='" + value + "'/> " +
-                    display + " <span class='searchFilter"+property+"-count'>(" + countMap.get(propertyObject).toString() + ")</span></li>");
+        String propertyCss = property.replaceAll("[\\.\\[\\]]", "_");
+        out.println("<ul class='searchFilter-"+propertyCss+"'>");
+        for (Object value : countMap.keySet()) {
+            Object display = valueDisplayMap.get(value);
+            out.println("<li value='"+ value +"'><input type='checkbox' class='searchFilter-"+propertyCss+"Checkbox' name='"+property+"' value='" + value + "'/> " +
+                    display + " <span class='searchFilter"+propertyCss+"-count'>(" + countMap.get(value).toString() + ")</span></li>");
         }
         out.println("</ul>");
 
+
         out.println("<script>" +
-                " var " + property + "Checked = 0;\r\n" +
+                " var " + propertyCss + "Checked = 0;\r\n" +
                 "    \r\n" +
-                "    $('.searchFilter-" + property + " li').click(function() {\r\n" +
+                "    $('.searchFilter-" + propertyCss + " li').click(function() {\r\n" +
                 "        var value = $(this).attr('value');\r\n" +
                 "        var checkbox = $(this).find(':checkbox');\r\n" +
-                "        if (" + property + "Checked == 0) {\r\n" +
-                "            $('.searchFilter-" + property + " li').each(function(){$(this).addClass('searchFilterDisabledSelect')});\r\n" +
+                "        if (" + propertyCss + "Checked == 0) {\r\n" +
+                "            $('.searchFilter-" + propertyCss + " li').each(function(){$(this).addClass('searchFilterDisabledSelect')});\r\n" +
                 "            $(this).removeClass('searchFilterDisabledSelect');\r\n" +
                 "            checkbox.attr('checked',true);\r\n" +
-                "            " + property + "Checked++;\r\n" +
+                "            " + propertyCss + "Checked++;\r\n" +
                 "        } else if (checkbox.attr('checked') == true) {\r\n" +
                 "            $(this).addClass('searchFilterDisabledSelect');\r\n" +
-                "            if (" + property + "Checked == 1) {\r\n" +
+                "            if (" + propertyCss + "Checked == 1) {\r\n" +
                 "                // unchecking the only checked category, so reactivate all categories\r\n" +
-                "                $('.searchFilter-"+property+" li').each(function(){$(this).removeClass('searchFilterDisabledSelect')});\r\n" +
+                "                $('.searchFilter-"+propertyCss+" li').each(function(){$(this).removeClass('searchFilterDisabledSelect')});\r\n" +
                 "            } \r\n" +
                 "            checkbox.attr('checked',false);\r\n" +
-                "            " + property + "Checked--;\r\n" +
+                "            " + propertyCss + "Checked--;\r\n" +
                 "        } else {\r\n" +
                 "            $(this).removeClass('searchFilterDisabledSelect');\r\n" +
                 "            checkbox.attr('checked',true);\r\n" +
-                "            " + property + "Checked++;\r\n" +
+                "            " + propertyCss + "Checked++;\r\n" +
                 "        }\r\n" +
                 "        updateSearchFilterResults();\r\n" +
                 "    } );" +
@@ -138,57 +116,38 @@ public class SearchFilterItemTag extends SimpleTagSupport {
 
     private void doSliderRange(JspWriter out)  throws JspException, IOException {
         List<Product> products = ((SearchFilterTag) getParent()).getProducts();
-        Class<Product> productClass = Product.class;
-
-        Method propertyMethod;
-        try {
-            propertyMethod = productClass.getMethod(getterName(property), (Class[])null);
-        } catch (NoSuchMethodException e1) {
-            throw new JspException(e1);
-        }
-        Class<?> propertyClass = propertyMethod.getReturnType();
-        if (!propertyClass.equals(Money.class)) {
-            throw new JspException ("invalid property specified for SearchFilterItemTag, must be of type Money");
-        }
 
         Money min = null;
         Money max = null;
+        BeanToPropertyValueTransformer valueTransformer = new BeanToPropertyValueTransformer(property, true);
 
         for (Product product : products) {
-            Money propertyObject;
-            try {
-                propertyObject = (Money)propertyMethod.invoke(product, (Object[])null);
-            } catch (Exception e) {
-                throw new JspException("Invalid propertyValue", e);
-            }
+            Money propertyObject = (Money) valueTransformer.transform(product);
             min = propertyObject.min(min);
             max = propertyObject.max(max);
         }
 
-        out.println("<div id='searchFilter-"+property+"'></div>");
+        String propertyCss = property.replaceAll("[.\\[\\]]", "_");
+
+        out.println("<div id='searchFilter-"+propertyCss+"'></div>");
         out.println("Range:");
-        out.println("<input type=\"text\" id=\"min-" + property + "\" name='min-" + property + "' value='$"+min.getAmount().toPlainString()+"'/> - ");
-        out.println("<input type=\"text\" id=\"max-" + property + "\" name='max-" + property + "' value='$"+max.getAmount().toPlainString()+"'/> <br/>");
+        out.println("<input type=\"text\" id=\"min-" + propertyCss + "\" name='min-" + property + "' value='$"+min.getAmount().toPlainString()+"'/> - ");
+        out.println("<input type=\"text\" id=\"max-" + propertyCss + "\" name='max-" + property + "' value='$"+max.getAmount().toPlainString()+"'/> <br/>");
 
         out.println("        <script type=\"text/javascript\">\r\n" +
                 "        $(function() {\r\n" +
-                "            $(\"#searchFilter-" + property + "\").slider({\r\n" +
+                "            $(\"#searchFilter-" + propertyCss + "\").slider({\r\n" +
                 "                range: true,\r\n" +
                 "                min: "+ min.getAmount().toPlainString() +", max: "+ max.getAmount().toPlainString() + "," +
                 "                values: ["+ min.getAmount().toPlainString() +","+ max.getAmount().toPlainString() +"]," +
                 "                slide: function(event, ui) {\r\n" +
-                "                    $(\"#min-" + property + "\").val('$' + ui.values[0] );\r\n" +
-                "                    $(\"#max-" + property + "\").val('$' + ui.values[1]);\r\n" +
+                "                    $(\"#min-" + propertyCss + "\").val('$' + ui.values[0] );\r\n" +
+                "                    $(\"#max-" + propertyCss + "\").val('$' + ui.values[1]);\r\n" +
                 "                }\r\n" +
                 "            });\r\n" +
                 "        });\r\n" +
-                "        $('#searchFilter-"+property+"').bind('slidechange',  updateSearchFilterResults); \r\n" +
+                "        $('#searchFilter-"+propertyCss+"').bind('slidechange',  updateSearchFilterResults); \r\n" +
         "        </script>");
-    }
-
-    private String getterName(String propertyName) {
-        if (propertyName == null) return "toString";
-        return "get" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1);
     }
 
     public String getProperty() {
