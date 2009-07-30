@@ -20,5 +20,13 @@
 				<tiles:insertAttribute name="footer" />
 			</div>
 		</div>
+		<c:choose>
+			<c:when test="${orderComplete}">
+				<blc:googleAnalytics webPropertyId="UA-8476611-1" order="${order}" />
+			</c:when>
+			<c:otherwise>
+				<blc:googleAnalytics webPropertyId="UA-8476611-1" />
+			</c:otherwise>
+		</c:choose>
 	</body>
 </html>

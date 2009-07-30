@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.checkout.service.CheckoutService;
 import org.broadleafcommerce.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.checkout.web.model.CheckoutForm;
@@ -39,13 +38,11 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.CartService;
-import org.broadleafcommerce.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.PaymentInfoService;
-import org.broadleafcommerce.payment.service.PaymentService;
 import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -76,18 +73,12 @@ public class CheckoutController {
     protected CustomerAddressService customerAddressService;
     @Resource(name="blCustomerPhoneService")
     protected CustomerPhoneService customerPhoneService;
-    @Resource(name="blCreditCardService")
-    protected PaymentService paymentService;
     @Resource(name="blCheckoutService")
     protected CheckoutService checkoutService;
-    @Resource(name="blCatalogService")
-    protected CatalogService catalogService;
     @Resource(name="blStateService")
     protected StateService stateService;
     @Resource(name="blCountryService")
     protected CountryService countryService;
-    @Resource(name="blFulfillmentGroupService")
-    protected FulfillmentGroupService fulfillmentGroupService;
     @Resource(name="blPaymentInfoService")
     protected PaymentInfoService paymentInfoService;
     @Resource(name="blSecurePaymentInfoService")
@@ -189,7 +180,7 @@ public class CheckoutController {
             LOG.error("Cannot perform checkout", e);
         }
 
-        return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderDetails.htm?orderNumber=" + order.getOrderNumber();
+        return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderConfirmation.htm?orderNumber=" + order.getOrderNumber();
     }
 
     @RequestMapping(value = "checkout.htm", method = {RequestMethod.GET})

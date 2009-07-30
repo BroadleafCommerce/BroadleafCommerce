@@ -23,6 +23,22 @@
 		</attribute>
     </tag>
     
+    <tag>
+        <name>googleAnalytics</name>
+        <tag-class>org.broadleafcommerce.catalog.web.taglib.GoogleAnalyticsTag</tag-class>
+        <body-content>empty</body-content>
+       	<attribute>
+			<name>webPropertyId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>order</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
+    
       <tag>
         <name>share</name>
         <tag-class>org.broadleafcommerce.catalog.web.taglib.ShareTag</tag-class>
