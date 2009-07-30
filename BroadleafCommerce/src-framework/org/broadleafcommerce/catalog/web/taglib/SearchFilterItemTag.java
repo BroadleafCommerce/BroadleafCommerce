@@ -112,7 +112,7 @@ public class SearchFilterItemTag extends SimpleTagSupport {
                 "    \r\n" +
                 "    $('.searchFilter-" + property + " li').click(function() {\r\n" +
                 "        var value = $(this).attr('value');\r\n" +
-                "        var checkbox = $('.searchFilter-" + property + "Checkbox[value=\"'+value+'\"]');\r\n" +
+                "        var checkbox = $(this).find(':checkbox');\r\n" +
                 "        if (" + property + "Checked == 0) {\r\n" +
                 "            $('.searchFilter-" + property + " li').each(function(){$(this).addClass('searchFilterDisabledSelect')});\r\n" +
                 "            $(this).removeClass('searchFilterDisabledSelect');\r\n" +
@@ -122,7 +122,7 @@ public class SearchFilterItemTag extends SimpleTagSupport {
                 "            $(this).addClass('searchFilterDisabledSelect');\r\n" +
                 "            if (" + property + "Checked == 1) {\r\n" +
                 "                // unchecking the only checked category, so reactivate all categories\r\n" +
-                "                $('.searchFilter-defaultCategory li').each(function(){$(this).removeClass('searchFilterDisabledSelect')});\r\n" +
+                "                $('.searchFilter-"+property+" li').each(function(){$(this).removeClass('searchFilterDisabledSelect')});\r\n" +
                 "            } \r\n" +
                 "            checkbox.attr('checked',false);\r\n" +
                 "            " + property + "Checked--;\r\n" +

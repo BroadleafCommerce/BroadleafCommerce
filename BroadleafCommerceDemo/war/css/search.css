@@ -13,12 +13,16 @@
 	width: 650px;
 }
 
-.searchFilter-defaultCategory li {
+.searchFilter-defaultCategory li,
+.searchFilter-manufacturer li
+{
 	
 	list-style-type: none;
 }
 
-.searchFilter-defaultCategoryCheckbox {
+.searchFilter-defaultCategoryCheckbox,
+.searchFilter-manufacturerCheckbox
+{
 	display:none;
 }
 
