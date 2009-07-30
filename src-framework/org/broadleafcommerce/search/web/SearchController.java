@@ -47,7 +47,7 @@ public class SearchController {
         List<Product> products = null;
 
         products = searchService.performSearch(input.getQueryString());
-        SearchFilterUtil.filterProducts(products, request.getParameterMap(), new String[]{"manufacturer","defaultCategory.id","sku[0].salePrice"});
+        SearchFilterUtil.filterProducts(products, request.getParameterMap(), new String[]{"manufacturer","defaultCategory.id","skus[0].salePrice"});
 
         model.addAttribute("queryString", input.getQueryString());
         model.addAttribute("products", products);
