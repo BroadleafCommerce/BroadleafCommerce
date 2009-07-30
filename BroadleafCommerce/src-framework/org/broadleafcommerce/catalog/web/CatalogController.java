@@ -17,17 +17,16 @@ package org.broadleafcommerce.catalog.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.search.util.SearchFilterUtil;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.util.UrlPathHelper;
@@ -190,21 +189,11 @@ public class CatalogController extends AbstractController {
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
             List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
-            filterProducts(productList, request);
+            SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "sku[0].salePrice"});
             model.put("currentProducts", productList);
         }
 
         return productFound;
-    }
-
-    private void filterProducts(List<Product> productList, HttpServletRequest request) {
-        String[] manufacturers = request.getParameterValues("manufacturer");
-        for (Iterator<Product> iter = productList.iterator(); iter.hasNext(); ) {
-            Product product = iter.next();
-            if (manufacturers != null && !ArrayUtils.contains(manufacturers, product.getManufacturer())) {
-                iter.remove();
-            }
-        }
     }
 
     public Long getRootCategoryId() {

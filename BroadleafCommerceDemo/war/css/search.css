@@ -13,14 +13,14 @@
 	width: 650px;
 }
 
-.searchFilter-defaultCategory li,
+.searchFilter-defaultCategory_id li,
 .searchFilter-manufacturer li
 {
 	
 	list-style-type: none;
 }
 
-.searchFilter-defaultCategoryCheckbox,
+.searchFilter-defaultCategory_idCheckbox,
 .searchFilter-manufacturerCheckbox
 {
 	display:none;
@@ -48,7 +48,7 @@
 	text-align:center;
 }
 
-#min-money, #max-money {
+#min-skus_0__salePrice, #max-skus_0__salePrice {
 	border:0;
 	background-color:#E5E5E5;
 	font-weight:bold;

@@ -18,10 +18,8 @@
       	Search Options
   		<form:form method="post" id="refineSearch" commandName="doSearch">
 			<blc:searchFilter products="${currentProducts}" queryString="">
-				<blc:searchFilterItem property="defaultCategory" propertyDisplay="name" propertyValue="id" displayTitle="Categories"/>
 				<blc:searchFilterItem property="manufacturer" displayTitle="Manufacturers"/>
-				<!--blc:searchFilterItem property="money" displayTitle="Prices" displayType="sliderRange"/>
-				-->
+				<blc:searchFilterItem property="skus[0].salePrice" displayTitle="Prices" displayType="sliderRange"/>
 			</blc:searchFilter>
 		</form:form>
     </div>

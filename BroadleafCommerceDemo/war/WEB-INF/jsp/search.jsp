@@ -13,9 +13,9 @@
 <div id="searchFilter">
 	<form:form method="post" id="refineSearch" commandName="doSearch">
 		<blc:searchFilter products="${products}" queryString="${queryString}">
-			<blc:searchFilterItem property="defaultCategory" propertyDisplay="name" propertyValue="id" displayTitle="Categories"/>
-			<!--blc:searchFilterItem property="money" displayTitle="Prices" displayType="sliderRange"/>
-			-->
+			<blc:searchFilterItem property="defaultCategory.id" propertyDisplay="defaultCategory.name" displayTitle="Categories"/>
+			<blc:searchFilterItem property="manufacturer" displayTitle="Manufacturers"/>
+			<blc:searchFilterItem property="skus[0].salePrice" displayTitle="Prices" displayType="sliderRange"/>
 		</blc:searchFilter>
 		<input type="submit" value="Search"/>
 	</form:form>
