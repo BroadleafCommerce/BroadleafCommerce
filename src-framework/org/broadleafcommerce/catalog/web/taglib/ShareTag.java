@@ -28,15 +28,11 @@ public class ShareTag extends SimpleTagSupport {
     @Override
     public void doTag() throws JspException, IOException {
         JspWriter out = getJspContext().getOut();
-
-        out.println(getUrl());
-
+        out.println(share());
         super.doTag();
     }
 
-    protected String getUrl() {
-        //  PageContext pageContext = (PageContext)getJspContext();
-        //  HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+    protected String share() {
         StringBuffer sb = new StringBuffer();
         sb.append("<a id=\"fbLink\" href=\"\">");
         sb.append("<img src=\"/broadleafdemo/images/share/link-facebook.gif\" />");
