@@ -33,11 +33,14 @@ public class SearchFilterTag extends TagSupport {
     public int doStartTag() throws JspException {
         JspWriter out = this.pageContext.getOut();
         if (products == null || products.size() == 0) { return SKIP_BODY; }
-        try {
-            out.println("<h3>Your Search</h3>");
-            out.println("<input type=\"text\" size=\"30\" class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
-            out.println("<input type=\"hidden\" size=\"30\" name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
-        } catch (IOException e) {
+
+        if (queryString != null && !queryString.isEmpty()) {
+            try {
+                out.println("<h3>Your Search</h3>");
+                out.println("<input type=\"text\" size=\"30\" class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
+                out.println("<input type=\"hidden\" size=\"30\" name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
+            } catch (IOException e) {
+            }
         }
 
         return EVAL_BODY_INCLUDE;

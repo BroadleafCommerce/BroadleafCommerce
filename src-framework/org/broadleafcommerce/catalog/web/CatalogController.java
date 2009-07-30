@@ -17,12 +17,14 @@ package org.broadleafcommerce.catalog.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
@@ -60,7 +62,11 @@ public class CatalogController extends AbstractController {
             } else if (currentCategory.getDisplayTemplate() != null && !"".equals(currentCategory.getUrl())) {
                 view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
             } else {
-                view = defaultCategoryView;
+                if ("true".equals(request.getParameter("ajax"))) {
+                    view = "catalog/categoryView/mainContentFragment";
+                } else {
+                    view = defaultCategoryView;
+                }
             }
         }
         return new ModelAndView(view, model);
@@ -184,10 +190,21 @@ public class CatalogController extends AbstractController {
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
             List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+            filterProducts(productList, request);
             model.put("currentProducts", productList);
         }
 
         return productFound;
+    }
+
+    private void filterProducts(List<Product> productList, HttpServletRequest request) {
+        String[] manufacturers = request.getParameterValues("manufacturer");
+        for (Iterator<Product> iter = productList.iterator(); iter.hasNext(); ) {
+            Product product = iter.next();
+            if (manufacturers.length > 0 && !ArrayUtils.contains(manufacturers, product.getManufacturer())) {
+                iter.remove();
+            }
+        }
     }
 
     public Long getRootCategoryId() {
