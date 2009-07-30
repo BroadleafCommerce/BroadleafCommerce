@@ -201,7 +201,7 @@ public class CatalogController extends AbstractController {
         String[] manufacturers = request.getParameterValues("manufacturer");
         for (Iterator<Product> iter = productList.iterator(); iter.hasNext(); ) {
             Product product = iter.next();
-            if (manufacturers.length > 0 && !ArrayUtils.contains(manufacturers, product.getManufacturer())) {
+            if (manufacturers != null && !ArrayUtils.contains(manufacturers, product.getManufacturer())) {
                 iter.remove();
             }
         }
