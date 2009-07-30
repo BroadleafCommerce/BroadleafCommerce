@@ -189,7 +189,7 @@ public class CatalogController extends AbstractController {
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
             List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
-            SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "sku[0].salePrice"});
+            SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "skus[0].salePrice"});
             model.put("currentProducts", productList);
         }
 
