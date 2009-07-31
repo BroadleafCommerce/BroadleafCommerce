@@ -7,6 +7,12 @@
 		<mapping-file>config/bc/jpa/domain/GiftCardPaymentInfo.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/CreditCardPaymentInfo.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/BankAccountPaymentInfo.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
+		<class>org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl</class>
+		<class>org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl</class>
+		<class>org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl</class>
+		<exclude-unlisted-classes/>
+		<properties>
+			<property name="hibernate.archive.autodetection" value="false" />
+        </properties>
 	</persistence-unit>
 </persistence>

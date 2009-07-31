@@ -61,12 +61,6 @@
 				<value>classpath*:/META-INF/persistence-auxiliary.xml</value>
 			</list>
 		</property>
-		<property name="validPersistenceUnitNames">
-			<list>
-				<value>blPU</value>
-				<value>blSecurePU</value>
-			</list>
-		</property>
 	</bean>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
@@ -88,6 +82,7 @@
                 <entry key="hibernate.cache.use_second_level_cache" value="true"/>
                 <entry key="hibernate.cache.use_query_cache" value="true"/>
                 <entry key="hibernate.generate_statistics" value="true" />
+                <entry key="hibernate.archive.autodetection" value="false" />
             </map>
         </property>
 	</bean>
@@ -109,6 +104,7 @@
                 <entry key="hibernate.connection.autocommit" value="false"/>
                 <entry key="hibernate.cache.use_second_level_cache" value="false"/>
                 <entry key="hibernate.cache.use_query_cache" value="false"/>
+                <entry key="hibernate.archive.autodetection" value="false" />
             </map>
         </property>
 	</bean>

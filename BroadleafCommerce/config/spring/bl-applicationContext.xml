@@ -13,6 +13,8 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
+	<context:component-scan base-package="org.broadleafcommerce" />
+	
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
 	    <property name="autodetect" value="true"/>
 	    <property name="assembler" ref="assembler"/>
@@ -25,8 +27,6 @@
 	<bean id="namingStrategy" class="org.broadleafcommerce.jmx.MetadataNamingStrategy">
 	    <property name="attributeSource" ref="attributeSource"/>
 	</bean>
-	
-	<context:component-scan base-package="org.broadleafcommerce" />
 	
 	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
 		<property name="propertyLocations">
@@ -80,8 +80,6 @@
          </value>
       </property>
    </bean>
-   
-	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 	
 	<bean id="blEncryptionModule" class="org.broadleafcommerce.encryption.DefaultEncryptionModule"/>
 	

@@ -16,6 +16,7 @@
 package org.broadleafcommerce.extensibility.jpa;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.spi.PersistenceUnitInfo;
@@ -37,40 +38,45 @@ import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
  */
 public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
-    private MutablePersistenceUnitInfo masterPU = new MutablePersistenceUnitInfo();
-    private List<String> validPersistenceUnitNames;
+    private HashMap<String, MutablePersistenceUnitInfo> mergedPus = new HashMap<String, MutablePersistenceUnitInfo>();
+
+    protected MutablePersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
+        if (!mergedPus.containsKey(persistenceUnitName)) {
+            mergedPus.put(persistenceUnitName, newPU);
+        }
+        return mergedPus.get(persistenceUnitName);
+    }
 
     @Override
     protected void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo newPU) {
         super.postProcessPersistenceUnitInfo(newPU);
-        if (validPersistenceUnitNames == null) {
-            throw new IllegalArgumentException("validPersistenceUnitNames must be set");
-        }
+        newPU.addJarFileUrl(newPU.getPersistenceUnitRootUrl());
         String persistenceUnitName = newPU.getPersistenceUnitName();
-        if (validPersistenceUnitNames.contains(persistenceUnitName)) {
-            final URL persistenceUnitRootUrl = newPU.getPersistenceUnitRootUrl();
-            if (!masterPU.getJarFileUrls().contains(persistenceUnitRootUrl)){
-                masterPU.addJarFileUrl(persistenceUnitRootUrl);
-            }
-            List<URL> urls = newPU.getJarFileUrls();
-            for (URL url : urls){
-                if (!masterPU.getJarFileUrls().contains(url)){
-                    masterPU.addJarFileUrl(url);
-                }
-            }
-            List<String> managedClassNames = newPU.getManagedClassNames();
-            for (String managedClassName : managedClassNames){
-                if (!masterPU.getManagedClassNames().contains(managedClassName)) {
-                    masterPU.addManagedClassName(managedClassName);
-                }
-            }
-            List<String> mappingFileNames = newPU.getMappingFileNames();
-            for (String mappingFileName : mappingFileNames) {
-                if (!masterPU.getMappingFileNames().contains(mappingFileName)) {
-                    masterPU.addMappingFileName(mappingFileName);
-                }
+        MutablePersistenceUnitInfo temp = getMergedUnit(persistenceUnitName, newPU);
+        final URL persistenceUnitRootUrl = newPU.getPersistenceUnitRootUrl();
+        temp.setPersistenceUnitRootUrl(persistenceUnitRootUrl);
+        List<String> managedClassNames = newPU.getManagedClassNames();
+        for (String managedClassName : managedClassNames){
+            if (!temp.getManagedClassNames().contains(managedClassName)) {
+                temp.addManagedClassName(managedClassName);
             }
         }
+        List<String> mappingFileNames = newPU.getMappingFileNames();
+        for (String mappingFileName : mappingFileNames) {
+            if (!temp.getMappingFileNames().contains(mappingFileName)) {
+                temp.addMappingFileName(mappingFileName);
+            }
+        }
+        temp.setExcludeUnlistedClasses(newPU.excludeUnlistedClasses());
+        for (URL url : newPU.getJarFileUrls()) {
+            if (!temp.getJarFileUrls().contains(url)) {
+                temp.addJarFileUrl(url);
+            }
+        }
+        temp.setJtaDataSource(newPU.getJtaDataSource());
+        temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
+        temp.setProperties(newPU.getProperties());
+        temp.setTransactionType(newPU.getTransactionType());
     }
 
     /* (non-Javadoc)
@@ -78,32 +84,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
      */
     @Override
     public PersistenceUnitInfo obtainPersistenceUnitInfo(String persistenceUnitName) {
-        MutablePersistenceUnitInfo pui = getPersistenceUnitInfo(persistenceUnitName);
-        if (pui == null) {
-            throw new IllegalArgumentException("No persistence unit with name '"
-                    + persistenceUnitName + "' found");
-        }
-
-        List<URL> jarUrls = pui.getJarFileUrls();
-        jarUrls.clear();
-        List<URL> urls = masterPU.getJarFileUrls();
-        for (URL url : urls) {
-            jarUrls.add(url);
-        }
-        List<String> classNames = pui.getManagedClassNames();
-        classNames.clear();
-        List<String> managedClassNames = masterPU.getManagedClassNames();
-        for (String managedClassName : managedClassNames) {
-            classNames.add(managedClassName);
-        }
-        List<String> mappingNames = pui.getMappingFileNames();
-        mappingNames.clear();
-        List<String> mappingFileNames = masterPU.getMappingFileNames();
-        for (String mappingFileName : mappingFileNames) {
-            mappingNames.add(mappingFileName);
-        }
-
-        return pui;
+        return mergedPus.get(persistenceUnitName);
     }
 
     /* (non-Javadoc)
@@ -112,20 +93,6 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
     @Override
     public PersistenceUnitInfo obtainDefaultPersistenceUnitInfo() {
         throw new IllegalStateException("Default Persistence Unit is not supported. The persistence unit name must be specified at the entity manager factory.");
-    }
-
-    /**
-     * @return the validPersistenceUnitNames
-     */
-    public List<String> getValidPersistenceUnitNames() {
-        return validPersistenceUnitNames;
-    }
-
-    /**
-     * @param validPersistenceUnitNames the validPersistenceUnitNames to set
-     */
-    public void setValidPersistenceUnitNames(List<String> validPersistenceUnitNames) {
-        this.validPersistenceUnitNames = validPersistenceUnitNames;
     }
 
 }

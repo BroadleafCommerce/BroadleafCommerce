@@ -10,5 +10,20 @@
         <mapping-file>config/bc/jpa/domain/Availability.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/TargetContent.orm.xml</mapping-file>
         <mapping-file>config/bc/jpa/domain/ShippingRate.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.catalog.domain.BasePriceImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.CategoryImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.CategoryProductImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.CategoryXref</class>
+        <class>org.broadleafcommerce.catalog.domain.CrossSaleProductImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.FeaturedProductImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.ProductAttributeImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.ProductImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.SkuAttributeImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.SkuImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.UpSaleProductImpl</class>
+        <exclude-unlisted-classes/>
+        <properties>
+			<property name="hibernate.archive.autodetection" value="false" />
+        </properties>
 	</persistence-unit>
 </persistence>

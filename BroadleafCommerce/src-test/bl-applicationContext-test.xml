@@ -16,18 +16,12 @@
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
+				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
 				<value>classpath*:/META-INF/persistence-framework-catalog.xml</value>
 				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
-				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
 				<value>classpath*:/META-INF/persistence-profile.xml</value>
 				<value>classpath*:/META-INF/persistence-auxiliary.xml</value>
 				<value>classpath*:/META-INF/persistence-test.xml</value>
-			</list>
-		</property>
-		<property name="validPersistenceUnitNames">
-			<list>
-				<value>blPU</value>
-				<value>blSecurePU</value>
 			</list>
 		</property>
 		<property name="dataSources">
@@ -73,7 +67,6 @@
                 <entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
                 <entry key="hibernate.cache.use_second_level_cache" value="true"/>
                 <entry key="hibernate.cache.use_query_cache" value="true"/>
-                <entry key="hibernate.generate_statistics" value="true" />
             </map>
         </property>
 	</bean>
@@ -96,7 +89,6 @@
                 <entry key="hibernate.transaction.flush_before_completion" value="false"/>
                 <entry key="hibernate.connection.autocommit" value="false"/>
                 <entry key="hibernate.cache.use_second_level_cache" value="false"/>
-                <entry key="hibernate.cache.use_query_cache" value="false"/>
             </map>
         </property>
 	</bean>
