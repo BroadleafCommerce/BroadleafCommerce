@@ -26,8 +26,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/velocity-1.6.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-annotations.jar" sourcepath="lib/common/source/hibernate-annotations-3.4.0.CR1-sources.zip"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-commons-annotations.jar" sourcepath="lib/common/source/hibernate-commons-annotations-3.1.0.CR1-sources.zip"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-entitymanager.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate3.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/common/bin/hibernate-entitymanager.jar" sourcepath="/Users/jfischer/Downloads/hibernate-entitymanager-3.4.0.GA-src"/>
 	<classpathentry kind="lib" path="lib/common/bin/jms.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/velocity-tools-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/test/bin/greenmail.jar"/>
@@ -48,5 +47,6 @@
 	<classpathentry kind="lib" path="lib/common/bin/USPSV3ShippingRates.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/USPSV2ShippingRates.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/hibernate-3.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

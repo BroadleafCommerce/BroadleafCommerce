@@ -5,9 +5,17 @@
              version="1.0">
 	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
 		<non-jta-data-source>jdbc/test</non-jta-data-source>
+		<exclude-unlisted-classes/>
+		<properties>
+			<property name="hibernate.archive.autodetection" value="false" />
+        </properties>
 	</persistence-unit>
 	
 	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
 		<non-jta-data-source>jdbc/testSecure</non-jta-data-source>
+		<exclude-unlisted-classes/>
+		<properties>
+			<property name="hibernate.archive.autodetection" value="false" />
+        </properties>
 	</persistence-unit>
 </persistence>
