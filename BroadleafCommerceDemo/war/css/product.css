@@ -49,5 +49,36 @@ h3.relatedProd {
 }
 
 .productPrice {
-	font-size: 14px; 
+	font-size: 12px;
+	font-weight:normal;
+	color:#6f8000;
+	line-height:1.2;
+}
+
+.productPrice .salePrice {
+	color:#6f8000;
+	font-weight:bold;
+	font-size:14px;
+}
+
+.productPrice .originalPrice {
+	color:#666;
+	font-size:12px;
+	text-decoration:line-through;
+}
+
+.addCartBtn {
+	border:0;
+	background: url("/broadleafdemo/images/greenBtnGradient24.gif") repeat-x center center;
+	font-weight:bold;
+	font-size:14px;
+	text-decoration:none;
+	color:#fff;
+	font-family:arial,sans-serif;
+	padding:4px 12px;
+	border:1px solid #85a300;
+	border-bottom:1px solid #586600;
+}
+.addCartBtn:hover,.addCartBtn:active,.addCartBtn:visited {
+	color:#fff;
 }

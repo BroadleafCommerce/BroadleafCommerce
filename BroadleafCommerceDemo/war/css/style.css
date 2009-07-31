@@ -65,6 +65,10 @@
 	width: 125px;
 	font-size:8px;
 }
+.promo h3 {
+	line-height:1.2;
+	margin-bottom:2px;
+}
 .errorInputText {
 	color:#FF0000;
 	font-size:11px;

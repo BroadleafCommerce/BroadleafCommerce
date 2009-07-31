@@ -18,22 +18,20 @@
 						<span> <b>Model:</b> ${product.model} </span> <br/>
 					</c:if>
 				</div>
-				<div class="span-3 column productResultsRightCol" style="float:right;">
-					<span class="productPrice"> 
+				<div class="span-3 column productResultsRightCol" style="float:right;text-align:right;">
+					<span class="productPrice">
 						<c:choose>
 							<c:when test="${product.skus[0].salePrice != null}" >
-								<span class="strikethrough">$<c:out value="${product.skus[0].retailPrice}" /></span>
-								$<c:out value="${product.skus[0].salePrice}" />
+								Sale: <span class="salePrice">$<c:out value="${product.skus[0].salePrice}" /></span>
+								<br/><span class="originalPrice">$<c:out value="${product.skus[0].retailPrice}" /></span>
 							</c:when>			
 							<c:otherwise>
-								$<c:out value="${product.skus[0].retailPrice}" />
+								<span class="salePrice">$<c:out value="${product.skus[0].retailPrice}" /></span>
 							</c:otherwise>
 						</c:choose>
 					</span> <br/><br/>
-					<a href="<c:url value="/basket/addItem.htm"> <c:param name="skuId" value="${product.skus[0].id}"/>
-						<c:param name="quantity" value="1"/> </c:url>">
-						<img src="/broadleafdemo/images/addToCart-160x25.png"/>
-					</a>
+					<a class="addCartBtn" href="<c:url value="/basket/addItem.htm"> <c:param name="skuId" value="${product.skus[0].id}"/>
+						<c:param name="quantity" value="1"/> </c:url>">Add to Cart</a>
 				</div>
 			</div>
 		</c:forEach>

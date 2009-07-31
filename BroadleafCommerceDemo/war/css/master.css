@@ -1,11 +1,10 @@
 /* Global and structural styles */
 body {
-	background: url("/broadleafdemo/images/coffeeFarm.jpg");
-	background-attachment: fixed;
-	font-family: arial, helvetica, sans-serif;
+/*	background: url("/broadleafdemo/images/coffeeFarm.jpg");
+	background-attachment: fixed;*/
+/*	background:#f5f5e6;*/
 	margin: 0;
 	padding: 0;
-	font-size: 12px;
 	color: #666666;
 	font-size: 12px;
 	font-family: arial, helvetica, sans-serif;
@@ -23,7 +22,7 @@ body {
 }
 
 .navGradientBg {
-	background: url("/broadleafdemo/images/navGradientNoBtm.gif") repeat-x
+	background: url("/broadleafdemo/images/navGradient.gif") repeat-x
 		bottom center;
 }
 

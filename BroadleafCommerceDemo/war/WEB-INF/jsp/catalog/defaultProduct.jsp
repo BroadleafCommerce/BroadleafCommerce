@@ -61,11 +61,10 @@
 						</c:choose>
 					</span>
 					<br/><br/>
-					<a href="<c:url value="/basket/addItem.htm">
+					<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
 							<c:param name="skuId" value="${currentProduct.skus[0].id}"/>
 							<c:param name="quantity" value="1"/>
-							</c:url>"><img src="/broadleafdemo/images/addToCart-160x25.png"/>
-					</a><br/> <br/>
+							</c:url>">Add to Cart</a><br/> <br/>
 					<a href="" > Add To Wishlist </a>
 				</div>
 			</div>
@@ -94,10 +93,10 @@
 											<c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" />
 										</c:otherwise>
 									</c:choose><br/>
-								    <a href="<c:url value="/basket/addItem.htm">
+								    <a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
 					   					<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
 										<c:param name="quantity" value="1"/>
-										</c:url>" ><img src="/broadleafdemo/images/addToCart-160x25.png" /> </a>
+										</c:url>" >Add to Cart</a>
 								</div>
 							</div>
 						</c:forEach>
@@ -127,10 +126,10 @@
 											<c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" /> 
 										</c:otherwise>
 									</c:choose>
-									 <br/><a href="<c:url value="/basket/addItem.htm">
+									 <br/><a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
 										<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
 										<c:param name="quantity" value="1"/>
-										</c:url>"> <img src="/broadleafdemo/images/addToCart-160x25.png"/> </a>
+										</c:url>">Add to Cart</a>
 								</div>
 							</div>
 						</c:forEach>

@@ -1,4 +1,11 @@
 <%@ include file="/WEB-INF/jsp/include.jsp"%>
+
+<!-- Blueprint Framework CSS -->
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/reset.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/plugins/fancy-type/screen.css" />
+
+
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/navigation.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/style.css" />
@@ -10,10 +17,6 @@
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/checkout.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/order.css" />
 
-<!-- Blueprint Framework CSS -->
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/reset.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/plugins/fancy-type/screen.css" />
 
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/jquery-smoothness/jquery-ui-1.7.2.custom.css" />
 

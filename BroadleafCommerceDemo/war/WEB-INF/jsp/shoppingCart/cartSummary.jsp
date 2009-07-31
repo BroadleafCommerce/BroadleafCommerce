@@ -68,12 +68,12 @@
 					<tr class="totals highlight">
 						<td colspan="3">&nbsp;</td>
 						<td style="text-align:right">Subtotal:</td>
-						<td style="text-align:right"><span class="price">${currentCartOrder.subTotal}</span></td>
+						<td style="text-align:right"><span class="price">$${currentCartOrder.subTotal}</span></td>
 					</tr>
 					<tr class="totals">
 						<td colspan="3">&nbsp;</td>
 						<td style="text-align:right">Estimated Tax:</td>
-						<td style="text-align:right"><span class="price">${currentCartOrder.totalTax}</span></td>
+						<td style="text-align:right"><span class="price">$${currentCartOrder.totalTax}</span></td>
 					</tr>
 					<tr class="totals">
 						<td colspan="3" style="text-align:right;">Shipping Method:
@@ -82,12 +82,12 @@
 							</form:select>
 						</td>
 						<td style="text-align:right">Estimated Shipping:</td>
-						<td style="text-align:right"><span class="price">${currentCartOrder.totalShipping}</span></td>
+						<td style="text-align:right"><span class="price">$${currentCartOrder.totalShipping}</span></td>
 					</tr>
 					<tr class="totals">
 						<td colspan="3">&nbsp;</td>
 						<td style="text-align:right">Total:</td>
-						<td style="text-align:right"><span class="price">${currentCartOrder.total}</span></td>
+						<td style="text-align:right"><span class="price">$${currentCartOrder.total}</span></td>
 					</tr>
 					<tr class="totals">
 						<td colspan="5" style="text-align:right"><a href="<c:url value="/store" />">Continue Shopping</a>  <button type="submit" name="checkout" id="checkout">Proceed to Checkout &raquo;</button>

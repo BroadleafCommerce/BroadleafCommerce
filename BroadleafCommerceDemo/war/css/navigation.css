@@ -44,6 +44,7 @@ ul#userNav {
 	position: absolute;
 	right: 6px;
 	top: 14px;
+	line-height:1.1;
 }
 
 ul#userNav li {

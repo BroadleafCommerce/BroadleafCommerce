@@ -47,6 +47,7 @@ button#checkout {
 	padding:6px;
 	cursor:pointer;
 	margin-left:18px;
+	border:1px solid #85a300;
 }
 button#checkout:hover {
 	background-position:top center;
