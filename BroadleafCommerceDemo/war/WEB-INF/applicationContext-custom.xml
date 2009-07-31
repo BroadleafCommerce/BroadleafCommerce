@@ -25,12 +25,6 @@
                 <value>classpath*:/META-INF/persistence.xml</value>
             </list>
         </property>
-        <property name="validPersistenceUnitNames">
-            <list>
-                <value>blPU</value>
-                <value>blSecurePU</value>
-            </list>
-        </property>
         <property name="dataSources">
             <map>
                 <entry key="jdbc/web" value-ref="webDS"/>
