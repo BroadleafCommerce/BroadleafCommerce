@@ -27,10 +27,8 @@
 	<li>&nbsp;&nbsp;</li>
 	<li><a class="${currentCategory.generatedUrl=='store'?'active':''}" href="/broadleafdemo/store">Home</a></li>
 	<li><a class="${currentCategory.generatedUrl=='store/coffee'?'active':''}" href="/broadleafdemo/store/coffee">Coffee</a></li>
-	<li><a href="#">Tea</a></li>
 	<li><a class="${currentCategory.generatedUrl=='store/equipment/grinders'?'active':''}" href="/broadleafdemo/store/equipment/grinders">Grinders</a></li>
 	<li><a class="${currentCategory.generatedUrl=='store/equipment/brewers'?'active':''}" href="/broadleafdemo/store/equipment/brewers">Coffee Brewers</a></li>
 	<li><a class="${currentCategory.generatedUrl=='store/equipment/espresso'?'active':''}" href="/broadleafdemo/store/equipment/espresso">Espresso Machines</a></li>
-	<li><a href="#">Accessories</a></li>
 </ul>
 </div>
