@@ -51,11 +51,8 @@
 
 			<fileset dir="${stage.dir}">
 				<exclude name="*test*.jar"/>
-				<include name="broadleaf-auxiliary-web.jar" />
-				<include name="broadleaf-auxiliary.jar" />
 				<include name="broadleaf-framework-web.jar" />
 				<include name="broadleaf-framework.jar" />
-				<include name="broadleaf-layout.jar" />
 				<include name="broadleaf-profile-web.jar" />
 				<include name="broadleaf-profile.jar" />
 			</fileset>
@@ -65,15 +62,7 @@
    <target name="reports.generate">
         <cobertura-report format="html" destdir="${reports.dir}"
         	datafile="${cobertura.instrumented.classes}/cobertura.ser">
-            <fileset dir="src-auxiliary">
-                <include name="**/*.java" />
-                <exclude name="**/*.xml" />
-            </fileset>
             <fileset dir="src-framework">
-                <include name="**/*.java" />
-                <exclude name="**/*.xml" />
-            </fileset>
-            <fileset dir="src-layout">
                 <include name="**/*.java" />
                 <exclude name="**/*.xml" />
             </fileset>
@@ -85,15 +74,7 @@
 
         <cobertura-report format="xml" destdir="${reports.dir}"
             datafile="${cobertura.instrumented.classes}/cobertura.ser">
-            <fileset dir="src-auxiliary">
-                <include name="**/*.java" />
-                <exclude name="**/*.xml" />
-            </fileset>
             <fileset dir="src-framework">
-                <include name="**/*.java" />
-                <exclude name="**/*.xml" />
-            </fileset>
-            <fileset dir="src-layout">
                 <include name="**/*.java" />
                 <exclude name="**/*.xml" />
             </fileset>
