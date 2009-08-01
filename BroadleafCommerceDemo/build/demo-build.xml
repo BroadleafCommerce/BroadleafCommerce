@@ -86,9 +86,6 @@
 				<include name="broadleaf-profile-web.jar" />
 				<include name="broadleaf-framework.jar"/>
 				<include name="broadleaf-framework-web.jar"/>
-				<include name="broadleaf-auxiliary.jar"/>
-				<include name="broadleaf-auxiliary-web.jar"/>
-				<include name="broadleaf-layout.jar"/>
 			</fileset>
 		</copy>
 
@@ -203,9 +200,6 @@
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-profile-web.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-framework.jar" />
 		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-framework-web.jar" />
-		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-auxiliary.jar" />
-		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-auxiliary-web.jar" />
-		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-layout.jar" />
 	</target>
 
 	<target name="tomcat-setup">
