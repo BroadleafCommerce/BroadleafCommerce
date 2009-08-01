@@ -5,9 +5,7 @@
     </description>
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="framework.src.dir" value="${basedir}/src-framework" />
-	<property name="auxiliary.src.dir" value="${basedir}/src-auxiliary" />
 	<property name="profile.src.dir" value="${basedir}/src-profile" />
-	<property name="layout.src.dir" value="${basedir}/src-layout" />
 	<property name="test.src.dir" value="${basedir}/src-test" />
 	<property name="lib.dir" value="${basedir}/lib" />
 	<property name="config.dir" value="${basedir}/config" />
@@ -32,11 +30,11 @@
 		<include name="**/*.jar" />
 	</fileset>
 	
-	<target name="compile-all" depends="compile-auxiliary, compile-profile, compile-framework, compile-layout"/>
+	<target name="compile-all" depends="compile-profile, compile-framework"/>
 
-	<target name="compile-framework" depends="setup, compile-auxiliary, compile-profile">
+	<target name="compile-framework" depends="setup, compile-profile">
 		<!--
-			Framework is allowed to depend on profile and auxiliary, but nothing else
+			Framework is allowed to depend on profile, but nothing else
 		-->
 		<mkdir dir="${stage.dir}/framework-jar" />
 
@@ -44,14 +42,13 @@
 			<fileset refid="compile.lib" />
 			<fileset refid="common.lib" />
 			<dirset dir="${stage.dir}/profile-jar"/>
-			<dirset dir="${stage.dir}/auxiliary-jar"/>
 		</path>
 
 		<echo>Compiling with debug=${debug.compile}</echo>
 		<javac destdir="${stage.dir}/framework-jar" srcdir="${framework.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
 	</target>
 		
-	<target name="build-framework-jar" depends="compile-framework, build-auxiliary-jar, build-profile-jar">
+	<target name="build-framework-jar" depends="compile-framework, build-profile-jar">
 		<copy todir="${stage.dir}/framework-jar">
 			<fileset dir="${framework.src.dir}">
 				<include name="**/*.*" />
@@ -78,102 +75,41 @@
 				<include name="**/*.xml" />
 				<include name="**/*.vm" />
 				<include name="**/*.mvel" />
+				<include name="**/*.txt" />
 				<include name="META-INF/**" />
 				<exclude name="**/test/**/*.class" />
 				<exclude name="**/web/**/*.*" />
+				<exclude name="**/layout/**/*.*" />
 			</fileset>
 		</jar>
 		
 		<jar jarfile="${stage.dir}/broadleaf-framework-web.jar">
 			<fileset dir="${stage.dir}/framework-jar">
 				<include name="**/web/**/*.*" />
+				<include name="**/layout/**/*.*" />
 				<include name="META-INF/**" />
 			</fileset>
 		</jar>
 	</target>
 
-	<target name="build-framework-source-jar" depends="build-auxiliary-source-jar, build-profile-source-jar">
+	<target name="build-framework-source-jar" depends="build-profile-source-jar">
 		<delete file="${stage.dir}/broadleaf-framework-sources.jar" />
 		<jar jarfile="${stage.dir}/broadleaf-framework-sources.jar" basedir="${framework.src.dir}">
 			<include name="**/*.java" />
 			<include name="**/*.properties" />
 			<include name="**/*.xml" />
+			<include name="**/*.vm" />
+			<include name="**/*.mvel" />
+			<include name="**/*.txt" />
 			<include name="META-INF/**" />
 			<exclude name="**/test/**/*.class" />
 			<exclude name="**/web/**/*.*" />
+			<exclude name="**/layout/**/*.*" />
 		</jar>
 		<jar jarfile="${stage.dir}/broadleaf-framework-sources-web.jar" basedir="${framework.src.dir}">
 			<include name="META-INF/**" />
 			<include name="**/web/**/*.*" />
-		</jar>
-	</target>
-	
-	<target name="compile-auxiliary" depends="setup">
-		<!--
-			Auxiliary is allowed to depend on Profile only
-		-->
-		<mkdir dir="${stage.dir}/auxiliary-jar" />
-
-		<path id="compile-lib">
-			<fileset refid="compile.lib" />
-			<fileset refid="common.lib" />
-		</path>
-
-		<echo>Compiling with debug=${debug.compile}</echo>
-		<javac destdir="${stage.dir}/auxiliary-jar" srcdir="${auxiliary.src.dir}:${profile.src.dir}" excludes="org/broadleafcommerce/profile/**" classpathref="compile-lib" debug="${debug.compile}"/>
-		<delete dir="${stage.dir}/auxiliary-jar/org/broadleafcommerce/profile"/>
-	</target>
-
-	<target name="build-auxiliary-jar" depends="compile-auxiliary">
-		<copy todir="${stage.dir}/auxiliary-jar">
-			<fileset dir="${auxiliary.src.dir}">
-				<include name="**/*.*" />
-				<exclude name="**/*.java" />
-			</fileset>
-		</copy>
-
-		<copy tofile="${stage.dir}/auxiliary-jar/jdbc.properties">
-			<fileset dir="${jdbc.config.dir}">
-				<include name="jdbc.properties" />
-			</fileset>
-		</copy>
-
-		<jar jarfile="${stage.dir}/broadleaf-auxiliary.jar">
-			<fileset dir="${stage.dir}/auxiliary-jar">
-				<include name="**/*.class" />
-				<include name="**/*.properties" />
-				<include name="**/*.txt" />
-				<include name="**/*.xml" />
-				<include name="**/*.vm" />
-				<include name="**/*.mvel" />
-				<include name="META-INF/**" />
-				<exclude name="**/test/**/*.class" />
-				<exclude name="**/web/**/*.*" />
-			</fileset>
-		</jar>
-
-		<jar jarfile="${stage.dir}/broadleaf-auxiliary-web.jar">
-			<fileset dir="${stage.dir}/auxiliary-jar">
-				<include name="META-INF/**" />
-				<include name="**/web/**/*.*" />
-			</fileset>
-		</jar>
-	</target>
-
-	<target name="build-auxiliary-source-jar">
-		<delete file="${stage.dir}/build-auxiliary-source-jar" />
-		<jar jarfile="${stage.dir}/broadleaf-auxiliary-sources.jar" basedir="${auxiliary.src.dir}">
-			<include name="**/*.java" />
-			<include name="**/*.properties" />
-			<include name="**/*.xml" />
-			<include name="META-INF/**" />
-			<exclude name="**/test/**/*.class" />
-			<exclude name="**/web/**/*.*" />
-		</jar>
-		
-		<jar jarfile="${stage.dir}/broadleaf-auxiliary-sources-web.jar" basedir="${auxiliary.src.dir}">
-			<include name="META-INF/**" />
-			<include name="**/web/**/*.*" />
+			<include name="**/layout/**/*.*" />
 		</jar>
 	</target>
 
@@ -189,18 +125,8 @@
 
          <!-- Build Java docs for all of BLC: 
               Framework
-              Profile
-              Auxiliary
-              Layout -->
+              Profile-->
          <fileset dir="${framework.src.dir}">
-            <include name="**/*.java" />
-         </fileset>
-         
-         <fileset dir="${auxiliary.src.dir}">
-            <include name="**/*.java" />
-         </fileset>
-         
-         <fileset dir="${layout.src.dir}">
             <include name="**/*.java" />
          </fileset>
          
@@ -209,58 +135,6 @@
          </fileset>
          
 		</javadoc>
-	</target>
-	
-	<target name="compile-layout" depends="setup, compile-auxiliary, compile-profile, compile-framework">
-		<!--
-			Layout is allowed to depend on all other modules
-		-->
-		<mkdir dir="${stage.dir}/layout-jar" />
-
-		<path id="compile-lib">
-			<fileset refid="compile.lib" />
-			<fileset refid="common.lib" />
-			<dirset dir="${stage.dir}/profile-jar"/>
-			<dirset dir="${stage.dir}/auxiliary-jar"/>
-			<dirset dir="${stage.dir}/framework-jar"/>
-		</path>
-
-		<echo>Compiling with debug=${debug.compile}</echo>
-		<javac destdir="${stage.dir}/layout-jar"
-			srcdir="${layout.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
-	</target>
-
-	<target name="build-layout-jar" depends="compile-layout, build-auxiliary-jar, build-profile-jar, build-framework-jar">
-		<copy todir="${stage.dir}/layout-jar">
-			<fileset dir="${layout.src.dir}">
-				<include name="**/*.*" />
-				<exclude name="**/*.java" />
-			</fileset>
-			<fileset dir="${config.dir}">
-				<include name="**/*.properties" />
-			</fileset>
-		</copy>
-
-		<jar jarfile="${stage.dir}/broadleaf-layout.jar">
-			<fileset dir="${stage.dir}/layout-jar">
-				<include name="**/*.class" />
-				<include name="**/*.properties" />
-				<include name="**/*.xml" />
-				<include name="META-INF/**" />
-				<exclude name="**/test/**/*.class" />
-			</fileset>
-		</jar>
-	</target>
-
-	<target name="build-layout-source-jar" depends="build-auxiliary-source-jar, build-profile-source-jar, build-framework-source-jar">
-		<delete file="${stage.dir}/broadleaf-layout-sources.jar" />
-		<jar jarfile="${stage.dir}/broadleaf-layout-sources.jar" basedir="${layout.src.dir}">
-			<include name="**/*.java" />
-			<include name="**/*.properties" />
-			<include name="**/*.xml" />
-			<include name="META-INF/**" />
-			<exclude name="**/test/**/*.class" />
-		</jar>
 	</target>
 	
 	<target name="compile-profile" depends="setup">
@@ -272,14 +146,13 @@
 		<path id="compile-lib">
 			<fileset refid="compile.lib" />
 			<fileset refid="common.lib" />
-			<dirset dir="${stage.dir}/auxiliary-jar"/>
 		</path>
 
 		<echo>Compiling with debug=${debug.compile}</echo>
 		<javac destdir="${stage.dir}/profile-jar" srcdir="${profile.src.dir}" classpathref="compile-lib" debug="${debug.compile}"/>
 	</target>
 
-	<target name="build-profile-jar" depends="build-auxiliary-jar, compile-profile">
+	<target name="build-profile-jar" depends="compile-profile">
 		<copy todir="${stage.dir}/profile-jar">
 			<fileset dir="${profile.src.dir}">
 				<include name="**/*.*" />
@@ -295,8 +168,10 @@
 			<fileset dir="${stage.dir}/profile-jar">
 				<include name="**/*.class" />
 				<include name="**/*.properties" />
+				<include name="**/*.txt" />
 				<include name="**/*.xml" />
 				<include name="**/*.vm" />
+				<include name="**/*.mvel" />
 				<include name="META-INF/**" />
 				<exclude name="**/test/**/*.class" />
 				<exclude name="**/web/**/*.*" />
@@ -311,13 +186,15 @@
 		</jar>
 	</target>
 
-	<target name="build-profile-source-jar" depends="build-auxiliary-source-jar">
+	<target name="build-profile-source-jar">
 		<delete file="${stage.dir}/broadleaf-profile-sources.jar" />
 		<jar jarfile="${stage.dir}/broadleaf-profile-sources.jar" basedir="${profile.src.dir}">
 			<include name="**/*.java" />
 			<include name="**/*.properties" />
+			<include name="**/*.txt" />
 			<include name="**/*.xml" />
 			<include name="**/*.vm" />
+			<include name="**/*.mvel" />
 			<include name="META-INF/**" />
 			<exclude name="**/test/**/*.class" />
 			<exclude name="**/web/**/*.*" />
@@ -329,33 +206,24 @@
 		</jar>
 	</target>
 
-	<target name="build-jars" depends="build-framework-jar,build-auxiliary-jar,build-profile-jar,build-layout-jar"/>
+	<target name="build-jars" depends="build-framework-jar,build-profile-jar"/>
 
-	<target name="build-source-jars" depends="build-framework-source-jar,build-auxiliary-source-jar,build-profile-source-jar,build-layout-source-jar"/>
+	<target name="build-source-jars" depends="build-framework-source-jar,build-profile-source-jar"/>
 
     <target name="publish-jars"
             depends="build-jars, build-source-jars"
             description="Publishes all artifacts from this build to the shared repository">
-    	<copy file="${stage.dir}/broadleaf-auxiliary.jar" todir="${basedir}/../org.broadleafcommerce/auxiliary/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-web.jar" todir="${basedir}/../org.broadleafcommerce/auxiliary-web/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-sources.jar" todir="${basedir}/../org.broadleafcommerce/auxiliary/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-sources-web.jar" todir="${basedir}/../org.broadleafcommerce/auxiliary-web/0.0.0/sources" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework.jar" todir="${basedir}/../org.broadleafcommerce/framework/0.0.0/jars" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework-web.jar" todir="${basedir}/../org.broadleafcommerce/framework-web/0.0.0/jars" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework-sources.jar" todir="${basedir}/../org.broadleafcommerce/framework/0.0.0/sources" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework-sources-web.jar" todir="${basedir}/../org.broadleafcommerce/framework-web/0.0.0/sources" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-layout.jar" todir="${basedir}/../org.broadleafcommerce/layout/0.0.0/jars" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-layout-sources.jar" todir="${basedir}/../org.broadleafcommerce/layout/0.0.0/sources" overwrite="true"/>
        	<copy file="${stage.dir}/broadleaf-profile.jar" todir="${basedir}/../org.broadleafcommerce/profile/0.0.0/jars" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-profile-web.jar" todir="${basedir}/../org.broadleafcommerce/profile-web/0.0.0/jars" overwrite="true"/>
        	<copy file="${stage.dir}/broadleaf-profile-sources.jar" todir="${basedir}/../org.broadleafcommerce/profile/0.0.0/sources" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-profile-sources-web.jar" todir="${basedir}/../org.broadleafcommerce/profile-web/0.0.0/sources" overwrite="true"/>
     	
-    	<copy file="${stage.dir}/broadleaf-auxiliary.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/auxiliary/jars/broadleaf-auxiliary-0.0.0.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-auxiliary-web.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/auxiliary-web/jars/broadleaf-auxiliary-web-0.0.0.jar" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/framework/jars/broadleaf-framework-0.0.0.jar" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-framework-web.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/framework-web/jars/broadleaf-framework-web-0.0.0.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-layout.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/layout/jars/broadleaf-layout-0.0.0.jar" overwrite="true"/>
        	<copy file="${stage.dir}/broadleaf-profile.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/profile/jars/broadleaf-profile-0.0.0.jar" overwrite="true"/>
     	<copy file="${stage.dir}/broadleaf-profile-web.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/profile-web/jars/broadleaf-profile-web-0.0.0.jar" overwrite="true"/>
     </target>

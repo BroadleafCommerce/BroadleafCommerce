@@ -79,6 +79,8 @@ public class DependencyTest extends BaseTest {
         acceptablePackages.add("org.broadleafcommerce.search.web");
         acceptablePackages.add("org.broadleafcommerce.checkout.web");
         acceptablePackages.add("org.broadleafcommerce.util.web");
+        acceptablePackages.add("org.broadleafcommerce.web");
+        acceptablePackages.add("org.broadleafcommerce.layout.tags");
     }
 
     @Test

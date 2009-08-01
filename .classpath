@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src-auxiliary"/>
 	<classpathentry kind="src" path="src-framework"/>
-	<classpathentry kind="src" path="src-layout"/>
 	<classpathentry kind="src" path="src-profile"/>
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="src" path="config/spring"/>
