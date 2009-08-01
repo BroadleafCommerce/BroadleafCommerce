@@ -138,9 +138,6 @@
 	</target>
 	
 	<target name="compile-profile" depends="setup">
-		<!--
-			Profile is allowed to depend on Auxiliary only
-		-->
 		<mkdir dir="${stage.dir}/profile-jar" />
 
 		<path id="compile-lib">
