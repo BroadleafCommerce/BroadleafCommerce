@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Broadleaf Commerce USPS build" default="usage" basedir="..">
+	<description>
+		Broadleaf Commerce USPS Build File
+    </description>
+
+	<property name="stage.dir" value="${basedir}/build/stage" />
+	<property name="modules.src.dir" value="${basedir}/src-usps" />
+	<property name="modules.jar.dir" value="${stage.dir}/broadleaf-usps-jar" />
+	<property name="modules.jar" value="${stage.dir}/broadleaf-usps.jar" />
+	<property name="modules.src.jar" value="${stage.dir}/broadleaf-usps-sources.jar" />
+	<property name="test.src.dir" value="${basedir}/src-usps-test" />
+	<property name="schemas.jar" value="${stage.dir}/broadleaf-usps-schemas.jar" />
+	<property name="schemas.src" value="${stage.dir}/broadleaf-usps-schemas" />
+	
+	<property name="discrete.build.file" value="${basedir}/build/modules.build.xml" />
+	<property name="test.build.file" value="${basedir}/build/unittests.build.xml" />
+	<property name="build.env" value="dev"/>
+
+	<target name="clean" description="Cleans the staging area.">
+		<ant antfile="${discrete.build.file}" target="clean" />
+	</target>
+
+	<target name="build-jars" description="Builds all jars to the staging area.">
+		<ant antfile="${discrete.build.file}" target="build-jars" />
+	</target>
+	
+	<target name="package-schemas" description="Package XMLBean vendor schema respresentations in a jar">
+		<ant antfile="${discrete.build.file}" target="package-modules-schemas" />
+	</target>
+
+	<target name="generate-javadocs" description="Generates Javadocs for the entire application.">
+		<ant antfile="${discrete.build.file}" target="generate-javadocs" />
+	</target>
+
+	<target name="runall" description="Runs all integration and unit tests.">
+		<ant antfile="${test.build.file}" target="runall" />
+	</target>
+
+	<target name="build-source-jars" description="Builds all source jars to the staging area.">
+		<ant antfile="${discrete.build.file}" target="build-source-jars" />
+	</target>
+
+	<target name="usage">
+		<echo>
+			This is the ANT build file for the Broadleaf Commerce USPS modules project.
+		</echo>
+	</target>
+
+</project>

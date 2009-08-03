@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Broadleaf Commerce Modules" default="usage" basedir="..">
+	<description>
+		Broadleaf Commerce Build File
+    </description>
+
+	<property name="internal.build.file" value="${basedir}/build/usps.build.xml" />
+	<property name="test.build.file" value="${basedir}/build/unittests.build.xml" />
+	<property name="build.env" value="dev"/>
+
+	<target name="Clean" description="Cleans the staging area.">
+		<ant antfile="${internal.build.file}" target="clean" />
+	</target>
+
+	<target name="Build Jars" description="Builds all jars to the staging area.">
+		<ant antfile="${internal.build.file}" target="build-jars" />
+	</target>
+
+	<target name="Generate Java Docs" description="Generates Javadocs for the entire application.">
+		<ant antfile="${internal.build.file}" target="generate-javadocs" />
+	</target>
+
+	<target name="Run Tests" description="Runs all integration and unit tests.">
+		<ant antfile="${test.build.file}" target="runall" />
+	</target>
+
+	<target name="Build Source Jars" description="Builds all source jars to the staging area.">
+		<ant antfile="${internal.build.file}" target="build-source-jars" />
+	</target>
+
+	<target name="Build Release Binaries and Source Jars" depends="Build Jars, Build Source Jars" description="Builds all production (disable automatic ddl table creation) binary and source jars to the staging area.">
+		<property name="hibernate.hbm2ddl.auto" value="false" />
+		<ant antfile="${internal.build.file}" target="build-jars"/>
+		<ant antfile="${internal.build.file}" target="build-source-jars"/>
+	</target>
+
+	<target name="Run Tests with Coverage" description="Runs all tests, and provides Code Coverage reports">
+		<property name="code.coverage" value="true" />
+		<ant antfile="${test.build.file}" target="runall" />
+	</target>
+
+	<target name="usage">
+		<echo>
+			This is the ANT build file for the Broadleaf Commerce modules project.
+		</echo>
+	</target>
+
+</project>
