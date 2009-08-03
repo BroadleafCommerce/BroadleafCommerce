@@ -1,10 +1,14 @@
 package org.broadleafcommerce.search.web;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.search.domain.SearchQuery;
 import org.broadleafcommerce.search.service.SearchService;
@@ -52,6 +56,20 @@ public class SearchController {
 
         model.addAttribute("queryString", input.getQueryString());
         model.addAttribute("products", products);
+
+        // separate results by category
+        List<Category> categories = new ArrayList<Category>();
+        Map<Long, List<Product> > categoryGroups= new HashMap<Long, List<Product> >();
+        for (Product prod : products) {
+            Category cat = prod.getDefaultCategory();
+            if (!categoryGroups.containsKey(cat.getId())) {
+                categories.add(cat);
+                categoryGroups.put(cat.getId(), new ArrayList<Product>());
+            }
+            categoryGroups.get(cat.getId()).add(prod);
+        }
+        model.addAttribute("categories", categories);
+        model.addAttribute("categoryGroups", categoryGroups);
 
         if (ajax == null || !ajax.booleanValue() || (originalQueryString != null && !originalQueryString.equals(queryString))) {
             return "search";
