@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="BroadleafCommerce Test Suite" verbose="2" parallel="false">
+	<test name="commerce-integrationtest">
+        <packages>
+        	<package name="org.broadleafcommerce.test.integration"></package>
+        	<package name="org.broadleafcommerce.vendor.test"></package>
+        </packages>
+    </test>
+</suite>
