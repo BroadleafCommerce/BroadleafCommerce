@@ -22,8 +22,8 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
+import org.broadleafcommerce.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.vendor.service.type.ContainerSizeType;
 
 @Embeddable
 public class ProductDimension implements Serializable {
@@ -100,19 +100,19 @@ public class ProductDimension implements Serializable {
         this.girth = girth;
     }
 
-    public USPSContainerSizeType getSize() {
-        return USPSContainerSizeType.getInstance(size);
+    public ContainerSizeType getSize() {
+        return ContainerSizeType.getInstance(size);
     }
 
-    public void setSize(USPSContainerSizeType size) {
+    public void setSize(ContainerSizeType size) {
         this.size = size.getType();
     }
 
-    public USPSContainerShapeType getContainer() {
-        return USPSContainerShapeType.getInstance(container);
+    public ContainerShapeType getContainer() {
+        return ContainerShapeType.getInstance(container);
     }
 
-    public void setContainer(USPSContainerShapeType container) {
+    public void setContainer(ContainerShapeType container) {
         this.container = container.getType();
     }
 

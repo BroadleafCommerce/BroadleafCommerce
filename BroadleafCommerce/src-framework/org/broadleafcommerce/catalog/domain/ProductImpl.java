@@ -45,8 +45,8 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.DateUtil;
-import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
+import org.broadleafcommerce.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.vendor.service.type.ContainerSizeType;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
@@ -446,19 +446,19 @@ public class ProductImpl implements Product {
         return dimension.getGirth();
     }
 
-    public USPSContainerSizeType getSize() {
+    public ContainerSizeType getSize() {
         return dimension.getSize();
     }
 
-    public void setSize(USPSContainerSizeType size) {
+    public void setSize(ContainerSizeType size) {
         dimension.setSize(size);
     }
 
-    public USPSContainerShapeType getContainer() {
+    public ContainerShapeType getContainer() {
         return dimension.getContainer();
     }
 
-    public void setContainer(USPSContainerShapeType container) {
+    public void setContainer(ContainerShapeType container) {
         dimension.setContainer(container);
     }
 
