@@ -9,7 +9,6 @@
         	<package name="org.broadleafcommerce.email.test"></package>
         	<package name="org.broadleafcommerce.dependency.test"></package>
         	<package name="org.broadleafcommerce.catalog.test"></package>
-        	<package name="org.broadleafcommerce.vendor.test"></package>
         	<package name="org.broadleafcommerce.security.test"></package>
         </packages>
     </test>
