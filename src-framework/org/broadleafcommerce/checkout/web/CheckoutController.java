@@ -163,6 +163,7 @@ public class CheckoutController {
         paymentInfo.setOrder(order);
         paymentInfo.setType(PaymentInfoType.CREDIT_CARD);
         paymentInfo.setReferenceNumber(checkoutForm.getCreditCardNumber());
+        paymentInfo.setAmount(order.getTotal());
         payments.put(paymentInfo, creditCardPaymentInfo);
         List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
         paymentInfos.add(paymentInfo);

@@ -55,11 +55,15 @@ public class StoreController {
 
         if (findAStoreForm.getPostalCode() == null || findAStoreForm.getPostalCode().isEmpty() ||
                 findAStoreForm.getDistance().isEmpty() || findAStoreForm.getPostalCode().length() != 5) {
+            model.addAttribute("errorMessage" , "Please enter a valid postal code and distance." );
             return showStores(model);
         }
 
         findAStoreForm.setStoreDistanceMap(storeService.findStoresByAddress(searchAddress,
                 Double.parseDouble(findAStoreForm.getDistance())));
+        if (findAStoreForm.getStoreDistanceMap().size() == 0) {
+            model.addAttribute("errorMessage" , "No stores found in your area." );
+        }
         model.addAttribute("stateList", stateService.findStates());
         model.addAttribute("countryList", countryService.findCountries());
         model.addAttribute("findAStoreForm", findAStoreForm);
