@@ -19,10 +19,8 @@ import org.broadleafcommerce.store.domain.ZipCode;
 
 public interface ZipCodeDao {
 
-    @SuppressWarnings("unchecked")
     public ZipCode findZipCodeByZipCode(Integer zipCode);
 
-    @SuppressWarnings("unchecked")
     public ZipCode findBestZipCode(String pCity, String pCounty, String pState, Integer pZipCode, Long pZipGeo);
 
 }

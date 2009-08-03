@@ -177,6 +177,7 @@ public class CatalogController extends AbstractController {
         return (productPosition !=0);
     }
 
+    @SuppressWarnings("unchecked")
     protected boolean addProductsToModel(HttpServletRequest request, Map<String,Object> model ) {
         boolean productFound = false;
 

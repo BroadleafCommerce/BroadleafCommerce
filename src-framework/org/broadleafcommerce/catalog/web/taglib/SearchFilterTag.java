@@ -26,6 +26,8 @@ import org.broadleafcommerce.catalog.domain.Product;
 
 public class SearchFilterTag extends TagSupport {
 
+    private static final long serialVersionUID = 1L;
+
     private List<Product> products;
     private String queryString;
 
