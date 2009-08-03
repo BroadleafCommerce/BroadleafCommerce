@@ -41,10 +41,8 @@
 	<classpathentry kind="lib" path="lib/test/bin/junit-4.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/compile/bin/jsp-api-2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/compile/bin/servlet-api-2.4.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/USPSV3ShippingRates.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/USPSV2ShippingRates.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/hibernate-3.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

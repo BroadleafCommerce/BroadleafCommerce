@@ -143,10 +143,4 @@
 	
 	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>
 	
-	<aop:config>
-	    <aop:aspect id="blServiceMonitorAspectShipping" ref="blServiceMonitor">
-            <aop:pointcut id="blServiceCheckMethodShipping" expression="execution(* org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationService.retrieveShippingRates(..))"/>
-            <aop:around method="checkServiceAOP" pointcut-ref="blServiceCheckMethodShipping"/>
-        </aop:aspect>
-	</aop:config>
 </beans>
