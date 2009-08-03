@@ -15,13 +15,13 @@
  */
 package org.broadleafcommerce.vendor.service.exception;
 
-import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceResponse;
+import org.broadleafcommerce.vendor.service.message.ShippingPriceResponse;
 
 public class ShippingPriceException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    protected USPSShippingPriceResponse shippingPriceResponse;
+    protected ShippingPriceResponse shippingPriceResponse;
 
     public ShippingPriceException() {
         super();
@@ -39,11 +39,11 @@ public class ShippingPriceException extends Exception {
         super(cause);
     }
 
-    public USPSShippingPriceResponse getShippingPriceResponse() {
+    public ShippingPriceResponse getShippingPriceResponse() {
         return shippingPriceResponse;
     }
 
-    public void setShippingPriceResponse(USPSShippingPriceResponse shippingPriceResponse) {
+    public void setShippingPriceResponse(ShippingPriceResponse shippingPriceResponse) {
         this.shippingPriceResponse = shippingPriceResponse;
     }
 }
