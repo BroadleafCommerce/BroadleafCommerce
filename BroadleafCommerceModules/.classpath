@@ -3,9 +3,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src-usps"/>
 	<classpathentry kind="src" path="src-test"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/BroadleafCommerce"/>
+	<classpathentry exported="true" kind="lib" path="lib/common/bin/ejb3-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/broadleaf-usps-schemas.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/broadleaf-profile.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/commons-logging-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/test/bin/spring-test.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/test/bin/testng-5.8-jdk15.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/common/bin/spring.jar" sourcepath="lib/common/source/spring-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

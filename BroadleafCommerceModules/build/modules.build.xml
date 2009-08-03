@@ -138,11 +138,6 @@
 				<property name="debug.compile" value="false" />
 			</else>
 		</if>
-
-		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-profile.jar" />
-		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-profile-web.jar" />
-		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-framework.jar" />
-		<copy todir="${stage.dir}" file="${basedir}/../BroadleafCommerce/build/stage/broadleaf-framework-web.jar" />
 	</target>
 
 	<target name="usage">
