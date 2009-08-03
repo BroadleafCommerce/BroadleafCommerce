@@ -72,4 +72,9 @@
 	<bean id="org.broadleafcommerce.security.domain.AdminUser" class="org.broadleafcommerce.security.domain.AdminUserImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.security.domain.AdminRole" class="org.broadleafcommerce.security.domain.AdminRoleImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.security.domain.AdminPermission" class="org.broadleafcommerce.security.domain.AdminPermissionImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.rating.domain.RatingSummary" class="org.broadleafcommerce.rating.domain.RatingSummaryImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.rating.domain.RatingDetail" class="org.broadleafcommerce.rating.domain.RatingDetailImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.rating.domain.ReviewDetail" class="org.broadleafcommerce.rating.domain.ReviewDetailImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.rating.domain.ReviewFeedback" class="org.broadleafcommerce.rating.domain.ReviewFeedbackImpl" scope="prototype"/>
+	
 </beans>
