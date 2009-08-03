@@ -267,6 +267,13 @@ public class SkuImpl implements Sku {
     }
 
     /*
+     * This is to facilitate serialization to non-Java clients
+     */
+    public Boolean getTaxable() {
+        return isTaxable();
+    }
+
+    /*
      * (non-Javadoc)
      * @see
      * org.broadleafcommerce.catalog.domain.Sku#setTaxable(java.lang.Boolean)
@@ -287,6 +294,13 @@ public class SkuImpl implements Sku {
         if (discountable == null)
             return null;
         return discountable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    /*
+     * This is to facilitate serialization to non-Java clients
+     */
+    public Boolean getDiscountable() {
+        return isDiscountable();
     }
 
     /*
