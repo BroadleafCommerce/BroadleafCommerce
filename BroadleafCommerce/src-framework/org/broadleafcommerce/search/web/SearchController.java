@@ -35,6 +35,7 @@ public class SearchController {
         return "search";
     }
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(method = {RequestMethod.GET, RequestMethod.POST})
     public String search (ModelMap model,
             HttpServletRequest request,
