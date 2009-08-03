@@ -21,8 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
+import org.broadleafcommerce.vendor.service.type.ContainerShapeType;
+import org.broadleafcommerce.vendor.service.type.ContainerSizeType;
 
 /**
  * Implementations of this interface are used to hold data for a Product.  A product is a general description
@@ -319,11 +319,11 @@ public interface Product extends Serializable {
 
     public BigDecimal getGirth();
 
-    public USPSContainerSizeType getSize();
+    public ContainerSizeType getSize();
 
-    public void setSize(USPSContainerSizeType size);
+    public void setSize(ContainerSizeType size);
 
-    public USPSContainerShapeType getContainer();
+    public ContainerShapeType getContainer();
 
-    public void setContainer(USPSContainerShapeType container);
+    public void setContainer(ContainerShapeType container);
 }
