@@ -18,7 +18,7 @@
 			          </tr>
 		          </thead>
 		          <tbody>
-				  	<form:form modelAttribute="cartSummary" action="viewCart.htm" method="POST">
+				  	<form:form modelAttribute="cartSummary" action="viewCart.htm" method="POST" name="cartForm">
 					<form:errors path="*" cssClass="errorText"/>
 					<c:forEach items="${currentCartOrder.orderItems}" var="orderItem" varStatus="status">		
 				    	<c:set var="item" value="${orderItem.sku}"/>
@@ -77,9 +77,10 @@
 					</tr>
 					<tr class="totals">
 						<td colspan="3" style="text-align:right;">Shipping Method:
-							<form:select cssClass="shipMethod" path="fulfillmentGroup.method">
+							<form:select  id="shipping"  cssClass="shipMethod" path="fulfillmentGroup.method">
 								<form:options items="${fulfillmentGroups}" itemValue="method" itemLabel="method" />
 							</form:select>
+							<input type="hidden" value="Update Shipping" name="updateShipping"  id="shippingButton"/>
 						</td>
 						<td style="text-align:right">Estimated Shipping:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.totalShipping}</span></td>

@@ -13,4 +13,9 @@
    $("#sameShippingInfo").click(function () {   
 	   verifyCheckbox();
    });
+   
+   $("#shipping").change(function () {
+	  document.cartForm.submit();
+   });
+   
  });

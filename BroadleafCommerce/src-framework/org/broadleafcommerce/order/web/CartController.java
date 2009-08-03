@@ -210,24 +210,32 @@ public class CartController {
                 }
             }
         }
-        // return cartViewRedirect ? "redirect:" + removeItemView : removeItemView;
-        return viewCart(model,request);
+        return cartView;
     }
 
-    @RequestMapping(value = "viewCart.htm", params="checkout", method = RequestMethod.POST)
+    @RequestMapping(params="checkout", method = RequestMethod.POST)
     public String checkout(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
         Order currentCartOrder = retrieveCartOrder(request, model);
-        List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
-        cartSummary.getFulfillmentGroup().setOrder(currentCartOrder);
-        fulfillmentGroups.add(cartSummary.getFulfillmentGroup());
-        currentCartOrder.setFulfillmentGroups(fulfillmentGroups);
-
-        cartService.save(currentCartOrder, true);
+        updateFulfillmentGroups(cartSummary, currentCartOrder);
         return "redirect:/checkout/checkout.htm";
     }
 
+    @RequestMapping(params="updateShipping", method = RequestMethod.POST)
+    public String updateShipping (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
+        Order currentCartOrder = retrieveCartOrder(request, model);
+        model.addAttribute("currentCartOrder", updateFulfillmentGroups(cartSummary, currentCartOrder));
+        model.addAttribute("cartSummary", cartSummary);
+        return cartView;
+    }
+
+    private Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
+        cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
+        cartService.addFulfillmentGroupToOrder(currentCartOrder, cartSummary.getFulfillmentGroup());
+        return cartService.save(currentCartOrder, true);
+    }
+
     @RequestMapping(value = "viewCart.htm", method = RequestMethod.GET)
-    public String viewCart(ModelMap model, HttpServletRequest request) {
+    public String viewCart(ModelMap model, HttpServletRequest request) throws PricingException {
         LOG.debug("Processing View Cart!");
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
@@ -239,12 +247,34 @@ public class CartController {
             cartSummary.getRows().add(cartOrderItem);
         }
 
+        if ((cart.getFulfillmentGroups() != null) && (cart.getFulfillmentGroups().isEmpty() == false)) {
+            String cartShippingMethod = cart.getFulfillmentGroups().get(0).getMethod();
+
+            if (cartShippingMethod != null) {
+                if (cartShippingMethod.equals("standard")) {
+                    cartSummary = createFulfillmentGroup(cartSummary, "standard", cart);
+                }
+                else if (cartShippingMethod.equals("expedited")) {
+                    cartSummary = createFulfillmentGroup(cartSummary, "expedited", cart);
+                }
+            }
+        }
+
+        updateFulfillmentGroups(cartSummary, cart);
         model.addAttribute("cartSummary", cartSummary);
-        model.addAttribute("fulfillmentGroups", createFulfillmentGroups());
         return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
 
-    private List<FulfillmentGroup> createFulfillmentGroups () {
+    private CartSummary createFulfillmentGroup (CartSummary cartSummary, String shippingMethod, Order cart) {
+        FulfillmentGroup fulfillmentGroup = new FulfillmentGroupImpl();
+        fulfillmentGroup.setMethod(shippingMethod);
+        fulfillmentGroup.setOrder(cart);
+        cartSummary.setFulfillmentGroup(fulfillmentGroup);
+        return cartSummary;
+    }
+
+    @ModelAttribute("fulfillmentGroups")
+    public List<FulfillmentGroup> initFulfillmentGroups () {
         List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
         FulfillmentGroup standardGroup = new FulfillmentGroupImpl();
         FulfillmentGroup expeditedGroup = new FulfillmentGroupImpl();

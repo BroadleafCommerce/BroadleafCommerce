@@ -137,12 +137,9 @@ public class CheckoutController {
 
         List<FulfillmentGroup> groups = order.getFulfillmentGroups();
         FulfillmentGroup group = groups.get(0);
-        group.setMethod("standard");
         group.setOrder(order);
         group.setAddress(checkoutForm.getShippingAddress());
         group.setShippingPrice(order.getTotalShipping());
-        groups.add(group);
-        order.setFulfillmentGroups(groups);
 
         for (OrderItem item:order.getOrderItems()) {
             FulfillmentGroupItem fulfillmentGroupItem = new FulfillmentGroupItemImpl();

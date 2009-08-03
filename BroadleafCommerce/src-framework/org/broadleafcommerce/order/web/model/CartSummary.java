@@ -16,6 +16,10 @@ public class CartSummary {
             FactoryUtils.instantiateFactory(CartOrderItem.class));
     private FulfillmentGroup fulfillmentGroup = new FulfillmentGroupImpl();
 
+    public CartSummary() {
+        fulfillmentGroup.setMethod("standard");
+    }
+
     public List<CartOrderItem> getRows() {
         return rows;
     }
