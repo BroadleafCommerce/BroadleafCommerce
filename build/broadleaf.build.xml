@@ -133,6 +133,10 @@
          <fileset dir="${profile.src.dir}">
             <include name="**/*.java" />
          </fileset>
+			
+		<fileset dir="${modules.src.dir}">
+            <include name="**/*.java" />
+         </fileset>
          
 		</javadoc>
 	</target>
