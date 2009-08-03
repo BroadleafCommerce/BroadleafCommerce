@@ -33,8 +33,10 @@
 				${info.address.country.name} <br/>
 			</div>
 			<div class="column span-5">
-				<label> Payment Total: </label> ${info.amount } <br/>
-				<label> Payment Type: </label> ${info.type.type } <br/>
+				<label> Payment Total: </label> $${info.amount } <br/>
+				<c:if test="${info.type.type == 'CREDIT_CARD' }" >
+					<label> Payment Type: </label> CREDIT CARD <br/>
+				</c:if>
 			</div>
 		</c:forEach>
 	</div>
@@ -73,13 +75,11 @@
 				<div class="column alignRight" >
 					<label>Subtotal:</label> <br/>
 					<label> Shipping: </label> <br/>
-					<label> Tax: </label> <br/>
 					<label> Shipment Total: </label> <br/>
 				</div>
 				<div class="column" >
 					$${fg.merchandiseTotal} <br/>
 					$${fg.shippingPrice} <br/>
-					$${fg.totalTax} <br/>
 					$${fg.total} <br/>
 				</div>
 			</div>
