@@ -12,6 +12,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import org.broadleafcommerce.admin.catalog.model.ProductModel;
 	import org.broadleafcommerce.admin.catalog.model.SkuModel;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
+	import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 	
 	public class EditProductCommand implements Command
 	{
@@ -40,6 +41,13 @@ package org.broadleafcommerce.admin.catalog.commands.product
 			//productModel.selectedCategories = 
 			skuModel.viewSkus = ecpc.product.allSkus;
 			productModel.viewState = ProductModel.STATE_VIEW_EDIT;
+	
+			if(productModel.currentProduct.allSkus.length< 0){
+				productModel.currentProduct.allSkus.addItem(new Sku());
+			}
+			
+			skuModel.currentSku = Sku(productModel.currentProduct.allSkus.getItemAt(0));
+
 			if(ecpc.switchView){
 				var vcpe:ViewCurrentProductEvent = new ViewCurrentProductEvent();
 				vcpe.dispatch();

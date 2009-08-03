@@ -23,6 +23,10 @@ package org.broadleafcommerce.admin.core.business
 			var call:AsyncToken = securityService.readAdminUserByUserName(username);
 			call.addResponder(responder);
 		}
+		
+		public function logout():void{
+			securityService.logout();
+		}
 
 		public function readAdminUserById(id:int):void{
 			var call:AsyncToken = securityService.readAdminUserById(id);

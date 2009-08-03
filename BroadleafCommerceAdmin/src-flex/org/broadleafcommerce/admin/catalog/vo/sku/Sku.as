@@ -9,18 +9,18 @@ package org.broadleafcommerce.admin.catalog.vo.sku
 	public class Sku
 	{
 		public var id:Number;
-//		public var salePrice:Money = new Money();
-//		public var retailPrice:Money = new Money();
+		public var salePrice:Money = new Money();
+		public var retailPrice:Money = new Money();
 //		public var listPrice:Money = new Money();
-		public var salePrice:Number;
-		public var retailPrice:Number;
-		public var listPrice:Number;
+//		public var salePrice:Number;
+//		public var retailPrice:Number;
+//		public var listPrice:Number;
 		public var name:String;
 		public var description:String;
 		public var longDescription:String;
-		public var taxable:String;
-		public var discountable:String;
-		public var available:String;
+		public var taxable:Boolean = true;
+		public var discountable:Boolean;
+		public var available:Boolean;
 		public var activeStartDate:Date = new Date();
 		public var activeEndDate:Date = new Date();
 		public var active:Boolean;
@@ -28,6 +28,22 @@ package org.broadleafcommerce.admin.catalog.vo.sku
 		public var allParentProducts:ArrayCollection = new ArrayCollection();
 		
 		public function Sku(){
+		}
+
+		public function get listPrice():Money{
+			return retailPrice;
+		}		
+		
+		public function set listPrice(money:Money):void{
+			this.retailPrice = money;
+		}
+		
+		public function get isDiscountable():Boolean{
+			return discountable;
+		}
+
+		public function set isDiscountable(b:Boolean):void{
+			this.discountable=b;
 		}
 
 		public function set skuImages(x:Object):void{

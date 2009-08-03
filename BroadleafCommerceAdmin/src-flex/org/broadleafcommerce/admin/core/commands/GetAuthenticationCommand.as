@@ -50,6 +50,9 @@ package org.broadleafcommerce.admin.core.commands
 			}else{
 				Alert.show("Error: "+ event);				
 			}
+			var securityDelegate:BlAdminSecurityServiceDelegate = new BlAdminSecurityServiceDelegate(this);
+			securityDelegate.logout();
+			
 		}		
 		
 	}

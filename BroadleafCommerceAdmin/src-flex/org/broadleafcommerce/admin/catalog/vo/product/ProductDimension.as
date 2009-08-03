@@ -10,6 +10,7 @@ package org.broadleafcommerce.admin.catalog.vo.product
 		public var girth:uint;
 		public var size:String;
 		public var container:String;
+		public var dimensionUnitOfMeasure:String;
 		
 	}
 }
