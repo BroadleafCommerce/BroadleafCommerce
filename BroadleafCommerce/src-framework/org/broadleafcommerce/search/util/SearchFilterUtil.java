@@ -31,7 +31,7 @@ public class SearchFilterUtil {
             if (parameters.containsKey(parameter)) { // we're doing a multi-select
                 for (Iterator<Product> itr = products.iterator(); itr.hasNext(); ) {
                     Product product = itr.next();
-                    if (!ArrayUtils.contains(parameters.get(parameter), reader.transform(product))) {
+                    if (!ArrayUtils.contains(parameters.get(parameter), reader.transform(product).toString())) {
                         itr.remove();
                     }
                 }

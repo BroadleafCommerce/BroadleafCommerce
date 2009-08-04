@@ -13,6 +13,11 @@
 	width: 650px;
 }
 
+#searchProduct {
+	float:left;
+	
+}
+
 .searchFilter-defaultCategory_id li,
 .searchFilter-manufacturer li
 {
