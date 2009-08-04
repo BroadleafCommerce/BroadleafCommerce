@@ -5,14 +5,14 @@
 
 	<div class="span-24">
 		<form:form method="post" action="findStores.htm" commandName="findAStoreForm" >
-			<div class="orderBorder column span-7" style="margin-top:0px;" >
+			<div class="orderBorder column span-6" style="margin-top:0px;" >
 				<div class="orderTitle" > <b>Address Information</b></div>
 				<div class="column span-3" style="height:150px; line-height:25px;">
 					<b>Postal Code:</b> <br/><br/>
 					<b>Radius (miles):</b> <br/> <br/>
 					<input type="submit" name="Find" value="Find"/>
 				</div>
-				<div class="column span-3" >
+				<div class="column span-2" >
 					<form:input path="postalCode" size="5"/> <br/><br/>
 					<form:input path="distance" size="3"/> 
 				</div>
