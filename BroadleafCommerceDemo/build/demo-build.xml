@@ -224,14 +224,14 @@
 		</if>
 		
 		<available file="${set.appserver.home}/lib/javarebel.jar" property="javarebel.jar.present"/>
-		<if>
+		<!-- if>
 			<not>
 				<equals arg1="javarebel.jar.present" arg2="true" />
 			</not>
 			<then>
 				<copy todir="${set.appserver.home}/lib" file="${basedir}/lib/test/bin/javarebel.jar" />
 			</then>	
-		</if>
+		</if -->
 	</target>
 		
 	<target name="clean">
