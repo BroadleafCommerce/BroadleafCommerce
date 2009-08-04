@@ -23,7 +23,6 @@ public class CompositeActivity extends BaseActivity {
 
     private SequenceProcessor workflow;
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         ProcessContext subContext = workflow.doActivities(((PricingContext) context).getSeedData());
         if (subContext.isStopped()) {

@@ -63,12 +63,10 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
         customerAddressDao.deleteCustomerAddressById(customerAddressId);
     }
 
-    @Override
     public CustomerAddress findDefaultCustomerAddress(Long customerId) {
         return customerAddressDao.findDefaultCustomerAddress(customerId);
     }
 
-    @Override
     public CustomerAddress create() {
         return customerAddressDao.create();
     }

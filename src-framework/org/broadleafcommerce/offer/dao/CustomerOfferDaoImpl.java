@@ -36,18 +36,14 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-
-    @Override
     public CustomerOffer create() {
         return ((CustomerOffer) entityConfiguration.createEntityInstance(CustomerOffer.class.getName()));
     }
 
-    @Override
     public void delete(CustomerOffer customerOffer) {
         em.remove(customerOffer);
     }
 
-    @Override
     public CustomerOffer save(CustomerOffer customerOffer) {
         if(customerOffer.getId() == null){
             em.persist(customerOffer);
@@ -57,13 +53,11 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
         return customerOffer;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public CustomerOffer readCustomerOfferById(Long customerOfferId) {
         return (CustomerOffer) em.find(entityConfiguration.lookupEntityClass(CustomerOffer.class.getName()), customerOfferId);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<CustomerOffer> readCustomerOffersByCustomer(Customer customer) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID");

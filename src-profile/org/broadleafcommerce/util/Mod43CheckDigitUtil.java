@@ -6,7 +6,7 @@ public class Mod43CheckDigitUtil {
 
     public static boolean isValidCheckedValue(String value) {
         boolean valid = false;
-        if (value != null && !value.isEmpty()) {
+        if (value != null && !"".equals(value)) {
             String code = value.substring(0, value.length() - 1);
             char checkDigit = value.substring(value.length() - 1).charAt(0);
             try {

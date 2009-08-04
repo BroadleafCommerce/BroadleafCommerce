@@ -41,7 +41,6 @@ public class CustomerStateStore implements PostLoginObserver, PreLogoutObserver 
         customerState.setCustomer(customer, request);
     }
 
-    @Override
     public void processPreLogout(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         CookieUtils.invalidateCookie(response, CookieUtils.CUSTOMER_COOKIE_NAME);
     }

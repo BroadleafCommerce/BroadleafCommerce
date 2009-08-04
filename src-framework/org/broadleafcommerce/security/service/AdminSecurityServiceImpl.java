@@ -39,67 +39,54 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     @Resource
     AdminPermissionDao adminPermissionDao;
 
-    @Override
     public void deleteAdminPermission(AdminPermission permission) {
         adminPermissionDao.deleteAdminPermission(permission);
     }
 
-    @Override
     public void deleteAdminRole(AdminRole role) {
         adminRoleDao.deleteAdminRole(role);
     }
 
-    @Override
     public void deleteAdminUser(AdminUser user) {
         adminUserDao.deleteAdminUser(user);
     }
 
-    @Override
     public AdminPermission readAdminPermissionById(Long id) {
         return adminPermissionDao.readAdminPermissionById(id);
     }
 
-    @Override
     public AdminRole readAdminRoleById(Long id) {
         return adminRoleDao.readAdminRoleById(id);
     }
 
-    @Override
     public AdminUser readAdminUserById(Long id) {
         return adminUserDao.readAdminUserById(id);
     }
 
-    @Override
     public AdminPermission saveAdminPermission(AdminPermission permission) {
         return adminPermissionDao.saveAdminPermission(permission);
     }
 
-    @Override
     public AdminRole saveAdminRole(AdminRole role) {
         return adminRoleDao.saveAdminRole(role);
     }
 
-    @Override
     public AdminUser saveAdminUser(AdminUser user) {
         return adminUserDao.saveAdminUser(user);
     }
 
-    @Override
     public AdminUser readAdminUserByUserName(String userName) {
         return adminUserDao.readAdminUserByUserName(userName);
     }
 
-    @Override
     public List<AdminUser> readAllAdminUsers() {
         return adminUserDao.readAllAdminUsers();
     }
 
-    @Override
     public List<AdminRole> readAllAdminRoles() {
         return adminRoleDao.readAllAdminRoles();
     }
 
-    @Override
     public List<AdminPermission> readAllAdminPermissions() {
         return adminPermissionDao.readAllAdminPermissions();
     }

@@ -49,17 +49,14 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
 
-    @Override
     public Order createNewCartForCustomer(Customer customer) {
         return orderDao.createNewCartForCustomer(customer);
     }
 
-    @Override
     public Order findCartForCustomer(Customer customer) {
         return orderDao.readCartForCustomer(customer);
     }
 
-    @Override
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
@@ -74,7 +71,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         return cartOrder;
     }
 
-    @Override
     public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException {
         Order wishlistOrder = findNamedOrderForCustomer(orderName, customerService.createCustomerFromId(customerId));
         OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
@@ -82,7 +78,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         return moveItemToCartFromNamedOrder(wishlistOrder, orderItem);
     }
 
-    @Override
     public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem) throws PricingException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
@@ -97,7 +92,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         return addOrderItemToOrder(cartOrder, orderItem);
     }
 
-    @Override
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
         Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder);
         if (deleteEmptyNamedOrders) {
@@ -111,7 +105,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
      * @seeorg.broadleafcommerce.order.service.OrderService#mergeCart(org.
      * broadleafcommerce.profile.domain.Customer, java.lang.Long)
      */
-    @Override
     public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         // reconstruct cart items (make sure they are valid)
@@ -174,7 +167,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
      * org.broadleafcommerce.order.service.OrderService#reconstructCart(org.
      * broadleafcommerce.profile.domain.Customer)
      */
-    @Override
     public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
         ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
         Order customerCart = findCartForCustomer(customer);

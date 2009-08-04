@@ -53,8 +53,8 @@ public class StoreController {
         searchAddress.setPostalCode(findAStoreForm.getPostalCode());
         searchAddress.setCountry(findAStoreForm.getCountry());
 
-        if (findAStoreForm.getPostalCode() == null || findAStoreForm.getPostalCode().isEmpty() ||
-                findAStoreForm.getDistance().isEmpty() || findAStoreForm.getPostalCode().length() != 5) {
+        if (findAStoreForm.getPostalCode() == null || "".equals(findAStoreForm.getPostalCode()) ||
+                "".equals(findAStoreForm.getDistance()) || findAStoreForm.getPostalCode().length() != 5) {
             model.addAttribute("errorMessage" , "Please enter a valid postal code and distance." );
             return showStores(model);
         }

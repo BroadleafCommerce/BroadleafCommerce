@@ -36,7 +36,6 @@ public class PaymentActivity extends BaseActivity {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
      */
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CombinedPaymentContextSeed seed = ((WorkflowPaymentContext) context).getSeedData();
         Map<PaymentInfo, Referenced> infos = seed.getInfos();

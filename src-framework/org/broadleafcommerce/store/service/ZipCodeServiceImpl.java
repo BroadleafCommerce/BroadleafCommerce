@@ -12,7 +12,6 @@ public class ZipCodeServiceImpl implements ZipCodeService {
     @Resource(name="blZipCodeDao")
     private ZipCodeDao zipCodeDao;
 
-    @Override
     public ZipCode findZipCodeByZipCode(Integer zipCode) {
         return zipCodeDao.findZipCodeByZipCode(zipCode);
     }

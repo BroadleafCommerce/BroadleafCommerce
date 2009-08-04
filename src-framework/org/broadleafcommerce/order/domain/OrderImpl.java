@@ -270,12 +270,10 @@ public class OrderImpl implements Order {
         return orderItems;
     }
 
-    @Override
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
-    @Override
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
     }
@@ -288,17 +286,14 @@ public class OrderImpl implements Order {
         this.fulfillmentGroups = fulfillmentGroups;
     }
 
-    @Override
     public void addCandidateOrderOffer(CandidateOrderOffer candidateOffer) {
         candidateOffers.add(candidateOffer);
     }
 
-    @Override
     public List<CandidateOrderOffer> getCandidateOrderOffers() {
         return candidateOffers;
     }
 
-    @Override
     public void removeAllCandidateOffers() {
         if (candidateOffers != null) {
             candidateOffers.clear();
@@ -316,7 +311,6 @@ public class OrderImpl implements Order {
         }
     }
 
-    @Override
     public void removeAllOrderCandidateOffers() {
         if (candidateOffers != null) {
             candidateOffers.clear();
@@ -395,7 +389,6 @@ public class OrderImpl implements Order {
         this.paymentInfos = paymentInfos;
     }
 
-    @Override
     public boolean hasCategoryItem(String categoryName) {
         for (OrderItem orderItem : orderItems) {
             if(orderItem.isInCategory(categoryName)) {
@@ -526,34 +519,28 @@ public class OrderImpl implements Order {
         return discreteOrderItems;
     }
 
-    @Override
     public List<OfferCode> getAddedOfferCodes() {
         return addedOfferCodes;
     }
 
-    @Override
     public void addAddedOfferCode(OfferCode addedOfferCode) {
         addedOfferCodes.add(addedOfferCode);
     }
 
-    @Override
     public void removeAllAddedOfferCodes() {
         if (addedOfferCodes != null) {
             addedOfferCodes.clear();
         }
     }
 
-    @Override
     public String getOrderNumber() {
         return orderNumber;
     }
 
-    @Override
     public void setOrderNumber(String orderNumber) {
         this.orderNumber = orderNumber;
     }
 
-    @Override
     public String getFulfillmentStatus() {
         // TODO Auto-generated method stub
         return null;
@@ -575,7 +562,6 @@ public class OrderImpl implements Order {
         this.additionalOfferInformation = additionalOfferInformation;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -604,7 +590,6 @@ public class OrderImpl implements Order {
         return true;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();

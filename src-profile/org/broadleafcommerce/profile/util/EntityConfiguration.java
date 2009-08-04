@@ -47,7 +47,6 @@ public class EntityConfiguration implements ApplicationContextAware {
         return applicationcontext.getBean(beanId);
     }
 
-    @Override
     public void setApplicationContext(ApplicationContext applicationcontext) throws BeansException {
         this.applicationcontext = applicationcontext;
     }

@@ -63,45 +63,44 @@ public class OrderServiceImpl implements OrderService {
 
     private static final Log LOG = LogFactory.getLog(OrderServiceImpl.class);
 
-    @Resource(name="blOrderDao")
+    @Resource(name = "blOrderDao")
     protected OrderDao orderDao;
 
-    @Resource(name="blPaymentInfoDao")
+    @Resource(name = "blPaymentInfoDao")
     protected PaymentInfoDao paymentInfoDao;
 
-    @Resource(name="blFulfillmentGroupDao")
+    @Resource(name = "blFulfillmentGroupDao")
     protected FulfillmentGroupDao fulfillmentGroupDao;
 
-    @Resource(name="blFulfillmentGroupItemDao")
+    @Resource(name = "blFulfillmentGroupItemDao")
     protected FulfillmentGroupItemDao fulfillmentGroupItemDao;
 
-    @Resource(name="blOfferDao")
+    @Resource(name = "blOfferDao")
     protected OfferDao offerDao;
 
-    @Resource(name="blPricingExecutionManager")
+    @Resource(name = "blPricingExecutionManager")
     protected PricingExecutionManager pricingExecutionManager;
 
-    @Resource(name="blOrderItemService")
+    @Resource(name = "blOrderItemService")
     protected OrderItemService orderItemService;
 
-    @Resource(name="blSkuDao")
+    @Resource(name = "blSkuDao")
     protected SkuDao skuDao;
 
-    @Resource(name="blProductDao")
+    @Resource(name = "blProductDao")
     protected ProductDao productDao;
 
-    @Resource(name="blCategoryDao")
+    @Resource(name = "blCategoryDao")
     protected CategoryDao categoryDao;
 
-    @Resource(name="blFulfillmentGroupService")
+    @Resource(name = "blFulfillmentGroupService")
     protected FulfillmentGroupService fulfillmentGroupService;
 
-    @Resource(name="blSecurePaymentInfoService")
+    @Resource(name = "blSecurePaymentInfoService")
     protected SecurePaymentInfoService securePaymentInfoService;
 
     protected boolean rollupOrderItems = true;
 
-    @Override
     public Order createNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = orderDao.create();
         namedOrder.setCustomer(customer);
@@ -110,39 +109,32 @@ public class OrderServiceImpl implements OrderService {
         return persistOrder(namedOrder);
     }
 
-    @Override
     public Order save(Order order, Boolean priceOrder) throws PricingException {
         return updateOrder(order, priceOrder);
     }
 
-    @Override
     public Order findOrderById(Long orderId) {
         return orderDao.readOrderById(orderId);
     }
 
-    @Override
     public List<Order> findOrdersForCustomer(Customer customer) {
         return orderDao.readOrdersForCustomer(customer.getId());
     }
 
-    @Override
     public List<Order> findOrdersForCustomer(Customer customer, OrderStatus status) {
         return orderDao.readOrdersForCustomer(customer, status);
     }
 
-    @Override
     public Order findNamedOrderForCustomer(String name, Customer customer) {
         return orderDao.readNamedOrderForCustomer(customer, name);
     }
 
-    @Override
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order) {
         FulfillmentGroup fg = fulfillmentGroupDao.readDefaultFulfillmentGroupForOrder(order);
 
         return fg;
     }
 
-    @Override
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
         if (orderId == null || skuId == null || quantity == null) {
             return null;
@@ -173,19 +165,16 @@ public class OrderServiceImpl implements OrderService {
         return addDiscreteItemToOrder(order, itemRequest);
     }
 
-    @Override
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
         DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
         return addOrderItemToOrder(order, item);
     }
 
-    @Override
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException {
         GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
         return addOrderItemToOrder(order, item);
     }
 
-    @Override
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException {
         BundleOrderItem item = orderItemService.createBundleOrderItem(itemRequest);
         return addOrderItemToOrder(order, item);
@@ -198,7 +187,6 @@ public class OrderServiceImpl implements OrderService {
         return removeItemFromOrder(order, orderItem);
     }
 
-    @Override
     public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException {
         removeOrderItemFromFullfillmentGroup(order, item);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
@@ -207,12 +195,10 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    @Override
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {
         return addPaymentToOrder(order, payment, null);
     }
 
-    @Override
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo) {
         payment.setOrder(order);
         order.getPaymentInfos().add(payment);
@@ -226,12 +212,10 @@ public class OrderServiceImpl implements OrderService {
         return order.getPaymentInfos().get(paymentIndex);
     }
 
-    @Override
     public void removeAllPaymentsFromOrder(Order order) {
         removePaymentsFromOrder(order, null);
     }
 
-    @Override
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType) {
         List<PaymentInfo> infos = new ArrayList<PaymentInfo>();
         for (PaymentInfo paymentInfo : order.getPaymentInfos()) {
@@ -253,7 +237,6 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException {
         FulfillmentGroup fg = fulfillmentGroupDao.create();
         fg.setAddress(fulfillmentGroupRequest.getAddress());
@@ -266,7 +249,6 @@ public class OrderServiceImpl implements OrderService {
         return fg;
     }
 
-    @Override
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
         FulfillmentGroup dfg = findDefaultFulfillmentGroupForOrder(order);
         if (dfg == null) {
@@ -300,7 +282,6 @@ public class OrderServiceImpl implements OrderService {
         return order.getFulfillmentGroups().get(fulfillmentGroupIndex);
     }
 
-    @Override
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException {
         Order order = item.getOrder();
         if (fulfillmentGroup.getId() == null) {
@@ -332,17 +313,14 @@ public class OrderServiceImpl implements OrderService {
         return fulfillmentGroup;
     }
 
-    @Override
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException {
         return addItemToFulfillmentGroup(item, fulfillmentGroup, item.getQuantity());
     }
 
-    @Override
     public Order addOfferToOrder(Order order, String offerCode) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public OrderItem updateItemInOrder(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
         // This isn't quite right. It will need to be changed later to reflect
         // the exact requirements we want.
@@ -363,7 +341,6 @@ public class OrderServiceImpl implements OrderService {
         return itemFromOrder;
     }
 
-    @Override
     public List<OrderItem> updateItemsInOrder(Order order, List<OrderItem> orderItems) throws ItemNotFoundException, PricingException {
         ArrayList<OrderItem> response = new ArrayList<OrderItem>();
         for (OrderItem orderItem : orderItems) {
@@ -373,7 +350,6 @@ public class OrderServiceImpl implements OrderService {
         return orderItems;
     }
 
-    @Override
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException {
         removeAllFulfillmentGroupsFromOrder(order, false);
     }
@@ -389,14 +365,12 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    @Override
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
         order.getFulfillmentGroups().remove(fulfillmentGroup);
         fulfillmentGroupDao.delete(fulfillmentGroup);
         updateOrder(order, true);
     }
 
-    @Override
     public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException {
         order.getCandidateOrderOffers().remove(offer);
         offerDao.delete(offer);
@@ -404,20 +378,17 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
-    @Override
     public Order removeAllOffersFromOrder(Order order) throws PricingException {
         order.getCandidateOrderOffers().clear();
         order = updateOrder(order, true);
         return order;
     }
 
-    @Override
     public void removeNamedOrderForCustomer(String name, Customer customer) {
         Order namedOrder = findNamedOrderForCustomer(name, customer);
         cancelOrder(namedOrder);
     }
 
-    @Override
     public Order confirmOrder(Order order) {
         // TODO Other actions needed to complete order
         // (such as calling something to make sure the order is fulfilled
@@ -426,17 +397,14 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.submitOrder(order);
     }
 
-    @Override
     public void cancelOrder(Order order) {
         orderDao.delete(order);
     }
 
-    @Override
     public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
         return paymentInfoDao.readPaymentInfosForOrder(order);
     }
 
-    @Override
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
         int orderItemIndex;
         List<OrderItem> orderItems = order.getOrderItems();
@@ -459,7 +427,6 @@ public class OrderServiceImpl implements OrderService {
         return order.getOrderItems().get(orderItemIndex);
     }
 
-    @Override
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             if (fulfillmentGroup.isPrimary()) {

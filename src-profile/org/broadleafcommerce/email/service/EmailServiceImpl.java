@@ -31,26 +31,25 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author jfischer
- *
  */
 @Service("blEmailService")
 public class EmailServiceImpl implements EmailService {
 
-    @Resource(name="blEmailTrackingManager")
+    @Resource(name = "blEmailTrackingManager")
     protected EmailTrackingManager emailTrackingManager;
 
-    @Resource(name="blServerInfo")
+    @Resource(name = "blServerInfo")
     protected ServerInfo serverInfo;
 
     protected EmailServiceProducer emailServiceProducer;
 
-    @Resource(name="blMessageCreator")
+    @Resource(name = "blMessageCreator")
     protected MessageCreator messageCreator;
 
-    @Resource(name="blEmailReportingDao")
+    @Resource(name = "blEmailReportingDao")
     protected EmailReportingDao emailReportingDao;
 
-    public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String,Object> props) {
+    public boolean sendTemplateEmail(EmailTarget emailTarget, EmailInfo emailInfo, HashMap<String, Object> props) {
         if (props == null) {
             props = new HashMap<String, Object>();
         }
@@ -66,8 +65,8 @@ public class EmailServiceImpl implements EmailService {
         return sendBasicEmail(emailInfo, emailTarget, props);
     }
 
-    public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, HashMap<String,Object> props) {
-        if (! (emailInfo instanceof NullEmailInfo)) {
+    public boolean sendTemplateEmail(String emailAddress, EmailInfo emailInfo, HashMap<String, Object> props) {
+        if (!(emailInfo instanceof NullEmailInfo)) {
             EmailTarget emailTarget = emailReportingDao.createTarget();
             emailTarget.setEmailAddress(emailAddress);
             return sendTemplateEmail(emailTarget, emailInfo, props);
@@ -76,8 +75,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
-    @Override
-    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap<String,Object> props) {
+    public boolean sendBasicEmail(EmailInfo emailInfo, EmailTarget emailTarget, HashMap<String, Object> props) {
         if (props == null) {
             props = new HashMap<String, Object>();
         }

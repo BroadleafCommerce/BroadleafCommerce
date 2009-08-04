@@ -40,12 +40,10 @@ public class CurrentCustomerFilter implements Filter  {
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
-    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // do nothing
     }
 
-    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         Customer requestCustomer = null;
         checkSession: {
@@ -78,7 +76,6 @@ public class CurrentCustomerFilter implements Filter  {
         chain.doFilter(request, response);
     }
 
-    @Override
     public void destroy() {
     }
 }

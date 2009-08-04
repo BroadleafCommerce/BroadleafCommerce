@@ -27,17 +27,14 @@ public class FulfillmentGroupServiceImpl implements FulfillmentGroupService {
     @Resource(name="blFulfillmentGroupDao")
     protected FulfillmentGroupDao fulfillmentGroupDao;
 
-    @Override
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
         return fulfillmentGroupDao.save(fulfillmentGroup);
     }
 
-    @Override
     public FulfillmentGroup createEmptyFulfillmentGroup() {
         return fulfillmentGroupDao.create();
     }
 
-    @Override
     public FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId) {
         return fulfillmentGroupDao.readFulfillmentGroupById(fulfillmentGroupId);
     }

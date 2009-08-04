@@ -24,12 +24,10 @@ public class CheckoutContext implements ProcessContext {
     private boolean stopEntireProcess = false;
     private CheckoutSeed seedData;
 
-    @Override
     public void setSeedData(Object seedObject) {
         seedData = (CheckoutSeed) seedObject;
     }
 
-    @Override
     public boolean stopProcess() {
         this.stopEntireProcess = true;
         return stopEntireProcess;

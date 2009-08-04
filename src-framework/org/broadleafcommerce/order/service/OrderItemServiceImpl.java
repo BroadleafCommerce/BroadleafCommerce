@@ -34,17 +34,14 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
 
-    @Override
     public OrderItem readOrderItemById(Long orderItemId) {
         return orderItemDao.readOrderItemById(orderItemId);
     }
 
-    @Override
     public OrderItem saveOrderItem(OrderItem orderItem) {
         return orderItemDao.saveOrderItem(orderItem);
     }
 
-    @Override
     public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest) {
         DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         item.setSku(itemRequest.getSku());
@@ -59,7 +56,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
-    @Override
     public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest) {
         GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
         item.setSku(itemRequest.getSku());
@@ -77,7 +73,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
-    @Override
     public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest) {
         BundleOrderItem item = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         item.setQuantity(itemRequest.getQuantity());
@@ -94,7 +89,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
-    @Override
     public void delete(OrderItem item) {
         orderItemDao.delete(item);
     }

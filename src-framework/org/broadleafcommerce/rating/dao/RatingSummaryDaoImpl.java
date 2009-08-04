@@ -29,6 +29,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blRatingSummaryDao")
 public class RatingSummaryDaoImpl implements RatingSummaryDao {
+
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
@@ -37,12 +38,10 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @Override
     public void deleteRatingSummary(RatingSummary summary) {
         em.remove(summary);
     }
 
-    @Override
     public RatingSummary saveRatingSummary(RatingSummary summary) {
         summary.resetAverageRating();
 
@@ -54,7 +53,6 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         return summary;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type) {
         Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
@@ -65,12 +63,11 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         return ratings;
     }
 
-    @Override
     public RatingSummary readRatingSummary(String itemId, RatingType type) {
         Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemId", itemId);
         query.setParameter("ratingType", type);
-        RatingSummary ratingSummary = (RatingSummary)query.getSingleResult();
+        RatingSummary ratingSummary = (RatingSummary) query.getSingleResult();
 
         return ratingSummary;
     }

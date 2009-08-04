@@ -33,7 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     protected PaymentModule paymentModule;
 
-    @Resource(name="blPaymentInfoService")
+    @Resource(name = "blPaymentInfoService")
     protected PaymentInfoService paymentInfoService;
 
     public PaymentModule getPaymentModule() {
@@ -44,7 +44,7 @@ public class PaymentServiceImpl implements PaymentService {
         this.paymentModule = paymentModule;
     }
 
-    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException  {
+    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         logPaymentStartEvent(paymentContext, TransactionType.AUTHORIZE);
         PaymentResponseItem response = null;
         PaymentException paymentException = null;
@@ -164,7 +164,6 @@ public class PaymentServiceImpl implements PaymentService {
         return response;
     }
 
-    @Override
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return paymentModule.isValidCandidate(paymentType);
     }
@@ -208,7 +207,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentLog log = paymentInfoService.createLog();
         log.setLogType(PaymentLogEventType.FINISHED);
         log.setTransactionTimestamp(new Date());
-        log.setTransactionSuccess(e==null?Boolean.TRUE:Boolean.FALSE);
+        log.setTransactionSuccess(e == null ? Boolean.TRUE : Boolean.FALSE);
         log.setTransactionType(transactionType);
         log.setUserName(paymentContext.getUserName());
         String exceptionMessage;

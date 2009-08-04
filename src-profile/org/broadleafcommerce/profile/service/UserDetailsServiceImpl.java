@@ -45,7 +45,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.forcePasswordChange = forcePasswordChange;
     }
 
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
         org.broadleafcommerce.profile.domain.Customer customer = customerService.readCustomerByUsername(username);
         if (customer == null) {

@@ -46,50 +46,42 @@ public class UserRoleImpl implements UserRole {
     @Column(name = "USER_ROLE_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = UserImpl.class, optional=false)
+    @ManyToOne(targetEntity = UserImpl.class, optional = false)
     @JoinColumn(name = "USER_ID")
     protected User user;
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional=false)
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional = false)
     @JoinColumn(name = "ROLE_ID")
     protected Role role;
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    @Override
     public User getUser() {
         return user;
     }
 
-    @Override
     public void setUser(User user) {
         this.user = user;
     }
 
-    @Override
     public Role getRole() {
         return role;
     }
 
-    @Override
     public void setRole(Role role) {
         this.role = role;
     }
 
-    @Override
     public String getRoleName() {
         return role.getRoleName();
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -98,7 +90,6 @@ public class UserRoleImpl implements UserRole {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

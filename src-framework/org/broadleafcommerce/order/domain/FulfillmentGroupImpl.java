@@ -180,7 +180,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         this.fulfillmentGroupItems = fulfillmentGroupItems;
     }
 
-    @Override
     public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem) {
         if (this.fulfillmentGroupItems == null) {
             this.fulfillmentGroupItems = new Vector<FulfillmentGroupItem>();
@@ -189,12 +188,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     }
 
-    @Override
     public Address getAddress() {
         return address;
     }
 
-    @Override
     public void setAddress(Address address) {
         this.address = address;
     }
@@ -207,53 +204,43 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         this.phone = phone;
     }
 
-    @Override
     public String getMethod() {
         return method;
     }
 
-    @Override
     public void setMethod(String fulfillmentMethod) {
         this.method = fulfillmentMethod;
     }
 
-    @Override
     public Money getRetailShippingPrice() {
         return retailShippingPrice == null ? null : new Money(retailShippingPrice);
     }
 
-    @Override
     public void setRetailShippingPrice(Money retailShippingPrice) {
         this.retailShippingPrice = Money.toAmount(retailShippingPrice);
     }
 
-    @Override
     public FulfillmentGroupType getType() {
         return FulfillmentGroupType.getInstance(type);
     }
 
-    @Override
     public void setType(FulfillmentGroupType type) {
         this.type = type.getType();
     }
 
-    @Override
     public void addCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateOffer) {
         candidateOffers.add(candidateOffer);
     }
 
-    @Override
     public List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers() {
         return candidateOffers;
     }
 
-    @Override
     public void setCandidateFulfillmentGroupOffer(List<CandidateFulfillmentGroupOffer> candidateOffers) {
         this.candidateOffers = candidateOffers;
 
     }
 
-    @Override
     public void removeAllCandidateOffers() {
         if (candidateOffers != null) {
             candidateOffers.clear();
@@ -393,7 +380,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         this.total = Money.toAmount(orderTotal);
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -402,7 +388,6 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

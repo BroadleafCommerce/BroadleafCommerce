@@ -30,7 +30,6 @@ public class ShippingActivity extends BaseActivity {
         this.shippingService = shippingService;
     }
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext)context).getSeedData();
 

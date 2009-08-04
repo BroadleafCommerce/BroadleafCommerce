@@ -37,12 +37,10 @@ public class CustomerPhoneValidator implements Validator {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean supports(Class clazz) {
         return clazz.equals(Phone.class);
     }
 
-    @Override
     public void validate(Object obj, Errors errors) {
         //use regular phone
         CustomerPhone cPhone = (CustomerPhone) obj;

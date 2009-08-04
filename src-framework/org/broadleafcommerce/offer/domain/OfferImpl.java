@@ -137,13 +137,10 @@ public class OfferImpl implements Offer {
 
     public OfferDiscountType getDiscountType() {
         return OfferDiscountType.getInstance(discountType);
-
     }
 
-    @Override
     public void setDiscountType(OfferDiscountType discountType) {
         this.discountType = discountType.getType();
-
     }
 
     public Money getValue() {
@@ -205,15 +202,12 @@ public class OfferImpl implements Offer {
         this.targetSystem = targetSystem;
     }
 
-    @Override
     public boolean getApplyDiscountToSalePrice() {
         return applyToSalePrice;
     }
 
-    @Override
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice) {
         this.applyToSalePrice=applyToSalePrice;
-
     }
 
     public String getAppliesToOrderRules() {

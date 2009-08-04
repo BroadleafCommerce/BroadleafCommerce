@@ -25,12 +25,10 @@ import org.springframework.validation.Validator;
 public class PhoneValidator implements Validator {
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean supports(Class clazz) {
         return clazz.equals(Phone.class);
     }
 
-    @Override
     public void validate(Object obj, Errors errors) {
         //use regular phone
         Phone phone = (Phone) obj;

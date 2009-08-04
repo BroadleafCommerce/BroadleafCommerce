@@ -41,7 +41,7 @@ public class ZipCodeDaoImpl implements ZipCodeDao {
         }
 
         // If we have a county, try and find a match
-        if ( pCounty != null && !pCounty.trim().isEmpty() ) {
+        if ( pCounty != null && !"".equals(pCounty.trim()) ) {
             Query query = em.createNamedQuery("FIND_ZIP_WITH_COUNTY");
             query.setHint("org.hibernate.cacheable", true);
             query.setParameter("county", pCounty);

@@ -34,7 +34,7 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public Address save(Address address) {
@@ -46,33 +46,30 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
         return address;
     }
 
-    @Override
     public ShippingRate save(ShippingRate shippingRate) {
-        if(shippingRate.getId() == null) {
+        if (shippingRate.getId() == null) {
             em.persist(shippingRate);
-        }else {
+        } else {
             shippingRate = em.merge(shippingRate);
         }
         return shippingRate;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public ShippingRate readShippingRateById(Long id) {
         return (ShippingRate) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.pricing.domain.ShippingRate"), id);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public ShippingRate readShippingRateByFeeTypesUnityQty(String feeType, String feeSubType, BigDecimal unitQuantity) {
         Query query = em.createNamedQuery("BC_READ_FIRST_SHIPPING_RATE_BY_FEE_TYPES");
         query.setParameter("feeType", feeType);
         query.setParameter("feeSubType", feeSubType);
         query.setParameter("bandUnitQuantity", unitQuantity);
         List<ShippingRate> returnedRates = query.getResultList();
-        if(returnedRates.size() > 0) {
+        if (returnedRates.size() > 0) {
             return returnedRates.get(0);
-        }else {
+        } else {
             return null;
         }
     }

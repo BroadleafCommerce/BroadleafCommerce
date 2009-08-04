@@ -27,10 +27,6 @@ import org.w3c.dom.NodeList;
  */
 public class InsertItems extends BaseHandler {
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#merge(org.w3c.dom.NodeList, org.w3c.dom.NodeList, org.w3c.dom.Node[])
-     */
-    @Override
     public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
         if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
             return null;

@@ -52,15 +52,15 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ADDRESS_ID")
     protected Address address;
 
-    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "PHONE_ID")
     protected Phone phone;
 
@@ -70,15 +70,13 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Column(name = "REFERENCE_NUMBER")
     protected String referenceNumber;
 
-    @Column(name = "PAYMENT_TYPE", nullable=false)
+    @Column(name = "PAYMENT_TYPE", nullable = false)
     protected String type;
 
-    @Override
     public Money getAmount() {
         return amount == null ? null : new Money(amount);
     }
 
-    @Override
     public void setAmount(Money amount) {
         this.amount = Money.toAmount(amount);
     }
@@ -131,7 +129,6 @@ public class PaymentInfoImpl implements PaymentInfo {
         this.type = type.getType();
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -158,7 +155,6 @@ public class PaymentInfoImpl implements PaymentInfo {
         return true;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

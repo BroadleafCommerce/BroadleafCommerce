@@ -26,12 +26,10 @@ import org.springframework.validation.Validator;
 public class CheckoutFormValidator implements Validator {
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean supports(Class clazz) {
         return clazz.equals(CheckoutForm.class);
     }
 
-    @Override
     public void validate(Object obj, Errors errors) {
         CheckoutForm checkoutForm = (CheckoutForm) obj;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.addressLine1", "addressLine1.required");

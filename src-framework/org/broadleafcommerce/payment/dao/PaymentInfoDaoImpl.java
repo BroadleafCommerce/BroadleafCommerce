@@ -32,34 +32,29 @@ import org.springframework.stereotype.Repository;
 @Repository("blPaymentInfoDao")
 public class PaymentInfoDaoImpl implements PaymentInfoDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Override
     public PaymentInfo save(PaymentInfo paymentInfo) {
         return em.merge(paymentInfo);
     }
 
-    @Override
     public PaymentResponseItem save(PaymentResponseItem paymentResponseItem) {
         return em.merge(paymentResponseItem);
     }
 
-    @Override
     public PaymentLog save(PaymentLog log) {
         return em.merge(log);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public PaymentInfo readPaymentInfoById(Long paymentId) {
         return (PaymentInfo) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.payment.domain.PaymentInfo"), paymentId);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
         Query query = em.createNamedQuery("BC_READ_ORDERS_PAYMENTS_BY_ORDER_ID");
@@ -67,22 +62,18 @@ public class PaymentInfoDaoImpl implements PaymentInfoDao {
         return query.getResultList();
     }
 
-    @Override
     public PaymentInfo create() {
         return ((PaymentInfo) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.PaymentInfo"));
     }
 
-    @Override
     public PaymentResponseItem createResponseItem() {
         return ((PaymentResponseItem) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.PaymentResponseItem"));
     }
 
-    @Override
     public PaymentLog createLog() {
         return ((PaymentLog) entityConfiguration.createEntityInstance("org.broadleafcommerce.payment.domain.PaymentLog"));
     }
 
-    @Override
     public void delete(PaymentInfo paymentInfo) {
         em.remove(paymentInfo);
     }

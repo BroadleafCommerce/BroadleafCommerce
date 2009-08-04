@@ -24,7 +24,6 @@ public class LogStatusHandler implements StatusHandler {
 
     private static final Log LOG = LogFactory.getLog(LogStatusHandler.class);
 
-    @Override
     public void handleStatus(String serviceName, ServiceStatusType status) {
         if (status.equals(ServiceStatusType.DOWN)) {
             LOG.error(serviceName + " is reporting a status of DOWN");

@@ -47,12 +47,10 @@ public class RatingServiceImpl implements RatingService {
     @Resource
     private ReviewDetailDao reviewDetailDao;
 
-    @Override
     public void deleteRatingSummary(RatingSummary ratingSummary) {
         ratingSummaryDao.deleteRatingSummary(ratingSummary);
     }
 
-    @Override
     public void markReviewHelpful(Long reviewId, Customer customer, Boolean helpful) {
         ReviewDetail reviewDetail = reviewDetailDao.readReviewDetailById(reviewId);
 
@@ -64,7 +62,6 @@ public class RatingServiceImpl implements RatingService {
 
     }
 
-    @Override
     public void rateItem(String itemId, RatingType type, Customer customer, Double rating) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
@@ -77,15 +74,13 @@ public class RatingServiceImpl implements RatingService {
         ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
-    @Override
     public RatingSummary readRatingSummary(String itemId, RatingType type) {
         return ratingSummaryDao.readRatingSummary(itemId, type);
     }
 
-    @Override
     public Map<String, RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type) {
         List<RatingSummary> ratings = ratingSummaryDao.readRatingSummaries(itemIds, type);
-        Map<String, RatingSummary> ratingsMap= new HashMap<String, RatingSummary>();
+        Map<String, RatingSummary> ratingsMap = new HashMap<String, RatingSummary>();
 
         for (RatingSummary ratingSummary : ratings) {
             ratingsMap.put(ratingSummary.getItemId(), ratingSummary);
@@ -94,7 +89,6 @@ public class RatingServiceImpl implements RatingService {
         return ratingsMap;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<ReviewDetail> readReviews(String itemId, RatingType type, int start, int finish, RatingSortType sortBy) {
         RatingSummary summary = this.readRatingSummary(itemId, type);
@@ -118,18 +112,15 @@ public class RatingServiceImpl implements RatingService {
             sortByBeanProperty = "helpfulCount";
         }
 
-
         Collections.sort(reviewsToReturn, new BeanComparator(sortByBeanProperty));
 
         return reviewsToReturn;
     }
 
-    @Override
     public RatingSummary saveRatingSummary(RatingSummary ratingSummary) {
         return ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
-    @Override
     public void reviewItem(String itemId, RatingType type, Customer customer, String reviewText) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 

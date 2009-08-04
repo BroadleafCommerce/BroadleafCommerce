@@ -36,12 +36,10 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Override
     public void delete(FulfillmentGroupItem fulfillmentGroupItem) {
         em.remove(fulfillmentGroupItem);
     }
 
-    @Override
     public FulfillmentGroupItem save(FulfillmentGroupItem fulfillmentGroupItem) {
         if (fulfillmentGroupItem.getId() == null) {
             em.persist(fulfillmentGroupItem);
@@ -53,12 +51,10 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public FulfillmentGroupItem readFulfillmentGroupItemById(Long fulfillmentGroupItemId) {
         return (FulfillmentGroupItem) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroupItem"), fulfillmentGroupItemId);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_ITEM_BY_FULFILLMENT_GROUP_ID");
@@ -66,9 +62,7 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
         return query.getResultList();
     }
 
-    @Override
     public FulfillmentGroupItem create() {
         return ((FulfillmentGroupItem) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroupItem"));
     }
-
 }

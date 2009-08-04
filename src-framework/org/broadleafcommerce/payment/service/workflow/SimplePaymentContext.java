@@ -24,12 +24,10 @@ public class SimplePaymentContext implements ProcessContext {
     private boolean stopEntireProcess = false;
     private PaymentSeed seedData;
 
-    @Override
     public void setSeedData(Object seedObject) {
         this.seedData = (PaymentSeed) seedObject;
     }
 
-    @Override
     public boolean stopProcess() {
         this.stopEntireProcess = true;
         return stopEntireProcess;
@@ -39,7 +37,7 @@ public class SimplePaymentContext implements ProcessContext {
         return stopEntireProcess;
     }
 
-    public PaymentSeed getSeedData(){
+    public PaymentSeed getSeedData() {
         return seedData;
     }
 

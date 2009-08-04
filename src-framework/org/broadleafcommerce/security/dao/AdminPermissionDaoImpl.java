@@ -36,20 +36,17 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @Override
     @SuppressWarnings("unchecked")
     public void deleteAdminPermission(AdminPermission permission) {
-       AdminPermission persisted = (AdminPermission) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminPermission"), permission.getId());
+        AdminPermission persisted = (AdminPermission) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminPermission"), permission.getId());
         em.remove(persisted);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public AdminPermission readAdminPermissionById(Long id) {
         return (AdminPermission) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminPermission"), id);
     }
 
-    @Override
     public AdminPermission saveAdminPermission(AdminPermission permission) {
         if (permission.getId() == null) {
             em.persist(permission);
@@ -59,7 +56,6 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
         return permission;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<AdminPermission> readAllAdminPermissions() {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_PERMISSIONS");

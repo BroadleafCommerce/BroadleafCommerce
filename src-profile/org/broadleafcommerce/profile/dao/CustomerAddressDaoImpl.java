@@ -32,7 +32,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @SuppressWarnings("unchecked")
@@ -76,7 +76,6 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public CustomerAddress findDefaultCustomerAddress(Long customerId) {
         Query query = em.createNamedQuery("BC_FIND_DEFAULT_ADDRESS_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);

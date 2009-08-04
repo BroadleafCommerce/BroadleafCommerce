@@ -33,7 +33,7 @@ public class StateDaoImpl implements StateDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
@@ -51,7 +51,6 @@ public class StateDaoImpl implements StateDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public List<State> findStates(String countryAbbreviation) {
         Query query = em.createNamedQuery("BC_FIND_STATES_BY_COUNTRY_ABBREVIATION");
         query.setParameter("countryAbbreviation", countryAbbreviation);

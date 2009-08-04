@@ -29,7 +29,6 @@ public class RoleServiceImpl implements RoleService {
     @Resource(name="blRoleDao")
     protected RoleDao roleDao;
 
-    @Override
     public List<CustomerRole> findCustomerRolesByCustomerId(Long customerId) {
         return roleDao.readCustomerRolesByCustomerId(customerId);
     }

@@ -30,9 +30,7 @@ public class OfferActivity extends BaseActivity {
     @Resource(name="blOfferService")
     private OfferService offerService;
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
-
         Order order = ((PricingContext)context).getSeedData();
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);

@@ -37,13 +37,11 @@ public class TargetContentDaoImpl implements TargetContentDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @Override
     public void delete(Long targetContentId) {
         TargetContent tc = readTargetContentById(targetContentId);
         em.remove(tc);
     }
 
-    @Override
     public TargetContent save(TargetContent targetContent) {
         if(targetContent.getId() == null) {
             em.persist(targetContent);
@@ -53,7 +51,6 @@ public class TargetContentDaoImpl implements TargetContentDao {
         return targetContent;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<TargetContent> readCurrentTargetContentByNameType(String name, String type) {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS_BY_NAME_TYPE");
@@ -63,7 +60,6 @@ public class TargetContentDaoImpl implements TargetContentDao {
         return query.getResultList();
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<TargetContent> readCurrentTargetContentsByPriority(int priority) {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS_BY_PRIORITY");
@@ -72,13 +68,11 @@ public class TargetContentDaoImpl implements TargetContentDao {
         return query.getResultList();
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public TargetContent readTargetContentById(Long targetContentId) {
         return (TargetContent) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.marketing.domain.TargetContent"), targetContentId);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<TargetContent> readTargetContents() {
         Query query = em.createNamedQuery("BC_READ_TARGET_CONTENTS");

@@ -36,8 +36,10 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     private static final long serialVersionUID = 1L;
 
     protected GiftCardPaymentInfoImpl() {
-        //do not allow direct instantiation -- must at least be package private for bytecode instrumentation
-        //this complies with JPA specification requirements for entity construction
+        // do not allow direct instantiation -- must at least be package private
+        // for bytecode instrumentation
+        // this complies with JPA specification requirements for entity
+        // construction
     }
 
     @Transient
@@ -49,51 +51,43 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     @Column(name = "PAYMENT_ID")
     protected Long id;
 
-    @Column(name = "REFERENCE_NUMBER", nullable=false)
+    @Column(name = "REFERENCE_NUMBER", nullable = false)
     protected String referenceNumber;
 
-    @Column(name = "PAN", nullable=false)
+    @Column(name = "PAN", nullable = false)
     protected String pan;
 
     @Column(name = "PIN")
     protected String pin;
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public String getPan() {
         return encryptionModule.decrypt(pan);
     }
 
-    @Override
     public String getPin() {
         return encryptionModule.decrypt(pin);
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    @Override
     public void setPan(String pan) {
         this.pan = encryptionModule.encrypt(pan);
     }
 
-    @Override
     public void setPin(String pin) {
         this.pin = encryptionModule.encrypt(pin);
     }
 
-    @Override
     public String getReferenceNumber() {
         return referenceNumber;
     }
 
-    @Override
     public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
@@ -106,7 +100,6 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
         this.encryptionModule = encryptionModule;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -116,7 +109,6 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

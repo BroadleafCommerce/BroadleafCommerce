@@ -32,7 +32,7 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     @SuppressWarnings("unchecked")
@@ -72,7 +72,6 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public CustomerPhone findDefaultCustomerPhone(Long customerId) {
         Query query = em.createNamedQuery("BC_FIND_DEFAULT_PHONE_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
@@ -81,7 +80,6 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_ALL_CUSTOMER_PHONES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);

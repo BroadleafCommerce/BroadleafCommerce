@@ -37,12 +37,10 @@ public class RegisterCustomerValidator implements Validator {
     public RegisterCustomerValidator() {}
 
     @SuppressWarnings("unchecked")
-    @Override
     public boolean supports(Class clazz) {
         return clazz.equals(RegisterCustomerForm.class);
     }
 
-    @Override
     public void validate(Object obj, Errors errors) {
         RegisterCustomerForm form = (RegisterCustomerForm) obj;
 

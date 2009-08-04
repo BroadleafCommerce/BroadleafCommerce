@@ -32,17 +32,14 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Override
     public OfferAudit create() {
         return ((OfferAudit) entityConfiguration.createEntityInstance(OfferAudit.class.getName()));
     }
 
-    @Override
     public void delete(OfferAudit offerAudit) {
         em.remove(offerAudit);
     }
 
-    @Override
     public OfferAudit save(OfferAudit offerAudit) {
         if(offerAudit.getId() == null){
             em.persist(offerAudit);
@@ -52,7 +49,6 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         return offerAudit;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public OfferAudit readAuditById(Long offerAuditId) {
         return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(OfferAudit.class.getName()), offerAuditId);

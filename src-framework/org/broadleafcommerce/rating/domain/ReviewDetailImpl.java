@@ -40,32 +40,33 @@ import org.broadleafcommerce.rating.service.type.ReviewStatusType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_REVIEW_DETAIL")
 public class ReviewDetailImpl implements ReviewDetail {
+
     @Id
     @GeneratedValue(generator = "ReviewDetailId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ReviewDetailId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ReviewDetailImpl", allocationSize = 50)
     @Column(name = "REVIEW_DETAIL_ID")
     private Long id;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @Column(name = "REVIEW_SUBMITTED_DATE", nullable=false)
+    @Column(name = "REVIEW_SUBMITTED_DATE", nullable = false)
     protected Date reivewSubmittedDate;
 
-    @Column(name = "REVIEW_TEXT", nullable=false)
+    @Column(name = "REVIEW_TEXT", nullable = false)
     protected String reviewText;
 
-    @Column(name = "REVIEW_STATUS", nullable=false)
+    @Column(name = "REVIEW_STATUS", nullable = false)
     protected String reviewStatus;
 
-    @Column(name = "HELPFUL_COUNT", nullable=false)
+    @Column(name = "HELPFUL_COUNT", nullable = false)
     protected Integer helpfulCount;
 
-    @Column(name = "NOT_HELPFUL_COUNT", nullable=false)
+    @Column(name = "NOT_HELPFUL_COUNT", nullable = false)
     protected Integer notHelpfulCount;
 
-    @ManyToOne(optional=false, targetEntity = RatingSummaryImpl.class)
+    @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)
     @JoinColumn(name = "RATING_SUMMARY_ID")
     protected RatingSummary ratingSummary;
 
@@ -81,47 +82,38 @@ public class ReviewDetailImpl implements ReviewDetail {
         this.reviewFeedback = new ArrayList<ReviewFeedback>();
     }
 
-    @Override
     public Date getReviewSubmittedDate() {
         return reivewSubmittedDate;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public String getReviewText() {
         return reviewText;
     }
 
-    @Override
     public ReviewStatusType getStatus() {
         return new ReviewStatusType(reviewStatus);
     }
 
-    @Override
     public Customer getCustomer() {
         return customer;
     }
 
-    @Override
     public Integer helpfulCount() {
         return helpfulCount;
     }
 
-    @Override
     public Integer notHelpfulCount() {
         return notHelpfulCount;
     }
 
-    @Override
     public RatingSummary getRatingSummary() {
         return ratingSummary;
     }
 
-    @Override
     public List<ReviewFeedback> getReviewFeedback() {
         return reviewFeedback == null ? new ArrayList<ReviewFeedback>() : reviewFeedback;
     }

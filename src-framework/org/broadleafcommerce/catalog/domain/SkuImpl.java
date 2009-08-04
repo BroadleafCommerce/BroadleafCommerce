@@ -387,7 +387,6 @@ public class SkuImpl implements Sku {
         return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false);
     }
 
-    @Override
     public boolean isActive(Product product, Category category) {
         if (LOG.isDebugEnabled()) {
             if (!DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false)) {
