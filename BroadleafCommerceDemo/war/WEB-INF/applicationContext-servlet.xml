@@ -21,7 +21,6 @@
 		class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
 		<constructor-arg>
 			<list>
-				<value>registrationMessages</value>
 				<value>messages</value>
 			</list>
 		</constructor-arg>
