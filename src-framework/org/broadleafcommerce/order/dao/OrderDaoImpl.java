@@ -132,7 +132,7 @@ public class OrderDaoImpl implements OrderDao {
 
     @SuppressWarnings("unchecked")
     public Order readOrderByOrderNumber(String orderNumber) {
-        if (orderNumber == null || orderNumber.equals("")) {
+        if (orderNumber == null || "".equals(orderNumber)) {
             return null;
         }
 
