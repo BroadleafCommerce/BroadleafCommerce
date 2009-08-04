@@ -7,28 +7,27 @@
 			<form:checkbox path="isSameAddress" id="sameShippingInfo"  /> 
 			<span style="padding-left:4px"> Yes, my <b>Billing</b> and <b>Shipping</b> addresses are the same </span>
 		</div>
-		<div>
-			<form:errors path="billingAddress.firstName" cssClass="errorInputText"><br/>
-			</form:errors>	
-			<form:errors path="billingAddress.lastName" cssClass="errorInputText"><br/>
+		<div class="errorInputText" style="margin-top:10px;">
+			<form:errors path="billingAddress.firstName" >	
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="billingAddress.primaryPhone" cssClass="errorInputText"><br/>
+			<form:errors path="billingAddress.lastName" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="creditCardNumber" cssClass="errorInputText"><br/>
+			<form:errors path="billingAddress.primaryPhone" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 			
+ 			</form:errors>
+			<form:errors path="billingAddress.addressLine1" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="creditCardExpMonth" cssClass="errorInputText"><br/>
+			<form:errors path="billingAddress.addressLine2" > 
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="creditCardExpYear" cssClass="errorInputText"><br/>
-			</form:errors>
-			<form:errors path="creditCardCvvCode" cssClass="errorInputText"><br/>
-			</form:errors>
-			<form:errors path="billingAddress.addressLine1" cssClass="errorInputText"><br/>
-			</form:errors>
-			<form:errors path="billingAddress.addressLine2" cssClass="errorInputText"><br/>
-			</form:errors>
-			<form:errors path="billingAddress.city" cssClass="errorInputText"><br/>
-			</form:errors>
-			<form:errors path="billingAddress.postalCode" cssClass="errorInputText"><br/> 
+			<form:errors path="billingAddress.city" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
+			 </form:errors>
+			<form:errors path="billingAddress.postalCode" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
 		</div>
 		<div>
@@ -83,6 +82,20 @@
 	<div class="span-10 creditCardPayment checkoutBorder">
 		<div class="checkoutTitle" > <b> Credit Card Information </b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
+		<div class="errorInputText" style="margin-top:10px;">
+			<form:errors path="creditCardNumber" > 
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
+			</form:errors>
+			<form:errors path="creditCardExpMonth" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
+			</form:errors>
+			<form:errors path="creditCardExpYear" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
+			</form:errors>
+			<form:errors path="creditCardCvvCode" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
+			</form:errors>
+		</div>
 		<div> 
 			<br/>
 			<label for="ccNumber"><b>* Card Type</b></label><br/>

@@ -2,20 +2,27 @@
 	<div id="checkoutContactInfo" class="span-11 column checkoutBorder displayNone">
 		<div class="checkoutTitle" ><b> Shipping Information </b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
-		<div>
-			<form:errors path="shippingAddress.firstName" cssClass="errorInputText"><br/>
+		<div class="errorInputText" style="margin-top:10px;">
+			<form:errors path="shippingAddress.firstName" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors> 
-			<form:errors path="shippingAddress.lastName" cssClass="errorInputText"><br/>	
+			<form:errors path="shippingAddress.lastName" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="shippingAddress.primaryPhone" cssClass="errorInputText"><br/>
+			<form:errors path="shippingAddress.primaryPhone" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="shippingAddress.addressLine1" cssClass="errorInputText"><br/>
+			<form:errors path="shippingAddress.addressLine1" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="shippingAddress.city" cssClass="errorInputText"><br/>
+			<form:errors path="shippingAddress.city" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="shippingAddress.postalCode" cssClass="errorInputText" ><br/>
+			<form:errors path="shippingAddress.postalCode" >	
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
-			<form:errors path="emailAddress" cssClass="errorInputText"><br/>	
+			<form:errors path="emailAddress" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
 		</div>
 		<div>
