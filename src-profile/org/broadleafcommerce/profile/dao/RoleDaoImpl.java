@@ -47,7 +47,6 @@ public class RoleDaoImpl implements RoleDao {
     public List<CustomerRole> readCustomerRolesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_ROLES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
-        query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
 
