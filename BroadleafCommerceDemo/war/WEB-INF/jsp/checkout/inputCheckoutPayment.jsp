@@ -3,6 +3,10 @@
 	<div class="checkoutBorder">
 		<div class="checkoutTitle" > <b>Payment Information </b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
+		<div style="margin-top:10px; font-size:13px;">
+			<form:checkbox path="isSameAddress" id="sameShippingInfo"  /> 
+			<span style="padding-left:4px"> Yes, my <b>Billing</b> and <b>Shipping</b> addresses are the same </span>
+		</div>
 		<div>
 			<form:errors path="billingAddress.firstName" cssClass="errorInputText"><br/>
 			</form:errors>	
@@ -73,10 +77,6 @@
 		<div>
 			<form:input path="billingAddress.primaryPhone"/>	
 			<span style="margin-left: 20px" ><form:input path="emailAddress"/></span>
-		</div>
-		<div>
-			<form:checkbox path="isSameAddress" id="sameShippingInfo"  /> 
-			<span style="padding-left:4px"> Yes, my <b>Billing</b> and <b>Shipping</b> addresses are the same </span>
 		</div>
 	</div>
 

@@ -109,7 +109,7 @@
 							<div class="relatedProd">
 								<div class="relatedProdImage">
 									<a href="${contextPath}${item.relatedSaleProduct.productImages.small}" class="thickbox">
-										<img src="/broadleafdemo${item.relatedSaleProduct.productImages.small}" width="60" />
+										<img src="/broadleafdemo${item.relatedSaleProduct.productImages.small}" width="80" />
 									</a>
 								</div> 
 								<div class="relatedProdText">
