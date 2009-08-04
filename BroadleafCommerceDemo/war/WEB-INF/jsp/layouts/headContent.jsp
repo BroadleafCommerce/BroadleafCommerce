@@ -37,4 +37,5 @@
 <script type="text/javascript" src="/broadleafdemo/js/thickbox-compressed.js"></script>
 <script type="text/javascript" src="/broadleafdemo/js/product.js"></script>
 <script type="text/javascript" src="/broadleafdemo/js/checkout.js"></script>
+<script type="text/javascript" src="/broadleafdemo/js/catalog.js"></script>
 <c:set scope="request" var="contextPath" value="${pageContext.request.contextPath}" />
