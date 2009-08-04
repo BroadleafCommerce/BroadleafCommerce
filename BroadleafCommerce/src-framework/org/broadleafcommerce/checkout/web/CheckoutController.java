@@ -18,6 +18,7 @@ package org.broadleafcommerce.checkout.web;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ReverseComparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.checkout.service.CheckoutService;
@@ -45,6 +48,7 @@ import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.PaymentInfoService;
 import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.domain.CustomerPhoneImpl;
@@ -181,6 +185,7 @@ public class CheckoutController {
         return receiptView != null ? "redirect:" + receiptView : "redirect:/orders/viewOrderConfirmation.htm?orderNumber=" + order.getOrderNumber();
     }
 
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "checkout.htm", method = {RequestMethod.GET})
     public String checkout(@ModelAttribute CheckoutForm checkoutForm,
             BindingResult errors,
@@ -188,7 +193,9 @@ public class CheckoutController {
             HttpServletRequest request) {
 
         model.addAttribute("stateList", stateService.findStates());
-        model.addAttribute("countryList", countryService.findCountries());
+        List<Country> countries = countryService.findCountries();
+        Collections.sort(countries, new ReverseComparator(new BeanComparator("abbreviation")));
+        model.addAttribute("countryList", countries);
 
         Customer currentCustomer = customerState.getCustomer(request);
         model.addAttribute("customer", currentCustomer);
@@ -202,7 +209,6 @@ public class CheckoutController {
         model.addAttribute("order", retrieveCartOrder(request, model));
         return checkoutView;
     }
-
 
     protected Order retrieveCartOrder(HttpServletRequest request, ModelMap model) {
         Customer currentCustomer = customerState.getCustomer(request);
