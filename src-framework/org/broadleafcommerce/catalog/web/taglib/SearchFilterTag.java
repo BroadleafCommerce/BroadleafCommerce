@@ -24,6 +24,13 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.broadleafcommerce.catalog.domain.Product;
 
+/**
+ * The SearchFilterTag sets up an environment for it's children {@link SearchFilterItemTag}s. If a queryString
+ * is passed in, the tag will render a textbox named queryString populated with the string passed in. It will also
+ * render a hidden input containing the same value to aid in deciding whether to do ajax loads while filtering
+ * search results or to do a full page refresh for new searches.
+ *
+ */
 public class SearchFilterTag extends TagSupport {
 
     private static final long serialVersionUID = 1L;
