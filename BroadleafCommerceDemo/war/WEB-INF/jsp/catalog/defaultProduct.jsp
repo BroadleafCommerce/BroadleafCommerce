@@ -80,23 +80,28 @@
 									</a>
 								</div> 
 								<div class="relatedProdText">
-									<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${item.relatedSaleProduct.id}">
-										${item.relatedSaleProduct.name}
-									</a>
-									<br/> Our Price: <br/>
-									<c:choose>
-										<c:when test="${item.relatedSaleProduct.skus[0].salePrice != null}" >
-											<span class="strikethrough"><c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" /></span>
-											<c:out value="${item.relatedSaleProduct.skus[0].salePrice}" />
-										</c:when>			
-										<c:otherwise>
-											<c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" />
-										</c:otherwise>
-									</c:choose><br/>
-								    <a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
-					   					<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
-										<c:param name="quantity" value="1"/>
-										</c:url>" >Add to Cart</a>
+									<div > 
+										<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${item.relatedSaleProduct.id}">
+											${item.relatedSaleProduct.name}
+										</a>
+									</div>
+									<div style="margin-top:5px;"> Our Price: <br/>
+										<c:choose>
+											<c:when test="${item.relatedSaleProduct.skus[0].salePrice != null}" >
+												<span class="strikethrough"><c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" /></span>
+												<c:out value="${item.relatedSaleProduct.skus[0].salePrice}" />
+											</c:when>			
+											<c:otherwise>
+												<c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" />
+											</c:otherwise>
+										</c:choose>
+									</div>
+									<div style="margin-top:5px;">
+								    	<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
+						   					<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
+											<c:param name="quantity" value="1"/>
+											</c:url>" >Add to Cart</a>
+									</div>
 								</div>
 							</div>
 						</c:forEach>
@@ -113,23 +118,26 @@
 									</a>
 								</div> 
 								<div class="relatedProdText">
-									<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${item.relatedSaleProduct.id}">
-										${item.relatedSaleProduct.name}
-									</a>
-									<br/> Our Price: <br/>
-									<c:choose>
-										<c:when test="${item.relatedSaleProduct.skus[0].salePrice != null}" >
-											<span class="strikethrough"><c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" /></span>
-											<c:out value="${item.relatedSaleProduct.skus[0].salePrice}" />
-										</c:when>			
-										<c:otherwise>
-											<c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" /> 
-										</c:otherwise>
-									</c:choose>
-									 <br/><a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
-										<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
-										<c:param name="quantity" value="1"/>
-										</c:url>">Add to Cart</a>
+									<div>
+										<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${item.relatedSaleProduct.id}">
+											${item.relatedSaleProduct.name}
+										</a>
+									</div>
+									<div style="margin-top:5px;"> Our Price: <br/>
+										<c:choose>
+											<c:when test="${item.relatedSaleProduct.skus[0].salePrice != null}" >
+												<span class="strikethrough">${item.relatedSaleProduct.skus[0].retailPrice}</span>
+												${item.relatedSaleProduct.skus[0].salePrice}
+											</c:when>			
+											<c:otherwise> ${item.relatedSaleProduct.skus[0].retailPrice} </c:otherwise>
+										</c:choose>
+									</div>
+									<div style="margin-top:5px;">
+										<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
+											<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
+											<c:param name="quantity" value="1"/>
+											</c:url>">Add to Cart</a>
+									</div>
 								</div>
 							</div>
 						</c:forEach>
