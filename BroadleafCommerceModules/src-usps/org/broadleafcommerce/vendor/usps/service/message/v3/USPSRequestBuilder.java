@@ -30,7 +30,6 @@ import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceReques
 
 public class USPSRequestBuilder implements org.broadleafcommerce.vendor.usps.service.message.USPSRequestBuilder {
 
-    @Override
     public XmlTokenSource buildRequest(USPSShippingPriceRequest request, String username, String password) {
         RateV3RequestDocument doc = RateV3RequestDocument.Factory.newInstance();
         RateV3RequestType v3Request = doc.addNewRateV3Request();
