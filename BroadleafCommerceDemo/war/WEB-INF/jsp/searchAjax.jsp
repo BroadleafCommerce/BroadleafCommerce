@@ -3,6 +3,9 @@
 	Search Results
 </h1>
 <c:choose>
+<c:when test="${fn:length(products) == 0}">
+	No results were found for your query.
+</c:when>
 <c:when test="${fn:length(categories) == 1}">
 	<c:forEach var="product" items="${products}" varStatus="status">
 		<div class="searchProduct span-3">

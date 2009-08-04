@@ -135,11 +135,6 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
        	<attribute>
-			<name>propertyValue</name>
-			<required>false</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-       	<attribute>
 			<name>displayTitle</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>

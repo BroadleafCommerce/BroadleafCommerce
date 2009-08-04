@@ -1,5 +1,9 @@
+.searchFilterDisabledSelect {
+	color:#AAAAAA;
+}
 
 #searchFilter {
+	color:#222222;
 	background-color: #E5E5E5 ;
 	float:left;
 	width: 260px;
@@ -21,7 +25,7 @@
 .searchFilter-defaultCategory_id li,
 .searchFilter-manufacturer li
 {
-	
+	cursor: pointer;
 	list-style-type: none;
 }
 
@@ -29,10 +33,6 @@
 .searchFilter-manufacturerCheckbox
 {
 	display:none;
-}
-
-.searchFilterDisabledSelect {
-	color:#AAAAAA;
 }
 
 .grayedOut {

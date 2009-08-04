@@ -27,11 +27,25 @@ import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.util.money.Money;
 
+/**
+ * <p>The SearchFilterItemTag renders form elements designed to help filter a list of products. There
+ * are two different filter options currently implemented: multiSelect and sliderRange.</p>
+ * <p>multiSelect, the default displayType, renders an unordered list of the unique values for properties.
+ * Each item consists of a checkbox, a string containing either the string representation of the property
+ * or, if set, the propertyDisplay property of a product. Javascript is also rendered that makes clicking on
+ * the strings check the corresponding checkbox as well as apply the css class 'searchFilterDisabledSelect'
+ * to unchecked options.</p>
+ * <p>sliderRange relies on the designated property being of type {@link Money} and renders a jQuery slider with
+ * minimum and maximum values corresponding to the minimum and maximum values of the property. The slider renders
+ * with javascript that causes 2 text input boxes to be updated with the values of the slider after each change.</p>
+ * <p>After all changes, the javascript function updateSearchFilterResults will be called, this funciton should
+ * be defined before the SearchFilterTag.</p>
+ * 
+ */
 public class SearchFilterItemTag extends SimpleTagSupport {
 
     protected String property;
     protected String propertyDisplay;
-    protected String propertyValue;
 
     protected String displayTitle;
     protected String displayType = "multiSelect";
@@ -174,11 +188,5 @@ public class SearchFilterItemTag extends SimpleTagSupport {
     }
     public void setPropertyDisplay(String propertyDisplay) {
         this.propertyDisplay = propertyDisplay;
-    }
-    public String getPropertyValue() {
-        return propertyValue;
-    }
-    public void setPropertyValue(String propertyValue) {
-        this.propertyValue = propertyValue;
     }
 }
