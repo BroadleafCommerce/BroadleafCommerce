@@ -41,11 +41,11 @@
 		</div>
 		<div>
 			<label for="addressLine1">* Address Line 1</b></label> <br/>
-			<form:input path="billingAddress.addressLine1" size="65" />
+			<form:input path="billingAddress.addressLine1" size="50" />
 		</div>
 		<div>
 			<label for="addressLine2">Address Line 2</b></label> <br/>
-			<form:input path="billingAddress.addressLine2"  size="65"/>
+			<form:input path="billingAddress.addressLine2"  size="50"/>
 		</div>
 		<div>
 			<label for="city">* City</b></label> <br/>

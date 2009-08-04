@@ -13,8 +13,8 @@
 					<input type="submit" name="Find" value="Find"/>
 				</div>
 				<div class="column span-3" >
-					<form:input path="postalCode" /> <br/><br/>
-					<form:input path="distance" /> 
+					<form:input path="postalCode" size="5"/> <br/><br/>
+					<form:input path="distance" size="3"/> 
 				</div>
 			</div>
 		</form:form>
