@@ -28,6 +28,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blAdminUserDao")
 public class AdminUserDaoImpl implements AdminUserDao {
+
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
@@ -36,20 +37,17 @@ public class AdminUserDaoImpl implements AdminUserDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @Override
     @SuppressWarnings("unchecked")
     public void deleteAdminUser(AdminUser user) {
         AdminUser persisted = (AdminUser) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminUser"), user.getId());
         em.remove(persisted);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public AdminUser readAdminUserById(Long id) {
         return (AdminUser) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminUser"), id);
     }
 
-    @Override
     public AdminUser saveAdminUser(AdminUser user) {
         if (user.getId() == null) {
             em.persist(user);
@@ -59,19 +57,17 @@ public class AdminUserDaoImpl implements AdminUserDao {
         return user;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public AdminUser readAdminUserByUserName(String userName) {
         Query query = em.createNamedQuery("BC_READ_ADMIN_USER_BY_USERNAME");
         query.setParameter("userName", userName);
         List<AdminUser> users = query.getResultList();
-        if (users != null && ! users.isEmpty()) {
+        if (users != null && !users.isEmpty()) {
             return users.get(0);
         }
         return null;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<AdminUser> readAllAdminUsers() {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_USERS");

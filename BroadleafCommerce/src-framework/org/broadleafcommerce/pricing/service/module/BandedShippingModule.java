@@ -34,44 +34,42 @@ public class BandedShippingModule implements ShippingModule {
 
     protected String name = MODULENAME;
 
-    @Resource(name="blShippingRatesDao")
+    @Resource(name = "blShippingRatesDao")
     private ShippingRateDao shippingRateDao;
 
     private Map<String, String> feeTypeMapping;
     private Map<String, String> feeSubTypeMapping;
 
-    @Override
     // this will need to calculate shipping on each fulfilmentGroup in an order
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(
-            FulfillmentGroup fulfillmentGroup) {
+    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         calculateShipping(fulfillmentGroup);
         return fulfillmentGroup;
     }
 
     private void calculateShipping(FulfillmentGroup fulfillmentGroup) {
         Address address = fulfillmentGroup.getAddress();
-        String state = (address!= null && address.getState() != null)? address.getState().getAbbreviation(): null;
+        String state = (address != null && address.getState() != null) ? address.getState().getAbbreviation() : null;
         BigDecimal retailTotal = new BigDecimal(0);
         String feeType = feeTypeMapping.get(fulfillmentGroup.getMethod());
-        String feeSubType = ((feeSubTypeMapping.get(state) == null)? feeSubTypeMapping.get("ALL") : feeSubTypeMapping.get(state));
+        String feeSubType = ((feeSubTypeMapping.get(state) == null) ? feeSubTypeMapping.get("ALL") : feeSubTypeMapping.get(state));
 
         for (FulfillmentGroupItem fulfillmentGroupItem : fulfillmentGroup.getFulfillmentGroupItems()) {
-            BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null)? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())):null;
-            if(price == null) {
+            BigDecimal price = (fulfillmentGroupItem.getRetailPrice() != null) ? fulfillmentGroupItem.getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity())) : null;
+            if (price == null) {
                 price = fulfillmentGroupItem.getOrderItem().getRetailPrice().getAmount().multiply(BigDecimal.valueOf(fulfillmentGroupItem.getQuantity()));
             }
             retailTotal = retailTotal.add(price);
         }
 
         ShippingRate sr = shippingRateDao.readShippingRateByFeeTypesUnityQty(feeType, feeSubType, retailTotal);
-        if(sr == null) {
-            throw new NotImplementedException("Shipping rate "+fulfillmentGroup.getMethod()+" not supported");
+        if (sr == null) {
+            throw new NotImplementedException("Shipping rate " + fulfillmentGroup.getMethod() + " not supported");
         }
         BigDecimal shippingPrice = new BigDecimal(0);
-        if(sr.getBandResultPercent().compareTo(0) > 0) {
-            BigDecimal percent = new BigDecimal(sr.getBandResultPercent()/100);
+        if (sr.getBandResultPercent().compareTo(0) > 0) {
+            BigDecimal percent = new BigDecimal(sr.getBandResultPercent() / 100);
             shippingPrice = retailTotal.multiply(percent);
-        }else {
+        } else {
             shippingPrice = sr.getBandResultQuantity();
         }
         fulfillmentGroup.setShippingPrice(new Money(shippingPrice));
@@ -79,12 +77,10 @@ public class BandedShippingModule implements ShippingModule {
         fulfillmentGroup.setRetailShippingPrice(fulfillmentGroup.getSaleShippingPrice());
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -112,7 +108,5 @@ public class BandedShippingModule implements ShippingModule {
     public void setFeeSubTypeMapping(Map<String, String> feeSubTypeMapping) {
         this.feeSubTypeMapping = feeSubTypeMapping;
     }
-
-
 
 }

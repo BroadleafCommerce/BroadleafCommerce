@@ -46,50 +46,42 @@ public class CustomerRoleImpl implements CustomerRole {
     @Column(name = "CUSTOMER_ROLE_ID")
     protected Long id;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional=false)
+    @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional = false)
     @JoinColumn(name = "ROLE_ID")
     protected Role role;
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    @Override
     public Customer getCustomer() {
         return customer;
     }
 
-    @Override
     public void setCustomer(Customer customer) {
         this.customer = customer;
     }
 
-    @Override
     public Role getRole() {
         return role;
     }
 
-    @Override
     public void setRole(Role role) {
         this.role = role;
     }
 
-    @Override
     public String getRoleName() {
         return role.getRoleName();
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -98,7 +90,6 @@ public class CustomerRoleImpl implements CustomerRole {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

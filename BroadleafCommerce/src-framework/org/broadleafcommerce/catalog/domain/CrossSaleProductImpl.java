@@ -49,52 +49,42 @@ public class CrossSaleProductImpl implements RelatedProduct {
     @Column(name = "SEQUENCE")
     private Long sequence;
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public Product getProduct() {
         return product;
     }
 
-    @Override
     public String getPromotionMessage() {
         return promotionMessage;
     }
 
-    @Override
     public Product getRelatedSaleProduct() {
         return relatedSaleProduct;
     }
 
-    @Override
     public Long getSequence() {
         return sequence;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    @Override
     public void setProduct(Product product) {
         this.product = product;
     }
 
-    @Override
     public void setPromotionMessage(String promotionMessage) {
         this.promotionMessage = promotionMessage;
     }
 
-    @Override
     public void setRelatedProduct(Product relatedSaleProduct) {
         this.relatedSaleProduct = relatedSaleProduct;
     }
 
-    @Override
     public void setSequence(Long sequence) {
         this.sequence = sequence;
     }

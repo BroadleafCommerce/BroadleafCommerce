@@ -45,7 +45,6 @@ public class CheckoutServiceImpl implements CheckoutService {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order, java.util.Map)
      */
-    @Override
     public CheckoutResponse performCheckout(Order order, Map<PaymentInfo, Referenced> payments) throws CheckoutException {
         /*
          * TODO add validation that checks the order and payment information for validity.
@@ -89,7 +88,6 @@ public class CheckoutServiceImpl implements CheckoutService {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order)
      */
-    @Override
     public CheckoutResponse performCheckout(Order order) throws CheckoutException {
         return performCheckout(order, null);
     }

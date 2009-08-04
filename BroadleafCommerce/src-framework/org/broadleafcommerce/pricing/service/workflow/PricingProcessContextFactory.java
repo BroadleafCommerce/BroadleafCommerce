@@ -22,7 +22,6 @@ import org.broadleafcommerce.workflow.WorkflowException;
 
 public class PricingProcessContextFactory implements ProcessContextFactory {
 
-    @Override
     public ProcessContext createContext(Object seedData) throws WorkflowException {
         if(!(seedData instanceof Order)){
             throw new WorkflowException("Seed data instance is incorrect. " +

@@ -37,25 +37,23 @@ public class SearchServiceCompassImpl implements SearchService {
     @CompassContext
     protected Compass compass;
 
-    @Resource(name="blCatalogService")
+    @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
-    @Override
     public List<Product> performSearch(String input) {
         CompassSearchSession session = compass.openSearchSession();
         CompassDetachedHits hits = session.find(input).detach();
         session.close();
         List<Product> results = new ArrayList<Product>(hits.length());
-        for(int i = 0; i < hits.length(); i ++ ) {
+        for (int i = 0; i < hits.length(); i++) {
             Product resourceProduct = (Product) hits.data(i);
             results.add(catalogService.findProductById(resourceProduct.getId()));
         }
         return results;
     }
 
-    @Override
     public void rebuildProductIndex() {
         logger.info("Rebuilding product index");
         List<Product> products = catalogService.findAllProducts();

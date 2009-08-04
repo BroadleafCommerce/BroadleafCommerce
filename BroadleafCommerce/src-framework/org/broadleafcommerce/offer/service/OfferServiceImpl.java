@@ -93,23 +93,18 @@ public class OfferServiceImpl implements OfferService {
         }
     } */
 
-    @Override
     public List<Offer> findAllOffers() {
         return offerDao.readAllOffers();
     }
 
-    @Override
     public Offer save(Offer offer) {
         return offerDao.save(offer);
     }
 
-    @Override
     public OfferCode saveOfferCode(OfferCode offerCode) {
         offerCode.setOffer(offerDao.save(offerCode.getOffer()));
         return offerCodeDao.save(offerCode);
     }
-
-
 
     /**
      * Creates a list of offers that applies to this order.  All offers that are assigned to the customer,
@@ -119,7 +114,6 @@ public class OfferServiceImpl implements OfferService {
      * @param order
      * @return a List of offers that may apply to this order
      */
-    @Override
     public Offer lookupOfferByCode(String code) {
         Offer offer = null;
         OfferCode offerCode = offerCodeDao.readOfferCodeByCode(code);
@@ -129,7 +123,6 @@ public class OfferServiceImpl implements OfferService {
         return offer;
     }
 
-
     /**
      * Creates a list of offers that applies to this order.  All offers that are assigned to the customer,
      * entered during checkout, or has a delivery type of automatic are added to the list.  The same offer
@@ -138,7 +131,6 @@ public class OfferServiceImpl implements OfferService {
      * @param order
      * @return a List of offers that may apply to this order
      */
-    @Override
     public List<Offer> buildOfferListForOrder(Order order) {
         List<Offer> offers = new ArrayList<Offer>();
         List<CustomerOffer> customerOffers = lookupOfferCustomerByCustomer(order.getCustomer());
@@ -162,7 +154,6 @@ public class OfferServiceImpl implements OfferService {
         }
         return offers;
     }
-
 
     /**
      * Private method used to retrieve all offers assigned to this customer.  These offers
@@ -214,7 +205,6 @@ public class OfferServiceImpl implements OfferService {
         return offerCodes;
     }
 
-
     /*
      *
      * Offers Logic:
@@ -245,7 +235,6 @@ public class OfferServiceImpl implements OfferService {
      * 9) Non-combinable offers only apply to the order and order items, fulfillment group offers will always apply
      *
      */
-    @Override
     @SuppressWarnings("unchecked")
     public void applyOffersToOrder(List<Offer> offers, Order order) throws PricingException {
         clearOffersandAdjustments(order);
@@ -749,14 +738,12 @@ public class OfferServiceImpl implements OfferService {
 
     }
 
-    @Override
     public void applyFulfillmentGroupsOffers(List<FulfillmentGroup> fulfillmentGroups) {
         for (FulfillmentGroup fulfillmentGroup : fulfillmentGroups) {
             applyFulfillmentGroupOffers(fulfillmentGroup);
         }
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public void applyFulfillmentGroupOffers(FulfillmentGroup fulfillmentGroup) {
         List<CandidateFulfillmentGroupOffer> qualifiedFulfillmentGroupOffers = fulfillmentGroup.getCandidateFulfillmentGroupOffers();
@@ -773,7 +760,6 @@ public class OfferServiceImpl implements OfferService {
             fulfillmentGroup.setShippingPrice(fulfillmentGroup.getRetailShippingPrice());
         }
     }
-
 
     /**
      * Private method that takes a list of sorted CandidateFulfillmentGroupOffer and determines if each offer can be
@@ -810,7 +796,6 @@ public class OfferServiceImpl implements OfferService {
         //add to adjustment
         fulfillmentGroupOffer.getFulfillmentGroup().addFulfillmentGroupAdjustment(fulfillmentGroupAdjustment);
     }
-
 
     public OfferCode lookupOfferCodeByCode(String code){
         return offerCodeDao.readOfferCodeByCode(code);

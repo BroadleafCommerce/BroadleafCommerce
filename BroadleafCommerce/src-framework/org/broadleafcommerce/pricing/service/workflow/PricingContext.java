@@ -24,12 +24,10 @@ public class PricingContext implements ProcessContext {
     private boolean stopEntireProcess = false;
     private Order seedData;
 
-    @Override
     public void setSeedData(Object seedObject) {
         seedData = (Order)seedObject;
     }
 
-    @Override
     public boolean stopProcess() {
         this.stopEntireProcess = true;
         return stopEntireProcess;

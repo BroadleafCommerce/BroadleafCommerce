@@ -34,29 +34,27 @@ import org.broadleafcommerce.profile.domain.CustomerImpl;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_REVIEW_FEEDBACK")
 public class ReviewFeedbackImpl implements ReviewFeedback {
+
     @Id
     @GeneratedValue(generator = "ReviewFeedbackId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ReviewFeedbackId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ReviewFeedbackImpl", allocationSize = 50)
     @Column(name = "REVIEW_FEEDBACK_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @Column(name = "IS_HELPFUL", nullable=false)
+    @Column(name = "IS_HELPFUL", nullable = false)
     protected Boolean isHelpful;
 
-    @ManyToOne(optional=false, targetEntity = ReviewDetailImpl.class)
+    @ManyToOne(optional = false, targetEntity = ReviewDetailImpl.class)
     @JoinColumn(name = "REVIEW_DETAIL_ID")
     protected ReviewDetail reviewDetail;
 
-    @Override
     public Long getId() {
         return id;
     }
-
-    public ReviewFeedbackImpl() {}
 
     public ReviewFeedbackImpl(Customer customer, Boolean isHelpful, ReviewDetail reviewDetail) {
         super();
@@ -65,19 +63,14 @@ public class ReviewFeedbackImpl implements ReviewFeedback {
         this.reviewDetail = reviewDetail;
     }
 
-
-
-    @Override
     public Customer getCustomer() {
         return customer;
     }
 
-    @Override
     public Boolean isHelpful() {
         return isHelpful;
     }
 
-    @Override
     public ReviewDetail getReviewDetail() {
         return reviewDetail;
     }

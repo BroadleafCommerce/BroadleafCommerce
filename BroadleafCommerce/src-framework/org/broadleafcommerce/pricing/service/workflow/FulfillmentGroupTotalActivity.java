@@ -25,7 +25,6 @@ import org.broadleafcommerce.workflow.ProcessContext;
 
 public class FulfillmentGroupTotalActivity extends BaseActivity {
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext) context).getSeedData();
         /*Money subTotal = new Money(0D);

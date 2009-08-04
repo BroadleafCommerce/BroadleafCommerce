@@ -29,50 +29,41 @@ import org.springframework.stereotype.Service;
 @Service("blPaymentInfoService")
 public class PaymentInfoServiceImpl implements PaymentInfoService {
 
-    @Resource(name="blPaymentInfoDao")
+    @Resource(name = "blPaymentInfoDao")
     protected PaymentInfoDao paymentInfoDao;
 
-    @Override
     public PaymentInfo save(PaymentInfo paymentInfo) {
         return paymentInfoDao.save(paymentInfo);
     }
 
-    @Override
     public PaymentResponseItem save(PaymentResponseItem paymentResponseItem) {
         return paymentInfoDao.save(paymentResponseItem);
     }
 
-    @Override
     public PaymentLog save(PaymentLog log) {
         return paymentInfoDao.save(log);
     }
 
-    @Override
     public PaymentInfo readPaymentInfoById(Long paymentId) {
         return paymentInfoDao.readPaymentInfoById(paymentId);
     }
 
-    @Override
     public List<PaymentInfo> readPaymentInfosForOrder(Order order) {
         return paymentInfoDao.readPaymentInfosForOrder(order);
     }
 
-    @Override
     public PaymentInfo create() {
         return paymentInfoDao.create();
     }
 
-    @Override
     public void delete(PaymentInfo paymentInfo) {
         paymentInfoDao.delete(paymentInfo);
     }
 
-    @Override
     public PaymentLog createLog() {
         return paymentInfoDao.createLog();
     }
 
-    @Override
     public PaymentResponseItem createResponseItem() {
         return paymentInfoDao.createResponseItem();
     }

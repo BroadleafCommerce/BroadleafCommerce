@@ -35,17 +35,14 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Override
     public OfferCode create() {
         return ((OfferCode) entityConfiguration.createEntityInstance(OfferCode.class.getName()));
     }
 
-    @Override
     public void delete(OfferCode offerCode) {
         em.remove(offerCode);
     }
 
-    @Override
     public OfferCode save(OfferCode offerCode) {
         if(offerCode.getId()==null){
             em.persist(offerCode);
@@ -55,14 +52,11 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
         return offerCode;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public OfferCode readOfferCodeById(Long offerCodeId) {
         return (OfferCode) em.find(entityConfiguration.lookupEntityClass(OfferCode.class.getName()), offerCodeId);
     }
 
-
-    @Override
     @SuppressWarnings("unchecked")
     public OfferCode readOfferCodeByCode(String code) {
         OfferCode offerCode = null;
@@ -74,6 +68,5 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
         }
         return offerCode;
     }
-
 
 }

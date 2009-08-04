@@ -36,7 +36,7 @@ public class SearchFilterTag extends TagSupport {
         JspWriter out = this.pageContext.getOut();
         if (products == null || products.size() == 0) { return SKIP_BODY; }
 
-        if (queryString != null && !queryString.isEmpty()) {
+        if (queryString != null && !queryString.equals("")) {
             try {
                 out.println("<h3>Your Search</h3>");
                 out.println("<input type=\"text\" size=\"30\" class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");

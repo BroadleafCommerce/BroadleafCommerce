@@ -21,18 +21,15 @@ public class USPSShippingModule implements ShippingModule {
 
     private String name = "USPSShippingPriceModule";
 
-    @Override
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }

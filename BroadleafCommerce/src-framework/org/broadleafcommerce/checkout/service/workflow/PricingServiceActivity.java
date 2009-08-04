@@ -27,7 +27,6 @@ public class PricingServiceActivity extends BaseActivity {
     @Resource(name="blPricingService")
     private PricingService pricingService;
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
         Order order = pricingService.executePricing(seed.getOrder());

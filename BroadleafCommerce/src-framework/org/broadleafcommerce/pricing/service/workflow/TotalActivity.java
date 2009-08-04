@@ -25,7 +25,6 @@ import org.broadleafcommerce.workflow.ProcessContext;
 
 public class TotalActivity extends BaseActivity {
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         Order order = ((PricingContext) context).getSeedData();
         Money total = new Money(BigDecimal.ZERO);

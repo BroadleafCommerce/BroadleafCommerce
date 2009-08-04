@@ -25,7 +25,6 @@ public class CompositeStatusHandler implements StatusHandler {
 
     protected List<StatusHandler> handlers = new ArrayList<StatusHandler>();
 
-    @Override
     public void handleStatus(String serviceName, ServiceStatusType status) {
         for (StatusHandler statusHandler : handlers) {
             statusHandler.handleStatus(serviceName, status);

@@ -26,7 +26,6 @@ public class CompositeActivity extends BaseActivity {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
      */
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         ProcessContext subContext = workflow.doActivities(((CheckoutContext) context).getSeedData());
         if (subContext.isStopped()) {

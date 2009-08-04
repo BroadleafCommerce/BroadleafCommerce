@@ -28,26 +28,23 @@ import org.springframework.stereotype.Service;
 
 /**
  * Acquisition of Primary Account Number (PAN) and other sensitive information
- * is retrieved through a service separate from the order. This conceptual separation facilitates
- * the physical separation of this sensitive data from the order. As a result, implementors
- * may host sensitive user account information in a datastore separate from the datastore
- * housing the order. This measure goes towards achieving a PCI compliant architecture.
- *
+ * is retrieved through a service separate from the order. This conceptual
+ * separation facilitates the physical separation of this sensitive data from
+ * the order. As a result, implementors may host sensitive user account
+ * information in a datastore separate from the datastore housing the order.
+ * This measure goes towards achieving a PCI compliant architecture.
  * @author jfischer
- *
  */
 @Service("blSecurePaymentInfoService")
 public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
-    @Resource(name="blSecurePaymentInfoDao")
+    @Resource(name = "blSecurePaymentInfoDao")
     protected SecurePaymentInfoDao securePaymentInfoDao;
 
-    @Override
     public Referenced save(Referenced securePaymentInfo) {
         return securePaymentInfoDao.save(securePaymentInfo);
     }
 
-    @Override
     public Referenced create(PaymentInfoType paymentInfoType) {
         if (paymentInfoType.equals(PaymentInfoType.CREDIT_CARD)) {
             CreditCardPaymentInfo ccinfo = securePaymentInfoDao.createCreditCardPaymentInfo();
@@ -63,7 +60,6 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
         return null;
     }
 
-    @Override
     public Referenced findSecurePaymentInfo(String referenceNumber, PaymentInfoType paymentInfoType) throws WorkflowException {
         if (paymentInfoType == PaymentInfoType.CREDIT_CARD) {
             CreditCardPaymentInfo ccinfo = findCreditCardInfo(referenceNumber);
@@ -88,7 +84,6 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
         return null;
     }
 
-    @Override
     public void findAndRemoveSecurePaymentInfo(String referenceNumber, PaymentInfoType paymentInfoType) throws WorkflowException {
         Referenced referenced = findSecurePaymentInfo(referenceNumber, paymentInfoType);
         if (referenced != null) {
@@ -97,7 +92,6 @@ public class SecurePaymentInfoServiceImpl implements SecurePaymentInfoService {
 
     }
 
-    @Override
     public void remove(Referenced securePaymentInfo) {
         securePaymentInfoDao.delete(securePaymentInfo);
     }

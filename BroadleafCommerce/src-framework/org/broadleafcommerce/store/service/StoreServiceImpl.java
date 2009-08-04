@@ -30,10 +30,10 @@ import org.springframework.stereotype.Service;
 @Service("blStoreService")
 public class StoreServiceImpl implements StoreService {
 
-    //   private final static int MAXIMUM_DISTANCE = Integer.valueOf(25);
-    @Resource(name="blStoreDao")
+    // private final static int MAXIMUM_DISTANCE = Integer.valueOf(25);
+    @Resource(name = "blStoreDao")
     private StoreDao storeDao;
-    @Resource(name="blZipCodeService")
+    @Resource(name = "blZipCodeService")
     private ZipCodeService zipCodeService;
 
     public Store readStoreByStoreCode(String storeCode) {
@@ -44,9 +44,8 @@ public class StoreServiceImpl implements StoreService {
         return storeDao.readAllStores();
     }
 
-    @Override
-    public Map<Store,Double> findStoresByAddress(Address searchAddress, double distance) {
-        Map<Store,Double> matchingStores = new HashMap<Store,Double>();
+    public Map<Store, Double> findStoresByAddress(Address searchAddress, double distance) {
+        Map<Store, Double> matchingStores = new HashMap<Store, Double>();
         for (Store store : readAllStores()) {
             Double storeDistance = findStoreDistance(store, Integer.parseInt(searchAddress.getPostalCode()));
             if (storeDistance != null && storeDistance <= distance) {

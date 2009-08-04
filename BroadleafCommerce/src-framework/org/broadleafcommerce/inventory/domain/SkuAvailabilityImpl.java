@@ -86,59 +86,45 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     @Column(name = "AVAILABILITY_DATE")
     protected Date availabilityDate;
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public Long getLocationId() {
         return locationId;
     }
 
-    @Override
     public Integer getQuantityOnHand() {
         return quantityOnHand;
     }
 
-    @Override
     public Long getSkuId() {
         return skuId;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    @Override
     public void setLocationId(Long locationId) {
         this.locationId = locationId;
     }
 
-    @Override
     public void setQuantityOnHand(Integer qoh) {
         this.quantityOnHand = qoh;
     }
 
-    @Override
     public void setSkuId(Long skuId) {
         this.skuId = skuId;
     }
 
-    @Override
     public Date getAvailabilityDate() {
         return availabilityDate;
     }
 
-    @Override
     public void setAvailabilityDate(Date availabilityDate) {
         this.availabilityDate = availabilityDate;
     }
-
-
-    //=======================================================================>
-
 
     /**
      * Returns an implementation specific availability status.   This property can return null.
@@ -153,8 +139,6 @@ public class SkuAvailabilityImpl implements SkuAvailability {
     public void setAvailabilityStatus(String status) {
         this.availabilityStatus = status;
     }
-
-
 
     /**
      * Returns the reserve quantity.   Nulls will be treated the same as 0.
@@ -187,7 +171,6 @@ public class SkuAvailabilityImpl implements SkuAvailability {
         }
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -196,7 +179,6 @@ public class SkuAvailabilityImpl implements SkuAvailability {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

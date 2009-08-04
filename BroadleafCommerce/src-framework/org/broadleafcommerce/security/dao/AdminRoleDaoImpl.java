@@ -28,6 +28,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blAdminRoleDao")
 public class AdminRoleDaoImpl implements AdminRoleDao {
+
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
@@ -36,20 +37,17 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @Override
     @SuppressWarnings("unchecked")
     public void deleteAdminRole(AdminRole role) {
         AdminRole persisted = (AdminRole) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminRole"), role.getId());
         em.remove(persisted);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public AdminRole readAdminRoleById(Long id) {
         return (AdminRole) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminRole"), id);
     }
 
-    @Override
     public AdminRole saveAdminRole(AdminRole role) {
         if (role.getId() == null) {
             em.persist(role);
@@ -59,7 +57,6 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
         return role;
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<AdminRole> readAllAdminRoles() {
         Query query = em.createNamedQuery("BC_READ_ALL_ADMIN_ROLES");

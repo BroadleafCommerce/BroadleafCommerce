@@ -42,13 +42,11 @@ public class OrderDaoImpl implements OrderDao {
     @Resource(name="blCustomerDao")
     protected CustomerDao customerDao;
 
-    @Override
     @SuppressWarnings("unchecked")
     public Order readOrderById(Long orderId) {
         return (Order) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.Order"), orderId);
     }
 
-    @Override
     public Order save(Order order) {
         if (order.getAuditable() != null) {
             order.getAuditable().setDateUpdated(new Date());
@@ -61,12 +59,10 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
-    @Override
     public void delete(Order salesOrder) {
         em.remove(salesOrder);
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus) {
         if (orderStatus == null) {
@@ -79,7 +75,6 @@ public class OrderDaoImpl implements OrderDao {
         }
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public List<Order> readOrdersForCustomer(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID");
@@ -88,7 +83,6 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public Order readCartForCustomer(Customer customer) {
         Order order = null;
         Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
@@ -116,7 +110,6 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
-    @Override
     public Order submitOrder(Order cartOrder) {
         cartOrder.setStatus(OrderStatus.SUBMITTED);
         return save(cartOrder);
@@ -129,7 +122,6 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
-    @Override
     public Order readNamedOrderForCustomer(Customer customer, String name) {
         Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", customer.getId());
@@ -138,10 +130,9 @@ public class OrderDaoImpl implements OrderDao {
         return (Order) query.getSingleResult();
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public Order readOrderByOrderNumber(String orderNumber) {
-        if (orderNumber == null || orderNumber.isEmpty()) {
+        if (orderNumber == null || orderNumber.equals("")) {
             return null;
         }
 

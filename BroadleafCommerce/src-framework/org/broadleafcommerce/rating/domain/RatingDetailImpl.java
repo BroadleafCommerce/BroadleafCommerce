@@ -43,21 +43,22 @@ public class RatingDetailImpl implements RatingDetail {
     @Column(name = "RATING_DETAIL_ID")
     private Long id;
 
-    @Column(name = "RATING", nullable=false)
+    @Column(name = "RATING", nullable = false)
     protected Double rating;
 
-    @Column(name = "RATING_SUBMITTED_DATE", nullable=false)
+    @Column(name = "RATING_SUBMITTED_DATE", nullable = false)
     protected Date ratingSubmittedDate;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @ManyToOne(optional=false, targetEntity = RatingSummaryImpl.class)
+    @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)
     @JoinColumn(name = "RATING_SUMMARY_ID")
     protected RatingSummary ratingSummary;
 
-    public RatingDetailImpl() {}
+    public RatingDetailImpl() {
+    }
 
     public RatingDetailImpl(RatingSummary ratingSummary, Double rating, Date ratingSubmittedDate, Customer customer) {
         super();
@@ -67,27 +68,22 @@ public class RatingDetailImpl implements RatingDetail {
         this.customer = customer;
     }
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public Double getRating() {
         return rating;
     }
 
-    @Override
     public Date getRatingSubmittedDate() {
         return ratingSubmittedDate;
     }
 
-    @Override
     public Customer getCustomer() {
         return customer;
     }
 
-    @Override
     public void setRating(Double newRating) {
         this.rating = newRating;
     }

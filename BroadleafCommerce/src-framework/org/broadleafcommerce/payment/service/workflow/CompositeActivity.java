@@ -23,10 +23,13 @@ public class CompositeActivity extends BaseActivity {
 
     private SequenceProcessor workflow;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce.workflow.ProcessContext)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.workflow.Activity#execute(org.broadleafcommerce
+     * .workflow.ProcessContext)
      */
-    @Override
+
     public ProcessContext execute(ProcessContext context) throws Exception {
         ProcessContext subContext = workflow.doActivities(((SimplePaymentContext) context).getSeedData());
         if (subContext.isStopped()) {

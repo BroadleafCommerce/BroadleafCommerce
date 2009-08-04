@@ -25,6 +25,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blReviewDetailDao")
 public class ReviewDetailDaoImpl implements ReviewDetailDao {
+
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
@@ -33,12 +34,10 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @Override
     public ReviewDetail readReviewDetailById(Long reviewId) {
         return em.find(ReviewDetail.class, reviewId);
     }
 
-    @Override
     public ReviewDetail saveReviewDetail(ReviewDetail reviewDetail) {
         if (reviewDetail.getId() == null) {
             em.persist(reviewDetail);

@@ -101,7 +101,6 @@ public class SequenceProcessor extends BaseProcessor {
         return processContextFactory.createContext(seedData);
     }
 
-    @Override
     public void setProcessContextFactory(ProcessContextFactory processContextFactory) {
         this.processContextFactory = processContextFactory;
     }

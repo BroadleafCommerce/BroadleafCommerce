@@ -28,12 +28,10 @@ package org.broadleafcommerce.encryption;
  */
 public class DefaultEncryptionModule implements EncryptionModule {
 
-    @Override
     public String decrypt(String cipherText) {
         return cipherText;
     }
 
-    @Override
     public String encrypt(String plainText) {
         return plainText;
     }

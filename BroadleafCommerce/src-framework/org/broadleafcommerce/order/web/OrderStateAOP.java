@@ -14,8 +14,8 @@ public class OrderStateAOP implements ApplicationContextAware {
     public Object processOrderRetrieval(ProceedingJoinPoint call) throws Throwable {
         Object returnValue;
         /*
-         * we retrieve the OrderState instance directly from the application context, as this
-         * bean has a request scope.
+         * we retrieve the OrderState instance directly from the application
+         * context, as this bean has a request scope.
          */
         OrderState orderState = (OrderState) applicationContext.getBean("blOrderState");
         Customer customer = (Customer) call.getArgs()[0];
@@ -30,9 +30,7 @@ public class OrderStateAOP implements ApplicationContextAware {
         return returnValue;
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext)
-    throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 }

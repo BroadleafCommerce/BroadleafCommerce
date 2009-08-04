@@ -169,7 +169,6 @@ public class MergeManager {
         MergeHandler[] explodedView = {};
         explodedView = handlers.toArray(explodedView);
         Comparator<Object> nameCompare = new Comparator<Object>() {
-            @Override
             public int compare(Object arg0, Object arg1) {
                 return ((MergeHandler) arg0).getName().compareTo(((MergeHandler) arg1).getName());
             }

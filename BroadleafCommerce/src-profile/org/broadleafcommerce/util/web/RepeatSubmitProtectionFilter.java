@@ -34,12 +34,10 @@ public class RepeatSubmitProtectionFilter implements Filter {
 
     private Map<String, List<String>> requests = new HashMap<String, List<String>>(100);
 
-    @Override
     public void destroy() {
         //do nothing
     }
 
-    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String sessionId;
         String requestURI;
@@ -71,7 +69,6 @@ public class RepeatSubmitProtectionFilter implements Filter {
         }
     }
 
-    @Override
     public void init(FilterConfig arg0) throws ServletException {
         //do nothing
     }

@@ -42,7 +42,6 @@ public class OfferDaoImpl implements OfferDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Override
     public Offer create() {
         return ((Offer) entityConfiguration.createEntityInstance(Offer.class.getName()));
     }
@@ -75,17 +74,14 @@ public class OfferDaoImpl implements OfferDao {
         return ((FulfillmentGroupAdjustment) entityConfiguration.createEntityInstance(FulfillmentGroupAdjustment.class.getName()));
     }
 
-    @Override
     public void delete(Offer offer) {
         em.remove(offer);
     }
 
-    @Override
     public void delete(OfferInfo offerInfo) {
         em.remove(offerInfo);
     }
 
-    @Override
     public Offer save(Offer offer) {
         if(offer.getId() == null){
             em.persist(offer);
@@ -96,7 +92,6 @@ public class OfferDaoImpl implements OfferDao {
 
     }
 
-    @Override
     public OfferInfo save(OfferInfo offerInfo) {
         if(offerInfo.getId() == null){
             em.persist(offerInfo);
@@ -113,14 +108,12 @@ public class OfferDaoImpl implements OfferDao {
         return query.getResultList();
     }
 
-    @Override
     @SuppressWarnings("unchecked")
     public Offer readOfferById(Long offerId) {
         return (Offer) em.find(entityConfiguration.lookupEntityClass(Offer.class.getName()), offerId);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public List<Offer> readOffersByAutomaticDeliveryType() {
         Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
         List<Offer> result = query.getResultList();

@@ -32,20 +32,17 @@ import org.broadleafcommerce.workflow.WorkflowException;
 
 public class PaymentProcessContextFactory implements ProcessContextFactory {
 
-    @Resource(name="blSecurePaymentInfoService")
+    @Resource(name = "blSecurePaymentInfoService")
     private SecurePaymentInfoService securePaymentInfoService;
 
-    @Resource(name="blCartService")
+    @Resource(name = "blCartService")
     private CartService cartService;
 
     private PaymentActionType paymentActionType;
 
-    @Override
     public ProcessContext createContext(Object seedData) throws WorkflowException {
-        if(!(seedData instanceof PaymentSeed)){
-            throw new WorkflowException("Seed data instance is incorrect. " +
-                    "Required class is "+PaymentSeed.class.getName()+" " +
-                    "but found class: "+seedData.getClass().getName());
+        if (!(seedData instanceof PaymentSeed)) {
+            throw new WorkflowException("Seed data instance is incorrect. " + "Required class is " + PaymentSeed.class.getName() + " " + "but found class: " + seedData.getClass().getName());
         }
         PaymentSeed paymentSeed = (PaymentSeed) seedData;
         Map<PaymentInfo, Referenced> secureMap = paymentSeed.getInfos();
@@ -56,7 +53,7 @@ public class PaymentProcessContextFactory implements ProcessContextFactory {
                 throw new WorkflowException("No payment info instances associated with the order -- id: " + paymentSeed.getOrder().getId());
             }
             Iterator<PaymentInfo> infos = paymentInfoList.iterator();
-            while(infos.hasNext()) {
+            while (infos.hasNext()) {
                 PaymentInfo info = infos.next();
                 secureMap.put(info, securePaymentInfoService.findSecurePaymentInfo(info.getReferenceNumber(), info.getType()));
             }

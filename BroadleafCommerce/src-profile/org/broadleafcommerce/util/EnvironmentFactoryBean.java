@@ -25,13 +25,11 @@ public class EnvironmentFactoryBean implements FactoryBean {
         this.className = className;
     }
 
-    @Override
     public Object getObject() throws Exception {
         return Class.forName(className).newInstance();
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public Class getObjectType() {
         try {
             return Class.forName(className);
@@ -40,7 +38,6 @@ public class EnvironmentFactoryBean implements FactoryBean {
         }
     }
 
-    @Override
     public boolean isSingleton() {
         return false;
     }

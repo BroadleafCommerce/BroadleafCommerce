@@ -29,77 +29,41 @@ import org.w3c.dom.NodeList;
  */
 public class MergeHandlerAdapter implements MergeHandler {
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#getChildren()
-	 */
-	@Override
-	public MergeHandler[] getChildren() {
-		return null;
-	}
+    public MergeHandler[] getChildren() {
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#getName()
-	 */
-	@Override
-	public String getName() {
-		return null;
-	}
+    public String getName() {
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#getPriority()
-	 */
-	@Override
-	public int getPriority() {
-		return 0;
-	}
+    public int getPriority() {
+        return 0;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#getXPath()
-	 */
-	@Override
-	public String getXPath() {
-		return null;
-	}
+    public String getXPath() {
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#merge(org.w3c.dom.NodeList, org.w3c.dom.NodeList, org.w3c.dom.Node[])
-	 */
-	@Override
-	public Node[] merge(NodeList nodeList1, NodeList nodeList2,
-			Node[] exhaustedNodes) {
-		return null;
-	}
+    public Node[] merge(NodeList nodeList1, NodeList nodeList2,
+            Node[] exhaustedNodes) {
+        return null;
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#setChildren(org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler[])
-	 */
-	@Override
-	public void setChildren(MergeHandler[] children) {
-		//do nothing
-	}
+    public void setChildren(MergeHandler[] children) {
+        //do nothing
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#setName(java.lang.String)
-	 */
-	@Override
-	public void setName(String name) {
-		//do nothing
-	}
+    public void setName(String name) {
+        //do nothing
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#setPriority(int)
-	 */
-	@Override
-	public void setPriority(int priority) {
-		//do nothing
-	}
+    public void setPriority(int priority) {
+        //do nothing
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#setXPath(java.lang.String)
-	 */
-	@Override
-	public void setXPath(String xpath) {
-		//do nothing
-	}
+    public void setXPath(String xpath) {
+        //do nothing
+    }
 
 }

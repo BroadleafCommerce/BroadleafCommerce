@@ -31,17 +31,16 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
 
     private static final Log LOG = LogFactory.getLog(PricingExecutionManagerImpl.class);
 
-    private static final ThreadLocal <Order> uniqueOrder  = new ThreadLocal <Order>();
+    private static final ThreadLocal<Order> uniqueOrder = new ThreadLocal<Order>();
 
     private int order;
 
-    @Resource(name="blPricingService")
+    @Resource(name = "blPricingService")
     private PricingService pricingService;
 
-    @Resource(name="blOrderDao")
+    @Resource(name = "blOrderDao")
     private OrderDao orderDao;
 
-    @Override
     public int getOrder() {
         return order;
     }
@@ -78,9 +77,9 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
             clearCache();
             if (orderItem != null) {
                 /*
-                 * We need to save the order before pricing, because it is sometimes
-                 * possible for transient items to exist in the order hierarchy that will
-                 * cause problems downstream during pricing.
+                 * We need to save the order before pricing, because it is
+                 * sometimes possible for transient items to exist in the order
+                 * hierarchy that will cause problems downstream during pricing.
                  */
                 orderDao.save(orderItem);
                 orderItem = pricingService.executePricing(orderItem);

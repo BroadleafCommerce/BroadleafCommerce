@@ -42,30 +42,25 @@ public class RoleImpl implements Role {
     @Column(name = "ROLE_ID")
     protected Long id;
 
-    @Column(name = "ROLE_NAME", nullable=false)
+    @Column(name = "ROLE_NAME", nullable = false)
     protected String roleName;
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(Long id) {
         this.id = id;
     }
 
-    @Override
     public String getRoleName() {
         return roleName;
     }
 
-    @Override
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
 
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -73,7 +68,6 @@ public class RoleImpl implements Role {
         return result;
     }
 
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

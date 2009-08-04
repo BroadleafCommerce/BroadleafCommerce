@@ -37,19 +37,16 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Override
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
         fulfillmentGroup = em.merge(fulfillmentGroup);
         return fulfillmentGroup;
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public FulfillmentGroup readFulfillmentGroupById(Long fulfillmentGroupId) {
         return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
     }
 
-    @Override
     public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(Order order) {
         Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
@@ -63,12 +60,10 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         return result;
     }
 
-    @Override
     public void delete(FulfillmentGroup fulfillmentGroup) {
         em.remove(fulfillmentGroup);
     }
 
-    @Override
     public FulfillmentGroup createDefault() {
         FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
         fg.setPrimary(true);
@@ -76,7 +71,6 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         return fg;
     }
 
-    @Override
     public FulfillmentGroup create() {
         FulfillmentGroup fg =  ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
         fg.setType(FulfillmentGroupType.SHIPPING);

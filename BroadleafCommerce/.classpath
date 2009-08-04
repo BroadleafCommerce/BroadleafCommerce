@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="src-profile"/>
 	<classpathentry kind="src" path="src-test"/>
 	<classpathentry kind="src" path="config/spring"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/ejb3-persistence.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/spring.jar" sourcepath="lib/common/source/spring-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-beanutils-1.7.0.jar"/>
@@ -44,5 +44,7 @@
 	<classpathentry kind="lib" path="lib/common/bin/hibernate-3.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/activation.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/jsr250-api-1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

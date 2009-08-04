@@ -55,47 +55,38 @@ public class CatalogServiceImpl implements CatalogService {
         return productDao.save(product);
     }
 
-    @Override
     public Category findCategoryById(Long categoryId) {
         return categoryDao.readCategoryById(categoryId);
     }
 
-    @Override
     public Category findCategoryByName(String categoryName) {
         return categoryDao.readCategoryByName(categoryName);
     }
 
-    @Override
     public Category saveCategory(Category category) {
         return categoryDao.save(category);
     }
 
-    @Override
     public List<Category> findAllCategories() {
         return categoryDao.readAllCategories();
     }
 
-    @Override
     public List<Product> findAllProducts() {
         return categoryDao.readAllProducts();
     }
 
-    @Override
     public List<Sku> findAllSkus() {
         return skuDao.readAllSkus();
     }
 
-    @Override
     public Sku findSkuById(Long skuId) {
         return skuDao.readSkuById(skuId);
     }
 
-    @Override
     public Sku saveSku(Sku sku) {
         return skuDao.save(sku);
     }
 
-    @Override
     public List<Sku> findSkusByIds(List<Long> ids) {
         return skuDao.readSkusById(ids);
     }

@@ -36,10 +36,10 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     @PersistenceContext(unitName = "blSecurePU")
     protected EntityManager em;
 
-    @Resource(name="blEncryptionModule")
+    @Resource(name = "blEncryptionModule")
     protected EncryptionModule encryptionModule;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     public Referenced save(Referenced securePaymentInfo) {
@@ -66,12 +66,11 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public BankAccountPaymentInfo findBankAccountInfo(String referenceNumber) {
         Query query = em.createNamedQuery("BC_READ_BANK_ACCOUNT_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<BankAccountPaymentInfo> infos = query.getResultList();
-        BankAccountPaymentInfo response = (infos==null || infos.size()==0)?null:infos.get(0);
+        BankAccountPaymentInfo response = (infos == null || infos.size() == 0) ? null : infos.get(0);
         if (response != null) {
             response.setEncryptionModule(encryptionModule);
         }
@@ -79,12 +78,11 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public CreditCardPaymentInfo findCreditCardInfo(String referenceNumber) {
         Query query = em.createNamedQuery("BC_READ_CREDIT_CARD_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<CreditCardPaymentInfo> infos = query.getResultList();
-        CreditCardPaymentInfo response = (infos==null || infos.size()==0)?null:infos.get(0);
+        CreditCardPaymentInfo response = (infos == null || infos.size() == 0) ? null : infos.get(0);
         if (response != null) {
             response.setEncryptionModule(encryptionModule);
         }
@@ -92,19 +90,17 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public GiftCardPaymentInfo findGiftCardInfo(String referenceNumber) {
         Query query = em.createNamedQuery("BC_READ_GIFT_CARD_BY_REFERENCE_NUMBER");
         query.setParameter("referenceNumber", referenceNumber);
         List<GiftCardPaymentInfo> infos = query.getResultList();
-        GiftCardPaymentInfo response = (infos==null || infos.size()==0)?null:infos.get(0);
+        GiftCardPaymentInfo response = (infos == null || infos.size() == 0) ? null : infos.get(0);
         if (response != null) {
             response.setEncryptionModule(encryptionModule);
         }
         return response;
     }
 
-    @Override
     public void delete(Referenced securePaymentInfo) {
         em.remove(securePaymentInfo);
     }

@@ -27,7 +27,6 @@ public class CompleteOrderActivity extends BaseActivity {
     @Resource(name="blCartService")
     private CartService cartService;
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
         seed.getOrder().setStatus(OrderStatus.SUBMITTED);

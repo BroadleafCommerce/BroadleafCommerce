@@ -24,12 +24,10 @@ public class WorkflowPaymentContext implements ProcessContext {
     private boolean stopEntireProcess = false;
     private CombinedPaymentContextSeed seedData;
 
-    @Override
     public void setSeedData(Object seedObject) {
         this.seedData = (CombinedPaymentContextSeed) seedObject;
     }
 
-    @Override
     public boolean stopProcess() {
         this.stopEntireProcess = true;
         return stopEntireProcess;
@@ -39,7 +37,7 @@ public class WorkflowPaymentContext implements ProcessContext {
         return stopEntireProcess;
     }
 
-    public CombinedPaymentContextSeed getSeedData(){
+    public CombinedPaymentContextSeed getSeedData() {
         return seedData;
     }
 

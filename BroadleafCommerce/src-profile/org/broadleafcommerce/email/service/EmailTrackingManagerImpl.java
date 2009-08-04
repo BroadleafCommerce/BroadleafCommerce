@@ -30,53 +30,48 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author jfischer
- *
  */
 @Service("blEmailTrackingManager")
 public class EmailTrackingManagerImpl implements EmailTrackingManager {
 
     private static final Log LOG = LogFactory.getLog(EmailTrackingManagerImpl.class);
 
-    @Resource(name="blEmailReportingDao")
+    @Resource(name = "blEmailReportingDao")
     protected EmailReportingDao emailReportingDao;
 
-    /* (non-Javadoc)
-     * @see com.containerstore.web.task.service.EmailTrackingManager#createTrackedEmail(java.lang.String, java.lang.String, java.lang.String)
-     */
     public Long createTrackedEmail(String emailAddress, String type, String extraValue) {
         return emailReportingDao.createTracking(emailAddress, type, extraValue);
     }
 
-    @Override
     public void recordClick(Long emailId, Map<String, String> parameterMap, Customer customer, Map<String, String> extraValues) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("recordClick() => Click detected for Email["+emailId+"]");
+            LOG.debug("recordClick() => Click detected for Email[" + emailId + "]");
         }
 
         Iterator<String> keys = parameterMap.keySet().iterator();
         // clean up and normalize the query string
         ArrayList<String> queryParms = new ArrayList<String>();
-        while ( keys.hasNext() ) {
+        while (keys.hasNext()) {
             String p = keys.next();
             // exclude email_id from the parms list
-            if ( !p.equals("email_id") ) {
-                queryParms.add( p );
+            if (!p.equals("email_id")) {
+                queryParms.add(p);
             }
         }
 
         String newQuery = null;
 
-        if ( queryParms.size() > 0 ) {
+        if (queryParms.size() > 0) {
 
-            String[] p = queryParms.toArray( new String[ queryParms.size() ] );
-            Arrays.sort( p );
+            String[] p = queryParms.toArray(new String[queryParms.size()]);
+            Arrays.sort(p);
 
             StringBuffer newQueryParms = new StringBuffer();
-            for ( int cnt = 0; cnt < p.length; cnt++ ) {
-                newQueryParms.append( p[ cnt ] );
-                newQueryParms.append( "=" );
-                newQueryParms.append( parameterMap.get(p[ cnt ]) );
-                if ( cnt != p.length - 1 ) {
+            for (int cnt = 0; cnt < p.length; cnt++) {
+                newQueryParms.append(p[cnt]);
+                newQueryParms.append("=");
+                newQueryParms.append(parameterMap.get(p[cnt]));
+                if (cnt != p.length - 1) {
                     newQueryParms.append("&");
                 }
             }
@@ -86,8 +81,11 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
         emailReportingDao.recordClick(emailId, customer, extraValues.get("requestUri"), newQuery);
     }
 
-    /* (non-Javadoc)
-     * @see com.containerstore.web.task.service.EmailTrackingManager#recordOpen(java.lang.String, javax.servlet.http.HttpServletRequest)
+    /*
+     * (non-Javadoc)
+     * @see
+     * com.containerstore.web.task.service.EmailTrackingManager#recordOpen(java
+     * .lang.String, javax.servlet.http.HttpServletRequest)
      */
     public void recordOpen(Long emailId, Map<String, String> extraValues) {
         if (LOG.isDebugEnabled()) {

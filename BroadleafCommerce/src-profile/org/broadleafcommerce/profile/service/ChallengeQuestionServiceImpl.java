@@ -33,7 +33,6 @@ public class ChallengeQuestionServiceImpl implements ChallengeQuestionService {
         return challengeQuestionDao.readChallengeQuestions();
     }
 
-    @Override
     public ChallengeQuestion readChallengeQuestionById(long challengeQuestionId) {
         return challengeQuestionDao.readChallengeQuestionById(challengeQuestionId);
     }

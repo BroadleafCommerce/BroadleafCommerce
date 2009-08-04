@@ -63,17 +63,14 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
         customerPhoneDao.deleteCustomerPhoneById(customerPhoneId);
     }
 
-    @Override
     public CustomerPhone findDefaultCustomerPhone(Long customerId) {
         return customerPhoneDao.findDefaultCustomerPhone(customerId);
     }
 
-    @Override
     public List<CustomerPhone> readAllCustomerPhonesByCustomerId(Long customerId) {
         return customerPhoneDao.readAllCustomerPhonesByCustomerId(customerId);
     }
 
-    @Override
     public CustomerPhone create() {
         return customerPhoneDao.create();
     }

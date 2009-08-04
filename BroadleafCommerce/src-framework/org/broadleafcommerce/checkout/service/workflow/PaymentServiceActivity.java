@@ -26,7 +26,6 @@ public class PaymentServiceActivity extends BaseActivity {
     @Resource(name="blCompositePaymentService")
     private CompositePaymentService compositePaymentService;
 
-    @Override
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
         compositePaymentService.executePayment(seed.getOrder(), seed.getInfos(), seed.getPaymentResponse());

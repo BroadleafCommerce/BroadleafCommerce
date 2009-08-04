@@ -37,10 +37,6 @@ import org.w3c.dom.NodeList;
  */
 public class NodeReplaceInsert extends BaseHandler {
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler#merge(org.w3c.dom.NodeList, org.w3c.dom.NodeList, org.w3c.dom.Node[])
-     */
-    @Override
     public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
         if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
             return null;
@@ -64,7 +60,6 @@ public class NodeReplaceInsert extends BaseHandler {
 
     private List<Node> matchNodes(Node[] exhaustedNodes, Node[] primaryNodes, ArrayList<Node> list) {
         Comparator<Node> hashCompare = new Comparator<Node>() {
-            @Override
             public int compare(Node arg0, Node arg1) {
                 int response = -1;
                 if (arg0.isSameNode(arg1)) {
@@ -144,7 +139,6 @@ public class NodeReplaceInsert extends BaseHandler {
         filtered = filterList.toArray(filtered);
 
         Comparator<Node> idCompare = new Comparator<Node>() {
-            @Override
             public int compare(Node arg0, Node arg1) {
                 Node id1 = arg0.getAttributes().getNamedItem(attribute);
                 Node id2 = arg1.getAttributes().getNamedItem(attribute);

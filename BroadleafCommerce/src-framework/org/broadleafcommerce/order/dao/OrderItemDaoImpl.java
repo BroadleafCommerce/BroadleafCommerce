@@ -35,7 +35,6 @@ public class OrderItemDaoImpl implements OrderItemDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Override
     public OrderItem save(OrderItem orderItem) {
         if (orderItem.getId() == null) {
             em.persist(orderItem);
@@ -45,12 +44,10 @@ public class OrderItemDaoImpl implements OrderItemDao {
         return orderItem;
     }
 
-    @Override
     public OrderItem readOrderItemById(Long orderItemId) {
         return em.find(OrderItemImpl.class, orderItemId);
     }
 
-    @Override
     public void delete(OrderItem orderItem) {
         if (GiftWrapOrderItem.class.isAssignableFrom(orderItem.getClass())) {
             GiftWrapOrderItem giftItem = (GiftWrapOrderItem) orderItem;
@@ -68,7 +65,6 @@ public class OrderItemDaoImpl implements OrderItemDao {
         return item;
     }
 
-    @Override
     public OrderItem saveOrderItem(OrderItem orderItem) {
         return em.merge(orderItem);
     }

@@ -35,6 +35,7 @@ import org.broadleafcommerce.rating.service.type.RatingType;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_RATING_SUMMARY")
 public class RatingSummaryImpl implements RatingSummary {
+
     @Id
     @GeneratedValue(generator = "RatingSummaryId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "RatingSummaryId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "RatingSummaryImpl", allocationSize = 50)
@@ -44,10 +45,10 @@ public class RatingSummaryImpl implements RatingSummary {
     @Column(name = "ITEM_ID", nullable = false)
     private String itemId;
 
-    @Column(name = "RATING_TYPE", nullable=false)
+    @Column(name = "RATING_TYPE", nullable = false)
     private String ratingType;
 
-    @Column(name = "AVERAGE_RATING", nullable=false)
+    @Column(name = "AVERAGE_RATING", nullable = false)
     protected Double averageRating;
 
     @OneToMany(mappedBy = "ratingSummary", targetEntity = RatingDetailImpl.class)
@@ -68,42 +69,34 @@ public class RatingSummaryImpl implements RatingSummary {
         return id;
     }
 
-    @Override
     public Double getAverageRating() {
         return averageRating;
     }
 
-    @Override
     public String getItemId() {
         return itemId;
     }
 
-    @Override
     public Integer getNumberOfRatings() {
         return getRatings().size();
     }
 
-    @Override
     public Integer getNumberOfReviews() {
         return getReviews().size();
     }
 
-    @Override
     public RatingType getRatingType() {
         return new RatingType(ratingType);
     }
 
-    @Override
     public List<RatingDetail> getRatings() {
         return ratings == null ? new ArrayList<RatingDetail>() : ratings;
     }
 
-    @Override
     public List<ReviewDetail> getReviews() {
         return reviews == null ? new ArrayList<ReviewDetail>() : reviews;
     }
 
-    @Override
     public void resetAverageRating() {
         double sum = 0;
         for (RatingDetail detail : ratings) {

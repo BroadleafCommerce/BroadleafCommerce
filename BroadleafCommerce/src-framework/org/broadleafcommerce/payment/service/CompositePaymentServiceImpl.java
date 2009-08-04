@@ -33,20 +33,18 @@ import org.springframework.stereotype.Service;
 
 /**
  * Execute the payment workflow independently of the checkout workflow
- *
  * @author jfischer
- *
  */
 @Service("blCompositePaymentService")
 public class CompositePaymentServiceImpl implements CompositePaymentService {
 
-    @Resource(name="blPaymentWorkflow")
+    @Resource(name = "blPaymentWorkflow")
     protected SequenceProcessor paymentWorkflow;
 
-    @Override
     public CompositePaymentResponse executePayment(Order order, Map<PaymentInfo, Referenced> payments, PaymentResponse response) throws PaymentException {
         /*
-         * TODO add validation that checks the order and payment information for validity.
+         * TODO add validation that checks the order and payment information for
+         * validity.
          */
         try {
             PaymentSeed seed = new PaymentSeed(order, payments, response);
@@ -55,7 +53,7 @@ public class CompositePaymentServiceImpl implements CompositePaymentService {
             return seed;
         } catch (WorkflowException e) {
             Throwable cause = null;
-            while(e.getCause() != null) {
+            while (e.getCause() != null) {
                 if (cause != null && cause.equals(e.getCause())) {
                     break;
                 }
@@ -68,12 +66,10 @@ public class CompositePaymentServiceImpl implements CompositePaymentService {
         }
     }
 
-    @Override
     public CompositePaymentResponse executePayment(Order order, Map<PaymentInfo, Referenced> payments) throws PaymentException {
         return executePayment(order, payments, new PaymentResponseImpl());
     }
 
-    @Override
     public CompositePaymentResponse executePayment(Order order) throws PaymentException {
         return executePayment(order, null);
     }

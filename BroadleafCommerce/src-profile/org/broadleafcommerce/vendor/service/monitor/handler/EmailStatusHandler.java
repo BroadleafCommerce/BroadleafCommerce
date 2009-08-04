@@ -31,7 +31,6 @@ public class EmailStatusHandler implements StatusHandler {
     protected EmailInfo emailInfo;
     protected EmailTarget emailTarget;
 
-    @Override
     public void handleStatus(String serviceName, ServiceStatusType status) {
         String message = serviceName + " is reporting a status of " + status.getType();
         EmailInfo copy = emailInfo.clone();

@@ -69,7 +69,6 @@ public class UserServiceImpl implements UserService {
         return userDao.readUserByUsername(username);
     }
 
-    @Override
     public User readUserById(Long id) {
         return userDao.readUserById(id);
     }

@@ -29,7 +29,6 @@ public class DefaultErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.workflow.ErrorHandler#handleError(org.broadleafcommerce.workflow.ProcessContext, java.lang.Throwable)
      */
-    @Override
     public void handleError(ProcessContext context, Throwable th) throws WorkflowException {
         context.stopProcess();
         LOG.error("An error occurred during the workflow", th);
@@ -39,7 +38,6 @@ public class DefaultErrorHandler implements ErrorHandler {
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.BeanNameAware#setBeanName(java.lang.String)
      */
-    @Override
     public void setBeanName(String name) {
         this.name = name;
     }

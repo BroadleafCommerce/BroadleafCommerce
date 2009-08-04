@@ -33,7 +33,7 @@ public class RoleDaoImpl implements RoleDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
@@ -44,7 +44,6 @@ public class RoleDaoImpl implements RoleDao {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
     public List<CustomerRole> readCustomerRolesByCustomerId(Long customerId) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_ROLES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);

@@ -21,7 +21,6 @@ import org.broadleafcommerce.workflow.WorkflowException;
 
 public class CheckoutProcessContextFactory implements ProcessContextFactory {
 
-    @Override
     public ProcessContext createContext(Object seedData) throws WorkflowException {
         if(!(seedData instanceof CheckoutSeed)){
             throw new WorkflowException("Seed data instance is incorrect. " +
