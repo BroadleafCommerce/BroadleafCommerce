@@ -260,10 +260,6 @@
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 
-	<bean id="blRoleDao" class="org.broadleafcommerce.profile.dao.RoleDaoImpl">
-		<property name="queryCacheableKey" value="${query.cacheable}"/>
-	</bean>
-
 	<bean id="blStateDao" class="org.broadleafcommerce.profile.dao.StateDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
