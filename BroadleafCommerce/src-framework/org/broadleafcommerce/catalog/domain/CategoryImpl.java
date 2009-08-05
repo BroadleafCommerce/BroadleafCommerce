@@ -42,11 +42,14 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.GenericValidator;
+import org.broadleafcommerce.media.domain.Media;
+import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
@@ -139,6 +142,14 @@ public class CategoryImpl implements Category {
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, String> categoryImages = new HashMap<String, String>();
+
+    @ManyToMany(targetEntity = MediaImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
+    @MapKey(columns = {@Column(name = "MAP_KEY")})
+    // @MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    protected Map<String, Media> categoryMedia = new HashMap<String , Media>();
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
@@ -495,6 +506,16 @@ public class CategoryImpl implements Category {
 
     public void setFeaturedProducts(List<FeaturedProduct> featuredProducts) {
         this.featuredProducts = featuredProducts;
+    }
+
+
+
+    public Map<String, Media> getCategoryMedia() {
+        return categoryMedia;
+    }
+
+    public void setCategoryMedia(Map<String, Media> categoryMedia) {
+        this.categoryMedia = categoryMedia;
     }
 
     @Override
