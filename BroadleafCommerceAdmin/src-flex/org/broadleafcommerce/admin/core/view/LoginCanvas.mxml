@@ -2,7 +2,8 @@
 <mx:Canvas 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	width="100%" height="100%"
-	backgroundAlpha="0">
+	backgroundAlpha="0"
+	defaultButton="{loginButton}">
 	
 	<mx:Script>
 		<![CDATA[
@@ -37,7 +38,7 @@
 		<mx:TextInput id="passwordInput" x="119" y="83" displayAsPassword="true"/>
 		<mx:Label x="10" y="47" text="Username:"/>
 		<mx:Label x="10" y="85" text="Password:"/>
-		<mx:Button x="129" y="126" label="Login" click="handleLoginClick()"/>
+		<mx:Button id="loginButton" x="129" y="126" label="Login" click="handleLoginClick()"/>
 		<mx:Text id="resultText" x="119" y="10" text="Text" width="160"/>
 		<mx:Label x="10" y="10" text="Login Result: " visible="{resultText.visible}"/>
 	</mx:TitleWindow>	
