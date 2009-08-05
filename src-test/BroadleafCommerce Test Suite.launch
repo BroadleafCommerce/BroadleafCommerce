@@ -73,9 +73,11 @@
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry path=&quot;3&quot; projectName=&quot;BroadleafCommerce&quot; type=&quot;1&quot;/&gt;&#10;"/>
 <listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;runtimeClasspathEntry internalArchive=&quot;/BroadleafCommerce/lib/common/bin/hibernate-entitymanager.jar&quot; path=&quot;3&quot; sourceAttachmentPath=&quot;/Users/jfischer/Downloads/hibernate-entitymanager-3.4.0.GA-src&quot; sourceRootPath=&quot;&quot; type=&quot;2&quot;/&gt;&#10;"/>
 </listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.CLASSPATH_PROVIDER" value="org.maven.ide.eclipse.launchconfig.classpathProvider"/>
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.testng.remote.RemoteTestNG"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="BroadleafCommerce"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.maven.ide.eclipse.launchconfig.sourcepathProvider"/>
 <mapAttribute key="org.testng.eclipse.ALL_CLASS_METHODS">
 <mapEntry key="org.broadleafcommerce.vendor.test.USPSShippingServiceTest" value=""/>
 </mapAttribute>
