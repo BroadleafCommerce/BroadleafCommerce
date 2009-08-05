@@ -26,12 +26,19 @@
     	<scope>provided</scope>
     </dependency>
     <dependency>
-    	<groupId>org.broadleafcommerce</groupId>
-    	<artifactId>broadleaf-profile</artifactId>
-    	<version>0.0.0</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
+  		<groupId>org.broadleafcommerce</groupId>
+  		<artifactId>broadleaf-profile</artifactId>
+  		<version>0.0.0</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.broadleafcommerce</groupId>
+  		<artifactId>broadleaf-profile-web</artifactId>
+  		<version>0.0.0</version>
+  		<type>jar</type>
+  		<scope>compile</scope>
+  	</dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>
     	<artifactId>servlet-api</artifactId>
