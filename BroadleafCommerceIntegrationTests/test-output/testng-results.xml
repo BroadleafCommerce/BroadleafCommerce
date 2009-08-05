@@ -1,0 +1,607 @@
+<testng-results>
+  <reporter-output>
+  </reporter-output>
+  <suite name="Failed suite [BroadleafCommerce Test Suite]">
+    <groups>
+      <group name="addPaymentToOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.addPaymentToOrder(org.broadleafcommerce.payment.domain.PaymentInfo)" name="addPaymentToOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="readFulfillmentGroupItemsById">
+        <method signature="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest.readFulfillmentGroupItemsById()" name="readFulfillmentGroupItemsById" class="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest"/>
+      </group>
+      <group name="createGiftWrapOrderItem">
+        <method signature="org.broadleafcommerce.order.dao.OrderItemDaoTest.createGiftWrapOrderItem(org.broadleafcommerce.order.domain.GiftWrapOrderItem)" name="createGiftWrapOrderItem" class="org.broadleafcommerce.order.dao.OrderItemDaoTest"/>
+      </group>
+      <group name="readOrderItemsById">
+        <method signature="org.broadleafcommerce.order.dao.OrderItemDaoTest.readOrderItemsById()" name="readOrderItemsById" class="org.broadleafcommerce.order.dao.OrderItemDaoTest"/>
+      </group>
+      <group name="deleteGiftWrapOrderItemsById">
+        <method signature="org.broadleafcommerce.order.dao.OrderItemDaoTest.deleteGiftWrapOrderItemsById()" name="deleteGiftWrapOrderItemsById" class="org.broadleafcommerce.order.dao.OrderItemDaoTest"/>
+      </group>
+      <group name="createDiscreteOrderItem">
+        <method signature="org.broadleafcommerce.order.dao.OrderItemDaoTest.createDiscreteOrderItem(org.broadleafcommerce.order.domain.DiscreteOrderItem)" name="createDiscreteOrderItem" class="org.broadleafcommerce.order.dao.OrderItemDaoTest"/>
+      </group>
+      <group name="createFulfillmentGroupItem">
+        <method signature="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest.createFulfillmentGroupItem()" name="createFulfillmentGroupItem" class="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest"/>
+      </group>
+      <group name="updateItemsInOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.updateItemsInOrder()" name="updateItemsInOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="readOrderItemsByIdAfterGiftWrapDeletion">
+        <method signature="org.broadleafcommerce.order.dao.OrderItemDaoTest.readOrderItemsByIdAfterGiftWrapDeletion()" name="readOrderItemsByIdAfterGiftWrapDeletion" class="org.broadleafcommerce.order.dao.OrderItemDaoTest"/>
+      </group>
+      <group name="createPhone">
+        <method signature="org.broadleafcommerce.profile.service.PhoneTest.createPhone(org.broadleafcommerce.profile.domain.Phone)" name="createPhone" class="org.broadleafcommerce.profile.service.PhoneTest"/>
+      </group>
+      <group name="createCustomerAddress">
+        <method signature="org.broadleafcommerce.profile.service.CustomerAddressTest.createCustomerAddress(org.broadleafcommerce.profile.domain.CustomerAddress)" name="createCustomerAddress" class="org.broadleafcommerce.profile.service.CustomerAddressTest"/>
+      </group>
+      <group name="createSku">
+        <method signature="org.broadleafcommerce.catalog.dao.SkuDaoTest.createSku(org.broadleafcommerce.catalog.domain.Sku)" name="createSku" class="org.broadleafcommerce.catalog.dao.SkuDaoTest"/>
+      </group>
+      <group name="addItemToOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.addItemToOrder()" name="addItemToOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="createDefaultFulfillmentGroup">
+        <method signature="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest.createDefaultFulfillmentGroup(org.broadleafcommerce.order.domain.FulfillmentGroup)" name="createDefaultFulfillmentGroup" class="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest"/>
+      </group>
+      <group name="findCurrentCartForCustomer">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.findCurrentCartForCustomer()" name="findCurrentCartForCustomer" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="addBundleToOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.addBundleToOrder()" name="addBundleToOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="removeFulfillmentGroupFromOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.removeFulfillmentGroupFromOrder()" name="removeFulfillmentGroupFromOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="addAnotherItemToOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.addAnotherItemToOrder()" name="addAnotherItemToOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="createCartForCustomer">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.createCartForCustomer()" name="createCartForCustomer" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="createCountry">
+        <method signature="org.broadleafcommerce.profile.service.AddressTest.createCountry()" name="createCountry" class="org.broadleafcommerce.profile.service.AddressTest"/>
+      </group>
+      <group name="findFulFillmentGroupForOrderFirst">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.findFillmentGroupForOrderFirst()" name="findFillmentGroupForOrderFirst" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="readSkuById">
+        <method signature="org.broadleafcommerce.catalog.dao.SkuDaoTest.readSkuById()" name="readSkuById" class="org.broadleafcommerce.catalog.dao.SkuDaoTest"/>
+      </group>
+      <group name="findDefaultFulFillmentGroupForOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.findDefaultFillmentGroupForOrder()" name="findDefaultFillmentGroupForOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="getItemsForOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.getItemsForOrder()" name="getItemsForOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="applyOffersToOrder">
+        <method signature="org.broadleafcommerce.offer.service.OfferServiceTest.applyOffersToOrder(java.util.List)" name="applyOffersToOrder" class="org.broadleafcommerce.offer.service.OfferServiceTest"/>
+      </group>
+      <group name="removeItemFromOrderAfterDefaultFulfillmentGroup">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.removeItemFromOrderAfterFulfillmentGroups()" name="removeItemFromOrderAfterFulfillmentGroups" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="readFulfillmentGroupItemsForFulfillmentGroup">
+        <method signature="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest.readFulfillmentGroupItemsForFulfillmentGroup()" name="readFulfillmentGroupItemsForFulfillmentGroup" class="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest"/>
+      </group>
+      <group name="readCustomer1">
+        <method signature="org.broadleafcommerce.profile.service.CustomerTest.readCustomersByUsername1()" name="readCustomersByUsername1" class="org.broadleafcommerce.profile.service.CustomerTest"/>
+      </group>
+      <group name="addFulfillmentGroupToOrderFirst">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.addFulfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FulfillmentGroup)" name="addFulfillmentGroupToOrderFirst" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="removeItemFromOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.removeItemFromOrder()" name="removeItemFromOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="removeBundleFromOrder">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.removeBundleFromOrder()" name="removeBundleFromOrder" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="createCustomers">
+        <method signature="org.broadleafcommerce.profile.service.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)" name="createCustomer" class="org.broadleafcommerce.profile.service.CustomerTest"/>
+      </group>
+      <group name="readGiftWrapOrderItemsById">
+        <method signature="org.broadleafcommerce.order.dao.OrderItemDaoTest.readGiftWrapOrderItemsById()" name="readGiftWrapOrderItemsById" class="org.broadleafcommerce.order.dao.OrderItemDaoTest"/>
+      </group>
+      <group name="readFirstSku">
+        <method signature="org.broadleafcommerce.catalog.dao.SkuDaoTest.readFirstSku()" name="readFirstSku" class="org.broadleafcommerce.catalog.dao.SkuDaoTest"/>
+      </group>
+      <group name="createOrder">
+        <method signature="org.broadleafcommerce.order.dao.OrderDaoTest.createOrder(org.broadleafcommerce.order.domain.Order)" name="createOrder" class="org.broadleafcommerce.order.dao.OrderDaoTest"/>
+      </group>
+      <group name="addItemToFulfillmentGroupSecond">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.addItemToFulfillmentgroupSecond()" name="addItemToFulfillmentgroupSecond" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="checkOrderItems">
+        <method signature="org.broadleafcommerce.order.service.OrderTest.checkOrderItems()" name="checkOrderItems" class="org.broadleafcommerce.order.service.OrderTest"/>
+      </group>
+      <group name="createCustomerIdGeneration">
+        <method signature="org.broadleafcommerce.profile.service.CustomerTest.createCustomerIdGeneration()" name="createCustomerIdGeneration" class="org.broadleafcommerce.profile.service.CustomerTest"/>
+      </group>
+    </groups>
+    <test name="offer-integrationtest(failed)">
+      <class name="org.broadleafcommerce.offer.service.OfferServiceTest">
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:03Z" finished-at="2009-08-05T18:50:03Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="8866" started-at="2009-08-05T18:49:55Z" finished-at="2009-08-05T18:50:03Z">
+        </test-method>
+        <test-method status="SKIP" signature="applyOffersToOrder(java.util.List)" name="applyOffersToOrder" duration-ms="0" depends-on-groups="getItemsForOrder, findCurrentCartForCustomer" started-at="2009-08-05T18:50:03Z" finished-at="2009-08-05T18:50:03Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.offer.service.OfferServiceTest.applyOffersToOrder(java.util.List) depends on nonexistent group "findCurrentCartForCustomer"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.offer.service.OfferServiceTest.applyOffersToOrder(java.util.List) depends on nonexistent group "findCurrentCartForCustomer"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:03Z" finished-at="2009-08-05T18:50:03Z">
+        </test-method>
+      </class>
+    </test>
+    <test name="commerce-integrationtest(failed)">
+      <class name="org.broadleafcommerce.profile.service.CustomerAddressTest">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerAddressTest.createCustomerAddress(org.broadleafcommerce.profile.domain.CustomerAddress)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerAddressTest.createCustomerAddress(org.broadleafcommerce.profile.domain.CustomerAddress)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerAddressTest.createCustomerAddress(org.broadleafcommerce.profile.domain.CustomerAddress)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createCustomerAddress(org.broadleafcommerce.profile.domain.CustomerAddress)" name="createCustomerAddress" duration-ms="21" depends-on-groups="readCustomer1, createCountry" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.CustomerAddressImpl@f2d2ef18]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="14" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="createCustomerAddress(org.broadleafcommerce.profile.domain.CustomerAddress)" name="createCustomerAddress" duration-ms="7" depends-on-groups="readCustomer1, createCountry" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.CustomerAddressImpl@adf68b7d]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="3" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerAddressTest.createCustomerAddress(org.broadleafcommerce.profile.domain.CustomerAddress)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.profile.service.AddressTest">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="15" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.AddressTest.createCountry()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="16" started-at="2009-08-05T18:50:03Z" finished-at="2009-08-05T18:50:03Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="52" started-at="2009-08-05T18:50:03Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.AddressTest.createCountry()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createCountry()" name="createCountry" duration-ms="13" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:03Z" finished-at="2009-08-05T18:50:03Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest">
+        <test-method status="SKIP" signature="readFulfillmentGroupItemsForFulfillmentGroup()" name="readFulfillmentGroupItemsForFulfillmentGroup" duration-ms="0" depends-on-groups="createFulfillmentGroupItem" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="17" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="readFulfillmentGroupItemsById()" name="readFulfillmentGroupItemsById" duration-ms="0" depends-on-groups="createFulfillmentGroupItem" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="createFulfillmentGroupItem()" name="createFulfillmentGroupItem" duration-ms="1" depends-on-groups="createDefaultFulfillmentGroup, createDiscreteOrderItem, createOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.order.dao.OrderItemDaoTest">
+        <test-method status="SKIP" signature="deleteGiftWrapOrderItemsById()" name="deleteGiftWrapOrderItemsById" duration-ms="0" depends-on-groups="readGiftWrapOrderItemsById" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="readGiftWrapOrderItemsById()" name="readGiftWrapOrderItemsById" duration-ms="0" depends-on-groups="createGiftWrapOrderItem" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="readOrderItemsByIdAfterGiftWrapDeletion()" name="readOrderItemsByIdAfterGiftWrapDeletion" duration-ms="0" depends-on-groups="deleteGiftWrapOrderItemsById" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="createDiscreteOrderItem(org.broadleafcommerce.order.domain.DiscreteOrderItem)" name="createDiscreteOrderItem" duration-ms="0" depends-on-groups="createSku, createOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="readOrderItemsById()" name="readOrderItemsById" duration-ms="0" depends-on-groups="createDiscreteOrderItem" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="createGiftWrapOrderItem(org.broadleafcommerce.order.domain.GiftWrapOrderItem)" name="createGiftWrapOrderItem" duration-ms="0" depends-on-groups="readOrderItemsById" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="17" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.profile.service.PhoneTest">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.PhoneTest.createPhone(org.broadleafcommerce.profile.domain.Phone)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.PhoneTest.createPhone(org.broadleafcommerce.profile.domain.Phone)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="createPhone(org.broadleafcommerce.profile.domain.Phone)" name="createPhone" duration-ms="4" depends-on-groups="readCustomer1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.PhoneImpl@9e2dbbe1]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="12" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.order.dao.OrderDaoTest">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="19" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="createOrder(org.broadleafcommerce.order.domain.Order)" name="createOrder" duration-ms="4" depends-on-groups="readCustomer1, createPhone" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.order.domain.OrderImpl@59ec0496]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.order.dao.OrderDaoTest.createOrder(org.broadleafcommerce.order.domain.Order)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="3" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.order.dao.OrderDaoTest.createOrder(org.broadleafcommerce.order.domain.Order)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="17" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="3" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest.createDefaultFulfillmentGroup(org.broadleafcommerce.order.domain.FulfillmentGroup)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest.createDefaultFulfillmentGroup(org.broadleafcommerce.order.domain.FulfillmentGroup)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="createDefaultFulfillmentGroup(org.broadleafcommerce.order.domain.FulfillmentGroup)" name="createDefaultFulfillmentGroup" duration-ms="105" depends-on-groups="createOrder, createCustomerAddress" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.order.domain.FulfillmentGroupImpl@3c2]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.order.service.OrderTest">
+        <test-method status="SKIP" signature="removeItemFromOrder()" name="removeItemFromOrder" duration-ms="0" depends-on-groups="getItemsForOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="findCurrentCartForCustomer()" name="findCurrentCartForCustomer" duration-ms="5" depends-on-groups="readCustomer1, createCartForCustomer, createPhone" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="updateItemsInOrder()" name="updateItemsInOrder" duration-ms="0" depends-on-groups="getItemsForOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="removeBundleFromOrder()" name="removeBundleFromOrder" duration-ms="1" depends-on-groups="addBundleToOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.order.service.OrderTest.findCurrentCartForCustomer()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="SKIP" signature="checkOrderItems()" name="checkOrderItems" duration-ms="3" depends-on-groups="removeItemFromOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.order.service.OrderTest.findCurrentCartForCustomer()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="SKIP" signature="addFulfillmentGroupToOrderFirst(org.broadleafcommerce.order.domain.FulfillmentGroup)" name="addFulfillmentGroupToOrderFirst" duration-ms="0" depends-on-groups="addPaymentToOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="addItemToFulfillmentgroupSecond()" name="addItemToFulfillmentgroupSecond" duration-ms="0" depends-on-groups="addFulfillmentGroupToOrderFirst" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="addPaymentToOrder(org.broadleafcommerce.payment.domain.PaymentInfo)" name="addPaymentToOrder" duration-ms="1" depends-on-groups="checkOrderItems" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="addItemToOrder()" name="addItemToOrder" duration-ms="0" depends-on-groups="createSku, findCurrentCartForCustomer" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="addBundleToOrder()" name="addBundleToOrder" duration-ms="0" depends-on-groups="addAnotherItemToOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="addAnotherItemToOrder()" name="addAnotherItemToOrder" duration-ms="0" depends-on-groups="addItemToOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="findFillmentGroupForOrderFirst()" name="findFillmentGroupForOrderFirst" duration-ms="0" depends-on-groups="addFulfillmentGroupToOrderFirst" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="getItemsForOrder()" name="getItemsForOrder" duration-ms="1" depends-on-groups="removeBundleFromOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="removeFulfillmentGroupFromOrder()" name="removeFulfillmentGroupFromOrder" duration-ms="0" depends-on-groups="addFulfillmentGroupToOrderFirst" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="findDefaultFillmentGroupForOrder()" name="findDefaultFillmentGroupForOrder" duration-ms="0" depends-on-groups="findCurrentCartForCustomer, addFulfillmentGroupToOrderFirst" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="removeItemFromOrderAfterFulfillmentGroups()" name="removeItemFromOrderAfterFulfillmentGroups" duration-ms="0" depends-on-groups="addFulfillmentGroupToOrderFirst" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="44" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="createCartForCustomer()" name="createCartForCustomer" duration-ms="139" depends-on-groups="readCustomer1, createPhone" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="2" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.order.service.OrderTest.createCartForCustomer()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="10" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.order.service.OrderTest.createCartForCustomer()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.profile.service.CustomerTest">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="2" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerTest.createCustomerIdGeneration()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createCustomerIdGeneration()" name="createCustomerIdGeneration" duration-ms="2" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerTest.createCustomerIdGeneration()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createCustomer(org.broadleafcommerce.profile.domain.Customer)" name="createCustomer" duration-ms="3" depends-on-groups="createCustomerIdGeneration" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.CustomerImpl@600e7c33]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="createCustomer(org.broadleafcommerce.profile.domain.Customer)" name="createCustomer" duration-ms="77" depends-on-groups="createCustomerIdGeneration" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[org.broadleafcommerce.profile.domain.CustomerImpl@600e7c32]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerTest.createCustomer(org.broadleafcommerce.profile.domain.Customer)]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="20" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerTest.readCustomersByUsername1()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void org.broadleafcommerce.profile.service.CustomerTest.readCustomersByUsername1()]]>
+              </value>
+            </param>
+          </params>
+        </test-method>
+        <test-method status="PASS" signature="readCustomersByUsername1()" name="readCustomersByUsername1" duration-ms="15" depends-on-groups="createCustomers" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.catalog.dao.SkuDaoTest">
+        <test-method status="SKIP" signature="readFirstSku()" name="readFirstSku" duration-ms="0" depends-on-groups="createSku" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="setup()" name="setup" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="PASS" signature="tearDown()" name="tearDown" is-config="true" duration-ms="0" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="createSku(org.broadleafcommerce.catalog.domain.Sku)" name="createSku" duration-ms="0" depends-on-groups="createProduct, readCustomer1, createOrder" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+          <exception class="java.lang.Throwable">
+            <message>
+              <![CDATA[Method org.broadleafcommerce.catalog.dao.SkuDaoTest.createSku(org.broadleafcommerce.catalog.domain.Sku) depends on nonexistent group "createProduct"]]>
+            </message>
+            <full-stacktrace>
+              <![CDATA[java.lang.Throwable: Method org.broadleafcommerce.catalog.dao.SkuDaoTest.createSku(org.broadleafcommerce.catalog.domain.Sku) depends on nonexistent group "createProduct"
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:964)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:110)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:712)
+	at org.testng.TestRunner.privateRun(TestRunner.java:582)
+	at org.testng.TestRunner.run(TestRunner.java:477)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:324)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:319)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:292)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:198)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:823)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:790)
+	at org.testng.TestNG.run(TestNG.java:708)
+	at org.testng.remote.RemoteTestNG.run(RemoteTestNG.java:73)
+	at org.testng.remote.RemoteTestNG.main(RemoteTestNG.java:124)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="16" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+        <test-method status="SKIP" signature="readSkuById()" name="readSkuById" duration-ms="0" depends-on-groups="createSku" started-at="2009-08-05T18:50:04Z" finished-at="2009-08-05T18:50:04Z">
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>

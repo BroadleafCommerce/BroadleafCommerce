@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.taglib.test;
+package org.broadleafcommerce.taglib;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +24,14 @@ import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.web.taglib.GetProductsByCategoryIdTag;
 import org.easymock.classextension.EasyMock;
+import org.testng.annotations.Test;
 
 public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
+	
     private GetProductsByCategoryIdTag getProductsByCategoryIdTag;
 
-    public void setUp() {
-        getProductsByCategoryIdTag = new GetProductsByCategoryIdTag();
-    }
-
     @SuppressWarnings("unchecked")
+    @Test
     public void test_GetProductsByCategoryIdTag() throws JspException {
 
         getProductsByCategoryIdTag.setJspContext(pageContext);
@@ -69,4 +68,9 @@ public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
 
         super.verifyBaseMockObjects();
     }
+
+	@Override
+	public void setup() {
+		getProductsByCategoryIdTag = new GetProductsByCategoryIdTag();
+	}
 }

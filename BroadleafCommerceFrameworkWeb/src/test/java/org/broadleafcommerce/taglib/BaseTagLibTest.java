@@ -13,25 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.taglib.test;
+package org.broadleafcommerce.taglib;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import junit.framework.TestCase;
 
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.easymock.classextension.EasyMock;
-import org.springframework.mock.web.MockHttpServletRequest;
 
 abstract public class BaseTagLibTest extends TestCase {
-    protected MockHttpServletRequest request;
+	
+    protected HttpServletRequest request;
     protected PageContext pageContext;
     protected CatalogService catalogService;
 
     public BaseTagLibTest() {
         pageContext = EasyMock.createMock(PageContext.class);
-        request = new MockHttpServletRequest();
+        request = EasyMock.createMock(HttpServletRequest.class);
         catalogService = EasyMock.createMock(CatalogService.class);
+        setup();
     }
 
     public void replayBaseMockObjects() {
@@ -47,7 +49,7 @@ abstract public class BaseTagLibTest extends TestCase {
     }
 
     public void replayAdditionalMockObjects(Object o1, Object o2){
-        EasyMock.replay(request, pageContext, catalogService, o1, o2);
+		EasyMock.replay(request, pageContext, catalogService, o1, o2);
     }
 
     public void setPageContext(PageContext pageContext) {
@@ -65,4 +67,7 @@ abstract public class BaseTagLibTest extends TestCase {
     public void verifyBaseMockObjects(Object o1, Object o2) {
         EasyMock.verify(request, pageContext, catalogService, o1, o2);
     }
+    
+    public abstract void setup();
+    
 }

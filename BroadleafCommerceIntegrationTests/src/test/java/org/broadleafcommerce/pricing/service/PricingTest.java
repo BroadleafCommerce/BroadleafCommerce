@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.pricing.test;
+package org.broadleafcommerce.pricing.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,9 +39,9 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.pricing.ShippingRateDataProvider;
 import org.broadleafcommerce.pricing.dao.ShippingRateDao;
 import org.broadleafcommerce.pricing.domain.ShippingRate;
-import org.broadleafcommerce.pricing.service.PricingService;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -50,8 +50,7 @@ import org.broadleafcommerce.profile.domain.IdGenerationImpl;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.dataprovider.ShippingRateDataProvider;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;

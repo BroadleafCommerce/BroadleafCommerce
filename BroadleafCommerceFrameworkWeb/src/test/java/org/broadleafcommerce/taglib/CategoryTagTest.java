@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.taglib.test;
+package org.broadleafcommerce.taglib;
 
 import javax.servlet.jsp.JspException;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.web.taglib.CategoryTag;
 import org.easymock.classextension.EasyMock;
+import org.testng.annotations.Test;
 
 public class CategoryTagTest extends BaseTagLibTest {
+	
     private CategoryTag categoryTag;
     private Category category;
 
-    public void setUp() {
-        categoryTag = new CategoryTag();
-        category = EasyMock.createMock(Category.class);
-    }
-
+    @Test
     public void test_categoryTag() throws JspException {
         categoryTag.setJspContext(pageContext);
         categoryTag.setVar("categoryVar");
@@ -51,4 +49,10 @@ public class CategoryTagTest extends BaseTagLibTest {
 
         super.verifyBaseMockObjects(category);
     }
+
+	@Override
+	public void setup() {
+		categoryTag = new CategoryTag();
+        category = EasyMock.createMock(Category.class);
+	}
 }

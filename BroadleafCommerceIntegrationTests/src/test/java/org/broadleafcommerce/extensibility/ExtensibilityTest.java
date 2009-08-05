@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.integration;
+package org.broadleafcommerce.extensibility;
 
 import org.broadleafcommerce.extensibility.context.MergeClassPathXMLApplicationContext;
-import org.broadleafcommerce.test.integration.extensibility.ExtensibilityTestBean;
-import org.broadleafcommerce.test.integration.extensibility.ExtensibilityTestBean3;
+import org.broadleafcommerce.test.BaseTest;
 import org.testng.annotations.Test;
 
 /**
@@ -33,7 +32,7 @@ public class ExtensibilityTest extends BaseTest {
             /*
              * First we load the merged application context
              */
-            MergeClassPathXMLApplicationContext test = new MergeClassPathXMLApplicationContext(new String[]{"org/broadleafcommerce/test/integration/extensibility/base/applicationContext-src.xml","org/broadleafcommerce/test/integration/extensibility/base/applicationContext-src2.xml"}, new String[]{"org/broadleafcommerce/test/integration/extensibility/override/applicationContext-patch1.xml","org/broadleafcommerce/test/integration/extensibility/override/applicationContext-patch2.xml"}, null);
+            MergeClassPathXMLApplicationContext test = new MergeClassPathXMLApplicationContext(new String[]{"org/broadleafcommerce/extensibility/base/applicationContext-src.xml","org/broadleafcommerce/extensibility/base/applicationContext-src2.xml"}, new String[]{"org/broadleafcommerce/extensibility/override/applicationContext-patch1.xml","org/broadleafcommerce/extensibility/override/applicationContext-patch2.xml"}, null);
 
             ExtensibilityTestBean srcBean = (ExtensibilityTestBean) test.getBean("test3");
             if (!srcBean.getTestProperty().equals("test1")) {

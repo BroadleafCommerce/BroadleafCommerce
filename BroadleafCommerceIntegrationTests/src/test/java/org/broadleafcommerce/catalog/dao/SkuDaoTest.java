@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.integration;
+package org.broadleafcommerce.catalog.dao;
 
 import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.SkuDao;
+import org.broadleafcommerce.catalog.SkuDaoDataProvider;
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.test.dataprovider.SkuDaoDataProvider;
+import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;

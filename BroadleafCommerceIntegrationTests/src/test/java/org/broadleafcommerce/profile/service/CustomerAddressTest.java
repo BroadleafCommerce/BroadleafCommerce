@@ -13,21 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.test;
+package org.broadleafcommerce.profile.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.profile.dataprovider.CustomerAddressDataProvider;
 import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
-import org.broadleafcommerce.profile.service.CountryService;
-import org.broadleafcommerce.profile.service.CustomerAddressService;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.profile.test.dataprovider.CustomerAddressDataProvider;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

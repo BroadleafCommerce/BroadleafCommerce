@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.layout.test;
+package org.broadleafcommerce.layout;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.web.PaginationCommandObject;
 import org.testng.annotations.Test;
 

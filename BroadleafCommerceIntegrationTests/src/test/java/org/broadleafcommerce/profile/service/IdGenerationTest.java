@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.test;
+package org.broadleafcommerce.profile.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.domain.IdGeneration;
 import org.broadleafcommerce.profile.domain.IdGenerationImpl;
-import org.broadleafcommerce.profile.service.IdGenerationService;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

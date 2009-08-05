@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.security.test;
+package org.broadleafcommerce.security.service;
 
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.security.domain.AdminRole;
-import org.broadleafcommerce.security.service.AdminSecurityService;
-import org.broadleafcommerce.security.test.dataprovider.AdminRoleDataProvider;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.security.service.dataprovider.AdminRoleDataProvider;
+import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

@@ -1,0 +1,15 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="5" skipfailedinvocationCounts="false" verbose="1" name="Failed suite [BroadleafCommerceIntegrationTests]" junit="false" annotations="JDK">
+  <test name="org.broadleafcommerce.checkout.service.CheckoutTest(failed)" junit="false" annotations="JDK">
+    <classes>
+      <class name="org.broadleafcommerce.checkout.service.CheckoutTest">
+        <methods>
+          <include name="tearDown"/>
+          <include name="setup"/>
+          <include name="springTestContextPrepareTestInstance"/>
+          <include name="testCheckout"/>
+        </methods>
+      </class>
+    </classes>
+  </test>
+</suite>

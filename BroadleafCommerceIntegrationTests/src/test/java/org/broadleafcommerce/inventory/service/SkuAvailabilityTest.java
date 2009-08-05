@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.inventory.test;
+package org.broadleafcommerce.inventory.service;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,9 +22,8 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.inventory.dao.AvailabilityDao;
 import org.broadleafcommerce.inventory.domain.SkuAvailability;
-import org.broadleafcommerce.inventory.service.AvailabilityService;
-import org.broadleafcommerce.inventory.test.dataprovider.SkuAvailabilityDataProvider;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.inventory.service.dataprovider.SkuAvailabilityDataProvider;
+import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

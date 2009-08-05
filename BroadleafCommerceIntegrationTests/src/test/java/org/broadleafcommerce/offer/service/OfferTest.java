@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.offer.test;
+package org.broadleafcommerce.offer.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.catalog.SkuDaoDataProvider;
 import org.broadleafcommerce.catalog.dao.ProductDao;
 import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Product;
@@ -36,7 +37,6 @@ import org.broadleafcommerce.offer.domain.CustomerOfferImpl;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OfferInfo;
-import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferType;
@@ -48,8 +48,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.dataprovider.SkuDaoDataProvider;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;

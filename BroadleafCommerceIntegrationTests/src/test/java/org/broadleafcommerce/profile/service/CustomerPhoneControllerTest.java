@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.test;
+package org.broadleafcommerce.profile.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.profile.dataprovider.CustomerPhoneControllerTestDataProvider;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
-import org.broadleafcommerce.profile.service.CustomerPhoneService;
-import org.broadleafcommerce.profile.test.dataprovider.CustomerPhoneControllerTestDataProvider;
 import org.broadleafcommerce.profile.web.controller.CustomerPhoneController;
 import org.broadleafcommerce.profile.web.model.PhoneNameForm;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.test.BaseTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.validation.BeanPropertyBindingResult;

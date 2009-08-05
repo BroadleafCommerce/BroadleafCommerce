@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.security.test.dataprovider;
+package org.broadleafcommerce.security.service.dataprovider;
 
 import org.broadleafcommerce.security.domain.AdminRole;
 import org.broadleafcommerce.security.domain.AdminRoleImpl;

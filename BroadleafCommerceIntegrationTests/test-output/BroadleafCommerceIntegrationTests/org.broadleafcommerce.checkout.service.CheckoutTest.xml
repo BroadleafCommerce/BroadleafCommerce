@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="org.broadleafcommerce.checkout.service.CheckoutTest" failures="0" tests="1" time="17.303" errors="0">
+  <properties/>
+  <testcase name="testCheckout" time="0.0" classname="org.broadleafcommerce.checkout.service.CheckoutTest">
+    <skipped/>
+  </testcase>
+</testsuite>

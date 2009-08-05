@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.integration;
+package org.broadleafcommerce.catalog.dao;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.ProductDao;
+import org.broadleafcommerce.catalog.ProductDataProvider;
 import org.broadleafcommerce.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.ProductWeight;
 import org.broadleafcommerce.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.catalog.domain.UpSaleProductImpl;
-import org.broadleafcommerce.test.dataprovider.ProductDataProvider;
+import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;

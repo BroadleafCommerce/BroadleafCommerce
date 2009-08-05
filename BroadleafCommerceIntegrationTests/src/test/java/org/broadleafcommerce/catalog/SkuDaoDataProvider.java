@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.dataprovider;
+package org.broadleafcommerce.catalog;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;

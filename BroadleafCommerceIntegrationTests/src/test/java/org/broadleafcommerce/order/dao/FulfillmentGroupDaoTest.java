@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.integration;
+package org.broadleafcommerce.order.dao;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.dao.FulfillmentGroupDao;
-import org.broadleafcommerce.order.dao.OrderDao;
+import org.broadleafcommerce.order.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.dataprovider.FulfillmentGroupDataProvider;
+import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

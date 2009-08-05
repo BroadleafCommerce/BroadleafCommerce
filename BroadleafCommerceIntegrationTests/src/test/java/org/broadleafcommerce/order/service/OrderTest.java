@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.integration;
+package org.broadleafcommerce.order.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,6 +30,7 @@ import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.order.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.order.domain.BundleOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
@@ -37,13 +38,11 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.service.CartService;
-import org.broadleafcommerce.order.service.OrderItemService;
-import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.OrderStatus;
+import org.broadleafcommerce.payment.PaymentInfoDataProvider;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
@@ -51,8 +50,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.dataprovider.FulfillmentGroupDataProvider;
-import org.broadleafcommerce.test.dataprovider.PaymentInfoDataProvider;
+import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;

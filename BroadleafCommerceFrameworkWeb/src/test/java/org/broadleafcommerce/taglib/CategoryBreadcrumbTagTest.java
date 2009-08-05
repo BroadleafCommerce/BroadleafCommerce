@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.taglib.test;
+package org.broadleafcommerce.taglib;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.web.taglib.CategoryBreadCrumbTag;
 import org.easymock.classextension.EasyMock;
+import org.testng.annotations.Test;
 
 public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
+	
     private CategoryBreadCrumbTag categoryBreadcrumbTag;
     private Category category;
+    private JspWriter writer;
 
-    public void setUp() {
-        categoryBreadcrumbTag = new CategoryBreadCrumbTag();
-        category = EasyMock.createMock(Category.class);
-    }
-
+    @Test
     public void test_Breadcrumb() throws JspException, IOException {
         List<Category> categoryList = new ArrayList<Category>();
 
@@ -41,13 +41,22 @@ public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
         categoryList.add(category);
         categoryList.add(defaultParentCategory);
 
-        pageContext.setAttribute("crumbVar", categoryList);
+        //pageContext.setAttribute("crumbVar", categoryList);
 
         categoryBreadcrumbTag.setCategoryId(0L);
         EasyMock.expect(catalogService.findCategoryById(0L)).andReturn(category);
-
         EasyMock.expect(category.getDefaultParentCategory()).andReturn(defaultParentCategory);
         EasyMock.expect(defaultParentCategory.getDefaultParentCategory()).andReturn(null);
+        EasyMock.expect(pageContext.getRequest()).andReturn(request).anyTimes();
+        EasyMock.expect(pageContext.getOut()).andReturn(writer).anyTimes();
+        EasyMock.expect(request.isSecure()).andReturn(false).anyTimes();
+        EasyMock.expect(request.getServerName()).andReturn("test").anyTimes();
+        EasyMock.expect(request.getLocalPort()).andReturn(80).anyTimes();
+        EasyMock.expect(request.getContextPath()).andReturn("myApp").anyTimes();
+        EasyMock.expect(category.getGeneratedUrl()).andReturn("url").anyTimes();
+        EasyMock.expect(category.getName()).andReturn("name").anyTimes();
+        EasyMock.expect(defaultParentCategory.getGeneratedUrl()).andReturn("url").anyTimes();
+        EasyMock.expect(defaultParentCategory.getName()).andReturn("name").anyTimes();
 
         categoryBreadcrumbTag.setCategoryList(categoryList);
         categoryBreadcrumbTag.setJspContext(pageContext);
@@ -65,5 +74,12 @@ public class CategoryBreadcrumbTagTest extends BaseTagLibTest {
 
         super.verifyBaseMockObjects(category, defaultParentCategory);
     }
+
+	@Override
+	public void setup() {
+		categoryBreadcrumbTag = new CategoryBreadCrumbTag();
+        category = EasyMock.createMock(Category.class);
+        writer = EasyMock.createNiceMock(JspWriter.class);
+	}
 
 }

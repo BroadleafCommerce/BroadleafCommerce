@@ -13,21 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.integration;
+package org.broadleafcommerce.catalog.dao;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.catalog.dao.CategoryDao;
-import org.broadleafcommerce.catalog.dao.ProductDao;
+import org.broadleafcommerce.catalog.CategoryDaoDataProvider;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.catalog.domain.FeaturedProductImpl;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.ProductImpl;
-import org.broadleafcommerce.test.dataprovider.CategoryDaoDataProvider;
+import org.broadleafcommerce.test.BaseTest;
 import org.testng.annotations.Test;
 
 public class CategoryDaoTest extends BaseTest {

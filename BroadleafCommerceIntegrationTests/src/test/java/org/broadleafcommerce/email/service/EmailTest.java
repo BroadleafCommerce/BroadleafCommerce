@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.email.test;
+package org.broadleafcommerce.email.service;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.email.service.EmailService;
 import org.broadleafcommerce.email.service.info.EmailInfo;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.test.BaseTest;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

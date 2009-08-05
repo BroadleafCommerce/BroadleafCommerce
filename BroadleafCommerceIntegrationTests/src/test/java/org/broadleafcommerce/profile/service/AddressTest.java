@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.test;
+package org.broadleafcommerce.profile.service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,7 @@ import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.CountryImpl;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
-import org.broadleafcommerce.profile.service.CountryService;
-import org.broadleafcommerce.profile.service.StateService;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

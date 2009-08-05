@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="commerce-integrationtest" failures="0" tests="132" time="12.361" errors="0">
+  <properties/>
+  <testcase name="createCustomerPhoneFromController" time="0.405" classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest"/>
+  <testcase name="createCustomerPhoneFromController" time="0.0090" classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest"/>
+  <testcase name="readCustomerPhoneFromController" time="0.0070" classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest"/>
+  <testcase name="makePhoneDefaultOnCustomerPhoneController" time="0.0090" classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest"/>
+  <testcase name="createCountry" time="0.0010" classname="org.broadleafcommerce.profile.service.AddressTest"/>
+  <testcase name="createCustomerIdGeneration" time="0.0020" classname="org.broadleafcommerce.profile.service.CustomerTest"/>
+  <testcase name="createState" time="0.014" classname="org.broadleafcommerce.profile.service.AddressTest"/>
+  <testcase name="findStates" time="0.0040" classname="org.broadleafcommerce.profile.service.AddressTest"/>
+  <testcase name="findStateByAbbreviation" time="0.011" classname="org.broadleafcommerce.profile.service.AddressTest"/>
+  <testcase name="viewExistingCustomerPhoneFromController" time="0.0020" classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest"/>
+  <testcase name="findCountries" time="0.0020" classname="org.broadleafcommerce.profile.service.AddressTest"/>
+  <testcase name="createCustomer" time="0.018" classname="org.broadleafcommerce.profile.service.CustomerTest"/>
+  <testcase name="createCustomer" time="0.0020" classname="org.broadleafcommerce.profile.service.CustomerTest"/>
+  <testcase name="readCustomersByUsername1" time="0.0080" classname="org.broadleafcommerce.profile.service.CustomerTest"/>
+  <testcase name="changeCustomerPasswords" time="0.0040" classname="org.broadleafcommerce.profile.service.CustomerTest"/>
+  <testcase name="readCustomersByUsername2" time="0.0040" classname="org.broadleafcommerce.profile.service.CustomerTest"/>
+  <testcase name="createPhone" time="0.0020" classname="org.broadleafcommerce.profile.service.PhoneTest"/>
+  <testcase name="createCartForCustomer" time="0.157" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="createCustomerAddress" time="0.0050" classname="org.broadleafcommerce.profile.service.CustomerAddressTest"/>
+  <testcase name="createCustomerAddress" time="0.0050" classname="org.broadleafcommerce.profile.service.CustomerAddressTest"/>
+  <testcase name="findCountryByShortName" time="0.0010" classname="org.broadleafcommerce.profile.service.AddressTest"/>
+  <testcase name="createId" time="0.0010" classname="org.broadleafcommerce.profile.service.IdGenerationTest"/>
+  <testcase name="findIds" time="0.015" classname="org.broadleafcommerce.profile.service.IdGenerationTest"/>
+  <testcase name="createProducts" time="0.0040" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createProducts" time="0.0020" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createProducts" time="0.0010" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createProducts" time="0.0020" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createProducts" time="0.0010" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createProducts" time="0.0020" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createProducts" time="0.0010" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createUpSaleValues" time="0.018" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createUpSaleValues" time="0.0040" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="testReadProductsWithUpSaleValues" time="0.089" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="testReadProductsWithUpSaleValues" time="0.0040" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createCrossSaleValues" time="0.0050" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="createCrossSaleValues" time="0.0030" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="findCurrentCartForCustomer" time="0.0040" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="getOrdersForCustomer" time="0.0080" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="findCartForAnonymousCustomer" time="0.0050" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="findOrderByOrderNumber" time="0.012" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="readPhoneById" time="0.0040" classname="org.broadleafcommerce.profile.service.PhoneTest"/>
+  <testcase name="findNamedOrderForCustomer" time="0.011" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="testSubmitOrder" time="0.01" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="testReadOrdersForCustomer" time="0.0080" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="testOrderProperties" time="0.0030" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="testNamedOrderForCustomer" time="0.0090" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="testAddSkuToOrder" time="0.241" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="testOrderPaymentInfos" time="0.0090" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="readCustomersById" time="0.0010" classname="org.broadleafcommerce.profile.service.CustomerTest"/>
+  <testcase name="readCustomerAddressByUserId" time="0.0060" classname="org.broadleafcommerce.profile.service.CustomerAddressTest"/>
+  <testcase name="createSkuAvailability" time="0.0020" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0010" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0010" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0090" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0010" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0020" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0010" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0010" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0010" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createSkuAvailability" time="0.0020" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="checkAvailableQuantityWithReserveAndQOH" time="0.0020" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="readAvailableSkusForLocation" time="0.0070" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="checkAvailableQuantityWithNullQuantityOnHand" time="0.0060" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="readAvailableSkusForUnknownLocation" time="0.0020" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createOrder" time="0.0070" classname="org.broadleafcommerce.order.dao.OrderDaoTest"/>
+  <testcase name="createDefaultFulfillmentGroup" time="0.097" classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest"/>
+  <testcase name="readDefaultFulfillmentGroupForOrder" time="0.0030" classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest"/>
+  <testcase name="createPaymentInfo" time="0.0060" classname="org.broadleafcommerce.payment.service.PaymentInfoServiceTest"/>
+  <testcase name="readPaymentInfoByOrder" time="0.0040" classname="org.broadleafcommerce.payment.service.PaymentInfoServiceTest"/>
+  <testcase name="readPaymentInfoById" time="0.028" classname="org.broadleafcommerce.payment.service.PaymentInfoServiceTest"/>
+  <testcase name="readOrdersForCustomer" time="0.0040" classname="org.broadleafcommerce.order.dao.OrderDaoTest"/>
+  <testcase name="readOrderById" time="0.0020" classname="org.broadleafcommerce.order.dao.OrderDaoTest"/>
+  <testcase name="createSku" time="0.0" classname="org.broadleafcommerce.catalog.dao.SkuDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readFirstSku" time="0.0010" classname="org.broadleafcommerce.catalog.dao.SkuDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="addItemToOrder" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readSkuById" time="0.0" classname="org.broadleafcommerce.catalog.dao.SkuDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="addAnotherItemToOrder" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="addBundleToOrder" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="removeBundleFromOrder" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="getItemsForOrder" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="removeItemFromOrder" time="0.0010" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="createFulfillmentGroup" time="0.0060" classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest"/>
+  <testcase name="readFulfillmentGroupsForId" time="0.0050" classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest"/>
+  <testcase name="updateItemsInOrder" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="deleteOrderForCustomer" time="0.016" classname="org.broadleafcommerce.order.dao.OrderDaoTest"/>
+  <testcase name="readSKUAvailabilityEntries" time="0.0060" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="createCustomerPhone" time="0.013" classname="org.broadleafcommerce.profile.service.CustomerPhoneTest"/>
+  <testcase name="createCustomerPhone" time="0.0040" classname="org.broadleafcommerce.profile.service.CustomerPhoneTest"/>
+  <testcase name="readCustomerPhoneByUserId" time="0.0030" classname="org.broadleafcommerce.profile.service.CustomerPhoneTest"/>
+  <testcase name="checkAvailableQuantityWithNullReserveQty" time="0.0010" classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest"/>
+  <testcase name="testShippingInsert" time="0.0040" classname="org.broadleafcommerce.pricing.service.PricingTest"/>
+  <testcase name="testPricing" time="0.227" classname="org.broadleafcommerce.pricing.service.PricingTest"/>
+  <testcase name="testCheckout" time="0.02" classname="org.broadleafcommerce.checkout.service.CheckoutTest"/>
+  <testcase name="testShipping" time="0.0070" classname="org.broadleafcommerce.pricing.service.PricingTest"/>
+  <testcase name="createDiscreteOrderItem" time="0.0" classname="org.broadleafcommerce.order.dao.OrderItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="createFulfillmentGroupItem" time="0.0010" classname="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readFulfillmentGroupItemsById" time="0.0060" classname="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readFulfillmentGroupItemsForFulfillmentGroup" time="0.0010" classname="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readOrderItemsById" time="0.0" classname="org.broadleafcommerce.order.dao.OrderItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="createGiftWrapOrderItem" time="0.0" classname="org.broadleafcommerce.order.dao.OrderItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readGiftWrapOrderItemsById" time="0.0" classname="org.broadleafcommerce.order.dao.OrderItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="deleteGiftWrapOrderItemsById" time="0.0" classname="org.broadleafcommerce.order.dao.OrderItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readOrderItemsByIdAfterGiftWrapDeletion" time="0.0" classname="org.broadleafcommerce.order.dao.OrderItemDaoTest">
+    <skipped/>
+  </testcase>
+  <testcase name="readDefaultFulfillmentGroupForId" time="0.0020" classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest"/>
+  <testcase name="testReadProductsWithCrossSaleValues" time="0.0070" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="testReadProductsWithCrossSaleValues" time="0.0030" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="checkOrderItems" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="addPaymentToOrder" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="addFulfillmentGroupToOrderFirst" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="removeFulfillmentGroupFromOrder" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="addItemToFulfillmentgroupSecond" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="findFillmentGroupForOrderFirst" time="0.0" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="findDefaultFillmentGroupForOrder" time="0.0010" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="removeItemFromOrderAfterFulfillmentGroups" time="0.0070" classname="org.broadleafcommerce.order.service.OrderTest">
+    <skipped/>
+  </testcase>
+  <testcase name="createTestPaymentInfo" time="0.0070" classname="org.broadleafcommerce.payment.service.PaymentInfoServiceTest"/>
+  <testcase name="testSetFeaturedProducts" time="0.0040" classname="org.broadleafcommerce.catalog.dao.CategoryDaoTest"/>
+  <testcase name="testReadProductsById" time="0.0020" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="testReadProductsByName" time="0.0040" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="testFeaturedProduct" time="0.0020" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="testProductAttributes" time="0.0040" classname="org.broadleafcommerce.catalog.dao.ProductDaoTest"/>
+  <testcase name="testSkus" time="0.0020" classname="org.broadleafcommerce.catalog.service.CatalogTest"/>
+  <testcase name="testCatalog" time="0.025" classname="org.broadleafcommerce.catalog.service.CatalogTest"/>
+  <testcase name="testSynchronousEmail" time="0.151" classname="org.broadleafcommerce.email.service.EmailTest"/>
+  <testcase name="test" time="0.154" classname="org.broadleafcommerce.extensibility.ExtensibilityTest"/>
+  <testcase name="findCartForNullCustomerId" time="0.0020" classname="org.broadleafcommerce.order.service.OrderTest"/>
+  <testcase name="viewCustomerPhoneFromController" time="0.0020" classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest"/>
+  <testcase name="createCustomerFromController" time="0.04" classname="org.broadleafcommerce.profile.service.RegisterCustomerControllerTest"/>
+  <testcase name="viewRegisterCustomerFromController" time="0.0020" classname="org.broadleafcommerce.profile.service.RegisterCustomerControllerTest"/>
+  <testcase name="testAdminPermissionSave" time="0.012" classname="org.broadleafcommerce.security.service.AdminPermissionTest"/>
+  <testcase name="testAdminRoleSave" time="0.027" classname="org.broadleafcommerce.security.service.AdminRoleTest"/>
+  <testcase name="testAdminUserSave" time="0.017" classname="org.broadleafcommerce.security.service.AdminUserTest"/>
+  <testcase name="testMappings" time="0.0010" classname="org.broadleafcommerce.test.OrmTest"/>
+</testsuite>

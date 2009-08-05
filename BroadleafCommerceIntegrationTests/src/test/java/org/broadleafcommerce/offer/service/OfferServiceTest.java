@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.integration;
+package org.broadleafcommerce.offer.service;
 
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.offer.OfferDataProvider;
 import org.broadleafcommerce.offer.domain.Offer;
-import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.order.service.OrderService;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.dataprovider.OfferDataProvider;
+import org.broadleafcommerce.test.BaseTest;
 import org.testng.annotations.Test;
 
 public class OfferServiceTest extends BaseTest{

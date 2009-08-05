@@ -13,64 +13,74 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.checkout.test;
+package org.broadleafcommerce.checkout.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.checkout.service.CheckoutService;
+import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.catalog.domain.SkuImpl;
+import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.encryption.EncryptionModule;
+import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
+import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.service.CartService;
+import org.broadleafcommerce.order.service.OrderItemService;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.payment.domain.Referenced;
-import org.broadleafcommerce.payment.service.SecurePaymentInfoService;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
+import org.broadleafcommerce.profile.domain.Country;
+import org.broadleafcommerce.profile.domain.CountryImpl;
+import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
-import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.profile.service.CustomerService;
+import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.Test;
 
 public class CheckoutTest extends BaseTest {
 
-    @Resource(name="checkoutService")
+    @Resource(name="blCheckoutService")
     private CheckoutService checkoutService;
+    
+    @Resource(name="blEncryptionModule")
+    private EncryptionModule encryptionModule;
+    
+    @Resource
+    private CustomerService customerService;
+    
+    @Resource
+    private CartService cartService;
+    
+    @Resource
+    private CatalogService catalogService;
+    
+    @Resource
+    private OrderItemService orderItemService;
 
-    @Resource(name="blSecurePaymentInfoService")
-    private SecurePaymentInfoService securePaymentInfoService;
-
-    @Test
+    @SuppressWarnings("serial")
+	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
     public void testCheckout() throws Exception {
-        Order order = new OrderImpl();
-        FulfillmentGroup group = new FulfillmentGroupImpl();
-        List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
-        groups.add(group);
-        order.setFulfillmentGroups(groups);
-        Money total = new Money(5D);
-        group.setShippingPrice(total);
-
-        OrderItem item = new DiscreteOrderItemImpl();
-        item.setPrice(new Money(10D));
-        item.setQuantity(1);
-        List<OrderItem> items = new ArrayList<OrderItem>();
-        items.add(item);
-        order.setOrderItems(items);
-
-        order.setTotalShipping(new Money(0D));
-
-        PaymentInfo payment = new PaymentInfoImpl();
+    	String userName = "customer1";
+        Customer customer = customerService.readCustomerByUsername(userName);
+        Order order = cartService.createNewCartForCustomer(customer);
+        
         Address address = new AddressImpl();
         address.setAddressLine1("123 Test Rd");
         address.setCity("Dallas");
@@ -79,18 +89,119 @@ public class CheckoutTest extends BaseTest {
         address.setPostalCode("75240");
         address.setPrimaryPhone("972-978-9067");
         State state = new StateImpl();
-        state.setAbbreviation("TX");
+        state.setAbbreviation("ALL");
+        state.setName("ALL");
         address.setState(state);
+        Country country = new CountryImpl();
+        country.setAbbreviation("US");
+        country.setName("United States");
+        state.setCountry(country);
+        address.setCountry(country);
+        
+        
+        FulfillmentGroup group = new FulfillmentGroupImpl();
+        group.setOrder(order);
+        group.setAddress(address);
+        List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
+        groups.add(group);
+        order.setFulfillmentGroups(groups);
+        Money total = new Money(5D);
+        group.setShippingPrice(total);
+        group.setMethod("standard");
+
+        DiscreteOrderItem item = new DiscreteOrderItemImpl();
+        item.setOrder(order);
+        item.setPrice(new Money(14.99D));
+        item.setRetailPrice(new Money(14.99D));
+        item.setQuantity(1);
+        
+        Sku newSku = new SkuImpl();
+        newSku.setName("Under Armor T-Shirt -- Red");
+        newSku.setRetailPrice(new Money(14.99));
+        newSku.setActiveStartDate(new Date());
+        newSku = catalogService.saveSku(newSku);
+        item.setSku(newSku);
+        
+        item = (DiscreteOrderItem) orderItemService.saveOrderItem(item);
+        
+        List<OrderItem> items = new ArrayList<OrderItem>();
+        items.add(item);
+        order.setOrderItems(items);
+        
+        FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
+        fgItem.setFulfillmentGroup(group);
+        fgItem.setOrderItem(item);
+        fgItem.setQuantity(1);
+        fgItem.setPrice(new Money(0D));
+        group.addFulfillmentGroupItem(fgItem);
+
+        order.setTotalShipping(new Money(0D));
+
+        PaymentInfo payment = new PaymentInfoImpl();
         payment.setAddress(address);
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
+        payment.setType(PaymentInfoType.CREDIT_CARD);
 
-        CreditCardPaymentInfo cc = (CreditCardPaymentInfo) securePaymentInfoService.create(PaymentInfoType.CREDIT_CARD);
-        cc.setExpirationMonth(11);
-        cc.setExpirationYear(2011);
-        cc.setPan("1111111111111111");
-        cc.setCvvCode("123");
-        cc.setReferenceNumber("1234");
+        CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
+
+			public String getCvvCode() {
+				return "123";
+			}
+
+			public Integer getExpirationMonth() {
+				return 11;
+			}
+
+			public Integer getExpirationYear() {
+				return 2011;
+			}
+
+			public Long getId() {
+				return null;
+			}
+
+			public String getPan() {
+				return "1111111111111111";
+			}
+
+			public void setCvvCode(String cvvCode) {
+				//do nothing
+			}
+
+			public void setExpirationMonth(Integer expirationMonth) {
+				//do nothing
+			}
+
+			public void setExpirationYear(Integer expirationYear) {
+				//do nothing
+			}
+
+			public void setId(Long id) {
+				//do nothing
+			}
+
+			public void setPan(String pan) {
+				//do nothing
+			}
+
+			public EncryptionModule getEncryptionModule() {
+				return encryptionModule;
+			}
+
+			public String getReferenceNumber() {
+				return "1234";
+			}
+
+			public void setEncryptionModule(EncryptionModule encryptionModule) {
+				//do nothing
+			}
+
+			public void setReferenceNumber(String referenceNumber) {
+				//do nothing
+			}
+        	
+        };
 
         Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
         map.put(payment, cc);
@@ -98,7 +209,7 @@ public class CheckoutTest extends BaseTest {
         checkoutService.performCheckout(order, map);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
-        assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D)));
-        assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax())));
+        assert (order.getTotalTax().equals(order.getSubTotal().add(order.getTotalShipping()).multiply(0.05D)));
+        assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping())));
     }
 }

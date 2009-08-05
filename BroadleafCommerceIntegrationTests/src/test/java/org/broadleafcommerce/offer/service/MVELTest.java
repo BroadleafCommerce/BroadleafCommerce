@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.test.integration;
+package org.broadleafcommerce.offer.service;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -33,6 +33,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;

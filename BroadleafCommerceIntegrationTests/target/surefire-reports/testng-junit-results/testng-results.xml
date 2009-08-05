@@ -1,0 +1,157 @@
+<testng-results>
+  <reporter-output>
+  </reporter-output>
+  <suite name="Command line suite">
+    <groups>
+    </groups>
+    <test name="Command line test">
+      <class name="org.broadleafcommerce.taglib.GetProductsByCategoryIdTagTest">
+        <test-method status="FAIL" signature="test_GetProductsByCategoryIdTag()" name="test_GetProductsByCategoryIdTag" duration-ms="6" started-at="2009-08-05T15:43:00Z" finished-at="2009-08-05T15:43:00Z">
+          <exception class="org.easymock.internal.RuntimeExceptionWrapper">
+            <full-stacktrace>
+              <![CDATA[org.easymock.internal.RuntimeExceptionWrapper
+	at org.easymock.classextension.internal.ClassExtensionHelper.getControl(ClassExtensionHelper.java:52)
+	at org.easymock.classextension.EasyMock.replay(EasyMock.java:117)
+	at org.broadleafcommerce.taglib.BaseTagLibTest.replayAdditionalMockObjects(BaseTagLibTest.java:42)
+	at org.broadleafcommerce.taglib.GetProductsByCategoryIdTagTest.test_GetProductsByCategoryIdTag(GetProductsByCategoryIdTagTest.java:63)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.testng.junit.JUnitTestRunner.doRun(JUnitTestRunner.java:244)
+	at org.testng.junit.JUnitTestRunner.start(JUnitTestRunner.java:217)
+	at org.testng.junit.JUnitTestRunner.run(JUnitTestRunner.java:205)
+	at org.testng.TestRunner$2.run(TestRunner.java:546)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:759)
+	at org.testng.TestRunner.privateRunJUnit(TestRunner.java:558)
+	at org.testng.TestRunner.run(TestRunner.java:483)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:332)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:327)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:299)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:204)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:877)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:842)
+	at org.testng.TestNG.run(TestNG.java:751)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:62)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:155)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:338)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:997)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.taglib.CategoryTagTest">
+        <test-method status="FAIL" signature="test_categoryTag()" name="test_categoryTag" duration-ms="298" started-at="2009-08-05T15:42:59Z" finished-at="2009-08-05T15:43:00Z">
+          <exception class="org.easymock.internal.RuntimeExceptionWrapper">
+            <full-stacktrace>
+              <![CDATA[org.easymock.internal.RuntimeExceptionWrapper
+	at org.easymock.classextension.internal.ClassExtensionHelper.getControl(ClassExtensionHelper.java:52)
+	at org.easymock.classextension.EasyMock.replay(EasyMock.java:117)
+	at org.broadleafcommerce.taglib.BaseTagLibTest.replayAdditionalMockObjects(BaseTagLibTest.java:46)
+	at org.broadleafcommerce.taglib.CategoryTagTest.test_categoryTag(CategoryTagTest.java:46)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.testng.junit.JUnitTestRunner.doRun(JUnitTestRunner.java:244)
+	at org.testng.junit.JUnitTestRunner.start(JUnitTestRunner.java:217)
+	at org.testng.junit.JUnitTestRunner.run(JUnitTestRunner.java:205)
+	at org.testng.TestRunner$2.run(TestRunner.java:546)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:759)
+	at org.testng.TestRunner.privateRunJUnit(TestRunner.java:558)
+	at org.testng.TestRunner.run(TestRunner.java:483)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:332)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:327)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:299)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:204)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:877)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:842)
+	at org.testng.TestNG.run(TestNG.java:751)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:62)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:155)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:338)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:997)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+      </class>
+      <class name="org.broadleafcommerce.taglib.CategoryBreadcrumbTagTest">
+        <test-method status="FAIL" signature="test_Breadcrumb()" name="test_Breadcrumb" duration-ms="1" started-at="2009-08-05T15:43:00Z" finished-at="2009-08-05T15:43:00Z">
+          <exception class="org.easymock.internal.RuntimeExceptionWrapper">
+            <full-stacktrace>
+              <![CDATA[org.easymock.internal.RuntimeExceptionWrapper
+	at org.easymock.classextension.internal.ClassExtensionHelper.getControl(ClassExtensionHelper.java:52)
+	at org.easymock.classextension.EasyMock.replay(EasyMock.java:117)
+	at org.broadleafcommerce.taglib.BaseTagLibTest.replayAdditionalMockObjects(BaseTagLibTest.java:50)
+	at org.broadleafcommerce.taglib.CategoryBreadcrumbTagTest.test_Breadcrumb(CategoryBreadcrumbTagTest.java:56)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at junit.framework.TestSuite.runTest(TestSuite.java:208)
+	at junit.framework.TestSuite.run(TestSuite.java:203)
+	at org.testng.junit.JUnitTestRunner.doRun(JUnitTestRunner.java:244)
+	at org.testng.junit.JUnitTestRunner.start(JUnitTestRunner.java:217)
+	at org.testng.junit.JUnitTestRunner.run(JUnitTestRunner.java:205)
+	at org.testng.TestRunner$2.run(TestRunner.java:546)
+	at org.testng.TestRunner.runWorkers(TestRunner.java:759)
+	at org.testng.TestRunner.privateRunJUnit(TestRunner.java:558)
+	at org.testng.TestRunner.run(TestRunner.java:483)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:332)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:327)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:299)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:204)
+	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:877)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:842)
+	at org.testng.TestNG.run(TestNG.java:751)
+	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:62)
+	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:155)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:338)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:997)
+]]>
+            </full-stacktrace>
+          </exception>
+        </test-method>
+      </class>
+    </test>
+  </suite>
+</testng-results>

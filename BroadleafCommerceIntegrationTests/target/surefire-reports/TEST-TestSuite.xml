@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite errors="0" skipped="11" tests="12" time="7.562" failures="1" name="TestSuite">
+<testsuite errors="0" skipped="28" tests="159" time="14.688" failures="0" name="TestSuite">
   <properties>
     <property value="Apple Inc." name="java.vendor"/>
     <property value="/Users/jfischer/m2repository" name="localRepository"/>
@@ -13,7 +13,6 @@
     <property value="1.5.0_19-b02-304" name="java.runtime.version"/>
     <property value="/tmp/launch-2am6Ky/Render" name="env.Apple_PubSub_Socket_Render"/>
     <property value="/tmp/launch-RMKo1i/:0" name="env.DISPLAY"/>
-    <property value="1" name="env.JAVA_STARTED_ON_FIRST_THREAD_235"/>
     <property value="jfischer" name="user.name"/>
     <property value="jfischer" name="env.USER"/>
     <property value="/bin/bash" name="env.SHELL"/>
@@ -22,7 +21,7 @@
     <property value="/usr/bin:/bin:/usr/sbin:/sbin" name="env.PATH"/>
     <property value="en" name="user.language"/>
     <property value="/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Libraries" name="sun.boot.library.path"/>
-    <property value="/Java_Projects/dev/credera/.metadata/.plugins/org.maven.ide.eclipse/launches/m2conf8816489641626246480.tmp" name="classworlds.conf"/>
+    <property value="/Java_Projects/dev/credera/.metadata/.plugins/org.maven.ide.eclipse/launches/m2conf1308210209302113488.tmp" name="classworlds.conf"/>
     <property value="1.5.0_19" name="java.version"/>
     <property value="America/Chicago" name="user.timezone"/>
     <property value="32" name="sun.arch.data.model"/>
@@ -31,6 +30,7 @@
     <property value="" name="sun.cpu.isalist"/>
     <property value="MacRoman" name="sun.jnu.encoding"/>
     <property value="sun.io" name="file.encoding.pkg"/>
+    <property value="org.codehaus.classworlds.Launcher" name="env.JAVA_MAIN_CLASS_3326"/>
     <property value="/" name="file.separator"/>
     <property value="Java Platform API Specification" name="java.specification.name"/>
     <property value="49.0" name="java.class.version"/>
@@ -50,19 +50,19 @@
     <property value="Sun Microsystems Inc." name="java.specification.vendor"/>
     <property value=".:/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java" name="java.library.path"/>
     <property value="http://www.apple.com/" name="java.vendor.url"/>
-    <property value="../Resources/Eclipse.icns" name="env.APP_ICON_235"/>
     <property value="Apple Inc." name="java.vm.vendor"/>
     <property value="false" name="gopherProxySet"/>
     <property value="EMBEDDED" name="maven.home"/>
     <property value="Java(TM) 2 Runtime Environment, Standard Edition" name="java.runtime.name"/>
     <property value="/Applications/eclipse/plugins/org.maven.ide.components.maven_embedder_2.1.0.20080530-2300/jars/plexus-classworlds-1.2-alpha-12.jar" name="java.class.path"/>
+    <property value="1" name="env.JAVA_STARTED_ON_FIRST_THREAD_1963"/>
     <property value="Java Virtual Machine Specification" name="java.vm.specification.name"/>
     <property value="1.0" name="java.vm.specification.version"/>
     <property value="/Java_Projects/dev/credera/.metadata/.plugins/org.maven.ide.eclipse/workspacestate.properties" name="m2eclipse.workspace.state"/>
     <property value="little" name="sun.cpu.endian"/>
     <property value="unknown" name="sun.os.patch.level"/>
     <property value="/Users/jfischer" name="env.HOME"/>
-    <property value="/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceIntegrationTests/target/test-classes:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceIntegrationTests/target/classes:/Users/jfischer/m2repository/junit/junit/3.8.1/junit-3.8.1.jar:/Users/jfischer/m2repository/org/hibernate/ejb3-persistence/1.0.2.GA/ejb3-persistence-1.0.2.GA.jar:/Users/jfischer/m2repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar:/Users/jfischer/m2repository/org/springframework/spring/2.5.6/spring-2.5.6.jar:/Users/jfischer/m2repository/log4j/log4j/1.2.12/log4j-1.2.12.jar:/Users/jfischer/m2repository/org/aspectj/aspectjweaver/1.6.5/aspectjweaver-1.6.5.jar:/Users/jfischer/m2repository/org/hibernate/hibernate-annotations/3.4.0.GA/hibernate-annotations-3.4.0.GA.jar:/Users/jfischer/m2repository/org/hibernate/hibernate-commons-annotations/3.1.0.GA/hibernate-commons-annotations-3.1.0.GA.jar:/Users/jfischer/m2repository/org/hibernate/hibernate-core/3.3.1.GA/hibernate-core-3.3.1.GA.jar:/Users/jfischer/m2repository/antlr/antlr/2.7.6/antlr-2.7.6.jar:/Users/jfischer/m2repository/commons-collections/commons-collections/3.2/commons-collections-3.2.jar:/Users/jfischer/m2repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:/Users/jfischer/m2repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:/Users/jfischer/m2repository/javax/transaction/jta/1.1/jta-1.1.jar:/Users/jfischer/m2repository/commons-validator/commons-validator/1.3.1/commons-validator-1.3.1.jar:/Users/jfischer/m2repository/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar:/Users/jfischer/m2repository/commons-digester/commons-digester/1.6/commons-digester-1.6.jar:/Users/jfischer/m2repository/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4.jar:/Users/jfischer/m2repository/org/springframework/spring-core/2.0.8/spring-core-2.0.8.jar:/Users/jfischer/m2repository/org/springframework/spring-context/2.0.8/spring-context-2.0.8.jar:/Users/jfischer/m2repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar:/Users/jfischer/m2repository/org/springframework/spring-beans/2.0.8/spring-beans-2.0.8.jar:/Users/jfischer/m2repository/org/springframework/spring-aop/2.0.8/spring-aop-2.0.8.jar:/Users/jfischer/m2repository/org/springframework/spring-support/2.0.8/spring-support-2.0.8.jar:/Users/jfischer/m2repository/commons-codec/commons-codec/1.3/commons-codec-1.3.jar:/Users/jfischer/m2repository/org/springframework/spring-test/2.5.6/spring-test-2.5.6.jar:/Users/jfischer/m2repository/org/testng/testng/5.9/testng-5.9-jdk15.jar:/Users/jfischer/m2repository/commons-dbcp/commons-dbcp/1.2.2/commons-dbcp-1.2.2.jar:/Users/jfischer/m2repository/commons-pool/commons-pool/1.3/commons-pool-1.3.jar:/Users/jfischer/m2repository/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar:/Users/jfischer/m2repository/org/slf4j/slf4j-api/1.5.2/slf4j-api-1.5.2.jar:/Users/jfischer/m2repository/hibernate/hibernate-entitymanager/3.4.0.GA/hibernate-entitymanager-3.4.0.GA.jar:/Users/jfischer/m2repository/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:/Users/jfischer/m2repository/org/slf4j/slf4j-jdk14/1.5.2/slf4j-jdk14-1.5.2.jar:/Users/jfischer/m2repository/org/slf4j/slf4j-log4j12/1.5.2/slf4j-log4j12-1.5.2.jar:/Users/jfischer/m2repository/velocity-tools/velocity-tools/1.4/velocity-tools-1.4.jar:/Users/jfischer/m2repository/org/hibernate/hibernate-jmx/3.3.1.GA/hibernate-jmx-3.3.1.GA.jar:/Users/jfischer/m2repository/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceProfile/target/classes:/Users/jfischer/m2repository/javax/mail/mail/1.4.1/mail-1.4.1.jar:/Users/jfischer/m2repository/javax/activation/activation/1.1/activation-1.1.jar:/Users/jfischer/m2repository/org/apache/velocity/velocity/1.6.2/velocity-1.6.2.jar:/Users/jfischer/m2repository/commons-lang/commons-lang/2.4/commons-lang-2.4.jar:/Users/jfischer/m2repository/oro/oro/2.0.8/oro-2.0.8.jar:/Users/jfischer/m2repository/org/apache/xmlbeans/xmlbeans/2.4.0/xmlbeans-2.4.0.jar:/Users/jfischer/m2repository/stax/stax-api/1.0.1/stax-api-1.0.1.jar:/Users/jfischer/m2repository/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar:/Users/jfischer/m2repository/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceProfileWeb/target/classes:/Users/jfischer/m2repository/org/springframework/spring-webmvc/2.5.6/spring-webmvc-2.5.6.jar:/Users/jfischer/m2repository/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6.jar:/Users/jfischer/m2repository/org/springframework/spring-web/2.5.6/spring-web-2.5.6.jar:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceFramework/target/classes:/Users/jfischer/m2repository/org/compass-project/compass/2.2.0/compass-2.2.0.jar:/Users/jfischer/m2repository/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1.jar:/Users/jfischer/m2repository/org/mvel/mvel2/2.0.11/mvel2-2.0.11.jar:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceFrameworkWeb/target/classes:" name="surefire.test.class.path"/>
+    <property value="/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceIntegrationTests/target/test-classes:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceIntegrationTests/target/classes:/Users/jfischer/m2repository/junit/junit/3.8.1/junit-3.8.1.jar:/Users/jfischer/m2repository/org/hibernate/ejb3-persistence/1.0.2.GA/ejb3-persistence-1.0.2.GA.jar:/Users/jfischer/m2repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar:/Users/jfischer/m2repository/org/springframework/spring/2.5.6/spring-2.5.6.jar:/Users/jfischer/m2repository/log4j/log4j/1.2.12/log4j-1.2.12.jar:/Users/jfischer/m2repository/org/aspectj/aspectjweaver/1.6.5/aspectjweaver-1.6.5.jar:/Users/jfischer/m2repository/org/hibernate/hibernate-annotations/3.4.0.GA/hibernate-annotations-3.4.0.GA.jar:/Users/jfischer/m2repository/org/hibernate/hibernate-commons-annotations/3.1.0.GA/hibernate-commons-annotations-3.1.0.GA.jar:/Users/jfischer/m2repository/org/hibernate/hibernate-core/3.3.1.GA/hibernate-core-3.3.1.GA.jar:/Users/jfischer/m2repository/antlr/antlr/2.7.6/antlr-2.7.6.jar:/Users/jfischer/m2repository/commons-collections/commons-collections/3.2/commons-collections-3.2.jar:/Users/jfischer/m2repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar:/Users/jfischer/m2repository/xml-apis/xml-apis/1.0.b2/xml-apis-1.0.b2.jar:/Users/jfischer/m2repository/javax/transaction/jta/1.1/jta-1.1.jar:/Users/jfischer/m2repository/commons-validator/commons-validator/1.3.1/commons-validator-1.3.1.jar:/Users/jfischer/m2repository/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar:/Users/jfischer/m2repository/commons-digester/commons-digester/1.6/commons-digester-1.6.jar:/Users/jfischer/m2repository/org/springframework/security/spring-security-core/2.0.4/spring-security-core-2.0.4.jar:/Users/jfischer/m2repository/org/springframework/spring-core/2.0.8/spring-core-2.0.8.jar:/Users/jfischer/m2repository/org/springframework/spring-context/2.0.8/spring-context-2.0.8.jar:/Users/jfischer/m2repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar:/Users/jfischer/m2repository/org/springframework/spring-beans/2.0.8/spring-beans-2.0.8.jar:/Users/jfischer/m2repository/org/springframework/spring-aop/2.0.8/spring-aop-2.0.8.jar:/Users/jfischer/m2repository/org/springframework/spring-support/2.0.8/spring-support-2.0.8.jar:/Users/jfischer/m2repository/commons-codec/commons-codec/1.3/commons-codec-1.3.jar:/Users/jfischer/m2repository/commons-dbcp/commons-dbcp/1.2.2/commons-dbcp-1.2.2.jar:/Users/jfischer/m2repository/commons-pool/commons-pool/1.3/commons-pool-1.3.jar:/Users/jfischer/m2repository/hsqldb/hsqldb/1.8.0.10/hsqldb-1.8.0.10.jar:/Users/jfischer/m2repository/org/slf4j/slf4j-api/1.5.2/slf4j-api-1.5.2.jar:/Users/jfischer/m2repository/hibernate/hibernate-entitymanager/3.4.0.GA/hibernate-entitymanager-3.4.0.GA.jar:/Users/jfischer/m2repository/javassist/javassist/3.4.GA/javassist-3.4.GA.jar:/Users/jfischer/m2repository/org/slf4j/slf4j-jdk14/1.5.2/slf4j-jdk14-1.5.2.jar:/Users/jfischer/m2repository/org/slf4j/slf4j-log4j12/1.5.2/slf4j-log4j12-1.5.2.jar:/Users/jfischer/m2repository/velocity-tools/velocity-tools/1.4/velocity-tools-1.4.jar:/Users/jfischer/m2repository/org/hibernate/hibernate-jmx/3.3.1.GA/hibernate-jmx-3.3.1.GA.jar:/Users/jfischer/m2repository/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceProfile/target/classes:/Users/jfischer/m2repository/javax/mail/mail/1.4.1/mail-1.4.1.jar:/Users/jfischer/m2repository/javax/activation/activation/1.1/activation-1.1.jar:/Users/jfischer/m2repository/org/apache/velocity/velocity/1.6.2/velocity-1.6.2.jar:/Users/jfischer/m2repository/commons-lang/commons-lang/2.4/commons-lang-2.4.jar:/Users/jfischer/m2repository/oro/oro/2.0.8/oro-2.0.8.jar:/Users/jfischer/m2repository/org/apache/xmlbeans/xmlbeans/2.4.0/xmlbeans-2.4.0.jar:/Users/jfischer/m2repository/stax/stax-api/1.0.1/stax-api-1.0.1.jar:/Users/jfischer/m2repository/org/apache/geronimo/specs/geronimo-jms_1.1_spec/1.1.1/geronimo-jms_1.1_spec-1.1.1.jar:/Users/jfischer/m2repository/net/sf/ehcache/ehcache/1.2.3/ehcache-1.2.3.jar:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceProfileWeb/target/classes:/Users/jfischer/m2repository/org/springframework/spring-webmvc/2.5.6/spring-webmvc-2.5.6.jar:/Users/jfischer/m2repository/org/springframework/spring-context-support/2.5.6/spring-context-support-2.5.6.jar:/Users/jfischer/m2repository/org/springframework/spring-web/2.5.6/spring-web-2.5.6.jar:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceFramework/target/classes:/Users/jfischer/m2repository/org/compass-project/compass/2.2.0/compass-2.2.0.jar:/Users/jfischer/m2repository/org/apache/lucene/lucene-core/2.4.1/lucene-core-2.4.1.jar:/Users/jfischer/m2repository/org/mvel/mvel2/2.0.11/mvel2-2.0.11.jar:/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceFrameworkWeb/target/classes:/Users/jfischer/m2repository/org/springframework/spring-test/2.5.6/spring-test-2.5.6.jar:/Users/jfischer/m2repository/org/testng/testng/5.9/testng-5.9-jdk15.jar:/Users/jfischer/m2repository/javax/servlet/jsp/jsp-api/2.1/jsp-api-2.1.jar:/Users/jfischer/m2repository/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar:/Users/jfischer/m2repository/com/icegreen/greenmail/1.3/greenmail-1.3.jar:" name="surefire.test.class.path"/>
     <property value="/var/folders/ts/tsuZmbvpGJuknB+L1RQavE+++TI/-Tmp-/" name="java.io.tmpdir"/>
     <property value="http://bugreport.apple.com/" name="java.vendor.url.bug"/>
     <property value="/tmp/launch-XEToPx/Listeners" name="env.SSH_AUTH_SOCK"/>
@@ -75,105 +75,226 @@
     <property value="1050.1.5.0_19-304" name="mrj.version"/>
     <property value="
 " name="line.separator"/>
-    <property value="org.codehaus.classworlds.Launcher" name="env.JAVA_MAIN_CLASS_1745"/>
     <property value="Java HotSpot(TM) Client VM" name="java.vm.name"/>
     <property value="/Java_Projects/dev/credera/BroadleafCommerce/BroadleafCommerceIntegrationTests" name="basedir"/>
     <property value="true" name="maven.mode.standalone"/>
     <property value="MacRoman" name="file.encoding"/>
     <property value="1.5" name="java.specification.version"/>
+    <property value="../Resources/Eclipse.icns" name="env.APP_ICON_1963"/>
   </properties>
-  <testcase classname="org.broadleafcommerce.profile.PhoneTest" time="0" name="springTestContextPrepareTestInstance">
-    <failure type="java.lang.NoClassDefFoundError" message="javax/servlet/http/HttpServletRequest">java.lang.NoClassDefFoundError: javax/servlet/http/HttpServletRequest
-	at java.lang.Class.getDeclaredMethods0(Native Method)
-	at java.lang.Class.privateGetDeclaredMethods(Class.java:2395)
-	at java.lang.Class.getDeclaredMethods(Class.java:1763)
-	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:460)
-	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:443)
-	at org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor.findPersistenceMetadata(PersistenceAnnotationBeanPostProcessor.java:363)
-	at org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor.postProcessMergedBeanDefinition(PersistenceAnnotationBeanPostProcessor.java:296)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyMergedBeanDefinitionPostProcessors(AbstractAutowireCapableBeanFactory.java:745)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:448)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory$1.run(AbstractAutowireCapableBeanFactory.java:409)
-	at java.security.AccessController.doPrivileged(Native Method)
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:380)
-	at org.springframework.beans.factory.support.AbstractBeanFactory$1.getObject(AbstractBeanFactory.java:264)
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:222)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:261)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:185)
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:164)
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:429)
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:728)
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:380)
-	at org.springframework.test.context.support.AbstractGenericContextLoader.loadContext(AbstractGenericContextLoader.java:84)
-	at org.springframework.test.context.support.AbstractGenericContextLoader.loadContext(AbstractGenericContextLoader.java:42)
-	at org.springframework.test.context.TestContext.loadApplicationContext(TestContext.java:173)
-	at org.springframework.test.context.TestContext.getApplicationContext(TestContext.java:197)
-	at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.injectDependencies(DependencyInjectionTestExecutionListener.java:109)
-	at org.springframework.test.context.support.DependencyInjectionTestExecutionListener.prepareTestInstance(DependencyInjectionTestExecutionListener.java:75)
-	at org.springframework.test.context.TestContextManager.prepareTestInstance(TestContextManager.java:255)
-	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextPrepareTestInstance(AbstractTestNGSpringContextTests.java:117)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:585)
-	at org.testng.internal.MethodHelper.invokeMethod(MethodHelper.java:607)
-	at org.testng.internal.Invoker.invokeConfigurationMethod(Invoker.java:417)
-	at org.testng.internal.Invoker.invokeConfigurations(Invoker.java:154)
-	at org.testng.internal.Invoker.invokeConfigurations(Invoker.java:88)
-	at org.testng.internal.TestMethodWorker.invokeBeforeClassMethods(TestMethodWorker.java:167)
-	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:104)
-	at org.testng.TestRunner.runWorkers(TestRunner.java:759)
-	at org.testng.TestRunner.privateRun(TestRunner.java:592)
-	at org.testng.TestRunner.run(TestRunner.java:486)
-	at org.testng.SuiteRunner.runTest(SuiteRunner.java:332)
-	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:327)
-	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:299)
-	at org.testng.SuiteRunner.run(SuiteRunner.java:204)
-	at org.testng.TestNG.createAndRunSuiteRunners(TestNG.java:877)
-	at org.testng.TestNG.runSuitesLocally(TestNG.java:842)
-	at org.testng.TestNG.run(TestNG.java:751)
-	at org.apache.maven.surefire.testng.TestNGExecutor.run(TestNGExecutor.java:62)
-	at org.apache.maven.surefire.testng.TestNGDirectoryTestSuite.execute(TestNGDirectoryTestSuite.java:141)
-	at org.apache.maven.surefire.Surefire.run(Surefire.java:177)
-	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
-	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
-	at java.lang.reflect.Method.invoke(Method.java:585)
-	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:338)
-	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:997)
-</failure>
-  </testcase>
-  <testcase classname="org.broadleafcommerce.profile.PhoneTest" time="0.006" name="setup">
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest" time="0.37" name="createCustomerPhoneFromController"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest" time="0.007" name="createCustomerPhoneFromController"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest" time="0.007" name="readCustomerPhoneFromController"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest" time="0.008" name="makePhoneDefaultOnCustomerPhoneController"/>
+  <testcase classname="org.broadleafcommerce.profile.service.AddressTest" time="0.003" name="createCountry"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerTest" time="0.001" name="createCustomerIdGeneration"/>
+  <testcase classname="org.broadleafcommerce.profile.service.AddressTest" time="0.011" name="createState"/>
+  <testcase classname="org.broadleafcommerce.profile.service.AddressTest" time="0.003" name="findStates"/>
+  <testcase classname="org.broadleafcommerce.profile.service.AddressTest" time="0.021" name="findStateByAbbreviation"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest" time="0.003" name="viewExistingCustomerPhoneFromController"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.018" name="createSku1"/>
+  <testcase classname="org.broadleafcommerce.profile.service.AddressTest" time="0.001" name="findCountries"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerTest" time="0.021" name="createCustomer"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerTest" time="0.005" name="createCustomer"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerTest" time="0.007" name="readCustomersByUsername1"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerTest" time="0.005" name="changeCustomerPasswords"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerTest" time="0.003" name="readCustomersByUsername2"/>
+  <testcase classname="org.broadleafcommerce.profile.service.PhoneTest" time="0.001" name="createPhone"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.138" name="createCartForCustomer"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerAddressTest" time="0.008" name="createCustomerAddress"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerAddressTest" time="0.006" name="createCustomerAddress"/>
+  <testcase classname="org.broadleafcommerce.profile.service.AddressTest" time="0" name="findCountryByShortName"/>
+  <testcase classname="org.broadleafcommerce.profile.service.IdGenerationTest" time="0.002" name="createId"/>
+  <testcase classname="org.broadleafcommerce.profile.service.IdGenerationTest" time="0.015" name="findIds"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.003" name="createProducts"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.002" name="createProducts"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.003" name="createProducts"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.002" name="createProducts"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.002" name="createProducts"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.002" name="createProducts"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.002" name="createProducts"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.017" name="createUpSaleValues"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.005" name="createUpSaleValues"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.095" name="testReadProductsWithUpSaleValues"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.004" name="testReadProductsWithUpSaleValues"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.008" name="createCrossSaleValues"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.005" name="createCrossSaleValues"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.005" name="findCurrentCartForCustomer"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.01" name="getOrdersForCustomer"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.004" name="findCartForAnonymousCustomer"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.012" name="findOrderByOrderNumber"/>
+  <testcase classname="org.broadleafcommerce.profile.service.PhoneTest" time="0.002" name="readPhoneById"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.002" name="createSku2"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.37" name="testOfferUsedForPricing"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.017" name="testOfferNotStackableItemOffers"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.018" name="testOfferNotCombinableItemOffers"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.022" name="testOfferLowerSalePrice"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.009" name="findNamedOrderForCustomer"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.005" name="testSubmitOrder"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.01" name="testReadOrdersForCustomer"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.003" name="testOrderProperties"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.021" name="testNamedOrderForCustomer"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.186" name="testAddSkuToOrder"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.019" name="testOrderPaymentInfos"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerTest" time="0.001" name="readCustomersById"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerAddressTest" time="0.002" name="readCustomerAddressByUserId"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.008" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.004" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.003" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="createSkuAvailability"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="checkAvailableQuantityWithReserveAndQOH"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.011" name="readAvailableSkusForLocation"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.003" name="checkAvailableQuantityWithNullQuantityOnHand"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.001" name="readAvailableSkusForUnknownLocation"/>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderDaoTest" time="0.002" name="createOrder"/>
+  <testcase classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest" time="0.108" name="createDefaultFulfillmentGroup"/>
+  <testcase classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest" time="0.002" name="readDefaultFulfillmentGroupForOrder"/>
+  <testcase classname="org.broadleafcommerce.payment.service.PaymentInfoServiceTest" time="0.007" name="createPaymentInfo"/>
+  <testcase classname="org.broadleafcommerce.payment.service.PaymentInfoServiceTest" time="0.001" name="readPaymentInfoByOrder"/>
+  <testcase classname="org.broadleafcommerce.payment.service.PaymentInfoServiceTest" time="0.036" name="readPaymentInfoById"/>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderDaoTest" time="0.003" name="readOrdersForCustomer"/>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderDaoTest" time="0.001" name="readOrderById"/>
+  <testcase classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest" time="0.007" name="createFulfillmentGroup"/>
+  <testcase classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest" time="0.003" name="readFulfillmentGroupsForId"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.SkuDaoTest" time="0.017" name="createSku">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.profile.PhoneTest" time="0.006" name="createPhone">
+  <testcase classname="org.broadleafcommerce.catalog.dao.SkuDaoTest" time="0.017" name="readFirstSku">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.profile.PhoneTest" time="0.007" name="readPhoneById">
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.018" name="addItemToOrder">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.profile.PhoneTest" time="0.007" name="tearDown">
+  <testcase classname="org.broadleafcommerce.catalog.dao.SkuDaoTest" time="0.018" name="readSkuById">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0.007" name="springTestContextPrepareTestInstance">
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.021" name="addAnotherItemToOrder">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0.007" name="setup">
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.021" name="addBundleToOrder">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0.008" name="springTestContextBeforeTestMethod">
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.021" name="removeBundleFromOrder">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0.001" name="testSkus">
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.022" name="getItemsForOrder">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0.001" name="springTestContextBeforeTestMethod">
+  <testcase classname="org.broadleafcommerce.offer.service.OfferServiceTest" time="0.036" name="applyOffersToOrder">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0" name="testCatalog">
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.036" name="removeItemFromOrder">
     <skipped/>
   </testcase>
-  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0" name="tearDown">
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.036" name="updateItemsInOrder">
     <skipped/>
   </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderDaoTest" time="0.011" name="deleteOrderForCustomer"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.007" name="readSKUAvailabilityEntries"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.025" name="testOfferLowerSalePriceWithNotCombinableOffer"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.016" name="testOfferLowerSalePriceWithNotCombinableOffer2"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.025" name="testOfferNotStackableOrderOffers"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneTest" time="0.004" name="createCustomerPhone"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneTest" time="0.004" name="createCustomerPhone"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneTest" time="0.015" name="readCustomerPhoneByUserId"/>
+  <testcase classname="org.broadleafcommerce.inventory.service.SkuAvailabilityTest" time="0.006" name="checkAvailableQuantityWithNullReserveQty"/>
+  <testcase classname="org.broadleafcommerce.pricing.service.PricingTest" time="0.003" name="testShippingInsert"/>
+  <testcase classname="org.broadleafcommerce.pricing.service.PricingTest" time="0.009" name="testPricing"/>
+  <testcase classname="org.broadleafcommerce.checkout.service.CheckoutTest" time="0.03" name="testCheckout"/>
+  <testcase classname="org.broadleafcommerce.pricing.service.PricingTest" time="0.004" name="testShipping"/>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderItemDaoTest" time="0.029" name="createDiscreteOrderItem">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest" time="0.054" name="createFulfillmentGroupItem">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest" time="0.054" name="readFulfillmentGroupItemsById">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.FulfillmentGroupItemDaoTest" time="0.054" name="readFulfillmentGroupItemsForFulfillmentGroup">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderItemDaoTest" time="0.055" name="readOrderItemsById">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderItemDaoTest" time="0.055" name="createGiftWrapOrderItem">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderItemDaoTest" time="0.056" name="readGiftWrapOrderItemsById">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderItemDaoTest" time="0.056" name="deleteGiftWrapOrderItemsById">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.dao.OrderItemDaoTest" time="0.056" name="readOrderItemsByIdAfterGiftWrapDeletion">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.042" name="testOfferLowerSalePriceWithNotCombinableOfferAndInformation"/>
+  <testcase classname="org.broadleafcommerce.order.dao.FulfillmentGroupDaoTest" time="0.001" name="readDefaultFulfillmentGroupForId"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.004" name="testReadProductsWithCrossSaleValues"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.003" name="testReadProductsWithCrossSaleValues"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.003" name="checkOrderItems">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.004" name="addPaymentToOrder">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.004" name="addFulfillmentGroupToOrderFirst">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.005" name="removeFulfillmentGroupFromOrder">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.005" name="addItemToFulfillmentgroupSecond">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.005" name="findFillmentGroupForOrderFirst">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.006" name="findDefaultFillmentGroupForOrder">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.006" name="removeItemFromOrderAfterFulfillmentGroups">
+    <skipped/>
+  </testcase>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.031" name="testOfferNotCombinableOrderOffers"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.015" name="testOfferNotCombinableOrderOffersWithItemOffer"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.014" name="testGlobalOffers"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.019" name="testCustomerAssociatedOffers"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.064" name="testFulfillmentGroupOffers"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.019" name="testOfferDelete"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.005" name="testReadAllOffers"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.004" name="testOfferCodeDao"/>
+  <testcase classname="org.broadleafcommerce.offer.service.OfferTest" time="0.002" name="testCustomerOffers"/>
+  <testcase classname="org.broadleafcommerce.payment.service.PaymentInfoServiceTest" time="0.004" name="createTestPaymentInfo"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.CategoryDaoTest" time="0.003" name="testSetFeaturedProducts"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.002" name="testReadProductsById"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.002" name="testReadProductsByName"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.001" name="testFeaturedProduct"/>
+  <testcase classname="org.broadleafcommerce.catalog.dao.ProductDaoTest" time="0.003" name="testProductAttributes"/>
+  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0" name="testSkus"/>
+  <testcase classname="org.broadleafcommerce.catalog.service.CatalogTest" time="0.025" name="testCatalog"/>
+  <testcase classname="org.broadleafcommerce.email.service.EmailTest" time="0.155" name="testSynchronousEmail"/>
+  <testcase classname="org.broadleafcommerce.extensibility.ExtensibilityTest" time="0.146" name="test"/>
+  <testcase classname="org.broadleafcommerce.layout.PaginationCommandObjectTest" time="0.001" name="testDisplayList"/>
+  <testcase classname="org.broadleafcommerce.layout.PaginationCommandObjectTest" time="0.001" name="testIndices"/>
+  <testcase classname="org.broadleafcommerce.layout.PaginationCommandObjectTest" time="0.001" name="testFullList"/>
+  <testcase classname="org.broadleafcommerce.offer.service.MVELTest" time="0.023" name="testOfferAppliesToItemsInCategoryAndOrderValueGreaterThanFifty"/>
+  <testcase classname="org.broadleafcommerce.offer.service.MVELTest" time="0.056" name="testBasicMVELFunctions"/>
+  <testcase classname="org.broadleafcommerce.offer.service.MVELTest" time="0.005" name="testOfferAppliesToFulfillmentGroup"/>
+  <testcase classname="org.broadleafcommerce.offer.service.MVELTest" time="0.003" name="testOfferAppliesToSpecificItems"/>
+  <testcase classname="org.broadleafcommerce.order.service.OrderTest" time="0.002" name="findCartForNullCustomerId"/>
+  <testcase classname="org.broadleafcommerce.profile.service.CustomerPhoneControllerTest" time="0.001" name="viewCustomerPhoneFromController"/>
+  <testcase classname="org.broadleafcommerce.profile.service.RegisterCustomerControllerTest" time="0.031" name="createCustomerFromController"/>
+  <testcase classname="org.broadleafcommerce.profile.service.RegisterCustomerControllerTest" time="0" name="viewRegisterCustomerFromController"/>
+  <testcase classname="org.broadleafcommerce.security.service.AdminPermissionTest" time="0.017" name="testAdminPermissionSave"/>
+  <testcase classname="org.broadleafcommerce.security.service.AdminRoleTest" time="0.019" name="testAdminRoleSave"/>
+  <testcase classname="org.broadleafcommerce.security.service.AdminUserTest" time="0.021" name="testAdminUserSave"/>
+  <testcase classname="org.broadleafcommerce.test.OrmTest" time="0" name="testMappings"/>
 </testsuite>
