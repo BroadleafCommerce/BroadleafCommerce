@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.util.money.Money;
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
@@ -188,6 +189,17 @@ public interface Sku extends Serializable {
      */
     public void setSkuImages(Map<String, String> skuImages);
 
+    /**
+     * Returns a map of key/value pairs where the key is a string for the name of a media object and the value
+     * is a media object.
+     */
+    public Map<String, Media> getSkuMedia();
+
+    /**
+     * Sets a map of key/value pairs where the key is a string for the name of a media object and the value
+     * is an object of type Media.
+     */
+    public void setSkuMedia(Map<String, Media> skuMedia);
     /**
      * Get all the parent products since a sku can exist in multiple
      */

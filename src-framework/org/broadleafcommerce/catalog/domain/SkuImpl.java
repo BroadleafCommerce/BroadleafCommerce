@@ -38,6 +38,8 @@ import javax.persistence.TableGenerator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.media.domain.Media;
+import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.money.Money;
 import org.compass.annotations.Searchable;
@@ -45,7 +47,9 @@ import org.compass.annotations.SearchableId;
 import org.compass.annotations.SearchableProperty;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.MapKey;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -130,6 +134,16 @@ public class SkuImpl implements Sku {
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, String> skuImages = new HashMap<String, String>();
+
+    /** The sku media. */
+    @ManyToMany(targetEntity = MediaImpl.class)
+    @JoinTable(name = "BLC_SKU_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
+    @MapKey(columns = {@Column(name = "MAP_KEY")})
+    //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    protected Map<String, Media> skuMedia = new HashMap<String , Media>();
+
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
@@ -423,6 +437,24 @@ public class SkuImpl implements Sku {
      */
     public void setSkuImages(Map<String, String> skuImages) {
         this.skuImages = skuImages;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#getSkuMedia()
+     */
+    public Map<String, Media> getSkuMedia() {
+        return skuMedia;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.catalog.domain.Sku#getSkuImage(java.util.Map)
+     */
+    public void setSkuMedia(Map<String, Media> skuMedia) {
+        this.skuMedia = skuMedia;
     }
 
     public List<Product> getAllParentProducts() {

@@ -44,6 +44,8 @@ import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.media.domain.Media;
+import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.vendor.service.type.ContainerSizeType;
@@ -54,7 +56,9 @@ import org.compass.annotations.SupportUnmarshall;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.MapKey;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -155,6 +159,15 @@ public class ProductImpl implements Product {
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, String> productImages = new HashMap<String, String>();
+
+    /** The product media. */
+    @ManyToMany(targetEntity = MediaImpl.class)
+    @JoinTable(name = "BLC_PRODUCT_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
+    @MapKey(columns = {@Column(name = "MAP_KEY")})
+    //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    protected Map<String, Media> productMedia = new HashMap<String , Media>();
 
     /** The default category. */
     @OneToOne(targetEntity = CategoryImpl.class)
@@ -363,6 +376,14 @@ public class ProductImpl implements Product {
      */
     public Category getDefaultCategory() {
         return defaultCategory;
+    }
+
+    public Map<String, Media> getProductMedia() {
+        return productMedia;
+    }
+
+    public void setProductMedia(Map<String, Media> productMedia) {
+        this.productMedia = productMedia;
     }
 
     /*
