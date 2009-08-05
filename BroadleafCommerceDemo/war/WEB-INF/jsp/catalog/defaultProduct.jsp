@@ -52,7 +52,7 @@
 						<span class="productPrice"> 
 							<b> Our Price: </b>
 							<c:choose>
-								<c:when test="${currentProduct.skus[0].salePrice != null}" >
+								<c:when test="${currentProduct.skus[0].salePrice != currentProduct.skus[0].retailPrice}" >
 									<span class="strikethrough"><c:out value="${currentProduct.skus[0].retailPrice}" /></span>
 									<c:out value="${currentProduct.skus[0].salePrice}" />
 								</c:when>			
@@ -90,7 +90,7 @@
 									</div>
 									<div style="margin-top:5px;"> Our Price: <br/>
 										<c:choose>
-											<c:when test="${item.relatedSaleProduct.skus[0].salePrice != null}" >
+											<c:when test="${item.relatedSaleProduct.skus[0].salePrice != item.relatedSaleProduct.skus[0].retailPrice }" >
 												<span class="strikethrough"><c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" /></span>
 												<c:out value="${item.relatedSaleProduct.skus[0].salePrice}" />
 											</c:when>			
@@ -128,7 +128,7 @@
 									</div>
 									<div style="margin-top:5px;"> Our Price: <br/>
 										<c:choose>
-											<c:when test="${item.relatedSaleProduct.skus[0].salePrice != null}" >
+											<c:when test="${item.relatedSaleProduct.skus[0].salePrice != item.relatedSaleProduct.skus[0].retailPrice }" >
 												<span class="strikethrough">${item.relatedSaleProduct.skus[0].retailPrice}</span>
 												${item.relatedSaleProduct.skus[0].salePrice}
 											</c:when>			

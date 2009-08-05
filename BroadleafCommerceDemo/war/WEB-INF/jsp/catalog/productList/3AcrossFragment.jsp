@@ -40,7 +40,7 @@
 				<div class="span-3 column productResultsRightCol" style="float:right;text-align:right;">
 					<span class="productPrice">
 						<c:choose>
-							<c:when test="${displayProduct.product.skus[0].salePrice != null}" >
+							<c:when test="${displayProduct.product.skus[0].salePrice != displayProduct.product.skus[0].retailPrice }" >
 								Sale: <span class="salePrice">$<c:out value="${displayProduct.product.skus[0].salePrice}" /></span>
 								<br/><span class="originalPrice">$<c:out value="${displayProduct.product.skus[0].retailPrice}" /></span>
 							</c:when>			
