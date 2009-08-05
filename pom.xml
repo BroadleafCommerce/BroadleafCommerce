@@ -6,4 +6,11 @@
   <name>BroadleafCommerce</name>
   <version>0.0.0</version>
   <description>BroadleafCommerce Maven Build</description>
+  <modules>
+  	<module>BroadleafCommerceProfile</module>
+  	<module>BroadleafCommerceProfileWeb</module>
+  	<module>BroadleafCommerceFramework</module>
+  	<module>BroadleafCommerceFramework</module>
+  	<module>BroadleafCommerceFrameworkWeb</module>
+  </modules>
 </project>
