@@ -12,6 +12,7 @@
         <mapping-file>config/bc/jpa/domain/ShippingRate.orm.xml</mapping-file>
         <class>org.broadleafcommerce.catalog.domain.BasePriceImpl</class>
         <class>org.broadleafcommerce.catalog.domain.CategoryImpl</class>
+        <class>org.broadleafcommerce.media.domain.MediaImpl</class>
         <class>org.broadleafcommerce.catalog.domain.CategoryProductImpl</class>
         <class>org.broadleafcommerce.catalog.domain.CategoryXref</class>
         <class>org.broadleafcommerce.catalog.domain.CrossSaleProductImpl</class>

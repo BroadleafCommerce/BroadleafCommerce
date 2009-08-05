@@ -18,6 +18,7 @@ package org.broadleafcommerce.catalog.test;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -29,8 +30,11 @@ import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.media.domain.Media;
+import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.test.integration.BaseTest;
 import org.broadleafcommerce.util.money.Money;
+import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
 public class CatalogTest extends BaseTest {
@@ -41,6 +45,7 @@ public class CatalogTest extends BaseTest {
     private ProductDao productDao;
 
     @Test
+    @Rollback(false)
     public void testCatalog() throws Exception {
         Category category = new CategoryImpl();
         category.setName("Soaps");
@@ -64,6 +69,17 @@ public class CatalogTest extends BaseTest {
 
         testCategory = catalogService.findCategoryById(category.getId());
         assert testCategory.getId().equals(category.getId());
+
+        Map<String, Media> categoryMedia = testCategory.getCategoryMedia();
+        Media media = new MediaImpl();
+        media.setLabel("test");
+        media.setName("large");
+        media.setUrl("http://myUrl");
+        categoryMedia.put("large", media);
+        catalogService.saveCategory(testCategory);
+
+        testCategory = catalogService.findCategoryById(category.getId());
+        assert(testCategory.getCategoryMedia().get("large") != null);
 
         List<Category> categories = catalogService.findAllCategories();
         assert categories != null && categories.size() == 1;
