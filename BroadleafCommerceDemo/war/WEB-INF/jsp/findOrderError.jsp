@@ -6,7 +6,7 @@
 
 	The order information you specified is incorrect. Please try again. <br/><br/>
 
-	<a href="showFindOrder.htm"> Back </a>
+	<a href="findOrder.htm"> Back </a>
 
 	</tiles:putAttribute>
 </tiles:insertDefinition>
