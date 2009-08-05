@@ -181,7 +181,6 @@
   	<module>BroadleafCommerceProfile</module>
   	<module>BroadleafCommerceProfileWeb</module>
   	<module>BroadleafCommerceFramework</module>
-  	<module>BroadleafCommerceFramework</module>
   	<module>BroadleafCommerceFrameworkWeb</module>
   </modules>
 </project>
