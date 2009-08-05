@@ -23,6 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.media.domain.Media;
+
 /**
  * Implementations of this interface are used to hold data about a Category.  A category is a group of products.
  * <br>
@@ -220,6 +222,11 @@ public interface Category extends Serializable {
      * @return the category image
      */
     public String getCategoryImage(String imageKey);
+
+    public Map<String, Media> getCategoryMedia() ;
+
+    public void setCategoryMedia(Map<String, Media> categoryMedia);
+
 
     /**
      * Sets the category images.
