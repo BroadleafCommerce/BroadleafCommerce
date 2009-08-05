@@ -1,0 +1,21 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="5" skipfailedinvocationCounts="false" verbose="0" name="Failed suite [Command line suite]" junit="false" annotations="JDK">
+  <test name="Command line test(failed)" junit="false" annotations="JDK">
+    <classes>
+      <class name="org.broadleafcommerce.catalog.service.CatalogTest">
+        <methods>
+          <include name="testSkus"/>
+          <include name="testCatalog"/>
+          <include name="springTestContextAfterTestMethod"/>
+        </methods>
+      </class>
+      <class name="org.broadleafcommerce.profile.PhoneTest">
+        <methods>
+          <include name="createPhone"/>
+          <include name="springTestContextPrepareTestInstance"/>
+          <include name="readPhoneById"/>
+        </methods>
+      </class>
+    </classes>
+  </test>
+</suite>
