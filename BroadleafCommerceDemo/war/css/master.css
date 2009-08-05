@@ -38,13 +38,15 @@ img {
 	border: 0;
 }
 
-.clearfix:after,.columns:after {
-	content: ".";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
+.columns:after {
+  content: "\0020"; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+  overflow:hidden; 
 }
+.columns {display: block;}
 
 .blueBorder {
 	border-width: 1px;

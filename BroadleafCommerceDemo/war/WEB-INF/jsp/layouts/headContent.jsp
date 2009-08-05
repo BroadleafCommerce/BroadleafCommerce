@@ -16,6 +16,7 @@
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/category.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/checkout.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/order.css" />
+<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/ui.stars.css" />
 
 
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/jquery-smoothness/jquery-ui-1.7.2.custom.css" />
@@ -37,5 +38,6 @@
 <script type="text/javascript" src="/broadleafdemo/js/thickbox-compressed.js"></script>
 <script type="text/javascript" src="/broadleafdemo/js/product.js"></script>
 <script type="text/javascript" src="/broadleafdemo/js/checkout.js"></script>
+<script type="text/javascript" src="/broadleafdemo/js/ui.stars.js"></script>
 <script type="text/javascript" src="/broadleafdemo/js/catalog.js"></script>
 <c:set scope="request" var="contextPath" value="${pageContext.request.contextPath}" />

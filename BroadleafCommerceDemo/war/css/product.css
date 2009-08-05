@@ -82,3 +82,24 @@ h3.relatedProd {
 .addCartBtn:hover,.addCartBtn:active,.addCartBtn:visited {
 	color:#fff;
 }
+
+a.reviewBtn {
+	border:0;
+	background: url("/broadleafdemo/images/steelBlueBtnGradient24.gif") repeat-x center center;
+	font-weight:bold;
+	font-size:12px;
+	text-decoration:none;
+	color:#333;
+	font-family:arial,sans-serif;
+	padding:4px 12px;
+	border:1px solid #74a6a2;
+}
+
+.reviewStars {
+	float:left;
+	margin-right:12px;
+}
+.ratingsSection {
+	margin-top:10px;
+	border-top:1px dashed #EE2200;
+}
