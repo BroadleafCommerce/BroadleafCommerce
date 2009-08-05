@@ -276,6 +276,13 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
+		
+		<sync todir="${set.deploy.path}/${app.name}/WEB-INF/tags">
+			<fileset dir="${war.dir}/WEB-INF/tags">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		
 		<copy todir="${set.deploy.path}/${app.name}">
 			<fileset dir="${war.dir}">
 				<include name="*.jsp"/>
