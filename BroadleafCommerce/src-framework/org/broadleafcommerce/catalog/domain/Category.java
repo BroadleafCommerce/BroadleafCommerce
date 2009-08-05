@@ -223,17 +223,26 @@ public interface Category extends Serializable {
      */
     public String getCategoryImage(String imageKey);
 
-    public Map<String, Media> getCategoryMedia() ;
-
-    public void setCategoryMedia(Map<String, Media> categoryMedia);
-
-
     /**
      * Sets the category images.
      * 
      * @param categoryImages the category images
      */
     public void setCategoryImages(Map<String, String> categoryImages);
+
+    /**
+     * Gets the category media map
+     * 
+     * @return the category Media
+     */
+    public Map<String, Media> getCategoryMedia() ;
+
+    /**
+     * Sets the category images.
+     * 
+     * @param categoryMedia the category media
+     */
+    public void setCategoryMedia(Map<String, Media> categoryMedia);
 
     /**
      * Gets the long description.

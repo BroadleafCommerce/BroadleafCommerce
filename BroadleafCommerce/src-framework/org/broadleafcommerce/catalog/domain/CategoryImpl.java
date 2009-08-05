@@ -146,7 +146,7 @@ public class CategoryImpl implements Category {
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKey(columns = {@Column(name = "MAP_KEY")})
-    // @MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
+    //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, Media> categoryMedia = new HashMap<String , Media>();
@@ -508,12 +508,18 @@ public class CategoryImpl implements Category {
         this.featuredProducts = featuredProducts;
     }
 
-
-
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Category#getCategoryMedia()
+     */
     public Map<String, Media> getCategoryMedia() {
         return categoryMedia;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.broadleafcommerce.catalog.domain.Category#setCategoryMedia(java.util.Map)
+     */
     public void setCategoryMedia(Map<String, Media> categoryMedia) {
         this.categoryMedia = categoryMedia;
     }

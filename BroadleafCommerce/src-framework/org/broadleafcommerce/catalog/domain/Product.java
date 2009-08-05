@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.vendor.service.type.ContainerSizeType;
 
@@ -171,6 +172,19 @@ public interface Product extends Serializable {
      */
     public void setProductImages(Map<String, String> productImages);
 
+    /**
+     * Returns a map of key/value pairs that associate the media name (key) with the Media object(value)
+     *
+     * @return a map of product media
+     */
+    public Map<String, Media> getProductMedia();
+
+    /**
+     * Sets the product media map.
+     *
+     * @param productImages - a map of product images
+     */
+    public void setProductMedia(Map<String, Media> productMedia);
     /**
      * Returns the default {@link Category} this product is associated with.
      *
