@@ -16,22 +16,27 @@
 package org.broadleafcommerce.catalog.web;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ReverseComparator;
 import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.search.util.SearchFilterUtil;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
 
-public class CatalogController extends AbstractController {
+@Controller
+public class CatalogController {
 
     private final UrlPathHelper pathHelper = new UrlPathHelper();
     private CatalogService catalogService;
@@ -41,14 +46,14 @@ public class CatalogController extends AbstractController {
     private String rootCategoryName;
     private String categoryTemplatePrefix;
 
-    @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-            HttpServletResponse response) {
+    @RequestMapping(method =  {RequestMethod.GET})
+    public String viewCatalog(ModelMap model, HttpServletRequest request) {
+        return showCatalog(model, request, null);
+    }
 
-        HashMap<String,Object> model = new HashMap<String,Object>();
-
+    private String showCatalog (ModelMap model, HttpServletRequest request, CatalogSort catalogSort) {
         addCategoryToModel(request, model);
-        boolean productFound = addProductsToModel(request, model);
+        boolean productFound = addProductsToModel(request, model, catalogSort);
 
         String view = defaultCategoryView;
         if (productFound) {
@@ -57,7 +62,7 @@ public class CatalogController extends AbstractController {
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
             if (currentCategory.getUrl() != null && !"".equals(currentCategory.getUrl())) {
-                return new ModelAndView("redirect:"+currentCategory.getUrl());
+                return "redirect:"+currentCategory.getUrl();
             } else if (currentCategory.getDisplayTemplate() != null && !"".equals(currentCategory.getUrl())) {
                 view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
             } else {
@@ -68,10 +73,20 @@ public class CatalogController extends AbstractController {
                 }
             }
         }
-        return new ModelAndView(view, model);
+
+        if (catalogSort == null) {
+            model.addAttribute("catalogSort", new CatalogSort());
+        }
+        return view;
     }
 
-    protected void addCategoryToModel(HttpServletRequest request, Map<String,Object> model ) {
+
+    @RequestMapping(method =  {RequestMethod.POST})
+    public String sortCatalog (ModelMap model, HttpServletRequest request, @ModelAttribute CatalogSort catalogSort) {
+        return showCatalog(model, request, catalogSort);
+    }
+
+    protected void addCategoryToModel(HttpServletRequest request, ModelMap model ) {
         Category rootCategory = null;
         if (getRootCategoryId() != null) {
             rootCategory = catalogService.findCategoryById(getRootCategoryId());
@@ -98,7 +113,7 @@ public class CatalogController extends AbstractController {
             category = catalogService.findCategoryById(category.getId());
         }
         addCategoryListToModel(categoryList, rootCategory, url, model);
-        model.put("rootCategory", rootCategory);
+        model.addAttribute("rootCategory", rootCategory);
     }
 
     protected int findProductPositionInList(Product product, List<Product> products) {
@@ -111,7 +126,7 @@ public class CatalogController extends AbstractController {
         return 0;
     }
 
-    protected boolean addCategoryListToModel(List<Category> categoryList, Category rootCategory, String url, Map<String,Object> model) {
+    protected boolean addCategoryListToModel(List<Category> categoryList, Category rootCategory, String url, ModelMap model) {
         boolean categoryError = false;
 
         while (categoryList == null) {
@@ -127,20 +142,21 @@ public class CatalogController extends AbstractController {
             }
         }
 
-        model.put("breadcrumbCategories", categoryList);
-        model.put("currentCategory", categoryList.get(categoryList.size()-1));
-        model.put("categoryError", categoryError);
+        model.addAttribute("breadcrumbCategories", categoryList);
+        model.addAttribute("currentCategory", categoryList.get(categoryList.size()-1));
+        model.addAttribute("categoryError", categoryError);
+
         return categoryError;
     }
 
-    protected boolean validateProductAndAddToModel(Product product, Map<String,Object> model) {
+    protected boolean validateProductAndAddToModel(Product product, ModelMap model) {
         Category currentCategory = (Category) model.get("currentCategory");
         Category rootCategory = (Category) model.get("rootCategory");
         int productPosition=0;
 
         List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
         if (productList != null) {
-            model.put("currentProducts", productList);
+            model.addAttribute("displayProducts", populateProducts(productList, currentCategory));
         }
         productPosition = findProductPositionInList(product, productList);
         if (productPosition == 0) {
@@ -148,7 +164,7 @@ public class CatalogController extends AbstractController {
             currentCategory = product.getDefaultCategory();
             productList = catalogService.findActiveProductsByCategory(currentCategory);
             if (productList != null) {
-                model.put("currentProducts", productList);
+                model.addAttribute("displayProducts", populateProducts(productList, currentCategory));
             }
             String url = currentCategory.getGeneratedUrl();
 
@@ -160,25 +176,25 @@ public class CatalogController extends AbstractController {
         }
 
         if (productPosition != 0) {
-            model.put("productError", false);
-            model.put("currentProduct", product);
-            model.put("productPosition", productPosition);
+            model.addAttribute("productError", false);
+            model.addAttribute("currentProduct", product);
+            model.addAttribute("productPosition", productPosition);
             if (productPosition != 1) {
-                model.put("previousProduct", productList.get(productPosition-2));
+                model.addAttribute("previousProduct", productList.get(productPosition-2));
             }
             if (productPosition < productList.size()) {
-                model.put("nextProduct", productList.get(productPosition));
+                model.addAttribute("nextProduct", productList.get(productPosition));
             }
-            model.put("totalProducts", productList.size());
+            model.addAttribute("totalProducts", productList.size());
         } else {
-            model.put("productError", true);
+            model.addAttribute("productError", true);
         }
 
         return (productPosition !=0);
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean addProductsToModel(HttpServletRequest request, Map<String,Object> model ) {
+    protected boolean addProductsToModel(HttpServletRequest request, ModelMap model, CatalogSort catalogSort) {
         boolean productFound = false;
 
         String productId = request.getParameter("productId");
@@ -191,11 +207,65 @@ public class CatalogController extends AbstractController {
             Category currentCategory = (Category) model.get("currentCategory");
             List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
             SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "skus[0].salePrice"});
-            model.put("currentProducts", productList);
+
+            if ((catalogSort != null) && (catalogSort.getSort() != null)) {
+                List<DisplayProduct> displayProducts = new ArrayList<DisplayProduct>();
+                displayProducts = populateProducts(productList, currentCategory);
+                model.addAttribute("displayProducts", sortProducts(catalogSort, displayProducts));
+            }
+            else {
+                catalogSort = new CatalogSort();
+                catalogSort.setSort("featured");
+                List<DisplayProduct> displayProducts = new ArrayList<DisplayProduct>();
+                displayProducts = populateProducts(productList, currentCategory);
+                model.addAttribute("displayProducts", sortProducts(catalogSort, displayProducts));
+            }
         }
 
         return productFound;
     }
+
+    private List<DisplayProduct> populateProducts (List<Product> productList, Category currentCategory ) {
+        List<DisplayProduct> displayProducts = new ArrayList<DisplayProduct>();
+
+        for (Product product : productList) {
+            DisplayProduct displayProduct = new DisplayProduct();
+            displayProduct.setProduct(product);
+            displayProducts.add(displayProduct);
+        }
+
+        for (FeaturedProduct featuredProduct : currentCategory.getFeaturedProducts()) {
+            for (DisplayProduct displayProduct: displayProducts) {
+                if ((displayProduct.getProduct().equals(featuredProduct.getProduct()))) {
+                    displayProduct.setPromoMessage(featuredProduct.getPromotionMessage());
+                }
+            }
+        }
+
+        return displayProducts;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<DisplayProduct> sortProducts (CatalogSort catalogSort, List<DisplayProduct> displayProducts) {
+        if (catalogSort.getSort().equals("priceL")) {
+            Collections.sort(displayProducts, new BeanComparator("product.skus[0].salePrice"));
+        }
+        else if (catalogSort.getSort().equals("priceH")) {
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("product.skus[0].salePrice")));
+        }
+        else if (catalogSort.getSort().equals("manufacturerA")) {
+            Collections.sort(displayProducts, new BeanComparator("product.manufacturer"));
+        }
+        else if (catalogSort.getSort().equals("manufacturerZ")) {
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("product.manufacturer")));
+        }
+        else if (catalogSort.getSort().equals("featured")) {
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("promoMessage")));
+        }
+
+        return displayProducts;
+    }
+
 
     public Long getRootCategoryId() {
         return rootCategoryId;
