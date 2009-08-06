@@ -1,8 +1,0 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="BroadleafCommerce Test Suite" verbose="2" parallel="false">
-	<test name="broadleafcommerce-unittest">
-        <packages>
-        	<package name="org.broadleafcommerce.taglib"></package>
-        </packages>
-    </test>
-</suite>
