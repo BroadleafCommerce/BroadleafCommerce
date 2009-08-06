@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="offer-integrationtest(failed)" failures="0" tests="1" time="8.877" errors="0">
-  <properties/>
-  <testcase name="applyOffersToOrder" time="0.0" classname="org.broadleafcommerce.offer.service.OfferServiceTest">
-    <skipped/>
-  </testcase>
-</testsuite>
