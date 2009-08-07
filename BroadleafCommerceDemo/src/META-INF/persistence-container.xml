@@ -3,10 +3,18 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
              version="1.0">
+             
     <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <non-jta-data-source>jdbc/web</non-jta-data-source>
-        <exclude-unlisted-classes/>
+        
+        <mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
+		<class>org.broadleafcommerce.rating.domain.RatingSummaryImpl</class>
+		<class>org.broadleafcommerce.rating.domain.RatingDetailImpl</class>
+		<class>org.broadleafcommerce.rating.domain.ReviewDetailImpl</class>
+		<class>org.broadleafcommerce.rating.domain.ReviewFeedbackImpl</class>
+		<exclude-unlisted-classes/>
+        
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="false"/>
