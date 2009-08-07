@@ -41,12 +41,7 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     }
 
     public OfferAudit save(OfferAudit offerAudit) {
-        if(offerAudit.getId() == null){
-            em.persist(offerAudit);
-        }else{
-            offerAudit = em.merge(offerAudit);
-        }
-        return offerAudit;
+        return em.merge(offerAudit);
     }
 
     @SuppressWarnings("unchecked")

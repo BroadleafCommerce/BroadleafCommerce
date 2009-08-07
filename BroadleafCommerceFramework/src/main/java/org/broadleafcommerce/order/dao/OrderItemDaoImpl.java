@@ -36,12 +36,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
     protected EntityConfiguration entityConfiguration;
 
     public OrderItem save(OrderItem orderItem) {
-        if (orderItem.getId() == null) {
-            em.persist(orderItem);
-        } else {
-            orderItem = em.merge(orderItem);
-        }
-        return orderItem;
+        return em.merge(orderItem);
     }
 
     public OrderItem readOrderItemById(Long orderItemId) {
@@ -53,7 +48,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
             GiftWrapOrderItem giftItem = (GiftWrapOrderItem) orderItem;
             for (OrderItem wrappedItem : giftItem.getWrappedItems()) {
                 wrappedItem.setGiftWrapOrderItem(null);
-                save(wrappedItem);
+                wrappedItem = save(wrappedItem);
             }
         }
         em.remove(orderItem);

@@ -32,5 +32,12 @@
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
+  	<dependency>
+      <groupId>org.broadleafcommerce</groupId>
+      <artifactId>broadleaf-profile</artifactId>
+      <version>0.0.0</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

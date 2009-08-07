@@ -49,12 +49,7 @@ public class AdminUserDaoImpl implements AdminUserDao {
     }
 
     public AdminUser saveAdminUser(AdminUser user) {
-        if (user.getId() == null) {
-            em.persist(user);
-        } else {
-            user = em.merge(user);
-        }
-        return user;
+        return em.merge(user);
     }
 
     @SuppressWarnings("unchecked")

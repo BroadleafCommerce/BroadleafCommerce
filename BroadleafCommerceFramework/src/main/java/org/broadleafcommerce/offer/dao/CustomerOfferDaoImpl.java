@@ -45,12 +45,7 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
     }
 
     public CustomerOffer save(CustomerOffer customerOffer) {
-        if(customerOffer.getId() == null){
-            em.persist(customerOffer);
-        }else{
-            customerOffer = em.merge(customerOffer);
-        }
-        return customerOffer;
+        return em.merge(customerOffer);
     }
 
     @SuppressWarnings("unchecked")

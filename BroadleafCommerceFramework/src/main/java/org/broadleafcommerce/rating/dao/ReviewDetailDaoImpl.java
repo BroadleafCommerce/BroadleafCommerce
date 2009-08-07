@@ -39,12 +39,7 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
     }
 
     public ReviewDetail saveReviewDetail(ReviewDetail reviewDetail) {
-        if (reviewDetail.getId() == null) {
-            em.persist(reviewDetail);
-        } else {
-            reviewDetail = em.merge(reviewDetail);
-        }
-        return reviewDetail;
+        return em.merge(reviewDetail);
     }
 
 }

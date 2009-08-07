@@ -18,6 +18,7 @@ package org.broadleafcommerce.extensibility.web;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -84,10 +85,15 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
     protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
         String[] broadleafConfigLocations = StandardConfigLocations.retrieveAll();
 
-        InputStream[] sources = new InputStream[broadleafConfigLocations.length];
-        for (int i = 0; i < broadleafConfigLocations.length; i++) {
-            sources[i] = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(broadleafConfigLocations[i]);
+        ArrayList<InputStream> sources = new ArrayList<InputStream>();
+        for (String location : broadleafConfigLocations) {
+            InputStream source = MergeXmlWebApplicationContext.class.getClassLoader().getResourceAsStream(location);
+            if (source != null) {
+            	sources.add(source);
+            }
         }
+        InputStream[] filteredSources = new InputStream[]{};
+        filteredSources = sources.toArray(filteredSources);
         String patchLocation = getPatchLocation();
         String[] patchLocations = StringUtils.tokenizeToStringArray(patchLocation, CONFIG_LOCATION_DELIMITERS);
         InputStream[] patches = new InputStream[patchLocations.length];
@@ -99,7 +105,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
                 patches[i] = resource.getInputStream();
             }
         }
-        Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(sources, patches);
+        Resource[] resources = new MergeApplicationContextXmlConfigResource().getConfigResources(filteredSources, patches);
 
         reader.loadBeanDefinitions(resources);
     }

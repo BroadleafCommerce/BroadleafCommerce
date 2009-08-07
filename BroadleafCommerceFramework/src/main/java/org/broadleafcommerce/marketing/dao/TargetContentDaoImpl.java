@@ -43,12 +43,7 @@ public class TargetContentDaoImpl implements TargetContentDao {
     }
 
     public TargetContent save(TargetContent targetContent) {
-        if(targetContent.getId() == null) {
-            em.persist(targetContent);
-        }else {
-            targetContent = em.merge(targetContent);
-        }
-        return targetContent;
+        return em.merge(targetContent);
     }
 
     @SuppressWarnings("unchecked")

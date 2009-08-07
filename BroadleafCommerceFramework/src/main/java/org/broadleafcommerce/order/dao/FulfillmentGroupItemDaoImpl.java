@@ -41,13 +41,7 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
     }
 
     public FulfillmentGroupItem save(FulfillmentGroupItem fulfillmentGroupItem) {
-        if (fulfillmentGroupItem.getId() == null) {
-            em.persist(fulfillmentGroupItem);
-        } else {
-            fulfillmentGroupItem = em.merge(fulfillmentGroupItem);
-        }
-
-        return fulfillmentGroupItem;
+        return em.merge(fulfillmentGroupItem);
     }
 
     @SuppressWarnings("unchecked")

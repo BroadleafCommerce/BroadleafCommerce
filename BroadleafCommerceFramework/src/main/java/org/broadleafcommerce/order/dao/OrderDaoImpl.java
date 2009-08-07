@@ -51,12 +51,7 @@ public class OrderDaoImpl implements OrderDao {
         if (order.getAuditable() != null) {
             order.getAuditable().setDateUpdated(new Date());
         }
-        if (order.getId() == null) {
-            em.persist(order);
-        } else {
-            order = em.merge(order);
-        }
-        return order;
+        return em.merge(order);
     }
 
     public void delete(Order salesOrder) {

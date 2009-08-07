@@ -33,12 +33,7 @@ public class BasePriceDaoImpl implements BasePriceDao {
     protected EntityConfiguration entityConfiguration;
 
     public BasePrice save(BasePrice basePrice) {
-        if (basePrice.getId() == null) {
-            em.persist(basePrice);
-        } else {
-            basePrice = em.merge(basePrice);
-        }
-        return basePrice;
+        return em.merge(basePrice);
     }
 
     @SuppressWarnings("unchecked")

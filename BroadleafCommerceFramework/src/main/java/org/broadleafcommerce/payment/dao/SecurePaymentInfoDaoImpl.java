@@ -43,8 +43,7 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     protected EntityConfiguration entityConfiguration;
 
     public Referenced save(Referenced securePaymentInfo) {
-        securePaymentInfo = em.merge(securePaymentInfo);
-        return securePaymentInfo;
+        return em.merge(securePaymentInfo);
     }
 
     public BankAccountPaymentInfo createBankAccountPaymentInfo() {

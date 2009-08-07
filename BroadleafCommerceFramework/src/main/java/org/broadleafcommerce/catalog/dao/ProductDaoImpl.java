@@ -38,12 +38,7 @@ public class ProductDaoImpl implements ProductDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public Product save(Product product) {
-        if (product.getId() == null) {
-            em.persist(product);
-        } else {
-            product = em.merge(product);
-        }
-        return product;
+        return em.merge(product);
     }
 
     @SuppressWarnings("unchecked")

@@ -48,12 +48,7 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
     }
 
     public AdminPermission saveAdminPermission(AdminPermission permission) {
-        if (permission.getId() == null) {
-            em.persist(permission);
-        } else {
-            permission = em.merge(permission);
-        }
-        return permission;
+        return em.merge(permission);
     }
 
     @SuppressWarnings("unchecked")

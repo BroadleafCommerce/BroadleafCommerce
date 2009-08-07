@@ -39,12 +39,7 @@ public class CategoryDaoImpl implements CategoryDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     public Category save(Category category) {
-        if (category.getId() == null) {
-            em.persist(category);
-        } else {
-            category = em.merge(category);
-        }
-        return category;
+        return em.merge(category);
     }
 
     @SuppressWarnings("unchecked")

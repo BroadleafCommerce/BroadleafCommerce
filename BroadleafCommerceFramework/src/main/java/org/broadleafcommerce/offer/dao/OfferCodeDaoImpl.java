@@ -44,12 +44,7 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
     }
 
     public OfferCode save(OfferCode offerCode) {
-        if(offerCode.getId()==null){
-            em.persist(offerCode);
-        }else{
-            offerCode = em.merge(offerCode);
-        }
-        return offerCode;
+        return em.merge(offerCode);
     }
 
     @SuppressWarnings("unchecked")

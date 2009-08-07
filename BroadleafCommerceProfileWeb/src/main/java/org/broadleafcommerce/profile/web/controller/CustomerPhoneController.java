@@ -174,7 +174,7 @@ public class CustomerPhoneController {
             customerPhoneValidator.validate(customerPhone, errors);
 
             if (!errors.hasErrors()) {
-                customerPhoneService.saveCustomerPhone(customerPhone);
+                customerPhone = customerPhoneService.saveCustomerPhone(customerPhone);
                 request.setAttribute("customerPhoneId", customerPhone.getId());
                 request.setAttribute("phoneId", customerPhone.getPhone().getId());
             }

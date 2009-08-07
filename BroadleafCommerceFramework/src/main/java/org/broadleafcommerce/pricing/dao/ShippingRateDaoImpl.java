@@ -24,7 +24,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.pricing.domain.ShippingRate;
-import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -37,22 +36,8 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    public Address save(Address address) {
-        if (address.getId() == null) {
-            em.persist(address);
-        } else {
-            address = em.merge(address);
-        }
-        return address;
-    }
-
     public ShippingRate save(ShippingRate shippingRate) {
-        if (shippingRate.getId() == null) {
-            em.persist(shippingRate);
-        } else {
-            shippingRate = em.merge(shippingRate);
-        }
-        return shippingRate;
+        return em.merge(shippingRate);
     }
 
     @SuppressWarnings("unchecked")

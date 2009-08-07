@@ -57,7 +57,7 @@ public class RatingServiceImpl implements RatingService {
         if (reviewDetail != null) {
             ReviewFeedback reviewFeedback = new ReviewFeedbackImpl(customer, helpful, reviewDetail);
             reviewDetail.getReviewFeedback().add(reviewFeedback);
-            reviewDetailDao.saveReviewDetail(reviewDetail);
+            reviewDetail = reviewDetailDao.saveReviewDetail(reviewDetail);
         }
 
     }
@@ -71,7 +71,7 @@ public class RatingServiceImpl implements RatingService {
 
         RatingDetail ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
         ratingSummary.getRatings().add(ratingDetail);
-        ratingSummaryDao.saveRatingSummary(ratingSummary);
+        ratingSummary = ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
     public RatingSummary readRatingSummary(String itemId, RatingType type) {
@@ -130,7 +130,7 @@ public class RatingServiceImpl implements RatingService {
 
         ReviewDetail reviewDetail = new ReviewDetailImpl(customer, new Date(), reviewText, ratingSummary);
         ratingSummary.getReviews().add(reviewDetail);
-        ratingSummaryDao.saveRatingSummary(ratingSummary);
+        ratingSummary = ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
 }

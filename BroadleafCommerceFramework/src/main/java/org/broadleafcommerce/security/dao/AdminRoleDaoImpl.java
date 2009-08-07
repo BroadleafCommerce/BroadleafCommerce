@@ -49,12 +49,7 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
     }
 
     public AdminRole saveAdminRole(AdminRole role) {
-        if (role.getId() == null) {
-            em.persist(role);
-        } else {
-            role = em.merge(role);
-        }
-        return role;
+        return em.merge(role);
     }
 
     @SuppressWarnings("unchecked")

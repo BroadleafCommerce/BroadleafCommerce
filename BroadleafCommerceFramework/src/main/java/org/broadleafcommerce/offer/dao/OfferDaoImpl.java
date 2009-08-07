@@ -83,23 +83,11 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     public Offer save(Offer offer) {
-        if(offer.getId() == null){
-            em.persist(offer);
-        }else{
-            offer = em.merge(offer);
-        }
-        return offer;
-
+        return em.merge(offer);
     }
 
     public OfferInfo save(OfferInfo offerInfo) {
-        if(offerInfo.getId() == null){
-            em.persist(offerInfo);
-        }else{
-            offerInfo = em.merge(offerInfo);
-        }
-        return offerInfo;
-
+        return em.merge(offerInfo);
     }
 
     @SuppressWarnings("unchecked")

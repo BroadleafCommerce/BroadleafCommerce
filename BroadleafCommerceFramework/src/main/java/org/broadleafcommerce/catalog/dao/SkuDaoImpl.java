@@ -36,12 +36,7 @@ public class SkuDaoImpl implements SkuDao {
     protected EntityConfiguration entityConfiguration;
 
     public Sku save(Sku sku) {
-        if (sku.getId() == null) {
-            em.persist(sku);
-        } else {
-            sku = em.merge(sku);
-        }
-        return sku;
+        return em.merge(sku);
     }
 
     @SuppressWarnings("unchecked")

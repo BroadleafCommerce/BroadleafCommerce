@@ -38,8 +38,7 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     protected EntityConfiguration entityConfiguration;
 
     public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
-        fulfillmentGroup = em.merge(fulfillmentGroup);
-        return fulfillmentGroup;
+        return em.merge(fulfillmentGroup);
     }
 
     @SuppressWarnings("unchecked")

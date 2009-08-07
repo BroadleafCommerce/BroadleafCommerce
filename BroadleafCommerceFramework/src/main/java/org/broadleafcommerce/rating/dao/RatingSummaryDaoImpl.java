@@ -44,13 +44,7 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
 
     public RatingSummary saveRatingSummary(RatingSummary summary) {
         summary.resetAverageRating();
-
-        if (summary.getId() == null) {
-            em.persist(summary);
-        } else {
-            summary = em.merge(summary);
-        }
-        return summary;
+        return em.merge(summary);
     }
 
     @SuppressWarnings("unchecked")
