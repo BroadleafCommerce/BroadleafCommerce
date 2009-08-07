@@ -56,4 +56,8 @@ public class CountryDaoImpl implements CountryDao {
     public void setQueryCacheableKey(String queryCacheableKey) {
         this.queryCacheableKey = queryCacheableKey;
     }
+    
+    public Country save(Country country) {
+    	return em.merge(country);
+    }
 }

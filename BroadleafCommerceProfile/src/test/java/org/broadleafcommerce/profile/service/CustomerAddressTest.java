@@ -24,6 +24,7 @@ import org.broadleafcommerce.profile.dataprovider.CustomerAddressDataProvider;
 import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
+import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
@@ -42,16 +43,20 @@ public class CustomerAddressTest extends BaseTest {
 
     @Resource
     private CountryService countryService;
+    
+    @Resource
+    private StateService stateService;
 
-    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer1", "createCountry"})
+    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer1", "createCountry", "createState"})
     @Rollback(false)
     public void createCustomerAddress(CustomerAddress customerAddress) {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         assert customerAddress.getId() == null;
         customerAddress.setCustomer(customer);
+        State state = stateService.findStateByAbbreviation("KY");
+        customerAddress.getAddress().setState(state);
         Country country = countryService.findCountryByAbbreviation("US");
-        customerAddress.getAddress().getState().setCountry(country);
         customerAddress.getAddress().setCountry(country);
         customerAddress = customerAddressService.saveCustomerAddress(customerAddress);
         assert customer.equals(customerAddress.getCustomer());

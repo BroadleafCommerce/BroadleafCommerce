@@ -15,19 +15,6 @@
 
 	<context:component-scan base-package="org.broadleafcommerce" />
 	
-	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
-	    <property name="autodetect" value="true"/>
-	    <property name="assembler" ref="assembler"/>
-	    <property name="namingStrategy" ref="namingStrategy"/>
-	</bean>
-	<bean id="attributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
-	<bean id="assembler" class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
-	    <property name="attributeSource" ref="attributeSource"/>
-	</bean>
-	<bean id="namingStrategy" class="org.broadleafcommerce.jmx.MetadataNamingStrategy">
-	    <property name="attributeSource" ref="attributeSource"/>
-	</bean>
-	
 	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
 		<property name="propertyLocations">
 			<set>
@@ -81,8 +68,6 @@
       </property>
    </bean>
 	
-	<bean id="blEncryptionModule" class="org.broadleafcommerce.encryption.DefaultEncryptionModule"/>
-	
 	<bean id="blEmailInfo" class="org.broadleafcommerce.email.service.info.EmailInfo" />
 	<bean id="blNullEmailInfo" class="org.broadleafcommerce.email.service.info.NullEmailInfo" />
 	<bean id="blRegistrationEmailInfo" parent="blNullEmailInfo" />
@@ -119,26 +104,6 @@
                 <entry key="serverInfo" value-ref="blServerInfo"/>
             </map>
         </constructor-arg>
-	</bean>
-
-	<bean id="blShippingService" class="org.broadleafcommerce.pricing.service.ShippingServiceImpl">
-		<property name="shippingModule" ref="blShippingModule"/>
-	</bean>
-
-	<bean id="blAccountNumberMask" class="org.broadleafcommerce.payment.AccountNumberMask">
-		<constructor-arg>
-			<list>
-				<bean class="org.broadleafcommerce.payment.UnmaskRange">
-					<constructor-arg value="0"/>
-					<constructor-arg value="0"/>
-				</bean>
-				<bean class="org.broadleafcommerce.payment.UnmaskRange">
-					<constructor-arg value="1"/>
-					<constructor-arg value="4"/>
-				</bean>
-			</list>
-		</constructor-arg>
-		<constructor-arg value="X"/>
 	</bean>
 	
 	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>

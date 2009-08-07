@@ -43,12 +43,7 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
     }
 
     public CustomerAddress save(CustomerAddress customerAddress) {
-        if (customerAddress.getId() == null) {
-            em.persist(customerAddress);
-        } else {
-            customerAddress = em.merge(customerAddress);
-        }
-        return customerAddress;
+    		return em.merge(customerAddress);
     }
 
     public CustomerAddress create() {

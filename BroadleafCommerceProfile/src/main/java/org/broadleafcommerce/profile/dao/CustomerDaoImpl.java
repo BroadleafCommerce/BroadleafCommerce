@@ -65,12 +65,7 @@ public class CustomerDaoImpl implements CustomerDao {
         if (customer.getAuditable() != null) {
             customer.getAuditable().setDateUpdated(new Date());
         }
-        if (customer.getId() == null) {
-            em.persist(customer);
-        } else {
-            customer = em.merge(customer);
-        }
-        return customer;
+        return em.merge(customer);
     }
 
     public Customer create() {

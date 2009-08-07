@@ -39,7 +39,7 @@ public class StandardConfigLocations {
                 if (temp == null) {
                     eof = true;
                 } else {
-                    if (!temp.startsWith("#") && temp.trim().length() > 0) {
+                    if (!temp.startsWith("#") && temp.trim().length() > 0 && StandardConfigLocations.class.getClassLoader().getResource(temp.trim()) != null) {
                         items.add(temp.trim());
                     }
                 }

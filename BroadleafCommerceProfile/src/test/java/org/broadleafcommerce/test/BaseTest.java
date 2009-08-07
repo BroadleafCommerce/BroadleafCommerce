@@ -17,28 +17,19 @@ package org.broadleafcommerce.test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
-@ContextConfiguration(
-        locations = {
-                "classpath:/bl-applicationContext.xml",
-                "classpath:/bl-applicationContext-entity.xml",
-                "classpath:/bl-applicationContext-persistence.xml",
-                "classpath:/bl-applicationContext-workflow.xml",
-                "classpath:/bl-applicationContext-test.xml",
-                "classpath:/bl-applicationContext-test-security.xml"
-        }
-)
 @TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
+@TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class})
 public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextTests {
 
-    /*
+	/*
      * TODO each extension of this BaseTest is getting a datasource set via autowiring. However, with the
      * new blSecurePU persistence unit, we will need to specify different datasources for the 2 persistence
      * units. Spring does not like this, since autowiring for this class expects a single DS to be defined. Therefore,
@@ -46,12 +37,11 @@ public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextT
      * specifying every test class in xml. Not a priority, but will come up later as we add test cases that involve
      * any of the secure payment info classes (i.e. CreditCardPaymentInfo).
      */
-    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     public EntityManager getEntityManager() {
         if (em == null) {
-            em = ((EntityManagerFactory) applicationContext.getBean("blEntityManagerFactory")).createEntityManager();
+            em = ((EntityManagerFactory) applicationContext.getBean("entityManagerFactory")).createEntityManager();
         }
         return em;
     }

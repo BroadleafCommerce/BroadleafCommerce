@@ -24,4 +24,7 @@ public interface CountryDao {
     public List<Country> findCountries();
 
     public Country findCountryByAbbreviation(String abbreviation);
+    
+    public Country save(Country country);
+    
 }

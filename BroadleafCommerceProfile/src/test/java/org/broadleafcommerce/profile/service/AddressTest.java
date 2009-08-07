@@ -46,7 +46,7 @@ public class AddressTest extends BaseTest {
         Country country = new CountryImpl();
         country.setAbbreviation("US");
         country.setName("United States");
-        em.persist(country);
+        countryService.save(country);
     }
 
     @Test(groups = "findCountries", dependsOnGroups = "createCountry")
@@ -68,7 +68,7 @@ public class AddressTest extends BaseTest {
         state.setAbbreviation("KY");
         state.setName("Kentucky");
         state.setCountry(countryService.findCountryByAbbreviation("US"));
-        em.persist(state);
+        stateService.save(state);
     }
 
     @Test(groups = "findStates", dependsOnGroups = "createState")

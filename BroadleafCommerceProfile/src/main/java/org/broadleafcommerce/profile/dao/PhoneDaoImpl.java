@@ -33,12 +33,7 @@ public class PhoneDaoImpl implements PhoneDao {
     protected EntityConfiguration entityConfiguration;
 
     public Phone save(Phone phone) {
-        if (phone.getId() == null) {
-            em.persist(phone);
-        } else {
-            phone = em.merge(phone);
-        }
-        return phone;
+        return em.merge(phone);
     }
 
     @SuppressWarnings("unchecked")

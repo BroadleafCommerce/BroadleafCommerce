@@ -36,4 +36,8 @@ public class CountryServiceImpl implements CountryService {
     public Country findCountryByAbbreviation(String abbreviation) {
         return countryDao.findCountryByAbbreviation(abbreviation);
     }
+    
+    public Country save(Country country) {
+    	return countryDao.save(country);
+    }
 }

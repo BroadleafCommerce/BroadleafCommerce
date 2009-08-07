@@ -65,13 +65,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     public User save(User user) {
-        User retUser = user;
-        if (retUser.getId() == null) {
-            em.persist(retUser);
-        } else {
-            retUser = em.merge(retUser);
-        }
-        return retUser;
+        return em.merge(user);
     }
 
     @SuppressWarnings("unchecked")

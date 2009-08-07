@@ -33,12 +33,7 @@ public class AddressDaoImpl implements AddressDao {
     protected EntityConfiguration entityConfiguration;
 
     public Address save(Address address) {
-        if (address.getId() == null) {
-            em.persist(address);
-        } else {
-            address = em.merge(address);
-        }
-        return address;
+        return em.merge(address);
     }
 
     @SuppressWarnings("unchecked")

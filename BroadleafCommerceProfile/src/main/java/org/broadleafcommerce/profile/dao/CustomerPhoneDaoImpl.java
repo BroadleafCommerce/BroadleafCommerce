@@ -43,12 +43,7 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
     }
 
     public CustomerPhone save(CustomerPhone customerPhone) {
-        if (customerPhone.getId() == null) {
-            em.persist(customerPhone);
-        } else {
-            customerPhone = em.merge(customerPhone);
-        }
-        return customerPhone;
+        return em.merge(customerPhone);
     }
 
     @SuppressWarnings("unchecked")

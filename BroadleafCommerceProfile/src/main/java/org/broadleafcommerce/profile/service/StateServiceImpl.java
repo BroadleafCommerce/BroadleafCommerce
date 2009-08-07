@@ -40,5 +40,9 @@ public class StateServiceImpl implements StateService {
     public State findStateByAbbreviation(String abbreviation) {
         return stateDao.findStateByAbbreviation(abbreviation);
     }
+    
+    public State save(State state) {
+    	return stateDao.save(state);
+    }
 }
 

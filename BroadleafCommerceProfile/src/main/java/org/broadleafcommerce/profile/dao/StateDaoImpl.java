@@ -81,4 +81,8 @@ public class StateDaoImpl implements StateDao {
     public State create() {
         return (State) entityConfiguration.createEntityInstance(State.class.getName());
     }
+    
+    public State save(State state) {
+    	return em.merge(state);
+    }
 }
