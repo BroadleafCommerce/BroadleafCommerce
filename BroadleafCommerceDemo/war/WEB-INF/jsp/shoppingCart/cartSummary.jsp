@@ -18,7 +18,7 @@
 			          </tr>
 		          </thead>
 		          <tbody>
-				  	<form:form modelAttribute="cartSummary" action="viewCart.htm" method="POST" name="cartForm">
+				  	<form:form modelAttribute="cartSummary" method="POST" name="cartForm">
 					<form:errors path="*" cssClass="errorText"/>
 					<c:forEach items="${currentCartOrder.orderItems}" var="orderItem" varStatus="status">		
 				    	<c:set var="item" value="${orderItem.sku}"/>
@@ -67,11 +67,14 @@
 					</c:forEach>
 					<tr class="totals highlight">
 						<td colspan="3">&nbsp;</td>
-						<td style="text-align:right">Subtotal:</td>
+						<td style="text-align:right"><b style="font-size:18px;"> *</b> Subtotal:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.subTotal}</span></td>
 					</tr>
 					<tr class="totals">
-						<td colspan="3">&nbsp;</td>
+						<td colspan="3" style="text-align:right;">Promo Code:
+							<form:input maxlength="10" path="promoCode" autocomplete="off"/>
+							<input type="submit" name="updatePromo" value="Add To Order" class="cartButton" />
+						</td>
 						<td style="text-align:right">Estimated Tax:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.totalTax}</span></td>
 					</tr>
@@ -97,6 +100,14 @@
 			</form:form>
 				</tbody>
 				</table>
+				<div style="float:right;">
+					<c:if test="${(cartSummary.orderDiscounts != null) && (cartSummary.orderDiscounts > 0)}">
+						<span><b style="font-size:18px;">* </b> Your order reflects a discount of $${cartSummary.orderDiscounts} based on the promo code(s) entered. </span> <br/>   
+					</c:if>
+					<c:if test="${promoError != null}">
+						<span> ${promoError} </span>
+					</c:if>
+				</div>			
 				</c:when>
 				<c:otherwise>
 					<c:url var="storeUrl" value="/store" />

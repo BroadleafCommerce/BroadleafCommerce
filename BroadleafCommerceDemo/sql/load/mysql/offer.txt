@@ -1,0 +1,1 @@
+1|discreteOrderItem.sku.id == 131|20 Percent Off Item Offer|2009-08-05 14:28:36|2009-08-07 14:28:36|ORDER_ITEM|PERCENT_OFF|20|CODE|1|1|10|0|0|0|10
