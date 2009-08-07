@@ -31,6 +31,7 @@ public interface ReviewDetail {
     public Integer notHelpfulCount();
     public ReviewStatusType getStatus();
     public RatingSummary getRatingSummary();
+    public RatingDetail getRatingDetail();
     public List<ReviewFeedback> getReviewFeedback();
 
 }
