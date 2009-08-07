@@ -23,6 +23,8 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.search.dao.SearchInterceptDao;
+import org.broadleafcommerce.search.domain.SearchIntercept;
 import org.compass.core.Compass;
 import org.compass.core.CompassContext;
 import org.compass.core.CompassDetachedHits;
@@ -31,6 +33,9 @@ import org.compass.core.CompassSearchSession;
 import org.compass.core.engine.SearchEngineIndexManager;
 import org.springframework.stereotype.Service;
 
+/**
+ *
+ */
 @Service("blSearchService")
 public class SearchServiceCompassImpl implements SearchService {
 
@@ -39,6 +44,9 @@ public class SearchServiceCompassImpl implements SearchService {
 
     @Resource(name = "blCatalogService")
     protected CatalogService catalogService;
+
+    @Resource(name = "blSearchInterceptDao")
+    protected SearchInterceptDao searchInterceptDao;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -67,6 +75,10 @@ public class SearchServiceCompassImpl implements SearchService {
         }
         session.commit();
         session.close();
+    }
+
+    public SearchIntercept getInterceptForTerm(String term) {
+        return searchInterceptDao.findInterceptByTerm(term);
     }
 
 }

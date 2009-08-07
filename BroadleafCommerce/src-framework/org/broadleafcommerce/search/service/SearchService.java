@@ -18,11 +18,14 @@ package org.broadleafcommerce.search.service;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.search.domain.SearchIntercept;
 
 public interface SearchService {
 
     public void rebuildProductIndex();
 
     public List<Product> performSearch(String input);
+
+    public SearchIntercept getInterceptForTerm(String term);
 
 }
