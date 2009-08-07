@@ -57,16 +57,16 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
     public List<RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type) {
         Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemIds", itemIds);
-        query.setParameter("ratingType", type);
+        query.setParameter("ratingType", type.getType());
         List<RatingSummary> ratings = query.getResultList();
 
         return ratings;
     }
 
     public RatingSummary readRatingSummary(String itemId, RatingType type) {
-        Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
+        Query query = em.createNamedQuery("BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemId", itemId);
-        query.setParameter("ratingType", type);
+        query.setParameter("ratingType", type.getType());
         RatingSummary ratingSummary = (RatingSummary) query.getSingleResult();
 
         return ratingSummary;

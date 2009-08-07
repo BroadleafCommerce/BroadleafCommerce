@@ -38,7 +38,9 @@ import org.broadleafcommerce.rating.domain.ReviewFeedback;
 import org.broadleafcommerce.rating.domain.ReviewFeedbackImpl;
 import org.broadleafcommerce.rating.service.type.RatingSortType;
 import org.broadleafcommerce.rating.service.type.RatingType;
+import org.springframework.stereotype.Service;
 
+@Service("blRatingService")
 public class RatingServiceImpl implements RatingService {
 
     @Resource
