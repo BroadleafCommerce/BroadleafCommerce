@@ -23,7 +23,9 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.rating.domain.RatingDetail;
 import org.broadleafcommerce.rating.domain.RatingSummary;
+import org.broadleafcommerce.rating.domain.ReviewDetail;
 import org.broadleafcommerce.rating.service.type.RatingType;
 import org.springframework.stereotype.Repository;
 
@@ -70,6 +72,24 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         RatingSummary ratingSummary = (RatingSummary) query.getSingleResult();
 
         return ratingSummary;
+    }
+
+    public RatingDetail readRating(Long customerId, Long ratingSummaryId) {
+        Query query = em.createNamedQuery("BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
+        query.setParameter("customerId", customerId);
+        query.setParameter("ratingSummaryId", ratingSummaryId);
+        RatingDetail ratingDetail = (RatingDetail) query.getSingleResult();
+
+        return ratingDetail;
+    }
+
+    public ReviewDetail readReview(Long customerId, Long ratingSummaryId) {
+        Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
+        query.setParameter("customerId", customerId);
+        query.setParameter("ratingSummaryId", ratingSummaryId);
+        ReviewDetail reviewDetail = (ReviewDetail) query.getSingleResult();
+
+        return reviewDetail;
     }
 
 }

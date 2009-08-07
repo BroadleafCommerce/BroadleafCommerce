@@ -67,11 +67,17 @@ public class RatingServiceImpl implements RatingService {
     public void rateItem(String itemId, RatingType type, Customer customer, Double rating) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
+        RatingDetail ratingDetail = null;
+
         if (ratingSummary == null) {
             ratingSummary = new RatingSummaryImpl(itemId, type);
+            ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+        } else {
+            ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
         }
 
-        RatingDetail ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+        ratingDetail.setRating(rating);
+
         ratingSummary.getRatings().add(ratingDetail);
         ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
@@ -123,14 +129,21 @@ public class RatingServiceImpl implements RatingService {
         return ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
-    public void reviewItem(String itemId, RatingType type, Customer customer, String reviewText) {
+    public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
+
+        ReviewDetail reviewDetail = null;
 
         if (ratingSummary == null) {
             ratingSummary = new RatingSummaryImpl(itemId, type);
+            reviewDetail = new ReviewDetailImpl(customer, new Date(), reviewText, ratingSummary);
+        } else {
+            reviewDetail = ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
         }
 
-        ReviewDetail reviewDetail = new ReviewDetailImpl(customer, new Date(), reviewText, ratingSummary);
+        this.rateItem(itemId, type, customer, rating);
+        reviewDetail.setReviewText(reviewText);
+
         ratingSummary.getReviews().add(reviewDetail);
         ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
