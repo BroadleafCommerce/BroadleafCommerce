@@ -96,6 +96,7 @@
 		<copy todir="${stage.dir}/war/WEB-INF/lib">
 			<fileset dir="${war.lib.dir}">
 				<include name="**/*.jar" />
+				<exclude name="backport-util-concurrent-3.1.jar"/>
 			</fileset>
 			<fileset dir="${include.lib.dir}">
 				<include name="**/*.jar" />
