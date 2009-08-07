@@ -291,20 +291,6 @@ public class CartController {
         return cartView;
     }
 
-    //    @RequestMapping(value = "viewCart.htm", params="removePromo", method = RequestMethod.POST)
-    //    public String removePromoCode (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
-    //        Order currentCartOrder = retrieveCartOrder(request, model);
-    //        currentCartOrder = cartService.removeAllOffersFromOrder(currentCartOrder);
-    //        List<Offer> blankOffers = new ArrayList<Offer>();
-    //        offerService.applyOffersToOrder(blankOffers, currentCartOrder);
-    //        cartService.save(currentCartOrder, true);
-    //        model.addAttribute("currentCartOrder", currentCartOrder );
-    //        cartSummary.setPromoCode(null);
-    //        cartSummary.setOrderDiscounts(null);
-    //        model.addAttribute("cartSummary", cartSummary);
-    //        return cartView;
-    //    }
-
     private Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
         cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
         cartService.addFulfillmentGroupToOrder(currentCartOrder, cartSummary.getFulfillmentGroup());
