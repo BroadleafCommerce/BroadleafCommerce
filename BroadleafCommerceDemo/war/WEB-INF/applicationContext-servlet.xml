@@ -106,6 +106,7 @@
 				<prop key="/checkout/*">checkoutController</prop>
 				<prop key="/storeLocator/*">storeController</prop>
 				<prop key="/account/*">myAccountController</prop>
+				<prop key="/rating/*">blRatingController</prop>
 			</props>
 		</property>
 	</bean>
