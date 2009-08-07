@@ -19,4 +19,20 @@
 		</query>
 	</named-query>
 	
+	<named-query name="BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID" >
+		<query>SELECT ratingDetail
+			   FROM org.broadleafcommerce.rating.domain.RatingDetail ratingDetail
+		       WHERE ratingDetail.customer.id = :customerId
+		       AND ratingDetail.ratingSummary.id = :ratingSummaryId
+		</query>
+	</named-query>
+	
+	<named-query name="BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID" >
+		<query>SELECT reviewDetail 
+			   FROM org.broadleafcommerce.rating.domain.ReviewDetail reviewDetail
+		       WHERE reviewDetail.customer.id = :customerId
+		       AND reviewDetail.ratingSummary.id = :ratingSummaryId
+		</query>
+	</named-query>
+	
 </entity-mappings>

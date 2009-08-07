@@ -101,6 +101,10 @@ public class ReviewDetailImpl implements ReviewDetail {
         return reviewText;
     }
 
+    public void setReviewText(String reviewText) {
+        this.reviewText = reviewText;
+    }
+
     public ReviewStatusType getStatus() {
         return new ReviewStatusType(reviewStatus);
     }
