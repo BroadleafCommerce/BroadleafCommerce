@@ -52,6 +52,7 @@
 
 	<bean id="catalogController" class="org.broadleafcommerce.catalog.web.CatalogController">
 		<property name="catalogService" ref="blCatalogService"/>
+		<property name="ratingService" ref="blRatingService" />
         <property name="defaultCategoryView" value="catalog/defaultCatalog"/>
         <property name="defaultProductView" value="catalog/defaultProduct"/>
         <property name="rootCategoryName" value="Store" />
