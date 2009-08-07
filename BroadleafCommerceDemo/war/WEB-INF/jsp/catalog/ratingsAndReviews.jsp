@@ -9,7 +9,8 @@ $(document).ready(function(){
 <div class="columns">
 	<div class="productLeftCol column span-7">
 		<h4 style="margin-bottom:6px;">Average Customer Review</h4>
-		<tags:stars numberOfStars="3" cssClass="reviewStars" /> (3 customer reviews)
+		<fmt:formatNumber value="${ratingSummary.averageRating}" maxFractionDigits="0" var="avgRating" />
+		<tags:stars numberOfStars="${avgRating}" cssClass="reviewStars" /> (<c:out value="${fn:length(ratingSummary.reviews)}" /> customer reviews)
 	</div>
 	<div class="column span-5" style="border-left:1px solid #ccc;padding:0 0 8px 10px;">
 	<h4 style="margin-bottom:6px;">Do you own this product?</h4>
@@ -35,14 +36,12 @@ $(document).ready(function(){
 
 <h4 style="margin:8px 0 4px 0;">Customer Reviews</h4>
 
-<h4 style="margin:8px 0 4px 0;"><tags:stars numberOfStars="2" cssClass="reviewStars" /> February 9, 2007</h4>
-<p>I bought this grinder after seeing it recommended on another site. Unfortunately, I quickly discovered that this grinder does not do a good job of fine grinding. Also, the lid is a little finicky going on and can't be used to hold the ground coffee. If you need your coffee ground fine, and don't want to shell out the bucks for a burr grinder, try the Braun KSM2.
-</p>
 
-<h4 style="margin:8px 0 4px 0;"><tags:stars numberOfStars="2" cssClass="reviewStars" /> September 24, 2003</h4>
-<p>This coffee grinder is very inconvenient to use--getting the ground coffee out of the machine is difficult and messy. Removing the coffee requires a tiny spoon or a brush, and even then is incomplete, leaving dregs in the grinder to turn rancid and spoil the flavor of future coffee, and a mess on the counter. I've used several less expensive models that were lots less trouble. Also, the body of the grinder is too fat to pick up securely with one hand, creating a tendency to drop it and make an even bigger mess. It looks like very little thought went into this design.
-</p>
-
-<h4 style="margin:8px 0 4px 0;"><tags:stars numberOfStars="5" cssClass="reviewStars" /> December 18, 2006</h4>
-<p>I've had nothing but good from this grinder and would recommend it. I AM drinking more coffee because it produces such a fine smooth cup. I shake it around as it hums and tap it out into my Bodum French Press and, man, what a good cup of coffee. It has made me move up the coffee bean path (via Whole Foods) from my good old family standard. Ethiopian beans, fresh ground with this machine, fresh shaked into the press and zapp! I'm awake to sip and enjoy my morning. It's been the good machine you'd expect from Bodum and presents a pleasant experience. I fresh grind all my coffee now.
-</p>
+<c:forEach var="review" items="${ratingSummary.reviews}">
+	Rating: ${review.ratingDetail.rating}
+	<fmt:formatNumber value="${review.ratingDetail.rating}" maxFractionDigits="0" var="rating" />
+	<h4 style="margin:8px 0 4px 0;"><tags:stars numberOfStars="${rating}" cssClass="reviewStars" /><fmt:formatDate type="date" dateStyle="full" value="${review.reviewSubmittedDate}" /></h4>
+	<p>${review.reviewText}
+	</p>
+	
+</c:forEach>
