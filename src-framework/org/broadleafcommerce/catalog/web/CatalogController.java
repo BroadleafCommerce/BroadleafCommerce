@@ -27,6 +27,9 @@ import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.rating.domain.RatingSummary;
+import org.broadleafcommerce.rating.service.RatingService;
+import org.broadleafcommerce.rating.service.type.RatingType;
 import org.broadleafcommerce.search.util.SearchFilterUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,6 +43,7 @@ public class CatalogController {
 
     private final UrlPathHelper pathHelper = new UrlPathHelper();
     private CatalogService catalogService;
+    private RatingService ratingService;
     private String defaultCategoryView;
     private String defaultProductView;
     private Long rootCategoryId;
@@ -202,6 +206,7 @@ public class CatalogController {
             Product product = catalogService.findProductById(new Long(productId));
             if (product != null) {
                 productFound = validateProductAndAddToModel(product, model);
+                addRatingSummaryToModel(productId, model);
             }
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
@@ -223,6 +228,11 @@ public class CatalogController {
         }
 
         return productFound;
+    }
+
+    private void addRatingSummaryToModel(String productId, ModelMap model) {
+        RatingSummary ratingSummary = ratingService.readRatingSummary(productId, RatingType.PRODUCT);
+        model.addAttribute("ratingSummary", ratingSummary);
     }
 
     private List<DisplayProduct> populateProducts (List<Product> productList, Category currentCategory ) {
@@ -289,6 +299,14 @@ public class CatalogController {
 
     public void setCatalogService(CatalogService catalogService) {
         this.catalogService = catalogService;
+    }
+
+    public RatingService getRatingService() {
+        return ratingService;
+    }
+
+    public void setRatingService(RatingService ratingService) {
+        this.ratingService = ratingService;
     }
 
     public String getDefaultCategoryView() {
