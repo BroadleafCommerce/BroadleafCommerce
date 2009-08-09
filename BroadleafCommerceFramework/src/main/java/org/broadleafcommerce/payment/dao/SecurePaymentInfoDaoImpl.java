@@ -101,6 +101,9 @@ public class SecurePaymentInfoDaoImpl implements SecurePaymentInfoDao {
     }
 
     public void delete(Referenced securePaymentInfo) {
+    	if (!em.contains(securePaymentInfo)) {
+    		securePaymentInfo = em.find(securePaymentInfo.getClass(), securePaymentInfo.getId());
+    	}
         em.remove(securePaymentInfo);
     }
 

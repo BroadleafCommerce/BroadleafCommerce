@@ -55,6 +55,9 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     public void delete(Order salesOrder) {
+    	if (!em.contains(salesOrder)) {
+    		salesOrder = readOrderById(salesOrder.getId());
+    	}
         em.remove(salesOrder);
     }
 

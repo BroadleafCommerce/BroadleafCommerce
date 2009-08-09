@@ -21,6 +21,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.pricing.dao.ShippingRateDao;
@@ -29,6 +31,8 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.util.money.Money;
 
 public class BandedShippingModule implements ShippingModule {
+	
+	private static final Log LOG = LogFactory.getLog(BandedShippingModule.class);
 
     public static final String MODULENAME = "bandedShippingModule";
 
@@ -47,6 +51,13 @@ public class BandedShippingModule implements ShippingModule {
     }
 
     private void calculateShipping(FulfillmentGroup fulfillmentGroup) {
+    	if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
+    		LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
+    		fulfillmentGroup.setShippingPrice(new Money(0D));
+            fulfillmentGroup.setSaleShippingPrice(new Money(0D));
+            fulfillmentGroup.setRetailShippingPrice(new Money(0D));
+    		return;
+    	}
         Address address = fulfillmentGroup.getAddress();
         String state = (address != null && address.getState() != null) ? address.getState().getAbbreviation() : null;
         BigDecimal retailTotal = new BigDecimal(0);

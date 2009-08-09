@@ -54,7 +54,7 @@ public class AvailabilityDaoImpl implements AvailabilityDao {
     }
 
     public void save(SkuAvailability skuAvailability) {
-        em.persist(skuAvailability);
+        em.merge(skuAvailability);
     }
 
     public String getQueryCacheableKey() {

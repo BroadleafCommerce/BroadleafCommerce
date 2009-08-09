@@ -36,10 +36,11 @@ public class AdminPermissionDaoImpl implements AdminPermissionDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @SuppressWarnings("unchecked")
     public void deleteAdminPermission(AdminPermission permission) {
-        AdminPermission persisted = (AdminPermission) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminPermission"), permission.getId());
-        em.remove(persisted);
+    	if (!em.contains(permission)) {
+    		permission = readAdminPermissionById(permission.getId());
+    	}
+        em.remove(permission);
     }
 
     @SuppressWarnings("unchecked")

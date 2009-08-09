@@ -505,11 +505,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     protected Order updateOrder(Order order, Boolean priceOrder) throws PricingException {
-        if (priceOrder) {
-            pricingExecutionManager.executePricing(order);
-        } else {
-            order = persistOrder(order);
-        }
+    	order = persistOrder(order);
+        pricingExecutionManager.executePricing(order);
         return order;
     }
 

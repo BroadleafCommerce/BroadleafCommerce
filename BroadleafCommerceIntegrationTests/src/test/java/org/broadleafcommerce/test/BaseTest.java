@@ -16,43 +16,38 @@
 package org.broadleafcommerce.test;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 
+import org.broadleafcommerce.extensibility.context.MergeClassPathXMLApplicationContext;
+import org.broadleafcommerce.extensibility.context.StandardConfigLocations;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
-import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
+import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 
 @TransactionConfiguration(transactionManager = "blTransactionManager", defaultRollback = true)
-@TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class})
-public abstract class BaseTest extends AbstractTransactionalTestNGSpringContextTests {
+@TestExecutionListeners(inheritListeners = false, value = {MergeDependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class, MergeTransactionalTestExecutionListener.class})
+public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 
-	/*
-     * TODO each extension of this BaseTest is getting a datasource set via autowiring. However, with the
-     * new blSecurePU persistence unit, we will need to specify different datasources for the 2 persistence
-     * units. Spring does not like this, since autowiring for this class expects a single DS to be defined. Therefore,
-     * we need to override in xml the datasource being set. Possibly, we need to find a convenient way to do this without
-     * specifying every test class in xml. Not a priority, but will come up later as we add test cases that involve
-     * any of the secure payment info classes (i.e. CreditCardPaymentInfo).
-     */
+	private static MergeClassPathXMLApplicationContext mergeContext = null;
+	
+	public static MergeClassPathXMLApplicationContext getContext() {
+		try {
+			if (mergeContext == null) {
+				String[] contexts = StandardConfigLocations.retrieveAll();
+				String[] allContexts = new String[contexts.length + 2];
+				System.arraycopy(contexts, 0, allContexts, 0, contexts.length);
+				allContexts[allContexts.length-2] = "bl-applicationContext-test.xml";
+				allContexts[allContexts.length-1] = "bl-applicationContext-test-security.xml";
+				mergeContext = new MergeClassPathXMLApplicationContext(allContexts, new String[]{});
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return mergeContext;
+	}
+	
+	@PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    public EntityManager getEntityManager() {
-        if (em == null) {
-            em = ((EntityManagerFactory) applicationContext.getBean("entityManagerFactory")).createEntityManager();
-        }
-        return em;
-    }
-
-    @BeforeClass
-    public void setup() {
-        getEntityManager();
-    }
-
-    @AfterClass
-    public void tearDown() {
-        //do nothing
-    }
 }

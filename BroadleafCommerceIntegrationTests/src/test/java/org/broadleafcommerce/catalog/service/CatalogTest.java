@@ -94,10 +94,10 @@ public class CatalogTest extends BaseTest {
         newSku.setName("Under Armor T-Shirt -- Red");
         newSku.setRetailPrice(new Money(14.99));
         newSku.setActiveStartDate(activeStartCal.getTime());
+        newSku = catalogService.saveSku(newSku);
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(newSku);
         newProduct.setAllSkus(allSkus);
-        newSku = catalogService.saveSku(newSku);
         newProduct = catalogService.saveProduct(newProduct);
         Long skuId = newProduct.getSkus().get(0).getId();
 

@@ -52,6 +52,7 @@ import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class CheckoutTest extends BaseTest {
@@ -76,6 +77,7 @@ public class CheckoutTest extends BaseTest {
 
     @SuppressWarnings("serial")
 	@Test(groups = { "checkout" }, dependsOnGroups = { "createCartForCustomer", "testShippingInsert" })
+	@Transactional
     public void testCheckout() throws Exception {
     	String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);

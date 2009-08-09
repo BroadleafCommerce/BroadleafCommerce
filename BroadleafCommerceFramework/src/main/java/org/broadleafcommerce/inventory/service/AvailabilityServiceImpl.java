@@ -91,4 +91,8 @@ public class AvailabilityServiceImpl implements AvailabilityService {
     public List<SkuAvailability> lookupSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime) {
         return availabilityDao.readSKUAvailabilityForLocation(skuIds, locationId, realTime);
     }
+    
+    public void save(SkuAvailability skuAvailability) {
+    	availabilityDao.save(skuAvailability);
+    }
 }

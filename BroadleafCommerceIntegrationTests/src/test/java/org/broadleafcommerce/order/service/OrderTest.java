@@ -53,6 +53,7 @@ import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class OrderTest extends BaseTest {
@@ -103,6 +104,7 @@ public class OrderTest extends BaseTest {
 
     @Test(groups = { "addItemToOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "createSku" })
     @Rollback(false)
+    @Transactional
     public void addItemToOrder() throws PricingException {
         numOrderItems++;
         Sku sku = skuDao.readFirstSku();
@@ -121,6 +123,7 @@ public class OrderTest extends BaseTest {
 
     @Test(groups = { "addAnotherItemToOrder" }, dependsOnGroups = { "addItemToOrder" })
     @Rollback(false)
+    @Transactional
     public void addAnotherItemToOrder() throws PricingException {
         Sku sku = skuDao.readFirstSku();
         Order order = cartService.findOrderById(orderId);
@@ -138,6 +141,7 @@ public class OrderTest extends BaseTest {
 
     @Test(groups = { "addBundleToOrder" }, dependsOnGroups = { "addAnotherItemToOrder" })
     @Rollback(false)
+    @Transactional
     public void addBundleToOrder() throws PricingException {
         numOrderItems++;
         Sku sku = skuDao.readFirstSku();
@@ -161,6 +165,7 @@ public class OrderTest extends BaseTest {
 
     @Test(groups = { "removeBundleFromOrder" }, dependsOnGroups = { "addBundleToOrder" })
     @Rollback(false)
+    @Transactional
     public void removeBundleFromOrder() throws PricingException {
         Order order = cartService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
@@ -178,6 +183,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups = { "getItemsForOrder" }, dependsOnGroups = { "removeBundleFromOrder" })
+    @Transactional
     public void getItemsForOrder() {
         Order order = cartService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
@@ -186,6 +192,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
+    @Transactional
     public void updateItemsInOrder() throws ItemNotFoundException, PricingException {
         Order order = cartService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
@@ -202,6 +209,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
+    @Transactional
     public void removeItemFromOrder() throws PricingException {
         Order order = cartService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
@@ -217,6 +225,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups = { "checkOrderItems" }, dependsOnGroups = { "removeItemFromOrder" })
+    @Transactional
     public void checkOrderItems() throws PricingException {
         Order order = cartService.findOrderById(orderId);
         assert order.getOrderItems().size() == 1;
@@ -226,6 +235,7 @@ public class OrderTest extends BaseTest {
 
     @Test(groups = { "addPaymentToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class, dependsOnGroups = { "checkOrderItems" })
     @Rollback(false)
+    @Transactional
     public void addPaymentToOrder(PaymentInfo paymentInfo) {
         Order order = cartService.findOrderById(orderId);
         cartService.addPaymentToOrder(order, paymentInfo, null);
@@ -240,6 +250,7 @@ public class OrderTest extends BaseTest {
 
     @Test(groups = "addFulfillmentGroupToOrderFirst", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "addPaymentToOrder" })
     @Rollback(false)
+    @Transactional
     public void addFulfillmentGroupToOrderFirst(FulfillmentGroup fulfillmentGroup) throws PricingException {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
@@ -259,6 +270,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups = { "removeFulfillmentGroupFromOrder" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
+    @Transactional
     public void removeFulfillmentGroupFromOrder() throws PricingException {
         Order order = cartService.findOrderById(orderId);
         List<FulfillmentGroup> fgItems = order.getFulfillmentGroups();
@@ -274,6 +286,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups = { "findFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
+    @Transactional
     public void findFillmentGroupForOrderFirst() {
         Order order = cartService.findOrderById(orderId);
         FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
@@ -287,6 +300,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups= {"addItemToFulfillmentGroupSecond"}, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
+    @Transactional
     public void addItemToFulfillmentgroupSecond() {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
@@ -346,6 +360,7 @@ public class OrderTest extends BaseTest {
      * (beforeRemove - afterRemove) == 1; }
      */
     @Test(groups = { "removeItemFromOrderAfterDefaultFulfillmentGroup" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
+    @Transactional
     public void removeItemFromOrderAfterFulfillmentGroups() {
         Order order = cartService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
@@ -473,6 +488,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups = { "testAddSkuToOrder" }, dependsOnGroups = { "testNamedOrderForCustomer" })
+    @Transactional
     public void testAddSkuToOrder() throws PricingException {
         Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
 
@@ -493,10 +509,10 @@ public class OrderTest extends BaseTest {
         newSku.setName("Red Leather Pants");
         newSku.setRetailPrice(new Money(44.99));
         newSku.setActiveStartDate(activeStartCal.getTime());
+        newSku = catalogService.saveSku(newSku);
         List<Sku> allSkus = new ArrayList<Sku>();
         allSkus.add(newSku);
         newProduct.setAllSkus(allSkus);
-        newSku = catalogService.saveSku(newSku);
         newProduct = catalogService.saveProduct(newProduct);
 
         Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
@@ -523,6 +539,7 @@ public class OrderTest extends BaseTest {
     }
 
     @Test(groups = { "testOrderPaymentInfos" }, dependsOnGroups = { "testAddSkuToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
+    @Transactional
     public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
         Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
         Order order = cartService.createNewCartForCustomer(customer);

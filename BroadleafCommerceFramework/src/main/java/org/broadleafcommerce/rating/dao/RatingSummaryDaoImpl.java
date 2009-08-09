@@ -38,7 +38,11 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    public void deleteRatingSummary(RatingSummary summary) {
+    @SuppressWarnings("unchecked")
+	public void deleteRatingSummary(RatingSummary summary) {
+    	if (!em.contains(summary)) {
+    		summary = (RatingSummary) em.find(entityConfiguration.lookupEntityClass(RatingSummary.class.getName()), summary.getId());
+    	}
         em.remove(summary);
     }
 

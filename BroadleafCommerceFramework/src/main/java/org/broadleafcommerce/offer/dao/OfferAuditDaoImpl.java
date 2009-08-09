@@ -37,6 +37,9 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
     }
 
     public void delete(OfferAudit offerAudit) {
+    	if (!em.contains(offerAudit)) {
+    		offerAudit = readAuditById(offerAudit.getId());
+    	}
         em.remove(offerAudit);
     }
 

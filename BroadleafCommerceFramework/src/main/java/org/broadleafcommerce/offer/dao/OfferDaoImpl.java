@@ -75,10 +75,17 @@ public class OfferDaoImpl implements OfferDao {
     }
 
     public void delete(Offer offer) {
+    	if (!em.contains(offer)) {
+    		offer = readOfferById(offer.getId());
+    	}
         em.remove(offer);
     }
 
-    public void delete(OfferInfo offerInfo) {
+    @SuppressWarnings("unchecked")
+	public void delete(OfferInfo offerInfo) {
+    	if (!em.contains(offerInfo)) {
+    		offerInfo = (OfferInfo) em.find(entityConfiguration.lookupEntityClass(OfferInfo.class.getName()), offerInfo.getId());
+    	}
         em.remove(offerInfo);
     }
 

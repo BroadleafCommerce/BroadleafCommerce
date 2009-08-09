@@ -52,34 +52,5 @@
     	<version>0.0.0</version>
     	<scope>compile</scope>
     </dependency>
-    <dependency>
-    	<groupId>org.easymock</groupId>
-    	<artifactId>easymock</artifactId>
-    	<version>2.5.1</version>
-    	<type>jar</type>
-    	<scope>test</scope>
-    </dependency>
-    <dependency>
-    	<groupId>org.easymock</groupId>
-    	<artifactId>easymockclassextension</artifactId>
-    	<version>2.4</version>
-    	<type>jar</type>
-    	<scope>test</scope>
-    </dependency>
-    <dependency>
-    	<groupId>org.testng</groupId>
-    	<artifactId>testng</artifactId>
-    	<version>5.9</version>
-    	<type>jar</type>
-    	<classifier>jdk15</classifier>
-    	<scope>test</scope>
-    </dependency>
-    <dependency>
-    	<groupId>org.springframework</groupId>
-    	<artifactId>spring-test</artifactId>
-    	<version>2.5.6</version>
-    	<type>jar</type>
-    	<scope>test</scope>
-    </dependency>
   </dependencies>
 </project>

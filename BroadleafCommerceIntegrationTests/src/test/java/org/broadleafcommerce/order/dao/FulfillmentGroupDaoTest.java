@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.order.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
@@ -36,6 +37,9 @@ public class FulfillmentGroupDaoTest extends BaseTest {
 
     @Resource
     private FulfillmentGroupDao fulfillmentGroupDao;
+    
+    @Resource
+    private FulfillmentGroupService fulfillmentGroupService;
 
     @Resource
     private CustomerService customerService;
@@ -62,7 +66,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
 
         assert newFG.getId() == null;
-        fulfillmentGroup = fulfillmentGroupDao.save(newFG);
+        fulfillmentGroup = fulfillmentGroupService.save(newFG);
         assert fulfillmentGroup.getId() != null;
         orderId = salesOrder.getId();
         defaultFulfillmentGroupId = fulfillmentGroup.getId();
@@ -102,7 +106,7 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         newFG.setOrder(salesOrder);
 
         assert newFG.getId() == null;
-        fulfillmentGroup = fulfillmentGroupDao.save(newFG);
+        fulfillmentGroup = fulfillmentGroupService.save(newFG);
         assert fulfillmentGroup.getId() != null;
         orderId = salesOrder.getId();
         fulfillmentGroupId = fulfillmentGroup.getId();

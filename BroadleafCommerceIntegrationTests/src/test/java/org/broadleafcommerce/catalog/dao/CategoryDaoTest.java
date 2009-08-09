@@ -26,7 +26,9 @@ import org.broadleafcommerce.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.catalog.domain.FeaturedProductImpl;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.ProductImpl;
+import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.test.BaseTest;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class CategoryDaoTest extends BaseTest {
@@ -34,17 +36,18 @@ public class CategoryDaoTest extends BaseTest {
     @Resource
     private CategoryDao categoryDao;
     @Resource
-    private ProductDao productDao;
+    private CatalogService catalogService;
 
     @Test(groups =  {"testSetFeaturedProducts"}, dataProvider="basicCategory", dataProviderClass=CategoryDaoDataProvider.class)
+    @Transactional
     public void testSetFeaturedProducts(Category category) {
-        category = categoryDao.save(category);
+        category = catalogService.saveCategory(category);
 
         Product product = new ProductImpl();
         product.setModel("KGX200");
         product.setDescription("This thing will change your life");
         product.setName("Test Product");
-        product = productDao.save(product);
+        product = catalogService.saveProduct(product);
 
         FeaturedProduct featuredProduct = new FeaturedProductImpl();
         featuredProduct.setCategory(category);
@@ -53,7 +56,7 @@ public class CategoryDaoTest extends BaseTest {
         List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
         featuredProducts.add(featuredProduct);
         category.setFeaturedProducts(featuredProducts);
-        category = categoryDao.save(category);
+        category = catalogService.saveCategory(category);
 
         Category categoryTest = categoryDao.readCategoryById(category.getId());
         FeaturedProduct featuredProductTest = categoryTest.getFeaturedProducts().get(0);

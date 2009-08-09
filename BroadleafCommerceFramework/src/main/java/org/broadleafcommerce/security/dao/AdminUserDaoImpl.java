@@ -39,8 +39,10 @@ public class AdminUserDaoImpl implements AdminUserDao {
 
     @SuppressWarnings("unchecked")
     public void deleteAdminUser(AdminUser user) {
-        AdminUser persisted = (AdminUser) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminUser"), user.getId());
-        em.remove(persisted);
+    	if (!em.contains(user)) {
+        	user = (AdminUser) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminUser"), user.getId());
+    	}
+        em.remove(user);
     }
 
     @SuppressWarnings("unchecked")

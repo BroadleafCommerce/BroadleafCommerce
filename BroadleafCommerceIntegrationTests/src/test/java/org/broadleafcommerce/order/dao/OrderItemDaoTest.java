@@ -29,6 +29,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class OrderItemDaoTest extends BaseTest {
@@ -89,6 +90,7 @@ public class OrderItemDaoTest extends BaseTest {
     }
 
     @Test(groups = { "readGiftWrapOrderItemsById" }, dependsOnGroups = { "createGiftWrapOrderItem" })
+    @Transactional
     public void readGiftWrapOrderItemsById() {
         assert giftWrapItemId != null;
         OrderItem result = orderItemDao.readOrderItemById(giftWrapItemId);

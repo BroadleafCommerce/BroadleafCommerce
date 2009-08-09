@@ -75,15 +75,19 @@
             <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue"/>
         </aop:aspect>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blCartServiceOperation" expression="execution(* org.broadleafcommerce.order.service.CartService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCartServiceOperation" order="1"/>
+	    <aop:aspect id="blPricingAspect2" ref="blPricingExecutionManager">
+            <aop:pointcut id="blServiceMethodWithReturnValue2" expression="execution(* org.broadleafcommerce.order.service.CartService.*(..))"/>
+            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue2"/>
+        </aop:aspect>
+	</aop:config>
 
 	<aop:config>
 		<aop:pointcut id="blOrderDaoOperation" expression="execution(* org.broadleafcommerce.order.dao.OrderDao.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation"/>
-	</aop:config>
-
-	<aop:config>
-		<aop:pointcut id="blCartServiceOperation" expression="execution(* org.broadleafcommerce.order.service.CartService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCartServiceOperation"/>
 	</aop:config>
 
 	<aop:config>
@@ -124,6 +128,16 @@
 	<aop:config>
 		<aop:pointcut id="blShippingRateServiceOperation" expression="execution(* org.broadleafcommerce.pricing.service.ShippingRateService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blShippingRateServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blAvailabilityServiceOperation" expression="execution(* org.broadleafcommerce.inventory.service.AvailabilityService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAvailabilityServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blRatingServiceOperation" expression="execution(* org.broadleafcommerce.rating.service.RatingService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRatingServiceOperation"/>
 	</aop:config>
 
     <bean id="blCategoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoImpl">

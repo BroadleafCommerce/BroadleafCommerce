@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.SkuDaoDataProvider;
 import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
@@ -32,15 +33,18 @@ public class SkuDaoTest extends BaseTest {
 
     @Resource
     private SkuDao skuDao;
+    
+    @Resource
+    private CatalogService catalogService;
 
-    @Test(groups = { "createSku" }, dataProvider = "basicSku", dataProviderClass = SkuDaoDataProvider.class, dependsOnGroups = { "readCustomer1", "createOrder", "createProduct" })
+    @Test(groups = { "createSku" }, dataProvider = "basicSku", dataProviderClass = SkuDaoDataProvider.class, dependsOnGroups = { "readCustomer1", "createOrder", "createProducts" })
     @Rollback(false)
     public void createSku(Sku sku) {
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));
         sku.setRetailPrice(new Money(BigDecimal.valueOf(15.0)));
         sku.setName("test sku");
         assert sku.getId() == null;
-        sku = skuDao.save(sku);
+        sku = catalogService.saveSku(sku);
         assert sku.getId() != null;
         skuId = sku.getId();
     }

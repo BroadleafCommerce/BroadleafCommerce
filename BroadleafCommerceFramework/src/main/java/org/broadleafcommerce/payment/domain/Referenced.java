@@ -34,5 +34,9 @@ public interface Referenced extends Serializable {
     public EncryptionModule getEncryptionModule();
 
     public void setEncryptionModule(EncryptionModule encryptionModule);
+    
+    public Long getId();
+    
+    public void setId(Long id);
 
 }

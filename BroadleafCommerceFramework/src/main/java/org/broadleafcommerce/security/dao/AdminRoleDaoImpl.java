@@ -37,10 +37,11 @@ public class AdminRoleDaoImpl implements AdminRoleDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @SuppressWarnings("unchecked")
     public void deleteAdminRole(AdminRole role) {
-        AdminRole persisted = (AdminRole) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.security.domain.AdminRole"), role.getId());
-        em.remove(persisted);
+    	if (!em.contains(role)) {
+    		role = readAdminRoleById(role.getId());
+    	}
+        em.remove(role);
     }
 
     @SuppressWarnings("unchecked")

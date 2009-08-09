@@ -23,10 +23,13 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.service.CartService;
+import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class FulfillmentGroupItemDaoTest extends BaseTest {
@@ -42,10 +45,14 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
 
     @Resource
     private OrderDao orderDao;
+    
+    @Resource
+    private CartService cartService;
 
     @Test(groups = { "createFulfillmentGroupItem" }, dependsOnGroups = { "createOrder", "createDiscreteOrderItem", "createDefaultFulfillmentGroup" })
     @Rollback(false)
-    public void createFulfillmentGroupItem() {
+    @Transactional
+    public void createFulfillmentGroupItem() throws PricingException {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
@@ -54,13 +61,8 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
 
         assert fulfillmentGroup != null;
 
-        FulfillmentGroupItem fgi = fulfillmentGroupItemDao.create();
-        fgi.setFulfillmentGroup(fulfillmentGroup);
-        fgi.setOrderItem(orderItem);
-        fgi.setQuantity(orderItem.getQuantity());
-
-        assert fgi.getId() == null;
-        fgi = fulfillmentGroupItemDao.save(fgi);
+        fulfillmentGroup = cartService.addItemToFulfillmentGroup(orderItem, fulfillmentGroup, orderItem.getQuantity());
+        FulfillmentGroupItem fgi = fulfillmentGroup.getFulfillmentGroupItems().get(fulfillmentGroup.getFulfillmentGroupItems().size()-1);
         assert fgi.getId() != null;
         fulfillmentGroupItemId = fgi.getId();
 

@@ -41,7 +41,7 @@ public class SkuAvailabilityTest extends BaseTest {
     @Test(groups = { "createSkuAvailability" }, dataProvider = "setupSkuAvailability", dataProviderClass = SkuAvailabilityDataProvider.class)
     @Rollback(false)
     public void createSkuAvailability(SkuAvailability skuAvailability) {
-        availabilityDao.save(skuAvailability);
+        availabilityService.save(skuAvailability);
     }
 
     @Test(dependsOnGroups = { "createSkuAvailability" })

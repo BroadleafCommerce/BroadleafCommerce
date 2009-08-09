@@ -63,5 +63,6 @@ public interface AvailabilityService {
 	 */
 	public List<SkuAvailability> lookupSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime);
 
-
+	public void save(SkuAvailability skuAvailability);
+	
 }
