@@ -23,17 +23,31 @@
 		          <phase>test</phase>
 		          <configuration>
 		            <tasks>
-		            	<copy file="../BroadleafCommerceFramework/target/instrumented/cobertura.ser" tofile="target/instrumented/framework.ser"/>
-		              <taskdef resource="testngtasks" classpath="testng.jar"
-		                       classpathref="maven.test.classpath"/>
+		              <taskdef resource="testngtasks" classpath="testng.jar" classpathref="maven.test.classpath"/>
 		              <taskdef classpathref="maven.test.classpath" resource="tasks.properties"/>
 		              <path id="test.path">
-		              	<fileset dir="../BroadleafCommerceFramework/target/instrumented"/>
+		              	<pathelement location="../BroadleafCommerceFramework/target/instrumented"/>
+		              	<pathelement location="../BroadleafCommerceFrameworkWeb/target/instrumented"/>
+		              	<pathelement location="../BroadleafCommerceProfile/target/instrumented"/>
+		              	<pathelement location="../BroadleafCommerceProfileWeb/target/instrumented"/>
 		              	<path refid="maven.test.classpath"/>
 		              </path>
-		              <testng classpathref="test.path"
-		                      outputdir="target/test-reports">
-		                <sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/framework.ser" />
+		              <property name="myproperty" refid="test.path"/>
+					<echo message="${myproperty}"/>
+		              <copy file="../BroadleafCommerceFramework/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser"/>
+		              <cobertura-merge datafile="target/instrumented/cobertura.ser">
+					    <fileset dir="../BroadleafCommerceFrameworkWeb/target/instrumented">
+					        <include name="cobertura.ser" />
+					    </fileset>
+					    <fileset dir="../BroadleafCommerceProfile/target/instrumented">
+					        <include name="cobertura.ser" />
+					    </fileset>
+					    <fileset dir="../BroadleafCommerceProfileWeb/target/instrumented">
+					        <include name="cobertura.ser" />
+					    </fileset>
+					  </cobertura-merge>
+		              <testng classpathref="test.path" outputdir="target/test-reports">
+		                <sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/cobertura.ser" />
 		                <xmlfileset dir="src/test/resources" includes="*testng.xml"/>
 		              </testng>
 		              <junitreport todir="target/test-reports">
@@ -42,14 +56,38 @@
 		                </fileset>
 		                <report format="noframes" todir="target/test-reports" />
 		              </junitreport>
-		              <cobertura-report format="html" destdir="target/test-reports" datafile="target/instrumented/cobertura.ser">
+		              <cobertura-report format="html" destdir="target/cobertura-reports" datafile="target/instrumented/cobertura.ser">
 			            <fileset dir="../BroadleafCommerceFramework/src/main/java">
 			                <include name="**/*.java" />
 			                <exclude name="**/*.xml" />
 			            </fileset>
+			            <fileset dir="../BroadleafCommerceFrameworkWeb/src/main/java">
+			                <include name="**/*.java" />
+			                <exclude name="**/*.xml" />
+			            </fileset>
+			            <fileset dir="../BroadleafCommerceProfile/src/main/java">
+			                <include name="**/*.java" />
+			                <exclude name="**/*.xml" />
+			            </fileset>
+			            <fileset dir="../BroadleafCommerceProfileWeb/src/main/java">
+			                <include name="**/*.java" />
+			                <exclude name="**/*.xml" />
+			            </fileset>
 				      </cobertura-report>
-				      <cobertura-report format="xml" destdir="target/test-reports" datafile="target/instrumented/cobertura.ser">
+				      <cobertura-report format="xml" destdir="target/cobertura-reports" datafile="target/instrumented/cobertura.ser">
 			            <fileset dir="../BroadleafCommerceFramework/src/main/java">
+			                <include name="**/*.java" />
+			                <exclude name="**/*.xml" />
+			            </fileset>
+			            <fileset dir="../BroadleafCommerceFrameworkWeb/src/main/java">
+			                <include name="**/*.java" />
+			                <exclude name="**/*.xml" />
+			            </fileset>
+			            <fileset dir="../BroadleafCommerceProfile/src/main/java">
+			                <include name="**/*.java" />
+			                <exclude name="**/*.xml" />
+			            </fileset>
+			            <fileset dir="../BroadleafCommerceProfileWeb/src/main/java">
 			                <include name="**/*.java" />
 			                <exclude name="**/*.xml" />
 			            </fileset>
@@ -89,6 +127,7 @@
   		<artifactId>broadleaf-profile</artifactId>
   		<version>0.0.0</version>
   		<type>jar</type>
+  		<classifier>cobertura</classifier>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
@@ -96,6 +135,7 @@
   		<artifactId>broadleaf-profile-web</artifactId>
   		<version>0.0.0</version>
   		<type>jar</type>
+  		<classifier>cobertura</classifier>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
@@ -103,6 +143,7 @@
   		<artifactId>broadleaf-framework-web</artifactId>
   		<version>0.0.0</version>
   		<type>jar</type>
+  		<classifier>cobertura</classifier>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
