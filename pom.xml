@@ -168,7 +168,7 @@
     <dependency>
     	<groupId>velocity-tools</groupId>
     	<artifactId>velocity-tools</artifactId>
-    	<version>1.2</version>
+    	<version>1.4</version>
     	<type>jar</type>
     	<scope>runtime</scope>
     </dependency>
