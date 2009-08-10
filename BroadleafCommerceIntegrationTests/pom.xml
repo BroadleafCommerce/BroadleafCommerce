@@ -32,8 +32,6 @@
 		              	<pathelement location="../BroadleafCommerceProfileWeb/target/instrumented"/>
 		              	<path refid="maven.test.classpath"/>
 		              </path>
-		              <property name="myproperty" refid="test.path"/>
-					<echo message="${myproperty}"/>
 		              <copy file="../BroadleafCommerceFramework/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser"/>
 		              <cobertura-merge datafile="target/instrumented/cobertura.ser">
 					    <fileset dir="../BroadleafCommerceFrameworkWeb/target/instrumented">
