@@ -134,16 +134,16 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public void assignFinalPrice() {
-        price = getCurrentPrice().getAmount();
+        price = getCurrentPrice(true).getAmount();
     }
 
     public Money getTaxablePrice() {
         return getPrice();
     }
 
-    public Money getCurrentPrice() {
+    public Money getCurrentPrice(boolean includeOffers) {
         Money currentPrice = null;
-        if (adjustmentPrice != null) {
+        if ((includeOffers) && (adjustmentPrice != null)) {
             currentPrice = new Money(adjustmentPrice);
         } else if (salePrice != null) {
             currentPrice = new Money(salePrice);
@@ -284,6 +284,14 @@ public class OrderItemImpl implements OrderItem {
 
     public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {
         this.orderItemAdjustments = orderItemAdjustments;
+    }
+
+    public Money getAdjustmentValue() {
+        Money adjustmentValue = new Money(0);
+        for (OrderItemAdjustment itemAdjustment : orderItemAdjustments) {
+            adjustmentValue = adjustmentValue.add(itemAdjustment.getValue());
+        }
+        return adjustmentValue;
     }
 
     public Money getAdjustmentPrice() {
