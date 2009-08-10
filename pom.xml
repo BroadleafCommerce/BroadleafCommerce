@@ -152,13 +152,6 @@
     	<scope>runtime</scope>
     </dependency>
     <dependency>
-    	<groupId>velocity-tools</groupId>
-    	<artifactId>velocity-tools</artifactId>
-    	<version>1.4</version>
-    	<type>jar</type>
-    	<scope>runtime</scope>
-    </dependency>
-    <dependency>
     	<groupId>org.hibernate</groupId>
     	<artifactId>hibernate-jmx</artifactId>
     	<version>3.3.1.GA</version>
@@ -171,6 +164,13 @@
     	<version>1.0</version>
     	<type>jar</type>
     	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>velocity-tools</groupId>
+    	<artifactId>velocity-tools</artifactId>
+    	<version>1.2</version>
+    	<type>jar</type>
+    	<scope>runtime</scope>
     </dependency>
   </dependencies>
   <modules>
