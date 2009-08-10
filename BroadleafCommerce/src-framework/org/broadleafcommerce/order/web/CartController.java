@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.order.web;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,13 +25,12 @@ import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
-import org.broadleafcommerce.offer.dao.OfferCodeDao;
-import org.broadleafcommerce.offer.dao.OfferDao;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
-import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.offer.service.OfferService;
+import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
@@ -47,7 +45,6 @@ import org.broadleafcommerce.order.web.model.CartSummary;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.web.CustomerState;
-import org.broadleafcommerce.util.money.Money;
 import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -76,10 +73,6 @@ public class CartController {
     protected final FulfillmentGroupService fulfillmentGroupService;
     @Resource(name="blOfferService")
     private OfferService offerService;
-    @Resource(name="blOfferCodeDao")
-    private OfferCodeDao offerCodeDao;
-    @Resource(name="blOfferDao")
-    private OfferDao offerDao;
     protected String cartView;
     protected boolean cartViewRedirect;
     protected String addItemView;
@@ -111,6 +104,27 @@ public class CartController {
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
 
+        for (OrderItem orderItem : cart.getOrderItems()) {
+            if (orderItem instanceof DiscreteOrderItem) {
+                Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
+                if (!(sku.getSalePrice().equals(((DiscreteOrderItem) orderItem).getSalePrice()))) {
+                    orderItem.setSalePrice(sku.getSalePrice());
+                }
+                if (!(sku.getRetailPrice().equals(((DiscreteOrderItem) orderItem).getRetailPrice()))) {
+                    orderItem.setRetailPrice(sku.getRetailPrice());
+                }
+
+                if (orderItem.getSalePrice() != orderItem.getRetailPrice()) {
+                    orderItem.setPrice(orderItem.getSalePrice());
+                }
+                else {
+                    orderItem.setPrice(orderItem.getRetailPrice());
+                }
+
+                orderItem.getPrice();
+            }
+        }
+
         if (cart.getOrderItems() != null ) {
             for (OrderItem orderItem : cart.getOrderItems()) {
                 CartOrderItem cartOrderItem = new CartOrderItem();
@@ -134,7 +148,7 @@ public class CartController {
         }
 
         updateFulfillmentGroups(cartSummary, cart);
-        cartSummary.setOrderDiscounts(getOrderDiscounts(cart));
+        cartSummary.setOrderDiscounts(cart.getOrderDiscounts());
         model.addAttribute("cartSummary", cartSummary);
         return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
@@ -196,7 +210,7 @@ public class CartController {
             model.addAttribute("error", "remove");
             LOG.error("An error occurred while removing an item from the cart: ("+orderItemId+")", e);
         }
-        cartSummary.setOrderDiscounts(getOrderDiscounts(currentCartOrder));
+        cartSummary.setOrderDiscounts(currentCartOrder.getOrderDiscounts());
 
         return removeItemViewRedirect ? "redirect:" + removeItemView : removeItemView;
     }
@@ -246,7 +260,7 @@ public class CartController {
                 }
             }
         }
-        cartSummary.setOrderDiscounts(getOrderDiscounts(currentCartOrder));
+        cartSummary.setOrderDiscounts(currentCartOrder.getOrderDiscounts());
         return cartView;
     }
 
@@ -277,7 +291,7 @@ public class CartController {
                 List<Offer> offers = offerService.buildOfferListForOrder(currentCartOrder);
                 offerService.applyOffersToOrder(offers, currentCartOrder);
                 currentCartOrder = updateFulfillmentGroups(cartSummary, currentCartOrder);
-                cartSummary.setOrderDiscounts(getOrderDiscounts(currentCartOrder));
+                cartSummary.setOrderDiscounts(currentCartOrder.getOrderDiscounts());
             }
             else {
                 model.addAttribute("promoError", "Invalid promo code entered.");
@@ -295,23 +309,6 @@ public class CartController {
         cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
         cartService.addFulfillmentGroupToOrder(currentCartOrder, cartSummary.getFulfillmentGroup());
         return cartService.save(currentCartOrder, true);
-    }
-
-    private BigDecimal getOrderDiscounts(Order cart) {
-        BigDecimal orderDiscounts = new BigDecimal(0);
-        if (cart.getAdjustmentPrice() != null) {
-            orderDiscounts.add(cart.getAdjustmentPrice().getAmount());
-        }
-
-        for (OrderItem item : cart.getOrderItems()) {
-            for (OrderItemAdjustment itemAdjustment : item.getOrderItemAdjustments()) {
-                Money itemValue = itemAdjustment.getValue();
-                itemValue = itemValue.multiply(item.getQuantity());
-                orderDiscounts = orderDiscounts.add(itemValue.getAmount());
-            }
-        }
-
-        return orderDiscounts;
     }
 
     private CartSummary createFulfillmentGroup (CartSummary cartSummary, String shippingMethod, Order cart) {

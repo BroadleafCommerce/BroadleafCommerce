@@ -50,9 +50,9 @@
 			  		  		<td style="text-align:right;">
 				    			<span class="price">
 	           						<c:choose>
-										<c:when test="${item.salePrice.amount != item.listPrice.amount}">
+										<c:when test="${item.salePrice.amount != item.retailPrice.amount}">
 											<span class="salePrice"><fmt:formatNumber type="currency" value="${item.salePrice.amount}" /></span>
-											<br/><span class="originalPrice">reg&nbsp;<fmt:formatNumber type="currency" value="${item.listPrice.amount}" /></span>
+											<br/><span class="originalPrice">reg&nbsp;<fmt:formatNumber type="currency" value="${item.retailPrice.amount}" /></span>
 										</c:when>
 										<c:otherwise>
 											<fmt:formatNumber type="currency" value="${item.listPrice.amount}" />
@@ -91,7 +91,7 @@
 					<tr class="totals">
 						<td colspan="3">&nbsp;</td>
 						<td style="text-align:right">Total:</td>
-						<td style="text-align:right"><span class="price">$${currentCartOrder.total}</span></td>
+						<td style="text-align:right"><span class="price">$${currentCartOrder.total }</span></td>
 					</tr>
 					<tr class="totals">
 						<td colspan="5" style="text-align:right"><a href="<c:url value="/store" />">Continue Shopping</a>  <button type="submit" name="checkout" id="checkout">Proceed to Checkout &raquo;</button>
