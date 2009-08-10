@@ -42,6 +42,8 @@ public interface OrderItem extends Serializable {
 
     public void setSalePrice(Money salePrice);
 
+    public Money getAdjustmentValue();
+
     public Money getAdjustmentPrice();
 
     public void setAdjustmentPrice(Money adjustmentPrice);
@@ -52,7 +54,7 @@ public interface OrderItem extends Serializable {
 
     public void assignFinalPrice();
 
-    public Money getCurrentPrice();
+    public Money getCurrentPrice(boolean includeOffers);
 
     public int getQuantity();
 

@@ -148,7 +148,7 @@ public class CartController {
         }
 
         updateFulfillmentGroups(cartSummary, cart);
-        cartSummary.setOrderDiscounts(cart.getOrderDiscounts());
+        cartSummary.setOrderDiscounts(cart.getTotalAdjustmentsValue().getAmount());
         model.addAttribute("cartSummary", cartSummary);
         return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
@@ -210,7 +210,7 @@ public class CartController {
             model.addAttribute("error", "remove");
             LOG.error("An error occurred while removing an item from the cart: ("+orderItemId+")", e);
         }
-        cartSummary.setOrderDiscounts(currentCartOrder.getOrderDiscounts());
+        cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
 
         return removeItemViewRedirect ? "redirect:" + removeItemView : removeItemView;
     }
@@ -260,7 +260,7 @@ public class CartController {
                 }
             }
         }
-        cartSummary.setOrderDiscounts(currentCartOrder.getOrderDiscounts());
+        cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
         return cartView;
     }
 
@@ -291,7 +291,7 @@ public class CartController {
                 List<Offer> offers = offerService.buildOfferListForOrder(currentCartOrder);
                 offerService.applyOffersToOrder(offers, currentCartOrder);
                 currentCartOrder = updateFulfillmentGroups(cartSummary, currentCartOrder);
-                cartSummary.setOrderDiscounts(currentCartOrder.getOrderDiscounts());
+                cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
             }
             else {
                 model.addAttribute("promoError", "Invalid promo code entered.");

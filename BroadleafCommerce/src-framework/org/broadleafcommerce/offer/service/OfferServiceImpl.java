@@ -247,7 +247,7 @@ public class OfferServiceImpl implements OfferService {
             List<CandidateOrderOffer> qualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
             List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
             // set order subtotal price to total item price without adjustments
-            order.setSubTotal(order.calculateOrderItemsCurrentPrice());
+            order.setSubTotal(order.calculateOrderItemsCurrentPrice(false));
             List<DiscreteOrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
             for (Offer offer : filteredOffers) {
                 if(offer.getType().equals(OfferType.ORDER)){
@@ -306,7 +306,7 @@ public class OfferServiceImpl implements OfferService {
                 }
 
                 if ((notCombinableItemOfferApplied != null) && (notCombinableOrderOfferApplied != null)) {
-                    if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
+                    if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice(true))) {
                         order.removeAllOrderAdjustments();
                         qualifiedOrderOffers = removeOfferFromCandidateOrderOffers(qualifiedOrderOffers, notCombinableOrderOfferApplied);
                         notCombinableOrderOfferApplied = null;
@@ -324,7 +324,7 @@ public class OfferServiceImpl implements OfferService {
                 }
                 if ((notCombinableItemOfferApplied != null) && (!qualifiedOrderOffers.isEmpty())){
                     // item is not combinable
-                    if (order.getAdjustmentPrice().greaterThan(order.calculateOrderItemsCurrentPrice())) {
+                    if (order.getAdjustmentPrice().greaterThan(order.calculateOrderItemsCurrentPrice(true))) {
                         // item is better
                         order.removeAllOrderAdjustments();
                         qualifiedOrderOffers.clear();
@@ -339,7 +339,7 @@ public class OfferServiceImpl implements OfferService {
                 }
                 if ((notCombinableOrderOfferApplied != null) && (!qualifiedItemOffers.isEmpty())) {
                     // item is not combinable
-                    if (order.getAdjustmentPrice().lessThan(order.calculateOrderItemsCurrentPrice())) {
+                    if (order.getAdjustmentPrice().lessThan(order.calculateOrderItemsCurrentPrice(true))) {
                         // order is better
                         order.removeAllItemAdjustments();
                         qualifiedItemOffers.clear();
