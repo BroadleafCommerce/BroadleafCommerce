@@ -125,7 +125,6 @@
   		<artifactId>broadleaf-profile</artifactId>
   		<version>0.0.0</version>
   		<type>jar</type>
-  		<classifier>cobertura</classifier>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
@@ -133,7 +132,6 @@
   		<artifactId>broadleaf-profile-web</artifactId>
   		<version>0.0.0</version>
   		<type>jar</type>
-  		<classifier>cobertura</classifier>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
@@ -141,7 +139,6 @@
   		<artifactId>broadleaf-framework-web</artifactId>
   		<version>0.0.0</version>
   		<type>jar</type>
-  		<classifier>cobertura</classifier>
   		<scope>test</scope>
   	</dependency>
   	<dependency>
