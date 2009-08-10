@@ -172,21 +172,6 @@
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>
-    <dependency>
-    	<groupId>org.springframework</groupId>
-    	<artifactId>spring-test</artifactId>
-    	<version>2.5.6</version>
-    	<type>jar</type>
-    	<scope>test</scope>
-    </dependency>
-    <dependency>
-    	<groupId>org.testng</groupId>
-    	<artifactId>testng</artifactId>
-    	<version>5.9</version>
-    	<type>jar</type>
-    	<classifier>jdk15</classifier>
-    	<scope>test</scope>
-    </dependency>
   </dependencies>
   <modules>
   	<module>BroadleafCommerceProfile</module>
@@ -195,13 +180,4 @@
   	<module>BroadleafCommerceFrameworkWeb</module>
     <module>BroadleafCommerceIntegrationTests</module>
   </modules>
-  <reporting>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.codehaus.mojo</groupId>
-  			<artifactId>cobertura-maven-plugin</artifactId>
-  			<version>2.3</version>
-  		</plugin>
-  	</plugins>
-  </reporting>
 </project>
