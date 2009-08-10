@@ -562,6 +562,30 @@ public class OrderImpl implements Order {
         this.additionalOfferInformation = additionalOfferInformation;
     }
 
+    public BigDecimal getOrderDiscounts() {
+        BigDecimal orderDiscounts = new BigDecimal(0);
+
+        List<OrderAdjustment> orderAdjustments = getOrderAdjustments();
+        if (orderAdjustments != null) {
+            for (OrderAdjustment orderAdjustment : orderAdjustments) {
+                orderDiscounts = orderDiscounts.add(orderAdjustment.getValue().getAmount());
+            }
+        }
+
+        List<OrderItem> orderItems = getOrderItems();
+        if (orderItems != null) {
+            for (OrderItem item : orderItems) {
+                for (OrderItemAdjustment itemAdjustment : item.getOrderItemAdjustments()) {
+                    Money itemValue = itemAdjustment.getValue();
+                    itemValue = itemValue.multiply(item.getQuantity());
+                    orderDiscounts = orderDiscounts.add(itemValue.getAmount());
+                }
+            }
+        }
+
+        return orderDiscounts;
+    }
+
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
