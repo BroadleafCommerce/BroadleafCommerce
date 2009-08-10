@@ -14,7 +14,8 @@
 			            <th>Item Description</th>
 			            <th style="text-align:center;">Quantity</th>
 			            <th style="text-align:right;padding-right:12px" width="150">Price</th>
-			            <th style="text-align:right;padding-right:14px">Total</th>
+						<th style="text-align:right;padding-right:3px" width="100">Discount</th>
+			            <th style="text-align:right;padding-right:14px" width="70">Total</th>
 			          </tr>
 		          </thead>
 		          <tbody>
@@ -60,54 +61,63 @@
 									</c:choose>
 					    		</span>
 						    </td>
+		  					<td style="text-align:right;">
+								<c:choose>
+									<c:when test="${orderItem.adjustmentValue.amount > 0}" >
+										<span class="price" style="color:red;">(<fmt:formatNumber type="currency" value="${orderItem.adjustmentValue.amount * orderItem.quantity}" />)</span>
+									</c:when>
+									<c:otherwise>
+										<span class="price"> -- &nbsp;&nbsp;&nbsp;</span>					
+									</c:otherwise>
+								</c:choose>								
+					  		</td>
 					  		<td style="text-align:right;">
 					  		  <span class="price"><fmt:formatNumber type="currency" value="${orderItem.price.amount * orderItem.quantity}" /></span>
 					  		</td>
 			     		</tr>
 					</c:forEach>
 					<tr class="totals highlight">
-						<td colspan="3">&nbsp;</td>
-						<td style="text-align:right"><b style="font-size:18px;"> *</b> Subtotal:</td>
+						<td colspan="4">&nbsp;</td>
+						<td style="text-align:right">Subtotal:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.subTotal}</span></td>
 					</tr>
+					<c:if test="${(currentCartOrder.orderAdjustmentsValue != null)}">
+						<tr>
+							<td colspan="4">&nbsp;</td>
+							<td style="text-align:right">Order Discount:</td>
+							<td style="text-align:right"><span class="price" style="color:red;">($${currentCartOrder.orderAdjustmentsValue})</span></td>
+						</tr>	   
+					</c:if>
 					<tr class="totals">
-						<td colspan="3" style="text-align:right;">Promo Code:
+						<td colspan="4" style="text-align:right;">Promo Code:
 							<form:input maxlength="10" path="promoCode" autocomplete="off"/>
 							<input type="submit" name="updatePromo" value="Add To Order" class="cartButton" />
 						</td>
-						<td style="text-align:right">Estimated Tax:</td>
+						<td style="text-align:right">Tax:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.totalTax}</span></td>
 					</tr>
 					<tr class="totals">
-						<td colspan="3" style="text-align:right;">Shipping Method:
+						<td colspan="4" style="text-align:right;">Shipping Method:
 							<form:select  id="shipping"  cssClass="shipMethod" path="fulfillmentGroup.method">
 								<form:options items="${fulfillmentGroups}" itemValue="method" itemLabel="method" />
 							</form:select>
 							<input type="hidden" value="Update Shipping" name="updateShipping"  id="shippingButton"/>
 						</td>
-						<td style="text-align:right">Estimated Shipping:</td>
+						<td style="text-align:right">Shipping:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.totalShipping}</span></td>
 					</tr>
 					<tr class="totals">
-						<td colspan="3">&nbsp;</td>
+						<td colspan="4">&nbsp;</td>
 						<td style="text-align:right">Total:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.total }</span></td>
 					</tr>
 					<tr class="totals">
-						<td colspan="5" style="text-align:right"><a href="<c:url value="/store" />">Continue Shopping</a>  <button type="submit" name="checkout" id="checkout">Proceed to Checkout &raquo;</button>
+						<td colspan="6" style="text-align:right"><a href="<c:url value="/store" />">Continue Shopping</a>  <button type="submit" name="checkout" id="checkout">Proceed to Checkout &raquo;</button>
 						</td>
 					</tr>
 			</form:form>
 				</tbody>
 				</table>
-				<div style="float:right;">
-					<c:if test="${(cartSummary.orderDiscounts != null) && (cartSummary.orderDiscounts > 0)}">
-						<span><b style="font-size:18px;">* </b> Your order reflects a discount of $${cartSummary.orderDiscounts} based on the promo code(s) entered. </span> <br/>   
-					</c:if>
-					<c:if test="${promoError != null}">
-						<span> ${promoError} </span>
-					</c:if>
-				</div>			
 				</c:when>
 				<c:otherwise>
 					<c:url var="storeUrl" value="/store" />
