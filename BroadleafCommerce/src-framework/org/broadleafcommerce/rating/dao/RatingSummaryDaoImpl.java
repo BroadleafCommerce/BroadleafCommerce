@@ -19,6 +19,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -69,7 +70,13 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         Query query = em.createNamedQuery("BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemId", itemId);
         query.setParameter("ratingType", type.getType());
-        RatingSummary ratingSummary = (RatingSummary) query.getSingleResult();
+        RatingSummary ratingSummary = null;
+
+        try {
+            ratingSummary = (RatingSummary) query.getSingleResult();
+        } catch (NoResultException e) {
+            // ignore
+        }
 
         return ratingSummary;
     }
@@ -78,7 +85,14 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         Query query = em.createNamedQuery("BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
         query.setParameter("customerId", customerId);
         query.setParameter("ratingSummaryId", ratingSummaryId);
-        RatingDetail ratingDetail = (RatingDetail) query.getSingleResult();
+
+        RatingDetail ratingDetail = null;
+
+        try {
+            ratingDetail = (RatingDetail) query.getSingleResult();
+        } catch (NoResultException e) {
+            // ignore
+        }
 
         return ratingDetail;
     }
@@ -87,7 +101,13 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
         query.setParameter("customerId", customerId);
         query.setParameter("ratingSummaryId", ratingSummaryId);
-        ReviewDetail reviewDetail = (ReviewDetail) query.getSingleResult();
+        ReviewDetail reviewDetail = null;
+
+        try {
+            reviewDetail = (ReviewDetail) query.getSingleResult();
+        } catch (NoResultException e) {
+            // ignore
+        }
 
         return reviewDetail;
     }
