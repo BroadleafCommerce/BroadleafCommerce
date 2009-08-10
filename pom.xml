@@ -179,5 +179,7 @@
   	<module>BroadleafCommerceFramework</module>
   	<module>BroadleafCommerceFrameworkWeb</module>
     <module>BroadleafCommerceIntegrationTests</module>
+    <module>BroadleafCommerceUSPS</module>
+    <module>BroadleafCommerceUSPSSchemas</module>
   </modules>
 </project>

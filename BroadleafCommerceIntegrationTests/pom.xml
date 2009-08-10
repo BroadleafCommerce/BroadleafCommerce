@@ -30,6 +30,7 @@
 		              	<pathelement location="../BroadleafCommerceFrameworkWeb/target/instrumented"/>
 		              	<pathelement location="../BroadleafCommerceProfile/target/instrumented"/>
 		              	<pathelement location="../BroadleafCommerceProfileWeb/target/instrumented"/>
+		              	<pathelement location="../BroadleafCommerceUSPS/target/instrumented"/>
 		              	<path refid="maven.test.classpath"/>
 		              </path>
 		              <copy file="../BroadleafCommerceFramework/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser"/>
@@ -41,6 +42,9 @@
 					        <include name="cobertura.ser" />
 					    </fileset>
 					    <fileset dir="../BroadleafCommerceProfileWeb/target/instrumented">
+					        <include name="cobertura.ser" />
+					    </fileset>
+					    <fileset dir="../BroadleafCommerceUSPS/target/instrumented">
 					        <include name="cobertura.ser" />
 					    </fileset>
 					  </cobertura-merge>
@@ -71,6 +75,10 @@
 			                <include name="**/*.java" />
 			                <exclude name="**/*.xml" />
 			            </fileset>
+			            <fileset dir="../BroadleafCommerceUSPS/src/main/java">
+			                <include name="**/*.java" />
+			                <exclude name="**/*.xml" />
+			            </fileset>
 				      </cobertura-report>
 				      <cobertura-report format="xml" destdir="target/cobertura-reports" datafile="target/instrumented/cobertura.ser">
 			            <fileset dir="../BroadleafCommerceFramework/src/main/java">
@@ -86,6 +94,10 @@
 			                <exclude name="**/*.xml" />
 			            </fileset>
 			            <fileset dir="../BroadleafCommerceProfileWeb/src/main/java">
+			                <include name="**/*.java" />
+			                <exclude name="**/*.xml" />
+			            </fileset>
+			            <fileset dir="../BroadleafCommerceUSPS/src/main/java">
 			                <include name="**/*.java" />
 			                <exclude name="**/*.xml" />
 			            </fileset>
@@ -137,6 +149,13 @@
   	<dependency>
   		<groupId>org.broadleafcommerce</groupId>
   		<artifactId>broadleaf-framework-web</artifactId>
+  		<version>0.0.0</version>
+  		<type>jar</type>
+  		<scope>test</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.broadleafcommerce</groupId>
+  		<artifactId>broadleaf-usps</artifactId>
   		<version>0.0.0</version>
   		<type>jar</type>
   		<scope>test</scope>
