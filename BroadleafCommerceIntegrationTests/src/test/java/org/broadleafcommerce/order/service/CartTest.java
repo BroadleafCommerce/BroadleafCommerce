@@ -30,6 +30,7 @@ import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
@@ -52,7 +53,7 @@ public class CartTest extends BaseTest {
     @Resource
     private CatalogService catalogService;
 
-    @Test(groups = { "testNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrder" })
     @Transactional
     public void testMoveAllItemsToCartFromNamedOrder() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -64,7 +65,7 @@ public class CartTest extends BaseTest {
     	assert namedOrder.getOrderItems().size() == 0;
     }
 
-    @Test(groups = { "testNamedOrder" })
+    @Test(groups = { "testCartAndNamedOrder" })
     @Transactional
     public void testAddAllItemsToCartFromNamedOrder() throws PricingException {
     	Order namedOrder = setUpNamedOrder();
@@ -77,8 +78,54 @@ public class CartTest extends BaseTest {
     	cartService.setMoveNamedOrderItems(true);
     }
 
+    @Test(groups = { "testCartAndNamedOrder" })
+    @Transactional
+    public void testAddAllItemsToCartFromNamedOrderWithoutExistingCart() throws PricingException {
+    	Order namedOrder = setUpNamedOrder();
+    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+    	namedOrderItems.addAll(namedOrder.getOrderItems());
+    	cartService.setMoveNamedOrderItems(false);
+    	Order cart = cartService.addAllItemsToCartFromNamedOrder(namedOrder);
+    	assert namedOrderItems.equals(cart.getOrderItems());
+    	cartService.setMoveNamedOrderItems(true);
+    }
+
+    @Test(groups = { "testCartAndNamedOrder" })
+    @Transactional
+    public void testAddItemToCartFromNamedOrder() throws PricingException {
+    	Order namedOrder = setUpNamedOrder();
+    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+    	namedOrderItems.addAll(namedOrder.getOrderItems());
+    	Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
+    	cartService.setMoveNamedOrderItems(false);
+    	OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder, namedOrderItems.get(0));
+    	cartService.setMoveNamedOrderItems(true);
+    	assert movedItem != null;
+    	assert cart.getOrderItems().size() == 1;
+    	assert cart.getOrderItems().size() == 1;
+    }
+
+    @Test(groups = { "testCartAndNamedOrder" })
+    @Transactional
+    public void testMoveItemToCartFromNamedOrder() throws PricingException {
+    	Order namedOrder = setUpNamedOrder();
+    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+    	namedOrderItems.addAll(namedOrder.getOrderItems());
+    	Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
+    	OrderItem movedItem = cartService.moveItemToCartFromNamedOrder(namedOrder, namedOrderItems.get(0));
+    	
+    	List<Order> customerNamedOrders = cartService.findOrdersForCustomer(namedOrder.getCustomer(), OrderStatus.NAMED);
+    	assert customerNamedOrders.size() == 0;
+    	assert movedItem != null;
+    	assert cart.getOrderItems().size() == 1;
+    	assert namedOrder.getOrderItems().size() == 0;
+    }
+
     
-    private Order setUpNamedOrder() throws PricingException {
+    //TODO: move this to OrderTest
+    @Test(groups = { "testCartAndNamedOrder" })
+    @Transactional
+    public void testCreateNamedOrder() throws PricingException {
         Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
 
         Category category = new CategoryImpl();
@@ -126,7 +173,42 @@ public class CartTest extends BaseTest {
         assert orderNullOrderItem == null;
         assert productNullOrderItem != null;
         assert categoryNullOrderItem != null;
-        
+    }
+    
+    private Order setUpNamedOrder() throws PricingException {
+        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+
+        Category category = new CategoryImpl();
+        category.setName("Boxes");
+        category = catalogService.saveCategory(category);
+        Product newProduct = new ProductImpl();
+
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+        newProduct.setActiveStartDate(activeStartCal.getTime());
+
+        newProduct.setDefaultCategory(category);
+        newProduct.setName("Cube Box");
+        newProduct = catalogService.saveProduct(newProduct);
+
+        Sku newSku = new SkuImpl();
+        newSku.setName("Small Cube Box");
+        newSku.setRetailPrice(new Money(44.99));
+        newSku.setActiveStartDate(activeStartCal.getTime());
+        newSku.setDiscountable(true);
+        newSku = catalogService.saveSku(newSku);
+        List<Sku> allSkus = new ArrayList<Sku>();
+        allSkus.add(newSku);
+        newProduct.setAllSkus(allSkus);
+        newProduct = catalogService.saveProduct(newProduct);
+
+        Order order = orderService.createNamedOrderForCustomer("Boxes Named Order", customer);
+
+        orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+    	
         return order;
     }
+    
+    
 }
