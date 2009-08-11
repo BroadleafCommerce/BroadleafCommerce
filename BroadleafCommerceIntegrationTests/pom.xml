@@ -23,8 +23,6 @@
 		          <phase>test</phase>
 		          <configuration>
 		            <tasks>
-		              <taskdef resource="testngtasks" classpath="testng.jar" classpathref="maven.test.classpath"/>
-		              <taskdef classpathref="maven.test.classpath" resource="tasks.properties"/>
 		              <path id="test.path">
 		              	<pathelement location="../BroadleafCommerceFramework/target/instrumented"/>
 		              	<pathelement location="../BroadleafCommerceFrameworkWeb/target/instrumented"/>
@@ -33,6 +31,8 @@
 		              	<pathelement location="../BroadleafCommerceUSPS/target/instrumented"/>
 		              	<path refid="maven.test.classpath"/>
 		              </path>
+		              <taskdef resource="testngtasks" classpath="testng.jar" classpathref="test.path"/>
+		              <taskdef classpathref="test.path" resource="tasks.properties"/>
 		              <copy file="../BroadleafCommerceFramework/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser"/>
 		              <cobertura-merge datafile="target/instrumented/cobertura.ser">
 					    <fileset dir="../BroadleafCommerceFrameworkWeb/target/instrumented">
@@ -48,7 +48,7 @@
 					        <include name="cobertura.ser" />
 					    </fileset>
 					  </cobertura-merge>
-		              <testng classpathref="test.path" outputdir="target/test-reports">
+		              <testng classpathref="test.path" outputdir="target/test-reports" haltonfailure="true">
 		                <sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/cobertura.ser" />
 		                <xmlfileset dir="src/test/resources" includes="*testng.xml"/>
 		              </testng>
@@ -146,21 +146,21 @@
     	<type>jar</type>
     	<scope>test</scope>
     </dependency>
-    <dependency>
+  	<dependency>
     	<groupId>org.easymock</groupId>
     	<artifactId>easymock</artifactId>
     	<version>2.5.1</version>
     	<type>jar</type>
     	<scope>test</scope>
     </dependency>
-    <dependency>
+  	<dependency>
     	<groupId>org.easymock</groupId>
     	<artifactId>easymockclassextension</artifactId>
     	<version>2.4</version>
     	<type>jar</type>
     	<scope>test</scope>
     </dependency>
-    <dependency>
+  	<dependency>
     	<groupId>org.testng</groupId>
     	<artifactId>testng</artifactId>
     	<version>5.9</version>
@@ -168,28 +168,28 @@
     	<classifier>jdk15</classifier>
     	<scope>test</scope>
     </dependency>
-    <dependency>
+  	<dependency>
     	<groupId>org.springframework</groupId>
     	<artifactId>spring-test</artifactId>
     	<version>2.5.6</version>
     	<type>jar</type>
     	<scope>test</scope>
     </dependency>
-    <dependency>
+  	<dependency>
     	<groupId>javax.servlet</groupId>
     	<artifactId>servlet-api</artifactId>
     	<version>2.5</version>
     	<type>jar</type>
     	<scope>provided</scope>
     </dependency>
-    <dependency>
+  	<dependency>
     	<groupId>javax.servlet.jsp</groupId>
     	<artifactId>jsp-api</artifactId>
     	<version>2.1</version>
     	<type>jar</type>
     	<scope>provided</scope>
     </dependency>
-    <dependency>
+  	<dependency>
   		<groupId>cobertura</groupId>
   		<artifactId>cobertura</artifactId>
   		<version>1.8</version>

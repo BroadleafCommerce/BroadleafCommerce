@@ -19,7 +19,20 @@
   			<executions>
 		        <!-- this ant script runs testng natively -->
 		        <execution>
-		          <id>uspsschemas</id>
+		          <id>uspsschemas-src</id>
+		          <phase>generate-sources</phase>
+		          <configuration>
+		            <tasks>
+		            	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpathref="maven.compile.classpath"/>
+						<xmlbean srcgendir="src/main/java" srconly="true" classpathref="maven.compile.classpath">
+							<fileset dir="src/main/resources" includes="*.xsd"/>
+						</xmlbean>
+		            </tasks>
+		          </configuration>
+		          <goals><goal>run</goal></goals>
+		        </execution>
+		        <execution>
+		          <id>uspsschemas-compile</id>
 		          <phase>compile</phase>
 		          <configuration>
 		            <tasks>
@@ -31,7 +44,7 @@
 		          </configuration>
 		          <goals><goal>run</goal></goals>
 		        </execution>
-		      </executions>
+		     </executions>
 		      <dependencies>
 		        <dependency>
 		          <groupId>ant</groupId>
