@@ -489,69 +489,6 @@ public class OrderTest extends BaseTest {
     @Test(groups = { "testAddSkuToOrder" })
     @Transactional
     public void testAddSkuToOrder() throws PricingException {
-        setUpNamedOrder();
-    }
-
-    @Test(groups = { "testOrderPaymentInfos" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
-    @Transactional
-    public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
-        Order order = cartService.createNewCartForCustomer(customer);
-        orderService.addPaymentToOrder(order, info);
-
-        boolean foundInfo = false;
-        assert order.getPaymentInfos() != null;
-        for (PaymentInfo testInfo : order.getPaymentInfos())
-        {
-            if (testInfo.equals(info))
-            {
-                foundInfo = true;
-            }
-        }
-        assert foundInfo == true;
-        assert orderService.readPaymentInfosForOrder(order) != null;
-
-        //orderService.removeAllPaymentsFromOrder(order);
-        //assert order.getPaymentInfos().size() == 0;
-    }
-
-    
-    @Test(groups = { "testNamedOrder" })
-    @Transactional
-    public void testAddAllItemsToCartFromNamedOrder() throws PricingException {
-    	
-    	Order namedOrder = setUpNamedOrder();
-    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
-    	namedOrderItems.addAll(namedOrder.getOrderItems());
-    	Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
-    	cart = cartService.addAllItemsToCartFromNamedOrder(namedOrder);
-    	assert namedOrderItems.equals(cart.getOrderItems());
-    	
-    }
-
-    @Test(groups = { "testSubmitOrder" }, dependsOnGroups = { "findNamedOrderForCustomer" })
-    public void testSubmitOrder() throws PricingException {
-        Customer customer = customerService.createCustomerFromId(null);
-        Order order = cartService.createNewCartForCustomer(customer);
-        order.setStatus(OrderStatus.IN_PROCESS);
-        order = orderService.save(order, false);
-        Long orderId = order.getId();
-
-        Order confirmedOrder = orderService.confirmOrder(order);
-
-        confirmedOrder = orderService.findOrderById(confirmedOrder.getId());
-        Long confirmedOrderId = confirmedOrder.getId();
-
-        assert orderId.equals(confirmedOrderId);
-        assert confirmedOrder.getStatus().equals(OrderStatus.SUBMITTED);
-    }
-
-    @Test
-    public void findCartForNullCustomerId() {
-        assert cartService.findCartForCustomer(new CustomerImpl()) == null;
-    }
-    
-    private Order setUpNamedOrder() throws PricingException {
         Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
 
         Category category = new CategoryImpl();
@@ -600,6 +537,51 @@ public class OrderTest extends BaseTest {
         assert productNullOrderItem != null;
         assert categoryNullOrderItem != null;
         
-        return order;
     }
+
+    @Test(groups = { "testOrderPaymentInfos" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
+    @Transactional
+    public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
+        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+        Order order = cartService.createNewCartForCustomer(customer);
+        orderService.addPaymentToOrder(order, info);
+
+        boolean foundInfo = false;
+        assert order.getPaymentInfos() != null;
+        for (PaymentInfo testInfo : order.getPaymentInfos())
+        {
+            if (testInfo.equals(info))
+            {
+                foundInfo = true;
+            }
+        }
+        assert foundInfo == true;
+        assert orderService.readPaymentInfosForOrder(order) != null;
+
+        //orderService.removeAllPaymentsFromOrder(order);
+        //assert order.getPaymentInfos().size() == 0;
+    }
+
+    @Test(groups = { "testSubmitOrder" }, dependsOnGroups = { "findNamedOrderForCustomer" })
+    public void testSubmitOrder() throws PricingException {
+        Customer customer = customerService.createCustomerFromId(null);
+        Order order = cartService.createNewCartForCustomer(customer);
+        order.setStatus(OrderStatus.IN_PROCESS);
+        order = orderService.save(order, false);
+        Long orderId = order.getId();
+
+        Order confirmedOrder = orderService.confirmOrder(order);
+
+        confirmedOrder = orderService.findOrderById(confirmedOrder.getId());
+        Long confirmedOrderId = confirmedOrder.getId();
+
+        assert orderId.equals(confirmedOrderId);
+        assert confirmedOrder.getStatus().equals(OrderStatus.SUBMITTED);
+    }
+
+    @Test
+    public void findCartForNullCustomerId() {
+        assert cartService.findCartForCustomer(new CustomerImpl()) == null;
+    }
+    
 }
