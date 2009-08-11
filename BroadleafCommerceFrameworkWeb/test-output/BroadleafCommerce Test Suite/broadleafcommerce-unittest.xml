@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="broadleafcommerce-unittest" failures="0" tests="3" time="4.503" errors="0">
+  <properties/>
+  <testcase name="test_Breadcrumb" time="4.332" classname="org.broadleafcommerce.taglib.CategoryBreadcrumbTagTest"/>
+  <testcase name="test_categoryTag" time="0.021" classname="org.broadleafcommerce.taglib.CategoryTagTest"/>
+  <testcase name="test_GetProductsByCategoryIdTag" time="0.034" classname="org.broadleafcommerce.taglib.GetProductsByCategoryIdTagTest"/>
+</testsuite>

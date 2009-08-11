@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util-2.0.xsd">
+
+    <bean class="org.springframework.jmx.export.MBeanExporter">
+        <property name="autodetect" value="false" />
+        <property name="assembler">
+            <bean id="jmxAssembler"
+                class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
+                <property name="attributeSource">
+                    <bean
+                        class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
+                </property>
+            </bean>
+        </property>
+        <property name="beans">
+            <map>
+                <entry key="org.broadleafcommerce:name=hibernate.statistics">
+                    <bean class="org.hibernate.jmx.StatisticsService">
+                        <property name="statisticsEnabled" value="true" />
+                        <property name="sessionFactory">
+                            <util:property-path
+                                path="entityManagerFactory.sessionFactory" />
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+	<bean id="blCacheManager" class="org.broadleafcommerce.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
+		<property name="shared" value="true"/>
+		<property name="configLocations">
+			<list>
+				<value>classpath:bl-ehcache.xml</value>
+			</list>
+		</property>
+	</bean>
+
+    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath*:/META-INF/persistence-profile.xml</value>
+				<value>classpath*:/META-INF/persistence-auxiliary.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
+		<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
+		<property name="persistenceUnitName" value="blPU"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="showSql" value="false" />
+				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
+			</bean>
+		</property>
+		<property name="jpaPropertyMap">
+            <map>
+            	<entry key="hibernate.show_sql" value="false"/>
+                <entry key="hibernate.transaction.flush_before_completion" value="false"/>
+                <entry key="hibernate.connection.autocommit" value="false"/>
+                <entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
+                <entry key="hibernate.cache.use_second_level_cache" value="true"/>
+                <entry key="hibernate.cache.use_query_cache" value="true"/>
+                <entry key="hibernate.generate_statistics" value="true" />
+                <entry key="hibernate.archive.autodetection" value="false" />
+            </map>
+        </property>
+	</bean>
+
+	<bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="blCustomerAddressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerAddressService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerAddressServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blAddressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.AddressService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAddressServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blPhoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.PhoneService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blPhoneServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blCustomerPhoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerPhoneService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerPhoneServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blCustomerServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blUserServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.UserService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blUserServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blIdGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blIdGenerationServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="blRoleServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.RoleService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRoleServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blCountryServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CountryService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCountryServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blStateServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.StateService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blStateServiceOperation"/>
+	</aop:config>
+
+	<bean id="blChallengeQuestionDao" class="org.broadleafcommerce.profile.dao.ChallengeQuestionDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blCountryDao" class="org.broadleafcommerce.profile.dao.CountryDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blIdGenerationDao" class="org.broadleafcommerce.profile.dao.IdGenerationDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blRoleDao" class="org.broadleafcommerce.profile.dao.RoleDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blStateDao" class="org.broadleafcommerce.profile.dao.StateDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+</beans>

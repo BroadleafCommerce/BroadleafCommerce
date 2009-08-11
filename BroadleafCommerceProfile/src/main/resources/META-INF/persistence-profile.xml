@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+             version="1.0">
+    <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+		<mapping-file>config/bc/jpa/domain/Address.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/ChallengeQuestion.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Country.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Customer.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/CustomerAddress.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/CustomerPhone.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/IdGeneration.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Phone.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Role.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/State.orm.xml</mapping-file>
+        <mapping-file>config/bc/jpa/domain/User.orm.xml</mapping-file>
+        <class>org.broadleafcommerce.profile.domain.AddressImpl</class>
+        <class>org.broadleafcommerce.profile.domain.ChallengeQuestionImpl</class>
+        <class>org.broadleafcommerce.profile.domain.CountryImpl</class>
+        <class>org.broadleafcommerce.profile.domain.CustomerAddressImpl</class>
+        <class>org.broadleafcommerce.profile.domain.CustomerImpl</class>
+        <class>org.broadleafcommerce.profile.domain.CustomerPhoneImpl</class>
+        <class>org.broadleafcommerce.profile.domain.CustomerRoleImpl</class>
+        <class>org.broadleafcommerce.profile.domain.IdGenerationImpl</class>
+        <class>org.broadleafcommerce.profile.domain.PhoneImpl</class>
+        <class>org.broadleafcommerce.profile.domain.RoleImpl</class>
+        <class>org.broadleafcommerce.profile.domain.StateImpl</class>
+        <class>org.broadleafcommerce.profile.domain.UserImpl</class>
+        <class>org.broadleafcommerce.profile.domain.UserRoleImpl</class>
+        <exclude-unlisted-classes/>
+        <properties>
+			<property name="hibernate.archive.autodetection" value="false" />
+        </properties>
+    </persistence-unit>
+</persistence>
