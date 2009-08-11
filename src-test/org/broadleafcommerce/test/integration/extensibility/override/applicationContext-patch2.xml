@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-
-	<!-- Don't override any of the original beans, just add a new one  -->
-	<bean id="test2" class="org.broadleafcommerce.test.integration.extensibility.ExtensibilityTestBean3"/>
-
-</beans>
