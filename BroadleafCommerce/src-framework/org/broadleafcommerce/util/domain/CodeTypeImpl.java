@@ -51,8 +51,8 @@ public class CodeTypeImpl implements CodeType {
     @Column(name = "CODE_DESC")
     protected String description;
 
-    @Column(name = "MODIFYABLE")
-    protected Character modifyable;
+    @Column(name = "MODIFIABLE")
+    protected Character modifiable;
 
     public Long getId() {
         return id;
@@ -86,21 +86,21 @@ public class CodeTypeImpl implements CodeType {
         this.description = description;
     }
 
-    public Boolean isModifyable() {
-        if(modifyable == null)
+    public Boolean isModifiable() {
+        if(modifiable == null)
             return null;
-        return modifyable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
+        return modifiable == 'Y' ? Boolean.TRUE : Boolean.FALSE;
     }
 
-    public Boolean getModifyable() {
-        return isModifyable();
+    public Boolean getModifiable() {
+        return isModifiable();
     }
 
-    public void setModifyable(Boolean modifyable) {
-        if(modifyable == null) {
-            this.modifyable = null;
+    public void setModifiable(Boolean modifiable) {
+        if(modifiable == null) {
+            this.modifiable = null;
         } else {
-            this.modifyable = modifyable ? 'Y' : 'N';
+            this.modifiable = modifiable ? 'Y' : 'N';
         }
     }
 }

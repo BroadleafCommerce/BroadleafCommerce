@@ -23,7 +23,7 @@ import org.broadleafcommerce.util.dao.CodeTypeDao;
 import org.broadleafcommerce.util.domain.CodeType;
 import org.springframework.stereotype.Service;
 
-@Service("blCodeTypeSerice")
+@Service("blCodeTypeService")
 public class CodeTypeServiceImpl implements CodeTypeService {
 
     @Resource(name="blCodeTypeDao")
@@ -41,7 +41,7 @@ public class CodeTypeServiceImpl implements CodeTypeService {
         return codeTypeDao.readCodeTypeById(codeTypeId);
     }
 
-    public CodeType lookupCodeTypeByKey(String key) {
+    public List<CodeType> lookupCodeTypeByKey(String key) {
         return codeTypeDao.readCodeTypeByKey(key);
     }
 

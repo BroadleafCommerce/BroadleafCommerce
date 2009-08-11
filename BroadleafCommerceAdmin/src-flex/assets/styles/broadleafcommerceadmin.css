@@ -162,11 +162,11 @@ DataGrid
 {
 	header-colors: #666666, #000000;
 	header-style-name: "dataGridHeaderStyle";	
-	roll-over-color: #9AB12A;
+	roll-over-color: #DEE7C0;
 	text-roll-over-color: #000000;
 	horizontal-grid-lines: true;
 	vertical-grid-lines: false;
-	selectionColor: #dee7c0;
+	selectionColor: #9AB12A;
 }
 
 GridRow
@@ -203,7 +203,11 @@ ComboBox
 
 Button
 {
-	theme-color: #94B12D;	
+/* 	color: #FFFFFF;
+	corner-radius: 4;
+	fill-alphas: 1, 0.50;
+	fill-colors: #000000, #000000, #000000, #000000; */
+	theme-color: #94B12D;		
 }
 
 DateField
@@ -240,3 +244,9 @@ TitleWindow
 	shadowDistance: 5;
 	color: #000000;
 }
+
+.headerLabel
+{
+	font-size: 16;
+	font-weight: bold;
+}	

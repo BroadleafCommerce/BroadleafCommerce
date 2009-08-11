@@ -5,7 +5,7 @@
 
 	<named-query name="BC_READ_CODE_TYPE_BY_KEY" >
 		<query>SELECT codeType FROM org.broadleafcommerce.util.domain.CodeType codeType
-		WHERE codeType.key = :key</query>
+		WHERE codeType.key LIKE :key</query>
 	</named-query>
 
 	<named-query name="BC_READ_ALL_CODE_TYPES">

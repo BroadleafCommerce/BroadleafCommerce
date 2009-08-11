@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	defaultButton="{submitButton}"
+	verticalAlign="middle">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.tools.control.events.codetype.ClearCodeTypeSearchEvent;
+			import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
+			import org.broadleafcommerce.admin.tools.model.ToolsModel;
+			import org.broadleafcommerce.admin.tools.control.events.codetype.FindAllCodeTypesEvent;
+			import mx.utils.StringUtil;
+			import org.broadleafcommerce.admin.tools.control.events.codetype.SearchCodeTypesEvent;
+			private function handleAdminSearch(event:Event):void{
+				if(keyTextInput.text != ""){
+					new SearchCodeTypesEvent(keyTextInput.text).dispatch();
+				}else{
+					handleClearSearchResults(event);
+				}
+			}
+			
+			private function handleAdvancedAdminSearch(event:Event):void{
+				
+			}
+			
+			private function handleClearSearchResults(event:Event):void{
+				new ClearCodeTypeSearchEvent().dispatch();
+				keyTextInput.text = "";
+			}
+		]]>
+	</mx:Script>
+	<mx:Label
+		text="Search By Key:"/>
+	<mx:TextInput
+		id="keyTextInput"
+		width="160"/>
+	<mx:Button
+		id="submitButton"
+		label="Search"
+		click="handleAdminSearch(event)"/>
+	<mx:LinkButton
+		id="advancedSearchLinkButton"
+		label="Advanced Search"
+		click="handleAdvancedAdminSearch(event)"/>
+	<mx:LinkButton
+		id="clearSearchResults"
+		label="Clear Search Results"
+		click="handleClearSearchResults(event)"/>
+</mx:HBox>

@@ -57,15 +57,11 @@ public class CodeTypeDaoImpl implements CodeTypeDao {
     }
 
     @SuppressWarnings("unchecked")
-    public CodeType readCodeTypeByKey(String key) {
-        CodeType codeType = null;
+    public List<CodeType> readCodeTypeByKey(String key) {
         Query query = em.createNamedQuery("BC_READ_CODE_TYPE_BY_KEY");
         query.setParameter("key", key);
         List<CodeType> result = query.getResultList();
-        if(result.size() > 0) {
-            codeType = result.get(0);
-        }
-        return codeType;
+        return result;
     }
 
     public CodeType save(CodeType codeType) {

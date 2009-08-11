@@ -5,10 +5,12 @@
 	xmlns:offer="org.broadleafcommerce.admin.view.offer.*"
 	xmlns:category="org.broadleafcommerce.admin.view.catalog.category.*"
 	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*" 
+	xmlns:helpers="org.broadleafcommerce.admin.core.view.helpers.*" 
+	xmlns:view="org.broadleafcommerce.admin.tools.view.*"
 	xmlns:security="org.broadleafcommerce.admin.security.view.*" 
 	width="100%" 
-	height="100%" creationPolicy="all" xmlns:helpers="org.broadleafcommerce.admin.core.view.helpers.*">
-	
+	height="100%" 
+	creationPolicy="all"> 
 	
 	<helpers:AdminContentViewHelper id="adminContent" />
 	
@@ -26,5 +28,10 @@
 			label="Admins" 
 			height="100%" 
 			width="100%" />
+		<view:CodeTypeCanvas
+			id="codeTypeCanvas"
+			label="Code Types"
+			height="100%"
+			width="100%"/>
 	</mx:ViewStack>
 </mx:HBox>

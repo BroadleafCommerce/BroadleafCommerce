@@ -16,7 +16,6 @@ package org.broadleafcommerce.admin.catalog.commands.category
 			CatalogModelLocator.getInstance().categoryModel.viewState = CategoryModel.STATE_EDIT;
 			var fpbce:FindProductsByCategoryEvent = new FindProductsByCategoryEvent(ecce.category);
 			fpbce.dispatch();
-
 		}
 	}
 }

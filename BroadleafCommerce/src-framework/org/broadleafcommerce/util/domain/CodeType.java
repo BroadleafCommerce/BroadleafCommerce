@@ -35,10 +35,10 @@ public interface CodeType extends Serializable {
 
     public String getDescription();
 
-    public void setModifyable(Boolean modifyable);
+    public void setModifiable(Boolean modifiable);
 
-    public Boolean getModifyable();
+    public Boolean getModifiable();
 
-    public Boolean isModifyable();
+    public Boolean isModifiable();
 
 }

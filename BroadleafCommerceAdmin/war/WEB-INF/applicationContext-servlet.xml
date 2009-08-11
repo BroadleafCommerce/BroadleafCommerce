@@ -56,5 +56,6 @@
 	<flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />	
 	<flex:remoting-destination ref="blAdminSecurityService"/>	
 	<flex:remoting-destination ref="blOfferService" />		
+	<flex:remoting-destination ref="blCodeTypeService"/>
 
 </beans>

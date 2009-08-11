@@ -25,7 +25,7 @@ public interface CodeTypeService {
 
     public CodeType save(CodeType codeType);
 
-    public CodeType lookupCodeTypeByKey(String key);
+    public List<CodeType> lookupCodeTypeByKey(String key);
 
     public void deleteCodeType(CodeType codeTypeId);
 

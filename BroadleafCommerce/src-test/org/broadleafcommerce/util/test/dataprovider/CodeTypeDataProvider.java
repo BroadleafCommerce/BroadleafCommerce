@@ -26,7 +26,7 @@ public class CodeTypeDataProvider {
         codeType.setCodeType("Test Type 1");
         codeType.setDescription("Test Description");
         codeType.setKey("codeTypeKey");
-        codeType.setModifyable(true);
+        codeType.setModifiable(true);
         return new Object[][] { new Object[] {codeType }} ;
     }
 }
