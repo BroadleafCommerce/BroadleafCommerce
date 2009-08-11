@@ -25,7 +25,7 @@ public interface CodeTypeDao {
 
     public CodeType readCodeTypeById(Long codeTypeId);
 
-    public CodeType readCodeTypeByKey(String key);
+    public List<CodeType> readCodeTypeByKey(String key);
 
     public CodeType save(CodeType codeType);
 

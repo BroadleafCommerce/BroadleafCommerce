@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.util.test;
 
+
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.test.integration.BaseTest;
@@ -33,13 +36,15 @@ public class CodeTypeTest extends BaseTest {
     public void testCodeTypeSave(CodeType codeType) throws Exception {
         CodeType newCodeType = codeTypeService.save(codeType);
 
-        CodeType codeTypeFromDB = codeTypeService.lookupCodeTypeByKey(codeType.getKey());
+        List<CodeType> codeTypeFromDB = codeTypeService.lookupCodeTypeByKey(codeType.getKey());
 
-        assert (newCodeType.getId() == codeTypeFromDB.getId());
-        assert (codeType.getKey() == codeTypeFromDB.getKey());
-        assert (codeType.getCodeType().equals(codeTypeFromDB.getCodeType()));
-        assert (codeType.getDescription().equals(codeTypeFromDB.getDescription()));
-        assert (codeType.getModifyable() == codeTypeFromDB.getModifyable());
+        for(CodeType codeTypeInCollection : codeTypeFromDB){
+            assert (newCodeType.getId() == codeTypeInCollection.getId());
+            assert (codeType.getKey() == codeTypeInCollection.getKey());
+            assert (codeType.getCodeType().equals(codeTypeInCollection.getCodeType()));
+            assert (codeType.getDescription().equals(codeTypeInCollection.getDescription()));
+            assert (codeType.getModifiable() == codeTypeInCollection.getModifiable());
+        }
     }
 
 
