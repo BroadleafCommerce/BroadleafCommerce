@@ -30,6 +30,7 @@
 		              	<pathelement location="../BroadleafCommerceProfileWeb/target/instrumented"/>
 		              	<pathelement location="../BroadleafCommerceUSPS/target/instrumented"/>
 		              	<path refid="maven.test.classpath"/>
+		              	<pathelement location="../../BroadleafCommerceConfig/src"/>
 		              </path>
 		              <taskdef resource="testngtasks" classpath="testng.jar" classpathref="test.path"/>
 		              <taskdef classpathref="test.path" resource="tasks.properties"/>
