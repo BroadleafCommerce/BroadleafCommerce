@@ -38,7 +38,9 @@ import org.broadleafcommerce.rating.domain.ReviewFeedback;
 import org.broadleafcommerce.rating.domain.ReviewFeedbackImpl;
 import org.broadleafcommerce.rating.service.type.RatingSortType;
 import org.broadleafcommerce.rating.service.type.RatingType;
+import org.springframework.stereotype.Service;
 
+@Service("blRatingService")
 public class RatingServiceImpl implements RatingService {
 
     @Resource
@@ -57,7 +59,7 @@ public class RatingServiceImpl implements RatingService {
         if (reviewDetail != null) {
             ReviewFeedback reviewFeedback = new ReviewFeedbackImpl(customer, helpful, reviewDetail);
             reviewDetail.getReviewFeedback().add(reviewFeedback);
-            reviewDetail = reviewDetailDao.saveReviewDetail(reviewDetail);
+            reviewDetailDao.saveReviewDetail(reviewDetail);
         }
 
     }
@@ -65,13 +67,19 @@ public class RatingServiceImpl implements RatingService {
     public void rateItem(String itemId, RatingType type, Customer customer, Double rating) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
+        RatingDetail ratingDetail = null;
+
         if (ratingSummary == null) {
             ratingSummary = new RatingSummaryImpl(itemId, type);
+            ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+        } else {
+            ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
         }
 
-        RatingDetail ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+        ratingDetail.setRating(rating);
+
         ratingSummary.getRatings().add(ratingDetail);
-        ratingSummary = ratingSummaryDao.saveRatingSummary(ratingSummary);
+        ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
     public RatingSummary readRatingSummary(String itemId, RatingType type) {
@@ -121,16 +129,23 @@ public class RatingServiceImpl implements RatingService {
         return ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
-    public void reviewItem(String itemId, RatingType type, Customer customer, String reviewText) {
+    public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
+
+        ReviewDetail reviewDetail = null;
 
         if (ratingSummary == null) {
             ratingSummary = new RatingSummaryImpl(itemId, type);
+            reviewDetail = new ReviewDetailImpl(customer, new Date(), reviewText, ratingSummary);
+        } else {
+            reviewDetail = ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
         }
 
-        ReviewDetail reviewDetail = new ReviewDetailImpl(customer, new Date(), reviewText, ratingSummary);
+        this.rateItem(itemId, type, customer, rating);
+        reviewDetail.setReviewText(reviewText);
+
         ratingSummary.getReviews().add(reviewDetail);
-        ratingSummary = ratingSummaryDao.saveRatingSummary(ratingSummary);
+        ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 
 }

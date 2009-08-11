@@ -29,6 +29,7 @@ public class TotalActivity extends BaseActivity {
         Order order = ((PricingContext) context).getSeedData();
         Money total = new Money(BigDecimal.ZERO);
         total = total.add(order.getSubTotal());
+        total = total.subtract(order.getOrderAdjustmentsValue());
         total = total.add(order.getTotalTax());
         total = total.add(order.getTotalShipping());
         order.setTotal(total);

@@ -1,5 +1,6 @@
 package org.broadleafcommerce.order.web.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public class CartSummary {
             new ArrayList<CartOrderItem>(),
             FactoryUtils.instantiateFactory(CartOrderItem.class));
     private FulfillmentGroup fulfillmentGroup = new FulfillmentGroupImpl();
+    private String promoCode;
+    private BigDecimal orderDiscounts;
 
     public CartSummary() {
         fulfillmentGroup.setMethod("standard");
@@ -36,4 +39,19 @@ public class CartSummary {
         this.fulfillmentGroup = fulfillmentGroup;
     }
 
+    public String getPromoCode() {
+        return promoCode;
+    }
+
+    public void setPromoCode(String promoCode) {
+        this.promoCode = promoCode;
+    }
+
+    public BigDecimal getOrderDiscounts() {
+        return orderDiscounts;
+    }
+
+    public void setOrderDiscounts(BigDecimal orderDiscounts) {
+        this.orderDiscounts = orderDiscounts;
+    }
 }

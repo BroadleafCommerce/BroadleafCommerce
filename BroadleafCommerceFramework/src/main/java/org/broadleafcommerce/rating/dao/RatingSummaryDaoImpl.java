@@ -19,11 +19,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.rating.domain.RatingDetail;
 import org.broadleafcommerce.rating.domain.RatingSummary;
+import org.broadleafcommerce.rating.domain.ReviewDetail;
 import org.broadleafcommerce.rating.service.type.RatingType;
 import org.springframework.stereotype.Repository;
 
@@ -55,19 +58,56 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
     public List<RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type) {
         Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemIds", itemIds);
-        query.setParameter("ratingType", type);
+        query.setParameter("ratingType", type.getType());
         List<RatingSummary> ratings = query.getResultList();
 
         return ratings;
     }
 
     public RatingSummary readRatingSummary(String itemId, RatingType type) {
-        Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
+        Query query = em.createNamedQuery("BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemId", itemId);
-        query.setParameter("ratingType", type);
-        RatingSummary ratingSummary = (RatingSummary) query.getSingleResult();
+        query.setParameter("ratingType", type.getType());
+        RatingSummary ratingSummary = null;
+
+        try {
+            ratingSummary = (RatingSummary) query.getSingleResult();
+        } catch (NoResultException e) {
+            // ignore
+        }
 
         return ratingSummary;
+    }
+
+    public RatingDetail readRating(Long customerId, Long ratingSummaryId) {
+        Query query = em.createNamedQuery("BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
+        query.setParameter("customerId", customerId);
+        query.setParameter("ratingSummaryId", ratingSummaryId);
+
+        RatingDetail ratingDetail = null;
+
+        try {
+            ratingDetail = (RatingDetail) query.getSingleResult();
+        } catch (NoResultException e) {
+            // ignore
+        }
+
+        return ratingDetail;
+    }
+
+    public ReviewDetail readReview(Long customerId, Long ratingSummaryId) {
+        Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
+        query.setParameter("customerId", customerId);
+        query.setParameter("ratingSummaryId", ratingSummaryId);
+        ReviewDetail reviewDetail = null;
+
+        try {
+            reviewDetail = (ReviewDetail) query.getSingleResult();
+        } catch (NoResultException e) {
+            // ignore
+        }
+
+        return reviewDetail;
     }
 
 }

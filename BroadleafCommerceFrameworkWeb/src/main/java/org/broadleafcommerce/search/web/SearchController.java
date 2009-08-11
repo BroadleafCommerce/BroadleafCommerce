@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.search.domain.SearchIntercept;
 import org.broadleafcommerce.search.domain.SearchQuery;
 import org.broadleafcommerce.search.service.SearchService;
 import org.broadleafcommerce.search.util.SearchFilterUtil;
@@ -49,6 +50,10 @@ public class SearchController {
 
         SearchQuery input = new SearchQuery();
         input.setQueryString(queryString);
+        SearchIntercept intercept = searchService.getInterceptForTerm(queryString);
+        if (intercept != null) {
+            return "redirect:"+ intercept.getRedirect();
+        }
         List<Product> products = null;
 
         products = searchService.performSearch(input.getQueryString());

@@ -189,10 +189,10 @@ public class OrderImpl implements Order {
         this.subTotal = Money.toAmount(subTotal);
     }
 
-    public Money calculateOrderItemsCurrentPrice() {
+    public Money calculateOrderItemsCurrentPrice(boolean includeOffers) {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
-            Money currentItemPrice = orderItem.getCurrentPrice();
+            Money currentItemPrice = orderItem.getCurrentPrice(includeOffers);
             calculatedSubTotal = calculatedSubTotal.add(new Money(currentItemPrice.doubleValue() * orderItem.getQuantity()));
         }
         return calculatedSubTotal;
@@ -560,6 +560,28 @@ public class OrderImpl implements Order {
 
     public void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation) {
         this.additionalOfferInformation = additionalOfferInformation;
+    }
+
+    public Money getItemAdjustmentsValue() {
+        Money itemAdjustmentsValue = new Money(0);
+        for (OrderItem orderItem : orderItems) {
+            itemAdjustmentsValue = itemAdjustmentsValue.add(orderItem.getAdjustmentValue().multiply(orderItem.getQuantity()));
+        }
+        return itemAdjustmentsValue;
+    }
+
+    public Money getOrderAdjustmentsValue() {
+        Money orderAdjustmentsValue = new Money(0);
+        for (OrderAdjustment orderAdjustment : orderAdjustments) {
+            orderAdjustmentsValue = orderAdjustmentsValue.add(orderAdjustment.getValue());
+        }
+        return orderAdjustmentsValue;
+    }
+
+    public Money getTotalAdjustmentsValue() {
+        Money totalAdjustmentsValue = getItemAdjustmentsValue();
+        totalAdjustmentsValue = totalAdjustmentsValue.add(getOrderAdjustmentsValue());
+        return totalAdjustmentsValue;
     }
 
     public boolean equals(Object obj) {

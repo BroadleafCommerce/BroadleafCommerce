@@ -29,6 +29,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -73,6 +74,12 @@ public class ReviewDetailImpl implements ReviewDetail {
     @OneToMany(mappedBy = "reviewDetail", targetEntity = ReviewFeedbackImpl.class)
     protected List<ReviewFeedback> reviewFeedback;
 
+    @OneToOne(targetEntity = RatingDetailImpl.class)
+    @JoinColumn(name = "RATING_ID")
+    protected RatingDetail ratingDetail;
+
+    public ReviewDetailImpl() {}
+
     public ReviewDetailImpl(Customer customer, Date reivewSubmittedDate, String reviewText, RatingSummary ratingSummary) {
         super();
         this.customer = customer;
@@ -94,6 +101,10 @@ public class ReviewDetailImpl implements ReviewDetail {
         return reviewText;
     }
 
+    public void setReviewText(String reviewText) {
+        this.reviewText = reviewText;
+    }
+
     public ReviewStatusType getStatus() {
         return new ReviewStatusType(reviewStatus);
     }
@@ -112,6 +123,10 @@ public class ReviewDetailImpl implements ReviewDetail {
 
     public RatingSummary getRatingSummary() {
         return ratingSummary;
+    }
+
+    public RatingDetail getRatingDetail() {
+        return ratingDetail;
     }
 
     public List<ReviewFeedback> getReviewFeedback() {

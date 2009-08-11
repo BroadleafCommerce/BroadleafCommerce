@@ -25,7 +25,12 @@ import org.apache.commons.beanutils.BeanPropertyValueEqualsPredicate;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.offer.domain.Offer;
+import org.broadleafcommerce.offer.domain.OfferCode;
+import org.broadleafcommerce.offer.service.OfferService;
+import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
@@ -66,6 +71,8 @@ public class CartController {
     protected final CatalogService catalogService;
     @Resource(name="blFulfillmentGroupService")
     protected final FulfillmentGroupService fulfillmentGroupService;
+    @Resource(name="blOfferService")
+    private OfferService offerService;
     protected String cartView;
     protected boolean cartViewRedirect;
     protected String addItemView;
@@ -80,28 +87,70 @@ public class CartController {
         this.fulfillmentGroupService = null;
     }
 
-    public void setCartView(String cartView) {
-        this.cartView = cartView;
+    @ModelAttribute("fulfillmentGroups")
+    public List<FulfillmentGroup> initFulfillmentGroups () {
+        List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
+        FulfillmentGroup standardGroup = new FulfillmentGroupImpl();
+        FulfillmentGroup expeditedGroup = new FulfillmentGroupImpl();
+        standardGroup.setMethod("standard");
+        expeditedGroup.setMethod("expedited");
+        fulfillmentGroups.add(standardGroup);
+        fulfillmentGroups.add(expeditedGroup);
+        return fulfillmentGroups;
     }
 
-    public void setAddItemView(String addItemView) {
-        this.addItemView = addItemView;
-    }
+    @RequestMapping(value = "viewCart.htm", method = RequestMethod.GET)
+    public String viewCart(ModelMap model, HttpServletRequest request) throws PricingException {
+        Order cart = retrieveCartOrder(request, model);
+        CartSummary cartSummary = new CartSummary();
 
-    public void setCartViewRedirect(boolean cartViewRedirect) {
-        this.cartViewRedirect = cartViewRedirect;
-    }
+        for (OrderItem orderItem : cart.getOrderItems()) {
+            if (orderItem instanceof DiscreteOrderItem) {
+                Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
+                if (!(sku.getSalePrice().equals(((DiscreteOrderItem) orderItem).getSalePrice()))) {
+                    orderItem.setSalePrice(sku.getSalePrice());
+                }
+                if (!(sku.getRetailPrice().equals(((DiscreteOrderItem) orderItem).getRetailPrice()))) {
+                    orderItem.setRetailPrice(sku.getRetailPrice());
+                }
 
-    public void setAddItemViewRedirect(boolean addItemViewRedirect) {
-        this.addItemViewRedirect = addItemViewRedirect;
-    }
+                if (orderItem.getSalePrice() != orderItem.getRetailPrice()) {
+                    orderItem.setPrice(orderItem.getSalePrice());
+                }
+                else {
+                    orderItem.setPrice(orderItem.getRetailPrice());
+                }
 
-    public void setRemoveItemView(String removeItemView) {
-        this.removeItemView = removeItemView;
-    }
+                orderItem.getPrice();
+            }
+        }
 
-    public void setRemoveItemViewRedirect(boolean removeItemViewRedirect) {
-        this.removeItemViewRedirect = removeItemViewRedirect;
+        if (cart.getOrderItems() != null ) {
+            for (OrderItem orderItem : cart.getOrderItems()) {
+                CartOrderItem cartOrderItem = new CartOrderItem();
+                cartOrderItem.setOrderItem(orderItem);
+                cartOrderItem.setQuantity(orderItem.getQuantity());
+                cartSummary.getRows().add(cartOrderItem);
+            }
+        }
+
+        if ((cart.getFulfillmentGroups() != null) && (cart.getFulfillmentGroups().isEmpty() == false)) {
+            String cartShippingMethod = cart.getFulfillmentGroups().get(0).getMethod();
+
+            if (cartShippingMethod != null) {
+                if (cartShippingMethod.equals("standard")) {
+                    cartSummary = createFulfillmentGroup(cartSummary, "standard", cart);
+                }
+                else if (cartShippingMethod.equals("expedited")) {
+                    cartSummary = createFulfillmentGroup(cartSummary, "expedited", cart);
+                }
+            }
+        }
+
+        updateFulfillmentGroups(cartSummary, cart);
+        cartSummary.setOrderDiscounts(cart.getTotalAdjustmentsValue().getAmount());
+        model.addAttribute("cartSummary", cartSummary);
+        return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
 
     /*
@@ -153,7 +202,7 @@ public class CartController {
     }
 
     @RequestMapping(value = "viewCart.htm", params="removeItemFromCart", method = {RequestMethod.GET, RequestMethod.POST})
-    public String removeItem(@RequestParam long orderItemId, ModelMap model, HttpServletRequest request) {
+    public String removeItem(@RequestParam long orderItemId, @ModelAttribute CartSummary cartSummary, ModelMap model, HttpServletRequest request) {
         Order currentCartOrder = retrieveCartOrder(request, model);
         try {
             currentCartOrder = cartService.removeItemFromOrder(currentCartOrder.getId(), orderItemId);
@@ -161,6 +210,7 @@ public class CartController {
             model.addAttribute("error", "remove");
             LOG.error("An error occurred while removing an item from the cart: ("+orderItemId+")", e);
         }
+        cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
 
         return removeItemViewRedirect ? "redirect:" + removeItemView : removeItemView;
     }
@@ -210,6 +260,7 @@ public class CartController {
                 }
             }
         }
+        cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
         return cartView;
     }
 
@@ -228,41 +279,36 @@ public class CartController {
         return cartView;
     }
 
+    @RequestMapping(value = "viewCart.htm", params="updatePromo", method = RequestMethod.POST)
+    public String updatePromoCode (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
+        Order currentCartOrder = retrieveCartOrder(request, model);
+
+        if (cartSummary.getPromoCode() != null) {
+            OfferCode code = offerService.lookupOfferCodeByCode(cartSummary.getPromoCode());
+
+            if (code != null ) {
+                currentCartOrder.addAddedOfferCode(code);
+                List<Offer> offers = offerService.buildOfferListForOrder(currentCartOrder);
+                offerService.applyOffersToOrder(offers, currentCartOrder);
+                currentCartOrder = updateFulfillmentGroups(cartSummary, currentCartOrder);
+                cartSummary.setOrderDiscounts(currentCartOrder.getTotalAdjustmentsValue().getAmount());
+            }
+            else {
+                model.addAttribute("promoError", "Invalid promo code entered.");
+
+            }
+        }
+
+        cartSummary.setPromoCode(null);
+        model.addAttribute("currentCartOrder", currentCartOrder );
+        model.addAttribute("cartSummary", cartSummary);
+        return cartView;
+    }
+
     private Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
         cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
         cartService.addFulfillmentGroupToOrder(currentCartOrder, cartSummary.getFulfillmentGroup());
         return cartService.save(currentCartOrder, true);
-    }
-
-    @RequestMapping(value = "viewCart.htm", method = RequestMethod.GET)
-    public String viewCart(ModelMap model, HttpServletRequest request) throws PricingException {
-        LOG.debug("Processing View Cart!");
-        Order cart = retrieveCartOrder(request, model);
-        CartSummary cartSummary = new CartSummary();
-
-        for (OrderItem orderItem : cart.getOrderItems()) {
-            CartOrderItem cartOrderItem = new CartOrderItem();
-            cartOrderItem.setOrderItem(orderItem);
-            cartOrderItem.setQuantity(orderItem.getQuantity());
-            cartSummary.getRows().add(cartOrderItem);
-        }
-
-        if ((cart.getFulfillmentGroups() != null) && (cart.getFulfillmentGroups().isEmpty() == false)) {
-            String cartShippingMethod = cart.getFulfillmentGroups().get(0).getMethod();
-
-            if (cartShippingMethod != null) {
-                if (cartShippingMethod.equals("standard")) {
-                    cartSummary = createFulfillmentGroup(cartSummary, "standard", cart);
-                }
-                else if (cartShippingMethod.equals("expedited")) {
-                    cartSummary = createFulfillmentGroup(cartSummary, "expedited", cart);
-                }
-            }
-        }
-
-        updateFulfillmentGroups(cartSummary, cart);
-        model.addAttribute("cartSummary", cartSummary);
-        return cartViewRedirect ? "redirect:" + cartView : cartView;
     }
 
     private CartSummary createFulfillmentGroup (CartSummary cartSummary, String shippingMethod, Order cart) {
@@ -271,18 +317,6 @@ public class CartController {
         fulfillmentGroup.setOrder(cart);
         cartSummary.setFulfillmentGroup(fulfillmentGroup);
         return cartSummary;
-    }
-
-    @ModelAttribute("fulfillmentGroups")
-    public List<FulfillmentGroup> initFulfillmentGroups () {
-        List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
-        FulfillmentGroup standardGroup = new FulfillmentGroupImpl();
-        FulfillmentGroup expeditedGroup = new FulfillmentGroupImpl();
-        standardGroup.setMethod("standard");
-        expeditedGroup.setMethod("expedited");
-        fulfillmentGroups.add(standardGroup);
-        fulfillmentGroups.add(expeditedGroup);
-        return fulfillmentGroups;
     }
 
     protected Order retrieveCartOrder(HttpServletRequest request, ModelMap model) {
@@ -299,4 +333,27 @@ public class CartController {
         return currentCartOrder;
     }
 
+    public void setCartView(String cartView) {
+        this.cartView = cartView;
+    }
+
+    public void setAddItemView(String addItemView) {
+        this.addItemView = addItemView;
+    }
+
+    public void setCartViewRedirect(boolean cartViewRedirect) {
+        this.cartViewRedirect = cartViewRedirect;
+    }
+
+    public void setAddItemViewRedirect(boolean addItemViewRedirect) {
+        this.addItemViewRedirect = addItemViewRedirect;
+    }
+
+    public void setRemoveItemView(String removeItemView) {
+        this.removeItemView = removeItemView;
+    }
+
+    public void setRemoveItemViewRedirect(boolean removeItemViewRedirect) {
+        this.removeItemViewRedirect = removeItemViewRedirect;
+    }
 }

@@ -33,7 +33,7 @@ public interface RatingService {
     public void rateItem(String itemId, RatingType type, Customer customer, Double rating);
 
     public List<ReviewDetail> readReviews(String itemId, RatingType type, int start, int finish, RatingSortType sortBy);
-    public void reviewItem(String itemId, RatingType type, Customer customer, String reviewText);
+    public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText);
     public void markReviewHelpful(Long reviewId, Customer customer, Boolean helpful);
 
 }

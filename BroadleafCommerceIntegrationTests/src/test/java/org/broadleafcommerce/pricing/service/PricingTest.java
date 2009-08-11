@@ -150,7 +150,7 @@ public class PricingTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D).add(group.getShippingPrice().multiply(0.05D))));
-        assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping())));
+        assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping()).subtract(order.getOrderAdjustments().get(0).getValue())));
     }
 
     @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })

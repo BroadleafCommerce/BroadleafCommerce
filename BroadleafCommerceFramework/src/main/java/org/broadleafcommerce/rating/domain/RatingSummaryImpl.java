@@ -46,7 +46,7 @@ public class RatingSummaryImpl implements RatingSummary {
     private String itemId;
 
     @Column(name = "RATING_TYPE", nullable = false)
-    private String ratingType;
+    private String ratingTypeStr;
 
     @Column(name = "AVERAGE_RATING", nullable = false)
     protected Double averageRating;
@@ -57,10 +57,12 @@ public class RatingSummaryImpl implements RatingSummary {
     @OneToMany(mappedBy = "ratingSummary", targetEntity = ReviewDetailImpl.class)
     protected List<ReviewDetail> reviews;
 
+    public RatingSummaryImpl() {}
+
     public RatingSummaryImpl(String itemId, RatingType ratingType) {
         super();
         this.itemId = itemId;
-        this.ratingType = ratingType.getType();
+        this.ratingTypeStr = ratingType.getType();
         this.ratings = new ArrayList<RatingDetail>();
         this.reviews = new ArrayList<ReviewDetail>();
     }
@@ -86,7 +88,7 @@ public class RatingSummaryImpl implements RatingSummary {
     }
 
     public RatingType getRatingType() {
-        return new RatingType(ratingType);
+        return new RatingType(ratingTypeStr);
     }
 
     public List<RatingDetail> getRatings() {

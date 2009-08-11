@@ -17,7 +17,9 @@ package org.broadleafcommerce.rating.dao;
 
 import java.util.List;
 
+import org.broadleafcommerce.rating.domain.RatingDetail;
 import org.broadleafcommerce.rating.domain.RatingSummary;
+import org.broadleafcommerce.rating.domain.ReviewDetail;
 import org.broadleafcommerce.rating.service.type.RatingType;
 
 public interface RatingSummaryDao {
@@ -27,4 +29,6 @@ public interface RatingSummaryDao {
     public RatingSummary saveRatingSummary(RatingSummary summary);
     public void deleteRatingSummary(RatingSummary summary);
 
+    public RatingDetail readRating(Long customerId, Long ratingSummaryId);
+    public ReviewDetail readReview(Long customerId, Long ratingSummaryId);
 }

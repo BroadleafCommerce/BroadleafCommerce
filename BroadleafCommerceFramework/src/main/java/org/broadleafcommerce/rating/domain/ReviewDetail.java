@@ -26,11 +26,13 @@ public interface ReviewDetail {
     public Long getId();
     public Customer getCustomer();
     public String getReviewText();
+    public void setReviewText(String reviewText);
     public Date getReviewSubmittedDate();
     public Integer helpfulCount();
     public Integer notHelpfulCount();
     public ReviewStatusType getStatus();
     public RatingSummary getRatingSummary();
+    public RatingDetail getRatingDetail();
     public List<ReviewFeedback> getReviewFeedback();
 
 }
