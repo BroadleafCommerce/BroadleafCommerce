@@ -171,6 +171,11 @@
 		<aop:pointcut id="blCustomerAddressServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.CustomerAddressService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCustomerAddressServiceOperation"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blRatingServiceOperation" expression="execution(* org.broadleafcommerce.rating.service.RatingService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRatingServiceOperation"/>
+	</aop:config>
 
 	<aop:config>
 		<aop:pointcut id="blPhoneServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.PhoneService.*(..))"/>
