@@ -63,4 +63,10 @@ public class CustomerPhoneTest extends BaseTest {
             assert customerPhone != null;
         }
     }
+    
+    @Test(groups = "readCustomerPhone", dependsOnGroups = "createCustomerPhone")
+    public void readDeafultCustomerPhoneByUserId() {
+    	CustomerPhone customerPhone = customerPhoneService.findDefaultCustomerPhone(userId);
+		assert customerPhone != null;
+    }
 }

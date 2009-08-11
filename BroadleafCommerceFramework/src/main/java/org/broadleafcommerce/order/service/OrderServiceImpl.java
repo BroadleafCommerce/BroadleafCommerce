@@ -191,8 +191,18 @@ public class OrderServiceImpl implements OrderService {
         removeOrderItemFromFullfillmentGroup(order, item);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
         orderItemService.delete(itemFromOrder);
+        itemFromOrder.setOrder(null);
         order = updateOrder(order, true);
         return order;
+    }
+    
+    public Order moveItemToOrder(Order originalOrder, Order destinationOrder, OrderItem item) throws PricingException{
+    	removeOrderItemFromFullfillmentGroup(originalOrder, item);
+    	OrderItem itemFromOrder = originalOrder.getOrderItems().remove(originalOrder.getOrderItems().indexOf(item));
+    	itemFromOrder.setOrder(null);
+    	originalOrder = updateOrder(originalOrder, true);
+    	addOrderItemToOrder(destinationOrder, item);
+    	return destinationOrder;
     }
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment) {

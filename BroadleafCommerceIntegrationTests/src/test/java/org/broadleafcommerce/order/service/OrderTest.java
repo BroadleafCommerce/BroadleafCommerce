@@ -126,13 +126,13 @@ public class OrderTest extends BaseTest {
     @Transactional
     public void addAnotherItemToOrder() throws PricingException {
         Sku sku = skuDao.readFirstSku();
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
         DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setQuantity(1);
         itemRequest.setSku(sku);
-        DiscreteOrderItem item = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest);
+        DiscreteOrderItem item = (DiscreteOrderItem) orderService.addDiscreteItemToOrder(order, itemRequest);
         assert item != null;
         assert item.getQuantity() == 2;
         assert item.getSku() != null;
@@ -145,7 +145,7 @@ public class OrderTest extends BaseTest {
     public void addBundleToOrder() throws PricingException {
         numOrderItems++;
         Sku sku = skuDao.readFirstSku();
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         assert order != null;
         assert sku.getId() != null;
 
@@ -157,7 +157,7 @@ public class OrderTest extends BaseTest {
         itemRequest.setSku(sku);
         bundleRequest.getDiscreteOrderItems().add(itemRequest);
 
-        BundleOrderItem item = (BundleOrderItem) cartService.addBundleItemToOrder(order, bundleRequest);
+        BundleOrderItem item = (BundleOrderItem) orderService.addBundleItemToOrder(order, bundleRequest);
         bundleOrderItemId = item.getId();
         assert item != null;
         assert item.getQuantity() == 1;
@@ -167,7 +167,7 @@ public class OrderTest extends BaseTest {
     @Rollback(false)
     @Transactional
     public void removeBundleFromOrder() throws PricingException {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() == numOrderItems;
         int startingSize = orderItems.size();
@@ -175,8 +175,8 @@ public class OrderTest extends BaseTest {
         assert bundleOrderItem != null;
         assert bundleOrderItem.getDiscreteOrderItems() != null;
         assert bundleOrderItem.getDiscreteOrderItems().size() == 1;
-        cartService.removeItemFromOrder(order, bundleOrderItem);
-        order = cartService.findOrderById(orderId);
+        orderService.removeItemFromOrder(order, bundleOrderItem);
+        order = orderService.findOrderById(orderId);
         List<OrderItem> items = order.getOrderItems();
         assert items != null;
         assert items.size() == startingSize - 1;
@@ -185,7 +185,7 @@ public class OrderTest extends BaseTest {
     @Test(groups = { "getItemsForOrder" }, dependsOnGroups = { "removeBundleFromOrder" })
     @Transactional
     public void getItemsForOrder() {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems != null;
         assert orderItems.size() == numOrderItems - 1;
@@ -194,31 +194,30 @@ public class OrderTest extends BaseTest {
     @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
     public void updateItemsInOrder() throws ItemNotFoundException, PricingException {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
         item.setSalePrice(new Money(BigDecimal.valueOf(10000)));
         item.setQuantity(10);
-        cartService.updateItemInOrder(order, item);
+        orderService.updateItemInOrder(order, item);
         OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
         assert updatedItem != null;
-        // TODO temporary to get TCS up and running - uncomment when PricingTest fixed
-        //        assert updatedItem.getPrice().equals(new Money(BigDecimal.valueOf(10000)));
+        assert updatedItem.getPrice().equals(new Money(BigDecimal.valueOf(10000)));
         assert updatedItem.getQuantity() == 10;
     }
 
     @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
     @Transactional
     public void removeItemFromOrder() throws PricingException {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
         int startingSize = orderItems.size();
         OrderItem item = orderItems.get(0);
         assert item != null;
-        cartService.removeItemFromOrder(order, item);
-        order = cartService.findOrderById(orderId);
+        orderService.removeItemFromOrder(order, item);
+        order = orderService.findOrderById(orderId);
         List<OrderItem> items = order.getOrderItems();
         assert items != null;
         assert items.size() == startingSize - 1;
@@ -227,7 +226,7 @@ public class OrderTest extends BaseTest {
     @Test(groups = { "checkOrderItems" }, dependsOnGroups = { "removeItemFromOrder" })
     @Transactional
     public void checkOrderItems() throws PricingException {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         assert order.getOrderItems().size() == 1;
         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemService.readOrderItemById(bundleOrderItemId);
         assert bundleOrderItem == null;
@@ -237,10 +236,10 @@ public class OrderTest extends BaseTest {
     @Rollback(false)
     @Transactional
     public void addPaymentToOrder(PaymentInfo paymentInfo) {
-        Order order = cartService.findOrderById(orderId);
-        cartService.addPaymentToOrder(order, paymentInfo, null);
+        Order order = orderService.findOrderById(orderId);
+        orderService.addPaymentToOrder(order, paymentInfo, null);
 
-        order = cartService.findOrderById(orderId);
+        order = orderService.findOrderById(orderId);
         PaymentInfo payment = order.getPaymentInfos().get(order.getPaymentInfos().indexOf(paymentInfo));
         assert payment != null;
         assert payment.getId() != null;
@@ -255,11 +254,11 @@ public class OrderTest extends BaseTest {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
 
         fulfillmentGroup.setOrder(order);
         fulfillmentGroup.setAddress(address);
-        FulfillmentGroup fg = cartService.addFulfillmentGroupToOrder(order, fulfillmentGroup);
+        FulfillmentGroup fg = orderService.addFulfillmentGroupToOrder(order, fulfillmentGroup);
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getAddress().equals(fulfillmentGroup.getAddress());
@@ -272,14 +271,14 @@ public class OrderTest extends BaseTest {
     @Test(groups = { "removeFulfillmentGroupFromOrder" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
     @Transactional
     public void removeFulfillmentGroupFromOrder() throws PricingException {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         List<FulfillmentGroup> fgItems = order.getFulfillmentGroups();
         assert fgItems.size() > 0;
         int startingSize = fgItems.size();
         FulfillmentGroup item = fgItems.get(0);
         assert item != null;
-        cartService.removeFulfillmentGroupFromOrder(order, item);
-        order = cartService.findOrderById(orderId);
+        orderService.removeFulfillmentGroupFromOrder(order, item);
+        order = orderService.findOrderById(orderId);
         List<FulfillmentGroup> items = order.getFulfillmentGroups();
         assert items != null;
         assert items.size() == startingSize - 1;
@@ -288,7 +287,7 @@ public class OrderTest extends BaseTest {
     @Test(groups = { "findFulFillmentGroupForOrderFirst" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
     @Transactional
     public void findFillmentGroupForOrderFirst() {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         FulfillmentGroup fg = order.getFulfillmentGroups().get(0);
         assert fg != null;
         assert fg.getId() != null;
@@ -305,18 +304,18 @@ public class OrderTest extends BaseTest {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
         Address address = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0).getAddress();
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert(orderItems.size() > 0);
         FulfillmentGroup newFg = new FulfillmentGroupImpl();
         newFg.setAddress(address);
         newFg.setMethod("standard");
         try {
-            newFg = cartService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
+            newFg = orderService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }
-        order = cartService.findOrderById(orderId);
+        order = orderService.findOrderById(orderId);
         FulfillmentGroup newNewFg = order.getFulfillmentGroups().get(order.getFulfillmentGroups().indexOf(newFg));
         assert(newNewFg.getFulfillmentGroupItems().size() == 1);
         assert(newNewFg.getFulfillmentGroupItems().get(0).getOrderItem().equals(orderItems.get(0)));
@@ -337,8 +336,8 @@ public class OrderTest extends BaseTest {
      */
     @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "addFulfillmentGroupToOrderFirst" })
     public void findDefaultFillmentGroupForOrder() {
-        Order order = cartService.findOrderById(orderId);
-        FulfillmentGroup fg = cartService.findDefaultFulfillmentGroupForOrder(order);
+        Order order = orderService.findOrderById(orderId);
+        FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
         assert fg != null;
         assert fg.getId() != null;
         FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class, fulfillmentGroupId);
@@ -362,17 +361,17 @@ public class OrderTest extends BaseTest {
     @Test(groups = { "removeItemFromOrderAfterDefaultFulfillmentGroup" }, dependsOnGroups = { "addFulfillmentGroupToOrderFirst" })
     @Transactional
     public void removeItemFromOrderAfterFulfillmentGroups() {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
         assert item != null;
         try {
-            cartService.removeItemFromOrder(order, item);
+            orderService.removeItemFromOrder(order, item);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }
-        FulfillmentGroup fg = cartService.findDefaultFulfillmentGroupForOrder(order);
+        FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
         for (FulfillmentGroupItem fulfillmentGroupItem : fg.getFulfillmentGroupItems()) {
             assert !fulfillmentGroupItem.getOrderItem().equals(item);
         }
@@ -382,7 +381,7 @@ public class OrderTest extends BaseTest {
     public void getOrdersForCustomer() {
         String username = "customer1";
         Customer customer = customerService.readCustomerByUsername(username);
-        List<Order> orders = cartService.findOrdersForCustomer(customer);
+        List<Order> orders = orderService.findOrdersForCustomer(customer);
         assert orders != null;
         assert orders.size() > 0;
     }
@@ -394,7 +393,7 @@ public class OrderTest extends BaseTest {
         assert order == null;
         order = cartService.createNewCartForCustomer(customer);
         Long orderId = order.getId();
-        Order newOrder = cartService.findOrderById(orderId);
+        Order newOrder = orderService.findOrderById(orderId);
         assert newOrder != null;
         assert newOrder.getCustomer() != null;
     }
@@ -487,58 +486,13 @@ public class OrderTest extends BaseTest {
 
     }
 
-    @Test(groups = { "testAddSkuToOrder" }, dependsOnGroups = { "testNamedOrderForCustomer" })
+    @Test(groups = { "testAddSkuToOrder" })
     @Transactional
     public void testAddSkuToOrder() throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
-
-        Category category = new CategoryImpl();
-        category.setName("Pants");
-        category = catalogService.saveCategory(category);
-        Product newProduct = new ProductImpl();
-
-        Calendar activeStartCal = Calendar.getInstance();
-        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
-        newProduct.setActiveStartDate(activeStartCal.getTime());
-
-        newProduct.setDefaultCategory(category);
-        newProduct.setName("Leather Pants");
-        newProduct = catalogService.saveProduct(newProduct);
-
-        Sku newSku = new SkuImpl();
-        newSku.setName("Red Leather Pants");
-        newSku.setRetailPrice(new Money(44.99));
-        newSku.setActiveStartDate(activeStartCal.getTime());
-        newSku = catalogService.saveSku(newSku);
-        List<Sku> allSkus = new ArrayList<Sku>();
-        allSkus.add(newSku);
-        newProduct.setAllSkus(allSkus);
-        newProduct = catalogService.saveProduct(newProduct);
-
-        Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
-
-        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), category.getId(), null);
-        OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
-                newProduct.getId(), category.getId(), 2);
-        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                null, category.getId(), 2);
-        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), null, 2);
-
-        assert orderItem != null;
-        assert skuNullOrderItem == null;
-        assert quantityNullOrderItem == null;
-        assert orderNullOrderItem == null;
-        assert productNullOrderItem != null;
-        assert categoryNullOrderItem != null;
+        setUpNamedOrder();
     }
 
-    @Test(groups = { "testOrderPaymentInfos" }, dependsOnGroups = { "testAddSkuToOrder" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
+    @Test(groups = { "testOrderPaymentInfos" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
     @Transactional
     public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
         Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
@@ -557,9 +511,22 @@ public class OrderTest extends BaseTest {
         assert foundInfo == true;
         assert orderService.readPaymentInfosForOrder(order) != null;
 
-        //DOESN'T WORK
-        //        orderService.removeAllPaymentsFromOrder(order);
-        //        assert order.getPaymentInfos().size() == 0;
+        //orderService.removeAllPaymentsFromOrder(order);
+        //assert order.getPaymentInfos().size() == 0;
+    }
+
+    
+    @Test(groups = { "testNamedOrder" })
+    @Transactional
+    public void testAddAllItemsToCartFromNamedOrder() throws PricingException {
+    	
+    	Order namedOrder = setUpNamedOrder();
+    	List<OrderItem> namedOrderItems = new ArrayList<OrderItem>();
+    	namedOrderItems.addAll(namedOrder.getOrderItems());
+    	Order cart = cartService.createNewCartForCustomer(namedOrder.getCustomer());
+    	cart = cartService.addAllItemsToCartFromNamedOrder(namedOrder);
+    	assert namedOrderItems.equals(cart.getOrderItems());
+    	
     }
 
     @Test(groups = { "testSubmitOrder" }, dependsOnGroups = { "findNamedOrderForCustomer" })
@@ -582,5 +549,57 @@ public class OrderTest extends BaseTest {
     @Test
     public void findCartForNullCustomerId() {
         assert cartService.findCartForCustomer(new CustomerImpl()) == null;
+    }
+    
+    private Order setUpNamedOrder() throws PricingException {
+        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+
+        Category category = new CategoryImpl();
+        category.setName("Pants");
+        category = catalogService.saveCategory(category);
+        Product newProduct = new ProductImpl();
+
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+        newProduct.setActiveStartDate(activeStartCal.getTime());
+
+        newProduct.setDefaultCategory(category);
+        newProduct.setName("Leather Pants");
+        newProduct = catalogService.saveProduct(newProduct);
+
+        Sku newSku = new SkuImpl();
+        newSku.setName("Red Leather Pants");
+        newSku.setRetailPrice(new Money(44.99));
+        newSku.setActiveStartDate(activeStartCal.getTime());
+        newSku.setDiscountable(true);
+        newSku = catalogService.saveSku(newSku);
+        List<Sku> allSkus = new ArrayList<Sku>();
+        allSkus.add(newSku);
+        newProduct.setAllSkus(allSkus);
+        newProduct = catalogService.saveProduct(newProduct);
+
+        Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
+
+        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), category.getId(), null);
+        OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
+                newProduct.getId(), category.getId(), 2);
+        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                null, category.getId(), 2);
+        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), null, 2);
+        
+        assert orderItem != null;
+        assert skuNullOrderItem == null;
+        assert quantityNullOrderItem == null;
+        assert orderNullOrderItem == null;
+        assert productNullOrderItem != null;
+        assert categoryNullOrderItem != null;
+        
+        return order;
     }
 }

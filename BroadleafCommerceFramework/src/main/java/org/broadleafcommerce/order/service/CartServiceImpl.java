@@ -62,12 +62,15 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
         }
-        for (OrderItem orderItem : namedOrder.getOrderItems()) {
-            if (moveNamedOrderItems) {
-                removeItemFromOrder(namedOrder, orderItem);
-            }
-            addOrderItemToOrder(cartOrder, orderItem);
-        }
+        for (int i = 0; i < namedOrder.getOrderItems().size(); i++) {
+			OrderItem orderItem = namedOrder.getOrderItems().get(i);
+			if (moveNamedOrderItems) {
+				moveItemToOrder(namedOrder, cartOrder, orderItem);
+			} else {
+				addOrderItemToOrder(cartOrder, orderItem);
+			}
+			
+		}
         return cartOrder;
     }
 
