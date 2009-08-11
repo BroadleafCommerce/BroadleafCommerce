@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.inventory.dao.AvailabilityDao;
 import org.broadleafcommerce.inventory.domain.SkuAvailability;
 import org.broadleafcommerce.inventory.service.dataprovider.SkuAvailabilityDataProvider;
 import org.broadleafcommerce.test.BaseTest;
@@ -34,9 +33,6 @@ public class SkuAvailabilityTest extends BaseTest {
 
     @Resource
     private AvailabilityService availabilityService;
-
-    @Resource
-    private AvailabilityDao availabilityDao;
 
     @Test(groups = { "createSkuAvailability" }, dataProvider = "setupSkuAvailability", dataProviderClass = SkuAvailabilityDataProvider.class)
     @Rollback(false)

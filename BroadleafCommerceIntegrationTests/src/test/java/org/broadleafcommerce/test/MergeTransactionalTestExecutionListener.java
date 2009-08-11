@@ -121,6 +121,7 @@ public class MergeTransactionalTestExecutionListener extends AbstractTestExecuti
 	 * @see org.springframework.transaction.annotation.Transactional
 	 * @see org.springframework.test.annotation.NotTransactional
 	 */
+	@SuppressWarnings("serial")
 	@Override
 	public void beforeTestMethod(TestContext testContext) throws Exception {
 		final Method testMethod = testContext.getTestMethod();

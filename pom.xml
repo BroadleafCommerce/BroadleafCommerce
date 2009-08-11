@@ -166,11 +166,11 @@
     	<scope>compile</scope>
     </dependency>
     <dependency>
-    	<groupId>velocity-tools</groupId>
+    	<groupId>org.apache.velocity</groupId>
     	<artifactId>velocity-tools</artifactId>
-    	<version>1.4</version>
+    	<version>2.0-beta4</version>
     	<type>jar</type>
-    	<scope>runtime</scope>
+    	<scope>compile</scope>
     </dependency>
   </dependencies>
   <modules>
