@@ -39,6 +39,8 @@ import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferCode;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
+import org.broadleafcommerce.offer.domain.OrderItemOffer;
+import org.broadleafcommerce.offer.domain.OrderItemOfferImpl;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
@@ -245,7 +247,7 @@ public class OfferServiceImpl implements OfferService {
             order.setSubTotal(order.calculateOrderItemsFinalPrice());
         } else {
             List<CandidateOrderOffer> qualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
-            List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
+            List<OrderItemOffer> orderItemOffers = new ArrayList<OrderItemOffer> ();
             // set order subtotal price to total item price without adjustments
             order.setSubTotal(order.calculateOrderItemsCurrentPrice());
             List<DiscreteOrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
@@ -260,14 +262,19 @@ public class OfferServiceImpl implements OfferService {
                         qualifiedOrderOffers.add(candidateOffer);
                     }
                 } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
+                    OrderItemOffer orderItemOffer = new OrderItemOfferImpl();
+                    orderItemOffer.setOffer(offer);
                     for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
                         if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
                             CandidateItemOffer candidateOffer = offerDao.createCandidateItemOffer();
                             candidateOffer.setOrderItem(discreteOrderItem);
                             candidateOffer.setOffer(offer);
                             discreteOrderItem.addCandidateItemOffer(candidateOffer);
-                            qualifiedItemOffers.add(candidateOffer);
+                            orderItemOffer.addCandidateItemOffer(candidateOffer);
                         }
+                    }
+                    if (orderItemOffer.getCandidateItemOffers().size() > 0) {
+                        orderItemOffers.add(orderItemOffer);
                     }
                 } else if(offer.getType().equals(OfferType.FULFILLMENT_GROUP)){
                     // TODO: Handle Offer calculation for offer type of fullfillment group
@@ -283,23 +290,29 @@ public class OfferServiceImpl implements OfferService {
                 }
             }
 
-            if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
+            if ((orderItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
                 order.assignOrderItemsFinalPrice();
                 order.setSubTotal(order.calculateOrderItemsFinalPrice());
             } else {
                 Offer notCombinableItemOfferApplied = null;
-                if (!qualifiedItemOffers.isEmpty()) {
-                    // Sort order item offers by priority and discount
-                    Collections.sort(qualifiedItemOffers, new BeanComparator("discountedPrice"));
-                    Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
+                List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
+                if (!orderItemOffers.isEmpty()) {
+                    // Sort order item offers by priority and total discount
+                    Collections.sort(orderItemOffers, new BeanComparator("totalDiscount", Collections.reverseOrder()));
+                    Collections.sort(orderItemOffers, new BeanComparator("priority"));
+                    for (OrderItemOffer orderItemOffer : orderItemOffers) {
+                        qualifiedItemOffers.addAll(orderItemOffer.getCandidateItemOffers());
+                    }
                     qualifiedItemOffers = removeTrailingNotCombinableItemOffers(qualifiedItemOffers);
                     notCombinableItemOfferApplied = applyAllItemOffers(qualifiedItemOffers, discreteOrderItems);
+                    // TODO: some notStackable offers may not have applied which changes the total discount of that offer
+                    // Do we need to resort the list again?
                 }
 
                 Offer notCombinableOrderOfferApplied = null;
                 if (!qualifiedOrderOffers.isEmpty()) {
                     // Sort order offers by priority and discount
-                    Collections.sort(qualifiedOrderOffers, new BeanComparator("discountedPrice"));
+                    Collections.sort(qualifiedOrderOffers, new BeanComparator("discountAmount", Collections.reverseOrder()));
                     Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
                     qualifiedOrderOffers = removeTrailingNotCombinableOrderOffers(qualifiedOrderOffers);
                     notCombinableOrderOfferApplied = applyAllOrderOffers(qualifiedOrderOffers, order);

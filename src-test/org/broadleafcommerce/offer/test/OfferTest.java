@@ -304,7 +304,61 @@ public class OfferTest extends BaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(250D)));
     }
 
-    @Test(groups =  {"testGlobalOffers"}, dependsOnGroups = { "testOfferNotCombinableOrderOffersWithItemOffer"})
+    @Test(groups =  {"testOfferGreaterDiscountSort"}, dependsOnGroups = { "testOfferNotCombinableOrderOffersWithItemOffer"})
+    public void testOfferGreaterDiscountSort() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 1));
+        order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1));
+
+        order.addAddedOfferCode(createOfferCode("2 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 2, null, "discreteOrderItem.sku.id == "+sku1, true, false, 10));
+        order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id == "+sku2, true, false, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        assert (order.getSubTotal().equals(new Money(27D)));
+    }
+
+    @Test(groups =  {"testOfferSortWhenOfferAppliedToMultipleQuantityItems"}, dependsOnGroups = { "testOfferGreaterDiscountSort"})
+    public void testOfferSortWhenOfferAppliedToMultipleQuantityItems() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(sku2, 10D, null, true, 1));
+
+        order.addAddedOfferCode(createOfferCode("2 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 2, null, "discreteOrderItem.sku.id == "+sku1, true, false, 10));
+        order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id == "+sku2, true, false, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        assert (order.getSubTotal().equals(new Money(26D)));
+    }
+
+    @Test(groups =  {"testOfferSortWhenOfferAppliedToMultipleItems"}, dependsOnGroups = { "testOfferSortWhenOfferAppliedToMultipleQuantityItems"})
+    public void testOfferSortWhenOfferAppliedToMultipleItems() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 10D, null, true, 1));
+        order.addOrderItem(createDiscreteOrderItem(sku2, 10D, null, true, 1));
+
+        order.addAddedOfferCode(createOfferCode("2 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 2, null, null, true, false, 10));
+        order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id == "+sku2, true, false, 10));
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        assert (order.getSubTotal().equals(new Money(16D)));
+    }
+
+    @Test(groups =  {"testGlobalOffers"}, dependsOnGroups = { "testOfferSortWhenOfferAppliedToMultipleItems"})
     public void testGlobalOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
