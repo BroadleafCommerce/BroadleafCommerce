@@ -67,13 +67,14 @@ public class RatingServiceImpl implements RatingService {
     public void rateItem(String itemId, RatingType type, Customer customer, Double rating) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
-        RatingDetail ratingDetail = null;
-
         if (ratingSummary == null) {
             ratingSummary = new RatingSummaryImpl(itemId, type);
+        }
+
+        RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
+
+        if (ratingDetail == null) {
             ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
-        } else {
-            ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
         }
 
         ratingDetail.setRating(rating);
@@ -132,16 +133,26 @@ public class RatingServiceImpl implements RatingService {
     public void reviewItem(String itemId, RatingType type, Customer customer, Double rating, String reviewText) {
         RatingSummary ratingSummary = this.readRatingSummary(itemId, type);
 
-        ReviewDetail reviewDetail = null;
-
         if (ratingSummary == null) {
             ratingSummary = new RatingSummaryImpl(itemId, type);
-            reviewDetail = new ReviewDetailImpl(customer, new Date(), reviewText, ratingSummary);
-        } else {
-            reviewDetail = ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
         }
 
-        this.rateItem(itemId, type, customer, rating);
+        RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
+
+        if (ratingDetail == null) {
+            ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+        }
+
+        ratingDetail.setRating(rating);
+
+        ratingSummary.getRatings().add(ratingDetail);
+
+        ReviewDetail reviewDetail = ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
+
+        if (reviewDetail == null) {
+            reviewDetail = new ReviewDetailImpl(customer, new Date(), ratingDetail, reviewText, ratingSummary);
+        }
+
         reviewDetail.setReviewText(reviewText);
 
         ratingSummary.getReviews().add(reviewDetail);
