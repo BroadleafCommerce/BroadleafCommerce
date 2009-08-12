@@ -52,43 +52,30 @@
     <dependency>
     	<groupId>org.springframework</groupId>
     	<artifactId>spring-webmvc</artifactId>
-    	<version>2.5.6</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
     </dependency>
     <dependency>
     	<groupId>javax.servlet.jsp</groupId>
     	<artifactId>jsp-api</artifactId>
-    	<version>2.1</version>
-    	<type>jar</type>
-    	<scope>provided</scope>
     </dependency>
     <dependency>
   		<groupId>org.broadleafcommerce</groupId>
   		<artifactId>broadleaf-profile</artifactId>
-  		<version>0.0.0</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>org.broadleafcommerce</groupId>
   		<artifactId>broadleaf-profile-web</artifactId>
-  		<version>0.0.0</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
   	</dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>
     	<artifactId>servlet-api</artifactId>
-    	<version>2.5</version>
-    	<type>jar</type>
-    	<scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>org.broadleafcommerce</groupId>
     	<artifactId>broadleaf-framework</artifactId>
-    	<version>0.0.0</version>
-    	<scope>compile</scope>
     </dependency>
+    <dependency>
+  		<groupId>commons-collections</groupId>
+  		<artifactId>commons-collections</artifactId>
+  	</dependency>
   </dependencies>
 </project>
