@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -71,7 +72,7 @@ public class ReviewDetailImpl implements ReviewDetail {
     @JoinColumn(name = "RATING_SUMMARY_ID")
     protected RatingSummary ratingSummary;
 
-    @OneToMany(mappedBy = "reviewDetail", targetEntity = ReviewFeedbackImpl.class)
+    @OneToMany(mappedBy = "reviewDetail", targetEntity = ReviewFeedbackImpl.class, cascade = {CascadeType.ALL})
     protected List<ReviewFeedback> reviewFeedback;
 
     @OneToOne(targetEntity = RatingDetailImpl.class)
@@ -80,13 +81,17 @@ public class ReviewDetailImpl implements ReviewDetail {
 
     public ReviewDetailImpl() {}
 
-    public ReviewDetailImpl(Customer customer, Date reivewSubmittedDate, String reviewText, RatingSummary ratingSummary) {
+    public ReviewDetailImpl(Customer customer, Date reivewSubmittedDate, RatingDetail ratingDetail, String reviewText, RatingSummary ratingSummary) {
         super();
         this.customer = customer;
         this.reivewSubmittedDate = reivewSubmittedDate;
         this.reviewText = reviewText;
         this.ratingSummary = ratingSummary;
         this.reviewFeedback = new ArrayList<ReviewFeedback>();
+        this.helpfulCount = new Integer(0);
+        this.notHelpfulCount = new Integer(0);
+        this.reviewStatus = ReviewStatusType.PENDING.getType();
+        this.ratingDetail = ratingDetail;
     }
 
     public Date getReviewSubmittedDate() {

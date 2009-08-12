@@ -18,6 +18,7 @@ package org.broadleafcommerce.rating.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,10 +52,10 @@ public class RatingSummaryImpl implements RatingSummary {
     @Column(name = "AVERAGE_RATING", nullable = false)
     protected Double averageRating;
 
-    @OneToMany(mappedBy = "ratingSummary", targetEntity = RatingDetailImpl.class)
+    @OneToMany(mappedBy = "ratingSummary", targetEntity = RatingDetailImpl.class, cascade = {CascadeType.ALL})
     protected List<RatingDetail> ratings;
 
-    @OneToMany(mappedBy = "ratingSummary", targetEntity = ReviewDetailImpl.class)
+    @OneToMany(mappedBy = "ratingSummary", targetEntity = ReviewDetailImpl.class, cascade = {CascadeType.ALL})
     protected List<ReviewDetail> reviews;
 
     public RatingSummaryImpl() {}
@@ -62,6 +63,7 @@ public class RatingSummaryImpl implements RatingSummary {
     public RatingSummaryImpl(String itemId, RatingType ratingType) {
         super();
         this.itemId = itemId;
+        this.averageRating = new Double(0);
         this.ratingTypeStr = ratingType.getType();
         this.ratings = new ArrayList<RatingDetail>();
         this.reviews = new ArrayList<ReviewDetail>();
@@ -100,11 +102,15 @@ public class RatingSummaryImpl implements RatingSummary {
     }
 
     public void resetAverageRating() {
-        double sum = 0;
-        for (RatingDetail detail : ratings) {
-            sum += detail.getRating();
-        }
+        if (ratings == null || ratings.isEmpty()) {
+            this.averageRating = new Double(0);
+        } else {
+            double sum = 0;
+            for (RatingDetail detail : ratings) {
+                sum += detail.getRating();
+            }
 
-        this.averageRating = sum / ratings.size();
+            this.averageRating = new Double(sum / ratings.size());
+        }
     }
 }
