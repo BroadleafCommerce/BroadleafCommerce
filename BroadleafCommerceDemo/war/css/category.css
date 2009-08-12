@@ -9,6 +9,11 @@
 	font-weight:bold;
 }
 
+.productResultsImage {
+	height:90px;
+	overflow:hidden;
+}
+
 .productResultsInfo {
 	margin-left: 10px;
 }
