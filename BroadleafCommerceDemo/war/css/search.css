@@ -32,7 +32,7 @@
 .searchFilter-defaultCategory_idCheckbox,
 .searchFilter-manufacturerCheckbox
 {
-	display:none;
+	/* display:none; */
 }
 
 .grayedOut {
