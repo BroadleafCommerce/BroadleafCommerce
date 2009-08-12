@@ -411,7 +411,7 @@ public class SkuImpl implements Sku {
                 LOG.debug("sku, " + id + ", inactive due to category being inactive");
             }
         }
-        return DateUtil.isActive(getActiveStartDate(), getActiveEndDate(), false) || !product.isActive() || !category.isActive();
+        return this.isActive() && product.isActive() && category.isActive();
     }
 
     /*

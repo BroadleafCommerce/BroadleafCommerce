@@ -170,39 +170,49 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
      * org.broadleafcommerce.order.service.OrderService#reconstructCart(org.
      * broadleafcommerce.profile.domain.Customer)
      */
-    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
-        ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
-        Order customerCart = findCartForCustomer(customer);
-        if (customerCart != null) {
-            for (OrderItem orderItem : customerCart.getOrderItems()) {
-                if (orderItem instanceof DiscreteOrderItem) {
-                    DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
-                    if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                        reconstructCartResponse.getRemovedItems().add(orderItem);
-                        removeItemFromOrder(customerCart, discreteOrderItem);
-                    }
-                } else if (orderItem instanceof BundleOrderItem) {
-                    BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
-                    boolean removeBundle = false;
-                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()){
-                        if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
-                            /*
-                             * Bundle has an inactive item in it -- remove the whole bundle
-                             */
-                            removeBundle = true;
-                            break;
-                        }
-                    }
-                    if (removeBundle) {
-                        reconstructCartResponse.getRemovedItems().add(orderItem);
-                        removeItemFromOrder(customerCart, bundleOrderItem);
-                    }
-                }
-            }
-        }
-        reconstructCartResponse.setOrder(customerCart);
-        return reconstructCartResponse;
-    }
+	public ReconstructCartResponse reconstructCart(Customer customer)
+			throws PricingException {
+		ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
+		Order customerCart = findCartForCustomer(customer);
+		if (customerCart != null) {
+			List<OrderItem> itemsToRemove = new ArrayList<OrderItem>();
+			for (OrderItem orderItem : customerCart.getOrderItems()) {
+				 if (orderItem instanceof DiscreteOrderItem) {
+					DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
+					if (!discreteOrderItem.getSku().isActive(
+							discreteOrderItem.getProduct(),
+							orderItem.getCategory())) {
+						itemsToRemove.add(orderItem);
+					}
+				} else if (orderItem instanceof BundleOrderItem) {
+					BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+					boolean removeBundle = false;
+					for (DiscreteOrderItem discreteOrderItem : bundleOrderItem
+							.getDiscreteOrderItems()) {
+						if (!discreteOrderItem.getSku().isActive(
+								discreteOrderItem.getProduct(),
+								orderItem.getCategory())) {
+							/*
+							 * Bundle has an inactive item in it -- remove the
+							 * whole bundle
+							 */
+							removeBundle = true;
+							break;
+						}
+					}
+					if (removeBundle) {
+						itemsToRemove.add(orderItem);
+					}
+				}
+			}
+			for (OrderItem item : itemsToRemove) {
+				removeItemFromOrder(customerCart, item);
+			}
+			reconstructCartResponse.setRemovedItems(itemsToRemove);
+		}
+		reconstructCartResponse.setOrder(customerCart);
+		return reconstructCartResponse;
+	}
 
     @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
     public boolean isMoveNamedOrderItems() {
