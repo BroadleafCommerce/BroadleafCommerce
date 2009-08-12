@@ -2,6 +2,21 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	$(".interactiveRating").stars({inputType:"select",captionEl: $("#stars-cap")});
+	$("#submitReview").click(function(){
+		$.ajax({
+			type: "GET",
+			url: "/broadleafdemo/rating/saveReview.htm",
+			data: {
+				productId: ${currentProduct.id},
+				reviewText: $("#reviewText").val(),
+				rating: $("input[name='customerRating']").val()
+			},
+			success: function(data) {
+				$("#yourReview").html(data);
+			}
+		});
+		return false;
+	});
 });
 </script>
 
@@ -30,12 +45,11 @@ $(document).ready(function(){
 	</div>
 	
 	<p style="font-size:13px;font-weight:normal;margin:0;">Please describe your experience with this product:</p>
-	<textarea class="span-13" style="height: 200px; width: 100%;"></textarea><br />
-	<div style="text-align: right;margin:2px 0 5px;"><a href="#" onclick="$('#yourReview').slideUp();return false;">Cancel</a>&nbsp;&nbsp;&nbsp;<a class="reviewBtn" href="#">Submit Review</a></div>
+	<textarea id="reviewText" class="span-13" style="height: 200px; width: 100%;"></textarea><br />
+	<div style="text-align: right;margin:2px 0 5px;"><a href="#" onclick="$('#yourReview').slideUp();return false;">Cancel</a>&nbsp;&nbsp;&nbsp;<a id="submitReview" class="reviewBtn" href="#">Submit Review</a></div>
 </div>
 
-<h4 style="margin:8px 0 4px 0;">Customer Reviews</h4>
-
+<c:if test="${!empty ratingSummary.reviews}"><h4 style="margin:8px 0 4px 0;">Customer Reviews</h4></c:if>
 
 <c:forEach var="review" items="${ratingSummary.reviews}">
 	Rating: ${review.ratingDetail.rating}
