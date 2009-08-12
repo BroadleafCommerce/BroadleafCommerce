@@ -31,6 +31,7 @@ import org.broadleafcommerce.profile.domain.CustomerAddress;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class PaymentInfoServiceTest extends BaseTest {
@@ -52,6 +53,7 @@ public class PaymentInfoServiceTest extends BaseTest {
 
     @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer1","createOrder"})
     @Rollback(false)
+    @Transactional
     public void createPaymentInfo(PaymentInfo paymentInfo){
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
