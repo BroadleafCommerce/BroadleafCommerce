@@ -30,13 +30,13 @@ import org.springframework.stereotype.Service;
 @Service("blAdminSecurityService")
 public class AdminSecurityServiceImpl implements AdminSecurityService {
 
-    @Resource
+	@Resource(name = "blAdminRoleDao")
     AdminRoleDao adminRoleDao;
 
-    @Resource
+    @Resource(name = "blAdminUserDao")
     AdminUserDao adminUserDao;
 
-    @Resource
+    @Resource(name = "blAdminPermissionDao")
     AdminPermissionDao adminPermissionDao;
 
     public void deleteAdminPermission(AdminPermission permission) {
