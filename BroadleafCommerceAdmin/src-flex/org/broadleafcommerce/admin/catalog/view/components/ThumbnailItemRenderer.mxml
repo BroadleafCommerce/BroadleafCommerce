@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
+	<mx:Script>
+		<![CDATA[
+			override public function set data(value:Object):void{
+				super.data = "http://localhost:8080/broadleafadmin/"+value.media.url;
+			}
+		]]>
+	</mx:Script>	
+	
+	<mx:Binding source="data"
+	            destination="thumbnail.source" />
+	
+	<mx:Image id="thumbnail" maxHeight="75" maxWidth="75" maintainAspectRatio="true" 
+		horizontalAlign="center" horizontalCenter="0" y="27" width="75" height="75"/>
+	<mx:Text text="{thumbnail.width}x{thumbnail.height}"  horizontalCenter="0" y="100"/>
+	<mx:LinkButton x="10" y="4" label="Upload" horizontalCenter="0"/>
+	
+</mx:Canvas>

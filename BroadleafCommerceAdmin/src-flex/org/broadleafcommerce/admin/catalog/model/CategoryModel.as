@@ -11,6 +11,8 @@ package org.broadleafcommerce.admin.catalog.model
 		public static const STATE_NEW:String = "new_category";
 		public static const STATE_EDIT:String = "edit_category";		
 		
+		public var viewType:String = "category";
+		
 		public var viewState:String = STATE_NONE;
 
 		public var currentCategory:Category = new Category();
@@ -18,5 +20,7 @@ package org.broadleafcommerce.admin.catalog.model
 		public var categoryTree:ArrayCollection = new ArrayCollection();
 
 		public var categoryArray:ArrayCollection = new ArrayCollection();
+		
+		public var categoryMedia:ArrayCollection = new ArrayCollection();
 	}
 }

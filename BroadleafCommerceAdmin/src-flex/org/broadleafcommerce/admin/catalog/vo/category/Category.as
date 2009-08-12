@@ -3,6 +3,7 @@ package org.broadleafcommerce.admin.catalog.vo.category
 	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.catalog.vo.product.Product;
+	import org.broadleafcommerce.util.HashMap;
 	
 	[Bindable]
 	[RemoteClass(alias="org.broadleafcommerce.catalog.domain.CategoryImpl")]
@@ -20,6 +21,7 @@ package org.broadleafcommerce.admin.catalog.vo.category
 		public var allChildCategories:ArrayCollection = new ArrayCollection();
 		public var allParentCategories:ArrayCollection = new ArrayCollection();
 		public var categoryImages:Object = new Object();
+		public var categoryMedia:Object = new Object();
 		public var longDescription:String;
 		public var featuredProducts:ArrayCollection = new ArrayCollection();
 		public var childCategories:ArrayCollection = new ArrayCollection();

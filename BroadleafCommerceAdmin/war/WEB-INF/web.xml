@@ -85,6 +85,20 @@
         <res-auth>Container</res-auth>
     </resource-ref>
 
+	<servlet>
+	    <servlet-name>spring-mvc</servlet-name>
+	    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	    <init-param>
+	    	<param-name>contextConfigLocation</param-name>
+	    	<param-value>/WEB-INF/spring-mvc-servlet.xml</param-value>
+	    </init-param>
+	    <load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>spring-mvc</servlet-name>
+	    <url-pattern>/spring/*</url-pattern>
+	</servlet-mapping> 
 
 	<!-- Map all /messagbroker requests to the DispatcherServlet for handling -->
 	<servlet-mapping>

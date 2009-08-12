@@ -15,48 +15,37 @@
 	   http://www.springframework.org/schema/flex/spring-flex-1.0.xsd"
     >
 
-	<bean id="resourceBundleExtensionPoint"
-		class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint" />
-
-	<bean id="messageSource"
-		class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
-		<constructor-arg>
-			<list>
-				<value>registrationMessages</value>
-				<value>messages</value>
-			</list>
-		</constructor-arg>
-		<constructor-arg ref="resourceBundleExtensionPoint" />
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
 	</bean>
+
+
+	<!-- lets use the Commons-based implementation of the MultipartResolver interface -->
+    <bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+    <bean id="fileUploadController" class="org.broadleafcommerce.admin.util.controllers.FileUploadController">
+        <property name="commandClass" value="org.broadleafcommerce.admin.util.domain.FileUploadBean"/>
+        <property name="formView" value="fileuploadform"/>
+        <property name="successView" value="confirmation"/>
+    </bean>
+
 
 
 	<!--  If you want to change the location of the services-config.xml uncomment the following bean
 	<flex:message-broker services-config-path="classpath*:services-config.xml" />
 	-->
 
-	<flex:message-broker>
-		<flex:secured />
-	</flex:message-broker>
-
 	<!-- Maps request paths at /* to the BlazeDS MessageBroker -->
 	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
         	<props>
-        		<prop key="/*">_messageBroker</prop>
+        		<prop key="/upload">fileUploadController</prop>
+        		<!--   prop key="/*">_messageBroker</prop -->
         	</props>		
 		</property>
 	</bean>
-
-	<!-- Dispatches requests mapped to a MessageBroker -->
-	<bean class="org.springframework.flex.servlet.MessageBrokerHandlerAdapter"/>
-
-
-
-	<!-- Expose the Service beans for BlazeDS remoting
-	-->
-	<flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />	
-	<flex:remoting-destination ref="blAdminSecurityService"/>	
-	<flex:remoting-destination ref="blOfferService" />		
-	<flex:remoting-destination ref="blCodeTypeService"/>
 
 </beans>

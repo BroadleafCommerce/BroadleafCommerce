@@ -5,11 +5,6 @@ package org.broadleafcommerce.admin.catalog.model
 	import com.adobe.cairngorm.model.IModelLocator;
 	
 	import mx.collections.ArrayCollection;
-	
-	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
-	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
-	import org.broadleafcommerce.admin.catalog.model.ProductModel;
-	import org.broadleafcommerce.admin.catalog.model.SkuModel;
 
 	public class CatalogModelLocator implements IModelLocator
 	{
@@ -30,7 +25,6 @@ package org.broadleafcommerce.admin.catalog.model
 				throw new CairngormError(CairngormMessageCodes.SINGLETON_EXCEPTION, "BlcAdminModelLocator");				
 		}
 		
-		
 		[Bindable]
 		public var catalogTree:ArrayCollection = new ArrayCollection();
 		
@@ -44,6 +38,9 @@ package org.broadleafcommerce.admin.catalog.model
 		public var productModel:ProductModel = new ProductModel();
 		
 		[Bindable]
-		public var skuModel:SkuModel = new SkuModel();		
+		public var skuModel:SkuModel = new SkuModel();
+		
+		[Bindable]
+		public var mediaModel:MediaModel = new MediaModel();		
 	}
 }

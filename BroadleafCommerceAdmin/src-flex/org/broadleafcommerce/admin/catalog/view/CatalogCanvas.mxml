@@ -3,7 +3,7 @@
 	width="800"
 	height="800"
 	creationComplete="creationComplete()"
-	xmlns:category="org.broadleafcommerce.admin.catalog.view.category.*" xmlns:product="org.broadleafcommerce.admin.catalog.view.product.*">
+	xmlns:category="org.broadleafcommerce.admin.catalog.view.category.*" xmlns:product="org.broadleafcommerce.admin.catalog.view.product.*" xmlns:view="org.broadleafcommerce.admin.catalog.view.*">
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
@@ -36,6 +36,8 @@
 	
 	<mx:Binding source="catalogModel.viewState"
 					   destination="currentState" />
+	
+	<view:CatalogCanvasViewHelper id="catalogCanvas" />
 	
 	<mx:VBox 
 		verticalGap="20"

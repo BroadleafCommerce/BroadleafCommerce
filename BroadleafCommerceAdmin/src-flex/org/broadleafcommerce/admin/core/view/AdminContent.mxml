@@ -28,10 +28,10 @@
 			label="Admins" 
 			height="100%" 
 			width="100%" />
-		<view:CodeTypeCanvas
+		<!--view:CodeTypeCanvas
 			id="codeTypeCanvas"
 			label="Code Types"
 			height="100%"
-			width="100%"/>
+			width="100%"/ -->
 	</mx:ViewStack>
 </mx:HBox>

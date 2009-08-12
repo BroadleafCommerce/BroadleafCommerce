@@ -4,8 +4,10 @@ package org.broadleafcommerce.admin.catalog.control
 	
 	import org.broadleafcommerce.admin.catalog.commands.BuildCatalogCommand;
 	import org.broadleafcommerce.admin.catalog.commands.RetrieveCatalogCommand;
+	import org.broadleafcommerce.admin.catalog.commands.ShowFileUploadCommand;
 	import org.broadleafcommerce.admin.catalog.commands.StandardizeCatalogObjectsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.AddCategoriesToCatalogTreeCommand;
+	import org.broadleafcommerce.admin.catalog.commands.category.AddCategoryMediaCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.EditCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.FindAllCatalogCategoriesCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.NewCategoryCommand;
@@ -27,8 +29,10 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.sku.SaveCatalogSkuCommand;
 	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.ShowFileUploadEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoryMediaEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.FindAllCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
@@ -54,6 +58,8 @@ package org.broadleafcommerce.admin.catalog.control
 		public function BlcAdminCatalogController()
 		{
 			super();
+			addCommand(ShowFileUploadEvent.EVENT_SHOW_FILE_UPLOAD, ShowFileUploadCommand);
+			
 			addCommand(RetrieveCatalogEvent.EVENT_RETRIEVE_CATALOG, RetrieveCatalogCommand);
 			addCommand(StandardizeCatalogObjectsEvent.EVENT_STANDARDIZE_CATALOG_OBJECTS, StandardizeCatalogObjectsCommand);
 			addCommand(BuildCatalogEvent.EVENT_BUILD_CATALOG_TREE, BuildCatalogCommand);
@@ -67,6 +73,7 @@ package org.broadleafcommerce.admin.catalog.control
 			addCommand(NewCategoryEvent.EVENT_NEW_CATALOG_CATEGORY, NewCategoryCommand);
 			addCommand(EditCategoryEvent.EVENT_EDIT_CATALOG_CATEGORY, EditCategoryCommand);
 			addCommand(SaveCategoryEvent.EVENT_SAVE_CATALOG_CATEGORY, SaveCategoryCommand);
+			addCommand(AddCategoryMediaEvent.EVENT_ADD_CATEGORY_MEDIA, AddCategoryMediaCommand);
 
 			addCommand(FindAllProductsEvent.EVENT_FIND_ALL_PRODUCTS, FindAllProductsCommand);
 			addCommand(FindProductsByCategoryEvent.EVENT_FIND_PRODUCTS_BY_CATEGORY, FindProductsByCategoryCommand);
