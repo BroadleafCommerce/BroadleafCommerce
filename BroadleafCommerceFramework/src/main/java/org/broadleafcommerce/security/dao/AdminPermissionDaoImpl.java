@@ -28,10 +28,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository("blAdminPermissionDao")
 public class AdminPermissionDaoImpl implements AdminPermissionDao {
+	
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource
+    @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
