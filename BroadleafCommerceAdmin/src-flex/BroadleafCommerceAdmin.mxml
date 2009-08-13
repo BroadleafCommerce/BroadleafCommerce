@@ -15,8 +15,8 @@
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
 			import org.broadleafcommerce.admin.core.control.events.InitializeApplicationEvent;
-			import com.adobe.cairngorm.control.CairngormEventDispatcher;
-			
+			import com.adobe.cairngorm.control.CairngormEventDispatcher; 
+			   
 			  import mx.managers.HistoryManager;
 			  import mx.managers.DragManager;
 			  import mx.managers.CursorManager;

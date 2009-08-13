@@ -9,7 +9,7 @@ package org.broadleafcommerce.admin.security.commands.admins
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 
-	import org.broadleafcommerce.admin.security.business.BroadleafCommerceAdminSecurityServiceDelegate;
+	import org.broadleafcommerce.admin.security.business.SecurityServiceDelegate;
 	import org.broadleafcommerce.admin.security.control.events.FindAdminUserByIdEvent;
 	import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
 
@@ -18,7 +18,7 @@ package org.broadleafcommerce.admin.security.commands.admins
 		public function execute(event:CairngormEvent):void
 		{
 			var fau:FindAdminUserByIdEvent = event as FindAdminUserByIdEvent;
-			var delegate:BroadleafCommerceAdminSecurityServiceDelegate = new BroadleafCommerceAdminSecurityServiceDelegate(this);
+			var delegate:SecurityServiceDelegate = new SecurityServiceDelegate(this);
 			delegate.findAdminUserById(fau.id);
 		}
 

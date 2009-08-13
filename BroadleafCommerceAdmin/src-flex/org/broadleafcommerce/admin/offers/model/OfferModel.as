@@ -11,6 +11,9 @@ package org.broadleafcommerce.admin.offers.model
 	[Bindable]
 	public class OfferModel
 	{
+
+		public static const SERVICE_ID:String = "blOfferService";
+
 		public var currentOffer:Offer = new Offer();
 
 		public var offersList:ArrayCollection = new ArrayCollection();

@@ -9,7 +9,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
-	import org.broadleafcommerce.admin.catalog.business.BroadleafCommerceAdminCatalogServiceDelegate;
+	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	
@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	{
 		public function execute(event:CairngormEvent):void
 		{
-			var delegate:BroadleafCommerceAdminCatalogServiceDelegate = new BroadleafCommerceAdminCatalogServiceDelegate(this);
+			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
 			delegate.findAllProducts();
 		}
 		

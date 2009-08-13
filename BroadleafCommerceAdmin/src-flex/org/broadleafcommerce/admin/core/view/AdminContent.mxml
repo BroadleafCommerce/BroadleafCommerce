@@ -23,15 +23,15 @@
 		id="contentViewStack" 
 		width="90%" 
 		height="100%">
-		<security:SecurityCanvas
-			id="securityCanvas"
-			label="Admins" 
-			height="100%" 
-			width="100%" />
 		<!--view:CodeTypeCanvas
 			id="codeTypeCanvas"
 			label="Code Types"
 			height="100%"
-			width="100%"/ -->
+			width="100%"/-->
+		<!--security:SecurityCanvas
+			id="securityCanvas"
+			label="Admins" 
+			height="100%" 
+			width="100%" /-->
 	</mx:ViewStack>
 </mx:HBox>

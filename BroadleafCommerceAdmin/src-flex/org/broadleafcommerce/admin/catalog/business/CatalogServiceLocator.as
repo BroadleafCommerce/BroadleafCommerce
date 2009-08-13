@@ -5,6 +5,7 @@ package org.broadleafcommerce.admin.catalog.business
 	import com.adobe.cairngorm.business.ServiceLocator;
 	
 	import mx.rpc.remoting.mxml.RemoteObject;
+	import mx.utils.ObjectUtil;
 	
 	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	
@@ -12,6 +13,7 @@ package org.broadleafcommerce.admin.catalog.business
 	{
 		
       private static var _instance : CatalogServiceLocator;
+      private var myService:RemoteObject = new RemoteObject();
 		
       /**
        * Return the ServiceLocator instance.
@@ -48,7 +50,8 @@ package org.broadleafcommerce.admin.catalog.business
       }
 		
 		public function getService():RemoteObject{
-			var myService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcAdminService"));
+			var defaultService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcAdminService"));
+			myService.endpoint = defaultService.endpoint;			
 			myService.destination = CatalogModel.SERVICE_ID;
 			return myService;
 		}

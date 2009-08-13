@@ -3,24 +3,25 @@ package org.broadleafcommerce.admin.security.business
 	import com.adobe.cairngorm.CairngormError;
 	import com.adobe.cairngorm.CairngormMessageCodes;
 	import com.adobe.cairngorm.business.ServiceLocator;
-
+	
 	import mx.rpc.remoting.mxml.RemoteObject;
-
+	
 	import org.broadleafcommerce.admin.security.model.SecurityModel;
 
-	public class AdminSecurityServiceLocator
+	public class SecurityServiceLocator
 	{
-		private static var _instance:AdminSecurityServiceLocator;
+		private static var _instance:SecurityServiceLocator;
+		private var myService:RemoteObject = new RemoteObject();
 
       /**
        * Return the ServiceLocator instance.
        * @return the instance.
        */
-      public static function get instance() : AdminSecurityServiceLocator
+      public static function get instance() : SecurityServiceLocator
       {
          if ( ! _instance )
          {
-            _instance = new AdminSecurityServiceLocator();
+            _instance = new SecurityServiceLocator();
          }
 
          return _instance;
@@ -30,13 +31,13 @@ package org.broadleafcommerce.admin.security.business
        * Return the ServiceLocator instance.
        * @return the instance.
        */
-      public static function getInstance() : AdminSecurityServiceLocator
+      public static function getInstance() : SecurityServiceLocator
       {
          return instance;
       }
 
       // Constructor should be private but current AS3.0 does not allow it
-      public function AdminSecurityServiceLocator()
+      public function SecurityServiceLocator()
       {
          if ( _instance )
          {
@@ -47,7 +48,8 @@ package org.broadleafcommerce.admin.security.business
       }
 
 		public function getService():RemoteObject{
-			var myService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcAdminService"));
+			var defaultService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcAdminService"));
+			myService.endpoint = defaultService.endpoint;
 			myService.destination = SecurityModel.SERVICE_ID;
 			return myService;
 		}

@@ -6,17 +6,16 @@ package org.broadleafcommerce.admin.offers.business
 	import org.broadleafcommerce.admin.offers.vo.Offer;
 	
 	
-	public class BroadleafCommerceAdminOfferServiceDelegate
+	public class OfferServiceDelegate
 	{
 
         private var responder : IResponder;
         private var service : Object;
-        private var catalogService : Object;
         private var offerService:Object;
 
-		public function BroadleafCommerceAdminOfferServiceDelegate(responder:IResponder)
+		public function OfferServiceDelegate(responder:IResponder)
 		{
-			this.catalogService = OfferServiceLocator.getInstance().getService();
+			this.offerService = OfferServiceLocator.getInstance().getService();
             this.responder = responder;	
 		}
 		

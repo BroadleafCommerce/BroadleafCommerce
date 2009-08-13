@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src-java"/>
 	<classpathentry exported="true" kind="lib" path="lib/include/bin/backport-util-concurrent.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/include/bin/cfgatewayadapter.jar"/>
@@ -21,5 +20,10 @@
 	<classpathentry kind="lib" path="/BroadleafCommerce/lib/compile/bin/jsp-api-2.0.jar"/>
 	<classpathentry kind="lib" path="/BroadleafCommerce/lib/compile/bin/servlet-api-2.4.jar"/>
 	<classpathentry kind="lib" path="/BroadleafCommerce/lib/common/bin/jsr250-api-1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0_17">
+		<attributes>
+			<attribute name="owner.project.facets" value="jst.java"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin/java"/>
 </classpath>

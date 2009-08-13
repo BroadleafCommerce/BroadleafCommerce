@@ -4,9 +4,9 @@
 	change="handleItemChange(event)">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 			import org.broadleafcommerce.admin.tools.control.events.codetype.EditCodeTypeEvent;
 			import mx.controls.Alert;
-			import org.broadleafcommerce.admin.tools.vo.CodeType;
 			private function handleItemChange(event:Event):void{
 				new EditCodeTypeEvent(CodeType(this.selectedItem)).dispatch();
 			}

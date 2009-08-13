@@ -7,7 +7,7 @@ package org.broadleafcommerce.admin.security.commands.admins
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 
-	import org.broadleafcommerce.admin.security.business.BroadleafCommerceAdminSecurityServiceDelegate;
+	import org.broadleafcommerce.admin.security.business.SecurityServiceDelegate;
 	import org.broadleafcommerce.admin.security.control.events.DeleteAdminUserEvent;
 	import org.broadleafcommerce.admin.security.control.events.FindAllAdminUsersEvent;
 
@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.security.commands.admins
 		public function execute(event:CairngormEvent):void
 		{
 			var de:DeleteAdminUserEvent = event as DeleteAdminUserEvent;
-			var delegate:BroadleafCommerceAdminSecurityServiceDelegate = new BroadleafCommerceAdminSecurityServiceDelegate(this);
+			var delegate:SecurityServiceDelegate = new SecurityServiceDelegate(this);
 			delegate.deleteAdminUser(de.adminUser);
 		}
 

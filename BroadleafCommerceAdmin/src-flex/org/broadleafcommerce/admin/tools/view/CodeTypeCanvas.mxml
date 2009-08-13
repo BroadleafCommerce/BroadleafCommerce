@@ -18,7 +18,6 @@
 			}
 		]]>
 	</mx:Script>
-	<control:BroadleafCommerceAdminToolsController/>
 	<mx:Binding 
 		source="toolsModel.codeTypes" 
 		destination="codeTypeDataGrid.dataProvider"/>

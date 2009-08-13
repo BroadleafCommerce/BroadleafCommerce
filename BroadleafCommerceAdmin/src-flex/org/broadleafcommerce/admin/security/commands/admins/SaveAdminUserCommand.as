@@ -7,7 +7,7 @@ package org.broadleafcommerce.admin.security.commands.admins
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 
-	import org.broadleafcommerce.admin.security.business.BroadleafCommerceAdminSecurityServiceDelegate;
+	import org.broadleafcommerce.admin.security.business.SecurityServiceDelegate;
 	import org.broadleafcommerce.admin.security.control.events.FindAllAdminUsersEvent;
 	import org.broadleafcommerce.admin.security.control.events.SaveAdminUserEvent;
 
@@ -16,7 +16,7 @@ package org.broadleafcommerce.admin.security.commands.admins
 		public function execute(event:CairngormEvent):void
 		{
 			var sau:SaveAdminUserEvent = event as SaveAdminUserEvent;
-			var delegate:BroadleafCommerceAdminSecurityServiceDelegate = new BroadleafCommerceAdminSecurityServiceDelegate(this);
+			var delegate:SecurityServiceDelegate = new SecurityServiceDelegate(this);
 			delegate.saveAdminUser(sau.adminUser);
 		}
 

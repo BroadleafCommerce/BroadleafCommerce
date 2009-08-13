@@ -1,4 +1,4 @@
-package org.broadleafcommerce.admin.tools.vo
+package org.broadleafcommerce.admin.core.vo.tools
 {
 	[Bindable]
 	[RemoteClass(alias="org.broadleafcommerce.util.domain.CodeTypeImpl")]

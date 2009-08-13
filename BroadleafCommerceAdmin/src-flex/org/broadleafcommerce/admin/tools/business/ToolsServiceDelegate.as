@@ -3,16 +3,17 @@ package org.broadleafcommerce.admin.tools.business
 	import mx.rpc.AsyncToken;
 	import mx.rpc.IResponder;
 	
-	import org.broadleafcommerce.admin.tools.vo.CodeType;
+	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 	
-	public class BroadleafCommerceAdminToolsServiceDelegate
+	public class ToolsServiceDelegate
 	{
 		private var responder:IResponder;
     	private var service:Object;
     	private var toolsService:Object;		
 		
-        public function BroadleafCommerceAdminToolsServiceDelegate(responder:IResponder){
-			this.toolsService = BroadleafCommerceAdminToolsServiceLocator.getInstance().getService();
+        public function ToolsServiceDelegate(responder:IResponder){
+			this.toolsService = ToolsServiceLocator.getInstance().getService();
+			trace("ToolsServiceDelegate().toolsService.destination : "+toolsService.destination);
             this.responder = responder;	
 		}
 
