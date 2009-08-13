@@ -37,8 +37,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
 @Table(name = "BLC_OFFER")
-@Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Inheritance(strategy = InheritanceType.JOINED)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 public class OfferImpl implements Offer {
 
     public static final long serialVersionUID = 1L;
@@ -49,19 +49,19 @@ public class OfferImpl implements Offer {
     @Column(name = "OFFER_ID")
     protected Long id;
 
-    @Column(name = "OFFER_NAME", nullable=false)
+    @Column(name = "OFFER_NAME", nullable = false)
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
     protected String description;
 
-    @Column(name = "OFFER_TYPE", nullable=false)
+    @Column(name = "OFFER_TYPE", nullable = false)
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     protected String discountType;
 
-    @Column(name = "OFFER_VALUE", nullable=false)
+    @Column(name = "OFFER_VALUE", nullable = false)
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
@@ -92,9 +92,12 @@ public class OfferImpl implements Offer {
     protected boolean applyDiscountToMarkedItems;
 
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
-    protected boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
+    protected boolean combinableWithOtherOffers; // no offers can be applied on
+    // top of this offer; if false,
+    // stackable has to be false
+    // also
 
-    @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
+    @Column(name = "OFFER_DELIVERY_TYPE", nullable = false)
     protected String deliveryType;
 
     @Column(name = "MAX_USES")
@@ -128,7 +131,7 @@ public class OfferImpl implements Offer {
     }
 
     public OfferType getType() {
-        return OfferType.getInstance(type);
+        return type == null ? null : OfferType.getInstance(type);
     }
 
     public void setType(OfferType type) {
@@ -136,7 +139,7 @@ public class OfferImpl implements Offer {
     }
 
     public OfferDiscountType getDiscountType() {
-        return OfferDiscountType.getInstance(discountType);
+        return discountType == null ? null : OfferDiscountType.getInstance(discountType);
     }
 
     public void setDiscountType(OfferDiscountType discountType) {
@@ -176,9 +179,8 @@ public class OfferImpl implements Offer {
     }
 
     /**
-     * Returns true if this offer can be stacked on top of another offer.  Stackable is evaluated
-     * against offers with the same offer type.
-     *
+     * Returns true if this offer can be stacked on top of another offer.
+     * Stackable is evaluated against offers with the same offer type.
      * @return true if stackable, otherwise false
      */
     public boolean isStackable() {
@@ -187,7 +189,6 @@ public class OfferImpl implements Offer {
 
     /**
      * Sets the stackable value for this offer.
-     *
      * @param stackable
      */
     public void setStackable(boolean stackable) {
@@ -207,7 +208,7 @@ public class OfferImpl implements Offer {
     }
 
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice) {
-        this.applyToSalePrice=applyToSalePrice;
+        this.applyToSalePrice = applyToSalePrice;
     }
 
     public String getAppliesToOrderRules() {
@@ -235,8 +236,8 @@ public class OfferImpl implements Offer {
     }
 
     /**
-     * Returns true if this offer can be combined with other offers in the order.
-     *
+     * Returns true if this offer can be combined with other offers in the
+     * order.
      * @return true if combinableWithOtherOffers, otherwise false
      */
     public boolean isCombinableWithOtherOffers() {
@@ -245,7 +246,6 @@ public class OfferImpl implements Offer {
 
     /**
      * Sets the combinableWithOtherOffers value for this offer.
-     *
      * @param combinableWithOtherOffers
      */
     public void setCombinableWithOtherOffers(boolean combinableWithOtherOffers) {
@@ -253,7 +253,7 @@ public class OfferImpl implements Offer {
     }
 
     public OfferDeliveryType getDeliveryType() {
-        return OfferDeliveryType.getInstance(deliveryType);
+        return deliveryType == null ? null : OfferDeliveryType.getInstance(deliveryType);
     }
 
     public void setDeliveryType(OfferDeliveryType deliveryType) {
@@ -335,7 +335,5 @@ public class OfferImpl implements Offer {
             return false;
         return true;
     }
-
-
 
 }

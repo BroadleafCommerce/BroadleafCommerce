@@ -77,7 +77,7 @@ import org.hibernate.annotations.CollectionOfElements;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
+@Searchable(alias = "product", supportUnmarshall = SupportUnmarshall.FALSE)
 public class ProductImpl implements Product {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
@@ -93,8 +93,8 @@ public class ProductImpl implements Product {
     protected Long id;
 
     /** The name. */
-    @Column(name = "NAME", nullable=false)
-    @SearchableProperty(name="productName")
+    @Column(name = "NAME", nullable = false)
+    @SearchableProperty(name = "productName")
     protected String name;
 
     /** The description. */
@@ -103,7 +103,7 @@ public class ProductImpl implements Product {
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
-    @SearchableProperty(name="productDescription")
+    @SearchableProperty(name = "productDescription")
     protected String longDescription;
 
     /** The active start date. */
@@ -116,12 +116,12 @@ public class ProductImpl implements Product {
 
     /** The product model number */
     @Column(name = "MODEL")
-    @SearchableProperty(name="productModel")
+    @SearchableProperty(name = "productModel")
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
-    @SearchableProperty(name="productManufacturer")
+    @SearchableProperty(name = "productManufacturer")
     protected String manufacturer;
 
     /** The product dimensions **/
@@ -132,14 +132,14 @@ public class ProductImpl implements Product {
     @Embedded
     protected ProductWeight weight = new ProductWeight();
 
-    @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "product", targetEntity = CrossSaleProductImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected List<RelatedProduct> crossSaleProducts = new ArrayList<RelatedProduct>();
 
-    @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "product", targetEntity = UpSaleProductImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OrderBy(value="sequence")
-    protected List<RelatedProduct> upSaleProducts  = new ArrayList<RelatedProduct>();
+    @OrderBy(value = "sequence")
+    protected List<RelatedProduct> upSaleProducts = new ArrayList<RelatedProduct>();
 
     /** The all skus. */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = SkuImpl.class)
@@ -167,7 +167,7 @@ public class ProductImpl implements Product {
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
 
-    @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
+    @Column(name = "IS_FEATURED_PRODUCT", nullable = false)
     protected boolean isFeaturedProduct = false;
 
     @Column(name = "IS_MACHINE_SORTABLE")
@@ -308,7 +308,7 @@ public class ProductImpl implements Product {
      * @see org.broadleafcommerce.catalog.domain.Product#getSkus()
      */
     public List<Sku> getSkus() {
-        if (skus.size() == 0) {
+        if (skus != null && skus.size() == 0) {
             List<Sku> allSkus = getAllSkus();
             for (Sku sku : allSkus) {
                 if (sku.isActive()) {
@@ -463,7 +463,8 @@ public class ProductImpl implements Product {
     }
 
     /**
-     * Returns the product dimensions as a String (assumes measurements are in inches)
+     * Returns the product dimensions as a String (assumes measurements are in
+     * inches)
      * @return a String value of the product dimensions
      */
     public String getDimensionString() {

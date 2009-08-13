@@ -51,16 +51,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getId()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getId()
-     */
     public String getId() {
         return id;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setId(java.lang.String)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setId(java.lang.String)
      */
@@ -71,16 +65,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getName()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getName()
-     */
     public String getName() {
         return name;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setName(java.lang.String)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setName(java.lang.String)
      */
@@ -91,16 +79,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getAddress1()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getAddress1()
-     */
     public String getAddress1() {
         return address1;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setAddress1(java.lang.String)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setAddress1(java.lang.String)
      */
@@ -111,16 +93,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getAddress2()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getAddress2()
-     */
     public String getAddress2() {
         return address2;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setAddress2(java.lang.String)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setAddress2(java.lang.String)
      */
@@ -131,16 +107,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getCity()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getCity()
-     */
     public String getCity() {
         return city;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setCity(java.lang.String)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setCity(java.lang.String)
      */
@@ -151,16 +121,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getZip()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getZip()
-     */
     public String getZip() {
         return zip;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setZip(java.lang.String)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setZip(java.lang.String)
      */
@@ -171,16 +135,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getCountry()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getCountry()
-     */
     public String getCountry() {
         return country;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setCountry(java.lang.String)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setCountry(java.lang.String)
      */
@@ -191,16 +149,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getPhone()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getPhone()
-     */
     public String getPhone() {
         return phone;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setPhone(java.lang.String)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setPhone(java.lang.String)
      */
@@ -211,16 +163,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getLongitude()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getLongitude()
-     */
     public Float getLongitude() {
         return longitude;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setLongitude(java.lang.Float)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setLongitude(java.lang.Float)
      */
@@ -231,16 +177,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getLatitude()
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getLatitude()
-     */
     public Float getLatitude() {
         return latitude;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setLatitude(java.lang.Float)
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setLatitude(java.lang.Float)
      */
@@ -251,16 +191,10 @@ public class StoreImpl implements Store {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#setState(java.lang.String)
      */
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#setState(java.lang.String)
-     */
     public void setState(String state) {
         this.state = state;
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.store.domain.Store#getState()
-     */
     /* (non-Javadoc)
      * @see org.broadleafcommerce.store.domain.Store#getState()
      */

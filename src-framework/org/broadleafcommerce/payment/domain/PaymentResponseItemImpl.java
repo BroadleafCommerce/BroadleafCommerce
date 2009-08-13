@@ -56,7 +56,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "PAYMENT_RESPONSE_ITEM_ID")
     protected Long id;
 
-    @Column(name = "USER_NAME", nullable=false)
+    @Column(name = "USER_NAME", nullable = false)
     protected String userName;
 
     @Column(name = "AMOUNT_PAID")
@@ -89,7 +89,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "TRANSACTION_SUCCESS")
     protected Boolean transactionSuccess;
 
-    @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
+    @Column(name = "TRANSACTION_TIMESTAMP", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     protected Date transactionTimestamp;
 
@@ -105,7 +105,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     @Column(name = "REMAINING_BALANCE")
     protected BigDecimal remainingBalance;
 
-    @Column(name = "TRANSACTION_TYPE", nullable=false)
+    @Column(name = "TRANSACTION_TYPE", nullable = false)
     protected String transactionType;
 
     @CollectionOfElements
@@ -173,7 +173,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     public Money getAmountPaid() {
-        return new Money(amountPaid);
+        return amountPaid == null ? null : new Money(amountPaid);
     }
 
     public void setAmountPaid(Money amountPaid) {
@@ -237,7 +237,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     public Money getRemainingBalance() {
-        return new Money(remainingBalance);
+        return remainingBalance == null ? null : new Money(remainingBalance);
     }
 
     public void setRemainingBalance(Money remainingBalance) {
@@ -245,7 +245,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     }
 
     public TransactionType getTransactionType() {
-        return TransactionType.getInstance(transactionType);
+        return transactionType == null ? null : TransactionType.getInstance(transactionType);
     }
 
     public void setTransactionType(TransactionType transactionType) {
@@ -314,7 +314,8 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
         sb.append("reference number: " + this.getReferenceNumber() + "\n");
         sb.append("transaction id: " + this.getTransactionId() + "\n");
         sb.append("avs code: " + this.getAvsCode() + "\n");
-        if (remainingBalance != null) sb.append("remaining balance: " + this.getRemainingBalance());
+        if (remainingBalance != null)
+            sb.append("remaining balance: " + this.getRemainingBalance());
 
         return sb.toString();
     }

@@ -52,7 +52,7 @@ public class ProductDimension implements Serializable {
     protected String dimensionUnitOfMeasure;
 
     public DimensionUnitOfMeasureType getDimensionUnitOfMeasure() {
-        return DimensionUnitOfMeasureType.getInstance(dimensionUnitOfMeasure);
+        return dimensionUnitOfMeasure == null ? null : DimensionUnitOfMeasureType.getInstance(dimensionUnitOfMeasure);
     }
 
     public void setDimensionUnitOfMeasure(DimensionUnitOfMeasureType dimensionUnitOfMeasure) {
@@ -101,7 +101,7 @@ public class ProductDimension implements Serializable {
     }
 
     public ContainerSizeType getSize() {
-        return ContainerSizeType.getInstance(size);
+        return size == null ? null : ContainerSizeType.getInstance(size);
     }
 
     public void setSize(ContainerSizeType size) {
@@ -109,7 +109,7 @@ public class ProductDimension implements Serializable {
     }
 
     public ContainerShapeType getContainer() {
-        return ContainerShapeType.getInstance(container);
+        return container == null ? null : ContainerShapeType.getInstance(container);
     }
 
     public void setContainer(ContainerShapeType container) {

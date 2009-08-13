@@ -51,10 +51,10 @@ public class PaymentLogImpl implements PaymentLog {
     @Column(name = "PAYMENT_LOG_ID")
     protected Long id;
 
-    @Column(name = "USER_NAME", nullable=false)
+    @Column(name = "USER_NAME", nullable = false)
     protected String userName;
 
-    @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
+    @Column(name = "TRANSACTION_TIMESTAMP", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     protected Date transactionTimestamp;
 
@@ -68,7 +68,7 @@ public class PaymentLogImpl implements PaymentLog {
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
     protected String paymentInfoReferenceNumber;
 
-    @Column(name = "TRANSACTION_TYPE", nullable=false)
+    @Column(name = "TRANSACTION_TYPE", nullable = false)
     protected String transactionType;
 
     @Column(name = "TRANSACTION_SUCCESS")
@@ -77,7 +77,7 @@ public class PaymentLogImpl implements PaymentLog {
     @Column(name = "EXCEPTION_MESSAGE")
     protected String exceptionMessage;
 
-    @Column(name = "LOG_TYPE", nullable=false)
+    @Column(name = "LOG_TYPE", nullable = false)
     protected String logType;
 
     @Column(name = "AMOUNT_PAID")
@@ -132,7 +132,7 @@ public class PaymentLogImpl implements PaymentLog {
     }
 
     public TransactionType getTransactionType() {
-        return TransactionType.getInstance(transactionType);
+        return transactionType == null ? null : TransactionType.getInstance(transactionType);
     }
 
     public void setTransactionType(TransactionType transactionType) {
@@ -140,7 +140,7 @@ public class PaymentLogImpl implements PaymentLog {
     }
 
     public PaymentLogEventType getLogType() {
-        return PaymentLogEventType.getInstance(logType);
+        return logType == null ? null : PaymentLogEventType.getInstance(logType);
     }
 
     public void setLogType(PaymentLogEventType logType) {
@@ -164,7 +164,7 @@ public class PaymentLogImpl implements PaymentLog {
     }
 
     public Money getAmountPaid() {
-        return new Money(amountPaid);
+        return amountPaid == null ? null : new Money(amountPaid);
     }
 
     public void setAmountPaid(Money amountPaid) {

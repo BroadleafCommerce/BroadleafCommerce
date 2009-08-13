@@ -122,7 +122,7 @@ public class PaymentInfoImpl implements PaymentInfo {
     }
 
     public PaymentInfoType getType() {
-        return PaymentInfoType.getInstance(type);
+        return type == null ? null : PaymentInfoType.getInstance(type);
     }
 
     public void setType(PaymentInfoType type) {

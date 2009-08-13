@@ -53,7 +53,7 @@ import org.hibernate.annotations.Cascade;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_FULFILLMENT_GROUP")
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     private static final long serialVersionUID = 1L;
@@ -64,7 +64,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Column(name = "FULFILLMENT_GROUP_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = OrderImpl.class, optional=false)
+    @ManyToOne(targetEntity = OrderImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ID")
     protected Order order;
 
@@ -72,46 +72,46 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected String referenceNumber;
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<FulfillmentGroupItem> fulfillmentGroupItems = new ArrayList<FulfillmentGroupItem>();
 
-    @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ADDRESS_ID")
     protected Address address;
 
-    @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(targetEntity = PhoneImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "PHONE_ID")
     protected Phone phone;
 
     @Column(name = "METHOD")
     protected String method;
 
-    //TODO change column name to RETAIL_SHIPPING_PRICE
+    // TODO change column name to RETAIL_SHIPPING_PRICE
     @Column(name = "RETAIL_PRICE")
     protected BigDecimal retailShippingPrice;
 
-    //TODO change column name to SALE_SHIPPING_PRICE
+    // TODO change column name to SALE_SHIPPING_PRICE
     @Column(name = "SALE_PRICE")
     protected BigDecimal saleShippingPrice;
 
-    //TODO change column name to SHIPPING_PRICE
+    // TODO change column name to SHIPPING_PRICE
     @Column(name = "PRICE")
     protected BigDecimal shippingPrice;
 
     @Transient
-    protected BigDecimal adjustmentPrice;  // retailPrice with adjustments
+    protected BigDecimal adjustmentPrice; // retailPrice with adjustments
 
     @Column(name = "TYPE")
     protected String type = FulfillmentGroupType.SHIPPING.getType();
 
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<CandidateFulfillmentGroupOffer> candidateOffers = new ArrayList<CandidateFulfillmentGroupOffer>();
 
-    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupAdjustmentImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
 
     @Column(name = "CITY_TAX")
@@ -221,7 +221,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
 
     public FulfillmentGroupType getType() {
-        return FulfillmentGroupType.getInstance(type);
+        return type == null ? null : FulfillmentGroupType.getInstance(type);
     }
 
     public void setType(FulfillmentGroupType type) {
@@ -252,8 +252,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
 
     /*
-     * Adds the adjustment to the order item's adjustment list an discounts the order item's adjustment
-     * price by the value of the adjustment.
+     * Adds the adjustment to the order item's adjustment list an discounts the
+     * order item's adjustment price by the value of the adjustment.
      */
     public List<FulfillmentGroupAdjustment> addFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment) {
         if (this.fulfillmentGroupAdjustments.size() == 0) {
@@ -415,7 +415,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     }
 
     public FulfillmentGroupStatusType getStatus() {
-        return FulfillmentGroupStatusType.getInstance(status);
+        return status == null ? null : FulfillmentGroupStatusType.getInstance(status);
     }
 
     public void setStatus(FulfillmentGroupStatusType status) {

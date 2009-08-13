@@ -192,7 +192,7 @@ public class SkuImpl implements Sku {
      * @see org.broadleafcommerce.catalog.domain.Sku#getListPrice()
      */
     public Money getListPrice() {
-        return new Money(retailPrice);
+        return retailPrice == null ? null : new Money(retailPrice);
     }
 
     /*

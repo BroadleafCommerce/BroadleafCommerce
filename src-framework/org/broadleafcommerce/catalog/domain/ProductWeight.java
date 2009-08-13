@@ -35,7 +35,7 @@ public class ProductWeight implements Serializable {
     protected String weightUnitOfMeasure;
 
     public WeightUnitOfMeasureType getWeightUnitOfMeasure() {
-        return WeightUnitOfMeasureType.getInstance(weightUnitOfMeasure);
+        return weightUnitOfMeasure == null ? null : WeightUnitOfMeasureType.getInstance(weightUnitOfMeasure);
     }
 
     public void setWeightUnitOfMeasure(WeightUnitOfMeasureType weightUnitOfMeasure) {

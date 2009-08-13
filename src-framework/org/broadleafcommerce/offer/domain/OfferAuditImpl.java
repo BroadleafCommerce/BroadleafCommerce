@@ -35,7 +35,7 @@ import org.broadleafcommerce.util.money.Money;
 
 @Entity
 @Table(name = "OFFER_AUDIT")
-@Inheritance(strategy=InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class OfferAuditImpl implements OfferAudit {
 
     public static final long serialVersionUID = 1L;
@@ -107,7 +107,7 @@ public class OfferAuditImpl implements OfferAudit {
     }
 
     public OfferDiscountType getOfferType() {
-        return OfferDiscountType.getInstance(offerType);
+        return offerType == null ? null : OfferDiscountType.getInstance(offerType);
     }
 
     public void setOfferType(OfferDiscountType offerType) {

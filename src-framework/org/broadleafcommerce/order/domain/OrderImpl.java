@@ -67,7 +67,7 @@ import org.hibernate.annotations.MapKeyManyToMany;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ORDER")
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
 public class OrderImpl implements Order {
 
     private static final long serialVersionUID = 1L;
@@ -84,7 +84,7 @@ public class OrderImpl implements Order {
     @Column(name = "NAME")
     protected String name;
 
-    @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
+    @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
     protected Customer customer;
 
@@ -125,41 +125,42 @@ public class OrderImpl implements Order {
     protected String emailAddress;
 
     @Transient
-    protected BigDecimal adjustmentPrice;  // retailPrice with order adjustments (no item adjustments)
+    protected BigDecimal adjustmentPrice; // retailPrice with order adjustments
+    // (no item adjustments)
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "order", targetEntity = OrderItemImpl.class, cascade = { CascadeType.ALL })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderItem> orderItems = new ArrayList<OrderItem>();
 
-    @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = { CascadeType.ALL })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
-    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL })
     @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"))
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
-    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = {CascadeType.ALL})
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "order", targetEntity = CandidateOrderOfferImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<CandidateOrderOffer> candidateOffers = new ArrayList<CandidateOrderOffer>();
 
-    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = {CascadeType.ALL})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @OneToMany(mappedBy = "order", targetEntity = PaymentInfoImpl.class, cascade = { CascadeType.ALL })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
 
-    @ManyToMany(targetEntity=OfferInfoImpl.class)
+    @ManyToMany(targetEntity = OfferInfoImpl.class)
     @JoinTable(name = "BLC_ADDITIONAL_OFFER_INFO", inverseJoinColumns = @JoinColumn(name = "OFFER_INFO_ID", referencedColumnName = "OFFER_INFO_ID"))
-    @MapKeyManyToMany(joinColumns = {@JoinColumn(name = "OFFER_ID") }, targetEntity=OfferImpl.class)
-    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @MapKeyManyToMany(joinColumns = { @JoinColumn(name = "OFFER_ID") }, targetEntity = OfferImpl.class)
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<Offer, OfferInfo>();
 
     @Transient
@@ -259,7 +260,7 @@ public class OrderImpl implements Order {
     }
 
     public OrderStatus getStatus() {
-        return OrderStatus.getInstance(status);
+        return status == null ? null : OrderStatus.getInstance(status);
     }
 
     public void setStatus(OrderStatus status) {
@@ -391,7 +392,7 @@ public class OrderImpl implements Order {
 
     public boolean hasCategoryItem(String categoryName) {
         for (OrderItem orderItem : orderItems) {
-            if(orderItem.isInCategory(categoryName)) {
+            if (orderItem.isInCategory(categoryName)) {
                 return true;
             }
         }
@@ -403,8 +404,8 @@ public class OrderImpl implements Order {
     }
 
     /*
-     * Adds the adjustment to the order item's adjustment list an discounts the order item's adjustment
-     * price by the value of the adjustment.
+     * Adds the adjustment to the order item's adjustment list an discounts the
+     * order item's adjustment price by the value of the adjustment.
      */
     public List<OrderAdjustment> addOrderAdjustments(OrderAdjustment orderAdjustment) {
         if (this.orderAdjustments.size() == 0) {
@@ -429,7 +430,7 @@ public class OrderImpl implements Order {
     }
 
     public void removeAllItemAdjustments() {
-        for (OrderItem orderItem: orderItems) {
+        for (OrderItem orderItem : orderItems) {
             orderItem.removeAllAdjustments();
         }
     }
@@ -453,12 +454,12 @@ public class OrderImpl implements Order {
     }
 
     /*
-     * Checks to see if the orders items in this order has an adjustment with a not combinable
-     * offer.
+     * Checks to see if the orders items in this order has an adjustment with a
+     * not combinable offer.
      */
     public boolean containsNotCombinableItemOfferAdjustments() {
         boolean isContainsNotCombinableItemOffer = false;
-        for (OrderItem orderItem: orderItems) {
+        for (OrderItem orderItem : orderItems) {
             for (OrderItemAdjustment itemAdjustment : orderItem.getOrderItemAdjustments()) {
                 if (!itemAdjustment.getOffer().isCombinableWithOtherOffers()) {
                     isContainsNotCombinableItemOffer = true;
@@ -474,7 +475,7 @@ public class OrderImpl implements Order {
      */
     public boolean containsNotStackableOrderOffer() {
         boolean isContainsNotStackableOrderOffer = false;
-        for (OrderAdjustment orderAdjustment: orderAdjustments) {
+        for (OrderAdjustment orderAdjustment : orderAdjustments) {
             if (!orderAdjustment.getOffer().isStackable()) {
                 isContainsNotStackableOrderOffer = true;
                 break;
@@ -487,12 +488,12 @@ public class OrderImpl implements Order {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
             if (orderItem instanceof BundleOrderItemImpl) {
-                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
+                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl) orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                     discreteOrderItems.add(discreteOrderItem);
                 }
             } else {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                 discreteOrderItems.add(discreteOrderItem);
             }
         }
@@ -503,14 +504,14 @@ public class OrderImpl implements Order {
         List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
             if (orderItem instanceof BundleOrderItemImpl) {
-                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
+                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl) orderItem;
                 for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                     if (discreteOrderItem.getSku().isDiscountable()) {
                         discreteOrderItems.add(discreteOrderItem);
                     }
                 }
             } else {
-                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                 if (discreteOrderItem.getSku().isDiscountable()) {
                     discreteOrderItems.add(discreteOrderItem);
                 }
