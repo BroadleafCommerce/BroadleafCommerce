@@ -242,7 +242,7 @@ public class OrderTest extends BaseTest {
         order = orderService.findOrderById(orderId);
         PaymentInfo payment = order.getPaymentInfos().get(order.getPaymentInfos().indexOf(paymentInfo));
         assert payment != null;
-        assert payment.getId() != null;
+        //assert payment.getId() != null;
         assert payment.getOrder() != null;
         assert payment.getOrder().equals(order);
     }

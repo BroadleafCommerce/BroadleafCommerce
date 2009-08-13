@@ -25,6 +25,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class OrderDaoTest extends BaseTest {
@@ -40,6 +41,7 @@ public class OrderDaoTest extends BaseTest {
 
     @Test(groups = { "createOrder" }, dataProvider = "basicOrder", dataProviderClass = OrderDataProvider.class, dependsOnGroups = { "readCustomer1", "createPhone" })
     @Rollback(false)
+    @Transactional
     public void createOrder(Order order) {
         userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
@@ -64,7 +66,7 @@ public class OrderDaoTest extends BaseTest {
         assert orders.size() > 0;
     }
 
-    @Test(groups = {"deleteOrderForCustomer"}, dependsOnGroups = {"createOrder"})
+    @Test(groups = {"deleteOrderForCustomer"}, dependsOnGroups = {"readOrder"})
     public void deleteOrderForCustomer(){
         Order order = orderDao.readOrderById(orderId);
         assert order != null;
