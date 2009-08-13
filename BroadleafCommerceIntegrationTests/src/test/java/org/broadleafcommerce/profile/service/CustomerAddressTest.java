@@ -15,38 +15,68 @@
  */
 package org.broadleafcommerce.profile.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.dataprovider.CustomerAddressDataProvider;
+import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
+import org.broadleafcommerce.profile.domain.CustomerAddressImpl;
 import org.broadleafcommerce.profile.domain.State;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
-public class CustomerAddressTest extends BaseTest {
+public class CustomerAddressTest extends CommonSetupBaseTest {
 
-    List<Long> customerAddressIds = new ArrayList<Long>();
-    String userName = new String();
-    Long userId;
-
+	private String userName;
+	private Long userId;
+	
     @Resource
     private CustomerAddressService customerAddressService;
 
-    @Resource
-    private CustomerService customerService;
-
-    @Resource
-    private CountryService countryService;
+    @Test(groups = "testCustomerAddress")
+    public void readCustomerAddresses() {
+    	Customer customer = createCustomerWithAddresses();
+    	List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
+    	for (CustomerAddress ca : customerAddressList) {
+    		assert ca != null;
+    	}
+    }
     
-    @Resource
-    private StateService stateService;
-
+    @Test(groups = "testCustomerAddress")
+    public void createNewDefaultAddress() {
+    	Customer customer = createCustomerWithAddresses();
+    	CustomerAddress ca = new CustomerAddressImpl();
+    	Address address = new AddressImpl();
+    	address.setAddressLine1("123 Main");
+    	address.setCity("Dallas");
+    	address.setPostalCode("75201");
+    	address.setDefault(true);
+    	ca.setAddress(address);
+    	ca.setCustomer(customer);
+    	CustomerAddress savedAddress = saveCustomerAddress(ca);
+    	
+    	List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
+    	for (CustomerAddress customerAddress : customerAddressList) {
+    		if (customerAddress.getId().equals(savedAddress.getId())) {
+    			assert customerAddress.getAddress().isDefault();
+    		} else {
+    			assert !customerAddress.getAddress().isDefault();
+    		}
+    	}
+    }
+    
+    
+    /**
+     * This method only exists because so many other tests depend on it, but should be removed once tests are more isolated
+     * @param customerAddress
+     */
+    @Deprecated
     @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer1", "createCountry", "createState"})
     @Rollback(false)
     public void createCustomerAddress(CustomerAddress customerAddress) {
@@ -63,6 +93,10 @@ public class CustomerAddressTest extends BaseTest {
         userId = customerAddress.getCustomer().getId();
     }
 
+    /**
+     * TThis method only exists because so many other tests depend on it, but should be removed once tests are more isolated
+     */
+    @Deprecated
     @Test(groups = "readCustomerAddress", dependsOnGroups = "createCustomerAddress")
     public void readCustomerAddressByUserId() {
         List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(userId);
@@ -70,4 +104,5 @@ public class CustomerAddressTest extends BaseTest {
             assert customerAddress != null;
         }
     }
+    
 }

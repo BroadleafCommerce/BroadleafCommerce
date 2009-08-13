@@ -18,35 +18,20 @@ package org.broadleafcommerce.profile.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.broadleafcommerce.profile.domain.Country;
-import org.broadleafcommerce.profile.domain.CountryImpl;
 import org.broadleafcommerce.profile.domain.State;
-import org.broadleafcommerce.profile.domain.StateImpl;
-import org.broadleafcommerce.test.BaseTest;
-import org.springframework.test.annotation.Rollback;
+import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.testng.annotations.Test;
 
-public class AddressTest extends BaseTest {
+public class AddressTest extends CommonSetupBaseTest {
 
     List<Long> addressIds = new ArrayList<Long>();
     String userName = new String();
     Long userId;
 
-    @Resource
-    private StateService stateService;
-
-    @Resource
-    private CountryService countryService;
-
     @Test(groups = "createCountry")
-    @Rollback(false)
     public void createCountry() {
-        Country country = new CountryImpl();
-        country.setAbbreviation("US");
-        country.setName("United States");
-        countryService.save(country);
+    	super.createCountry();
     }
 
     @Test(groups = "findCountries", dependsOnGroups = "createCountry")
@@ -55,20 +40,15 @@ public class AddressTest extends BaseTest {
         assert countries.size() > 0;
     }
 
-    @Test(groups = "findCountryByShortName", dependsOnGroups = "findCountries")
+    @Test(groups = "findCountryByShortName", dependsOnGroups = "createCountry")
     public void findCountryByShortName() {
         Country country = countryService.findCountryByAbbreviation("US");
         assert country != null;
     }
 
-    @Test(groups = "createState", dependsOnGroups = "createCountry")
-    @Rollback(false)
+    @Test(groups = "createState")
     public void createState() {
-        State state = new StateImpl();
-        state.setAbbreviation("KY");
-        state.setName("Kentucky");
-        state.setCountry(countryService.findCountryByAbbreviation("US"));
-        stateService.save(state);
+        super.createState();
     }
 
     @Test(groups = "findStates", dependsOnGroups = "createState")
@@ -83,11 +63,4 @@ public class AddressTest extends BaseTest {
         assert state != null;
     }
 
-    /*
-     * @Test(groups = "createAddress", dataProvider = "setupAddress",
-     * dataProviderClass = AddressDataProvider.class)
-     * @Rollback(false) public void createAddress(Address address) { assert
-     * address.getId() == null; address = addressService.saveAddress(address);
-     * assert address.getId() != null; }
-     */
 }
