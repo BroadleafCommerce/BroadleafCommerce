@@ -24,12 +24,11 @@ import org.broadleafcommerce.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.profile.dao.CustomerAddressDao;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
-public class FulfillmentGroupDaoTest extends BaseTest {
+public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
 
     private Long orderId;
     private Long defaultFulfillmentGroupId;
@@ -42,19 +41,14 @@ public class FulfillmentGroupDaoTest extends BaseTest {
     private FulfillmentGroupService fulfillmentGroupService;
 
     @Resource
-    private CustomerService customerService;
-
-    @Resource
     private CustomerAddressDao customerAddressDao;
 
     @Resource
     private OrderDao orderDao;
 
-    @Test(groups = "createDefaultFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "createOrder", "createCustomerAddress" })
-    @Rollback(false)
+    @Test(groups = "createDefaultFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
     public void createDefaultFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        String userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
+        Customer customer = createCustomerWithBasicOrderAndAddresses();
         Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
         Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
 
@@ -90,11 +84,10 @@ public class FulfillmentGroupDaoTest extends BaseTest {
         assert fg.getId().equals(defaultFulfillmentGroupId);
     }
 
-    @Test(groups = "createFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "createOrder", "createCustomerAddress" })
+    @Test(groups = "createFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
     @Rollback(false)
     public void createFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        String userName = "customer1";
-        Customer customer = customerService.readCustomerByUsername(userName);
+        Customer customer = createCustomerWithBasicOrderAndAddresses();
         Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
         Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
 
