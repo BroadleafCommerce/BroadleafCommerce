@@ -46,6 +46,11 @@
         <version>${project.version}</version>
         <optional>false</optional>
 	</dependency>
+	<dependency>
+		<groupId>opensymphony</groupId>
+		<artifactId>quartz</artifactId>
+		<version>1.6.3</version>
+	</dependency>
   </dependencies>
   <build>
     <finalName>broadleafdemo</finalName>
