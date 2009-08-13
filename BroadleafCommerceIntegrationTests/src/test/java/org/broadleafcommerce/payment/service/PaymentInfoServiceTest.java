@@ -19,8 +19,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.payment.PaymentInfoDataProvider;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
@@ -43,7 +43,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     private PaymentInfoService paymentInfoService;
 
     @Resource
-    private OrderDao orderDao;
+    private CartService cartService;
 
     @Resource
     private CustomerAddressDao customerAddressDao;
@@ -51,7 +51,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer1","createOrder"})
+    @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer1", "createOrder"})
     @Rollback(false)
     @Transactional
     public void createPaymentInfo(PaymentInfo paymentInfo){
@@ -61,7 +61,7 @@ public class PaymentInfoServiceTest extends BaseTest {
         Address address = null;
         if (!addresses.isEmpty())
             address = addresses.get(0).getAddress();
-        Order salesOrder = orderDao.readCartForCustomer(customer);
+        Order salesOrder = cartService.createNewCartForCustomer(customer);
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);
@@ -96,7 +96,7 @@ public class PaymentInfoServiceTest extends BaseTest {
         Address address = null;
         if (!addresses.isEmpty())
             address = addresses.get(0).getAddress();
-        Order salesOrder = orderDao.readCartForCustomer(customer);
+        Order salesOrder = cartService.findCartForCustomer(customer);
 
         paymentInfo.setAddress(address);
         paymentInfo.setOrder(salesOrder);

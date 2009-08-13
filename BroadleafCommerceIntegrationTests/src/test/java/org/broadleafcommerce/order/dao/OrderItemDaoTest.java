@@ -22,11 +22,7 @@ import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.OrderItemDataProvider;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.GiftWrapOrderItem;
-import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.service.type.OrderStatus;
-import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,27 +37,17 @@ public class OrderItemDaoTest extends BaseTest {
     private OrderItemDao orderItemDao;
 
     @Resource
-    private OrderDao orderDao;
-
-    @Resource
     private SkuDao skuDao;
-
-    @Resource
-    private CustomerService customerService;
 
     @Test(groups = { "createDiscreteOrderItem" }, dataProvider = "basicDiscreteOrderItem", dataProviderClass = OrderItemDataProvider.class, dependsOnGroups = { "createOrder", "createSku" })
     @Rollback(false)
+    @Transactional
     public void createDiscreteOrderItem(DiscreteOrderItem orderItem) {
-        String userName = "customer1";
         Sku si = skuDao.readFirstSku();
         assert si.getId() != null;
         orderItem.setSku(si);
-        Customer customer = customerService.readCustomerByUsername(userName);
-        Order so = orderDao.readCartForCustomer(customer);
-        assert so.getStatus().equals(OrderStatus.IN_PROCESS);
-        assert so.getId() != null;
         assert orderItem.getId() == null;
-
+        
         orderItem = (DiscreteOrderItem) orderItemDao.save(orderItem);
         assert orderItem.getId() != null;
         orderItemId = orderItem.getId();
@@ -70,14 +56,9 @@ public class OrderItemDaoTest extends BaseTest {
     @Test(groups = { "createGiftWrapOrderItem" }, dataProvider = "basicGiftWrapOrderItem", dataProviderClass = OrderItemDataProvider.class, dependsOnGroups = { "readOrderItemsById" })
     @Rollback(false)
     public void createGiftWrapOrderItem(GiftWrapOrderItem orderItem) {
-        String userName = "customer1";
         Sku si = skuDao.readFirstSku();
         assert si.getId() != null;
         orderItem.setSku(si);
-        Customer customer = customerService.readCustomerByUsername(userName);
-        Order so = orderDao.readCartForCustomer(customer);
-        assert so.getStatus().equals(OrderStatus.IN_PROCESS);
-        assert so.getId() != null;
         assert orderItem.getId() == null;
 
         OrderItem discreteItem = orderItemDao.readOrderItemById(orderItemId);

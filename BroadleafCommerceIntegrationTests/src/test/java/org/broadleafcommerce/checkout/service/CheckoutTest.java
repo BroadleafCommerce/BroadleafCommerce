@@ -99,8 +99,7 @@ public class CheckoutTest extends BaseTest {
         country.setName("United States");
         state.setCountry(country);
         address.setCountry(country);
-        
-        
+         
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setOrder(order);
         group.setAddress(address);
@@ -121,6 +120,7 @@ public class CheckoutTest extends BaseTest {
         newSku.setName("Under Armor T-Shirt -- Red");
         newSku.setRetailPrice(new Money(14.99));
         newSku.setActiveStartDate(new Date());
+        newSku.setDiscountable(false);
         newSku = catalogService.saveSku(newSku);
         item.setSku(newSku);
         
