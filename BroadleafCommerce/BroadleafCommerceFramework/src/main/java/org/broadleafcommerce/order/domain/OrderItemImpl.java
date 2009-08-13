@@ -134,16 +134,16 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public void assignFinalPrice() {
-        price = getCurrentPrice(true).getAmount();
+        price = getCurrentPrice().getAmount();
     }
 
     public Money getTaxablePrice() {
         return getPrice();
     }
 
-    public Money getCurrentPrice(boolean includeOffers) {
+    public Money getCurrentPrice() {
         Money currentPrice = null;
-        if ((includeOffers) && (adjustmentPrice != null)) {
+        if (adjustmentPrice != null) {
             currentPrice = new Money(adjustmentPrice);
         } else if (salePrice != null) {
             currentPrice = new Money(salePrice);

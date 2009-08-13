@@ -54,7 +54,7 @@ public interface OrderItem extends Serializable {
 
     public void assignFinalPrice();
 
-    public Money getCurrentPrice(boolean includeOffers);
+    public Money getCurrentPrice();
 
     public int getQuantity();
 

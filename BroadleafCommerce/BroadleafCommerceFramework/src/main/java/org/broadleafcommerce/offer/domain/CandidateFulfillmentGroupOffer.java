@@ -28,6 +28,8 @@ public interface CandidateFulfillmentGroupOffer extends Serializable {
 
     public Money getDiscountedPrice(); //transient, computed
 
+    public Money getDiscountAmount(); //transient, computed
+
     public FulfillmentGroup getFulfillmentGroup();
 
     public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
