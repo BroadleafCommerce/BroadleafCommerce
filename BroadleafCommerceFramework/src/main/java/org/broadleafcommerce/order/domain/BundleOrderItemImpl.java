@@ -80,7 +80,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
             discreteOrderItem.assignFinalPrice();
         }
-        price = getCurrentPrice(true).getAmount();
+        price = getCurrentPrice().getAmount();
     }
 
     @Override
@@ -161,10 +161,10 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
-    public Money getCurrentPrice(boolean includeOffers) {
+    public Money getCurrentPrice() {
         Money currentBundlePrice = new Money();
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            Money currentItemPrice = discreteOrderItem.getCurrentPrice(includeOffers);
+            Money currentItemPrice = discreteOrderItem.getCurrentPrice();
             currentBundlePrice = currentBundlePrice.add(new Money(currentItemPrice.doubleValue() * discreteOrderItem.getQuantity()));
         }
         return currentBundlePrice;

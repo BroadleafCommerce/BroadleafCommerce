@@ -189,10 +189,10 @@ public class OrderImpl implements Order {
         this.subTotal = Money.toAmount(subTotal);
     }
 
-    public Money calculateOrderItemsCurrentPrice(boolean includeOffers) {
+    public Money calculateOrderItemsCurrentPrice() {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
-            Money currentItemPrice = orderItem.getCurrentPrice(includeOffers);
+            Money currentItemPrice = orderItem.getCurrentPrice();
             calculatedSubTotal = calculatedSubTotal.add(new Money(currentItemPrice.doubleValue() * orderItem.getQuantity()));
         }
         return calculatedSubTotal;
@@ -585,12 +585,12 @@ public class OrderImpl implements Order {
     }
 
     public boolean equals(Object obj) {
-    	 if (this == obj)
-             return true;
-         if (obj == null)
-             return false;
-         if (getClass() != obj.getClass())
-             return false;
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
         OrderImpl other = (OrderImpl) obj;
 
         if (id != null && other.id != null) {

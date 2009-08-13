@@ -28,6 +28,8 @@ public interface CandidateItemOffer extends Serializable {
 
     public Money getDiscountedPrice(); //transient, computed
 
+    public Money getDiscountAmount();  //transient, computed
+
     public OrderItem getOrderItem();
 
     public void setOrderItem(OrderItem orderItem);

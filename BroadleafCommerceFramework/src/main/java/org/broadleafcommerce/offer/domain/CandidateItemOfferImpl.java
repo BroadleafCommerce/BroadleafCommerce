@@ -28,6 +28,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.OrderItem;
@@ -60,6 +61,9 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
 
     @Column(name = "DISCOUNTED_PRICE")
     private BigDecimal discountedPrice;
+
+    @Transient
+    private BigDecimal discountAmount;
 
     /*public CandidateItemOfferImpl(){
         this(null, null);
@@ -94,9 +98,16 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
 
     public Money getDiscountedPrice() {
         if (discountedPrice == null) {
-            computeDiscountedPrice();
+            computeDiscountedPriceAndAmount();
         }
         return discountedPrice == null ? null : new Money(discountedPrice);
+    }
+
+    public Money getDiscountAmount() {
+        if (discountAmount == null) {
+            computeDiscountedPriceAndAmount();
+        }
+        return discountAmount == null ? null : new Money(discountAmount);
     }
 
     public int getPriority() {
@@ -107,25 +118,28 @@ public class CandidateItemOfferImpl implements CandidateItemOffer {
         return offer;
     }
 
-    protected void computeDiscountedPrice() {
+    protected void computeDiscountedPriceAndAmount() {
         if (offer != null && orderItem != null){
 
             Money priceToUse = orderItem.getRetailPrice();
+            Money discountAmount = new Money(0);
             if ((offer.getApplyDiscountToSalePrice()) && (orderItem.getSalePrice() != null)) {
                 priceToUse = orderItem.getSalePrice();
             }
 
             if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                priceToUse = priceToUse.subtract(offer.getValue());
+                discountAmount = offer.getValue();
             } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                priceToUse = offer.getValue();
+                discountAmount = priceToUse.subtract(offer.getValue());
             } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                priceToUse = priceToUse.subtract(priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()));
+                discountAmount = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount());
             }
-            if (priceToUse.lessThan(new Money(0))) {
-                priceToUse = new Money(0);
+            if (discountAmount.greaterThan(priceToUse)) {
+                discountAmount = priceToUse;
             }
+            priceToUse = priceToUse.subtract(discountAmount);
             discountedPrice = priceToUse.getAmount();
+            this.discountAmount = discountAmount.getAmount();
         }
     }
 

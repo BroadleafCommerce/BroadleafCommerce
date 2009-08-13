@@ -47,8 +47,7 @@ public interface Order extends Serializable {
 
     /**
      * Returns the subtotal price for the order.  The subtotal price is the price of all order items
-     * with item offers applied.  The subtotal does not take into account the order offers.  To get
-     * total price of all items without offers applied, please call calculateOrderItemsCurrentPrice(false);
+     * with item offers applied.  The subtotal does not take into account the order offers.
      *
      * @return the total item price with offers applied
      */
@@ -64,13 +63,7 @@ public interface Order extends Serializable {
 
     public void assignOrderItemsFinalPrice();
 
-    /**
-     * Calculates the total item price with or without the offers applied.
-     *
-     * @param includeOffers a boolean if offers should be included in price
-     * @return the total item price with or without offers applied
-     */
-    public Money calculateOrderItemsCurrentPrice(boolean includeOffers);
+    public Money calculateOrderItemsCurrentPrice();
 
     public Money calculateOrderItemsFinalPrice();
 
