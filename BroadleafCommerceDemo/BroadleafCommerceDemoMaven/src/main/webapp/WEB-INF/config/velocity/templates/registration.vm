@@ -1,0 +1,18 @@
+<html>
+<head>
+    <title>Registration for $user.firstName</title>
+</head>
+<body bgcolor="#faf7f1">
+<hr/>
+Hello $user.firstName,
+<br/>
+Thank you for registering with the Broadleaf Commerce project. This is just a test<br/>
+Your login id: $user.username<br/>
+For security reasons, your password is not sent through this email.
+<br/>
+#d()
+<br/>
+Our email address is <a href="mailto:${from}">$from</a></br>
+<a href="www.credera.com"><img src="$baseurl/broadleafdemo/images/imgLogo.jpg" /></a>
+</body>
+</html>

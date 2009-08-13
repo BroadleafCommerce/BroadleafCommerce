@@ -1,0 +1,2 @@
+1|The Coffee Shop|12770 Merit Drive||Dallas|Texas|75251|32.9209|-96.7735
+2|Java Coffee Shop|5657 Amesbury Drive||Dallas|Texas|75206|32.8225|-96.7762

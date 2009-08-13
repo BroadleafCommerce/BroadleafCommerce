@@ -1,0 +1,371 @@
+1|127|Manufacturer|DeLonghi|1
+2|127|Product Name|DeLonghi - 10 Cup Drip Coffee Maker|1
+3|127|Description|Seamless brushed aluminum body durable and stylish, it beautifully complements any kitchen dÃ©cor. Permanent gold-tone filter durable and long-lasting, the gold-tone filter is specially designed to keep even the finest grounds out of your coffee. Ergonomic handle for comfortable use and easy handling.|1
+4|127|Dimensions|15.59 x 7.40 x 14.13|1
+5|127|Weight|6 lb|1
+6|127|Model|DCM900|1
+7|127|Image Name|DCM900.jpg|1
+8|128|Manufacturer|DeLonghi|1
+9|128|Product Name|DeLonghi - 14 Cup Drip Coffee Maker|1
+10|128|Description|24-hour programmable timer is convenient and easy-to-use. Just set the timer the night before, and wake up to the aroma of fresh brewed coffee. Internal water level indicator lets you know how much water is in the tank. Permanent gold-tone filter durable and long lasting, the gold-tone filter is specially designed to keep even the finest grounds out of your coffee.|1
+11|128|Dimensions|8.50 x 9.75 x 12.71|1
+12|128|Weight|8.2 lb|1
+13|128|Model|DC514T|1
+14|128|Image Name|DC514T.jpg|1
+15|129|Manufacturer|DeLonghi|1
+16|129|Product Name|DeLonghi - 12-Cup Drip Coffee Maker w/ Frontal Access|1
+17|129|Description|24-hour programmable digital timer with 2 hour automatic shut-off. Water level indicator lets you know when the unit needs refilling. Permanent gold-tone filter durable and long lasting, the gold-tone filter is specially designed to keep even the finest grounds out of your coffee.|1
+18|129|Dimensions|9.25 x 10.43 x 12.32|1
+19|129|Weight|7.1 lb|1
+20|129|Model|DCF212T|1
+21|129|Image Name|DCF212T.jpg|1
+22|130|Manufacturer|Capresso|1
+23|130|Product Name|Capresso - Coffee Team Therm Grind/Brew Coffeemaker Kit|1
+24|130|Description|Perfect for the brewed coffee connoisseur, the programmable 10-cup capacity Capresso CoffeeTEAM is the only combination machine with a conical burr grinder and a stainless steel thermal carafe. Just pour in the beans, program the time and the amount of coffee to be ground and the brewer does the rest. High quality heating elements assure ideal brewing temperatures of over 200°F and approximately 180°F in the carafe directly after brewing. |1
+25|130|Dimensions|16 x 12 x 11|1
+26|130|Weight|10 lb|1
+27|130|Model|B108|1
+28|130|Image Name|B108.jpg|1
+29|131|Manufacturer|Capresso|1
+30|131|Product Name|Capresso - MT500 PLUS Coffeemaker Kit|1
+31|131|Description|It's easy to see why this programmable 10-cup coffee maker was named "2008 Consumers Digest Best Buy". With its beautiful high-gloss alloy body and stainless steel thermal carafe, the Capresso MT500 keeps coffee hot and fresh for up to 4 hours.|1
+32|131|Dimensions|14 x 10 x 10|1
+33|131|Weight|7 lb|1
+34|131|Model|B109|1
+35|131|Image Name|B109.jpg|1
+36|132|Manufacturer|Capresso|1
+37|132|Product Name|Capresso - CoffeeTEC|1
+38|132|Description|Brews 10 5-ounce cups of coffee directly into a stainless-steel vacuum carafe. Virtually unbreakable carafe keeps coffee hot 4 hours without a warming plate. Programmable digital clock/timer for "wake-up" coffee; pour a cup midbrew via 20-second brew-pause. Permanent GoldTone filter eliminates messy paper filters; push-button, swing-out filter holder.|1
+39|132|Dimensions|11 x 11 x 14|1
+40|132|Weight|8 lb|1
+41|132|Model|471|1
+42|132|Image Name|471.jpg|1
+43|133|Manufacturer|Bodum|1
+44|133|Product Name|Bodum - Cafe Solo - Filtre Belgique|1
+45|133|Description|The design of the Filter Belgique is itself done with a "silent attitude", but the product incorporates a high content of design details which make it simple to use and nice to look at. In this way, it stands out from most of the same type of mass-market products. The Filter Belgique design came from the same honest work that so many scarcely noticed everyday essentials emerge from. |1
+46|133|Dimensions|4.5 x 3.8 x 7.4|1
+47|133|Weight|1 lb|1
+48|133|Model|K10461-01|1
+49|133|Image Name|K10461-01.jpg|1
+50|134|Manufacturer|DeLonghi|1
+51|134|Product Name|DeLonghi - Perfecta Fully Automatic Expresso Machine|1
+52|134|Model|ESAM5500M|1
+53|134|Description|Easy to use control panel with digital programmable menu settings allow you to adjust start time, auto shut and off and clock. You can adjust temperature of the coffee and water hardness. Plus, there are five settings for coffee strength: extra-mild, mild, regular, strong, and extra strong. The easy to use rotary control panel allows you to easily choose the size of cup you from small (risretto) to large (American coffee).|1
+54|134|Dimensions|11.14 x 17.52 x 14.88|1
+55|134|Weight|23.2 lb|1
+56|134|Image Name|ESAM5500M.jpg|1
+57|135|Manufacturer|DeLonghi|1
+58|135|Product Name|DeLonghi - Alicia Moka Expresso Maker|1
+59|135|Model|EMK6|1
+60|135|Description|Transparent container allows you to easily monitor the entire brewing process. The container is durable and easy-to-clean. Filter adapter allows you to choose 3 or 6 cups of espresso. Cordless operation with detachable base makes serving simple.|1
+61|135|Dimensions|4.80 x 7.28 x 9.25|1
+62|135|Weight|4 lb|1
+63|135|Image Name|EMK6.jpg|1
+64|136|Manufacturer|DeLonghi|1
+65|136|Product Name|DeLonghi - Magnifica Super Automatic Espresso Machine|1
+66|136|Model|ESAM3300|1
+67|136|Description|What you grind is what you brew. The compact and patented Direct-to-Brew System with Thermo Block technology provides excellent heat distribution and it’s removable for easy cleaning. The beans are ground instantly to ensure the freshest espresso or coffee. |1
+68|136|Dimensions|11.00 x 15.00 x 14.00|1
+69|136|Weight|26.2 lb|1
+70|136|Image Name|ESAM3300.jpg|1
+71|137|Manufacturer|DeLonghi|1
+72|137|Product Name|DeLonghi - Lattissima - Metal|1
+73|137|Model|EN680M|1
+74|137|Description|Patented IFD system includes a 25 oz. milk container for cappuccino or latte macchiato. It also includes a unique automatic cleaning function with the easy push of a button. Plus, the entire container is detachable, so it can easily be placed in the refrigerator. Amounts of frothed / steamed milk and coffee are adjustable. Cup warming tray is perfect for warm, ready-to-use cups.|1
+75|137|Dimensions|8.00 x 13.50 x 10.00|1
+76|137|Weight|22.4 lb|1
+77|137|Image Name|EN680M.jpg|1
+78|138|Manufacturer|DeLonghi|1
+79|138|Product Name|DeLonghi - Pump Driven Espresso/Cappuccino|1
+80|138|Model|BAR32|1
+81|138|Description|High performance pump pressure delivers rich and savory espresso with crema. Swivel jet frother utilizes dry steam to produce a thick milk froth for cappuccino, latte and hot chocolate. Adjustable steam emission For espresso or cappuccino includes pressure safety valve to ensure safe operation.|1
+82|138|Dimensions|8.07 x 10.24 x 11.81|1
+83|138|Weight|11.2 lb|1
+84|138|Image Name|BAR32.jpg|1
+85|139|Manufacturer|DeLonghi|1
+86|139|Product Name|DeLonghi - Magnifica Digital Auto Espresso/Cappuccino Machine|1
+87|139|Model|ESAM3500|1
+88|139|Description|Digital programmable menu settings allow you to adjust start time, auto shut-off and clock. You can adjust temperature of the coffee and water hardness. Plus, there are five settings for coffee strength: extra-mild, mild, regular, strong, and extra strong. Three buttons allow you to easily choose the size of cup you want: “ristretto” (small), “espresso” (medium) and large (American coffee). The three settings can be customized to your preferred taste.|1
+89|139|Dimensions|11 x 15 x 14|1
+90|139|Weight|31 lb|1
+91|139|Image Name|ESAM3500.jpg|1
+92|140|Manufacturer|Pasquini|1
+93|140|Product Name|Pasquini - Livia Automatic Espresso Machine Kit|1
+94|140|Model|E406|1
+95|140|Description|The ultimate gift for the discriminating espresso connoisseur and home barista, the Livia 90 Automatic is the top-of-the-line commercial-grade automatic home machine. This extraordinary machine has all the benefits of the Livia 90 with the added convenience of automatic espresso extraction settings and use of E.S.E. Servings (pods).|1
+96|140|Dimensions|12.25 x 11.5 x 15|
+97|140|Weight|50 lb|1
+98|140|Image Name|E406.jpg|1
+99|141|Manufacturer|Illy|1
+100|141|Product Name|Illy - Francis Francis X1 Ground Espresso Machine Kit|1
+101|141|Model|E410|1
+102|141|Description|Ideal for connoisseurs who love preparing authentic espresso the traditional way, the X1 Ground features new state-of-the-art electronics and automatic boiler refill. Featuring all new electronics and updated controls, this retro-futuristic espresso machine designed by Italian architect Luca Trazzi comes in a handsome finish that makes a bold statement in any kitchen. |1
+103|141|Dimensions|12.5 x 10.5 x 9.5|1
+104|141|Weight|15.4 lb|1
+105|141|Image Name|E410.jpg|1
+106|142|Manufacturer|Illy |1
+107|142|Product Name|Illy - Francis Francis X3 Espresso Machine Kit|1
+108|142|Model|E301|1
+109|142|Description|A creation of renowned Italian architect Luca Trazzi—this sleek, compact Francis Francis X3 espresso machine is designed for coffee lovers who may be more cost-conscious or have limited kitchen space but don't want to sacrifice quality or aesthetics. It makes perfect espresso with illy's Easy Serving Espresso (E.S.E.) system.|1
+110|142|Dimensions|11.5 x 6 x 10 1/2|1
+111|142|Weight|13.2 lb|1
+112|142|Image Name|E301.jpg|1
+113|143|Manufacturer|Illy|1
+114|143|Product Name|Illy - Francis Francis X1 Trio Espresso Machine Kit|1
+115|143|Model|E409|1
+116|143|Description|Enjoy the pleasure of espresso three ways with the new Francis Francis X1 Trio featuring advanced trio technology for ristretto (short), espresso and espresso lungo with a turn of the brewing handle. Combining state-of-the-art electronics with the world famous, retro-futuristic design by Italian architect Luca Trazzi, the X1 Trio makes it easier than ever to prepare expert espresso and cappuccino each and every time.|1
+117|143|Dimensions|13 x 9.85 x 10.25|1
+118|143|Weight|15.43 lb|1
+119|143|Image Name|E409.jpg|1
+120|144|Manufacturer|Gaggia |1
+121|144|Product Name|Gaggia - Classic Espresso Machine Kit|1
+122|144|Model|E400|1
+123|144|Description|The Classic is Italian espresso machine manufacturer Gaggia's top of the line machine for home baristas. Loaded with commercial-quality components, the Classic is encased in a handsome and durable solid brushed stainless steel housing.|1
+124|144|Dimensions|14.25 x 8 x 9.5|1
+125|144|Weight|17 lb|1
+126|144|Image Name|E400.jpg|1
+127|145|Manufacturer|Jura|1
+128|145|Product Name|Jura - Capresso Impressa Z5 Espresso Machine Kit|1
+129|145|Model|E412|1
+130|145|Description|This super automatic espresso machine lets you go from whole beans to superb espresso and any size cappuccino or latte with one-touch convenience. Programmable brewing buttons let you select your coffee’s size, strength and temperature. Built-in commercial burr grinder is extremely low-noise, making the Impressa Z5 the quietest automatic coffee center on the market today|1
+131|145|Dimensions|14.5 x 12.2 x 17.1|1
+132|145|Weight|30 lb|1
+133|145|Image Name|E412.jpg|1
+134|146|Manufacturer|Pasquini|1
+135|146|Product Name|Pasquini - Livietta Espresso Machine Kit|1
+136|146|Model|E408|1
+137|146|Description|Compact and semi-automatic, Pasquini's latest commercial machine for the home fits beautifully in almost any size kitchen. New thermoblock technology lets you steam milk and brew espresso at the same time—making it ideal for entertaining. Use with illy E.S.E. pods or ground coffee.|1
+138|146|Dimensions|12.5 x 8.5 x 14.25|1
+139|146|Weight|23 lb|1
+140|146|Image Name|E408.jpg|1
+141|147|Manufacturer|Gaggia |1
+142|147|Product Name|Gaggia - Titanium Espresso Machine Kit|1
+143|147|Model|E407|1
+144|147|Description|This super automatic, all-in-one home café machine makes espresso, cappuccino and latte almost instantly. Fully programmable with three brewing buttons to dispense any amount of coffee you like, plus a built-in professional burr grinder and two superb frothers, the Titanium will grind your beans, tamp, brew and discard the grounds, all at the touch of a button.|1
+145|147|Dimensions|14.75 x 11.5 x 16.75|1
+146|147|Weight|22 lb|1
+147|147|Image Name|E407.jpg|1
+148|148|Manufacturer|Saeco |1
+149|148|Product Name|Saeco - Magic Cappuccino Espresso Machine Kit|1
+150|148|Model|E413|1
+151|148|Description|This is a terrific machine that uses a patented nickel plated brass pressurized portfilter to ensure a great espresso extraction. It works by pressurizing the brewing chamber through a small spring-loaded valve located below the filter basket. The valve remains closed until enough pressure builds to open it and release the espresso.|1
+152|148|Dimensions|16.75 x 11.5 x 13.25|1
+153|148|Weight|13.5 lb|1
+154|148|Image Name|E413.jpg|1
+155|149|Manufacturer|Gaggia |1
+156|149|Product Name|Gaggia - Evolution Espresso Machine Kit|1
+157|149|Model|E401|1
+158|149|Description|The silver and chrome Gaggia Evolution espresso machine has a high-end look that speaks proudly of its Italian heritage. Featuring many commercial-quality components, the Evolution is an excellent mid-range espresso machine choice for the home.|1
+159|149|Dimensions|13.4 x 8.7 x 10.6|1
+160|149|Weight|15 lb|1
+161|149|Image Name|E401.jpg|1
+162|150|Manufacturer|Saeco |1
+163|150|Product Name|Saeco - Magic Cappuccino Espresso Machine Kit|1
+164|150|Model|E413|1
+165|150|Description|This is a terrific machine that uses a patented nickel plated brass pressurized portfilter to ensure a great espresso extraction. It works by pressurizing the brewing chamber through a small spring-loaded valve located below the filter basket. The valve remains closed until enough pressure builds to open it and release the espresso. The high pressure results in an optimal extraction of the coffee flavor and aroma, making a delicious espresso with a thick golden crema.|1
+166|150|Dimensions|16.75 x 11.5 x 13.25|1
+167|150|Weight|13.5 lb|1
+168|150|Image Name|E413.jpg|1
+169|151|Manufacturer|Pasquini|1
+170|151|Product Name|Pasquini - Livia 90P Espresso Machine Kit|1
+171|151|Model|E405|1
+172|151|Description|The ultimate gift for the discriminating espresso connoisseur and home barista. This kit includes the Pasquini Livia 90, the top-of-the-line espesso machine whose commercial-grade quality and design make it the very best semi-automatic home machine worldwide. With sturdy commercial components from Pasquini's acclaimed professional line, the Livia 90 can steam milk and brew coffee simultaneously, making outstanding Italian espresso and cappuccino every time. Pasquini stainless base also available.|1
+173|151|Dimensions|12.25 x 11.5 x 15|1
+174|151|Weight|50 lb|1
+175|151|Image Name|E405.jpg|1
+176|152|Manufacturer|Kitchenaid|1
+177|152|Product Name|Kitchenaid - ProLine Espresso Machine Kit|1
+178|152|Model|E402|1
+179|152|Description|The Kitchenaid Pro Line is a high-performance professional espresso machine designed for the home. Based on models used in Italian coffee bars, this stylish commercial-grade machine has dual boilers that let you brew espresso and steam milk with no downtime, making the Pro Line supberb for home entertaining. Use with ground coffee or illy's E.S.E. servings (pods).|1
+180|152|Dimensions|16 x 12.4 x 12.5|1
+181|152|Weight|29.9 lb|1
+182|152|Image Name|E402.jpg|1
+183|153|Manufacturer|Illy|1
+184|153|Product Name|Illy - FrancisFrancis X6 Trio Espresso Machine Kit|1
+185|153|Model|E304|1
+186|153|Description|From renowned Italian espresso machine maker francis francis and architect Luca Trazzi, the X6 features an 18 Bar pressure pump and unique Trio Technology that makes three espresso preparations: short (ristretto), normal(espresso) and long (espresso lungo). With quality all-brass boiler and brewing components, the X6 is designed to work exclusively with E.S.E. Servings (pods) for perfectly measured and tamped espresso every time. And the stylish retro-contemporary design makes a strong visual statement in any kitchen. |1
+187|153|Dimensions|12.5 x 10.5 x 9.5|1
+188|153|Weight|13.2 lb|1
+189|153|Image Name|E304.jpg|1
+190|154|Manufacturer|Illy|1
+191|154|Product Name|Illy - FrancisFrancis X8 iperEspresso Machine Kit|1
+192|154|Model|E309|1
+193|154|Description|Designed to work exclusively with illy iperEspresso capsules, the state-of-the-art Francis Francis X8 iperEspresso machine makes extraordinary espresso with one-touch convenience. Unlike conventional one-stage systems, the iperEspresso method uses an innovative, patented two-stage process to create intensely aromatic, full-bodied espresso with rich, velvety crema that lasts and lasts. And because extraction takes place entirely inside the capsule, the coffee and machine never come in contact making for easy clean up. |1
+194|154|Dimensions|12.6 x 7.9 x 13.4|1
+195|154|Weight|13.3 lb|1
+196|154|Image Name|E309.jpg|1
+197|155|Manufacturer|Illy|1
+198|155|Product Name|Illy - FrancisFrancis X7 iperEspresso Machine Kit|1
+199|155|Model|E307|1
+200|155|Description|Designed to work exclusively with illy iperEspresso capsules, the striking Francis Francis X7 makes extraordinary espresso with one-touch convenience. Unlike conventional one-stage systems, the iperEspresso method uses an innovative, patented two-stage process to create intensely aromatic, full-bodied espresso with rich, velvety crema that lasts and lasts. And because extraction takes place entirely inside the capsule, the coffee and machine never come in contact making for easy clean up. |1
+201|155|Dimensions|12.2 x 11 x 13.2|1
+202|155|Weight|13.2 lb|1
+203|155|Image Name|E307.jpg|1
+204|156|Manufacturer|DeLonghi |1
+205|156|Product Name|DeLonghi - Magnifica Super Automatic Espresso Machine Kit|1
+206|156|Model|E414|1
+207|156|Description|The Delonghi Magnifica lets you brew fresh, aromatic espresso or coffee from beans freshly ground in the professional-quality, lower-pitch conical burr grinder. What you grind is what you brew. The compact and patented Direct-to-Brew System with Thermo Block technology provides excellent heat distribution and it’s removable for easy cleaning. Double boiler with new stainless steel piped espresso boiler -no longer wait between espresso and steam.|1
+208|156|Dimensions|14 x 11 x 15|1
+209|156|Weight|21 lb|1
+210|156|Image Name|E414.jpg|1
+211|157|Manufacturer|Saeco |1
+212|157|Product Name|Saeco - Odea Giro Super Automatic Espresso Machine kit|1
+213|157|Model|E411|1
+214|157|Description|Designed by BMW DesignworksUSA, the new Saeco Odea super automatic espresso machine lets you easily brew high-quality espresso and cappuccino at home. Featuring Saeco's innovative Giro interface display with simplified programming, this super automatic starts with whole bean coffee and automatically grinds, tamps, doses and brews. Intuitive controls let you select the type of drink you want, your coffee strength (mild, medium, strong) and number of servings.|1
+215|157|Dimensions|14.5 x 11.5 x 15|1
+216|157|Weight|19 lb|1
+217|157|Image Name|E411.jpg|1
+218|158|Manufacturer|Saeco |1
+219|158|Product Name|Saeco - Nina Cappuccino|1
+220|158|Model|Nina Cappuccino|1
+221|158|Description|The mid-level machine in the Nina line, Nina Cappuccino features a cappuccinatore automatic frothing device that allows you to quickly and easily make delicious cappuccinos and lattes. It also stands out from the rest of the line with its beige exterior color. Other features include a valve water tank, height adjustable drip tray and the new ESE metal filter holder.|1
+222|158|Dimensions|11 x 12 x 14|1
+223|158|Weight|9 lb|1
+224|158|Image Name|Nina-Cappuccino.jpg|1
+225|159|Manufacturer|Saeco |1
+226|159|Product Name|Saeco - Magic Cappuccino Plus|1
+227|159|Model|Magic Cappuccino Plus|1
+228|159|Description|The Magic Cappuccino Plus is a combination of elegant style, with its stately silver color, and durable commercial characteristics. This unit has been a long time favorite due to sturdy construction and ease of use. This traditional pump driven espresso machine makes perfect espresso, cappuccino and lattes every time. The electric pump system and unique pressurized portafilter enable the user to make a perfect cup of espresso without being an expert barista|1
+229|159|Dimensions|9.5 x 11 x 14|1
+230|159|Weight|13.5 lb|1
+231|159|Image Name|Magic-Cappuccino-Plus.jpg|1
+232|160|Manufacturer|Saeco |1
+233|160|Product Name|Saeco - Nina Bar|1
+234|160|Model|Nina Bar|1
+235|160|Description|The top level machine in the Nina line, Nina Bar features an innovative new interface that allows for more brewing control. With the push of a button you can program the electronic dosing system and control the amount of coffee brewed. Once programming is complete, the coffee buttons will dose the exact amount of coffee each time it you brew. Other features include a valve water tank, height adjustable drip tray and the new ESE metal filter holder.|1
+236|160|Dimensions|11 x 12 x 14|1
+237|160|Weight|9 lb|1
+238|160|Image Name|Nina-Bar.jpg|1
+239|161|Manufacturer|Saeco |1
+240|161|Product Name|Saeco - Aroma |1
+241|161|Model|Aroma|1
+242|161|Description|This traditional Italian-made espresso machine is a great addition to any kitchen. Featuring a sturdy all-metal body, this machine is designed to last. The steam wand allows you to froth milk quickly and easily, and even dispenses hot water for tea. Create all of your favorite coffee drinks, such as cappuccinos, lattes, and mochas. It includes a pressurized portafilter, making traditional espresso-brewing simple and easy.|1
+243|161|Dimensions|8 x 10 x 11.75|1
+244|161|Weight|14 lb|1
+245|161|Image Name|Aroma.jpg|1
+246|162|Manufacturer|Saeco |1
+247|162|Product Name|Saeco - Odea Giro Orange|1
+248|162|Model|Odea Giro Orange|1
+249|162|Description|Part of the new Odea line designed by BMW DesignworksUSA, the Odea Giro features Saeco's latest innovations including a Giro (dial) interface, ceramic disc grinder, drip tray with manual Touch Lift technology, and OptiDose, to adjust the aroma of your favorite coffee. Thanks to Rapid Steam®, you can use the redesigned steam wand to create delicious frothed milk in just a matter of seconds.|1
+250|162|Dimensions|11.5 x 15 x 14.5|1
+251|162|Weight|19 lb|1
+252|162|Image Name|Odea-Giro-Orange.jpg|1
+253|163|Manufacturer|Saeco |1
+254|163|Product Name|Saeco - Talea Touch|1
+255|163|Model|Talea Touch|1
+256|163|Description|Part of the new Talea line designed by BMW DesignworksUSA, the Talea Touch features Saeco's latest innovations including a large touch screen interface, SBS Saeco Brewing System, ceramic disc grinder and motorized drip tray with Touch Lift technology. This super automatic espresso machine includes Saeco's Milk Island, an automatic milk frothing device.|1
+257|163|Dimensions|13 x 16 x 14.5|1
+258|163|Weight|21 lb|1
+259|163|Image Name|Talea-Touch.jpg|1
+260|164|Manufacturer|Saeco |1
+261|164|Product Name|Saeco - Primea Ring|1
+262|164|Model|Primea Ring|1
+263|164|Description|Designed exclusively by BMW Group DesignworksUSA, the Primea Ring is a masterpiece in design, and the latest in luxury for your home. Thanks to superior innovations in technology, the Primea Ring prepares espresso with a perfect crema, aroma and flavor every time. Fully programmable features, accessed through the click wheel interface, cater to the personal preferences of every coffee lover.|1
+264|164|Dimensions|14 x 18 x 15|1
+265|164|Weight|33 lb|1
+266|164|Image Name|Primea-Ring.jpg|1
+267|165|Manufacturer|Saeco |1
+268|165|Product Name|Saeco - Royal Coffee Bar|1
+269|165|Model|Royal Coffee Bar|1
+270|165|Description|The Royal Coffee Bar, stylish and sleek in silver and graphite, is sure to be an eye catcher in any kitchen or office. With the simple push button technology the machine will grind, tamp, and dispense espresso/coffee with a rich creamy crema. The digital display makes using the Royal Coffee Bar simple to operature, even for a beginner barista. Preset your individual drinks to the amount you desire, then steam milk with the Cappuccinatore, automatic frothing device and you will have a delicious cappuccino or latte. |1
+271|165|Dimensions|15.25 x 17.5 x 15.75|1
+272|165|Weight|31.5 lb|1
+273|165|Image Name|Royal-Coffee-Bar.jpg|1
+274|166|Manufacturer|Saeco|1
+275|166|Product Name|Saeco - Incanto Classic|1
+276|166|Model|Incanto Classic|1
+277|166|Description|Part of the Incanto family of automatic machines, the Incanto Classic features innovative Saeco technologies including 2 programmable beverage settings, Saeco OptiDose and built-in burr grinder. With the Saeco Brewing System, or SBS, the Classic makes it easier than ever before to customize and brew espresso at home; and thanks to the Rapid Steam® technology, you can easily froth milk to quickly turn an espresso into a cappuccino or latte.|1
+278|166|Dimensions|12 x 15.5 x 15|1
+279|166|Weight|26 lb|1
+280|166|Image Name|Incanto-Classic.jpg|1
+281|167|Manufacturer|Saeco|1
+282|167|Product Name|Saeco - Espresso Italiano|1
+283|167|Model|Espresso Italiano|1
+284|167|Description|Bringing the café into your own home has never been easier than with the Espresso Italiano. Just add whole beans and water, and instantly you will have a perfectly extracted espresso. With state-of-the-art technology, including a tri-colored digital display screen that helps to easily identify the machine’s functions, you can make all of your favorite espresso-based drinks, including cappuccino, latte and Americano.|1
+285|167|Dimensions|13 x 19 x 14.5|1
+286|167|Weight|20 lb|1
+287|167|Image Name|Espresso-Italiano.jpg|1
+288|168|Manufacturer|Saeco|1
+289|168|Product Name|Saeco - Spidem Villa|1
+290|168|Model|Spidem Villa|1
+291|168|Description|The Villa Silver puts Saeco’s patented removable brew group technology into an easy-to-use interface. You can now make espressos, cappuccinos, lattes, and tea all from one machine that grinds, tamps, and brews gourmet coffee. The pump driven steam and hot water wand has an exclusive Pannarello to make frothing milk simple. The Villa’s adjustable conical burr grinder makes the perfect grind for gourmet coffee.|1
+292|168|Dimensions|15 x 14 x 15.5|1
+293|168|Weight|18 lb|1
+294|168|Image Name|Spidem-Villa.jpg|1
+295|169|Manufacturer|Jura|1
+296|169|Product Name|Jura - ENA 5|1
+297|169|Model|13442|1
+298|169|Description|The new contemporary design is less than 9½ inches wide, freeing up counter space while offering a true bean-to-cup experience. The new rotary switch makes the ENA the easiest to use automatic coffee center. The patent-pending Zero-Energy-Technology uses less electricity than any other coffee center on the market. Created for the coffee enthusiast, the ENA series offers the best in authentic crema coffee, espresso, cappuccino and latte in a flawless, striking design. The ENA series features 18 bars of pressure, a professional-grade conical burr grinder, energy saving technology and a wealth of convenience features.|1
+299|169|Dimensions|14 x 9 x 17|1
+300|169|Weight|20 lb|1
+301|169|Image Name|13442.jpg|1
+302|170|Manufacturer|Jura|1
+303|170|Product Name|Jura - IMPRESSA S9 One Touch|1
+304|170|Model|13423|1
+305|170|Description|With the latest and most comprehensive One Touch technology, the Jura-Capresso IMPRESSA S9 One Touch lets you make cappuccino, café mocha, latte or latte macchiato with the simple touch of one button, without moving the cup.  It can grind, tamp and brew delicious crema coffee or espresso – in seconds, one or two cups at a time, ½ to 16 ounces – fresher than in a coffee bar.  The IMPRESSA S9 One Touch with two stainless steel-lined ThermoBlock heating systems and its large 96 ounce water capacity makes easy work out of espresso based drinks and frothed milk drinks, with no down time. |1
+306|170|Dimensions|14.75 x 13.5 x 15|1
+307|170|Weight|27 lb|1
+308|170|Image Name|13423.jpg|1
+309|171|Manufacturer|Jura |1
+310|171|Product Name|Jura - IMPRESSA J5|1
+311|171|Model|13333|1
+312|171|Description|The IMPRESSA J5 is Jura’s first compact automatic coffee center expressing a new design philosophy. Smooth, clean lines, elegant accents, and an all-encompassing attention to detail make the J5 an aesthetic masterpiece from any angle. High-end materials, a rich platinum metallic treatment for the front and top with tasteful chrome accents contrast with matte black side panels. A second version features glossy piano white panels recognizing this resurgent kitchen décor option.|1
+313|171|Dimensions|13.6 x 11 x 17.1|1
+314|171|Weight|22 lb|1
+315|171|Image Name|13333.jpg|1
+316|172|Manufacturer|Jura|1
+317|172|Product Name|Jura - IMPRESSA Z5|1
+318|172|Model|13339|1
+319|172|Description|Beans are ground. Fresh, cold milk transforms into hot, frothed milk and pours into your cup. With high pressure hot water is forced through the perfectly ground and tamped coffee. Now espresso flows through the thick layer of milk froth: pick up your cappuccino and enjoy. In the meantime the used coffee grounds are discarded and you can immediately start dreaming about another cappuccino, latte, espresso or any other hot large cup of crema coffee.|1
+320|172|Dimensions|12.2 x 14.5 x 17.1|1
+321|172|Weight|30 lb|1
+322|172|Image Name|13339.jpg|1
+323|173|Manufacturer|Jura|1
+324|173|Product Name|Jura - IMPRESSA C9 One Touch|1
+325|173|Model|13422|1
+326|173|Description|The IMPRESSA C9 One Touch is the most compact One Touch Automatic Coffee Center today.  With the ultimate in user-friendly technology, the C9 One Touch creates a cappuccino, café mocha or latte at the touch of one button, without moving the cup.  The insulated 14 oz. thermal stainless steel milk container keeps cold milk cold for up to eight hours, so you can leave the milk right next to the machine. No more running back and forth to the refrigerator.|1
+327|173|Dimensions|13.5 x 11 x 16|1
+328|173|Weight|21 lb|1
+329|173|Image Name|13422.jpg|1
+330|174|Manufacturer|Jura|1
+331|174|Product Name|Jura - IMPRESSA Z6|1
+332|174|Model|13299|1
+333|174|Description|Add luxury to perfection! Grand curved high-gloss chrome plated-plated aluminum front. High-polished mirrored LED display (the LED information “shines” through the mirror finish). Hand-polished, oversized, drip tray made of die-cast zinc (weighs almost 1.5 lbs!) lets the Z6 shines even more. Custom designed 20 oz. stainless steel thermal milk container keeps cold milk cold for up to eight hours.|1
+334|174|Dimensions|12.2 x 14.5 x 17.1|1
+335|174|Weight|31.5 lb|1
+336|174|Image Name|13299.jpg|1
+337|175|Manufacturer|DeLonghi|1
+338|175|Product Name|DeLonghi - Electric Coffee Grinder|1
+339|175|Model|DCG39|1
+340|175|Description|4-12 cup (2.36-ounce) ground coffee capacity. Stainless steel grinding blades are durable and long lasting. Grind selector allows you to choose the perfect grind setting from coarse, to medium, to fine - indicated by the 3 green lights.|1
+341|175|Dimensions|4.13 x 4.53 x 8.58|1
+342|175|Weight|3 lb|1
+343|175|Image Name|dcg39.jpg|1
+344|176|Manufacturer|Bodum|1
+345|176|Product Name|Bodum - Venice|1
+346|176|Model|0429-10|1
+347|176|Description|This stylish hand coffee grinder is made of brushed stainless steeel and plastic. It features an adjustable grind control and easy-to-fill container that holds enough beans for an 8 cup BODUM coffee maker. The container has a bayonet cap fitting which is dishwasher safe. The opening on the top slides for easy fill of coffee beans. |1
+348|176|Dimensions|6.1 x 4.5 x 8.5|1
+349|176|Weight|1.5 lb|1
+350|176|Image Name|0429-10.jpg|1
+351|177|Manufacturer|Bodum|1
+352|177|Product Name|Bodum - C-Mill|1
+353|177|Model|5679-01US|1
+354|177|Description|Coffee culture in this country has improved a lot over the last years. Still, what's not completely understood is what a big difference freshly ground coffee beans make to the taste. It's the defining element in the coffee brewing process, next to the quality of the beans, the roast, the water, and the coffee maker.|1
+355|177|Dimensions|N/A|1
+356|177|Weight|4 lb|1
+357|177|Image Name|5679-01US.jpg|1
+358|178|Manufacturer|Bodum|1
+359|178|Product Name|Bodum - Antigua|1
+360|178|Model|10462-01USA|1
+361|178|Description|Freshly ground coffee makes all the difference when brewing the perfect cup! Just like professional-grade coffee grinders, BODUM‘s Antigua electric coffee grinder features a conical burr grinder that cuts the coffee beans rather than crushing them, preventing the coffee from losing its characteristic taste and aroma.|1
+362|178|Dimensions|N/A|1
+363|178|Weight|7 lb|1
+364|178|Image Name|10462-01USA.jpg|1
+365|179|Manufacturer|Capresso|1
+366|179|Product Name|Capresso - Cool Grind Blade Grinder|1
+367|179|Model|503|1
+368|179|Description|Our Cool Grind blade grinders are suitable for drips coffee makers and percolators. They also to a great job for grinding spices and herbs. The large stainless steel grinding chamber reduces heat built-up to preserve more aroma.|1
+369|179|Dimensions|8 x 4 x 4|1
+370|179|Weight|2 lb|1
+371|179|Image Name|503.jpg|1

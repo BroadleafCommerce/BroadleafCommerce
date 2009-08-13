@@ -1,0 +1,109 @@
+/* Header, top navigation and footer */
+#header {
+	margin: 10px 0;
+	background: #e20;
+	position: relative;
+}
+
+#header .logo {
+	margin: 14px;
+}
+
+#footer {
+	background:#e5e5e5;
+	padding:12px;
+	border-bottom:#ccc;
+	text-align:center;
+}
+#footer p {
+	margin:0;
+}
+
+#searchBar {
+	position: absolute;
+	bottom: 14px;
+	right: 14px;
+}
+
+#searchBar input {
+	vertical-align: middle;
+}
+
+#searchBar .searchField {
+	font-size: 11px;
+	padding: 3px 3px 2px 3px;
+}
+
+#searchBar .imageBtn {
+	margin-left: 8px;
+}
+
+ul#userNav {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	right: 6px;
+	top: 14px;
+	line-height:1.1;
+}
+
+ul#userNav li {
+	list-style: none;
+	float: left;
+	border-right: 1px solid #fff;
+}
+
+ul#userNav li.last {
+	border-right: 0;
+}
+
+ul#userNav li a {
+	color: #fff;
+	padding: 4px 8px;
+	font-weight: bold;
+}
+
+.slogan {
+	margin: 12px 0 12px 20px;
+}
+
+ul#primaryNav {
+	margin: 0;
+	padding: 0;
+	font-family: tahoma, sans-serif;
+	font-size: 13px;
+	background: url("/broadleafdemo/images/navGradient.gif") repeat-x bottom
+		center;
+}
+
+ul#primaryNav li {
+	list-style: none;
+	float: left;
+}
+
+ul#primaryNav li a {
+	cursor: pointer;
+	color: #666;
+	text-decoration: none;
+	line-height: 22px;
+	display: block;
+	padding: 6px 12px 6px;
+	text-transform: uppercase;
+}
+
+ul#primaryNav li a:hover {
+	color: #05f;
+}
+
+ul#primaryNav li a.active {
+	background: #fff;
+	border-top: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	padding: 5px 11px 6px;
+}
+
+ul#primaryNav li a.active:hover {
+	background: #fff;
+	color: #000;
+}

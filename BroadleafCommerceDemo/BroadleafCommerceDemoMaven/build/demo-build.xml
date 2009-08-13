@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${app.name}" basedir=".." default="usage">
+
+	<property name="war.dir" value="${basedir}/target/broadleafdemo" />
+	<property name="stage.dir" value="${basedir}/target" />
+	<property file="${basedir}/build/build.properties" />
+	
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${basedir}/build/lib/ant-contrib-1.0b3.jar" />
+			<pathelement location="${basedir}/build/lib/catalina.jar" />
+		</classpath>
+	</taskdef>
+	
+	
+	<target name="deploy-integrated-war" depends="setup-war">
+		<copy todir="${set.deploy.path}" file="${stage.dir}/${app.name}.war" />
+	</target>
+
+	<target name="deploy-exploded-war" depends="setup-war">
+		<copy todir="${set.deploy.path}/${app.name}">
+			<fileset dir="${war.dir}" />
+		</copy>
+	</target>
+
+	<target name="undeploy-war">
+		<delete dir="${set.deploy.path}/${app.name}.war" />
+		<delete dir="${set.deploy.path}/${app.name}" />
+		<delete>
+			<fileset dir="${set.deploy.path}" includes="${app.name}.war" />
+			<fileset dir="${set.deploy.path}" includes="${app.name}" />
+		</delete>
+	</target>
+
+	<target name="setup-war">		
+
+		<replace file="${war.dir}/META-INF/context.xml" token="@@MYSQL_USERNAME@@" value="${set.mysql.db.user}"/>
+		<replace file="${war.dir}/META-INF/context.xml" token="@@MYSQL_PASSWORD@@" value="${set.mysql.db.pw}"/>
+		
+		<copy tofile="${set.appserver.home}/conf/Catalina/localhost/broadleafdemo.xml">
+			<fileset dir="${war.dir}/META-INF">
+			    <depend targetdir="${set.appserver.home}/conf/Catalina/localhost"/>
+				<include name="context.xml" />
+			</fileset>
+		</copy>
+	</target>
+		
+	<target name="generate-javadocs">
+		<mkdir dir="${stage.dir}/javadocs" />
+
+		<path id="compile-lib">
+			<fileset refid="compile.lib" />
+			<fileset file="war.lib" />
+		</path>
+
+		<javadoc packagenames="org.broadleafcommerce.*" destdir="${stage.dir}/javadocs" classpathref="compile-lib" useexternalfile="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="app.synch">
+		<echo>Synchronizing App</echo>
+		<sync todir="${set.deploy.path}/${app.name}/css">
+			<fileset dir="${war.dir}/css">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${set.deploy.path}/${app.name}/js">
+			<fileset dir="${war.dir}/js">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${set.deploy.path}/${app.name}/images">
+			<fileset dir="${war.dir}/images">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${set.deploy.path}/${app.name}/WEB-INF/jsp">
+			<fileset dir="${war.dir}/WEB-INF/jsp">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		
+		<sync todir="${set.deploy.path}/${app.name}/WEB-INF/tags">
+			<fileset dir="${war.dir}/WEB-INF/tags">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		
+		<copy todir="${set.deploy.path}/${app.name}">
+			<fileset dir="${war.dir}">
+				<include name="*.jsp"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="load-data">
+		<delete>
+			<fileset dir="${basedir}/sql/load/mysql/stage">
+			    <include name="*.sql"/>
+			</fileset>
+		</delete>
+
+		
+		<copy todir="${basedir}/sql/load/mysql/stage">
+		    <fileset dir="${basedir}/sql/load/mysql">
+		    	<include name="*.sql"/>
+		    </fileset>
+		</copy>
+
+		<replace file="${basedir}/sql/load/mysql/stage/load_data.sql" token="@@BASE_DIR@@" value="${basedir}/sql/load/mysql"/>
+		<replace file="${basedir}/sql/load/mysql/stage/load_data.sql" token="\" value="\\"/>
+		
+	     <sql driver="${mysql.db.driver}"
+	          url="${mysql.db.url}"
+	          userid="${set.mysql.db.user}"
+	          password="${set.mysql.db.pw}"
+	          encoding="UTF-8"
+	          classpath="${basedir}/../BroadleafCommerce/lib/common/bin/mysql-connector-java-5.1.7-bin.jar">
+	     	<transaction src="${basedir}/sql/load/mysql/stage/load_data.sql"/>
+	     </sql>
+	</target>
+	
+	<target name="usage">
+		<echo>This is the internal build file for BroadleafCommerceDemo.</echo>
+		<echo>Please use build.xml</echo>
+	</target>
+
+</project>
