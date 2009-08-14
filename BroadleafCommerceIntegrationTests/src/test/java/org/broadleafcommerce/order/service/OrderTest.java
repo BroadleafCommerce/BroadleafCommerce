@@ -199,6 +199,13 @@ public class OrderTest extends OrderBaseTest {
         assert updatedItem != null;
         assert updatedItem.getPrice().equals(new Money(BigDecimal.valueOf(10000)));
         assert updatedItem.getQuantity() == 10;
+        
+        List<OrderItem> updateItems = new ArrayList<OrderItem> (order.getOrderItems());
+        updateItems.get(0).setQuantity(15);
+        orderService.updateItemsInOrder(order, updateItems);
+        order = orderService.findOrderById(orderId);
+        assert order.getOrderItems().get(0).getQuantity() == 15;
+        
     }
 
     @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
@@ -632,7 +639,7 @@ public class OrderTest extends OrderBaseTest {
     
     @Test(groups = { "testOrderFulfillmentGroups" }, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
     @Transactional
-    public void testAddFulfillmentGroupToOrder(ShippingRate shippingRate, ShippingRate sr2) throws PricingException{
+    public void testAddFulfillmentGroupToOrder(ShippingRate shippingRate, ShippingRate sr2) throws PricingException, ItemNotFoundException{
         shippingRate = shippingRateService.save(shippingRate);
         sr2 = shippingRateService.save(sr2);
     	Customer customer = createCustomerWithAddresses();
@@ -659,8 +666,17 @@ public class OrderTest extends OrderBaseTest {
     	Order resultOrder = orderService.findOrderById(order.getId());
     	assert resultOrder.getFulfillmentGroups().size() == 1;
     	assert resultOrder.getFulfillmentGroups().get(0).getFulfillmentGroupItems().size() == 2;
+    	
+    	orderService.removeAllFulfillmentGroupsFromOrder(order, false);
+    	resultOrder = orderService.findOrderById(order.getId());
+    	assert resultOrder.getFulfillmentGroups().size() == 0;
+    	
+    	FulfillmentGroup defaultFg = orderService.createDefaultFulfillmentGroup(order, customerAddress.getAddress());
+    	defaultFg.setMethod("standard");
+    	assert defaultFg.isPrimary();
+    	orderService.addFulfillmentGroupToOrder(order, defaultFg);
+    	resultOrder = orderService.findOrderById(order.getId());
+    	assert resultOrder.getFulfillmentGroups().size() == 1;
     }
-    
-    
     
 }
