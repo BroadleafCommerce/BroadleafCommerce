@@ -57,13 +57,13 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-public class OfferTest extends BaseTest {
+public class OfferTest extends CommonSetupBaseTest {
 
     @Resource
     private OfferService offerService;
@@ -474,11 +474,6 @@ public class OfferTest extends BaseTest {
         CustomerOffer customerOfferTest = customerOfferDao.readCustomerOfferById(customerOffer.getId());
 
         assert (customerOffer.getId().equals(customerOfferTest.getId()));
-    }
-
-    private Customer createCustomer() {
-        Customer customer = customerService.createCustomerFromId(null);
-        return customer;
     }
 
     private List<FulfillmentGroup> createFulfillmentGroups(String method, Double shippingPrice, Order order) {

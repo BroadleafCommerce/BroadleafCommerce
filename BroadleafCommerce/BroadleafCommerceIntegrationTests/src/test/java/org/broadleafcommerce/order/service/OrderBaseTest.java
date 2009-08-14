@@ -20,9 +20,6 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     @Resource
     protected CartService cartService;
     
-    @Resource
-    protected OrderService orderService;
-    
     private int bundleCount = 0;
     
     public Order setUpNamedOrder() throws PricingException {
