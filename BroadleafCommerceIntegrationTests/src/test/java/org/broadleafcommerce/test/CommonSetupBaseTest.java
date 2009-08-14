@@ -1,10 +1,20 @@
 package org.broadleafcommerce.test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.ProductImpl;
+import org.broadleafcommerce.catalog.domain.Sku;
+import org.broadleafcommerce.catalog.domain.SkuImpl;
+import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.Order;
@@ -38,6 +48,9 @@ public abstract class CommonSetupBaseTest extends BaseTest {
     
     @Resource
     protected CustomerAddressService customerAddressService;
+    
+    @Resource
+    protected CatalogService catalogService;
     
     @Resource
     private OrderDao orderDao;
@@ -136,6 +149,51 @@ public abstract class CommonSetupBaseTest extends BaseTest {
         assert order.getId() != null;
         
         return customer;
+    }
+    
+    public Sku addTestSku(String skuName, String productName, String categoryName) {
+    	return addTestSku(skuName, productName, categoryName, true);
+    }
+    
+    public Sku addTestSku(String skuName, String productName, String categoryName, boolean active) {
+    	Calendar activeStartCal = Calendar.getInstance();
+    	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+
+    	Category category = new CategoryImpl();
+        category.setName(categoryName);
+        category.setActiveStartDate(activeStartCal.getTime());
+        category = catalogService.saveCategory(category);
+        Product newProduct = new ProductImpl();
+
+        Calendar activeEndCal = Calendar.getInstance();
+        activeEndCal.add(Calendar.DAY_OF_YEAR, -1);
+        newProduct.setActiveStartDate(activeStartCal.getTime());
+        
+        newProduct.setDefaultCategory(category);
+        newProduct.setName(productName);
+        newProduct = catalogService.saveProduct(newProduct);
+
+        List<Product> products = new ArrayList<Product>();
+        products.add(newProduct);
+        
+        Sku newSku = new SkuImpl();
+        newSku.setName(skuName);
+        newSku.setRetailPrice(new Money(44.99));
+        newSku.setActiveStartDate(activeStartCal.getTime());
+        
+        if (!active) {
+        	newSku.setActiveEndDate(activeEndCal.getTime());
+        }
+        newSku.setDiscountable(true);
+        newSku = catalogService.saveSku(newSku);
+        newSku.setAllParentProducts(products);
+        
+        List<Sku> allSkus = new ArrayList<Sku>();
+        allSkus.add(newSku);
+        newProduct.setAllSkus(allSkus);
+        newProduct = catalogService.saveProduct(newProduct);
+
+        return newSku;
     }
 
 

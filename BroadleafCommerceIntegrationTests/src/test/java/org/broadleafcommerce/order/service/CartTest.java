@@ -16,47 +16,18 @@
 package org.broadleafcommerce.order.service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.domain.CategoryImpl;
-import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.catalog.domain.ProductImpl;
-import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.catalog.domain.SkuImpl;
-import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
-import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.call.MergeCartResponse;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.BaseTest;
-import org.broadleafcommerce.util.money.Money;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-public class CartTest extends BaseTest {
-
-    @Resource
-    private CartService cartService;
-    
-    @Resource
-    private CustomerService customerService;
-    
-    @Resource
-    private OrderService orderService;
-    
-    @Resource
-    private CatalogService catalogService;
-    
-    private int bundleCount = 0;
+public class CartTest extends OrderBaseTest {
 
     @Test(groups = { "testCartAndNamedOrder" })
     @Transactional
@@ -158,62 +129,6 @@ public class CartTest extends BaseTest {
     	assert namedOrder.getOrderItems().size() == 0;
     }
 
-    
-    
-    //TODO: move this to OrderTest
-    @Test(groups = { "testCartAndNamedOrder" })
-    @Transactional
-    public void testCreateNamedOrder() throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
-        Calendar activeStartCal = Calendar.getInstance();
-        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
-
-        Category category = new CategoryImpl();
-        category.setName("Pants");
-        category.setActiveStartDate(activeStartCal.getTime());
-        category = catalogService.saveCategory(category);
-        Product newProduct = new ProductImpl();
-
-        newProduct.setActiveStartDate(activeStartCal.getTime());
-
-        newProduct.setDefaultCategory(category);
-        newProduct.setName("Leather Pants");
-        newProduct = catalogService.saveProduct(newProduct);
-
-        Sku newSku = new SkuImpl();
-        newSku.setName("Red Leather Pants");
-        newSku.setRetailPrice(new Money(44.99));
-        newSku.setActiveStartDate(activeStartCal.getTime());
-        newSku.setDiscountable(true);
-        newSku = catalogService.saveSku(newSku);
-        List<Sku> allSkus = new ArrayList<Sku>();
-        allSkus.add(newSku);
-        newProduct.setAllSkus(allSkus);
-        newProduct = catalogService.saveProduct(newProduct);
-
-        Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
-
-        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), category.getId(), null);
-        OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
-                newProduct.getId(), category.getId(), 2);
-        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newSku.getId(),
-                newProduct.getId(), category.getId(), 2);
-        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                null, category.getId(), 2);
-        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), null, 2);
-        
-        assert orderItem != null;
-        assert skuNullOrderItem == null;
-        assert quantityNullOrderItem == null;
-        assert orderNullOrderItem == null;
-        assert productNullOrderItem != null;
-        assert categoryNullOrderItem != null;
-    }
-    
     @Transactional
     @Test(groups = { "testMergeCart" }) 
     public void testMergeToEmptyCart() throws PricingException {
@@ -236,163 +151,11 @@ public class CartTest extends BaseTest {
     	//sets up existing cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
     	setUpExistingCartWithInactiveSkuAndInactiveBundle(customer);
     	MergeCartResponse response = cartService.mergeCart(customer, anonymousCart.getId());
+    	
     	assert response.getAddedItems().size() == 2;
     	assert response.getOrder().getOrderItems().size() == 4;
     	assert response.isMerged();
     	assert response.getRemovedItems().size() == 4;
     }
     
-    private Order setUpNamedOrder() throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
-
-        Sku newSku = addTestSku("Small Cube Box", "Cube Box", "Boxes");
-
-        Order order = orderService.createNamedOrderForCustomer("Boxes Named Order", customer);
-        
-        Product newProduct = newSku.getAllParentProducts().get(0);
-        Category newCategory = newProduct.getDefaultCategory();
-
-        orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), newCategory.getId(), 2);
-    	
-        return order;
-    }
-    
-    private Order setUpAnonymousCartWithInactiveSku() throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
-
-        Order order = cartService.createNewCartForCustomer(customer);
-
-        Sku newSku = addTestSku("Small Plastic Crate", "Plastic Crate", "Crates");
-        Sku newInactiveSku = addTestSku("Small Red Plastic Crate", "Plastic Crate", "Crates", false);
-        
-        Product newProduct = newSku.getAllParentProducts().get(0);
-        Category newCategory = newProduct.getDefaultCategory();
-
-        orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), newCategory.getId(), 2);
-        orderService.addSkuToOrder(order.getId(), newInactiveSku.getId(),
-        		newProduct.getId(), newCategory.getId(), 2);
-    	
-        orderService.addBundleItemToOrder(order, createBundleOrderItemRequest());
-        orderService.addBundleItemToOrder(order, createBundleOrderItemRequestWithInactiveSku());
-        
-        return order;
-    }
-    
-
-
-    private Order setUpExistingCartWithInactiveSkuAndInactiveBundle(Customer customer) throws PricingException {
-        Sku newSku = addTestSku("Large Plastic Crate", "Plastic Crate", "Crates");
-        Sku newInactiveSku = addTestSku("Large Red Plastic Crate", "Plastic Crate", "Crates", false);
-        
-        Product newProduct = newSku.getAllParentProducts().get(0);
-        Category newCategory = newProduct.getDefaultCategory();
-
-        Order order = cartService.createNewCartForCustomer(customer);
-
-        orderService.addSkuToOrder(order.getId(), newSku.getId(),
-        		newProduct.getId(), newCategory.getId(), 2);
-        orderService.addSkuToOrder(order.getId(), newInactiveSku.getId(),
-        		newProduct.getId(), newCategory.getId(), 2);
-        
-        orderService.addBundleItemToOrder(order, createBundleOrderItemRequest());
-        orderService.addBundleItemToOrder(order, createBundleOrderItemRequestWithInactiveSku());
-
-        return order;
-    }
-    
-    private Sku addTestSku(String skuName, String productName, String categoryName) {
-    	return addTestSku(skuName, productName, categoryName, true);
-    }
-    
-    private Sku addTestSku(String skuName, String productName, String categoryName, boolean active) {
-    	Calendar activeStartCal = Calendar.getInstance();
-    	activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
-
-    	Category category = new CategoryImpl();
-        category.setName(categoryName);
-        category.setActiveStartDate(activeStartCal.getTime());
-        category = catalogService.saveCategory(category);
-        Product newProduct = new ProductImpl();
-
-        Calendar activeEndCal = Calendar.getInstance();
-        activeEndCal.add(Calendar.DAY_OF_YEAR, -1);
-        newProduct.setActiveStartDate(activeStartCal.getTime());
-        
-        newProduct.setDefaultCategory(category);
-        newProduct.setName(productName);
-        newProduct = catalogService.saveProduct(newProduct);
-
-        List<Product> products = new ArrayList<Product>();
-        products.add(newProduct);
-        
-        Sku newSku = new SkuImpl();
-        newSku.setName(skuName);
-        newSku.setRetailPrice(new Money(44.99));
-        newSku.setActiveStartDate(activeStartCal.getTime());
-        
-        if (!active) {
-        	newSku.setActiveEndDate(activeEndCal.getTime());
-        }
-        newSku.setDiscountable(true);
-        newSku = catalogService.saveSku(newSku);
-        newSku.setAllParentProducts(products);
-        
-        List<Sku> allSkus = new ArrayList<Sku>();
-        allSkus.add(newSku);
-        newProduct.setAllSkus(allSkus);
-        newProduct = catalogService.saveProduct(newProduct);
-
-        return newSku;
-    }
-    
-    
-    private BundleOrderItemRequest createBundleOrderItemRequest() {
-        Sku screwSku = addTestSku("Screw", "Bookshelf", "Components");
-        Sku shelfSku = addTestSku("Shelf", "Bookshelf", "Components");
-        Sku bracketsSku = addTestSku("Brackets", "Bookshelf", "Components");
-        Category category = screwSku.getAllParentProducts().get(0).getDefaultCategory();
-        
-        List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-        discreteOrderItems.add(createDiscreteOrderItemRequest(screwSku, 20));
-        discreteOrderItems.add(createDiscreteOrderItemRequest(shelfSku, 3));
-        discreteOrderItems.add(createDiscreteOrderItemRequest(bracketsSku, 6));
-        
-        BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
-        itemRequest.setCategory(category);
-        itemRequest.setName("test bundle " + bundleCount++);
-        itemRequest.setQuantity(1);
-        itemRequest.setDiscreteOrderItems(discreteOrderItems);
-        return itemRequest;
-    }
-    
-    private BundleOrderItemRequest createBundleOrderItemRequestWithInactiveSku() {
-    	Sku drawerSku = addTestSku("Drawer", "Drawer System", "Systems");
-    	Sku nailsSku = addTestSku("Nails", "Drawer System", "Systems");
-    	Sku tracksSku = addTestSku("Tracks", "Drawer System", "Systems", false);
-    	Category category = drawerSku.getAllParentProducts().get(0).getDefaultCategory();
-    	
-    	List<DiscreteOrderItemRequest> discreteOrderItems = new ArrayList<DiscreteOrderItemRequest>();
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(drawerSku, 20));
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(nailsSku, 3));
-    	discreteOrderItems.add(createDiscreteOrderItemRequest(tracksSku, 6));
-    	
-    	BundleOrderItemRequest itemRequest = new BundleOrderItemRequest();
-    	itemRequest.setCategory(category);
-    	itemRequest.setName("test bundle " + bundleCount++);
-    	itemRequest.setQuantity(1);
-    	itemRequest.setDiscreteOrderItems(discreteOrderItems);
-    	return itemRequest;
-    }
-    
-    private DiscreteOrderItemRequest createDiscreteOrderItemRequest(Sku sku, int quantity) {
-    	Product product = sku.getAllParentProducts().get(0);
-    	DiscreteOrderItemRequest request = new DiscreteOrderItemRequest();
-        request.setSku(sku);
-        request.setQuantity(quantity);
-        request.setProduct(product);
-        request.setCategory(product.getDefaultCategory());
-        return request;
-    }
 }

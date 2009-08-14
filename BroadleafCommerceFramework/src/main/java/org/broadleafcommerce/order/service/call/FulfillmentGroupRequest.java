@@ -27,7 +27,8 @@ public class FulfillmentGroupRequest {
     protected Address address;
     protected Order order;
     protected Phone phone;
-    protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
+    protected String method;
+	protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
 
     public Address getAddress() {
         return address;
@@ -52,6 +53,14 @@ public class FulfillmentGroupRequest {
     public void setPhone(Phone phone) {
         this.phone = phone;
     }
+
+    public String getMethod() {
+		return method;
+	}
+
+	public void setMethod(String method) {
+		this.method = method;
+	}
 
     public List<FulfillmentGroupItemRequest> getFulfillmentGroupItemRequests() {
         return fulfillmentGroupItemRequests;

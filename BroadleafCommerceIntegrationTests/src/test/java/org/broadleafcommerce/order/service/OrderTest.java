@@ -29,7 +29,6 @@ import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
-import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.order.FulfillmentGroupDataProvider;
 import org.broadleafcommerce.order.domain.BundleOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
@@ -40,23 +39,26 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
+import org.broadleafcommerce.order.service.call.FulfillmentGroupItemRequest;
+import org.broadleafcommerce.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.PaymentInfoDataProvider;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.pricing.ShippingRateDataProvider;
+import org.broadleafcommerce.pricing.domain.ShippingRate;
+import org.broadleafcommerce.pricing.service.ShippingRateService;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerAddress;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
-import org.broadleafcommerce.profile.service.CustomerAddressService;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
-public class OrderTest extends BaseTest {
+public class OrderTest extends OrderBaseTest {
 
     private Long orderId = null;
     private int numOrderItems = 0;
@@ -64,19 +66,11 @@ public class OrderTest extends BaseTest {
     private Long bundleOrderItemId;
 
     @Resource
-    private CustomerAddressService customerAddressService;
-    @Resource
-    private CartService cartService;
-    @Resource
     private OrderItemService orderItemService;
-    @Resource
-    private CustomerService customerService;
     @Resource
     private SkuDao skuDao;
     @Resource
-    private OrderService orderService;
-    @Resource
-    private CatalogService catalogService;
+    private ShippingRateService shippingRateService;
 
     @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer1", "createPhone" })
     @Rollback(false)
@@ -582,5 +576,91 @@ public class OrderTest extends BaseTest {
     public void findCartForNullCustomerId() {
         assert cartService.findCartForCustomer(new CustomerImpl()) == null;
     }
+    
+    @Test(groups = { "testCartAndNamedOrder" })
+    @Transactional
+    public void testCreateNamedOrder() throws PricingException {
+        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+        Calendar activeStartCal = Calendar.getInstance();
+        activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
+
+        Category category = new CategoryImpl();
+        category.setName("Pants");
+        category.setActiveStartDate(activeStartCal.getTime());
+        category = catalogService.saveCategory(category);
+        Product newProduct = new ProductImpl();
+
+        newProduct.setActiveStartDate(activeStartCal.getTime());
+
+        newProduct.setDefaultCategory(category);
+        newProduct.setName("Leather Pants");
+        newProduct = catalogService.saveProduct(newProduct);
+
+        Sku newSku = new SkuImpl();
+        newSku.setName("Red Leather Pants");
+        newSku.setRetailPrice(new Money(44.99));
+        newSku.setActiveStartDate(activeStartCal.getTime());
+        newSku.setDiscountable(true);
+        newSku = catalogService.saveSku(newSku);
+        List<Sku> allSkus = new ArrayList<Sku>();
+        allSkus.add(newSku);
+        newProduct.setAllSkus(allSkus);
+        newProduct = catalogService.saveProduct(newProduct);
+
+        Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
+
+        OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+        OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), category.getId(), null);
+        OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
+                newProduct.getId(), category.getId(), 2);
+        OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newSku.getId(),
+                newProduct.getId(), category.getId(), 2);
+        OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                null, category.getId(), 2);
+        OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
+                newProduct.getId(), null, 2);
+        
+        assert orderItem != null;
+        assert skuNullOrderItem == null;
+        assert quantityNullOrderItem == null;
+        assert orderNullOrderItem == null;
+        assert productNullOrderItem != null;
+        assert categoryNullOrderItem != null;
+    }
+    
+    @Test(groups = { "testOrderFulfillmentGroups" }, dataProvider = "basicShippingRates", dataProviderClass = ShippingRateDataProvider.class)
+    @Transactional
+    public void testAddFulfillmentGroupToOrder(ShippingRate shippingRate, ShippingRate sr2) throws PricingException{
+        shippingRate = shippingRateService.save(shippingRate);
+        sr2 = shippingRateService.save(sr2);
+    	Customer customer = createCustomerWithAddresses();
+    	Order order = setUpExistingCart(customer);
+    	CustomerAddress customerAddress = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId()).get(0);
+    	
+    	FulfillmentGroupRequest fgRequest = new FulfillmentGroupRequest();
+    	
+    	List<FulfillmentGroupItemRequest> fgiRequests = new ArrayList<FulfillmentGroupItemRequest>();
+
+    	for (OrderItem orderItem : order.getOrderItems()) {
+    		FulfillmentGroupItemRequest fgiRequest = new FulfillmentGroupItemRequest();
+    		fgiRequest.setOrderItem(orderItem);
+    		fgiRequest.setQuantity(1);
+    		fgiRequests.add(fgiRequest);
+    	}
+    	
+    	fgRequest.setAddress(customerAddress.getAddress());
+    	fgRequest.setFulfillmentGroupItemRequests(fgiRequests);
+    	fgRequest.setOrder(cartService.findCartForCustomer(customer));
+    	fgRequest.setMethod("standard");
+    	orderService.addFulfillmentGroupToOrder(fgRequest);
+    	
+    	Order resultOrder = orderService.findOrderById(order.getId());
+    	assert resultOrder.getFulfillmentGroups().size() == 1;
+    	assert resultOrder.getFulfillmentGroups().get(0).getFulfillmentGroupItems().size() == 2;
+    }
+    
+    
     
 }

@@ -252,6 +252,7 @@ public class OrderServiceImpl implements OrderService {
         fg.setAddress(fulfillmentGroupRequest.getAddress());
         fg.setOrder(fulfillmentGroupRequest.getOrder());
         fg.setPhone(fulfillmentGroupRequest.getPhone());
+        fg.setMethod(fulfillmentGroupRequest.getMethod());
         for (FulfillmentGroupItemRequest request : fulfillmentGroupRequest.getFulfillmentGroupItemRequests()) {
             fg = addItemToFulfillmentGroup(request.getOrderItem(), fg, request.getQuantity());
         }
