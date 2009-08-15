@@ -7,7 +7,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.broadleafcommerce</groupId>
   <artifactId>BroadleafCommerceDemo</artifactId>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <name>BroadleafCommerceDemo</name>
   <version>0.0.0</version>
   <url>http://maven.apache.org</url>
@@ -96,13 +96,6 @@
     	<version>2.0.5</version>
     	<type>jar</type>
     	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>ant-contrib</groupId>
-    	<artifactId>ant-contrib</artifactId>
-    	<version>1.0b3</version>
-    	<type>jar</type>
-    	<scope>test</scope>
     </dependency>
   </dependencies>
 </project>
