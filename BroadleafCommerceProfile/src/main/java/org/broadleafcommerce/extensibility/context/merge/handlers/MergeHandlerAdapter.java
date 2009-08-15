@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.extensibility.context.merge.handlers;
 
+import java.util.List;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -46,7 +48,7 @@ public class MergeHandlerAdapter implements MergeHandler {
     }
 
     public Node[] merge(NodeList nodeList1, NodeList nodeList2,
-            Node[] exhaustedNodes) {
+            List<Node> exhaustedNodes) {
         return null;
     }
 

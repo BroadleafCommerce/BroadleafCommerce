@@ -41,6 +41,11 @@
   		<url>http://download.java.net/maven/1</url>
   		<layout>legacy</layout>
   	</repository>
+  	<repository>
+  		<id>jboss.com</id>
+  		<name>jboss.com</name>
+  		<url>http://repository.jboss.com/maven2</url>
+  	</repository>
   </repositories>
   <modules>
   	<module>BroadleafCommerceProfile</module>
@@ -50,7 +55,10 @@
     <module>BroadleafCommerceIntegrationTests</module>
     <module>BroadleafCommerceUSPS</module>
     <module>BroadleafCommerceUSPSSchemas</module>
+    <module>BroadleafCommerceDemo</module>
   </modules>
+  <dependencies>
+  </dependencies>
   <dependencyManagement>
   	<dependencies>
   		<dependency>
@@ -392,6 +400,83 @@
   			<type>jar</type>
   			<scope>compile</scope>
   		</dependency>
+  		<dependency>
+	    	<groupId>opensymphony</groupId>
+	    	<artifactId>quartz</artifactId>
+	    	<version>1.6.3</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>asm</groupId>
+	    	<artifactId>asm</artifactId>
+	    	<version>2.2.1</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>cglib</groupId>
+	    	<artifactId>cglib</artifactId>
+	    	<version>2.1_3</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.antlr</groupId>
+	    	<artifactId>antlr-runtime</artifactId>
+	    	<version>3.0</version>
+	    	<type>jar</type>
+	    	<scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>oro</groupId>
+	    	<artifactId>oro</artifactId>
+	    	<version>2.0.8</version>
+	    	<type>jar</type>
+	    	<scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>net.sf.jsr107cache</groupId>
+	    	<artifactId>jsr107cache</artifactId>
+	    	<version>1.0</version>
+	    	<type>jar</type>
+	    	<scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>javax.xml.bind</groupId>
+	    	<artifactId>jsr173_api</artifactId>
+	    	<version>1.0</version>
+	    	<type>jar</type>
+	    	<scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.apache.lucene</groupId>
+	    	<artifactId>lucene-analyzers</artifactId>
+	    	<version>2.4.1</version>
+	    	<type>jar</type>
+	    	<scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.springframework.security</groupId>
+	    	<artifactId>spring-security-acl</artifactId>
+	    	<version>2.0.5.RELEASE</version>
+	    	<type>jar</type>
+	    	<scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.springframework.security</groupId>
+	    	<artifactId>spring-security-core-tiger</artifactId>
+	    	<version>2.0.5.RELEASE</version>
+	    	<type>jar</type>
+	    	<scope>runtime</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.springframework.security</groupId>
+	    	<artifactId>spring-security-taglibs</artifactId>
+	    	<version>2.0.5.RELEASE</version>
+	    	<type>jar</type>
+	    	<scope>runtime</scope>
+	    </dependency>
   	</dependencies>
   </dependencyManagement>
 </project>

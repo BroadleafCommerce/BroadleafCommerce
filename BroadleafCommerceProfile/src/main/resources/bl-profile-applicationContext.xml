@@ -12,8 +12,6 @@
            http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
-
-	<context:component-scan base-package="org.broadleafcommerce" />
 	
 	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
 		<property name="propertyLocations">

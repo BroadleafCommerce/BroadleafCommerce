@@ -1,0 +1,90 @@
+/* Global and structural styles */
+body {
+/*	background: url("/broadleafdemo/images/coffeeFarm.jpg");
+	background-attachment: fixed;*/
+/*	background:#f5f5e6;*/
+	margin: 0;
+	padding: 0;
+	color: #666666;
+	font-size: 12px;
+	font-family: arial, helvetica, sans-serif;
+}
+
+.bodyWrapper {
+	width: 990px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+.contentWrapper {
+	padding: 0px 8px;
+	background: #e5e5e5;
+}
+
+.navGradientBg {
+	background: url("/broadleafdemo/images/navGradient.gif") repeat-x
+		bottom center;
+}
+
+.mainContent {
+	background: #fff;
+	padding: 8px;
+	border-right: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+img {
+	border: 0;
+}
+
+.columns:after {
+  content: "\0020"; 
+  display: block; 
+  height: 0; 
+  clear: both; 
+  visibility: hidden;
+  overflow:hidden; 
+}
+.columns {display: block;}
+
+.blueBorder {
+	border-width: 1px;
+	border-style: solid;
+	border-color: #C9E1F4;
+}
+
+input.helpTextVisible {
+	color: #666;
+}
+
+.strikethrough {
+	text-decoration: line-through;
+}
+
+.breadcrumb {
+	margin: 10px 0px 10px 0px; 
+}
+
+.body {
+	margin: 5px 5px 15px 5px; 
+} 
+
+.noTextUnderline {
+	text-decoration: none;
+}
+.displayNone {
+	display: none;
+}
+
+.alignRight {
+	text-align: right;
+}
+
+.alignCenter {
+	text-align: center;
+}
+
+.pageTitle {
+	margin-top: 10px;
+}

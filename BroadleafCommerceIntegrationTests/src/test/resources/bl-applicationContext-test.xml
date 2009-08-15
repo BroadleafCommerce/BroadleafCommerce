@@ -16,11 +16,6 @@
     <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
-				<value>classpath*:/META-INF/persistence-framework-catalog.xml</value>
-				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
-				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
-				<value>classpath*:/META-INF/persistence-profile.xml</value>
-				<value>classpath*:/META-INF/persistence-auxiliary.xml</value>
 				<value>classpath*:/META-INF/persistence-test.xml</value>
 			</list>
 		</property>

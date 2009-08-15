@@ -17,6 +17,7 @@ package org.broadleafcommerce.extensibility.context.merge.handlers;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
@@ -32,7 +33,7 @@ import org.w3c.dom.NodeList;
  */
 public class AttributePreserveInsert extends BaseHandler {
 
-    public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
+    public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
         if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
             return null;
         }
@@ -45,12 +46,13 @@ public class AttributePreserveInsert extends BaseHandler {
                 return ((Node) arg0).getNodeName().compareTo(((Node) arg1).getNodeName());
             }
         };
-
-        Arrays.sort(exhaustedNodes, nameCompare);
+        Node[] tempNodes = {};
+        tempNodes = exhaustedNodes.toArray(tempNodes);
+        Arrays.sort(tempNodes, nameCompare);
         int length = attributes2.getLength();
         for (int j = 0; j < length; j++) {
             Node temp = attributes2.item(j);
-            int pos = Arrays.binarySearch(exhaustedNodes, temp, nameCompare);
+            int pos = Arrays.binarySearch(tempNodes, temp, nameCompare);
             if (pos < 0) {
                 ((Element) node1).setAttributeNode((Attr) node1.getOwnerDocument().importNode(temp.cloneNode(true), true));
             }

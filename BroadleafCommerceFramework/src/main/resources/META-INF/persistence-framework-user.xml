@@ -14,6 +14,7 @@
 		<mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
 		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/SearchIntercept.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
 		<class>org.broadleafcommerce.inventory.domain.SkuAvailabilityImpl</class>
 		<class>org.broadleafcommerce.marketing.domain.TargetContentImpl</class>
 		<class>org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl</class>
@@ -47,6 +48,10 @@
 		<class>org.broadleafcommerce.security.domain.AdminUserPermissionXref</class>
 		<class>org.broadleafcommerce.security.domain.AdminUserRoleXref</class>
 		<class>org.broadleafcommerce.search.domain.SearchInterceptImpl</class>
+		<class>org.broadleafcommerce.rating.domain.RatingSummaryImpl</class>
+		<class>org.broadleafcommerce.rating.domain.RatingDetailImpl</class>
+		<class>org.broadleafcommerce.rating.domain.ReviewDetailImpl</class>
+		<class>org.broadleafcommerce.rating.domain.ReviewFeedbackImpl</class>
 		<exclude-unlisted-classes/>
 		<properties>
 			<property name="hibernate.archive.autodetection" value="false" />

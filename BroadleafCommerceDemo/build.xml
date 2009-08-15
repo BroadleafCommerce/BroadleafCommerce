@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="BroadleafCommerceDemo" default="package" basedir=".">
+
+  <!-- ====================================================================== -->
+  <!-- Import maven-build.xml into the current project                        -->
+  <!-- ====================================================================== -->
+
+  <import file="maven-build.xml"/>
+	
+	<property file="build.properties" />
+  
+  <!-- ====================================================================== -->
+  <!-- Help target                                                            -->
+  <!-- ====================================================================== -->
+
+  <target name="help">
+    <echo message="Please run: $ant -projecthelp"/>
+  </target>
+	
+	<target name="app.synch">
+		<echo>Synchronizing App</echo>
+		<sync todir="${deploy.path}/${app.name}/css">
+			<fileset dir="${war.dir}/css">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${deploy.path}/${app.name}/js">
+			<fileset dir="${war.dir}/js">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${deploy.path}/${app.name}/images">
+			<fileset dir="${war.dir}/images">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${deploy.path}/${app.name}/WEB-INF/jsp">
+			<fileset dir="${war.dir}/WEB-INF/jsp">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<sync todir="${deploy.path}/${app.name}/WEB-INF/tags">
+			<fileset dir="${war.dir}/WEB-INF/tags">
+				<include name="**/*.*"/>
+			</fileset>
+		</sync>
+		<copy todir="${deploy.path}/${app.name}">
+			<fileset dir="${war.dir}">
+				<include name="*.jsp"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="load-data">
+		<delete>
+			<fileset dir="config/mysql/stage">
+			    <include name="*.sql"/>
+			</fileset>
+		</delete>
+		
+		<copy todir="config/mysql/stage">
+		    <fileset dir="config/mysql">
+		    	<include name="*.sql"/>
+		    </fileset>
+		</copy>
+		
+		<property name="baseLocation" location="config/mysql"/>
+
+		<replace file="config/mysql/stage/load_data.sql" token="@@BASE_DIR@@" value="${baseLocation}"/>
+		<replace file="config/mysql/stage/load_data.sql" token="\" value="\\"/>
+		
+	     <sql driver="${mysql.db.driver}"
+	          url="${mysql.db.url}"
+	          userid="${mysql.db.user}"
+	          password="${mysql.db.pw}"
+	          encoding="UTF-8"
+	     	  classpathref="build.test.classpath">
+	     	<transaction src="config/mysql/stage/load_data.sql"/>
+	     </sql>
+	</target>
+	
+	<target name="package" depends="compile,test" description="Package the application">
+	    <mkdir dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib"/>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" flatten="true">
+			<path refid="build.test.classpath"/>	
+		</copy>
+	    <war destfile="${maven.build.dir}/${maven.build.finalName}.war" 
+	         compress="true" 
+	         webxml="src/main/webapp/WEB-INF/web.xml">
+	      <lib dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib"/>
+	      <classes dir="${maven.build.outputDir}"/>
+	      <fileset dir="src/main/webapp" 
+	               excludes="WEB-INF/web.xml"/>
+		  <fileset dir="${maven.build.dir}/${maven.build.finalName}">
+		  	<include name="WEB-INF/*.xml"/>
+		  </fileset>
+	    </war>
+	</target>
+	
+	<target name="war">
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
+			<fileset dir="config/spring">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_USERNAME@@" value="${mysql.db.user}"/>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_PASSWORD@@" value="${mysql.db.pw}"/>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_URL@@" value="${mysql.db.url}"/>
+		<antcall inheritall="true" target="package"/>
+	</target>
+	
+	<target name="deploy-integrated-war" depends="war">
+		<copy tofile="${deploy.path}/broadleafdemo.war" file="${maven.build.dir}/${maven.build.finalName}.war" />
+	</target>
+
+	<target name="deploy-exploded-war" depends="war">
+		<mkdir dir="${deploy.path}/broadleafdemo"/>
+		<copy todir="${deploy.path}/broadleafdemo">
+			<fileset dir="${maven.build.dir}/${maven.build.finalName}" />
+			<fileset dir="src/main/webapp" />
+		</copy>
+		<copy todir="${deploy.path}/broadleafdemo/WEB-INF/classes">
+			<fileset dir="${maven.build.outputDir}" />
+		</copy>
+		<copy todir="${deploy.path}/broadleafdemo/WEB-INF">
+			<fileset dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
+			  	<include name="*.xml"/>
+			  </fileset>
+		</copy>
+	</target>
+	
+	<target name="undeploy">
+		<delete dir="${deploy.path}/broadleafdemo"/>
+		<delete file="${deploy.path}/broadleafdemo.war"/>
+	</target>
+	
+	<target name="Start Tomcat - Debug Mode">
+	    <java jar="${appserver.home}/bin/bootstrap.jar" fork="true">
+	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
+	        <jvmarg value="-Xdebug"/>
+	        <jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
+	    	<jvmarg value="-Xms128M" />
+	    	<jvmarg value="-Xmx512m" />
+			<jvmarg value="-Xverify:none" />
+			<!--<jvmarg value="-javaagent:${set.appserver.home}/lib/javarebel.jar" />-->
+			<!--<jvmarg value="-Drebel.spring_plugin=true" /> -->
+			<jvmarg value="-DmyProject.root=${basedir}" />
+	    	<jvmarg value="-XX:MaxPermSize=512M" />
+	    	<jvmarg value="-Dcom.sun.management.jmxremote=true" />
+	    	<jvmarg value="-Dcom.sun.management.jmxremote.port=1616" />
+	    	<jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
+	    	<jvmarg value="-Dcom.sun.management.jmxremote.ssl=false" />
+	    </java>
+	</target>
+
+	<target name="Stop Tomcat">
+	    <java jar="${appserver.home}/bin/bootstrap.jar" fork="true">
+	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
+	        <arg value="stop"/>
+	    </java>
+	</target>
+	
+	<target name="test-offline">
+	    <condition property="maven.mode.offline">
+	      <equals arg1="${my.maven.settings.offline}" arg2="true"/>
+	    </condition>
+	</target>
+</project>

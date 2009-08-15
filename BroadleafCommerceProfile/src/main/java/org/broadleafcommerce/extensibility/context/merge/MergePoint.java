@@ -15,11 +15,15 @@
  */
 package org.broadleafcommerce.extensibility.context.merge;
 
+import java.util.List;
+
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.extensibility.context.merge.handlers.MergeHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -38,6 +42,8 @@ import org.w3c.dom.NodeList;
  *
  */
 public class MergePoint {
+	
+	private static final Log LOG = LogFactory.getLog(MergePoint.class);
 	
 	private MergeHandler handler;
 	private Document doc1;
@@ -60,20 +66,22 @@ public class MergePoint {
 	 * @return list of merged nodes
 	 * @throws XPathExpressionException
 	 */
-	public Node[] merge(Node[] exhaustedNodes) throws XPathExpressionException {
+	public Node[] merge(List<Node> exhaustedNodes) throws XPathExpressionException {
 		return merge(handler, exhaustedNodes);
 	}
 	
-	private Node[] merge(MergeHandler handler, Node[] exhaustedNodes) throws XPathExpressionException {
+	private Node[] merge(MergeHandler handler, List<Node> exhaustedNodes) throws XPathExpressionException {
+		if (LOG.isDebugEnabled()) {
+    		LOG.debug("Processing handler: " + handler.getXPath());
+    	}
 		if (handler.getChildren() != null) {
 			MergeHandler[] children = handler.getChildren();
 			for (int j=0;j<children.length;j++){
 				Node[] temp = merge(children[j], exhaustedNodes);
 				if (temp != null) {
-					Node[] newExhausted = new Node[exhaustedNodes.length + temp.length];
-					System.arraycopy(exhaustedNodes, 0, newExhausted, 0, exhaustedNodes.length);
-					System.arraycopy(temp, 0, newExhausted, exhaustedNodes.length, temp.length);
-					exhaustedNodes = newExhausted;
+					for (Node node : temp) {
+						exhaustedNodes.add(node);
+					}
 				}
 			}
 		}

@@ -66,10 +66,6 @@
     	<artifactId>jsp-api</artifactId>
     </dependency>
     <dependency>
-    	<groupId>com.icegreen</groupId>
-    	<artifactId>greenmail</artifactId>
-    </dependency>
-    <dependency>
   		<groupId>cobertura</groupId>
   		<artifactId>cobertura</artifactId>
   	</dependency>

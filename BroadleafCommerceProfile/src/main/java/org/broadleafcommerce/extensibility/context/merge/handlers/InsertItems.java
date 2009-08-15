@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.extensibility.context.merge.handlers;
 
+import java.util.List;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -27,13 +29,14 @@ import org.w3c.dom.NodeList;
  */
 public class InsertItems extends BaseHandler {
 
-    public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
+    public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
         if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
             return null;
         }
         Node node1Parent = nodeList1.item(0).getParentNode();
         for (int j=0;j<nodeList2.getLength();j++) {
-            node1Parent.appendChild(node1Parent.getOwnerDocument().importNode(nodeList2.item(j).cloneNode(true), true));
+        	Node tempNode = node1Parent.getOwnerDocument().importNode(nodeList2.item(j).cloneNode(true), true);
+            node1Parent.appendChild(tempNode);
         }
 
         Node[] response = {nodeList2.item(0).getParentNode()};
