@@ -1,0 +1,30 @@
+.productResults {
+	padding:15px 20px 15px 10px;
+	font-size: 11px;
+}
+
+.productResultsRightCol {
+	color:#CC0000;
+	font-size:13px;
+	font-weight:bold;
+}
+
+.productResultsImage {
+	height:90px;
+	overflow:hidden;
+}
+
+.productResultsInfo {
+	margin-left: 10px;
+}
+
+.featuredProductPromo {
+	margin-left:  205px;
+}
+
+.featuredProduct {
+	border-style: dashed;
+	border-color: #EE2200;
+	border-width: 1px;
+	margin: 5px 5px 5px 5px;
+}

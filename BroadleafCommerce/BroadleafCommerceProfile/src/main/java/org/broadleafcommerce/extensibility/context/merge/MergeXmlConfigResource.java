@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.extensibility.context.merge;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,6 +87,15 @@ public class MergeXmlConfigResource {
         for (int j=1;j<sources.length;j++){
             pair[1] = sources[j];
             response = mergeItems(pair);
+            if (LOG.isDebugEnabled()) {
+            	try {
+					byte[] itemArray = buildArrayFromStream(response);
+					LOG.debug("merged sources - stage["+j+"]" + serialize(new ByteArrayInputStream(itemArray)));
+					response = new ByteArrayInputStream(itemArray);
+				} catch (IOException e) {
+					throw new MergeException(e);
+				}
+            }
             try{
                 pair[0].close();
             } catch (Throwable e) {

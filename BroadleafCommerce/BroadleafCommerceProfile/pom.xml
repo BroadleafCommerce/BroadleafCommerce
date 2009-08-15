@@ -109,10 +109,6 @@
 		<groupId>org.apache.velocity</groupId>
 		<artifactId>velocity-tools</artifactId>
 	</dependency>
-  	<dependency>
-  		<groupId>org.broadleafcommerce</groupId>
-  		<artifactId>broadleaf-usps-schemas</artifactId>
-  	</dependency>
     <dependency>
     	<groupId>javax.mail</groupId>
     	<artifactId>mail</artifactId>
@@ -141,5 +137,41 @@
     	<groupId>org.springframework.security</groupId>
     	<artifactId>spring-security-core</artifactId>
 	</dependency>
+	<dependency>
+    	<groupId>opensymphony</groupId>
+    	<artifactId>quartz</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.antlr</groupId>
+    	<artifactId>antlr-runtime</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>oro</groupId>
+    	<artifactId>oro</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>net.sf.jsr107cache</groupId>
+    	<artifactId>jsr107cache</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>javax.xml.bind</groupId>
+    	<artifactId>jsr173_api</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.lucene</groupId>
+    	<artifactId>lucene-analyzers</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.security</groupId>
+    	<artifactId>spring-security-acl</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.security</groupId>
+    	<artifactId>spring-security-core-tiger</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.security</groupId>
+    	<artifactId>spring-security-taglibs</artifactId>
+    </dependency>
   </dependencies>
 </project>

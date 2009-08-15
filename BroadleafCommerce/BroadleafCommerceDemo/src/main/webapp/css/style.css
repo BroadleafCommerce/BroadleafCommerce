@@ -1,0 +1,76 @@
+.listItem {
+	float: left;
+	margin: 12px 0px 12px 0px;
+	width: 153px;
+	text-align: center;
+}
+
+.category {
+	text-align: center;
+	margin: 6px 0px 8px 0px;
+}
+
+.category p {
+	margin: 8px 0px 0px 0px;
+}
+
+.category a {
+	font-size: 13px;
+	color: #6699CC;
+	line-height: 11pt;
+	text-decoration: none;
+}
+
+.category a:visited,.category a:active {
+	color: #6699CC;
+	text-decoration: none;
+}
+
+.category a:hover {
+	color: #6699CC;
+	text-decoration: underline;
+}
+
+.listItem p {
+	width: 110;
+	padding: 0;
+	margin: auto;
+	line-height: 16px;
+}
+
+.listItem a,.listItem a:visited,.listItem a:active {
+	color: #666666;
+	text-decoration: none;
+}
+
+.listItem a:hover {
+	color: #666666;
+	text-decoration: underline;
+}
+
+.promo {
+	display: list-item;
+	height: 67px;
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+	margin-bottom: 13px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 13px;
+	padding-bottom: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-top: 0px;
+	width: 125px;
+	font-size:8px;
+}
+.promo h3 {
+	line-height:1.2;
+	margin-bottom:2px;
+}
+.errorInputText {
+	color:#FF0000;
+	font-size:11px;
+	font-weight:bold;
+}

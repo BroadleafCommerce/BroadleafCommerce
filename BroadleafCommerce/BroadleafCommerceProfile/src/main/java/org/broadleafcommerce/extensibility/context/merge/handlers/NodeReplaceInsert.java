@@ -21,6 +21,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -36,8 +38,10 @@ import org.w3c.dom.NodeList;
  *
  */
 public class NodeReplaceInsert extends BaseHandler {
+	
+	private static final Log LOG = LogFactory.getLog(NodeReplaceInsert.class);
 
-    public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
+    public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
         if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
             return null;
         }
@@ -58,7 +62,7 @@ public class NodeReplaceInsert extends BaseHandler {
         return response;
     }
 
-    private List<Node> matchNodes(Node[] exhaustedNodes, Node[] primaryNodes, ArrayList<Node> list) {
+    private List<Node> matchNodes(List<Node> exhaustedNodes, Node[] primaryNodes, ArrayList<Node> list) {
         Comparator<Node> hashCompare = new Comparator<Node>() {
             public int compare(Node arg0, Node arg1) {
                 int response = -1;
@@ -82,7 +86,9 @@ public class NodeReplaceInsert extends BaseHandler {
                 return response;
             }
         };
-        Arrays.sort(exhaustedNodes, hashCompare);
+        Node[] tempNodes = {};
+        tempNodes = exhaustedNodes.toArray(tempNodes);
+        Arrays.sort(tempNodes, hashCompare);
 
         List<Node> usedNodes = new ArrayList<Node>();
 
@@ -91,40 +97,55 @@ public class NodeReplaceInsert extends BaseHandler {
         Document ownerDocument = parentNode.getOwnerDocument();
         while(itr.hasNext()) {
             Node node = itr.next();
-            if (Element.class.isAssignableFrom(node.getClass()) && Arrays.binarySearch(exhaustedNodes, node, hashCompare) < 0) {
-                //find matching nodes based on id
-                if (replaceNode(primaryNodes, node, "id")) {
-                    usedNodes.add(node);
+            if (Element.class.isAssignableFrom(node.getClass()) && Arrays.binarySearch(tempNodes, node, hashCompare) < 0) {
+            	
+            	if(LOG.isDebugEnabled()) {
+            		StringBuffer sb = new StringBuffer();
+            		sb.append("matching node for replacement: ");
+            		sb.append(node.getNodeName());
+            		int attrLength = node.getAttributes().getLength();
+            		for (int j=0;j<attrLength;j++){
+            			sb.append(" : (");
+            			sb.append(node.getAttributes().item(j).getNodeName());
+            			sb.append("/");
+            			sb.append(node.getAttributes().item(j).getNodeValue());
+            			sb.append(")");
+            		}
+            		LOG.debug(sb.toString());
+            	}
+                
+            	//find matching nodes based on id
+                if (replaceNode(primaryNodes, node, "id", usedNodes)) {
                     continue;
                 }
                 //find matching nodes based on name
-                if (replaceNode(primaryNodes, node, "name")) {
-                    usedNodes.add(node);
+                if (replaceNode(primaryNodes, node, "name", usedNodes)) {
                     continue;
                 }
                 //check if this same node already exists
-                if (exactNodeExists(primaryNodes, node)) {
-                    usedNodes.add(node);
+                if (exactNodeExists(primaryNodes, node, usedNodes)) {
                     continue;
                 }
                 //simply append the node if all the above fails
-                parentNode.appendChild(ownerDocument.importNode(node.cloneNode(true), true));
+                Node newNode = ownerDocument.importNode(node.cloneNode(true), true);
+                parentNode.appendChild(newNode);
                 usedNodes.add(node);
             }
         }
         return usedNodes;
     }
 
-    private boolean exactNodeExists(Node[] primaryNodes, Node testNode) {
+    private boolean exactNodeExists(Node[] primaryNodes, Node testNode, List<Node> usedNodes) {
         for (int j=0;j<primaryNodes.length;j++){
             if (primaryNodes[j].isEqualNode(testNode)) {
+            	usedNodes.add(primaryNodes[j]);
                 return true;
             }
         }
         return false;
     }
 
-    private boolean replaceNode(Node[] primaryNodes, Node testNode, final String attribute) {
+    private boolean replaceNode(Node[] primaryNodes, Node testNode, final String attribute, List<Node> usedNodes) {
         if (testNode.getAttributes().getNamedItem(attribute) == null) {
             return false;
         }
@@ -150,7 +171,9 @@ public class NodeReplaceInsert extends BaseHandler {
         Arrays.sort(filtered, idCompare);
         int pos = Arrays.binarySearch(filtered, testNode, idCompare);
         if (pos >= 0) {
-            filtered[pos].getParentNode().replaceChild(filtered[pos].getOwnerDocument().importNode(testNode.cloneNode(true), true), filtered[pos]);
+        	Node newNode = filtered[pos].getOwnerDocument().importNode(testNode.cloneNode(true), true);
+            filtered[pos].getParentNode().replaceChild(newNode, filtered[pos]);
+            usedNodes.add(testNode);
             return true;
         }
         return false;

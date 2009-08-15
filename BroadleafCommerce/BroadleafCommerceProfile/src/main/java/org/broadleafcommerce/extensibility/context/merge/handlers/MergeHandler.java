@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.extensibility.context.merge.handlers;
 
+import java.util.List;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -40,7 +42,7 @@ public interface MergeHandler {
 	 * @param exhaustedNodes already merged nodes
 	 * @return list of merged nodes
 	 */
-	public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes);
+	public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes);
 	
 	/**
 	 * Retrieve the priority for the handler. Priorities are used by the MergeManager
