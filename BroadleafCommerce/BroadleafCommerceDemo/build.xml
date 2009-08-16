@@ -4,56 +4,60 @@
 <!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
 <!-- ====================================================================== -->
 
-<project name="BroadleafCommerceDemo" default="package" basedir=".">
-
-  <!-- ====================================================================== -->
-  <!-- Import maven-build.xml into the current project                        -->
-  <!-- ====================================================================== -->
-
-  <import file="maven-build.xml"/>
+<project name="BroadleafCommerceDemo" default="war" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	
+	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.0.10.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+	
+	<artifact:pom id="mypom" file="pom.xml"/>
+	<artifact:dependencies filesetId="mydeps" pomRefId="mypom" useScope="runtime"/>
+	<path id="build.runtime.classpath">
+		<fileset refid="mydeps"/>
+	</path>
+	
+	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
+	<property name="maven.build.dir" value="target"/>
+	<property name="maven.build.outputDir" value="${maven.build.dir}/classes"/>
+	<property name="app.name" value="broadleafdemo"/>
 	
 	<property file="build.properties" />
-  
-  <!-- ====================================================================== -->
-  <!-- Help target                                                            -->
-  <!-- ====================================================================== -->
-
-  <target name="help">
-    <echo message="Please run: $ant -projecthelp"/>
-  </target>
 	
 	<target name="app.synch">
 		<echo>Synchronizing App</echo>
 		<sync todir="${deploy.path}/${app.name}/css">
-			<fileset dir="${war.dir}/css">
+			<fileset dir="src/main/webapp/css">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
 		<sync todir="${deploy.path}/${app.name}/js">
-			<fileset dir="${war.dir}/js">
+			<fileset dir="src/main/webapp/js">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
 		<sync todir="${deploy.path}/${app.name}/images">
-			<fileset dir="${war.dir}/images">
+			<fileset dir="src/main/webapp/images">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
 		<sync todir="${deploy.path}/${app.name}/WEB-INF/jsp">
-			<fileset dir="${war.dir}/WEB-INF/jsp">
+			<fileset dir="src/main/webapp/WEB-INF/jsp">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
 		<sync todir="${deploy.path}/${app.name}/WEB-INF/tags">
-			<fileset dir="${war.dir}/WEB-INF/tags">
+			<fileset dir="src/main/webapp/WEB-INF/tags">
 				<include name="**/*.*"/>
 			</fileset>
 		</sync>
 		<copy todir="${deploy.path}/${app.name}">
-			<fileset dir="${war.dir}">
+			<fileset dir="src/main/webapp">
 				<include name="*.jsp"/>
 			</fileset>
 		</copy>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${maven.build.dir}"/>
 	</target>
 
 	<target name="load-data">
@@ -79,15 +83,15 @@
 	          userid="${mysql.db.user}"
 	          password="${mysql.db.pw}"
 	          encoding="UTF-8"
-	     	  classpathref="build.test.classpath">
+	     	  classpathref="build.runtime.classpath">
 	     	<transaction src="config/mysql/stage/load_data.sql"/>
 	     </sql>
 	</target>
 	
-	<target name="package" depends="compile,test" description="Package the application">
+	<target name="package">
 	    <mkdir dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib"/>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" flatten="true">
-			<path refid="build.test.classpath"/>	
+			<path refid="build.runtime.classpath"/>	
 		</copy>
 	    <war destfile="${maven.build.dir}/${maven.build.finalName}.war" 
 	         compress="true" 
@@ -115,19 +119,19 @@
 	</target>
 	
 	<target name="deploy-integrated-war" depends="war">
-		<copy tofile="${deploy.path}/broadleafdemo.war" file="${maven.build.dir}/${maven.build.finalName}.war" />
+		<copy tofile="${deploy.path}/${app.name}.war" file="${maven.build.dir}/${maven.build.finalName}.war" />
 	</target>
 
 	<target name="deploy-exploded-war" depends="war">
-		<mkdir dir="${deploy.path}/broadleafdemo"/>
-		<copy todir="${deploy.path}/broadleafdemo">
+		<mkdir dir="${deploy.path}/${app.name}"/>
+		<copy todir="${deploy.path}/${app.name}">
 			<fileset dir="${maven.build.dir}/${maven.build.finalName}" />
 			<fileset dir="src/main/webapp" />
 		</copy>
-		<copy todir="${deploy.path}/broadleafdemo/WEB-INF/classes">
+		<copy todir="${deploy.path}/${app.name}/WEB-INF/classes">
 			<fileset dir="${maven.build.outputDir}" />
 		</copy>
-		<copy todir="${deploy.path}/broadleafdemo/WEB-INF">
+		<copy todir="${deploy.path}/${app.name}/WEB-INF">
 			<fileset dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
 			  	<include name="*.xml"/>
 			  </fileset>
@@ -135,11 +139,11 @@
 	</target>
 	
 	<target name="undeploy">
-		<delete dir="${deploy.path}/broadleafdemo"/>
-		<delete file="${deploy.path}/broadleafdemo.war"/>
+		<delete dir="${deploy.path}/${app.name}"/>
+		<delete file="${deploy.path}/${app.name}.war"/>
 	</target>
 	
-	<target name="Start Tomcat - Debug Mode">
+	<target name="start-tomcat-debug">
 	    <java jar="${appserver.home}/bin/bootstrap.jar" fork="true">
 	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
 	        <jvmarg value="-Xdebug"/>
@@ -158,16 +162,10 @@
 	    </java>
 	</target>
 
-	<target name="Stop Tomcat">
+	<target name="stop-tomcat">
 	    <java jar="${appserver.home}/bin/bootstrap.jar" fork="true">
 	        <jvmarg value="-Dcatalina.home=${appserver.home}"/>
 	        <arg value="stop"/>
 	    </java>
-	</target>
-	
-	<target name="test-offline">
-	    <condition property="maven.mode.offline">
-	      <equals arg1="${my.maven.settings.offline}" arg2="true"/>
-	    </condition>
 	</target>
 </project>

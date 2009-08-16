@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="BroadleafCommerceAdmin" default="clean" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	
+	<path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.0.10.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+	<taskdef resource="flexTasks.tasks" classpath="lib/flexTasks.jar"/>
+	
+	<artifact:pom id="mypom" file="pom.xml"/>
+	<artifact:dependencies filesetId="mydeps" pomRefId="mypom" useScope="runtime"/>
+	<path id="build.runtime.classpath">
+		<fileset refid="mydeps"/>
+	</path>
+	
+	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
+	<property name="maven.build.dir" location="target"/>
+	<property name="maven.build.outputDir" location="${maven.build.dir}/classes"/>
+	<property name="app.name" value="broadleafadmin"/>
+	
+	<property file="build.properties" />
+	<property name="demo.location" location="../BroadleafCommerceDemo"/>
+	<property name="internal.build.file" location="${demo.location}/build.xml" />
+	
+	<target name="app.synch">
+		<ant antfile="${internal.build.file}" target="app.synch" />
+	</target>
+	
+	<target name="clean">
+		<ant antfile="${internal.build.file}" target="clean" />
+	</target>
+	
+	<target name="load-data">
+		<ant antfile="${internal.build.file}" target="load-data" />
+	</target>
+	
+	<target name="package">
+	    <mkdir dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib"/>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" flatten="true">
+			<path refid="build.runtime.classpath"/>	
+		</copy>
+	    <war destfile="${maven.build.dir}/${maven.build.finalName}.war" 
+	         compress="true" 
+	         webxml="src/main/webapp/WEB-INF/web.xml">
+	      <lib dir="lib"/>
+	      <classes dir="${maven.build.outputDir}"/>
+	      <fileset dir="${demo.location}/src/main/webapp" 
+	               excludes="WEB-INF/web.xml"/>
+		  <fileset dir="${maven.build.dir}/${maven.build.finalName}">
+		  	<include name="**/*.*"/>
+		  </fileset>
+	    </war>
+	</target>
+	
+	<target name="war">
+		<mkdir dir="${maven.build.dir}/${maven.build.finalName}"/>
+		<html-wrapper
+			swf="BroadleafCommerceAdmin"
+			title="Broadleaf Commerce Admin"
+			file="BroadleafCommerceAdmin.html"
+			template="client-side-detection"
+			height="100%"
+			width="100%"
+			output="${maven.build.dir}/${maven.build.finalName}"
+			history="true"
+		/>
+		<artifact:dependencies pathId="swf.path">
+		  <dependency groupId="org.broadleafcommerce" artifactId="broadleaf-admin-flex" version="1.0.0" type="swf"/>
+		</artifact:dependencies>
+		<mkdir dir="${maven.build.dir}/temp"/>
+		<copy todir="${maven.build.dir}/temp" flatten="true">
+			<path refid="swf.path"/>
+		</copy>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}">
+			<fileset dir="${maven.build.dir}/temp">
+				<include name="*.swf"/>
+			</fileset>
+		</copy>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
+			<fileset dir="config/spring">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_USERNAME@@" value="${mysql.db.user}"/>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_PASSWORD@@" value="${mysql.db.pw}"/>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_URL@@" value="${mysql.db.url}"/>
+		<antcall inheritall="true" target="package"/>
+	</target>
+	
+	<target name="deploy-integrated-war">
+		<ant antfile="${internal.build.file}" target="deploy-integrated-war" />
+	</target>
+	
+	<target name="deploy-exploded-war" depends="war">
+		<mkdir dir="${deploy.path}/${app.name}"/>
+		<copy todir="${deploy.path}/${app.name}">
+			<fileset dir="${demo.location}/src/main/webapp" />
+		</copy>
+		<copy todir="${deploy.path}/${app.name}">
+			<fileset dir="${maven.build.dir}/${maven.build.finalName}" />
+			<fileset dir="src/main/webapp" />
+		</copy>
+		<copy todir="${deploy.path}/${app.name}/WEB-INF/classes">
+			<fileset dir="${maven.build.outputDir}" />
+		</copy>
+		<copy todir="${deploy.path}/${app.name}/WEB-INF">
+			<fileset dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
+			  	<include name="*.xml"/>
+			  </fileset>
+		</copy>
+		<copy todir="${deploy.path}/${app.name}/WEB-INF/lib">
+			<fileset dir="lib">
+			  	<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="undeploy">
+		<ant antfile="${internal.build.file}" target="undeploy" />
+	</target>
+	
+	<target name="start-tomcat-debug">
+		<ant antfile="${internal.build.file}" target="start-tomcat-debug" />
+	</target>
+	
+	<target name="stop-tomcat">
+		<ant antfile="${internal.build.file}" target="stop-tomcat" />
+	</target>
+</project>

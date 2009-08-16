@@ -5,7 +5,7 @@
   <artifactId>BroadleafCommerce</artifactId>
   <packaging>pom</packaging>
   <name>BroadleafCommerce</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>BroadleafCommerce Maven Build</description>
   <build>
   	<pluginManagement>
@@ -84,6 +84,8 @@
     <module>BroadleafCommerceDemo</module>
     <module>BroadleafCommerceAdminFlexCairngorm</module>
     <module>BroadleafCommerceAdminFlex</module>
+    <module>BroadleafCommerceAdmin</module>
+    <module>BroadleafCommerceAdminWeb</module>
   </modules>
   <dependencies>
   </dependencies>
@@ -265,42 +267,70 @@
 	    <dependency>
 	  		<groupId>org.broadleafcommerce</groupId>
 	  		<artifactId>broadleaf-usps-schemas</artifactId>
-	  		<version>0.0.0</version>
+	  		<version>1.0.0</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
 	  	<dependency>
 	  		<groupId>org.broadleafcommerce</groupId>
 	  		<artifactId>broadleaf-usps</artifactId>
-	  		<version>0.0.0</version>
+	  		<version>1.0.0</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
 	  	<dependency>
 	      <groupId>org.broadleafcommerce</groupId>
 	      <artifactId>broadleaf-profile</artifactId>
-	      <version>0.0.0</version>
+	      <version>1.0.0</version>
 	      <type>jar</type>
 	      <scope>compile</scope>
 	    </dependency>
 	    <dependency>
 	  		<groupId>org.broadleafcommerce</groupId>
 	  		<artifactId>broadleaf-profile-web</artifactId>
-	  		<version>0.0.0</version>
+	  		<version>1.0.0</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
 	    <dependency>
 	      <groupId>org.broadleafcommerce</groupId>
 	      <artifactId>broadleaf-framework</artifactId>
-	      <version>0.0.0</version>
+	      <version>1.0.0</version>
 	      <type>jar</type>
 	      <scope>compile</scope>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.broadleafcommerce</groupId>
 	      <artifactId>broadleaf-framework-web</artifactId>
-	      <version>0.0.0</version>
+	      <version>1.0.0</version>
+	      <type>jar</type>
+	      <scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.broadleafcommerce</groupId>
+	      <artifactId>broadleaf-demo</artifactId>
+	      <version>1.0.0</version>
+	      <type>jar</type>
+	      <scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.broadleafcommerce</groupId>
+	      <artifactId>broadleaf-admin-flex-cairngorm</artifactId>
+	      <version>1.0.0</version>
+	      <type>swc</type>
+	      <scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.broadleafcommerce</groupId>
+	      <artifactId>broadleaf-admin-flex</artifactId>
+	      <version>1.0.0</version>
+	      <type>swf</type>
+	      <scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.broadleafcommerce</groupId>
+	      <artifactId>broadleaf-admin</artifactId>
+	      <version>1.0.0</version>
 	      <type>jar</type>
 	      <scope>compile</scope>
 	    </dependency>
@@ -515,7 +545,7 @@
 		<dependency>
 		  <groupId>org.broadleafcommerce</groupId>
 		  <artifactId>broadleaf-admin-flex-cairngorm</artifactId>
-		  <version>0.0.0</version>
+		  <version>1.0.0</version>
 		  <type>swc</type>
 		</dependency>
 		<dependency>
@@ -529,6 +559,13 @@
 		  <artifactId>animal-sniffer-annotation</artifactId>
 		  <version>1.0</version>
 		  <type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.flex</groupId>
+			<artifactId>spring-flex</artifactId>
+			<version>1.0.0.RELEASE</version>
+			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
   	</dependencies>
   </dependencyManagement>
