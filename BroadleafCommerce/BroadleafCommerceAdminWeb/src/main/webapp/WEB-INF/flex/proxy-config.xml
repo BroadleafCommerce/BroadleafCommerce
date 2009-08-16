@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service id="proxy-service" 
+    class="flex.messaging.services.HTTPProxyService">
+
+    <properties>
+        <connection-manager>
+            <max-total-connections>100</max-total-connections>
+            <default-max-connections-per-host>2</default-max-connections-per-host>
+        </connection-manager>
+        <allow-lax-ssl>true</allow-lax-ssl>
+    </properties>
+
+    <adapters>
+        <adapter-definition id="http-proxy" class="flex.messaging.services.http.HTTPProxyAdapter" default="true"/>
+        <adapter-definition id="soap-proxy" class="flex.messaging.services.http.SOAPProxyAdapter"/>
+    </adapters>
+
+    <default-channels>
+        <channel ref="my-amf"/>
+    </default-channels>
+
+    <destination id="DefaultHTTP">
+    </destination>
+
+</service>
