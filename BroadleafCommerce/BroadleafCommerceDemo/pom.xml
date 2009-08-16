@@ -17,7 +17,16 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-ant-plugin</artifactId>
         <version>2.2</version>
-      </plugin>
+        <executions>
+	      <execution>
+	        <id>ant-build</id>
+	        <phase>process-resources</phase>
+	        <goals>
+	          <goal>ant</goal>
+	        </goals>
+	      </execution>
+	      </executions>
+	   </plugin>
     </plugins>
   </build>
   <dependencies>

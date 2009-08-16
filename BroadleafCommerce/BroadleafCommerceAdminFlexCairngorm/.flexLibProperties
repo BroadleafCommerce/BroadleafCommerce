@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties version="1">
+  <includeClasses>
+    <classEntry path="com.adobe.cairngorm.CairngormError"/>
+    <classEntry path="com.adobe.cairngorm.CairngormMessageCodes"/>
+    <classEntry path="com.adobe.cairngorm.business.AbstractServices"/>
+    <classEntry path="com.adobe.cairngorm.business.Delegate"/>
+    <classEntry path="com.adobe.cairngorm.business.HTTPServices"/>
+    <classEntry path="com.adobe.cairngorm.business.IServiceLocator"/>
+    <classEntry path="com.adobe.cairngorm.business.IServices"/>
+    <classEntry path="com.adobe.cairngorm.business.RemoteObjects"/>
+    <classEntry path="com.adobe.cairngorm.business.Responder"/>
+    <classEntry path="com.adobe.cairngorm.business.ServiceLocator"/>
+    <classEntry path="com.adobe.cairngorm.business.WebServices"/>
+    <classEntry path="com.adobe.cairngorm.commands.Command"/>
+    <classEntry path="com.adobe.cairngorm.commands.ICommand"/>
+    <classEntry path="com.adobe.cairngorm.commands.SequenceCommand"/>
+    <classEntry path="com.adobe.cairngorm.control.CairngormEvent"/>
+    <classEntry path="com.adobe.cairngorm.control.CairngormEventDispatcher"/>
+    <classEntry path="com.adobe.cairngorm.control.FrontController"/>
+    <classEntry path="com.adobe.cairngorm.control.FrontControllerEvent"/>
+    <classEntry path="com.adobe.cairngorm.model.IModelLocator"/>
+    <classEntry path="com.adobe.cairngorm.model.ModelLocator"/>
+    <classEntry path="com.adobe.cairngorm.responder.CairngormProgressResponder"/>
+    <classEntry path="com.adobe.cairngorm.responder.CairngormResponder"/>
+    <classEntry path="com.adobe.cairngorm.responder.ICairngormCancelResponder"/>
+    <classEntry path="com.adobe.cairngorm.responder.ICairngormProgressResponder"/>
+    <classEntry path="com.adobe.cairngorm.responder.ICairngormResponder"/>
+    <classEntry path="com.adobe.cairngorm.view.ViewHelper"/>
+    <classEntry path="com.adobe.cairngorm.view.ViewLocator"/>
+    <classEntry path="com.adobe.cairngorm.vo.IValueObject"/>
+    <classEntry path="com.adobe.cairngorm.vo.ValueObject"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

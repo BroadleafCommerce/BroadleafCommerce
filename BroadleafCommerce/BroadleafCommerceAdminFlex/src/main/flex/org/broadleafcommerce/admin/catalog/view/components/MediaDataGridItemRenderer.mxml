@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" >
+
+<mx:Script>
+	<![CDATA[
+		override public function set data(value:Object):void{
+			super.data = value.media;
+		}
+	]]>
+</mx:Script>
+
+	<mx:Binding source="data.name"
+	            destination="nameLabel.text" />
+	<mx:Binding source="data.label"
+	            destination="labelLabel.text" />
+	<mx:Binding source="data.url"
+	            destination="urlLabel.text" />
+	
+	<mx:Text text="Name:" />	<mx:Text id="nameLabel"  y="0" x="40"/>
+	<mx:Text text="Label:"  x="2" y="23"/>	<mx:Text id="urlLabel"  y="45" x="40"/>
+	<mx:Text text="URL:"  y="45" x="10"/>	<mx:Text id="labelLabel"  y="23" x="40"/>
+
+</mx:Canvas>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:DataGrid
+	xmlns:mx="http://www.adobe.com/2006/mxml" >
+		<mx:columns>
+			<mx:DataGridColumn
+				dataField="id"
+				headerText="Id" />
+			<mx:DataGridColumn
+				dataField="name"
+				headerText="Name"/>
+			<mx:DataGridColumn
+				dataField="description"
+				headerText="Description"/>
+			<!--mx:DataGridColumn
+				dataField="activeStartDate"
+				headerText="Start Date"/>
+			<mx:DataGridColumn
+				dataField="activeEndDate"
+				headerText="End Date"/>
+			<mx:DataGridColumn
+				dataField="model"
+				headerText="Model"/>
+			<mx:DataGridColumn
+				dataField="manufacturer"
+				headerText="Manufacturer"/>
+			<mx:DataGridColumn
+				dataField="weight"
+				headerText="Weight"/-->
+		</mx:columns>
+</mx:DataGrid>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	verticalGap="5">
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			public var title:String;
+		]]>
+	</mx:Script>
+	<mx:Label
+		text="{this.title}"/>
+	<mx:HRule
+		strokeColor="#9AB12A;"
+		strokeWidth="2"/>
+</mx:VBox>
