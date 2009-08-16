@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <parent>
+    <artifactId>BroadleafCommerce</artifactId>
+    <groupId>org.broadleafcommerce</groupId>
+    <version>1.0.0</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.broadleafcommerce</groupId>
+  <artifactId>broadleaf-admin</artifactId>
+  <name>BroadleafCommerceAdmin</name>
+  <version>1.0.0</version>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+    	<groupId>org.broadleafcommerce</groupId>
+    	<artifactId>broadleaf-framework</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.flex</groupId>
+    	<artifactId>spring-flex</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>javax.servlet</groupId>
+    	<artifactId>servlet-api</artifactId> 	
+    </dependency>
+  </dependencies>
+</project>

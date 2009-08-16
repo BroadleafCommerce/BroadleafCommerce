@@ -2,33 +2,15 @@
   <parent>
     <artifactId>BroadleafCommerce</artifactId>
     <groupId>org.broadleafcommerce</groupId>
-    <version>0.0.0</version>
+    <version>1.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.broadleafcommerce</groupId>
-  <artifactId>BroadleafCommerceDemo</artifactId>
+  <artifactId>broadleaf-demo</artifactId>
   <packaging>jar</packaging>
   <name>BroadleafCommerceDemo</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <url>http://maven.apache.org</url>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ant-plugin</artifactId>
-        <version>2.2</version>
-        <executions>
-	      <execution>
-	        <id>ant-build</id>
-	        <phase>process-resources</phase>
-	        <goals>
-	          <goal>ant</goal>
-	        </goals>
-	      </execution>
-	      </executions>
-	   </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
     	<groupId>org.broadleafcommerce</groupId>
