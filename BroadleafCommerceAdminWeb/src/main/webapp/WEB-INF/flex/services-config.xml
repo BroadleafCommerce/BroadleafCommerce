@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services-config>
+
+    <services>
+        <service-include file-path="remoting-config.xml" />
+        <service-include file-path="proxy-config.xml" />
+        <service-include file-path="messaging-config.xml" />        
+    </services>
+
+    <security>
+        <login-command class="flex.messaging.security.TomcatLoginCommand" server="Tomcat"/>
+        <!-- Uncomment the correct app server
+        <login-command class="flex.messaging.security.TomcatLoginCommand" server="JBoss">
+		<login-command class="flex.messaging.security.JRunLoginCommand" server="JRun"/>        
+        <login-command class="flex.messaging.security.WeblogicLoginCommand" server="Weblogic"/>
+        <login-command class="flex.messaging.security.WebSphereLoginCommand" server="WebSphere"/>
+        -->
+
+        <!-- 
+        <security-constraint id="basic-read-access">
+            <auth-method>Basic</auth-method>
+            <roles>
+                <role>guests</role>
+                <role>accountants</role>
+                <role>employees</role>
+                <role>managers</role>
+            </roles>
+        </security-constraint>
+         -->
+    </security>
+
+    <channels>
+
+        <channel-definition id="my-amf" class="mx.messaging.channels.AMFChannel">
+            <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/amf" class="flex.messaging.endpoints.AMFEndpoint"/>
+        </channel-definition>
+
+        <channel-definition id="my-secure-amf" class="mx.messaging.channels.SecureAMFChannel">
+            <endpoint url="https://{server.name}:{server.port}/{context.root}/messagebroker/amfsecure" class="flex.messaging.endpoints.SecureAMFEndpoint"/>
+            <properties>
+                <add-no-cache-headers>false</add-no-cache-headers>
+            </properties>
+        </channel-definition>
+
+        <channel-definition id="my-polling-amf" class="mx.messaging.channels.AMFChannel">
+            <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/amfpolling" class="flex.messaging.endpoints.AMFEndpoint"/>
+            <properties>
+                <polling-enabled>true</polling-enabled>
+                <polling-interval-seconds>4</polling-interval-seconds>
+            </properties>
+        </channel-definition>
+
+        <!--
+        <channel-definition id="my-http" class="mx.messaging.channels.HTTPChannel">
+            <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/http" class="flex.messaging.endpoints.HTTPEndpoint"/>
+        </channel-definition>
+
+        <channel-definition id="my-secure-http" class="mx.messaging.channels.SecureHTTPChannel">
+            <endpoint url="https://{server.name}:{server.port}/{context.root}/messagebroker/httpsecure" class="flex.messaging.endpoints.SecureHTTPEndpoint"/>
+            <properties>
+                <add-no-cache-headers>false</add-no-cache-headers>
+            </properties>
+        </channel-definition>
+        -->
+    </channels>
+
+    <logging>
+        <target class="flex.messaging.log.ConsoleTarget" level="Error">
+            <properties>
+                <prefix>[BlazeDS] </prefix>
+                <includeDate>false</includeDate>
+                <includeTime>false</includeTime>
+                <includeLevel>false</includeLevel>
+                <includeCategory>false</includeCategory>
+            </properties>
+            <filters>
+                <pattern>Endpoint.*</pattern>
+                <pattern>Service.*</pattern>
+                <pattern>Configuration</pattern>
+            </filters>
+        </target>
+    </logging>
+
+    <system>
+        <redeploy>
+            <enabled>false</enabled>
+            <!-- 
+            <watch-interval>20</watch-interval>
+            <watch-file>{context.root}/WEB-INF/flex/services-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/proxy-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/remoting-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/messaging-config.xml</watch-file>
+            <watch-file>{context.root}/WEB-INF/flex/data-management-config.xml</watch-file>
+            <touch-file>{context.root}/WEB-INF/web.xml</touch-file>
+             -->
+        </redeploy>
+    </system>
+
+</services-config>
