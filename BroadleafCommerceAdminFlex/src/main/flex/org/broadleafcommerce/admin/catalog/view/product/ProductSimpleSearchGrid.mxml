@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Grid 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	defaultButton="{submitButton}">
+	<mx:Script>
+		<![CDATA[
+			private function handleProductSearch(event:Event):void{
+				
+			}
+			
+			private function handleAdvancedProductSearch(event:Event):void{
+				
+			}
+		]]>
+	</mx:Script>	
+	<mx:GridRow>
+		<mx:GridItem 
+			styleName="fieldLabel">
+			<mx:Label
+				text="Search By Name:"/>
+		</mx:GridItem>
+		<mx:GridItem>
+			<mx:TextInput
+				id="nameTextInput"
+				width="160"/>
+		</mx:GridItem>
+		<mx:GridItem> 
+			<mx:Button
+				id="submitButton"
+				label="Submit"
+				click="handleProductSearch(event)"/>
+		</mx:GridItem>
+		<mx:GridItem>
+			<mx:LinkButton
+				id="advancedSearchLinkButton"
+				label="Advanced Search"
+				click="handleAdvancedProductSearch(event)"/>
+		</mx:GridItem>
+	</mx:GridRow>
+</mx:Grid>

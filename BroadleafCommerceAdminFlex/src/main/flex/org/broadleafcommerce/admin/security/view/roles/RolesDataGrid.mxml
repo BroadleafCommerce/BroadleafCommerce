@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:columns>
+		<mx:DataGridColumn dataField="id"  headerText="Role ID"/>		
+		<mx:DataGridColumn dataField="name"  headerText="Name"/>
+		<mx:DataGridColumn dataField="description"  headerText="Description"/>
+	</mx:columns>
+</mx:DataGrid>

@@ -24,6 +24,20 @@
 	          <artifactId>cobertura-maven-plugin</artifactId>
 	          <version>2.3</version>
 	        </plugin>
+	        <plugin>
+  				<groupId>org.apache.maven.plugins</groupId>
+  				<artifactId>maven-compiler-plugin</artifactId>
+  				<version>2.0.2</version>
+  				<configuration>
+		            <source>1.5</source>
+		            <target>1.5</target>
+		        </configuration>
+  			</plugin>
+  			<plugin>
+		        <groupId>org.sonatype.flexmojos</groupId>
+		        <artifactId>flexmojos-maven-plugin</artifactId>
+		        <version>3.2.0</version>    
+		    </plugin>
   		</plugins>
   	</pluginManagement>
   	<plugins>
@@ -46,16 +60,30 @@
   		<name>jboss.com</name>
   		<url>http://repository.jboss.com/maven2</url>
   	</repository>
+  	<repository>
+	   <id>flex-mojos-repository</id>
+	   <name>flex-mojos</name>
+	   <url>http://repository.sonatype.org/content/groups/flexgroup</url>
+	  </repository>
   </repositories>
+  <pluginRepositories>
+	  <pluginRepository>
+	   <id>flex-mojos-repository</id>
+	   <name>flex-mojos-plugins</name>
+	   <url>http://repository.sonatype.org/content/groups/flexgroup</url>
+	  </pluginRepository>
+  </pluginRepositories>
   <modules>
-  	<module>BroadleafCommerceProfile</module>
-  	<module>BroadleafCommerceProfileWeb</module>
-  	<module>BroadleafCommerceFramework</module>
-  	<module>BroadleafCommerceFrameworkWeb</module>
+    <module>BroadleafCommerceProfile</module>
+    <module>BroadleafCommerceProfileWeb</module>
+    <module>BroadleafCommerceFramework</module>
+    <module>BroadleafCommerceFrameworkWeb</module>
     <module>BroadleafCommerceIntegrationTests</module>
     <module>BroadleafCommerceUSPS</module>
     <module>BroadleafCommerceUSPSSchemas</module>
     <module>BroadleafCommerceDemo</module>
+    <module>BroadleafCommerceAdminFlexCairngorm</module>
+    <module>BroadleafCommerceAdminFlex</module>
   </modules>
   <dependencies>
   </dependencies>
@@ -477,6 +505,31 @@
 	    	<type>jar</type>
 	    	<scope>runtime</scope>
 	    </dependency>
+	    <dependency>
+  			<groupId>org.sonatype.flexmojos</groupId>
+  			<artifactId>flexmojos-unittest-support</artifactId>
+  			<version>3.2.0</version>
+  			<type>swc</type>
+  			<scope>test</scope>
+  		</dependency>
+		<dependency>
+		  <groupId>org.broadleafcommerce</groupId>
+		  <artifactId>broadleaf-admin-flex-cairngorm</artifactId>
+		  <version>0.0.0</version>
+		  <type>swc</type>
+		</dependency>
+		<dependency>
+		   <groupId>com.adobe.flex.framework</groupId>
+		   <artifactId>flex-framework</artifactId>
+		   <version>3.1.0.2710</version>
+		   <type>pom</type>
+		</dependency>
+		<dependency>
+		  <groupId>org.jvnet</groupId>
+		  <artifactId>animal-sniffer-annotation</artifactId>
+		  <version>1.0</version>
+		  <type>jar</type>
+		</dependency>
   	</dependencies>
   </dependencyManagement>
 </project>

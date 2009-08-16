@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.tools.control.events.codetype.CreateCodeTypeEvent;
+			
+			private function handleAddCodeTypeButtonClick(event:Event):void{
+				new CreateCodeTypeEvent().dispatch();
+			}
+		]]>
+	</mx:Script>
+	<mx:VBox
+		width="100%"
+		verticalGap="5">
+		<mx:Grid
+			width="100%">
+			<mx:GridRow verticalAlign="bottom"
+				width="100%">
+				<mx:GridItem
+					horizontalAlign="left"
+					width="50%">
+					<mx:Label 
+						text="Code Types"
+						styleName="headerLabel"/>
+				</mx:GridItem>
+				<mx:GridItem
+					horizontalAlign="right"
+					width="50%">
+					<mx:Button 
+						label="Add Code Type"
+						click="handleAddCodeTypeButtonClick(event)"/>		
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>		
+		<mx:HRule 
+			width="100%"
+			left="10"
+			right="10"/>
+	</mx:VBox>
+</mx:Canvas>
