@@ -37,24 +37,6 @@
 		<ant antfile="${internal.build.file}" target="load-data" />
 	</target>
 	
-	<target name="package">
-	    <mkdir dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib"/>
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" flatten="true">
-			<path refid="build.runtime.classpath"/>	
-		</copy>
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" file="lib/flex-messaging-opt.jar"/>
-	    <war destfile="${maven.build.dir}/${maven.build.finalName}.war" 
-	         compress="true" 
-	         webxml="src/main/webapp/WEB-INF/web.xml">
-	      <classes dir="${maven.build.outputDir}"/>
-	      <fileset dir="${demo.location}/src/main/webapp" 
-	               excludes="WEB-INF/web.xml"/>
-		  <fileset dir="${maven.build.dir}/${maven.build.finalName}">
-		  	<include name="**/*.*"/>
-		  </fileset>
-	    </war>
-	</target>
-	
 	<target name="war">
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}"/>
 		<html-wrapper
@@ -87,36 +69,45 @@
 		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_USERNAME@@" value="${mysql.db.user}"/>
 		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_PASSWORD@@" value="${mysql.db.pw}"/>
 		<replace file="${maven.build.dir}/${maven.build.finalName}/WEB-INF/applicationContext-custom.xml" token="@@MYSQL_URL@@" value="${mysql.db.url}"/>
-		<antcall inheritall="true" target="package"/>
+		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib"/>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" flatten="true">
+			<path refid="build.runtime.classpath"/>	
+		</copy>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}">
+			<fileset dir="${demo.location}/src/main/webapp">
+				<exclude name="WEB-INF/web.xml"/>
+			</fileset>
+		</copy>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}">
+			<fileset dir="src/main/webapp" />
+		</copy>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/classes">
+			<fileset dir="${maven.build.outputDir}" />
+		</copy>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
+			<fileset dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
+			  	<include name="*.xml"/>
+			  </fileset>
+		</copy>
 	</target>
 	
-	<target name="deploy-integrated-war">
-		<ant antfile="${internal.build.file}" target="deploy-integrated-war" />
+	<target name="deploy-integrated-war" depends="package">
+		<copy tofile="${deploy.path}/${app.name}.war" file="${maven.build.dir}/${maven.build.finalName}.war" />
+	</target>
+	
+	<target name="package">
+	    <zip destfile="${maven.build.dir}/${maven.build.finalName}.war" 
+	         compress="true">
+		  <fileset dir="${maven.build.dir}/${maven.build.finalName}">
+		  	<include name="**/*.*"/>
+		  </fileset>
+	    </zip>
 	</target>
 	
 	<target name="deploy-exploded-war" depends="war">
 		<mkdir dir="${deploy.path}/${app.name}"/>
 		<copy todir="${deploy.path}/${app.name}">
-			<fileset dir="${demo.location}/src/main/webapp">
-				<exclude name="WEB-INF/web.xml"/>
-			</fileset>
-		</copy>
-		<copy todir="${deploy.path}/${app.name}">
-			<fileset dir="${maven.build.dir}/${maven.build.finalName}" />
-			<fileset dir="src/main/webapp" />
-		</copy>
-		<copy todir="${deploy.path}/${app.name}/WEB-INF/classes">
-			<fileset dir="${maven.build.outputDir}" />
-		</copy>
-		<copy todir="${deploy.path}/${app.name}/WEB-INF">
-			<fileset dir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
-			  	<include name="*.xml"/>
-			  </fileset>
-		</copy>
-		<copy todir="${deploy.path}/${app.name}/WEB-INF/lib">
-			<fileset dir="lib">
-			  	<include name="*.jar"/>
-			</fileset>
+			<fileset dir="${maven.build.dir}/${maven.build.finalName}"/>
 		</copy>
 	</target>
 	
