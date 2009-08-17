@@ -22,25 +22,23 @@
           class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
         <property name="persistenceXmlLocations">
             <list>
-                <value>classpath*:/META-INF/persistence.xml</value>
+                <value>classpath*:/META-INF/persistence-container.xml</value>
             </list>
         </property>
         <property name="dataSources">
             <map>
                 <entry key="jdbc/web" value-ref="webDS"/>
-                <entry key="jdbc/webSecure" value-ref="webSecureDS"/>
+                <entry key="jdbc/webSecure" value-ref="webDS"/>
             </map>
         </property>
         <property name="defaultDataSource" ref="webDS"/>
     </bean>
 
-    <bean id="webDS"
-          class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/comp/env/jdbc/web"/>
+    <bean id="webDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="@@MYSQL_URL@@" />
+		<property name="username" value="@@MYSQL_USERNAME@@" />
+		<property name="password" value="@@MYSQL_PASSWORD@@" />
     </bean>
     
-    <bean id="webSecureDS"
-          class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:/comp/env/jdbc/webSecure"/>
-    </bean>
 </beans>
