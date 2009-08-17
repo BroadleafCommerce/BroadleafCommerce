@@ -97,7 +97,9 @@
 	<target name="deploy-exploded-war" depends="war">
 		<mkdir dir="${deploy.path}/${app.name}"/>
 		<copy todir="${deploy.path}/${app.name}">
-			<fileset dir="${demo.location}/src/main/webapp" />
+			<fileset dir="${demo.location}/src/main/webapp">
+				<exclude name="WEB-INF/web.xml"/>
+			</fileset>
 		</copy>
 		<copy todir="${deploy.path}/${app.name}">
 			<fileset dir="${maven.build.dir}/${maven.build.finalName}" />
