@@ -42,10 +42,10 @@
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" flatten="true">
 			<path refid="build.runtime.classpath"/>	
 		</copy>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF/lib" file="lib/flex-messaging-opt.jar"/>
 	    <war destfile="${maven.build.dir}/${maven.build.finalName}.war" 
 	         compress="true" 
 	         webxml="src/main/webapp/WEB-INF/web.xml">
-	      <lib dir="lib"/>
 	      <classes dir="${maven.build.outputDir}"/>
 	      <fileset dir="${demo.location}/src/main/webapp" 
 	               excludes="WEB-INF/web.xml"/>
