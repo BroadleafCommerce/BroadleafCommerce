@@ -49,15 +49,8 @@
 			output="${maven.build.dir}/${maven.build.finalName}"
 			history="true"
 		/>
-		<artifact:dependencies pathId="swf.path">
-		  <dependency groupId="org.broadleafcommerce" artifactId="broadleaf-admin-flex" version="1.0.0" type="swf"/>
-		</artifact:dependencies>
-		<mkdir dir="${maven.build.dir}/temp"/>
-		<copy todir="${maven.build.dir}/temp" flatten="true">
-			<path refid="swf.path"/>
-		</copy>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}">
-			<fileset dir="${maven.build.dir}/temp">
+			<fileset dir="../BroadleafCommerceAdminFlex/target">
 				<include name="*.swf"/>
 			</fileset>
 		</copy>
