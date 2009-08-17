@@ -19,6 +19,13 @@
         <groupId>org.sonatype.flexmojos</groupId>
         <artifactId>flexmojos-maven-plugin</artifactId>
         <extensions>true</extensions>
+        <configuration>
+			<moduleFiles>
+				<module>modules/catalog/CatalogModule.mxml</module>
+				<module>modules/offers/OfferModule.mxml</module>
+			</moduleFiles>
+			<loadExternsOnModules>false</loadExternsOnModules>
+        </configuration>
       </plugin>
     </plugins>
   </build>

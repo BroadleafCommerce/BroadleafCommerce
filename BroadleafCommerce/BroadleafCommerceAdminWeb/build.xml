@@ -39,8 +39,9 @@
 	
 	<target name="war">
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}"/>
+		<mkdir dir="${maven.build.outputDir}"/>
 		<html-wrapper
-			swf="BroadleafCommerceAdmin"
+			swf="broadleaf-admin-flex-1.0.0"
 			title="Broadleaf Commerce Admin"
 			file="BroadleafCommerceAdmin.html"
 			template="client-side-detection"
@@ -49,6 +50,16 @@
 			output="${maven.build.dir}/${maven.build.finalName}"
 			history="true"
 		/>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/modules">
+			<fileset dir="../BroadleafCommerceAdminFlex/target/classes/modules">
+				<include name="*.xml" />	
+			</fileset>
+		</copy>
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/assets">
+			<fileset dir="../BroadleafCommerceAdminFlex/target/classes/assets">
+				<include name="**/*" />	
+			</fileset>
+		</copy>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}">
 			<fileset dir="../BroadleafCommerceAdminFlex/target">
 				<include name="*.swf"/>
