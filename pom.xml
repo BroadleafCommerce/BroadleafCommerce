@@ -442,7 +442,7 @@
   			<artifactId>commons-dbcp</artifactId>
   			<version>1.2.2</version>
   			<type>jar</type>
-  			<scope>test</scope>
+  			<scope>compile</scope>
   		</dependency>
   		<dependency>
   			<groupId>hsqldb</groupId>
