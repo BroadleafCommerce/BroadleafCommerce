@@ -1,0 +1,4 @@
+<xml>
+	<menuitem label="Catalog" swf="broadleaf-admin-flex-1.0.0-CatalogModule.swf" displayOrder="2" authRoles="ROLE_ADMIN,asdfsdf" />
+	<menuitem label="Offers" swf="broadleaf-admin-flex-1.0.0-OfferModule.swf" displayOrder="5" authRoles="ROLE_ADMIN" />
+</xml>
