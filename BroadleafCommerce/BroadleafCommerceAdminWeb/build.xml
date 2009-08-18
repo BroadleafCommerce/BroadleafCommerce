@@ -147,7 +147,7 @@
 		<copy tofile="${deploy.path}/${app.name}.war" file="${maven.build.dir}/${maven.build.finalName}.war" />
 	</target>
 	
-	<target name="package">
+	<target name="package" depends="war">
 	    <zip destfile="${maven.build.dir}/${maven.build.finalName}.war" 
 	         compress="true">
 		  <fileset dir="${maven.build.dir}/${maven.build.finalName}">
