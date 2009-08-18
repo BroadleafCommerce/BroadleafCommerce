@@ -36,7 +36,8 @@ public class CustomerState {
         Customer customer;
         checkCustomer: {
             if (sessionReference instanceof Long) {
-                Long customerId = (Long) sessionReference;
+                //TODO: Long customerId = (Long) sessionReference;
+                Long customerId = 1L;
                 if (customerId != null) {
                     customer = customerService.readCustomerById(customerId);
                     if (customer == null) {
@@ -51,7 +52,8 @@ public class CustomerState {
                     break checkCustomer;
                 }
             }
-            customer = null;
+            //TODO: Remove hard-coded customer
+            customer = customerService.readCustomerById(1L);
         }
 
         return customer;
