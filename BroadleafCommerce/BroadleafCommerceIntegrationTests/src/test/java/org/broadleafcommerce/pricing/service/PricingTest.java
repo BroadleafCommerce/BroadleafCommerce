@@ -54,6 +54,7 @@ import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class PricingTest extends BaseTest {
@@ -78,6 +79,7 @@ public class PricingTest extends BaseTest {
     }
 
     @Test(dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
+    @Transactional
     public void testPricing() throws Exception {
         Order order = orderDao.create();
         order.setCustomer(createCustomer());
@@ -154,6 +156,7 @@ public class PricingTest extends BaseTest {
     }
 
     @Test(groups = { "testShipping" }, dependsOnGroups = { "testShippingInsert", "createCustomerIdGeneration" })
+    @Transactional
     public void testShipping() throws Exception {
         Order order = orderDao.create();
         order.setCustomer(createCustomer());
@@ -196,9 +199,7 @@ public class PricingTest extends BaseTest {
             fgi.setRetailPrice(new Money(15D));
             group1.addFulfillmentGroupItem(fgi);
         }
-
         order.setTotalShipping(new Money(0D));
-
         order = pricingService.executePricing(order);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));

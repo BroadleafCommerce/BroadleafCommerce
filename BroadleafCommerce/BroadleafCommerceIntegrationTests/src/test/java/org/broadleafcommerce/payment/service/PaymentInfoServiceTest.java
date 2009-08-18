@@ -88,6 +88,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     }
 
     @Test(groups={"testCreatePaymentInfo"}, dependsOnGroups={"createPaymentInfo"})
+    @Transactional
     public void createTestPaymentInfo(){
         userName = "customer1";
         PaymentInfo paymentInfo = paymentInfoService.create();

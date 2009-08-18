@@ -100,6 +100,7 @@ public class ProductDaoTest extends BaseTest {
     }
 
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
+    @Transactional
     public void testReadProductsByName(Product product) {
         String name = product.getName();
         product = catalogService.saveProduct(product);

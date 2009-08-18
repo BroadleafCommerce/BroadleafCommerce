@@ -55,6 +55,7 @@ public class OrderItemDaoTest extends BaseTest {
 
     @Test(groups = { "createGiftWrapOrderItem" }, dataProvider = "basicGiftWrapOrderItem", dataProviderClass = OrderItemDataProvider.class, dependsOnGroups = { "readOrderItemsById" })
     @Rollback(false)
+    @Transactional
     public void createGiftWrapOrderItem(GiftWrapOrderItem orderItem) {
         Sku si = skuDao.readFirstSku();
         assert si.getId() != null;
