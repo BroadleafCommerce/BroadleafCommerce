@@ -39,7 +39,6 @@ import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.order.service.FulfillmentGroupService;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.web.model.AddToCartItem;
-import org.broadleafcommerce.order.web.model.AddToCartItems;
 import org.broadleafcommerce.order.web.model.CartOrderItem;
 import org.broadleafcommerce.order.web.model.CartSummary;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
@@ -104,25 +103,27 @@ public class CartController {
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
 
-        for (OrderItem orderItem : cart.getOrderItems()) {
-            if (orderItem instanceof DiscreteOrderItem) {
-                Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
-                if (!(sku.getSalePrice().equals(((DiscreteOrderItem) orderItem).getSalePrice()))) {
-                    orderItem.setSalePrice(sku.getSalePrice());
-                }
-                if (!(sku.getRetailPrice().equals(((DiscreteOrderItem) orderItem).getRetailPrice()))) {
-                    orderItem.setRetailPrice(sku.getRetailPrice());
-                }
-
-                if (orderItem.getSalePrice() != orderItem.getRetailPrice()) {
-                    orderItem.setPrice(orderItem.getSalePrice());
-                }
-                else {
-                    orderItem.setPrice(orderItem.getRetailPrice());
-                }
-
-                orderItem.getPrice();
-            }
+        if (cart.getOrderItems() != null ) {
+	        for (OrderItem orderItem : cart.getOrderItems()) {
+	            if (orderItem instanceof DiscreteOrderItem) {
+	                Sku sku = catalogService.findSkuById(((DiscreteOrderItem) orderItem).getSku().getId());
+	                if (!(sku.getSalePrice().equals(((DiscreteOrderItem) orderItem).getSalePrice()))) {
+	                    orderItem.setSalePrice(sku.getSalePrice());
+	                }
+	                if (!(sku.getRetailPrice().equals(((DiscreteOrderItem) orderItem).getRetailPrice()))) {
+	                    orderItem.setRetailPrice(sku.getRetailPrice());
+	                }
+	
+	                if (orderItem.getSalePrice() != orderItem.getRetailPrice()) {
+	                    orderItem.setPrice(orderItem.getSalePrice());
+	                }
+	                else {
+	                    orderItem.setPrice(orderItem.getRetailPrice());
+	                }
+	
+	                orderItem.getPrice();
+	            }
+	        }
         }
 
         if (cart.getOrderItems() != null ) {
@@ -179,7 +180,13 @@ public class CartController {
 
         if (addToCartItem.getQuantity() > 0) {
             try {
-                OrderItem orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity());
+                OrderItem orderItem;
+                if (addToCartItem.getOrderId() != null) {
+                    orderItem = cartService.addSkuToOrder(addToCartItem.getOrderId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity());
+                }
+                else {
+                    orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity());
+                }
                 orderItemsAdded.add(orderItem);
             } catch (PricingException e) {
                 LOG.error("Unable to price the order: ("+currentCartOrder.getId()+")", e);
@@ -193,12 +200,6 @@ public class CartController {
         } else {
             return "catalog/fragments/addToCartModal";
         }
-    }
-
-    @RequestMapping(value = "addToWishList.htm", method = {RequestMethod.GET, RequestMethod.POST})
-    public String addToWishlist(@ModelAttribute AddToCartItems addToCartItems, BindingResult errors, ModelMap model,
-            HttpServletRequest request) {
-        return "redirect:success";  // need to be redirected to the viewWishlists method of the WishlistController
     }
 
     @RequestMapping(value = "viewCart.htm", params="removeItemFromCart", method = {RequestMethod.GET, RequestMethod.POST})
