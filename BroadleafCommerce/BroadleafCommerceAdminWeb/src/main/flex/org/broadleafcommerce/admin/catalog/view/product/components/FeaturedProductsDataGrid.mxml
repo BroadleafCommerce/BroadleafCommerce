@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:DataGrid
+	xmlns:mx="http://www.adobe.com/2006/mxml" >
+		<mx:columns>
+			<mx:DataGridColumn
+				dataField="id"
+				headerText="Id" />
+			<mx:DataGridColumn
+				dataField="product.name"
+				headerText="Name"/>
+			<mx:DataGridColumn
+				dataField="category"
+				headerText="Category"/>
+			<mx:DataGridColumn
+				dataField="sequence"
+				headerText="Sequence"/>
+			<mx:DataGridColumn
+				dataField="promotionMessage"
+				headerText="promotionMessage"/>
+			<!--mx:DataGridColumn
+				dataField="model"
+				headerText="Model"/>
+			<mx:DataGridColumn
+				dataField="manufacturer"
+				headerText="Manufacturer"/>
+			<mx:DataGridColumn
+				dataField="weight"
+				headerText="Weight"/-->
+		</mx:columns>
+</mx:DataGrid>

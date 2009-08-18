@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Form 
+	xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
+			import org.broadleafcommerce.admin.tools.model.ToolsModel;
+			
+			[Bindable]
+			private var toolsModel:ToolsModel = ToolsModelLocator.getInstance().toolsModel;
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="toolsModel.currentCodeType.codeType"
+		destination="codeTypeLabel.text"/>
+	<mx:Binding
+		source="toolsModel.currentCodeType.description"
+		destination="descriptionLabel.text"/>
+	<mx:Binding
+		source="toolsModel.currentCodeType.key"
+		destination="keyLabel.text"/>
+	<mx:Binding
+		source="toolsModel.currentCodeType.modifiable"
+		destination="modifiableLabel.text"/>
+	<mx:FormItem
+		label="Code Type:">
+		<mx:Label
+			id="codeTypeLabel"/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Key:">
+		<mx:Label
+			id="keyLabel"/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Description:">
+		<mx:Label
+			id="descriptionLabel"/>
+	</mx:FormItem>
+	<mx:FormItem
+		label="Modifiable:">
+		<mx:Label
+			id="modifiableLabel"/>
+	</mx:FormItem>
+</mx:Form>
