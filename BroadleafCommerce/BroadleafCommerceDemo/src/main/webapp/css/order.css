@@ -1,17 +1,26 @@
 .orderTitle {
 	margin-bottom:5px;
-	padding:2px 7px;
-	background:#C3D9FF none repeat scroll 0 0;
+	padding:4px 7px;
+	background:transparent url(/broadleafdemo/images/steelBlueGradient30.gif) repeat-x scroll center center;
+	border-bottom: 1px solid #ccc;
 }
 
 .orderBorder {
 	border-style: solid;
-	border-color: #CCCCCC;
+	border-color: #ccc;
 	border-width: 1px;
-	padding: 5px 5px 5px 5px;
+	padding: 0;
 	margin-top: 15px;
 }
 
 .orderTotals {
 	font-weight: bold;
+}
+
+table.basicTable th {
+	background:0;
+	border-bottom:1px solid #ccc;
+}
+table.basicTable td {
+	text-align:left;
 }

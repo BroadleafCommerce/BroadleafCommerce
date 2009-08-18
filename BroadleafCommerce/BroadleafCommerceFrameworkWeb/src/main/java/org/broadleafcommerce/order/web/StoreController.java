@@ -36,6 +36,7 @@ public class StoreController {
     public String showStores(ModelMap model) {
         List<Store> storeList = storeService.readAllStores();
         FindAStoreForm findAStoreForm = new FindAStoreForm();
+        findAStoreForm.setDistance("30");
         model.addAttribute("stateList", stateService.findStates());
         model.addAttribute("countryList", countryService.findCountries());
         model.addAttribute("stores", storeList);
@@ -55,7 +56,7 @@ public class StoreController {
 
         if (findAStoreForm.getPostalCode() == null || "".equals(findAStoreForm.getPostalCode()) ||
                 "".equals(findAStoreForm.getDistance()) || findAStoreForm.getPostalCode().length() != 5) {
-            model.addAttribute("errorMessage" , "Please enter a valid postal code and distance." );
+            model.addAttribute("errorMessage" , "Please enter a valid zip/postal code and distance." );
             return showStores(model);
         }
 
