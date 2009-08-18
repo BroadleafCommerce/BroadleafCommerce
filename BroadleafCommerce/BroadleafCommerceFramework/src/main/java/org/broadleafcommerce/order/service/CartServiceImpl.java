@@ -91,8 +91,11 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
             if (namedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
                 cancelOrder(namedOrder);
             }
+        } else {
+        	orderItem = addOrderItemToOrder(cartOrder, orderItem);
         }
-        return addOrderItemToOrder(cartOrder, orderItem);
+        
+        return orderItem;
     }
 
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
