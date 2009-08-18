@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="handleCreationComplete()"
+	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			
+			[Bindable]
+			private var appModel:AppModelLocator = AppModelLocator.getInstance(); 
+			
+			private function handleCreationComplete():void{
+				this.skuDataGrid.dataProvider = this.appModel.skuModel.catalogSkus;
+			}
+		]]>
+	</mx:Script>
+	<product:ProductSimpleSearchGrid/>	
+	<mx:DataGrid
+		id="skuDataGrid"
+		borderStyle="none" height="100%">
+		<mx:columns>
+			<mx:DataGridColumn
+				dataField="name"
+				headerText="Name"
+				width="160"/>
+			<mx:DataGridColumn/>
+			<mx:DataGridColumn/>
+		</mx:columns>
+	</mx:DataGrid>
+		<mx:HBox>
+		<mx:Label text="Filter: " />			
+		<mx:TextInput id="filterText" />
+		</mx:HBox>
+	
+</mx:VBox>

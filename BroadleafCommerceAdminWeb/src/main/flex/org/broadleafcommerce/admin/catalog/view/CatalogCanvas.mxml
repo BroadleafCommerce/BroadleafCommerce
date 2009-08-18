@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="800"
+	height="800"
+	creationComplete="creationComplete()"
+	xmlns:category="org.broadleafcommerce.admin.catalog.view.category.*" xmlns:product="org.broadleafcommerce.admin.catalog.view.product.*" xmlns:view="org.broadleafcommerce.admin.catalog.view.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModel;
+			import org.broadleafcommerce.admin.catalog.control.events.category.ViewCategoriesEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.product.ViewCurrentProductEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.product.AddProductsToCategoriesEvent;
+			import org.broadleafcommerce.admin.catalog.vo.product.Product;
+			import org.broadleafcommerce.admin.catalog.vo.category.Category;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			
+			[Bindable]
+			private var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
+			
+			private function creationComplete():void{
+			}
+			
+			private function handleView(event:Event):void{
+				if(event.target == this.categoriesLinkButton){
+					var vce:ViewCategoriesEvent = new ViewCategoriesEvent();
+					vce.dispatch();
+				}else if(event.target == this.productsLinkButton){
+					var vcpe:ViewCurrentProductEvent = new ViewCurrentProductEvent();
+					vcpe.dispatch();
+				}
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Binding source="catalogModel.viewState"
+					   destination="currentState" />
+	
+	<view:CatalogCanvasViewHelper id="catalogCanvas" />
+	
+	<mx:VBox 
+		verticalGap="20"
+		width="100%">
+		<mx:HBox
+			verticalAlign="middle">
+			<mx:LinkButton
+				id="categoriesLinkButton"
+				label="Categories"
+				click="this.handleView(event)"/>
+			<mx:VRule
+				height="10"/>
+			<mx:LinkButton
+				id="productsLinkButton"
+				label="Products"
+				click="this.handleView(event)"/>
+			<mx:VRule
+				height="10"/>
+		</mx:HBox>
+		<mx:Canvas id="workingAreaCanvas" 
+			width="100%"
+			height="100%">
+				<category:CategoryCanvas id="categoryCanvas" width="100%" height="100%" />
+				<product:ProductCanvas  id="productCanvas" />
+			</mx:Canvas>
+	</mx:VBox>
+	<mx:states>
+		<mx:State name="{CatalogModel.STATE_VIEW_CATEGORY}">
+			<mx:SetProperty target="{categoryCanvas}" name="visible" value="true" />
+			<mx:SetProperty target="{productCanvas}" name="visible" value="false" />
+		</mx:State>
+		<mx:State name="{CatalogModel.STATE_VIEW_PRODUCT}">
+			<mx:SetProperty target="{categoryCanvas}" name="visible" value="false" />
+			<mx:SetProperty target="{productCanvas}" name="visible" value="true" />
+		</mx:State>
+	</mx:states>
+		
+</mx:Canvas>

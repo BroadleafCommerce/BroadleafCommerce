@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  
+	xmlns:view="org.broadleafcommerce.admin.view.*" 
+	xmlns:wizard="org.broadleafcommerce.admin.view.components.wizard.*" 
+	xmlns:components="org.broadleafcommerce.admin.view.components.*" 
+	xmlns:offer="org.broadleafcommerce.admin.view.offer.*" xmlns:view1="org.broadleafcommerce.admin.offers.view.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
+			import org.broadleafcommerce.admin.offers.model.OfferModel;
+			import org.broadleafcommerce.admin.offers.vo.Offer;
+			import org.broadleafcommerce.admin.offers.model.OfferModel;
+			import org.broadleafcommerce.admin.offers.vo.Offer;
+			import org.broadleafcommerce.admin.offers.control.events.ShowOfferWindowEvent;
+			import mx.containers.TitleWindow;
+			import mx.managers.PopUpManager;
+			import mx.core.IFlexDisplayObject;
+			import org.broadleafcommerce.admin.offers.view.events.WizardEvent;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	
+			[Bindable]
+			private static var STATE_LIST:String = "state_list";
+			[Bindable]
+			private static var STATE_NEW:String = "state_new";
+	
+			[Bindable]
+			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
+		
+			private function handleNewClick(event:Event):void{
+					var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this);
+					sowe.dispatch()
+			}
+			
+			private function handleOffersDataGridDoubleClick(event:Event):void{
+				var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this,Offer(offersDataGrid.selectedItem));
+				sowe.dispatch();
+			}
+		]]>
+	</mx:Script> 
+	<mx:Binding
+		source="this.offerModel.offersListFiltered"
+		destination="this.offersDataGrid.dataProvider"/>
+	<mx:VBox 
+		verticalGap="20"
+		width="100%">
+		<mx:Button 
+			x="10" 
+			y="10" 
+			label="New Offer" 
+			click="handleNewClick(event)"/>
+		<view1:OfferFilterCanvas/>	
+		<view1:OfferDataGrid 
+			id="offersDataGrid"
+			width="75%" 
+			height="75%" 
+			doubleClickEnabled="true" 
+			doubleClick="handleOffersDataGridDoubleClick(event)"/> 
+	</mx:VBox>
+	<!--	<mx:DataGrid id="offersDataGrid" x="10" y="37" width="75%" height="75%" doubleClickEnabled="true" doubleClick="handleOffersDataGridDoubleClick(event)">
+		</mx:DataGrid>
+		-->
+</mx:Canvas>	
+
+

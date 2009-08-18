@@ -15,8 +15,10 @@
 	<path id="build.runtime.classpath">
 		<fileset refid="mydeps"/>
 	</path>
+
 	
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
+	<property name="maven.build.name" value="${mypom.name}" />
 	<property name="maven.build.dir" location="target"/>
 	<property name="maven.build.outputDir" location="${maven.build.dir}/classes"/>
 	<property name="app.name" value="broadleafadmin"/>
@@ -25,6 +27,9 @@
 	<property name="demo.location" location="../BroadleafCommerceDemo"/>
 	<property name="internal.build.file" location="${demo.location}/build.xml" />
 	
+	<property name="FLEX_HOME" value="${flex.sdk.dir}"/>
+	<property name="flex.home" value="${flex.sdk.dir}"/>
+
 	<target name="app.synch">
 		<ant antfile="${internal.build.file}" target="app.synch" />
 	</target>
@@ -36,12 +41,44 @@
 	<target name="load-data">
 		<ant antfile="${internal.build.file}" target="load-data" />
 	</target>
+
+	<target name="build-module">
+		<mxmlc file="src/main/flex/${module.dir}/${module}.mxml" output="${maven.build.dir}/${maven.build.finalName}/${module.dir}/${module}.swf" incremental="true"
+			services="src/main/webapp/WEB-INF/flex/services-config.xml" context-root="/" >
+			<load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml"/>
+			<source-path path-element="${flex.sdk.dir}/frameworks" />
+			<source-path path-element="src/main/flex" />
+			<include-libraries file="lib/*.swc"/>
+			<load-externs>target/flex-link-report.xml</load-externs>
+		</mxmlc>			
+	</target>
 	
 	<target name="war">
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}"/>
 		<mkdir dir="${maven.build.outputDir}"/>
+		<mkdir dir="${maven.build.dir}/${maven.build.finalName}"/>
+
+
+		<mxmlc file="src/main/flex/BroadleafCommerceAdmin.mxml" output="${maven.build.dir}/${maven.build.finalName}/BroadleafCommerceAdmin.swf" incremental="true"
+			services="src/main/webapp/WEB-INF/flex/services-config.xml" context-root="/" >
+			<load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml"/>
+			<source-path path-element="${flex.sdk.dir}/frameworks" />
+			<include-libraries file="lib/*.swc"/>
+			<link-report>target/flex-link-report.xml</link-report>
+		</mxmlc>		
+
+		<antcall target="build-module">
+			<param name="module.dir" value="modules/catalog" />
+			<param name="module" value="CatalogModule" />
+		</antcall>
+
+		<antcall target="build-module">
+			<param name="module.dir" value="modules/offers" />
+			<param name="module" value="OfferModule" />
+		</antcall>
+		
+		
 		<html-wrapper
-			swf="broadleaf-admin-flex-1.0.0"
+			swf="BroadleafCommerceAdmin"
 			title="Broadleaf Commerce Admin"
 			file="BroadleafCommerceAdmin.html"
 			template="client-side-detection"
@@ -50,7 +87,7 @@
 			output="${maven.build.dir}/${maven.build.finalName}"
 			history="true"
 		/>
-		<copy todir="${maven.build.dir}/${maven.build.finalName}/modules">
+		<!--copy todir="${maven.build.dir}/${maven.build.finalName}/modules">
 			<fileset dir="../BroadleafCommerceAdminFlex/target/classes/modules">
 				<include name="*.xml" />	
 			</fileset>
@@ -64,7 +101,18 @@
 			<fileset dir="../BroadleafCommerceAdminFlex/target">
 				<include name="*.swf"/>
 			</fileset>
+		</copy-->
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/assets">
+			<fileset dir="src/main/flex/assets" />
 		</copy>
+
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/modules">
+		<fileset dir="src/main/flex/modules">
+			<exclude name="**/*.mxml" />
+			<exclude name="**/*.as" />
+		</fileset>
+		</copy>
+		
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/WEB-INF">
 			<fileset dir="config/spring">
 				<include name="*.xml"/>
