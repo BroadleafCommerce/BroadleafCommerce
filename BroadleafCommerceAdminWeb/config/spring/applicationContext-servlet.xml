@@ -34,9 +34,13 @@
 	<flex:message-broker services-config-path="classpath*:services-config.xml" />
 	-->
 
+	<bean id="_messageBroker" class="org.springframework.flex.core.MessageBrokerFactoryBean" />
+	<!--
+	The below is valid in later versions of spring, but not with 2.5.4
 	<flex:message-broker>
 		<flex:secured />
 	</flex:message-broker>
+	-->
 
 	<!-- Maps request paths at /* to the BlazeDS MessageBroker -->
 	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -58,5 +62,6 @@
 	<flex:remoting-destination ref="blAdminSecurityService"/>	
 	<flex:remoting-destination ref="blOfferService" />		
 	<flex:remoting-destination ref="blCodeTypeService"/>
+	<flex:remoting-destination ref="blSearchService"/>
 
 </beans>
