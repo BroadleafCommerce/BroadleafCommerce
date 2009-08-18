@@ -91,17 +91,15 @@ public interface Order extends Serializable {
 
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
+    public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers);
+
+    public void addCandidateOrderOffer(CandidateOrderOffer candidateOrderOffer);
+
     public List<CandidateOrderOffer> getCandidateOrderOffers();
-
-    public void setCandidateOffers(List<CandidateOrderOffer> offers);
-
-    public void addCandidateOrderOffer(CandidateOrderOffer candidateOffer);
 
     public void removeAllCandidateOffers();
 
-    public void removeAllOrderCandidateOffers();
-
-    public boolean isMarkedForOffer();
+    public void removeAllCandidateOrderOffers();
 
     public void setMarkedForOffer(boolean markForOffer);
 
@@ -147,19 +145,17 @@ public interface Order extends Serializable {
 
     public boolean hasCategoryItem(String categoryName);
 
-    public List<OrderAdjustment> getOrderAdjustments();
+    //public List<OrderAdjustment> getOrderAdjustments();
 
     public List<OrderAdjustment> addOrderAdjustments(OrderAdjustment orderAdjustment);
 
-    public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments);
+    //public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments);
 
     public void removeAllAdjustments();
 
     public void removeAllOrderAdjustments();
 
     public void removeAllItemAdjustments();
-
-    public boolean containsNotCombinableItemOfferAdjustments();
 
     public boolean containsNotStackableOrderOffer();
 
@@ -212,5 +208,9 @@ public interface Order extends Serializable {
      * @return the total discount of all applied item and order offers
      */
     public Money getTotalAdjustmentsValue();
+
+    public boolean isNotCombinableOfferApplied();
+
+	public boolean isHasOrderAdjustments();
 
 }

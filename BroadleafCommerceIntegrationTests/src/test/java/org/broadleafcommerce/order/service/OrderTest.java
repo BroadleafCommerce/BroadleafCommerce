@@ -194,7 +194,7 @@ public class OrderTest extends OrderBaseTest {
         OrderItem item = orderItems.get(0);
         item.setSalePrice(new Money(BigDecimal.valueOf(10000)));
         item.setQuantity(10);
-        orderService.updateItemInOrder(order, item);
+        orderService.updateItemQuantity(order, item);
         OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
         assert updatedItem != null;
         assert updatedItem.getPrice().equals(new Money(BigDecimal.valueOf(10000)));
@@ -202,7 +202,7 @@ public class OrderTest extends OrderBaseTest {
         
         List<OrderItem> updateItems = new ArrayList<OrderItem> (order.getOrderItems());
         updateItems.get(0).setQuantity(15);
-        orderService.updateItemsInOrder(order, updateItems);
+        orderService.updateItemQuantity(order, updatedItem);
         order = orderService.findOrderById(orderId);
         assert order.getOrderItems().get(0).getQuantity() == 15;
         

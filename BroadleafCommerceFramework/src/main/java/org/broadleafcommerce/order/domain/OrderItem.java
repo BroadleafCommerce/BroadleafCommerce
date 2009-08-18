@@ -66,11 +66,11 @@ public interface OrderItem extends Serializable {
 
     public List<CandidateItemOffer> getCandidateItemOffers();
 
-    public void setCandidateItemOffers(List<CandidateItemOffer> candidateOffers);
+    public void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers);
 
-    public List<CandidateItemOffer> addCandidateItemOffer(CandidateItemOffer candidateOffer);
+    public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer);
 
-    public void removeAllCandidateOffers();
+    public void removeAllCandidateItemOffers();
 
     public boolean markForOffer();
 
@@ -80,13 +80,13 @@ public interface OrderItem extends Serializable {
 
     public boolean isAllQuantityMarkedForOffer();
 
-    public List<OrderItemAdjustment> getOrderItemAdjustments();
+    //public List<OrderItemAdjustment> getOrderItemAdjustments();
 
-    public List<OrderItemAdjustment> addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment);
+    public void addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment);
 
-    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
+    //public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
 
-    public void removeAllAdjustments();
+    public int removeAllAdjustments();
 
     public PersonalMessage getPersonalMessage();
 
@@ -107,4 +107,8 @@ public interface OrderItem extends Serializable {
     public boolean getIsOnSale();
 
     public boolean getIsDiscounted();
+
+    public boolean isNotCombinableOfferApplied();
+
+	public boolean isHasOrderItemAdjustments();
 }
