@@ -66,7 +66,23 @@
 								<c:param name="skuId" value="${currentProduct.skus[0].id}"/>
 								<c:param name="quantity" value="1"/>
 								</c:url>">Add to Cart</a><br/> <br/>
-						<a href="#">Add To Wishlist</a>
+						<form:form method="post" modelAttribute="wishlistRequest" action="../../wishlist/addToWishlist.htm">
+							<form:hidden path="addProductId" />
+							<form:hidden path="addCategoryId" />
+							<form:hidden path="addSkuId" />
+							<form:hidden path="quantity"  />
+							<c:choose>
+								<c:when test="${(wishlists != null) && !(empty wishlists) }" >
+									<form:select  path="wishlistName">
+										<form:options items="${wishlists}" itemValue="name" itemLabel="name" />
+									</form:select>
+									<input type="submit" value="Add To Wishlist" name="addToWishlist">     			
+								</c:when>
+								<c:otherwise>
+									<input type="submit" value="Add To New Wishlist" name="addToWishlist">
+								</c:otherwise>
+							</c:choose>
+						</form:form>
 					</div>
 				</div>
 				<jsp:include page="ratingsAndReviews.jsp" />

@@ -71,7 +71,7 @@
 		</div>
 		<div>
 			<label for="contactInfo.primaryPhone"><b>* Phone Number</b></label>
-			<label style="margin-left: 70px" for="contactInfo.email">Email Address</b></label> 
+			<label style="margin-left: 70px" for="contactInfo.email">* Email Address</b></label> 
 		</div>
 		<div>
 			<form:input path="billingAddress.primaryPhone"/>	

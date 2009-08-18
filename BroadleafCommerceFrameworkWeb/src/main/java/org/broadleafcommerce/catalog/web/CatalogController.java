@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanComparator;
@@ -27,12 +28,20 @@ import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.FeaturedProduct;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.service.CartService;
+import org.broadleafcommerce.order.service.type.OrderStatus;
+import org.broadleafcommerce.order.web.model.WishlistRequest;
+import org.broadleafcommerce.profile.web.CustomerState;
 import org.broadleafcommerce.rating.domain.RatingSummary;
 import org.broadleafcommerce.rating.service.RatingService;
 import org.broadleafcommerce.rating.service.type.RatingType;
 import org.broadleafcommerce.search.util.SearchFilterUtil;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -41,6 +50,10 @@ import org.springframework.web.util.UrlPathHelper;
 @Controller
 public class CatalogController {
 
+    @Resource(name="blCartService")
+    protected final CartService cartService;
+    @Resource(name="blCustomerState")
+    protected final CustomerState customerState;
     private final UrlPathHelper pathHelper = new UrlPathHelper();
     private CatalogService catalogService;
     private RatingService ratingService;
@@ -49,6 +62,11 @@ public class CatalogController {
     private Long rootCategoryId;
     private String rootCategoryName;
     private String categoryTemplatePrefix;
+
+    public CatalogController() {
+        this.cartService = null;
+        this.customerState = null;
+    }
 
     @RequestMapping(method =  {RequestMethod.GET})
     public String viewCatalog(ModelMap model, HttpServletRequest request) {
@@ -81,9 +99,12 @@ public class CatalogController {
         if (catalogSort == null) {
             model.addAttribute("catalogSort", new CatalogSort());
         }
+
+        List<Order> wishlists = cartService.findOrdersForCustomer(customerState.getCustomer(request), OrderStatus.NAMED);
+        model.addAttribute("wishlists", wishlists);
+
         return view;
     }
-
 
     @RequestMapping(method =  {RequestMethod.POST})
     public String sortCatalog (ModelMap model, HttpServletRequest request, @ModelAttribute CatalogSort catalogSort) {
@@ -194,6 +215,13 @@ public class CatalogController {
             model.addAttribute("productError", true);
         }
 
+        WishlistRequest wishlistRequest = new WishlistRequest();
+        wishlistRequest.setAddCategoryId(currentCategory.getId());
+        wishlistRequest.setAddProductId(product.getId());
+        wishlistRequest.setQuantity(1);
+        wishlistRequest.setAddSkuId(product.getSkus().get(0).getId());
+        model.addAttribute("wishlistRequest", wishlistRequest);
+
         return (productPosition !=0);
     }
 
@@ -276,6 +304,11 @@ public class CatalogController {
         return displayProducts;
     }
 
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(Long.class, new CustomNumberEditor(Long.class, false));
+        binder.registerCustomEditor(Integer.class, new CustomNumberEditor(Integer.class, false));
+    }
 
     public Long getRootCategoryId() {
         return rootCategoryId;

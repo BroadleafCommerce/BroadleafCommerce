@@ -5,6 +5,7 @@ public class AddToCartItem {
     private long productId;
     private long categoryId;
     private long skuId;
+    private Long orderId;
     private int quantity;
 
     public long getSkuId() {
@@ -30,5 +31,11 @@ public class AddToCartItem {
     }
     public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
+    }
+    public Long getOrderId() {
+        return orderId;
+    }
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 }
