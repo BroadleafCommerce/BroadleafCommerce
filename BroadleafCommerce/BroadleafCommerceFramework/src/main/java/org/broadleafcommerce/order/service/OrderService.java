@@ -70,9 +70,7 @@ public interface OrderService {
 
     public Order addOfferToOrder(Order order, String offerCode);
 
-    public OrderItem updateItemInOrder(Order order, OrderItem item) throws ItemNotFoundException, PricingException;
-
-    public List<OrderItem> updateItemsInOrder(Order order, List<OrderItem> orderItems) throws ItemNotFoundException, PricingException;
+    public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException;
 
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
 

@@ -244,7 +244,7 @@ public class CartController {
                 if (cartOrderItem.getQuantity() > 0) {
                     orderItem.setQuantity(cartOrderItem.getQuantity());
                     try {
-                        cartService.updateItemInOrder(currentCartOrder, orderItem);
+                        cartService.updateItemQuantity(currentCartOrder, orderItem);
                     } catch (ItemNotFoundException e) {
                         LOG.error("Item not found in order: ("+orderItem.getId()+")", e);
                     } catch (PricingException e) {

@@ -332,7 +332,7 @@ public class OrderServiceImpl implements OrderService {
         throw new UnsupportedOperationException();
     }
 
-    public OrderItem updateItemInOrder(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
+    public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
         // This isn't quite right. It will need to be changed later to reflect
         // the exact requirements we want.
         // item.setQuantity(quantity);
@@ -341,24 +341,9 @@ public class OrderServiceImpl implements OrderService {
             throw new ItemNotFoundException("Order Item (" + item.getId() + ") not found in Order (" + order.getId() + ")");
         }
         OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
-        itemFromOrder.setOrderItemAdjustments(item.getOrderItemAdjustments());
-        itemFromOrder.setCandidateItemOffers(item.getCandidateItemOffers());
-        itemFromOrder.setCategory(item.getCategory());
-        itemFromOrder.setPersonalMessage(item.getPersonalMessage());
         itemFromOrder.setQuantity(item.getQuantity());
 
         order = updateOrder(order, true);
-
-        return itemFromOrder;
-    }
-
-    public List<OrderItem> updateItemsInOrder(Order order, List<OrderItem> orderItems) throws ItemNotFoundException, PricingException {
-        ArrayList<OrderItem> response = new ArrayList<OrderItem>();
-        for (OrderItem orderItem : orderItems) {
-            OrderItem responseItem = updateItemInOrder(order, orderItem);
-            response.add(responseItem);
-        }
-        return orderItems;
     }
 
     public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException {

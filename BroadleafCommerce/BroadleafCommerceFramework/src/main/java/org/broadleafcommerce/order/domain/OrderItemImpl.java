@@ -105,6 +105,12 @@ public class OrderItemImpl implements OrderItem {
 
     @Transient
     protected int markedForOffer = 0;
+    
+    @Transient
+    protected boolean notCombinableOfferApplied = false;    
+    
+    @Transient
+    protected boolean hasOrderItemAdjustments = false;
 
     @Column(name = "ORDER_ITEM_TYPE")
     protected String orderItemType;
@@ -161,14 +167,6 @@ public class OrderItemImpl implements OrderItem {
         this.quantity = quantity;
     }
 
-    public List<CandidateItemOffer> getCandidateItemOffers() {
-        return candidateItemOffers;
-    }
-
-    public void setCandidateItemOffers(List<CandidateItemOffer> itemOffers) {
-        this.candidateItemOffers = itemOffers;
-    }
-
     public Category getCategory() {
         return category;
     }
@@ -177,15 +175,22 @@ public class OrderItemImpl implements OrderItem {
         this.category = category;
     }
 
-    public List<CandidateItemOffer> addCandidateItemOffer(CandidateItemOffer candidateOffer) {
-        // TODO: if stacked, add all of the items to the persisted structure and
-        // add just the stacked version
-        // to this collection
-        this.candidateItemOffers.add(candidateOffer);
+    public List<CandidateItemOffer> getCandidateItemOffers() {
         return candidateItemOffers;
     }
 
-    public void removeAllCandidateOffers() {
+    public void setCandidateItemOffers(List<CandidateItemOffer> candidateItemOffers) {
+    	this.candidateItemOffers = candidateItemOffers;
+    }
+
+    public void addCandidateItemOffer(CandidateItemOffer candidateItemOffer) {
+        // TODO: if stacked, add all of the items to the persisted structure and
+        // add just the stacked version
+        // to this collection
+        this.candidateItemOffers.add(candidateItemOffer);
+    }
+
+    public void removeAllCandidateItemOffers() {
         if (candidateItemOffers != null) {
             candidateItemOffers.clear();
         }
@@ -258,7 +263,7 @@ public class OrderItemImpl implements OrderItem {
 
     }
 
-    public List<OrderItemAdjustment> getOrderItemAdjustments() {
+    protected List<OrderItemAdjustment> getOrderItemAdjustments() {
         return this.orderItemAdjustments;
     }
 
@@ -266,24 +271,43 @@ public class OrderItemImpl implements OrderItem {
      * Adds the adjustment to the order item's adjustment list an discounts the
      * order item's adjustment price by the value of the adjustment.
      */
-    public List<OrderItemAdjustment> addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment) {
+    public void addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment) {
         if (this.orderItemAdjustments.size() == 0) {
             adjustmentPrice = retailPrice;
         }
         adjustmentPrice = adjustmentPrice.subtract(orderItemAdjustment.getValue().getAmount());
         this.orderItemAdjustments.add(orderItemAdjustment);
-        return this.orderItemAdjustments;
+        if (!orderItemAdjustment.getOffer().isCombinableWithOtherOffers()) {
+        	notCombinableOfferApplied = true;
+        }
+        hasOrderItemAdjustments = true;
     }
 
-    public void removeAllAdjustments() {
+    public int removeAllAdjustments() {
+    	int removedAdjustmentCount = 0;
         if (orderItemAdjustments != null) {
+        	removedAdjustmentCount = orderItemAdjustments.size();
             orderItemAdjustments.clear();
         }
         adjustmentPrice = null;
+        notCombinableOfferApplied = false;
+        hasOrderItemAdjustments = false;
+        return removedAdjustmentCount;
     }
 
-    public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {
+    protected void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments) {    	
         this.orderItemAdjustments = orderItemAdjustments;
+        if ((orderItemAdjustments == null) || (orderItemAdjustments.size() == 0)) {
+        	removeAllAdjustments();
+        } else {
+        	for (OrderItemAdjustment orderItemAdjustment : orderItemAdjustments) {
+        		if (!notCombinableOfferApplied) {
+        			addOrderItemAdjustment(orderItemAdjustment);
+        		} else {
+        			break;
+        		}
+        	}
+        }
     }
 
     public Money getAdjustmentValue() {
@@ -326,7 +350,15 @@ public class OrderItemImpl implements OrderItem {
         return !getPrice().equals(getRetailPrice());
     }
 
-    public int hashCode() {
+    public boolean isNotCombinableOfferApplied() {
+		return notCombinableOfferApplied;
+	}
+
+	public boolean isHasOrderItemAdjustments() {
+		return hasOrderItemAdjustments;
+	}
+
+	public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((adjustmentPrice == null) ? 0 : adjustmentPrice.hashCode());

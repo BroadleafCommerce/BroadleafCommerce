@@ -62,17 +62,19 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
-    public void removeAllCandidateOffers() {
+    public void removeAllCandidateItemOffers() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            discreteOrderItem.removeAllCandidateOffers();
+            discreteOrderItem.removeAllCandidateItemOffers();
         }
     }
 
     @Override
-    public void removeAllAdjustments() {
+    public int removeAllAdjustments() {
+    	int removedAdjustmentCount = 0;
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-            discreteOrderItem.removeAllAdjustments();
+        	removedAdjustmentCount = removedAdjustmentCount + discreteOrderItem.removeAllAdjustments();
         }
+        return removedAdjustmentCount;
     }
 
     @Override
