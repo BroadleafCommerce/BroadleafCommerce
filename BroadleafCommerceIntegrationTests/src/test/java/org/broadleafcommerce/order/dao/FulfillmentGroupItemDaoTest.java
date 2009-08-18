@@ -74,6 +74,7 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
 
     @Test(groups = "createItemFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class, dependsOnGroups = { "createOrder", "createCustomerAddress" })
     @Rollback(false)
+    @Transactional
     public void createDefaultFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
@@ -110,6 +111,7 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     }
 
     @Test(groups = { "readFulfillmentGroupItemsForFulfillmentGroup" }, dependsOnGroups = { "createFulfillmentGroupItem" })
+    @Transactional
     public void readFulfillmentGroupItemsForFulfillmentGroup() {
         List<FulfillmentGroupItem> fgis = fulfillmentGroupItemDao.readFulfillmentGroupItemsForFulfillmentGroup(fulfillmentGroup);
         assert fgis != null;
@@ -117,6 +119,7 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     }
 
     @Test(groups = { "readFulfillmentGroupItemsById" }, dependsOnGroups = { "createFulfillmentGroupItem" })
+    @Transactional
     public void readFulfillmentGroupItemsById() {
         FulfillmentGroupItem fgi = fulfillmentGroupItemDao.readFulfillmentGroupItemById(fulfillmentGroupItemId);
         assert fgi != null;

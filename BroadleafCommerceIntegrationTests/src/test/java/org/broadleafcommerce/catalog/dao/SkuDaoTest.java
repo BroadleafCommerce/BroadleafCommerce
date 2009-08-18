@@ -25,6 +25,7 @@ import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class SkuDaoTest extends BaseTest {
@@ -50,6 +51,7 @@ public class SkuDaoTest extends BaseTest {
     }
 
     @Test(groups = { "readFirstSku" }, dependsOnGroups = { "createSku" })
+    @Transactional
     public void readFirstSku() {
         Sku si = skuDao.readFirstSku();
         assert si != null;
@@ -57,6 +59,7 @@ public class SkuDaoTest extends BaseTest {
     }
 
     @Test(groups = { "readSkuById" }, dependsOnGroups = { "createSku" })
+    @Transactional
     public void readSkuById() {
         Sku item = skuDao.readSkuById(skuId);
         assert item != null;

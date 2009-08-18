@@ -26,6 +26,7 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
@@ -47,6 +48,8 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
     private OrderDao orderDao;
 
     @Test(groups = "createDefaultFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
+    @Transactional
+    @Rollback(false)
     public void createDefaultFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         Customer customer = createCustomerWithBasicOrderAndAddresses();
         Address address = (customerAddressDao.readActiveCustomerAddressesByCustomerId(customer.getId())).get(0).getAddress();
@@ -67,6 +70,7 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
     }
 
     @Test(groups = { "readDefaultFulfillmentGroupForOrder" }, dependsOnGroups = { "createDefaultFulfillmentGroup" })
+    @Transactional
     public void readDefaultFulfillmentGroupForOrder() {
         Order order = orderDao.readOrderById(orderId);
         assert order != null;
@@ -77,6 +81,7 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
     }
 
     @Test(groups = { "readDefaultFulfillmentGroupForId" }, dependsOnGroups = { "createDefaultFulfillmentGroup" })
+    @Transactional
     public void readDefaultFulfillmentGroupForId() {
         FulfillmentGroup fg = fulfillmentGroupDao.readFulfillmentGroupById(defaultFulfillmentGroupId);
         assert fg != null;
@@ -85,6 +90,7 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
     }
 
     @Test(groups = "createFulfillmentGroup", dataProvider = "basicFulfillmentGroup", dataProviderClass = FulfillmentGroupDataProvider.class)
+    @Transactional
     @Rollback(false)
     public void createFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         Customer customer = createCustomerWithBasicOrderAndAddresses();
@@ -106,6 +112,7 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
     }
 
     @Test(groups = { "readFulfillmentGroupsForId" }, dependsOnGroups = { "createFulfillmentGroup" })
+    @Transactional
     public void readFulfillmentGroupsForId() {
         FulfillmentGroup fg = fulfillmentGroupDao.readFulfillmentGroupById(fulfillmentGroupId);
         assert fg != null;
