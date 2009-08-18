@@ -82,8 +82,6 @@
     <module>BroadleafCommerceUSPS</module>
     <module>BroadleafCommerceUSPSSchemas</module>
     <module>BroadleafCommerceDemo</module>
-    <module>BroadleafCommerceAdminFlexCairngorm</module>
-    <module>BroadleafCommerceAdminFlex</module>
     <module>BroadleafCommerceAdmin</module>
     <module>BroadleafCommerceAdminWeb</module>
   </modules>
