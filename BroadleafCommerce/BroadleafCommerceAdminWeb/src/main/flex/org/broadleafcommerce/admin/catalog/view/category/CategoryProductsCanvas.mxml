@@ -15,44 +15,46 @@
 
 		[Bindable]
 		private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
-		
+
 		[Bindable]
-		private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel; 
-		 
-		 
+		private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
+
 		 private function handleProductsDataGridClick(event:MouseEvent):void{
 		 	var product:Product = Product(ProductsDataGrid(event.currentTarget).selectedItem);
 		 	viewProduct(product, false);
 		 }
-		 
+
 		 private function handleViewEditButtonClick(event:MouseEvent):void{
 		 	var product:Product = Product(categoryProductDataGrid.selectedItem);
-		 	viewProduct(product, true);		 	
-		 }		 
-		 
+		 	viewProduct(product, true);
+		 }
+
 		 private function viewProduct(product:Product, view:Boolean):void{
 		 	var epe:EditProductEvent = new EditProductEvent(product, view);
-		 	epe.dispatch();		 	
+		 	epe.dispatch();
 		 }
-		 
+
 	]]>
 </mx:Script>
 
 <!-- mx:Binding source="categoryModel.currentCategory.allProducts"
                    destination="categoryProductDataGrid.dataProvider" /-->
 <mx:Binding source="productModel.filteredCatalogProducts"
-            destination="categoryProductDataGrid.dataProvider" />                   
+            destination="categoryProductDataGrid.dataProvider" />
 
-	<mx:HBox height="100%" width="100%">
-		<mx:VBox height="100%">
-			<components1:ProductsDataGrid id="categoryProductDataGrid" click="handleProductsDataGridClick(event)" 
-				height="100%" width="100%"/>
-			<components:ProductFilter />
-		</mx:VBox>
-		<mx:VBox >
-			<mx:Button id="addButton" label="Add"/>
-			<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" />
-			<mx:Button id="removeButton" label="Remove"/>
-		</mx:VBox>
-	</mx:HBox>
+	<mx:VBox height="100%" width="100%" styleName="padding10">
+		<mx:HBox>
+			<components:ProductFilter/>
+			<mx:VRule
+				height="25"/>
+			<mx:Button id="addButton" label="Add" styleName="addButton"/>
+			<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" styleName="viewEditButton" />
+			<mx:Button id="removeButton" label="Remove" styleName="deleteButton"/>
+		</mx:HBox>
+		<components1:ProductsDataGrid id="categoryProductDataGrid" click="handleProductsDataGridClick(event)"
+			height="100%" width="100%"/>
+
+	</mx:VBox>
+
 </mx:Canvas>

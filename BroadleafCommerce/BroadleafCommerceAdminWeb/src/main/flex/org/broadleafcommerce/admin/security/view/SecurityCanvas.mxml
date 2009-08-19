@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:security="org.broadleafcommerce.admin.security.view.*"
 	xmlns:admins="org.broadleafcommerce.admin.security.view.admins.*"
 	xmlns:roles="org.broadleafcommerce.admin.security.view.roles.*"
@@ -17,19 +17,19 @@
 			import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
 			import org.broadleafcommerce.admin.security.model.SecurityModel;
 			//import com.adobeflexspy.FlexSpy;
-			
+
 			[Bindable]
 			private var securityModel:SecurityModel = SecurityModelLocator.getInstance().securityModel;
-			
+
 			private function creationComplete():void{
 				this.manageAdminsLink.selected = true;
 			}
-			
+
 			private function handleView(event:Event):void{
 				this.manageAdminsLink.selected = false;
 				this.manageRolesLink.selected = false;
 				this.managePermissionsLink.selected = false;
-				
+
 				if(event.target == this.manageAdminsLink){
 					this.manageAdminsLink.selected = true;
 					var vae:ViewAdminsEvent = new ViewAdminsEvent();
@@ -44,16 +44,17 @@
 					vpe.dispatch();
 				}
 			}
-			
+
 		]]>
-			
+
 	</mx:Script>
-	
+
 	<mx:Binding source="securityModel.viewState" destination="currentState" />
-	
+
 	<mx:VBox verticalGap="20"
-		width="100%">
-		
+		width="100%"
+		height="100%">
+
 		<mx:HBox
 			verticalAlign="middle">
 			<mx:LinkButton
@@ -71,37 +72,32 @@
 			<mx:LinkButton
 				id="managePermissionsLink"
 				label="Manage Permissions"
-				click="this.handleView(event)"/>				
+				click="this.handleView(event)"/>
 			<mx:VRule
 				height="10"/>
 			<!--mx:Button id="btnFlexSpy" label="FlexSpy" click="FlexSpy.show()" /-->
 		</mx:HBox>
-		<mx:Canvas id="workingAreaCanvas" 
+		<mx:ViewStack id="viewStack"
+			top="75" left="8" right="8" bottom="8"
 			width="100%"
 			height="100%">
-				<admins:AdminCanvas id="adminCanvas"/>
-				<roles:RoleCanvas id="roleCanvas"/>
-				<permissions:PermissionCanvas id="permissionCanvas"/>
-		</mx:Canvas>
+				<admins:AdminCanvas id="adminCanvas" width="100%" height="100%"/>
+				<roles:RoleCanvas id="roleCanvas" width="100%" height="100%"/>
+				<permissions:PermissionCanvas id="permissionCanvas" width="100%" height="100%"/>
+		</mx:ViewStack>
 	</mx:VBox>
-	
+
 	<mx:states>
 		<mx:State name="{SecurityModel.STATE_VIEW_ADMINS}">
-			<mx:SetProperty target="{adminCanvas}" name="visible" value="true" />
-			<mx:SetProperty target="{roleCanvas}" name="visible" value="false" />
-			<mx:SetProperty target="{permissionCanvas}" name="visible" value="false" />
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="0"/>
 		</mx:State>
 		<mx:State name="{SecurityModel.STATE_VIEW_ROLES}">
-			<mx:SetProperty target="{adminCanvas}" name="visible" value="false" />
-			<mx:SetProperty target="{roleCanvas}" name="visible" value="true" />
-			<mx:SetProperty target="{permissionCanvas}" name="visible" value="false" />
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="1"/>
 		</mx:State>
 		<mx:State name="{SecurityModel.STATE_VIEW_PERMISSIONS}">
-			<mx:SetProperty target="{adminCanvas}" name="visible" value="false" />
-			<mx:SetProperty target="{roleCanvas}" name="visible" value="false" />
-			<mx:SetProperty target="{permissionCanvas}" name="visible" value="true" />
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="2"/>
 		</mx:State>
 	</mx:states>
-	
+
 	<control:SecurityController />
 </mx:Canvas>

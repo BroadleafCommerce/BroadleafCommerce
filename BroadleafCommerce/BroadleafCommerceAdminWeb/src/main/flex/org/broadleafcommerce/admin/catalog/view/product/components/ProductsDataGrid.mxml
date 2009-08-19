@@ -4,7 +4,8 @@
 		<mx:columns>
 			<mx:DataGridColumn
 				dataField="id"
-				headerText="Id" />
+				headerText="Id"
+				width="50"/>
 			<mx:DataGridColumn
 				dataField="name"
 				headerText="Name"/>
