@@ -9,15 +9,7 @@
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.connection.autocommit" value="false"/>
-
-            <!-- This stuff is for caching... -->
-            <property name="hibernate.cache.use_second_level_cache" value="false"/>
-            <property name="hibernate.cache.use_query_cache" value="false"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect"/>
-            <property name="hibernate.archive.autodetection" value="false" />
         </properties>
 	</persistence-unit>
 	
@@ -26,15 +18,7 @@
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.transaction.flush_before_completion" value="false"/>
-            <property name="hibernate.connection.autocommit" value="false"/>
-
-            <!-- This stuff is for caching... -->
-            <property name="hibernate.cache.use_second_level_cache" value="false"/>
-            <property name="hibernate.cache.use_query_cache" value="false"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect"/>
-            <property name="hibernate.archive.autodetection" value="false" />
         </properties>
 	</persistence-unit>
 </persistence>

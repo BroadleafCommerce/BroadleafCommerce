@@ -33,37 +33,6 @@
 		<property name="url" value="jdbc:hsqldb:mem:broadleaf" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
-
-
-		<!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-		<property name="url" value="jdbc:mysql://localhost:3306/broadleafcommerce"/>
-		<property name="username" value="root"/>
-		<property name="password" value=""/>
-
-	--></bean>
-
-	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
-		<property name="persistenceUnitName" value="blPU"/>
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="generateDdl" value="true" />
-				<property name="showSql" value="true" />
-				<property name="databasePlatform" value="org.hibernate.dialect.HSQLDialect" />
-				<!--<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
-			--></bean>
-		</property>
-		<property name="jpaPropertyMap">
-            <map>
-            	<entry key="hibernate.hbm2ddl.auto" value="update"/>
-            	<entry key="hibernate.show_sql" value="true"/>
-                <entry key="hibernate.transaction.flush_before_completion" value="false"/>
-                <entry key="hibernate.connection.autocommit" value="false"/>
-                <entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
-                <entry key="hibernate.cache.use_second_level_cache" value="true"/>
-                <entry key="hibernate.cache.use_query_cache" value="true"/>
-            </map>
-        </property>
 	</bean>
 
 	<bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">

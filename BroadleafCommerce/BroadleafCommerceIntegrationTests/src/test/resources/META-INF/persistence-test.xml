@@ -7,7 +7,9 @@
 		<non-jta-data-source>jdbc/test</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-			<property name="hibernate.archive.autodetection" value="false" />
+			<property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
 	</persistence-unit>
 	
@@ -15,7 +17,9 @@
 		<non-jta-data-source>jdbc/testSecure</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-			<property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
 	</persistence-unit>
 </persistence>

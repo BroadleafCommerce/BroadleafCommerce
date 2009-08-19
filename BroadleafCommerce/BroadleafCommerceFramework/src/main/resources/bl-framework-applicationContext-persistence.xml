@@ -27,25 +27,11 @@
 	</bean>
 
 	<bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</property>
 		<property name="persistenceUnitManager" ref="blPersistenceUnitManager" />
 		<property name="persistenceUnitName" value="blSecurePU"/>
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="generateDdl" value="false" />
-				<property name="showSql" value="false" />
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
-			</bean>
-		</property>
-		<property name="jpaPropertyMap">
-            <map>
-            	<entry key="hibernate.show_sql" value="false"/>
-                <entry key="hibernate.transaction.flush_before_completion" value="false"/>
-                <entry key="hibernate.connection.autocommit" value="false"/>
-                <entry key="hibernate.cache.use_second_level_cache" value="false"/>
-                <entry key="hibernate.cache.use_query_cache" value="false"/>
-                <entry key="hibernate.archive.autodetection" value="false" />
-            </map>
-        </property>
 	</bean>
 
 	<bean id="blTransactionManagerSecureInfo" class="org.springframework.orm.jpa.JpaTransactionManager">
@@ -144,7 +130,7 @@
 		<aop:pointcut id="blRatingServiceOperation" expression="execution(* org.broadleafcommerce.rating.service.RatingService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRatingServiceOperation"/>
 	</aop:config>
-	
+
 	<aop:config>
 		<aop:pointcut id="blSearchServiceOperation" expression="execution(* org.broadleafcommerce.search.service.SearchService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSearchServiceOperation"/>
