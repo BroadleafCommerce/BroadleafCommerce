@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:HBox 
-	xmlns:mx="http://www.adobe.com/2006/mxml" 
+<mx:Canvas
+	xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:catalog="org.broadleafcommerce.admin.view.catalog.*"
 	xmlns:offer="org.broadleafcommerce.admin.view.offer.*"
 	xmlns:category="org.broadleafcommerce.admin.view.catalog.category.*"
-	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*" 
-	xmlns:helpers="org.broadleafcommerce.admin.core.view.helpers.*" 
+	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*"
+	xmlns:helpers="org.broadleafcommerce.admin.core.view.helpers.*"
 	xmlns:view="org.broadleafcommerce.admin.tools.view.*"
-	xmlns:security="org.broadleafcommerce.admin.security.view.*" 
-	width="100%" 
-	height="100%" 
-	creationPolicy="all"> 
-	
+	xmlns:security="org.broadleafcommerce.admin.security.view.*"
+	width="100%"
+	height="100%"
+	creationPolicy="all">
+
 	<helpers:AdminContentViewHelper id="adminContent" />
-	
-	<mx:LinkBar id="contentLinkBar"
-		height="100%" 
-		width="10%"  
-		dataProvider="contentViewStack"
-		direction="vertical"/>
-	<mx:ViewStack 
-		id="contentViewStack" 
-		width="90%" 
-		height="100%">
+
+	<mx:HBox left="320" verticalAlign="middle" top="10" horizontalGap="15">
+		<mx:Label text="Welcome Username"/>
+		<mx:Button icon="@Embed(source='/assets/images/arrow_refresh_small.png')" id="refreshBtn" height="32" cornerRadius="2" />
+		<mx:VRule height="45" />
+		<mx:ButtonBar dataProvider="{contentViewStack}">
+
+		</mx:ButtonBar>
+	</mx:HBox>
+
+	<mx:ViewStack id="contentViewStack" top="75" left="8" right="8" bottom="8">
 		<security:SecurityCanvas
 			id="securityCanvas"
-			label="Admins" 
-			height="100%" 
+			label="Users"
+			height="100%"
 			width="100%" />
 		<!--view:CodeTypeCanvas
 			id="codeTypeCanvas"
@@ -34,4 +35,4 @@
 			height="100%"
 			width="100%"/ -->
 	</mx:ViewStack>
-</mx:HBox>
+</mx:Canvas>

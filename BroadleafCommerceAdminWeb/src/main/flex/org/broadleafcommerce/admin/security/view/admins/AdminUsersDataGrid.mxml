@@ -9,7 +9,7 @@
 	    	import org.broadleafcommerce.admin.core.vo.security.AdminRole;
 	        import mx.controls.dataGridClasses.DataGridColumn;
 	        import mx.utils.ObjectUtil;
-	        
+
 	        private function role_labelFunc(item:Object, column:DataGridColumn):String {
 	        	var roleString:String = "";
 	        	var user:AdminUser = item as AdminUser;
@@ -23,7 +23,7 @@
 	        	}
 	            return roleString;
 	        }
-	        
+
 	       	private function handleViewEditButtonClick(event:Event):void{
 				var editUserModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, AdminAddEditModal , true));
 				AdminAddEditModal(editUserModal).editAdminUser = AdminUser(this.adminDataGrid.selectedItem);
@@ -31,14 +31,15 @@
 
 	    ]]>
 	</mx:Script>
-	<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml" 
-		id="adminDataGrid" 
-		dataProvider="{SecurityModelLocator.getInstance().adminUsers}" 
+	<mx:DataGrid xmlns:mx="http://www.adobe.com/2006/mxml"
+		id="adminDataGrid"
+		dataProvider="{SecurityModelLocator.getInstance().adminUsers}"
 		doubleClickEnabled="true"
 		itemDoubleClick="handleViewEditButtonClick(event)"
-		width="100%">
+		width="100%"
+		height="100%">
 		<mx:columns>
-			<mx:DataGridColumn dataField="id"  headerText="Admin User ID"/>		
+			<mx:DataGridColumn dataField="id"  headerText="Admin User ID"/>
 			<mx:DataGridColumn dataField="name"  headerText="Name"/>
 			<mx:DataGridColumn dataField="login"  headerText="Login"/>
 			<mx:DataGridColumn dataField="email"  headerText="Email"/>

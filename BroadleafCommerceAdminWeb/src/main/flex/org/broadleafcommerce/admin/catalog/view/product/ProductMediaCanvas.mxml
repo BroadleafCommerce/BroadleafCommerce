@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*" xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*"
+	xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*">
 
 <mx:Script>
 	<![CDATA[
@@ -10,8 +12,8 @@
 		import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 			[Bindable]
-			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;	
-	
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
 	]]>
 </mx:Script>
 

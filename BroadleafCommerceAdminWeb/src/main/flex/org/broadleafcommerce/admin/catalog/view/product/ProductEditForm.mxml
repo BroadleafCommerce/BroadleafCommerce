@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:view="org.broadleafcommerce.admin.view.*" width="100%" height="100%"
+	xmlns:view="org.broadleafcommerce.admin.view.*"
 	defaultButton="{saveButton}"
-	  xmlns:view1="org.broadleafcommerce.admin.core.view.*" 
-	  xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*" xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*">
+	xmlns:view1="org.broadleafcommerce.admin.core.view.*"
+	xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*"
+	xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*">
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.catalog.control.events.sku.SaveSkuEvent;
@@ -23,16 +24,16 @@
 			import mx.utils.ObjectUtil;
 			import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
-			
+
 			[Bindable]
-			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;	
-			
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
 			[Bindable]
 			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
-			
+
 			[Bindable]
-			private var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;		
-		
+			private var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;
+
 			private function handleSaveProduct(event:Event):void{
 				var product:Product = Product(ObjectUtil.copy(productModel.currentProduct));
 				if( product.id == 0){
@@ -59,7 +60,7 @@
 				skuModel.currentSku.discountable = discountableCheckbox.selected;
 				skuModel.currentSku.taxable = taxableCheckBox.selected;
 				product.allSkus.removeItemAt(0);
-				product.allSkus.addItemAt(skuModel.currentSku,0);						
+				product.allSkus.addItemAt(skuModel.currentSku,0);
 //				Sku(product.allSkus.getItemAt(0)).retailPrice.amount = Number(retailPriceText.text);
 //				Sku(product.allSkus.getItemAt(0)).salePrice.amount = Number(salePriceText.text);
 //				Sku(product.allSkus.getItemAt(0)).discountable = discountableCheckbox.selected;
@@ -67,15 +68,15 @@
 				new SaveProductEvent(product).dispatch();
 				new SaveSkuEvent(skuModel.currentSku).dispatch();
 //				new SaveSkuEvent(Sku(product.allSkus.getItemAt(0))).dispatch();
-				
+
 			}
-			
+
 			private function handleProductParentsListClick(event:MouseEvent):void{
 				// call add parent to product event
 				var aptpe:UpdateParentsOfProductEvent = new UpdateParentsOfProductEvent(productModel.currentProduct, new ArrayCollection(ProductParentsList(event.currentTarget).selectedItems));
 				aptpe.dispatch();
 			}
-			
+
 		]]>
 	</mx:Script>
 	<mx:Binding
@@ -110,7 +111,7 @@
 		destination="widthTextInput.text"/>
 	<mx:Binding
 		source="productModel.currentProduct.height.toString()"
-		destination="heightTextInput.text"/>		
+		destination="heightTextInput.text"/>
 	<mx:Binding
 		source="categoryModel.categoryArray"
 		destination="parentList.dataProvider" />
@@ -122,7 +123,7 @@
 		destination="defaultParentCategoryComboBox.dataProvider"  />
 	<mx:Binding
 		source="productModel.currentProduct.allParentCategories.getItemIndex(productModel.currentProduct.defaultCategory)"
-		destination="defaultParentCategoryComboBox.selectedIndex" />		
+		destination="defaultParentCategoryComboBox.selectedIndex" />
 	<mx:Binding
 		source="String(skuModel.currentSku.retailPrice.amount)"
 		destination="retailPriceText.text" />
@@ -134,94 +135,102 @@
 		destination="discountableCheckbox.selected" />
 	<mx:Binding
 		source="skuModel.currentSku.taxable"
-		destination="taxableCheckBox.selected" />				
-	
-	
-<mx:Form>
-		
-	<mx:FormItem 
-		label="Name:">
-		<mx:TextInput
-			id="nameTextInput"/>
-	</mx:FormItem>
-	<mx:FormItem 
-		label="Description:">
-		<mx:TextInput
-			id="descriptionTextInput"/>
-	</mx:FormItem>
-	<mx:FormItem 
-		label="Long Description:">
-		<mx:TextInput
-			id="longDescriptionTextInput"/>
-	</mx:FormItem>
-	<mx:FormItem 
-		label="Active Start Date:">
-		<view1:BroadleafCommerceDateField
-			id="activeStartDateDateField"/>
-	</mx:FormItem>
-	<mx:FormItem 
-		label="Active End Date:">
-		<view1:BroadleafCommerceDateField
-			id="activeEndDateDateField"/>
-	</mx:FormItem>
-	<mx:FormItem 
-		label="Model:">
-		<mx:TextInput
-			id="modelTextInput"/>
-	</mx:FormItem>
-	<mx:FormItem
-		label="Manufacturer:">
-		<mx:TextInput
-			id="manufacturerTextInput"/>
-	</mx:FormItem>
-	<mx:FormItem
-		label="Depth:">
-		<mx:TextInput
-			id="depthTextInput"/>
-	</mx:FormItem>
-	<mx:FormItem
-		label="Width:">
-			<mx:TextInput
-				id="widthTextInput"/>
-	</mx:FormItem>
-	<mx:FormItem
-		label="Height:">
-			<mx:TextInput
-				id="heightTextInput"/>
-	</mx:FormItem>
-	<mx:FormItem
-		label="Weight:">
-		<mx:TextInput
-			id="weightTextInput"/>		
-	</mx:FormItem>
-	<mx:FormItem>
-		<mx:Button 
-			id="saveButton"
-			label="Save"
-			click="handleSaveProduct(event)"/>
-	</mx:FormItem>
-</mx:Form>
-	<mx:FormItem label="Default Category Parent:" x="316" y="10">
-		<mx:ComboBox 
-			id="defaultParentCategoryComboBox"
-			labelField="name"
-			width="160"/>		
-	</mx:FormItem>
-	<mx:FormItem label="Retail Price:" x="316" y="266">
-		<mx:TextInput id="retailPriceText"  width="60"/>
-	</mx:FormItem>
-	<mx:FormItem label="Sale Price:" x="316" y="292" width="146">
-		<mx:TextInput id="salePriceText" />
-	</mx:FormItem>
-	<mx:FormItem label="Taxable: " x="316" y="318">
-		<mx:CheckBox id="taxableCheckBox"  width="77"/>
-	</mx:FormItem>
-	<mx:FormItem
-		label="Parent Categories" x="316" y="40" width="318" height="209">
-		<components1:ProductParentsList id="parentList" labelField="name" 
-			allowMultipleSelection="true"  width="175" height="205" click="handleProductParentsListClick(event)"/>
-	</mx:FormItem>
-	<mx:FormItem label="Discountable:" x="316" y="344" width="146">
-		<mx:CheckBox id="discountableCheckbox" />
-	</mx:FormItem>
+		destination="taxableCheckBox.selected" />
+
+
+	<mx:HBox>
+		<mx:VBox>
+			<mx:Form>
+				<mx:FormItem
+					label="Name:">
+					<mx:TextInput
+						id="nameTextInput" width="300"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Description:">
+					<mx:TextArea
+						id="descriptionTextInput" width="300" height="100"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Long Description:">
+					<mx:TextArea
+						id="longDescriptionTextInput" width="300" height="200"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Active Start Date:">
+					<view1:BroadleafCommerceDateField
+						id="activeStartDateDateField"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Active End Date:">
+					<view1:BroadleafCommerceDateField
+						id="activeEndDateDateField"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Model:">
+					<mx:TextInput
+						id="modelTextInput" width="300"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Manufacturer:">
+					<mx:TextInput
+						id="manufacturerTextInput" width="300"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Depth:">
+					<mx:TextInput
+						id="depthTextInput"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Width:">
+						<mx:TextInput
+							id="widthTextInput"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Height:">
+						<mx:TextInput
+							id="heightTextInput"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Weight:">
+					<mx:TextInput
+						id="weightTextInput"/>
+				</mx:FormItem>
+			</mx:Form>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Form>
+				<mx:FormItem label="Default Category Parent:">
+						<mx:ComboBox
+						id="defaultParentCategoryComboBox"
+						labelField="name"
+						/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Parent Categories" >
+					<components1:ProductParentsList id="parentList" labelField="name"
+						allowMultipleSelection="true" width="300" click="handleProductParentsListClick(event)"/>
+				</mx:FormItem>
+				<mx:FormItem label="Retail Price:">
+					<mx:TextInput id="retailPriceText" />
+				</mx:FormItem>
+				<mx:FormItem label="Sale Price:">
+					<mx:TextInput id="salePriceText" />
+				</mx:FormItem>
+				<mx:FormItem label="Taxable: ">
+					<mx:CheckBox id="taxableCheckBox" />
+				</mx:FormItem>
+				<mx:FormItem label="Discountable:" >
+					<mx:CheckBox id="discountableCheckbox" />
+				</mx:FormItem>
+
+				<mx:FormItem>
+					<mx:Button
+						id="saveButton"
+						label="Save"
+						click="handleSaveProduct(event)"/>
+				</mx:FormItem>
+			</mx:Form>
+		</mx:VBox>
+	</mx:HBox>
 </mx:Canvas>

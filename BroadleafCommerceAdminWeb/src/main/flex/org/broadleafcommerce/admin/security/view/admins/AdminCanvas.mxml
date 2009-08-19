@@ -2,7 +2,6 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:admins="org.broadleafcommerce.admin.security.view.admins.*"
 	xmlns:components="org.broadleafcommerce.util.components.*"
-	width="800" height="800"
 	creationComplete="creationComplete();">
 	<mx:Script>
 		<![CDATA[
@@ -16,16 +15,16 @@
 			import org.broadleafcommerce.admin.security.control.events.FindAllAdminUsersEvent;
 			import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
 			import mx.collections.ArrayCollection;
-			
+
 			private function creationComplete():void{
 				var faae:FindAllAdminUsersEvent = new FindAllAdminUsersEvent();
 				faae.dispatch();
-				
+
 				var fare:FindAllRolesEvent = new FindAllRolesEvent();
 				fare.dispatch();
 			}
-			
-			
+
+
 			private function handleAddClick(event:Event):void{
 				var newUserModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, AdminAddEditModal , true));
 			}
@@ -34,7 +33,7 @@
 				var editUserModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, AdminAddEditModal , true));
 				AdminAddEditModal(editUserModal).editAdminUser = AdminUser(this.adminUsersDataGrid.adminDataGrid.selectedItem);
 			}
-			
+
 			private function handleRemoveButtonClick(event:Event):void{
 				var deleteUser:DeleteAdminUserEvent = new DeleteAdminUserEvent(AdminUser(this.adminUsersDataGrid.adminDataGrid.selectedItem));
 				deleteUser.dispatch();
@@ -42,22 +41,20 @@
 		]]>
 	</mx:Script>
 
-    <mx:TabNavigator id="tnAdminCanvas"  width="100%" height="100%" paddingLeft="20" paddingBottom="20" paddingTop="20" paddingRight="20">
+    <mx:TabNavigator id="tnAdminCanvas"  width="100%" height="100%" styleName="padding10">
 
-        <mx:VBox label="Administrators">
-        	<admins:AdminSimpleSearchGrid />
-        	<mx:HBox width="100%" height="100%">
-				<admins:AdminUsersDataGrid
+        <mx:VBox height="100%" width="100%" label="Administrators">
+        	<mx:HBox>
+        		<admins:AdminSimpleSearchGrid />
+				<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/>
+				<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" styleName="viewEditButton" />
+				<mx:Button id="removeButton" label="Remove" styleName="deleteButton" click="handleRemoveButtonClick(event)"/>
+			</mx:HBox>
+			<admins:AdminUsersDataGrid
 					id="adminUsersDataGrid"
-					width="90%" 
+					width="100%"
 					height="100%" />
-				<mx:VBox width="10%">
-					<mx:Button id="addButton" label="Add" width="80" click="handleAddClick(event)"/>
-					<mx:Button id="viewEditButton" label="View/Edit" width="80" click="handleViewEditButtonClick(event)" />
-					<mx:Button id="removeButton" label="Remove" width="80" click="handleRemoveButtonClick(event)"/>
-				</mx:VBox>	        		
-        	</mx:HBox>
         </mx:VBox>
-        
+
     </mx:TabNavigator>
 </mx:Canvas>
