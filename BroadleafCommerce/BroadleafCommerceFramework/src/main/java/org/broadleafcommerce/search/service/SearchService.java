@@ -26,6 +26,10 @@ public interface SearchService {
 
     public List<Product> performSearch(String input);
 
-    public SearchIntercept getInterceptForTerm(String term);
+    public List<SearchIntercept> getAllSearchIntercepts();
 
+    public SearchIntercept getInterceptForTerm(String term);
+    public void createSearchIntercept(SearchIntercept intercept);
+    public void updateSearchIntercept(SearchIntercept intercept);
+    public void deleteSearchIntercept(SearchIntercept intercept);
 }

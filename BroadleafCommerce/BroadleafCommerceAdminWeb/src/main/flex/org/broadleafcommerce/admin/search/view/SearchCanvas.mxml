@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="org.broadleafcommerce.admin.view.*" 
+	xmlns:wizard="org.broadleafcommerce.admin.view.components.wizard.*" 
+	xmlns:components="org.broadleafcommerce.admin.view.components.*" 
+	xmlns:search="org.broadleafcommerce.admin.search.view.*" 
+	xmlns:control="org.broadleafcommerce.admin.search.control.*" 
+	creationComplete="creationComplete();"
+	>
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.search.control.events.FindAllSearchInterceptsEvent;
+			import org.broadleafcommerce.admin.search.model.SearchModelLocator;
+			import org.broadleafcommerce.admin.search.model.SearchModel;
+			import org.broadleafcommerce.admin.search.vo.SearchIntercept;
+			import mx.containers.TitleWindow;
+			import mx.managers.PopUpManager;
+			import mx.core.IFlexDisplayObject;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+
+			[Bindable]
+			private var searchModel:SearchModel = SearchModelLocator.getInstance().searchModel;
+		
+			private function handleNewClick(event:Event):void{
+				var newInterceptModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, SearchInterceptAddEditModal, true));
+				SearchInterceptAddEditModal(newInterceptModal).searchIntercept = SearchIntercept(this.searchInterceptDataGrid.selectedItem);
+			}
+			
+			private function handleSearchInterceptDataGridDoubleClick(event:Event):void{
+				var newInterceptModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, SearchInterceptAddEditModal, true));
+				SearchInterceptAddEditModal(newInterceptModal).searchIntercept = SearchIntercept(this.searchInterceptDataGrid.selectedItem);
+			}
+			
+			private function creationComplete():void{
+				var fasie:FindAllSearchInterceptsEvent = new FindAllSearchInterceptsEvent();
+				fasie.dispatch();
+			}
+			
+		]]>
+	</mx:Script> 
+	<mx:Binding
+		source="this.searchModel.searchInterceptList"
+		destination="this.searchInterceptDataGrid.dataProvider"/>
+	<mx:VBox 
+		verticalGap="20"
+		width="100%">
+		<mx:Button 
+			x="10" 
+			y="10" 
+			label="New Search Intercept" 
+			click="handleNewClick(event)"/>
+		<search:SearchInterceptDataGrid 
+			id="searchInterceptDataGrid"
+			width="75%" 
+			height="75%" 
+			doubleClickEnabled="true" 
+			doubleClick="handleSearchInterceptDataGridDoubleClick(event)"/> 
+	</mx:VBox>
+</mx:Canvas>

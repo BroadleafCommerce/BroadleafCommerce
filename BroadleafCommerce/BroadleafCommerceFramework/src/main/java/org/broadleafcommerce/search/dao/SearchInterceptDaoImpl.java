@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.search.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -40,6 +42,32 @@ public class SearchInterceptDaoImpl implements SearchInterceptDao {
         }
 
         return result;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<SearchIntercept> findAllIntercepts() {
+        Query query = em.createNamedQuery("BC_READ_ALL_SEARCH_INTERCEPTS");
+        List<SearchIntercept> result;
+        try {
+            result = (List<SearchIntercept>) query.getResultList();
+        } catch (NoResultException e) {
+            result = null;
+        }
+
+        return result;
+        
+    }
+
+    public void createIntercept(SearchIntercept intercept) {
+        em.persist(intercept);
+    }
+
+    public void deleteIntercept(SearchIntercept intercept) {
+        em.remove(intercept);
+    }
+
+    public void updateIntercept(SearchIntercept intercept) {
+        em.merge(intercept);
     }
 
 }

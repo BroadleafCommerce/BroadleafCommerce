@@ -144,6 +144,11 @@
 		<aop:pointcut id="blRatingServiceOperation" expression="execution(* org.broadleafcommerce.rating.service.RatingService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRatingServiceOperation"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blSearchServiceOperation" expression="execution(* org.broadleafcommerce.search.service.SearchService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSearchServiceOperation"/>
+	</aop:config>
 
     <bean id="blCategoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>

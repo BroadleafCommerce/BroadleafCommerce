@@ -8,4 +8,8 @@
 		       WHERE  searchIntercept.term = :searchTerm</query>
 	</named-query>
 
+	<named-query name="BC_READ_ALL_SEARCH_INTERCEPTS" >
+		<query>SELECT searchIntercept FROM org.broadleafcommerce.search.domain.SearchIntercept searchIntercept</query>
+	</named-query>
+
 </entity-mappings>
