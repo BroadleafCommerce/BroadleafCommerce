@@ -63,27 +63,11 @@
 	</bean>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+		</property>
 		<property name="persistenceUnitManager" ref="blPersistenceUnitManager"/>
 		<property name="persistenceUnitName" value="blPU"/>
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="generateDdl" value="false" />
-				<property name="showSql" value="false" />
-				<property name="databasePlatform" value="org.hibernate.dialect.MySQLInnoDBDialect" />
-			</bean>
-		</property>
-		<property name="jpaPropertyMap">
-            <map>
-            	<entry key="hibernate.show_sql" value="false"/>
-                <entry key="hibernate.transaction.flush_before_completion" value="false"/>
-                <entry key="hibernate.connection.autocommit" value="false"/>
-                <entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
-                <entry key="hibernate.cache.use_second_level_cache" value="true"/>
-                <entry key="hibernate.cache.use_query_cache" value="true"/>
-                <entry key="hibernate.generate_statistics" value="true" />
-                <entry key="hibernate.archive.autodetection" value="false" />
-            </map>
-        </property>
 	</bean>
 
 	<bean id="blTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

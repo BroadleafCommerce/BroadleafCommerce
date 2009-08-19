@@ -18,6 +18,7 @@ package org.broadleafcommerce.extensibility.jpa;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import javax.persistence.spi.PersistenceUnitInfo;
 
@@ -75,7 +76,16 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         }
         temp.setJtaDataSource(newPU.getJtaDataSource());
         temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
-        temp.setProperties(newPU.getProperties());
+        if (temp.getProperties() == null) {
+        	temp.setProperties(newPU.getProperties());
+        } else {
+        	Properties props = newPU.getProperties();
+        	if (props != null) {
+        		for (Object key : props.keySet()) {
+        			temp.getProperties().setProperty((String) key, props.getProperty((String) key)); 
+        		}
+        	}
+        }
         temp.setTransactionType(newPU.getTransactionType());
     }
 

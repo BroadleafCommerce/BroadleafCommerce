@@ -12,7 +12,12 @@
 		<class>org.broadleafcommerce.payment.domain.GiftCardPaymentInfoImpl</class>
 		<exclude-unlisted-classes/>
 		<properties>
-			<property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.transaction.flush_before_completion" value="false"/>
+            <property name="hibernate.connection.autocommit" value="false"/>
+            <property name="hibernate.cache.use_second_level_cache" value="false"/>
+            <property name="hibernate.cache.use_query_cache" value="false"/>
+            <property name="hibernate.archive.autodetection" value="false" />
         </properties>
 	</persistence-unit>
 </persistence>
