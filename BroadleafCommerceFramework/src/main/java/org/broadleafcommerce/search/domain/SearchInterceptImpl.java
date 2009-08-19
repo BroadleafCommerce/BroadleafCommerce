@@ -66,4 +66,10 @@ public class SearchInterceptImpl implements SearchIntercept {
     public void setRedirect(String redirect) {
         this.redirect = redirect;
     }
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

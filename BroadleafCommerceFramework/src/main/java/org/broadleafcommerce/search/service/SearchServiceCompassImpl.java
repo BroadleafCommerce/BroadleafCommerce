@@ -34,6 +34,7 @@ import org.compass.core.engine.SearchEngineIndexManager;
 import org.springframework.stereotype.Service;
 
 /**
+ * @author dmclain
  *
  */
 @Service("blSearchService")
@@ -79,6 +80,22 @@ public class SearchServiceCompassImpl implements SearchService {
 
     public SearchIntercept getInterceptForTerm(String term) {
         return searchInterceptDao.findInterceptByTerm(term);
+    }
+
+    public List<SearchIntercept> getAllSearchIntercepts() {
+        return searchInterceptDao.findAllIntercepts();
+    }
+
+    public void createSearchIntercept(SearchIntercept intercept) {
+        searchInterceptDao.createIntercept(intercept);
+    }
+
+    public void deleteSearchIntercept(SearchIntercept intercept) {
+        searchInterceptDao.deleteIntercept(intercept);
+    }
+
+    public void updateSearchIntercept(SearchIntercept intercept) {
+        searchInterceptDao.updateIntercept(intercept);
     }
 
 }

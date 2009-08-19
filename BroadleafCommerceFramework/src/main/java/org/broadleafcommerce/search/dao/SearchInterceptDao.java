@@ -15,8 +15,14 @@
  */
 package org.broadleafcommerce.search.dao;
 
+import java.util.List;
+
 import org.broadleafcommerce.search.domain.SearchIntercept;
 
 public interface SearchInterceptDao {
     public SearchIntercept findInterceptByTerm(String term);
+    public List<SearchIntercept> findAllIntercepts();
+    public void createIntercept(SearchIntercept intercept);
+    public void updateIntercept(SearchIntercept intercept);
+    public void deleteIntercept(SearchIntercept intercept);
 }
