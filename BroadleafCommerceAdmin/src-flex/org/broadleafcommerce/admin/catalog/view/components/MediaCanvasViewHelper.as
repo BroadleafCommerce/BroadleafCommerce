@@ -12,6 +12,7 @@ package org.broadleafcommerce.admin.catalog.view.components
 	
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.MediaModel;
+	import org.broadleafcommerce.admin.catalog.view.category.CategoryCanvas;
 	import org.broadleafcommerce.admin.catalog.vo.Media;
 
 	public class MediaCanvasViewHelper extends ViewHelper
@@ -29,6 +30,11 @@ package org.broadleafcommerce.admin.catalog.view.components
             fileRef.addEventListener(Event.SELECT, selectHandler);
             fileRef.addEventListener(Event.COMPLETE, completeHandler);
             					
+		}
+		
+		public function editItem(index:int):void{
+			MediaCanvas(CategoryCanvas(view).categoryMediaCanvas).mediaDataGrid.editedItemPosition = {columnIndex:0,rowIndex : index};
+			//MediaCanvas(view).mediaDataGrid.se
 		}
 
 		
@@ -58,8 +64,13 @@ package org.broadleafcommerce.admin.catalog.view.components
 		    }
 		}
 
+
 		private function completeHandler(event:Event):void {
-				this.media.url = directory+fileRef.name;	    
+				this.media.url = directory+fileRef.name;
+				// var mlr:MediaListRenderer = MediaListRenderer(MediaCanvas(CategoryCanvas(view).categoryMediaCanvas).mediaDataGrid.itemEditorInstance);
+				// mlr.handleEdit();
+				// mlr.urlLabelEdit.text = directory+fileRef.name;
+//				MediaCanvas(CategoryCanvas(view).categoryMediaCanvas).mediaDataGrid.editedItemPosition = MediaCanvas(CategoryCanvas(view).categoryMediaCanvas).mediaDataGrid.editedItemPosition; 	    
 //			Alert.show("Upload complete");
 		    trace("uploaded");
 		}						

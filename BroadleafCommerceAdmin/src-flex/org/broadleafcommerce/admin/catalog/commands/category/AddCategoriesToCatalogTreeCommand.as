@@ -4,9 +4,10 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
 	import mx.collections.ArrayCollection;
-	import mx.utils.ObjectUtil;
 	
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
+	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 
 	public class AddCategoriesToCatalogTreeCommand implements Command
@@ -18,6 +19,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("AddCategoriesToCatalogTreeCommand.execute()");
 			var actce:AddCategoriesToCatalogTreeEvent = AddCategoriesToCatalogTreeEvent(event);
 			var rawCats:ArrayCollection = actce.categoryArray;
 			var rootCats:ArrayCollection = actce.catalogTree;
@@ -43,6 +45,10 @@ package org.broadleafcommerce.admin.catalog.commands.category
 				}else{
 					rootCats.addItem(category);
 				}
+			}
+			if(CatalogModelLocator.getInstance().categoryModel.currentCategory != null){
+				var ece:EditCategoryEvent = new EditCategoryEvent(CatalogModelLocator.getInstance().categoryModel.currentCategory);
+				ece.dispatch();
 			}
 			
 		}

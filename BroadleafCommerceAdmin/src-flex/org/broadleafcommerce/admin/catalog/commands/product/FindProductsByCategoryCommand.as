@@ -21,6 +21,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("FindProductsByCategoryCommand.execute()");
 			var fpfce:FindProductsByCategoryEvent = FindProductsByCategoryEvent(event);
 			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
 			delegate.findActiveProductsByCategory(fpfce.category);
@@ -28,6 +29,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 
 		public function result(data:Object):void
 		{
+			trace("FindProductsByCategoryCommand.result()");
 			var event:ResultEvent = ResultEvent(data);
 			CatalogModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
 			CatalogModelLocator.getInstance().productModel.filteredCatalogProducts = ArrayCollection(event.result);
@@ -35,6 +37,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		
 		public function fault(info:Object):void
 		{
+			trace("FindProductsByCategoryCommand.fault()");
 			var event:FaultEvent = FaultEvent(info);
 			Alert.show("Error: "+ event);
 		}

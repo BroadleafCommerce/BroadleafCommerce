@@ -7,6 +7,9 @@
 	creationComplete="handleCreationComplete()" xmlns:category1="org.broadleafcommerce.admin.catalog.view.category.*" xmlns:components="org.broadleafcommerce.admin.catalog.view.category.components.*" xmlns:components1="org.broadleafcommerce.admin.catalog.view.components.*">
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.List;
+			import org.broadleafcommerce.admin.catalog.view.components.MediaDataGridItemRenderer;
+			import org.broadleafcommerce.admin.catalog.vo.Media;
 			import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 			import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoryMediaEvent;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
@@ -42,6 +45,9 @@
 			}
 			
 			private function handleSaveClick(event:Event):void{
+				var newMedia:Media = Media(List(MediaCanvas(event.currentTarget).mediaDataGrid).selectedItem);
+				
+				categoryModel.currentCategory.categoryMedia[newMedia.key] = newMedia;
 				var sce:SaveCategoryEvent = new SaveCategoryEvent(categoryModel.currentCategory);
 				sce.dispatch();
 			}

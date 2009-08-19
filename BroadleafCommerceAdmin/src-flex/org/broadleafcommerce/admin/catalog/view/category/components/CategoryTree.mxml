@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Tree xmlns:mx="http://www.adobe.com/2006/mxml"
 		labelField="name"
+		dragEnabled="true"
+		dropEnabled="true"
 		itemClick="handleItemClick(event)"
 		dataDescriptor="{new CategoryTreeDataDescriptor()}"
 		dataChange="handleDataChange()"

@@ -15,6 +15,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	public class SaveCategoryCommand implements Command, IResponder{
 		
 		public function execute(event:CairngormEvent):void{
+			trace("execute : ");
 			var scce:SaveCategoryEvent = SaveCategoryEvent(event);
 			var category:Category = scce.category;
 			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);

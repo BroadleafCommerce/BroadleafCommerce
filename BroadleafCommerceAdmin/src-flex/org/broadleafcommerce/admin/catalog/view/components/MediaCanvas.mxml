@@ -7,6 +7,7 @@
 </mx:Metadata>
 <mx:Script>
 	<![CDATA[
+		import mx.controls.Alert;
 		import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 		import mx.events.ListEventReason;
 		import mx.events.ListEvent;
@@ -45,18 +46,81 @@
 		}
 		
 		private function handleItemEdit(event:ListEvent):void{
-			// Check the reason for the event.
-            if (event.reason == ListEventReason.CANCELLED){
-            	// Do not update cell.
-                return;
-			}
             event.preventDefault();
-			Media(mediaDataGrid.editedItemRenderer.data).label = 
-			 	MediaEditRenderer(List(event.target).itemEditorInstance).labelLabel.text;
-			Media(mediaDataGrid.editedItemRenderer.data).name =
-				MediaEditRenderer(List(event.target).itemEditorInstance).nameLabel.text;
-			this.dispatchEvent(new Event("clickSave"));							
+			var media:Media = Media(mediaDataGrid.editedItemRenderer.data);
+			var editor:MediaEditRenderer = MediaEditRenderer(List(event.target).itemEditorInstance);
+			if(editor.action == "save"){				
+				if(editor.labelLabel.text != "" &&
+				   editor.nameLabel.text != "" &&
+				   editor.keyText.selectedIndex > -1) {
+					media.label = editor.labelLabel.text;
+					media.name = editor.nameLabel.text;
+					media.key = editor.keyText.selectedItem.key;
+					mediaDataGrid.destroyItemEditor();										   	
+					//this.dispatchEvent(new Event("clickSave"));
+					
+				}
+				if(editor.action == "upload"){
+					mediaDataGrid.editedItemPosition = mediaDataGrid.editedItemPosition;
+				}
+				if(editor.action == "ucomplete"){
+					Alert.show("state ucomplete");						
+				}
+				if(editor.action == "none"){
+					if(media.id < 0){				
+						ArrayCollection(dataProvider).removeItemAt(mediaDataGrid.selectedIndex);
+					}
+					mediaDataGrid.destroyItemEditor();
+				}
+			}				
 		}
+		
+		private function handleItemEditEnd(event:Event):void{
+			event.preventDefault();
+		}
+		
+		private function handleDataChange(event:Event):void{
+			Alert.show("data change");
+		}
+		
+		private function handleItemEditBegin(event:Event):void{
+			event.preventDefault();
+//			if(event.target.id != "cancelButton" && Media(ListEvent(event).itemRenderer.data).id < 0){
+//				MediaListRenderer(ListEvent(event).itemRenderer).handleEdit();
+//			}
+		}
+		
+		private function handleClick(event:Event):void{
+			event.preventDefault();
+			if(event.target.hasOwnProperty("id") ){
+				var media:Media = Media(mediaDataGrid.selectedItem);				
+				if(event.target.id == "editButton" || event.target.id == "uploadButton"){
+					mediaDataGrid.editedItemPosition = {columnIndex:0, rowIndex:mediaDataGrid.selectedIndex};
+				}
+				if(event.target.id == "saveButton"){
+					//save stuff
+				var editor:MediaListRenderer = MediaListRenderer(List(event.target.parentDocument).itemEditorInstance);
+				if(editor.labelLabelEdit.text != "" &&
+				   editor.nameLabelEdit.text != "" &&
+				   editor.keyTextBox.selectedIndex > -1 &&
+				   editor.urlLabelEdit.text != "") {					
+						this.dispatchEvent(new Event("clickSave"));
+						mediaDataGrid.destroyItemEditor();
+				   }else{
+				   	Alert.show("Please fill out all Fields");
+				   }
+					
+				}
+				if(event.target.id == "cancelButton"){
+					if(media.id < -1){
+						ArrayCollection(dataProvider).removeItemAt(mediaDataGrid.selectedIndex);						
+					}
+					mediaDataGrid.destroyItemEditor();
+				}
+		}
+		}
+		
+		// editable="true" itemEditEnd="handleItemEdit(event)" 
 	]]>
 </mx:Script>
 
@@ -64,9 +128,13 @@
             destination="mediaDataGrid.dataProvider" />
                         
 	<mx:HBox width="100%" height="100%">		
-	<mx:List id="mediaDataGrid" width="100%" height="100%" editable="true" itemEditEnd="handleItemEdit(event)" 
+	<mx:List id="mediaDataGrid" width="100%" height="100%" labelField=""  
+		editable="true" rendererIsEditor="true" editorDataField="editedData"
 		itemRenderer="org.broadleafcommerce.admin.catalog.view.components.MediaListRenderer"
-		 itemEditor="org.broadleafcommerce.admin.catalog.view.components.MediaEditRenderer" />
+		dataChange="handleDataChange(event)"  
+		itemEditEnd="handleItemEditEnd(event)"
+		itemEditBegin="handleItemEditBegin(event)"
+		click="handleClick(event)" />
 		 
 		 
 <!-- 

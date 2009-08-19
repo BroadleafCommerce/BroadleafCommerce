@@ -20,6 +20,7 @@ package org.broadleafcommerce.admin.catalog.commands
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("execute : ");
 			var currentViewState:String = CatalogCanvasViewHelper(ViewLocator.getInstance().getViewHelper("catalogCanvas")).getViewIndex();
 			var categoryViewState:String = CatalogModel.STATE_VIEW_CATEGORY;
 			var productViewState:String = CatalogModel.STATE_VIEW_PRODUCT;

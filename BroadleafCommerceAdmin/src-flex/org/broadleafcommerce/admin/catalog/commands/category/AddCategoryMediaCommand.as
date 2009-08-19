@@ -2,10 +2,13 @@ package org.broadleafcommerce.admin.catalog.commands.category
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.adobe.cairngorm.view.ViewLocator;
+	
+	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.catalog.view.components.MediaCanvasViewHelper;
 	import org.broadleafcommerce.admin.catalog.vo.Media;
-	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 
 	public class AddCategoryMediaCommand implements Command
 	{
@@ -15,8 +18,11 @@ package org.broadleafcommerce.admin.catalog.commands.category
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("execute : ");
 			var newMedia:Media = new Media();
-			CatalogModelLocator.getInstance().categoryModel.categoryMedia.addItem(newMedia);
+			var categoryMedia:ArrayCollection = CatalogModelLocator.getInstance().categoryModel.categoryMedia; 
+			categoryMedia.addItem(newMedia);
+			MediaCanvasViewHelper(ViewLocator.getInstance().getViewHelper("categoryMediaCanvasViewHelper")).editItem(categoryMedia.length-1);
 //			var currentCategory:Category = CatalogModelLocator.getInstance().categoryModel.currentCategory;
 //			currentCategory.categoryMedia["new"] = newMedia;
 			
