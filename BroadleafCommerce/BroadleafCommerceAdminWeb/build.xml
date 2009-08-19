@@ -76,6 +76,11 @@
 			<param name="module" value="OfferModule" />
 		</antcall>
 		
+		<antcall target="build-module">
+			<param name="module.dir" value="modules/search" />
+			<param name="module" value="SearchModule" />
+		</antcall>
+		
 		
 		<html-wrapper
 			swf="BroadleafCommerceAdmin"
@@ -174,4 +179,5 @@
 	<target name="stop-tomcat">
 		<ant antfile="${internal.build.file}" target="stop-tomcat" />
 	</target>
+
 </project>
