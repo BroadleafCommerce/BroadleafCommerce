@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:components="org.broadleafcommerce.util.components.*"	
-	width="700" 
-	height="400" 	
+	xmlns:components="org.broadleafcommerce.util.components.*"
+	width="700"
+	height="400"
 	showCloseButton="true"
-	headerColors="[#666666, #000000]"
-	close="PopUpManager.removePopUp(this)" 
+	close="PopUpManager.removePopUp(this)"
 	creationComplete="creationComplete()"
 	verticalAlign="middle" horizontalAlign="center">
-	
+
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.security.view.roles.RoleAddEditModal;
@@ -19,13 +18,13 @@
 			import org.broadleafcommerce.admin.core.vo.security.AdminUser;
 			import org.broadleafcommerce.admin.security.control.events.SaveAdminPermissionEvent;
 			import mx.managers.PopUpManager;
-			
+
 			[Bindable]
 			public var editAdminUser:AdminUser;
-			
+
 			private function creationComplete():void {
 				PopUpManager.centerPopUp(this);
-				
+
 				if (editAdminUser != null) {
 					this.title = "Edit Administrator User";
 					this.formHeading.label = "Editing " + editAdminUser.name;
@@ -40,7 +39,7 @@
 							}
 						}
 					}
-					
+
 					this.roleList.selectedIndices = selectedRoles;
 					this.buttonUpdate.visible = true;
 				} else {
@@ -49,11 +48,11 @@
 					this.buttonSave.visible = true;
 				}
 			}
-			
+
 			private function handleNewRoleClick(event:Event):void{
 				var newRoleModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, RoleAddEditModal , true));
 			}
-			
+
 			private function handleUpdateClick(event:Event):void{
 				editAdminUser.name = this.txtName.text;
 				editAdminUser.email = this.txtEmail.text;
@@ -61,13 +60,13 @@
 				editAdminUser.password = this.txtPassword.text;
 				var allRoles:ArrayCollection = new ArrayCollection(this.roleList.selectedItems);
 				editAdminUser.allRoles = allRoles;
-				
+
 				var saveAdmin:SaveAdminUserEvent = new SaveAdminUserEvent(editAdminUser);
 				saveAdmin.dispatch();
-				
+
 				PopUpManager.removePopUp(this);
 			}
-						
+
 			private function handleSaveClick(event:Event):void{
 				var adminUser:AdminUser = new AdminUser();
 				adminUser.id = null;
@@ -77,35 +76,35 @@
 				adminUser.password = this.txtPassword.text;
 				var roles:ArrayCollection = new ArrayCollection(this.roleList.selectedItems);
 				adminUser.allRoles = roles;
-				
+
 				var saveAdmin:SaveAdminUserEvent = new SaveAdminUserEvent(adminUser);
 				saveAdmin.dispatch();
-				
+
 				PopUpManager.removePopUp(this);
 			}
 		]]>
 	</mx:Script>
-    <mx:StringValidator 
+    <mx:StringValidator
         id="nameValidator"
-        source="{txtName}" 
+        source="{txtName}"
         property="text"
         minLength="2"
     />
-    <mx:StringValidator 
+    <mx:StringValidator
         id="loginValidator"
-        source="{txtLogin}" 
+        source="{txtLogin}"
         property="text"
         minLength="2"
     />
-    <mx:StringValidator 
+    <mx:StringValidator
         id="emailValidator"
-        source="{txtEmail}" 
+        source="{txtEmail}"
         property="text"
         minLength="2"
-    />    	
-    <mx:VBox label="Administrator Details" verticalAlign="middle" horizontalAlign="right">
+    />
+    <mx:VBox label="Administrator Details" verticalAlign="middle" horizontalAlign="right" >
         <mx:VBox width="100%">
-        	<mx:FormHeading id="formHeading"/>	            	
+        	<mx:FormHeading id="formHeading"/>
         	<mx:HBox>
                 <mx:Form width="350">
                     <mx:FormItem label="Name">
@@ -127,16 +126,16 @@
 
                 <mx:VBox height="100%">
 	                <mx:Label text="Roles"/>
-		            <components:CheckBoxList id="roleList" allowMultipleSelection="true" dataProvider="{SecurityModelLocator.getInstance().adminRoles}" labelField="name" 
+		            <components:CheckBoxList id="roleList" allowMultipleSelection="true" dataProvider="{SecurityModelLocator.getInstance().adminRoles}" labelField="name"
 	       				width="300">
 	                </components:CheckBoxList>
 	               	<mx:LinkButton label="Create New Role" click="handleNewRoleClick(event)"/>
 	            </mx:VBox>
-            
+
         	</mx:HBox>
         </mx:VBox>
-        
-        
+
+
      	<mx:Button label="Save" click="handleSaveClick(event)" id="buttonSave" visible="false"/>
      	<mx:Button label="Update" click="handleUpdateClick(event)" id="buttonUpdate" visible="false"/>
     </mx:VBox>
