@@ -9,9 +9,9 @@ package org.broadleafcommerce.admin.offers.control
 	import org.broadleafcommerce.admin.offers.control.events.FindAllOffersEvent;
 	import org.broadleafcommerce.admin.offers.control.events.ShowOfferWindowEvent;
 	
-	public class BlcAdminOfferController extends FrontController
+	public class OfferController extends FrontController
 	{
-		public function BlcAdminOfferController()
+		public function OfferController()
 		{
 			super();
 			addCommand(FindAllOffersEvent.EVENT_FIND_ALL_OFFERS, FindAllOffersCommand);

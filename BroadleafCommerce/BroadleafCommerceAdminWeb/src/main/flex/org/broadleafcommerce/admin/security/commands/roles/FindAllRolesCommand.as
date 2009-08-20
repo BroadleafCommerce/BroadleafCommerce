@@ -9,14 +9,14 @@ package org.broadleafcommerce.admin.security.commands.roles
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 
-	import org.broadleafcommerce.admin.security.business.BroadleafCommerceAdminSecurityServiceDelegate;
+	import org.broadleafcommerce.admin.security.business.SecurityServiceDelegate;
 	import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
 
 	public class FindAllRolesCommand implements ICommand, IResponder
 	{
 		public function execute(event:CairngormEvent):void
 		{
-			var delegate:BroadleafCommerceAdminSecurityServiceDelegate = new BroadleafCommerceAdminSecurityServiceDelegate(this);
+			var delegate:SecurityServiceDelegate = new SecurityServiceDelegate(this);
 			delegate.findAllAdminRoles();
 		}
 

@@ -17,9 +17,9 @@ package org.broadleafcommerce.admin.tools.control
 	import org.broadleafcommerce.admin.tools.control.events.codetype.SaveCodeTypeEvent;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.SearchCodeTypesEvent;
 
-	public class BroadleafCommerceAdminToolsController extends FrontController
+	public class ToolsController extends FrontController
 	{
-		public function BroadleafCommerceAdminToolsController()
+		public function ToolsController()
 		{
 			super();
 			addCommand(FindAllCodeTypesEvent.EVENT_FIND_ALL_CODE_TYPES, FindAllCodeTypesCommand);

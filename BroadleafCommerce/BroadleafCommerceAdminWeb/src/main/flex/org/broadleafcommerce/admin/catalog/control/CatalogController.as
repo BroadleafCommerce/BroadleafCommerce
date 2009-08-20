@@ -53,9 +53,9 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.control.events.sku.NewSkuEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.sku.SaveSkuEvent;
 	
-	public class BlcAdminCatalogController extends FrontController
+	public class CatalogController extends FrontController
 	{
-		public function BlcAdminCatalogController()
+		public function CatalogController()
 		{
 			super();
 			addCommand(ShowFileUploadEvent.EVENT_SHOW_FILE_UPLOAD, ShowFileUploadCommand);

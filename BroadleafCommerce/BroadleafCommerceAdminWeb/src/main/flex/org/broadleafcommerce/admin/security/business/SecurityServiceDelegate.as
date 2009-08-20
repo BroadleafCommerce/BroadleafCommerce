@@ -7,14 +7,14 @@ package org.broadleafcommerce.admin.security.business
 	import org.broadleafcommerce.admin.core.vo.security.AdminRole;
 	import org.broadleafcommerce.admin.core.vo.security.AdminUser;
 
-	public class BroadleafCommerceAdminSecurityServiceDelegate
+	public class SecurityServiceDelegate
 	{
         private var responder : IResponder;
         private var adminSecurityService:Object;
 
-		public function BroadleafCommerceAdminSecurityServiceDelegate(responder:IResponder)
+		public function SecurityServiceDelegate(responder:IResponder)
 		{
-			this.adminSecurityService = AdminSecurityServiceLocator.getInstance().getService();
+			this.adminSecurityService = SecurityServiceLocator.getInstance().getService();
 			this.responder = responder;
 		}
 

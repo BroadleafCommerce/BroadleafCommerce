@@ -7,7 +7,7 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	
-	import org.broadleafcommerce.admin.catalog.business.BroadleafCommerceAdminCatalogServiceDelegate;
+	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.control.events.sku.FindAllSkusEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.sku.SaveSkuEvent;
 	import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 		public function execute(event:CairngormEvent):void{
 			var scse:SaveSkuEvent = SaveSkuEvent(event);
 			var sku:Sku = scse.sku;
-			var delegate:BroadleafCommerceAdminCatalogServiceDelegate = new BroadleafCommerceAdminCatalogServiceDelegate(this);
+			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
 			delegate.saveSku(sku);				
 		}
 		

@@ -8,7 +8,7 @@ package org.broadleafcommerce.admin.security.commands.permissions
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 
-	import org.broadleafcommerce.admin.security.business.BroadleafCommerceAdminSecurityServiceDelegate;
+	import org.broadleafcommerce.admin.security.business.SecurityServiceDelegate;
 	import org.broadleafcommerce.admin.security.control.events.FindAllPermissionsEvent;
 	import org.broadleafcommerce.admin.security.control.events.SaveAdminPermissionEvent;
 	import org.broadleafcommerce.admin.core.vo.security.AdminPermission;
@@ -19,7 +19,7 @@ package org.broadleafcommerce.admin.security.commands.permissions
 		public function execute(event:CairngormEvent):void
 		{
 			var se:SaveAdminPermissionEvent = event as SaveAdminPermissionEvent;
-			var delegate:BroadleafCommerceAdminSecurityServiceDelegate = new BroadleafCommerceAdminSecurityServiceDelegate(this);
+			var delegate:SecurityServiceDelegate = new SecurityServiceDelegate(this);
 			delegate.saveAdminPermission(se.permission);
 		}
 

@@ -5,14 +5,14 @@ package org.broadleafcommerce.admin.tools.business
 	
 	import org.broadleafcommerce.admin.tools.vo.CodeType;
 	
-	public class BroadleafCommerceAdminToolsServiceDelegate
+	public class ToolsServiceDelegate
 	{
 		private var responder:IResponder;
     	private var service:Object;
     	private var toolsService:Object;		
 		
-        public function BroadleafCommerceAdminToolsServiceDelegate(responder:IResponder){
-			this.toolsService = BroadleafCommerceAdminToolsServiceLocator.getInstance().getService();
+        public function ToolsServiceDelegate(responder:IResponder){
+			this.toolsService = ToolsServiceLocator.getInstance().getService();
             this.responder = responder;	
 		}
 

@@ -9,14 +9,14 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
-	import org.broadleafcommerce.admin.catalog.business.BroadleafCommerceAdminCatalogServiceDelegate;
+	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	
 	public class FindAllCatalogSkusCommand implements Command, IResponder
 	{
 		public function execute(event:CairngormEvent):void{
-			var delegate:BroadleafCommerceAdminCatalogServiceDelegate = new BroadleafCommerceAdminCatalogServiceDelegate(this);
+			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
 			delegate.findAllSkus();
 		}
 		
