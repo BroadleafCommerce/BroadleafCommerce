@@ -1,7 +1,7 @@
 /* CSS file */
 @font-face
 {
-    src: url("assets/fonts/DejaVuSans.ttf");
+    src: url("/assets/fonts/DejaVuSans.ttf");
     font-family: main;
     font-style: normal;
     font-weight: normal;
@@ -9,7 +9,7 @@
 
 @font-face
 {
-    src: url("assets/fonts/DejaVuSans-Bold.ttf");
+    src: url("/assets/fonts/DejaVuSans-Bold.ttf");
     font-family: main;
     font-style: normal;
     font-weight: bold;
@@ -22,7 +22,7 @@ Application {
 	color: #333333;
 	font-size: 11;
 	theme-color: #006699;
-	background-image: Embed("assets/images/broadleaf_skin.png",
+	background-image: Embed("/assets/images/broadleaf_skin.png",
 			scaleGridLeft="5",
 			scaleGridRight="10",
 			scaleGridTop="70",
