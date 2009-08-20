@@ -2,7 +2,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-	
+
 	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 
@@ -16,7 +16,10 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		{
 			var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
 			catalogModel.viewState = CatalogModel.STATE_VIEW_PRODUCT;
+
+			CatalogModelLocator.getInstance().categoriesSelected = false;
+			CatalogModelLocator.getInstance().productsSelected = true;
 		}
-		
+
 	}
 }
