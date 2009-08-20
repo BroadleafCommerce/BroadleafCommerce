@@ -14,9 +14,9 @@ package org.broadleafcommerce.admin.core.control
 	import org.broadleafcommerce.admin.core.control.events.LoadModulesEvent;
 	
 	
-	public class BlcAdminController extends FrontController
+	public class AdminController extends FrontController
 	{
-		public function BlcAdminController()
+		public function AdminController()
 		{
 			super();
 			addCommand(InitializeApplicationEvent.EVENT_INITIALIZE_APPLICATION, InitializeApplicationCommand);
