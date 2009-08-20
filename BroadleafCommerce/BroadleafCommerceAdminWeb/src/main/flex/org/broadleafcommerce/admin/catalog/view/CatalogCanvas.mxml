@@ -87,13 +87,15 @@
 			<mx:LinkButton
 				id="categoriesLinkButton"
 				label="Categories"
-				click="this.handleView(event)"/>
+				click="this.handleView(event)"
+				selected="{CatalogModelLocator.getInstance().categoriesSelected}"/>
 			<mx:VRule
 				height="10"/>
 			<mx:LinkButton
 				id="productsLinkButton"
 				label="Products"
-				click="this.handleView(event)"/>
+				click="this.handleView(event)"
+				selected="{CatalogModelLocator.getInstance().productsSelected}"/>
 			<mx:VRule
 				height="10"/>
 		</mx:HBox>
