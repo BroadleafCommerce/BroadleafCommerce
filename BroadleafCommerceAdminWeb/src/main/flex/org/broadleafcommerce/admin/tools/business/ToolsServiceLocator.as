@@ -8,17 +8,17 @@ package org.broadleafcommerce.admin.tools.business
 	
 	import org.broadleafcommerce.admin.tools.model.ToolsModel;
 	
-	public class BroadleafCommerceAdminToolsServiceLocator
+	public class ToolsServiceLocator
 	{
-		private static var _instance:BroadleafCommerceAdminToolsServiceLocator;
+		private static var _instance:ToolsServiceLocator;
 
 		/**
 		 * Return the ServiceLocator instance.
 		 * @return the instance.
 		*/
-		public static function get instance():BroadleafCommerceAdminToolsServiceLocator{
+		public static function get instance():ToolsServiceLocator{
 			if(!_instance){
-	        	_instance = new BroadleafCommerceAdminToolsServiceLocator();
+	        	_instance = new ToolsServiceLocator();
 	        }
 	        return _instance;
         }
@@ -27,12 +27,12 @@ package org.broadleafcommerce.admin.tools.business
 		 * Return the ServiceLocator instance.
 		 * @return the instance.
 		 */
-		public static function getInstance():BroadleafCommerceAdminToolsServiceLocator{
+		public static function getInstance():ToolsServiceLocator{
 			return instance;
 		}
 		
 		// Constructor should be private but current AS3.0 does not allow it
-		public function BroadleafCommerceAdminToolsServiceLocator(){
+		public function ToolsServiceLocator(){
 			if( _instance){
 			   throw new CairngormError(CairngormMessageCodes.SINGLETON_EXCEPTION, "BroadleafCommerceAdminToolsServiceLocator" );
 			}

@@ -8,7 +8,7 @@ package org.broadleafcommerce.admin.catalog.business
 	import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 	
 	
-	public class BroadleafCommerceAdminCatalogServiceDelegate
+	public class CatalogServiceDelegate
 	{
 
         private var responder : IResponder;
@@ -16,7 +16,7 @@ package org.broadleafcommerce.admin.catalog.business
         private var catalogService : Object;
         private var offerService:Object;
 
-		public function BroadleafCommerceAdminCatalogServiceDelegate(responder:IResponder)
+		public function CatalogServiceDelegate(responder:IResponder)
 		{
 			this.catalogService = CatalogServiceLocator.getInstance().getService();
             this.responder = responder;	

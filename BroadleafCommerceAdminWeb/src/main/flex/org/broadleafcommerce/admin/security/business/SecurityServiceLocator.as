@@ -8,19 +8,19 @@ package org.broadleafcommerce.admin.security.business
 
 	import org.broadleafcommerce.admin.security.model.SecurityModel;
 
-	public class AdminSecurityServiceLocator
+	public class SecurityServiceLocator
 	{
-		private static var _instance:AdminSecurityServiceLocator;
+		private static var _instance:SecurityServiceLocator;
 
       /**
        * Return the ServiceLocator instance.
        * @return the instance.
        */
-      public static function get instance() : AdminSecurityServiceLocator
+      public static function get instance() : SecurityServiceLocator
       {
          if ( ! _instance )
          {
-            _instance = new AdminSecurityServiceLocator();
+            _instance = new SecurityServiceLocator();
          }
 
          return _instance;
@@ -30,13 +30,13 @@ package org.broadleafcommerce.admin.security.business
        * Return the ServiceLocator instance.
        * @return the instance.
        */
-      public static function getInstance() : AdminSecurityServiceLocator
+      public static function getInstance() : SecurityServiceLocator
       {
          return instance;
       }
 
       // Constructor should be private but current AS3.0 does not allow it
-      public function AdminSecurityServiceLocator()
+      public function SecurityServiceLocator()
       {
          if ( _instance )
          {

@@ -7,7 +7,7 @@ package org.broadleafcommerce.admin.security.commands.roles
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 
-	import org.broadleafcommerce.admin.security.business.BroadleafCommerceAdminSecurityServiceDelegate;
+	import org.broadleafcommerce.admin.security.business.SecurityServiceDelegate;
 	import org.broadleafcommerce.admin.security.control.events.FindAllRolesEvent;
 	import org.broadleafcommerce.admin.security.control.events.SaveRoleEvent;
 
@@ -16,7 +16,7 @@ package org.broadleafcommerce.admin.security.commands.roles
 		public function execute(event:CairngormEvent):void
 		{
 			var sre:SaveRoleEvent = event as SaveRoleEvent;
-			var delegate:BroadleafCommerceAdminSecurityServiceDelegate = new BroadleafCommerceAdminSecurityServiceDelegate(this);
+			var delegate:SecurityServiceDelegate = new SecurityServiceDelegate(this);
 			delegate.saveRole(sre.role);
 		}
 
