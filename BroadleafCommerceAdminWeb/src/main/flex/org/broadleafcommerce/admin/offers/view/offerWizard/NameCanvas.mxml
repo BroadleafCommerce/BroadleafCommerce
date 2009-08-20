@@ -6,24 +6,24 @@
 		<![CDATA[
 			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 			import org.broadleafcommerce.admin.offers.model.OfferModel;
-			
+
 			[Bindable]
 			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
-			
+
 			private function handleCreationComplete():void{
 				this.discountType.selectedIndex = 0;
 				this.offerType.selectedIndex = 0;
 			}
 		]]>
 	</mx:Script>
-	
+
 	<mx:Binding destination="offerType.dataProvider" source="this.offerModel.offerTypes" />
 	<mx:Binding destination="discountType.dataProvider" source="this.offerModel.discountTypes" />
-	
+
 	<mx:RadioButtonGroup id="offerPrice"/>
 	<mx:VBox paddingLeft="10"
 		paddingRight="10"
-		paddingTop="10"
+		paddingTop="50"
 		width="100%"
 		verticalGap="5">
 		<mx:Label text="Offer"
@@ -37,7 +37,7 @@
 					<mx:Label text="Name:"/>
 				</mx:GridItem>
 				<mx:GridItem>
-					<mx:TextInput id="offerNameText" 
+					<mx:TextInput id="offerNameText"
 						toolTip="The name of this offer"/>
 				</mx:GridItem>
 			</mx:GridRow>
@@ -47,7 +47,7 @@
 				</mx:GridItem>
 				<mx:GridItem>
 					<mx:TextInput id="offerDescriptionText"
-						width="254"  
+						width="254"
 						toolTip="The description of this offer"/>
 				</mx:GridItem>
 			</mx:GridRow>
@@ -70,40 +70,40 @@
 				<mx:GridItem>
 					<mx:ComboBox id="offerType"
 						fontWeight="normal"
-						toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />					
+						toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />
 				</mx:GridItem>
 			</mx:GridRow>
 			<mx:GridRow styleName="offerEditorFormGridRow"
 				includeInLayout="{offerType.selectedIndex == 1}">
 				<mx:GridItem styleName="fieldLabel">
-					<mx:Text text="Apply To: " 
+					<mx:Text text="Apply To: "
 						visible="{offerType.selectedIndex == 1}"/>
 				</mx:GridItem>
 				<mx:GridItem>
-					<mx:RadioButton id="retailRadio" 
-						label="Retail Price" 
-						groupName="offerPrice" 
+					<mx:RadioButton id="retailRadio"
+						label="Retail Price"
+						groupName="offerPrice"
 						visible="{offerType.selectedIndex==1}"/>
-					<mx:RadioButton id="saleRadio" 
-						label="Sale Price" 
-						groupName="offerPrice" 
-						visible="{offerType.selectedIndex==1}"/>					
+					<mx:RadioButton id="saleRadio"
+						label="Sale Price"
+						groupName="offerPrice"
+						visible="{offerType.selectedIndex==1}"/>
 				</mx:GridItem>
 			</mx:GridRow>
 			<mx:GridRow styleName="offerEditorFormGridRow">
 				<mx:GridItem styleName="fieldLabel">
-					<mx:Text text="Discount:" 
+					<mx:Text text="Discount:"
 						toolTip="What kind of discount this offer gives to the customer."/>
 				</mx:GridItem>
 				<mx:GridItem>
 					<mx:TextInput id="discountValue"
-						width="47"   
-						toolTip="The priority of this offer in relationship to other offers."/>					
+						width="47"
+						toolTip="The priority of this offer in relationship to other offers."/>
 					<mx:ComboBox id="discountType"
 						width="160"
-						selectedIndex="0"  
+						selectedIndex="0"
 						fontWeight="normal"
-						toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />					
+						toolTip="What this offer applies to; an Order, an Item or a fulfillment group." />
 				</mx:GridItem>
 			</mx:GridRow>
 		</mx:Grid>
