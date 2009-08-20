@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"  
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	width="100%">
 	<mx:RadioButtonGroup id="discountType" />
 	<mx:RadioButtonGroup id="offerPrice" />
@@ -7,7 +7,7 @@
 	<mx:VBox verticalGap="15"
 		paddingLeft="10"
 		paddingRight="10"
-		paddingTop="10"
+		paddingTop="50"
 		width="100%">
 		<mx:VBox verticalGap="5"
 			width="100%">
@@ -24,40 +24,40 @@
 				</mx:GridItem>
 				<mx:GridItem>
 					<mx:TextInput id="offerPriorityText"
-						width="47" 
+						width="47"
 						toolTip="The priority of this offer in relationship to other offers."/>
 				</mx:GridItem>
 			</mx:GridRow>
 		</mx:Grid>
 		<mx:VBox>
-			<mx:Label text="Number Of Uses:"/>	
+			<mx:Label text="Number Of Uses:"/>
 			<mx:VBox paddingLeft="15">
 				<mx:RadioButton id="usesUnlimtedRadio"
-					label="Unlimited" 
+					label="Unlimited"
 					selected="{Number(usesText.text)==0}"/>
 				<mx:HBox verticalAlign="middle">
 					<mx:RadioButton id="usesRadio"
-						label="Up to" 
-						selected="{Number(usesText.text)>0}"/>	
+						label="Up to"
+						selected="{Number(usesText.text)>0}"/>
 					<mx:TextInput id="usesText"
 						width="46"/>
-					<mx:Label text="times"/>							
+					<mx:Label text="times"/>
 				</mx:HBox>
 			</mx:VBox>
 		</mx:VBox>
 		<mx:VBox>
-			<mx:Text text="How is this offer applied with other offers?" 
+			<mx:Text text="How is this offer applied with other offers?"
 				width="289"/>
 			<mx:VBox paddingLeft="15">
 				<mx:CheckBox id="stackableCheckbox"
 					label="Stackable"/>
 				<mx:CheckBox id="combinableCheckbox"
-					label="Combinable"/>				
+					label="Combinable"/>
 			</mx:VBox>
 		</mx:VBox>
 		<mx:VBox>
-			<mx:Text text="Only give the offer to Order/Items/Fulfillment Groups that meet the following condition:" 
-				height="39" 
+			<mx:Text text="Only give the offer to Order/Items/Fulfillment Groups that meet the following condition:"
+				height="39"
 				width="380"/>
 			<mx:Canvas>
 				<mx:TextInput id="appliesOrderText"
