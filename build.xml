@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="BroadleafCommerceDistribution" default="clean" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+	
+	<path id="maven-ant-tasks.classpath" path="BroadleafCommerceDemo/lib/maven-ant-tasks-2.0.10.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+	
+	<artifact:pom id="mypom" file="pom.xml"/>
+	
+	<property file="build.properties" />
+	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
+	
+	<target name="create-bin-distribution-with-dependencies" depends="setup, build-bin, build-src, build-docs"/>
+	
+	<target name="build-bin">
+		<artifact:mvn mavenHome="${maven.home}" fork="true">
+		    <arg value="install"/>
+		</artifact:mvn>
+		<copy todir="${maven.build.finalName}/dist">
+			<fileset dir="BroadleafCommerceAdmin/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceFramework/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceFrameworkWeb/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceProfile/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceProfileWeb/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceUSPS/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceUSPSSchemas/target">
+				<include name="*.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="retrieve-licenses">
+		<artifact:mvn mavenHome="${maven.home}" fork="true">
+		    <arg value="org.jboss.maven.plugins:maven-jboss-license-plugin:1.0.0:download-licenses"/>
+		</artifact:mvn>
+	</target>
+	
+	<target name="build-src">
+		<artifact:mvn mavenHome="${maven.home}" fork="true">
+		    <arg value="source:jar"/>
+		</artifact:mvn>
+		<copy todir="${maven.build.finalName}/dist">
+			<fileset dir="BroadleafCommerceAdmin/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceFramework/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceFrameworkWeb/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceProfile/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceProfileWeb/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceUSPS/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceUSPSSchemas/target">
+				<include name="*sources.jar"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="build-docs">
+		<mkdir dir="${maven.build.finalName}/docs"/>
+		<mkdir dir="${maven.build.finalName}/docs/api"/>
+		<artifact:mvn mavenHome="${maven.home}" fork="true">
+		    <arg value="javadoc:javadoc"/>
+		</artifact:mvn>
+		<copy todir="${maven.build.finalName}/docs/api">
+			<fileset dir="target/site/apidocs">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+		<copy todir="${maven.build.finalName}" file="doc/license.txt"/>
+	</target>
+	
+	<target name="build-dependencies">
+		<mkdir dir="${maven.build.finalName}/lib"/>
+		<artifact:pom id="demoPom" file="BroadleafCommerceDemo/pom.xml"/>
+		<artifact:dependencies filesetId="demodeps" pomRefId="demoPom" useScope="runtime"/>
+		<path id="build.runtime.classpath">
+			<fileset refid="demodeps"/>
+		</path>
+		<copy todir="${maven.build.finalName}/lib">
+			<path refid="build.runtime.classpath"/>	
+		</copy>
+	</target>
+
+	<target name="setup">
+		<artifact:mvn mavenHome="${maven.home}" fork="true">
+		    <arg value="clean"/>
+		</artifact:mvn>
+		<delete dir="${maven.build.finalName}"/>
+		<mkdir dir="${maven.build.finalName}"/>
+		<mkdir dir="${maven.build.finalName}/dist"/>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${maven.build.finalName}"/>
+	</target>
+</project>
