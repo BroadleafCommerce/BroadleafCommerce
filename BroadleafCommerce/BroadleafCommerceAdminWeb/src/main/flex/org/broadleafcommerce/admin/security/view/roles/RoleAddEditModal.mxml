@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:components="org.broadleafcommerce.util.components.*"	
-	width="650" 
-	height="400" 	
+	xmlns:components="org.broadleafcommerce.util.components.*"
+	width="650"
+	height="400"
 	showCloseButton="true"
-	headerColors="[#666666, #000000]"
-	close="PopUpManager.removePopUp(this)" 
+	close="PopUpManager.removePopUp(this)"
 	creationComplete="creationComplete()"
 	verticalAlign="middle" horizontalAlign="center">
-	
+
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.security.view.permissions.PermissionAddEditModal;
@@ -18,13 +17,13 @@
 			import mx.collections.ArrayCollection;
 			import org.broadleafcommerce.admin.core.vo.security.AdminRole;
 			import mx.managers.PopUpManager;
-			
+
 			[Bindable]
 			public var editRole:AdminRole
-			
+
 			private function creationComplete():void {
 				PopUpManager.centerPopUp(this);
-				
+
 				if (editRole != null) {
 					this.title = "Edit Role";
 					this.formHeading.label = "Editing " + editRole.name;
@@ -52,50 +51,50 @@
 				role.id = null;
 				role.name = this.txtName.text;
 				role.description = this.txtDescription.text;
-				
+
 				var permissions:ArrayCollection = new ArrayCollection(this.permissionsList.selectedItems);
 				role.allPermissions = permissions;
-				
+
 				var saveRole:SaveRoleEvent = new SaveRoleEvent(role);
 				saveRole.dispatch();
-				
+
 				PopUpManager.removePopUp(this);
 			}
-			
+
 			private function handleUpdateClick(event:Event):void{
 				editRole.name = this.txtName.text;
 				editRole.description = this.txtDescription.text;
-				
+
 				var permissions:ArrayCollection = new ArrayCollection(this.permissionsList.selectedItems);
 				editRole.allPermissions = permissions;
-				
+
 				var saveRole:SaveRoleEvent = new SaveRoleEvent(editRole);
 				saveRole.dispatch();
-				
+
 				PopUpManager.removePopUp(this);
 			}
-			
+
 			private function handleNewPermissionClick(event:Event):void{
 				var newPermissionModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, PermissionAddEditModal , true));
 			}
 		]]>
 	</mx:Script>
-    <mx:StringValidator 
+    <mx:StringValidator
         id="nameValidator"
-        source="{txtName}" 
+        source="{txtName}"
         property="text"
         minLength="2"
     />
-    <mx:StringValidator 
+    <mx:StringValidator
         id="descriptionValidator"
-        source="{txtDescription}" 
+        source="{txtDescription}"
         property="text"
         minLength="2"
-    />		
-    
+    />
+
     <mx:VBox label="Add New Role" verticalAlign="middle" horizontalAlign="right">
         <mx:VBox width="100%">
-        	<mx:FormHeading id="formHeading"/>	            	
+        	<mx:FormHeading id="formHeading"/>
         	<mx:HBox width="50%">
                 <mx:Form width="300">
                     <mx:FormItem label="Name">
@@ -110,14 +109,14 @@
 	                <mx:Label text="Permissions"/>
 	                <components:CheckBoxList id="permissionsList" allowMultipleSelection="true" dataProvider="{SecurityModelLocator.getInstance().adminPermissions}" labelField="name" width="300">
 	                </components:CheckBoxList>
-	                
+
 	               	<mx:LinkButton label="Create New Permission" click="handleNewPermissionClick(event)"/>
 	            </mx:VBox>
-            
+
         	</mx:HBox>
         </mx:VBox>
-        
+
      	<mx:Button label="Save" click="handleSaveClick(event)" id="buttonSave" visible="false"/>
      	<mx:Button label="Update" click="handleUpdateClick(event)" id="buttonUpdate" visible="false"/>
-    </mx:VBox>    
+    </mx:VBox>
 </mx:TitleWindow>
