@@ -6,13 +6,13 @@ package org.broadleafcommerce.admin.core.business
 	import mx.rpc.IResponder;
 	import mx.rpc.remoting.RemoteObject;
 	
-	public class BlAdminSecurityServiceDelegate
+	public class AdminSecurityServiceDelegate
 	{
 		
 		private var responder:IResponder;
 		private var securityService:RemoteObject;		
 		
-		public function BlAdminSecurityServiceDelegate(responder:IResponder)
+		public function AdminSecurityServiceDelegate(responder:IResponder)
 		{
 			this.securityService = ServiceLocator.getInstance().getRemoteObject("blcAdminSecurityService");
 			this.responder = responder;

@@ -39,8 +39,8 @@
 	<mx:Binding source="authModel.authenticatedState"
 	                   destination="this.currentState" />
 
-	<control:BlcAdminController />
-	<business:BlcAdminServices />
+	<control:AdminController />
+	<business:AdminServices />
 
 	<view:LoginCanvas id="loginCanvas" width="100%" height="100%" visible="true" />
 
