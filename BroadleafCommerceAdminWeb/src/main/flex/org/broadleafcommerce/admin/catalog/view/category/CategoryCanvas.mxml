@@ -48,29 +48,24 @@
 				var sce:SaveCategoryEvent = new SaveCategoryEvent(categoryModel.currentCategory);
 				sce.dispatch();
 			}
+			
+			private function handleDeleteClick(event:Event):void{
+				var deleteMedia:Media = Media(List(MediaCanvas(event.currentTarget).mediaDataGrid).selectedItem);;
+				delete categoryModel.currentCategory.categoryMedia[deleteMedia.key];
+				var sce:SaveCategoryEvent = new SaveCategoryEvent(categoryModel.currentCategory);
+				sce.dispatch();				
+			}
 
 		]]>
 	</mx:Script>
 
 	<mx:Binding source="categoryModel.viewState"
 					   destination="this.currentState" />
-<!--
-	<mx:Binding source="categoryModel.currentCategory.categoryMedia"
-	            destination="categoryMediaCanvas.mediaMap" />
--->
+
 	<mx:Binding source="categoryModel.categoryMedia"
 	            destination="categoryMediaCanvas.dataProvider" />
 
 	<components1:MediaCanvasViewHelper id="categoryMediaCanvasViewHelper" />
-
-	<!--mx:VBox
-		width="100%"
-		height="100%"
-		horizontalGap="20">
-		<mx:Button icon="@Embed(source='/assets/images/add.png')" id="addCatProductBtn" height="28" cornerRadius="2" label="New Category"
-				click="handleNewCategory(event)"/>
-
--->
 
 		<mx:HDividedBox width="100%" height="100%" >
 			<category1:CategoryTreeCanvas id="viewCategoriesCanvas" width="300" height="100%" />
@@ -79,12 +74,12 @@
 				<components1:MediaCanvas label="Media" id="categoryMediaCanvas"
 					width="100%" height="100%"
 					clickAdd="handleAddClick(event)"
-					clickEdit="handleEditClick(event)"/>
+					clickEdit="handleEditClick(event)"
+					clickDelete="handleDeleteClick(event)"/>
 				<category1:CategoryProductsCanvas id="productsCanvas" label="Products" width="100%" height="100%" />
 				<category1:CategoryFeaturedProductsCanvas id="featuredProductsCanvas" label="Featured Products" width="100%" height="100%" />
 			</mx:TabNavigator>
 		</mx:HDividedBox>
-	<!--/mx:VBox-->
 	<mx:states>
 		<mx:State name="{CategoryModel.STATE_NONE}">
 			<mx:SetProperty target="{editCategoryCanvas}" name="visible" value="true" />
