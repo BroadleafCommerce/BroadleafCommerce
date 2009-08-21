@@ -37,17 +37,13 @@ public class AdminCatalogService {
     }
 
     public Product saveProduct(Product product) {
-        ASObject asObjectProductImages = (ASObject)product.getProductImages();
-        Map<String, String> productImages = new HashMap<String, String>();        
-        for(Object key : asObjectProductImages.keySet()) {
-            if(String.class.equals(key.getClass())) {                
-                Object test = asObjectProductImages.get(key);
-                if(String.class.equals(test.getClass())) {
-                    productImages.put((String)key, (String)asObjectProductImages.get(key));                
-                }
-            }
+    	if(product.getProductImages() != null && product.getProductImages() instanceof ASObject){
+    		product.setProductImages(getImagesMapFromAsObject((ASObject)product.getProductImages()));    		
+    	}
+        
+        if(product.getProductMedia() != null && product.getProductMedia() instanceof ASObject){
+        	product.setProductMedia(getMediaMapFromAsObject((ASObject)product.getProductMedia()));
         }
-        product.setProductImages(productImages);
         return catalogService.saveProduct(product);
     }
     
@@ -61,48 +57,15 @@ public class AdminCatalogService {
 
     public Category saveCategory(Category category) {
         if(category.getCategoryImages() != null && category.getCategoryImages() instanceof ASObject) {
-            ASObject asObjectCategoryImages = (ASObject)category.getCategoryImages();
-            Map<String, String> categoryImages = new HashMap<String, String>();        
-            for(Object key : asObjectCategoryImages.keySet()) {
-                if(String.class.equals(key.getClass())) {                
-                    Object test = asObjectCategoryImages.get(key);
-                    if(String.class.equals(test.getClass())) {
-                        categoryImages.put((String)key, (String)asObjectCategoryImages.get(key));                
-                    }
-                }
-            }
-            category.setCategoryImages(categoryImages);
+            category.setCategoryImages(getImagesMapFromAsObject((ASObject)category.getCategoryImages()));
         }
 
         if(category.getCategoryMedia() != null && category.getCategoryMedia() instanceof ASObject) {            
-            ASObject asObjectCategoryMedia = (ASObject) category.getCategoryMedia();
-            Map<String, Media> categoryMedia = new HashMap<String, Media>();
-            for(Object key:asObjectCategoryMedia.keySet()) {
-                if(String.class.equals(key.getClass())) {
-                    Object test = asObjectCategoryMedia.get(key);
-                    if(test instanceof MediaImpl) {
-                    	String keyString = (String)key;
-                        categoryMedia.put(keyString, (MediaImpl)asObjectCategoryMedia.get(key));
-                    }
-                }
-            }
-//            Category testCat = catalogService.findCategoryById(category.getId());
-//            testCat.setCategoryMedia(categoryMedia);
-//            return catalogService.saveCategory(testCat);
-            
-            category.setCategoryMedia(categoryMedia);
+            category.setCategoryMedia(getMediaMapFromAsObject((ASObject)category.getCategoryMedia()));
         }
-//        else {
-//            Map<String, Media> newMap = new HashMap<String, Media>();
-//            category.setCategoryMedia(newMap);
-//            Category testCat = catalogService.findCategoryById(category.getId());
-//            testCat.setCategoryMedia(newMap);
-//            return catalogService.saveCategory(testCat);
-//        }
-
-        
         return catalogService.saveCategory(category);
     }
+
 
     public List<Category> findAllCategories() {
         return catalogService.findAllCategories();
@@ -121,11 +84,46 @@ public class AdminCatalogService {
     }
 
     public Sku saveSku(Sku sku) {
+    	if(sku.getSkuImages() != null && sku.getSkuImages() instanceof ASObject){
+    		sku.setSkuImages(getImagesMapFromAsObject((ASObject)sku.getSkuImages()));
+    	}
+    	if(sku.getSkuMedia() != null && sku.getSkuMedia() instanceof ASObject){
+    		sku.setSkuMedia(getMediaMapFromAsObject((ASObject)sku.getSkuMedia()));
+    	}
         return catalogService.saveSku(sku);
     }
 
     public List<Sku> findSkusByIds(List<Long> ids) {
         return catalogService.findSkusByIds(ids);
+    }
+
+    private Map<String, String> getImagesMapFromAsObject(ASObject oldImages){
+        Map<String, String> newImages = new HashMap<String, String>();        
+        for(Object key : oldImages.keySet()) {
+            if(String.class.equals(key.getClass())) {                
+                Object test = oldImages.get(key);
+                if(String.class.equals(test.getClass())) {
+                    newImages.put((String)key, (String)oldImages.get(key));                
+                }
+            }
+        }
+        return newImages;
+    	
+    }
+    
+    private Map<String,Media> getMediaMapFromAsObject(ASObject oldMedia){
+        Map<String, Media> newMedia = new HashMap<String, Media>();
+        for(Object key:oldMedia.keySet()) {
+            if(String.class.equals(key.getClass())) {
+                Object test = oldMedia.get(key);
+                if(test instanceof MediaImpl) {
+                	String keyString = (String)key;
+                    newMedia.put(keyString, (MediaImpl)oldMedia.get(key));
+                }
+            }
+        }
+        return newMedia;
+    	
     }
 
     
