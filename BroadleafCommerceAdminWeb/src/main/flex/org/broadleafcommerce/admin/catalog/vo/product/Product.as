@@ -29,6 +29,7 @@ package org.broadleafcommerce.admin.catalog.vo.product
 		public var upSaleProducts:ArrayCollection = new ArrayCollection();
 		public var allSkus:ArrayCollection = new ArrayCollection();
 		public var productImages:Object = new Object();
+		public var productMedia:Object = new Object();
 		public var defaultCategory:Category = new Category();
 		public var allParentCategories:ArrayCollection = new ArrayCollection();
 		public var isFeaturedProduct:Boolean;

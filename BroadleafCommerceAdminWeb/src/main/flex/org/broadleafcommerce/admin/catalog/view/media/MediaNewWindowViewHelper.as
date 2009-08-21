@@ -1,4 +1,4 @@
-package org.broadleafcommerce.admin.catalog.view.components
+package org.broadleafcommerce.admin.catalog.view.media
 {
 	import com.adobe.cairngorm.view.ViewHelper;
 	
@@ -8,16 +8,13 @@ package org.broadleafcommerce.admin.catalog.view.components
 	import flash.net.URLRequest;
 	import flash.net.URLVariables;
 	
-	import mx.containers.TitleWindow;
 	import mx.controls.Alert;
-	import mx.managers.PopUpManager;
 	
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.MediaModel;
-	import org.broadleafcommerce.admin.catalog.view.category.CategoryCanvas;
-	import org.broadleafcommerce.admin.catalog.vo.Media;
+	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 
-	public class MediaCanvasViewHelper extends ViewHelper
+	public class MediaNewWindowViewHelper extends ViewHelper
 	{
 		private var fileRef:FileReference;
 		private var directory:String;
@@ -25,29 +22,14 @@ package org.broadleafcommerce.admin.catalog.view.components
 		private var media:Media;
 		private const FILE_UPLOAD_URL:String = "http://localhost:8080/broadleafadmin/spring/upload";		
 
-		public function MediaCanvasViewHelper()
+		public function MediaNewWindowViewHelper()
 		{
-			super();	
+			super();
+		}
+		public function uploadImage(directory:String, media:Media):void{
 			fileRef = new FileReference();
             fileRef.addEventListener(Event.SELECT, selectHandler);
             fileRef.addEventListener(Event.COMPLETE, completeHandler);
-            					
-		}
-		
-		public function editItem(index:int):void{
-			MediaCanvas(CategoryCanvas(view).categoryMediaCanvas).mediaDataGrid.editedItemPosition = {columnIndex:0,rowIndex : index};
-			//MediaCanvas(view).mediaDataGrid.se
-		}
-
-		public function editMedia(eMedia:Media):void{
-			var newMediaWindow:TitleWindow = 
-				TitleWindow(PopUpManager.createPopUp(CategoryCanvas(view),MediaNewWindow, true));
-			MediaNewWindow(newMediaWindow).media = eMedia;				
-									
-			
-		}
-		
-		public function uploadImage(directory:String, media:Media):void{
 			this.urlRequest = new URLRequest(FILE_UPLOAD_URL);			
 	    	var params:URLVariables = new URLVariables();
 	    	this.directory = directory;
@@ -75,7 +57,10 @@ package org.broadleafcommerce.admin.catalog.view.components
 
 
 		private function completeHandler(event:Event):void {
-				this.media.url = directory+fileRef.name;
+				//this.media.url = directory+fileRef.name;
+				// MediaNewWindow(view).urlLabelEdit.text = directory+fileRef.name;
+			CatalogModelLocator.getInstance().mediaModel.currentMedia.url = directory+fileRef.name; 			
+				
 				// var mlr:MediaListRenderer = MediaListRenderer(MediaCanvas(CategoryCanvas(view).categoryMediaCanvas).mediaDataGrid.itemEditorInstance);
 				// mlr.handleEdit();
 				// mlr.urlLabelEdit.text = directory+fileRef.name;

@@ -4,17 +4,17 @@
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.control.events.media.ShowFileUploadEvent;
 		import org.broadleafcommerce.admin.core.model.ConfigModel;
 		import mx.utils.ObjectUtil;
 		import mx.events.FlexEvent;
 		import mx.events.ListEventReason;
 		import mx.events.ListEvent;
-		import org.broadleafcommerce.admin.catalog.vo.Media;
+		import org.broadleafcommerce.admin.catalog.vo.media.Media;
 		import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 		import mx.collections.ArrayCollection;
 		import org.broadleafcommerce.admin.core.model.AppModelLocator;
 		import org.broadleafcommerce.admin.core.model.ToolsModel;
-		import org.broadleafcommerce.admin.catalog.control.events.ShowFileUploadEvent;
 
 	[Bindable]
 	private var configModel:ConfigModel = AppModelLocator.getInstance().configModel;

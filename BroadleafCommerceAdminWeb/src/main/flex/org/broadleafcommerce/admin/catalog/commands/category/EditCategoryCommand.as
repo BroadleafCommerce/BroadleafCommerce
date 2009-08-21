@@ -10,8 +10,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import org.broadleafcommerce.admin.catalog.control.events.product.FindProductsByCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
-	import org.broadleafcommerce.admin.catalog.view.components.MediaCanvasViewHelper;
-	import org.broadleafcommerce.admin.catalog.vo.Media;
+	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 	
 	public class EditCategoryCommand implements Command
 	{

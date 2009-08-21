@@ -1,4 +1,4 @@
-package org.broadleafcommerce.admin.catalog.vo
+package org.broadleafcommerce.admin.catalog.vo.media
 {
 	[Bindable]
 	[RemoteClass(alias="org.broadleafcommerce.media.domain.MediaImpl")]	
