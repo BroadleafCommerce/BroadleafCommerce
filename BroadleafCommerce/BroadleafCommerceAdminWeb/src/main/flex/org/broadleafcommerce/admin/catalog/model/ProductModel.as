@@ -23,5 +23,7 @@ package org.broadleafcommerce.admin.catalog.model
 		
 		public var selectedCategories:Array = new Array();
 		
+		public var productMedia:ArrayCollection = new ArrayCollection();
+		
 	}
 }

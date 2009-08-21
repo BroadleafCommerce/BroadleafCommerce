@@ -1,4 +1,4 @@
-package org.broadleafcommerce.admin.catalog.control.events
+package org.broadleafcommerce.admin.catalog.control.events.media
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 

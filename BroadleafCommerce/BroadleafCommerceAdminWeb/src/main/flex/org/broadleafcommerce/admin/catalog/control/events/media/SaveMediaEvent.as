@@ -1,8 +1,8 @@
-package org.broadleafcommerce.admin.catalog.control.events
+package org.broadleafcommerce.admin.catalog.control.events.media
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
-	import org.broadleafcommerce.admin.catalog.vo.Media;
+	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 
 	public class SaveMediaEvent extends CairngormEvent
 	{

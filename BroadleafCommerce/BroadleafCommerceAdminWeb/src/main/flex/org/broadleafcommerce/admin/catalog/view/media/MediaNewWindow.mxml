@@ -1,38 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300" xmlns:components="org.broadleafcommerce.admin.catalog.view.components.*"
-	  creationComplete="handleCreationComplete()">
+	  creationComplete="handleCreationComplete()" xmlns:media="org.broadleafcommerce.admin.catalog.view.media.*">
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.control.events.media.ShowFileUploadEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.media.SaveMediaEvent;
+		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+		import org.broadleafcommerce.admin.catalog.model.MediaModel;
 		import org.broadleafcommerce.admin.core.model.ConfigModel;
 		import mx.utils.ObjectUtil;
 		import mx.managers.PopUpManager;
-		import org.broadleafcommerce.admin.catalog.control.events.SaveMediaEvent;
 		import mx.collections.ArrayCollection;
 		import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 		import org.broadleafcommerce.admin.core.model.AppModelLocator;
 		import org.broadleafcommerce.admin.core.model.ToolsModel;
-		import org.broadleafcommerce.admin.catalog.control.events.ShowFileUploadEvent;
-		import org.broadleafcommerce.admin.catalog.vo.Media;
+		import org.broadleafcommerce.admin.catalog.vo.media.Media;
 
 	[Bindable]
 		public var media:Media = new Media();
 	
 	[Bindable]
 	private var configModel:ConfigModel = AppModelLocator.getInstance().configModel;
+	
+	[Bindable]
+	private var mediaModel:MediaModel = CatalogModelLocator.getInstance().mediaModel;
 
 		private function handleCreationComplete():void{
 			PopUpManager.centerPopUp(this);			
 		}
 
 		private function handleSave():void{
-			var newMedia:Media = Media(ObjectUtil.copy(media));
+			// var newMedia:Media = Media(ObjectUtil.copy(media));
 			// Put validators here
-			newMedia.key = keyTextBox.selectedItem.key;
-			newMedia.name = nameLabelEdit.text;
-			newMedia.url = urlLabelEdit.text;
-			newMedia.label = labelLabelEdit.text;
-			var sme:SaveMediaEvent = new SaveMediaEvent(newMedia);
+			mediaModel.currentMedia.key = keyTextBox.selectedItem.key;
+			mediaModel.currentMedia.name = nameLabelEdit.text;
+			mediaModel.currentMedia.url = urlLabelEdit.text;
+			mediaModel.currentMedia.label = labelLabelEdit.text;
+//			newMedia.key = keyTextBox.selectedItem.key;
+//			newMedia.name = nameLabelEdit.text;
+//			newMedia.url = urlLabelEdit.text;
+//			newMedia.label = labelLabelEdit.text;
+			var sme:SaveMediaEvent = new SaveMediaEvent(mediaModel.currentMedia);
 			sme.dispatch();
 			PopUpManager.removePopUp(this);
 		}
@@ -62,20 +71,20 @@
 
 	]]>	
 </mx:Script>
-	<mx:Binding source="media.url"
+	<mx:Binding source="mediaModel.currentMedia.url"
 	            destination="urlLabelEdit.text" />
-	<mx:Binding source="media.name" 
+	<mx:Binding source="mediaModel.currentMedia.name" 
 		        destination="nameLabelEdit.text"/>
-	<mx:Binding source="media.label" 
+	<mx:Binding source="mediaModel.currentMedia.label" 
 		        destination="labelLabelEdit.text"/>
 	<mx:Binding source="configModel.currentCodeTypes"
 	            destination="keyTextBox.dataProvider" />	
 	<mx:Binding source="'http://localhost:8080/broadleafadmin/'+urlLabelEdit.text"
 	            destination="thumbnailEdit.source" />            
-	<mx:Binding source="selectCurrentCodeType(media.key)"
+	<mx:Binding source="selectCurrentCodeType(mediaModel.currentMedia.key)"
 	            destination="keyTextBox.selectedIndex" />
 
-	<components:MediaNewWindowViewHelper id="mediaNewWindowViewHelper" />
+	<media:MediaNewWindowViewHelper id="mediaNewWindowViewHelper" />
 
 	<mx:HBox width="100%">
 		<mx:VBox>
