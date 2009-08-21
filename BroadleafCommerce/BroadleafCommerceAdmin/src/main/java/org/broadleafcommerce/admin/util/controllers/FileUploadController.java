@@ -37,7 +37,6 @@ public class FileUploadController extends SimpleFormController {
                  // hmm, that's strange, the user did not upload anything
             }
 
-             // well, let's do nothing with the bean for now and return
             try {
                 String uriBegining = request.getRequestURI().substring(1,request.getRequestURI().indexOf("/",2));
                 String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf(uriBegining)+uriBegining.length());
