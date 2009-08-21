@@ -81,7 +81,8 @@ public class AdminCatalogService {
                 if(String.class.equals(key.getClass())) {
                     Object test = asObjectCategoryMedia.get(key);
                     if(test instanceof MediaImpl) {
-                        categoryMedia.put((String)key, (MediaImpl)asObjectCategoryMedia.get(key));
+                    	String keyString = (String)key;
+                        categoryMedia.put(keyString, (MediaImpl)asObjectCategoryMedia.get(key));
                     }
                 }
             }
