@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	{
 		
 		public function execute(event:CairngormEvent):void{
+			trace("execute : ");
 			var ecpc:EditProductEvent = EditProductEvent(event);
 			var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 			var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;

@@ -3,7 +3,7 @@ package org.broadleafcommerce.admin.catalog.model
 	import com.adobe.cairngorm.CairngormError;
 	import com.adobe.cairngorm.CairngormMessageCodes;
 	import com.adobe.cairngorm.model.IModelLocator;
-
+	
 	import mx.collections.ArrayCollection;
 
 	public class CatalogModelLocator implements IModelLocator
@@ -48,5 +48,6 @@ package org.broadleafcommerce.admin.catalog.model
 
 		[Bindable]
 		public var productsSelected:Boolean = false;
+
 	}
 }

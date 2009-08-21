@@ -16,6 +16,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	public class SaveProductCommand implements Command, IResponder
 	{
 		public function execute(event:CairngormEvent):void{
+			trace("execute : ");
 			var scpe:SaveProductEvent = SaveProductEvent(event);
 			var product:Product = scpe.product;
 			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);			

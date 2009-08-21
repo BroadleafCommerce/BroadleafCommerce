@@ -7,10 +7,10 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	
+	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 	import org.broadleafcommerce.admin.tools.business.ToolsServiceDelegate;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.FindAllCodeTypesEvent;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.SaveCodeTypeEvent;
-	import org.broadleafcommerce.admin.tools.vo.CodeType;
 	
 	public class SaveCodeTypeCommand implements Command, IResponder
 	{

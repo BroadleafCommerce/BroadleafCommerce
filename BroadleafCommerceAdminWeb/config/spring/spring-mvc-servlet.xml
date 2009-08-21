@@ -29,7 +29,7 @@
     <bean id="fileUploadController" class="org.broadleafcommerce.admin.util.controllers.FileUploadController">
         <property name="commandClass" value="org.broadleafcommerce.admin.util.domain.FileUploadBean"/>
         <property name="formView" value="fileuploadform"/>
-        <property name="successView" value="confirmation"/>
+        <property name="successView" value="fileUploadConfirmation"/>
     </bean>
 
 

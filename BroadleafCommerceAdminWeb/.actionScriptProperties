@@ -1,20 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <actionScriptProperties mainApplicationPath="BroadleafCommerceAdmin.mxml" version="3">
-<compiler additionalCompilerArguments="-locale en_US -managers flash.fonts.AFEFontManager" copyDependentFiles="true" enableModuleDebug="true" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.124" htmlPlayerVersionCheck="true" outputFolderPath="bin-debug" sourceFolderPath="src/main/flex" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
-<compilerSourcePath/>
-<libraryPath defaultLinkType="1">
-<libraryPathEntry kind="4" path=""/>
-<libraryPathEntry kind="1" linkType="1" path="lib"/>
-</libraryPath>
-<sourceAttachmentPath/>
-</compiler>
-<applications>
-<application path="BroadleafCommerceAdmin.mxml"/>
-</applications>
-<modules>
-<module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/catalog/CatalogModule.swf" optimize="true" sourcePath="src/main/flex/modules/catalog/CatalogModule.mxml"/>
-<module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/offers/OfferModule.swf" optimize="true" sourcePath="src/main/flex/modules/offers/OfferModule.mxml"/>
-<module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/search/SearchModule.swf" optimize="true" sourcePath="src/main/flex/modules/search/SearchModule.mxml"/>
-</modules>
-<buildCSSFiles/>
+  <compiler additionalCompilerArguments="-locale en_US -managers flash.fonts.AFEFontManager" copyDependentFiles="true" enableModuleDebug="true" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersion="9.0.124" htmlPlayerVersionCheck="true" outputFolderPath="bin-debug" sourceFolderPath="src/main/flex" strict="true" useApolloConfig="false" verifyDigests="true" warn="true">
+    <compilerSourcePath/>
+    <libraryPath defaultLinkType="1">
+      <libraryPathEntry kind="4" path="">
+        <modifiedEntries>
+          <libraryPathEntry kind="3" linkType="4" path="${PROJECT_FRAMEWORKS}/libs/framework.swc" useDefaultLinkType="true">
+            <crossDomainRsls>
+              <crossDomainRslEntry autoExtract="true" policyFileUrl="" rslUrl="framework_3.2.0.3958.swz"/>
+              <crossDomainRslEntry autoExtract="true" policyFileUrl="" rslUrl="framework_3.2.0.3958.swf"/>
+            </crossDomainRsls>
+          </libraryPathEntry>
+        </modifiedEntries>
+      </libraryPathEntry>
+      <libraryPathEntry kind="1" linkType="1" path="lib"/>
+    </libraryPath>
+    <sourceAttachmentPath/>
+  </compiler>
+  <applications>
+    <application path="BroadleafCommerceAdmin.mxml"/>
+  </applications>
+  <modules>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="OfferModule.swf" optimize="true" sourcePath="src/main/flex/OfferModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="SearchModule.swf" optimize="true" sourcePath="src/main/flex/SearchModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="SecurityModule.swf" optimize="true" sourcePath="src/main/flex/SecurityModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="ToolsModule.swf" optimize="true" sourcePath="src/main/flex/ToolsModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="CatalogModule.swf" optimize="true" sourcePath="src/main/flex/CatalogModule.mxml"/>
+  </modules>
+  <buildCSSFiles/>
 </actionScriptProperties>

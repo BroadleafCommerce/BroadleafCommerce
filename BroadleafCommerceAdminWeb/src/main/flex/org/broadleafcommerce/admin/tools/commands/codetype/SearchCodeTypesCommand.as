@@ -9,11 +9,11 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
+	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 	import org.broadleafcommerce.admin.tools.business.ToolsServiceDelegate;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.SearchCodeTypesEvent;
 	import org.broadleafcommerce.admin.tools.model.ToolsModel;
 	import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
-	import org.broadleafcommerce.admin.tools.vo.CodeType;
 
 	public class SearchCodeTypesCommand implements Command, IResponder
 	{

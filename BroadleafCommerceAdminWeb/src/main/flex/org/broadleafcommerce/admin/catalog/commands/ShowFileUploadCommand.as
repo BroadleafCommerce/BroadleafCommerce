@@ -8,7 +8,7 @@ package org.broadleafcommerce.admin.catalog.commands
 	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.view.CatalogCanvasViewHelper;
-	import org.broadleafcommerce.admin.catalog.view.components.MediaCanvasViewHelper;
+	import org.broadleafcommerce.admin.catalog.view.components.MediaNewWindowViewHelper;
 	import org.broadleafcommerce.admin.catalog.vo.Media;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 
@@ -20,13 +20,15 @@ package org.broadleafcommerce.admin.catalog.commands
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("execute : ");
 			var currentViewState:String = CatalogCanvasViewHelper(ViewLocator.getInstance().getViewHelper("catalogCanvas")).getViewIndex();
 			var categoryViewState:String = CatalogModel.STATE_VIEW_CATEGORY;
 			var productViewState:String = CatalogModel.STATE_VIEW_PRODUCT;
 			var sfue:ShowFileUploadEvent = ShowFileUploadEvent(event);
 			if(currentViewState ==  categoryViewState){
 				var category:Category = CatalogModelLocator.getInstance().categoryModel.currentCategory;
-				MediaCanvasViewHelper(ViewLocator.getInstance().getViewHelper("categoryMediaCanvasViewHelper")).uploadImage("/images/category/"+category.id+"/",Media(sfue.viewData));				
+				//MediaCanvasViewHelper(ViewLocator.getInstance().getViewHelper("categoryMediaCanvasViewHelper")).uploadImage("/images/category/"+category.id+"/",Media(sfue.viewData));
+				MediaNewWindowViewHelper(ViewLocator.getInstance().getViewHelper("mediaNewWindowViewHelper")).uploadImage("/images/category/"+category.id+"/",Media(sfue.viewData));				
 			}
 		}
 		

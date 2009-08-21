@@ -22,5 +22,7 @@ package org.broadleafcommerce.admin.catalog.model
 		public var categoryArray:ArrayCollection = new ArrayCollection();
 		
 		public var categoryMedia:ArrayCollection = new ArrayCollection();
+		
+		public var categoryMediaCodes:ArrayCollection = new ArrayCollection();		
 	}
 }

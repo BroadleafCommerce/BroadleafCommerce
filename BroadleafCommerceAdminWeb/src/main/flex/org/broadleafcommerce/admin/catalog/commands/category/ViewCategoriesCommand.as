@@ -14,6 +14,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("ViewCategoriesCommand.execute()");
 			var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
 			catalogModel.viewState = CatalogModel.STATE_VIEW_CATEGORY;
 

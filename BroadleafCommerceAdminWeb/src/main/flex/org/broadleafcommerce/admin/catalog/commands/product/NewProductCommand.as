@@ -14,6 +14,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		
 		public function execute(event:CairngormEvent):void
 		{
+			trace("execute : ");
 			var product:Product = new Product();
 			var defaultCategory:Category = CatalogModelLocator.getInstance().categoryModel.currentCategory
 			var sku:Sku = new Sku();

@@ -15,5 +15,13 @@
 		showBusyCursor="true"
 		destination="blAdminSecurityService">
 	</mx:RemoteObject>
+	
+	<mx:RemoteObject
+		id="blCodeTypeService"
+		endpoint="http://localhost:8080/broadleafadmin/messagebroker/amf"
+		showBusyCursor="true"
+		destination="blCodeTypeService">
+	</mx:RemoteObject>
+	
     
 </cairngorm:ServiceLocator>

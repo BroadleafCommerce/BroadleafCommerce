@@ -9,7 +9,7 @@ package org.broadleafcommerce.admin.offers.commands
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
-	import org.broadleafcommerce.admin.offers.business.BroadleafCommerceAdminOfferServiceDelegate;
+	import org.broadleafcommerce.admin.offers.business.OfferServiceDelegate;
 	import org.broadleafcommerce.admin.offers.model.OfferModel;
 	import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 	import org.broadleafcommerce.admin.offers.vo.Offer;
@@ -20,7 +20,7 @@ package org.broadleafcommerce.admin.offers.commands
 		
 		public function execute(event:CairngormEvent):void
 		{
-			var delegate:BroadleafCommerceAdminOfferServiceDelegate = new BroadleafCommerceAdminOfferServiceDelegate(this);
+			var delegate:OfferServiceDelegate = new OfferServiceDelegate(this);
 			delegate.findAllOffers();
 		}
 		

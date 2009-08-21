@@ -6,18 +6,18 @@ package org.broadleafcommerce.admin.core.business
 	import mx.rpc.IResponder;
 	import mx.rpc.remoting.RemoteObject;
 	
-	public class AdminSecurityServiceDelegate
+	public class AdminAuthenticationDelegate
 	{
 		
 		private var responder:IResponder;
 		private var securityService:RemoteObject;		
 		
-		public function AdminSecurityServiceDelegate(responder:IResponder)
+		public function AdminAuthenticationDelegate(responder:IResponder)
 		{
 			this.securityService = ServiceLocator.getInstance().getRemoteObject("blcAdminSecurityService");
 			this.responder = responder;
 		}
-		
+
 		public function authenticateUser(username:String, password:String):void{
 			securityService.setCredentials(username, password);
 			var call:AsyncToken = securityService.readAdminUserByUserName(username);

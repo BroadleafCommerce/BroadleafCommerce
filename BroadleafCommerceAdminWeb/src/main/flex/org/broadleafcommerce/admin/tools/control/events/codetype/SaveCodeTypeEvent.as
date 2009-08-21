@@ -2,7 +2,7 @@ package org.broadleafcommerce.admin.tools.control.events.codetype
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
-	import org.broadleafcommerce.admin.tools.vo.CodeType;
+	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 
 	public class SaveCodeTypeEvent extends CairngormEvent
 	{

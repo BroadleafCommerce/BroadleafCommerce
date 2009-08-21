@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.tools.model
 		
 		public function ToolsModelLocator(){
 			if(modelLocator != null){
-				throw new CairngormError(CairngormMessageCodes.SINGLETON_EXCEPTION, "SecurityModelLocator");
+				throw new CairngormError(CairngormMessageCodes.SINGLETON_EXCEPTION, "ToolsModelLocator");
 			}
 		}
 		

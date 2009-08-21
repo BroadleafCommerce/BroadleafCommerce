@@ -18,16 +18,15 @@
 			}
 		]]>
 	</mx:Script>
-	<control:ToolsController/>
 	<mx:Binding 
 		source="toolsModel.codeTypes" 
 		destination="codeTypeDataGrid.dataProvider"/>
 	<mx:Binding
 		source="toolsModel.viewState"
 		destination="currentState"/>
-	<mx:Binding
+	<!--mx:Binding
 		source="toolsModel.currentCodeType"
-		destination="codeTypeDataGrid.selectedItem"/>
+		destination="codeTypeDataGrid.selectedItem"/-->
 	<mx:VBox
 		verticalGap="20">
 		<view:CodeTypeHeaderCanvas

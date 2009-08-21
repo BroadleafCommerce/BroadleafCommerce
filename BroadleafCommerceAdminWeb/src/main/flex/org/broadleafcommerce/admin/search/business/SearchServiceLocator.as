@@ -12,6 +12,8 @@ package org.broadleafcommerce.admin.search.business
 	{
 		
       private static var _instance : SearchServiceLocator;
+
+	  private static var myService : RemoteObject;
 		
       /**
        * Return the ServiceLocator instance.
@@ -48,8 +50,14 @@ package org.broadleafcommerce.admin.search.business
       }
 		
 		public function getService():RemoteObject{
-			var myService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcAdminService"));
-			myService.destination = SearchModel.SERVICE_ID;
+			if(myService == null){				
+				myService = new mx.rpc.remoting.mxml.RemoteObject(); 
+				var adminService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject((ServiceLocator.getInstance().getRemoteObject("blcAdminService")));
+				myService.concurrency = "multiple";
+				myService.endpoint = adminService.endpoint;
+				myService.showBusyCursor = true; 
+				myService.destination = SearchModel.SERVICE_ID;
+			}
 			return myService;
 		}
 

@@ -16,7 +16,6 @@
 			import mx.managers.PopUpManager;
 			import mx.core.IFlexDisplayObject;
 			import org.broadleafcommerce.admin.offers.view.events.WizardEvent;
-			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 			[Bindable]
 			private static var STATE_LIST:String = "state_list";

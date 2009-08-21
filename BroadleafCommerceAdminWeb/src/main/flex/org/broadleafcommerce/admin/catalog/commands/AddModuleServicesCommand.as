@@ -12,7 +12,7 @@ package org.broadleafcommerce.admin.catalog.commands
 
 		public function execute(event:CairngormEvent):void
 		{
-			
+			trace("execute : ");			
 		}
 		
 	}
