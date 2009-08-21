@@ -8,7 +8,7 @@ package org.broadleafcommerce.admin.offers.commands
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	
-	import org.broadleafcommerce.admin.offers.business.BroadleafCommerceAdminOfferServiceDelegate;
+	import org.broadleafcommerce.admin.offers.business.OfferServiceDelegate;
 	import org.broadleafcommerce.admin.offers.control.events.AddUpdateOfferEvent;
 	import org.broadleafcommerce.admin.offers.control.events.FindAllOffersEvent;
 	import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
@@ -26,7 +26,7 @@ package org.broadleafcommerce.admin.offers.commands
 //				offersList.removeItemAt(index);
 //				offersList.addItemAt(offer,index);
 //			}
-			var delegate:BroadleafCommerceAdminOfferServiceDelegate = new BroadleafCommerceAdminOfferServiceDelegate(this);
+			var delegate:OfferServiceDelegate = new OfferServiceDelegate(this);
 			delegate.saveOffer(offer);
 			
 		}

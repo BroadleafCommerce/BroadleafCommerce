@@ -9,6 +9,10 @@
 	xmlns:components1="org.broadleafcommerce.admin.catalog.view.components.*">
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.List;
+			import mx.utils.ObjectUtil;
+			import org.broadleafcommerce.admin.catalog.vo.Media;
+			import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryMediaEvent;
 			import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 			import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoryMediaEvent;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
@@ -30,8 +34,17 @@
 				var acme:AddCategoryMediaEvent = new AddCategoryMediaEvent();
 				acme.dispatch();
 			}
-
+			
+			private function handleEditClick(event:Event):void{
+				var media:Media = Media(categoryMediaCanvas.mediaDataGrid.selectedItem);
+				var ecme:EditCategoryMediaEvent = new EditCategoryMediaEvent(Media(ObjectUtil.copy(media)));
+				ecme.dispatch();
+			}
+			
 			private function handleSaveClick(event:Event):void{
+				var newMedia:Media = Media(List(MediaCanvas(event.currentTarget).mediaDataGrid).selectedItem);
+				
+				categoryModel.currentCategory.categoryMedia[newMedia.key] = newMedia;
 				var sce:SaveCategoryEvent = new SaveCategoryEvent(categoryModel.currentCategory);
 				sce.dispatch();
 			}
@@ -66,7 +79,7 @@
 				<components1:MediaCanvas label="Media" id="categoryMediaCanvas"
 					width="100%" height="100%"
 					clickAdd="handleAddClick(event)"
-					clickSave="handleSaveClick(event)"/>
+					clickEdit="handleEditClick(event)"/>
 				<category1:CategoryProductsCanvas id="productsCanvas" label="Products" width="100%" height="100%" />
 				<category1:CategoryFeaturedProductsCanvas id="featuredProductsCanvas" label="Featured Products" width="100%" height="100%" />
 			</mx:TabNavigator>

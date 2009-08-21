@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300" xmlns:components="org.broadleafcommerce.admin.catalog.view.components.*"
+	  creationComplete="handleCreationComplete()">
+
+<mx:Script>
+	<![CDATA[
+		import org.broadleafcommerce.admin.core.model.ConfigModel;
+		import mx.utils.ObjectUtil;
+		import mx.managers.PopUpManager;
+		import org.broadleafcommerce.admin.catalog.control.events.SaveMediaEvent;
+		import mx.collections.ArrayCollection;
+		import org.broadleafcommerce.admin.core.vo.tools.CodeType;
+		import org.broadleafcommerce.admin.core.model.AppModelLocator;
+		import org.broadleafcommerce.admin.core.model.ToolsModel;
+		import org.broadleafcommerce.admin.catalog.control.events.ShowFileUploadEvent;
+		import org.broadleafcommerce.admin.catalog.vo.Media;
+
+	[Bindable]
+		public var media:Media = new Media();
+	
+	[Bindable]
+	private var configModel:ConfigModel = AppModelLocator.getInstance().configModel;
+
+		private function handleCreationComplete():void{
+			PopUpManager.centerPopUp(this);			
+		}
+
+		private function handleSave():void{
+			var newMedia:Media = Media(ObjectUtil.copy(media));
+			// Put validators here
+			newMedia.key = keyTextBox.selectedItem.key;
+			newMedia.name = nameLabelEdit.text;
+			newMedia.url = urlLabelEdit.text;
+			newMedia.label = labelLabelEdit.text;
+			var sme:SaveMediaEvent = new SaveMediaEvent(newMedia);
+			sme.dispatch();
+			PopUpManager.removePopUp(this);
+		}
+		
+		private function handleCancel():void{
+			PopUpManager.removePopUp(this);
+		}
+
+		private function handleUploadClick(event:Event):void{
+			//currentState = "EDIT";
+			var sfue:ShowFileUploadEvent = new ShowFileUploadEvent("",this.media);
+			sfue.dispatch();
+		}		
+
+	private function selectCurrentCodeType(key:String):int{
+		if(keyTextBox.dataProvider != null && keyTextBox.dataProvider is ArrayCollection){
+			var x:int =  0;
+			for each(var codeType:CodeType in ArrayCollection(keyTextBox.dataProvider)){
+				if(codeType.key == key){
+					return x;
+				}
+				x++;
+			}
+		}
+		return -1;
+	}
+
+	]]>	
+</mx:Script>
+	<mx:Binding source="media.url"
+	            destination="urlLabelEdit.text" />
+	<mx:Binding source="media.name" 
+		        destination="nameLabelEdit.text"/>
+	<mx:Binding source="media.label" 
+		        destination="labelLabelEdit.text"/>
+	<mx:Binding source="configModel.currentCodeTypes"
+	            destination="keyTextBox.dataProvider" />	
+	<mx:Binding source="'http://localhost:8080/broadleafadmin/'+urlLabelEdit.text"
+	            destination="thumbnailEdit.source" />            
+	<mx:Binding source="selectCurrentCodeType(media.key)"
+	            destination="keyTextBox.selectedIndex" />
+
+	<components:MediaNewWindowViewHelper id="mediaNewWindowViewHelper" />
+
+	<mx:HBox width="100%">
+		<mx:VBox>
+			<mx:Image id="thumbnailEdit" maxHeight="75" maxWidth="75" maintainAspectRatio="true" 
+				horizontalAlign="center" horizontalCenter="0" y="27" width="75" height="75"/>
+			<mx:LinkButton x="10" y="4" label="Upload" horizontalCenter="0" click="handleUploadClick(event)"/>			
+		</mx:VBox>
+		<mx:VBox>
+		 <mx:HBox>		 	
+			<mx:VBox>				
+				<mx:HBox>
+					<mx:Text width="50" text="Name:" /><mx:TextInput id="nameLabelEdit" width="100" y="0" x="40"/>				
+				</mx:HBox>
+				<mx:HBox>
+					<mx:Text width="50" text="Label:"  x="2" y="23"/>	<mx:TextInput id="labelLabelEdit" width="100"  y="23" x="40"/>				
+				</mx:HBox>
+			</mx:VBox>
+			<mx:VBox>
+				<mx:ComboBox id="keyTextBox" labelField="key" />
+				<mx:HBox>					
+					<mx:Button id="saveButton" label="Save" click="handleSave()"/>
+					<mx:Button id="cancelButton" label="Cancel" click="handleCancel()" />			
+				</mx:HBox>
+			</mx:VBox>
+		 </mx:HBox>
+			<mx:HBox>
+				<mx:Text text="URL:"  y="45" x="10"/> <mx:Text id="urlLabelEdit"  y="45" x="40"/>					
+			</mx:HBox>
+		</mx:VBox>
+	</mx:HBox>	
+</mx:TitleWindow>

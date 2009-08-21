@@ -4,7 +4,7 @@ package org.broadleafcommerce.admin.core.model
 	import com.adobe.cairngorm.CairngormMessageCodes;
 	import com.adobe.cairngorm.model.IModelLocator;
 	
-	import org.broadleafcommerce.admin.core.vo.security.AdminUser;
+	import org.broadleafcommerce.admin.core.model.ToolsModel;
 	
 
 	public class AppModelLocator implements IModelLocator

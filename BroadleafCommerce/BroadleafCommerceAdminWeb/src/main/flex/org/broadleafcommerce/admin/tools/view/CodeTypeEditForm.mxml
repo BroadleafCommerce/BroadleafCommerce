@@ -3,11 +3,11 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 			import org.broadleafcommerce.admin.tools.control.events.codetype.RemoveCodeTypeFormEvent;
 			import mx.utils.ObjectUtil;
 			import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
 			import org.broadleafcommerce.admin.tools.model.ToolsModel;
-			import org.broadleafcommerce.admin.tools.vo.CodeType;
 			import org.broadleafcommerce.admin.tools.control.events.codetype.SaveCodeTypeEvent;
 			
 			[Bindable]

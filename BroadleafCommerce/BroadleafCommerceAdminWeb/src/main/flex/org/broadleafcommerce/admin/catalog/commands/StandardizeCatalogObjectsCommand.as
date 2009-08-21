@@ -6,6 +6,8 @@ package org.broadleafcommerce.admin.catalog.commands
 	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
+	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 	public class StandardizeCatalogObjectsCommand implements Command
 	{
@@ -15,11 +17,12 @@ package org.broadleafcommerce.admin.catalog.commands
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("StandardizeCatalogObjectsCommand.execute()");
 			var scoe:StandardizeCatalogObjectsEvent = StandardizeCatalogObjectsEvent(event);
 			var categoryArray:ArrayCollection = scoe.categoryArray;
 			var productArray:ArrayCollection = scoe.productArray;
 			var skuArray:ArrayCollection = scoe.skuArray;
-			
+			AppModelLocator.getInstance().configModel.currentCodeTypes = CatalogModelLocator.getInstance().categoryModel.categoryMediaCodes;			
 		}
 		
 	}

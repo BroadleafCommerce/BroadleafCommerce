@@ -24,12 +24,12 @@
 	</mx:HBox>
 
 	<mx:ViewStack id="contentViewStack" top="75" left="8" right="8" bottom="8">
-		<security:SecurityCanvas
+		<!--security:SecurityCanvas
 			id="securityCanvas"
 			label="Users"
 			height="100%"
 			width="100%" />
-		<!--view:CodeTypeCanvas
+		<view:CodeTypeCanvas
 			id="codeTypeCanvas"
 			label="Code Types"
 			height="100%"

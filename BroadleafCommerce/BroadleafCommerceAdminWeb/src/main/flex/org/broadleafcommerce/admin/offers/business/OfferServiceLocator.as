@@ -6,12 +6,14 @@ package org.broadleafcommerce.admin.offers.business
 	
 	import mx.rpc.remoting.mxml.RemoteObject;
 	
-	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
+	import org.broadleafcommerce.admin.offers.model.OfferModel;
 	
 	public class OfferServiceLocator
 	{
 		
       private static var _instance : OfferServiceLocator;
+      
+      private static var myService : RemoteObject;
 		
       /**
        * Return the ServiceLocator instance.
@@ -48,8 +50,14 @@ package org.broadleafcommerce.admin.offers.business
       }
 		
 		public function getService():RemoteObject{
-			var myService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcOfferService"));
-			myService.destination = CatalogModel.SERVICE_ID;
+			if(myService == null){				
+				myService = new mx.rpc.remoting.mxml.RemoteObject(); 
+				var adminService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject((ServiceLocator.getInstance().getRemoteObject("blcAdminService")));
+				myService.concurrency = "multiple";
+				myService.endpoint = adminService.endpoint;
+				myService.showBusyCursor = true; 
+				myService.destination = OfferModel.SERVICE_ID;
+			}
 			return myService;
 		}
 

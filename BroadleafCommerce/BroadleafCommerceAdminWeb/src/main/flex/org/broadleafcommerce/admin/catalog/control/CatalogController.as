@@ -4,11 +4,13 @@ package org.broadleafcommerce.admin.catalog.control
 	
 	import org.broadleafcommerce.admin.catalog.commands.BuildCatalogCommand;
 	import org.broadleafcommerce.admin.catalog.commands.RetrieveCatalogCommand;
+	import org.broadleafcommerce.admin.catalog.commands.SaveMediaCommand;
 	import org.broadleafcommerce.admin.catalog.commands.ShowFileUploadCommand;
 	import org.broadleafcommerce.admin.catalog.commands.StandardizeCatalogObjectsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.AddCategoriesToCatalogTreeCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.AddCategoryMediaCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.EditCategoryCommand;
+	import org.broadleafcommerce.admin.catalog.commands.category.EditCategoryMediaCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.FindAllCatalogCategoriesCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.NewCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.SaveCategoryCommand;
@@ -29,11 +31,13 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.sku.SaveCatalogSkuCommand;
 	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.SaveMediaEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.ShowFileUploadEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoryMediaEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryMediaEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.FindAllCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
@@ -88,7 +92,9 @@ package org.broadleafcommerce.admin.catalog.control
 			addCommand(EditSkuEvent.EVENT_EDIT_SKU, EditSkuCommand);
 			addCommand(SaveSkuEvent.EVENT_SAVE_CATALOG_SKU, SaveCatalogSkuCommand);
 			addCommand(NewSkuEvent.EVENT_NEW_SKU, NewSkuCommand);
-
+			addCommand(SaveMediaEvent.EVENT_SAVE_MEDIA, SaveMediaCommand);
+			addCommand(EditCategoryMediaEvent.EVENT_EDIT_CATEGORY_MEDIA_EVENT, EditCategoryMediaCommand);
+			
 
 
 		}

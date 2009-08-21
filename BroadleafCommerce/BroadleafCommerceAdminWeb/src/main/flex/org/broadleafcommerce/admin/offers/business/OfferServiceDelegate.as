@@ -2,21 +2,20 @@ package org.broadleafcommerce.admin.offers.business
 {
 	import mx.rpc.AsyncToken;
 	import mx.rpc.IResponder;
+	import mx.rpc.remoting.RemoteObject;
 	
 	import org.broadleafcommerce.admin.offers.vo.Offer;
 	
 	
-	public class BroadleafCommerceAdminOfferServiceDelegate
+	public class OfferServiceDelegate
 	{
 
         private var responder : IResponder;
-        private var service : Object;
-        private var catalogService : Object;
-        private var offerService:Object;
+        private var offerService:RemoteObject;
 
-		public function BroadleafCommerceAdminOfferServiceDelegate(responder:IResponder)
+		public function OfferServiceDelegate(responder:IResponder)
 		{
-			this.catalogService = OfferServiceLocator.getInstance().getService();
+			this.offerService = OfferServiceLocator.getInstance().getService();
             this.responder = responder;	
 		}
 		

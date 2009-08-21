@@ -15,6 +15,9 @@ package org.broadleafcommerce.admin.core.model
 		
 		public var modules:ArrayCollection = new ArrayCollection();
 
+		public var codeTypes:ArrayCollection = new ArrayCollection();
 
+		[Bindable]
+		public var currentCodeTypes:ArrayCollection = new ArrayCollection();
 	}
 }

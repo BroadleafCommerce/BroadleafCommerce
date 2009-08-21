@@ -2,7 +2,7 @@ package org.broadleafcommerce.admin.tools.model
 {
 	import mx.collections.ArrayCollection;
 	
-	import org.broadleafcommerce.admin.tools.vo.CodeType;
+	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 	
 	[Bindable]
 	public class ToolsModel

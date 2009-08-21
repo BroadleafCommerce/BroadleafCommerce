@@ -4,7 +4,7 @@ package org.broadleafcommerce.admin.catalog.business
 	import com.adobe.cairngorm.CairngormMessageCodes;
 	import com.adobe.cairngorm.business.ServiceLocator;
 	
-	import mx.rpc.remoting.mxml.RemoteObject;
+	import mx.rpc.remoting.RemoteObject;
 	
 	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	
@@ -12,13 +12,16 @@ package org.broadleafcommerce.admin.catalog.business
 	{
 		
       private static var _instance : CatalogServiceLocator;
-		
+
+	  //private static var myService : RemoteObject;
+				
       /**
        * Return the ServiceLocator instance.
        * @return the instance.
        */
       public static function get instance() : CatalogServiceLocator 
       {
+      	trace("CatalogServiceLocator.get instance()");      	
          if ( ! _instance )
          {
             _instance = new CatalogServiceLocator();
@@ -33,12 +36,14 @@ package org.broadleafcommerce.admin.catalog.business
        */
       public static function getInstance() : CatalogServiceLocator 
       {
+      	trace("CatalogServiceLocator.getInstance()");
          return instance;
       }
          
       // Constructor should be private but current AS3.0 does not allow it
       public function CatalogServiceLocator() 
       {   
+      	trace("new CatalogServiceLocator()");
          if ( _instance )
          {
             throw new CairngormError( CairngormMessageCodes.SINGLETON_EXCEPTION, "CatalogServiceLocator" );
@@ -48,8 +53,17 @@ package org.broadleafcommerce.admin.catalog.business
       }
 		
 		public function getService():RemoteObject{
-			var myService:RemoteObject = mx.rpc.remoting.mxml.RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcAdminService"));
-			myService.destination = CatalogModel.SERVICE_ID;
+			trace("CatalogServiceLocator.getService()");
+			var x:RemoteObject = myService;
+			// if(myService == null){		
+				trace("CatalogServiceLocator.getService() -- creating new RemoteObject");		
+				var myService:RemoteObject = new RemoteObject; 
+				var adminService: RemoteObject = RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcAdminService"));
+				myService.concurrency = "multiple";
+				myService.endpoint = adminService.endpoint;
+				myService.showBusyCursor = true; 
+				myService.destination = CatalogModel.SERVICE_ID;
+			// }
 			return myService;
 		}
 

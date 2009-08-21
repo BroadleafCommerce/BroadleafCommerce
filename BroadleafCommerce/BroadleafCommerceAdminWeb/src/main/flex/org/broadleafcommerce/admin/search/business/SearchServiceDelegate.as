@@ -2,13 +2,14 @@ package org.broadleafcommerce.admin.search.business
 {
 	import mx.rpc.AsyncToken;
 	import mx.rpc.IResponder;
+	import mx.rpc.remoting.RemoteObject;
 	
 	import org.broadleafcommerce.admin.search.vo.SearchIntercept;
 
 	public class SearchServiceDelegate
 	{
         private var responder : IResponder;
-        private var searchService:Object;
+        private var searchService:RemoteObject;
 
 		public function SearchServiceDelegate(responder:IResponder)
 		{

@@ -7,9 +7,10 @@ package org.broadleafcommerce.admin.catalog.commands
 	
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
-	import org.broadleafcommerce.admin.catalog.control.events.product.AddProductsToCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 
 	public class BuildCatalogCommand implements Command
 	{
@@ -31,6 +32,7 @@ package org.broadleafcommerce.admin.catalog.commands
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("BuildCatalogCommand.execute()");
 			var categoriesArray:ArrayCollection = CatalogModelLocator.getInstance().categoryModel.categoryArray;
 			var productsArray:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;
 			var skusArray:ArrayCollection = CatalogModelLocator.getInstance().skuModel.catalogSkus;					
@@ -39,7 +41,17 @@ package org.broadleafcommerce.admin.catalog.commands
 //				&& productsArray.length > 0 
 //				&& skusArray.length > 0
 				)
-			{			
+			{	
+				
+				var codes:ArrayCollection = AppModelLocator.getInstance().configModel.codeTypes;
+				var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+				categoryModel.categoryMediaCodes = new ArrayCollection();
+				for each(var codeType:CodeType in codes){
+					if(codeType.codeType == "CATEGORY_MEDIA"){
+						categoryModel.categoryMediaCodes.addItem(codeType);
+					}	
+				}
+						
 				for each(var event:CairngormEvent in eventChain){
 					event.dispatch();
 				}

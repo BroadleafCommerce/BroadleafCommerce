@@ -10,6 +10,7 @@
 
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.DataGrid;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
 			import org.broadleafcommerce.admin.core.control.events.InitializeApplicationEvent;
@@ -21,6 +22,7 @@
 			  public var __dm:DragManager;
 			  public var __cm:CursorManager;
 			  public var __hm:HistoryManager;
+			  public var __dg:DataGrid;
 
 			[Bindable]
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;

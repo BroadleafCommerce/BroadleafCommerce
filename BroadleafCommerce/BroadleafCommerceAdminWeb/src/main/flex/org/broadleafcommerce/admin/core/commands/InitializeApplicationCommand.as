@@ -6,12 +6,11 @@ package org.broadleafcommerce.admin.core.commands
 	import com.adobe.cairngorm.control.CairngormEventDispatcher;
 	
 	import mx.collections.ArrayCollection;
-	import mx.core.Application;
 	import mx.modules.IModuleInfo;
 	import mx.rpc.remoting.mxml.RemoteObject;
 	
 	import org.broadleafcommerce.admin.core.control.events.GetAdminConfigEvent;
-	import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	import org.broadleafcommerce.admin.core.control.events.codetype.AdminFindAllCodeTypesEvent;
 	
 
 	public class InitializeApplicationCommand implements Command
@@ -23,6 +22,8 @@ package org.broadleafcommerce.admin.core.commands
 		public function InitializeApplicationCommand()
 		{			
 			eventChain.addItem(new GetAdminConfigEvent());
+			eventChain.addItem(new AdminFindAllCodeTypesEvent());
+
 		}
 
 		public function execute(event:CairngormEvent):void

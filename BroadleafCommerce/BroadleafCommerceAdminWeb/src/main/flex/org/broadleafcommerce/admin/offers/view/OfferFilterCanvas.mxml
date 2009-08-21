@@ -6,7 +6,6 @@
 			import org.broadleafcommerce.admin.offers.vo.Offer;
 			import mx.utils.StringUtil;
 			import org.broadleafcommerce.admin.offers.vo.Offer;
-			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.offers.model.OfferModel;
 			
 			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;

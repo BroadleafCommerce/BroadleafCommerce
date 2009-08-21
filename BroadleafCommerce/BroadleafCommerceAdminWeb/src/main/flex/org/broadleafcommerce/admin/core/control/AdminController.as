@@ -7,11 +7,15 @@ package org.broadleafcommerce.admin.core.control
 	import org.broadleafcommerce.admin.core.commands.GetAuthenticationCommand;
 	import org.broadleafcommerce.admin.core.commands.InitializeApplicationCommand;
 	import org.broadleafcommerce.admin.core.commands.LoadModulesCommand;
+	import org.broadleafcommerce.admin.core.commands.codetype.AdminFindAllCodeTypesCommand;
+	import org.broadleafcommerce.admin.core.commands.codetype.AdminSearchCodeTypesCommand;
 	import org.broadleafcommerce.admin.core.control.events.AddModulesToViewEvent;
 	import org.broadleafcommerce.admin.core.control.events.GetAdminConfigEvent;
 	import org.broadleafcommerce.admin.core.control.events.GetAuthenticationEvent;
 	import org.broadleafcommerce.admin.core.control.events.InitializeApplicationEvent;
 	import org.broadleafcommerce.admin.core.control.events.LoadModulesEvent;
+	import org.broadleafcommerce.admin.core.control.events.codetype.AdminFindAllCodeTypesEvent;
+	import org.broadleafcommerce.admin.core.control.events.codetype.AdminSearchCodeTypesEvent;
 	
 	
 	public class AdminController extends FrontController
@@ -24,6 +28,10 @@ package org.broadleafcommerce.admin.core.control
 			addCommand(LoadModulesEvent.EVENT_LOAD_MODULES, LoadModulesCommand);
 			addCommand(AddModulesToViewEvent.EVENT_ADD_MODULES_TO_VIEW, AddModulesToViewCommand);
 			addCommand(GetAuthenticationEvent.EVENT_GET_AUTHENTICATION, GetAuthenticationCommand);
+			
+			addCommand(AdminFindAllCodeTypesEvent.EVENT_FIND_ALL_CODE_TYPES, AdminFindAllCodeTypesCommand);
+			addCommand(AdminSearchCodeTypesEvent.EVENT_SEARCH_CODE_TYPES, AdminSearchCodeTypesCommand);
+			
 		}
 		
 	}
