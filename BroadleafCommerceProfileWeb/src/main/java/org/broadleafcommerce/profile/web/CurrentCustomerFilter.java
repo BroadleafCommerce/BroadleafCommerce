@@ -16,6 +16,7 @@
 package org.broadleafcommerce.profile.web;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
@@ -33,6 +34,7 @@ import org.broadleafcommerce.profile.service.CustomerService;
 public class CurrentCustomerFilter implements Filter  {
 
     private final static String CUSTOMER_REQUEST_ATTR_NAME = "customer";
+    private static String[] validURIExtensions = {"",".htm",".html",".jsp"};
 
     @Resource(name="blCustomerState")
     protected CustomerState customerState;
@@ -41,10 +43,29 @@ public class CurrentCustomerFilter implements Filter  {
     protected CustomerService customerService;
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        // do nothing
+        Arrays.sort(validURIExtensions);
+    }
+
+    private boolean checkUriValidity(ServletRequest request) {
+        String uri = ((HttpServletRequest) request).getRequestURI();
+        int lastElementStart = uri.lastIndexOf("/");
+        if (lastElementStart < 0) {
+            lastElementStart = 0;
+        }
+        String extension;
+        String lastElement = uri.substring(lastElementStart, uri.length());
+        int extensionStart = lastElement.lastIndexOf(".");
+        if (extensionStart < 0) {
+            extension = "";
+        } else {
+            extension = lastElement.substring(extensionStart, lastElement.length()).toLowerCase();
+        }
+        int pos = Arrays.binarySearch(validURIExtensions, extension);
+        return pos >= 0;
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (checkUriValidity(request)) {
         Customer requestCustomer = null;
         checkSession: {
             Customer sessionCustomer = customerState.getCustomer((HttpServletRequest) request);
@@ -73,6 +94,7 @@ public class CurrentCustomerFilter implements Filter  {
             }
         }
         request.setAttribute(CUSTOMER_REQUEST_ATTR_NAME, requestCustomer);
+        }
         chain.doFilter(request, response);
     }
 
