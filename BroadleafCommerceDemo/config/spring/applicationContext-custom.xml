@@ -29,4 +29,13 @@
 		<property name="password" value="@@MYSQL_PASSWORD@@" />
 	</bean>
 	
+	<bean id="customerStateAOP" class="org.broadleafcommerce.profile.aop.test.CustomerStateAOP"/>
+
+    <aop:config>
+        <aop:aspect id="customerAspect" ref="customerStateAOP">
+            <aop:pointcut id="customerRetrievalMethod" expression="execution(* org.broadleafcommerce.profile.web.CustomerState.getCustomer(javax.servlet.http.HttpServletRequest))"/>
+            <aop:around method="processCustomerRetrieval" pointcut-ref="customerRetrievalMethod"/>
+        </aop:aspect>
+    </aop:config>
+	
 </beans>

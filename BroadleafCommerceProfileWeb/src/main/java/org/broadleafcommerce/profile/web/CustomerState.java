@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 @Component("blCustomerState")
 public class CustomerState {
 
+	private static final long serialVersionUID = 1L;
 	private static final String DEFAULTSESSIONATTRIBUTENAME = "customer_session";
 	private static final String SERIALIZEDSESSIONATTRIBUTENAME = "customer_session_serialized";
 	private static final String SERIALIZEDREQUESTATTRIBUTENAME = "customer_request_serialized";

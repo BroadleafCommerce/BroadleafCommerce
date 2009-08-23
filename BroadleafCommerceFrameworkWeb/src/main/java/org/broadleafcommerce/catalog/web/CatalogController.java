@@ -51,9 +51,10 @@ import org.springframework.web.util.UrlPathHelper;
 public class CatalogController {
 
     @Resource(name="blCartService")
-    protected final CartService cartService;
+    protected CartService cartService;
     @Resource(name="blCustomerState")
-    protected final CustomerState customerState;
+    protected CustomerState customerState;
+    
     private final UrlPathHelper pathHelper = new UrlPathHelper();
     private CatalogService catalogService;
     private RatingService ratingService;
@@ -62,11 +63,6 @@ public class CatalogController {
     private Long rootCategoryId;
     private String rootCategoryName;
     private String categoryTemplatePrefix;
-
-    public CatalogController() {
-        this.cartService = null;
-        this.customerState = null;
-    }
 
     @RequestMapping(method =  {RequestMethod.GET})
     public String viewCatalog(ModelMap model, HttpServletRequest request) {
