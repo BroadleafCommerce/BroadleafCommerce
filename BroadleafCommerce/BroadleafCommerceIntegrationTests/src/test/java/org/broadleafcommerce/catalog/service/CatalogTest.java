@@ -49,13 +49,21 @@ public class CatalogTest extends BaseTest {
         Category category = new CategoryImpl();
         category.setName("Soaps");
         category = catalogService.saveCategory(category);
+        Category category2 = new CategoryImpl();
+        category2.setName("Towels");
+        category2 = catalogService.saveCategory(category2);
+        ArrayList<Category> allParentCategories = new ArrayList<Category>();
+        allParentCategories.add(category);
+        allParentCategories.add(category2);
+        
         Product newProduct = new ProductImpl();
 
         Calendar activeStartCal = Calendar.getInstance();
         activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
         newProduct.setActiveStartDate(activeStartCal.getTime());
-
         newProduct.setDefaultCategory(category);
+//        newProduct.setAllParentCategories(allParentCategories);
+        
         newProduct.setName("Lavender Soap");
         newProduct = catalogService.saveProduct(newProduct);
         Long newProductId = newProduct.getId();
@@ -81,7 +89,7 @@ public class CatalogTest extends BaseTest {
         assert(testCategory.getCategoryMedia().get("large") != null);
 
         List<Category> categories = catalogService.findAllCategories();
-        assert categories != null && categories.size() == 1;
+        assert categories != null && categories.size() == 2;
 
         List<Product> products = catalogService.findAllProducts();
         boolean foundProduct = false;

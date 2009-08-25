@@ -56,7 +56,7 @@ public class SkuAttributeImpl implements SkuAttribute {
     @Id
     @GeneratedValue(generator = "SkuAttributeId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SkuAttributeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuAttributeImpl", allocationSize = 50)
-    @Column(name = "ID")
+    @Column(name = "SKU_ATTR_ID")
     protected Long id;
 
     /** The sku. */

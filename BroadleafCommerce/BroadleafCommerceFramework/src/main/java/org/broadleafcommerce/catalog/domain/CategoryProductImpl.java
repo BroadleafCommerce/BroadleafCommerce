@@ -55,7 +55,7 @@ public class CategoryProductImpl implements CategoryProduct {
     @Id
     @GeneratedValue(generator = "CategoryProductId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "CategoryProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategoryProductImpl", allocationSize = 50)
-    @Column(name = "ID")
+    @Column(name = "CATEGORY_PRODUCT_ID")
     protected Long id;
 
     /** The category. */

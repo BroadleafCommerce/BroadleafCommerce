@@ -42,7 +42,7 @@ public class ProductAttributeImpl implements ProductAttribute {
     @Id
     @GeneratedValue(generator = "ProductAttributeId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ProductAttributeId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ProductAttributeImpl", allocationSize = 50)
-    @Column(name = "ID")
+    @Column(name = "PRODUCT_ATTRIBUTE_ID")
     protected Long id;
 
     /** The product. */
