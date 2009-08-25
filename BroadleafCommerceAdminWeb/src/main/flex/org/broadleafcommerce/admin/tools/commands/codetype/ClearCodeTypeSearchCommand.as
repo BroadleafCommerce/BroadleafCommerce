@@ -5,7 +5,7 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 	
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.FindAllCodeTypesEvent;
-	import org.broadleafcommerce.admin.tools.model.ToolsModel;
+	import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
 	import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
 
 	public class ClearCodeTypeSearchCommand implements Command
@@ -13,8 +13,8 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 		public function execute(event:CairngormEvent):void
 		{
 			new FindAllCodeTypesEvent().dispatch();
-			ToolsModelLocator.getInstance().toolsModel.currentCodeType = new CodeType();
-			ToolsModelLocator.getInstance().toolsModel.viewState = ToolsModel.STATE_NONE;
+			ToolsModelLocator.getInstance().codeTypeModel.currentCodeType = new CodeType();
+			ToolsModelLocator.getInstance().codeTypeModel.viewState = CodeTypeModel.STATE_NONE;
 		}
 		
 	}

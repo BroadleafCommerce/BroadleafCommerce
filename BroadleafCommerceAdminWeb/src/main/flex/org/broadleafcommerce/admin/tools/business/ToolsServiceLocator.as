@@ -6,7 +6,7 @@ package org.broadleafcommerce.admin.tools.business
 	
 	import mx.rpc.remoting.mxml.RemoteObject;
 	
-	import org.broadleafcommerce.admin.tools.model.ToolsModel;
+	import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
 	
 	public class ToolsServiceLocator
 	{
@@ -48,7 +48,7 @@ package org.broadleafcommerce.admin.tools.business
 				myService.concurrency = "multiple";
 				myService.endpoint = adminService.endpoint;
 				myService.showBusyCursor = true; 
-				myService.destination = ToolsModel.SERVICE_ID;
+				myService.destination = CodeTypeModel.SERVICE_ID;
 			}
 			return myService;
 		}

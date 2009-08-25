@@ -23,6 +23,9 @@ package org.broadleafcommerce.admin.tools.model
 		
 		[Bindable]
 		public var toolsModel:ToolsModel = new ToolsModel();
+		
+		[Bindable]
+		public var codeTypeModel:CodeTypeModel = new CodeTypeModel();
 
 	}
 }

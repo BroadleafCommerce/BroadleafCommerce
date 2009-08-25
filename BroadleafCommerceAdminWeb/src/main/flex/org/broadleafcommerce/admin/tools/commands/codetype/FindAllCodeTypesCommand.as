@@ -23,7 +23,7 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 		public function result(data:Object):void{
 			trace("result : FindAllCodeTypesCommand");
 			var event:ResultEvent = ResultEvent(data);
-			ToolsModelLocator.getInstance().toolsModel.codeTypes = ArrayCollection(event.result);
+			ToolsModelLocator.getInstance().codeTypeModel.codeTypes = ArrayCollection(event.result);
 		}
 		
 		public function fault(info:Object):void{

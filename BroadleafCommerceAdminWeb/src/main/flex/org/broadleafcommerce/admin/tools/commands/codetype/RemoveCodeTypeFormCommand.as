@@ -4,15 +4,15 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
-	import org.broadleafcommerce.admin.tools.model.ToolsModel;
+	import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
 	import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
 	
 	public class RemoveCodeTypeFormCommand implements Command
 	{
 		public function execute(event:CairngormEvent):void{
-			var toolsModel:ToolsModel = ToolsModelLocator.getInstance().toolsModel;
+			var toolsModel:CodeTypeModel = ToolsModelLocator.getInstance().codeTypeModel;
 			toolsModel.currentCodeType = new CodeType();
-			toolsModel.viewState = ToolsModel.STATE_NONE;
+			toolsModel.viewState = CodeTypeModel.STATE_NONE;
 		}
 	}
 }

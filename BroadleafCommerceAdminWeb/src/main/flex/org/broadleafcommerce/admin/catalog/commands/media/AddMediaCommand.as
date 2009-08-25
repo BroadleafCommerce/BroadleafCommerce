@@ -2,9 +2,9 @@ package org.broadleafcommerce.admin.catalog.commands.media
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-	import com.adobe.cairngorm.view.ViewLocator;
 	
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.catalog.model.ProductModel;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 
 	public class AddMediaCommand implements Command
@@ -17,7 +17,8 @@ package org.broadleafcommerce.admin.catalog.commands.media
 		{
 			trace("execute : ");
 			var newMedia:Media = new Media();
-			CatalogModelLocator.getInstance().mediaModel.currentMedia = newMedia;			
+			CatalogModelLocator.getInstance().mediaModel.currentMedia = newMedia;	
+			var x:ProductModel = CatalogModelLocator.getInstance().productModel;		
 		}
 		
 	}

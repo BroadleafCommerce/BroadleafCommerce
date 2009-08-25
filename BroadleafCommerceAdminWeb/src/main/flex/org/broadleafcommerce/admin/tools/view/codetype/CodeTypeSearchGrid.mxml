@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:HBox
+<mx:Grid
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	defaultButton="{submitButton}"
-	verticalAlign="middle">
+	>
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.tools.control.events.codetype.ClearCodeTypeSearchEvent;
 			import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
-			import org.broadleafcommerce.admin.tools.model.ToolsModel;
+			import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
 			import org.broadleafcommerce.admin.tools.control.events.codetype.FindAllCodeTypesEvent;
 			import mx.utils.StringUtil;
 			import org.broadleafcommerce.admin.tools.control.events.codetype.SearchCodeTypesEvent;
@@ -29,21 +29,31 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:Label
-		text="Search By Key:"/>
-	<mx:TextInput
-		id="keyTextInput"
-		width="160"/>
-	<mx:Button
-		id="submitButton"
-		label="Search"
-		click="handleAdminSearch(event)"/>
-	<mx:LinkButton
-		id="advancedSearchLinkButton"
-		label="Advanced Search"
-		click="handleAdvancedAdminSearch(event)"/>
-	<mx:LinkButton
-		id="clearSearchResults"
-		label="Clear Search Results"
-		click="handleClearSearchResults(event)"/>
-</mx:HBox>
+	<mx:GridRow>
+		<mx:GridItem>			
+			<mx:Label
+				text="Search By Key:"/>
+		</mx:GridItem>
+		<mx:GridItem>			
+			<mx:TextInput
+				id="keyTextInput"
+				width="160"/>
+		</mx:GridItem>
+		<mx:GridItem>			
+			<mx:Button
+				id="submitButton"
+				label="Search"
+				click="handleAdminSearch(event)"/>
+		</mx:GridItem>
+		<mx:GridItem>			
+			<mx:LinkButton
+				id="advancedSearchLinkButton"
+				label="Advanced Search"
+				click="handleAdvancedAdminSearch(event)"/>
+		</mx:GridItem>	
+			<!--mx:LinkButton
+				id="clearSearchResults"
+				label="Clear Search Results"
+				click="handleClearSearchResults(event)"/-->
+	</mx:GridRow>
+</mx:Grid>

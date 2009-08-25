@@ -13,7 +13,7 @@ package org.broadleafcommerce.admin.core.commands.codetype
 	import org.broadleafcommerce.admin.core.control.events.codetype.AdminSearchCodeTypesEvent;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.model.ConfigModel;
-	import org.broadleafcommerce.admin.core.model.ToolsModel;
+	import org.broadleafcommerce.admin.core.model.AdminToolsModel;
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 
 	public class AdminSearchCodeTypesCommand implements Command, IResponder

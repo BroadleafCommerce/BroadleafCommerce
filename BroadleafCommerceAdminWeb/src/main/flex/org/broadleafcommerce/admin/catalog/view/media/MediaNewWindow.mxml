@@ -14,7 +14,7 @@
 		import mx.collections.ArrayCollection;
 		import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 		import org.broadleafcommerce.admin.core.model.AppModelLocator;
-		import org.broadleafcommerce.admin.core.model.ToolsModel;
+		import org.broadleafcommerce.admin.core.model.AdminToolsModel;
 		import org.broadleafcommerce.admin.catalog.vo.media.Media;
 
 	[Bindable]

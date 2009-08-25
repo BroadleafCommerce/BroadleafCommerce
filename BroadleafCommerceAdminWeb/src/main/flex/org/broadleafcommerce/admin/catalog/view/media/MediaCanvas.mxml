@@ -135,19 +135,19 @@
 <mx:Binding source="dataProvider"
             destination="mediaDataGrid.dataProvider" />
                         
-	<mx:HBox width="100%" height="100%">		
-	<mx:List id="mediaDataGrid" width="100%" height="100%" labelField=""  
-		editable="false" rendererIsEditor="true" editorDataField="editedData"
-		itemRenderer="org.broadleafcommerce.admin.catalog.view.media.MediaListRenderer"
-		dataChange="handleDataChange(event)"  
-		itemEditEnd="handleItemEditEnd(event)"
-		itemEditBegin="handleItemEditBegin(event)"
-		click="handleClick(event)" />
-		 
-		<mx:VBox>			
-			<mx:Button x="308" y="10" label="Add" click="handleAddClick(event)"/>
-			<mx:Button label="Edit" click="handleEditClick(event)" enabled="{mediaDataGrid.selectedIndex > -1}" />
-			<mx:Button label="Delete" click="handleDeleteClick(event)" enabled="{mediaDataGrid.selectedIndex > -1}" />
-		</mx:VBox>
-	</mx:HBox>
+	<mx:VBox height="100%" width="100%" styleName="padding10">
+		<mx:HBox>
+			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/>
+			<mx:Button id="viewEditButton" label="View/Edit" click="handleEditClick(event)" enabled="{mediaDataGrid.selectedIndex > -1}"  styleName="viewEditButton" />
+			<mx:Button id="removeButton" label="Remove" click="handleDeleteClick(event)" enabled="{mediaDataGrid.selectedIndex > -1}" styleName="deleteButton"/>
+		</mx:HBox>
+	
+		<mx:List id="mediaDataGrid" width="100%" height="100%" labelField=""  
+			editable="false" rendererIsEditor="true" editorDataField="editedData"
+			itemRenderer="org.broadleafcommerce.admin.catalog.view.media.MediaListRenderer"
+			dataChange="handleDataChange(event)"  
+			itemEditEnd="handleItemEditEnd(event)"
+			itemEditBegin="handleItemEditBegin(event)"
+			click="handleClick(event)" />
+	</mx:VBox>
 </mx:Canvas>

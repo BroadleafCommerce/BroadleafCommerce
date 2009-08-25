@@ -1,5 +1,7 @@
 package org.broadleafcommerce.admin.catalog.vo.product
 {
+	import flash.utils.Dictionary;
+	
 	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
@@ -24,11 +26,11 @@ package org.broadleafcommerce.admin.catalog.vo.product
 		public var girth:uint;
 		public var size:String;
 		public var container:String;
-		public var weight:ProductWeight = new ProductWeight();
+		// public var weight:ProductWeight = new ProductWeight();
 		public var crossSaleProducts:ArrayCollection = new ArrayCollection();
 		public var upSaleProducts:ArrayCollection = new ArrayCollection();
 		public var allSkus:ArrayCollection = new ArrayCollection();
-		public var productImages:Object = new Object();
+		public var productImages:*;
 		public var productMedia:Object = new Object();
 		public var defaultCategory:Category = new Category();
 		public var allParentCategories:ArrayCollection = new ArrayCollection();

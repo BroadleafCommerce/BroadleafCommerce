@@ -31,5 +31,10 @@ package org.broadleafcommerce.admin.tools.business
 			var call:AsyncToken = toolsService.lookupCodeTypeByKey(key);
 			call.addResponder(responder);
 		}
+		
+		public function removeCodeTypeById(codeType:CodeType):void{
+			var call:AsyncToken = toolsService.deleteCodeType(codeType);
+			call.addResponder(responder);
+		}
 	}
 }
