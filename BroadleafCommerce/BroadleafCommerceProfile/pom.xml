@@ -44,6 +44,11 @@
 		          <artifactId>ant-junit</artifactId>
 		          <version>1.6.2</version>
 		        </dependency>
+		        <dependency>
+			  		<groupId>cobertura</groupId>
+			  		<artifactId>cobertura</artifactId>
+			  		<version>1.8</version>
+			  	</dependency>
 		      </dependencies>
   		</plugin>
   	</plugins>
@@ -172,6 +177,14 @@
     <dependency>
     	<groupId>org.springframework.security</groupId>
     	<artifactId>spring-security-taglibs</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>ant</groupId>
+    	<artifactId>ant</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>cglib</groupId>
+    	<artifactId>cglib-nodep</artifactId>
     </dependency>
   </dependencies>
 </project>
