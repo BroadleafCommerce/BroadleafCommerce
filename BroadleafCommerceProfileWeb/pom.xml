@@ -44,6 +44,11 @@
 		          <artifactId>ant-junit</artifactId>
 		          <version>1.6.2</version>
 		        </dependency>
+		        <dependency>
+			  		<groupId>cobertura</groupId>
+			  		<artifactId>cobertura</artifactId>
+			  		<version>1.8</version>
+			  	</dependency>
 		      </dependencies>
   		</plugin>
   	</plugins>
@@ -69,5 +74,13 @@
   		<groupId>cobertura</groupId>
   		<artifactId>cobertura</artifactId>
   	</dependency>
+  	<dependency>
+    	<groupId>jstl</groupId>
+    	<artifactId>jstl</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>taglibs</groupId>
+    	<artifactId>standard</artifactId>
+    </dependency>
   </dependencies>
 </project>

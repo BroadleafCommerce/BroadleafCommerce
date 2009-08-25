@@ -3,6 +3,10 @@
 	
 	<path id="maven-ant-tasks.classpath" path="BroadleafCommerceDemo/lib/maven-ant-tasks-2.0.10.jar" />
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+	<artifact:pom id="frameworkPom" file="BroadleafCommerceFrameworkWeb/pom.xml"/>
+	<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime"/>
+	<artifact:pom id="demoPom" file="BroadleafCommerceDemo/pom.xml"/>
+	<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="compile"/>
 	
 	<artifact:pom id="mypom" file="pom.xml"/>
 	
@@ -11,7 +15,7 @@
 	
 	<target name="create-bin-distribution-with-dependencies" depends="setup, build-bin, build-src, build-docs"/>
 	
-	<target name="build-bin">
+	<target name="build-bin" depends="setup">
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 		    <arg value="install"/>
 		</artifact:mvn>
@@ -40,13 +44,7 @@
 		</copy>
 	</target>
 	
-	<target name="retrieve-licenses">
-		<artifact:mvn mavenHome="${maven.home}" fork="true">
-		    <arg value="org.jboss.maven.plugins:maven-jboss-license-plugin:1.0.0:download-licenses"/>
-		</artifact:mvn>
-	</target>
-	
-	<target name="build-src">
+	<target name="build-src" depends="setup">
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 		    <arg value="source:jar"/>
 		</artifact:mvn>
@@ -75,7 +73,7 @@
 		</copy>
 	</target>
 	
-	<target name="build-docs">
+	<target name="build-docs" depends="setup">
 		<mkdir dir="${maven.build.finalName}/docs"/>
 		<mkdir dir="${maven.build.finalName}/docs/api"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
@@ -89,16 +87,16 @@
 		<copy todir="${maven.build.finalName}" file="doc/license.txt"/>
 	</target>
 	
-	<target name="build-dependencies">
+	<target name="build-dependencies" depends="build-bin">
 		<mkdir dir="${maven.build.finalName}/lib"/>
-		<artifact:pom id="demoPom" file="BroadleafCommerceDemo/pom.xml"/>
-		<artifact:dependencies filesetId="demodeps" pomRefId="demoPom" useScope="runtime"/>
 		<path id="build.runtime.classpath">
-			<fileset refid="demodeps"/>
+			<fileset refid="frameworkDeps"/>
 		</path>
-		<copy todir="${maven.build.finalName}/lib">
-			<path refid="build.runtime.classpath"/>	
-		</copy>
+		<taskdef name="licenseCopy" classname="org.broadleafcommerce.util.DependencyLicenseCopy" classpathref="build.runtime.classpath"/>
+		<licenseCopy todir="${maven.build.finalName}/lib" licenseDir="doc/dependency-licenses">
+			<fileset refid="frameworkDeps"/>
+			<fileset refid="demoDeps"/>
+		</licenseCopy>
 	</target>
 
 	<target name="setup">
