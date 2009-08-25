@@ -15,10 +15,14 @@
  */
 package org.broadleafcommerce.profile.web.controller;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.broadleafcommerce.profile.domain.ChallengeQuestion;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.service.ChallengeQuestionService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
@@ -49,6 +53,9 @@ public class RegisterCustomerController {
 
     @Resource(name="blRegisterCustomerValidator")
     private RegisterCustomerValidator registerCustomerValidator;
+    
+    @Resource(name="blChallengeQuestionService")
+    private ChallengeQuestionService challengeQuestionService;
 
     @RequestMapping(method = { RequestMethod.GET })
     public String viewForm() {
@@ -73,6 +80,11 @@ public class RegisterCustomerController {
         Customer customer = customerService.createCustomerFromId(null);
         customerRegistrationForm.setCustomer(customer);
         return customerRegistrationForm;
+    }
+    
+    @ModelAttribute("challengeQuestions")
+    public List<ChallengeQuestion> getChallengeQuestions() {
+        return challengeQuestionService.readChallengeQuestions();
     }
 
     public String getRegistrationErrorView() {
