@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="BroadleafCommerceDistribution" default="clean" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+<project name="BroadleafCommerceDistribution" default="clean" basedir="." 
+	xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+	xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
+	
+	<!--
+		This build script requires at least ANT version 1.7, or above
+	-->
 	
 	<path id="maven-ant-tasks.classpath" path="BroadleafCommerceDemo/lib/maven-ant-tasks-2.0.10.jar" />
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
@@ -7,6 +13,8 @@
 	<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime"/>
 	<artifact:pom id="demoPom" file="BroadleafCommerceDemo/pom.xml"/>
 	<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="compile"/>
+	<artifact:pom id="adminPom" file="BroadleafCommerceAdmin/pom.xml"/>
+	<artifact:dependencies filesetId="adminDeps" pomRefId="adminPom" useScope="runtime"/>
 	
 	<artifact:pom id="mypom" file="pom.xml"/>
 	
@@ -87,15 +95,30 @@
 		<copy todir="${maven.build.finalName}" file="doc/license.txt"/>
 	</target>
 	
-	<target name="build-dependencies" depends="build-bin">
+	<target name="build-dependencies">
 		<mkdir dir="${maven.build.finalName}/lib"/>
+		<mkdir dir="${maven.build.finalName}/lib/framework"/>
+		<mkdir dir="${maven.build.finalName}/lib/admin"/>
 		<path id="build.runtime.classpath">
 			<fileset refid="frameworkDeps"/>
 		</path>
 		<taskdef name="licenseCopy" classname="org.broadleafcommerce.util.DependencyLicenseCopy" classpathref="build.runtime.classpath"/>
-		<licenseCopy todir="${maven.build.finalName}/lib" licenseDir="doc/dependency-licenses">
-			<fileset refid="frameworkDeps"/>
-			<fileset refid="demoDeps"/>
+		<licenseCopy todir="${maven.build.finalName}/lib/framework" licenseDir="doc/dependency-licenses">
+			<restrict>
+				<fileset refid="frameworkDeps"/>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar"/>
+				</rsel:not>
+			</restrict>
+		</licenseCopy>
+		<licenseCopy todir="${maven.build.finalName}/lib/admin" licenseDir="doc/dependency-licenses">
+			<difference>
+				<fileset refid="adminDeps"/>
+				<intersect>
+					<fileset refid="adminDeps"/>
+					<fileset refid="frameworkDeps"/>
+				</intersect>
+			</difference>
 		</licenseCopy>
 	</target>
 
