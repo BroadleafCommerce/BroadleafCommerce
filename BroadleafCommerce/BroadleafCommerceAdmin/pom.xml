@@ -18,10 +18,44 @@
     <dependency>
     	<groupId>org.springframework.flex</groupId>
     	<artifactId>spring-flex</artifactId>
+    	<exclusions>
+    		<exclusion>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+			</exclusion>
+		</exclusions>
     </dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>
     	<artifactId>servlet-api</artifactId> 	
     </dependency>
+    <dependency>
+  		<groupId>xalan</groupId>
+  		<artifactId>xalan</artifactId>
+  		<version>2.7.1</version>
+  		<type>jar</type>
+  		<scope>runtime</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-io</groupId>
+  		<artifactId>commons-io</artifactId>
+  		<version>1.4</version>
+  		<type>jar</type>
+  		<scope>runtime</scope>
+  	</dependency>
+  	<dependency>
+  		<groupId>commons-fileupload</groupId>
+  		<artifactId>commons-fileupload</artifactId>
+  		<version>1.2.1</version>
+  		<type>jar</type>
+  		<scope>runtime</scope>
+  	</dependency>
+  	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring</artifactId>
+		<version>2.5.6.SEC01</version>
+		<type>jar</type>
+		<scope>runtime</scope>
+	</dependency>
   </dependencies>
 </project>
