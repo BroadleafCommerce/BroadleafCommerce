@@ -19,11 +19,11 @@
 					</td>
 				<tr>
 					<td style="text-align:right"><label for="firstName">* First Name</label></td>
-					<td><form:input path="firstName" size="30" cssClass="userField" id="firstName" /></td>
+					<td><form:input path="customer.firstName" size="30" cssClass="userField" id="firstName" /></td>
 	    		</tr>
 				<tr>
 					<td style="text-align:right"><label for="lastName">* Last Name</label></td>
-					<td><form:input path="lastName" size="30" cssClass="userField" id="lastName" /></td>
+					<td><form:input path="customer.lastName" size="30" cssClass="userField" id="lastName" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="password">* Password</label></td>
@@ -39,17 +39,17 @@
 	    		</tr>
 				<tr>
 					<td style="text-align:right"><label for="challengeQuestion">* Challenge Question</b></label></td>
-					<td><form:select id="challengeQuestions" path="challengeQuestionId">
+					<td><form:select id="challengeQuestions" path="customer.challengeQuestionId">
           				<form:options items="${challengeQuestions}" itemLabel="question" itemValue="id"/>
        				</form:select> </td>				
 	    		</tr>
 	    	    <tr>
 					<td style="text-align:right"><label for="challengeAnswer">* Challenge Answer</b></label></td>
-					<td><form:input path="unencodedChallengeAnswer" size="30" cssClass="userField"  id="challengeAnswer" /></td>
+					<td><form:input path="customer.unencodedChallengeAnswer" size="30" cssClass="userField"  id="challengeAnswer" /></td>
 	    		</tr>
 	    		<tr>
 					<td style="text-align:right"><label for="emailAddress">* Email Address</label></td>
-					<td><form:input path="emailAddress" size="30" cssClass="userField" id="emailAddress" /></td>
+					<td><form:input path="customer.emailAddress" size="30" cssClass="userField" id="emailAddress" /></td>
 	    		</tr>
 			  	<tr>
     	  			<td class="alignCenter" colspan="2">
