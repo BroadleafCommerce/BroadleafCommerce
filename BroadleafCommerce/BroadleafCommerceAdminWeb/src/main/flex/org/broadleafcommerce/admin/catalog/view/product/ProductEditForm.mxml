@@ -46,9 +46,9 @@
 				product.activeEndDate = activeEndDateDateField.selectedDate;
 				product.model = modelTextInput.text;
 				product.manufacturer = manufacturerTextInput.text;
-				if(product.weight == null)
-					product.weight = new ProductWeight();
-				product.weight.weight = uint(weightTextInput.text);
+//				if(product.weight == null)
+//					product.weight = new ProductWeight();
+//				product.weight.weight = uint(weightTextInput.text);
 				if(product.dimension == null) product.dimension = new ProductDimension();
 				product.dimension.depth = Number(depthTextInput.text);
 				product.dimension.width = Number(widthTextInput.text);
@@ -100,9 +100,9 @@
 	<mx:Binding
 		source="productModel.currentProduct.manufacturer"
 		destination="manufacturerTextInput.text"/>
-	<mx:Binding
+	<!--mx:Binding
 		source="productModel.currentProduct.weight.weight.toString()"
-		destination="weightTextInput.text"/>
+		destination="weightTextInput.text"/-->
 	<mx:Binding
 		source="productModel.currentProduct.depth.toString()"
 		destination="depthTextInput.text"/>

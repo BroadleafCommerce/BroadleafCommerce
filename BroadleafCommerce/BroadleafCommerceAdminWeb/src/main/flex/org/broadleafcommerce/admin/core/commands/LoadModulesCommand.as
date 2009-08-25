@@ -3,10 +3,11 @@ package org.broadleafcommerce.admin.core.commands
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
 	import com.adobe.cairngorm.view.ViewLocator;
-
+	
 	import mx.collections.ArrayCollection;
+	import mx.controls.Alert;
 	import mx.modules.IModuleInfo;
-
+	
 	import org.broadleafcommerce.admin.core.control.events.LoadModulesEvent;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.view.helpers.AdminContentViewHelper;
@@ -34,7 +35,12 @@ package org.broadleafcommerce.admin.core.commands
 				for each(var role:Object in userRoles){
 					if(role["name"] != null && role["name"] is String){
 						if(module.authenticatedRoles.indexOf(String(role["name"])) > -1){
-							AppModelLocator.getInstance().authModel.authenticatedModules.addItem(module);
+							try{
+								AppModelLocator.getInstance().authModel.authenticatedModules.addItem(module);								
+							} catch (error:Error){
+								Alert.show("Error loading module: "+module.label+": "+error.message);
+							}
+							
 						}
 					}
 				}

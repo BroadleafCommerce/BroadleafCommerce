@@ -5,9 +5,9 @@ package org.broadleafcommerce.admin.core.model
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 	
 	[Bindable]
-	public class ToolsModel
+	public class AdminToolsModel
 	{
-		public function ToolsModel()
+		public function AdminToolsModel()
 		{
 		}
 		public static const SERVICE_ID:String = "blCodeTypeService";

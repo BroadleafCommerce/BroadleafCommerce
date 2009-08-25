@@ -4,10 +4,10 @@
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
-			import org.broadleafcommerce.admin.tools.model.ToolsModel;
+			import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
 			
 			[Bindable]
-			private var toolsModel:ToolsModel = ToolsModelLocator.getInstance().toolsModel;
+			private var toolsModel:CodeTypeModel = ToolsModelLocator.getInstance().codeTypeModel;
 		]]>
 	</mx:Script>
 	<mx:Binding
@@ -19,9 +19,9 @@
 	<mx:Binding
 		source="toolsModel.currentCodeType.key"
 		destination="keyLabel.text"/>
-	<mx:Binding
+	<!--mx:Binding
 		source="toolsModel.currentCodeType.modifiable"
-		destination="modifiableLabel.text"/>
+		destination="modifiableLabel.text"/-->
 	<mx:FormItem
 		label="Code Type:">
 		<mx:Label
@@ -37,9 +37,9 @@
 		<mx:Label
 			id="descriptionLabel"/>
 	</mx:FormItem>
-	<mx:FormItem
-		label="Modifiable:">
+	<mx:FormItem>
 		<mx:Label
-			id="modifiableLabel"/>
+			id="modifiableLabel"
+			text="Code Type is Read Only"/>
 	</mx:FormItem>
 </mx:Form>

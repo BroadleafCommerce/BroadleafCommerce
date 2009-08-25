@@ -6,6 +6,7 @@ package org.broadleafcommerce.admin.tools.control
 	import org.broadleafcommerce.admin.tools.commands.codetype.CreateCodeTypeCommand;
 	import org.broadleafcommerce.admin.tools.commands.codetype.EditCodeTypeCommand;
 	import org.broadleafcommerce.admin.tools.commands.codetype.FindAllCodeTypesCommand;
+	import org.broadleafcommerce.admin.tools.commands.codetype.RemoveCodeTypeCommand;
 	import org.broadleafcommerce.admin.tools.commands.codetype.RemoveCodeTypeFormCommand;
 	import org.broadleafcommerce.admin.tools.commands.codetype.SaveCodeTypeCommand;
 	import org.broadleafcommerce.admin.tools.commands.codetype.SearchCodeTypesCommand;
@@ -13,6 +14,7 @@ package org.broadleafcommerce.admin.tools.control
 	import org.broadleafcommerce.admin.tools.control.events.codetype.CreateCodeTypeEvent;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.EditCodeTypeEvent;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.FindAllCodeTypesEvent;
+	import org.broadleafcommerce.admin.tools.control.events.codetype.RemoveCodeTypeEvent;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.RemoveCodeTypeFormEvent;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.SaveCodeTypeEvent;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.SearchCodeTypesEvent;
@@ -29,6 +31,7 @@ package org.broadleafcommerce.admin.tools.control
 			addCommand(RemoveCodeTypeFormEvent.EVENT_REMOVE_CODE_TYPE_FORM, RemoveCodeTypeFormCommand);
 			addCommand(SearchCodeTypesEvent.EVENT_SEARCH_CODE_TYPES, SearchCodeTypesCommand);
 			addCommand(ClearCodeTypeSearchEvent.EVENT_CLEAR_CODE_TYPE_SEARCH, ClearCodeTypeSearchCommand);
+			addCommand(RemoveCodeTypeEvent.EVENT_REMOVE_CODETYPE, RemoveCodeTypeCommand);
 		}
 		
 	}

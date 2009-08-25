@@ -25,6 +25,7 @@ package org.broadleafcommerce.admin.catalog.vo.sku
 		public var activeEndDate:Date = new Date();
 		public var active:Boolean;
 //		private var _skuImages:Object;
+		private var skuMedia:Object;
 		public var allParentProducts:ArrayCollection = new ArrayCollection();
 		
 		public function Sku(){

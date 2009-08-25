@@ -9,7 +9,7 @@
 		import mx.events.ListEvent;
 		import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 		import mx.collections.ArrayCollection;
-		import org.broadleafcommerce.admin.core.model.ToolsModel;
+		import org.broadleafcommerce.admin.core.model.AdminToolsModel;
 		import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 	[Bindable]

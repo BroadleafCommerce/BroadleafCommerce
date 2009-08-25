@@ -12,7 +12,7 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 	import org.broadleafcommerce.admin.tools.business.ToolsServiceDelegate;
 	import org.broadleafcommerce.admin.tools.control.events.codetype.SearchCodeTypesEvent;
-	import org.broadleafcommerce.admin.tools.model.ToolsModel;
+	import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
 	import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
 
 	public class SearchCodeTypesCommand implements Command, IResponder
@@ -26,18 +26,18 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 		}
 		
 		public function result(data:Object):void{
-			var toolsModel:ToolsModel = ToolsModelLocator.getInstance().toolsModel;
+			var toolsModel:CodeTypeModel = ToolsModelLocator.getInstance().codeTypeModel;
 			var event:ResultEvent = ResultEvent(data);
 			toolsModel.codeTypes = ArrayCollection(event.result);
 			if(toolsModel.codeTypes.length != 0){
 				toolsModel.currentCodeType = CodeType(toolsModel.codeTypes.getItemAt(0));
 				if(toolsModel.currentCodeType.modifiable == 'true'){
-					toolsModel.viewState = ToolsModel.STATE_EDIT;
+					toolsModel.viewState = CodeTypeModel.STATE_EDIT;
 				}else{
-					toolsModel.viewState = ToolsModel.STATE_VIEW;
+					toolsModel.viewState = CodeTypeModel.STATE_VIEW;
 				}
 			}else{
-				toolsModel.viewState = ToolsModel.STATE_NONE;
+				toolsModel.viewState = CodeTypeModel.STATE_NONE;
 			}
 		}		
 		

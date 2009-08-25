@@ -22,7 +22,7 @@ package org.broadleafcommerce.admin.catalog.commands
 			var categoryArray:ArrayCollection = scoe.categoryArray;
 			var productArray:ArrayCollection = scoe.productArray;
 			var skuArray:ArrayCollection = scoe.skuArray;
-			AppModelLocator.getInstance().configModel.currentCodeTypes = CatalogModelLocator.getInstance().categoryModel.categoryMediaCodes;			
+
 		}
 		
 	}

@@ -11,6 +11,7 @@ package org.broadleafcommerce.admin.catalog.commands
 	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
+	import org.broadleafcommerce.admin.catalog.model.ProductModel;
 
 	public class BuildCatalogCommand implements Command
 	{
@@ -45,10 +46,15 @@ package org.broadleafcommerce.admin.catalog.commands
 				
 				var codes:ArrayCollection = AppModelLocator.getInstance().configModel.codeTypes;
 				var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+				var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 				categoryModel.categoryMediaCodes = new ArrayCollection();
+				productModel.productMediaCodes = new ArrayCollection();
 				for each(var codeType:CodeType in codes){
 					if(codeType.codeType == "CATEGORY_MEDIA"){
 						categoryModel.categoryMediaCodes.addItem(codeType);
+					}
+					if(codeType.codeType == "PRODUCT_MEDIA") {
+						productModel.productMediaCodes.addItem(codeType);
 					}	
 				}
 						

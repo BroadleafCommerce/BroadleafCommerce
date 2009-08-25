@@ -7,18 +7,19 @@
 			import org.broadleafcommerce.admin.tools.control.events.codetype.RemoveCodeTypeFormEvent;
 			import mx.utils.ObjectUtil;
 			import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
-			import org.broadleafcommerce.admin.tools.model.ToolsModel;
+			import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
 			import org.broadleafcommerce.admin.tools.control.events.codetype.SaveCodeTypeEvent;
 			
 			[Bindable]
-			private var toolsModel:ToolsModel = ToolsModelLocator.getInstance().toolsModel;
+			private var toolsModel:CodeTypeModel = ToolsModelLocator.getInstance().codeTypeModel;
 			
 			private function handleSaveButtonClick(event:Event):void{
 				var editCodeType:CodeType = CodeType(ObjectUtil.copy(toolsModel.currentCodeType));
 				editCodeType.codeType = codeTypeTextInput.text;
 				editCodeType.description = descriptionTextInput.text;
 				editCodeType.key = keyTextInput.text;
-				editCodeType.modifiable = modifiableTrueRadioButton.selected.toString();
+				//editCodeType.modifiable = modifiableTrueRadioButton.selected.toString();
+				editCodeType.modifiable = "True";
 				new SaveCodeTypeEvent(editCodeType).dispatch();
 			}
 			
@@ -36,12 +37,12 @@
 	<mx:Binding
 		source="toolsModel.currentCodeType.key"
 		destination="keyTextInput.text"/>
-	<mx:Binding
+	<!--mx:Binding
 		source="toolsModel.currentCodeType.modifiable == 'true'"
 		destination="modifiableTrueRadioButton.selected"/>
 	<mx:Binding
 		source="toolsModel.currentCodeType.modifiable == 'false'"
-		destination="modifiableFalseRadioButton.selected"/>
+		destination="modifiableFalseRadioButton.selected"/-->
 	<mx:FormItem
 		label="Code Type:">
 		<mx:TextInput 
@@ -60,7 +61,7 @@
 			id="descriptionTextInput"
 			width="160"/> 
 	</mx:FormItem> 
-	<mx:FormItem
+	<!--mx:FormItem
 		label="Modifiable:">
 		<mx:RadioButtonGroup
 			id="modifiableRadioButtonGroup"/>
@@ -74,7 +75,7 @@
 				groupName="modifiableRadioButtonGroup" 
 				label="False"/>
 		</mx:HBox>
-	</mx:FormItem>
+	</mx:FormItem-->
 	<mx:FormItem>
 		<mx:HBox>
 			<mx:Button

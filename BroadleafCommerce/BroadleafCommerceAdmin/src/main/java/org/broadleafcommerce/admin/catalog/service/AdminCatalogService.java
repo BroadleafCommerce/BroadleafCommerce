@@ -1,5 +1,6 @@
 package org.broadleafcommerce.admin.catalog.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class AdminCatalogService {
     }
 
     public Product saveProduct(Product product) {
+    	product.setAllParentCategories(normalizeCategories(product.getAllParentCategories()));
+    	
     	if(product.getProductImages() != null && product.getProductImages() instanceof ASObject){
     		product.setProductImages(getImagesMapFromAsObject((ASObject)product.getProductImages()));    		
     	}
@@ -124,6 +127,16 @@ public class AdminCatalogService {
         }
         return newMedia;
     	
+    }
+    
+    private List<Category> normalizeCategories(List<Category> asObjectCategories){
+    	List<Category> normalizedCategories = new ArrayList<Category>();
+    	for (Category category : asObjectCategories){
+    		category.setCategoryImages(getImagesMapFromAsObject((ASObject)category.getCategoryImages()));
+    		category.setCategoryMedia(getMediaMapFromAsObject((ASObject)category.getCategoryMedia()));
+    		normalizedCategories.add(category);
+    	}
+    	return normalizedCategories;
     }
 
     

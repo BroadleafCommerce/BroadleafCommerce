@@ -2,7 +2,6 @@ package org.broadleafcommerce.admin.catalog.commands.category
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-	import com.adobe.cairngorm.view.ViewLocator;
 	
 	import mx.collections.ArrayCollection;
 	
@@ -11,6 +10,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
+	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	
 	public class EditCategoryCommand implements Command
 	{
@@ -33,6 +33,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 			}
 
 			categoryModel.viewState = CategoryModel.STATE_EDIT;
+			AppModelLocator.getInstance().configModel.currentCodeTypes = CatalogModelLocator.getInstance().categoryModel.categoryMediaCodes;			
 			var fpbce:FindProductsByCategoryEvent = new FindProductsByCategoryEvent(ecce.category);
 			fpbce.dispatch();
 
