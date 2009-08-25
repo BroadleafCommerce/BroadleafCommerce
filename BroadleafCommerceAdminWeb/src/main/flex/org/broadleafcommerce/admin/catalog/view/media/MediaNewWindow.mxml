@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="400" height="300" xmlns:components="org.broadleafcommerce.admin.catalog.view.components.*"
-	  creationComplete="handleCreationComplete()" xmlns:media="org.broadleafcommerce.admin.catalog.view.media.*">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute"  
+	creationComplete="handleCreationComplete()"
+	showCloseButton="true" 
+	close="PopUpManager.removePopUp(this)"	
+	xmlns:components="org.broadleafcommerce.admin.catalog.view.components.*"
+	xmlns:media="org.broadleafcommerce.admin.catalog.view.media.*">
 
 <mx:Script>
 	<![CDATA[
@@ -28,6 +33,7 @@
 
 		private function handleCreationComplete():void{
 			PopUpManager.centerPopUp(this);			
+			this.title = "Add/Edit Media";
 		}
 
 		private function handleSave():void{
@@ -111,7 +117,7 @@
 			</mx:VBox>
 		 </mx:HBox>
 			<mx:HBox>
-				<mx:Text text="URL:"  y="45" x="10"/> <mx:Text id="urlLabelEdit"  y="45" x="40"/>					
+				<mx:Text text="URL:"  y="45" x="10"/> <mx:Text id="urlLabelEdit"  y="45" x="40" width="300"/>					
 			</mx:HBox>
 		</mx:VBox>
 	</mx:HBox>	

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <services-config>
 
-    <services>
+    <!-- services>
         <service-include file-path="remoting-config.xml" />
         <service-include file-path="proxy-config.xml" />
         <service-include file-path="messaging-config.xml" />        
-    </services>
+    </services -->
 
     <security>
         <!-- Uncomment the correct app server
