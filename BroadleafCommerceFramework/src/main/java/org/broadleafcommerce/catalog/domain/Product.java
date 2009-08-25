@@ -185,10 +185,25 @@ public interface Product extends Serializable {
      * @param productImages - a map of product images
      */
     public void setProductMedia(Map<String, Media> productMedia);
+
+    /**
+     * Returns all parent {@link Category}(s) this product is associated with.
+     *
+     * @return the all parent categories for this product
+     */
+    public List<Category> getAllParentCategories();
+
+    /**
+     * Sets all parent {@link Category}s this product is associated with.
+     *
+     * @param allParentCategories - a List of all parent {@link Category}(s) to associate this product with
+     */
+    public void setAllParentCategories(List<Category> allParentCategories);
+     
     /**
      * Returns the default {@link Category} this product is associated with.
      *
-     * @return the default category for this product
+     * @param defaultCategory - the default {@link Category} to associate this product with
      */
     public Category getDefaultCategory();
 

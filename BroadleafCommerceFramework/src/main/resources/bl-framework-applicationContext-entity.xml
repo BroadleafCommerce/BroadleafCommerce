@@ -51,5 +51,6 @@
 	<bean id="org.broadleafcommerce.rating.domain.RatingDetail" class="org.broadleafcommerce.rating.domain.RatingDetailImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.rating.domain.ReviewDetail" class="org.broadleafcommerce.rating.domain.ReviewDetailImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.rating.domain.ReviewFeedback" class="org.broadleafcommerce.rating.domain.ReviewFeedbackImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.util.domain.CodeType" class="org.broadleafcommerce.util.domain.CodeTypeImpl" scope="prototype"/>
 	
 </beans>
