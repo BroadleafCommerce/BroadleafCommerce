@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands
 
 		public function execute(event:CairngormEvent):void
 		{
-			trace("StandardizeCatalogObjectsCommand.execute()");
+			trace("DEBUG: StandardizeCatalogObjectsCommand.execute()");
 			var scoe:StandardizeCatalogObjectsEvent = StandardizeCatalogObjectsEvent(event);
 			var categoryArray:ArrayCollection = scoe.categoryArray;
 			var productArray:ArrayCollection = scoe.productArray;

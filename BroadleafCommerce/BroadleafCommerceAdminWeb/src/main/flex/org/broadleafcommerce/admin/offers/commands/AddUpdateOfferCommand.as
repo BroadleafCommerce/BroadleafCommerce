@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.offers.commands
 	{
 		public function execute(event:CairngormEvent):void
 		{
+			trace("DEBUG: AddUpdateOfferCommand.execute()");
 			var auoe:AddUpdateOfferEvent = AddUpdateOfferEvent(event);
 			var offer:Offer = auoe.offer;
 			var offersList:ArrayCollection = OfferModelLocator.getInstance().offerModel.offersList;
@@ -33,6 +34,7 @@ package org.broadleafcommerce.admin.offers.commands
 		
 		public function result(data:Object):void
 		{
+			trace("DEBUG: AddUpdateOfferCommand.result()");
 			var faoe:FindAllOffersEvent = new FindAllOffersEvent();
 			faoe.dispatch();
 

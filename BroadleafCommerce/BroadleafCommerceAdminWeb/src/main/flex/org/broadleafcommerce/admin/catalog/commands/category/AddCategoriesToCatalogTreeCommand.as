@@ -19,7 +19,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 
 		public function execute(event:CairngormEvent):void
 		{
-			trace("AddCategoriesToCatalogTreeCommand.execute()");
+			trace("DEBUG: AddCategoriesToCatalogTreeCommand.execute()");
 			var actce:AddCategoriesToCatalogTreeEvent = AddCategoriesToCatalogTreeEvent(event);
 			var rawCats:ArrayCollection = actce.categoryArray;
 			var rootCats:ArrayCollection = actce.catalogTree;

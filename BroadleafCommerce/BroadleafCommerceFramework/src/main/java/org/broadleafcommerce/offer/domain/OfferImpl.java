@@ -194,6 +194,10 @@ public class OfferImpl implements Offer {
         this.stackable = stackable;
     }
 
+    public boolean getStackable(){
+    	return stackable;
+    }
+    
     public String getTargetSystem() {
         return targetSystem;
     }
@@ -230,6 +234,10 @@ public class OfferImpl implements Offer {
         return applyDiscountToMarkedItems;
     }
 
+    public boolean getApplyDiscountToMarkedItems() {
+    	return applyDiscountToMarkedItems;
+    }
+    
     public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems) {
         this.applyDiscountToMarkedItems = applyDiscountToMarkedItems;
     }
@@ -252,6 +260,10 @@ public class OfferImpl implements Offer {
         this.combinableWithOtherOffers = combinableWithOtherOffers;
     }
 
+    public boolean getCombinableWithOtherOffers() {
+    	return combinableWithOtherOffers;
+    }
+    
     public OfferDeliveryType getDeliveryType() {
         return OfferDeliveryType.getInstance(deliveryType);
     }

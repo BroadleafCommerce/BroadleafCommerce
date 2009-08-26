@@ -15,7 +15,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	public class EditCategoryCommand implements Command
 	{
 		public function execute(event:CairngormEvent):void{
-			trace("EditCategoryCommand.execute()");
+			trace("DEBUG: EditCategoryCommand.execute()");
 			var ecce:EditCategoryEvent = EditCategoryEvent(event);
 			var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel; 			
 			categoryModel.currentCategory = ecce.category;

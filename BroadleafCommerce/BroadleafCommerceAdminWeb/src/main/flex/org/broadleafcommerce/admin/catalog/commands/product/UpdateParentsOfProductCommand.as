@@ -11,7 +11,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	{
 		public function execute(event:CairngormEvent):void
 		{
-			trace("execute : ");
+			trace("DEBUG: execute : ");
 			var aptpe:UpdateParentsOfProductEvent = UpdateParentsOfProductEvent(event);
 			aptpe.product.allParentCategories = aptpe.parents;
 			CatalogModelLocator.getInstance().productModel.currentProductChanged = true;

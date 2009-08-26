@@ -15,16 +15,19 @@ package org.broadleafcommerce.admin.offers.business
 
 		public function OfferServiceDelegate(responder:IResponder)
 		{
+			trace("DEBUG: new OfferServiceDelegate()");
 			this.offerService = OfferServiceLocator.getInstance().getService();
             this.responder = responder;	
 		}
 		
 		public function findAllOffers():void{
+			trace("DEBUG: OfferServiceDelegate.findAllOffers()");
 			var call:AsyncToken = offerService.findAllOffers();
 			call.addResponder(responder); 
 		}
 		
 		public function saveOffer(offer:Offer):void{
+			trace("DEBUG: OfferServiceDelegate.saveOffer()");
 			var call:AsyncToken = offerService.save(offer);
 			call.addResponder(responder);
 		}

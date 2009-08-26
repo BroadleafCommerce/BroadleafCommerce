@@ -17,13 +17,13 @@ package org.broadleafcommerce.admin.core.commands.codetype
 	public class AdminFindAllCodeTypesCommand implements Command, IResponder
 	{
 		public function execute(event:CairngormEvent):void{
-			trace("AdminFindAllCodeTypesCommand.execute()");
+			trace("DEBUG: AdminFindAllCodeTypesCommand.execute()");
 			var delegate:AdminToolsDelegate = new AdminToolsDelegate(this);
 			delegate.findAllCodeTypes();
 		}
 
 		public function result(data:Object):void{
-			trace("AdminFindAllCodeTypesCommand.result()");
+			trace("DEBUG: AdminFindAllCodeTypesCommand.result()");
 			// The following line is needed so that the remoteObject is properly 
 			// created as a CodeType
 			var codeType:CodeType = new CodeType();

@@ -18,7 +18,7 @@
 				}
 				
 				private function handleDataChange():void{
-					trace("handle data change");
+					trace("DEBUG: handle data change");
 				}
 				
 			]]>

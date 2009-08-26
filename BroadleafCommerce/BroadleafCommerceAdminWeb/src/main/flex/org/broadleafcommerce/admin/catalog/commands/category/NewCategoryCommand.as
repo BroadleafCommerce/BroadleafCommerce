@@ -12,7 +12,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	public class NewCategoryCommand implements Command
 	{
 		public function execute(event:CairngormEvent):void{
-			trace("execute : ");
+			trace("DEBUG: execute : ");
 			var nce:NewCategoryEvent = NewCategoryEvent(event);
 			CatalogModelLocator.getInstance().categoryModel.currentCategory = new Category();
 			if(nce.parentCategory != null){

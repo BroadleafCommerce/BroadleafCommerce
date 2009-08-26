@@ -42,7 +42,7 @@ package org.broadleafcommerce.admin.catalog.view.media
 			    var success:Boolean = fileRef.browse(new Array(fileFilter));
 			} catch (error:Error) {
 				Alert.show("Unable to browse for files.");
-			    trace("Unable to browse for files.");
+			    trace("DEBUG: Unable to browse for files.");
 			}
 		}
 	
@@ -51,7 +51,7 @@ package org.broadleafcommerce.admin.catalog.view.media
 				fileRef.upload(urlRequest, "file");
 		    } catch (error:Error) {
 		    	Alert.show("Unable to upload file.");
-		        trace("Unable to upload file.");
+		        trace("DEBUG: Unable to upload file.");
 		    }
 		}
 
@@ -66,7 +66,7 @@ package org.broadleafcommerce.admin.catalog.view.media
 				// mlr.urlLabelEdit.text = directory+fileRef.name;
 //				MediaCanvas(CategoryCanvas(view).categoryMediaCanvas).mediaDataGrid.editedItemPosition = MediaCanvas(CategoryCanvas(view).categoryMediaCanvas).mediaDataGrid.editedItemPosition; 	    
 //			Alert.show("Upload complete");
-		    trace("uploaded");
+		    trace("DEBUG: uploaded");
 		}						
 		
 	}
