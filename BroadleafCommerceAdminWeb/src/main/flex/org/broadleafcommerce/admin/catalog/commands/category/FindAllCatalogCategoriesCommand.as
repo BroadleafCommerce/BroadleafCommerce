@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	{
 		public function execute(event:CairngormEvent):void
 		{
-			trace("FindAllCategoriesCommand.execute()");
+			trace("DEBUG: FindAllCategoriesCommand.execute()");
 			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
 			delegate.findAllCategories();
 		}

@@ -33,7 +33,7 @@ package org.broadleafcommerce.admin.catalog.commands
 
 		public function execute(event:CairngormEvent):void
 		{
-			trace("BuildCatalogCommand.execute()");
+			trace("DEBUG: BuildCatalogCommand.execute()");
 			var categoriesArray:ArrayCollection = CatalogModelLocator.getInstance().categoryModel.categoryArray;
 			var productsArray:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;
 			var skusArray:ArrayCollection = CatalogModelLocator.getInstance().skuModel.catalogSkus;					

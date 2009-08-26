@@ -21,7 +21,7 @@ package org.broadleafcommerce.admin.catalog.business
        */
       public static function get instance() : CatalogServiceLocator 
       {
-      	trace("CatalogServiceLocator.get instance()");      	
+      	trace("DEBUG: CatalogServiceLocator.get instance()");      	
          if ( ! _instance )
          {
             _instance = new CatalogServiceLocator();
@@ -36,14 +36,14 @@ package org.broadleafcommerce.admin.catalog.business
        */
       public static function getInstance() : CatalogServiceLocator 
       {
-      	trace("CatalogServiceLocator.getInstance()");
+      	trace("DEBUG: CatalogServiceLocator.getInstance()");
          return instance;
       }
          
       // Constructor should be private but current AS3.0 does not allow it
       public function CatalogServiceLocator() 
       {   
-      	trace("new CatalogServiceLocator()");
+      	trace("DEBUG: new CatalogServiceLocator()");
          if ( _instance )
          {
             throw new CairngormError( CairngormMessageCodes.SINGLETON_EXCEPTION, "CatalogServiceLocator" );
@@ -53,10 +53,10 @@ package org.broadleafcommerce.admin.catalog.business
       }
 		
 		public function getService():RemoteObject{
-			trace("CatalogServiceLocator.getService()");
+			trace("DEBUG: CatalogServiceLocator.getService()");
 			var x:RemoteObject = myService;
 			// if(myService == null){		
-				trace("CatalogServiceLocator.getService() -- creating new RemoteObject");		
+				trace("DEBUG: CatalogServiceLocator.getService() -- creating new RemoteObject");		
 				var myService:RemoteObject = new RemoteObject; 
 				var adminService: RemoteObject = RemoteObject(ServiceLocator.getInstance().getRemoteObject("blcAdminService"));
 				myService.concurrency = "multiple";

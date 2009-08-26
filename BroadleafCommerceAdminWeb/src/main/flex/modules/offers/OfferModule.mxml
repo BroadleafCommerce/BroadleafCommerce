@@ -7,7 +7,6 @@
 <mx:Script>
 	<![CDATA[
 		import mx.controls.Alert;
-		import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
 
 		private function handleCreationComplete():void{
 			this.label = "Offers";

@@ -18,7 +18,7 @@
 			private var codeTypeModel:CodeTypeModel = ToolsModelLocator.getInstance().codeTypeModel;
 		
 			private function handleCreationComplete():void{
-				trace("creationComplete : CodeTypeCanvas");
+				trace("DEBUG: creationComplete : CodeTypeCanvas");
 				new FindAllCodeTypesEvent().dispatch();
 			}
 			

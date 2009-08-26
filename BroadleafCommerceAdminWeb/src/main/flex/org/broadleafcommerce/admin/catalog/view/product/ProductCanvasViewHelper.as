@@ -60,7 +60,7 @@ package org.broadleafcommerce.admin.catalog.view.product
 			    var success:Boolean = fileRef.browse(new Array(fileFilter));
 			} catch (error:Error) {
 				Alert.show("Unable to browse for files.");
-			    trace("Unable to browse for files.");
+			    trace("DEBUG: Unable to browse for files.");
 			}
 		}
 	
@@ -69,14 +69,14 @@ package org.broadleafcommerce.admin.catalog.view.product
 				fileRef.upload(urlRequest, "file");
 		    } catch (error:Error) {
 		    	Alert.show("Unable to upload file.");
-		        trace("Unable to upload file.");
+		        trace("DEBUG: Unable to upload file.");
 		    }
 		}
 
 
 		private function completeHandler(event:Event):void {
 			this.media.url = directory+fileRef.name;
-		    trace("uploaded");
+		    trace("DEBUG: uploaded");
 		}						
 		
 	}

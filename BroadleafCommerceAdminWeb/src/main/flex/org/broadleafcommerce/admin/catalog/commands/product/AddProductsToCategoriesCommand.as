@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 
 		public function execute(event:CairngormEvent):void
 		{
-			trace("execute : ");
+			trace("DEBUG: execute : ");
 			var aptcte:AddProductsToCategoriesEvent = AddProductsToCategoriesEvent(event);
 			var categoryArray:ArrayCollection = aptcte.categoryArray;
 			var productArray:ArrayCollection = aptcte.productsArray;			

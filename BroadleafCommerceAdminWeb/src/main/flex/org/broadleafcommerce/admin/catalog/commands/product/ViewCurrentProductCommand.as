@@ -14,7 +14,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 
 		public function execute(event:CairngormEvent):void
 		{
-			trace("execute : ");
+			trace("DEBUG: execute : ");
 			var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
 			catalogModel.viewState = CatalogModel.STATE_VIEW_PRODUCT;
 

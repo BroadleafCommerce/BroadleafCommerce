@@ -3,7 +3,7 @@
     <menuitem label="Security" swf="SecurityModule.swf" displayOrder="6" authRoles="ROLE_ADMIN" />
 	<menuitem label="Search" swf="SearchModule.swf" displayOrder="6" authRoles="ROLE_ADMIN" />
     <!--  
-	<menuitem label="Offers" swf="OfferModule.swf" displayOrder="5" authRoles="ROLE_ADMIN" />
 	-->
+	<menuitem label="Offers" swf="OfferModule.swf" displayOrder="5" authRoles="ROLE_ADMIN" />
 	<menuitem label="Tools" swf="ToolsModule.swf" displayOrder="10" authRoles="ROLE_ADMIN" />
 </xml>

@@ -9,7 +9,7 @@ package org.broadleafcommerce.admin.core.vo
 	[RemoteClass(alias="org.broadleafcommerce.util.money.Money")]	
 	public class Money implements IExternalizable
 	{
-		public var amount:Number; 
+		public var amount:uint; 
 		public var currency:Object;
 
     public function readExternal(input:IDataInput):void {

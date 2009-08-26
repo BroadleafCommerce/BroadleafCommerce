@@ -15,6 +15,7 @@ package org.broadleafcommerce.admin.offers.commands
 	{
 		public function execute(event:CairngormEvent):void
 		{
+			trace("DEBUG: ShowOfferWindowCommand.execute()");
 			var sowe:ShowOfferWindowEvent = ShowOfferWindowEvent(event);
 			if(sowe.offer != null){
 				OfferModelLocator.getInstance().offerModel.currentOffer = sowe.offer;

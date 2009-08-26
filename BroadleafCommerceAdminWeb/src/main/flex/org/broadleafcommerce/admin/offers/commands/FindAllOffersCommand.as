@@ -20,12 +20,14 @@ package org.broadleafcommerce.admin.offers.commands
 		
 		public function execute(event:CairngormEvent):void
 		{
+			trace("DEBUG: FindAllOffersCommand.execute()");
 			var delegate:OfferServiceDelegate = new OfferServiceDelegate(this);
 			delegate.findAllOffers();
 		}
 		
 		public function result(data:Object):void
 		{
+			trace("DEBUG: FindAllOffersCommand.result()");
 			var event:ResultEvent = ResultEvent(data);
 			this.offerModel.offersList = ArrayCollection(event.result);
 			// populate array collection of offers to be filtered

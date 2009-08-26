@@ -22,7 +22,7 @@ package org.broadleafcommerce.admin.catalog.commands.media
 
 		public function execute(event:CairngormEvent):void
 		{	
-			trace("SaveMediaCommand.execute()");
+			trace("DEBUG: SaveMediaCommand.execute()");
 			var sme:SaveMediaEvent = SaveMediaEvent(event);
 			var media:Media = sme.media;
 			var catalogModelLocator:CatalogModelLocator = CatalogModelLocator.getInstance();

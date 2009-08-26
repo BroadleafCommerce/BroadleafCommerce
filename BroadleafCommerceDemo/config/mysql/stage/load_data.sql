@@ -1,6 +1,48 @@
 SET foreign_key_checks = 0;
 set sql_mode = '';
 
+DELETE FROM broadleafcommerce.BLC_ADMIN_USER;
+
+LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/admin_user.txt'
+INTO TABLE broadleafcommerce.BLC_ADMIN_USER
+FIELDS TERMINATED BY '|' ENCLOSED BY "" 
+(ADMIN_USER_ID, EMAIL, LOGIN, NAME, PASSWORD);
+
+DELETE FROM broadleafcommerce.BLC_ADMIN_ROLE;
+
+LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/admin_role.txt'
+INTO TABLE broadleafcommerce.BLC_ADMIN_ROLE
+FIELDS TERMINATED BY '|' ENCLOSED BY "" 
+(ADMIN_ROLE_ID, DESCRIPTION, NAME);
+
+DELETE FROM broadleafcommerce.BLC_ADMIN_PERMISSION;
+
+LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/admin_permission.txt'
+INTO TABLE broadleafcommerce.BLC_ADMIN_PERMISSION
+FIELDS TERMINATED BY '|' ENCLOSED BY "" 
+(ADMIN_PERMISSION_ID, DESCRIPTION, NAME);
+
+DELETE FROM broadleafcommerce.BLC_ADMIN_ROLE_PERMISSION_XREF;
+
+LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/admin_role_permission_xref.txt'
+INTO TABLE broadleafcommerce.BLC_ADMIN_ROLE_PERMISSION_XREF
+FIELDS TERMINATED BY '|' ENCLOSED BY "" 
+(ADMIN_ROLE_ID, ADMIN_PERMISSION_ID);
+
+DELETE FROM broadleafcommerce.BLC_ADMIN_USER_ROLE_XREF;
+
+LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/admin_user_role_xref.txt'
+INTO TABLE broadleafcommerce.BLC_ADMIN_USER_ROLE_XREF
+FIELDS TERMINATED BY '|' ENCLOSED BY "" 
+(ADMIN_ROLE_ID, ADMIN_USER_ID);
+
+DELETE FROM broadleafcommerce.BLC_CODE_TYPES;
+
+LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/code_types.txt'
+INTO TABLE broadleafcommerce.BLC_CODE_TYPES
+FIELDS TERMINATED BY '|' ENCLOSED BY "" 
+(CODE_ID, CODE_TYPE, CODE_DESC, CODE_KEY, MODIFIABLE);
+
 DELETE FROM broadleafcommerce.BLC_CATEGORY;
 
 LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/category.txt' 
@@ -36,7 +78,7 @@ DELETE FROM broadleafcommerce.BLC_CATEGORY_PRODUCT_XREF;
 LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/category_product_xref.txt' 
 INTO TABLE broadleafcommerce.BLC_CATEGORY_PRODUCT_XREF
 FIELDS TERMINATED BY '|' ENCLOSED BY "" 
-(ID, PRODUCT_ID, CATEGORY_ID, DISPLAY_ORDER);
+(CATEGORY_PRODUCT_ID, PRODUCT_ID, CATEGORY_ID, DISPLAY_ORDER);
 
 DELETE FROM broadleafcommerce.BLC_SKU;
 
@@ -58,7 +100,7 @@ DELETE FROM broadleafcommerce.BLC_PRODUCT_ATTRIBUTE;
 LOAD DATA INFILE 'C:\\dev\\workspaces\\BLC-uber\\BroadleafCommerce\\BroadleafCommerceDemo\\config\\mysql/product_attribute.txt' 
 INTO TABLE broadleafcommerce.BLC_PRODUCT_ATTRIBUTE
 FIELDS TERMINATED BY '|' ENCLOSED BY "" 
-(ID, PRODUCT_ID, NAME, VALUE, SEARCHABLE);
+(PRODUCT_ATTRIBUTE_ID, PRODUCT_ID, NAME, VALUE, SEARCHABLE);
 
 DELETE FROM broadleafcommerce.BLC_PRODUCT_IMAGE;
 

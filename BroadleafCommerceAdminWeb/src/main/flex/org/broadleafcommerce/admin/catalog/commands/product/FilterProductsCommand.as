@@ -17,7 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 
 		public function execute(event:CairngormEvent):void
 		{
-			trace("execute : ");
+			trace("DEBUG: execute : ");
 			var fpe:FilterProductsEvent = FilterProductsEvent(event);
 			var filterString:String = fpe.filterString;
 			var products:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;

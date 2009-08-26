@@ -18,7 +18,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 
 		public function execute(event:CairngormEvent):void
 		{
-			trace("execute : ");
+			trace("DEBUG: execute : ");
 			var newMedia:Media = new Media();
 			var productMedia:ArrayCollection = CatalogModelLocator.getInstance().productModel.productMedia;
 			productMedia.addItem(newMedia);
