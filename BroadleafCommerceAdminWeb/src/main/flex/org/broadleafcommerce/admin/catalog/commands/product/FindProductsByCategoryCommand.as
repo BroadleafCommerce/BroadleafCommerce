@@ -24,7 +24,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 			trace("DEBUG: FindProductsByCategoryCommand.execute()");
 			var fpfce:FindProductsByCategoryEvent = FindProductsByCategoryEvent(event);
 			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
-			delegate.findActiveProductsByCategory(fpfce.category);
+			delegate.findProductsByCategory(fpfce.category);
 		}
 
 		public function result(data:Object):void

@@ -58,6 +58,16 @@
 //				var epe:EditProductEvent = new EditProductEvent(Product(List(event.currentTarget).selectedItem), true);
 //				epe.dispatch();
 //			}
+
+			
+			private function getSelectedIndex(category:Category):int{
+				for (var i:int;i<categoryModel.categoryArray.length; i++){
+					if(Category(categoryModel.categoryArray.getItemAt(i)).name == category.defaultParentCategory.name){
+						return i;
+					}
+				}
+				return -1;
+			}
 		]]>
 	</mx:Script>
 	<mx:Binding
@@ -73,7 +83,7 @@
 		source="categoryModel.currentCategory.longDescription"
 		destination="longDescriptionTextInput.text"/>
 	<mx:Binding
-		source="categoryModel.categoryArray.getItemIndex(categoryModel.currentCategory.defaultParentCategory)"
+		source="getSelectedIndex(categoryModel.currentCategory)"
 		destination="defaultParentCategoryComboBox.selectedIndex"/>
 	<mx:Binding
 		source="categoryModel.currentCategory.activeStartDate"
@@ -115,7 +125,7 @@
 			<mx:ComboBox
 				id="defaultParentCategoryComboBox"
 				labelField="name"
-				width="160"/>
+				width="160" selectedIndex="1"/>
 		</mx:FormItem>
 		<mx:FormItem
 			label="Active Start Date:">

@@ -2,12 +2,13 @@ package org.broadleafcommerce.admin.catalog.commands.category
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.adobe.cairngorm.view.ViewLocator;
 	
 	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
-	import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.catalog.view.category.CategoryCanvasViewHelper;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 
 	public class AddCategoriesToCatalogTreeCommand implements Command
@@ -46,10 +47,8 @@ package org.broadleafcommerce.admin.catalog.commands.category
 					rootCats.addItem(category);
 				}
 			}
-			if(CatalogModelLocator.getInstance().categoryModel.currentCategory != null){
-				var ece:EditCategoryEvent = new EditCategoryEvent(CatalogModelLocator.getInstance().categoryModel.currentCategory);
-				ece.dispatch();
-			}
+			CatalogModelLocator.getInstance().catalogTree = rootCats;
+			CategoryCanvasViewHelper(ViewLocator.getInstance().getViewHelper("categoryCanvasViewHelper")).selectCurrentCategoryInTree();
 			
 		}
 		
