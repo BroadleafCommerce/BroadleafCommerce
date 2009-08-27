@@ -24,8 +24,8 @@ package org.broadleafcommerce.admin.catalog.vo.sku
 		public var activeStartDate:Date = new Date();
 		public var activeEndDate:Date = new Date();
 		public var active:Boolean;
-//		private var _skuImages:Object;
-		private var skuMedia:Object;
+		public var skuImages:Object = new Object();
+		public var skuMedia:Object = new Object();
 		public var allParentProducts:ArrayCollection = new ArrayCollection();
 		
 		public function Sku(){
@@ -47,14 +47,6 @@ package org.broadleafcommerce.admin.catalog.vo.sku
 			this.discountable=b;
 		}
 
-		public function set skuImages(x:Object):void{
-			// do nothing
-		}
-		
-		public function get skuImages():Object{
-			return null;
-		}
-		
 //		public function get isTaxable():Boolean{
 //			return this.taxable;
 //		}

@@ -11,13 +11,11 @@ package org.broadleafcommerce.admin.offers.control.events
 		public static const EVENT_SHOW_OFFER_WINDOW:String = "event_show_offer_window";
 		
 		public var offer:Offer;
-		public var parent:DisplayObject;
 		
-		public function ShowOfferWindowEvent( parent:DisplayObject,offer:Offer= null)
+		public function ShowOfferWindowEvent(offer:Offer= null)
 		{
 			super(EVENT_SHOW_OFFER_WINDOW);
 			this.offer = offer;
-			this.parent = parent;
 		}
 		
 	}

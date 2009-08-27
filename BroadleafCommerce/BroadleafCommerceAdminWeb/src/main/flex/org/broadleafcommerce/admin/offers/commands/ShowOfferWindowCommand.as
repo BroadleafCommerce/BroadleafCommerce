@@ -2,13 +2,11 @@ package org.broadleafcommerce.admin.offers.commands
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-	
-	import mx.containers.TitleWindow;
-	import mx.managers.PopUpManager;
+	import com.adobe.cairngorm.view.ViewLocator;
 	
 	import org.broadleafcommerce.admin.offers.control.events.ShowOfferWindowEvent;
 	import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
-	import org.broadleafcommerce.admin.offers.view.offerWizard.NewOfferWizard;
+	import org.broadleafcommerce.admin.offers.view.OfferCanvasViewHelper;
 	import org.broadleafcommerce.admin.offers.vo.Offer;
 
 	public class ShowOfferWindowCommand implements Command
@@ -24,9 +22,7 @@ package org.broadleafcommerce.admin.offers.commands
 				OfferModelLocator.getInstance().offerModel.currentOffer = offer;
 			}
 			
-			var newOfferWizard:TitleWindow = 
-				TitleWindow(PopUpManager.createPopUp(sowe.parent,NewOfferWizard, true));			
-			
+			OfferCanvasViewHelper(ViewLocator.getInstance().getViewHelper("offerCanvasViewHelper")).showOfferWizard();
 		}
 		
 	}

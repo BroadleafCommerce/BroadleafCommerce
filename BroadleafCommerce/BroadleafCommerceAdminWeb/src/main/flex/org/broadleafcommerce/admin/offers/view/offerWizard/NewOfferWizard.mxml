@@ -108,7 +108,7 @@
 <mx:Binding destination="editOffer.endDate" source="whatCanvas.offerDateTo.selectedDate" />
 <mx:Binding destination="editOffer.typeString" source="whatCanvas.offerType.selectedItem.valueOf()" />
 <mx:Binding destination="editOffer.applyDiscountToSalePrice" source="whatCanvas.saleRadio.selected" />
-<mx:Binding destination="editOffer.valueNumber" source="Number(whatCanvas.discountValue.text)" />
+<mx:Binding destination="editOffer.value.amount" source="Number(whatCanvas.discountValue.text)" />
 <mx:Binding destination="editOffer.discountTypeString" source="whatCanvas.discountType.selectedItem.toString()" />
 
 <mx:Binding destination="editOffer.priority" source="Number(howCanvas.offerPriorityText.text)" />
@@ -128,7 +128,7 @@
 <mx:Binding source="{currentOffer.typeString}" destination="whatCanvas.offerType.selectedItem" />
 <mx:Binding source="{currentOffer.applyDiscountToSalePrice}" destination="whatCanvas.saleRadio.selected" />
 <mx:Binding source="{!currentOffer.applyDiscountToSalePrice}" destination="whatCanvas.retailRadio.selected" />
-<mx:Binding source="{currentOffer.valueNumber.toString()}" destination="whatCanvas.discountValue.text" />
+<mx:Binding source="{currentOffer.value.amount.toString()}" destination="whatCanvas.discountValue.text" />
 <mx:Binding source="{currentOffer.discountTypeString}" destination="whatCanvas.discountType.selectedItem" />
 
 <mx:Binding source="{currentOffer.priority.toString()}" destination="howCanvas.offerPriorityText.text" />

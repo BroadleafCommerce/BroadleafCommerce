@@ -31,6 +31,7 @@ package org.broadleafcommerce.admin.offers.commands
 			var event:ResultEvent = ResultEvent(data);
 			this.offerModel.offersList = ArrayCollection(event.result);
 			// populate array collection of offers to be filtered
+			this.offerModel.offersListFiltered.removeAll();
 			for each(var offerToBeFiltered:Offer in this.offerModel.offersList){
 				this.offerModel.offersListFiltered.addItem(offerToBeFiltered);
 			}
