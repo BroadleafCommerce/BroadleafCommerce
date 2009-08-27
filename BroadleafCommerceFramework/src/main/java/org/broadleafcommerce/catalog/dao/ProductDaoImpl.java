@@ -63,6 +63,13 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @SuppressWarnings("unchecked")
+    public List<Product> readProductsByCategory(Long categoryId) {
+        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY");
+        query.setHint(getQueryCacheableKey(), true);
+        return query.getResultList();
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Product> readProductsBySku(Long skuId) {
         Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU");
         query.setParameter("skuId", skuId);

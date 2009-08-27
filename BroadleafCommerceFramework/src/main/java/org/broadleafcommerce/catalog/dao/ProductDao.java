@@ -28,6 +28,8 @@ public interface ProductDao {
     public List<Product> readProductsByName(String searchName);
 
     public List<Product> readActiveProductsByCategory(Long categoryId);
+    
+    public List<Product> readProductsByCategory(Long categoryId);    
 
     public List<Product> readProductsBySku(Long skuId);
 
