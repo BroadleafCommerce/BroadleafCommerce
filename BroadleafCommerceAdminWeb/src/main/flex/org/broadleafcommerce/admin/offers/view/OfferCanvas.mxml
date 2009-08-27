@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
-	xmlns:view="org.broadleafcommerce.admin.view.*"
-	xmlns:wizard="org.broadleafcommerce.admin.view.components.wizard.*"
-	xmlns:components="org.broadleafcommerce.admin.view.components.*"
-	xmlns:offer="org.broadleafcommerce.admin.view.offer.*" xmlns:view1="org.broadleafcommerce.admin.offers.view.*"
-	creationComplete="handleCreationComplete()">
+	xmlns:offer="org.broadleafcommerce.admin.view.offer.*" 
+	xmlns:view1="org.broadleafcommerce.admin.offers.view.*"
+	creationComplete="handleCreationComplete()" >
 	<mx:Script>
 		<![CDATA[
-			import org.broadleafcommerce.admin.tools.control.events.codetype.FindAllCodeTypesEvent;
+			import org.broadleafcommerce.admin.offers.control.events.FindAllOffersEvent;
 			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
 			import org.broadleafcommerce.admin.offers.model.OfferModel;
 			import org.broadleafcommerce.admin.offers.vo.Offer;
@@ -28,23 +26,26 @@
 			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
 
 			private function handleCreationComplete():void{
-				new FindAllCodeTypesEvent().dispatch();
+				var faoe:FindAllOffersEvent = new FindAllOffersEvent();
+				faoe.dispatch();				
 			}
 
 			private function handleNewClick(event:Event):void{
-					var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this);
+					var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent();
 					sowe.dispatch()
 			}
 
 			private function handleOffersDataGridDoubleClick(event:Event):void{
-				var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(this,Offer(offersDataGrid.selectedItem));
+				var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(Offer(offersDataGrid.selectedItem));
 				sowe.dispatch();
 			}
 		]]>
 	</mx:Script>
 	<mx:Binding
-		source="this.offerModel.offersListFiltered"
-		destination="this.offersDataGrid.dataProvider"/>
+		source="offerModel.offersListFiltered"
+		destination="offersDataGrid.dataProvider"/>
+
+	<view1:OfferCanvasViewHelper id="offerCanvasViewHelper" />
 
 	<mx:TabNavigator id="offerTN" width="100%" height="100%" >
 		<mx:Canvas width="100%" height="100%" label="Offers" >

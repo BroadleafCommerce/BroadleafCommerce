@@ -15,13 +15,13 @@ package org.broadleafcommerce.admin.tools.commands.codetype
 	public class FindAllCodeTypesCommand implements Command, IResponder
 	{
 		public function execute(event:CairngormEvent):void{
-			trace("DEBUG: execute : FindAllCodeTypesCommand");
+			trace("DEBUG: FindAllCodeTypesCommand.execute()");
 			var delegate:ToolsServiceDelegate = new ToolsServiceDelegate(this);
 			delegate.findAllCodeTypes();
 		}
 
 		public function result(data:Object):void{
-			trace("DEBUG: result : FindAllCodeTypesCommand");
+			trace("DEBUG: FindAllCodeTypesCommand.result()");
 			var event:ResultEvent = ResultEvent(data);
 			ToolsModelLocator.getInstance().codeTypeModel.codeTypes = ArrayCollection(event.result);
 		}

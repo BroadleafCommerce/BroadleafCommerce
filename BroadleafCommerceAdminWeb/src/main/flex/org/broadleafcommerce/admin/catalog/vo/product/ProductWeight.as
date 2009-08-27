@@ -5,6 +5,6 @@ package org.broadleafcommerce.admin.catalog.vo.product
 	public class ProductWeight
 	{
 		public var weight:uint;
-		public var unitOfMeasure:String;
+		public var weightUnitOfMeasure:String;
 	}
 }

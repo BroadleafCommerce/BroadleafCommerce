@@ -26,19 +26,19 @@ package org.broadleafcommerce.admin.offers.vo
 		public var maxUses:int;
 		public var uses:int;
 		
-		public function get valueNumber():Number{
-			if(value && value.amount){
-				return value.amount
-			}else{
-				value = new Money();
-				value.amount = 0;
-				return value.amount;
-			}
-		}
+//		public function get valueNumber():Number{
+//			if(value && value.amount){
+//				return value.amount
+//			}else{
+//				value = new Money();
+//				value.amount = 0;
+//				return value.amount;
+//			}
+//		}
 		
-		public function set valueNumber(newValue:Number):void{
-			value.amount = newValue;
-		}
+//		public function set valueNumber(newValue:Number):void{
+//			value.amount = newValue;
+//		}
 		
 				
 		public function set deliveryTypeString(newType:String):void{

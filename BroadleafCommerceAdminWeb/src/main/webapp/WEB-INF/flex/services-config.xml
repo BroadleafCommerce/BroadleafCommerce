@@ -32,6 +32,8 @@
 
         <channel-definition id="my-amf" class="mx.messaging.channels.AMFChannel">
             <endpoint url="http://{server.name}:{server.port}/{context.root}/messagebroker/amf" class="flex.messaging.endpoints.AMFEndpoint"/>
+            <!-- 
+             -->
             <properties>
 	            <serialization>
 	            	<legacy-map>true</legacy-map>

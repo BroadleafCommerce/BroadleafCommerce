@@ -10,6 +10,7 @@
 
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.core.vo.Money;
 			import mx.controls.DataGrid;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
@@ -23,6 +24,7 @@
 			  public var __cm:CursorManager;
 			  public var __hm:HistoryManager;
 			  public var __dg:DataGrid;
+			  public var __money:Money;
 
 			[Bindable]
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
