@@ -24,4 +24,11 @@
 		AND (categoryProductXref.product.activeEndDate &gt; CURRENT_DATE OR categoryProductXref.product.activeEndDate = null)
 		ORDER BY categoryProductXref.displayOrder</query>
 	</named-query>
+	
+	<named-query name="BC_READ_PRODUCTS_BY_CATEGORY" >
+		<query>SELECT categoryProductXref.product FROM org.broadleafcommerce.catalog.domain.CategoryProduct categoryProductXref
+		WHERE categoryProductXref.category.id = :categoryId
+		ORDER BY categoryProductXref.displayOrder</query>
+	</named-query>
+
 </entity-mappings>
