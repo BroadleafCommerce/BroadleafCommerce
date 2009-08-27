@@ -33,20 +33,17 @@ public class AdminCatalogService {
         return catalogService.findProductsByName(searchName);
     }
 
-    public List<Product> findActiveProductsByCategory(Category category) {
-        return catalogService.findActiveProductsByCategory(category);
+    public List<Product> findProductsByCategory(Category category) {
+    	List<Product> p = catalogService.findProductsForCategory(category);    	
+        return p;
     }
 
     public Product saveProduct(Product product) {
-    	product.setAllParentCategories(normalizeCategories(product.getAllParentCategories()));
-    	
-    	if(product.getProductImages() != null && product.getProductImages() instanceof ASObject){
-    		product.setProductImages(getImagesMapFromAsObject((ASObject)product.getProductImages()));    		
-    	}
-        
-        if(product.getProductMedia() != null && product.getProductMedia() instanceof ASObject){
-        	product.setProductMedia(getMediaMapFromAsObject((ASObject)product.getProductMedia()));
-        }
+//    	Map<String, String> images = product.getProductImages();
+//    	Map<String, Media> media = product.getProductMedia();
+    	Product newProduct = catalogService.findProductById(product.getId());
+    	newProduct.getAllParentCategories().clear();
+    	newProduct.getAllParentCategories().add(newProduct.getDefaultCategory());
         return catalogService.saveProduct(product);
     }
     
@@ -71,7 +68,8 @@ public class AdminCatalogService {
 
 
     public List<Category> findAllCategories() {
-        return catalogService.findAllCategories();
+    	List<Category> c = catalogService.findAllCategories(); 
+        return c;
     }
 
     public List<Product> findAllProducts() {
