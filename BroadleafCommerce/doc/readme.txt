@@ -1,0 +1,152 @@
+Broadleaf Commerce, release %%version%%
+--------------------------------------------------
+http://www.broadleafcommerce.org
+
+1. INTRODUCTION
+
+BroadleafCommerce is an open-source, e-commerce framework written entirely in Java. 
+It is targeted at facilitating the development of enterprise-class, commerce-driven 
+sites by providing a robust data model, services and specialized tooling that take care 
+of most of the "heavy lifting" work. To accomplish this goal, we have developed our 
+platform based on the key feature sets required by world-class online retailers - and 
+we're committed to continually expanding our feature offering. We've also taken extra 
+steps to guarantee interoperability with today's enterprise by utilizing standards wherever 
+possible and incorporating best-of-breed, open-source software libraries from the community.
+
+Spring Framework -- Spring is the enterprise Java platform on which BroadleafCommerce is based. 
+It provides numerous features, including dependency injection and transaction control.
+
+Security -- Spring Security provides a robust security framework for controlling authentication 
+and authorization at both the code and page level and is utilized by BroadleafCommerce for access 
+control.
+
+Persistence -- JPA and Hibernate represent the BroadleafCommerce ORM infrastructure for 
+controlling persistence of our rich domain model.
+
+Asynchronous Messaging -- BroadleafCommerce achieves asynchronous processing of application 
+messages via interaction with a modern JMS broker through Spring JMS.
+
+Search -- Flexible domain search capabilities in BroadleafCommerce are provided through integration
+with the popular Compass and Lucene projects.
+
+Task Scheduling -- Scheduling of repetitive tasks in BroadleafCommerce is offered through the 
+Quartz job scheduling system.
+
+Email -- Email support is provided throughout the BroadleafCommerce framework in either synchronous 
+or asynchronous (JMS) modes. Email presentation customization is achieved via Velocity template 
+utilization. Full target email open and link click tracking is supported out-of-the-box.
+
+Modular Design -- Important e-commerce touchpoints are embodied in the concept of BroadleafCommerce 
+"Modules". A module can provide interaction with a credit card processor, or even a shipping provider. 
+The USPS shipping support is a great example of the pluggable architecture BroadleafCommerce employs. 
+Any number of custom modules may be developed and utilized with BroadleafCommerce.
+
+Configurable Workflows -- Key areas in the e-commerce lifecycle are represented as configurable 
+workflows. Implementors have full control over the keys steps in pricing and checkout, allowing 
+manipulation of module ordering, overriding existing module behavior and custom module execution. 
+Composite workflows are also supported to achieve more exotic, nested behavior.
+
+Extendible Design -- BroadleafCommerce is designed from the ground-up with extensibility in mind. 
+Almost every aspect of BroadleafCommerce can be overridden, added to or otherwise modified to enhance 
+or change the default behavior to best fit your needs. This includes all of our services, data access 
+objects and entities. Please refer to the extensibility section of our documentation.
+
+Configuration Merging -- As an extra bonus to our extensibility model, we offer a custom merge facility 
+for Spring configuration files. We minimize the BroadleafCommerce configuration semantics that an 
+implementer must be aware of, allowing our users to focus on their own configuration particulars. 
+BroadleafCommerce will intelligently merge its own configuration information with that provided by 
+the implementer at runtime.
+
+Runtime Configuration Management -- BroadleafCommerce exposes configurable properties for services, 
+modules and other subsystems through JMX so that BroadleafCommerce administrators can alter application 
+behavior without having to bring down the system.
+
+Presentation Layer Support -- BroadleafCommerce also includes a number of pre-written SpringMVC 
+controllers that help to speed development of the presentation layer of your own BroadleafCommerce-driven 
+site.
+
+QOS -- BroadleafCommerce also provides quality of service monitoring for modules (both custom and 
+default modules) and provides support for several QOS handlers out-of-the-box: logging and email. 
+Additional, custom QOS handlers may be added through our open API.
+
+Promotion System -- BroadleafCommerce includes a highly-configurable system for including your pricing 
+promotions. We provide several standard levels at which promotions may be applied: Order level, Order 
+Item level and Fulfillment Group level. In addition, your promotion business rules are represented in 
+a flexible and standardized way using the MVEL expression language.
+
+PCI Considerations -- We have taken measures in the construction and design of BroadleafCommerce to 
+help you achieve PCI compliance, should you decide to store and use sensitive customer financial 
+account information. Payment account information is referenced separately, allowing you to segregate 
+confidential data onto a separate, secure database platform. API methods have been added to allow 
+inclusion of any PCI compliant encryption scheme. Also, verbose logging is included to track payment 
+interaction history.
+
+2. RELEASE INFO
+
+Broadleaf Commerce %%version%% requires JDK 1.5 (or above) to build and/or run.
+
+Basic release contents (~2 MB):
+* "dist" contains the Broadleaf Commerce binary jar files
+
+Contents of the "-with-docs" distribution (~6 MB):
+* "dist" contains the Broadleaf Commerce binary jar files, as well as corresponding source jars
+* "docs" contains the Broadleaf Commerce API javadocs
+
+Contents of the "-with-dependencies" distribution (~52 MB):
+* "dist" contains the Broadleaf Commerce binary jar files, as well as corresponding source jars
+* "docs" contains the Broadleaf Commerce API javadocs
+* "lib" contains all third-party libraries needed for building the framework and/or running the demo
+* "src" contains the general Java source files for the framework
+
+The "lib" directory is only included in the "-with-dependencies" download. The "-with-dependencies"
+download is required to build and run the demo application. Ant build scripts are provided for 
+creating standard WAR modules for both the demo application and the admin application (see the
+BroadleafCommerceDemo and BroadeleafCommerceAdminWeb directories). Maven2 POM files are provided for
+building the framework (see pom.xml in the "src" directory).
+
+Latest info is available at the public website: http://www.broadleafcommerce.org
+Project info at the SourceForge site: http://sourceforge.net/projects/broadleafcommerce
+
+Broadleaf Commerce is released under the terms of the Apache Software License (see license.txt).
+All libraries included in the "-with-dependencies" download are subject to their respective licenses.
+This product includes software developed by the Apache Software Foundation (http://www.apache.org).
+
+3. DISTRIBUTION JAR FILES
+
+The "dist" directory contains the following distinct jar files for use in applications. 
+
+* "broadleaf-admin" (~12 KB)
+- Contents: Broadleaf Commerce admin application
+- Dependencies: broadleaf-framework, broadleaf-framework-web, broadleaf-profile, broadleaf-profile-web
+
+* "broadleaf-framework" (~364 KB)
+- Contents: Core Broadleaf Commerce framework classes
+- Dependencies: broadleaf-profile
+
+* "broadleaf-framework-web" (~88 KB)
+- Contents: Spring MVC controllers (and related items) supporting the core Broadleaf Commerce classes
+- Dependencies: broadleaf-framework, broadleaf-profile, broadleaf-profile-web
+
+* "broadleaf-profile" (~221 KB)
+- Contents: Broadleaf Commerce Customer profile related classes, utility classes, email, configuration merge
+
+* "broadleaf-profile-web" (~49 KB)
+- Contents: Spring MVC controllers (and related items) supporting the core Broadleaf Commerce profile classes
+- Dependencies: broadleaf-profile
+
+* "broadleaf-usps" (~49 KB)
+- Contents: Broadleaf Commerce shipping modules and support classes for USPS
+- Dependencies: broadleaf-framework, broadleaf-usps-schemas
+
+* "broadleaf-usps-schemas" (~193 KB)
+- Contents: Compiled XMLBeans support for USPS shipping API
+
+4. WHERE TO START?
+
+* A Quick Start guide is available on the Broadleaf Commerce support wiki: [place quick start guide url here].
+This guide provides the minimum information needed to get up and running with the Broadleaf Commerce 
+framework in your own application.
+
+* A Broadleaf Commerce Demo guide is available on the support wiki: [place demo guide url here].
+This guide provides instructions for deploying and running a local instance of the Broadleaf Commerce
+Demo application in a local Tomcat instance backed by a MySQL database.
