@@ -20,10 +20,46 @@
 	
 	<property file="build.properties" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
+	<property name="demo.build.finalName" value="${demoPom.artifactId}-${demoPom.version}"/>
 	
-	<target name="create-bin-distribution-with-dependencies" depends="setup, build-bin, build-src, build-docs"/>
+	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-docs, build-dependencies">
+		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-dependencies.zip">
+			<fileset dir="${maven.build.finalName}">
+				<include name="dist/**/*.*"/>
+				<include name="src/**/*.*"/>
+				<include name="docs/**/*.*"/>
+				<include name="lib/**/*.*"/>
+				<include name="*.*"/>
+				<exclude name="*.zip"/>
+			</fileset>
+		</zip>
+	</target>
+	
+	<target name="create-with-docs" depends="setup, build-bin, build-src-jars, build-docs">
+		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-docs.zip">
+			<fileset dir="${maven.build.finalName}">
+				<include name="dist/**/*.*"/>
+				<include name="docs/**/*.*"/>
+				<include name="*.*"/>
+				<exclude name="*.zip"/>
+			</fileset>
+		</zip>
+	</target>
+	
+	<target name="create-bin" depends="setup, build-bin, build-src-jars">
+		<zip destfile="${maven.build.finalName}/${maven.build.finalName}.zip">
+			<fileset dir="${maven.build.finalName}">
+				<include name="dist/**/*.*"/>
+				<include name="*.*"/>
+				<exclude name="*.zip"/>
+			</fileset>
+		</zip>
+	</target>
+	
+	<target name="create-all" depends="create-with-dependencies, create-with-docs, create-bin"/>
 	
 	<target name="build-bin" depends="setup">
+		<mkdir dir="${maven.build.finalName}/dist"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 		    <arg value="install"/>
 		</artifact:mvn>
@@ -50,9 +86,32 @@
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
+		<copy todir="${maven.build.finalName}" file="doc/license.txt"/>
 	</target>
 	
 	<target name="build-src" depends="setup">
+		<mkdir dir="${maven.build.finalName}/src"/>
+		<copy todir="${maven.build.finalName}/src">
+			<fileset dir="./">
+				<include name="BroadleafCommerceAdmin/**/*.*"/>
+				<include name="BroadleafCommerceAdminWeb/**/*.*"/>
+				<include name="BroadleafCommerceDemo/**/*.*"/>
+				<include name="BroadleafCommerceFramework/**/*.*"/>
+				<include name="BroadleafCommerceFrameworkWeb/**/*.*"/>
+				<include name="BroadleafCommerceIntegrationTests/**/*.*"/>
+				<include name="BroadleafCommerceProfile/**/*.*"/>
+				<include name="BroadleafCommerceProfileWeb/**/*.*"/>
+				<include name="BroadleafCommerceUSPS/**/*.*"/>
+				<include name="BroadleafCommerceUSPSSchemas/**/*.*"/>
+				<include name="pom.xml"/>
+				<exclude name="**/.*/*.*"/>
+				<exclude name="**/.*"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<target name="build-src-jars" depends="setup">
+		<mkdir dir="${maven.build.finalName}/dist"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 		    <arg value="source:jar"/>
 		</artifact:mvn>
@@ -92,7 +151,6 @@
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
-		<copy todir="${maven.build.finalName}" file="doc/license.txt"/>
 	</target>
 	
 	<target name="build-dependencies">
@@ -120,6 +178,7 @@
 				</intersect>
 			</difference>
 		</licenseCopy>
+		<copy file="doc/dependency-licenses/readme.txt" todir="${maven.build.finalName}/lib"/>
 	</target>
 
 	<target name="setup">
@@ -128,7 +187,8 @@
 		</artifact:mvn>
 		<delete dir="${maven.build.finalName}"/>
 		<mkdir dir="${maven.build.finalName}"/>
-		<mkdir dir="${maven.build.finalName}/dist"/>
+		<copy file="doc/readme.txt" todir="${maven.build.finalName}"/>
+		<replace file="${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}"/>
 	</target>
 	
 	<target name="clean">
