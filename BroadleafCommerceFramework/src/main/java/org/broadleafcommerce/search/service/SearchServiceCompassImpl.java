@@ -24,7 +24,9 @@ import org.apache.log4j.Logger;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.search.dao.SearchInterceptDao;
+import org.broadleafcommerce.search.dao.SearchSynonymDao;
 import org.broadleafcommerce.search.domain.SearchIntercept;
+import org.broadleafcommerce.search.domain.SearchSynonym;
 import org.compass.core.Compass;
 import org.compass.core.CompassContext;
 import org.compass.core.CompassDetachedHits;
@@ -48,6 +50,9 @@ public class SearchServiceCompassImpl implements SearchService {
 
     @Resource(name = "blSearchInterceptDao")
     protected SearchInterceptDao searchInterceptDao;
+
+    @Resource(name = "blSearchSynonymDao")
+    protected SearchSynonymDao searchSynonymDao;
 
     private Logger logger = Logger.getLogger(this.getClass());
 
@@ -96,6 +101,22 @@ public class SearchServiceCompassImpl implements SearchService {
 
     public void updateSearchIntercept(SearchIntercept intercept) {
         searchInterceptDao.updateIntercept(intercept);
+    }
+
+    public void createSearchSynonym(SearchSynonym synonym) {
+        searchSynonymDao.createSynonym(synonym);
+    }
+
+    public void deleteSearchSynonym(SearchSynonym synonym) {
+        searchSynonymDao.deleteSynonym(synonym);
+    }
+
+    public List<SearchSynonym> getAllSearchSynonyms() {
+        return searchSynonymDao.getAllSynonyms();
+    }
+
+    public void updateSearchSynonym(SearchSynonym synonym) {
+        searchSynonymDao.updateSynonym(synonym);
     }
 
 }

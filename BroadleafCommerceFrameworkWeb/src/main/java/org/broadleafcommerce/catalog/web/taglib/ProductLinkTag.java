@@ -45,9 +45,6 @@ public class ProductLinkTag extends CategoryLinkTag {
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
         StringBuffer sb = new StringBuffer();
         sb.append("<a class=\"noTextUnderline\"  href=\"");
-        sb.append(request.isSecure() ? "https://" : "http://");
-        sb.append(request.getServerName());
-        sb.append(request.getLocalPort() != 80 ? ":" + request.getLocalPort() : "");
         sb.append(request.getContextPath());
         sb.append("/");
         sb.append(getCategory() == null ? product.getDefaultCategory().getGeneratedUrl() : getCategory().getGeneratedUrl());

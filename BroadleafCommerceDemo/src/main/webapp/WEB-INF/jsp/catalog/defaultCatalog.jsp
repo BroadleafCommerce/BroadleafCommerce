@@ -17,7 +17,7 @@
     <div class="span-5 blueBorder">
       	Search Options
   		<form:form method="post" id="refineSearch" commandName="doSearch">
-			<blc:searchFilter products="${currentProducts}" queryString="">
+			<blc:searchFilter products="${displayProducts}" queryString="">
 				<blc:searchFilterItem property="manufacturer" displayTitle="Manufacturers"/>
 				<blc:searchFilterItem property="skus[0].salePrice" displayTitle="Prices" displayType="sliderRange"/>
 			</blc:searchFilter>

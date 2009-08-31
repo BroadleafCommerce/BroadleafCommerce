@@ -33,19 +33,20 @@ public class CheckoutFormValidator implements Validator {
     public void validate(Object obj, Errors errors) {
         CheckoutForm checkoutForm = (CheckoutForm) obj;
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.addressLine1", "addressLine1.required");
+        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.primaryPhone", "phone.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.city", "city.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.postalCode", "postalCode.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.firstName", "firstName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "billingAddress.lastName", "lastName.required");
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "shippingAddress.addressLine1", "addressLine1.required");
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "shippingAddress.primaryPhone", "phone.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "shippingAddress.city", "city.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "shippingAddress.postalCode", "postalCode.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "shippingAddress.firstName", "firstName.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "shippingAddress.lastName", "lastName.required");
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "emailAddress", "emailAddress.required");
+        
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "creditCardNumber", "creditCardNumber.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "creditCardCvvCode", "creditCardCvvCode.required");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "creditCardExpMonth", "creditCardExpMonth.required");

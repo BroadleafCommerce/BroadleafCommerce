@@ -189,6 +189,9 @@ public class ProductImpl implements Product {
     /** The skus. */
     @Transient
     protected List<Sku> skus = new ArrayList<Sku>();
+    
+    @Transient
+    protected String promoMessage;
 
     /*
      * (non-Javadoc)
@@ -557,6 +560,15 @@ public class ProductImpl implements Product {
         } else if (!skus.equals(other.skus))
             return false;
         return true;
+    }
+    
+    public String getPromoMessage() {
+        if (promoMessage==null) return "";
+        return promoMessage;
+    }
+
+    public void setPromoMessage(String promoMessage) {
+        this.promoMessage = promoMessage;
     }
 
 }

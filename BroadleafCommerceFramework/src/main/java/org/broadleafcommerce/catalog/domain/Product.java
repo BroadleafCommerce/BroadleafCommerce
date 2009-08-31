@@ -355,4 +355,8 @@ public interface Product extends Serializable {
     public ContainerShapeType getContainer();
 
     public void setContainer(ContainerShapeType container);
+    
+    public String getPromoMessage();
+    
+    public void setPromoMessage(String promoMessage);
 }

@@ -253,7 +253,7 @@ public class CustomerPhoneController {
         if (customerPhoneId == null) {
             return viewPhoneSuccessView;
         } else {
-            Long currCustomerId = customerState.getCustomerId(request);
+            Long currCustomerId = customerState.getCustomer(request).getId();
             CustomerPhone cPhone = customerPhoneService.readCustomerPhoneById(customerPhoneId);
 
             if (cPhone != null) {

@@ -48,6 +48,7 @@
 		<class>org.broadleafcommerce.security.domain.AdminUserPermissionXref</class>
 		<class>org.broadleafcommerce.security.domain.AdminUserRoleXref</class>
 		<class>org.broadleafcommerce.search.domain.SearchInterceptImpl</class>
+		<class>org.broadleafcommerce.search.domain.SearchSynonymImpl</class>
 		<class>org.broadleafcommerce.rating.domain.RatingSummaryImpl</class>
 		<class>org.broadleafcommerce.rating.domain.RatingDetailImpl</class>
 		<class>org.broadleafcommerce.rating.domain.ReviewDetailImpl</class>

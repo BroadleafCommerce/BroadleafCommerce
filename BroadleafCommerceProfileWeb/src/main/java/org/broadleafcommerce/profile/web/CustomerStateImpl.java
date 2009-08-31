@@ -13,30 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.catalog.web;
+package org.broadleafcommerce.profile.web;
 
-import org.broadleafcommerce.catalog.domain.Product;
+import javax.servlet.http.HttpServletRequest;
 
-public class DisplayProduct {
+import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.web.security.CustomerStateFilter;
+import org.springframework.stereotype.Component;
 
-    private Product product;
-    private String promoMessage;
+@Component("blCustomerState")
+public class CustomerStateImpl implements CustomerState {
 
-    public DisplayProduct () {
-        this.promoMessage = "";
-    }
+    private static final long serialVersionUID = 1L;
 
-    public Product getProduct() {
-        return product;
-    }
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-    public String getPromoMessage() {
-        return promoMessage;
-    }
-    public void setPromoMessage(String promoMessage) {
-        this.promoMessage = promoMessage;
+    public Customer getCustomer(HttpServletRequest request) {
+        return (Customer) request.getAttribute(CustomerStateFilter.getCustomerRequestAttributeName());
     }
 
 }

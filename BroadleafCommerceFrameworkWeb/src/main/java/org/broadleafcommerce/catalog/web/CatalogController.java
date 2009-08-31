@@ -175,7 +175,8 @@ public class CatalogController {
 
         List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
         if (productList != null) {
-            model.addAttribute("displayProducts", populateProducts(productList, currentCategory));
+            populateProducts(productList, currentCategory);
+            model.addAttribute("products", productList);
         }
         productPosition = findProductPositionInList(product, productList);
         if (productPosition == 0) {
@@ -183,8 +184,9 @@ public class CatalogController {
             currentCategory = product.getDefaultCategory();
             productList = catalogService.findActiveProductsByCategory(currentCategory);
             if (productList != null) {
-                model.addAttribute("displayProducts", populateProducts(productList, currentCategory));
-            }
+	            populateProducts(productList, currentCategory);
+	            model.addAttribute("products", productList);
+	        }
             String url = currentCategory.getGeneratedUrl();
 
             // override category list settings using this products default
@@ -236,16 +238,14 @@ public class CatalogController {
             SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "skus[0].salePrice"});
 
             if ((catalogSort != null) && (catalogSort.getSort() != null)) {
-                List<DisplayProduct> displayProducts = new ArrayList<DisplayProduct>();
-                displayProducts = populateProducts(productList, currentCategory);
-                model.addAttribute("displayProducts", sortProducts(catalogSort, displayProducts));
+                populateProducts(productList, currentCategory);
+                model.addAttribute("displayProducts", sortProducts(catalogSort, productList));
             }
             else {
                 catalogSort = new CatalogSort();
                 catalogSort.setSort("featured");
-                List<DisplayProduct> displayProducts = new ArrayList<DisplayProduct>();
-                displayProducts = populateProducts(productList, currentCategory);
-                model.addAttribute("displayProducts", sortProducts(catalogSort, displayProducts));
+                populateProducts(productList, currentCategory);
+                model.addAttribute("displayProducts", sortProducts(catalogSort, productList));
             }
         }
 
@@ -257,39 +257,30 @@ public class CatalogController {
         model.addAttribute("ratingSummary", ratingSummary);
     }
 
-    private List<DisplayProduct> populateProducts (List<Product> productList, Category currentCategory ) {
-        List<DisplayProduct> displayProducts = new ArrayList<DisplayProduct>();
-
-        for (Product product : productList) {
-            DisplayProduct displayProduct = new DisplayProduct();
-            displayProduct.setProduct(product);
-            displayProducts.add(displayProduct);
-        }
+    private void populateProducts (List<Product> productList, Category currentCategory ) {
 
         for (FeaturedProduct featuredProduct : currentCategory.getFeaturedProducts()) {
-            for (DisplayProduct displayProduct: displayProducts) {
-                if ((displayProduct.getProduct().equals(featuredProduct.getProduct()))) {
-                    displayProduct.setPromoMessage(featuredProduct.getPromotionMessage());
+            for (Product product: productList) {
+                if ((product.equals(featuredProduct.getProduct()))) {
+                    product.setPromoMessage(featuredProduct.getPromotionMessage());
                 }
             }
         }
-
-        return displayProducts;
     }
 
     @SuppressWarnings("unchecked")
-    private List<DisplayProduct> sortProducts (CatalogSort catalogSort, List<DisplayProduct> displayProducts) {
+    private List<Product> sortProducts (CatalogSort catalogSort, List<Product> displayProducts) {
         if (catalogSort.getSort().equals("priceL")) {
-            Collections.sort(displayProducts, new BeanComparator("product.skus[0].salePrice"));
+            Collections.sort(displayProducts, new BeanComparator("skus[0].salePrice"));
         }
         else if (catalogSort.getSort().equals("priceH")) {
-            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("product.skus[0].salePrice")));
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("skus[0].salePrice")));
         }
         else if (catalogSort.getSort().equals("manufacturerA")) {
-            Collections.sort(displayProducts, new BeanComparator("product.manufacturer"));
+            Collections.sort(displayProducts, new BeanComparator("manufacturer"));
         }
         else if (catalogSort.getSort().equals("manufacturerZ")) {
-            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("product.manufacturer")));
+            Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("manufacturer")));
         }
         else if (catalogSort.getSort().equals("featured")) {
             Collections.sort(displayProducts, new ReverseComparator(new BeanComparator("promoMessage")));

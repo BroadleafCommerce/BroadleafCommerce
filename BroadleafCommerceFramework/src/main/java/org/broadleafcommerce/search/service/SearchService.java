@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.search.domain.SearchIntercept;
+import org.broadleafcommerce.search.domain.SearchSynonym;
 
 public interface SearchService {
 
@@ -32,4 +33,9 @@ public interface SearchService {
     public void createSearchIntercept(SearchIntercept intercept);
     public void updateSearchIntercept(SearchIntercept intercept);
     public void deleteSearchIntercept(SearchIntercept intercept);
+    
+    public List<SearchSynonym> getAllSearchSynonyms();
+    public void createSearchSynonym(SearchSynonym synonym);
+    public void updateSearchSynonym(SearchSynonym synonym);
+    public void deleteSearchSynonym(SearchSynonym synonym);
 }

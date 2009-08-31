@@ -52,9 +52,6 @@ public class CategoryLinkTag extends AbstractCatalogTag {
         HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
         StringBuffer sb = new StringBuffer();
         sb.append("<a href=\"");
-        sb.append(request.isSecure() ? "https://" : "http://");
-        sb.append(request.getServerName());
-        sb.append(request.getLocalPort() != 80 ? ":" + request.getLocalPort() : "");
         sb.append(request.getContextPath());
         sb.append("/");
         sb.append(category.getGeneratedUrl());

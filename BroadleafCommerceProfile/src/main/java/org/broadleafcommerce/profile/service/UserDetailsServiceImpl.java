@@ -28,9 +28,9 @@ import org.springframework.security.userdetails.User;
 import org.springframework.security.userdetails.UserDetails;
 import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
 
-@Service("blUserDetailsService")
+//@Service("blUserDetailsService")
+@Deprecated
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Resource(name="blCustomerService")
