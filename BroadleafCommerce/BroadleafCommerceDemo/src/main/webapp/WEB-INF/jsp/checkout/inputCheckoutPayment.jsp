@@ -29,6 +29,9 @@
 			<form:errors path="billingAddress.postalCode" >
 				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
 			</form:errors>
+			<form:errors path="emailAddress" >
+				<c:forEach items="${messages}" var="message"> ${message} <br/> </c:forEach> 
+			</form:errors>
 		</div>
 		<div>
 			<br/>

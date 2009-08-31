@@ -14,8 +14,8 @@
         	<package name="org.broadleafcommerce.order.service"></package>
         	<package name="org.broadleafcommerce.payment.service"></package>
         	<package name="org.broadleafcommerce.pricing.service"></package>
-        	<package name="org.broadleafcommerce.profile.service"></package>
-        	<package name="org.broadleafcommerce.profile.web.controller"></package>
+        	<!--package name="org.broadleafcommerce.profile.service"></package-->
+        	<!--package name="org.broadleafcommerce.profile.web.controller"></package-->
         	<package name="org.broadleafcommerce.security.service"></package>
         	<package name="org.broadleafcommerce.taglib"></package>
         	<package name="org.broadleafcommerce.test"></package>

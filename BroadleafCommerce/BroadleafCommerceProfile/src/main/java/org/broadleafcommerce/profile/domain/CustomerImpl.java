@@ -79,6 +79,15 @@ public class CustomerImpl implements Customer {
 
     @Transient
     protected String unencodedChallengeAnswer;
+    
+    @Transient
+    protected boolean anonymous;
+
+    @Transient
+    protected boolean cookied;
+
+    @Transient
+    protected boolean loggedIn;
 
     public Long getId() {
         return id;
@@ -190,6 +199,36 @@ public class CustomerImpl implements Customer {
 
     public void setAuditable(Auditable auditable) {
         this.auditable = auditable;
+    }
+
+    public boolean isAnonymous() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public boolean isCookied() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public boolean isLoggedIn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    public void setAnonymous(boolean anonymous) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setCookied(boolean cookied) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        // TODO Auto-generated method stub
+        
     }
 
     @Override

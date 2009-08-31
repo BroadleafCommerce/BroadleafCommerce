@@ -23,7 +23,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import org.compass.annotations.SearchableId;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -35,7 +34,6 @@ public class SearchInterceptImpl implements SearchIntercept {
     @GeneratedValue(generator = "SearchInterceptId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SearchInterceptId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchInterceptImpl", allocationSize = 50)
     @Column(name = "SEARCH_INTERCEPT_ID")
-    @SearchableId
     protected Long id;
     @Column(name = "TERM")
     private String term;
