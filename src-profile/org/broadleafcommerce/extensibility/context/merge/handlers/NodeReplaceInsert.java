@@ -92,30 +92,36 @@ public class NodeReplaceInsert extends BaseHandler {
         while(itr.hasNext()) {
             Node node = itr.next();
             if (Element.class.isAssignableFrom(node.getClass()) && Arrays.binarySearch(exhaustedNodes, node, hashCompare) < 0) {
-                //find matching nodes based on id
-                if (replaceNode(primaryNodes, node, "id")) {
+                if (!checkNode(usedNodes, primaryNodes, node)) {
+                    //simply append the node if all the above fails
+                    parentNode.appendChild(ownerDocument.importNode(node.cloneNode(true), true));
                     usedNodes.add(node);
-                    continue;
                 }
-                //find matching nodes based on name
-                if (replaceNode(primaryNodes, node, "name")) {
-                    usedNodes.add(node);
-                    continue;
-                }
-                //check if this same node already exists
-                if (exactNodeExists(primaryNodes, node)) {
-                    usedNodes.add(node);
-                    continue;
-                }
-                //simply append the node if all the above fails
-                parentNode.appendChild(ownerDocument.importNode(node.cloneNode(true), true));
-                usedNodes.add(node);
             }
         }
         return usedNodes;
     }
 
-    private boolean exactNodeExists(Node[] primaryNodes, Node testNode) {
+    protected boolean checkNode(List<Node> usedNodes, Node[] primaryNodes, Node node) {
+        //find matching nodes based on id
+        if (replaceNode(primaryNodes, node, "id")) {
+            usedNodes.add(node);
+            return true;
+        }
+        //find matching nodes based on name
+        if (replaceNode(primaryNodes, node, "name")) {
+            usedNodes.add(node);
+            return true;
+        }
+        //check if this same node already exists
+        if (exactNodeExists(primaryNodes, node)) {
+            usedNodes.add(node);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean exactNodeExists(Node[] primaryNodes, Node testNode) {
         for (int j=0;j<primaryNodes.length;j++){
             if (primaryNodes[j].isEqualNode(testNode)) {
                 return true;
@@ -124,7 +130,7 @@ public class NodeReplaceInsert extends BaseHandler {
         return false;
     }
 
-    private boolean replaceNode(Node[] primaryNodes, Node testNode, final String attribute) {
+    protected boolean replaceNode(Node[] primaryNodes, Node testNode, final String attribute) {
         if (testNode.getAttributes().getNamedItem(attribute) == null) {
             return false;
         }

@@ -40,8 +40,8 @@ public class OfferDataProvider {
         o.setName("Some test offer");
         o.setPriority(100);
         o.setStackable(true);
-        o.setStartDate(new Date(DateUtil.getNow().getTime()));
-        o.setEndDate(new Date(DateUtil.getNow().getTime()+100000000));
+        o.setStartDate(new Date(DateUtil.getNow()));
+        o.setEndDate(new Date(DateUtil.getNow()+100000000));
         o.setApplyDiscountToMarkedItems(false);
         o.setTargetSystem("WEB");
         o.setType(OfferType.ORDER_ITEM);
@@ -71,8 +71,8 @@ public class OfferDataProvider {
         o.setName("Second test offer");
         o.setPriority(100);
         o.setStackable(false);
-        o.setStartDate(new Date(DateUtil.getNow().getTime()));
-        o.setEndDate(new Date(DateUtil.getNow().getTime()+100000000));
+        o.setStartDate(new Date(DateUtil.getNow()));
+        o.setEndDate(new Date(DateUtil.getNow()+100000000));
         o.setApplyDiscountToMarkedItems(false);
         o.setTargetSystem("WEB");
         o.setType(OfferType.FULFILLMENT_GROUP);

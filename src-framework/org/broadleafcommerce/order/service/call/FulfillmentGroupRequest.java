@@ -27,6 +27,7 @@ public class FulfillmentGroupRequest {
     protected Address address;
     protected Order order;
     protected Phone phone;
+    protected String method;
     protected List<FulfillmentGroupItemRequest> fulfillmentGroupItemRequests = new ArrayList<FulfillmentGroupItemRequest>();
 
     public Address getAddress() {
@@ -51,6 +52,14 @@ public class FulfillmentGroupRequest {
 
     public void setPhone(Phone phone) {
         this.phone = phone;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public List<FulfillmentGroupItemRequest> getFulfillmentGroupItemRequests() {

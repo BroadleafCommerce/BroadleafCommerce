@@ -46,5 +46,6 @@
 	<classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/activation.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/jsr250-api-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/ehcache-1.5.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

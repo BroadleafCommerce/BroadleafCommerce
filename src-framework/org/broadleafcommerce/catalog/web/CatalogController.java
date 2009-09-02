@@ -91,12 +91,8 @@ public class CatalogController extends AbstractController {
                 url = category.getUrl();
             }
         }
+        List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
 
-        List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(url);
-
-        for (Category category : categoryList) {
-            category = catalogService.findCategoryById(category.getId());
-        }
         addCategoryListToModel(categoryList, rootCategory, url, model);
         model.put("rootCategory", rootCategory);
     }
@@ -123,7 +119,7 @@ public class CatalogController extends AbstractController {
                 categoryList.add(rootCategory);
             } else {
                 url = url.substring(0, url.lastIndexOf("/"));
-                categoryList = rootCategory.getChildCategoryURLMap().get(url);
+                categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
             }
         }
 
@@ -153,7 +149,7 @@ public class CatalogController extends AbstractController {
             String url = currentCategory.getGeneratedUrl();
 
             // override category list settings using this products default
-            List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(url);
+            List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
             if (categoryList != null && ! addCategoryListToModel(categoryList, rootCategory, url, model)) {
                 productPosition = findProductPositionInList(product, productList);
             }
