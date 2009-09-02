@@ -37,7 +37,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Resource(name="blIdGenerationService")
     protected IdGenerationService idGenerationService;
 
-    @Resource(name="passwordEncoder")
+    @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
 
     private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();

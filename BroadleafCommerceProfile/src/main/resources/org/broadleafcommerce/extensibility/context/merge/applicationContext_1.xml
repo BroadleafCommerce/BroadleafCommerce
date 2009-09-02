@@ -82,8 +82,6 @@
 	    <aop:advisor advice-ref="txAdvice" pointcut-ref="userServiceOperation"/>
 	</aop:config>
 
-	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
-
 	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
     	<property name="host"><value>localhost</value></property>
     	<property name="port"><value>25</value></property>

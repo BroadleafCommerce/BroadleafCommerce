@@ -202,33 +202,39 @@ public class CustomerImpl implements Customer {
     }
 
     public boolean isAnonymous() {
-        // TODO Auto-generated method stub
-        return false;
+        return anonymous;
     }
 
     public boolean isCookied() {
-        // TODO Auto-generated method stub
-        return false;
+        return cookied;
     }
 
     public boolean isLoggedIn() {
-        // TODO Auto-generated method stub
-        return false;
+        return loggedIn;
     }
 
     public void setAnonymous(boolean anonymous) {
-        // TODO Auto-generated method stub
-        
+        this.anonymous = anonymous;
+        if (anonymous) {
+            cookied = false;
+            loggedIn = false;
+        }
     }
 
     public void setCookied(boolean cookied) {
-        // TODO Auto-generated method stub
-        
+        this.cookied = cookied;
+        if (cookied) {
+            anonymous = false;
+            loggedIn = false;
+        }
     }
 
     public void setLoggedIn(boolean loggedIn) {
-        // TODO Auto-generated method stub
-        
+        this.loggedIn = loggedIn;
+        if (loggedIn) {
+            anonymous = false;
+            cookied = false;
+        }
     }
 
     @Override

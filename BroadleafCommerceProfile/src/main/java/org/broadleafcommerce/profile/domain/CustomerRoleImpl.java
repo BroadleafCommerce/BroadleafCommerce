@@ -26,7 +26,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -50,7 +49,7 @@ public class CustomerRoleImpl implements CustomerRole {
     @JoinColumn(name = "CUSTOMER_ID")
     protected Customer customer;
 
-    @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional = false)
     @JoinColumn(name = "ROLE_ID")
     protected Role role;
 

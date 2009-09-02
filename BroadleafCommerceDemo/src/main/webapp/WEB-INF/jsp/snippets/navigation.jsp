@@ -8,7 +8,17 @@
 
 <div id="header"><a href="/broadleafdemo"><img class="logo" src="/broadleafdemo/images/demoLogo.gif" /></a>
 <ul id="userNav" class="clearfix">
-	<li><a href="/broadleafdemo/registerCustomer/registerCustomer.htm">Login</a></li>
+	<li>
+	<c:choose>
+		<c:when test="${customer.anonymous}">
+			<a href="/broadleafdemo/registerCustomer/registerCustomer.htm">Login</a>
+		</c:when>
+		<c:otherwise>
+			<a href="/broadleafdemo/account/myAccount.htm">Hello <c:out value="${customer.firstName}"/></a></li>
+			<li><a href="/broadleafdemo/logout.htm">Logout</a>
+		</c:otherwise>
+	</c:choose>
+	</li>
 	<li><a href="#">Help</a></li>
 	<li><a href="/broadleafdemo/account/myAccount.htm">My Account</a></li>
 	<li><a href="/broadleafdemo/storeLocator/findStores.htm">Store Locator</a></li>
