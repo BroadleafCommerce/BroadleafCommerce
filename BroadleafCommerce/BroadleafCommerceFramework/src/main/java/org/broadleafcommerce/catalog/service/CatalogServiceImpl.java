@@ -100,8 +100,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     public List<Product> findProductsForCategory(Category category) {
-        // TODO Implement this, it's being called by TCS CartController
-        return null;
+        return productDao.readProductsByCategory(category.getId());
     }
 
     public void setCategoryDao(CategoryDao categoryDao) {

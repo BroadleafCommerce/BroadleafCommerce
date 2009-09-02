@@ -52,17 +52,17 @@ public class CatalogTest extends BaseTest {
         Category category2 = new CategoryImpl();
         category2.setName("Towels");
         category2 = catalogService.saveCategory(category2);
-        ArrayList<Category> allParentCategories = new ArrayList<Category>();
-        allParentCategories.add(category);
-        allParentCategories.add(category2);
         
         Product newProduct = new ProductImpl();
 
         Calendar activeStartCal = Calendar.getInstance();
         activeStartCal.add(Calendar.DAY_OF_YEAR, -2);
         newProduct.setActiveStartDate(activeStartCal.getTime());
-        newProduct.setDefaultCategory(category);
 //        newProduct.setAllParentCategories(allParentCategories);
+        newProduct.setDefaultCategory(category);
+        newProduct.getAllParentCategories().clear();
+        newProduct.getAllParentCategories().add(category);
+        newProduct.getAllParentCategories().add(category2);
         
         newProduct.setName("Lavender Soap");
         newProduct = catalogService.saveProduct(newProduct);

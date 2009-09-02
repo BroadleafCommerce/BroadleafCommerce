@@ -408,7 +408,10 @@ public class CategoryImpl implements Category {
      * .util.List)
      */
     public void setAllChildCategories(List<Category> allChildCategories) {
-        this.allChildCategories = allChildCategories;
+    	this.allChildCategories.clear();
+    	for(Category category : allChildCategories){
+    		this.allChildCategories.add(category);
+    	}
     }
 
     /*
@@ -436,7 +439,10 @@ public class CategoryImpl implements Category {
      * util.Map)
      */
     public void setCategoryImages(Map<String, String> categoryImages) {
-        this.categoryImages = categoryImages;
+    	this.categoryImages.clear();
+    	for(String key : categoryImages.keySet()){
+    		this.categoryImages.put(key, categoryImages.get(key));
+    	}
     }
 
     /*
@@ -497,7 +503,10 @@ public class CategoryImpl implements Category {
     }
 
     public void setAllParentCategories(List<Category> allParentCategories) {
-        this.allParentCategories = allParentCategories;
+    	this.allParentCategories.clear();
+    	for(Category category : allParentCategories){
+    		this.allParentCategories.add(category);
+    	}
     }
 
     public List<FeaturedProduct> getFeaturedProducts() {
@@ -505,7 +514,10 @@ public class CategoryImpl implements Category {
     }
 
     public void setFeaturedProducts(List<FeaturedProduct> featuredProducts) {
-        this.featuredProducts = featuredProducts;
+    	this.featuredProducts.clear();
+    	for(FeaturedProduct featuredProduct : featuredProducts){
+    		this.featuredProducts.add(featuredProduct);
+    	}
     }
 
     /*
@@ -521,7 +533,10 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#setCategoryMedia(java.util.Map)
      */
     public void setCategoryMedia(Map<String, Media> categoryMedia) {
-        this.categoryMedia = categoryMedia;
+    	this.categoryMedia.clear();
+    	for(String key : categoryMedia.keySet()){
+    		this.categoryMedia.put(key, categoryMedia.get(key));
+    	}
     }
 
     @Override

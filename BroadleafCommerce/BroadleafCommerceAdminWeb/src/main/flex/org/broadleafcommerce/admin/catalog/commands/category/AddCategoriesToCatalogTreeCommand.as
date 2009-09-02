@@ -9,6 +9,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.view.category.CategoryCanvasViewHelper;
+	import org.broadleafcommerce.admin.catalog.view.product.ProductCanvasViewHelper;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 
 	public class AddCategoriesToCatalogTreeCommand implements Command
@@ -49,7 +50,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 			}
 			CatalogModelLocator.getInstance().catalogTree = rootCats;
 			CategoryCanvasViewHelper(ViewLocator.getInstance().getViewHelper("categoryCanvasViewHelper")).selectCurrentCategoryInTree();
-			
+			ProductCanvasViewHelper(ViewLocator.getInstance().getViewHelper("productCanvasViewHelper")).selectCurrentProduct();
 		}
 		
 	}

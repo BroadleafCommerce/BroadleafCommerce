@@ -10,7 +10,9 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.catalog.domain.CrossSaleProductImpl;
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.media.domain.Media;
@@ -42,8 +44,18 @@ public class AdminCatalogService {
 //    	Map<String, String> images = product.getProductImages();
 //    	Map<String, Media> media = product.getProductMedia();
     	Product newProduct = catalogService.findProductById(product.getId());
-    	newProduct.getAllParentCategories().clear();
-    	newProduct.getAllParentCategories().add(newProduct.getDefaultCategory());
+//    	List<Product> c2 = catalogService.findActiveProductsByCategory(newProduct.getDefaultCategory());
+//    	List<Category> c = newProduct.getAllParentCategories();
+//    	List<RelatedProduct> x = newProduct.getCrossSaleProducts();
+//    	int y = x.size();
+//    	Category cat = c.get(0);
+//    	newProduct.getAllParentCategories().clear();
+//    	newProduct.getAllParentCategories().add(newProduct.getDefaultCategory());
+    	List<Sku> skus = product.getAllSkus();
+    	product.getAllSkus().clear();
+    	for (int i=0; i< skus.size(); i++){
+    		product.getAllSkus().add(catalogService.saveSku(product.getSkus().get(i)));
+    	}
         return catalogService.saveProduct(product);
     }
     

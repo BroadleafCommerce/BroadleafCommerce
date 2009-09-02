@@ -51,6 +51,15 @@ package org.broadleafcommerce.admin.catalog.commands.media
 			if(currentViewState == productViewState){
 				var productModel:ProductModel = catalogModelLocator.productModel;
 				productModel.currentProduct.productMedia[media.key] = media;
+				var isNewProductMedia:Boolean = true;
+				for each(var prodMedia:Media in productModel.productMedia){
+					if(prodMedia.id == media.id){
+						isNewProductMedia = false;
+					}
+				}
+				if(isNewProductMedia){
+					productModel.productMedia.addItem(media);					
+				}
 				var spe:SaveProductEvent = new SaveProductEvent(catalogModelLocator.productModel.currentProduct);
 				spe.dispatch();
 			}			

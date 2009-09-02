@@ -65,6 +65,9 @@
 	<mx:Binding
 		source="productModel.viewState"
 		destination="currentState"/>
+
+	<mx:Binding source="productModel.productMedia"
+	            destination="productMediaCanvas.dataProvider" />
 		
 	<product1:ProductCanvasViewHelper id="productCanvasViewHelper" />		
 
