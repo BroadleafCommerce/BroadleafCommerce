@@ -1,6 +1,8 @@
 package org.broadleafcommerce.admin.catalog.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +53,11 @@ public class AdminCatalogService {
 //    	Category cat = c.get(0);
 //    	newProduct.getAllParentCategories().clear();
 //    	newProduct.getAllParentCategories().add(newProduct.getDefaultCategory());
-    	List<Sku> skus = product.getAllSkus();
+    	List<Sku> skus = new ArrayList<Sku>(product.getAllSkus().size());
+    	skus.addAll(product.getAllSkus());
     	product.getAllSkus().clear();
     	for (int i=0; i< skus.size(); i++){
-    		product.getAllSkus().add(catalogService.saveSku(product.getSkus().get(i)));
+    		product.getAllSkus().add(catalogService.saveSku(skus.get(i)));
     	}
         return catalogService.saveProduct(product);
     }
