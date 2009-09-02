@@ -106,7 +106,7 @@ public class SimpleCatalogController extends AbstractController {
     }
 
     protected List<Category> buildCategoryList(Category rootCategory, Category currentCategory, String url) {
-        List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(url);
+        List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
 
         if (categoryList == null) {
             categoryList = new ArrayList<Category>();
