@@ -65,6 +65,7 @@ public class ProductDaoImpl implements ProductDao {
     @SuppressWarnings("unchecked")
     public List<Product> readProductsByCategory(Long categoryId) {
         Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_CATEGORY");
+        query.setParameter("categoryId", categoryId);
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }

@@ -15,7 +15,10 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -46,73 +49,25 @@ import javax.persistence.TableGenerator;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_PRODUCT_XREF")
-public class CategoryProductImpl implements CategoryProduct {
+public class CategoryProductImpl implements Serializable {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-    /** The id. */
-    @Id
-    @GeneratedValue(generator = "CategoryProductId", strategy = GenerationType.TABLE)
-    @TableGenerator(name = "CategoryProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategoryProductImpl", allocationSize = 50)
-    @Column(name = "CATEGORY_PRODUCT_ID")
-    protected Long id;
+      @EmbeddedId
+      CategoryProductXrefPk categoryProductXref;
 
-    /** The category. */
-    @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
-    @JoinColumn(name = "CATEGORY_ID")
-    protected Category category;
+    public CategoryProductXrefPk getCategoryProductXref() {
+		return categoryProductXref;
+	}
+    
+    public void setCategoryProductXref(CategoryProductXrefPk categoryProductXref) {
+		this.categoryProductXref = categoryProductXref;
+	}
 
-    /** The product. */
-    @ManyToOne(targetEntity = ProductImpl.class, optional=false)
-    @JoinColumn(name = "PRODUCT_ID")
-    protected Product product;
-
-    /** The display order. */
+	/** The display order. */
     @Column(name = "DISPLAY_ORDER")
     protected Integer displayOrder;
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.CategoryProduct#getId()
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.CategoryProduct#setId(java.lang.Long)
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.CategoryProduct#getCategory()
-     */
-    public Category getCategory() {
-        return category;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.CategoryProduct#setCategory(org.broadleafcommerce.catalog.domain.Category)
-     */
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.CategoryProduct#getProduct()
-     */
-    public Product getProduct() {
-        return product;
-    }
-
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.catalog.domain.CategoryProduct#setProduct(org.broadleafcommerce.catalog.domain.Product)
-     */
-    public void setProduct(Product product) {
-        this.product = product;
-    }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.CategoryProduct#getDisplayOrder()
@@ -127,46 +82,55 @@ public class CategoryProductImpl implements CategoryProduct {
     public void setDisplayOrder(Integer displayOrder) {
         this.displayOrder = displayOrder;
     }
+    
+    public static class CategoryProductXrefPk implements Serializable{
+        /** The Constant serialVersionUID. */
+        private static final long serialVersionUID = 1L;
+        
+        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+        @JoinColumn(name = "CATEGORY_ID")
+        protected Category category;
+        
+        /** The product. */
+        @ManyToOne(targetEntity = ProductImpl.class, optional=false)
+        @JoinColumn(name = "PRODUCT_ID")
+        protected Product product;
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((category == null) ? 0 : category.hashCode());
-        result = prime * result + ((displayOrder == null) ? 0 : displayOrder.hashCode());
-        result = prime * result + ((product == null) ? 0 : product.hashCode());
-        return result;
+		public Category getCategory() {
+			return category;
+		}
+
+		public void setCategory(Category category) {
+			this.category = category;
+		}
+
+		public Product getProduct() {
+			return product;
+		}
+
+		public void setProduct(Product product) {
+			this.product = product;
+		}
+
+		@Override
+		public int hashCode() {
+			return category.hashCode() + product.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+	        if (obj == null) return false;
+	        else if (!(obj instanceof CategoryProductXrefPk)) return false;
+
+	        return category.getId().equals(((CategoryProductXrefPk) obj).category.getId())
+	        && product.getId().equals(((CategoryProductXrefPk) obj).product.getId());
+		}
+		
+		
+        
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        CategoryProductImpl other = (CategoryProductImpl) obj;
 
-        if (id != null && other.id != null) {
-            return id.equals(other.id);
-        }
-
-        if (category == null) {
-            if (other.category != null)
-                return false;
-        } else if (!category.equals(other.category))
-            return false;
-        if (displayOrder == null) {
-            if (other.displayOrder != null)
-                return false;
-        } else if (!displayOrder.equals(other.displayOrder))
-            return false;
-        if (product == null) {
-            if (other.product != null)
-                return false;
-        } else if (!product.equals(other.product))
-            return false;
-        return true;
-    }
+    
+    
 }

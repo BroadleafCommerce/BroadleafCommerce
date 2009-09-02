@@ -12,11 +12,13 @@ package org.broadleafcommerce.admin.catalog.view.product
 	import mx.controls.Alert;
 	import mx.managers.PopUpManager;
 	
+	import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.MediaModel;
 	import org.broadleafcommerce.admin.catalog.view.media.MediaCanvas;
 	import org.broadleafcommerce.admin.catalog.view.media.MediaNewWindow;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
+	import org.broadleafcommerce.admin.catalog.vo.product.Product;
 
 	public class ProductCanvasViewHelper extends ViewHelper
 	{
@@ -33,6 +35,14 @@ package org.broadleafcommerce.admin.catalog.view.product
             fileRef.addEventListener(Event.SELECT, selectHandler);
             fileRef.addEventListener(Event.COMPLETE, completeHandler);
             					
+		}
+		
+		public function selectCurrentProduct():void{
+			var currentProduct:Product = CatalogModelLocator.getInstance().productModel.currentProduct;
+			if(currentProduct.id > -1){				
+				var epe:EditProductEvent = new EditProductEvent(currentProduct,false);
+				epe.dispatch();
+			}
 		}
 		
 		public function editItem(index:int):void{

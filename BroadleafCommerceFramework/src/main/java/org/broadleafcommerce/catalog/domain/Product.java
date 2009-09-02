@@ -148,6 +148,8 @@ public interface Product extends Serializable {
      */
     public void setAllSkus(List<Sku> skus);
 
+    public List<Sku> getAllSkus();
+    
     /**
      * Returns a map of key/value pairs that associate the image name (key) with the URL to the image (value)
      * for display purposes.

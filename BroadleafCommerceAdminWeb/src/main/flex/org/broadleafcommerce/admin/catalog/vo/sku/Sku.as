@@ -29,6 +29,7 @@ package org.broadleafcommerce.admin.catalog.vo.sku
 		public var allParentProducts:ArrayCollection = new ArrayCollection();
 		
 		public function Sku(){
+			id=-1;
 		}
 
 		public function get listPrice():Money{

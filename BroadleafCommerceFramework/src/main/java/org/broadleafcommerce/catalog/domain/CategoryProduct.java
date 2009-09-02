@@ -34,20 +34,6 @@ import java.io.Serializable;
 public interface CategoryProduct extends Serializable {
 
     /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
-    public Long getId();
-
-    /**
-     * Sets the id.
-     * 
-     * @param id the new id
-     */
-    public void setId(Long id);
-
-    /**
      * Gets the category.
      * 
      * @return the category

@@ -3,6 +3,7 @@
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.control.events.product.NewProductEvent;
 		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 		import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
 		import org.broadleafcommerce.admin.catalog.vo.product.Product;
@@ -19,6 +20,10 @@
 		[Bindable]
 		private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 
+
+		private function handleAddClick(event:MouseEvent):void{
+				new NewProductEvent().dispatch();			
+		}
 
 		 private function handleProductsDataGridClick(event:MouseEvent):void{
 		 	var product:Product = Product(ProductsDataGrid(event.currentTarget).selectedItem);
@@ -48,7 +53,7 @@
 			<components:ProductFilter/>
 			<mx:VRule
 				height="25"/>
-			<mx:Button id="addButton" label="Add" styleName="addButton"/>
+			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/>
 			<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" styleName="viewEditButton" />
 			<mx:Button id="removeButton" label="Remove" styleName="deleteButton"/>
 		</mx:HBox>

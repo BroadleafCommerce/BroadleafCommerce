@@ -174,8 +174,10 @@ public class ProductImpl implements Product {
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     protected Category defaultCategory;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class)
-    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable=true))
+    //@org.hibernate.annotations.OrderBy(clause = "DISPLAY_ORDER")
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
@@ -341,8 +343,11 @@ public class ProductImpl implements Product {
      * org.broadleafcommerce.catalog.domain.Product#setAllSkus(java.util.List)
      */
     public void setAllSkus(List<Sku> skus) {
-        this.allSkus = skus;
-        this.skus.clear();
+        this.allSkus.clear();
+        for(Sku sku : skus){
+        	this.allSkus.add(sku);
+        }
+        //this.skus.clear();
     }
 
     /*
@@ -370,7 +375,10 @@ public class ProductImpl implements Product {
      * .Map)
      */
     public void setProductImages(Map<String, String> productImages) {
-        this.productImages = productImages;
+        this.productImages.clear();
+        for(String key : productImages.keySet()){
+        	this.productImages.put(key, productImages.get(key));
+        }
     }
 
     /*
@@ -386,7 +394,10 @@ public class ProductImpl implements Product {
     }
 
     public void setProductMedia(Map<String, Media> productMedia) {
-        this.productMedia = productMedia;
+        this.productMedia.clear();
+        for(String key : productMedia.keySet()){
+        	this.productMedia.put(key, productMedia.get(key));
+        }
     }
 
     /*
@@ -402,8 +413,11 @@ public class ProductImpl implements Product {
         return allParentCategories;
     }
 
-    public void setAllParentCategories(List<Category> allParentCategories) {
-        this.allParentCategories = allParentCategories;
+    public void setAllParentCategories(List<Category> allParentCategories) {    	
+        this.allParentCategories.clear();
+        for(Category category : allParentCategories){
+        	this.allParentCategories.add(category);
+        }
     }
 
     public List<RelatedProduct> getCrossSaleProducts() {
@@ -411,7 +425,10 @@ public class ProductImpl implements Product {
     }
 
     public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts) {
-        this.crossSaleProducts = crossSaleProducts;
+        this.crossSaleProducts.clear();
+        for(RelatedProduct relatedProduct : crossSaleProducts){
+        	this.crossSaleProducts.add(relatedProduct);
+        }    	
     }
 
     public String getModel() {
@@ -499,6 +516,10 @@ public class ProductImpl implements Product {
     }
 
     public void setUpSaleProducts(List<RelatedProduct> upSaleProducts) {
+        this.upSaleProducts.clear();
+        for(RelatedProduct relatedProduct : upSaleProducts){
+        	this.upSaleProducts.add(relatedProduct);
+        }
         this.upSaleProducts = upSaleProducts;
     }
 

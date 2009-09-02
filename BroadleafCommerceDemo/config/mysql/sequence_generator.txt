@@ -9,8 +9,13 @@ PersonalMessageId|1
 RatingSummaryId|10
 RatingDetailId|10
 ReviewDetailId|10
-MediaId|10
+MediaId|1
 CategoryImpl|10000
 ProductImpl|1000
 AdminUserImpl|100
 CodeTypeId|100
+OfferImpl|500
+CategoryProductImpl|500
+AdminRoleImpl|2
+SearchInterceptImpl|1
+SkuImpl|10000
