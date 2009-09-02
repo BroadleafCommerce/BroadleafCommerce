@@ -18,6 +18,10 @@
 						 * <b>All fields are required. </b>
 					</td>
 				<tr>
+					<td style="text-align:right"><label for="username">* Username</label></td>
+					<td><form:input path="customer.username" size="30" cssClass="userField" id="username" /></td>
+	    		</tr>
+				<tr>
 					<td style="text-align:right"><label for="firstName">* First Name</label></td>
 					<td><form:input path="customer.firstName" size="30" cssClass="userField" id="firstName" /></td>
 	    		</tr>
@@ -54,6 +58,26 @@
 			  	<tr>
     	  			<td class="alignCenter" colspan="2">
 						<input type="submit" class="saveButton" value="Register" name="submitAction"/>
+          			</td>
+        		</tr>
+    		</table>
+		</div>
+	</form:form>
+	<form:form method="post" action="/broadleafdemo/login_post.htm">
+		<div class="orderBorder span-10" style="margin-top:10px;" >
+			<div class="orderTitle" > <b>Login for Existing users</b></div>
+			<table class="formTable">
+				<tr>
+					<td style="text-align:right"><label for="username">Username</label></td>
+					<td><input size="30" cssClass="userField" id="username" name="j_username" /></td>
+	    		</tr>
+				<tr>
+					<td style="text-align:right"><label for="password">Password</label></td>
+					<td><input size="30" cssClass="userField" id="password" name="j_password" /></td>
+	    		</tr>
+			  	<tr>
+    	  			<td class="alignCenter" colspan="2">
+						<input type="submit" class="saveButton" value="Login" name="loginSubmitAction"/>
           			</td>
         		</tr>
     		</table>

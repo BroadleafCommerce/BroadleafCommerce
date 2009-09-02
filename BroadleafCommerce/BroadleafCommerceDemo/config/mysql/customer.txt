@@ -1,1 +1,1 @@
-1|John|Doe|jdoe@gmail.com|0|0|0
+1|John|Doe|jdoe@gmail.com|0|0|0|jdoe|foo

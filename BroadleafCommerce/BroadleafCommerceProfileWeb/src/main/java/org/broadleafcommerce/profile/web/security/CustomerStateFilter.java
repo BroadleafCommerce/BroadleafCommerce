@@ -56,48 +56,49 @@ public class CustomerStateFilter extends SpringSecurityFilter implements Applica
         Customer customer = null;
         if (authentication != null) {
             String userName = request.getUserPrincipal().getName();
-            if (userName != null) {
+            customer = (Customer) request.getAttribute(customerRequestAttributeName);
+            if (userName != null && (customer == null || !userName.equals(customer.getUsername()))) {
+                // can only get here if the authenticated user does not match the user in session
                 customer = customerService.readCustomerByUsername(userName);
-                if (customer != null) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Customer found by username " + userName);
-                    }
-                    
-                    ApplicationEvent lastPublishedEvent = (ApplicationEvent) request.getSession(true).getAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME);
-                    if (authentication instanceof RememberMeAuthenticationToken) {
-                    	// set transient property of customer
-                    	customer.setCookied(true);
-                    	boolean publishRememberMeEvent = true;
-                    	if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerAuthenticatedFromCookieEvent) {
-                    		CustomerAuthenticatedFromCookieEvent cookieEvent = (CustomerAuthenticatedFromCookieEvent) lastPublishedEvent;
-                    		if (userName.equals(cookieEvent.getCustomer().getUsername())) {
-                    			publishRememberMeEvent = false;
-                    		}
-                    	}
-                    	if (publishRememberMeEvent) {
-                    		CustomerAuthenticatedFromCookieEvent cookieEvent = new CustomerAuthenticatedFromCookieEvent(customer, this.getClass().getName()); 
-                    		eventPublisher.publishEvent(cookieEvent);
-                    		request.getSession().setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, cookieEvent);
-                    	}                    	
-                    } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
-                        customer.setLoggedIn(true);
-                        boolean publishLoggedInEvent = true;
-                    	if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerLoggedInEvent) {
-                    		CustomerLoggedInEvent loggedInEvent = (CustomerLoggedInEvent) lastPublishedEvent;
-                    		if (userName.equals(loggedInEvent.getCustomer().getUsername())) {
-                    			publishLoggedInEvent= false;
-                    		}
-                    	}
-                    	if (publishLoggedInEvent) {
-                    		CustomerLoggedInEvent loggedInEvent = new CustomerLoggedInEvent(customer, this.getClass().getName()); 
-                    		eventPublisher.publishEvent(loggedInEvent);
-                    		request.getSession().setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, loggedInEvent);
-                    	}                        
-                    } else {
-                        customer = null;
-                    }
-                    
+                if (logger.isDebugEnabled() && customer != null) {
+                    logger.debug("Customer found by username " + userName);
                 }
+            }
+            if (customer != null) {
+                ApplicationEvent lastPublishedEvent = (ApplicationEvent) request.getSession(true).getAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME);
+                if (authentication instanceof RememberMeAuthenticationToken) {
+                	// set transient property of customer
+                	customer.setCookied(true);
+                	boolean publishRememberMeEvent = true;
+                	if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerAuthenticatedFromCookieEvent) {
+                		CustomerAuthenticatedFromCookieEvent cookieEvent = (CustomerAuthenticatedFromCookieEvent) lastPublishedEvent;
+                		if (userName.equals(cookieEvent.getCustomer().getUsername())) {
+                			publishRememberMeEvent = false;
+                		}
+                	}
+                	if (publishRememberMeEvent) {
+                		CustomerAuthenticatedFromCookieEvent cookieEvent = new CustomerAuthenticatedFromCookieEvent(customer, this.getClass().getName()); 
+                		eventPublisher.publishEvent(cookieEvent);
+                		request.getSession().setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, cookieEvent);
+                	}                    	
+                } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
+                    customer.setLoggedIn(true);
+                    boolean publishLoggedInEvent = true;
+                	if (lastPublishedEvent != null && lastPublishedEvent instanceof CustomerLoggedInEvent) {
+                		CustomerLoggedInEvent loggedInEvent = (CustomerLoggedInEvent) lastPublishedEvent;
+                		if (userName.equals(loggedInEvent.getCustomer().getUsername())) {
+                			publishLoggedInEvent= false;
+                		}
+                	}
+                	if (publishLoggedInEvent) {
+                		CustomerLoggedInEvent loggedInEvent = new CustomerLoggedInEvent(customer, this.getClass().getName()); 
+                		eventPublisher.publishEvent(loggedInEvent);
+                		request.getSession().setAttribute(LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME, loggedInEvent);
+                	}                        
+                } else {
+                    customer = null;
+                }
+                    
             }
         }
 
@@ -116,7 +117,6 @@ public class CustomerStateFilter extends SpringSecurityFilter implements Applica
             }
         }
         request.setAttribute(customerRequestAttributeName, customer);
-
 
         chain.doFilter(request, response);
     }

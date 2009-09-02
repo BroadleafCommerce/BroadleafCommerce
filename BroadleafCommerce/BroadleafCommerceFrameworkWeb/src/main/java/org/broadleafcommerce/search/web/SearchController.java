@@ -26,14 +26,6 @@ public class SearchController {
     @Resource(name="blSearchService")
     private SearchService searchService;
 
-    public SearchService getSearchService() {
-        return searchService;
-    }
-
-    public void setSearchService(SearchService searchService) {
-        this.searchService = searchService;
-    }
-
     @RequestMapping(method = {RequestMethod.GET})
     public String blank (ModelMap model, HttpServletRequest request)
     {

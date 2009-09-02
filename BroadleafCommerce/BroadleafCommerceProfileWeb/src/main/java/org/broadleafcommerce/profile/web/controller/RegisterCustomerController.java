@@ -85,6 +85,7 @@ public class RegisterCustomerController {
     @ModelAttribute("challengeQuestions")
     public List<ChallengeQuestion> getChallengeQuestions() {
         return challengeQuestionService.readChallengeQuestions();
+        //return null;
     }
 
     public String getRegistrationErrorView() {

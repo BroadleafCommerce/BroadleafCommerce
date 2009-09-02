@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     @Resource(name="blUserDao")
     protected UserDao userDao;
 
-    @Resource(name="passwordEncoder")
+    @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
 
     public User saveUser(User user) {

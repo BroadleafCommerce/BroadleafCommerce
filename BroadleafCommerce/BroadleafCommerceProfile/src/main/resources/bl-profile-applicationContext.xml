@@ -31,12 +31,12 @@
 		<property name="ignoreUnresolvablePlaceholders" value="true"/>
 	</bean>
 
+	<bean id="blPasswordEncoder" class="org.springframework.security.providers.encoding.PlaintextPasswordEncoder"/>
+
 	<bean id="blServerInfo" class="org.broadleafcommerce.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>
 		<property name="serverPort" value="8080"/>
 	</bean>
-
-	<bean id="passwordEncoder" class="org.springframework.security.providers.encoding.ShaPasswordEncoder"/>
 
 	<bean id="blMailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
     	<property name="host"><value>localhost</value></property>
