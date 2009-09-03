@@ -12,7 +12,7 @@
         <sec:intercept-url pattern="/account/**" />      
         <sec:form-login login-page='/registerCustomer/registerCustomer.htm' 
         				default-target-url='/welcome.htm'
-        				authentication-failure-url="/registerCustomer/registerCustomer.htm"
+        				authentication-failure-url="/registerCustomer/registerCustomer.htm?error=true"
         				login-processing-url="/login_post.htm"
         				 />
    		<sec:logout logout-url="/logout.htm"/>

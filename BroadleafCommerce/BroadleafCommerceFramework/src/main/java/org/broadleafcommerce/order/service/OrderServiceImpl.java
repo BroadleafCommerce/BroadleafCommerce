@@ -295,14 +295,8 @@ public class OrderServiceImpl implements OrderService {
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException {
         Order order = item.getOrder();
-        if (fulfillmentGroup.getId() == null) {
-            // API user is trying to add an item to a fulfillment group not
-            // created
-            fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup);
-        }
-        // API user is trying to add an item to an existing fulfillment group
-        // Steps are
-        // 1) Find the item's existing fulfillment group
+        
+        // 1) Find the item's existing fulfillment group, if any
         for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
             Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
             while (itr.hasNext()) {
@@ -314,6 +308,12 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
         }
+        
+        if (fulfillmentGroup.getId() == null) {
+            // API user is trying to add an item to a fulfillment group not created
+            fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup);
+        } 
+        
         FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, quantity);
         fgi = fulfillmentGroupItemDao.save(fgi);
 

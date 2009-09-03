@@ -275,6 +275,7 @@ public class CartController {
     @RequestMapping(params="updateShipping", method = RequestMethod.POST)
     public String updateShipping (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         Order currentCartOrder = retrieveCartOrder(request, model);
+        cartSummary = createFulfillmentGroup(cartSummary, cartSummary.getFulfillmentGroup().getMethod(), currentCartOrder);
         model.addAttribute("currentCartOrder", updateFulfillmentGroups(cartSummary, currentCartOrder));
         model.addAttribute("cartSummary", cartSummary);
         return cartView;
@@ -305,10 +306,15 @@ public class CartController {
         model.addAttribute("cartSummary", cartSummary);
         return cartView;
     }
-
+    
     private Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
         cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
-        cartService.addFulfillmentGroupToOrder(currentCartOrder, cartSummary.getFulfillmentGroup());
+        FulfillmentGroup fg = cartSummary.getFulfillmentGroup();
+        for(CartOrderItem item : cartSummary.getRows()) {
+            item.getOrderItem().setOrder(currentCartOrder);
+            fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity());
+        }
+        cartSummary.setFulfillmentGroup(fg);
         return cartService.save(currentCartOrder, true);
     }
 
