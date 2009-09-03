@@ -117,6 +117,11 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         ReconstructCartResponse reconstructCartResponse = reconstructCart(customer);
         mergeCartResponse.setRemovedItems(reconstructCartResponse.getRemovedItems());
         Order customerCart = reconstructCartResponse.getOrder();
+        /*
+         * Set the response to merged if the saved cart has any items available
+         * to merge in.
+         */
+        mergeCartResponse.setMerged(customerCart != null && customerCart.getOrderItems().size() > 0);
 
         // add anonymous cart items (make sure they are valid)
         if ((customerCart == null || !customerCart.getId().equals(anonymousCartId)) && anonymousCartId != null) {
@@ -158,7 +163,6 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                             mergeCartResponse.getRemovedItems().add(orderItem);
                         }
                     }
-                    mergeCartResponse.setMerged(true);
                 }
                 cancelOrder(anonymousCart);
             }

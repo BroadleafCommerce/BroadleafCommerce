@@ -50,6 +50,7 @@
 					    </fileset>
 					  </cobertura-merge>
 		              <testng classpathref="test.path" outputdir="target/test-reports" haltonfailure="true">
+		              	<jvmarg value="-Xmx512M" />
 		                <sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/cobertura.ser" />
 		                <xmlfileset dir="src/test/resources" includes="*testng.xml"/>
 		              </testng>

@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.checkout.service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +65,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         }
 
         try {
-            order.setSubmitDate(DateUtil.getNow());
+            order.setSubmitDate(new Date(DateUtil.getNow()));
             order = cartService.save(order, false);
 
             CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());

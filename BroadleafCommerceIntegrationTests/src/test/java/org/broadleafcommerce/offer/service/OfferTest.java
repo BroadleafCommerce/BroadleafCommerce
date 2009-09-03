@@ -428,6 +428,7 @@ public class OfferTest extends CommonSetupBaseTest {
     }
 
     @Test(groups =  {"testReadAllOffers"}, dependsOnGroups = { "testOfferDelete"})
+    @Transactional
     public void testReadAllOffers() throws Exception {
         Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer.setDeliveryType(OfferDeliveryType.MANUAL);

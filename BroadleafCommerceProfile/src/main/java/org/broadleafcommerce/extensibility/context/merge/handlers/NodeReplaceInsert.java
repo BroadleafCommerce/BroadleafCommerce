@@ -113,29 +113,34 @@ public class NodeReplaceInsert extends BaseHandler {
             		}
             		LOG.debug(sb.toString());
             	}
-                
-            	//find matching nodes based on id
-                if (replaceNode(primaryNodes, node, "id", usedNodes)) {
-                    continue;
+            	if (!checkNode(usedNodes, primaryNodes, node)) {
+                    //simply append the node if all the above fails
+            		Node newNode = ownerDocument.importNode(node.cloneNode(true), true);
+                    parentNode.appendChild(newNode);
+                    usedNodes.add(node);
                 }
-                //find matching nodes based on name
-                if (replaceNode(primaryNodes, node, "name", usedNodes)) {
-                    continue;
-                }
-                //check if this same node already exists
-                if (exactNodeExists(primaryNodes, node, usedNodes)) {
-                    continue;
-                }
-                //simply append the node if all the above fails
-                Node newNode = ownerDocument.importNode(node.cloneNode(true), true);
-                parentNode.appendChild(newNode);
-                usedNodes.add(node);
             }
         }
         return usedNodes;
     }
+    
+    protected boolean checkNode(List<Node> usedNodes, Node[] primaryNodes, Node node) {
+        //find matching nodes based on id
+        if (replaceNode(primaryNodes, node, "id", usedNodes)) {
+            return true;
+        }
+        //find matching nodes based on name
+        if (replaceNode(primaryNodes, node, "name", usedNodes)) {
+            return true;
+        }
+        //check if this same node already exists
+        if (exactNodeExists(primaryNodes, node, usedNodes)) {
+            return true;
+        }
+        return false;
+    }
 
-    private boolean exactNodeExists(Node[] primaryNodes, Node testNode, List<Node> usedNodes) {
+    protected boolean exactNodeExists(Node[] primaryNodes, Node testNode, List<Node> usedNodes) {
         for (int j=0;j<primaryNodes.length;j++){
             if (primaryNodes[j].isEqualNode(testNode)) {
             	usedNodes.add(primaryNodes[j]);
@@ -145,7 +150,7 @@ public class NodeReplaceInsert extends BaseHandler {
         return false;
     }
 
-    private boolean replaceNode(Node[] primaryNodes, Node testNode, final String attribute, List<Node> usedNodes) {
+    protected boolean replaceNode(Node[] primaryNodes, Node testNode, final String attribute, List<Node> usedNodes) {
         if (testNode.getAttributes().getNamedItem(attribute) == null) {
             return false;
         }

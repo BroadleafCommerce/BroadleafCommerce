@@ -15,17 +15,21 @@
  */
 package org.broadleafcommerce.util;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Hashtable;
 
-public class UrlUtil {
-	public static String generateUrlKey(String toConvert) {
-        if (toConvert.matches(".*?\\W.*?")) {
-		//remove all non-word characters
-		String result = toConvert.replaceAll("\\W","");
-		//uncapitalizes the first letter of the url key
-		return StringUtils.uncapitalize(result);
-        } else {
-            return StringUtils.uncapitalize(toConvert);
-        }
-	}
+@SuppressWarnings("unchecked")
+public class HydratedCache extends Hashtable {
+
+    private static final long serialVersionUID = 1L;
+
+    private String cacheName;
+
+    public HydratedCache(String cacheName) {
+        this.cacheName = cacheName;
+    }
+
+    public String getCacheName() {
+        return cacheName;
+    }
+
 }

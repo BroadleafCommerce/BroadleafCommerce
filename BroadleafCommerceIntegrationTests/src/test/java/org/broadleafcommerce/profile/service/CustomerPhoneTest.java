@@ -27,6 +27,7 @@ import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.domain.PhoneImpl;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class CustomerPhoneTest extends BaseTest {
@@ -41,7 +42,8 @@ public class CustomerPhoneTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Test(groups = "createCustomerPhone", dataProvider = "setupCustomerPhone", dataProviderClass = CustomerPhoneDataProvider.class, dependsOnGroups = "readCustomer1")
+    @Test(groups = "createCustomerPhone", dataProvider = "setupCustomerPhone", dataProviderClass = CustomerPhoneDataProvider.class, dependsOnGroups = "readCustomer")
+    @Transactional
     @Rollback(false)
     public void createCustomerPhone(CustomerPhone customerPhone) {
         userName = "customer1";
@@ -57,6 +59,7 @@ public class CustomerPhoneTest extends BaseTest {
     }
 
     @Test(groups = "readCustomerPhone", dependsOnGroups = "createCustomerPhone")
+    @Transactional
     public void readCustomerPhoneByUserId() {
         List<CustomerPhone> customerPhoneList = customerPhoneService.readActiveCustomerPhonesByCustomerId(userId);
         for (CustomerPhone customerPhone : customerPhoneList) {
@@ -65,6 +68,7 @@ public class CustomerPhoneTest extends BaseTest {
     }
     
     @Test(groups = "readCustomerPhone", dependsOnGroups = "createCustomerPhone")
+    @Transactional
     public void readDeafultCustomerPhoneByUserId() {
     	CustomerPhone customerPhone = customerPhoneService.findDefaultCustomerPhone(userId);
 		assert customerPhone != null;

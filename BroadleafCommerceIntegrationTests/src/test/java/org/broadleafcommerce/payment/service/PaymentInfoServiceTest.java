@@ -51,7 +51,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer1", "createOrder"})
+    @Test(groups={"createPaymentInfo"}, dataProvider="basicPaymentInfo", dataProviderClass=PaymentInfoDataProvider.class, dependsOnGroups={"readCustomer", "createOrder"})
     @Rollback(false)
     @Transactional
     public void createPaymentInfo(PaymentInfo paymentInfo){
@@ -81,6 +81,7 @@ public class PaymentInfoServiceTest extends BaseTest {
     }
 
     @Test(groups={"readPaymentInfosByOrder"}, dependsOnGroups={"createPaymentInfo"})
+    @Transactional
     public void readPaymentInfoByOrder(){
         List<PaymentInfo> payments = paymentInfoService.readPaymentInfosForOrder(paymentInfo.getOrder());
         assert payments != null;

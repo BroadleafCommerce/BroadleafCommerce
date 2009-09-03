@@ -20,13 +20,17 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
+import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.dataprovider.CustomerPhoneControllerTestDataProvider;
 import org.broadleafcommerce.profile.web.model.PhoneNameForm;
+import org.broadleafcommerce.profile.web.security.CustomerStateFilter;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.testng.annotations.Test;
@@ -37,18 +41,22 @@ public class CustomerPhoneControllerTest extends BaseTest {
     private CustomerPhoneController customerPhoneController;
     @Resource
     private CustomerPhoneService customerPhoneService;
+    @Resource
+    private CustomerService customerService;
     private List<Long> createdCustomerPhoneIds = new ArrayList<Long>();
     private Long userId = 1L;
     private MockHttpServletRequest request;
     private static final String SUCCESS = "customerPhones";
 
-    @Test(groups = "createCustomerPhoneFromController", dataProvider = "setupCustomerPhoneControllerData", dataProviderClass = CustomerPhoneControllerTestDataProvider.class)
+    @Test(groups = "createCustomerPhoneFromController", dataProvider = "setupCustomerPhoneControllerData", dataProviderClass = CustomerPhoneControllerTestDataProvider.class, dependsOnGroups = "readCustomer")
+    @Transactional
     @Rollback(false)
     public void createCustomerPhoneFromController(PhoneNameForm phoneNameForm) {
         BindingResult errors = new BeanPropertyBindingResult(phoneNameForm, "phoneNameForm");
 
+        Customer customer = customerService.readCustomerById(userId);
         request = this.getNewServletInstance();
-        request.getSession().setAttribute("customer_session", userId); //set customer on session
+        request.setAttribute(CustomerStateFilter.getCustomerRequestAttributeName(), customer);
 
         String view = customerPhoneController.savePhone(phoneNameForm, errors, request, null, null);
         assert (view.indexOf(SUCCESS) >= 0);
@@ -71,6 +79,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
     }
 
     @Test(groups = "makePhoneDefaultOnCustomerPhoneController", dependsOnGroups = "createCustomerPhoneFromController")
+    @Transactional
     public void makePhoneDefaultOnCustomerPhoneController() {
         Long nonDefaultPhoneId = null;
         List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
@@ -99,6 +108,7 @@ public class CustomerPhoneControllerTest extends BaseTest {
     }
 
     @Test(groups = "readCustomerPhoneFromController", dependsOnGroups = "createCustomerPhoneFromController")
+    @Transactional
     public void readCustomerPhoneFromController() {
         List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
         int phones_1_size = phones_1.size();
@@ -126,13 +136,16 @@ public class CustomerPhoneControllerTest extends BaseTest {
     }
 
     @Test(groups = "viewExistingCustomerPhoneFromController", dependsOnGroups = "createCustomerPhoneFromController")
+    @Transactional
     public void viewExistingCustomerPhoneFromController() {
         List<CustomerPhone> phones_1 = customerPhoneService.readAllCustomerPhonesByCustomerId(1L);
         PhoneNameForm pnf = new PhoneNameForm();
 
         BindingResult errors = new BeanPropertyBindingResult(pnf, "phoneNameForm");
 
+        Customer customer = customerService.readCustomerById(userId);
         request = this.getNewServletInstance();
+        request.setAttribute(CustomerStateFilter.getCustomerRequestAttributeName(), customer);
 
         String view = customerPhoneController.viewPhone(phones_1.get(0).getId(), request, pnf, errors);
         assert (view.indexOf(SUCCESS) >= 0);
