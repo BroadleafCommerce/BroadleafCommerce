@@ -104,7 +104,7 @@
 							<input type="hidden" value="Update Shipping" name="updateShipping"  id="shippingButton"/>
 						</td>
 						<td style="text-align:right">Shipping:</td>
-						<td style="text-align:right"><span class="price">$${cartSummary.fulfillmentGroup.shippingPrice}</span></td>
+						<td style="text-align:right"><span class="price">$${currentCartOrder.totalShipping}</span></td>
 					</tr>
 					<tr class="totals">
 						<td colspan="4">&nbsp;</td>
