@@ -213,4 +213,6 @@ public interface Order extends Serializable {
 
 	public boolean isHasOrderAdjustments();
 
+	public boolean updatePrices();
+	
 }

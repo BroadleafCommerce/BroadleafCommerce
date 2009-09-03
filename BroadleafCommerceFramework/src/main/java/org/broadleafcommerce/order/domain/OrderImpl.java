@@ -584,6 +584,16 @@ public class OrderImpl implements Order {
 	public boolean isHasOrderAdjustments() {
 		return hasOrderAdjustments;
 	}
+	
+	public boolean updatePrices() {
+        boolean updated = false;
+        for (OrderItem orderItem : orderItems) {
+            if (orderItem.updatePrices()) {
+                updated = true;
+            }
+        }
+        return updated;
+    }
 
 	public boolean equals(Object obj) {
 	   	if (this == obj)

@@ -39,18 +39,32 @@ public class OrderState {
 
     @Resource(name="blOrderDao")
     private OrderDao orderDao;
+    private boolean updatePrices = true;
 
     public Order getOrder(Customer customer) {
         if (orders.get(customer.getId()) == null) {
             return null;
         }
-        return orderDao.readOrderById(orders.get(customer.getId()));
+        Order order = orderDao.readOrderById(orders.get(customer.getId()));
+        return order;
     }
 
-    public void setOrder(Customer customer, Order order) {
+    public Order setOrder(Customer customer, Order order) {
         if (customer != null && order != null) {
             orders.put(customer.getId(), order.getId());
+            if (updatePrices && order.updatePrices()) {
+                order = orderDao.save(order);
+            }
         }
+        return order;
+        }
+
+    public boolean isUpdatePrices() {
+        return updatePrices;
+    }
+
+    public void setUpdatePrices(boolean updatePrices) {
+        this.updatePrices = updatePrices;
     }
 
 }
