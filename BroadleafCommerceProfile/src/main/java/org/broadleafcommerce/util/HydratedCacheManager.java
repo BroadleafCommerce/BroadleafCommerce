@@ -18,6 +18,7 @@ package org.broadleafcommerce.util;
 import java.util.Hashtable;
 
 import net.sf.ehcache.CacheException;
+import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Status;
 import net.sf.ehcache.event.CacheManagerEventListener;
 
@@ -42,7 +43,11 @@ public class HydratedCacheManager implements CacheManagerEventListener {
     private final Hashtable<String, HydratedCache> hydratedCacheManager = new Hashtable<String, HydratedCache>();
 
     public void addHydratedCache(HydratedCache cache) {
-        hydratedCacheManager.put(cache.getCacheName(), cache);
+    	CacheManager cacheManager = CacheManager.getInstance();
+    	if (cacheManager.cacheExists(cache.getCacheName())) {
+    		cache.setCacheGuid(cacheManager.getCache(cache.getCacheName()).getGuid());
+    	}
+    	hydratedCacheManager.put(cache.getCacheName(), cache);
     }
 
     public HydratedCache removeHydratedCache(String cacheName) {
@@ -50,7 +55,18 @@ public class HydratedCacheManager implements CacheManagerEventListener {
     }
 
     public  HydratedCache getHydratedCache(String cacheName) {
-        return hydratedCacheManager.get(cacheName);
+    	//TODO test that the cache is evicted when the ehcache item expires
+    	HydratedCache myCache = hydratedCacheManager.get(cacheName);
+    	if (myCache != null) {
+	    	CacheManager cacheManager = CacheManager.getInstance();
+	    	if (myCache.getCacheGuid() == null) {
+	    		myCache.setCacheGuid(cacheManager.getCache(cacheName).getGuid());
+	    	} else if (!cacheManager.getCache(cacheName).getGuid().equals(myCache.getCacheGuid())) {
+	    		notifyCacheRemoved(cacheName);
+	    		myCache.setCacheGuid(cacheManager.getCache(cacheName).getGuid());
+	    	}
+    	}
+    	return myCache;
     }
 
     public void dispose() throws CacheException {
