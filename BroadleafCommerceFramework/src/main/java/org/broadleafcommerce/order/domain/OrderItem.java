@@ -80,12 +80,25 @@ public interface OrderItem extends Serializable {
 
     public boolean isAllQuantityMarkedForOffer();
 
-    //public List<OrderItemAdjustment> getOrderItemAdjustments();
+    /**
+     * Returns a unmodifiable List of OrderItemAdjustment.  To modify the List of OrderItemAdjustment, please
+     * use the addOrderItemAdjustment or removeAllAdjustments methods.
+     * @return a unmodifiable List of OrderItemAdjustment
+     */
+    public List<OrderItemAdjustment> getOrderItemAdjustments();
 
+    /**
+     * Adds the adjustment to the order item's adjustment list and discounts the
+     * order item's adjustment price by the value of the adjustment.
+     * @param orderItemAdjustment
+     */
     public void addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment);
 
     //public void setOrderItemAdjustments(List<OrderItemAdjustment> orderItemAdjustments);
 
+    /**
+     * Removes all adjustment for this order item and reset the adjustment price.
+     */
     public int removeAllAdjustments();
 
     public PersonalMessage getPersonalMessage();

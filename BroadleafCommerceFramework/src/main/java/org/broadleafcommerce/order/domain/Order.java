@@ -145,16 +145,40 @@ public interface Order extends Serializable {
 
     public boolean hasCategoryItem(String categoryName);
 
-    //public List<OrderAdjustment> getOrderAdjustments();
+    /**
+     * Returns a unmodifiable List of OrderAdjustment.  To modify the List of OrderAdjustment, please
+     * use the addOrderAdjustments or removeAllOrderAdjustments methods.
+     * 
+     * @return a unmodifiable List of OrderItemAdjustment
+     */
+    public List<OrderAdjustment> getOrderAdjustments();
 
-    public List<OrderAdjustment> addOrderAdjustments(OrderAdjustment orderAdjustment);
+    /**
+     * Adds the adjustment to the order's adjustment list and discounts the order's adjustment
+     * price by the value of the adjustment.
+     * 
+     * @param orderAdjustment
+     */
+    public void addOrderAdjustments(OrderAdjustment orderAdjustment);
 
     //public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments);
 
+    /**
+     * Removes all order, order item, and fulfillment adjustments from the order and resets the adjustment
+     * price.
+     */
     public void removeAllAdjustments();
 
+    /**
+     * Removes all order adjustments from the order and resets the adjustment price.  This method does not 
+     * remove order item or fulfillment adjustments from the order.
+     */
     public void removeAllOrderAdjustments();
 
+    /**
+     * Removes all adjustments from the order's order items and resets the adjustment price for each item.  
+     * This method does not remove order or fulfillment adjustments from the order.
+     */
     public void removeAllItemAdjustments();
 
     public boolean containsNotStackableOrderOffer();
