@@ -80,7 +80,7 @@ public interface OrderItem extends Serializable {
 
     public boolean isAllQuantityMarkedForOffer();
 
-    //public List<OrderItemAdjustment> getOrderItemAdjustments();
+    public List<OrderItemAdjustment> getOrderItemAdjustments();
 
     public void addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment);
 

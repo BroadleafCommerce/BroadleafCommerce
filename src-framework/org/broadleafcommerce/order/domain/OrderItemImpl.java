@@ -263,7 +263,7 @@ public class OrderItemImpl implements OrderItem {
 
     }
 
-    protected List<OrderItemAdjustment> getOrderItemAdjustments() {
+    public List<OrderItemAdjustment> getOrderItemAdjustments() {
         return this.orderItemAdjustments;
     }
 
