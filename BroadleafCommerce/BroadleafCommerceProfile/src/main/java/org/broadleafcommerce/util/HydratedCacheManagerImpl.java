@@ -31,12 +31,9 @@ import org.hibernate.cache.CacheKey;
 public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCacheManager {
 
     private static final Log LOG = LogFactory.getLog(HydratedCacheManagerImpl.class);
-    private static HydratedCacheManagerImpl manager = null;
+    private static final HydratedCacheManagerImpl manager = new HydratedCacheManagerImpl();
 
-    public static synchronized HydratedCacheManager getInstance() {
-        if (manager == null) {
-            manager = new HydratedCacheManagerImpl();
-        }
+    public static HydratedCacheManagerImpl getInstance() {
         return manager;
     }
 
