@@ -476,8 +476,10 @@ public class CategoryImpl implements Category {
         List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
 
-        //populate the category images from the lazy item for our cached map
+        //populate the lazy items for our cached map
         category.getCategoryImages().size();
+        category.getCategoryMedia().size();
+        category.getFeaturedProducts().size();
 
         categoryUrlMap.put(currentPath, newCategoryList);
         for (Category currentCategory : category.getChildCategories()) {
