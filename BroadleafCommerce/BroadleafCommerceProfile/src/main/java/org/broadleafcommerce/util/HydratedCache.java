@@ -23,6 +23,7 @@ public class HydratedCache extends Hashtable {
     private static final long serialVersionUID = 1L;
 
     private String cacheName;
+    private String cacheGuid;
 
     public HydratedCache(String cacheName) {
         this.cacheName = cacheName;
@@ -31,5 +32,13 @@ public class HydratedCache extends Hashtable {
     public String getCacheName() {
         return cacheName;
     }
+
+	public String getCacheGuid() {
+		return cacheGuid;
+	}
+
+	public void setCacheGuid(String cacheGuid) {
+		this.cacheGuid = cacheGuid;
+	}
 
 }
