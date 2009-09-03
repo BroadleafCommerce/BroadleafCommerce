@@ -72,7 +72,8 @@ public class OrderTest extends OrderBaseTest {
     @Resource
     private ShippingRateService shippingRateService;
 
-    @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer1", "createPhone" })
+    @Test(groups = { "createCartForCustomer" }, dependsOnGroups = { "readCustomer", "createPhone" })
+    @Transactional
     @Rollback(false)
     public void createCartForCustomer() {
         String userName = "customer1";
@@ -84,7 +85,8 @@ public class OrderTest extends OrderBaseTest {
         this.orderId = order.getId();
     }
 
-    @Test(groups = { "findCurrentCartForCustomer" }, dependsOnGroups = { "readCustomer1", "createPhone", "createCartForCustomer" })
+    @Test(groups = { "findCurrentCartForCustomer" }, dependsOnGroups = { "readCustomer", "createPhone", "createCartForCustomer" })
+    @Transactional
     @Rollback(false)
     public void findCurrentCartForCustomer() {
         String userName = "customer1";
@@ -336,6 +338,7 @@ public class OrderTest extends OrderBaseTest {
      * (beforeRemove - afterRemove) == 1; }
      */
     @Test(groups = { "findDefaultFulFillmentGroupForOrder" }, dependsOnGroups = { "findCurrentCartForCustomer", "addFulfillmentGroupToOrderFirst" })
+    @Transactional
     public void findDefaultFillmentGroupForOrder() {
         Order order = orderService.findOrderById(orderId);
         FulfillmentGroup fg = orderService.findDefaultFulfillmentGroupForOrder(order);
@@ -378,7 +381,8 @@ public class OrderTest extends OrderBaseTest {
         }
     }
 
-    @Test(groups = { "getOrdersForCustomer" }, dependsOnGroups = { "readCustomer1", "findCurrentCartForCustomer" })
+    @Test(groups = { "getOrdersForCustomer" }, dependsOnGroups = { "readCustomer", "findCurrentCartForCustomer" })
+    @Transactional
     public void getOrdersForCustomer() {
         String username = "customer1";
         Customer customer = customerService.readCustomerByUsername(username);
@@ -400,6 +404,7 @@ public class OrderTest extends OrderBaseTest {
     }
 
     @Test(groups = { "findOrderByOrderNumber" }, dependsOnGroups = { "findCartForAnonymousCustomer" })
+    @Transactional
     public void findOrderByOrderNumber() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);
@@ -418,6 +423,7 @@ public class OrderTest extends OrderBaseTest {
     }
 
     @Test(groups = { "findNamedOrderForCustomer" }, dependsOnGroups = { "findOrderByOrderNumber" })
+    @Transactional
     public void findNamedOrderForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);
@@ -431,6 +437,7 @@ public class OrderTest extends OrderBaseTest {
     }
 
     @Test(groups = { "testReadOrdersForCustomer" }, dependsOnGroups = { "findNamedOrderForCustomer" })
+    @Transactional
     public void testReadOrdersForCustomer() throws PricingException {
         Customer customer = customerService.createCustomerFromId(null);
         Order order = cartService.createNewCartForCustomer(customer);

@@ -25,18 +25,14 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.IdGeneration;
 import org.broadleafcommerce.profile.domain.IdGenerationImpl;
 import org.broadleafcommerce.test.BaseTest;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class CustomerTest extends BaseTest {
 
     @Resource
     private CustomerService customerService;
-
-    @Resource
-    private UserDetailsService userDetailsService;
 
     List<Long> userIds = new ArrayList<Long>();
 
@@ -74,15 +70,16 @@ public class CustomerTest extends BaseTest {
         }
     }
 
-    @Test(groups = { "readCustomer1" }, dependsOnGroups = { "createCustomers" })
+    /*@Test(groups = { "readCustomer1" }, dependsOnGroups = { "createCustomers" })
     public void readCustomersByUsername1() {
         for (String userName : userNames) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
             assert userDetails != null && userDetails.getPassword().equals(userDetails.getUsername() + "Password");
         }
-    }
+    }*/
 
-    @Test(groups = { "changeCustomerPassword" }, dependsOnGroups = { "readCustomer1" })
+    @Test(groups = { "changeCustomerPassword" }, dependsOnGroups = { "readCustomer" })
+    @Transactional
     @Rollback(false)
     public void changeCustomerPasswords() {
         for (String userName : userNames) {
@@ -92,11 +89,11 @@ public class CustomerTest extends BaseTest {
         }
     }
 
-    @Test(groups = { "readCustomer2" }, dependsOnGroups = { "changeCustomerPassword" })
+    /*@Test(groups = { "readCustomer2" }, dependsOnGroups = { "changeCustomerPassword" })
     public void readCustomersByUsername2() {
         for (String userName : userNames) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
             assert userDetails != null && userDetails.getPassword().equals(userDetails.getUsername() + "Password-Changed");
         }
-    }
+    }*/
 }

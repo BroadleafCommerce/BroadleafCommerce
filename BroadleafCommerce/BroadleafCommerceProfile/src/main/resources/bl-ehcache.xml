@@ -2,7 +2,7 @@
 
 	<diskStore path="java.io.tmpdir"/>
 	
-	<cacheManagerEventListenerFactory class="" properties=""/>
+	<cacheManagerEventListenerFactory class="org.broadleafcommerce.util.HydratedCacheManagerEventListenerFactory" properties="cacheNames=org.broadleafcommerce.catalog.domain.CategoryImpl"/>
 	
     <defaultCache
         maxElementsInMemory="100000"

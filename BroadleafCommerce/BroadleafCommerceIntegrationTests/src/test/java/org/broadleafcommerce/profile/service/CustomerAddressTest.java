@@ -29,6 +29,7 @@ import org.broadleafcommerce.profile.domain.CustomerAddressImpl;
 import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.test.CommonSetupBaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class CustomerAddressTest extends CommonSetupBaseTest {
@@ -40,6 +41,7 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
     private CustomerAddressService customerAddressService;
 
     @Test(groups = "testCustomerAddress")
+    @Transactional
     public void readCustomerAddresses() {
     	Customer customer = createCustomerWithAddresses();
     	List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());
@@ -49,6 +51,7 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
     }
     
     @Test(groups = "testCustomerAddress")
+    @Transactional
     public void createNewDefaultAddress() {
     	Customer customer = createCustomerWithAddresses();
     	CustomerAddress ca = new CustomerAddressImpl();
@@ -77,7 +80,8 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
      * @param customerAddress
      */
     @Deprecated
-    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer1", "createCountry", "createState"})
+    @Test(groups = "createCustomerAddress", dataProvider = "setupCustomerAddress", dataProviderClass = CustomerAddressDataProvider.class, dependsOnGroups = {"readCustomer", "createCountry", "createState"})
+    @Transactional
     @Rollback(false)
     public void createCustomerAddress(CustomerAddress customerAddress) {
         userName = "customer1";
@@ -98,6 +102,7 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
      */
     @Deprecated
     @Test(groups = "readCustomerAddress", dependsOnGroups = "createCustomerAddress")
+    @Transactional
     public void readCustomerAddressByUserId() {
         List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(userId);
         for (CustomerAddress customerAddress : customerAddressList) {

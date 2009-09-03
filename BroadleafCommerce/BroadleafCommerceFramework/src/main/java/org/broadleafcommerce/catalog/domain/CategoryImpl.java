@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,14 +36,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
-import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.util.HydratedCache;
+import org.broadleafcommerce.util.HydratedCacheManager;
 import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -120,7 +119,7 @@ public class CategoryImpl implements Category {
     protected String displayTemplate;
 
     /** The all child categories. */
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
+    @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -128,7 +127,7 @@ public class CategoryImpl implements Category {
     protected List<Category> allChildCategories = new ArrayList<Category>();
 
     /** The all parent categories. */
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = CategoryImpl.class)
+    @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -157,14 +156,6 @@ public class CategoryImpl implements Category {
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
-
-    /** The child categories. */
-    @Transient
-    protected List<Category> childCategories = new ArrayList<Category>();
-
-    /** The cached child category url map. */
-    @Transient
-    protected Map<String, List<Category>> cachedChildCategoryUrlMap = new HashMap<String, List<Category>>();
 
     /*
      * (non-Javadoc)
@@ -240,7 +231,7 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getUrlKey()
      */
     public String getUrlKey() {
-        if (GenericValidator.isBlankOrNull(urlKey) && getName() != null) {
+        if ((urlKey == null || "".equals(urlKey)) && getName() != null) {
             return UrlUtil.generateUrlKey(getName());
         }
         return urlKey;
@@ -368,29 +359,12 @@ public class CategoryImpl implements Category {
         this.displayTemplate = displayTemplate;
     }
 
-    /**
-     * Gets the all child categories.
-     * @return the all child categories
-     */
-    private List<Category> getAllChildCategories() {
-        return allChildCategories;
-    }
-
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
-        if (childCategories.size() == 0) {
-            List<Category> allChildCategories = getAllChildCategories();
-            for (Category category : allChildCategories) {
-                if (category.isActive()) {
-                    childCategories.add(category);
-                }
-            }
-        }
-        return childCategories;
-
+        return allChildCategories;
     }
 
     /*
@@ -407,8 +381,8 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setAllChildCategories(java
      * .util.List)
      */
-    public void setAllChildCategories(List<Category> allChildCategories) {
-    	this.allChildCategories.clear();
+    public void setChildCategories(List<Category> allChildCategories) {
+        this.allChildCategories.clear();
     	for(Category category : allChildCategories){
     		this.allChildCategories.add(category);
     	}
@@ -468,16 +442,23 @@ public class CategoryImpl implements Category {
      * @see
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
+    @SuppressWarnings("unchecked")
     public Map<String, List<Category>> getChildCategoryURLMap() {
-        if (cachedChildCategoryUrlMap.isEmpty()) {
-            synchronized (cachedChildCategoryUrlMap) {
-                if (cachedChildCategoryUrlMap.isEmpty()) {
+        Map<String, List<Category>> cachedChildCategoryUrlMap;
+        HydratedCache hydratedCache = HydratedCacheManager.getInstance().getHydratedCache(CategoryImpl.class.getName());
+        if (hydratedCache != null) {
+            cachedChildCategoryUrlMap = (Map<String, List<Category>>) hydratedCache.get("cachedChildCategoryUrlMap_"+getId());
+            if (cachedChildCategoryUrlMap != null && !cachedChildCategoryUrlMap.isEmpty()) {
+                return cachedChildCategoryUrlMap;
+            }
+        }
+        cachedChildCategoryUrlMap = new HashMap<String, List<Category>>();
                     Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
                     fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
                     cachedChildCategoryUrlMap = newMap;
+        if (hydratedCache != null) {
+            hydratedCache.put("cachedChildCategoryUrlMap_"+getId(), cachedChildCategoryUrlMap);
                 }
-            }
-        }
         return cachedChildCategoryUrlMap;
     }
 
@@ -492,6 +473,10 @@ public class CategoryImpl implements Category {
         String currentPath = startingPath + "/" + category.getUrlKey();
         List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
+
+        //populate the category images from the lazy item for our cached map
+        category.getCategoryImages().size();
+
         categoryUrlMap.put(currentPath, newCategoryList);
         for (Category currentCategory : category.getChildCategories()) {
             fillInURLMapForCategory(categoryUrlMap, currentCategory, currentPath, newCategoryList);

@@ -16,6 +16,7 @@
 package org.broadleafcommerce.catalog.service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -105,5 +106,13 @@ public class CatalogServiceImpl implements CatalogService {
 
     public void setCategoryDao(CategoryDao categoryDao) {
         this.categoryDao = categoryDao;
+    }
+
+    public Map<String, List<Category>> getChildCategoryURLMapByCategoryId(Long categoryId) {
+        Category category = findCategoryById(categoryId);
+        if (category != null) {
+            return category.getChildCategoryURLMap();
+        }
+        return null;
     }
 }

@@ -19,12 +19,12 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.profile.web.controller.RegisterCustomerController;
 import org.broadleafcommerce.profile.web.controller.dataprovider.RegisterCustomerDataProvider;
 import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.testng.annotations.AfterClass;
@@ -60,6 +60,7 @@ public class RegisterCustomerControllerTest extends BaseTest {
     }
 
     @Test(groups = "createCustomerFromController", dataProvider = "setupCustomerControllerData", dataProviderClass = RegisterCustomerDataProvider.class)
+    @Transactional
     @Rollback(false)
     public void createCustomerFromController(RegisterCustomerForm registerCustomer) {
         BindingResult errors = new BeanPropertyBindingResult(registerCustomer, "registerCustomer");

@@ -129,7 +129,7 @@ public class CatalogController {
             }
         }
 
-        List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(url);
+        List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
 
         addCategoryListToModel(categoryList, rootCategory, url, model);
         model.addAttribute("rootCategory", rootCategory);
@@ -157,7 +157,7 @@ public class CatalogController {
                 categoryList.add(rootCategory);
             } else {
                 url = url.substring(0, url.lastIndexOf("/"));
-                categoryList = rootCategory.getChildCategoryURLMap().get(url);
+                categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
             }
         }
 
@@ -190,7 +190,7 @@ public class CatalogController {
             String url = currentCategory.getGeneratedUrl();
 
             // override category list settings using this products default
-            List<Category> categoryList = rootCategory.getChildCategoryURLMap().get(url);
+            List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
             if (categoryList != null && ! addCategoryListToModel(categoryList, rootCategory, url, model)) {
                 productPosition = findProductPositionInList(product, productList);
             }

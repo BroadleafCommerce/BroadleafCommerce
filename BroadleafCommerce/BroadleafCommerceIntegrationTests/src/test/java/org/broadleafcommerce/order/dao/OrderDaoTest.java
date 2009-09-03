@@ -39,7 +39,7 @@ public class OrderDaoTest extends BaseTest {
     @Resource
     private CustomerService customerService;
 
-    @Test(groups = { "createOrder" }, dataProvider = "basicOrder", dataProviderClass = OrderDataProvider.class, dependsOnGroups = { "readCustomer1", "createPhone" })
+    @Test(groups = { "createOrder" }, dataProvider = "basicOrder", dataProviderClass = OrderDataProvider.class, dependsOnGroups = { "readCustomer", "createPhone" })
     @Rollback(false)
     @Transactional
     public void createOrder(Order order) {
@@ -58,7 +58,8 @@ public class OrderDaoTest extends BaseTest {
         assert result != null;
     }
 
-    @Test(groups = { "readOrdersForCustomer" }, dependsOnGroups = { "readCustomer1", "createOrder" })
+    @Test(groups = { "readOrdersForCustomer" }, dependsOnGroups = { "readCustomer", "createOrder" })
+    @Transactional
     public void readOrdersForCustomer() {
         userName = "customer1";
         Customer user = customerService.readCustomerByUsername(userName);

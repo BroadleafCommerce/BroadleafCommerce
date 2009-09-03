@@ -38,7 +38,7 @@ public class SkuDaoTest extends BaseTest {
     @Resource
     private CatalogService catalogService;
 
-    @Test(groups = { "createSku" }, dataProvider = "basicSku", dataProviderClass = SkuDaoDataProvider.class, dependsOnGroups = { "readCustomer1", "createOrder", "createProducts" })
+    @Test(groups = { "createSku" }, dataProvider = "basicSku", dataProviderClass = SkuDaoDataProvider.class, dependsOnGroups = { "readCustomer", "createOrder", "createProducts" })
     @Rollback(false)
     public void createSku(Sku sku) {
         sku.setSalePrice(new Money(BigDecimal.valueOf(10.0)));

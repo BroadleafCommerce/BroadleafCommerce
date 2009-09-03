@@ -16,6 +16,7 @@
 package org.broadleafcommerce.catalog.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
@@ -50,4 +51,7 @@ public interface CatalogService {
     public List<Sku> findSkusByIds(List<Long> ids);
 
     public Sku findSkuById(Long skuId);
+
+    public Map<String, List<Category>> getChildCategoryURLMapByCategoryId(Long categoryId);
+
 }

@@ -232,27 +232,20 @@
 	    	<scope>compile</scope>
 	    </dependency>
 	    <dependency>
-	  		<groupId>cobertura</groupId>
-	  		<artifactId>cobertura</artifactId>
-	  		<version>1.8</version>
-	  		<type>jar</type>
-	  		<scope>test</scope>
-	  	</dependency>
-	    <dependency>
 	  		<groupId>org.broadleafcommerce</groupId>
 	  		<artifactId>broadleaf-usps-schemas</artifactId>
 	  		<version>1.0.0</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
-	  	<dependency>
+	    <dependency>
 	  		<groupId>org.broadleafcommerce</groupId>
 	  		<artifactId>broadleaf-usps</artifactId>
 	  		<version>1.0.0</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
-	  	<dependency>
+	    <dependency>
 	      <groupId>org.broadleafcommerce</groupId>
 	      <artifactId>broadleaf-profile</artifactId>
 	      <version>1.0.0</version>
@@ -294,63 +287,63 @@
 	      <type>jar</type>
 	      <scope>compile</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>javax.servlet</groupId>
 	    	<artifactId>servlet-api</artifactId>
 	    	<version>2.5</version>
 	    	<type>jar</type>
 	    	<scope>provided</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>javax.servlet.jsp</groupId>
 	    	<artifactId>jsp-api</artifactId>
 	    	<version>2.1</version>
 	    	<type>jar</type>
 	    	<scope>provided</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>com.icegreen</groupId>
 	    	<artifactId>greenmail</artifactId>
 	    	<version>1.3</version>
 	    	<type>jar</type>
 	    	<scope>test</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	  		<groupId>org.compass-project</groupId>
 	  		<artifactId>compass</artifactId>
 	  		<version>2.2.0</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
-	  	<dependency>
+	    <dependency>
 	  		<groupId>org.mvel</groupId>
 	  		<artifactId>mvel2</artifactId>
 	  		<version>2.0.11</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
-	  	<dependency>
+	    <dependency>
 	  		<groupId>commons-collections</groupId>
 	  		<artifactId>commons-collections</artifactId>
 	  		<version>3.2.1</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
 	  	</dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>org.easymock</groupId>
 	    	<artifactId>easymock</artifactId>
 	    	<version>2.5.1</version>
 	    	<type>jar</type>
 	    	<scope>test</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>org.easymock</groupId>
 	    	<artifactId>easymockclassextension</artifactId>
 	    	<version>2.4</version>
 	    	<type>jar</type>
 	    	<scope>test</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>org.testng</groupId>
 	    	<artifactId>testng</artifactId>
 	    	<version>5.9</version>
@@ -358,117 +351,117 @@
 	    	<classifier>jdk15</classifier>
 	    	<scope>test</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
   			<groupId>commons-dbcp</groupId>
   			<artifactId>commons-dbcp</artifactId>
   			<version>1.2.2</version>
   			<type>jar</type>
   			<scope>compile</scope>
   		</dependency>
-	  	<dependency>
+	    <dependency>
   			<groupId>hsqldb</groupId>
   			<artifactId>hsqldb</artifactId>
   			<version>1.8.0.10</version>
   			<type>jar</type>
   			<scope>test</scope>
   		</dependency>
-	  	<dependency>
+	    <dependency>
   			<groupId>org.slf4j</groupId>
   			<artifactId>slf4j-api</artifactId>
   			<version>1.5.2</version>
   			<type>jar</type>
   			<scope>compile</scope>
   		</dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>opensymphony</groupId>
 	    	<artifactId>quartz</artifactId>
 	    	<version>1.6.1</version>
 	    	<type>jar</type>
 	    	<scope>compile</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>asm</groupId>
 	    	<artifactId>asm</artifactId>
 	    	<version>2.2.1</version>
 	    	<type>jar</type>
 	    	<scope>compile</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>cglib</groupId>
 	    	<artifactId>cglib</artifactId>
 	    	<version>2.1_3</version>
 	    	<type>jar</type>
 	    	<scope>compile</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>org.antlr</groupId>
 	    	<artifactId>antlr-runtime</artifactId>
 	    	<version>3.0</version>
 	    	<type>jar</type>
 	    	<scope>runtime</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>oro</groupId>
 	    	<artifactId>oro</artifactId>
 	    	<version>2.0.8</version>
 	    	<type>jar</type>
 	    	<scope>runtime</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>net.sf.jsr107cache</groupId>
 	    	<artifactId>jsr107cache</artifactId>
 	    	<version>1.0</version>
 	    	<type>jar</type>
 	    	<scope>runtime</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>javax.xml.bind</groupId>
 	    	<artifactId>jsr173_api</artifactId>
 	    	<version>1.0</version>
 	    	<type>jar</type>
 	    	<scope>runtime</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>org.apache.lucene</groupId>
 	    	<artifactId>lucene-analyzers</artifactId>
 	    	<version>2.4.1</version>
 	    	<type>jar</type>
 	    	<scope>runtime</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 		   <groupId>com.adobe.flex.framework</groupId>
 		   <artifactId>flex-framework</artifactId>
 		   <version>3.1.0.2710</version>
 		   <type>pom</type>
 		</dependency>
-	  	<dependency>
+	    <dependency>
 		  <groupId>org.jvnet</groupId>
 		  <artifactId>animal-sniffer-annotation</artifactId>
 		  <version>1.0</version>
 		  <type>jar</type>
 		</dependency>
-	  	<dependency>
+	    <dependency>
 			<groupId>org.springframework.flex</groupId>
 			<artifactId>spring-flex</artifactId>
 			<version>1.0.0.RELEASE</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-  		<dependency>
+	    <dependency>
 	    	<groupId>org.springframework.security</groupId>
 	    	<artifactId>spring-security-acl</artifactId>
 	    	<version>2.0.5.RELEASE</version>
 	    	<type>jar</type>
 	    	<scope>runtime</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>org.springframework.security</groupId>
 	    	<artifactId>spring-security-core-tiger</artifactId>
 	    	<version>2.0.5.RELEASE</version>
 	    	<type>jar</type>
 	    	<scope>runtime</scope>
 	    </dependency>
-	  	<dependency>
+	    <dependency>
 	    	<groupId>org.springframework.security</groupId>
 	    	<artifactId>spring-security-taglibs</artifactId>
 	    	<version>2.0.5.RELEASE</version>
@@ -569,6 +562,13 @@
 	    	<artifactId>ant</artifactId>
 	    	<version>1.7.0</version>
 	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>cobertura</groupId>
+	    	<artifactId>cobertura</artifactId>
+	    	<version>1.8</version>
+	    	<type>jar</type>
+	    	<scope>test</scope>
 	    </dependency>
   	</dependencies>
   </dependencyManagement>

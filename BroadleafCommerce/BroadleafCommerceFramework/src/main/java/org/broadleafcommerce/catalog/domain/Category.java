@@ -205,7 +205,7 @@ public interface Category extends Serializable {
      * 
      * @param allChildCategories the new all child categories
      */
-    public void setAllChildCategories(List<Category> allChildCategories);
+    public void setChildCategories(List<Category> childCategories);
 
     /**
      * Gets the category images.
