@@ -45,8 +45,20 @@ public interface Order extends Serializable {
 
     public void setAuditable(Auditable auditable);
 
+    /**
+     * Returns the subtotal price for the order.  The subtotal price is the price of all order items
+     * with item offers applied.  The subtotal does not take into account the order offers.
+     *
+     * @return the total item price with offers applied
+     */
     public Money getSubTotal();
 
+    /**
+     * Sets the subtotal price for the order.  The subtotal price is the price of all order items
+     * with item offers applied.  The subtotal does not take into account the order offers.
+     *
+     * @param subTotal
+     */
     public void setSubTotal(Money subTotal);
 
     public void assignOrderItemsFinalPrice();
@@ -79,17 +91,15 @@ public interface Order extends Serializable {
 
     public void setFulfillmentGroups(List<FulfillmentGroup> fulfillmentGroups);
 
+    public void setCandidateOrderOffers(List<CandidateOrderOffer> candidateOrderOffers);
+
+    public void addCandidateOrderOffer(CandidateOrderOffer candidateOrderOffer);
+
     public List<CandidateOrderOffer> getCandidateOrderOffers();
-
-    public void setCandidateOffers(List<CandidateOrderOffer> offers);
-
-    public void addCandidateOrderOffer(CandidateOrderOffer candidateOffer);
 
     public void removeAllCandidateOffers();
 
-    public void removeAllOrderCandidateOffers();
-
-    public boolean isMarkedForOffer();
+    public void removeAllCandidateOrderOffers();
 
     public void setMarkedForOffer(boolean markForOffer);
 
@@ -121,6 +131,10 @@ public interface Order extends Serializable {
 
     public void setTotalShipping(Money totalShipping);
 
+    /**
+     * Returns the price of the order with the order offers applied (item offers are not applied).
+     * @return the order price with the order offers applied (item offers are not applied)
+     */
     public Money getAdjustmentPrice();
 
     public void setAdjustmentPrice(Money adjustmentPrice);
@@ -131,19 +145,17 @@ public interface Order extends Serializable {
 
     public boolean hasCategoryItem(String categoryName);
 
-    public List<OrderAdjustment> getOrderAdjustments();
+    //public List<OrderAdjustment> getOrderAdjustments();
 
     public List<OrderAdjustment> addOrderAdjustments(OrderAdjustment orderAdjustment);
 
-    public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments);
+    //public void setOrderAdjustments(List<OrderAdjustment> orderAdjustments);
 
     public void removeAllAdjustments();
 
     public void removeAllOrderAdjustments();
 
     public void removeAllItemAdjustments();
-
-    public boolean containsNotCombinableItemOfferAdjustments();
 
     public boolean containsNotStackableOrderOffer();
 
@@ -171,6 +183,35 @@ public interface Order extends Serializable {
 
     public void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation);
 
-    public boolean updatePrices();
+    /**
+     * Returns the discount value of all the applied item offers for this order.  The value is already
+     * deducted from the order subTotal.
+     *
+     * @return the discount value of all the applied item offers for this order
+     */
+    public Money getItemAdjustmentsValue();
 
+    /**
+     * Returns the discount value of all the applied order offers.  The value returned from this
+     * method should be subtracted from the getSubTotal() to get the order price with all item and
+     * order offers applied.
+     *
+     * @return the discount value of all applied order offers.
+     */
+    public Money getOrderAdjustmentsValue();
+
+    /**
+     * Returns the total discount value for all applied item and order offers in the order.  The return
+     * value should not be used with getSubTotal() to calculate the final price, since getSubTotal()
+     * already takes into account the applied item offers.
+     *
+     * @return the total discount of all applied item and order offers
+     */
+    public Money getTotalAdjustmentsValue();
+
+    public boolean isNotCombinableOfferApplied();
+
+    public boolean isHasOrderAdjustments();
+
+    public boolean updatePrices();
 }

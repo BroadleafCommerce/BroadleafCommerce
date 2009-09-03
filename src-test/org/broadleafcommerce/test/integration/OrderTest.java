@@ -189,18 +189,24 @@ public class OrderTest extends BaseTest {
 
     @Test(groups = { "updateItemsInOrder" }, dependsOnGroups = { "getItemsForOrder" })
     public void updateItemsInOrder() throws ItemNotFoundException, PricingException {
-        Order order = cartService.findOrderById(orderId);
+        Order order = orderService.findOrderById(orderId);
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
         item.setSalePrice(new Money(BigDecimal.valueOf(10000)));
         item.setQuantity(10);
-        cartService.updateItemInOrder(order, item);
+        orderService.updateItemQuantity(order, item);
         OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
         assert updatedItem != null;
-        // TODO temporary to get TCS up and running - uncomment when PricingTest fixed
-        //        assert updatedItem.getPrice().equals(new Money(BigDecimal.valueOf(10000)));
+        assert updatedItem.getPrice().equals(new Money(BigDecimal.valueOf(10000)));
         assert updatedItem.getQuantity() == 10;
+
+        List<OrderItem> updateItems = new ArrayList<OrderItem> (order.getOrderItems());
+        updateItems.get(0).setQuantity(15);
+        orderService.updateItemQuantity(order, updatedItem);
+        order = orderService.findOrderById(orderId);
+        assert order.getOrderItems().get(0).getQuantity() == 15;
+
     }
 
     @Test(groups = { "removeItemFromOrder" }, dependsOnGroups = { "getItemsForOrder" })
