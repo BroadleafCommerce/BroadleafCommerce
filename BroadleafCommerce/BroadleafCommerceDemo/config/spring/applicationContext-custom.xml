@@ -28,8 +28,7 @@
 		<property name="username" value="@@MYSQL_USERNAME@@" />
 		<property name="password" value="@@MYSQL_PASSWORD@@" />
 	</bean>
-	
-	
+    
 	<!--
 	<bean id="customerStateAOP" class="org.broadleafcommerce.profile.aop.test.CustomerStateAOP"/>
 

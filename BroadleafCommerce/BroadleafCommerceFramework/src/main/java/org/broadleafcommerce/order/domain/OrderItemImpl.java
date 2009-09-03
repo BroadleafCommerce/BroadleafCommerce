@@ -357,6 +357,10 @@ public class OrderItemImpl implements OrderItem {
 	public boolean isHasOrderItemAdjustments() {
 		return hasOrderItemAdjustments;
 	}
+	
+	public boolean updatePrices() {
+        return false;
+    }
 
 	public int hashCode() {
         final int prime = 31;

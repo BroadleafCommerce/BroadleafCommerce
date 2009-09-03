@@ -91,6 +91,20 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     public String getName() {
         return getSku().getName();
     }
+    
+    @Override
+    public boolean updatePrices() {
+        boolean updated = false;
+        if (!getRetailPrice().equals(getSku().getRetailPrice())) {
+            setRetailPrice(getSku().getRetailPrice());
+            updated = true;
+        }
+        if (!getSalePrice().equals(getSku().getSalePrice())) {
+            setSalePrice(getSku().getSalePrice());
+            updated = true;
+        }
+        return updated;
+    }
 
     @Override
     public boolean equals(Object obj) {

@@ -26,8 +26,12 @@ import org.apache.commons.logging.LogFactory;
 public class StandardConfigLocations {
 
     private static final Log LOG = LogFactory.getLog(StandardConfigLocations.class);
+    
+    public static final int ALLCONTEXTTYPE = 0;
+    public static final int WEBCONTEXTTYPE = 1;
+    public static final int SERVICECONTEXTTYPE = 2;
 
-    public static String[] retrieveAll() throws IOException {
+    public static String[] retrieveAll(int contextType) throws IOException {
         String[] response;
         BufferedReader reader = null;
         try {
@@ -40,7 +44,13 @@ public class StandardConfigLocations {
                     eof = true;
                 } else {
                     if (!temp.startsWith("#") && temp.trim().length() > 0 && StandardConfigLocations.class.getClassLoader().getResource(temp.trim()) != null) {
-                        items.add(temp.trim());
+                    	if (
+                    			contextType == ALLCONTEXTTYPE  ||
+                    			(contextType == WEBCONTEXTTYPE && temp.indexOf("-web-") >= 0) ||
+                    			(contextType == SERVICECONTEXTTYPE && temp.indexOf("-web-") < 0) 
+                    	){
+                    		items.add(temp.trim());
+                    	}
                     }
                 }
             }

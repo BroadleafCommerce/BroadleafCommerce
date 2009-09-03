@@ -140,6 +140,7 @@ public class CategoryImpl implements Category {
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     protected Map<String, String> categoryImages = new HashMap<String, String>();
 
     @ManyToMany(targetEntity = MediaImpl.class)
@@ -148,6 +149,7 @@ public class CategoryImpl implements Category {
     //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     protected Map<String, Media> categoryMedia = new HashMap<String , Media>();
 
     /** The long description. */

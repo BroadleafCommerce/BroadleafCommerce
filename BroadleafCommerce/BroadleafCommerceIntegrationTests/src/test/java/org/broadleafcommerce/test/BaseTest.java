@@ -34,7 +34,7 @@ public abstract class BaseTest extends AbstractTestNGSpringContextTests {
 	public static MergeClassPathXMLApplicationContext getContext() {
 		try {
 			if (mergeContext == null) {
-				String[] contexts = StandardConfigLocations.retrieveAll();
+				String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.SERVICECONTEXTTYPE);
 				String[] allContexts = new String[contexts.length + 2];
 				System.arraycopy(contexts, 0, allContexts, 0, contexts.length);
 				allContexts[allContexts.length-2] = "bl-applicationContext-test.xml";
