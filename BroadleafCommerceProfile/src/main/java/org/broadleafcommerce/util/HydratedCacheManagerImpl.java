@@ -33,7 +33,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     private static final Log LOG = LogFactory.getLog(HydratedCacheManagerImpl.class);
     private static HydratedCacheManagerImpl manager = null;
 
-    public static synchronized HydratedCacheManagerImpl getInstance() {
+    public static synchronized HydratedCacheManager getInstance() {
         if (manager == null) {
             manager = new HydratedCacheManagerImpl();
         }
