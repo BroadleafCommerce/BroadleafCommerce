@@ -17,6 +17,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -402,15 +403,11 @@ public class OrderImpl implements Order {
         return false;
     }
 
-    protected List<OrderAdjustment> getOrderAdjustments() {
-        return this.orderAdjustments;
+    public List<OrderAdjustment> getOrderAdjustments() {
+        return Collections.unmodifiableList(this.orderAdjustments);
     }
 
-    /*
-     * Adds the adjustment to the order item's adjustment list an discounts the order item's adjustment
-     * price by the value of the adjustment.
-     */
-    public List<OrderAdjustment> addOrderAdjustments(OrderAdjustment orderAdjustment) {
+    public void addOrderAdjustments(OrderAdjustment orderAdjustment) {
         if (this.orderAdjustments.size() == 0) {
             adjustmentPrice = getSubTotal().getAmount();
         }
@@ -420,7 +417,6 @@ public class OrderImpl implements Order {
         	notCombinableOfferApplied = true;
         }
         hasOrderAdjustments = true;
-        return this.orderAdjustments;
     }
 
     public void removeAllAdjustments() {

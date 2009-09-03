@@ -126,8 +126,6 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, true, true, 10));
         order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != "+sku1, true, true, 10));
         order.addAddedOfferCode(createOfferCode("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -146,8 +144,6 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == "+sku1, true, true, 1));
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != "+sku1, true, true, 1));
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != "+sku1, false, true, 1));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -166,8 +162,6 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == "+sku1, true, false, 1));
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != "+sku1, true, false, 1));
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != "+sku1, true, true, 1));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -186,8 +180,6 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id == "+sku1, true, true, 1));
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id != "+sku1, true, true, 1));
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, "discreteOrderItem.sku.id != "+sku1, true, true, 1));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -204,8 +196,6 @@ public class OfferTest extends CommonSetupBaseTest {
 
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1));
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, false, 1));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -233,8 +223,6 @@ public class OfferTest extends CommonSetupBaseTest {
         OfferInfo info2 = offerDao.createOfferInfo();
         info2.getFieldValues().put("key2", "value2");
         order.getAdditionalOfferInformation().put(offerCode2.getOffer(), info2);
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         order = cartService.save(order, true);
 
@@ -255,8 +243,6 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("35 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 35, null, null, true, true, 1));
         order.addAddedOfferCode(createOfferCode("45 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 45, null, null, true, false, 1));
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -275,8 +261,6 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, "order.subTotal.getAmount() >= 400", false, true, 1));
         order.addAddedOfferCode(createOfferCode("100 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 100, null, "order.subTotal.getAmount() >= 400", false, true, 1));
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, "order.subTotal.getAmount() < 400", false, true, 1));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -294,8 +278,6 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("20 Percent Off Order Offer", OfferType.ORDER, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 1));
         order.addAddedOfferCode(createOfferCode("30 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 30, null, null, true, true, 1));
         order.addAddedOfferCode(createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, false, 1));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -315,8 +297,6 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("15 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 15, null, null, true, true, 1));
         order.addAddedOfferCode(createOfferCode("90 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 90, null, null, true, false, 1));
         order.addAddedOfferCode(createOfferCode("50 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 50, null, null, true, true, 1));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -325,6 +305,7 @@ public class OfferTest extends CommonSetupBaseTest {
     }
 
     @Test(groups =  {"testGlobalOffers"}, dependsOnGroups = { "testOfferNotCombinableOrderOffersWithItemOffer"})
+    @Transactional
     public void testGlobalOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         
@@ -333,8 +314,6 @@ public class OfferTest extends CommonSetupBaseTest {
 
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, true, true, 10));
         order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != "+sku1, true, true, 10));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer.setDeliveryType(OfferDeliveryType.AUTOMATIC);
@@ -347,6 +326,7 @@ public class OfferTest extends CommonSetupBaseTest {
     }
 
     @Test(groups =  {"testCustomerAssociatedOffers"}, dependsOnGroups = { "testGlobalOffers"})
+    @Transactional
     public void testCustomerAssociatedOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         
@@ -355,8 +335,6 @@ public class OfferTest extends CommonSetupBaseTest {
 
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, true, true, 10));
         order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.AMOUNT_OFF, 3, null, "discreteOrderItem.sku.id != "+sku1, true, true, 10));
-
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
         
         Offer offer = createOffer("1.20 Dollars Off Order Offer", OfferType.ORDER, OfferDiscountType.AMOUNT_OFF, 1.20, null, null, true, true, 10);
         offer.setDeliveryType(OfferDeliveryType.MANUAL);
@@ -372,7 +350,39 @@ public class OfferTest extends CommonSetupBaseTest {
         assert (order.getAdjustmentPrice().equals(new Money(31.80D)));
     }
 
-    @Test(groups =  {"testFulfillmentGroupOffers"}, dependsOnGroups = { "testCustomerAssociatedOffers"})
+    @Test(groups =  {"testCustomerAssociatedOffers2"}, dependsOnGroups = { "testCustomerAssociatedOffers"})
+    @Transactional
+    public void testCustomerAssociatedOffers2() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 20D, null, true, 1));
+        order.addOrderItem(createDiscreteOrderItem(sku2, 20D, null, true, 1));
+
+        order.addAddedOfferCode(createOfferCode("15%OFF", "15 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 15, null, null, false, true, 0));
+
+        Offer offer1 = createOffer("20 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20, null, "discreteOrderItem.sku.id == "+sku1, false, true, 0);
+        offer1.setDeliveryType(OfferDeliveryType.MANUAL);
+        offerDao.save(offer1);
+        CustomerOffer customerOffer1 = new CustomerOfferImpl();
+        customerOffer1.setCustomer(order.getCustomer());
+        customerOffer1.setOffer(offer1);
+        customerOfferDao.save(customerOffer1);
+
+        Offer offer2 = createOffer("10 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 10, null, "discreteOrderItem.sku.id == "+sku2, false, true, 0);
+        offer2.setDeliveryType(OfferDeliveryType.MANUAL);
+        offerDao.save(offer2);
+        CustomerOffer customerOffer2 = new CustomerOfferImpl();
+        customerOffer2.setCustomer(order.getCustomer());
+        customerOffer2.setOffer(offer2);
+        customerOfferDao.save(customerOffer2);
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        assert (order.getSubTotal().equals(new Money(33D)));
+    }
+
+    @Test(groups =  {"testFulfillmentGroupOffers"}, dependsOnGroups = { "testCustomerAssociatedOffers2"})
     public void testFulfillmentGroupOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         
@@ -544,10 +554,14 @@ public class OfferTest extends CommonSetupBaseTest {
     }
 
     private OfferCode createOfferCode(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
+        return createOfferCode("NONAME", offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
+    }
+
+    private OfferCode createOfferCode(String offerCodeName, String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
         OfferCode offerCode = offerCodeDao.create();
         Offer offer = createOffer(offerName, offerType, discountType, value, customerRule, orderRule, stackable, combinable, priority);
         offerCode.setOffer(offer);
-        offerCode.setOfferCode("OPRAH");
+        offerCode.setOfferCode(offerCodeName);
         offerCode = offerService.saveOfferCode(offerCode);
         return offerCode;
     }

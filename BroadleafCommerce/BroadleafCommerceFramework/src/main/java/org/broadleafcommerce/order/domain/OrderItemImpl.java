@@ -17,6 +17,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -263,14 +264,10 @@ public class OrderItemImpl implements OrderItem {
 
     }
 
-    protected List<OrderItemAdjustment> getOrderItemAdjustments() {
-        return this.orderItemAdjustments;
+    public List<OrderItemAdjustment> getOrderItemAdjustments() {
+        return Collections.unmodifiableList(this.orderItemAdjustments);
     }
 
-    /*
-     * Adds the adjustment to the order item's adjustment list an discounts the
-     * order item's adjustment price by the value of the adjustment.
-     */
     public void addOrderItemAdjustment(OrderItemAdjustment orderItemAdjustment) {
         if (this.orderItemAdjustments.size() == 0) {
             adjustmentPrice = retailPrice;
