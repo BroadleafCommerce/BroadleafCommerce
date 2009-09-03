@@ -2,18 +2,21 @@
 
 	<diskStore path="java.io.tmpdir"/>
 	
-	<cacheManagerEventListenerFactory class="org.broadleafcommerce.util.HydratedCacheManagerEventListenerFactory" properties="cacheNames=org.broadleafcommerce.catalog.domain.CategoryImpl"/>
-	
     <defaultCache
         maxElementsInMemory="100000"
-        eternal="true"
-        overflowToDisk="true"/>
+        eternal="false"
+        overflowToDisk="true"
+        timeToLiveSeconds="50"
+    	timeToIdleSeconds="50">
+    	<cacheEventListenerFactory class="org.broadleafcommerce.util.HydratedCacheEventListenerFactory" properties="cacheNames=org.broadleafcommerce.catalog.domain.CategoryImpl"/>
+   	</defaultCache>
         
     <cache
     	name="org.hibernate.cache.StandardQueryCache"
     	maxElementsInMemory="100000"
     	eternal="true"
-    	overflowToDisk="true"/>
+    	overflowToDisk="true">
+    </cache>
     	
    	<cache
     	name="blOrderElements"
