@@ -171,6 +171,17 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
     }
 
     @Override
+    public boolean updatePrices() {
+        boolean updated = false;
+        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+            if (discreteOrderItem.updatePrices()){
+                updated = true;
+            }
+        }
+        return updated;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

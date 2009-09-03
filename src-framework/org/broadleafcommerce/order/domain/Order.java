@@ -171,4 +171,6 @@ public interface Order extends Serializable {
 
     public void setAdditionalOfferInformation(Map<Offer, OfferInfo> additionalOfferInformation);
 
+    public boolean updatePrices();
+
 }

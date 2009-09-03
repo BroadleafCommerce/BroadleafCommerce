@@ -105,4 +105,6 @@ public interface OrderItem extends Serializable {
     public boolean getIsOnSale();
 
     public boolean getIsDiscounted();
+
+    public boolean updatePrices();
 }

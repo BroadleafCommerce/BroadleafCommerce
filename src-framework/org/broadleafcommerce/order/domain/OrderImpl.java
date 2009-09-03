@@ -563,6 +563,16 @@ public class OrderImpl implements Order {
         this.additionalOfferInformation = additionalOfferInformation;
     }
 
+    public boolean updatePrices() {
+        boolean updated = false;
+        for (OrderItem orderItem : orderItems) {
+            if (orderItem.updatePrices()) {
+                updated = true;
+            }
+        }
+        return updated;
+    }
+
     public boolean equals(Object obj) {
         if (this == obj)
             return true;

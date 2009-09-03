@@ -137,6 +137,7 @@ public class CategoryImpl implements Category {
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
     protected Map<String, String> categoryImages = new HashMap<String, String>();
 
     /** The long description. */

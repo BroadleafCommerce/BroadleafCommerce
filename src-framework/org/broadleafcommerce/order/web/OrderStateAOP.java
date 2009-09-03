@@ -24,7 +24,7 @@ public class OrderStateAOP implements ApplicationContextAware {
             returnValue = order;
         } else {
             returnValue = call.proceed();
-            orderState.setOrder(customer, (Order) returnValue);
+            returnValue = orderState.setOrder(customer, (Order) returnValue);
         }
 
         return returnValue;

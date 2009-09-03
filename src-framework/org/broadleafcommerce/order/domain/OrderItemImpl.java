@@ -318,6 +318,10 @@ public class OrderItemImpl implements OrderItem {
         return !getPrice().equals(getRetailPrice());
     }
 
+    public boolean updatePrices() {
+        return false;
+    }
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
