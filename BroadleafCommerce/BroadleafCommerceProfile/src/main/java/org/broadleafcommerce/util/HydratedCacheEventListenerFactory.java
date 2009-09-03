@@ -41,7 +41,7 @@ public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory
             HydratedCache cache = new HydratedCache(name.trim());
             HydratedCacheManagerImpl.getInstance().addHydratedCache(cache);
         }
-        return HydratedCacheManagerImpl.getInstance();
+        return (CacheEventListener) HydratedCacheManagerImpl.getInstance();
 	}
 
 }
