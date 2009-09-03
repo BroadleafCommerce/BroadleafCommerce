@@ -15,15 +15,14 @@
  */
 package org.broadleafcommerce.util;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 
-@SuppressWarnings("unchecked")
-public class HydratedCache extends Hashtable {
+public class HydratedCache extends Hashtable<String, Object> {
 
     private static final long serialVersionUID = 1L;
 
     private String cacheName;
-    private String cacheGuid;
 
     public HydratedCache(String cacheName) {
         this.cacheName = cacheName;
@@ -33,12 +32,17 @@ public class HydratedCache extends Hashtable {
         return cacheName;
     }
 
-	public String getCacheGuid() {
-		return cacheGuid;
-	}
-
-	public void setCacheGuid(String cacheGuid) {
-		this.cacheGuid = cacheGuid;
-	}
-
+    public HydratedCacheElement getCacheElement(String cacheName, Serializable key) {
+    	return (HydratedCacheElement) get(cacheName + "_" + key);
+    }
+    
+    public HydratedCacheElement removeCacheElement(String cacheName, Serializable key) {
+    	String myKey = cacheName + "_" + key;
+     	return (HydratedCacheElement) remove(myKey);
+    }
+    
+    public void addCacheElement(String cacheName, Serializable key, Object value) {
+    	String myKey = cacheName + "_" + key;
+     	put(myKey, value);
+    }
 }

@@ -17,19 +17,19 @@ package org.broadleafcommerce.util;
 
 import java.util.Properties;
 
-import net.sf.ehcache.event.CacheManagerEventListener;
-import net.sf.ehcache.event.CacheManagerEventListenerFactory;
+import net.sf.ehcache.event.CacheEventListener;
+import net.sf.ehcache.event.CacheEventListenerFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class HydratedCacheManagerEventListenerFactory extends CacheManagerEventListenerFactory {
+public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory {
 
-    private static final Log LOG = LogFactory.getLog(HydratedCacheManagerEventListenerFactory.class);
+    private static final Log LOG = LogFactory.getLog(HydratedCacheEventListenerFactory.class);
 
     @Override
-    public CacheManagerEventListener createCacheManagerEventListener(Properties props) {
-        String cacheNames = props.getProperty("cacheNames");
+	public CacheEventListener createCacheEventListener(Properties props) {
+		String cacheNames = props.getProperty("cacheNames");
         if (cacheNames == null) {
             throw new RuntimeException("Must specify a cacheNames property with a semi-colon delimitted list of cache names.");
         }
@@ -38,10 +38,10 @@ public class HydratedCacheManagerEventListenerFactory extends CacheManagerEventL
         }
         String[] names = cacheNames.split(";");
         for (String name : names) {
-            HydratedCache cache = new HydratedCache(name);
-            HydratedCacheManager.getInstance().addHydratedCache(cache);
+            HydratedCache cache = new HydratedCache(name.trim());
+            HydratedCacheManagerImpl.getInstance().addHydratedCache(cache);
         }
-        return HydratedCacheManager.getInstance();
-    }
+        return HydratedCacheManagerImpl.getInstance();
+	}
 
 }

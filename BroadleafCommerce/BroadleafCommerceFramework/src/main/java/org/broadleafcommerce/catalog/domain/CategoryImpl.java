@@ -42,8 +42,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.util.DateUtil;
-import org.broadleafcommerce.util.HydratedCache;
-import org.broadleafcommerce.util.HydratedCacheManager;
+import org.broadleafcommerce.util.HydratedCacheManagerImpl;
 import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -446,21 +445,15 @@ public class CategoryImpl implements Category {
      */
     @SuppressWarnings("unchecked")
     public Map<String, List<Category>> getChildCategoryURLMap() {
-        Map<String, List<Category>> cachedChildCategoryUrlMap;
-        HydratedCache hydratedCache = HydratedCacheManager.getInstance().getHydratedCache(CategoryImpl.class.getName());
-        if (hydratedCache != null) {
-            cachedChildCategoryUrlMap = (Map<String, List<Category>>) hydratedCache.get("cachedChildCategoryUrlMap_"+getId());
-            if (cachedChildCategoryUrlMap != null && !cachedChildCategoryUrlMap.isEmpty()) {
-                return cachedChildCategoryUrlMap;
-            }
+        Map<String, List<Category>> cachedChildCategoryUrlMap = (Map<String, List<Category>>) HydratedCacheManagerImpl.getInstance().getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "cachedChildCategoryUrlMap");
+        if (cachedChildCategoryUrlMap != null) {
+        	return cachedChildCategoryUrlMap;
         }
         cachedChildCategoryUrlMap = new HashMap<String, List<Category>>();
-                    Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
-                    fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
-                    cachedChildCategoryUrlMap = newMap;
-        if (hydratedCache != null) {
-            hydratedCache.put("cachedChildCategoryUrlMap_"+getId(), cachedChildCategoryUrlMap);
-                }
+        Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
+        fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
+        cachedChildCategoryUrlMap = newMap;
+        HydratedCacheManagerImpl.getInstance().addHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "cachedChildCategoryUrlMap", cachedChildCategoryUrlMap);
         return cachedChildCategoryUrlMap;
     }
 
