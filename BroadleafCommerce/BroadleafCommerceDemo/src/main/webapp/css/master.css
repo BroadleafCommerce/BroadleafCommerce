@@ -1,8 +1,6 @@
 /* Global and structural styles */
 body {
-/*	background: url("/broadleafdemo/images/coffeeFarm.jpg");
-	background-attachment: fixed;*/
-/*	background:#f5f5e6;*/
+	background: #a98b69 url("/broadleafdemo/images/coffeeTopTile.jpg") repeat-x top center;
 	margin: 0;
 	padding: 0;
 	color: #666666;
@@ -19,6 +17,11 @@ body {
 .contentWrapper {
 	padding: 0px 8px;
 	background: #e5e5e5;
+}
+
+.container {
+	background: #f2e8ce url("/broadleafdemo/images/containerTop.gif") repeat-x top center;
+	width:880px;
 }
 
 .navGradientBg {
@@ -63,12 +66,32 @@ input.helpTextVisible {
 }
 
 .breadcrumb {
-	margin: 10px 0px 10px 0px; 
+	margin: 0 0 10px 9px; 
 }
 
-.body {
-	margin: 5px 5px 15px 5px; 
-} 
+a, a:visited {
+	color:#992400;
+}
+a:hover {
+	text-decoration:underline;
+	color:#992400;
+}
+
+
+.productResults a {
+	font-size:12px;
+}
+
+.breadcrumb a,
+.breadcrumb a:visited {
+/*	color:#862204;
+	color:#693F2D;*/
+	color:#992400;
+	text-decoration: none;
+}
+.breadcrumb a:hover {
+	text-decoration: underline;
+}
 
 .noTextUnderline {
 	text-decoration: none;
@@ -87,4 +110,25 @@ input.helpTextVisible {
 
 .pageTitle {
 	margin-top: 10px;
+	color:#566F32;
+}
+.bottomRule {
+	padding-bottom: 15px;
+	background: url("/broadleafdemo/images/drawnLineHorizontal.gif") repeat-x bottom left;
+	margin-bottom: 10px;
+}
+
+.topRule {
+	padding-top: 10px;
+	background: url("/broadleafdemo/images/drawnLineHorizontal.gif") repeat-x top right;
+	margin-top: 15px;
+}
+
+.rightRule {
+	padding-right: 13px;
+	background: url("/broadleafdemo/images/drawnLineVertical.gif") repeat-y top right;
+}
+.leftRule {
+	padding-left: 10px;
+	background: url("/broadleafdemo/images/drawnLineVertical.gif") repeat-y top left;
 }

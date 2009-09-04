@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="baseNoSide">
 <tiles:putAttribute name="mainContent" type="string">
+<div class="mainContentAreaFull clearfix" style="padding:0 0 8px 8px;">
 	<form:form method="post" modelAttribute="registerCustomerForm">
 		<spring:hasBindErrors name="registerCustomerForm">
 			  <spring:bind path="registerCustomerForm.*">
@@ -83,5 +84,6 @@
     		</table>
 		</div>
 	</form:form>
+</div>
 </tiles:putAttribute>
 </tiles:insertDefinition>

@@ -2,12 +2,17 @@
 .cartTable {
 	line-height:1.2;
 }
-.cartTable th {
-	border-top:1px solid #9bc;
-	border-bottom:1px solid #9bc;
-	}
 .cartTable th,.cartTable td {
 	padding:4px;
+}
+.cartTable th {
+	background: url("/broadleafdemo/images/drawnLineHorizontalSlim.gif") repeat-x top left;
+	border:0;
+	padding-top:7px;
+}
+.cartTable .topLine td {
+	background: url("/broadleafdemo/images/drawnLineHorizontalSlim.gif") repeat-x top left;
+	padding-top:7px;
 }
 .cartTable tr.product td {
 	padding:6px 4px;
@@ -48,6 +53,10 @@ button#checkout {
 	cursor:pointer;
 	margin-left:18px;
 	border:1px solid #85a300;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	-moz-box-shadow: 0 1px 3px #999;
+	-webkit-box-shadow: 0 1px 3px #999;
 }
 button#checkout:hover {
 	background-position:top center;

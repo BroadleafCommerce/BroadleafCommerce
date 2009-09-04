@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <div class="span-11 column">
-	<div class="checkoutBorder">
-		<div class="checkoutTitle" > <b>Payment Information </b></div>
+	<div class="orderBorder">
+		<div class="orderTitle"><b>Payment Information</b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
 		<div style="margin-top:10px; font-size:13px;">
 			<form:checkbox path="isSameAddress" id="sameShippingInfo"  /> 

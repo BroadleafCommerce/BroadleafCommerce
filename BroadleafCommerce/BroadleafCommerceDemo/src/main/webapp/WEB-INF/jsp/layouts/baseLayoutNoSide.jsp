@@ -10,15 +10,9 @@
 	</head>
 	<body>
 		<div class="container">
-			<div class="span-24 last">
-				<tiles:insertAttribute name="navigation" />
-			</div>
-			<div class="span-24 last" style="margin-bottom: 10px;">
-				<tiles:insertAttribute name="mainContent" />
-			</div>
-			<div class="span-24 last">
-				<tiles:insertAttribute name="footer" />
-			</div>
+			<tiles:insertAttribute name="navigation" />
+			<tiles:insertAttribute name="mainContent" />
+			<tiles:insertAttribute name="footer" />
 		</div>
 		<c:choose>
 			<c:when test="${orderComplete}">
