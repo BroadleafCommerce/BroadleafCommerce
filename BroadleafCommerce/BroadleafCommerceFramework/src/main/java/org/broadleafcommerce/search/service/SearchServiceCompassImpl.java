@@ -119,4 +119,36 @@ public class SearchServiceCompassImpl implements SearchService {
         searchSynonymDao.updateSynonym(synonym);
     }
 
+    public Compass getCompass() {
+        return compass;
+    }
+
+    public void setCompass(Compass compass) {
+        this.compass = compass;
+    }
+
+    public CatalogService getCatalogService() {
+        return catalogService;
+    }
+
+    public void setCatalogService(CatalogService catalogService) {
+        this.catalogService = catalogService;
+    }
+
+    public SearchInterceptDao getSearchInterceptDao() {
+        return searchInterceptDao;
+    }
+
+    public void setSearchInterceptDao(SearchInterceptDao searchInterceptDao) {
+        this.searchInterceptDao = searchInterceptDao;
+    }
+
+    public SearchSynonymDao getSearchSynonymDao() {
+        return searchSynonymDao;
+    }
+
+    public void setSearchSynonymDao(SearchSynonymDao searchSynonymDao) {
+        this.searchSynonymDao = searchSynonymDao;
+    }
+
 }

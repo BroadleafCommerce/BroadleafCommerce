@@ -74,4 +74,12 @@ public class SearchController {
             return "searchAjax";
         }
     }
+
+    public SearchService getSearchService() {
+        return searchService;
+    }
+
+    public void setSearchService(SearchService searchService) {
+        this.searchService = searchService;
+    }
 }
