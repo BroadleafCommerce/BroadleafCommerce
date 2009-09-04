@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:view="org.broadleafcommerce.admin.view.*"
-	defaultButton="{saveButton}"
 	xmlns:view1="org.broadleafcommerce.admin.core.view.*"
 	xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*"
 	xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*">
 	<mx:Script>
 		<![CDATA[
+//	defaultButton="{saveButton}"
 			import org.broadleafcommerce.admin.catalog.control.events.sku.SaveSkuEvent;
 			import org.broadleafcommerce.admin.catalog.model.SkuModel;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
