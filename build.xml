@@ -22,34 +22,37 @@
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
 	<property name="demo.build.finalName" value="${demoPom.artifactId}-${demoPom.version}"/>
 	
-	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-docs, build-dependencies">
+	<target name="create-with-dependencies" depends="setup, build-sql, build-src, build-bin, build-src-jars, build-docs, build-dependencies">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-dependencies.zip">
 			<fileset dir="${maven.build.finalName}">
 				<include name="dist/**/*.*"/>
 				<include name="src/**/*.*"/>
 				<include name="docs/**/*.*"/>
 				<include name="lib/**/*.*"/>
+				<include name="sql/**/*.*"/>
 				<include name="*.*"/>
 				<exclude name="*.zip"/>
 			</fileset>
 		</zip>
 	</target>
 	
-	<target name="create-with-docs" depends="setup, build-bin, build-src-jars, build-docs">
+	<target name="create-with-docs" depends="setup, build-sql, build-bin, build-src-jars, build-docs">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-docs.zip">
 			<fileset dir="${maven.build.finalName}">
 				<include name="dist/**/*.*"/>
 				<include name="docs/**/*.*"/>
+				<include name="sql/**/*.*"/>
 				<include name="*.*"/>
 				<exclude name="*.zip"/>
 			</fileset>
 		</zip>
 	</target>
 	
-	<target name="create-bin" depends="setup, build-bin, build-src-jars">
+	<target name="create-bin" depends="setup, build-sql, build-bin, build-src-jars">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}.zip">
 			<fileset dir="${maven.build.finalName}">
 				<include name="dist/**/*.*"/>
+				<include name="sql/**/*.*"/>
 				<include name="*.*"/>
 				<exclude name="*.zip"/>
 			</fileset>
@@ -153,6 +156,15 @@
 		</copy>
 	</target>
 	
+	<target name="build-sql">
+		<mkdir dir="${maven.build.finalName}/sql"/>
+		<copy todir="${maven.build.finalName}/sql">
+			<fileset dir="sql/${mypom.version}">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+	</target>
+	
 	<target name="build-dependencies">
 		<mkdir dir="${maven.build.finalName}/lib"/>
 		<mkdir dir="${maven.build.finalName}/lib/framework"/>
@@ -188,6 +200,7 @@
 		<delete dir="${maven.build.finalName}"/>
 		<mkdir dir="${maven.build.finalName}"/>
 		<copy file="doc/readme.txt" todir="${maven.build.finalName}"/>
+		<copy file="doc/quickStartGuide.txt" todir="${maven.build.finalName}"/>
 		<replace file="${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}"/>
 	</target>
 	

@@ -1,0 +1,108 @@
+= Quick-Start Guide =
+
+This quick-start guide is intended to give you the bare minimum information you will need to get up and running using the Broadleaf Commerce framework. It is split into two sections: Building and Running the Broadleaf Commerce Demo Application, and Preparing Your Custom Application to Run with Broadleaf Commerce.
+
+== Building and Running the Broadleaf Commerce Demo Application ==
+
+Demo Application Prerequisites:
+ * JDK 1.5 (http://java.sun.com/javase/downloads/index_jdk5.jsp)
+ * MySQL 5 (http://dev.mysql.com/downloads/)
+ * Tomcat 6 (http://tomcat.apache.org/download-60.cgi)
+ * Maven 2 (http://maven.apache.org/download.html)
+ * Ant 1.7.1 (http://ant.apache.org/bindownload.cgi)
+
+Make sure you have the prerequisite items installed and confirm that each is in an operational state on your test machine. Also confirm that the "ant" and "mvn" commands are operational at the command prompt - refer to the installation instructions at the Apache Ant and Apache Maven download sites.
+
+Setup the Database:
+ * Add a new empty database to MySQL entitled "broadleafcommerce" (refer to the MySQL installation instructions for the steps required to add a new database).
+
+Build and Deploy the Demo Application:
+ * Download the "-with-dependencies" distribution of the Broadleaf Commerce framework from our SourceForge site (http://sourceforge.net/projects/broadleaf/). This distribution contains the source code necessary to build and run the demo.
+ * Unzip the Broadleaf Commerce distribution to a suitable directory
+ * Edit the "BroadleafCommerceDemo/build.properties" file. 
+   * Change the appserver.home location to the appropriate location of your local Tomcat installation.
+   * Change the mysql.db.url value to the appropriate JDBC url for your MySQL instance
+   * Change the mysql.db.user and mysql.db.password values to the appropriate login credentials for your MySQL instance
+ * Execute the following command at the src directory of the Broadleaf Commerce distribution. This may take some time, as maven will need to download additional dependencies and compile the Broadleaf Commerce framework.
+   * '''mvn install'''
+ * Execute the following commands at the "BroadleafCommerceDemo" directory (inside src). These steps will build and deploy the demo application to your local Tomcat instance and start Tomcat.
+   * '''ant deploy-exploded-war'''
+   * '''ant start-tomcat-debug'''
+ * After Tomcat has finished starting, execute the following command at the "BroadleafCommerceDemo" directory (inside src). This step will populate the database with sample data.
+   * '''ant load-data'''
+
+At this point, you should be able to access the demo application using your favorite web browser. Open the site at http://localhost:8080/broadleafdemo.
+
+== Preparing Your Custom Application to Run with Broadleaf Commerce ==
+
+We've prepared the following quick-start overview to help you out as you prepare your custom JEE module based on Broadleaf Commerce.
+
+Prerequisites:
+ * JDK 1.5 (http://java.sun.com/javase/downloads/index_jdk5.jsp)
+
+Dependencies:
+
+Many of these dependencies have dependencies of their own. For the complete list, refer to the lib directory of the Broadleaf Commerce "-with-dependencies" distribution.
+
+ * Service Layer
+   * hibernate-core 3.3.1.GA
+   * hibernate-entitymanager 3.4.0.GA
+   * hibernate-jmx 3.3.1.GA
+   * commons-logging 1.1.1
+   * log4j 1.2.12
+   * aspectjweaver 1.6.5
+   * slf4j 1.5.2
+   * jsr250-api 1.0
+   * velocity 1.6.2
+   * velocity-tools 2.0-beta4
+   * mail 1.4.1
+   * xmlbeans 2.4.0
+   * geronimo-jms_1.1_spec 1.1.1
+   * ehcache 1.2.3
+   * compass 2.2.0
+   * mvel2 2.0.11
+   * asm 2.2.1
+   * cglib 2.1_3
+   * oro 2.0.8
+   * jsr107cache 1.0
+   * jsr172_api 1.0
+   * lucene 2.4.1
+   * spring security 2.0.5
+   * spring framework 2.5.4
+ * Web Layer
+   * spring webmvc 2.5.4
+   * servlet-api 2.5
+   * jsp-api 2.1
+   * jstl 1.1.2
+   * taglibs standard 1.1.2
+
+The Broadleaf Commerce framework minimum jar requirements are:
+
+ * broadleaf-framework.jar
+ * broadleaf-profile.jar
+
+To add in authentication / authorization support as well as pre-made controllers and taglibs:
+
+ * broadleaf-framework-web.jar
+ * broadleaf-profile-web.jar
+
+To add in USPS shipping support:
+
+ * broadleaf-usps.jar
+ * broadleaf-usps-schemas.jar
+
+To add in administration support: 
+
+ * broadleaf-admin.jar
+
+'''The following represents the general considerations that will need to be addressed to launch a custom application on top of Broadleaf Commerce:'''
+
+ * Review the [wiki:broadleafCommerceDataModel Broadleaf Commerce data model]. We have made every effort to create a rich data model that should cover most, if not all, of our user's needs. However, should you encounter a situation where you need to extend/override the Broadleaf Commerce data model, you will need to refer to the [wiki:entityExtensionGuide Entity Extension Guide].
+ * Broadleaf Commerce is a Spring-based framework. Your application will need to use Spring as well to interact with Broadleaf Commerce. As a result, you will need to merge the Spring configuration for your application with that of Broadleaf Commerce. Thankfully, this is easy to do, but there are some guidelines. Refer to the [wiki:mergeConfiguration Merge Configuration Guide].
+ * Broadleaf Commerce will also work with most modern database platforms for which a valid JDBC driver exists. We include ddl creation scripts for a handful of major database platforms in the sql directory of our distributions.
+ * Broadleaf Commerce requires at least some minimal entity manager configuration to work with your database. Refer to the [wiki:persistenceConfiguration Persistence Configuration Guide].
+ * Should you need to add custom configuration for you application based on environment (i.e. development, test, prod, etc...), Broadleaf Commerce provides an environment configuration facility. Refer to the [wiki:environmentConfiguration Environment Configuration Guide].
+ * Should you need to override / alter the behavior specified in a Broadleaf Commerce service, then refer to the [wiki:serviceExtension Service Extension Guide].
+ * Broadleaf Commerce provides highly-configurable workflows for both pricing and checkout. The default behavior of these workflows will fulfill many user's needs. However, if you wish to re-order workflows or add activities, refer to the [wiki:workflowConfigurationGuide Workflow Configuration Guide].
+ * Broadleaf Commerce performs a number of key functions through the use of modules. For example, Pricing (including shipping, tax, etc...) and Payment (credit card, gift card, bank account, etc...) are all handled through the use of Broadleaf Commerce modules. Refer to the [wiki:moduleGuide Module Guide] for more information.
+ * While not required, Broadleaf Commerce suggests that users implement the presentation layer of their applications using Spring MVC. Broadleaf Commerce includes a number of pre-built controllers and tag libraries that work with Spring MVC (our demo application was also built using Spring MVC). Refer to the [wiki:presentationLayerGuide Presentation Layer Guide].
