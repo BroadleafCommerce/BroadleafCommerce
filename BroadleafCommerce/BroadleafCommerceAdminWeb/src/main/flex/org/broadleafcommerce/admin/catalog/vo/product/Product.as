@@ -34,6 +34,7 @@ package org.broadleafcommerce.admin.catalog.vo.product
 		public var allParentCategories:ArrayCollection = new ArrayCollection();
 		public var isFeaturedProduct:Boolean;
 		public var machineSortable:Boolean;
+		public var promoMessage:String;
 		
 		public function get isMachineSortable():Boolean{
 			return machineSortable;

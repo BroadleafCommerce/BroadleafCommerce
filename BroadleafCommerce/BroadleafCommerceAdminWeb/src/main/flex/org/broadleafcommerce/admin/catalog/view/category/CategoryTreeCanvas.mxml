@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:components="org.broadleafcommerce.admin.view.catalog.category.components.*"
-	xmlns:components1="org.broadleafcommerce.admin.catalog.view.category.components.*">
+	xmlns:components1="org.broadleafcommerce.admin.catalog.view.category.components.*" xmlns:tree="com.idsklijnsma.tree.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.view.category.components.CategoryTreeDataDescriptor;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 			import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
@@ -23,5 +24,6 @@
 	</mx:Script>
 	<mx:Binding source="catalogTree"
 						destination="categoryTree.dataProvider" />
-	<components1:CategoryTree id="categoryTree" width="100%" height="100%"/>
+	<components1:CategoryTree id="categoryTree" width="100%" height="100%" />
+	
 </mx:Canvas>
