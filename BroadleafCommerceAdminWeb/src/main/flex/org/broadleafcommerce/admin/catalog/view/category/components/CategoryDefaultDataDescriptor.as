@@ -13,9 +13,7 @@ package org.broadleafcommerce.admin.catalog.view.category.components
 {
 
 import mx.collections.ArrayCollection;
-import mx.collections.CursorBookmark;
 import mx.collections.ICollectionView;
-import mx.collections.IViewCursor;
 import mx.controls.treeClasses.ITreeDataDescriptor;
 import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
@@ -51,11 +49,17 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     public function getChildren(node:Object,
         model:Object=null):ICollectionView
     {
+    	trace("DEBUG: CategoryDefaultDataDescriptor.getChildren()");            	
         try
         {
             if (node is Object) {
                 if(node.children is ArrayCollection){
-                    return node.children;
+                	var categoryChildren:ArrayCollection = new ArrayCollection();
+                	for each(var obj:Object in node.children){
+                		if (obj is Category) categoryChildren.addItem(obj);
+                	}
+                    //return node.children;
+                    return categoryChildren;
                 }else{
                     return new ArrayCollection(node.children);
                 }
@@ -72,6 +76,7 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     // It does not support empty branches, but does support null children
     // fields.
     public function isBranch(node:Object, model:Object=null):Boolean {
+    	trace("DEBUG: CategoryDefaultDataDescriptor.isBranch()");            	
         try {
             if (node is Object) {
                 if (node.children != null)  {
@@ -88,6 +93,7 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     // The hasChildren method Returns true if the
     // node actually has children. 
     public function hasChildren(node:Object, model:Object=null):Boolean {
+    	trace("DEBUG: CategoryDefaultDataDescriptor.hasChildren()");            	
         if (node == null) 
             return false;
         var children:ICollectionView = getChildren(node, model);
@@ -101,8 +107,9 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     }
     // The getData method simply returns the node as an Object.
     public function getData(node:Object, model:Object=null):Object {
+    	trace("DEBUG: CategoryDefaultDataDescriptor.getData()");            	
         try {
-            return node;
+            return Category(node);
         }
         catch (e:Error) {
         }
@@ -118,7 +125,7 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     // a children field.
     public function addChildAt(parent:Object, child:Object, index:int, 
             model:Object=null):Boolean {
-    	trace("************** addChildAt *******************");            	
+    	trace("DEBUG: CategoryDefaultDataDescriptor.addChildAt()");            	
         var event:CollectionEvent = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
         event.kind = CollectionEventKind.MOVE;
         event.items = [child];
@@ -157,6 +164,7 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     }
     
     private function saveChildCategory(parentObj:Object,childObj:Object):void{
+    	trace("DEBUG: CategoryDefaultDataDescriptor.saveChildCategory()");            	
     	var child:Category = Category(childObj);
     	var parent:Category = Category(parentObj);
     	parent.allChildCategories
@@ -174,7 +182,7 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     // removes the child at the index parameter location in the parent.
     public function removeChildAt(parent:Object, child:Object, index:int, model:Object=null):Boolean
     {
-    	trace("************** removeChildAt *******************");
+    	trace("DEBUG: CategoryDefaultDataDescriptor.removeChildAt()");            	
         var event:CollectionEvent = new CollectionEvent(CollectionEvent.COLLECTION_CHANGE);
         event.kind = CollectionEventKind.REMOVE;
         event.items = [child];
@@ -206,14 +214,15 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     }
 
 	private function removeChildFromParent(parent:Object, child:Object, index:int):void{
-			var parentCat:Category = Category(parent);
-			parentCat.allChildCategories.removeItemAt(index);			
-			var childCat:Category = Category(child);
-			for (var i:String  in childCat.allParentCategories){
-				if(parentCat.id == Category(childCat.allParentCategories[i]).id){
-					childCat.allParentCategories.removeItemAt(int(i));
-				}
-			}		
+    	trace("DEBUG: CategoryDefaultDataDescriptor.removeChildFromParent()");            	
+		var parentCat:Category = Category(parent);
+		parentCat.allChildCategories.removeItemAt(index);			
+		var childCat:Category = Category(child);
+		for (var i:String  in childCat.allParentCategories){
+			if(parentCat.id == Category(childCat.allParentCategories[i]).id){
+				childCat.allParentCategories.removeItemAt(int(i));
+			}
+		}		
 	}
 
 }

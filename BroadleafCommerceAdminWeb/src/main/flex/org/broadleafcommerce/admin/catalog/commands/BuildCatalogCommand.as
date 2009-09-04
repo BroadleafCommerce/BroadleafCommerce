@@ -27,7 +27,7 @@ package org.broadleafcommerce.admin.catalog.commands
 			eventChain.addItem(new StandardizeCatalogObjectsEvent(categoryArray, productsArray, skusArray));
 			eventChain.addItem(new AddCategoriesToCatalogTreeEvent(catalogTree, categoryArray));		
 			// The following events add products and skus to the tree	 
-			eventChain.addItem(new AddProductsToCategoriesEvent(categoryArray, productsArray));
+			// eventChain.addItem(new AddProductsToCategoriesEvent(categoryArray, productsArray));
 			// eventChain.addItem(new AddSkusToProductsEvent(productsArray, skusArray));
 																					  
 		}
