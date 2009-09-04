@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.util;
+package org.broadleafcommerce.cache;
 
 import java.util.Properties;
 
 import net.sf.ehcache.event.CacheEventListener;
 import net.sf.ehcache.event.CacheEventListenerFactory;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory {
-
-    private static final Log LOG = LogFactory.getLog(HydratedCacheEventListenerFactory.class);
 
     @Override
 	public CacheEventListener createCacheEventListener(Properties props) {
-		String cacheNames = props.getProperty("cacheNames");
+		/*String cacheNames = props.getProperty("cacheNames");
         if (cacheNames == null) {
             throw new RuntimeException("Must specify a cacheNames property with a semi-colon delimitted list of cache names.");
         }
@@ -40,7 +35,7 @@ public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory
         for (String name : names) {
             HydratedCache cache = new HydratedCache(name.trim());
             HydratedCacheManagerImpl.getInstance().addHydratedCache(cache);
-        }
+        }*/
         return (CacheEventListener) HydratedCacheManagerImpl.getInstance();
 	}
 

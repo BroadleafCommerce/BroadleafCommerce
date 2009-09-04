@@ -185,6 +185,8 @@ public interface Category extends Serializable {
      * @return the child category url map
      */
     public Map<String,List<Category>> getChildCategoryURLMap();
+    
+    public void setChildCategoryURLMap(Map<String, List<Category>> cachedChildCategoryUrlMap);
 
     /**
      * Gets the child categories.

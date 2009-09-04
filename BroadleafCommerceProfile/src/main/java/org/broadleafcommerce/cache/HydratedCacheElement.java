@@ -1,4 +1,4 @@
-package org.broadleafcommerce.util;
+package org.broadleafcommerce.cache;
 
 import java.io.Serializable;
 import java.util.Hashtable;

@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,13 +37,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cache.Hydrated;
+import org.broadleafcommerce.cache.HydratedCacheJPAListener;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.util.DateUtil;
-import org.broadleafcommerce.util.HydratedCacheManagerImpl;
 import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -71,6 +74,7 @@ import org.hibernate.annotations.OrderBy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@EntityListeners({HydratedCacheJPAListener.class})
 public class CategoryImpl implements Category {
 
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -145,7 +149,6 @@ public class CategoryImpl implements Category {
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_CATEGORY_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKey(columns = {@Column(name = "MAP_KEY")})
-    //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
@@ -157,6 +160,10 @@ public class CategoryImpl implements Category {
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
+    
+    @Transient
+    @Hydrated
+    private Map<String, List<Category>> cachedChildCategoryUrlMap;
 
     /*
      * (non-Javadoc)
@@ -443,9 +450,7 @@ public class CategoryImpl implements Category {
      * @see
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
-    @SuppressWarnings("unchecked")
     public Map<String, List<Category>> getChildCategoryURLMap() {
-        Map<String, List<Category>> cachedChildCategoryUrlMap = (Map<String, List<Category>>) HydratedCacheManagerImpl.getInstance().getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "cachedChildCategoryUrlMap");
         if (cachedChildCategoryUrlMap != null) {
         	return cachedChildCategoryUrlMap;
         }
@@ -453,8 +458,11 @@ public class CategoryImpl implements Category {
         Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
         fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
         cachedChildCategoryUrlMap = newMap;
-        HydratedCacheManagerImpl.getInstance().addHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "cachedChildCategoryUrlMap", cachedChildCategoryUrlMap);
         return cachedChildCategoryUrlMap;
+    }
+    
+    public void setChildCategoryURLMap(Map<String, List<Category>> cachedChildCategoryUrlMap) {
+    	this.cachedChildCategoryUrlMap = cachedChildCategoryUrlMap;
     }
 
     /**

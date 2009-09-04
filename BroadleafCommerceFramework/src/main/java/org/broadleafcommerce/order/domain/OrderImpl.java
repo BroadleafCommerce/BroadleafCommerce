@@ -53,7 +53,6 @@ import org.broadleafcommerce.offer.domain.OfferInfo;
 import org.broadleafcommerce.offer.domain.OfferInfoImpl;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
-import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
