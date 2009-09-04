@@ -3,8 +3,6 @@
 <!-- Blueprint Framework CSS -->
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/screen.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/reset.css" />
-<link rel="stylesheet" type="text/css" href="/broadleafdemo/css/blueprint/plugins/fancy-type/screen.css" />
-
 
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/master.css" />
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/navigation.css" />
@@ -24,8 +22,6 @@
 <!--[if lt IE 8]>
 <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection">
 <![endif]-->
-<!-- Import fancy-type plugin. -->  
-<link rel="stylesheet" href="/broadleafdemo/css/blueprint/plugins/fancy-type/screen.css" type="text/css" media="screen, projection" />  
 
 <!--[if IE]>
 <link rel="stylesheet" type="text/css" href="/broadleafdemo/css/ieConditional.css" />

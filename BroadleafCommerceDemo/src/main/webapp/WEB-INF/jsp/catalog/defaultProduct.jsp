@@ -4,7 +4,9 @@
 	<div class="breadcrumb">
 		<blc:breadcrumb categoryList="${breadcrumbCategories}" />
 	</div>
-	<div id="productContainer" class="productContainer">
+	<div id="productContainer" class="mainContentArea">
+		<h3 class="productName">${currentProduct.name}</h3>
+		<jsp:include page="relatedProducts.jsp" />
 		<div class="columns">
 			<div class="column productImage span-5">
 				<c:choose>
@@ -19,23 +21,20 @@
 					</c:otherwise>
 				</c:choose>
 			</div>
-			<div class="column productSummary span-13">
-				<div class="productSummaryTop">
-					<c:if test="${currentProduct.isFeaturedProduct == true}">
-						<h3 class="productName">${currentProduct.name} -- <b> FEATURED </b> </h3> 	
+			<div class="column productSummary span-11">
+				<div class="bottomRule">
+					<c:if test="${currentProduct.isFeaturedProduct}">
+						<img class="featuredSmall" src="/broadleafdemo/images/featuredSmallRed.gif" /><br/>
 					</c:if>
-					<c:if test="${currentProduct.isFeaturedProduct == false}">
-						<h3 class="productName">${currentProduct.name} </h3> 	
+					<c:if test="${!empty currentProduct.manufacturer}" >
+						<b>Manufacturer:</b> ${currentProduct.manufacturer}<br/>
 					</c:if>
-					<c:if test="${!(empty currentProduct.manufacturer) }" >
-						<span> <b>Manufacturer:</b> ${currentProduct.manufacturer} </span> <br/>
+					<c:if test="${!empty currentProduct.model}" >
+						<b>Model:</b> ${currentProduct.model}<br/>
 					</c:if>
-					<c:if test="${!(empty currentProduct.model) }" >
-						<span> <b>Model:</b> ${currentProduct.model} </span> <br/>
-					</c:if>
-					<span> <b>SKU:</b> ${currentProduct.skus[0].id} </span> <br/>
-					<c:if test="${!(empty currentProduct.longDescription) }" >
-						<span> <b>Description:</b> ${currentProduct.longDescription} </span> <br/>		
+					<b>SKU:</b> ${currentProduct.skus[0].id}<br/>
+					<c:if test="${!empty currentProduct.longDescription}" >
+						<b>Description:</b> ${currentProduct.longDescription}<br/>		
 					</c:if>
 				</div>
 				<div class="columns">
@@ -48,7 +47,7 @@
 							${currentProduct.dimension.depth} X ${currentProduct.dimension.height}  </span> <br/>
 						</c:if>
 					</div>
-					<div class="productRightCol column span-5">
+					<div class="productRightCol">
 						<span class="productPrice"> 
 							<b> Our Price: </b>
 							<c:choose>
@@ -73,101 +72,27 @@
 							<form:hidden path="quantity"  />
 							<c:choose>
 								<c:when test="${(wishlists != null) && !(empty wishlists) }" >
-									<form:select  path="wishlistName">
+									<form:select path="wishlistName">
 										<form:options items="${wishlists}" itemValue="name" itemLabel="name" />
 									</form:select>
-									<input type="submit" value="Add To Wishlist" name="addToWishlist">     			
+									<button class="wishlistBtn" type="submit" name="addToWishlist">Add To Wishlist</button>		
 								</c:when>
 								<c:otherwise>
-									<input type="submit" value="Add To New Wishlist" name="addToWishlist">
+									<button class="wishlistBtn" type="submit" name="addToWishlist">Add To New Wishlist</button>
 								</c:otherwise>
 							</c:choose>
 						</form:form>
 					</div>
 				</div>
 				<jsp:include page="ratingsAndReviews.jsp" />
-			</div>
-			<div class="relatedProducts column last span-6">
-				<div class="productUpSale">
-					<c:if test="${(currentProduct.upSaleProducts != null) && !(empty currentProduct.upSaleProducts) }" >
-						<h3 class="relatedProd">You may also like</h3>
-						<c:forEach var="item" items="${currentProduct.upSaleProducts}" varStatus="status">
-							<div class="relatedProd">
-								<div class="relatedProdImage">
-									<a href="${contextPath}${item.relatedSaleProduct.productImages.small}" class="thickbox">
-										<img src="/broadleafdemo${item.relatedSaleProduct.productImages.small}" width="80" />
-									</a>
-								</div> 
-								<div class="relatedProdText">
-									<div > 
-										<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${item.relatedSaleProduct.id}">
-											${item.relatedSaleProduct.name}
-										</a>
-									</div>
-									<div style="margin-top:5px;"> Our Price: <br/>
-										<c:choose>
-											<c:when test="${item.relatedSaleProduct.skus[0].salePrice != item.relatedSaleProduct.skus[0].retailPrice }" >
-												<span class="strikethrough"><c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" /></span>
-												<c:out value="${item.relatedSaleProduct.skus[0].salePrice}" />
-											</c:when>			
-											<c:otherwise>
-												<c:out value="${item.relatedSaleProduct.skus[0].retailPrice}" />
-											</c:otherwise>
-										</c:choose>
-									</div>
-									<div style="margin-top:5px;">
-								    	<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
-						   					<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
-											<c:param name="quantity" value="1"/>
-											</c:url>" >Add to Cart</a>
-									</div>
-								</div>
-							</div>
-						</c:forEach>
-					</c:if>
-				</div> 
-				<div class="productCrossSale">
-					<c:if test="${(currentProduct.crossSaleProducts != null) && !(empty currentProduct.crossSaleProducts) }" >
-						<h3 class="relatedProd">Related Products</h3>
-						<c:forEach var="item" items="${currentProduct.crossSaleProducts}" varStatus="status">
-							<div class="relatedProd">
-								<div class="relatedProdImage">
-									<a href="${contextPath}${item.relatedSaleProduct.productImages.small}" class="thickbox">
-										<img src="/broadleafdemo${item.relatedSaleProduct.productImages.small}" width="80" />
-									</a>
-								</div> 
-								<div class="relatedProdText">
-									<div>
-										<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${item.relatedSaleProduct.id}">
-											${item.relatedSaleProduct.name}
-										</a>
-									</div>
-									<div style="margin-top:5px;"> Our Price: <br/>
-										<c:choose>
-											<c:when test="${item.relatedSaleProduct.skus[0].salePrice != item.relatedSaleProduct.skus[0].retailPrice }" >
-												<span class="strikethrough">${item.relatedSaleProduct.skus[0].retailPrice}</span>
-												${item.relatedSaleProduct.skus[0].salePrice}
-											</c:when>			
-											<c:otherwise> ${item.relatedSaleProduct.skus[0].retailPrice} </c:otherwise>
-										</c:choose>
-									</div>
-									<div style="margin-top:5px;">
-										<a class="addCartBtn" href="<c:url value="/basket/addItem.htm">
-											<c:param name="skuId" value="${item.relatedSaleProduct.skus[0].id}"/>
-											<c:param name="quantity" value="1"/>
-											</c:url>">Add to Cart</a>
-									</div>
-								</div>
-							</div>
-						</c:forEach>
-					</c:if>
+				<div class="socialNetworks">
+					Share this Product: <blc:share />
 				</div>
 			</div>
+
 		</div>
 		
-		<div>
-			Share this Product: <blc:share />
-		</div>
+
 	</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

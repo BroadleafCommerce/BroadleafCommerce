@@ -3,7 +3,8 @@
 	<tiles:putAttribute name="mainContent" type="string">
 	
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-		<h3 style="margin:8px 0;font-weight:bold;">Your Shopping Cart</h3>
+	<div class="mainContentAreaFull" style="padding:8px;">
+		<h3 class="pageTitle">Your Shopping Cart</h3>
 		<c:choose>
 		    <c:when test="${!empty currentCartOrder.orderItems}">
 			    <p style="margin-bottom:8px;">Checking out is quick, easy and secure. &nbsp; If you have any questions, please contact support.</p>
@@ -11,7 +12,7 @@
 			 	  <thead>
 			          <tr valign="bottom">
 			          	<th width="80">&nbsp;</th>
-			            <th>Item Description</th>
+			            <th>&nbsp;</th>
 			            <th style="text-align:center;">Quantity</th>
 			            <th style="text-align:right;padding-right:12px" width="150">Price</th>
 						<th style="text-align:right;padding-right:3px" width="100">Discount</th>
@@ -76,7 +77,7 @@
 					  		</td>
 			     		</tr>
 					</c:forEach>
-					<tr class="totals highlight">
+					<tr class="totals topLine">
 						<td colspan="4">&nbsp;</td>
 						<td style="text-align:right">Subtotal:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.subTotal}</span></td>
@@ -133,5 +134,6 @@
 	                </div>
 				</c:otherwise>
 			</c:choose>
+	</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

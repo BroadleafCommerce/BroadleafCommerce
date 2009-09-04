@@ -1,25 +1,26 @@
 .orderTitle {
 	margin-bottom:5px;
-	padding:4px 7px;
-	background:transparent url(/broadleafdemo/images/steelBlueGradient30.gif) repeat-x scroll center center;
-	border-bottom: 1px solid #ccc;
+	padding:5px 7px;
 }
 
 .orderBorder {
-	border-style: solid;
-	border-color: #ccc;
-	border-width: 1px;
+	border:1px solid #ccc;
+	background: url(/broadleafdemo/images/brownGradient30.gif) repeat-x scroll center top;
 	padding: 0;
 	margin-top: 15px;
+	-moz-border-radius-topleft:6px;
+	-moz-border-radius-topright:6px;
 }
 
 .orderTotals {
 	font-weight: bold;
 }
-
 table.basicTable th {
 	background:0;
 	border-bottom:1px solid #ccc;
+}
+#findAStoreForm table.basicTable th {
+	border-bottom:0;
 }
 table.basicTable td {
 	text-align:left;

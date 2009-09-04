@@ -1,24 +1,19 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
-	<div class="span-16">
-		&nbsp;
-	</div>
 	
-	<div class="span-16 ">
-		<img src="/broadleafdemo/images/promos/store-splash-600x300.png" />
+	<div class="splashContainer">
+	<div class="dontMiss">
+		<a href="/broadleafdemo/store/equipment/espresso?productId=140"><img src="/broadleafdemo/images/promos/mainPromo1.gif" /></a>
 	</div>		
-	<div class="span-8 last">
-		<div class="blueBorder">
-			<img src="/broadleafdemo/images/promos/cups-300x100.png" />
+	<div class="sidePromoContainer">
+		<div class="sidePromo">
+			<a href="/broadleafdemo/store/equipment/brewers?productId=128"><img src="/broadleafdemo/images/promos/sidePromo1.jpg" /></a>
 		</div>
-		<div>&nbsp;</div>
-		<div class="blueBorder">
-			<img src="/broadleafdemo/images/promos/coffee-300x100.png" />
+		<div class="sidePromo">
+			<a href="/broadleafdemo/store/coffee/starbucks?productId=123"><img src="/broadleafdemo/images/promos/sidePromo2.jpg" /></a>
 		</div>
 	</div>
-	
-
 
 	</tiles:putAttribute>
 </tiles:insertDefinition>

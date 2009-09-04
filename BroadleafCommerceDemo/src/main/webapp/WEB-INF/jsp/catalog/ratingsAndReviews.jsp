@@ -20,19 +20,20 @@ $(document).ready(function(){
 });
 </script>
 
-<h4 style="border-top:1px dashed #EE2200;font-weight:bold;color:#555;margin-top:10px;padding-top:10px;">Customer Ratings & Reviews</h4>
+<h4 class="topRule" style="color:#566F32;font-size:18px;">Customer Ratings & Reviews</h4>
 <div class="columns">
-	<div class="productLeftCol column span-7">
+	<div class="productLeftCol column span-6">
 		<h4 style="margin-bottom:6px;">Average Customer Review</h4>
 		<fmt:formatNumber value="${ratingSummary.averageRating}" maxFractionDigits="0" var="avgRating" />
-		<tags:stars numberOfStars="${avgRating}" cssClass="reviewStars" /> (<c:out value="${fn:length(ratingSummary.reviews)}" /> customer reviews)
+		<tags:stars numberOfStars="${avgRating}" cssClass="reviewStars" /> (${fn:length(ratingSummary.reviews)} customer reviews)
 	</div>
-	<div class="column span-5" style="border-left:1px solid #ccc;padding:0 0 8px 10px;">
+	<div class="productRightCol">
 	<h4 style="margin-bottom:6px;">Do you own this product?</h4>
 	<a class="reviewBtn" href="#" onclick="$('#yourReview').slideDown();return false;">Write a Review</a>
 	</div>
 </div>
-<div id="yourReview" class="clearfix span-13" style="display:none;background:#eef;border:1px solid #dde;padding:6px;margin:10px 0;">
+<div id="yourReview" class="clearfix span-11" style="display:none;background:#fff0c5;border:1px solid #edd38a;margin:10px 0;">
+<div style="margin:8px;">
 	<div class="clearfix" style="font-size:13px;font-weight:normal;margin:0 0 6px 0;">
 	<div style="float:left;margin-right:12px;">Please rate this product:</div>
 		<span class="interactiveRating"><select name="customerRating">
@@ -45,8 +46,9 @@ $(document).ready(function(){
 	</div>
 	
 	<p style="font-size:13px;font-weight:normal;margin:0;">Please describe your experience with this product:</p>
-	<textarea id="reviewText" class="span-13" style="height: 200px; width: 100%;"></textarea><br />
+	<textarea id="reviewText" style="height: 200px; width: 97%;"></textarea><br />
 	<div style="text-align: right;margin:2px 0 5px;"><a href="#" onclick="$('#yourReview').slideUp();return false;">Cancel</a>&nbsp;&nbsp;&nbsp;<a id="submitReview" class="reviewBtn" href="#">Submit Review</a></div>
+</div>
 </div>
 
 <c:if test="${!empty ratingSummary.reviews}"><h4 style="margin:8px 0 4px 0;">Customer Reviews</h4></c:if>

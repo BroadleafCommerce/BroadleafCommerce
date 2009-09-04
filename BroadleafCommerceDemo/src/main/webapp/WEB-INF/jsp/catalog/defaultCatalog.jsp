@@ -14,20 +14,21 @@
 	<div class="breadcrumb">
 		<blc:breadcrumb categoryList="${breadcrumbCategories}" />
 	</div>
-    <div class="span-5 blueBorder">
-      	Search Options
+	<div class="catalogContainer columns mainContentAreaFull" style="padding:8px 0 8px 8px;">
+    <div class="span-5" style="width:170px;margin-left:10px;">
   		<form:form method="post" id="refineSearch" commandName="doSearch">
+      	Narrow results by:
 			<blc:searchFilter products="${displayProducts}" queryString="">
 				<blc:searchFilterItem property="manufacturer" displayTitle="Manufacturers"/>
+				<br />
 				<blc:searchFilterItem property="skus[0].salePrice" displayTitle="Prices" displayType="sliderRange"/>
 			</blc:searchFilter>
 		</form:form>
     </div>
-    <div class="span-14 blueBorder" id="mainContent">
+    <div class="span-14" id="mainContent">
         <jsp:include page="/WEB-INF/jsp/catalog/categoryView/mainContentFragment.jsp" />
     </div>
-    <div class="span-4 blueBorder last">
-     	<jsp:include page="/WEB-INF/jsp/catalog/promos/categoryPromos.jsp" />
+   	<jsp:include page="/WEB-INF/jsp/catalog/promos/categoryPromos.jsp" />
     </div>
 
 	</tiles:putAttribute>

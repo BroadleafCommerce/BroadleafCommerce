@@ -54,8 +54,18 @@
 }
 
 #min-skus_0__salePrice, #max-skus_0__salePrice {
-	border:0;
-	background-color:#E5E5E5;
-	font-weight:bold;
-	width:60px;
+	width:55px;
+}
+#refineSearch {
+	margin-top:4px;
+}
+#refineSearch h3 {
+	color:#566F32;
+	margin:4px 0 8px;
+}
+ul.searchFilter-manufacturer {
+	margin:0 0 0 1px;
+}
+.ui-slider {
+	margin: 0 10px 0 7px;
 }

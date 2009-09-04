@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
+	<div class="mainContentAreaFull" style="padding:0 0 8px 8px;">
 		<h3 class="pageTitle">My Account</h3>
 		<span style="font-size:13px;"> <b>Order Management</b> </span><br/>	
 		<a class="noTextUnderline" href="/broadleafdemo/orders/viewOrders.htm" > View Previous Orders </a> <br/>
@@ -8,5 +9,6 @@
 		<span style="font-size:13px;"> <b>Wishlist Management</b> </span><br/>		
 		<a class="noTextUnderline" href="/broadleafdemo/wishlist/showWishlists.htm" > View Wishlists</a><br/>
 		<a class="noTextUnderline" href="/broadleafdemo/wishlist/createWishlistName.htm" > Create Wishlist</a>
+	</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>
