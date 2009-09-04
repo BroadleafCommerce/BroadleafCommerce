@@ -77,6 +77,7 @@
 		<property name="deletePhoneSuccessView" value="myAccount/phone/customerPhones"/>
 	</bean>
 	
+
 	<bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
@@ -98,8 +99,8 @@
 				<prop key="/store/*/*">catalogController</prop>
 				<prop key="/store/*/*/*">catalogController</prop>
 				<prop key="/basket/*">cartController</prop>
-				<prop key="/search">searchController</prop>
-				<prop key="/search/*">searchController</prop>
+				<prop key="/search">compassSearchController</prop>
+				<prop key="/search/*">compassSearchController</prop>
 				<prop key="/checkout/*">checkoutController</prop>
 				<prop key="/storeLocator/*">storeController</prop>
 				<prop key="/account/*">myAccountController</prop>
