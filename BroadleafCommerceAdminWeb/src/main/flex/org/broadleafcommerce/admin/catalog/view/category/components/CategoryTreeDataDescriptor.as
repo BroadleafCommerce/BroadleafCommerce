@@ -5,6 +5,7 @@ package org.broadleafcommerce.admin.catalog.view.category.components
 	
 	import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
+	import mx.collections.ArrayCollection;
 
 	public class CategoryTreeDataDescriptor implements ITreeDataDescriptor
 	{
@@ -14,33 +15,41 @@ package org.broadleafcommerce.admin.catalog.view.category.components
 
 		public function getChildren(node:Object, model:Object=null):ICollectionView
 		{
-			return Category(node).allChildCategories;
+//			return Category(node).allChildCategories;
+			var categoryNodes:ArrayCollection = new ArrayCollection();
+			for each(var object:Object in Category(node).allChildCategories){
+				if(object is Category){
+					categoryNodes.addItem(object);
+				}
+			}
+			return categoryNodes;
+//			// return Category(node).allChildCategories;
 		}
 		
 		public function hasChildren(node:Object, model:Object=null):Boolean
 		{
 			//return (Category(node).allChildCategories.length > 0);
-			for each(var object:Object in Category(node).allChildCategories){
-				if(object is Category){
+//			for each(var object:Object in Category(node).allChildCategories){
+//				if(object is Category){
 					return true;
-				}
-			}
-			return false;
+//				}
+//			}
+//			return false;
 		}
 		
 		public function isBranch(node:Object, model:Object=null):Boolean
 		{
 			var result:Boolean = false;
 			
-			if(node is Category){
-				 for each(var cat:Object in Category(node).allChildCategories){
-				 	if(cat is Category){
+//			if(node is Category){
+//				 for each(var cat:Object in Category(node).allChildCategories){
+//				 	if(cat is Category){
 				 		result = true;
-				 		break;
-				 	}
-				 }
-				
-			} 
+//				 		break;
+//				 	}
+//				 }
+//				
+//			} 
 			return result;
 		}
 		
@@ -53,6 +62,10 @@ package org.broadleafcommerce.admin.catalog.view.category.components
 		{
 			var childCat:Category = Category(newChild);
 			var parentCat:Category = Category(parent);
+//			if(Category(parentCat).allChildCategories.contains(childCat)){
+//				trace("DEBUG: CategoryTreeDataDescriptor.addChildAt() -- don't change anything since user is dropping to same location"); 
+//				return false;
+//			}
 			if(parentCat == null && model != null && model[0] != null){
 				parentCat = 	Category(model[0])	
 			}
@@ -60,10 +73,16 @@ package org.broadleafcommerce.admin.catalog.view.category.components
 			parentCat.allChildCategories.addItemAt(childCat,index);				
 		
 			var scce:SaveCategoryEvent = new SaveCategoryEvent(childCat);
-			scce.dispatch();
+			scce.dispatch(
+			);
+//			function ():void{
+//				var scce:SaveCategoryEvent = new SaveCategoryEvent(parentCat);
+//				scce.dispatch();			
+//				});
 		
 			return true;
 		}
+
 		
 		public function removeChildAt(parent:Object, child:Object, index:int, model:Object=null):Boolean
 		{

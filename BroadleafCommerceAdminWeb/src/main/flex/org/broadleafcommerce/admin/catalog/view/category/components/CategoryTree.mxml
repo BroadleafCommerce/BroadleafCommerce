@@ -1,25 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Tree xmlns:mx="http://www.adobe.com/2006/mxml"
+<mx:Tree xmlns:mx="http://www.adobe.com/2006/mxml" 
 		labelField="name"
+		iconFunction="determineIcon"
+		dragEnabled="true"
+		dropEnabled="true" 
+		dragDrop="handleDragComplete(event)"
+		dataDescriptor="{new CategoryDefaultDataDescriptor}"
 		itemClick="handleItemClick(event)"
-		dataDescriptor="{new CategoryTreeDataDescriptor()}"
-		dataChange="handleDataChange()"
 		>
 		<mx:Script>
 			<![CDATA[
 				import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
-				import org.broadleafcommerce.admin.catalog.vo.category.Category;
 				import mx.events.ListEvent;
-
-				private function handleItemClick(event:ListEvent):void{
-					var selectedItem:Category = Category(this.selectedItem); 
-					var ecce:EditCategoryEvent = new EditCategoryEvent(selectedItem);
-					ecce.dispatch();
-				}
+				import mx.events.DragEvent;
+				import org.broadleafcommerce.admin.catalog.vo.category.Category; 
 				
-				private function handleDataChange():void{
-					trace("DEBUG: handle data change");
+			[Bindable]
+            [Embed("/assets/images/3D-Documents.png")]
+            private var categoryHasIcon:Class;
+
+            [Bindable]
+            [Embed("/assets/images/Blank.png")]
+            private var categoryHasNotIcon:Class;
+            
+			private function determineIcon(item:Object):Class{
+				var iconClass:Class;
+				if(item is Category){					
+					var category:Category = Category(item);
+					if(category.allChildCategories.length > 0){
+						iconClass = categoryHasIcon;
+					}else{
+						iconClass = categoryHasNotIcon;
+					}
+                return iconClass;				
 				}
+				return null;
+			}			
+			
+			private function handleDragComplete(event:DragEvent):void{
+				super.dragDropHandler(event);
+				var e:DragEvent = event;
+			}
+
+			private function handleItemClick(event:ListEvent):void{
+				var selectedItem:Category = Category(this.selectedItem); 
+				var ecce:EditCategoryEvent = new EditCategoryEvent(selectedItem);
+				ecce.dispatch();
+			}
+			
+//		dragDrop="handleDragDrop(event)"
+//		dragStart="handleDragStart(event)"
+//			private function handleDragStart(event:DragEvent):void{
+//				var e:DragEvent = event;
+//			} 
+//		dataChange="handleDataChange()"
+//				import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
+//				import org.broadleafcommerce.admin.catalog.vo.category.Category;
+//				import mx.events.ListEvent;
+//
+//				
+//				private function handleDataChange():void{
+//					trace("DEBUG: handle data change");
+//				}
+//				
+//				private function handleDragDrop(event:DragEvent):void{
+//					Tree(event.currentTarget).dr
+//					super.dragDropHandler(event);
+//				} 		
 				
 			]]>
 		</mx:Script>
