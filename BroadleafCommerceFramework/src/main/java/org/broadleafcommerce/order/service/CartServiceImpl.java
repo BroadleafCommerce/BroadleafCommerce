@@ -56,8 +56,12 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
     public Order findCartForCustomer(Customer customer) {
         return orderDao.readCartForCustomer(customer);
     }
-
+    
     public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
+    	return addAllItemsToCartFromNamedOrder(namedOrder, true);
+    }
+
+    public Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
@@ -65,56 +69,72 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         for (int i = 0; i < namedOrder.getOrderItems().size(); i++) {
 			OrderItem orderItem = namedOrder.getOrderItems().get(i);
 			if (moveNamedOrderItems) {
-				moveItemToOrder(namedOrder, cartOrder, orderItem);
+				moveItemToOrder(namedOrder, cartOrder, orderItem, priceOrder);
 			} else {
-				addOrderItemToOrder(cartOrder, orderItem);
+				addOrderItemToOrder(cartOrder, orderItem, priceOrder);
 			}
 			
 		}
         return cartOrder;
     }
-
+    
     public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException {
+    	return moveItemToCartFromNamedOrder(customerId, orderName, orderItemId, quantity, true);
+    }
+
+    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity, boolean priceOrder) throws PricingException {
         Order wishlistOrder = findNamedOrderForCustomer(orderName, customerService.createCustomerFromId(customerId));
         OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
         orderItem.setQuantity(quantity);
-        return moveItemToCartFromNamedOrder(wishlistOrder, orderItem);
+        return moveItemToCartFromNamedOrder(wishlistOrder, orderItem, priceOrder);
+    }
+    
+    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem) throws PricingException {
+    	return moveItemToCartFromNamedOrder(namedOrder, orderItem, true);
     }
 
-    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem) throws PricingException {
+    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws PricingException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
         }
         if (moveNamedOrderItems) {
-            moveItemToOrder(namedOrder, cartOrder, orderItem);
+            moveItemToOrder(namedOrder, cartOrder, orderItem, priceOrder);
             if (namedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
                 cancelOrder(namedOrder);
             }
         } else {
-        	orderItem = addOrderItemToOrder(cartOrder, orderItem);
+        	orderItem = addOrderItemToOrder(cartOrder, orderItem, priceOrder);
         }
         
         return orderItem;
     }
-
+    
     public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-        Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder);
+    	return moveAllItemsToCartFromNamedOrder(namedOrder, true);
+    }
+
+    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
+        Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder, priceOrder);
         if (deleteEmptyNamedOrders) {
             cancelOrder(namedOrder);
         }
         return cartOrder;
     }
 
+    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException {
+    	return mergeCart(customer, anonymousCartId, true);
+    }
+    
     /*
      * (non-Javadoc)
      * @seeorg.broadleafcommerce.order.service.OrderService#mergeCart(org.
      * broadleafcommerce.profile.domain.Customer, java.lang.Long)
      */
-    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException {
+    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId, boolean priceOrder) throws PricingException {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         // reconstruct cart items (make sure they are valid)
-        ReconstructCartResponse reconstructCartResponse = reconstructCart(customer);
+        ReconstructCartResponse reconstructCartResponse = reconstructCart(customer, priceOrder);
         mergeCartResponse.setRemovedItems(reconstructCartResponse.getRemovedItems());
         Order customerCart = reconstructCartResponse.getOrder();
         /*
@@ -136,7 +156,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                         if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
                             DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
-                            addDiscreteItemToOrder(customerCart, itemRequest);
+                            addDiscreteItemToOrder(customerCart, itemRequest, priceOrder);
                             mergeCartResponse.getAddedItems().add(orderItem);
                         } else {
                             mergeCartResponse.getRemovedItems().add(orderItem);
@@ -157,7 +177,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         }
                         BundleOrderItemRequest bundleOrderItemRequest = createBundleOrderItemRequest(bundleOrderItem, discreteOrderItemRequests);
                         if (!removeBundle) {
-                            addBundleItemToOrder(customerCart, bundleOrderItemRequest);
+                            addBundleItemToOrder(customerCart, bundleOrderItemRequest, priceOrder);
                             mergeCartResponse.getAddedItems().add(orderItem);
                         } else {
                             mergeCartResponse.getRemovedItems().add(orderItem);
@@ -170,6 +190,10 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         mergeCartResponse.setOrder(customerCart);
         return mergeCartResponse;
     }
+    
+    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException {
+    	return reconstructCart(customer, true);
+    }
 
     /*
      * (non-Javadoc)
@@ -177,8 +201,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
      * org.broadleafcommerce.order.service.OrderService#reconstructCart(org.
      * broadleafcommerce.profile.domain.Customer)
      */
-	public ReconstructCartResponse reconstructCart(Customer customer)
-			throws PricingException {
+	public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException {
 		ReconstructCartResponse reconstructCartResponse = new ReconstructCartResponse();
 		Order customerCart = findCartForCustomer(customer);
 		if (customerCart != null) {
@@ -213,7 +236,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
 				}
 			}
 			for (OrderItem item : itemsToRemove) {
-				removeItemFromOrder(customerCart, item);
+				removeItemFromOrder(customerCart, item, priceOrder);
 			}
 			reconstructCartResponse.setRemovedItems(itemsToRemove);
 		}

@@ -51,34 +51,58 @@ public interface OrderService {
     public FulfillmentGroup findDefaultFulfillmentGroupForOrder(Order order);
 
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException;
+    
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
     public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException;
+    
+    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
     public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException;
+    
+    public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest, boolean priceOrder) throws PricingException;
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment);
 
     public PaymentInfo addPaymentToOrder(Order order, PaymentInfo payment, Referenced securePaymentInfo);
 
     public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException;
+    
+    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException;
 
     public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
+    
+    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException;
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException;
+    
+    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException;
 
     public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException;
+    
+    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException;
 
     public Order addOfferToOrder(Order order, String offerCode);
 
     public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException;
+    
+    public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException;
 
     public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException;
+    
+    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException;
 
     public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException;
+    
+    public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException;
 
     public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException;
+    
+    public Order removeOfferFromOrder(Order order, Offer offer, boolean priceOrder) throws PricingException;
 
     public Order removeAllOffersFromOrder(Order order) throws PricingException;
+    
+    public Order removeAllOffersFromOrder(Order order, boolean priceOrder) throws PricingException;
 
     public void removeNamedOrderForCustomer(String name, Customer customer);
 
@@ -93,14 +117,20 @@ public interface OrderService {
     public List<PaymentInfo> readPaymentInfosForOrder(Order order);
 
     public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException;
+    
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException;
 
     public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException;
+    
+    public Order removeItemFromOrder(Long orderId, Long itemId, boolean priceOrder) throws PricingException;
 
     public void removeAllPaymentsFromOrder(Order order);
 
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address);
 
     public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException;
+    
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException;
 
     public Order findOrderByOrderNumber (String orderNumber);
 
