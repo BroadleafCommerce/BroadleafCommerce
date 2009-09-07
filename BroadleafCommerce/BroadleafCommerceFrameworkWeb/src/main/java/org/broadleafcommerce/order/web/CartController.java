@@ -312,7 +312,7 @@ public class CartController {
         FulfillmentGroup fg = cartSummary.getFulfillmentGroup();
         for(CartOrderItem item : cartSummary.getRows()) {
             item.getOrderItem().setOrder(currentCartOrder);
-            fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity());
+            fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity(), false);
         }
         cartSummary.setFulfillmentGroup(fg);
         return cartService.save(currentCartOrder, true);
