@@ -57,8 +57,10 @@ public class HydratedCacheJPAListener {
 			for (String field : descriptor.getHydratedMutators().keySet()) {
 				try {
 					Object fieldVal = descriptor.getHydratedMutators().get(field).getMutators()[0].invoke(entity, new Object[]{});
-					Serializable entityId = (Serializable) idMutators[0].invoke(entity, new Object[]{});
-					((HydratedCacheManager) manager).addHydratedCacheElementItem(cacheRegion, entityId, field, fieldVal);
+					if (fieldVal != null) {
+						Serializable entityId = (Serializable) idMutators[0].invoke(entity, new Object[]{});
+						((HydratedCacheManager) manager).addHydratedCacheElementItem(cacheRegion, entityId, field, fieldVal);
+					}
 				} catch (InvocationTargetException e) {
 					if (e.getTargetException() != null && e.getTargetException() instanceof CacheFactoryException) {
 						LOG.warn("Unable to setup the hydrated cache for an entity. " + e.getTargetException().getMessage());
