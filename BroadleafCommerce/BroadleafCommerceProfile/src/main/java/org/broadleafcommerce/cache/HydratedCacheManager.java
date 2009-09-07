@@ -8,6 +8,4 @@ public interface HydratedCacheManager {
 
 	public void addHydratedCacheElementItem(String cacheName, Serializable elementKey, String elementItemName, Object elementValue);
 	
-	public String getCacheRegion(Object entity);
-	
 }

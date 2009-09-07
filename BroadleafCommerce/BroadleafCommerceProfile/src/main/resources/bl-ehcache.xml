@@ -4,10 +4,8 @@
 	
     <defaultCache
         maxElementsInMemory="100000"
-        eternal="false"
-        overflowToDisk="true"
-        timeToLiveSeconds="50"
-    	timeToIdleSeconds="50">
+        eternal="true"
+        overflowToDisk="true">
     	<cacheEventListenerFactory class="org.broadleafcommerce.cache.HydratedCacheEventListenerFactory"/>
    	</defaultCache>
         
