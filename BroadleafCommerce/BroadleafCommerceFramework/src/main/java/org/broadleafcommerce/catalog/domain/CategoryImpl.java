@@ -452,11 +452,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
     public Map<String, List<Category>> getChildCategoryURLMap() {
-        try {
-			return createChildCategoryURLMap();
-		} catch (CacheFactoryException e) {
-			throw new RuntimeException(e);
-		}
+        return childCategoryURLMap;
     }
     
     public void setChildCategoryURLMap(Map<String, List<Category>> cachedChildCategoryUrlMap) {
