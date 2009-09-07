@@ -41,6 +41,7 @@ import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.cache.CacheFactoryException;
 import org.broadleafcommerce.cache.Hydrated;
 import org.broadleafcommerce.cache.HydratedCacheJPAListener;
 import org.broadleafcommerce.media.domain.Media;
@@ -162,8 +163,8 @@ public class CategoryImpl implements Category {
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
     
     @Transient
-    @Hydrated
-    private Map<String, List<Category>> cachedChildCategoryUrlMap;
+    @Hydrated(factoryMethod="createChildCategoryURLMap")
+    protected Map<String, List<Category>> childCategoryURLMap;
 
     /*
      * (non-Javadoc)
@@ -239,7 +240,7 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getUrlKey()
      */
     public String getUrlKey() {
-        if ((urlKey == null || "".equals(urlKey)) && getName() != null) {
+        if ((urlKey == null || "".equals(urlKey.trim())) && getName() != null) {
             return UrlUtil.generateUrlKey(getName());
         }
         return urlKey;
@@ -451,18 +452,23 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
     public Map<String, List<Category>> getChildCategoryURLMap() {
-        if (cachedChildCategoryUrlMap != null) {
-        	return cachedChildCategoryUrlMap;
-        }
-        cachedChildCategoryUrlMap = new HashMap<String, List<Category>>();
-        Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
-        fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
-        cachedChildCategoryUrlMap = newMap;
-        return cachedChildCategoryUrlMap;
+        try {
+			return createChildCategoryURLMap();
+		} catch (CacheFactoryException e) {
+			throw new RuntimeException(e);
+		}
     }
     
     public void setChildCategoryURLMap(Map<String, List<Category>> cachedChildCategoryUrlMap) {
-    	this.cachedChildCategoryUrlMap = cachedChildCategoryUrlMap;
+    	this.childCategoryURLMap = cachedChildCategoryUrlMap;
+    }
+    
+    public Map<String, List<Category>> createChildCategoryURLMap() throws CacheFactoryException {
+    	childCategoryURLMap = new HashMap<String, List<Category>>();
+        Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
+        fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
+        childCategoryURLMap = newMap;
+        return childCategoryURLMap;
     }
 
     /**
@@ -472,8 +478,15 @@ public class CategoryImpl implements Category {
      * @param startingPath the starting path
      * @param startingCategoryList the starting category list
      */
-    private void fillInURLMapForCategory(Map<String, List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) {
-        String currentPath = startingPath + "/" + category.getUrlKey();
+    private void fillInURLMapForCategory(Map<String, List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) throws CacheFactoryException {
+        String urlKey = category.getUrlKey();
+        if (urlKey == null) {
+        	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
+        }
+    	String currentPath = startingPath + "/" + category.getUrlKey();
+        if (category.getUrlKey() == null) {
+        	System.out.println(category.getId());
+        }
         List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
 

@@ -16,12 +16,9 @@
 package org.broadleafcommerce.cache;
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.Map;
-
-import javax.persistence.Id;
 
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
@@ -45,10 +42,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     private HydratedCacheManagerImpl()  {}
 
     private Hashtable<String, HydratedCache> hydratedCacheContainer = new Hashtable<String, HydratedCache>();
-    private Hashtable<String, Map<Field, Method[]>> hydratedMutators = new Hashtable<String, Map<Field, Method[]>>();
-    private Hashtable<String, Method[]> idMutators = new Hashtable<String, Method[]>();
-    private Hashtable<String, String> cacheRegions = new Hashtable<String, String>();
-    private HydrationFieldScanner scanner = new HydrationFieldScanner();
+    private Hashtable<String, HydrationDescriptor> hydrationDescriptors = new Hashtable<String, HydrationDescriptor>();
 
     public void addHydratedCache(HydratedCache cache) {
     	hydratedCacheContainer.put(cache.getCacheName(), cache);
@@ -59,6 +53,10 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     }
 
     public  HydratedCache getHydratedCache(String cacheName) {
+    	if (!containsCache(cacheName)) {
+    		HydratedCache cache = new HydratedCache(cacheName);
+    		addHydratedCache(cache);
+    	}
     	return hydratedCacheContainer.get(cacheName);
     }
     
@@ -66,62 +64,47 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     	return hydratedCacheContainer.containsKey(cacheName);
     }
     
-    public Map<Field, Method[]> getHydratedMutators(Object entity) {
-    	if (hydratedMutators.containsKey(entity.getClass().getName())) {
-    		return hydratedMutators.get(entity.getClass().getName());
+    public HydrationDescriptor getHydrationDescriptor(Object entity) {
+    	if (hydrationDescriptors.containsKey(entity.getClass().getName())) {
+    		return hydrationDescriptors.get(entity.getClass().getName());
     	}
-    	Map<Field, Method[]> mutators = scanner.retrieveMutators(entity.getClass(), Hydrated.class);
-    	hydratedMutators.put(entity.getClass().getName(), mutators);
-    	return mutators;
-    }
-    
-    public Method[] getIdMutators(Object entity) {
-    	if (idMutators.containsKey(entity.getClass().getName())) {
-    		return idMutators.get(entity.getClass().getName());
-    	}
-    	Map<Field, Method[]> mutators = scanner.retrieveMutators(entity.getClass(), Id.class);
+    	HydrationDescriptor descriptor = new HydrationDescriptor();
+    	HydrationScanner scanner = new HydrationScanner(entity);
+    	scanner.init();
+    	descriptor.setHydratedMutators(scanner.getCacheMutators());
+    	Map<String, Method[]> mutators = scanner.getIdMutators();
     	if (mutators.size() != 1) {
     		throw new RuntimeException("Broadleaf Commerce Hydrated Cache currently only supports entities with a single @Id annotation.");
     	}
     	Method[] singleMutators = mutators.values().iterator().next();
-    	idMutators.put(entity.getClass().getName(), singleMutators);
-    	return singleMutators;
-    }
-    
-    public String getCacheRegion(Object entity) {
-    	if (cacheRegions.containsKey(entity.getClass().getName())) {
-    		return cacheRegions.get(entity.getClass().getName());
-    	}
-    	String cacheRegion = scanner.retrieveCacheRegion(entity.getClass());
+    	descriptor.setIdMutators(singleMutators);
+    	String cacheRegion = scanner.getCacheRegion();
     	if (cacheRegion == null || "".equals(cacheRegion)) {
     		cacheRegion = entity.getClass().getName();
     	}
-    	cacheRegions.put(entity.getClass().getName(), cacheRegion);
-    	return cacheRegion;
+    	descriptor.setCacheRegion(cacheRegion);
+    	hydrationDescriptors.put(entity.getClass().getName(), descriptor);
+    	return descriptor;
     }
     
     public Object getHydratedCacheElementItem(String cacheName, Serializable elementKey, String elementItemName) {
     	Object response = null;
     	HydratedCache hydratedCache = getHydratedCache(cacheName);
-        if (hydratedCache != null) {
-        	HydratedCacheElement element = hydratedCache.getCacheElement(cacheName, elementKey);
-        	if (element != null) {
-        		response = element.getCacheElementItem(elementItemName, elementKey);
-        	}
-        }
+    	HydratedCacheElement element = hydratedCache.getCacheElement(cacheName, elementKey);
+    	if (element != null) {
+    		response = element.getCacheElementItem(elementItemName, elementKey);
+    	}
         return response;
     }
     
     public void addHydratedCacheElementItem(String cacheName, Serializable elementKey, String elementItemName, Object elementValue) {
     	HydratedCache hydratedCache = getHydratedCache(cacheName);
-        if (hydratedCache != null) {
-        	HydratedCacheElement element = hydratedCache.getCacheElement(cacheName, elementKey);
-        	if (element == null) {
-        		element = new HydratedCacheElement();
-        		hydratedCache.addCacheElement(cacheName, elementKey, element);
-        	}
-        	element.putCacheElementItem(elementItemName, elementKey, elementValue);
-        }
+    	HydratedCacheElement element = hydratedCache.getCacheElement(cacheName, elementKey);
+    	if (element == null) {
+    		element = new HydratedCacheElement();
+    		hydratedCache.addCacheElement(cacheName, elementKey, element);
+    	}
+    	element.putCacheElementItem(elementItemName, elementKey, elementValue);
     }
 
     public void dispose() {
