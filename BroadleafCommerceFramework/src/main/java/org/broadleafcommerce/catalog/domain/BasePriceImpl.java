@@ -35,6 +35,7 @@ import javax.persistence.TemporalType;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Index;
 
 /**
  * The Class BasePriceImpl.
@@ -42,6 +43,7 @@ import org.broadleafcommerce.util.money.Money;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BASE_PRICE")
+@org.hibernate.annotations.Table(appliesTo="BLC_BASE_PRICE", indexes={@Index(name="BASE_PRICE_INDEX", columnNames={"SKU_ID"})})
 public class BasePriceImpl implements BasePrice {
 
     /** The Constant serialVersionUID. */
