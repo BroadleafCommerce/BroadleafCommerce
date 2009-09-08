@@ -41,6 +41,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 
 @Entity
@@ -84,6 +85,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected String implementorResponseText;
 
     @Column(name = "REFERENCE_NUMBER")
+    @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
     protected String referenceNumber;
 
     @Column(name = "TRANSACTION_SUCCESS")
@@ -106,6 +108,7 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected BigDecimal remainingBalance;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
+    @Index(name="PAYRESPONSE_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
     protected String transactionType;
 
     @CollectionOfElements
@@ -115,13 +118,16 @@ public class PaymentResponseItemImpl implements PaymentResponseItem {
     protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     @Column(name = "ORDER_PAYMENT_ID")
+    @Index(name="PAYRESPONSE_ORDERPAYMENT_INDEX", columnNames={"ORDER_PAYMENT_ID"})
     protected Long paymentInfoId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
+    @Index(name="PAYRESPONSE_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
+    @Index(name="PAYRESPONSE_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
     protected String paymentInfoReferenceNumber;
 
     public String getAuthorizationCode() {

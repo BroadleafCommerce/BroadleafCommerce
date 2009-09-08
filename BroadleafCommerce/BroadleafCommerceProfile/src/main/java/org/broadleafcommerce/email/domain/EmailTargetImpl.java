@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 /**
  * Basic implementation of EmailTarget
+ * 
  * @author bpolster
  */
 public class EmailTargetImpl implements EmailTarget {

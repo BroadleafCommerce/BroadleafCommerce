@@ -37,6 +37,7 @@ import org.broadleafcommerce.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -52,6 +53,7 @@ public class PaymentLogImpl implements PaymentLog {
     protected Long id;
 
     @Column(name = "USER_NAME", nullable=false)
+    @Index(name="PAYMENTLOG_USER_INDEX", columnNames={"USER_NAME"})
     protected String userName;
 
     @Column(name = "TRANSACTION_TIMESTAMP", nullable=false)
@@ -59,16 +61,20 @@ public class PaymentLogImpl implements PaymentLog {
     protected Date transactionTimestamp;
 
     @Column(name = "ORDER_PAYMENT_ID")
+    @Index(name="PAYMENTLOG_ORDERPAYMENT_INDEX", columnNames={"ORDER_PAYMENT_ID"})
     protected Long paymentInfoId;
 
     @ManyToOne(targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
+    @Index(name="PAYMENTLOG_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @Column(name = "PAYMENT_INFO_REFERENCE_NUMBER")
+    @Index(name="PAYMENTLOG_REFERENCE_INDEX", columnNames={"PAYMENT_INFO_REFERENCE_NUMBER"})
     protected String paymentInfoReferenceNumber;
 
     @Column(name = "TRANSACTION_TYPE", nullable=false)
+    @Index(name="PAYMENTLOG_TRANTYPE_INDEX", columnNames={"TRANSACTION_TYPE"})
     protected String transactionType;
 
     @Column(name = "TRANSACTION_SUCCESS")
@@ -78,6 +84,7 @@ public class PaymentLogImpl implements PaymentLog {
     protected String exceptionMessage;
 
     @Column(name = "LOG_TYPE", nullable=false)
+    @Index(name="PAYMENTLOG_LOGTYPE_INDEX", columnNames={"LOG_TYPE"})
     protected String logType;
 
     @Column(name = "AMOUNT_PAID")

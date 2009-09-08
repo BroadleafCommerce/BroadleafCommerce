@@ -35,6 +35,7 @@ import org.broadleafcommerce.order.domain.OrderItemImpl;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -52,10 +53,12 @@ public class OrderItemAdjustmentImpl implements OrderItemAdjustment {
 
     @ManyToOne(targetEntity = OrderItemImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ITEM_ID")
+    @Index(name="OIADJUST_ITEM_INDEX", columnNames={"ORDER_ITEM_ID"})
     protected OrderItem orderItem;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
+    @Index(name="OIADJUST_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)

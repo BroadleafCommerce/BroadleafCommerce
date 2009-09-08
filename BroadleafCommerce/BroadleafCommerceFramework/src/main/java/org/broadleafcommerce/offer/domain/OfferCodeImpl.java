@@ -29,6 +29,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Index;
+
 @Entity
 @Table(name = "BLC_OFFER_CODE")
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -44,9 +46,11 @@ public class OfferCodeImpl implements OfferCode {
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
+    @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
+    @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
     protected String offerCode;
 
     @Column(name = "START_DATE")

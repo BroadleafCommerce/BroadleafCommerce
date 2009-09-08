@@ -30,6 +30,7 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 /**
  * The Class SkuAvailabilityImpl is the default implementation of {@link SkuAvailability}.
@@ -64,10 +65,12 @@ public class SkuAvailabilityImpl implements SkuAvailability {
 
     /** The sale price. */
     @Column(name = "SKU_ID")
+    @Index(name="SKUAVAIL_SKU_INDEX", columnNames={"SKU_ID"})
     protected Long skuId;
 
     /** The retail price. */
     @Column(name = "LOCATION_ID")
+    @Index(name="SKUAVAIL_LOCATION_INDEX", columnNames={"LOCATION_ID"})
     protected Long locationId;
 
     /** The quantity on hand. */
@@ -80,6 +83,7 @@ public class SkuAvailabilityImpl implements SkuAvailability {
 
     /** The description. */
     @Column(name = "AVAILABILITY_STATUS")
+    @Index(name="SKUAVAIL_STATUS_INDEX", columnNames={"AVAILABILITY_STATUS"})
     protected String availabilityStatus;
 
     /** The date this product will be available. */

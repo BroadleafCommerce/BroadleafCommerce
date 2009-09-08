@@ -34,6 +34,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_FG_ADJUSTMENT")
@@ -51,10 +52,12 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
 
     @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class, optional=false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
+    @Index(name="FGADJUSTMENT_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     protected FulfillmentGroup fulfillmentGroup;
 
     @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
+    @Index(name="FGADJUSTMENT_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)

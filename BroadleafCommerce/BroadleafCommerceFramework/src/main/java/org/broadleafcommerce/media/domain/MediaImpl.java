@@ -30,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -48,9 +49,11 @@ public class MediaImpl implements Media {
     protected Long id;
 
     @Column(name = "NAME", nullable = false)
+    @Index(name="MEDIA_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     @Column(name = "URL", nullable = false)
+    @Index(name="MEDIA_URL_INDEX", columnNames={"URL"})
     protected String url;
 
     @Column(name = "LABEL", nullable = false)

@@ -28,6 +28,7 @@ import javax.persistence.UniqueConstraint;
 import org.broadleafcommerce.common.domain.Auditable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -45,6 +46,7 @@ public class CustomerImpl implements Customer {
     protected Auditable auditable = new Auditable();
 
     @Column(name = "USER_NAME")
+    @Index(name="CUSTOMER_USERNAME_INDEX", columnNames={"USER_NAME"})
     protected String username;
 
     @Column(name = "PASSWORD")
@@ -57,9 +59,11 @@ public class CustomerImpl implements Customer {
     protected String lastName;
 
     @Column(name = "EMAIL_ADDRESS")
+    @Index(name="CUSTOMER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
     protected String emailAddress;
 
     @Column(name = "CHALLENGE_QUESTION_ID")
+    @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
     protected Long challengeQuestionId;
 
     @Column(name = "CHALLENGE_ANSWER")

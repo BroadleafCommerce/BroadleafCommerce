@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
+import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -48,10 +49,12 @@ public class UserRoleImpl implements UserRole {
 
     @ManyToOne(targetEntity = UserImpl.class, optional = false)
     @JoinColumn(name = "USER_ID")
+    @Index(name="USERROLE_USER_INDEX", columnNames={"USER_ID"})
     protected User user;
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional = false)
     @JoinColumn(name = "ROLE_ID")
+    @Index(name="USERROLE_ROLE_INDEX", columnNames={"ROLE_ID"})
     protected Role role;
 
     public Long getId() {

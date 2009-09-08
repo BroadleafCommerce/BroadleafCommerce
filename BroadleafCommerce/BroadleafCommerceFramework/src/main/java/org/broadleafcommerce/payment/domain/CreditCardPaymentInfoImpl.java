@@ -27,6 +27,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.encryption.EncryptionModule;
+import org.hibernate.annotations.Index;
 
 /**
  * 
@@ -55,6 +56,7 @@ public class CreditCardPaymentInfoImpl implements CreditCardPaymentInfo {
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER", nullable=false)
+    @Index(name="CREDITCARD_INDEX", columnNames={"REFERENCE_NUMBER"})
     protected String referenceNumber;
 
     @Column(name = "PAN", nullable=false)

@@ -53,6 +53,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
 
@@ -91,6 +92,7 @@ public class CategoryImpl implements Category {
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     /** The url. */
@@ -99,11 +101,13 @@ public class CategoryImpl implements Category {
 
     /** The url key. */
     @Column(name = "URL_KEY")
+    @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
     protected String urlKey;
 
     /** The default parent category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
+    @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
     protected Category defaultParentCategory;
 
     /** The description. */

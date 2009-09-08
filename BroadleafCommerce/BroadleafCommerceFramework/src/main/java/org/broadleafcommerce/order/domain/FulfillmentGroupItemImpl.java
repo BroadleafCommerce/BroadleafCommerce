@@ -34,6 +34,7 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @DiscriminatorColumn(name = "TYPE")
@@ -52,10 +53,12 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 
     @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional=false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
+    @Index(name="FGITEM_FG_INDEX", columnNames={"FULFILLMENT_GROUP_ID"})
     protected FulfillmentGroup fulfillmentGroup;
 
     @OneToOne(targetEntity = OrderItemImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ITEM_ID")
+    @Index(name="FGITEM_ORDER_INDEX", columnNames={"ORDER_ITEM_ID"})
     protected OrderItem orderItem;
 
     @Column(name = "QUANTITY", nullable=false)
@@ -71,6 +74,7 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
     protected BigDecimal price;
 
     @Column(name = "STATUS")
+    @Index(name="FGITEM_STATUS_INDEX", columnNames={"STATUS"})
     private String status;
 
     public Long getId() {

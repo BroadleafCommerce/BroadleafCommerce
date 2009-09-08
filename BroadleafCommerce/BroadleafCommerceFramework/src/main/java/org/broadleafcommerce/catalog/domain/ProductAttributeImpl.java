@@ -27,6 +27,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Index;
+
 /**
  * The Class ProductAttributeImpl.
  */
@@ -48,10 +50,12 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The product. */
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
+    @Index(name="PRODUCTATTRIBUTE_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product;
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
+    @Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     /** The value. */

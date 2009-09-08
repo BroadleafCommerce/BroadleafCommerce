@@ -49,6 +49,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 
 /**
@@ -97,6 +98,7 @@ public class SkuImpl implements Sku {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @SearchableProperty
+    @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     /** The description. */
@@ -109,18 +111,22 @@ public class SkuImpl implements Sku {
 
     /** The taxable. */
     @Column(name = "TAXABLE_FLAG")
+    @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
     protected Character taxable;
 
     /** The discountable. */
     @Column(name = "DISCOUNTABLE_FLAG")
+    @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
     protected Character discountable;
 
     /** The available. */
     @Column(name = "AVAILABLE_FLAG")
+    @Index(name="SKU_AVAILABLE_INDEX", columnNames={"AVAILABLE_FLAG"})
     protected Character available;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
+    @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
     protected Date activeStartDate;
 
     /** The active end date. */

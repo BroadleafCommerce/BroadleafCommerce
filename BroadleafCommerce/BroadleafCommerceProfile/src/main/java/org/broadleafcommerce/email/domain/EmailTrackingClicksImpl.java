@@ -29,6 +29,7 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.hibernate.annotations.Index;
 
 /**
  * @author jfischer
@@ -49,6 +50,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
 
     @ManyToOne(optional=false, targetEntity = EmailTrackingImpl.class)
     @JoinColumn(name = "EMAIL_TRACKING_ID")
+    @Index(name="TRACKINGCLICKS_TRACKING_INDEX", columnNames={"EMAIL_TRACKING_ID"})
     protected EmailTracking emailTracking;
 
     @Column(nullable=false, name = "DATE_CLICKED")
@@ -56,6 +58,7 @@ public class EmailTrackingClicksImpl implements EmailTrackingClicks {
 
     @ManyToOne(optional=false, targetEntity = CustomerImpl.class)
     @JoinColumn(name = "CUSTOMER_ID")
+    @Index(name="TRACKINGCLICKS_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @Column(name = "DESTINATION_URI")

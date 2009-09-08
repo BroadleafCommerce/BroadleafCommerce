@@ -34,6 +34,7 @@ import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_OFFER")
@@ -50,15 +51,18 @@ public class OfferImpl implements Offer {
     protected Long id;
 
     @Column(name = "OFFER_NAME", nullable=false)
+    @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
     protected String description;
 
     @Column(name = "OFFER_TYPE", nullable=false)
+    @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
+    @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
     protected String discountType;
 
     @Column(name = "OFFER_VALUE", nullable=false)
@@ -95,6 +99,7 @@ public class OfferImpl implements Offer {
     protected boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
 
     @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
+    @Index(name="OFFER_DELIVERY_INDEX", columnNames={"OFFER_DELIVERY_TYPE"})
     protected String deliveryType;
 
     @Column(name = "MAX_USES")

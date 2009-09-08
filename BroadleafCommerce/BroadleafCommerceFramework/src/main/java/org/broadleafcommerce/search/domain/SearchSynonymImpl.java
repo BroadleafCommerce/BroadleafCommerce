@@ -11,18 +11,23 @@ import javax.persistence.TableGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_SEARCH_SYNONYM")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SearchSynonymImpl implements SearchSynonym {
+	
     @Id
     @GeneratedValue(generator = "SearchSynonymId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SearchSynonymId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchSynonymImpl", allocationSize = 50)
     @Column(name = "SEARCH_SYNONYM_ID")
     private Long id;
+    
     @Column(name = "TERM")
+    @Index(name="SEARCHSYNONYM_TERM_INDEX", columnNames={"TERM"})
     private String term;
+    
     @Column(name = "SYNONYMS")
     private String synonyms;
     
