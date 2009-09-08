@@ -88,8 +88,8 @@ public class ReviewDetailImpl implements ReviewDetail {
         this.reviewText = reviewText;
         this.ratingSummary = ratingSummary;
         this.reviewFeedback = new ArrayList<ReviewFeedback>();
-        this.helpfulCount = new Integer(0);
-        this.notHelpfulCount = new Integer(0);
+        this.helpfulCount = Integer.valueOf(0);
+        this.notHelpfulCount = Integer.valueOf(0);
         this.reviewStatus = ReviewStatusType.PENDING.getType();
         this.ratingDetail = ratingDetail;
     }
