@@ -27,6 +27,7 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -41,6 +42,7 @@ public class StateImpl implements State {
     protected String abbreviation;
 
     @Column(name = "NAME", nullable = false)
+    @Index(name="STATE_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)

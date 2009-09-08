@@ -32,6 +32,7 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -65,10 +66,12 @@ public class AddressImpl implements Address {
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class, optional = false)
     @JoinColumn(name = "STATE_PROV_REGION")
+    @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
     protected State state;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
     @JoinColumn(name = "COUNTRY")
+    @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
     protected Country country;
 
     @Column(name = "TOKENIZED_ADDRESS")

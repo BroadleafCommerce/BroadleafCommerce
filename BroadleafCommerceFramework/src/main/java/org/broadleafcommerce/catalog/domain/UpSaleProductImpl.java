@@ -25,6 +25,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_UP_SALE")
@@ -37,10 +39,12 @@ public class UpSaleProductImpl implements RelatedProduct {
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
+    @Index(name="UPSALE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     private Product product;
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
+    @Index(name="UPSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
     private Product relatedSaleProduct;
 
     @Column(name = "PROMOTION_MESSAGE")

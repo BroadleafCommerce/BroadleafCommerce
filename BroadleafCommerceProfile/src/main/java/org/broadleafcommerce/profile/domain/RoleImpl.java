@@ -27,6 +27,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
+import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -43,6 +44,7 @@ public class RoleImpl implements Role {
     protected Long id;
 
     @Column(name = "ROLE_NAME", nullable = false)
+    @Index(name="ROLE_NAME_INDEX", columnNames={"ROLE_NAME"})
     protected String roleName;
 
     public Long getId() {

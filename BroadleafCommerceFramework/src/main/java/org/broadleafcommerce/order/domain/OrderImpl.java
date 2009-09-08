@@ -62,6 +62,7 @@ import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKeyManyToMany;
 
 @Entity
@@ -82,13 +83,16 @@ public class OrderImpl implements Order {
     protected Auditable auditable = new Auditable();
 
     @Column(name = "NAME")
+    @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID", nullable = false)
+    @Index(name="ORDER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @Column(name = "ORDER_STATUS")
+    @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
     protected String status;
 
     @Column(name = "CITY_TAX")
@@ -119,9 +123,11 @@ public class OrderImpl implements Order {
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
+    @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
+    @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
     protected String emailAddress;
 
     @Transient

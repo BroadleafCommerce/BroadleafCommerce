@@ -25,18 +25,23 @@ import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_SEARCH_INTERCEPT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SearchInterceptImpl implements SearchIntercept {
+	
     @Id
     @GeneratedValue(generator = "SearchInterceptId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "SearchInterceptId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SearchInterceptImpl", allocationSize = 50)
     @Column(name = "SEARCH_INTERCEPT_ID")
     protected Long id;
+    
     @Column(name = "TERM")
+    @Index(name="SEARCHINTERCEPT_TERM_INDEX", columnNames={"TERM"})
     private String term;
+    
     @Column(name = "REDIRECT")
     private String redirect;
 

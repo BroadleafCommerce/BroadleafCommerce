@@ -35,6 +35,7 @@ import javax.persistence.TableGenerator;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -48,6 +49,7 @@ public class AdminUserImpl implements AdminUser {
     private Long id;
 
     @Column(name = "NAME", nullable=false)
+    @Index(name="ADMINUSER_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     @Column(name = "LOGIN", nullable=false)
@@ -57,6 +59,7 @@ public class AdminUserImpl implements AdminUser {
     protected String password;
 
     @Column(name = "EMAIL", nullable=false)
+    @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
     protected String email;
 
     /** All roles that this user has */

@@ -31,6 +31,7 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -51,6 +52,7 @@ public class RatingDetailImpl implements RatingDetail {
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional = false)
     @JoinColumn(name = "CUSTOMER_ID")
+    @Index(name="RATING_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @ManyToOne(optional = false, targetEntity = RatingSummaryImpl.class)

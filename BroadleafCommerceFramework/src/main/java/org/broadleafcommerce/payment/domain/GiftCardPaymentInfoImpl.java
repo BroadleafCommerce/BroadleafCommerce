@@ -27,6 +27,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.encryption.EncryptionModule;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -52,6 +53,7 @@ public class GiftCardPaymentInfoImpl implements GiftCardPaymentInfo {
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER", nullable = false)
+    @Index(name="GIFTCARD_INDEX", columnNames={"REFERENCE_NUMBER"})
     protected String referenceNumber;
 
     @Column(name = "PAN", nullable = false)

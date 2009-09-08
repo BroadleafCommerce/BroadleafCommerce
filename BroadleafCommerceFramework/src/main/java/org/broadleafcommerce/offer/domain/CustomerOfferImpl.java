@@ -28,6 +28,7 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_CUSTOMER_OFFER_XREF")
@@ -44,10 +45,12 @@ public class CustomerOfferImpl implements CustomerOffer {
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
+    @Index(name="CUSTOFFER_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
+    @Index(name="CUSTOFFER_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     public Long getId() {

@@ -35,6 +35,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -51,6 +52,7 @@ public class UserImpl implements User {
     protected Long id;
 
     @Column(name = "USER_NAME", nullable=false)
+    @Index(name="USER_NAME_INDEX", columnNames={"USER_NAME"})
     protected String username;
 
     @Column(name = "PASSWORD", nullable=false)
@@ -63,6 +65,7 @@ public class UserImpl implements User {
     protected String lastName;
 
     @Column(name = "EMAIL_ADDRESS")
+    @Index(name="USER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
     protected String emailAddress;
 
     @Column(name = "CHALLENGE_QUESTION")

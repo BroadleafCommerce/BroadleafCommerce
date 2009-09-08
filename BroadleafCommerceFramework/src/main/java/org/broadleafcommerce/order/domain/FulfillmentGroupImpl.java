@@ -49,6 +49,7 @@ import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -66,9 +67,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @ManyToOne(targetEntity = OrderImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ID")
+    @Index(name="FG_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Order order;
 
     @Column(name = "REFERENCE_NUMBER")
+    @Index(name="FG_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
     protected String referenceNumber;
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
@@ -77,13 +80,16 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "ADDRESS_ID")
+    @Index(name="FG_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "PHONE_ID")
+    @Index(name="FG_PHONE_INDEX", columnNames={"PHONE_ID"})
     protected Phone phone;
 
     @Column(name = "METHOD")
+    @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
     protected String method;
 
     //TODO change column name to RETAIL_SHIPPING_PRICE
@@ -133,10 +139,12 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected String deliveryInstruction;
 
     @Column(name = "IS_PRIMARY")
+    @Index(name="FG_PRIMARY_INDEX", columnNames={"IS_PRIMARY"})
     protected boolean primary = false;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class)
     @JoinColumn(name = "PERSONAL_MESSAGE_ID")
+    @Index(name="FG_MESSAGE_INDEX", columnNames={"PERSONAL_MESSAGE_ID"})
     protected PersonalMessage personalMessage;
 
     @Column(name = "MERCHANDISE_TOTAL")
@@ -146,6 +154,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected BigDecimal total;
 
     @Column(name = "STATUS")
+    @Index(name="FG_STATUS_INDEX", columnNames={"STATUS"})
     protected String status;
 
     public Long getId() {

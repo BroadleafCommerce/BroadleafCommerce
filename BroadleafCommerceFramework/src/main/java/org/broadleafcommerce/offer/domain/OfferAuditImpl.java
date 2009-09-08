@@ -32,6 +32,7 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "OFFER_AUDIT")
@@ -48,18 +49,23 @@ public class OfferAuditImpl implements OfferAudit {
 
     @ManyToOne(targetEntity = OfferImpl.class)
     @JoinColumn(name = "OFFER_ID")
+    @Index(name="OFFERAUDIT_OFFER_INDEX", columnNames={"OFFER_ID"})
     protected Offer offer;
 
     @Column(name = "OFFER_CODE_ID")
+    @Index(name="OFFERAUDIT_OFFERCODE_INDEX", columnNames={"OFFER_CODE_ID"})
     protected Long offerCodeId;
 
     @Column(name = "CUSTOMER_ID")
+    @Index(name="OFFERAUDIT_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Long customerId;
 
     @Column(name = "OFFER_TYPE")
+    @Index(name="OFFERAUDIT_TYPE_INDEX", columnNames={"OFFER_TYPE"})
     protected String offerType;
 
     @Column(name = "RELATED_ID")
+    @Index(name="OFFERAUDIT_RELATED_INDEX", columnNames={"RELATED_ID"})
     protected Long relatedId;
 
     @Column(name = "RELATED_RETAIL_PRICE")

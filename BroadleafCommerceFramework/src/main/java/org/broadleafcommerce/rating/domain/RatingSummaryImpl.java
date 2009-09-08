@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.rating.service.type.RatingType;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -44,9 +45,11 @@ public class RatingSummaryImpl implements RatingSummary {
     private Long id;
 
     @Column(name = "ITEM_ID", nullable = false)
+    @Index(name="RATINGSUMM_ITEM_INDEX", columnNames={"ITEM_ID"})
     private String itemId;
 
     @Column(name = "RATING_TYPE", nullable = false)
+    @Index(name="RATINGSUMM_TYPE_INDEX", columnNames={"RATING_TYPE"})
     private String ratingTypeStr;
 
     @Column(name = "AVERAGE_RATING", nullable = false)

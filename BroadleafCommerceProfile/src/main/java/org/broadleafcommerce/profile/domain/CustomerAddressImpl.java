@@ -31,6 +31,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
 
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
+import org.hibernate.annotations.Index;
 
 @Entity
 @EntityListeners(value = { TemporalTimestampListener.class })
@@ -47,14 +48,17 @@ public class CustomerAddressImpl implements CustomerAddress {
     protected Long id;
 
     @Column(name = "ADDRESS_NAME")
+    @Index(name="CUSTOMERADDRESS_NAME_INDEX", columnNames={"ADDRESS_NAME"})
     protected String addressName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
+    @Index(name="CUSTOMERADDRESS_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class, optional=false)
     @JoinColumn(name = "ADDRESS_ID")
+    @Index(name="CUSTOMERADDRESS_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
 
     public Long getId() {

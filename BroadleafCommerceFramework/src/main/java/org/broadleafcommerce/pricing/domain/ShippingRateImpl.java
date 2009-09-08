@@ -29,6 +29,7 @@ import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -45,9 +46,11 @@ public class ShippingRateImpl implements ShippingRate {
     protected Long id;
 
     @Column(name = "FEE_TYPE", nullable=false)
+    @Index(name="SHIPPINGRATE_FEE_INDEX", columnNames={"FEE_TYPE"})
     protected String feeType;
 
     @Column(name = "FEE_SUB_TYPE")
+    @Index(name="SHIPPINGRATE_FEESUB_INDEX", columnNames={"FEE_SUB_TYPE"})
     protected String feeSubType;
 
     @Column(name = "FEE_BAND", nullable=false)

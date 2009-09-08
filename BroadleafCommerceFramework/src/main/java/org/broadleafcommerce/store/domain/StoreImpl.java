@@ -7,6 +7,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Index;
+
 @Entity
 @Table(name = "BLC_STORE")
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -19,6 +21,7 @@ public class StoreImpl implements Store {
     private String id;
 
     @Column(name = "STORE_NAME")
+    @Index(name="STORE_NAME_INDEX", columnNames={"STORE_NAME"})
     private String name;
 
     @Column(name = "ADDRESS_1")
@@ -28,24 +31,30 @@ public class StoreImpl implements Store {
     private String address2;
 
     @Column(name = "STORE_CITY")
+    @Index(name="STORE_CITY_INDEX", columnNames={"STORE_CITY"})
     private String city;
 
     @Column(name = "STORE_STATE")
+    @Index(name="STORE_STATE_INDEX", columnNames={"STORE_STATE"})
     private String state;
 
     @Column(name = "STORE_ZIP")
+    @Index(name="STORE_ZIP_INDEX", columnNames={"STORE_ZIP"})
     private String zip;
 
     @Column(name = "STORE_COUNTRY")
+    @Index(name="STORE_COUNTRY_INDEX", columnNames={"STORE_COUNTRY"})
     private String country;
 
     @Column(name = "STORE_PHONE")
     private String phone;
 
     @Column(name = "LATITUDE")
+    @Index(name="STORE_LATITUDE_INDEX", columnNames={"LATITUDE"})
     private Float latitude;
 
     @Column(name = "LONGITUDE")
+    @Index(name="STORE_LONGITUDE_INDEX", columnNames={"LONGITUDE"})
     private Float longitude;
 
     /* (non-Javadoc)

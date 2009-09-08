@@ -27,6 +27,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.encryption.EncryptionModule;
+import org.hibernate.annotations.Index;
 
 /**
  * 
@@ -55,6 +56,7 @@ public class BankAccountPaymentInfoImpl implements BankAccountPaymentInfo {
     protected Long id;
 
     @Column(name = "REFERENCE_NUMBER", nullable=false)
+    @Index(name="BANKACCOUNT_INDEX", columnNames={"REFERENCE_NUMBER"})
     protected String referenceNumber;
 
     @Column(name = "ACCOUNT_NUMBER", nullable=false)

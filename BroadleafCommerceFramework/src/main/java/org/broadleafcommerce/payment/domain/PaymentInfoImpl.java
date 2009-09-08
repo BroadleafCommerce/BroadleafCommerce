@@ -38,6 +38,7 @@ import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.domain.PhoneImpl;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -54,23 +55,28 @@ public class PaymentInfoImpl implements PaymentInfo {
 
     @ManyToOne(targetEntity = OrderImpl.class, optional = false)
     @JoinColumn(name = "ORDER_ID")
+    @Index(name="ORDERPAYMENT_ORDER_INDEX", columnNames={"ORDER_ID"})
     protected Order order;
 
     @ManyToOne(targetEntity = AddressImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "ADDRESS_ID")
+    @Index(name="ORDERPAYMENT_ADDRESS_INDEX", columnNames={"ADDRESS_ID"})
     protected Address address;
 
     @ManyToOne(targetEntity = PhoneImpl.class, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "PHONE_ID")
+    @Index(name="ORDERPAYMENT_PHONE_INDEX", columnNames={"PHONE_ID"})
     protected Phone phone;
 
     @Column(name = "AMOUNT")
     protected BigDecimal amount;
 
     @Column(name = "REFERENCE_NUMBER")
+    @Index(name="ORDERPAYMENT_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
     protected String referenceNumber;
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
+    @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
     protected String type;
 
     public Money getAmount() {

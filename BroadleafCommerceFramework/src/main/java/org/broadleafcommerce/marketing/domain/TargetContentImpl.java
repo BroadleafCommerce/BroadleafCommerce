@@ -29,6 +29,7 @@ import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -48,12 +49,15 @@ public class TargetContentImpl implements TargetContent {
     protected int priority;
 
     @Column(name="CONTENT_TYPE", nullable=false)
+    @Index(name="TARGETCONTENT_TYPE_INDEX", columnNames={"CONTENT_TYPE"})
     protected String contentType;
 
     @Column(name="CONTENT_NAME", nullable=false)
+    @Index(name="TARGETCONTENT_NAME_INDEX", columnNames={"CONTENT_NAME"})
     protected String contentName;
 
     @Column(name="URL")
+    @Index(name="TARGETCONTENT_URL_INDEX", columnNames={"URL"})
     protected String url;
 
     @Column(name="CONTENT")

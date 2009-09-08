@@ -27,6 +27,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Index;
+
 /**
  * @author jfischer
  *
@@ -52,6 +54,7 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
 
     @ManyToOne(targetEntity = EmailTrackingImpl.class)
     @JoinColumn(name = "EMAIL_TRACKING_ID")
+    @Index(name="TRACKINGOPEN_TRACKING", columnNames={"EMAIL_TRACKING_ID"})
     protected EmailTracking emailTracking;
 
     /* (non-Javadoc)

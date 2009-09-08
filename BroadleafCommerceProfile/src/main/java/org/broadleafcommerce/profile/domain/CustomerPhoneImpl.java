@@ -29,6 +29,8 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Index;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER_PHONE", uniqueConstraints = @UniqueConstraint(columnNames = { "CUSTOMER_ID", "PHONE_NAME" }))
@@ -43,14 +45,17 @@ public class CustomerPhoneImpl implements CustomerPhone{
     protected Long id;
 
     @Column(name = "PHONE_NAME")
+    @Index(name="CUSTPHONE_NAME_INDEX", columnNames={"PHONE_NAME"})
     protected String phoneName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
+    @Index(name="CUSTPHONE_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)
     @JoinColumn(name = "PHONE_ID")
+    @Index(name="CUSTPHONE_PHONE_INDEX", columnNames={"PHONE_ID"})
     protected Phone phone;
 
     public Long getId() {

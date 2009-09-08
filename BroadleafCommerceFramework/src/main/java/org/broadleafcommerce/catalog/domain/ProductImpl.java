@@ -58,6 +58,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
+import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 
 /**
@@ -99,6 +100,7 @@ public class ProductImpl implements Product {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @SearchableProperty(name="productName")
+    @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
     protected String name;
 
     /** The description. */
@@ -164,7 +166,6 @@ public class ProductImpl implements Product {
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_PRODUCT_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
     @MapKey(columns = {@Column(name = "MAP_KEY")})
-    //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, Media> productMedia = new HashMap<String , Media>();
@@ -172,11 +173,11 @@ public class ProductImpl implements Product {
     /** The default category. */
     @OneToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
+    @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
     protected Category defaultCategory;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable=true))
-    //@org.hibernate.annotations.OrderBy(clause = "DISPLAY_ORDER")
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)

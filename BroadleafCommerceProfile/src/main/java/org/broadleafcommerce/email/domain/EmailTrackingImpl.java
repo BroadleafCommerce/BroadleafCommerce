@@ -28,6 +28,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.hibernate.annotations.Index;
+
 /**
  * @author jfischer
  *
@@ -46,6 +48,7 @@ public class EmailTrackingImpl implements EmailTracking {
     protected Long id;
 
     @Column(name = "EMAIL_ADDRESS")
+    @Index(name="EMAILTRACKING_INDEX", columnNames={"EMAIL_ADDRESS"})
     protected String emailAddress;
 
     @Column(name = "DATE_SENT")

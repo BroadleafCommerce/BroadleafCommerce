@@ -43,7 +43,6 @@ import org.hibernate.annotations.Index;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BASE_PRICE")
-@org.hibernate.annotations.Table(appliesTo="BLC_BASE_PRICE", indexes={@Index(name="BASE_PRICE_INDEX", columnNames={"SKU_ID"})})
 public class BasePriceImpl implements BasePrice {
 
     /** The Constant serialVersionUID. */
@@ -63,6 +62,7 @@ public class BasePriceImpl implements BasePrice {
     /** The sku. */
     @ManyToOne(targetEntity = SkuImpl.class)
     @JoinColumn(name = "SKU_ID", nullable = false)
+    @Index(name="BASEPRICE_INDEX", columnNames={"SKU_ID"})
     protected Sku sku;
 
     /** The amount. */

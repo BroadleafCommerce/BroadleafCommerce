@@ -29,6 +29,7 @@ import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Index;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -40,14 +41,17 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
+    @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
     protected Sku sku;
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
+    @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
     protected Product product;
 
     @ManyToOne(targetEntity = BundleOrderItemImpl.class)
     @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
+    @Index(name="DISCRETE_BUNDLE_INDEX", columnNames={"BUNDLE_ORDER_ITEM_ID"})
     protected BundleOrderItem bundleOrderItem;
 
     public Sku getSku() {
