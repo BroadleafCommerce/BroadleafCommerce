@@ -37,13 +37,14 @@ import org.springframework.stereotype.Service;
 
 @Service("blCartService")
 /*
- * TODO setup other BLC items to be JMX managed resources like this one. This would include other services, and singleton beans
- * that are configured via Spring and property files (i.e. payment modules, etc...)
+ * TODO setup other BLC items to be JMX managed resources like this one. This
+ * would include other services, and singleton beans that are configured via
+ * Spring and property files (i.e. payment modules, etc...)
  */
-@ManagedResource(objectName="org.broadleafcommerce:name=CartService", description="Cart Service", currencyTimeLimit=15)
+@ManagedResource(objectName = "org.broadleafcommerce:name=CartService", description = "Cart Service", currencyTimeLimit = 15)
 public class CartServiceImpl extends OrderServiceImpl implements CartService {
 
-    @Resource(name="blCustomerService")
+    @Resource(name = "blCustomerService")
     protected CustomerService customerService;
 
     protected boolean moveNamedOrderItems = true;
@@ -115,7 +116,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
          * Set the response to merged if the saved cart has any items available
          * to merge in.
          */
-        mergeCartResponse.setMerged(customerCart.getOrderItems().size() > 0);
+        mergeCartResponse.setMerged(customerCart != null && customerCart.getOrderItems().size() > 0);
 
         // add anonymous cart items (make sure they are valid)
         if ((customerCart == null || !customerCart.getId().equals(anonymousCartId)) && anonymousCartId != null) {
@@ -139,12 +140,13 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
                         boolean removeBundle = false;
                         List<DiscreteOrderItemRequest> discreteOrderItemRequests = new ArrayList<DiscreteOrderItemRequest>();
-                        for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()){
+                        for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                             DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
                             discreteOrderItemRequests.add(itemRequest);
                             if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
                                 /*
-                                 * Bundle has an inactive item in it -- remove the whole bundle
+                                 * Bundle has an inactive item in it -- remove
+                                 * the whole bundle
                                  */
                                 removeBundle = true;
                             }
@@ -185,10 +187,11 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                 } else if (orderItem instanceof BundleOrderItem) {
                     BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
                     boolean removeBundle = false;
-                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()){
+                    for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
                         if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
                             /*
-                             * Bundle has an inactive item in it -- remove the whole bundle
+                             * Bundle has an inactive item in it -- remove the
+                             * whole bundle
                              */
                             removeBundle = true;
                             break;
@@ -205,22 +208,22 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         return reconstructCartResponse;
     }
 
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
+    @ManagedAttribute(description = "The move item from named order when adding to the cart attribute", currencyTimeLimit = 15)
     public boolean isMoveNamedOrderItems() {
         return moveNamedOrderItems;
     }
 
-    @ManagedAttribute(description="The move item from named order when adding to the cart attribute", currencyTimeLimit=15)
+    @ManagedAttribute(description = "The move item from named order when adding to the cart attribute", currencyTimeLimit = 15)
     public void setMoveNamedOrderItems(boolean moveNamedOrderItems) {
         this.moveNamedOrderItems = moveNamedOrderItems;
     }
 
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
+    @ManagedAttribute(description = "The delete empty named order after adding items to cart attribute", currencyTimeLimit = 15)
     public boolean isDeleteEmptyNamedOrders() {
         return deleteEmptyNamedOrders;
     }
 
-    @ManagedAttribute(description="The delete empty named order after adding items to cart attribute", currencyTimeLimit=15)
+    @ManagedAttribute(description = "The delete empty named order after adding items to cart attribute", currencyTimeLimit = 15)
     public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders) {
         this.deleteEmptyNamedOrders = deleteEmptyNamedOrders;
     }
