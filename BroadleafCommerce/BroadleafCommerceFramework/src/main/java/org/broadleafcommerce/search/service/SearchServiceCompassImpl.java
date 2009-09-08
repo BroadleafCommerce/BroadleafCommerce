@@ -42,6 +42,8 @@ import org.springframework.stereotype.Service;
 @Service("blSearchService")
 public class SearchServiceCompassImpl implements SearchService {
 
+	private static final Logger logger = Logger.getLogger(SearchServiceCompassImpl.class);
+	
     @CompassContext
     protected Compass compass;
 
@@ -53,8 +55,6 @@ public class SearchServiceCompassImpl implements SearchService {
 
     @Resource(name = "blSearchSynonymDao")
     protected SearchSynonymDao searchSynonymDao;
-
-    private Logger logger = Logger.getLogger(this.getClass());
 
     public List<Product> performSearch(String input) {
         CompassSearchSession session = compass.openSearchSession();

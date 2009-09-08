@@ -480,9 +480,6 @@ public class CategoryImpl implements Category {
         	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
         }
     	String currentPath = startingPath + "/" + category.getUrlKey();
-        if (category.getUrlKey() == null) {
-        	System.out.println(category.getId());
-        }
         List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
 
