@@ -76,7 +76,7 @@ public class ReviewDetailImpl implements ReviewDetail {
     protected List<ReviewFeedback> reviewFeedback;
 
     @OneToOne(targetEntity = RatingDetailImpl.class)
-    @JoinColumn(name = "RATING_ID")
+    @JoinColumn(name = "RATING_DETAIL_ID")
     protected RatingDetail ratingDetail;
 
     public ReviewDetailImpl() {}
