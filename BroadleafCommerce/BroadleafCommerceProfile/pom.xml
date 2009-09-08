@@ -131,7 +131,7 @@
     	<artifactId>geronimo-jms_1.1_spec</artifactId>
     </dependency>
     <dependency>
-    	<groupId>ehcache</groupId>
+    	<groupId>net.sf.ehcache</groupId>
     	<artifactId>ehcache</artifactId>
     </dependency>
     <dependency>
