@@ -8,4 +8,9 @@
 		WHERE customerRole.customer.id = :customerId</query>
 	</named-query>
 
+	<named-query name="BC_READ_ROLE_BY_NAME" >
+		<query>SELECT role FROM org.broadleafcommerce.profile.domain.Role role
+		WHERE role.roleName = :name</query>
+	</named-query>
+
 </entity-mappings>

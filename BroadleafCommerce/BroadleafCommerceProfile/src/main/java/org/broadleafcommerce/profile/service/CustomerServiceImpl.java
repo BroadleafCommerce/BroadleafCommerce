@@ -22,7 +22,11 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.profile.dao.CustomerDao;
+import org.broadleafcommerce.profile.dao.RoleDao;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.profile.domain.CustomerRole;
+import org.broadleafcommerce.profile.domain.CustomerRoleImpl;
+import org.broadleafcommerce.profile.domain.Role;
 import org.broadleafcommerce.profile.service.listener.PostRegistrationObserver;
 import org.broadleafcommerce.profile.util.PasswordChange;
 import org.springframework.security.providers.encoding.PasswordEncoder;
@@ -39,6 +43,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Resource(name="blPasswordEncoder")
     protected PasswordEncoder passwordEncoder;
+    
+    @Resource(name="blRoleDao")
+    protected RoleDao roleDao;
 
     private final List<PostRegistrationObserver> postRegisterListeners = new ArrayList<PostRegistrationObserver>();
 
@@ -73,6 +80,11 @@ public class CustomerServiceImpl implements CustomerService {
         }
         customer.setUnencodedPassword(password);
         Customer retCustomer = saveCustomer(customer);
+        Role role = roleDao.readRoleByName("ROLE_USER");
+        CustomerRole customerRole = new CustomerRoleImpl();
+        customerRole.setRole(role);
+        customerRole.setCustomer(retCustomer);
+        roleDao.addRoleToCustomer(customerRole);
         notifyPostRegisterListeners(retCustomer);
         return retCustomer;
     }

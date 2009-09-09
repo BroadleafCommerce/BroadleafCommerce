@@ -46,7 +46,7 @@ public class RegisterCustomerController {
     // URLs For success and failure
     private String displayRegistrationFormView = "/account/registration/registerCustomer";
     private String registrationErrorView = displayRegistrationFormView;
-    private String registrationSuccessView = "redirect:/account/registration/registrationSuccess";
+    private String registrationSuccessView = "redirect:/registerCustomer/registerCustomerSuccess.htm";
 
     @Resource(name="blCustomerService")
     private CustomerService customerService;
@@ -58,7 +58,7 @@ public class RegisterCustomerController {
     private ChallengeQuestionService challengeQuestionService;
 
     @RequestMapping(method = { RequestMethod.GET })
-    public String viewForm() {
+    public String registerCustomer() {
         return getDisplayRegistrationFormView();
     }
 
@@ -72,6 +72,11 @@ public class RegisterCustomerController {
         } else {
             return new ModelAndView(getRegistrationErrorView());
         }
+    }
+    
+    @RequestMapping (method = { RequestMethod.GET })
+    public String registerCustomerSuccess() {
+        return "/account/registration/registerCustomerSuccess";
     }
 
     @ModelAttribute("registerCustomerForm")

@@ -90,4 +90,5 @@ public class RoleImpl implements Role {
             return false;
         return true;
     }
+
 }
