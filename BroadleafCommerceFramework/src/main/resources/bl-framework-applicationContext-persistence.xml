@@ -16,16 +16,6 @@
            http://www.springframework.org/schema/util
            http://www.springframework.org/schema/util/spring-util-2.0.xsd">
 
-    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
-		<property name="persistenceXmlLocations">
-			<list>
-				<value>classpath*:/META-INF/persistence-framework-catalog.xml</value>
-				<value>classpath*:/META-INF/persistence-framework-user.xml</value>
-				<value>classpath*:/META-INF/persistence-framework-secure.xml</value>
-			</list>
-		</property>
-	</bean>
-
 	<bean id="blEntityManagerFactorySecureInfo" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="blCacheManager">
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>

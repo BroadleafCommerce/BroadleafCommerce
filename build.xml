@@ -7,7 +7,7 @@
 		This build script requires at least ANT version 1.7, or above
 	-->
 	
-	<path id="maven-ant-tasks.classpath" path="BroadleafCommerceDemo/lib/maven-ant-tasks-2.0.10.jar" />
+	<path id="maven-ant-tasks.classpath" path="BroadleafCommerceDemo/lib/maven-ant-tasks-2.0.10.jar" />   
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
 	<artifact:pom id="frameworkPom" file="BroadleafCommerceFrameworkWeb/pom.xml"/>
 	<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime"/>
@@ -21,6 +21,10 @@
 	<property file="build.properties" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
 	<property name="demo.build.finalName" value="${demoPom.artifactId}-${demoPom.version}"/>
+	
+	<path id="build.runtime.classpath">
+		<fileset refid="frameworkDeps"/>
+	</path>
 	
 	<target name="create-with-dependencies" depends="setup, build-sql, build-src, build-bin, build-src-jars, build-docs, build-dependencies">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-dependencies.zip">
@@ -60,6 +64,24 @@
 	</target>
 	
 	<target name="create-all" depends="create-with-dependencies, create-with-docs, create-bin"/>
+	
+	<target name="build-sql">
+		<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="build.runtime.classpath" />
+		<path id="build.demo.classpath">
+							<fileset refid="demoDeps"/>
+						</path>
+		<property name="temp" refid="demoDeps"/>
+		<echo message="${temp}"/>
+		<hibernatetool destdir="${build.dir}">
+		 <jpaconfiguration persistenceunit="blPU"/>
+		 <classpath>
+		 	<path>
+		 		<fileset refid="demoDeps"/>
+		  	</path>
+		 </classpath>
+		 <hbm2ddl export="false" outputfilename="sql.ddl"/>
+		</hibernatetool>
+	</target>
 	
 	<target name="build-bin" depends="setup">
 		<mkdir dir="${maven.build.finalName}/dist"/>
@@ -156,22 +178,10 @@
 		</copy>
 	</target>
 	
-	<target name="build-sql">
-		<mkdir dir="${maven.build.finalName}/sql"/>
-		<copy todir="${maven.build.finalName}/sql">
-			<fileset dir="sql/${mypom.version}">
-				<include name="**/*.*"/>
-			</fileset>
-		</copy>
-	</target>
-	
 	<target name="build-dependencies">
 		<mkdir dir="${maven.build.finalName}/lib"/>
 		<mkdir dir="${maven.build.finalName}/lib/framework"/>
 		<mkdir dir="${maven.build.finalName}/lib/admin"/>
-		<path id="build.runtime.classpath">
-			<fileset refid="frameworkDeps"/>
-		</path>
 		<taskdef name="licenseCopy" classname="org.broadleafcommerce.util.DependencyLicenseCopy" classpathref="build.runtime.classpath"/>
 		<licenseCopy todir="${maven.build.finalName}/lib/framework" licenseDir="doc/dependency-licenses">
 			<restrict>
