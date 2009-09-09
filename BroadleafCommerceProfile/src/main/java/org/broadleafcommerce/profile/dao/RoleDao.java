@@ -18,8 +18,14 @@ package org.broadleafcommerce.profile.dao;
 import java.util.List;
 
 import org.broadleafcommerce.profile.domain.CustomerRole;
+import org.broadleafcommerce.profile.domain.Role;
 
 public interface RoleDao {
 
     public List<CustomerRole> readCustomerRolesByCustomerId(Long customerId);
+    
+    public Role readRoleByName(String name);
+    
+    public void addRoleToCustomer(CustomerRole customerRole);
+    
 }

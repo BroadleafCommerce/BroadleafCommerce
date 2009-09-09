@@ -59,7 +59,7 @@ public class RegisterCustomerControllerTest extends BaseTest {
         greenMail.stop();
     }
 
-    @Test(groups = "createCustomerFromController", dataProvider = "setupCustomerControllerData", dataProviderClass = RegisterCustomerDataProvider.class)
+    @Test(groups = "createCustomerFromController", dataProvider = "setupCustomerControllerData", dataProviderClass = RegisterCustomerDataProvider.class, enabled=false)
     @Transactional
     @Rollback(false)
     public void createCustomerFromController(RegisterCustomerForm registerCustomer) {
@@ -73,7 +73,7 @@ public class RegisterCustomerControllerTest extends BaseTest {
 
     @Test(groups = "viewRegisterCustomerFromController")
     public void viewRegisterCustomerFromController() {
-        String view = registerCustomerController.viewForm();
+        String view = registerCustomerController.registerCustomer();
         assert (view.equals("/account/registration/registerCustomer"));
     }
 

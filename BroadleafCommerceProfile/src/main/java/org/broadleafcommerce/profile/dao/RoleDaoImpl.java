@@ -24,6 +24,7 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.CustomerRole;
+import org.broadleafcommerce.profile.domain.Role;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -48,6 +49,16 @@ public class RoleDaoImpl implements RoleDao {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_ROLES_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
         return query.getResultList();
+    }
+    
+    public Role readRoleByName(String name) {
+        Query query = em.createNamedQuery("BC_READ_ROLE_BY_NAME");
+        query.setParameter("name", name);
+        return (Role) query.getSingleResult();
+    }
+
+    public void addRoleToCustomer(CustomerRole customerRole) {
+        em.persist(customerRole);
     }
 
     public String getQueryCacheableKey() {

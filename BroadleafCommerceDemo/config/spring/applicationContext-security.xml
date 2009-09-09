@@ -36,7 +36,7 @@
 	                                      join blc_customer_role cr on c.customer_id = cr.customer_id 
 	                                      join blc_role r on cr.role_id = r.role_id 
 	                                      where user_name=?"
-	/>
+	 /> 
                                   
 	<bean id="blCustomerStateFilter" class="org.broadleafcommerce.profile.web.security.CustomerStateFilter">
 	  <sec:custom-filter after="REMEMBER_ME_FILTER" />
