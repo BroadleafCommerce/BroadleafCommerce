@@ -7,8 +7,8 @@ This quick-start guide is intended to give you the bare minimum information you 
 Demo Application Prerequisites:
  * JDK 1.5 (http://java.sun.com/javase/downloads/index_jdk5.jsp)
  * MySQL 5 (http://dev.mysql.com/downloads/)
- * Tomcat 6 (http://tomcat.apache.org/download-60.cgi)
- * Maven 2 (http://maven.apache.org/download.html)
+ * Tomcat 6.0.20 (http://tomcat.apache.org/download-60.cgi)
+ * Maven 2.0.9 (http://archive.apache.org/dist/maven/binaries/)
  * Ant 1.7.1 (http://ant.apache.org/bindownload.cgi)
 
 Make sure you have the prerequisite items installed and confirm that each is in an operational state on your test machine. Also confirm that the "ant" and "mvn" commands are operational at the command prompt - refer to the installation instructions at the Apache Ant and Apache Maven download sites.
@@ -58,7 +58,7 @@ Many of these dependencies have dependencies of their own. For the complete list
    * mail 1.4.1
    * xmlbeans 2.4.0
    * geronimo-jms_1.1_spec 1.1.1
-   * ehcache 1.2.3
+   * ehcache 1.4.1
    * compass 2.2.0
    * mvel2 2.0.11
    * asm 2.2.1
