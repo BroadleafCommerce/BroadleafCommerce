@@ -104,7 +104,7 @@
 				<prop key="/checkout/*">checkoutController</prop>
 				<prop key="/storeLocator/*">storeController</prop>
 				<prop key="/account/*">myAccountController</prop>
-				<!--<prop key="/rating/*">blRatingController</prop>-->
+				<prop key="/rating/*">blRatingController</prop>
 				<prop key="/wishlist/*">blWishlistController</prop>
 			</props>
 		</property>
