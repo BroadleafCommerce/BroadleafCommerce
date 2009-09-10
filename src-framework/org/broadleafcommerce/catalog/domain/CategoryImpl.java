@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -116,7 +117,7 @@ public class CategoryImpl implements Category {
     protected String displayTemplate;
 
     /** The all child categories. */
-    @ManyToMany(targetEntity = CategoryImpl.class)
+    @ManyToMany(targetEntity = CategoryImpl.class, fetch=FetchType.EAGER)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
