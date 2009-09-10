@@ -8,8 +8,8 @@
                         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.2.xsd">
 
 
-    <sec:http auto-config="true">
-        <sec:intercept-url pattern="/account/**" />      
+    <sec:http auto-config="true" >
+        <sec:intercept-url pattern="/account/**" access="ROLE_USER" />      
         <sec:form-login login-page='/registerCustomer/registerCustomer.htm' 
         				default-target-url='/welcome.htm'
         				authentication-failure-url="/registerCustomer/registerCustomer.htm?error=true"
@@ -17,6 +17,7 @@
         				 />
    		<sec:logout logout-url="/logout.htm"/>
    		<sec:remember-me />
+   		
     </sec:http>
     
     <!--  bean id="passwordEncoder" class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/ -->    
@@ -24,13 +25,15 @@
     <!--=============================================================================================== -->
 	<!--  Override the authentication provider to use the JDBC authentication defined below.                                                -->
     <!--=============================================================================================== -->
-	<sec:authentication-provider user-service-ref="blcdemoUserDetailsService" >
+	<sec:authentication-provider user-service-ref="blUserDetailsService" >
 		<sec:password-encoder ref="blPasswordEncoder"/>
 	</sec:authentication-provider>
+	
+	<sec:authentication-manager alias="blAuthenticationManager"/>
 
 	<sec:jdbc-user-service 
 			data-source-ref="blDS"
-		    id="blcdemoUserDetailsService" 
+		    id="blUserDetailsService" 
 	        users-by-username-query="select user_name,password,true from blc_customer where user_name=?"
 	        authorities-by-username-query="select c.user_name,r.role_name from blc_customer c 
 	                                      join blc_customer_role cr on c.customer_id = cr.customer_id 
