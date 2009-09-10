@@ -68,13 +68,18 @@
 		<div class="orderBorder span-10" style="margin-top:10px;" >
 			<div class="orderTitle" > <b>Login for Existing users</b></div>
 			<table class="formTable">
+			<c:if test="${param.error eq 'true'}">
+				<tr>
+					<td colspan="2"><span style="color:red">Your login credentials were incorrect</span></td>
+				</tr>
+			</c:if>
 				<tr>
 					<td style="text-align:right"><label for="username">Username</label></td>
 					<td><input size="30" cssClass="userField" id="username" name="j_username" /></td>
 	    		</tr>
 				<tr>
 					<td style="text-align:right"><label for="password">Password</label></td>
-					<td><input size="30" cssClass="userField" id="password" name="j_password" /></td>
+					<td><input size="30" type="password" cssClass="userField" id="password" name="j_password" /></td>
 	    		</tr>
 			  	<tr>
     	  			<td class="alignCenter" colspan="2">
