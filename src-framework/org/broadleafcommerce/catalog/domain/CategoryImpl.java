@@ -36,6 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -146,6 +147,10 @@ public class CategoryImpl implements Category {
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
+
+    /** The child categories. */
+    @Transient
+    protected List<Category> childCategories = new ArrayList<Category>();
 
     /*
      * (non-Javadoc)
@@ -354,7 +359,14 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
-        return allChildCategories;
+        if (childCategories.size() == 0) {
+            for (Category category : allChildCategories) {
+                if (category.isActive()) {
+                    childCategories.add(category);
+                }
+            }
+        }
+        return childCategories;
     }
 
     /*
