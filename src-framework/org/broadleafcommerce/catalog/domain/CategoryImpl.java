@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,6 +36,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,7 +117,7 @@ public class CategoryImpl implements Category {
     protected String displayTemplate;
 
     /** The all child categories. */
-    @ManyToMany(targetEntity = CategoryImpl.class, fetch=FetchType.EAGER)
+    @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -133,7 +133,7 @@ public class CategoryImpl implements Category {
     protected List<Category> allParentCategories = new ArrayList<Category>();
 
     /** The category images. */
-    @CollectionOfElements(fetch=FetchType.EAGER)
+    @CollectionOfElements
     @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
@@ -147,6 +147,10 @@ public class CategoryImpl implements Category {
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
+
+    /** The child categories. */
+    @Transient
+    protected List<Category> childCategories = new ArrayList<Category>();
 
     /*
      * (non-Javadoc)
@@ -355,7 +359,14 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
-        return getFilteredChildCategories();
+        if (childCategories.size() == 0) {
+            for (Category category : allChildCategories) {
+                if (category.isActive()) {
+                    childCategories.add(category);
+                }
+            }
+        }
+        return childCategories;
     }
 
     /*
@@ -445,30 +456,6 @@ public class CategoryImpl implements Category {
             hydratedCache.put("cachedChildCategoryUrlMap_"+getId(), cachedChildCategoryUrlMap);
         }
         return cachedChildCategoryUrlMap;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<Category> getFilteredChildCategories() {
-        List<Category> filteredChildCategories;
-        HydratedCache hydratedCache = HydratedCacheManager.getInstance().getHydratedCache(CategoryImpl.class.getName());
-        if (hydratedCache != null) {
-            filteredChildCategories = (List<Category>) hydratedCache.get("filteredChildCategories_"+getId());
-            if (filteredChildCategories != null && !filteredChildCategories.isEmpty()) {
-                return filteredChildCategories;
-            }
-        }
-        filteredChildCategories = new ArrayList<Category>();
-        for (Category category : allChildCategories) {
-            if (category.isActive()) {
-                //populate the category images from the lazy item for our cached map
-                category.getCategoryImages().size();
-                filteredChildCategories.add(category);
-            }
-        }
-        if (hydratedCache != null) {
-            hydratedCache.put("filteredChildCategories_"+getId(), filteredChildCategories);
-        }
-        return filteredChildCategories;
     }
 
     /**
