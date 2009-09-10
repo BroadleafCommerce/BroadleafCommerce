@@ -459,6 +459,8 @@ public class CategoryImpl implements Category {
         filteredChildCategories = new ArrayList<Category>();
         for (Category category : allChildCategories) {
             if (category.isActive()) {
+                //populate the category images from the lazy item for our cached map
+                category.getCategoryImages().size();
                 filteredChildCategories.add(category);
             }
         }
