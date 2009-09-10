@@ -354,7 +354,7 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
-        return allChildCategories;
+        return getFilteredChildCategories();
     }
 
     /*
@@ -444,6 +444,28 @@ public class CategoryImpl implements Category {
             hydratedCache.put("cachedChildCategoryUrlMap_"+getId(), cachedChildCategoryUrlMap);
         }
         return cachedChildCategoryUrlMap;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Category> getFilteredChildCategories() {
+        List<Category> filteredChildCategories;
+        HydratedCache hydratedCache = HydratedCacheManager.getInstance().getHydratedCache(CategoryImpl.class.getName());
+        if (hydratedCache != null) {
+            filteredChildCategories = (List<Category>) hydratedCache.get("filteredChildCategories_"+getId());
+            if (filteredChildCategories != null && !filteredChildCategories.isEmpty()) {
+                return filteredChildCategories;
+            }
+        }
+        filteredChildCategories = new ArrayList<Category>();
+        for (Category category : allChildCategories) {
+            if (category.isActive()) {
+                filteredChildCategories.add(category);
+            }
+        }
+        if (hydratedCache != null) {
+            hydratedCache.put("filteredChildCategories_"+getId(), filteredChildCategories);
+        }
+        return filteredChildCategories;
     }
 
     /**
