@@ -26,6 +26,12 @@ import org.broadleafcommerce.profile.service.ChallengeQuestionService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
+import org.springframework.security.Authentication;
+import org.springframework.security.AuthenticationManager;
+import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
+import org.springframework.security.userdetails.UserDetails;
+import org.springframework.security.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -56,6 +62,12 @@ public class RegisterCustomerController {
     
     @Resource(name="blChallengeQuestionService")
     private ChallengeQuestionService challengeQuestionService;
+    
+    @Resource(name="blAuthenticationManager")
+    private AuthenticationManager authenticationManager;
+    
+    @Resource(name="blUserDetailsService")
+    private UserDetailsService userDetailsService;
 
     @RequestMapping(method = { RequestMethod.GET })
     public String registerCustomer() {
@@ -68,6 +80,10 @@ public class RegisterCustomerController {
         registerCustomerValidator.validate(registerCustomerForm, errors);
         if (! errors.hasErrors()) {
             customerService.registerCustomer(registerCustomerForm.getCustomer(), registerCustomerForm.getPassword(), registerCustomerForm.getPasswordConfirm());
+            UserDetails principal = userDetailsService.loadUserByUsername(registerCustomerForm.getCustomer().getUsername());
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(principal, registerCustomerForm.getPassword(), principal.getAuthorities());
+            Authentication authentication = authenticationManager.authenticate(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             return new ModelAndView(getRegistrationSuccessView());
         } else {
             return new ModelAndView(getRegistrationErrorView());
