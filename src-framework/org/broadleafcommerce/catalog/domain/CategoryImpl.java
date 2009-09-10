@@ -133,7 +133,7 @@ public class CategoryImpl implements Category {
     protected List<Category> allParentCategories = new ArrayList<Category>();
 
     /** The category images. */
-    @CollectionOfElements
+    @CollectionOfElements(fetch=FetchType.EAGER)
     @JoinTable(name = "BLC_CATEGORY_IMAGE", joinColumns = @JoinColumn(name = "CATEGORY_ID"))
     @MapKey(columns = { @Column(name = "NAME", length = 5) })
     @Column(name = "URL")
