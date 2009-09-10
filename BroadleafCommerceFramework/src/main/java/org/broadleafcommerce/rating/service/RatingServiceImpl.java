@@ -141,9 +141,9 @@ public class RatingServiceImpl implements RatingService {
 
         if (ratingDetail == null) {
             ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+        } else {
+            ratingDetail.setRating(rating);        	
         }
-
-        ratingDetail.setRating(rating);
 
         ratingSummary.getRatings().add(ratingDetail);
 
@@ -151,11 +151,13 @@ public class RatingServiceImpl implements RatingService {
 
         if (reviewDetail == null) {
             reviewDetail = new ReviewDetailImpl(customer, new Date(), ratingDetail, reviewText, ratingSummary);
+        } else {
+            reviewDetail.setReviewText(reviewText);        	
         }
 
-        reviewDetail.setReviewText(reviewText);
-
         ratingSummary.getReviews().add(reviewDetail);
+        // load reviews
+        ratingSummary.getReviews().size();
         ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
 

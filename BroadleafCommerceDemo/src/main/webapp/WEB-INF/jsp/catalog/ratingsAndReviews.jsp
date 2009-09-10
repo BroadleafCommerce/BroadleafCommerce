@@ -27,10 +27,19 @@ $(document).ready(function(){
 		<fmt:formatNumber value="${ratingSummary.averageRating}" maxFractionDigits="0" var="avgRating" />
 		<tags:stars numberOfStars="${avgRating}" cssClass="reviewStars" /> (${fn:length(ratingSummary.reviews)} customer reviews)
 	</div>
-	<div class="productRightCol">
-	<h4 style="margin-bottom:6px;">Do you own this product?</h4>
-	<a class="reviewBtn" href="#" onclick="$('#yourReview').slideDown();return false;">Write a Review</a>
-	</div>
+	<c:choose>
+		<c:when test="${customer.registered}">
+			<div class="productRightCol">
+			<h4 style="margin-bottom:6px;">Do you own this product?</h4>
+			<a class="reviewBtn" href="#" onclick="$('#yourReview').slideDown();return false;">Write a Review</a>
+			</div>
+		</c:when>
+		<c:otherwise>
+			<div class="productRightCol">
+			<h4 style="margin-bottom:6px;">Please login to write a review.</h4>
+			</div>
+		</c:otherwise>
+	</c:choose>
 </div>
 <div id="yourReview" class="clearfix span-11" style="display:none;background:#fff0c5;border:1px solid #edd38a;margin:10px 0;">
 <div style="margin:8px;">

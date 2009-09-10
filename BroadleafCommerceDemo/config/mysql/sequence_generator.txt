@@ -6,9 +6,9 @@ AddressId|3
 PhoneId|1
 FulfillmentGroupItemId|1
 PersonalMessageId|1
-RatingSummaryId|10
-RatingDetailId|10
-ReviewDetailId|10
+RatingSummaryImpl|10
+RatingDetailImpl|10
+ReviewDetailImpl|10
 MediaId|1
 CategoryImpl|10000
 ProductImpl|1000
