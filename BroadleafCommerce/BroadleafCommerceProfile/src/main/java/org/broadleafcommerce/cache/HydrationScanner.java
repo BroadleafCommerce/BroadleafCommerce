@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.persistence.Id;
 
-import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.hibernate.annotations.Cache;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Attribute;
@@ -21,22 +20,22 @@ import org.objectweb.asm.commons.EmptyVisitor;
 
 public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationVisitor {
 	
-	public static void main(String[] items) {
-		HydrationScanner scanner = new HydrationScanner(new AddressImpl());
-		scanner.init();
-	}
-	
 	private static final int CLASSSTAGE = 0;
 	private static final int FIELDSTAGE = 1;
 	
-	public HydrationScanner(Object entity) {
-		this.entity = entity;
+	@SuppressWarnings("unchecked")
+	public HydrationScanner(Class topEntityClass, Class entityClass) {
+		this.topEntityClass = topEntityClass;
+		this.entityClass = entityClass;
 	}
 	
 	private String cacheRegion;
 	private Map<String, Method[]> idMutators = new HashMap<String, Method[]>();
 	private Map<String, HydrationItemDescriptor> cacheMutators = new HashMap<String, HydrationItemDescriptor>();
-	private final Object entity;
+	@SuppressWarnings("unchecked")
+	private final Class entityClass;
+	@SuppressWarnings("unchecked")
+	private final Class topEntityClass;
 	
 	private int stage = CLASSSTAGE;
 	@SuppressWarnings("unchecked")
@@ -48,7 +47,9 @@ public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationV
 	
 	public void init() {
 		try {
-			InputStream in = HydrationScanner.class.getClassLoader().getResourceAsStream(entity.getClass().getName().replace('.', '/') + ".class");
+			InputStream in = HydrationScanner.class.getClassLoader().getResourceAsStream(topEntityClass.getName().replace('.', '/') + ".class");
+			new ClassReader(in).accept(this, true);
+			in = HydrationScanner.class.getClassLoader().getResourceAsStream(entityClass.getName().replace('.', '/') + ".class");
 			new ClassReader(in).accept(this, true);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

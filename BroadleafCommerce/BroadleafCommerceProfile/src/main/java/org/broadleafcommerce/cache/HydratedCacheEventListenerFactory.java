@@ -24,18 +24,6 @@ public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory
 
     @Override
 	public CacheEventListener createCacheEventListener(Properties props) {
-		/*String cacheNames = props.getProperty("cacheNames");
-        if (cacheNames == null) {
-            throw new RuntimeException("Must specify a cacheNames property with a semi-colon delimitted list of cache names.");
-        }
-        if (LOG.isInfoEnabled()) {
-            LOG.info("adding hydrated cache objects for registered cache names: " + cacheNames);
-        }
-        String[] names = cacheNames.split(";");
-        for (String name : names) {
-            HydratedCache cache = new HydratedCache(name.trim());
-            HydratedCacheManagerImpl.getInstance().addHydratedCache(cache);
-        }*/
         return (CacheEventListener) HydratedCacheManagerImpl.getInstance();
 	}
 
