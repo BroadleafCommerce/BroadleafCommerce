@@ -21,11 +21,11 @@
     <application path="BroadleafCommerceAdmin.mxml"/>
   </applications>
   <modules>
-    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="OfferModule.swf" optimize="true" sourcePath="src/main/flex/OfferModule.mxml"/>
-    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="ToolsModule.swf" optimize="true" sourcePath="src/main/flex/ToolsModule.mxml"/>
-    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="CatalogModule.swf" optimize="true" sourcePath="src/main/flex/CatalogModule.mxml"/>
-    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="SearchModule.swf" optimize="true" sourcePath="src/main/flex/SearchModule.mxml"/>
-    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="SecurityModule.swf" optimize="true" sourcePath="src/main/flex/SecurityModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/offers/OfferModule.swf" optimize="true" sourcePath="src/main/flex/modules/offers/OfferModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/tools/ToolsModule.swf" optimize="true" sourcePath="src/main/flex/modules/tools/ToolsModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/catalog/CatalogModule.swf" optimize="true" sourcePath="src/main/flex/modules/catalog/CatalogModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/search/SearchModule.swf" optimize="true" sourcePath="src/main/flex/modules/search/SearchModule.mxml"/>
+    <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/security/SecurityModule.swf" optimize="true" sourcePath="src/main/flex/modules/security/SecurityModule.mxml"/>
   </modules>
   <buildCSSFiles/>
 </actionScriptProperties>
