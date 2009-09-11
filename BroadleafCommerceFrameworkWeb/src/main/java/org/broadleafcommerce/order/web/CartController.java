@@ -308,13 +308,15 @@ public class CartController {
     }
     
     private Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
-        cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
         FulfillmentGroup fg = cartSummary.getFulfillmentGroup();
-        for(CartOrderItem item : cartSummary.getRows()) {
-            item.getOrderItem().setOrder(currentCartOrder);
-            fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity(), false);
+        if (fg.getId() == null) {
+	        cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
+	        for(CartOrderItem item : cartSummary.getRows()) {
+	            item.getOrderItem().setOrder(currentCartOrder);
+	            fg = cartService.addItemToFulfillmentGroup(item.getOrderItem(), fg, item.getQuantity(), false);
+	        }
+	        cartSummary.setFulfillmentGroup(fg);
         }
-        cartSummary.setFulfillmentGroup(fg);
         return cartService.save(currentCartOrder, true);
     }
 
