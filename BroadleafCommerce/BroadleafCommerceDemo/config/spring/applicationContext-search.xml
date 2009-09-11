@@ -42,9 +42,19 @@
     
     <compass:context />
     
+	<bean id="compassSearchController" class="org.broadleafcommerce.search.web.SearchController">
+		<property name="searchService" ref="blcSearchService"/>
+	</bean>
+	
+	<bean id="blcSearchService" class="org.broadleafcommerce.search.service.SearchServiceCompassImpl">
+		<property name="catalogService" ref="blCatalogService" />
+	    <property name="searchInterceptDao" ref="blSearchInterceptDao" />
+	    <property name="searchSynonymDao" ref="blSearchSynonymDao" />
+	</bean>
+    
     <!--  This job rebuilds the search index  -->
 	<bean id="indexCreationJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="blSearchService" />
+		<property name="targetObject" ref="blcSearchService" />
 		<property name="targetMethod" value="rebuildProductIndex" />
 		<property name="concurrent" value="false" />
 	</bean>
