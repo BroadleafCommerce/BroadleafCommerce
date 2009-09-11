@@ -27,6 +27,9 @@ package org.broadleafcommerce.admin.catalog.model
 
 		[Bindable]
 		public var catalogTree:ArrayCollection = new ArrayCollection();
+		
+		[Bindable]
+		public var catalogTreeItemArray:ArrayCollection = new ArrayCollection();
 
 		[Bindable]
 		public var catalogModel:CatalogModel = new CatalogModel();

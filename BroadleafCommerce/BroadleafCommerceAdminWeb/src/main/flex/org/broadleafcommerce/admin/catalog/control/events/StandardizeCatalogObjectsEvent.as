@@ -22,15 +22,6 @@ package org.broadleafcommerce.admin.catalog.control.events
 			this.productArray = productArray;
 			this.skuArray = skuArray;
 			
-			for each(var product:Product in productArray){
-				for (var i:String in product.allParentCategories){
-					for each(var refCategory:Category in categoryArray){
-						if(product.allParentCategories[i].id == refCategory.id){
-							product.allParentCategories[i] = refCategory;
-						}
-					}
-				}
-			}
 		}
 		
 	}

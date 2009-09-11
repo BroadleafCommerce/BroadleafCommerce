@@ -3,7 +3,6 @@ package org.broadleafcommerce.admin.catalog.vo.category
 	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.catalog.vo.product.Product;
-	import org.broadleafcommerce.util.HashMap;
 	
 	[Bindable]
 	[RemoteClass(alias="org.broadleafcommerce.catalog.domain.CategoryImpl")]
@@ -26,7 +25,7 @@ package org.broadleafcommerce.admin.catalog.vo.category
 		public var featuredProducts:ArrayCollection = new ArrayCollection();
 		public var childCategories:ArrayCollection = new ArrayCollection();
 		public var cachedChildCategoryUrlMap:Array;
-		
+
 		public function get children():ArrayCollection{
 			return allChildCategories;
 		}
@@ -45,8 +44,8 @@ package org.broadleafcommerce.admin.catalog.vo.category
 			return products;
 		}
 		
-		public function get uid():String{
-			return "Category_"+id;
-		}
+//		public function get uid():String{ 
+//			return defaultParentCategory.name+"_"+"Category_"+id;
+//		}
 	}
 }

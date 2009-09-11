@@ -7,7 +7,6 @@ package org.broadleafcommerce.admin.catalog.commands
 	
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
-	import org.broadleafcommerce.admin.catalog.control.events.product.AddProductsToCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 	import org.broadleafcommerce.admin.catalog.model.ProductModel;
@@ -21,11 +20,12 @@ package org.broadleafcommerce.admin.catalog.commands
 		public function BuildCatalogCommand()
 		{
 			var catalogTree:ArrayCollection = CatalogModelLocator.getInstance().catalogTree;
+			var catalogTreeItemArray:ArrayCollection = CatalogModelLocator.getInstance().catalogTreeItemArray;
 			var categoryArray:ArrayCollection = CatalogModelLocator.getInstance().categoryModel.categoryArray;
 			var productsArray:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;
 			var skusArray:ArrayCollection = CatalogModelLocator.getInstance().skuModel.catalogSkus;
 			eventChain.addItem(new StandardizeCatalogObjectsEvent(categoryArray, productsArray, skusArray));
-			eventChain.addItem(new AddCategoriesToCatalogTreeEvent(catalogTree, categoryArray));		
+			eventChain.addItem(new AddCategoriesToCatalogTreeEvent(catalogTree, catalogTreeItemArray));		
 			// The following events add products and skus to the tree	 
 			// eventChain.addItem(new AddProductsToCategoriesEvent(categoryArray, productsArray));
 			// eventChain.addItem(new AddSkusToProductsEvent(productsArray, skusArray));

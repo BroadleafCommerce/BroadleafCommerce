@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 
+import org.apache.commons.lang.ObjectUtils;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.CategoryImpl;
 import org.broadleafcommerce.catalog.domain.CrossSaleProductImpl;
@@ -28,6 +29,14 @@ public class AdminCatalogService {
     
     @Resource(name = "blCatalogService")
     CatalogService catalogService;
+    
+    public Category findCategoryById(Long categoryId) {
+    	return catalogService.findCategoryById(categoryId);
+    }
+    
+    public Category findCategoryByName(String categoryName) {
+    	return catalogService.findCategoryByName(categoryName);
+    }
     
     public Product findProductById(Long productId) {
         return catalogService.findProductById(productId);
@@ -62,14 +71,6 @@ public class AdminCatalogService {
         return catalogService.saveProduct(product);
     }
     
-    public Category findCategoryById(Long categoryId) {
-        return catalogService.findCategoryById(categoryId);
-    }
-
-    public Category findCategoryByName(String categoryName) {
-        return catalogService.findCategoryByName(categoryName);
-    }
-
     public Category saveCategory(Category category) {
         if(category.getCategoryImages() != null && category.getCategoryImages() instanceof ASObject) {
             category.setCategoryImages(getImagesMapFromAsObject((ASObject)category.getCategoryImages()));
@@ -78,9 +79,9 @@ public class AdminCatalogService {
         if(category.getCategoryMedia() != null && category.getCategoryMedia() instanceof ASObject) {            
             category.setCategoryMedia(getMediaMapFromAsObject((ASObject)category.getCategoryMedia()));
         }
-        return catalogService.saveCategory(category);
+                
+        return catalogService.saveCategory(category); 
     }
-
 
     public List<Category> findAllCategories() {
     	List<Category> c = catalogService.findAllCategories(); 
