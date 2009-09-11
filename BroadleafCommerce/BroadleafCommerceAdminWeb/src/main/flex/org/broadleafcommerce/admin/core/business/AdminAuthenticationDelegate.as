@@ -19,6 +19,7 @@ package org.broadleafcommerce.admin.core.business
 		}
 
 		public function authenticateUser(username:String, password:String):void{
+			securityService.logout();
 			securityService.setCredentials(username, password);
 			var call:AsyncToken = securityService.readAdminUserByUserName(username);
 			call.addResponder(responder);
