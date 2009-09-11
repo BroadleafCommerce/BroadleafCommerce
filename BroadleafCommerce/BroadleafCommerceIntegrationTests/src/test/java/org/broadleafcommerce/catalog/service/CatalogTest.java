@@ -52,6 +52,20 @@ public class CatalogTest extends BaseTest {
         Category category2 = new CategoryImpl();
         category2.setName("Towels");
         category2 = catalogService.saveCategory(category2);
+        Category category3 = new CategoryImpl();
+        category3.setName("SuperCategory");
+        category3.getAllParentCategories().add(category);
+        category3 = catalogService.saveCategory(category3);
+        
+        // Test category hierarchy
+        Long cat3Id = category3.getId();
+        category3 = null;
+        category3 = catalogService.findCategoryById(cat3Id);
+        category3.getAllParentCategories().clear();
+        category3.getAllParentCategories().add(category);
+        category3.getAllParentCategories().add(category2);
+        category3 = catalogService.saveCategory(category3);
+        assert category3.getAllParentCategories().size() == 2;
         
         Product newProduct = new ProductImpl();
 
@@ -76,7 +90,7 @@ public class CatalogTest extends BaseTest {
 
         testCategory = catalogService.findCategoryById(category.getId());
         assert testCategory.getId().equals(category.getId());
-
+                
         Map<String, Media> categoryMedia = testCategory.getCategoryMedia();
         Media media = new MediaImpl();
         media.setLabel("test");
@@ -89,7 +103,7 @@ public class CatalogTest extends BaseTest {
         assert(testCategory.getCategoryMedia().get("large") != null);
 
         List<Category> categories = catalogService.findAllCategories();
-        assert categories != null && categories.size() == 2;
+        assert categories != null && categories.size() == 3;
 
         List<Product> products = catalogService.findAllProducts();
         boolean foundProduct = false;
