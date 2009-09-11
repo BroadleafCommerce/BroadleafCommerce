@@ -4,12 +4,20 @@
 		iconFunction="determineIcon"
 		dragEnabled="true"
 		dropEnabled="true" 
-		dragDrop="handleDragComplete(event)"
-		dataDescriptor="{new CategoryDefaultDataDescriptor}"
+		dragComplete="handleDragComplete(event)"
+		dragDrop="handleDragDrop(event)"
 		itemClick="handleItemClick(event)"
+		dragStart="handleDragStart(event)"
 		>
 		<mx:Script>
 			<![CDATA[
+				import mx.controls.Alert;
+				import mx.utils.ObjectUtil;
+				import mx.collections.ArrayCollection;
+				import org.broadleafcommerce.admin.catalog.control.events.category.CopyCategoryEvent;
+				import mx.managers.DragManager;
+				import org.broadleafcommerce.admin.catalog.control.events.category.MoveCategoryEvent;
+				import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
 				import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
 				import mx.events.ListEvent;
 				import mx.events.DragEvent;
@@ -25,25 +33,52 @@
             
 			private function determineIcon(item:Object):Class{
 				var iconClass:Class;
-				if(item is Category){					
-					var category:Category = Category(item);
-					if(category.allChildCategories.length > 0){
+					if(item.children.length > 0){
 						iconClass = categoryHasIcon;
 					}else{
 						iconClass = categoryHasNotIcon;
 					}
                 return iconClass;				
-				}
-				return null;
 			}			
 			
-			private function handleDragComplete(event:DragEvent):void{
-				super.dragDropHandler(event);
+			private function handleDragStart(event:DragEvent):void{
+				super.dragStartHandler(event);
+				event.draggedItem = selectedItem;
 				var e:DragEvent = event;
+			}
+			
+			private function handleDragComplete(event:DragEvent):void{
+				super.dragCompleteHandler(event);
+			}
+			
+			private function handleDragDrop(event:DragEvent):void{
+				try{						
+					var draggedItem:Object = ObjectUtil.copy(this.selectedItem);
+					var index:int = this.calculateDropIndex(event);
+					var newParent:Object;
+					if(this.dataDescriptor.isBranch(this.indexToItemRenderer(index-1).data)){
+						newParent = this.indexToItemRenderer(index-1).data;					
+					}else{					
+						newParent = this.getParentItem(this.indexToItemRenderer(index-1).data);										
+					}
+					var oldParent:Object = getParentItem(draggedItem);
+					super.dragDropHandler(event);
+					if(event.action == DragManager.COPY){
+						var cce:CopyCategoryEvent = new CopyCategoryEvent(Category(draggedItem.category), Category(newParent.category));
+						cce.dispatch();	
+					}else{
+						var mce:MoveCategoryEvent = new MoveCategoryEvent(Category(draggedItem.category), Category(oldParent.category), Category(newParent.category));
+						mce.dispatch();
+					}				
+			   }catch (error:Error){
+					Alert.show("Could not complete drag and drop : "+error.message);
+					event.stopImmediatePropagation();
+					this.hideDropFeedback(event);
+				}
 			}
 
 			private function handleItemClick(event:ListEvent):void{
-				var selectedItem:Category = Category(this.selectedItem); 
+				var selectedItem:Category = Category(this.selectedItem.category); 
 				var ecce:EditCategoryEvent = new EditCategoryEvent(selectedItem);
 				ecce.dispatch();
 			}

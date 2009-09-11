@@ -19,6 +19,7 @@ import mx.events.CollectionEvent;
 import mx.events.CollectionEventKind;
 
 import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
+import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
 import org.broadleafcommerce.admin.catalog.vo.category.Category;
 
 /**
@@ -54,12 +55,12 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
         {
             if (node is Object) {
                 if(node.children is ArrayCollection){
-                	var categoryChildren:ArrayCollection = new ArrayCollection();
-                	for each(var obj:Object in node.children){
-                		if (obj is Category) categoryChildren.addItem(obj);
-                	}
-                    //return node.children;
-                    return categoryChildren;
+//                	var categoryChildren:ArrayCollection = new ArrayCollection();
+//                	for each(var obj:Object in node.children){
+//                		if (obj is CategoryTreeItem) categoryChildren.addItem(obj);
+//                	}
+                    return node.children;
+//                    return categoryChildren;
                 }else{
                     return new ArrayCollection(node.children);
                 }
@@ -142,13 +143,16 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
         if (parent is Object) {
             if (parent != null) {
                 if(parent.children is ArrayCollection) {
-                    parent.children.addItemAt(child, index);                    
-                    if (model){
-                        model.dispatchEvent(event);
-                        model.itemUpdated(parent);
-                    }
-                    // saveChildCategory(parent,child);
-                    return true;
+                	if(!parent.children.contains(child)){                		
+                    	parent.children.addItemAt(child, index);                    
+	                    if (model){
+	                        model.dispatchEvent(event);
+	                        model.itemUpdated(parent);
+	                    }
+	                    //saveChildCategory(parent,child);
+	                    return true;
+                	}
+                	return false;
                 }
                 else {
                     parent.children.splice(index, 0, child);
@@ -167,7 +171,6 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
     	trace("DEBUG: CategoryDefaultDataDescriptor.saveChildCategory()");            	
     	var child:Category = Category(childObj);
     	var parent:Category = Category(parentObj);
-    	parent.allChildCategories
     	child.allParentCategories.addItem(parent);
     	var sce:SaveCategoryEvent = new SaveCategoryEvent(child);
     	sce.dispatch();
@@ -221,8 +224,10 @@ public class CategoryDefaultDataDescriptor implements ITreeDataDescriptor
 		for (var i:String  in childCat.allParentCategories){
 			if(parentCat.id == Category(childCat.allParentCategories[i]).id){
 				childCat.allParentCategories.removeItemAt(int(i));
+//				var sce:SaveCategoryEvent = new SaveCategoryEvent(childCat);
+//				sce.dispatch();	
 			}
-		}		
+		}	
 	}
 
 }
