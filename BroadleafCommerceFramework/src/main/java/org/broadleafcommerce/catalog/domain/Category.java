@@ -81,6 +81,11 @@ public interface Category extends Serializable {
      */
     public void setDefaultParentCategory(Category defaultParentCategory);
 
+    public List<Category> getAllParentCategories();
+    
+    public void setAllParentCategories(List<Category> allParentCategories);
+
+    
     /**
      * Gets the url.
      * 
@@ -187,6 +192,27 @@ public interface Category extends Serializable {
     public Map<String,List<Category>> getChildCategoryURLMap();
     
     public void setChildCategoryURLMap(Map<String, List<Category>> cachedChildCategoryUrlMap);
+
+    /**
+     * Gets the child categories.
+     * 
+     * @return the child categories
+     */
+    public List<Category> getAllChildCategories();
+
+    /**
+     * Checks for child categories.
+     * 
+     * @return true, if successful
+     */
+    public boolean hasAllChildCategories();
+
+    /**
+     * Sets the all child categories.
+     * 
+     * @param allChildCategories the new all child categories
+     */
+    public void setAllChildCategories(List<Category> childCategories);
 
     /**
      * Gets the child categories.
