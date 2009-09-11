@@ -169,6 +169,9 @@ public class CategoryImpl implements Category {
     @Transient
     @Hydrated(factoryMethod="createChildCategoryURLMap")
     protected Map<String, List<Category>> childCategoryURLMap;
+    
+    @Transient
+    protected List<Category> childCategories = new ArrayList<Category>();
 
     /*
      * (non-Javadoc)
@@ -377,7 +380,14 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
-        return allChildCategories;
+    	if (childCategories.size() == 0) {
+            for (Category category : allChildCategories) {
+                if (category.isActive()) {
+                    childCategories.add(category);
+                }
+            }
+        }
+        return childCategories;
     }
 
     /*
