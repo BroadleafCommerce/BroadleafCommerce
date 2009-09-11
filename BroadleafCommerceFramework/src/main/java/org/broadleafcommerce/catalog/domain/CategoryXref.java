@@ -20,6 +20,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -63,41 +65,43 @@ public class CategoryXref implements Serializable {
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
-        @Column(name = "CATEGORY_ID", nullable = false)
-        private Long categoryId;
+        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+        @JoinColumn(name = "CATEGORY_ID")
+        protected Category category;
+        
+        @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
+        @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID")
+        protected Category subCategory;
 
-        /** The sub-category id. */
-        @Column(name = "SUB_CATEGORY_ID", nullable = false)
-        private Long subCategoryId;
+        public Category getCategory() {
+			return category;
+		}
 
-        public Long getCategoryId() {
-            return categoryId;
-        }
+		public void setCategory(Category category) {
+			this.category = category;
+		}
 
-        public void setCategoryId(Long categoryId) {
-            this.categoryId = categoryId;
-        }
+		public Category getSubCategory() {
+			return subCategory;
+		}
 
-        public Long getSubCategoryId() {
-            return subCategoryId;
-        }
+		public void setSubCategory(Category subCategory) {
+			this.subCategory = subCategory;
+		}
 
-        public void setSubCategoryId(Long subCategoryId) {
-            this.subCategoryId = subCategoryId;
-        }
-
-        @Override
+		@Override
         public boolean equals(Object obj) {
             if (obj == null) return false;
             else if (!(obj instanceof CategoryXrefPK)) return false;
 
-            return categoryId.equals(((CategoryXrefPK) obj).getCategoryId())
-            && subCategoryId.equals(((CategoryXrefPK) obj).getSubCategoryId());
+            return category.getId().equals(((CategoryXrefPK) obj).getCategory().getId())
+            && subCategory.getId().equals(((CategoryXrefPK) obj).getSubCategory().getId());
         }
+		
 
         @Override
         public int hashCode() {
-            return categoryId.hashCode() + subCategoryId.hashCode();
+        	return category.hashCode() + subCategory.hashCode();
         }
 
 
