@@ -11,18 +11,19 @@ package org.broadleafcommerce.admin.catalog.vo.media
 		public var id:Number;
 		public var name:String;
 		public var url:String;
-		private var _label:String;
+//		private var _label:String;
+		public var label:String;
 		
 		
 		public var key:String;
 		
-		public function set label(newLabel:String):void{
-			_label = newLabel;
-		} 
-		
-		public function get label():String{
-			return _label;
-		}
+//		public function set label(newLabel:String):void{
+//			_label = newLabel;
+//		} 
+//		
+//		public function get label():String{
+//			return _label;
+//		}
 
 	}
 }
