@@ -64,12 +64,14 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     	return hydratedCacheContainer.containsKey(cacheName);
     }
     
-    public HydrationDescriptor getHydrationDescriptor(Object entity) {
+    @SuppressWarnings("unchecked")
+	public HydrationDescriptor getHydrationDescriptor(Object entity) {
     	if (hydrationDescriptors.containsKey(entity.getClass().getName())) {
     		return hydrationDescriptors.get(entity.getClass().getName());
     	}
     	HydrationDescriptor descriptor = new HydrationDescriptor();
-    	HydrationScanner scanner = new HydrationScanner(entity);
+    	Class topEntityClass = getTopEntityClass(entity);
+    	HydrationScanner scanner = new HydrationScanner(topEntityClass, entity.getClass());
     	scanner.init();
     	descriptor.setHydratedMutators(scanner.getCacheMutators());
     	Map<String, Method[]> mutators = scanner.getIdMutators();
@@ -80,11 +82,22 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     	descriptor.setIdMutators(singleMutators);
     	String cacheRegion = scanner.getCacheRegion();
     	if (cacheRegion == null || "".equals(cacheRegion)) {
-    		cacheRegion = entity.getClass().getName();
+    		cacheRegion = topEntityClass.getName();
     	}
     	descriptor.setCacheRegion(cacheRegion);
     	hydrationDescriptors.put(entity.getClass().getName(), descriptor);
     	return descriptor;
+    }
+    
+    @SuppressWarnings("unchecked")
+	public Class getTopEntityClass(Object entity) {
+    	Class myClass = entity.getClass();
+    	Class superClass = entity.getClass().getSuperclass();
+    	while (superClass != null && superClass.getName().startsWith("org.broadleaf")) {
+    		myClass = superClass;
+    		superClass = superClass.getSuperclass();
+    	}
+    	return myClass;
     }
     
     public Object getHydratedCacheElementItem(String cacheName, Serializable elementKey, String elementItemName) {
