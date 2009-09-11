@@ -137,6 +137,7 @@ public class CategoryImpl implements Category {
     /** The all parent categories. */
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
@@ -375,6 +376,38 @@ public class CategoryImpl implements Category {
         this.displayTemplate = displayTemplate;
     }
 
+    /**
+     * Gets the child categories.
+     * 
+     * @return the child categories
+     */
+    public List<Category> getAllChildCategories(){
+    	return allChildCategories;
+    }
+
+    /**
+     * Checks for child categories.
+     * 
+     * @return true, if successful
+     */
+    public boolean hasAllChildCategories(){
+    	return allChildCategories.size() > 0;
+    }
+
+    /**
+     * Sets the all child categories.
+     * 
+     * @param allChildCategories the new all child categories
+     */
+    public void setAllChildCategories(List<Category> childCategories){
+    	this.allChildCategories.clear();
+    	for(Category category : allChildCategories){
+    		this.allChildCategories.add(category);
+    	}    	
+    }
+
+
+    
     /*
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
