@@ -2,12 +2,12 @@
 <project name="BroadleafCommerceDistribution" default="clean" basedir="." 
 	xmlns:artifact="antlib:org.apache.maven.artifact.ant"
 	xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
-	
+
 	<!--
 		This build script requires at least ANT version 1.7, or above
 	-->
-	
-	<path id="maven-ant-tasks.classpath" path="BroadleafCommerceDemo/lib/maven-ant-tasks-2.0.10.jar" />   
+
+	<path id="maven-ant-tasks.classpath" path="BroadleafCommerceDemo/lib/maven-ant-tasks-2.0.10.jar" />
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
 	<artifact:pom id="frameworkPom" file="BroadleafCommerceFrameworkWeb/pom.xml"/>
 	<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime"/>
@@ -15,78 +15,114 @@
 	<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="compile"/>
 	<artifact:pom id="adminPom" file="BroadleafCommerceAdmin/pom.xml"/>
 	<artifact:dependencies filesetId="adminDeps" pomRefId="adminPom" useScope="runtime"/>
-	
+
 	<artifact:pom id="mypom" file="pom.xml"/>
-	
+
 	<property file="build.properties" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
 	<property name="demo.build.finalName" value="${demoPom.artifactId}-${demoPom.version}"/>
-	
+
 	<path id="build.runtime.classpath">
 		<fileset refid="frameworkDeps"/>
 	</path>
-	
-	<target name="create-with-dependencies" depends="setup, build-sql, build-src, build-bin, build-src-jars, build-docs, build-dependencies">
+
+	<path id="build.demo.runtime.classpath">
+		<fileset refid="demoDeps"/>
+	</path>
+
+	<path id="build.admin.runtime.classpath">
+		<fileset refid="adminDeps"/>
+	</path>
+
+	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-docs, build-dependencies, build-sql">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-dependencies.zip">
 			<fileset dir="${maven.build.finalName}">
 				<include name="dist/**/*.*"/>
 				<include name="src/**/*.*"/>
 				<include name="docs/**/*.*"/>
 				<include name="lib/**/*.*"/>
-				<include name="sql/**/*.*"/>
+				<include name="sql/*.*"/>
 				<include name="*.*"/>
 				<exclude name="*.zip"/>
 			</fileset>
 		</zip>
 	</target>
-	
-	<target name="create-with-docs" depends="setup, build-sql, build-bin, build-src-jars, build-docs">
+
+	<target name="create-with-docs" depends="setup, build-bin, build-src-jars, build-docs, build-sql">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-docs.zip">
 			<fileset dir="${maven.build.finalName}">
 				<include name="dist/**/*.*"/>
 				<include name="docs/**/*.*"/>
-				<include name="sql/**/*.*"/>
+				<include name="sql/*.*"/>
 				<include name="*.*"/>
 				<exclude name="*.zip"/>
 			</fileset>
 		</zip>
 	</target>
-	
-	<target name="create-bin" depends="setup, build-sql, build-bin, build-src-jars">
+
+	<target name="create-bin" depends="setup, build-bin, build-src-jars, build-sql">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}.zip">
 			<fileset dir="${maven.build.finalName}">
 				<include name="dist/**/*.*"/>
-				<include name="sql/**/*.*"/>
+				<include name="sql/*.*"/>
 				<include name="*.*"/>
 				<exclude name="*.zip"/>
 			</fileset>
 		</zip>
 	</target>
-	
+
 	<target name="create-all" depends="create-with-dependencies, create-with-docs, create-bin"/>
-	
+
 	<target name="build-sql">
-		<taskdef name="hibernatetool" classname="org.hibernate.tool.ant.HibernateToolTask" classpathref="build.runtime.classpath" />
-		<path id="build.demo.classpath">
-							<fileset refid="demoDeps"/>
-						</path>
-		<property name="temp" refid="demoDeps"/>
-		<echo message="${temp}"/>
-		<hibernatetool destdir="${build.dir}">
-		 <jpaconfiguration persistenceunit="blPU"/>
-		 <classpath>
-		 	<path>
-		 		<fileset refid="demoDeps"/>
-		  	</path>
-		 </classpath>
-		 <hbm2ddl export="false" outputfilename="sql.ddl"/>
+		<delete dir="sql"/>
+		<mkdir dir="sql"/>
+		<taskdef name="hibernatetool" classname="org.broadleafcommerce.util.sql.HibernateToolTask" classpathref="build.admin.runtime.classpath" />
+		<hibernatetool destDir="sql" combinePersistenceUnits="false" refineFileNames="true">
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.MySQLInnoDBDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.OracleDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SybaseDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SQLServerDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SAPDBDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.InformixDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.HSQLDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.IngresDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.ProgressDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.MckoiDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.InterbaseDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.PointbaseDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.FirebirdDialect" />
+			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.DB2Dialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.MySQLInnoDBDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.OracleDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SybaseDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SQLServerDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SAPDBDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.InformixDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.HSQLDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.IngresDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.ProgressDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.MckoiDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.InterbaseDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.PointbaseDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.FirebirdDialect" />
+			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.DB2Dialect" />
+			<classpath refid="build.admin.runtime.classpath" />
+			<hbm2ddl export="false"/>
 		</hibernatetool>
+		<mkdir dir="${maven.build.finalName}/sql"/>
+		<copy todir="${maven.build.finalName}/sql">
+			<fileset dir="sql">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
 	</target>
-	
+
 	<target name="build-bin" depends="setup">
 		<mkdir dir="${maven.build.finalName}/dist"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
-		    <arg value="install"/>
+			<arg value="install"/>
 		</artifact:mvn>
 		<copy todir="${maven.build.finalName}/dist">
 			<fileset dir="BroadleafCommerceAdmin/target">
@@ -113,7 +149,7 @@
 		</copy>
 		<copy todir="${maven.build.finalName}" file="doc/license.txt"/>
 	</target>
-	
+
 	<target name="build-src" depends="setup">
 		<mkdir dir="${maven.build.finalName}/src"/>
 		<copy todir="${maven.build.finalName}/src">
@@ -134,11 +170,11 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="build-src-jars" depends="setup">
 		<mkdir dir="${maven.build.finalName}/dist"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
-		    <arg value="source:jar"/>
+			<arg value="source:jar"/>
 		</artifact:mvn>
 		<copy todir="${maven.build.finalName}/dist">
 			<fileset dir="BroadleafCommerceAdmin/target">
@@ -164,12 +200,12 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="build-docs" depends="setup">
 		<mkdir dir="${maven.build.finalName}/docs"/>
 		<mkdir dir="${maven.build.finalName}/docs/api"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
-		    <arg value="javadoc:javadoc"/>
+			<arg value="javadoc:javadoc"/>
 		</artifact:mvn>
 		<copy todir="${maven.build.finalName}/docs/api">
 			<fileset dir="target/site/apidocs">
@@ -177,7 +213,7 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="build-dependencies">
 		<mkdir dir="${maven.build.finalName}/lib"/>
 		<mkdir dir="${maven.build.finalName}/lib/framework"/>
@@ -205,7 +241,7 @@
 
 	<target name="setup">
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
-		    <arg value="clean"/>
+			<arg value="clean"/>
 		</artifact:mvn>
 		<delete dir="${maven.build.finalName}"/>
 		<mkdir dir="${maven.build.finalName}"/>
@@ -213,7 +249,7 @@
 		<copy file="doc/quickStartGuide.txt" todir="${maven.build.finalName}"/>
 		<replace file="${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}"/>
 	</target>
-	
+
 	<target name="clean">
 		<delete dir="${maven.build.finalName}"/>
 	</target>

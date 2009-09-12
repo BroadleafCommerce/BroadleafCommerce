@@ -8,7 +8,7 @@
 		<non-jta-data-source>jdbc/web</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
             <property name="hibernate.dialect" value="org.broadleafcommerce.dialect.MySQLInnoDB_BLC_DDialect"/>
         </properties>
 	</persistence-unit>
@@ -17,7 +17,7 @@
 		<non-jta-data-source>jdbc/webSecure</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
             <property name="hibernate.dialect" value="org.broadleafcommerce.dialect.MySQLInnoDB_BLC_DDialect"/>
         </properties>
 	</persistence-unit>
