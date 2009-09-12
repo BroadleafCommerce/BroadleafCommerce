@@ -74,10 +74,9 @@
 	<target name="create-all" depends="create-with-dependencies, create-with-docs, create-bin"/>
 
 	<target name="build-sql">
-		<delete dir="sql"/>
-		<mkdir dir="sql"/>
+		<mkdir dir="${maven.build.finalName}/sql"/>
 		<taskdef name="hibernatetool" classname="org.broadleafcommerce.util.sql.HibernateToolTask" classpathref="build.admin.runtime.classpath" />
-		<hibernatetool destDir="sql" combinePersistenceUnits="false" refineFileNames="true">
+		<hibernatetool destDir="${maven.build.finalName}/sql" combinePersistenceUnits="false" refineFileNames="true">
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.MySQLInnoDBDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.OracleDialect" />
@@ -111,12 +110,6 @@
 			<classpath refid="build.admin.runtime.classpath" />
 			<hbm2ddl export="false"/>
 		</hibernatetool>
-		<mkdir dir="${maven.build.finalName}/sql"/>
-		<copy todir="${maven.build.finalName}/sql">
-			<fileset dir="sql">
-				<include name="**/*.*"/>
-			</fileset>
-		</copy>
 	</target>
 
 	<target name="build-bin" depends="setup">
