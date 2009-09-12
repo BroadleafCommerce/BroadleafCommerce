@@ -83,6 +83,7 @@
             <property name="hibernate.cache.use_query_cache" value="true"/>
             <property name="hibernate.generate_statistics" value="true" />
             <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
 	</persistence-unit>
 	
@@ -101,6 +102,7 @@
             <property name="hibernate.cache.use_second_level_cache" value="false"/>
             <property name="hibernate.cache.use_query_cache" value="false"/>
             <property name="hibernate.archive.autodetection" value="false" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
 	</persistence-unit>
 </persistence>
