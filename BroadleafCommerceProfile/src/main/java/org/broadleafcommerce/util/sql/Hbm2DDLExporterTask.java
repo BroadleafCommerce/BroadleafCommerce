@@ -8,6 +8,8 @@ import org.hibernate.tool.hbm2x.Exporter;
 import org.hibernate.tool.hbm2x.Hbm2DDLExporter;
 
 /**
+ * This is a re-worked version from Hibernate tools
+ * 
  * @author jfischer
  *
  */

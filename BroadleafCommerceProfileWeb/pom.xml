@@ -82,5 +82,17 @@
     	<groupId>taglibs</groupId>
     	<artifactId>standard</artifactId>
     </dependency>
+	<dependency>
+    	<groupId>org.apache.lucene</groupId>
+    	<artifactId>lucene-analyzers</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.security</groupId>
+    	<artifactId>spring-security-acl</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework.security</groupId>
+    	<artifactId>spring-security-taglibs</artifactId>
+    </dependency>
   </dependencies>
 </project>

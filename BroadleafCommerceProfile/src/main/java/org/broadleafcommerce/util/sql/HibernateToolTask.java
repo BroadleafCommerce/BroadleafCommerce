@@ -22,7 +22,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,6 +37,8 @@ import org.hibernate.tool.ant.ConfigurationTask;
 import org.hibernate.util.StringHelper;
 
 /**
+ * This is a re-worked version from Hibernate tools
+ * 
  * @author jfischer
  *
  */
@@ -46,8 +47,10 @@ public class HibernateToolTask extends Task {
 	public HibernateToolTask() {
 		super();
 	}
+	@SuppressWarnings("unchecked")
 	private List configurationTasks = new ArrayList();
 	private File destDir;
+	@SuppressWarnings("unchecked")
 	private List generators = new ArrayList();
 	private Path classPath;
 	private boolean combinePersistenceUnits = true;
@@ -65,10 +68,12 @@ public class HibernateToolTask extends Task {
 		return task;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected boolean addConfiguration(ConfigurationTask config) {
 		return configurationTasks.add(config);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected boolean addGenerator(ExporterTask generator) {
 		return generators.add(generator);
 	}
@@ -93,6 +98,7 @@ public class HibernateToolTask extends Task {
 		return classPath;
     }
 
+	@SuppressWarnings("unchecked")
 	public void execute() {
 		AntClassLoader loader;
 		MergeClassPathXMLApplicationContext mergeContext;
@@ -103,7 +109,7 @@ public class HibernateToolTask extends Task {
 			loader.setThreadContextLoader();
 			// launch the service merge application context to get the entity configuration for the entire framework
 			String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.SERVICECONTEXTTYPE);
-			mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[] {});
+			mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[]{});
 		} catch (Exception e) {
 			throw new BuildException(e, getLocation());
 		}
@@ -150,9 +156,12 @@ public class HibernateToolTask extends Task {
 				File[] sqlFiles = destDir.listFiles(new SqlFileFilter());
 				for (File file : sqlFiles) {
 					String filename = file.getName();
-					if (filename.startsWith("org.hibernate.dialect.")) {
-						String newFileName = filename.substring("org.hibernate.dialect.".length(), filename.length());
-						file.renameTo(new File(destDir, newFileName));
+					String[] starters = {"org.hibernate.dialect.", "org.broadleafcommerce.util.sql."};
+					for (String starter : starters) {
+						if (filename.startsWith(starter)) {
+							String newFileName = filename.substring(starter.length(), filename.length());
+							file.renameTo(new File(destDir, newFileName));
+						}
 					}
 				}
 			}
