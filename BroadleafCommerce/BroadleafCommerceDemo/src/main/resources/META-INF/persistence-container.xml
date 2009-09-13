@@ -9,7 +9,7 @@
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.hbm2ddl.auto" value="create"/>
-            <property name="hibernate.dialect" value="org.broadleafcommerce.dialect.MySQLInnoDB_BLC_DDialect"/>
+            <property name="hibernate.dialect" value="org.broadleafcommerce.util.sql.MySQLInnoDBDialect"/>
         </properties>
 	</persistence-unit>
 	
@@ -18,7 +18,7 @@
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.hbm2ddl.auto" value="create"/>
-            <property name="hibernate.dialect" value="org.broadleafcommerce.dialect.MySQLInnoDB_BLC_DDialect"/>
+            <property name="hibernate.dialect" value="org.broadleafcommerce.util.sql.MySQLInnoDBDialect"/>
         </properties>
 	</persistence-unit>
 </persistence>

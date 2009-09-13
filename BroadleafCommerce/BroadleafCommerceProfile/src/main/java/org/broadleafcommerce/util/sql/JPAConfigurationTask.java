@@ -32,6 +32,7 @@ import org.hibernate.util.ReflectHelper;
 import org.xml.sax.EntityResolver;
 
 /**
+ * This is a re-worked version from Hibernate tools
  * 
  * @author jfischer
  *

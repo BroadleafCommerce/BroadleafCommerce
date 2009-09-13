@@ -20,6 +20,11 @@ import java.util.Properties;
 import net.sf.ehcache.event.CacheEventListener;
 import net.sf.ehcache.event.CacheEventListenerFactory;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class HydratedCacheEventListenerFactory extends CacheEventListenerFactory {
 
     @Override

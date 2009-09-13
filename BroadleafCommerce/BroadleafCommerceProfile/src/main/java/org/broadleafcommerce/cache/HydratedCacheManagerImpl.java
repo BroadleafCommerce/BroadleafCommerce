@@ -29,13 +29,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cache.CacheKey;
 
-
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCacheManager, HydratedAnnotationManager {
 
     private static final Log LOG = LogFactory.getLog(HydratedCacheManagerImpl.class);
     private static final HydratedCacheManagerImpl manager = new HydratedCacheManagerImpl();
 
-    public static HydratedCacheManagerImpl getInstance() {
+    protected static HydratedCacheManagerImpl getInstance() {
         return manager;
     }
 
@@ -44,15 +48,15 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     private Hashtable<String, HydratedCache> hydratedCacheContainer = new Hashtable<String, HydratedCache>();
     private Hashtable<String, HydrationDescriptor> hydrationDescriptors = new Hashtable<String, HydrationDescriptor>();
 
-    public void addHydratedCache(HydratedCache cache) {
+    protected void addHydratedCache(HydratedCache cache) {
     	hydratedCacheContainer.put(cache.getCacheName(), cache);
     }
 
-    public HydratedCache removeHydratedCache(String cacheName) {
+    protected HydratedCache removeHydratedCache(String cacheName) {
         return hydratedCacheContainer.remove(cacheName);
     }
 
-    public  HydratedCache getHydratedCache(String cacheName) {
+    protected  HydratedCache getHydratedCache(String cacheName) {
     	if (!containsCache(cacheName)) {
     		HydratedCache cache = new HydratedCache(cacheName);
     		addHydratedCache(cache);
@@ -60,7 +64,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     	return hydratedCacheContainer.get(cacheName);
     }
     
-    public boolean containsCache(String cacheName) {
+    protected boolean containsCache(String cacheName) {
     	return hydratedCacheContainer.containsKey(cacheName);
     }
     
@@ -90,7 +94,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     }
     
     @SuppressWarnings("unchecked")
-	public Class getTopEntityClass(Object entity) {
+	protected Class getTopEntityClass(Object entity) {
     	Class myClass = entity.getClass();
     	Class superClass = entity.getClass().getSuperclass();
     	while (superClass != null && superClass.getName().startsWith("org.broadleaf")) {

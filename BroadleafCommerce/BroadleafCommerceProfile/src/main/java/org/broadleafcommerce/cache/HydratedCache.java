@@ -18,6 +18,11 @@ package org.broadleafcommerce.cache;
 import java.io.Serializable;
 import java.util.Hashtable;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class HydratedCache extends Hashtable<String, Object> {
 
     private static final long serialVersionUID = 1L;

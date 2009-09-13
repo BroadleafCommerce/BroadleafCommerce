@@ -13,9 +13,9 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2x.Exporter;
 
 /**
- * @author jfischer
+ * This is a re-worked version from Hibernate tools
  * 
- * Is not actually a ant task, but simply just a task part of a HibernateToolTask
+ * @author jfischer
  *
  */
 public abstract class ExporterTask {
