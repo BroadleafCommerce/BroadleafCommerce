@@ -35,6 +35,7 @@ import org.broadleafcommerce.checkout.service.CheckoutService;
 import org.broadleafcommerce.checkout.service.exception.CheckoutException;
 import org.broadleafcommerce.checkout.web.model.CheckoutForm;
 import org.broadleafcommerce.checkout.web.validator.CheckoutFormValidator;
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.order.service.type.OrderStatus;
@@ -131,9 +132,15 @@ public class CheckoutController {
         checkoutForm.getBillingAddress().setState(stateService.findStateByAbbreviation(checkoutForm.getBillingAddress().getState().getAbbreviation()));
         checkoutForm.getShippingAddress().setCountry(countryService.findCountryByAbbreviation(checkoutForm.getShippingAddress().getCountry().getAbbreviation()));
         checkoutForm.getShippingAddress().setState(stateService.findStateByAbbreviation(checkoutForm.getShippingAddress().getState().getAbbreviation()));
-
+        
         Order order = retrieveCartOrder(request, model);
         order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(new Date()));
+        
+        List<FulfillmentGroup> groups = order.getFulfillmentGroups();
+        FulfillmentGroup group = groups.get(0);
+        group.setOrder(order);
+        group.setAddress(checkoutForm.getShippingAddress());
+        group.setShippingPrice(order.getTotalShipping());
 
         //TODO this controller needs to handle the other payment types as well, not just credit card.
         Map<PaymentInfo, Referenced> payments = new HashMap<PaymentInfo, Referenced>();
@@ -155,6 +162,7 @@ public class CheckoutController {
         List<PaymentInfo> paymentInfos = new ArrayList<PaymentInfo>();
         paymentInfos.add(paymentInfo);
         order.setPaymentInfos(paymentInfos);
+        
 
         order.setStatus(OrderStatus.SUBMITTED);
         order.setSubmitDate(Calendar.getInstance().getTime());
