@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-	<div id="checkoutContactInfo" class="span-11 column orderBorder displayNone">
+	<div id="checkoutContactInfo" class="span-10 column orderBorder displayNone">
 		<div class="orderTitle" ><b> Shipping Information </b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
 		<div class="errorInputText" style="margin-top:10px;">
