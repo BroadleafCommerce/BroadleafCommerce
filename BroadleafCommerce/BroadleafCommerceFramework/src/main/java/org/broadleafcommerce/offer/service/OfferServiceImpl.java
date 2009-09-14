@@ -60,7 +60,7 @@ import org.springframework.stereotype.Service;
 @Service("blOfferService")
 public class OfferServiceImpl implements OfferService {
 
-    private static final LRUMap expressionCache = new LRUMap(100);
+    private static final LRUMap EXPRESSION_CACHE = new LRUMap(100);
     //    private static final StringBuffer functions = new StringBuffer();
 
     // should be called outside of Offer service after Offer service is executed
@@ -686,7 +686,7 @@ public class OfferServiceImpl implements OfferService {
      * @return a Boolean object containing the result of executing the MVEL expression
      */
     protected Boolean executeExpression(String expression, Map<String, Object> vars) {
-        Serializable exp = (Serializable)expressionCache.get(expression);
+        Serializable exp = (Serializable)EXPRESSION_CACHE.get(expression);
         if (exp == null) {
             ParserContext context = new ParserContext();
             context.addImport("OfferType", OfferType.class);
@@ -695,7 +695,7 @@ public class OfferServiceImpl implements OfferService {
             //            completeExpression.append(" ").append(expression);
             exp = MVEL.compileExpression(expression.toString(), context);
         }
-        expressionCache.put(expression, exp);
+        EXPRESSION_CACHE.put(expression, exp);
 
         return (Boolean)MVEL.executeExpression(exp, vars);
 

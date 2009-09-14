@@ -36,19 +36,20 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         return ((OfferAudit) entityConfiguration.createEntityInstance(OfferAudit.class.getName()));
     }
 
-    public void delete(OfferAudit offerAudit) {
-    	if (!em.contains(offerAudit)) {
-    		offerAudit = readAuditById(offerAudit.getId());
+    public void delete(final OfferAudit offerAudit) {
+    	OfferAudit loa = offerAudit;
+    	if (!em.contains(loa)) {
+    		loa = readAuditById(offerAudit.getId());
     	}
-        em.remove(offerAudit);
+        em.remove(loa);
     }
 
-    public OfferAudit save(OfferAudit offerAudit) {
+    public OfferAudit save(final OfferAudit offerAudit) {
         return em.merge(offerAudit);
     }
 
     @SuppressWarnings("unchecked")
-    public OfferAudit readAuditById(Long offerAuditId) {
+    public OfferAudit readAuditById(final Long offerAuditId) {
         return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(OfferAudit.class.getName()), offerAuditId);
     }
 

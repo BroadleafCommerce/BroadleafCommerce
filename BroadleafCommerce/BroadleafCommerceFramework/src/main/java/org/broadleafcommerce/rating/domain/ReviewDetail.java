@@ -23,16 +23,16 @@ import org.broadleafcommerce.rating.service.type.ReviewStatusType;
 
 public interface ReviewDetail {
 
-    public Long getId();
-    public Customer getCustomer();
-    public String getReviewText();
-    public void setReviewText(String reviewText);
-    public Date getReviewSubmittedDate();
-    public Integer helpfulCount();
-    public Integer notHelpfulCount();
-    public ReviewStatusType getStatus();
-    public RatingSummary getRatingSummary();
-    public RatingDetail getRatingDetail();
-    public List<ReviewFeedback> getReviewFeedback();
+    Long getId();
+    Customer getCustomer();
+    String getReviewText();
+    void setReviewText(String reviewText);
+    Date getReviewSubmittedDate();
+    Integer helpfulCount();
+    Integer notHelpfulCount();
+    ReviewStatusType getStatus();
+    RatingSummary getRatingSummary();
+    RatingDetail getRatingDetail();
+    List<ReviewFeedback> getReviewFeedback();
 
 }

@@ -20,15 +20,15 @@ import java.util.List;
 import org.broadleafcommerce.rating.service.type.RatingType;
 
 public interface RatingSummary {
-    public Long getId();
-    public RatingType getRatingType();
-    public String getItemId();
-    public Integer getNumberOfRatings();
-    public Integer getNumberOfReviews();
-    public Double getAverageRating();
-    public void resetAverageRating();
+    Long getId();
+    RatingType getRatingType();
+    String getItemId();
+    Integer getNumberOfRatings();
+    Integer getNumberOfReviews();
+    Double getAverageRating();
+    void resetAverageRating();
 
-    public List<ReviewDetail> getReviews();
-    public List<RatingDetail> getRatings();
+    List<ReviewDetail> getReviews();
+    List<RatingDetail> getRatings();
 
 }

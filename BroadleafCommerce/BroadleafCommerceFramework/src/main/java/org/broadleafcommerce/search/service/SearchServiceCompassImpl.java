@@ -42,7 +42,7 @@ import org.springframework.stereotype.Service;
 @Service("blSearchService")
 public class SearchServiceCompassImpl implements SearchService {
 
-	private static final Logger logger = Logger.getLogger(SearchServiceCompassImpl.class);
+	private static final Logger LOG = Logger.getLogger(SearchServiceCompassImpl.class);
 	
     @CompassContext
     protected Compass compass;
@@ -69,7 +69,7 @@ public class SearchServiceCompassImpl implements SearchService {
     }
 
     public void rebuildProductIndex() {
-        logger.info("Rebuilding product index");
+        LOG.info("Rebuilding product index");
         List<Product> products = catalogService.findAllProducts();
         SearchEngineIndexManager manager = compass.getSearchEngineIndexManager();
         if (!manager.indexExists()) {

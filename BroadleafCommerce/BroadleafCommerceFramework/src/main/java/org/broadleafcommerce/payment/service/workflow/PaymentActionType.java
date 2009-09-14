@@ -16,7 +16,7 @@
 package org.broadleafcommerce.payment.service.workflow;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,17 +29,17 @@ public class PaymentActionType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentActionType> types = new Hashtable<String, PaymentActionType>();
+    private static final Map<String, PaymentActionType> TYPES = new HashMap<String, PaymentActionType>();
 
-    public static PaymentActionType AUTHORIZE = new PaymentActionType("AUTHORIZE");
-    public static PaymentActionType DEBIT = new PaymentActionType("DEBIT");
-    public static PaymentActionType AUTHORIZEANDDEBIT = new PaymentActionType("AUTHORIZEANDDEBIT");
-    public static PaymentActionType CREDIT = new PaymentActionType("CREDIT");
-    public static PaymentActionType VOID = new PaymentActionType("VOID");
-    public static PaymentActionType BALANCE = new PaymentActionType("BALANCE");
+    public static final PaymentActionType AUTHORIZE = new PaymentActionType("AUTHORIZE");
+    public static final PaymentActionType DEBIT = new PaymentActionType("DEBIT");
+    public static final PaymentActionType AUTHORIZEANDDEBIT = new PaymentActionType("AUTHORIZEANDDEBIT");
+    public static final PaymentActionType CREDIT = new PaymentActionType("CREDIT");
+    public static final PaymentActionType VOID = new PaymentActionType("VOID");
+    public static final PaymentActionType BALANCE = new PaymentActionType("BALANCE");
 
-    public static PaymentActionType getInstance(String type) {
-        return types.get(type);
+    public static PaymentActionType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -48,7 +48,7 @@ public class PaymentActionType implements Serializable {
         //do nothing
     }
 
-    public PaymentActionType(String type) {
+    public PaymentActionType(final String type) {
         setType(type);
     }
 
@@ -56,10 +56,10 @@ public class PaymentActionType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

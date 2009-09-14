@@ -42,30 +42,31 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
     @SuppressWarnings("unchecked")
-	public void deleteRatingSummary(RatingSummary summary) {
-    	if (!em.contains(summary)) {
-    		summary = (RatingSummary) em.find(entityConfiguration.lookupEntityClass(RatingSummary.class.getName()), summary.getId());
+	public void deleteRatingSummary(final RatingSummary summary) {
+    	RatingSummary lSummary = summary;
+    	if (!em.contains(lSummary)) {
+    		lSummary = (RatingSummary) em.find(entityConfiguration.lookupEntityClass(RatingSummary.class.getName()), lSummary.getId());
     	}
-        em.remove(summary);
+        em.remove(lSummary);
     }
 
-    public RatingSummary saveRatingSummary(RatingSummary summary) {
+    public RatingSummary saveRatingSummary(final RatingSummary summary) {
         summary.resetAverageRating();
         return em.merge(summary);
     }
 
     @SuppressWarnings("unchecked")
-    public List<RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type) {
-        Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
+    public List<RatingSummary> readRatingSummaries(final List<String> itemIds, final RatingType type) {
+        final Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemIds", itemIds);
         query.setParameter("ratingType", type.getType());
-        List<RatingSummary> ratings = query.getResultList();
+        final List<RatingSummary> ratings = query.getResultList();
 
         return ratings;
     }
 
-    public RatingSummary readRatingSummary(String itemId, RatingType type) {
-        Query query = em.createNamedQuery("BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE");
+    public RatingSummary readRatingSummary(final String itemId, final RatingType type) {
+        final Query query = em.createNamedQuery("BC_READ_RATING_SUMMARY_BY_ITEM_ID_AND_TYPE");
         query.setParameter("itemId", itemId);
         query.setParameter("ratingType", type.getType());
         RatingSummary ratingSummary = null;
@@ -79,8 +80,8 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         return ratingSummary;
     }
 
-    public RatingDetail readRating(Long customerId, Long ratingSummaryId) {
-        Query query = em.createNamedQuery("BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
+    public RatingDetail readRating(final Long customerId, final Long ratingSummaryId) {
+        final Query query = em.createNamedQuery("BC_READ_RATING_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
         query.setParameter("customerId", customerId);
         query.setParameter("ratingSummaryId", ratingSummaryId);
 
@@ -95,8 +96,8 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         return ratingDetail;
     }
 
-    public ReviewDetail readReview(Long customerId, Long ratingSummaryId) {
-        Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
+    public ReviewDetail readReview(final Long customerId, final Long ratingSummaryId) {
+        final Query query = em.createNamedQuery("BC_READ_REVIEW_DETAIL_BY_CUSTOMER_ID_AND_RATING_SUMMARY_ID");
         query.setParameter("customerId", customerId);
         query.setParameter("ratingSummaryId", ratingSummaryId);
         ReviewDetail reviewDetail = null;

@@ -24,11 +24,11 @@ import org.broadleafcommerce.rating.service.type.RatingType;
 
 public interface RatingSummaryDao {
 
-    public RatingSummary readRatingSummary(String itemId, RatingType type);
-    public List<RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type);
-    public RatingSummary saveRatingSummary(RatingSummary summary);
-    public void deleteRatingSummary(RatingSummary summary);
+    RatingSummary readRatingSummary(String itemId, RatingType type);
+    List<RatingSummary> readRatingSummaries(List<String> itemIds, RatingType type);
+    RatingSummary saveRatingSummary(RatingSummary summary);
+    void deleteRatingSummary(RatingSummary summary);
 
-    public RatingDetail readRating(Long customerId, Long ratingSummaryId);
-    public ReviewDetail readReview(Long customerId, Long ratingSummaryId);
+    RatingDetail readRating(Long customerId, Long ratingSummaryId);
+    ReviewDetail readReview(Long customerId, Long ratingSummaryId);
 }

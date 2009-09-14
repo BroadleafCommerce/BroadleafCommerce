@@ -16,7 +16,7 @@
 package org.broadleafcommerce.order.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,14 +28,14 @@ public class OrderItemType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OrderItemType> types = new Hashtable<String, OrderItemType>();
+    private static final Map<String, OrderItemType> TYPES = new HashMap<String, OrderItemType>();
 
-    public static OrderItemType DISCRETE  = new OrderItemType("org.broadleafcommerce.order.domain.DiscreteOrderItem");
-    public static OrderItemType BUNDLE = new OrderItemType("org.broadleafcommerce.order.domain.BundleOrderItem");
-    public static OrderItemType GIFTWRAP = new OrderItemType("org.broadleafcommerce.order.domain.GiftWrapOrderItem");
+    public static final OrderItemType DISCRETE  = new OrderItemType("org.broadleafcommerce.order.domain.DiscreteOrderItem");
+    public static final OrderItemType BUNDLE = new OrderItemType("org.broadleafcommerce.order.domain.BundleOrderItem");
+    public static final OrderItemType GIFTWRAP = new OrderItemType("org.broadleafcommerce.order.domain.GiftWrapOrderItem");
 
-    public static OrderItemType getInstance(String type) {
-        return types.get(type);
+    public static OrderItemType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -44,7 +44,7 @@ public class OrderItemType implements Serializable {
         //do nothing
     }
 
-    public OrderItemType(String type) {
+    public OrderItemType(final String type) {
         setType(type);
     }
 
@@ -52,10 +52,10 @@ public class OrderItemType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

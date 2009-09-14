@@ -21,11 +21,11 @@ import org.broadleafcommerce.profile.domain.Customer;
 
 public interface RatingDetail {
 
-    public Long getId();
-    public Double getRating();
-    public void setRating(Double newRating);
-    public Customer getCustomer();
-    public Date getRatingSubmittedDate();
-    public RatingSummary getRatingSummary();
+    Long getId();
+    Double getRating();
+    void setRating(Double newRating);
+    Customer getCustomer();
+    Date getRatingSubmittedDate();
+    RatingSummary getRatingSummary();
 
 }

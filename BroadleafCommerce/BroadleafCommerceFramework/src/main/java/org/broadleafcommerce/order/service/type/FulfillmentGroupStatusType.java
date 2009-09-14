@@ -16,7 +16,7 @@
 package org.broadleafcommerce.order.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,14 +29,14 @@ public class FulfillmentGroupStatusType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, FulfillmentGroupStatusType> types = new Hashtable<String, FulfillmentGroupStatusType>();
+    private static final Map<String, FulfillmentGroupStatusType> TYPES = new HashMap<String, FulfillmentGroupStatusType>();
 
-    public static FulfillmentGroupStatusType PROCESSING = new FulfillmentGroupStatusType("PROCESSING");
-    public static FulfillmentGroupStatusType SHIPPED = new FulfillmentGroupStatusType("SHIPPED");
-    public static FulfillmentGroupStatusType DELIVERED = new FulfillmentGroupStatusType("DELIVERED");
+    public static final FulfillmentGroupStatusType PROCESSING = new FulfillmentGroupStatusType("PROCESSING");
+    public static final FulfillmentGroupStatusType SHIPPED = new FulfillmentGroupStatusType("SHIPPED");
+    public static final FulfillmentGroupStatusType DELIVERED = new FulfillmentGroupStatusType("DELIVERED");
 
-    public static FulfillmentGroupStatusType getInstance(String type) {
-        return types.get(type);
+    public static FulfillmentGroupStatusType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -45,7 +45,7 @@ public class FulfillmentGroupStatusType implements Serializable {
         //do nothing
     }
 
-    public FulfillmentGroupStatusType(String type) {
+    public FulfillmentGroupStatusType(final String type) {
         setType(type);
     }
 
@@ -53,10 +53,10 @@ public class FulfillmentGroupStatusType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

@@ -34,16 +34,16 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Resource(name="blOrderItemDao")
     protected OrderItemDao orderItemDao;
 
-    public OrderItem readOrderItemById(Long orderItemId) {
+    public OrderItem readOrderItemById(final Long orderItemId) {
         return orderItemDao.readOrderItemById(orderItemId);
     }
 
-    public OrderItem saveOrderItem(OrderItem orderItem) {
+    public OrderItem saveOrderItem(final OrderItem orderItem) {
         return orderItemDao.saveOrderItem(orderItem);
     }
 
-    public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest) {
-        DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
+    public DiscreteOrderItem createDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest) {
+        final DiscreteOrderItem item = (DiscreteOrderItem) orderItemDao.create(OrderItemType.DISCRETE);
         item.setSku(itemRequest.getSku());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
@@ -56,8 +56,8 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
-    public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest) {
-        GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
+    public GiftWrapOrderItem createGiftWrapOrderItem(final GiftWrapOrderItemRequest itemRequest) {
+        final GiftWrapOrderItem item = (GiftWrapOrderItem) orderItemDao.create(OrderItemType.GIFTWRAP);
         item.setSku(itemRequest.getSku());
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
@@ -73,14 +73,14 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
-    public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest) {
-        BundleOrderItem item = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
+    public BundleOrderItem createBundleOrderItem(final BundleOrderItemRequest itemRequest) {
+        final BundleOrderItem item = (BundleOrderItem) orderItemDao.create(OrderItemType.BUNDLE);
         item.setQuantity(itemRequest.getQuantity());
         item.setCategory(itemRequest.getCategory());
         item.setName(itemRequest.getName());
 
         for (DiscreteOrderItemRequest discreteItemRequest : itemRequest.getDiscreteOrderItems()) {
-            DiscreteOrderItem discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
+            final DiscreteOrderItem discreteOrderItem = createDiscreteOrderItem(discreteItemRequest);
             discreteOrderItem.setBundleOrderItem(item);
             item.getDiscreteOrderItems().add(discreteOrderItem);
             item.assignFinalPrice();
@@ -89,7 +89,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         return item;
     }
 
-    public void delete(OrderItem item) {
+    public void delete(final OrderItem item) {
         orderItemDao.delete(item);
     }
 }
