@@ -22,7 +22,7 @@
 	<div class="orderBorder columns span-12">
 		<div class="orderTitle" > <b>Billing Information </b></div>
 		<c:forEach var="info" items="${order.paymentInfos}" varStatus="status">
-			<div class="column span-17">
+			<div class="column span-7">
 				<span class="small"> <b>Billing Address #${status.index+1 }: </b> </span>  <br/>
 				${info.address.firstName } &nbsp; ${info.address.lastName} <br/>
 				${info.address.addressLine1} <br/>
