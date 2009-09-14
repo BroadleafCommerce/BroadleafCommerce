@@ -530,10 +530,16 @@ public class CategoryImpl implements Category {
         List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
 
-        //populate the lazy items for our cached map
+        /*
+         * TODO create a simplified, non-persistent version of category to place in this map instead
+         * of the actual persistent entity, since we do not intend to fully eager populate every
+         * lazy collection in the category hierarchy of elements.
+         */
+        //populate some lazy items for our cached map
         category.getCategoryImages().size();
         category.getCategoryMedia().size();
-        category.getFeaturedProducts().size();
+        category.getAllParentCategories().size();
+        category.getAllChildCategories().size();
 
         categoryUrlMap.put(currentPath, newCategoryList);
         for (Category currentCategory : category.getChildCategories()) {
