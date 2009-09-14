@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-	<div class="orderBorder columns span-9" style="margin-top:0px;" >
+	<div class="orderBorder columns span-9">
 		<div class="orderTitle" > <b>Order Summary </b></div>
 		<div class="column span-4">
 			Order Number: <br/>
@@ -19,7 +19,7 @@
 		</div>
 	</div>
 
-	<div class="orderBorder columns span-23">
+	<div class="orderBorder columns span-12">
 		<div class="orderTitle" > <b>Billing Information </b></div>
 		<c:forEach var="info" items="${order.paymentInfos}" varStatus="status">
 			<div class="column span-17">
@@ -42,7 +42,7 @@
 	</div>
 	
 	<c:forEach var="fg" items="${order.fulfillmentGroups}" varStatus="status">
-		<div class="orderBorder columns span-23">
+		<div class="orderBorder columns span-12">
 			<div class="orderTitle" > <b>Shipment #${status.index+1} Information </b></div>
 			<div>
 				<span class="small"> <b>Ship To:</b> </span>  <br/>
@@ -85,3 +85,4 @@
 			</div>
 		</div>
 	</c:forEach>
+	<div style="clear:both"> </div>
