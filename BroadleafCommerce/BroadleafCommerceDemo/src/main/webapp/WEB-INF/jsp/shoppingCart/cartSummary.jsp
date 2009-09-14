@@ -53,11 +53,11 @@
 				    			<span class="price">
 	           						<c:choose>
 										<c:when test="${item.salePrice.amount != item.retailPrice.amount}">
-											<span class="salePrice"><fmt:formatNumber type="currency" value="${item.salePrice.amount * orderItem.quantity}" /></span>
-											<br/><span class="originalPrice">reg&nbsp;<fmt:formatNumber type="currency" value="${item.retailPrice.amount * orderItem.quantity}" /></span>
+											<span class="salePrice"><fmt:formatNumber type="currency" value="${item.salePrice.amount}" /></span>
+											<br/><span class="originalPrice">reg&nbsp;<fmt:formatNumber type="currency" value="${item.retailPrice.amount}" /></span>
 										</c:when>
 										<c:otherwise>
-											<fmt:formatNumber type="currency" value="${item.retailPrice.amount * orderItem.quantity}" />
+											<fmt:formatNumber type="currency" value="${item.retailPrice.amount}" />
 										</c:otherwise>
 									</c:choose>
 					    		</span>
@@ -65,7 +65,7 @@
 		  					<td style="text-align:right;">
 								<c:choose>
 									<c:when test="${orderItem.adjustmentValue.amount > 0}" >
-										<span class="price" style="color:red;">(<fmt:formatNumber type="currency" value="${orderItem.adjustmentValue.amount * orderItem.quantity}" />)</span>
+										<span class="price" style="color:red;">(<fmt:formatNumber type="currency" value="${orderItem.adjustmentValue.amount}" />)</span>
 									</c:when>
 									<c:otherwise>
 										<span class="price"> -- &nbsp;&nbsp;&nbsp;</span>					
