@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="baseNoSide">
 <tiles:putAttribute name="mainContent" type="string">
+<div class="mainContentAreaFull" style="padding:8px 0 8px 8px;">
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 	<h3 style="margin:8px 0;font-weight:bold;">Wishlist: ${wishlist.name}</h3>
 	<c:choose>
@@ -86,5 +87,6 @@
 			<b> <a href="../store" >Add Something to Your Cart</a></b>
 		</c:otherwise>
 	</c:choose>
+</div>
 </tiles:putAttribute>
 </tiles:insertDefinition>
