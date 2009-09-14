@@ -9,7 +9,6 @@
 
 
     <sec:http auto-config="true" >
-        <sec:intercept-url pattern="/account/**" access="ROLE_USER" />      
         <sec:form-login login-page='/registerCustomer/registerCustomer.htm' 
         				default-target-url='/welcome.htm'
         				authentication-failure-url="/registerCustomer/registerCustomer.htm?error=true"
