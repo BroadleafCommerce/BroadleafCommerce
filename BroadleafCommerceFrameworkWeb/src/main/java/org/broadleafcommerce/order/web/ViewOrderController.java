@@ -79,25 +79,18 @@ public class ViewOrderController {
 
     @RequestMapping(method =  {RequestMethod.POST})
     public String processFindOrder (@ModelAttribute FindOrderForm findOrderForm, ModelMap model, HttpServletRequest request) {
-        boolean zipFound = false;
         Order order = cartService.findOrderByOrderNumber(findOrderForm.getOrderNumber());
 
         if (order == null) {
             return "findOrderError";
         }
-
         List<FulfillmentGroup> orderFulfillmentGroups = order.getFulfillmentGroups();
         if (orderFulfillmentGroups != null ) {
-            orderLoop: for (FulfillmentGroup fulfillmentGroup : orderFulfillmentGroups)  {
+            for (FulfillmentGroup fulfillmentGroup : orderFulfillmentGroups)  {
                 if (fulfillmentGroup.getAddress().getPostalCode().equals(findOrderForm.getPostalCode())) {
-                    zipFound = true;
-                    break orderLoop;
+		            return viewOrderDetails(model, request, order.getOrderNumber());
                 }
             }
-        }
-
-        if (zipFound) {
-            return viewOrderDetails(model, request, order.getOrderNumber());
         }
 
         return "findOrderError";
