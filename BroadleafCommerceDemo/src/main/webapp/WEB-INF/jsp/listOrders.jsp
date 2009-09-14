@@ -1,6 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
 <tiles:insertDefinition name="baseNoSide">
 	<tiles:putAttribute name="mainContent" type="string">
+	<div class="mainContentAreaFull" style="padding:8px 0 8px 8px;">
 	
 	<h3 class="pageTitle" ><b>Manage Orders </b></h3>
 
@@ -31,6 +32,6 @@
 			You haven't placed any orders!
 		</c:otherwise>	
 	</c:choose>
-
+	</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>
