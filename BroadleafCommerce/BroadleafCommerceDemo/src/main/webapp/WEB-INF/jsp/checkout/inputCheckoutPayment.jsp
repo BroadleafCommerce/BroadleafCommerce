@@ -82,8 +82,8 @@
 		</div>
 	</div>
 
-	<div class="span-10 creditCardPayment checkoutBorder">
-		<div class="checkoutTitle" > <b> Credit Card Information </b></div>
+	<div class="span-10 creditCardPayment orderBorder">
+		<div class="orderTitle" > <b> Credit Card Information </b></div>
 		<span class="small"><b>* Required Fields</b></span> <br/>
 		<div class="errorInputText" style="margin-top:10px;">
 			<form:errors path="creditCardNumber" > 

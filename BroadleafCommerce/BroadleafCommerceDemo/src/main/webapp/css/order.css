@@ -6,7 +6,7 @@
 .orderBorder {
 	border:1px solid #ccc;
 	background: url(/broadleafdemo/images/brownGradient30.gif) repeat-x scroll center top;
-	padding: 0;
+	padding: 5;
 	margin-top: 15px;
 	-moz-border-radius-topleft:6px;
 	-moz-border-radius-topright:6px;
