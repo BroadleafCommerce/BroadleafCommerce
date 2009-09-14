@@ -84,6 +84,15 @@
 			<param name="module" value="SearchModule" />
 		</antcall>
 
+		<antcall target="build-module">
+			<param name="module.dir" value="modules/security" />
+			<param name="module" value="SecurityModule" />
+		</antcall>
+
+		<antcall target="build-module">
+			<param name="module.dir" value="modules/tools" />
+			<param name="module" value="ToolsModule" />
+		</antcall>
 
 		<html-wrapper
 			swf="BroadleafCommerceAdmin"
