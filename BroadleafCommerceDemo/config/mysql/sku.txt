@@ -120,7 +120,7 @@
 120|Organic Serena Blend||10.99|8.99|N|N
 121|Espresso Roast||11.99|11.99|N|N
 122|Decaf Espresso Roast||10.99|8.99|N|N
-123|French Roast||4.99|2.99|N|N
+123|French Roast||4.99|3.99|N|N
 124|Italian Roast||9.99|7.99|N|N
 125|Pike Place Roast||9.99|9.99|N|N
 126|Decaf Pike Place Roast||23.99|21.99|N|N

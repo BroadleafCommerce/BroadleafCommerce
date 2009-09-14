@@ -120,7 +120,7 @@
 120|1008|Organic Serena Blend||0|1|||||||
 121|1008|Espresso Roast||1|1|||||||
 122|1008|Decaf Espresso Roast||0|1|||||||
-123|1008|French Roast||1|1|||||||
+123|1008|French Roast||1|1||||||1 lb|
 124|1008|Italian Roast||1|1|||||||
 125|1008|Pike Place Roast||0|1|||||||
 126|1008|Decaf Pike Place Roast||0|1|||||||
