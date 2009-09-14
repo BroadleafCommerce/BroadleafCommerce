@@ -16,7 +16,7 @@
 package org.broadleafcommerce.payment.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,17 +29,17 @@ public class TransactionType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, TransactionType> types = new Hashtable<String, TransactionType>();
+    private static final Map<String, TransactionType> TYPES = new HashMap<String, TransactionType>();
 
-    public static TransactionType AUTHORIZE = new TransactionType("AUTHORIZE");
-    public static TransactionType DEBIT = new TransactionType("DEBIT");
-    public static TransactionType AUTHORIZEANDDEBIT = new TransactionType("AUTHORIZEANDDEBIT");
-    public static TransactionType CREDIT = new TransactionType("CREDIT");
-    public static TransactionType VOIDPAYMENT = new TransactionType("VOIDPAYMENT");
-    public static TransactionType BALANCE = new TransactionType("BALANCE");
+    public static final TransactionType AUTHORIZE = new TransactionType("AUTHORIZE");
+    public static final TransactionType DEBIT = new TransactionType("DEBIT");
+    public static final TransactionType AUTHORIZEANDDEBIT = new TransactionType("AUTHORIZEANDDEBIT");
+    public static final TransactionType CREDIT = new TransactionType("CREDIT");
+    public static final TransactionType VOIDPAYMENT = new TransactionType("VOIDPAYMENT");
+    public static final TransactionType BALANCE = new TransactionType("BALANCE");
 
-    public static TransactionType getInstance(String type) {
-        return types.get(type);
+    public static TransactionType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -48,7 +48,7 @@ public class TransactionType implements Serializable {
         //do nothing
     }
 
-    public TransactionType(String type) {
+    public TransactionType(final String type) {
         setType(type);
     }
 
@@ -56,10 +56,10 @@ public class TransactionType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

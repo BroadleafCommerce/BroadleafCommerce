@@ -19,7 +19,7 @@ import org.broadleafcommerce.rating.domain.ReviewDetail;
 
 public interface ReviewDetailDao {
 
-    public ReviewDetail readReviewDetailById(Long reviewId);
-    public ReviewDetail saveReviewDetail(ReviewDetail reviewDetail);
+    ReviewDetail readReviewDetailById(Long reviewId);
+    ReviewDetail saveReviewDetail(ReviewDetail reviewDetail);
 
 }

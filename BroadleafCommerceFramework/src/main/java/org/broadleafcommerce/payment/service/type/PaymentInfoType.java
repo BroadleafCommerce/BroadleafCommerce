@@ -16,7 +16,7 @@
 package org.broadleafcommerce.payment.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,14 +29,14 @@ public class PaymentInfoType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentInfoType> types = new Hashtable<String, PaymentInfoType>();
+    private static final Map<String, PaymentInfoType> TYPES = new HashMap<String, PaymentInfoType>();
 
-    public static PaymentInfoType GIFT_CARD = new PaymentInfoType("GIFT_CARD");
-    public static PaymentInfoType CREDIT_CARD = new PaymentInfoType("CREDIT_CARD");
-    public static PaymentInfoType BANK_ACCOUNT = new PaymentInfoType("BANK_ACCOUNT");
+    public static final PaymentInfoType GIFT_CARD = new PaymentInfoType("GIFT_CARD");
+    public static final PaymentInfoType CREDIT_CARD = new PaymentInfoType("CREDIT_CARD");
+    public static final PaymentInfoType BANK_ACCOUNT = new PaymentInfoType("BANK_ACCOUNT");
 
-    public static PaymentInfoType getInstance(String type) {
-        return types.get(type);
+    public static PaymentInfoType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -45,7 +45,7 @@ public class PaymentInfoType implements Serializable {
         //do nothing
     }
 
-    public PaymentInfoType(String type) {
+    public PaymentInfoType(final String type) {
         setType(type);
     }
 
@@ -53,10 +53,10 @@ public class PaymentInfoType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

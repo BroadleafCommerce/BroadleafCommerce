@@ -24,25 +24,25 @@ import org.broadleafcommerce.profile.domain.Customer;
 
 public interface CartService extends OrderService {
 
-    public Order createNewCartForCustomer(Customer customer);
+    Order createNewCartForCustomer(Customer customer);
 
-    public Order findCartForCustomer(Customer customer);
+    Order findCartForCustomer(Customer customer);
 
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
+    Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
     
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException;
+    Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException;
 
-    public OrderItem moveItemToCartFromNamedOrder(Order order, OrderItem orderItem) throws PricingException;
+    OrderItem moveItemToCartFromNamedOrder(Order order, OrderItem orderItem) throws PricingException;
     
-    public OrderItem moveItemToCartFromNamedOrder(Order order, OrderItem orderItem, boolean priceOrder) throws PricingException;
+    OrderItem moveItemToCartFromNamedOrder(Order order, OrderItem orderItem, boolean priceOrder) throws PricingException;
 
-    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException;
+    OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException;
     
-    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity, boolean priceOrder) throws PricingException;
+    OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity, boolean priceOrder) throws PricingException;
 
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
+    Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
     
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException;
+    Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException;
 
     /**
      * Merge the anonymous cart with the customer's cart taking into
@@ -52,9 +52,9 @@ public interface CartService extends OrderService {
      * @return the response containing the cart, any items added to the cart,
      *         and any items removed from the cart
      */
-    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException;
+    MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException;
     
-    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId, boolean priceOrder) throws PricingException;
+    MergeCartResponse mergeCart(Customer customer, Long anonymousCartId, boolean priceOrder) throws PricingException;
 
     /**
      * Reconstruct the cart using previous stored state taking into
@@ -63,15 +63,15 @@ public interface CartService extends OrderService {
      * @return the response containing the cart and any items removed from the
      *         cart
      */
-    public ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
+    ReconstructCartResponse reconstructCart(Customer customer) throws PricingException;
     
-    public ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
+    ReconstructCartResponse reconstructCart(Customer customer, boolean priceOrder) throws PricingException;
 
-    public boolean isMoveNamedOrderItems();
+    boolean isMoveNamedOrderItems();
 
-    public void setMoveNamedOrderItems(boolean moveNamedOrderItems);
+    void setMoveNamedOrderItems(boolean moveNamedOrderItems);
 
-    public boolean isDeleteEmptyNamedOrders();
+    boolean isDeleteEmptyNamedOrders();
 
-    public void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
+    void setDeleteEmptyNamedOrders(boolean deleteEmptyNamedOrders);
 }

@@ -16,7 +16,7 @@
 package org.broadleafcommerce.offer.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -32,14 +32,14 @@ public class OfferDeliveryType implements Serializable
 {
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OfferDeliveryType> types = new Hashtable<String, OfferDeliveryType>();
+    private static final Map<String, OfferDeliveryType> TYPES = new HashMap<String, OfferDeliveryType>();
 
-    public static OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC");
-    public static OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL");
-    public static OfferDeliveryType CODE = new OfferDeliveryType("CODE");
+    public static final OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC");
+    public static final OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL");
+    public static final OfferDeliveryType CODE = new OfferDeliveryType("CODE");
 
-    public static OfferDeliveryType getInstance(String type) {
-        return types.get(type);
+    public static OfferDeliveryType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -48,14 +48,14 @@ public class OfferDeliveryType implements Serializable
         //do nothing
     }
 
-    public OfferDeliveryType(String type) {
+    public OfferDeliveryType(final String type) {
         setType(type);
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

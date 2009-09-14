@@ -16,7 +16,7 @@
 package org.broadleafcommerce.payment.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,13 +29,13 @@ public class PaymentLogEventType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, PaymentLogEventType> types = new Hashtable<String, PaymentLogEventType>();
+    private static final Map<String, PaymentLogEventType> TYPES = new HashMap<String, PaymentLogEventType>();
 
-    public static PaymentLogEventType START  = new PaymentLogEventType("START");
-    public static PaymentLogEventType FINISHED = new PaymentLogEventType("FINISHED");
+    public static final PaymentLogEventType START  = new PaymentLogEventType("START");
+    public static final PaymentLogEventType FINISHED = new PaymentLogEventType("FINISHED");
 
-    public static PaymentLogEventType getInstance(String type) {
-        return types.get(type);
+    public static PaymentLogEventType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -44,7 +44,7 @@ public class PaymentLogEventType implements Serializable {
         //do nothing
     }
 
-    public PaymentLogEventType(String type) {
+    public PaymentLogEventType(final String type) {
         setType(type);
     }
 
@@ -52,10 +52,10 @@ public class PaymentLogEventType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

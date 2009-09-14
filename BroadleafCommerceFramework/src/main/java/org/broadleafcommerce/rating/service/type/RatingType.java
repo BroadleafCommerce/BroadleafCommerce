@@ -15,18 +15,18 @@
  */
 package org.broadleafcommerce.rating.service.type;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RatingType {
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, RatingType> types = new Hashtable<String, RatingType>();
+    private static final Map<String, RatingType> TYPES = new HashMap<String, RatingType>();
 
-    public static RatingType PRODUCT = new RatingType("PRODUCT");
+    public static final RatingType PRODUCT = new RatingType("PRODUCT");
 
-    public static RatingType getInstance(String type) {
-        return types.get(type);
+    public static RatingType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -34,7 +34,7 @@ public class RatingType {
     public RatingType() {
     }
 
-    public RatingType(String type) {
+    public RatingType(final String type) {
         setType(type);
     }
 
@@ -42,10 +42,10 @@ public class RatingType {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

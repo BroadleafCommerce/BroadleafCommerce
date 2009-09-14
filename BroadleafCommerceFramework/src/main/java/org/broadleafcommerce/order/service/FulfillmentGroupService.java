@@ -19,9 +19,9 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 
 public interface FulfillmentGroupService {
 
-    public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
+    FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
 
-    public FulfillmentGroup createEmptyFulfillmentGroup();
+    FulfillmentGroup createEmptyFulfillmentGroup();
 
-    public FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId);
+    FulfillmentGroup findFulfillmentGroupById(Long fulfillmentGroupId);
 }

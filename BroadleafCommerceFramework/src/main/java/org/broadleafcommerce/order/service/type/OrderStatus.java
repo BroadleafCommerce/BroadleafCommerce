@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.order.service.type;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,14 +27,14 @@ public class OrderStatus {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, OrderStatus> types = new Hashtable<String, OrderStatus>();
+    private static final Map<String, OrderStatus> TYPES = new HashMap<String, OrderStatus>();
 
-    public static OrderStatus NAMED = new OrderStatus("NAMED");
-    public static OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS");
-    public static OrderStatus SUBMITTED = new OrderStatus("SUBMITTED");
+    public static final OrderStatus NAMED = new OrderStatus("NAMED");
+    public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS");
+    public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED");
 
-    public static OrderStatus getInstance(String type) {
-        return types.get(type);
+    public static OrderStatus getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -43,7 +43,7 @@ public class OrderStatus {
         //do nothing
     }
 
-    public OrderStatus(String type) {
+    public OrderStatus(final String type) {
         setType(type);
     }
 
@@ -51,10 +51,10 @@ public class OrderStatus {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

@@ -16,21 +16,21 @@
 package org.broadleafcommerce.rating.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 
 public class RatingSortType implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, RatingSortType> types = new Hashtable<String, RatingSortType>();
+    private static final Map<String, RatingSortType> TYPES = new HashMap<String, RatingSortType>();
 
-    public static RatingSortType MOST_HELPFUL = new RatingSortType("MOST_HELPFUL");
-    public static RatingSortType MOST_RECENT = new RatingSortType("MOST_RECENT");
-    public static RatingSortType DEFAULT = new RatingSortType("DEFAULT");
+    public static final RatingSortType MOST_HELPFUL = new RatingSortType("MOST_HELPFUL");
+    public static final RatingSortType MOST_RECENT = new RatingSortType("MOST_RECENT");
+    public static final RatingSortType DEFAULT = new RatingSortType("DEFAULT");
 
-    public static RatingSortType getInstance(String type) {
-        return types.get(type);
+    public static RatingSortType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -38,7 +38,7 @@ public class RatingSortType implements Serializable {
     public RatingSortType() {
     }
 
-    public RatingSortType(String type) {
+    public RatingSortType(final String type) {
         setType(type);
     }
 
@@ -46,10 +46,10 @@ public class RatingSortType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+        	TYPES.put(type, this);
         }
     }
 

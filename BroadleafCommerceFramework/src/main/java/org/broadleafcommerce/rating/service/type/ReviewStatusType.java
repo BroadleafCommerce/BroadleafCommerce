@@ -15,20 +15,20 @@
  */
 package org.broadleafcommerce.rating.service.type;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ReviewStatusType {
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ReviewStatusType> types = new Hashtable<String, ReviewStatusType>();
+    private static final Map<String, ReviewStatusType> TYPES = new HashMap<String, ReviewStatusType>();
 
-    public static ReviewStatusType PENDING = new ReviewStatusType("PENDING");
-    public static ReviewStatusType APPROVED = new ReviewStatusType("APPROVED");
-    public static ReviewStatusType REJECTED = new ReviewStatusType("REJECTED");
+    public static final ReviewStatusType PENDING = new ReviewStatusType("PENDING");
+    public static final ReviewStatusType APPROVED = new ReviewStatusType("APPROVED");
+    public static final ReviewStatusType REJECTED = new ReviewStatusType("REJECTED");
 
-    public static ReviewStatusType getInstance(String type) {
-        return types.get(type);
+    public static ReviewStatusType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -36,7 +36,7 @@ public class ReviewStatusType {
     public ReviewStatusType() {
     }
 
-    public ReviewStatusType(String type) {
+    public ReviewStatusType(final String type) {
         setType(type);
     }
 
@@ -44,10 +44,10 @@ public class ReviewStatusType {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+        	TYPES.put(type, this);
         }
     }
 

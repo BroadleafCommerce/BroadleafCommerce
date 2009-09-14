@@ -31,7 +31,7 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
 
     private static final Log LOG = LogFactory.getLog(PricingExecutionManagerImpl.class);
 
-    private static final ThreadLocal<Order> uniqueOrder = new ThreadLocal<Order>();
+    private static final ThreadLocal<Order> UNIQUE_ORDER = new ThreadLocal<Order>();
 
     private int order;
 
@@ -50,16 +50,16 @@ public class PricingExecutionManagerImpl implements PricingExecutionManager, Ord
     }
 
     public void clearCache() {
-        uniqueOrder.remove();
+        UNIQUE_ORDER.remove();
     }
 
     public void executePricing(Order order) {
-        uniqueOrder.set(order);
+        UNIQUE_ORDER.set(order);
         LOG.debug("Context order reset : order id " + order.getId());
     }
 
     public Order getLatestItem() {
-        Order order = uniqueOrder.get();
+        Order order = UNIQUE_ORDER.get();
         if (order != null) {
             LOG.debug("Latest context order retrieved : order id " + order.getId());
         }
