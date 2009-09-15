@@ -52,7 +52,6 @@ public class UserImpl implements User {
     protected Long id;
 
     @Column(name = "USER_NAME", nullable=false)
-    @Index(name="USER_NAME_INDEX", columnNames={"USER_NAME"})
     protected String username;
 
     @Column(name = "PASSWORD", nullable=false)

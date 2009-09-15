@@ -48,12 +48,10 @@ public class CustomerAddressImpl implements CustomerAddress {
     protected Long id;
 
     @Column(name = "ADDRESS_NAME")
-    @Index(name="CUSTOMERADDRESS_NAME_INDEX", columnNames={"ADDRESS_NAME"})
     protected String addressName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="CUSTOMERADDRESS_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = AddressImpl.class, optional=false)

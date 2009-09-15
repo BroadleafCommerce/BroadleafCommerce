@@ -46,7 +46,6 @@ public class CustomerImpl implements Customer {
     protected Auditable auditable = new Auditable();
 
     @Column(name = "USER_NAME")
-    @Index(name="CUSTOMER_USERNAME_INDEX", columnNames={"USER_NAME"})
     protected String username;
 
     @Column(name = "PASSWORD")
