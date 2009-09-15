@@ -46,7 +46,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order, java.util.Map)
      */
-    public CheckoutResponse performCheckout(Order order, Map<PaymentInfo, Referenced> payments) throws CheckoutException {
+    public CheckoutResponse performCheckout(Order order, final Map<PaymentInfo, Referenced> payments) throws CheckoutException {
         /*
          * TODO add validation that checks the order and payment information for validity.
          */
@@ -68,7 +68,7 @@ public class CheckoutServiceImpl implements CheckoutService {
             order.setSubmitDate(new Date(DateUtil.getNow()));
             order = cartService.save(order, false);
 
-            CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
+            final CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);
 
             return seed;
@@ -89,7 +89,7 @@ public class CheckoutServiceImpl implements CheckoutService {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order)
      */
-    public CheckoutResponse performCheckout(Order order) throws CheckoutException {
+    public CheckoutResponse performCheckout(final Order order) throws CheckoutException {
         return performCheckout(order, null);
     }
 

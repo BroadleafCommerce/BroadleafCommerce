@@ -44,56 +44,56 @@ public interface Product extends Serializable {
      *
      * @return the id of the Product
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the id of the Product.
      *
      * @param id - the id of the product
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Returns the name of the product that is used for display purposes.
      *
      * @return the name of the product
      */
-    public String getName();
+    String getName();
 
     /**
      * Sets the name of the product that is used for display purposes.
      *
      * @param name - the name of the Product
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Returns a brief description of the product that is used for display.
      *
      * @return a brief description of the product
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Sets a brief description of the product that is used for display.
      *
      * @param description - a brief description of the product
      */
-    public void setDescription(String description);
+    void setDescription(String description);
 
     /**
      * Returns a long description of the product that is used for display.
      *
      * @return a long description of the product
      */
-    public String getLongDescription();
+    String getLongDescription();
 
     /**
      * Sets a long description of the product that is used for display.
      *
      * @param longDescription the long description
      */
-    public void setLongDescription(String longDescription);
+    void setLongDescription(String longDescription);
 
     /**
      * Returns the first date a product will be available that is used to determine whether
@@ -101,7 +101,7 @@ public interface Product extends Serializable {
      *
      * @return the first date the product will be available
      */
-    public Date getActiveStartDate();
+    Date getActiveStartDate();
 
     /**
      * Sets the first date a product will be available that is used to determine whether
@@ -109,7 +109,7 @@ public interface Product extends Serializable {
      *
      * @param activeStartDate - the first day the product is available
      */
-    public void setActiveStartDate(Date activeStartDate);
+    void setActiveStartDate(Date activeStartDate);
 
     /**
      * Returns the last date a product will be available that is used to determine whether
@@ -117,7 +117,7 @@ public interface Product extends Serializable {
      *
      * @return the last day the product is available
      */
-    public Date getActiveEndDate();
+    Date getActiveEndDate();
 
     /**
      * Sets the last date a product will be available that is used to determine whether
@@ -125,30 +125,30 @@ public interface Product extends Serializable {
      *
      * @param activeEndDate - the last day the product is available
      */
-    public void setActiveEndDate(Date activeEndDate);
+    void setActiveEndDate(Date activeEndDate);
 
     /**
      * Returns a boolean that indicates if the product is currently active.
      *
      * @return a boolean indicates if the product is active.
      */
-    public boolean isActive();
+    boolean isActive();
 
     /**
      * Returns a list of {@link Sku}s that are part of this product.
      *
      * @return a list of {@link Sku}s associated with this product
      */
-    public List<Sku> getSkus();
+    List<Sku> getSkus();
 
     /**
      * Sets the {@link Sku}s that are to be associated with this product.
      *
      * @param skus - a List of {@link Sku}s to associate with this product.
      */
-    public void setAllSkus(List<Sku> skus);
+    void setAllSkus(List<Sku> skus);
 
-    public List<Sku> getAllSkus();
+    List<Sku> getAllSkus();
     
     /**
      * Returns a map of key/value pairs that associate the image name (key) with the URL to the image (value)
@@ -156,7 +156,7 @@ public interface Product extends Serializable {
      *
      * @return a map of product images
      */
-    public Map<String, String> getProductImages();
+    Map<String, String> getProductImages();
 
     /**
      * Returns a string URL to an image given the string key passed in for this product.
@@ -165,200 +165,200 @@ public interface Product extends Serializable {
      *
      * @return a URL to the image associated witht he key passed in.
      */
-    public String getProductImage(String imageKey);
+    String getProductImage(String imageKey);
 
     /**
      * Sets the product images map.
      *
      * @param productImages - a map of product images
      */
-    public void setProductImages(Map<String, String> productImages);
+    void setProductImages(Map<String, String> productImages);
 
     /**
      * Returns a map of key/value pairs that associate the media name (key) with the Media object(value)
      *
      * @return a map of product media
      */
-    public Map<String, Media> getProductMedia();
+    Map<String, Media> getProductMedia();
 
     /**
      * Sets the product media map.
      *
      * @param productImages - a map of product images
      */
-    public void setProductMedia(Map<String, Media> productMedia);
+    void setProductMedia(Map<String, Media> productMedia);
 
     /**
      * Returns all parent {@link Category}(s) this product is associated with.
      *
      * @return the all parent categories for this product
      */
-    public List<Category> getAllParentCategories();
+    List<Category> getAllParentCategories();
 
     /**
      * Sets all parent {@link Category}s this product is associated with.
      *
      * @param allParentCategories - a List of all parent {@link Category}(s) to associate this product with
      */
-    public void setAllParentCategories(List<Category> allParentCategories);
+    void setAllParentCategories(List<Category> allParentCategories);
      
     /**
      * Returns the default {@link Category} this product is associated with.
      *
      * @param defaultCategory - the default {@link Category} to associate this product with
      */
-    public Category getDefaultCategory();
+    Category getDefaultCategory();
 
     /**
      * Sets the default {@link Category} to associate this product with.
      *
      * @param defaultCategory - the default {@link Category} to associate this product with
      */
-    public void setDefaultCategory(Category defaultCategory);
+    void setDefaultCategory(Category defaultCategory);
 
     /**
      * Returns the model number of the product
      * @return the model number
      */
-    public String getModel();
+    String getModel();
 
     /**
      * Sets the model number of the product
      * @param model
      */
-    public void setModel(String model);
+    void setModel(String model);
 
     /**
      * Returns the manufacture name for this product
      * @return the manufacture name
      */
-    public String getManufacturer();
+    String getManufacturer();
 
     /**
      * Sets the manufacture for this product
      * @param manufacturer
      */
-    public void setManufacturer(String manufacturer);
+    void setManufacturer(String manufacturer);
 
     /**
      * Returns the {@link ProductDimension} for this product
      * @return a ProductDimensions object
      */
-    public ProductDimension getDimension();
+    ProductDimension getDimension();
 
     /**
      * Sets the {@link ProductDimension} for this product
      * @param dimension
      */
-    public void setDimension(ProductDimension dimension);
+    void setDimension(ProductDimension dimension);
 
     /**
      * Returns the product dimension width
      * @return width dimension of the product
      */
-    public BigDecimal getWidth();
+    BigDecimal getWidth();
 
     /**
      * Sets the product dimension width
      * @param width
      */
-    public void setWidth(BigDecimal width);
+    void setWidth(BigDecimal width);
 
     /**
      * Returns the product dimension height
      * @return height dimension of the product
      */
-    public BigDecimal getHeight();
+    BigDecimal getHeight();
 
     /**
      * Sets the product dimension height
      * @param height
      */
-    public void setHeight(BigDecimal height);
+    void setHeight(BigDecimal height);
 
     /**
      * Returns the product dimension depth
      * @return width depth of the product
      */
-    public BigDecimal getDepth();
+    BigDecimal getDepth();
 
     /**
      * Sets the product dimension depth
      * @param depth
      */
-    public void setDepth(BigDecimal depth);
+    void setDepth(BigDecimal depth);
 
     /**
      * Returns the weight of the product
      * @return weight of product
      */
-    public ProductWeight getWeight();
+    ProductWeight getWeight();
 
     /**
      * Sets the product weight
      * @param weight
      */
-    public void setWeight(ProductWeight weight);
+    void setWeight(ProductWeight weight);
 
     /**
      * Returns a String representation of the product dimension
      * @return a product dimension String
      */
-    public String getDimensionString();
+    String getDimensionString();
 
     /**
      * Returns a List of this product's related Cross Sales
      * @return
      */
-    public List<RelatedProduct> getCrossSaleProducts();
+    List<RelatedProduct> getCrossSaleProducts();
 
     /**
      * Sets the related Cross Sales
      * @param crossSaleProducts
      */
-    public void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
+    void setCrossSaleProducts(List<RelatedProduct> crossSaleProducts);
 
     /**
      * Returns a List of this product's related Up Sales
      * @return
      */
-    public List<RelatedProduct> getUpSaleProducts();
+    List<RelatedProduct> getUpSaleProducts();
 
     /**
      * Sets the related Up Sales
      * @param upSaleProducts
      */
-    public void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
+    void setUpSaleProducts(List<RelatedProduct> upSaleProducts);
 
     /**
      * Returns whether or not the product is featured
      * @return isFeaturedProduct as Boolean
      */
-    public boolean getIsFeaturedProduct();
+    boolean getIsFeaturedProduct();
 
     /**
      * Sets whether or not the product is featured
      * @param isFeaturedProduct
      */
-    public void setFeaturedProduct(boolean isFeaturedProduct);
+    void setFeaturedProduct(boolean isFeaturedProduct);
 
-    public boolean isMachineSortable();
+    boolean isMachineSortable();
 
-    public void setMachineSortable(boolean isMachineSortable);
+    void setMachineSortable(boolean isMachineSortable);
 
-    public void setGirth(BigDecimal girth);
+    void setGirth(BigDecimal girth);
 
-    public BigDecimal getGirth();
+    BigDecimal getGirth();
 
-    public ContainerSizeType getSize();
+    ContainerSizeType getSize();
 
-    public void setSize(ContainerSizeType size);
+    void setSize(ContainerSizeType size);
 
-    public ContainerShapeType getContainer();
+    ContainerShapeType getContainer();
 
-    public void setContainer(ContainerShapeType container);
+    void setContainer(ContainerShapeType container);
     
-    public String getPromoMessage();
+    String getPromoMessage();
     
-    public void setPromoMessage(String promoMessage);
+    void setPromoMessage(String promoMessage);
 }

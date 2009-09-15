@@ -16,7 +16,7 @@
 package org.broadleafcommerce.email.service.message;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,14 +29,14 @@ public class EmailPropertyType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, EmailPropertyType> types = new Hashtable<String, EmailPropertyType>();
+    private static final Map<String, EmailPropertyType> TYPES = new HashMap<String, EmailPropertyType>();
 
-    public static EmailPropertyType USER = new EmailPropertyType("user");
-    public static EmailPropertyType INFO = new EmailPropertyType("info");
-    public static EmailPropertyType SERVERINFO = new EmailPropertyType("serverInfo");
+    public static final EmailPropertyType USER = new EmailPropertyType("user");
+    public static final EmailPropertyType INFO = new EmailPropertyType("info");
+    public static final EmailPropertyType SERVERINFO = new EmailPropertyType("serverInfo");
 
-    public static EmailPropertyType getInstance(String type) {
-        return types.get(type);
+    public static EmailPropertyType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -45,7 +45,7 @@ public class EmailPropertyType implements Serializable {
         //do nothing
     }
 
-    public EmailPropertyType(String type) {
+    public EmailPropertyType(final String type) {
         setType(type);
     }
 
@@ -53,10 +53,10 @@ public class EmailPropertyType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

@@ -38,40 +38,40 @@ public interface CategoryProduct extends Serializable {
      * 
      * @return the category
      */
-    public Category getCategory();
+    Category getCategory();
 
     /**
      * Sets the category.
      * 
      * @param category the new category
      */
-    public void setCategory(Category category);
+    void setCategory(Category category);
 
     /**
      * Gets the product.
      * 
      * @return the product
      */
-    public Product getProduct();
+    Product getProduct();
 
     /**
      * Sets the product.
      * 
      * @param product the new product
      */
-    public void setProduct(Product product);
+    void setProduct(Product product);
 
     /**
      * Gets the display order.
      * 
      * @return the display order
      */
-    public Integer getDisplayOrder();
+    Integer getDisplayOrder();
 
     /**
      * Sets the display order.
      * 
      * @param displayOrder the new display order
      */
-    public void setDisplayOrder(Integer displayOrder);
+    void setDisplayOrder(Integer displayOrder);
 }

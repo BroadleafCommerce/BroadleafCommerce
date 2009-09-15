@@ -16,7 +16,7 @@
 package org.broadleafcommerce.util;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,13 +29,13 @@ public class WeightUnitOfMeasureType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, WeightUnitOfMeasureType> types = new Hashtable<String, WeightUnitOfMeasureType>();
+    private static final Map<String, WeightUnitOfMeasureType> TYPES = new HashMap<String, WeightUnitOfMeasureType>();
 
-    public static WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS");
-    public static WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS");
+    public static final WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS");
+    public static final WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS");
 
-    public static WeightUnitOfMeasureType getInstance(String type) {
-        return types.get(type);
+    public static WeightUnitOfMeasureType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -44,7 +44,7 @@ public class WeightUnitOfMeasureType implements Serializable {
         //do nothing
     }
 
-    public WeightUnitOfMeasureType(String type) {
+    public WeightUnitOfMeasureType(final String type) {
         setType(type);
     }
 
@@ -52,10 +52,10 @@ public class WeightUnitOfMeasureType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)){
-            types.put(type, this);
+        if (!TYPES.containsKey(type)){
+            TYPES.put(type, this);
         }
     }
 

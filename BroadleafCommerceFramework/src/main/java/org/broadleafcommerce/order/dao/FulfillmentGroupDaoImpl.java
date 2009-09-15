@@ -37,17 +37,17 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup) {
+    public FulfillmentGroup save(final FulfillmentGroup fulfillmentGroup) {
         return em.merge(fulfillmentGroup);
     }
 
     @SuppressWarnings("unchecked")
-    public FulfillmentGroup readFulfillmentGroupById(Long fulfillmentGroupId) {
+    public FulfillmentGroup readFulfillmentGroupById(final Long fulfillmentGroupId) {
         return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
     }
 
-    public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(Order order) {
-        Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
+    public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(final Order order) {
+        final Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
         FulfillmentGroupImpl result;
         try {
@@ -67,14 +67,14 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     }
 
     public FulfillmentGroup createDefault() {
-        FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
+        final FulfillmentGroup fg = ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
         fg.setPrimary(true);
         fg.setType(FulfillmentGroupType.SHIPPING);
         return fg;
     }
 
     public FulfillmentGroup create() {
-        FulfillmentGroup fg =  ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
+        final FulfillmentGroup fg =  ((FulfillmentGroup) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.FulfillmentGroup"));
         fg.setType(FulfillmentGroupType.SHIPPING);
         return fg;
     }

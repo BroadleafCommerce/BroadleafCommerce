@@ -27,7 +27,7 @@ public abstract class BaseActivity implements Activity {
         return errorHandler;
     }
 
-    public void setBeanName(String beanName) {
+    public void setBeanName(final String beanName) {
         this.beanName = beanName; 
 
     }
@@ -36,7 +36,7 @@ public abstract class BaseActivity implements Activity {
      * Set the fine grained error handler
      * @param errorHandler
      */
-    public void setErrorHandler(ErrorHandler errorHandler) {
+    public void setErrorHandler(final ErrorHandler errorHandler) {
         this.errorHandler = errorHandler;
     }
     

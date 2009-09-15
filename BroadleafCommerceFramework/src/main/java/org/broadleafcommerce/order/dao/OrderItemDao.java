@@ -20,14 +20,14 @@ import org.broadleafcommerce.order.service.type.OrderItemType;
 
 public interface OrderItemDao {
 
-    public OrderItem readOrderItemById(Long orderItemId);
+    OrderItem readOrderItemById(Long orderItemId);
 
-    public OrderItem save(OrderItem orderItem);
+    OrderItem save(OrderItem orderItem);
 
-    public void delete(OrderItem orderItem);
+    void delete(OrderItem orderItem);
 
-    public OrderItem create(OrderItemType orderItemType);
+    OrderItem create(OrderItemType orderItemType);
 
-    public OrderItem saveOrderItem(OrderItem orderItem);
+    OrderItem saveOrderItem(OrderItem orderItem);
 
 }

@@ -22,14 +22,14 @@ import org.broadleafcommerce.util.money.Money;
 
 public interface BundleOrderItem extends OrderItem {
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public List<DiscreteOrderItem> getDiscreteOrderItems();
+    List<DiscreteOrderItem> getDiscreteOrderItems();
 
-    public void setDiscreteOrderItems(List<DiscreteOrderItem> discreteOrderItems);
+    void setDiscreteOrderItems(List<DiscreteOrderItem> discreteOrderItems);
 
-    public Money getTaxablePrice();
+    Money getTaxablePrice();
 
 }

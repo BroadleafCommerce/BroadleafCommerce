@@ -377,9 +377,12 @@ public class ProductImpl implements Product {
      */
     public void setProductImages(Map<String, String> productImages) {
         this.productImages.clear();
-        for(String key : productImages.keySet()){
-        	this.productImages.put(key, productImages.get(key));
-        }
+//        for(String key : productImages.keySet()){
+//        	this.productImages.put(key, productImages.get(key));
+//        }
+    	for(Map.Entry<String, String> me : productImages.entrySet()) {
+    		this.productImages.put(me.getKey(), me.getValue());
+    	}
     }
 
     /*
@@ -396,9 +399,9 @@ public class ProductImpl implements Product {
 
     public void setProductMedia(Map<String, Media> productMedia) {
         this.productMedia.clear();
-        for(String key : productMedia.keySet()){
-        	this.productMedia.put(key, productMedia.get(key));
-        }
+    	for(Map.Entry<String, Media> me : productMedia.entrySet()) {
+    		this.productMedia.put(me.getKey(), me.getValue());
+    	}
     }
 
     /*

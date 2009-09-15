@@ -35,11 +35,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    public OrderItem save(OrderItem orderItem) {
+    public OrderItem save(final OrderItem orderItem) {
         return em.merge(orderItem);
     }
 
-    public OrderItem readOrderItemById(Long orderItemId) {
+    public OrderItem readOrderItemById(final Long orderItemId) {
         return em.find(OrderItemImpl.class, orderItemId);
     }
 
@@ -48,7 +48,7 @@ public class OrderItemDaoImpl implements OrderItemDao {
     		orderItem = readOrderItemById(orderItem.getId());
     	}
         if (GiftWrapOrderItem.class.isAssignableFrom(orderItem.getClass())) {
-            GiftWrapOrderItem giftItem = (GiftWrapOrderItem) orderItem;
+            final GiftWrapOrderItem giftItem = (GiftWrapOrderItem) orderItem;
             for (OrderItem wrappedItem : giftItem.getWrappedItems()) {
                 wrappedItem.setGiftWrapOrderItem(null);
                 wrappedItem = save(wrappedItem);
@@ -57,13 +57,13 @@ public class OrderItemDaoImpl implements OrderItemDao {
         em.remove(orderItem);
     }
 
-    public OrderItem create(OrderItemType orderItemType) {
-        OrderItem item = (OrderItem) entityConfiguration.createEntityInstance(orderItemType.getType());
+    public OrderItem create(final OrderItemType orderItemType) {
+        final OrderItem item = (OrderItem) entityConfiguration.createEntityInstance(orderItemType.getType());
         item.setOrderItemType(orderItemType);
         return item;
     }
 
-    public OrderItem saveOrderItem(OrderItem orderItem) {
+    public OrderItem saveOrderItem(final OrderItem orderItem) {
         return em.merge(orderItem);
     }
 }

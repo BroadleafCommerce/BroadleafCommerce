@@ -16,7 +16,7 @@
 package org.broadleafcommerce.vendor.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,14 +29,14 @@ public class ServiceStatusType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ServiceStatusType> types = new Hashtable<String, ServiceStatusType>();
+    private static final Map<String, ServiceStatusType> TYPES = new HashMap<String, ServiceStatusType>();
 
-    public static ServiceStatusType UP  = new ServiceStatusType("UP");
-    public static ServiceStatusType DOWN  = new ServiceStatusType("DOWN");
-    public static ServiceStatusType PAUSED  = new ServiceStatusType("PAUSED");
+    public static final ServiceStatusType UP  = new ServiceStatusType("UP");
+    public static final ServiceStatusType DOWN  = new ServiceStatusType("DOWN");
+    public static final ServiceStatusType PAUSED  = new ServiceStatusType("PAUSED");
 
-    public static ServiceStatusType getInstance(String type) {
-        return types.get(type);
+    public static ServiceStatusType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -45,7 +45,7 @@ public class ServiceStatusType implements Serializable {
         //do nothing
     }
 
-    public ServiceStatusType(String type) {
+    public ServiceStatusType(final String type) {
         setType(type);
     }
 
@@ -53,10 +53,10 @@ public class ServiceStatusType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)){
-            types.put(type, this);
+        if (!TYPES.containsKey(type)){
+            TYPES.put(type, this);
         }
     }
 
