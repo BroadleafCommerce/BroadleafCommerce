@@ -58,7 +58,6 @@ public class FulfillmentGroupItemImpl implements FulfillmentGroupItem {
 
     @OneToOne(targetEntity = OrderItemImpl.class, optional=false)
     @JoinColumn(name = "ORDER_ITEM_ID")
-    @Index(name="FGITEM_ORDER_INDEX", columnNames={"ORDER_ITEM_ID"})
     protected OrderItem orderItem;
 
     @Column(name = "QUANTITY", nullable=false)

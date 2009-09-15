@@ -54,7 +54,6 @@ public class UserRoleImpl implements UserRole {
 
     @OneToOne(cascade = CascadeType.ALL, targetEntity = RoleImpl.class, optional = false)
     @JoinColumn(name = "ROLE_ID")
-    @Index(name="USERROLE_ROLE_INDEX", columnNames={"ROLE_ID"})
     protected Role role;
 
     public Long getId() {

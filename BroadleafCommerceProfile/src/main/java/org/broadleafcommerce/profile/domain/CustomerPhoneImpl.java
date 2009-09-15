@@ -45,12 +45,10 @@ public class CustomerPhoneImpl implements CustomerPhone{
     protected Long id;
 
     @Column(name = "PHONE_NAME")
-    @Index(name="CUSTPHONE_NAME_INDEX", columnNames={"PHONE_NAME"})
     protected String phoneName;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, targetEntity = CustomerImpl.class, optional=false)
     @JoinColumn(name = "CUSTOMER_ID")
-    @Index(name="CUSTPHONE_CUSTOMER_INDEX", columnNames={"CUSTOMER_ID"})
     protected Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = PhoneImpl.class, optional=false)
