@@ -1,7 +1,7 @@
 <%@ include file="/WEB-INF/jsp/include.jsp" %>
-<h1>
+<h2 style="color: rgb(86, 111, 50);">
 	Search Results
-</h1>
+</h2>
 <c:choose>
 <c:when test="${fn:length(products) == 0}">
 	No results were found for your query.
@@ -22,7 +22,7 @@
 <c:otherwise>
 	<c:forEach var="category" items="${categories}" varStatus="status">
 		<div class="searchCategory span-13">
-			<h2><c:out value="${category.name}"/></h2>
+			<h3 style="color: rgb(86, 111, 50);"><c:out value="${category.name}"/></h3>
 			<c:forEach var="product" items="${categoryGroups[category.id]}" varStatus="status" end="3">
 				<div class="searchProduct span-3">
 					<a href="/broadleafdemo/${category.generatedUrl}?productId=${product.id}">

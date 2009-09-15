@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,8 +41,6 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cache.CacheFactoryException;
-import org.broadleafcommerce.cache.Hydrated;
-import org.broadleafcommerce.cache.HydratedCacheJPAListener;
 import org.broadleafcommerce.cache.HydratedCacheManager;
 import org.broadleafcommerce.cache.HydratedCacheManagerImpl;
 import org.broadleafcommerce.media.domain.Media;
@@ -502,7 +499,8 @@ public class CategoryImpl implements Category {
      * @see
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
-    public Map<String, List<Category>> getChildCategoryURLMap() {
+    @SuppressWarnings("unchecked")
+	public Map<String, List<Category>> getChildCategoryURLMap() {
     	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
     	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
     	if (hydratedItem != null) {
