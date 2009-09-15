@@ -157,9 +157,12 @@
 				<include name="BroadleafCommerceProfileWeb/**/*.*"/>
 				<include name="BroadleafCommerceUSPS/**/*.*"/>
 				<include name="BroadleafCommerceUSPSSchemas/**/*.*"/>
-				<include name="pom.xml"/>
+				<!--<include name="pom.xml"/>-->
 				<exclude name="**/.*/*.*"/>
 				<exclude name="**/.*"/>
+			</fileset>
+			<fileset dir="doc">
+				<include name="pom.xml"/>
 			</fileset>
 		</copy>
 	</target>
