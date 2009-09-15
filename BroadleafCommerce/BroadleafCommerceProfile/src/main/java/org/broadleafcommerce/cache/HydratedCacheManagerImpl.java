@@ -17,7 +17,7 @@ package org.broadleafcommerce.cache;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.ehcache.CacheException;
@@ -37,26 +37,26 @@ import org.hibernate.cache.CacheKey;
 public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCacheManager, HydratedAnnotationManager {
 
     private static final Log LOG = LogFactory.getLog(HydratedCacheManagerImpl.class);
-    private static final HydratedCacheManagerImpl manager = new HydratedCacheManagerImpl();
+    private static final HydratedCacheManagerImpl MANAGER = new HydratedCacheManagerImpl();
 
     protected static HydratedCacheManagerImpl getInstance() {
-        return manager;
+        return MANAGER;
     }
 
     private HydratedCacheManagerImpl()  {}
 
-    private Hashtable<String, HydratedCache> hydratedCacheContainer = new Hashtable<String, HydratedCache>();
-    private Hashtable<String, HydrationDescriptor> hydrationDescriptors = new Hashtable<String, HydrationDescriptor>();
+    private Map<String, HydratedCache> hydratedCacheContainer = new HashMap<String, HydratedCache>();
+    private Map<String, HydrationDescriptor> hydrationDescriptors = new HashMap<String, HydrationDescriptor>();
 
-    protected void addHydratedCache(HydratedCache cache) {
+    protected void addHydratedCache(final HydratedCache cache) {
     	hydratedCacheContainer.put(cache.getCacheName(), cache);
     }
 
-    protected HydratedCache removeHydratedCache(String cacheName) {
+    protected HydratedCache removeHydratedCache(final String cacheName) {
         return hydratedCacheContainer.remove(cacheName);
     }
 
-    protected  HydratedCache getHydratedCache(String cacheName) {
+    protected  HydratedCache getHydratedCache(final String cacheName) {
     	if (!containsCache(cacheName)) {
     		HydratedCache cache = new HydratedCache(cacheName);
     		addHydratedCache(cache);

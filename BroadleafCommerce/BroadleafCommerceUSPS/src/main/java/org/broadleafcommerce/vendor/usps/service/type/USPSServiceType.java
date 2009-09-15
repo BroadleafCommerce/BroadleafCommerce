@@ -16,7 +16,7 @@
 package org.broadleafcommerce.vendor.usps.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,26 +28,26 @@ public class USPSServiceType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, USPSServiceType> types = new Hashtable<String, USPSServiceType>();
+    private static final Map<String, USPSServiceType> TYPES = new HashMap<String, USPSServiceType>();
 
-    public static USPSServiceType ALL  = new USPSServiceType("ALL");
-    public static USPSServiceType ONLINE = new USPSServiceType("ONLINE");
-    public static USPSServiceType FIRSTCLASS = new USPSServiceType("FIRST CLASS");
-    public static USPSServiceType PRIORITY = new USPSServiceType("PRIORITY");
-    public static USPSServiceType PRIORITYCOMMERCIAL = new USPSServiceType("PRIORITY COMMERCIAL");
-    public static USPSServiceType EXPRESS = new USPSServiceType("EXPRESS");
-    public static USPSServiceType EXPRESS_SH = new USPSServiceType("EXPRESS SH");
-    public static USPSServiceType EXPRESS_HFP = new USPSServiceType("EXPRESS HFP");
-    public static USPSServiceType EXPRESSCOMMERCIAL = new USPSServiceType("EXPRESS COMMERCIAL");
-    public static USPSServiceType EXPRESS_SH_COMMERCIAL = new USPSServiceType("EXPRESS SH COMMERCIAL");
-    public static USPSServiceType EXPRESS_HFP_COMMERCIAL = new USPSServiceType("EXPRESS HFP COMMERCIAL");
-    public static USPSServiceType BPM = new USPSServiceType("BPM");
-    public static USPSServiceType PARCEL = new USPSServiceType("PARCEL");
-    public static USPSServiceType MEDIA = new USPSServiceType("MEDIA");
-    public static USPSServiceType LIBRARY = new USPSServiceType("LIBRARY");
+    public static final USPSServiceType ALL  = new USPSServiceType("ALL");
+    public static final USPSServiceType ONLINE = new USPSServiceType("ONLINE");
+    public static final USPSServiceType FIRSTCLASS = new USPSServiceType("FIRST CLASS");
+    public static final USPSServiceType PRIORITY = new USPSServiceType("PRIORITY");
+    public static final USPSServiceType PRIORITYCOMMERCIAL = new USPSServiceType("PRIORITY COMMERCIAL");
+    public static final USPSServiceType EXPRESS = new USPSServiceType("EXPRESS");
+    public static final USPSServiceType EXPRESS_SH = new USPSServiceType("EXPRESS SH");
+    public static final USPSServiceType EXPRESS_HFP = new USPSServiceType("EXPRESS HFP");
+    public static final USPSServiceType EXPRESSCOMMERCIAL = new USPSServiceType("EXPRESS COMMERCIAL");
+    public static final USPSServiceType EXPRESS_SH_COMMERCIAL = new USPSServiceType("EXPRESS SH COMMERCIAL");
+    public static final USPSServiceType EXPRESS_HFP_COMMERCIAL = new USPSServiceType("EXPRESS HFP COMMERCIAL");
+    public static final USPSServiceType BPM = new USPSServiceType("BPM");
+    public static final USPSServiceType PARCEL = new USPSServiceType("PARCEL");
+    public static final USPSServiceType MEDIA = new USPSServiceType("MEDIA");
+    public static final USPSServiceType LIBRARY = new USPSServiceType("LIBRARY");
 
-    public static USPSServiceType getInstance(String type) {
-        return types.get(type);
+    public static USPSServiceType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -56,7 +56,7 @@ public class USPSServiceType implements Serializable {
         //do nothing
     }
 
-    public USPSServiceType(String type) {
+    public USPSServiceType(final String type) {
         setType(type);
     }
 
@@ -64,10 +64,10 @@ public class USPSServiceType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

@@ -21,20 +21,20 @@ import org.broadleafcommerce.util.money.Money;
 
 public interface DiscreteOrderItem extends OrderItem {
 
-    public Sku getSku();
+    Sku getSku();
 
-    public void setSku(Sku sku);
+    void setSku(Sku sku);
 
-    public Product getProduct();
+    Product getProduct();
 
-    public void setProduct(Product product);
+    void setProduct(Product product);
 
-    public BundleOrderItem getBundleOrderItem();
+    BundleOrderItem getBundleOrderItem();
 
-    public void setBundleOrderItem(BundleOrderItem bundleOrderItem);
+    void setBundleOrderItem(BundleOrderItem bundleOrderItem);
 
-    public String getName();
+    String getName();
 
-    public Money getTaxablePrice();
+    Money getTaxablePrice();
 
 }

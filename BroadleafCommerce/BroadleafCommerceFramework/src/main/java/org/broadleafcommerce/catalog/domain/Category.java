@@ -44,46 +44,46 @@ public interface Category extends Serializable {
      * 
      * @return the id
      */
-    public Long getId();
+    Long getId();
 
     /**
      * Sets the id.
      * 
      * @param id the new id
      */
-    public void setId(Long id);
+    void setId(Long id);
 
     /**
      * Gets the name.
      * 
      * @return the name
      */
-    public String getName();
+    String getName();
 
     /**
      * Sets the name.
      * 
      * @param name the new name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Gets the default parent category.
      * 
      * @return the default parent category
      */
-    public Category getDefaultParentCategory();
+    Category getDefaultParentCategory();
 
     /**
      * Sets the default parent category.
      * 
      * @param defaultParentCategory the new default parent category
      */
-    public void setDefaultParentCategory(Category defaultParentCategory);
+    void setDefaultParentCategory(Category defaultParentCategory);
 
-    public List<Category> getAllParentCategories();
+    List<Category> getAllParentCategories();
     
-    public void setAllParentCategories(List<Category> allParentCategories);
+    void setAllParentCategories(List<Category> allParentCategories);
 
     
     /**
@@ -91,156 +91,156 @@ public interface Category extends Serializable {
      * 
      * @return the url
      */
-    public String getUrl();
+    String getUrl();
 
     /**
      * Sets the url.
      * 
      * @param url the new url
      */
-    public void setUrl(String url);
+    void setUrl(String url);
 
     /**
      * Gets the url key.
      * 
      * @return the url key
      */
-    public String getUrlKey();
+    String getUrlKey();
 
     /**
      * Gets the generated url.
      * 
      * @return the generated url
      */
-    public String getGeneratedUrl();
+    String getGeneratedUrl();
 
     /**
      * Sets the url key.
      * 
      * @param urlKey the new url key
      */
-    public void setUrlKey(String urlKey);
+    void setUrlKey(String urlKey);
 
     /**
      * Gets the description.
      * 
      * @return the description
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Sets the description.
      * 
      * @param description the new description
      */
-    public void setDescription(String description);
+    void setDescription(String description);
 
     /**
      * Gets the active start date.
      * 
      * @return the active start date
      */
-    public Date getActiveStartDate();
+    Date getActiveStartDate();
 
     /**
      * Sets the active start date.
      * 
      * @param activeStartDate the new active start date
      */
-    public void setActiveStartDate(Date activeStartDate);
+    void setActiveStartDate(Date activeStartDate);
 
     /**
      * Gets the active end date.
      * 
      * @return the active end date
      */
-    public Date getActiveEndDate();
+    Date getActiveEndDate();
 
     /**
      * Sets the active end date.
      * 
      * @param activeEndDate the new active end date
      */
-    public void setActiveEndDate(Date activeEndDate);
+    void setActiveEndDate(Date activeEndDate);
 
     /**
      * Checks if is active.
      * 
      * @return true, if is active
      */
-    public boolean isActive();
+    boolean isActive();
 
     /**
      * Gets the display template.
      * 
      * @return the display template
      */
-    public String getDisplayTemplate();
+    String getDisplayTemplate();
 
     /**
      * Sets the display template.
      * 
      * @param displayTemplate the new display template
      */
-    public void setDisplayTemplate(String displayTemplate);
+    void setDisplayTemplate(String displayTemplate);
 
     /**
      * Gets the child category url map.
      * 
      * @return the child category url map
      */
-    public Map<String,List<Category>> getChildCategoryURLMap();
+    Map<String,List<Category>> getChildCategoryURLMap();
     
-    public void setChildCategoryURLMap(Map<String, List<Category>> cachedChildCategoryUrlMap);
+    void setChildCategoryURLMap(Map<String, List<Category>> cachedChildCategoryUrlMap);
 
     /**
      * Gets the child categories.
      * 
      * @return the child categories
      */
-    public List<Category> getAllChildCategories();
+    List<Category> getAllChildCategories();
 
     /**
      * Checks for child categories.
      * 
      * @return true, if successful
      */
-    public boolean hasAllChildCategories();
+    boolean hasAllChildCategories();
 
     /**
      * Sets the all child categories.
      * 
      * @param allChildCategories the new all child categories
      */
-    public void setAllChildCategories(List<Category> childCategories);
+    void setAllChildCategories(List<Category> childCategories);
 
     /**
      * Gets the child categories.
      * 
      * @return the child categories
      */
-    public List<Category> getChildCategories();
+    List<Category> getChildCategories();
 
     /**
      * Checks for child categories.
      * 
      * @return true, if successful
      */
-    public boolean hasChildCategories();
+    boolean hasChildCategories();
 
     /**
      * Sets the all child categories.
      * 
      * @param allChildCategories the new all child categories
      */
-    public void setChildCategories(List<Category> childCategories);
+    void setChildCategories(List<Category> childCategories);
 
     /**
      * Gets the category images.
      * 
      * @return the category images
      */
-    public Map<String, String> getCategoryImages();
+    Map<String, String> getCategoryImages();
 
     /**
      * Gets the category image.
@@ -249,54 +249,54 @@ public interface Category extends Serializable {
      * 
      * @return the category image
      */
-    public String getCategoryImage(String imageKey);
+    String getCategoryImage(String imageKey);
 
     /**
      * Sets the category images.
      * 
      * @param categoryImages the category images
      */
-    public void setCategoryImages(Map<String, String> categoryImages);
+    void setCategoryImages(Map<String, String> categoryImages);
 
     /**
      * Gets the category media map
      * 
      * @return the category Media
      */
-    public Map<String, Media> getCategoryMedia() ;
+    Map<String, Media> getCategoryMedia() ;
 
     /**
      * Sets the category images.
      * 
      * @param categoryMedia the category media
      */
-    public void setCategoryMedia(Map<String, Media> categoryMedia);
+    void setCategoryMedia(Map<String, Media> categoryMedia);
 
     /**
      * Gets the long description.
      * 
      * @return the long description
      */
-    public String getLongDescription();
+    String getLongDescription();
 
     /**
      * Sets the long description.
      * 
      * @param longDescription the new long description
      */
-    public void setLongDescription(String longDescription);
+    void setLongDescription(String longDescription);
 
     /**
      * Gets the featured products.
      * 
      * @return the featured products
      */
-    public List<FeaturedProduct> getFeaturedProducts();
+    List<FeaturedProduct> getFeaturedProducts();
 
     /**
      * Sets the featured products.
      * 
      * @param featuredProducts the featured products
      */
-    public void setFeaturedProducts(List<FeaturedProduct> featuredProducts);
+    void setFeaturedProducts(List<FeaturedProduct> featuredProducts);
 }

@@ -16,7 +16,7 @@
 package org.broadleafcommerce.util;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -29,15 +29,15 @@ public class DimensionUnitOfMeasureType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, DimensionUnitOfMeasureType> types = new Hashtable<String, DimensionUnitOfMeasureType>();
+    private static final Map<String, DimensionUnitOfMeasureType> TYPES = new HashMap<String, DimensionUnitOfMeasureType>();
 
-    public static DimensionUnitOfMeasureType CENTIMETERS  = new DimensionUnitOfMeasureType("CENTIMETERS");
-    public static DimensionUnitOfMeasureType METERS  = new DimensionUnitOfMeasureType("METERS");
-    public static DimensionUnitOfMeasureType INCHES  = new DimensionUnitOfMeasureType("INCHES");
-    public static DimensionUnitOfMeasureType FEET  = new DimensionUnitOfMeasureType("FEET");
+    public static final DimensionUnitOfMeasureType CENTIMETERS  = new DimensionUnitOfMeasureType("CENTIMETERS");
+    public static final DimensionUnitOfMeasureType METERS  = new DimensionUnitOfMeasureType("METERS");
+    public static final DimensionUnitOfMeasureType INCHES  = new DimensionUnitOfMeasureType("INCHES");
+    public static final DimensionUnitOfMeasureType FEET  = new DimensionUnitOfMeasureType("FEET");
 
-    public static DimensionUnitOfMeasureType getInstance(String type) {
-        return types.get(type);
+    public static DimensionUnitOfMeasureType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -46,7 +46,7 @@ public class DimensionUnitOfMeasureType implements Serializable {
         //do nothing
     }
 
-    public DimensionUnitOfMeasureType(String type) {
+    public DimensionUnitOfMeasureType(final String type) {
         setType(type);
     }
 
@@ -54,10 +54,10 @@ public class DimensionUnitOfMeasureType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)){
-            types.put(type, this);
+        if (!TYPES.containsKey(type)){
+            TYPES.put(type, this);
         }
     }
 

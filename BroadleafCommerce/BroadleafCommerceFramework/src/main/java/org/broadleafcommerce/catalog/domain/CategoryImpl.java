@@ -186,7 +186,7 @@ public class CategoryImpl implements Category {
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#setId(java.lang.Long)
      */
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -203,7 +203,7 @@ public class CategoryImpl implements Category {
      * @see
      * org.broadleafcommerce.catalog.domain.Category#setName(java.lang.String)
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -222,7 +222,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setDefaultParentCategory
      * (org.broadleafcommerce.catalog.domain.Category)
      */
-    public void setDefaultParentCategory(Category defaultParentCategory) {
+    public void setDefaultParentCategory(final Category defaultParentCategory) {
         this.defaultParentCategory = defaultParentCategory;
     }
 
@@ -239,7 +239,7 @@ public class CategoryImpl implements Category {
      * @see
      * org.broadleafcommerce.catalog.domain.Category#setUrl(java.lang.String)
      */
-    public void setUrl(String url) {
+    public void setUrl(final String url) {
         this.url = url;
     }
 
@@ -269,17 +269,18 @@ public class CategoryImpl implements Category {
      * @param ignoreTopLevel the ignore top level
      * @return the string
      */
-    private String buildLink(String link, Category category, boolean ignoreTopLevel) {
+    private String buildLink(final String link, final Category category, final boolean ignoreTopLevel) {
         if (category == null || (ignoreTopLevel && category.getDefaultParentCategory() == null)) {
             return link;
-        } else {
-            if (link == null) {
-                link = category.getUrlKey();
-            } else {
-                link = category.getUrlKey() + "/" + link;
-            }
         }
-        return buildLink(link, category.getDefaultParentCategory(), ignoreTopLevel);
+        
+        String lLink;
+    	if (link == null) {
+    		lLink = category.getUrlKey();
+        } else {
+        	lLink = category.getUrlKey() + "/" + link;
+        }
+        return buildLink(lLink, category.getDefaultParentCategory(), ignoreTopLevel);
     }
 
     /*
@@ -287,7 +288,7 @@ public class CategoryImpl implements Category {
      * @see
      * org.broadleafcommerce.catalog.domain.Category#setUrlKey(java.lang.String)
      */
-    public void setUrlKey(String urlKey) {
+    public void setUrlKey(final String urlKey) {
         this.urlKey = urlKey;
     }
 
@@ -305,7 +306,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setDescription(java.lang
      * .String)
      */
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -323,7 +324,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setActiveStartDate(java
      * .util.Date)
      */
-    public void setActiveStartDate(Date activeStartDate) {
+    public void setActiveStartDate(final Date activeStartDate) {
         this.activeStartDate = activeStartDate;
     }
 
@@ -341,7 +342,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setActiveEndDate(java.util
      * .Date)
      */
-    public void setActiveEndDate(Date activeEndDate) {
+    public void setActiveEndDate(final Date activeEndDate) {
         this.activeEndDate = activeEndDate;
     }
 
@@ -372,7 +373,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setDisplayTemplate(java
      * .lang.String)
      */
-    public void setDisplayTemplate(String displayTemplate) {
+    public void setDisplayTemplate(final String displayTemplate) {
         this.displayTemplate = displayTemplate;
     }
 
@@ -391,7 +392,7 @@ public class CategoryImpl implements Category {
      * @return true, if successful
      */
     public boolean hasAllChildCategories(){
-    	return allChildCategories.size() > 0;
+    	return !allChildCategories.isEmpty();
     }
 
     /**
@@ -399,7 +400,7 @@ public class CategoryImpl implements Category {
      * 
      * @param allChildCategories the new all child categories
      */
-    public void setAllChildCategories(List<Category> childCategories){
+    public void setAllChildCategories(final List<Category> childCategories){
     	this.allChildCategories.clear();
     	for(Category category : allChildCategories){
     		this.allChildCategories.add(category);
@@ -413,7 +414,7 @@ public class CategoryImpl implements Category {
      * @see org.broadleafcommerce.catalog.domain.Category#getChildCategories()
      */
     public List<Category> getChildCategories() {
-    	if (childCategories.size() == 0) {
+    	if (childCategories.isEmpty()) {
             for (Category category : allChildCategories) {
                 if (category.isActive()) {
                     childCategories.add(category);
@@ -437,7 +438,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setAllChildCategories(java
      * .util.List)
      */
-    public void setChildCategories(List<Category> allChildCategories) {
+    public void setChildCategories(final List<Category> allChildCategories) {
         this.allChildCategories.clear();
     	for(Category category : allChildCategories){
     		this.allChildCategories.add(category);
@@ -458,7 +459,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#getCategoryImage(java.lang
      * .String)
      */
-    public String getCategoryImage(String imageKey) {
+    public String getCategoryImage(final String imageKey) {
         return categoryImages.get(imageKey);
     }
 
@@ -468,10 +469,13 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setCategoryImages(java.
      * util.Map)
      */
-    public void setCategoryImages(Map<String, String> categoryImages) {
+    public void setCategoryImages(final Map<String, String> categoryImages) {
     	this.categoryImages.clear();
-    	for(String key : categoryImages.keySet()){
-    		this.categoryImages.put(key, categoryImages.get(key));
+//    	for(String key : categoryImages.keySet()){
+//    		this.categoryImages.put(key, categoryImages.get(key));
+//    	}
+    	for(Map.Entry<String, String> me : categoryImages.entrySet()) {
+    		this.categoryImages.put(me.getKey(), me.getValue());
     	}
     }
 
@@ -489,7 +493,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setLongDescription(java
      * .lang.String)
      */
-    public void setLongDescription(String longDescription) {
+    public void setLongDescription(final String longDescription) {
         this.longDescription = longDescription;
     }
 
@@ -502,13 +506,13 @@ public class CategoryImpl implements Category {
         return childCategoryURLMap;
     }
     
-    public void setChildCategoryURLMap(Map<String, List<Category>> cachedChildCategoryUrlMap) {
+    public void setChildCategoryURLMap(final Map<String, List<Category>> cachedChildCategoryUrlMap) {
     	this.childCategoryURLMap = cachedChildCategoryUrlMap;
     }
     
     public Map<String, List<Category>> createChildCategoryURLMap() throws CacheFactoryException {
     	childCategoryURLMap = new HashMap<String, List<Category>>();
-        Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
+        final Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
         fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
         childCategoryURLMap = newMap;
         return childCategoryURLMap;
@@ -521,13 +525,13 @@ public class CategoryImpl implements Category {
      * @param startingPath the starting path
      * @param startingCategoryList the starting category list
      */
-    private void fillInURLMapForCategory(Map<String, List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) throws CacheFactoryException {
-        String urlKey = category.getUrlKey();
+    private void fillInURLMapForCategory(final Map<String, List<Category>> categoryUrlMap, final Category category, final String startingPath, final List<Category> startingCategoryList) throws CacheFactoryException {
+        final String urlKey = category.getUrlKey();
         if (urlKey == null) {
         	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
         }
-    	String currentPath = startingPath + "/" + category.getUrlKey();
-        List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
+    	final String currentPath = startingPath + "/" + category.getUrlKey();
+        final List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
 
         /*
@@ -551,7 +555,7 @@ public class CategoryImpl implements Category {
         return allParentCategories;
     }
 
-    public void setAllParentCategories(List<Category> allParentCategories) {
+    public void setAllParentCategories(final List<Category> allParentCategories) {
     	this.allParentCategories.clear();
     	for(Category category : allParentCategories){
     		this.allParentCategories.add(category);
@@ -562,7 +566,7 @@ public class CategoryImpl implements Category {
         return featuredProducts;
     }
 
-    public void setFeaturedProducts(List<FeaturedProduct> featuredProducts) {
+    public void setFeaturedProducts(final List<FeaturedProduct> featuredProducts) {
     	this.featuredProducts.clear();
     	for(FeaturedProduct featuredProduct : featuredProducts){
     		this.featuredProducts.add(featuredProduct);
@@ -581,10 +585,10 @@ public class CategoryImpl implements Category {
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#setCategoryMedia(java.util.Map)
      */
-    public void setCategoryMedia(Map<String, Media> categoryMedia) {
+    public void setCategoryMedia(final Map<String, Media> categoryMedia) {
     	this.categoryMedia.clear();
-    	for(String key : categoryMedia.keySet()){
-    		this.categoryMedia.put(key, categoryMedia.get(key));
+    	for(Map.Entry<String, Media> me : categoryMedia.entrySet()) {
+    		this.categoryMedia.put(me.getKey(), me.getValue());
     	}
     }
 
@@ -598,14 +602,14 @@ public class CategoryImpl implements Category {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
         if (getClass() != obj.getClass())
             return false;
-        CategoryImpl other = (CategoryImpl) obj;
+        final CategoryImpl other = (CategoryImpl) obj;
 
         if (id != null && other.id != null) {
             return id.equals(other.id);

@@ -55,7 +55,7 @@ public class ProductDimension implements Serializable {
         return DimensionUnitOfMeasureType.getInstance(dimensionUnitOfMeasure);
     }
 
-    public void setDimensionUnitOfMeasure(DimensionUnitOfMeasureType dimensionUnitOfMeasure) {
+    public void setDimensionUnitOfMeasure(final DimensionUnitOfMeasureType dimensionUnitOfMeasure) {
         this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
     }
 
@@ -63,7 +63,7 @@ public class ProductDimension implements Serializable {
         return width;
     }
 
-    public void setWidth(BigDecimal width) {
+    public void setWidth(final BigDecimal width) {
         this.width = width;
     }
 
@@ -71,7 +71,7 @@ public class ProductDimension implements Serializable {
         return height;
     }
 
-    public void setHeight(BigDecimal height) {
+    public void setHeight(final BigDecimal height) {
         this.height = height;
     }
 
@@ -79,7 +79,7 @@ public class ProductDimension implements Serializable {
         return depth;
     }
 
-    public void setDepth(BigDecimal depth) {
+    public void setDepth(final BigDecimal depth) {
         this.depth = depth;
     }
 
@@ -96,7 +96,7 @@ public class ProductDimension implements Serializable {
         return girth;
     }
 
-    public void setGirth(BigDecimal girth) {
+    public void setGirth(final BigDecimal girth) {
         this.girth = girth;
     }
 
@@ -104,7 +104,7 @@ public class ProductDimension implements Serializable {
         return ContainerSizeType.getInstance(size);
     }
 
-    public void setSize(ContainerSizeType size) {
+    public void setSize(final ContainerSizeType size) {
         this.size = size.getType();
     }
 
@@ -112,7 +112,7 @@ public class ProductDimension implements Serializable {
         return ContainerShapeType.getInstance(container);
     }
 
-    public void setContainer(ContainerShapeType container) {
+    public void setContainer(final ContainerShapeType container) {
         this.container = container.getType();
     }
 

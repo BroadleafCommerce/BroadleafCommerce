@@ -47,21 +47,20 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
         em.remove(customerOffer);
     }
 
-    public CustomerOffer save(CustomerOffer customerOffer) {
+    public CustomerOffer save(final CustomerOffer customerOffer) {
         return em.merge(customerOffer);
     }
 
     @SuppressWarnings("unchecked")
-    public CustomerOffer readCustomerOfferById(Long customerOfferId) {
+    public CustomerOffer readCustomerOfferById(final Long customerOfferId) {
         return (CustomerOffer) em.find(entityConfiguration.lookupEntityClass(CustomerOffer.class.getName()), customerOfferId);
     }
 
     @SuppressWarnings("unchecked")
-    public List<CustomerOffer> readCustomerOffersByCustomer(Customer customer) {
-        Query query = em.createNamedQuery("BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID");
+    public List<CustomerOffer> readCustomerOffersByCustomer(final Customer customer) {
+        final Query query = em.createNamedQuery("BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID");
         query.setParameter("customerId", customer.getId());
-        List<CustomerOffer> result = query.getResultList();
-        return result;
+        return query.getResultList();
     }
 
 }

@@ -16,7 +16,7 @@
 package org.broadleafcommerce.vendor.usps.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,13 +28,13 @@ public class USPSShipDateOptionType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, USPSShipDateOptionType> types = new Hashtable<String, USPSShipDateOptionType>();
+    private static final Map<String, USPSShipDateOptionType> TYPES = new HashMap<String, USPSShipDateOptionType>();
 
-    public static USPSShipDateOptionType EMSH  = new USPSShipDateOptionType("EMSH");
-    public static USPSShipDateOptionType HFP = new USPSShipDateOptionType("HFP");
+    public static final USPSShipDateOptionType EMSH  = new USPSShipDateOptionType("EMSH");
+    public static final USPSShipDateOptionType HFP = new USPSShipDateOptionType("HFP");
 
-    public static USPSShipDateOptionType getInstance(String type) {
-        return types.get(type);
+    public static USPSShipDateOptionType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -43,7 +43,7 @@ public class USPSShipDateOptionType implements Serializable {
         //do nothing
     }
 
-    public USPSShipDateOptionType(String type) {
+    public USPSShipDateOptionType(final String type) {
         setType(type);
     }
 
@@ -51,10 +51,10 @@ public class USPSShipDateOptionType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

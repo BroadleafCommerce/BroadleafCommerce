@@ -17,22 +17,22 @@ package org.broadleafcommerce.catalog.domain;
 
 public interface FeaturedProduct {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public Category getCategory();
+    Category getCategory();
 
-    public void setCategory(Category category);
+    void setCategory(Category category);
 
-    public Product getProduct();
+    Product getProduct();
 
-    public void setProduct(Product product);
+    void setProduct(Product product);
 
-    public void setSequence(Long sequence);
+    void setSequence(Long sequence);
 
-    public String getPromotionMessage();
+    String getPromotionMessage();
 
-    public void setPromotionMessage(String promotionMessage);
+    void setPromotionMessage(String promotionMessage);
 
 }

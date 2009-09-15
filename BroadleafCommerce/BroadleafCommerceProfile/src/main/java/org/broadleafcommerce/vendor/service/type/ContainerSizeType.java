@@ -16,7 +16,7 @@
 package org.broadleafcommerce.vendor.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,10 +28,10 @@ public class ContainerSizeType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ContainerSizeType> types = new Hashtable<String, ContainerSizeType>();
+    private static final Map<String, ContainerSizeType> TYPES = new HashMap<String, ContainerSizeType>();
 
-    public static ContainerSizeType getInstance(String type) {
-        return types.get(type);
+    public static ContainerSizeType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
     private String type;
@@ -40,7 +40,7 @@ public class ContainerSizeType implements Serializable {
         //do nothing
     }
 
-    public ContainerSizeType(String type) {
+    public ContainerSizeType(final String type) {
         setType(type);
     }
 
@@ -48,10 +48,10 @@ public class ContainerSizeType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 

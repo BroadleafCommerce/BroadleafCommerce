@@ -43,18 +43,18 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
         em.remove(fulfillmentGroupItem);
     }
 
-    public FulfillmentGroupItem save(FulfillmentGroupItem fulfillmentGroupItem) {
+    public FulfillmentGroupItem save(final FulfillmentGroupItem fulfillmentGroupItem) {
         return em.merge(fulfillmentGroupItem);
     }
 
     @SuppressWarnings("unchecked")
-    public FulfillmentGroupItem readFulfillmentGroupItemById(Long fulfillmentGroupItemId) {
+    public FulfillmentGroupItem readFulfillmentGroupItemById(final Long fulfillmentGroupItemId) {
         return (FulfillmentGroupItem) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroupItem"), fulfillmentGroupItemId);
     }
 
     @SuppressWarnings("unchecked")
-    public List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_ITEM_BY_FULFILLMENT_GROUP_ID");
+    public List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(final FulfillmentGroup fulfillmentGroup) {
+        final Query query = em.createNamedQuery("BC_READ_FULFILLMENT_GROUP_ITEM_BY_FULFILLMENT_GROUP_ID");
         query.setParameter("fulfillmentGroupId", fulfillmentGroup.getId());
         return query.getResultList();
     }

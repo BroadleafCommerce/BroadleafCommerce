@@ -20,15 +20,15 @@ import org.broadleafcommerce.order.domain.Order;
 
 public interface FulfillmentGroupDao {
 
-    public FulfillmentGroup readFulfillmentGroupById(Long fulfillmentGroupId);
+    FulfillmentGroup readFulfillmentGroupById(Long fulfillmentGroupId);
 
-    public FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
+    FulfillmentGroup save(FulfillmentGroup fulfillmentGroup);
 
-    public FulfillmentGroup readDefaultFulfillmentGroupForOrder(Order order);
+    FulfillmentGroup readDefaultFulfillmentGroupForOrder(Order order);
 
-    public void delete(FulfillmentGroup fulfillmentGroup);
+    void delete(FulfillmentGroup fulfillmentGroup);
 
-    public FulfillmentGroup createDefault();
+    FulfillmentGroup createDefault();
 
-    public FulfillmentGroup create();
+    FulfillmentGroup create();
 }

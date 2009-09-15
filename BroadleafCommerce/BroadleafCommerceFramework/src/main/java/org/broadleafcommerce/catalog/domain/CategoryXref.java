@@ -46,7 +46,7 @@ public class CategoryXref implements Serializable {
         return categoryXrefPK;
     }
 
-    public void setCategoryXrefPK(CategoryXrefPK categoryXrefPK) {
+    public void setCategoryXrefPK(final CategoryXrefPK categoryXrefPK) {
         this.categoryXrefPK = categoryXrefPK;
     }
 
@@ -57,7 +57,7 @@ public class CategoryXref implements Serializable {
         return displayOrder;
     }
 
-    public void setDisplayOrder(int displayOrder) {
+    public void setDisplayOrder(final int displayOrder) {
         this.displayOrder = displayOrder;
     }
 
@@ -77,7 +77,7 @@ public class CategoryXref implements Serializable {
 			return category;
 		}
 
-		public void setCategory(Category category) {
+		public void setCategory(final Category category) {
 			this.category = category;
 		}
 
@@ -85,12 +85,12 @@ public class CategoryXref implements Serializable {
 			return subCategory;
 		}
 
-		public void setSubCategory(Category subCategory) {
+		public void setSubCategory(final Category subCategory) {
 			this.subCategory = subCategory;
 		}
 
 		@Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (obj == null) return false;
             else if (!(obj instanceof CategoryXrefPK)) return false;
 

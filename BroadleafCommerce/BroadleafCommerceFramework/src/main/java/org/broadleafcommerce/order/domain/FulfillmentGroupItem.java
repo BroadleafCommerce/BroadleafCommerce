@@ -21,37 +21,37 @@ import org.broadleafcommerce.util.money.Money;
 
 public interface FulfillmentGroupItem extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public FulfillmentGroup getFulfillmentGroup();
+    FulfillmentGroup getFulfillmentGroup();
 
-    public void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
+    void setFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
-    public OrderItem getOrderItem();
+    OrderItem getOrderItem();
 
-    public void setOrderItem(OrderItem orderItem);
+    void setOrderItem(OrderItem orderItem);
 
-    public int getQuantity();
+    int getQuantity();
 
-    public void setQuantity(int quantity);
+    void setQuantity(int quantity);
 
     //TODO refactor these price method names to reflect that they represent shipping prices
-    public Money getRetailPrice();
+    Money getRetailPrice();
 
-    public void setRetailPrice(Money retailPrice);
+    void setRetailPrice(Money retailPrice);
 
-    public Money getSalePrice();
+    Money getSalePrice();
 
-    public void setSalePrice(Money salePrice);
+    void setSalePrice(Money salePrice);
 
-    public Money getPrice();
+    Money getPrice();
 
-    public void setPrice(Money price);
+    void setPrice(Money price);
 
-    public String getStatus();
+    String getStatus();
 
-    public void setStatus(String status);
+    void setStatus(String status);
 
 }

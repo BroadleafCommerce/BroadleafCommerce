@@ -22,13 +22,13 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 
 public interface FulfillmentGroupItemDao {
 
-    public FulfillmentGroupItem readFulfillmentGroupItemById(Long fulfillmentGroupItemId);
+    FulfillmentGroupItem readFulfillmentGroupItemById(Long fulfillmentGroupItemId);
 
-    public FulfillmentGroupItem save(FulfillmentGroupItem fulfillmentGroupItem);
+    FulfillmentGroupItem save(FulfillmentGroupItem fulfillmentGroupItem);
 
-    public List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
+    List<FulfillmentGroupItem> readFulfillmentGroupItemsForFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
 
-    public void delete(FulfillmentGroupItem fulfillmentGroupItem);
+    void delete(FulfillmentGroupItem fulfillmentGroupItem);
 
-    public FulfillmentGroupItem create();
+    FulfillmentGroupItem create();
 }

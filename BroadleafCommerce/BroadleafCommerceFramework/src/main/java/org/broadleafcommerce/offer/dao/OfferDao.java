@@ -28,34 +28,34 @@ import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 
 public interface OfferDao {
 
-    public List<Offer> readAllOffers();
+    List<Offer> readAllOffers();
 
-    public Offer readOfferById(Long offerId);
+    Offer readOfferById(Long offerId);
 
-    public List<Offer> readOffersByAutomaticDeliveryType();
+    List<Offer> readOffersByAutomaticDeliveryType();
 
-    public Offer save(Offer offer);
+    Offer save(Offer offer);
 
-    public void delete(Offer offer);
+    void delete(Offer offer);
 
-    public Offer create();
+    Offer create();
 
-    public CandidateOrderOffer createCandidateOrderOffer();
+    CandidateOrderOffer createCandidateOrderOffer();
 
-    public CandidateItemOffer createCandidateItemOffer();
+    CandidateItemOffer createCandidateItemOffer();
 
-    public CandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer();
+    CandidateFulfillmentGroupOffer createCandidateFulfillmentGroupOffer();
 
-    public OrderItemAdjustment createOrderItemAdjustment();
+    OrderItemAdjustment createOrderItemAdjustment();
 
-    public OrderAdjustment createOrderAdjustment();
+    OrderAdjustment createOrderAdjustment();
 
-    public FulfillmentGroupAdjustment createFulfillmentGroupAdjustment();
+    FulfillmentGroupAdjustment createFulfillmentGroupAdjustment();
 
-    public OfferInfo createOfferInfo();
+    OfferInfo createOfferInfo();
 
-    public OfferInfo save(OfferInfo offerInfo);
+    OfferInfo save(OfferInfo offerInfo);
 
-    public void delete(OfferInfo offerInfo);
+    void delete(OfferInfo offerInfo);
 
 }

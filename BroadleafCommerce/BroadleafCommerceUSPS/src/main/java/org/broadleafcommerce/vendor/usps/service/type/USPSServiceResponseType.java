@@ -16,7 +16,7 @@
 package org.broadleafcommerce.vendor.usps.service.type;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.util.StringUtil;
@@ -30,38 +30,38 @@ public class USPSServiceResponseType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, USPSServiceResponseType> types = new Hashtable<String, USPSServiceResponseType>();
+    private static final Map<String, USPSServiceResponseType> TYPES = new HashMap<String, USPSServiceResponseType>();
 
-    public static USPSServiceResponseType FIRSTCLASS  = new USPSServiceResponseType("0", "First Class");
-    public static USPSServiceResponseType PRIORITYMAIL = new USPSServiceResponseType("1", "Priority Mail");
-    public static USPSServiceResponseType EXPRESSMAILHOLDFORPICKUP = new USPSServiceResponseType("2", "Express Mail Hold for Pickup");
-    public static USPSServiceResponseType EXPRESSMAILPOTOADDRESSEE = new USPSServiceResponseType("3", "Express Mail PO to Addressee");
-    public static USPSServiceResponseType PARCELPOST = new USPSServiceResponseType("4", "Parcel Post");
-    public static USPSServiceResponseType BOUNDPRINTEDMATTER = new USPSServiceResponseType("5", "Bound Printed Matter");
-    public static USPSServiceResponseType MEDIAMAIL = new USPSServiceResponseType("6", "Media Mail");
-    public static USPSServiceResponseType LIBRARY = new USPSServiceResponseType("7", "Library Mail");
-    public static USPSServiceResponseType FIRSTCLASSPOSTCARDSTAMPED = new USPSServiceResponseType("12", "First Class Postcard Stamped");
-    public static USPSServiceResponseType EXPRESSMAILFLATRATEENVELOPE = new USPSServiceResponseType("13", "Express Mail Flat Rate Envelope");
-    public static USPSServiceResponseType PRIORITYMAILFLATRATEENVELOPE = new USPSServiceResponseType("16", "Priority Mail Flat Rate Envelope");
-    public static USPSServiceResponseType PRIORITYMAILFLATRATEBOX = new USPSServiceResponseType("17", "Priority Mail Flat Rate Box");
-    public static USPSServiceResponseType PRIORITYMAILKEYSANDIDS = new USPSServiceResponseType("18", "Priority Mail Keys and IDs");
-    public static USPSServiceResponseType FIRSTCLASSKEYSANDIDS = new USPSServiceResponseType("19", "First Class Keys and IDs");
-    public static USPSServiceResponseType PRIORITYMAILFLATRATELARGEBOX = new USPSServiceResponseType("22", "Priority Mail Flat Rate Large Box");
-    public static USPSServiceResponseType EXPRESSMAILSUNDAYHOLIDAY = new USPSServiceResponseType("23", "Express Mail Sunday/Holiday");
-    public static USPSServiceResponseType EXPRESSMAILFLATRATEENVELOPESUNDAYHOLIDAY = new USPSServiceResponseType("25", "Express Mail Flat Rate Envelope Sunday/Holiday");
-    public static USPSServiceResponseType EXPRESSMAILFLATRATEENVELOPEHOLDFORPICKUP = new USPSServiceResponseType("27", "Express Mail Flat Rate Envelope Hold For Pickup");
+    public static final USPSServiceResponseType FIRSTCLASS  = new USPSServiceResponseType("0", "First Class");
+    public static final USPSServiceResponseType PRIORITYMAIL = new USPSServiceResponseType("1", "Priority Mail");
+    public static final USPSServiceResponseType EXPRESSMAILHOLDFORPICKUP = new USPSServiceResponseType("2", "Express Mail Hold for Pickup");
+    public static final USPSServiceResponseType EXPRESSMAILPOTOADDRESSEE = new USPSServiceResponseType("3", "Express Mail PO to Addressee");
+    public static final USPSServiceResponseType PARCELPOST = new USPSServiceResponseType("4", "Parcel Post");
+    public static final USPSServiceResponseType BOUNDPRINTEDMATTER = new USPSServiceResponseType("5", "Bound Printed Matter");
+    public static final USPSServiceResponseType MEDIAMAIL = new USPSServiceResponseType("6", "Media Mail");
+    public static final USPSServiceResponseType LIBRARY = new USPSServiceResponseType("7", "Library Mail");
+    public static final USPSServiceResponseType FIRSTCLASSPOSTCARDSTAMPED = new USPSServiceResponseType("12", "First Class Postcard Stamped");
+    public static final USPSServiceResponseType EXPRESSMAILFLATRATEENVELOPE = new USPSServiceResponseType("13", "Express Mail Flat Rate Envelope");
+    public static final USPSServiceResponseType PRIORITYMAILFLATRATEENVELOPE = new USPSServiceResponseType("16", "Priority Mail Flat Rate Envelope");
+    public static final USPSServiceResponseType PRIORITYMAILFLATRATEBOX = new USPSServiceResponseType("17", "Priority Mail Flat Rate Box");
+    public static final USPSServiceResponseType PRIORITYMAILKEYSANDIDS = new USPSServiceResponseType("18", "Priority Mail Keys and IDs");
+    public static final USPSServiceResponseType FIRSTCLASSKEYSANDIDS = new USPSServiceResponseType("19", "First Class Keys and IDs");
+    public static final USPSServiceResponseType PRIORITYMAILFLATRATELARGEBOX = new USPSServiceResponseType("22", "Priority Mail Flat Rate Large Box");
+    public static final USPSServiceResponseType EXPRESSMAILSUNDAYHOLIDAY = new USPSServiceResponseType("23", "Express Mail Sunday/Holiday");
+    public static final USPSServiceResponseType EXPRESSMAILFLATRATEENVELOPESUNDAYHOLIDAY = new USPSServiceResponseType("25", "Express Mail Flat Rate Envelope Sunday/Holiday");
+    public static final USPSServiceResponseType EXPRESSMAILFLATRATEENVELOPEHOLDFORPICKUP = new USPSServiceResponseType("27", "Express Mail Flat Rate Envelope Hold For Pickup");
 
-    public static USPSServiceResponseType getInstance(String type) {
-        return types.get(type);
+    public static USPSServiceResponseType getInstance(final String type) {
+        return TYPES.get(type);
     }
 
-    public static USPSServiceResponseType getInstanceByDescription(String description) {
+    public static USPSServiceResponseType getInstanceByDescription(final String description) {
         //remove any dimension callouts
-        description = description.replaceAll("\\(.*?\\)", "");
+        String lDescription = description.replaceAll("\\(.*?\\)", "");
         USPSServiceResponseType closestMatch = null;
         Double closestChecksumDeviation = null;
-        for (USPSServiceResponseType type : types.values()) {
-            double deviation = StringUtil.determineSimilarity(description, type.getDescription());
+        for (USPSServiceResponseType type : TYPES.values()) {
+            double deviation = StringUtil.determineSimilarity(lDescription, type.getDescription());
             if (
                     (closestChecksumDeviation == null && deviation <= 5000000.0) ||
                     (closestChecksumDeviation != null && deviation < closestChecksumDeviation)
@@ -80,7 +80,7 @@ public class USPSServiceResponseType implements Serializable {
         //do nothing
     }
 
-    public USPSServiceResponseType(String type, String description) {
+    public USPSServiceResponseType(final String type, final String description) {
         this.description = description;
         setType(type);
     }
@@ -89,10 +89,10 @@ public class USPSServiceResponseType implements Serializable {
         return type;
     }
 
-    public void setType(String type) {
+    private void setType(final String type) {
         this.type = type;
-        if (!types.containsKey(type)) {
-            types.put(type, this);
+        if (!TYPES.containsKey(type)) {
+            TYPES.put(type, this);
         }
     }
 
@@ -100,7 +100,7 @@ public class USPSServiceResponseType implements Serializable {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 

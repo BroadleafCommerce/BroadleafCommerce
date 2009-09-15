@@ -43,11 +43,11 @@ public class OrderDaoImpl implements OrderDao {
     protected CustomerDao customerDao;
 
     @SuppressWarnings("unchecked")
-    public Order readOrderById(Long orderId) {
+    public Order readOrderById(final Long orderId) {
         return (Order) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.Order"), orderId);
     }
 
-    public Order save(Order order) {
+    public Order save(final Order order) {
         if (order.getAuditable() != null) {
             order.getAuditable().setDateUpdated(new Date());
         }
@@ -62,11 +62,11 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus) {
+    public List<Order> readOrdersForCustomer(final Customer customer, final OrderStatus orderStatus) {
         if (orderStatus == null) {
             return readOrdersForCustomer(customer.getId());
         } else {
-            Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS");
+            final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_STATUS");
             query.setParameter("customerId", customer.getId());
             query.setParameter("orderStatus", orderStatus.getType());
             return query.getResultList();
@@ -74,20 +74,20 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Order> readOrdersForCustomer(Long customerId) {
-        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID");
+    public List<Order> readOrdersForCustomer(final Long customerId) {
+        final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID");
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
 
     @SuppressWarnings("unchecked")
-    public Order readCartForCustomer(Customer customer) {
+    public Order readCartForCustomer(final Customer customer) {
         Order order = null;
-        Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
+        final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
-        List temp = query.getResultList();
-        if (temp.size() > 0) {
+        final List temp = query.getResultList();
+        if (temp != null && !temp.isEmpty()) {
             order = (Order) temp.get(0);
         }
         return order;
@@ -108,20 +108,20 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
-    public Order submitOrder(Order cartOrder) {
+    public Order submitOrder(final Order cartOrder) {
         cartOrder.setStatus(OrderStatus.SUBMITTED);
         return save(cartOrder);
     }
 
     public Order create() {
-        Order order = ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order"));
+        final Order order = ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order"));
         order.getAuditable().setDateCreated(new Date());
 
         return order;
     }
 
-    public Order readNamedOrderForCustomer(Customer customer, String name) {
-        Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
+    public Order readNamedOrderForCustomer(final Customer customer, final String name) {
+        final Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
@@ -129,16 +129,16 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @SuppressWarnings("unchecked")
-    public Order readOrderByOrderNumber(String orderNumber) {
+    public Order readOrderByOrderNumber(final String orderNumber) {
         if (orderNumber == null || "".equals(orderNumber)) {
             return null;
         }
 
         Order order = null;
-        Query query = em.createNamedQuery("BC_READ_ORDER_BY_ORDER_NUMBER");
+        final Query query = em.createNamedQuery("BC_READ_ORDER_BY_ORDER_NUMBER");
         query.setParameter("orderNumber", orderNumber);
-        List<Order> result = query.getResultList();
-        if (result.size() > 0) {
+        final List<Order> result = query.getResultList();
+        if (result != null && !result.isEmpty()) {
             order = result.get(0);
         }
         return order;

@@ -26,15 +26,15 @@ public interface Activity extends BeanNameAware{
      * @return resulting process context
      * @throws Exception
      */
-    public ProcessContext execute(ProcessContext context) throws Exception;
+    ProcessContext execute(ProcessContext context) throws Exception;
     
     
     /**
      * Get the fine-grained error handler wired up for this Activity
      * @return
      */
-    public ErrorHandler getErrorHandler();
+    ErrorHandler getErrorHandler();
     
-    public String getBeanName();
+    String getBeanName();
 
 }

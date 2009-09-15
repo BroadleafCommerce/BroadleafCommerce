@@ -23,33 +23,33 @@ import org.broadleafcommerce.profile.domain.Customer;
 
 public interface OrderDao {
 
-    public Order readOrderById(Long orderId);
+    Order readOrderById(Long orderId);
 
-    public List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
+    List<Order> readOrdersForCustomer(Customer customer, OrderStatus orderStatus);
 
-    public List<Order> readOrdersForCustomer(Long id);
+    List<Order> readOrdersForCustomer(Long id);
 
-    public Order readNamedOrderForCustomer(Customer customer, String name);
+    Order readNamedOrderForCustomer(Customer customer, String name);
 
-    public Order readCartForCustomer(Customer customer);
+    Order readCartForCustomer(Customer customer);
 
-    public Order save(Order order);
+    Order save(Order order);
 
-    public void delete(Order order);
+    void delete(Order order);
 
-    public Order submitOrder(Order cartOrder);
+    Order submitOrder(Order cartOrder);
 
-    public Order create();
+    Order create();
 
-    public Order createNewCartForCustomer(Customer customer);
+    Order createNewCartForCustomer(Customer customer);
 
-    public Order readOrderByOrderNumber(String orderNumber);
+    Order readOrderByOrderNumber(String orderNumber);
 
     //    removed methods
-    //    public List<Order> readNamedOrdersForcustomer(Customer customer);
+    //    List<Order> readNamedOrdersForcustomer(Customer customer);
     //
-    //    public Order readOrderForCustomer(Long customerId, Long orderId);
+    //    Order readOrderForCustomer(Long customerId, Long orderId);
     //
-    //    public List<Order> readSubmittedOrdersForCustomer(Customer customer);
+    //    List<Order> readSubmittedOrdersForCustomer(Customer customer);
     //
 }

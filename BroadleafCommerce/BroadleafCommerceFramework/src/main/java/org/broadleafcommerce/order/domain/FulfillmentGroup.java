@@ -28,111 +28,111 @@ import org.broadleafcommerce.util.money.Money;
 
 public interface FulfillmentGroup extends Serializable {
 
-    public Long getId();
+    Long getId();
 
-    public void setId(Long id);
+    void setId(Long id);
 
-    public Order getOrder();
+    Order getOrder();
 
-    public void setOrder(Order order);
+    void setOrder(Order order);
 
-    public Address getAddress();
+    Address getAddress();
 
-    public void setAddress(Address address);
+    void setAddress(Address address);
 
-    public Phone getPhone();
+    Phone getPhone();
 
-    public void setPhone(Phone phone);
+    void setPhone(Phone phone);
 
-    public List<FulfillmentGroupItem> getFulfillmentGroupItems();
+    List<FulfillmentGroupItem> getFulfillmentGroupItems();
 
-    public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems);
+    void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems);
 
-    public void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
+    void addFulfillmentGroupItem(FulfillmentGroupItem fulfillmentGroupItem);
 
-    public String getMethod();
+    String getMethod();
 
-    public void setMethod(String fulfillmentMethod);
+    void setMethod(String fulfillmentMethod);
 
-    public Money getRetailShippingPrice();
+    Money getRetailShippingPrice();
 
-    public void setRetailShippingPrice(Money retailShippingPrice);
+    void setRetailShippingPrice(Money retailShippingPrice);
 
-    public Money getSaleShippingPrice();
+    Money getSaleShippingPrice();
 
-    public void setSaleShippingPrice(Money saleShippingPrice);
+    void setSaleShippingPrice(Money saleShippingPrice);
 
-    public Money getShippingPrice();
+    Money getShippingPrice();
 
-    public void setShippingPrice(Money shippingPrice);
+    void setShippingPrice(Money shippingPrice);
 
-    public Money getAdjustmentPrice();
+    Money getAdjustmentPrice();
 
-    public void setAdjustmentPrice(Money adjustmentPrice);
+    void setAdjustmentPrice(Money adjustmentPrice);
 
-    public String getReferenceNumber();
+    String getReferenceNumber();
 
-    public void setReferenceNumber(String referenceNumber);
+    void setReferenceNumber(String referenceNumber);
 
-    public FulfillmentGroupType getType();
+    FulfillmentGroupType getType();
 
-    public void setType(FulfillmentGroupType type);
+    void setType(FulfillmentGroupType type);
 
-    public List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers();
+    List<CandidateFulfillmentGroupOffer> getCandidateFulfillmentGroupOffers();
 
-    public void setCandidateFulfillmentGroupOffer(List<CandidateFulfillmentGroupOffer> candidateOffers);
+    void setCandidateFulfillmentGroupOffer(List<CandidateFulfillmentGroupOffer> candidateOffers);
 
-    public void addCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateOffer);
+    void addCandidateFulfillmentGroupOffer(CandidateFulfillmentGroupOffer candidateOffer);
 
-    public void removeAllCandidateOffers();
+    void removeAllCandidateOffers();
 
-    public List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments();
+    List<FulfillmentGroupAdjustment> getFulfillmentGroupAdjustments();
 
-    public List<FulfillmentGroupAdjustment> addFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment);
+    List<FulfillmentGroupAdjustment> addFulfillmentGroupAdjustment(FulfillmentGroupAdjustment fulfillmentGroupAdjustment);
 
-    public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments);
+    void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments);
 
-    public void removeAllAdjustments();
+    void removeAllAdjustments();
 
-    public Money getCityTax();
+    Money getCityTax();
 
-    public void setCityTax(Money cityTax);
+    void setCityTax(Money cityTax);
 
-    public Money getCountyTax();
+    Money getCountyTax();
 
-    public void setCountyTax(Money countyTax);
+    void setCountyTax(Money countyTax);
 
-    public Money getStateTax();
+    Money getStateTax();
 
-    public void setStateTax(Money stateTax);
+    void setStateTax(Money stateTax);
 
-    public Money getCountryTax();
+    Money getCountryTax();
 
-    public void setCountryTax(Money countryTax);
+    void setCountryTax(Money countryTax);
 
-    public Money getTotalTax();
+    Money getTotalTax();
 
-    public void setTotalTax(Money totalTax);
+    void setTotalTax(Money totalTax);
 
-    public String getDeliveryInstruction();
+    String getDeliveryInstruction();
 
-    public void setDeliveryInstruction(String deliveryInstruction);
+    void setDeliveryInstruction(String deliveryInstruction);
 
-    public PersonalMessage getPersonalMessage();
+    PersonalMessage getPersonalMessage();
 
-    public void setPersonalMessage(PersonalMessage personalMessage);
+    void setPersonalMessage(PersonalMessage personalMessage);
 
-    public boolean isPrimary();
+    boolean isPrimary();
 
-    public void setPrimary(boolean primary);
+    void setPrimary(boolean primary);
 
-    public Money getMerchandiseTotal();
+    Money getMerchandiseTotal();
 
-    public void setMerchandiseTotal(Money merchandiseTotal);
+    void setMerchandiseTotal(Money merchandiseTotal);
 
-    public Money getTotal();
+    Money getTotal();
 
-    public void setTotal(Money orderTotal);
+    void setTotal(Money orderTotal);
 
-    public FulfillmentGroupStatusType getStatus();
+    FulfillmentGroupStatusType getStatus();
 }
