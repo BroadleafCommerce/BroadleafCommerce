@@ -44,6 +44,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cache.CacheFactoryException;
 import org.broadleafcommerce.cache.Hydrated;
 import org.broadleafcommerce.cache.HydratedCacheJPAListener;
+import org.broadleafcommerce.cache.HydratedCacheManager;
+import org.broadleafcommerce.cache.HydratedCacheManagerImpl;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.util.DateUtil;
@@ -76,7 +78,6 @@ import org.hibernate.annotations.OrderBy;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@EntityListeners({HydratedCacheJPAListener.class})
 public class CategoryImpl implements Category {
 
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -168,7 +169,6 @@ public class CategoryImpl implements Category {
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
     
     @Transient
-    @Hydrated(factoryMethod="createChildCategoryURLMap")
     protected Map<String, List<Category>> childCategoryURLMap;
     
     @Transient
@@ -503,6 +503,13 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
     public Map<String, List<Category>> getChildCategoryURLMap() {
+    	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
+    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
+    	if (hydratedItem != null) {
+    		return (Map<String, List<Category>>) hydratedItem;
+    	}
+    	childCategoryURLMap = createChildCategoryURLMap();
+    	((HydratedCacheManager) manager).addHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
         return childCategoryURLMap;
     }
     
@@ -510,12 +517,16 @@ public class CategoryImpl implements Category {
     	this.childCategoryURLMap = cachedChildCategoryUrlMap;
     }
     
-    public Map<String, List<Category>> createChildCategoryURLMap() throws CacheFactoryException {
-    	childCategoryURLMap = new HashMap<String, List<Category>>();
-        final Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
-        fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
-        childCategoryURLMap = newMap;
-        return childCategoryURLMap;
+    public Map<String, List<Category>> createChildCategoryURLMap() {
+    	try {
+			childCategoryURLMap = new HashMap<String, List<Category>>();
+			final Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
+			fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
+			childCategoryURLMap = newMap;
+			return childCategoryURLMap;
+		} catch (CacheFactoryException e) {
+			throw new RuntimeException(e);
+		}
     }
 
     /**
@@ -525,13 +536,13 @@ public class CategoryImpl implements Category {
      * @param startingPath the starting path
      * @param startingCategoryList the starting category list
      */
-    private void fillInURLMapForCategory(final Map<String, List<Category>> categoryUrlMap, final Category category, final String startingPath, final List<Category> startingCategoryList) throws CacheFactoryException {
-        final String urlKey = category.getUrlKey();
+    private void fillInURLMapForCategory(Map<String, List<Category>> categoryUrlMap, Category category, String startingPath, List<Category> startingCategoryList) throws CacheFactoryException {
+        String urlKey = category.getUrlKey();
         if (urlKey == null) {
         	throw new CacheFactoryException("Cannot create childCategoryURLMap - the urlKey for a category("+category.getId()+") was null");
         }
-    	final String currentPath = startingPath + "/" + category.getUrlKey();
-        final List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
+    	String currentPath = startingPath + "/" + category.getUrlKey();
+        List<Category> newCategoryList = new ArrayList<Category>(startingCategoryList);
         newCategoryList.add(category);
 
         /*
@@ -544,6 +555,7 @@ public class CategoryImpl implements Category {
         category.getCategoryMedia().size();
         category.getAllParentCategories().size();
         category.getAllChildCategories().size();
+        category.getFeaturedProducts().size();
 
         categoryUrlMap.put(currentPath, newCategoryList);
         for (Category currentCategory : category.getChildCategories()) {

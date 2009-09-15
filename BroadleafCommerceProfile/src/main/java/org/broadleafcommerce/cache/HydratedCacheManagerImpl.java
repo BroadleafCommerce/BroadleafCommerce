@@ -17,7 +17,7 @@ package org.broadleafcommerce.cache;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import net.sf.ehcache.CacheException;
@@ -39,24 +39,24 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     private static final Log LOG = LogFactory.getLog(HydratedCacheManagerImpl.class);
     private static final HydratedCacheManagerImpl MANAGER = new HydratedCacheManagerImpl();
 
-    protected static HydratedCacheManagerImpl getInstance() {
+    public static HydratedCacheManagerImpl getInstance() {
         return MANAGER;
     }
 
     private HydratedCacheManagerImpl()  {}
 
-    private Map<String, HydratedCache> hydratedCacheContainer = new HashMap<String, HydratedCache>();
-    private Map<String, HydrationDescriptor> hydrationDescriptors = new HashMap<String, HydrationDescriptor>();
+    private Map<String, HydratedCache> hydratedCacheContainer = new Hashtable<String, HydratedCache>();
+    private Map<String, HydrationDescriptor> hydrationDescriptors = new Hashtable<String, HydrationDescriptor>();
 
-    protected void addHydratedCache(final HydratedCache cache) {
+    public void addHydratedCache(final HydratedCache cache) {
     	hydratedCacheContainer.put(cache.getCacheName(), cache);
     }
 
-    protected HydratedCache removeHydratedCache(final String cacheName) {
+    public HydratedCache removeHydratedCache(final String cacheName) {
         return hydratedCacheContainer.remove(cacheName);
     }
 
-    protected  HydratedCache getHydratedCache(final String cacheName) {
+    public  HydratedCache getHydratedCache(final String cacheName) {
     	if (!containsCache(cacheName)) {
     		HydratedCache cache = new HydratedCache(cacheName);
     		addHydratedCache(cache);
@@ -64,7 +64,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     	return hydratedCacheContainer.get(cacheName);
     }
     
-    protected boolean containsCache(String cacheName) {
+    public boolean containsCache(String cacheName) {
     	return hydratedCacheContainer.containsKey(cacheName);
     }
     
@@ -94,7 +94,7 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     }
     
     @SuppressWarnings("unchecked")
-	protected Class getTopEntityClass(Object entity) {
+	public Class getTopEntityClass(Object entity) {
     	Class myClass = entity.getClass();
     	Class superClass = entity.getClass().getSuperclass();
     	while (superClass != null && superClass.getName().startsWith("org.broadleaf")) {
