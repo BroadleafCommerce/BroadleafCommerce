@@ -37,7 +37,7 @@ public class SearchFilterTag extends TagSupport {
 
     private List<Product> products;
     private String queryString;
-
+    
     @Override
     public int doStartTag() throws JspException {
         JspWriter out = this.pageContext.getOut();
@@ -46,8 +46,8 @@ public class SearchFilterTag extends TagSupport {
         if (queryString != null && !"".equals(queryString)) {
             try {
                 out.println("<h3>Your Search</h3>");
-                out.println("<input type=\"text\" size=\"30\" class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
-                out.println("<input type=\"hidden\" size=\"30\" name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
+                out.println("<input type=\"text\"  class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
+                out.println("<input type=\"hidden\"  name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
             } catch (IOException e) {
             }
         }
