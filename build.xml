@@ -210,7 +210,7 @@
 	<target name="build-dependencies">
 		<mkdir dir="${maven.build.finalName}/lib"/>
 		<mkdir dir="${maven.build.finalName}/lib/framework"/>
-		<mkdir dir="${maven.build.finalName}/lib/admin"/>
+		<!--<mkdir dir="${maven.build.finalName}/lib/admin"/>-->
 		<taskdef name="licenseCopy" classname="org.broadleafcommerce.util.DependencyLicenseCopy" classpathref="build.runtime.classpath"/>
 		<licenseCopy todir="${maven.build.finalName}/lib/framework" licenseDir="doc/dependency-licenses">
 			<restrict>
@@ -220,7 +220,7 @@
 				</rsel:not>
 			</restrict>
 		</licenseCopy>
-		<licenseCopy todir="${maven.build.finalName}/lib/admin" licenseDir="doc/dependency-licenses">
+		<!--<licenseCopy todir="${maven.build.finalName}/lib/admin" licenseDir="doc/dependency-licenses">
 			<difference>
 				<fileset refid="adminDeps"/>
 				<intersect>
@@ -228,7 +228,7 @@
 					<fileset refid="frameworkDeps"/>
 				</intersect>
 			</difference>
-		</licenseCopy>
+		</licenseCopy>-->
 		<copy file="doc/dependency-licenses/readme.txt" todir="${maven.build.finalName}/lib"/>
 	</target>
 
