@@ -356,3 +356,5 @@
 177|/images/products/small/5679-01us.jpg|small
 178|/images/products/small/10462-01usa.jpg|small
 179|/images/products/small/503.jpg|small
+180|/images/products/large/macchianator.jpg|large
+180|/images/products/small/macchianator.jpg|small
