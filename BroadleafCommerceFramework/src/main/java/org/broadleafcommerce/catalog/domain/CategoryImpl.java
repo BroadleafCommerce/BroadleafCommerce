@@ -399,7 +399,7 @@ public class CategoryImpl implements Category {
      */
     public void setAllChildCategories(final List<Category> childCategories){
     	this.allChildCategories.clear();
-    	for(Category category : allChildCategories){
+    	for(Category category : childCategories){
     		this.allChildCategories.add(category);
     	}    	
     }
