@@ -58,7 +58,7 @@
 	    		</tr>
 			  	<tr>
     	  			<td class="alignCenter" colspan="2">
-						<input type="submit" class="saveButton" value="Register" name="submitAction"/>
+						<button type="submit" value="Register">Register</button>
           			</td>
         		</tr>
     		</table>
@@ -83,7 +83,7 @@
 	    		</tr>
 			  	<tr>
     	  			<td class="alignCenter" colspan="2">
-						<input type="submit" class="saveButton" value="Login" name="loginSubmitAction"/>
+						<button type="submit" value="Login">Login</button>
           			</td>
         		</tr>
     		</table>

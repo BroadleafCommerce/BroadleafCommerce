@@ -17,7 +17,7 @@
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
-						<td><input type="submit" name="findOrder" value="Find Order"/></td>
+						<td><button type="submit" name="findOrder" value="Find Order">Find Order</button></td>
 					</tr>
 				</table>
 			</div>

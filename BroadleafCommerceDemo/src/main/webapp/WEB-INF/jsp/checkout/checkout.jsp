@@ -9,7 +9,7 @@
 				<jsp:include page="/WEB-INF/jsp/checkout/inputCheckoutContactInformation.jsp" />
 			</div>
 			<div class="formButtonFooter personFormButtons">
-	     		<input type="submit" value="Submit Order">     
+	     		<button type="submit" id="checkout" name="checkout">Submit Order</button>     
 	        </div>
 		</form:form>	
 		</div>
