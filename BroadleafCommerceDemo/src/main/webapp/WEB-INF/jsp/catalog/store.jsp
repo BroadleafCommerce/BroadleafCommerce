@@ -4,7 +4,7 @@
 	
 	<div class="splashContainer">
 	<div class="dontMiss">
-		<a href="/broadleafdemo/store/equipment/espresso?productId=140"><img src="/broadleafdemo/images/promos/mainPromo1.gif" /></a>
+		<a href="/broadleafdemo/store/equipment/espresso?productId=180"><img src="/broadleafdemo/images/promos/mainPromo1.gif" /></a>
 	</div>		
 	<div class="sidePromoContainer">
 		<div class="sidePromo">

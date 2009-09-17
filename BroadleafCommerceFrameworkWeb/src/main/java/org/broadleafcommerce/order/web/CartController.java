@@ -237,7 +237,8 @@ public class CartController {
         }
         Order currentCartOrder = retrieveCartOrder(request, model);
         List<OrderItem> orderItems = currentCartOrder.getOrderItems();
-        for (CartOrderItem cartOrderItem : cartSummary.getRows()) {
+        List<CartOrderItem> items = new ArrayList<CartOrderItem>(cartSummary.getRows());
+        for (CartOrderItem cartOrderItem : items) {
             OrderItem orderItem = (OrderItem)CollectionUtils.find(orderItems,
                     new BeanPropertyValueEqualsPredicate("id", cartOrderItem.getOrderItem().getId()));
             //in case the item was removed from the cart from another browser tab
@@ -254,6 +255,7 @@ public class CartController {
                 } else {
                     try {
                         cartService.removeItemFromOrder(currentCartOrder, orderItem);
+                        cartSummary.getRows().remove(cartOrderItem);
                     } catch (Exception e) {
                         // TODO: handle exception gracefully
                         LOG.error("Unable to remove item from the order: ("+currentCartOrder.getId()+")");

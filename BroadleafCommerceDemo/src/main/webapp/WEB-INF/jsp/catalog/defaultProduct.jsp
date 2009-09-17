@@ -71,6 +71,9 @@
 							<form:hidden path="addSkuId" />
 							<form:hidden path="quantity"  />
 							<c:choose>
+								<c:when test="${customer.anonymous}">
+									Logged in users can add items to wishlists
+								</c:when>
 								<c:when test="${(wishlists != null) && !(empty wishlists) }" >
 									<form:select path="wishlistName">
 										<form:options items="${wishlists}" itemValue="name" itemLabel="name" />
