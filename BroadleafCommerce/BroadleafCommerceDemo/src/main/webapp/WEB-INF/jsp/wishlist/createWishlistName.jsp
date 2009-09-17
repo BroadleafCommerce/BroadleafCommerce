@@ -8,7 +8,7 @@
 			<form:hidden path="addSkuId" />
 			<form:hidden path="quantity"  />
 			<div class="columns">
-				<div class="column span-5">
+				<div class="column span-9">
 					<h3 class="pageTitle">Create a Wishlist</h3>
 					<table class="basicTable">
 						<tr>
@@ -17,7 +17,7 @@
 						</tr>
 						<tr>
 							<td>&nbsp;</td>
-							<td><input type="submit" name="createWishlist" value="Create Wishlist"/></td>
+							<td><button type="submit" name="createWishlist" value="Create Wishlist">Create Wishlist</button></td>
 						</tr>
 					</table>
 				</div>
