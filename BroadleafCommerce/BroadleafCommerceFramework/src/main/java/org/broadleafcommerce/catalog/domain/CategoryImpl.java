@@ -399,7 +399,7 @@ public class CategoryImpl implements Category {
      */
     public void setAllChildCategories(final List<Category> childCategories){
     	this.allChildCategories.clear();
-    	for(Category category : allChildCategories){
+    	for(Category category : childCategories){
     		this.allChildCategories.add(category);
     	}    	
     }
@@ -435,10 +435,10 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setAllChildCategories(java
      * .util.List)
      */
-    public void setChildCategories(final List<Category> allChildCategories) {
-        this.allChildCategories.clear();
-    	for(Category category : allChildCategories){
-    		this.allChildCategories.add(category);
+    public void setChildCategories(final List<Category> childCategories) {
+        this.childCategories.clear();
+    	for(Category category : childCategories){
+    		this.childCategories.add(category);
     	}
     }
 

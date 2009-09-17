@@ -10,7 +10,7 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 	import mx.rpc.events.ResultEvent;
 	
 	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
-	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogChainEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	
 	public class FindAllCatalogSkusCommand implements Command, IResponder
@@ -23,7 +23,7 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 		public function result(data:Object):void{
 			var event:ResultEvent = ResultEvent(data);
 			CatalogModelLocator.getInstance().skuModel.catalogSkus = ArrayCollection(event.result);
-			var bcte:BuildCatalogEvent = new BuildCatalogEvent();
+			var bcte:BuildCatalogChainEvent = new BuildCatalogChainEvent();
 			bcte.dispatch()
 		}
 		

@@ -40,18 +40,10 @@
 		<property name="username" value="@@MYSQL_USERNAME@@" />
 		<property name="password" value="@@MYSQL_PASSWORD@@" />
     </bean>
-    
+
 	<aop:config>
 	    <aop:pointcut id="blAdminCatalogServiceOperation" expression="execution(* org.broadleafcommerce.admin.catalog.service.AdminCatalogService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminCatalogServiceOperation"/>
 	</aop:config>
 
-	<!-- 
-	<aop:config>
-	    <aop:pointcut id="blAdminCatalogServiceOperation2" expression="execution(* org.broadleafcommerce.admin.catalog.service.AdminCatalogService.saveCategory(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminCatalogServiceOperation2"/>
-	</aop:config>
-	
-	 -->    
-    
 </beans>

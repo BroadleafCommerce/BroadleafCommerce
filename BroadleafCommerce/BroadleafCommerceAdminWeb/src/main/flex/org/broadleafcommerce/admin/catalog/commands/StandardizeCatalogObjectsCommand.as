@@ -27,17 +27,10 @@ package org.broadleafcommerce.admin.catalog.commands
 
 			var categoryTreeItemArray:ArrayCollection = new ArrayCollection();
 
-//			for each(var product:Product in productArray){
-//				for (var i:String in product.allParentCategories){
-					for each(var refCategory:Category in categoryArray){
-						var categoryTreeItem:CategoryTreeItem = new CategoryTreeItem(refCategory);
-						categoryTreeItemArray.addItem(categoryTreeItem);
-//						if(product.allParentCategories[i].id == refCategory.id){							
-//							product.allParentCategories[i] = refCategory;
-//						}
-					}
-//				}
-//			}
+			for each(var refCategory:Category in categoryArray){
+				var categoryTreeItem:CategoryTreeItem = new CategoryTreeItem(refCategory);
+				categoryTreeItemArray.addItem(categoryTreeItem);
+			}
 			
 			CatalogModelLocator.getInstance().catalogTreeItemArray = categoryTreeItemArray;
 			

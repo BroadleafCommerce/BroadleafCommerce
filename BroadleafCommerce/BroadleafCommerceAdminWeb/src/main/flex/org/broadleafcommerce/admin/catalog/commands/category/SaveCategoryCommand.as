@@ -14,17 +14,25 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	
 	public class SaveCategoryCommand implements Command, IResponder{
 		
+		private var nextEvent:CairngormEvent;
+		
 		public function execute(event:CairngormEvent):void{
 			trace("DEBUG: SaveCategoryCommand.execute()");
 			var scce:SaveCategoryEvent = SaveCategoryEvent(event);
 			var category:Category = scce.category;
+			nextEvent = scce.nextEvent;
 			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
 			delegate.saveCategory(category);
 		}
 		
 		public function result(data:Object):void{
-			var facce:FindAllCategoriesEvent = new FindAllCategoriesEvent();
-			facce.dispatch();
+			if(nextEvent){
+				nextEvent.dispatch();			
+			}else{
+				var facce:FindAllCategoriesEvent = new FindAllCategoriesEvent();
+				facce.dispatch();
+				
+			}
 		}		
 		
 		public function fault(info:Object):void{

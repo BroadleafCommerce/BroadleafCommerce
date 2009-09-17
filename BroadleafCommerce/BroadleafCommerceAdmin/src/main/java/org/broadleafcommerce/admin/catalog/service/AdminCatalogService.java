@@ -62,45 +62,29 @@ public class AdminCatalogService {
     }
 
     public List<Product> findProductsByCategory(Category category) {
-    	List<Product> p = catalogService.findProductsForCategory(category);    	
-        return p;
+        return catalogService.findProductsForCategory(category); 
     }
 
     public Product saveProduct(Product product) {
-//    	Map<String, String> images = product.getProductImages();
-//    	Map<String, Media> media = product.getProductMedia();
     	Product newProduct = catalogService.findProductById(product.getId());
-//    	List<Product> c2 = catalogService.findActiveProductsByCategory(newProduct.getDefaultCategory());
-//    	List<Category> c = newProduct.getAllParentCategories();
-//    	List<RelatedProduct> x = newProduct.getCrossSaleProducts();
-//    	int y = x.size();
-//    	Category cat = c.get(0);
-//    	newProduct.getAllParentCategories().clear();
-//    	newProduct.getAllParentCategories().add(newProduct.getDefaultCategory());
     	List<Sku> skus = new ArrayList<Sku>(product.getAllSkus().size());
     	skus.addAll(product.getAllSkus());
     	product.getAllSkus().clear();
     	for (int i=0; i< skus.size(); i++){
     		product.getAllSkus().add(catalogService.saveSku(skus.get(i)));
     	}
-        return catalogService.saveProduct(product);
+        return catalogService.saveProduct(mendProductTrees(product));
     }
     
     public Category saveCategory(Category category) {
-        if(category.getCategoryImages() != null && category.getCategoryImages() instanceof ASObject) {
-            category.setCategoryImages(getImagesMapFromAsObject((ASObject)category.getCategoryImages()));
-        }
-
-        if(category.getCategoryMedia() != null && category.getCategoryMedia() instanceof ASObject) {            
-            category.setCategoryMedia(getMediaMapFromAsObject((ASObject)category.getCategoryMedia()));
-        }
-                
-        return catalogService.saveCategory(category); 
+        Category cat = catalogService.saveCategory(mendCategoryTrees(category));       
+        return cat; 
     }
 
     public List<Category> findAllCategories() {
-    	List<Category> c = catalogService.findAllCategories(); 
-        return c;
+    	List<Category> categories = catalogService.findAllCategories();
+    	categories.get(0).getAllChildCategories().size();
+    	return categories;
     }
 
     public List<Product> findAllProducts() {
@@ -116,12 +100,6 @@ public class AdminCatalogService {
     }
 
     public Sku saveSku(Sku sku) {
-    	if(sku.getSkuImages() != null && sku.getSkuImages() instanceof ASObject){
-    		sku.setSkuImages(getImagesMapFromAsObject((ASObject)sku.getSkuImages()));
-    	}
-    	if(sku.getSkuMedia() != null && sku.getSkuMedia() instanceof ASObject){
-    		sku.setSkuMedia(getMediaMapFromAsObject((ASObject)sku.getSkuMedia()));
-    	}
         return catalogService.saveSku(sku);
     }
 
@@ -129,44 +107,34 @@ public class AdminCatalogService {
         return catalogService.findSkusByIds(ids);
     }
 
-    private Map<String, String> getImagesMapFromAsObject(ASObject oldImages){
-        Map<String, String> newImages = new HashMap<String, String>();        
-        for(Object key : oldImages.keySet()) {
-            if(String.class.equals(key.getClass())) {                
-                Object test = oldImages.get(key);
-                if(String.class.equals(test.getClass())) {
-                    newImages.put((String)key, (String)oldImages.get(key));                
-                }
-            }
-        }
-        return newImages;
-    	
-    }
-    
-    private Map<String,Media> getMediaMapFromAsObject(ASObject oldMedia){
-        Map<String, Media> newMedia = new HashMap<String, Media>();
-        for(Object key:oldMedia.keySet()) {
-            if(String.class.equals(key.getClass())) {
-                Object test = oldMedia.get(key);
-                if(test instanceof MediaImpl) {
-                	String keyString = (String)key;
-                    newMedia.put(keyString, (MediaImpl)oldMedia.get(key));
-                }
-            }
-        }
-        return newMedia;
-    	
-    }
-    
-    private List<Category> normalizeCategories(List<Category> asObjectCategories){
-    	List<Category> normalizedCategories = new ArrayList<Category>();
-    	for (Category category : asObjectCategories){
-    		category.setCategoryImages(getImagesMapFromAsObject((ASObject)category.getCategoryImages()));
-    		category.setCategoryMedia(getMediaMapFromAsObject((ASObject)category.getCategoryMedia()));
-    		normalizedCategories.add(category);
+    private Category mendCategoryTrees(Category category){
+    	addAllCategories(category.getAllChildCategories(), mendCategoriesList(category.getAllChildCategories()));
+    	addAllCategories(category.getAllParentCategories(), mendCategoriesList(category.getAllParentCategories()));
+    	if(category.getDefaultParentCategory() != null){    		
+    		category.setDefaultParentCategory(catalogService.findCategoryById(category.getDefaultParentCategory().getId()));
     	}
-    	return normalizedCategories;
+    	return category;
     }
-
+    
+    private Product mendProductTrees(Product product){
+    	addAllCategories(product.getAllParentCategories(), mendCategoriesList(product.getAllParentCategories()));
+    	product.setDefaultCategory(mendCategoryTrees(product.getDefaultCategory()));
+    	return product;
+    }
+    
+    private List<Category> mendCategoriesList(List<Category> categories){
+    	List<Category> mendedCategories = new ArrayList<Category>();
+        for(Category category : categories){
+            mendedCategories.add(catalogService.findCategoryById(category.getId()));
+        }
+        return mendedCategories;
+    }
+    
+    private void addAllCategories(List<Category> categories, List<Category> newCategories){
+    	categories.clear();
+    	for(Category category : newCategories){
+    		categories.add(category);
+    	}
+    }
     
 }
