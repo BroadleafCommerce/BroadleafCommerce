@@ -2,7 +2,7 @@ package org.broadleafcommerce.admin.catalog.control
 {
 	import com.adobe.cairngorm.control.FrontController;
 	
-	import org.broadleafcommerce.admin.catalog.commands.BuildCatalogCommand;
+	import org.broadleafcommerce.admin.catalog.commands.BuildCatalogChainCommand;
 	import org.broadleafcommerce.admin.catalog.commands.RetrieveCatalogCommand;
 	import org.broadleafcommerce.admin.catalog.commands.StandardizeCatalogObjectsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.AddCategoriesToCatalogTreeCommand;
@@ -31,7 +31,7 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.sku.FindAllCatalogSkusCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.NewSkuCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.SaveCatalogSkuCommand;
-	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogChainEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
@@ -70,7 +70,7 @@ package org.broadleafcommerce.admin.catalog.control
 			
 			addCommand(RetrieveCatalogEvent.EVENT_RETRIEVE_CATALOG, RetrieveCatalogCommand);
 			addCommand(StandardizeCatalogObjectsEvent.EVENT_STANDARDIZE_CATALOG_OBJECTS, StandardizeCatalogObjectsCommand);
-			addCommand(BuildCatalogEvent.EVENT_BUILD_CATALOG_TREE, BuildCatalogCommand);
+			addCommand(BuildCatalogChainEvent.EVENT_BUILD_CATALOG_TREE, BuildCatalogChainCommand);
 			addCommand(AddCategoriesToCatalogTreeEvent.EVENT_ADD_CATEGORIES_TO_CATALOG_TREE, AddCategoriesToCatalogTreeCommand);
 			addCommand(AddProductsToCategoriesEvent.EVENT_ADD_PRODUCTS_TO_CATALOG_TREE, AddProductsToCategoriesCommand);
 			addCommand(AddSkusToProductsEvent.EVENT_ADD_SKUS_TO_CATALOG_TREE, AddSkusToProductsCommand);

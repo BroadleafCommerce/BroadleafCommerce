@@ -22,6 +22,9 @@
 				import mx.events.ListEvent;
 				import mx.events.DragEvent;
 				import org.broadleafcommerce.admin.catalog.vo.category.Category; 
+
+            public var previousSelectedItem:Object;
+
 				
 			[Bindable]
             [Embed("/assets/images/3D-Documents.png")]
@@ -31,9 +34,13 @@
             [Embed("/assets/images/Blank.png")]
             private var categoryHasNotIcon:Class;
             
+            private function isBranch(item:Object):Boolean{
+            	return (item && item.hasOwnProperty("children") && item.children.length > 0);
+            }
+            
 			private function determineIcon(item:Object):Class{
 				var iconClass:Class;
-					if(item.children.length > 0){
+					if(isBranch(item)){
 						iconClass = categoryHasIcon;
 					}else{
 						iconClass = categoryHasNotIcon;
@@ -53,7 +60,7 @@
 			
 			private function handleDragDrop(event:DragEvent):void{
 				try{						
-					var draggedItem:Object = ObjectUtil.copy(this.selectedItem);
+					var draggedItem:CategoryTreeItem = CategoryTreeItem(this.selectedItem);
 					var index:int = this.calculateDropIndex(event);
 					var newParent:Object;
 					if(this.dataDescriptor.isBranch(this.indexToItemRenderer(index-1).data)){
@@ -61,6 +68,7 @@
 					}else{					
 						newParent = this.getParentItem(this.indexToItemRenderer(index-1).data);										
 					}
+					trace("new parent:"+newParent.name+" newParent.category "+newParent.category.name);
 					var oldParent:Object = getParentItem(draggedItem);
 					super.dragDropHandler(event);
 					if(event.action == DragManager.COPY){
@@ -78,30 +86,11 @@
 			}
 
 			private function handleItemClick(event:ListEvent):void{
+				previousSelectedItem = this.selectedItem;
 				var selectedItem:Category = Category(this.selectedItem.category); 
 				var ecce:EditCategoryEvent = new EditCategoryEvent(selectedItem);
 				ecce.dispatch();
-			}
-			
-//		dragDrop="handleDragDrop(event)"
-//		dragStart="handleDragStart(event)"
-//			private function handleDragStart(event:DragEvent):void{
-//				var e:DragEvent = event;
-//			} 
-//		dataChange="handleDataChange()"
-//				import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
-//				import org.broadleafcommerce.admin.catalog.vo.category.Category;
-//				import mx.events.ListEvent;
-//
-//				
-//				private function handleDataChange():void{
-//					trace("DEBUG: handle data change");
-//				}
-//				
-//				private function handleDragDrop(event:DragEvent):void{
-//					Tree(event.currentTarget).dr
-//					super.dragDropHandler(event);
-//				} 		
+			}				
 				
 			]]>
 		</mx:Script>

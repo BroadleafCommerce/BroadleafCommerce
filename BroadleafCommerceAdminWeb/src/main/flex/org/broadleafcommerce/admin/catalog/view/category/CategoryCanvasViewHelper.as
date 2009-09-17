@@ -6,8 +6,7 @@ package org.broadleafcommerce.admin.catalog.view.category
 	
 	import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
-	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
-	import org.broadleafcommerce.admin.catalog.view.category.components.CategoryTree;
+	import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 
 	public class CategoryCanvasViewHelper extends ViewHelper
@@ -18,8 +17,18 @@ package org.broadleafcommerce.admin.catalog.view.category
 		}
 		
 		public function selectCurrentCategoryInTree():void{
-			var ece:EditCategoryEvent = new EditCategoryEvent(CatalogModelLocator.getInstance().categoryModel.currentCategory);
-			ece.dispatch();
+			var  currentCategory:Category = CatalogModelLocator.getInstance().categoryModel.currentCategory; 
+			if(currentCategory.id > 0){
+				var ece:EditCategoryEvent = new EditCategoryEvent(CatalogModelLocator.getInstance().categoryModel.currentCategory);
+				ece.dispatch();				
+			}
+			var branchItems:ArrayCollection = new ArrayCollection();
+			for each(var cti:CategoryTreeItem in CatalogModelLocator.getInstance().catalogTreeItemArray){
+				if(cti.children != null && cti.children.length > 0){
+					branchItems.addItem(cti);
+				}
+			}
+			CategoryCanvas(this.view).categoryTreeCanvas.categoryTree.openItems = branchItems;
 			
 		}
 		

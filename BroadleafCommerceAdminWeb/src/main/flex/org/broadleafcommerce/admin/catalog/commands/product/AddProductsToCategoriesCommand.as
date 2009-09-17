@@ -27,7 +27,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 				for each(var parent:Category in product.allParentCategories){
 					for each(var category:Category in categoryArray){
 						if(category.id == parent.id){
-							category.children.addItem(product);						
+//							category.children.addItem(product);						
 						}
 					}
 					

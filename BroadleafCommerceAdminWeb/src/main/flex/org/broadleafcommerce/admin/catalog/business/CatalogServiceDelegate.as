@@ -47,7 +47,7 @@ package org.broadleafcommerce.admin.catalog.business
 		}
 		
 		public function findProductsByCategory(category:Category):void{
-			trace("DEBUG: CatalogServiceDelegate.findActiveProductsByCategory()");			
+			trace("DEBUG: CatalogServiceDelegate.findProductsByCategory()");			
 			var call:AsyncToken = catalogService.findProductsByCategory(category);
 			call.addResponder(responder);
 		}

@@ -10,7 +10,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import mx.rpc.events.ResultEvent;
 	
 	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
-	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogChainEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 
 	public class FindAllCatalogCategoriesCommand implements Command, IResponder
@@ -24,14 +24,16 @@ package org.broadleafcommerce.admin.catalog.commands.category
 		
 		public function result(data:Object):void
 		{
+			trace("DEBUG: FindAllCategoriesCommand.result()");
 			var event:ResultEvent = ResultEvent(data);
 			CatalogModelLocator.getInstance().categoryModel.categoryArray = ArrayCollection(event.result);
-			var bcte:BuildCatalogEvent = new BuildCatalogEvent();
+			var bcte:BuildCatalogChainEvent = new BuildCatalogChainEvent();
 			bcte.dispatch()
 		}
 		
 		public function fault(info:Object):void
 		{
+			trace("DEBUG: FindAllCategoriesCommand.fault()");			
 			var event:FaultEvent = FaultEvent(info);
 			Alert.show("Error: "+ event);
 		}

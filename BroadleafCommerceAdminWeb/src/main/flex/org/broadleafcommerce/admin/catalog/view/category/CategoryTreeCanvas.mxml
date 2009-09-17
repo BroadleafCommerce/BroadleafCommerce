@@ -4,9 +4,9 @@
 	xmlns:components1="org.broadleafcommerce.admin.catalog.view.category.components.*" xmlns:tree="com.idsklijnsma.tree.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 			import org.broadleafcommerce.admin.catalog.view.category.components.CategoryTreeDataDescriptor;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
-			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 			import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
 			import mx.collections.ArrayCollection;
 			import mx.events.ListEvent;
@@ -14,15 +14,9 @@
 			import mx.events.ItemClickEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
-			[Bindable]
-			private var catalogTree:ArrayCollection = CatalogModelLocator.getInstance().catalogTree;
-
-			[Bindable]
-			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
-
 		]]>
 	</mx:Script>
-	<mx:Binding source="catalogTree"
+	<mx:Binding source="CatalogModelLocator.getInstance().catalogTree"
 						destination="categoryTree.dataProvider" />
 	<components1:CategoryTree id="categoryTree" width="100%" height="100%" />
 	

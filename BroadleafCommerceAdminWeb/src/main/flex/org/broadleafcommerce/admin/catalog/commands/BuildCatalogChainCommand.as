@@ -13,11 +13,11 @@ package org.broadleafcommerce.admin.catalog.commands
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 
-	public class BuildCatalogCommand implements Command
+	public class BuildCatalogChainCommand implements Command
 	{
 		private var eventChain:ArrayCollection = new ArrayCollection();
 		
-		public function BuildCatalogCommand()
+		public function BuildCatalogChainCommand()
 		{
 			var catalogTree:ArrayCollection = CatalogModelLocator.getInstance().catalogTree;
 			var catalogTreeItemArray:ArrayCollection = CatalogModelLocator.getInstance().catalogTreeItemArray;
@@ -39,10 +39,7 @@ package org.broadleafcommerce.admin.catalog.commands
 			var productsArray:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;
 			var skusArray:ArrayCollection = CatalogModelLocator.getInstance().skuModel.catalogSkus;					
 
-			if(categoriesArray.length > 0 
-//				&& productsArray.length > 0 
-//				&& skusArray.length > 0
-				)
+			if(categoriesArray.length > 0)
 			{	
 				
 				var codes:ArrayCollection = AppModelLocator.getInstance().configModel.codeTypes;

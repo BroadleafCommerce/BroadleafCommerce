@@ -68,7 +68,7 @@
 		<category1:CategoryCanvasViewHelper id="categoryCanvasViewHelper" />
 
 		<mx:HDividedBox width="100%" height="100%" >
-			<category1:CategoryTreeCanvas id="viewCategoriesCanvas" width="300" height="100%" />
+			<category1:CategoryTreeCanvas id="categoryTreeCanvas" width="300" height="100%" />
 			<mx:TabNavigator id="categoryTabNavigator" width="100%" height="100%">
 				<category1:CategoryEditFormCanvas id="editCategoryCanvas"  label="General" width="100%" height="100%" />
 				<category1:CategoryProductsCanvas id="productsCanvas" label="Products" width="100%" height="100%" />
