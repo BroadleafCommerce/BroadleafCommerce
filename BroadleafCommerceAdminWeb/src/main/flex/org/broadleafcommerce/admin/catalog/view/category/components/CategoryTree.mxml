@@ -60,16 +60,32 @@
 			
 			private function handleDragDrop(event:DragEvent):void{
 				try{						
-					var draggedItem:CategoryTreeItem = CategoryTreeItem(this.selectedItem);
+					var items:Array = event.dragSource.dataForFormat("treeItems") as Array;					
+					var draggedItem:CategoryTreeItem = CategoryTreeItem(items[0]);
 					var index:int = this.calculateDropIndex(event);
-					var newParent:Object;
-					if(this.dataDescriptor.isBranch(this.indexToItemRenderer(index-1).data)){
-						newParent = this.indexToItemRenderer(index-1).data;					
+					var newParent:CategoryTreeItem;
+					if(isItemOpen(this.indexToItemRenderer(index-1).data)){
+						var x:Object = this.indexToItemRenderer(index-1);
+						newParent = (this.indexToItemRenderer(index-1).data as CategoryTreeItem);					
 					}else{					
-						newParent = this.getParentItem(this.indexToItemRenderer(index-1).data);										
+						newParent = (this.getParentItem(this.indexToItemRenderer(index-1).data) as CategoryTreeItem);										
 					}
-					trace("new parent:"+newParent.name+" newParent.category "+newParent.category.name);
-					var oldParent:Object = getParentItem(draggedItem);
+					var oldParent:CategoryTreeItem = (getParentItem(draggedItem) as CategoryTreeItem);
+					if(draggedItem.catId == newParent.catId){
+						event.preventDefault();
+						Alert.show("Can not drag a Category onto itself");
+						this.hideDropFeedback(event);					
+						return;
+					}
+					for each(var catTreeItem:CategoryTreeItem in newParent.children){
+						if(catTreeItem.catId == draggedItem.catId){
+							event.preventDefault();
+							Alert.show("Dragged Category already exists in "+newParent.name);
+							this.hideDropFeedback(event);							
+							return; 							
+						}
+					}
+					
 					super.dragDropHandler(event);
 					if(event.action == DragManager.COPY){
 						var cce:CopyCategoryEvent = new CopyCategoryEvent(Category(draggedItem.category), Category(newParent.category));
