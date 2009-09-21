@@ -34,9 +34,21 @@ package org.broadleafcommerce.admin.catalog.business
 			call.addResponder(responder);
 		}
 		
+		public function removeCategory(category:Category, parentCategory:Category):void{
+			trace("DEBUG: CatalogServiceDelegate.removeCategory()");			
+			var call:AsyncToken = catalogService.deleteCategory(category, parentCategory);
+			call.addResponder(responder);
+		}
+		
 		public function saveProduct(product:Product):void{
 			trace("DEBUG: CatalogServiceDelegate.saveProduct()");			
 			var call:AsyncToken = catalogService.saveProduct(product);
+			call.addResponder(responder);
+		}
+		
+		public function removeProduct(product:Product):void{
+			trace("DEBUG: CatalogServiceDelegate.removeProduct()");			
+			var call:AsyncToken = catalogService.deleteProduct(product);
 			call.addResponder(responder);
 		}
 		

@@ -78,6 +78,13 @@ public class ProductDaoImpl implements ProductDao {
         return query.getResultList();
     }
 
+    public void delete(Product product){
+    	if (!em.contains(product)) {
+    		product = readProductById(product.getId());
+    	}
+        em.remove(product);    	
+    }
+    
     public String getQueryCacheableKey() {
         return queryCacheableKey;
     }

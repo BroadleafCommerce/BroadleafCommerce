@@ -32,5 +32,7 @@ public interface ProductDao {
     public List<Product> readProductsByCategory(Long categoryId);    
 
     public List<Product> readProductsBySku(Long skuId);
+    
+    public void delete(Product product);
 
 }

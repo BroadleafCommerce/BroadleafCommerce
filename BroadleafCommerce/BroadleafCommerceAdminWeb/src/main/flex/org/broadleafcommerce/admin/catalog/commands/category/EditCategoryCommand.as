@@ -11,15 +11,18 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	import org.broadleafcommerce.admin.core.model.ConfigModel;
 	
 	public class EditCategoryCommand implements Command
 	{
 		public function execute(event:CairngormEvent):void{
 			trace("DEBUG: EditCategoryCommand.execute()");
 			var ecce:EditCategoryEvent = EditCategoryEvent(event);
-			var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel; 			
+			var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+			var configModel:ConfigModel = AppModelLocator.getInstance().configModel; 
+			 			
 			categoryModel.currentCategory = ecce.category;
-			categoryModel.categoryMedia = new ArrayCollection();
+			categoryModel.categoryMedia = new ArrayCollection();			
 			for (var x:String in ecce.category.categoryMedia){
 				if(x is String && ecce.category.categoryMedia[x] is Media){
 					var m:Media = new Media(); 
@@ -32,10 +35,13 @@ package org.broadleafcommerce.admin.catalog.commands.category
 				}
 			}
 
-			categoryModel.viewState = CategoryModel.STATE_EDIT;
-			AppModelLocator.getInstance().configModel.currentCodeTypes = CatalogModelLocator.getInstance().categoryModel.categoryMediaCodes;			
+			categoryModel.selectableParentCategories = categoryModel.currentCategory.allParentCategories;
+			configModel.currentCodeTypes = categoryModel.categoryMediaCodes;			
+
 			var fpbce:FindProductsByCategoryEvent = new FindProductsByCategoryEvent(ecce.category);
 			fpbce.dispatch();
+
+			categoryModel.viewState = CategoryModel.STATE_EDIT;
 
 		}
 	}

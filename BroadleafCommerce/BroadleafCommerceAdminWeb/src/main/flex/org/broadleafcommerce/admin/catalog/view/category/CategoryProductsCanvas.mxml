@@ -3,6 +3,7 @@
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.control.events.product.RemoveProductEvent;
 		import org.broadleafcommerce.admin.catalog.control.events.product.NewProductEvent;
 		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 		import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
@@ -26,8 +27,10 @@
 		}
 
 		 private function handleProductsDataGridClick(event:MouseEvent):void{
-		 	var product:Product = Product(ProductsDataGrid(event.currentTarget).selectedItem);
-		 	viewProduct(product, false);
+		 	if(ProductsDataGrid(event.currentTarget).selectedItem != null){
+			 	var product:Product = Product(ProductsDataGrid(event.currentTarget).selectedItem);
+			 	viewProduct(product, false);		 		
+		 	}
 		 }
 
 		 private function handleViewEditButtonClick(event:MouseEvent):void{
@@ -40,13 +43,20 @@
 		 	epe.dispatch();
 		 }
 
+		private function handleRemoveButtonClick(event:MouseEvent):void{
+			var rpe:RemoveProductEvent = new RemoveProductEvent(Product(categoryProductDataGrid.selectedItem));
+			rpe.dispatch();
+		}
+
 	]]>
 </mx:Script>
 
-<!-- mx:Binding source="categoryModel.currentCategory.allProducts"
-                   destination="categoryProductDataGrid.dataProvider" /-->
-<mx:Binding source="productModel.filteredCatalogProducts"
-            destination="categoryProductDataGrid.dataProvider" />
+	<mx:Binding source="productModel.filteredCatalogProducts"
+	            destination="categoryProductDataGrid.dataProvider" />
+	<mx:Binding source="categoryProductDataGrid.selectedItem != null"
+				destination="removeButton.enabled" />
+	<mx:Binding source="categoryProductDataGrid.selectedItem != null"
+				destination="viewEditButton.enabled" />
 
 	<mx:VBox height="100%" width="100%" styleName="padding10">
 		<mx:HBox>
@@ -55,7 +65,7 @@
 				height="25"/>
 			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/>
 			<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" styleName="viewEditButton" />
-			<mx:Button id="removeButton" label="Remove" styleName="deleteButton"/>
+			<mx:Button id="removeButton" label="Remove" styleName="deleteButton" click="handleRemoveButtonClick(event)"/>
 		</mx:HBox>
 		<components1:ProductsDataGrid id="categoryProductDataGrid" click="handleProductsDataGridClick(event)"
 			height="100%" width="100%"/>

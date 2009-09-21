@@ -65,6 +65,9 @@
 	<mx:Binding source="categoryModel.categoryMedia"
 	            destination="categoryMediaCanvas.dataProvider" />
 
+	<mx:Binding source="categoryTreeCanvas.categoryTree.selectedItem != null"
+	            destination="productsCanvas.enabled" />	            
+
 		<category1:CategoryCanvasViewHelper id="categoryCanvasViewHelper" />
 
 		<mx:HDividedBox width="100%" height="100%" >

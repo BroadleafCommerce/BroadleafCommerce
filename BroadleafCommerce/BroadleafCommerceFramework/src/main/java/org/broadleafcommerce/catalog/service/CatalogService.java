@@ -24,7 +24,7 @@ import org.broadleafcommerce.catalog.domain.Sku;
 
 public interface CatalogService {
 
-    public Product saveProduct(Product product);
+    public Product saveProduct(Product product);    
 
     public Product findProductById(Long productId);
 
@@ -33,6 +33,8 @@ public interface CatalogService {
     public List<Product> findActiveProductsByCategory(Category category);
 
     public Category saveCategory(Category category);
+    
+    public void removeCategory(Category category);
 
     public Category findCategoryById(Long categoryId);
 

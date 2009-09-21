@@ -16,34 +16,40 @@
 package org.broadleafcommerce.admin.catalog.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 
 
-import org.apache.commons.lang.ObjectUtils;
+import org.broadleafcommerce.catalog.dao.CategoryDao;
+import org.broadleafcommerce.catalog.dao.CategoryXrefDao;
+import org.broadleafcommerce.catalog.dao.ProductDao;
+import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.domain.CategoryImpl;
-import org.broadleafcommerce.catalog.domain.CrossSaleProductImpl;
+import org.broadleafcommerce.catalog.domain.CategoryXref;
 import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.catalog.domain.RelatedProduct;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
-import org.broadleafcommerce.media.domain.Media;
-import org.broadleafcommerce.media.domain.MediaImpl;
 import org.springframework.stereotype.Service;
-
-import flex.messaging.io.amf.ASObject;
 
 @Service("blAdminCatalogService")
 public class AdminCatalogService {
     
     @Resource(name = "blCatalogService")
     CatalogService catalogService;
+    
+    @Resource(name="blCategoryDao")
+    protected CategoryDao categoryDao;
+
+    @Resource(name="blCategoryXrefDao")
+    protected CategoryXrefDao categoryXrefDao;
+
+    @Resource(name="blProductDao")
+    protected ProductDao productDao;
+
+    @Resource(name="blSkuDao")
+    protected SkuDao skuDao;
+
     
     public Category findCategoryById(Long categoryId) {
     	return catalogService.findCategoryById(categoryId);
@@ -76,9 +82,31 @@ public class AdminCatalogService {
         return catalogService.saveProduct(mendProductTrees(product));
     }
     
+    public void deleteProduct(Product product){
+    	product.getAllParentCategories().clear();
+    	catalogService.saveProduct(product);
+    	productDao.delete(product);
+    }
+
     public Category saveCategory(Category category) {
-        Category cat = catalogService.saveCategory(mendCategoryTrees(category));       
+        Category cat = catalogService.saveCategory(mendCategoryTrees(category));
+        for(Category parentCategory : cat.getAllParentCategories()){
+        	parentCategory.getAllChildCategories().size();
+        	if(!parentCategory.getAllChildCategories().contains(cat)){
+        		parentCategory.getAllChildCategories().add(cat);
+        		catalogService.saveCategory(parentCategory);
+        	}
+        }
         return cat; 
+    }
+    
+    public void deleteCategory(Category category, Category parentCategory){
+    	parentCategory = mendCategoryTrees(parentCategory);
+    	parentCategory.getAllChildCategories().size();
+    	parentCategory.getAllChildCategories().remove(category);
+    	categoryDao.save(parentCategory);
+    	category = mendCategoryTrees(category);  
+    	catalogService.removeCategory(category);
     }
 
     public List<Category> findAllCategories() {
@@ -101,6 +129,10 @@ public class AdminCatalogService {
 
     public Sku saveSku(Sku sku) {
         return catalogService.saveSku(sku);
+    }
+    
+    public void deleteSku(Sku sku){
+    	skuDao.delete(sku);
     }
 
     public List<Sku> findSkusByIds(List<Long> ids) {
@@ -135,6 +167,16 @@ public class AdminCatalogService {
     	for(Category category : newCategories){
     		categories.add(category);
     	}
+    }
+    
+    private void saveCategoryDisplayOrders(Category category){
+    	int index = 0;
+    	for(Category childCategory : category.getAllChildCategories()){
+    		CategoryXref categoryXref = categoryXrefDao.readXrefByIds(category.getId(), childCategory.getId());
+    		categoryXref.setDisplayOrder(index);
+    		index++;
+    	}
+    	
     }
     
 }

@@ -47,7 +47,7 @@ public class OfferType implements Serializable
         setType(type);
     }
 
-    private void setType(final String type) {
+    public void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

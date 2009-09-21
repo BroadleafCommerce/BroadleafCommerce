@@ -132,7 +132,7 @@ public class CategoryImpl implements Category {
     @BatchSize(size = 50)
     protected List<Category> allChildCategories = new ArrayList<Category>();
 
-    /** The all parent categories. */
+    /** The all parent categories. */	
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    

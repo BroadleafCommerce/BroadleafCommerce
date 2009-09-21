@@ -14,9 +14,12 @@
 			import mx.events.ItemClickEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
+			[Bindable]
+			private var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
+
 		]]>
 	</mx:Script>
-	<mx:Binding source="CatalogModelLocator.getInstance().catalogTree"
+	<mx:Binding source="catalogModel.catalogTree"
 						destination="categoryTree.dataProvider" />
 	<components1:CategoryTree id="categoryTree" width="100%" height="100%" />
 	

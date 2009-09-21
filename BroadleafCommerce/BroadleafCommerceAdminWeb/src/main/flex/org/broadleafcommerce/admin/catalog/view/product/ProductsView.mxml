@@ -20,8 +20,10 @@
 			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 
 			private function handleDataGridClick(event:MouseEvent):void{
-				var vcpe:EditProductEvent = new EditProductEvent(Product(DataGrid(event.currentTarget).selectedItem), false);
-				vcpe.dispatch();
+				if(DataGrid(event.currentTarget).selectedItem != null){					
+					var vcpe:EditProductEvent = new EditProductEvent(Product(DataGrid(event.currentTarget).selectedItem), false);
+					vcpe.dispatch();
+				}
 			}
 		]]>
 	</mx:Script>
