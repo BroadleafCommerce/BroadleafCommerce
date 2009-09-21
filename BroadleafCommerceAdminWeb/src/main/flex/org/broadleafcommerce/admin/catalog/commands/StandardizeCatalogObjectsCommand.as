@@ -6,10 +6,10 @@ package org.broadleafcommerce.admin.catalog.commands
 	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
+	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
-	import org.broadleafcommerce.admin.catalog.vo.product.Product;
 
 	public class StandardizeCatalogObjectsCommand implements Command
 	{
@@ -24,6 +24,7 @@ package org.broadleafcommerce.admin.catalog.commands
 			var categoryArray:ArrayCollection = scoe.categoryArray;
 			var productArray:ArrayCollection = scoe.productArray;
 			var skuArray:ArrayCollection = scoe.skuArray;
+			var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
 
 			var categoryTreeItemArray:ArrayCollection = new ArrayCollection();
 
@@ -32,7 +33,7 @@ package org.broadleafcommerce.admin.catalog.commands
 				categoryTreeItemArray.addItem(categoryTreeItem);
 			}
 			
-			CatalogModelLocator.getInstance().catalogTreeItemArray = categoryTreeItemArray;
+			catalogModel.catalogTreeItemArray = categoryTreeItemArray;
 			
 
 		}

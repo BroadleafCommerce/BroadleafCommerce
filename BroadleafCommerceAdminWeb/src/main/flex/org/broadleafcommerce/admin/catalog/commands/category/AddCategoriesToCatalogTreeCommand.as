@@ -7,6 +7,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import mx.collections.ArrayCollection;
 	
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
+	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
 	import org.broadleafcommerce.admin.catalog.view.category.CategoryCanvasViewHelper;
@@ -24,9 +25,9 @@ package org.broadleafcommerce.admin.catalog.commands.category
 		{
 			trace("DEBUG: AddCategoriesToCatalogTreeCommand.execute()");
 			var actce:AddCategoriesToCatalogTreeEvent = AddCategoriesToCatalogTreeEvent(event);
-            var catTreeItems:ArrayCollection = 	CatalogModelLocator.getInstance().catalogTreeItemArray;
+            var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel; 
 
-			CatalogModelLocator.getInstance().catalogTree = buildTreeFromParents(catTreeItems);
+			catalogModel.catalogTree = buildTreeFromParents(catalogModel.catalogTreeItemArray);
 			CategoryCanvasViewHelper(ViewLocator.getInstance().getViewHelper("categoryCanvasViewHelper")).selectCurrentCategoryInTree();
 			ProductCanvasViewHelper(ViewLocator.getInstance().getViewHelper("productCanvasViewHelper")).selectCurrentProduct();
 		}

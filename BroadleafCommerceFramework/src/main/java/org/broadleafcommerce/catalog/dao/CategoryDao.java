@@ -34,4 +34,6 @@ public interface CategoryDao {
     public List<Product> readAllProducts();
 
     public List<Category> readAllSubCategories(Category category);
+    
+    public void delete(Category category);    
 }

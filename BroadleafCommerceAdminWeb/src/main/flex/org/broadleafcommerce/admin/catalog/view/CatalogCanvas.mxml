@@ -6,6 +6,10 @@
 	xmlns:view="org.broadleafcommerce.admin.catalog.view.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
+			import org.broadleafcommerce.admin.catalog.control.events.category.RemoveCategoryEvent;
+			import org.broadleafcommerce.admin.catalog.model.ProductModel;
+			import org.broadleafcommerce.admin.catalog.control.events.product.RemoveProductEvent;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 			import org.broadleafcommerce.admin.catalog.control.events.category.ViewCategoriesEvent;
@@ -24,6 +28,9 @@
 
 			[Bindable]
 			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+			
+			[Bindable]
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 
 			private function creationComplete():void{
 			}
@@ -39,25 +46,34 @@
 			}
 
 			private function handleNewCategory(event:Event):void{
-				var ncce:NewCategoryEvent;
-				var parentCategory:Category = null;
-				if(categoryModel.currentCategory.allParentCategories != null &&
-				   categoryModel.currentCategory.allParentCategories.length > 0){
-				   	ncce = new NewCategoryEvent(Category(categoryModel.currentCategory.allParentCategories.getItemAt(0)));
-				   }else{
-				   	ncce = new NewCategoryEvent();
-				   }
+				var ncce:NewCategoryEvent = new NewCategoryEvent();
 				ncce.dispatch();
 			}
 
 			private function handleNewProduct(event:Event):void{
 				new NewProductEvent().dispatch();
 			}
+			
+			private function handleRemoveCategoryButtonClick(event:Event):void{
+				var category:Category = CategoryTreeItem(categoryCanvas.categoryTreeCanvas.categoryTree.selectedItem).category;
+				var parentCategory:Category = CategoryTreeItem(categoryCanvas.categoryTreeCanvas.categoryTree.getParentItem(categoryCanvas.categoryTreeCanvas.categoryTree.selectedItem)).category;
+				var rce:RemoveCategoryEvent = new RemoveCategoryEvent(category, parentCategory);
+				rce.dispatch();
+			}			
+
+			private function handleRemoveProductButtonClick(event:Event):void{				
+				var rpe:RemoveProductEvent = new RemoveProductEvent(productModel.currentProduct);
+				rpe.dispatch();
+			}			
 		]]>
 	</mx:Script>
 
 	<mx:Binding source="catalogModel.viewState"
 					   destination="currentState" />
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="removeCategoryButton.enabled" />
+	<mx:Binding source="productModel.currentProduct.id > 0"
+	            destination="removeProductButton.enabled" />
 
 	<view:CatalogCanvasViewHelper id="catalogCanvas" />
 
@@ -68,20 +84,39 @@
 			verticalAlign="middle">
 			<mx:ViewStack id="addViewStack" width="100%" height="100%">
 				<mx:Canvas width="100%" height="100%">
+					<mx:HBox>
+						
 					<mx:Button
 						id="addCategorytBtn"
 						height="28"
 						styleName="addButton"
 						label="New Category"
 						click="handleNewCategory(event)" />
+					<mx:Button 
+						id="removeCategoryButton" 
+						height="28"
+						label="Remove" 
+						styleName="deleteButton" 
+						click="handleRemoveCategoryButtonClick(event)"/>
+					</mx:HBox>
+						
 				</mx:Canvas>
 				<mx:Canvas width="100%" height="100%">
-					<mx:Button
-						id="addProductBtn"
-						styleName="addButton"
-						height="28"
-						label="New Product"
-						click="handleNewProduct(event)" />
+					<mx:HBox>
+						<mx:Button
+							id="addProductBtn"
+							styleName="addButton"
+							height="28"
+							label="New Product"
+							click="handleNewProduct(event)" />
+						<mx:Button 
+							id="removeProductButton" 
+							height="28"
+							label="Remove" 
+							styleName="deleteButton" 
+							click="handleRemoveProductButtonClick(event)"/>
+					</mx:HBox>
+						
 				</mx:Canvas>
 			</mx:ViewStack>
 			<mx:LinkButton

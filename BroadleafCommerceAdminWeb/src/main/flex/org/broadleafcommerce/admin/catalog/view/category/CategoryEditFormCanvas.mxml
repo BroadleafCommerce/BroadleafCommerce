@@ -27,12 +27,6 @@
 			}
 
 			private function handleSaveCategory(event:Event):void{
-//				appModel.currentCategory.name = nameTextInput.text;
-//				appModel.currentCategory.description = descriptionTextInput.text;
-//				appModel.currentCategory.longDescription = longDescriptionTextInput.text;
-////				appModel.currentCategory.defaultParentCategory = Category(defaultParentCategoryComboBox.selectedItem);
-//				appModel.currentCategory.activeStartDate = activeStartDateDateField.selectedDate;
-//				appModel.currentCategory.activeEndDate = activeEndDateDateField.selectedDate;
 				var editCategory:Category = Category(ObjectUtil.copy(categoryModel.currentCategory));
 				editCategory.name = nameTextInput.text;
 				editCategory.description = descriptionTextInput.text;
@@ -44,22 +38,6 @@
 				scce.dispatch();
 			}
 
-//			private function handleChildDrop(event:DragEvent):void{
-//				var cat:Category = Category(Tree(event.dragInitiator).selectedItem);
-//					categoryModel.currentCategory.allChildCategories.addItem(Category(cat));
-//			}
-
-//			private function handleChildDragEnter(event:DragEvent):void{
-//				if(event.dragInitiator is Tree && Tree(event.dragInitiator).selectedItem is Category)
-//					DragManager.acceptDragDrop(List(event.currentTarget));
-//			}
-//
-//			private function handleProductClick(event:MouseEvent):void{
-//				var epe:EditProductEvent = new EditProductEvent(Product(List(event.currentTarget).selectedItem), true);
-//				epe.dispatch();
-//			}
-
-			
 			private function getSelectedIndex(category:Category):int{
 				for (var i:int;i<categoryModel.categoryArray.length; i++){
 					if(Category(categoryModel.categoryArray.getItemAt(i)).name == category.defaultParentCategory.name){
@@ -71,7 +49,7 @@
 		]]>
 	</mx:Script>
 	<mx:Binding
-		source="categoryModel.currentCategory.allParentCategories"
+		source="categoryModel.selectableParentCategories"
 		destination="defaultParentCategoryComboBox.dataProvider"/>
 	<mx:Binding
 		source="categoryModel.currentCategory.name"
@@ -91,9 +69,6 @@
 	<mx:Binding
 		source="categoryModel.currentCategory.activeEndDate"
 		destination="activeEndDateDateField.selectedDate"/>
-	<!--mx:Binding
-		source="categoryModel.currentCategory.children"
-		destination="productList.dataProvider" /-->
 
 	<mx:DateFormatter
 		id="dateFormatter"/>
@@ -144,14 +119,4 @@
 				click="handleSaveCategory(event)"/>
 		</mx:FormItem>
 	</mx:Form>
-	<!-- mx:FormItem
-		label="Products" x="360" y="10">
-		<mx:List
-			id="productList"
-			labelField="name"
-			width="200"
-			itemRenderer="org.broadleafcommerce.admin.catalog.view.product.components.ProductListItemRenderer"
-			click="handleProductClick(event)"
-			/>
-	</mx:FormItem-->
 </mx:Canvas>

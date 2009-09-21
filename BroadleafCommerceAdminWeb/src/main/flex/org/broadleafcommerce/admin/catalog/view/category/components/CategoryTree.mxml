@@ -59,6 +59,11 @@
 			}
 			
 			private function handleDragDrop(event:DragEvent):void{
+				if(event.action == DragManager.COPY){
+					Alert.show("Categories do not currently support multiple parents.");
+					event.preventDefault();
+					return;
+				}
 				try{						
 					var items:Array = event.dragSource.dataForFormat("treeItems") as Array;					
 					var draggedItem:CategoryTreeItem = CategoryTreeItem(items[0]);

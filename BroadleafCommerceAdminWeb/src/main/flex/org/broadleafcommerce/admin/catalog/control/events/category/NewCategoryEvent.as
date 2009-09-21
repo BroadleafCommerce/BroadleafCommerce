@@ -8,12 +8,10 @@ package org.broadleafcommerce.admin.catalog.control.events.category
 	{
 		public static const EVENT_NEW_CATALOG_CATEGORY:String = "event_new_catalog_category";
 		
-		public var parentCategory:Category;
 		
-		public function NewCategoryEvent(parentCategory:Category= null)
+		public function NewCategoryEvent()
 		{
 			super(EVENT_NEW_CATALOG_CATEGORY);
-			this.parentCategory = parentCategory;
 		}
 		
 	}

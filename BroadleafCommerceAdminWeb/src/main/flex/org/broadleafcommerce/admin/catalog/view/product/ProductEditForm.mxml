@@ -62,13 +62,7 @@
 				skuModel.currentSku.taxable = taxableCheckBox.selected;
 				product.allSkus.removeItemAt(0);
 				product.allSkus.addItemAt(skuModel.currentSku,0);
-//				Sku(product.allSkus.getItemAt(0)).retailPrice.amount = Number(retailPriceText.text);
-//				Sku(product.allSkus.getItemAt(0)).salePrice.amount = Number(salePriceText.text);
-//				Sku(product.allSkus.getItemAt(0)).discountable = discountableCheckbox.selected;
-//				Sku(product.allSkus.getItemAt(0)).taxable = taxableCheckBox.selected;
 				new SaveProductEvent(product).dispatch();
-//				new SaveSkuEvent(skuModel.currentSku).dispatch();
-//				new SaveSkuEvent(Sku(product.allSkus.getItemAt(0))).dispatch();
 
 			}
 
