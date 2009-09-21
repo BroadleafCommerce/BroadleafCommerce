@@ -18,10 +18,16 @@ package org.broadleafcommerce.admin.catalog.commands.category
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
 	
+	import mx.controls.Alert;
+	import mx.rpc.IResponder;
+	import mx.rpc.events.FaultEvent;
+	import mx.rpc.events.ResultEvent;
+	
+	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.control.events.category.CopyCategoryEvent;
-	import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.category.FindAllCategoriesEvent;
 
-	public class CopyCategoryCommand implements Command
+	public class CopyCategoryCommand implements Command, IResponder
 	{
 		public function CopyCategoryCommand()
 		{
@@ -32,10 +38,32 @@ package org.broadleafcommerce.admin.catalog.commands.category
 			trace("DEBUG: CopyCategoryCommand.execute()");			
 			var cce:CopyCategoryEvent = CopyCategoryEvent(event);
 			cce.movedCategory.allParentCategories.addItem(cce.newParent);
-			cce.newParent.allChildCategories.addItem(cce.movedCategory);
-			var saveNewParentEvent:SaveCategoryEvent = new SaveCategoryEvent(cce.newParent);
-			var sce:SaveCategoryEvent = new SaveCategoryEvent(cce.movedCategory, saveNewParentEvent);
-			sce.dispatch();
+			if(cce.droppedIndex > -1){
+				cce.newParent.allChildCategories.addItemAt(cce.movedCategory,cce.droppedIndex);
+			}else{
+				cce.newParent.allChildCategories.addItem(cce.movedCategory);								
+			}
+			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
+			delegate.updateCategoryParents(cce.movedCategory, null, cce.newParent);
+//			var saveNewParentEvent:SaveCategoryEvent = new SaveCategoryEvent(cce.newParent);
+//			var sce:SaveCategoryEvent = new SaveCategoryEvent(cce.movedCategory, saveNewParentEvent);
+//			sce.dispatch();
+			
+		}
+
+		public function result(data:Object):void
+		{
+			trace("DEBUG: MoveCategoryCommand.result()");
+			var event:ResultEvent = ResultEvent(data);
+			var fce:FindAllCategoriesEvent = new FindAllCategoriesEvent();
+			fce.dispatch();
+		}
+		
+		public function fault(info:Object):void
+		{
+			trace("DEBUG: MoveCategoryCommand.fault()");			
+			var event:FaultEvent = FaultEvent(info);
+			Alert.show("Error: "+ event);
 			
 		}
 		

@@ -99,21 +99,14 @@
 						this.hideDropFeedback(event);					
 						return;
 					}
-					for each(var catTreeItem:CategoryTreeItem in newParent.children){
-						if(catTreeItem.catId == draggedItem.catId){
-							event.preventDefault();
-							Alert.show("Dragged Category already exists in "+newParent.name);
-							this.hideDropFeedback(event);							
-							return; 							
-						}
-					}
-					
+
 					super.dragDropHandler(event);
+					var childIndex:int = newParent.children.getItemIndex(draggedItem);
 					if(event.action == DragManager.COPY){
-						var cce:CopyCategoryEvent = new CopyCategoryEvent(Category(draggedItem.category), Category(newParent.category));
+						var cce:CopyCategoryEvent = new CopyCategoryEvent(childIndex,Category(draggedItem.category), Category(newParent.category));
 						cce.dispatch();	
 					}else{
-						var mce:MoveCategoryEvent = new MoveCategoryEvent(Category(draggedItem.category), Category(oldParent.category), Category(newParent.category));
+						var mce:MoveCategoryEvent = new MoveCategoryEvent(childIndex,Category(draggedItem.category), Category(oldParent.category), Category(newParent.category));
 						mce.dispatch();
 					}				
 			   }catch (error:Error){

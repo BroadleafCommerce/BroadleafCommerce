@@ -51,13 +51,13 @@ public class CategoryXref implements Serializable {
     }
 
     @Column(name = "DISPLAY_ORDER")
-    private int displayOrder;
+    private Long displayOrder;
 
-    public int getDisplayOrder() {
+    public Long getDisplayOrder() {
         return displayOrder;
     }
 
-    public void setDisplayOrder(final int displayOrder) {
+    public void setDisplayOrder(final Long displayOrder) {
         this.displayOrder = displayOrder;
     }
 

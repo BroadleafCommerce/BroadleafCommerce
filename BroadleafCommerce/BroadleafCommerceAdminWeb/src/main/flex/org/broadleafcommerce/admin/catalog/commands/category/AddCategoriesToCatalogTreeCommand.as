@@ -42,7 +42,8 @@ package org.broadleafcommerce.admin.catalog.commands.category
 			var actce:AddCategoriesToCatalogTreeEvent = AddCategoriesToCatalogTreeEvent(event);
             var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel; 
 
-			catalogModel.catalogTree = buildTreeFromParents(catalogModel.catalogTreeItemArray);
+			// catalogModel.catalogTree = buildTreeFromParents(catalogModel.catalogTreeItemArray);
+			catalogModel.catalogTree = buildTreeFromChildren(catalogModel.catalogTreeItemArray);
 			CategoryCanvasViewHelper(ViewLocator.getInstance().getViewHelper("categoryCanvasViewHelper")).selectCurrentCategoryInTree();
 			ProductCanvasViewHelper(ViewLocator.getInstance().getViewHelper("productCanvasViewHelper")).selectCurrentProduct();
 		}
@@ -72,8 +73,9 @@ package org.broadleafcommerce.admin.catalog.commands.category
 							}
 							// add the child category tree item  to
 							// the parent category tree item as a child
-							catTreeItemParent.children.addItem(dupCatTreeItemChild); 											
+							catTreeItemParent.children.addItem(dupCatTreeItemChild); 	
 							// put the category of the category tree item in a hashtable
+							catTreeItemParent.children.sort;										
 							// to see later if we have added it
 							catMap[dupCatTreeItemChild.catId] = dupCatTreeItemChild;
 						}
