@@ -111,7 +111,9 @@ public class AdminCatalogService {
 
     public List<Category> findAllCategories() {
     	List<Category> categories = catalogService.findAllCategories();
-    	categories.get(0).getAllChildCategories().size();
+    	if(categories.size() > 0){
+    		categories.get(0).getAllChildCategories().size();    		
+    	}
     	return categories;
     }
 
