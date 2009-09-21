@@ -48,15 +48,9 @@ public class MergeCartProcessorImpl implements MergeCartProcessor {
         Customer loggedInCustomer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
         Customer anonymousCustomer = customerState.getCustomer(request);
         Order cart = cartService.findCartForCustomer(anonymousCustomer);
-        Long anonymousCartId;
-        if (cart != null) {
-            anonymousCartId = cart.getId();
-        } else {
-            anonymousCartId = null;
-        }
         MergeCartResponse mergeCartResponse;
         try {
-            mergeCartResponse = cartService.mergeCart(loggedInCustomer, anonymousCartId);
+            mergeCartResponse = cartService.mergeCart(loggedInCustomer, cart);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }
