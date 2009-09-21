@@ -51,7 +51,7 @@ public class DependencyLicenseCopy extends Copy {
                         file = file.substring(baseDir.length(), file.length());
                         String[] parts = file.split("/");
     			    	if (parts.length<=1) {
-    			    		parts = file.split("\\");
+    			    		parts = file.split("\\\\");
     			    	}
     			    	if (parts.length <= 1) {
     			    		throw new BuildException("Unable to recognize the path separator for src file: " + file);
