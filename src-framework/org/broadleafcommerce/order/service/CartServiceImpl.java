@@ -16,10 +16,15 @@
 package org.broadleafcommerce.order.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.offer.domain.OfferCode;
+import org.broadleafcommerce.offer.domain.OfferInfo;
+import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.order.domain.BundleOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.Order;
@@ -46,6 +51,9 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
 
     @Resource(name = "blCustomerService")
     protected CustomerService customerService;
+
+    @Resource(name = "blOfferService")
+    protected OfferService offerService;
 
     protected boolean moveNamedOrderItems = true;
     protected boolean deleteEmptyNamedOrders = true;
@@ -106,7 +114,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
      * @seeorg.broadleafcommerce.order.service.OrderService#mergeCart(org.
      * broadleafcommerce.profile.domain.Customer, java.lang.Long)
      */
-    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException {
+    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException {
         MergeCartResponse mergeCartResponse = new MergeCartResponse();
         // reconstruct cart items (make sure they are valid)
         ReconstructCartResponse reconstructCartResponse = reconstructCart(customer);
@@ -119,8 +127,8 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         mergeCartResponse.setMerged(customerCart != null && customerCart.getOrderItems().size() > 0);
 
         // add anonymous cart items (make sure they are valid)
-        if ((customerCart == null || !customerCart.getId().equals(anonymousCartId)) && anonymousCartId != null) {
-            Order anonymousCart = findOrderById(anonymousCartId);
+        if (anonymousCart != null && (customerCart == null || !customerCart.getId().equals(anonymousCart.getId()))) {
+            //Order anonymousCart = findOrderById(anonymousCartId);
             if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
                 if (customerCart == null) {
                     customerCart = createNewCartForCustomer(customer);
@@ -128,6 +136,8 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                 // currently we'll just add items
                 for (OrderItem orderItem : anonymousCart.getOrderItems()) {
                     if (orderItem instanceof DiscreteOrderItem) {
+                        orderItem.removeAllAdjustments();
+                        orderItem.removeAllCandidateItemOffers();
                         DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                         if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
                             DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
@@ -138,9 +148,13 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         }
                     } else if (orderItem instanceof BundleOrderItem) {
                         BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
+                        orderItem.removeAllAdjustments();
+                        orderItem.removeAllCandidateItemOffers();
                         boolean removeBundle = false;
                         List<DiscreteOrderItemRequest> discreteOrderItemRequests = new ArrayList<DiscreteOrderItemRequest>();
                         for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                            discreteOrderItem.removeAllAdjustments();
+                            discreteOrderItem.removeAllCandidateItemOffers();
                             DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
                             discreteOrderItemRequests.add(itemRequest);
                             if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
@@ -160,6 +174,26 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         }
                     }
                 }
+
+                // add all offers from anonymous order
+                Map<String, OfferCode> customerOffersMap = new HashMap<String, OfferCode>();
+                for (OfferCode customerOffer : customerCart.getAddedOfferCodes()) {
+                    customerOffersMap.put(customerOffer.getOfferCode(), customerOffer);
+                }
+
+                for (OfferCode anonymousOffer : anonymousCart.getAddedOfferCodes()) {
+                    if (!customerOffersMap.containsKey(anonymousOffer.getOfferCode())) {
+                        OfferCode transferredCode = offerService.lookupOfferCodeByCode(anonymousOffer.getOfferCode());
+                        OfferInfo info = anonymousCart.getAdditionalOfferInformation().get(anonymousOffer.getOffer());
+                        OfferInfo offerInfo = offerDao.createOfferInfo();
+                        for (String key : info.getFieldValues().keySet()) {
+                            offerInfo.getFieldValues().put(key, info.getFieldValues().get(key));
+                        }
+                        customerCart.getAdditionalOfferInformation().put(transferredCode.getOffer(), offerInfo);
+                        customerCart.addAddedOfferCode(transferredCode);
+                    }
+                }
+                customerCart = save(customerCart, true);
                 cancelOrder(anonymousCart);
             }
         }

@@ -44,7 +44,7 @@ public interface CartService extends OrderService {
      * @return the response containing the cart, any items added to the cart,
      *         and any items removed from the cart
      */
-    public MergeCartResponse mergeCart(Customer customer, Long anonymousCartId) throws PricingException;
+    public MergeCartResponse mergeCart(Customer customer, Order anonymousCart) throws PricingException;
 
     /**
      * Reconstruct the cart using previous stored state taking into

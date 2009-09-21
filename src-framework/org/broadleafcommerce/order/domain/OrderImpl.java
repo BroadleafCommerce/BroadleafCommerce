@@ -37,6 +37,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
@@ -132,6 +133,7 @@ public class OrderImpl implements Order {
 
     @OneToMany(mappedBy = "order", targetEntity = FulfillmentGroupImpl.class, cascade = { CascadeType.ALL })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    @OrderBy("id")
     protected List<FulfillmentGroup> fulfillmentGroups = new ArrayList<FulfillmentGroup>();
 
     @OneToMany(mappedBy = "order", targetEntity = OrderAdjustmentImpl.class, cascade = { CascadeType.ALL })
@@ -139,9 +141,8 @@ public class OrderImpl implements Order {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OrderAdjustment> orderAdjustments = new ArrayList<OrderAdjustment>();
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class, cascade = { CascadeType.ALL })
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OfferCodeImpl.class)
     @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"))
-    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<OfferCode> addedOfferCodes = new ArrayList<OfferCode>();
 
@@ -435,7 +436,7 @@ public class OrderImpl implements Order {
         adjustmentPrice = null;
         notCombinableOfferApplied = false;
         hasOrderAdjustments = false;
-   }
+    }
 
     public void removeAllItemAdjustments() {
         for (OrderItem orderItem : orderItems) {
