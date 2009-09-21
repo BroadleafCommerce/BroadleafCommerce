@@ -49,6 +49,12 @@ package org.broadleafcommerce.admin.catalog.business
 			call.addResponder(responder);
 		}
 		
+		public function updateCategoryParents(category:Category, oldParent:Category, newParent:Category){
+			trace("DEBUG: CatalogServiceDelegate.updatecategoryParents()");			
+			var call:AsyncToken = catalogService.updateCategoryParents(category, oldParent, newParent);
+			call.addResponder(responder);			
+		}
+		
 		public function removeCategory(category:Category, parentCategory:Category):void{
 			trace("DEBUG: CatalogServiceDelegate.removeCategory()");			
 			var call:AsyncToken = catalogService.deleteCategory(category, parentCategory);

@@ -23,12 +23,14 @@ package org.broadleafcommerce.admin.catalog.control.events.category
 	{
 		public static const EVENT_COPY_CATEGORY:String = "copy_category_event";
 		
+		public var droppedIndex:int;
 		public var movedCategory:Category;
 		public var newParent:Category;
 		
-		public function CopyCategoryEvent(movedCategory:Category, newParent:Category)
+		public function CopyCategoryEvent(droppedIndex:int, movedCategory:Category, newParent:Category)
 		{
 			super(EVENT_COPY_CATEGORY);
+			this.droppedIndex = droppedIndex;
 			this.movedCategory = movedCategory;
 			this.newParent = newParent;
 		}

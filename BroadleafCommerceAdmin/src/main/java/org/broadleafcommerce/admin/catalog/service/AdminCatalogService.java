@@ -88,14 +88,36 @@ public class AdminCatalogService {
     	productDao.delete(product);
     }
 
+    public Category updateCategoryParents(Category category, Category oldParent, Category newParent){
+    	Category updatedOldParent = null;
+    	if(oldParent != null){
+    		updatedOldParent = catalogService.saveCategory(mendCategoryTrees(oldParent));    		
+    	}
+    	Category updatedNewParent = catalogService.saveCategory(mendCategoryTrees(newParent));
+    	Category updatedCategory = catalogService.saveCategory(mendCategoryTrees(category));
+    	if(updatedOldParent != null){
+    		saveCategoryDisplayOrders(updatedOldParent);
+    	}
+    	saveCategoryDisplayOrders(updatedNewParent);
+    	return updatedCategory;
+    }
+    
     public Category saveCategory(Category category) {
         Category cat = catalogService.saveCategory(mendCategoryTrees(category));
+        int index = 0;
         for(Category parentCategory : cat.getAllParentCategories()){
         	parentCategory.getAllChildCategories().size();
         	if(!parentCategory.getAllChildCategories().contains(cat)){
-        		parentCategory.getAllChildCategories().add(cat);
+        		parentCategory.getAllChildCategories().add(index,cat);
         		catalogService.saveCategory(parentCategory);
+        		saveCategoryDisplayOrders(parentCategory);
         	}
+        	index++;
+        }
+        if(cat.getAllParentCategories().indexOf(cat.getDefaultParentCategory()) < 0){
+//        	cat.getAllParentCategories().add(cat.getDefaultParentCategory());
+        	cat.getDefaultParentCategory().getAllChildCategories().add(cat);
+        	catalogService.saveCategory(cat.getDefaultParentCategory());
         }
         return cat; 
     }
@@ -112,7 +134,9 @@ public class AdminCatalogService {
     public List<Category> findAllCategories() {
     	List<Category> categories = catalogService.findAllCategories();
     	if(categories.size() > 0){
-    		categories.get(0).getAllChildCategories().size();    		
+    		for(Category category : categories){
+    			category.getAllChildCategories().size();    		    			
+    		}
     	}
     	return categories;
     }
@@ -175,8 +199,9 @@ public class AdminCatalogService {
     	int index = 0;
     	for(Category childCategory : category.getAllChildCategories()){
     		CategoryXref categoryXref = categoryXrefDao.readXrefByIds(category.getId(), childCategory.getId());
-    		categoryXref.setDisplayOrder(index);
+    		categoryXref.setDisplayOrder(new Long(index));
     		index++;
+    		categoryXrefDao.save(categoryXref);
     	}
     	
     }

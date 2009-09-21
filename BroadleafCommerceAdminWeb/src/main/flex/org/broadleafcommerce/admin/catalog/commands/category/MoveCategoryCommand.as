@@ -17,15 +17,18 @@ package org.broadleafcommerce.admin.catalog.commands.category
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-	import com.adobe.cairngorm.responder.CairngormResponder;
 	
-	import flash.events.Event;
+	import mx.controls.Alert;
+	import mx.rpc.IResponder;
+	import mx.rpc.events.FaultEvent;
+	import mx.rpc.events.ResultEvent;
 	
+	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
+	import org.broadleafcommerce.admin.catalog.control.events.category.FindAllCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.MoveCategoryEvent;
-	import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 
-	public class MoveCategoryCommand implements Command
+	public class MoveCategoryCommand implements Command, IResponder
 	{
 		public function MoveCategoryCommand()
 		{
@@ -60,10 +63,35 @@ package org.broadleafcommerce.admin.catalog.commands.category
 					break;
 				}
 			}
+			
+			if(mce.dropIndex > -1){
+				newParent.allChildCategories.addItemAt(movedCategory, mce.dropIndex);				
+			}else{
+				newParent.allChildCategories.addItem(movedCategory);
+			}
+			
 
-			var sce:SaveCategoryEvent = new SaveCategoryEvent(movedCategory);			
-			sce.dispatch();
+//			var sce:SaveCategoryEvent = new SaveCategoryEvent(movedCategory);			
+//			sce.dispatch();
+			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);
+			delegate.updateCategoryParents(movedCategory, oldParent, newParent);
 		}
+
+		public function result(data:Object):void
+		{
+			trace("DEBUG: MoveCategoryCommand.result()");
+			var event:ResultEvent = ResultEvent(data);
+			var fce:FindAllCategoriesEvent = new FindAllCategoriesEvent();
+			fce.dispatch();
+		}
+		
+		public function fault(info:Object):void
+		{
+			trace("DEBUG: MoveCategoryCommand.fault()");			
+			var event:FaultEvent = FaultEvent(info);
+			Alert.show("Error: "+ event);
+		}
+
 		
 	}
 }
