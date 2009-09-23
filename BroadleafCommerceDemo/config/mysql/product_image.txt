@@ -358,3 +358,9 @@
 179|/images/products/small/503.jpg|small
 180|/images/products/large/macchianator.jpg|large
 180|/images/products/small/macchianator.jpg|small
+181|/images/products/large/basicmug.jpg|large
+181|/images/products/small/basicmug.jpg|small
+182|/images/products/large/dinermug.jpg|large
+182|/images/products/small/dinermug.jpg|small
+183|/images/products/large/colormug.jpg|large
+183|/images/products/small/colormug.jpg|small

@@ -8,7 +8,7 @@
 	</div>		
 	<div class="sidePromoContainer">
 		<div class="sidePromo">
-			<a href="/broadleafdemo/store/equipment/brewers?productId=128"><img src="/broadleafdemo/images/promos/sidePromo1.jpg" /></a>
+			<a href="/broadleafdemo/store/equipment/cups"><img src="/broadleafdemo/images/promos/sidePromo1.jpg" /></a>
 		</div>
 		<div class="sidePromo">
 			<a href="/broadleafdemo/store/coffee/starbucks?productId=123"><img src="/broadleafdemo/images/promos/sidePromo2.jpg" /></a>
