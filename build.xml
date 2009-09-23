@@ -118,9 +118,9 @@
 			<arg value="install"/>
 		</artifact:mvn>
 		<copy todir="${maven.build.finalName}/dist">
-			<!--<fileset dir="BroadleafCommerceAdmin/target">
+			<fileset dir="BroadleafCommerceAdmin/target">
 				<include name="*.jar"/>
-			</fileset>-->
+			</fileset>
 			<fileset dir="BroadleafCommerceFramework/target">
 				<include name="*.jar"/>
 			</fileset>
@@ -147,8 +147,8 @@
 		<mkdir dir="${maven.build.finalName}/src"/>
 		<copy todir="${maven.build.finalName}/src">
 			<fileset dir="./">
-				<!--<include name="BroadleafCommerceAdmin/**/*.*"/>
-				<include name="BroadleafCommerceAdminWeb/**/*.*"/>-->
+				<include name="BroadleafCommerceAdmin/**/*.*"/>
+				<include name="BroadleafCommerceAdminWeb/**/*.*"/>
 				<include name="BroadleafCommerceDemo/**/*.*"/>
 				<include name="BroadleafCommerceFramework/**/*.*"/>
 				<include name="BroadleafCommerceFrameworkWeb/**/*.*"/>
@@ -157,12 +157,9 @@
 				<include name="BroadleafCommerceProfileWeb/**/*.*"/>
 				<include name="BroadleafCommerceUSPS/**/*.*"/>
 				<include name="BroadleafCommerceUSPSSchemas/**/*.*"/>
-				<!--<include name="pom.xml"/>-->
+				<include name="pom.xml"/>
 				<exclude name="**/.*/*.*"/>
 				<exclude name="**/.*"/>
-			</fileset>
-			<fileset dir="doc">
-				<include name="pom.xml"/>
 			</fileset>
 		</copy>
 	</target>
@@ -173,9 +170,9 @@
 			<arg value="source:jar"/>
 		</artifact:mvn>
 		<copy todir="${maven.build.finalName}/dist">
-			<!--<fileset dir="BroadleafCommerceAdmin/target">
+			<fileset dir="BroadleafCommerceAdmin/target">
 				<include name="*sources.jar"/>
-			</fileset>-->
+			</fileset>
 			<fileset dir="BroadleafCommerceFramework/target">
 				<include name="*sources.jar"/>
 			</fileset>
@@ -213,7 +210,7 @@
 	<target name="build-dependencies">
 		<mkdir dir="${maven.build.finalName}/lib"/>
 		<mkdir dir="${maven.build.finalName}/lib/framework"/>
-		<!--<mkdir dir="${maven.build.finalName}/lib/admin"/>-->
+		<mkdir dir="${maven.build.finalName}/lib/admin"/>
 		<taskdef name="licenseCopy" classname="org.broadleafcommerce.util.DependencyLicenseCopy" classpathref="build.runtime.classpath"/>
 		<licenseCopy todir="${maven.build.finalName}/lib/framework" licenseDir="doc/dependency-licenses">
 			<restrict>
@@ -223,7 +220,7 @@
 				</rsel:not>
 			</restrict>
 		</licenseCopy>
-		<!--<licenseCopy todir="${maven.build.finalName}/lib/admin" licenseDir="doc/dependency-licenses">
+		<licenseCopy todir="${maven.build.finalName}/lib/admin" licenseDir="doc/dependency-licenses">
 			<difference>
 				<fileset refid="adminDeps"/>
 				<intersect>
@@ -231,7 +228,7 @@
 					<fileset refid="frameworkDeps"/>
 				</intersect>
 			</difference>
-		</licenseCopy>-->
+		</licenseCopy>
 		<copy file="doc/dependency-licenses/readme.txt" todir="${maven.build.finalName}/lib"/>
 	</target>
 
