@@ -132,7 +132,7 @@ public class CategoryImpl implements Category {
     @BatchSize(size = 50)
     protected List<Category> allChildCategories = new ArrayList<Category>();
 
-    /** The all parent categories. */
+    /** The all parent categories. */	
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "SUB_CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable = true))
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
@@ -435,10 +435,10 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setAllChildCategories(java
      * .util.List)
      */
-    public void setChildCategories(final List<Category> allChildCategories) {
-        this.allChildCategories.clear();
-    	for(Category category : allChildCategories){
-    		this.allChildCategories.add(category);
+    public void setChildCategories(final List<Category> childCategories) {
+        this.childCategories.clear();
+    	for(Category category : childCategories){
+    		this.childCategories.add(category);
     	}
     }
 
@@ -517,11 +517,11 @@ public class CategoryImpl implements Category {
     
     public Map<String, List<Category>> createChildCategoryURLMap() {
     	try {
-			childCategoryURLMap = new HashMap<String, List<Category>>();
-			final Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
-			fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
-			childCategoryURLMap = newMap;
-			return childCategoryURLMap;
+    	childCategoryURLMap = new HashMap<String, List<Category>>();
+        final Map<String, List<Category>> newMap = new HashMap<String, List<Category>>();
+        fillInURLMapForCategory(newMap, this, "", new ArrayList<Category>());
+        childCategoryURLMap = newMap;
+        return childCategoryURLMap;
 		} catch (CacheFactoryException e) {
 			throw new RuntimeException(e);
 		}

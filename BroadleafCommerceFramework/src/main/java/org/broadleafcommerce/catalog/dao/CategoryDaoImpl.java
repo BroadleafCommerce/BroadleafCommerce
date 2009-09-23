@@ -81,4 +81,12 @@ public class CategoryDaoImpl implements CategoryDao {
     public void setQueryCacheableKey(String queryCacheableKey) {
         this.queryCacheableKey = queryCacheableKey;
     }
+    
+    public void delete(Category category){
+    	if (!em.contains(category)) {
+    		category = readCategoryById(category.getId());
+    	}
+        em.remove(category);    	
+    }
+    
 }

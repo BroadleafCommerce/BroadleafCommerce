@@ -102,7 +102,27 @@ public class SearchFilterItemTag extends SimpleTagSupport {
         out.println("<script>" +
                 " var " + propertyCss + "Checked = 0;\r\n" +
                 "    \r\n" +
-                "    $('.searchFilter-" + propertyCss + "Checkbox').click(function() {\r\n" +
+                "    $('.searchFilter-" + propertyCss + " li').click(function() {\r\n" +
+                "        var value = $(this).attr('value');\r\n" +
+                "        var checkbox = $(this).find(':checkbox');\r\n" +
+                "        if (" + propertyCss + "Checked == 0) {\r\n" +
+                "            $('.searchFilter-" + propertyCss + " li').each(function(){$(this).addClass('searchFilterDisabledSelect')});\r\n" +
+                "            $(this).removeClass('searchFilterDisabledSelect');\r\n" +
+                "            checkbox.attr('checked',true);\r\n" +
+                "            " + propertyCss + "Checked++;\r\n" +
+                "        } else if (checkbox.attr('checked') == true) {\r\n" +
+                "            $(this).addClass('searchFilterDisabledSelect');\r\n" +
+                "            if (" + propertyCss + "Checked == 1) {\r\n" +
+                "                // unchecking the only checked category, so reactivate all categories\r\n" +
+                "                $('.searchFilter-"+propertyCss+" li').each(function(){$(this).removeClass('searchFilterDisabledSelect')});\r\n" +
+                "            } \r\n" +
+                "            checkbox.attr('checked',false);\r\n" +
+                "            " + propertyCss + "Checked--;\r\n" +
+                "        } else {\r\n" +
+                "            $(this).removeClass('searchFilterDisabledSelect');\r\n" +
+                "            checkbox.attr('checked',true);\r\n" +
+                "            " + propertyCss + "Checked++;\r\n" +
+                "        }\r\n" +
                 "        updateSearchFilterResults();\r\n" +
                 "    } );" +
         "</script>");

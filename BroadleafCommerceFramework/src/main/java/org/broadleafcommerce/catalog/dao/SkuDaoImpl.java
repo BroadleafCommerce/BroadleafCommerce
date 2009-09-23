@@ -61,4 +61,12 @@ public class SkuDaoImpl implements SkuDao {
         query.setParameter("skuIds", ids);
         return query.getResultList();
     }
+    
+    public void delete(Sku sku){
+    	if (!em.contains(sku)) {
+    		sku = readSkuById(sku.getId());
+    	}
+        em.remove(sku);    	
+    }
+    
 }

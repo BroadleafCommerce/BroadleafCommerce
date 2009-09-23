@@ -67,6 +67,10 @@ public class CatalogServiceImpl implements CatalogService {
     public Category saveCategory(Category category) {
         return categoryDao.save(category);
     }
+    
+    public void removeCategory(Category category){
+    	categoryDao.delete(category);
+    }
 
     public List<Category> findAllCategories() {
         return categoryDao.readAllCategories();

@@ -1,8 +1,23 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.broadleafcommerce.admin.catalog.control
 {
 	import com.adobe.cairngorm.control.FrontController;
 	
-	import org.broadleafcommerce.admin.catalog.commands.BuildCatalogCommand;
+	import org.broadleafcommerce.admin.catalog.commands.BuildCatalogChainCommand;
 	import org.broadleafcommerce.admin.catalog.commands.RetrieveCatalogCommand;
 	import org.broadleafcommerce.admin.catalog.commands.StandardizeCatalogObjectsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.AddCategoriesToCatalogTreeCommand;
@@ -11,6 +26,7 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.category.FindAllCatalogCategoriesCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.MoveCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.NewCategoryCommand;
+	import org.broadleafcommerce.admin.catalog.commands.category.RemoveCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.SaveCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.ViewCategoriesCommand;
 	import org.broadleafcommerce.admin.catalog.commands.media.AddMediaCommand;
@@ -23,6 +39,7 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.product.FindAllProductsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.FindProductsByCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.NewProductCommand;
+	import org.broadleafcommerce.admin.catalog.commands.product.RemoveProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.SaveProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.UpdateParentsOfProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.ViewCurrentProductCommand;
@@ -31,7 +48,7 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.sku.FindAllCatalogSkusCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.NewSkuCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.SaveCatalogSkuCommand;
-	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogChainEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
@@ -40,6 +57,7 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.control.events.category.FindAllCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.MoveCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.category.RemoveCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.ViewCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.media.AddMediaEvent;
@@ -52,6 +70,7 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.control.events.product.FindAllProductsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.FindProductsByCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.NewProductEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.product.RemoveProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.UpdateParentsOfProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.ViewCurrentProductEvent;
@@ -70,7 +89,7 @@ package org.broadleafcommerce.admin.catalog.control
 			
 			addCommand(RetrieveCatalogEvent.EVENT_RETRIEVE_CATALOG, RetrieveCatalogCommand);
 			addCommand(StandardizeCatalogObjectsEvent.EVENT_STANDARDIZE_CATALOG_OBJECTS, StandardizeCatalogObjectsCommand);
-			addCommand(BuildCatalogEvent.EVENT_BUILD_CATALOG_TREE, BuildCatalogCommand);
+			addCommand(BuildCatalogChainEvent.EVENT_BUILD_CATALOG_TREE, BuildCatalogChainCommand);
 			addCommand(AddCategoriesToCatalogTreeEvent.EVENT_ADD_CATEGORIES_TO_CATALOG_TREE, AddCategoriesToCatalogTreeCommand);
 			addCommand(AddProductsToCategoriesEvent.EVENT_ADD_PRODUCTS_TO_CATALOG_TREE, AddProductsToCategoriesCommand);
 			addCommand(AddSkusToProductsEvent.EVENT_ADD_SKUS_TO_CATALOG_TREE, AddSkusToProductsCommand);
@@ -83,6 +102,7 @@ package org.broadleafcommerce.admin.catalog.control
 			addCommand(SaveCategoryEvent.EVENT_SAVE_CATALOG_CATEGORY, SaveCategoryCommand);
 			addCommand(MoveCategoryEvent.EVENT_MOVE_CATEGORY, MoveCategoryCommand);
 			addCommand(CopyCategoryEvent.EVENT_COPY_CATEGORY, CopyCategoryCommand);
+			addCommand(RemoveCategoryEvent.EVENT_REMOVE_CATEGORY, RemoveCategoryCommand);
 
 			addCommand(FindAllProductsEvent.EVENT_FIND_ALL_PRODUCTS, FindAllProductsCommand);
 			addCommand(FindProductsByCategoryEvent.EVENT_FIND_PRODUCTS_BY_CATEGORY, FindProductsByCategoryCommand);
@@ -92,6 +112,7 @@ package org.broadleafcommerce.admin.catalog.control
 			addCommand(UpdateParentsOfProductEvent.EVENT_ADD_PARENT_TO_PRODUCT, UpdateParentsOfProductCommand);
 			addCommand(SaveProductEvent.EVENT_SAVE_CATALOG_PRODUCT, SaveProductCommand);
 			addCommand(FilterProductsEvent.EVENT_FILTER_PRODUCTS, FilterProductsCommand);
+			addCommand(RemoveProductEvent.EVENT_REMOVE_PRODUCT, RemoveProductCommand);
 
 			addCommand(FindAllSkusEvent.EVENT_FIND_ALL_CATALOG_SKUS, FindAllCatalogSkusCommand);
 			addCommand(EditSkuEvent.EVENT_EDIT_SKU, EditSkuCommand);

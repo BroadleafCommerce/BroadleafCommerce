@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
 <mx:Tree xmlns:mx="http://www.adobe.com/2006/mxml" 
 		labelField="name"
 		iconFunction="determineIcon"
@@ -22,6 +39,9 @@
 				import mx.events.ListEvent;
 				import mx.events.DragEvent;
 				import org.broadleafcommerce.admin.catalog.vo.category.Category; 
+
+            public var previousSelectedItem:Object;
+
 				
 			[Bindable]
             [Embed("/assets/images/3D-Documents.png")]
@@ -31,9 +51,13 @@
             [Embed("/assets/images/Blank.png")]
             private var categoryHasNotIcon:Class;
             
+            private function isBranch(item:Object):Boolean{
+            	return (item && item.hasOwnProperty("children") && item.children.length > 0);
+            }
+            
 			private function determineIcon(item:Object):Class{
 				var iconClass:Class;
-					if(item.children.length > 0){
+					if(isBranch(item)){
 						iconClass = categoryHasIcon;
 					}else{
 						iconClass = categoryHasNotIcon;
@@ -52,22 +76,37 @@
 			}
 			
 			private function handleDragDrop(event:DragEvent):void{
+				if(event.action == DragManager.COPY){
+					Alert.show("Categories do not currently support multiple parents.");
+					event.preventDefault();
+					return;
+				}
 				try{						
-					var draggedItem:Object = ObjectUtil.copy(this.selectedItem);
+					var items:Array = event.dragSource.dataForFormat("treeItems") as Array;					
+					var draggedItem:CategoryTreeItem = CategoryTreeItem(items[0]);
 					var index:int = this.calculateDropIndex(event);
-					var newParent:Object;
-					if(this.dataDescriptor.isBranch(this.indexToItemRenderer(index-1).data)){
-						newParent = this.indexToItemRenderer(index-1).data;					
+					var newParent:CategoryTreeItem;
+					if(isItemOpen(this.indexToItemRenderer(index-1).data)){
+						var x:Object = this.indexToItemRenderer(index-1);
+						newParent = (this.indexToItemRenderer(index-1).data as CategoryTreeItem);					
 					}else{					
-						newParent = this.getParentItem(this.indexToItemRenderer(index-1).data);										
+						newParent = (this.getParentItem(this.indexToItemRenderer(index-1).data) as CategoryTreeItem);										
 					}
-					var oldParent:Object = getParentItem(draggedItem);
+					var oldParent:CategoryTreeItem = (getParentItem(draggedItem) as CategoryTreeItem);
+					if(draggedItem.catId == newParent.catId){
+						event.preventDefault();
+						Alert.show("Can not drag a Category onto itself");
+						this.hideDropFeedback(event);					
+						return;
+					}
+
 					super.dragDropHandler(event);
+					var childIndex:int = newParent.children.getItemIndex(draggedItem);
 					if(event.action == DragManager.COPY){
-						var cce:CopyCategoryEvent = new CopyCategoryEvent(Category(draggedItem.category), Category(newParent.category));
+						var cce:CopyCategoryEvent = new CopyCategoryEvent(childIndex,Category(draggedItem.category), Category(newParent.category));
 						cce.dispatch();	
 					}else{
-						var mce:MoveCategoryEvent = new MoveCategoryEvent(Category(draggedItem.category), Category(oldParent.category), Category(newParent.category));
+						var mce:MoveCategoryEvent = new MoveCategoryEvent(childIndex,Category(draggedItem.category), Category(oldParent.category), Category(newParent.category));
 						mce.dispatch();
 					}				
 			   }catch (error:Error){
@@ -78,30 +117,11 @@
 			}
 
 			private function handleItemClick(event:ListEvent):void{
+				previousSelectedItem = this.selectedItem;
 				var selectedItem:Category = Category(this.selectedItem.category); 
 				var ecce:EditCategoryEvent = new EditCategoryEvent(selectedItem);
 				ecce.dispatch();
-			}
-			
-//		dragDrop="handleDragDrop(event)"
-//		dragStart="handleDragStart(event)"
-//			private function handleDragStart(event:DragEvent):void{
-//				var e:DragEvent = event;
-//			} 
-//		dataChange="handleDataChange()"
-//				import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
-//				import org.broadleafcommerce.admin.catalog.vo.category.Category;
-//				import mx.events.ListEvent;
-//
-//				
-//				private function handleDataChange():void{
-//					trace("DEBUG: handle data change");
-//				}
-//				
-//				private function handleDragDrop(event:DragEvent):void{
-//					Tree(event.currentTarget).dr
-//					super.dragDropHandler(event);
-//				} 		
+			}				
 				
 			]]>
 		</mx:Script>

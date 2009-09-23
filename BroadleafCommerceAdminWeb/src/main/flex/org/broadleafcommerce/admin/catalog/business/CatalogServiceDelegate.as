@@ -1,3 +1,18 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.broadleafcommerce.admin.catalog.business
 {
 	import mx.rpc.AsyncToken;
@@ -34,9 +49,27 @@ package org.broadleafcommerce.admin.catalog.business
 			call.addResponder(responder);
 		}
 		
+		public function updateCategoryParents(category:Category, oldParent:Category, newParent:Category){
+			trace("DEBUG: CatalogServiceDelegate.updatecategoryParents()");			
+			var call:AsyncToken = catalogService.updateCategoryParents(category, oldParent, newParent);
+			call.addResponder(responder);			
+		}
+		
+		public function removeCategory(category:Category, parentCategory:Category):void{
+			trace("DEBUG: CatalogServiceDelegate.removeCategory()");			
+			var call:AsyncToken = catalogService.deleteCategory(category, parentCategory);
+			call.addResponder(responder);
+		}
+		
 		public function saveProduct(product:Product):void{
 			trace("DEBUG: CatalogServiceDelegate.saveProduct()");			
 			var call:AsyncToken = catalogService.saveProduct(product);
+			call.addResponder(responder);
+		}
+		
+		public function removeProduct(product:Product):void{
+			trace("DEBUG: CatalogServiceDelegate.removeProduct()");			
+			var call:AsyncToken = catalogService.deleteProduct(product);
 			call.addResponder(responder);
 		}
 		
@@ -47,7 +80,7 @@ package org.broadleafcommerce.admin.catalog.business
 		}
 		
 		public function findProductsByCategory(category:Category):void{
-			trace("DEBUG: CatalogServiceDelegate.findActiveProductsByCategory()");			
+			trace("DEBUG: CatalogServiceDelegate.findProductsByCategory()");			
 			var call:AsyncToken = catalogService.findProductsByCategory(category);
 			call.addResponder(responder);
 		}

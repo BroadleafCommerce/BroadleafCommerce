@@ -1,3 +1,18 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.broadleafcommerce.admin.catalog.commands
 {
 	import com.adobe.cairngorm.commands.Command;
@@ -7,28 +22,31 @@ package org.broadleafcommerce.admin.catalog.commands
 	
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
+	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 	import org.broadleafcommerce.admin.catalog.model.ProductModel;
+	import org.broadleafcommerce.admin.catalog.model.SkuModel;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 
-	public class BuildCatalogCommand implements Command
+	public class BuildCatalogChainCommand implements Command
 	{
 		private var eventChain:ArrayCollection = new ArrayCollection();
 		
-		public function BuildCatalogCommand()
+		public function BuildCatalogChainCommand()
 		{
-			var catalogTree:ArrayCollection = CatalogModelLocator.getInstance().catalogTree;
-			var catalogTreeItemArray:ArrayCollection = CatalogModelLocator.getInstance().catalogTreeItemArray;
-			var categoryArray:ArrayCollection = CatalogModelLocator.getInstance().categoryModel.categoryArray;
-			var productsArray:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;
-			var skusArray:ArrayCollection = CatalogModelLocator.getInstance().skuModel.catalogSkus;
-			eventChain.addItem(new StandardizeCatalogObjectsEvent(categoryArray, productsArray, skusArray));
-			eventChain.addItem(new AddCategoriesToCatalogTreeEvent(catalogTree, catalogTreeItemArray));		
-			// The following events add products and skus to the tree	 
-			// eventChain.addItem(new AddProductsToCategoriesEvent(categoryArray, productsArray));
-			// eventChain.addItem(new AddSkusToProductsEvent(productsArray, skusArray));
+			var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
+			var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;			
+			var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+			var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;
+
+
+
+			eventChain.addItem(new StandardizeCatalogObjectsEvent(categoryModel.categoryArray, 
+															      productModel.catalogProducts, 
+															      skuModel.catalogSkus));
+			eventChain.addItem(new AddCategoriesToCatalogTreeEvent(catalogModel.catalogTree, catalogModel.catalogTreeItemArray));		
 																					  
 		}
 
@@ -36,13 +54,8 @@ package org.broadleafcommerce.admin.catalog.commands
 		{
 			trace("DEBUG: BuildCatalogCommand.execute()");
 			var categoriesArray:ArrayCollection = CatalogModelLocator.getInstance().categoryModel.categoryArray;
-			var productsArray:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;
-			var skusArray:ArrayCollection = CatalogModelLocator.getInstance().skuModel.catalogSkus;					
 
-			if(categoriesArray.length > 0 
-//				&& productsArray.length > 0 
-//				&& skusArray.length > 0
-				)
+			if(categoriesArray.length > 0)
 			{	
 				
 				var codes:ArrayCollection = AppModelLocator.getInstance().configModel.codeTypes;
