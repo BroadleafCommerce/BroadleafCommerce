@@ -78,7 +78,7 @@ import org.hibernate.annotations.OrderBy;
 public class CategoryImpl implements Category {
 
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
-    /** The Constant serialVersionUID. */
+    /** The Constant serialVersionUID.  */
     private static final long serialVersionUID = 1L;
 
     /** The id. */
