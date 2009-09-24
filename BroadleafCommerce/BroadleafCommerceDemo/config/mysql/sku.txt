@@ -178,3 +178,6 @@
 178|Bodum - Antigua|Freshly ground coffee makes all the difference when brewing the perfect cup! Just like professional-grade coffee grinders, BODUMâs Antigua electric coffee grinder features a conical burr grinder that cuts the coffee beans rather than crushing them, preventing the coffee from losing its characteristic taste and aroma.|59.99|57.99|N|N
 179|Capresso - Cool Grind Blade Grinder|Our Cool Grind blade grinders are suitable for drips coffee makers and percolators. They also to a great job for grinding spices and herbs. The large stainless steel grinding chamber reduces heat built-up to preserve more aroma. |185.99|183.99|N|N
 180|Havaletta - Macchianator|Brass boiler, lines and chromed brass brewing head all maintain and distribute heat to brew the perfect cup of coffee.|445.89|445.89|N|N
+181|Havaletta - Basic Cup|The basic no frills option. For the person who wants the world to know that they're drinking coffee, and that doesn't have mean anything more.|4.99|3.99|N|N
+182|Havaletta - Diner Cup|Whether you prefer your greasy eggs with greasy sausage or greasy bacon, this cup will hold your black coffee with a flared top that makes it easier for the waitress to top you off.|5.99|4.99|N|N
+183|Havaletta - Colored Ceramic Cup|These colored cups are perfect for curling up with a good book on a rainy Saturday morning.|14.99|8.99|N|N
