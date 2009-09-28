@@ -82,8 +82,14 @@
 	<mx:Binding source="categoryModel.categoryMedia"
 	            destination="categoryMediaCanvas.dataProvider" />
 
-	<mx:Binding source="categoryTreeCanvas.categoryTree.selectedItem != null"
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
 	            destination="productsCanvas.enabled" />	            
+
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="categoryMediaCanvas.enabled" />	            
+
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="featuredProductsCanvas.enabled" />	            
 
 		<category1:CategoryCanvasViewHelper id="categoryCanvasViewHelper" />
 

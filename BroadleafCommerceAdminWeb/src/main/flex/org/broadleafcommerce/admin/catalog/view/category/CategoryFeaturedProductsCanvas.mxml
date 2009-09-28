@@ -20,6 +20,12 @@
 
 <mx:Script>
 	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.category.RemoveFeaturedProductFromCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.vo.category.Category;
+		import mx.events.DragEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.category.AddFeaturedProductToCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.model.ProductModel;
 		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 		import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
 		import org.broadleafcommerce.admin.catalog.vo.product.Product;
@@ -32,36 +38,83 @@
 		[Bindable]
 		private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
 
+		[Bindable]
+		private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 
 		 private function handleProductsDataGridClick(event:MouseEvent):void{
 //		 	var product:Product = Product(ProductsDataGrid(event.currentTarget).selectedItem);
 //		 	viewProduct(product, false);
 		 }
 
+		public function handleAddButtonClick(event:MouseEvent):void{
+			var afptce:AddFeaturedProductToCategoryEvent = new AddFeaturedProductToCategoryEvent(Product(categoryProductsList.selectedItem), categoryModel.currentCategory);
+			afptce.dispatch();
+		}
+
 		 private function handleViewEditButtonClick(event:MouseEvent):void{
 //		 	var product:Product = Product(categoryProductDataGrid.selectedItem);
 //		 	viewProduct(product, true);
 		 }
 
-		 private function viewProduct(product:Product, view:Boolean):void{
-//		 	var epe:EditProductEvent = new EditProductEvent(product, view);
-//		 	epe.dispatch();
-		 }
+		private function handleRemoveButtonClick(event:MouseEvent):void{
+			var category:Category = categoryModel.currentCategory;
+			var featureddProduct:FeaturedProduct = FeaturedProduct(categoryFeaturedProductDataGrid.selectedItem);
+			var rfpfce:RemoveFeaturedProductFromCategoryEvent = new RemoveFeaturedProductFromCategoryEvent(featureddProduct,category);
+			rfpfce.dispatch();
+		}
+
+		private function handleGridDrop(event:DragEvent):void{
+			var product:Product = Product(List(event.dragInitiator).selectedItem);
+			var category:Category = categoryModel.currentCategory;
+			var index:int = categoryFeaturedProductDataGrid.calculateDropIndex(event);
+			
+			event.preventDefault();
+			
+			var afptce:AddFeaturedProductToCategoryEvent = new AddFeaturedProductToCategoryEvent(product, category, index);
+			afptce.dispatch();
+			
+			categoryFeaturedProductDataGrid.hideDropFeedback(event);
+		}
+		
+		private function handleEditItem(event:Event):void{
+			var category:Category = categoryModel.currentCategory;
+			var sce:SaveCategoryEvent = new SaveCategoryEvent(category);
+			sce.dispatch();						
+		}
 
 	]]>
 </mx:Script>
 
 <mx:Binding source="categoryModel.currentCategory.featuredProducts"
                    destination="categoryFeaturedProductDataGrid.dataProvider" />
+                   
+<mx:Binding source="productModel.catalogProducts"
+            destination="categoryProductsList.dataProvider" />
+            
+<mx:Binding source="categoryProductsList.selectedItem != null"
+            destination="addButton.enabled" />            
+
+<mx:Binding source="categoryFeaturedProductDataGrid.selectedItem != null"
+            destination="removeButton.enabled" />            
+
+<!-- mx:Binding source="categoryFeaturedProductDataGrid.selectedItem != null"
+            destination="viewEditButton.enabled" /-->            
 
 	<mx:VBox height="100%" width="100%" styleName="padding10">
 		<mx:HBox>
-			<mx:Button id="addButton" label="Add" styleName="addButton"/>
-			<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" styleName="viewEditButton" />
-			<mx:Button id="removeButton" label="Remove" styleName="deleteButton"/>
+			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddButtonClick(event)"/>
+			<!-- mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" styleName="viewEditButton" / -->
+			<mx:Button id="removeButton" label="Remove" styleName="deleteButton" click="handleRemoveButtonClick(event)"/>
 		</mx:HBox>
-		<components1:FeaturedProductsDataGrid id="categoryFeaturedProductDataGrid" click="handleProductsDataGridClick(event)"
-			height="100%" width="100%"/>
+		<mx:HBox width="100%" height="100%">
+			<mx:VBox height="100%" width="25%" maxWidth="250" >
+				<mx:Label text="Category Products" />			
+				<mx:List id="categoryProductsList" width="100%" height="100%" labelField="name" dragEnabled="true"/>			
+			</mx:VBox>					
+			<components1:FeaturedProductsDataGrid id="categoryFeaturedProductDataGrid" click="handleProductsDataGridClick(event)"
+				height="100%" width="75%" itemEditEnd="handleEditItem(event)"
+				dropEnabled="true" dragDrop="handleGridDrop(event)"/>
+		</mx:HBox>
 	</mx:VBox>
 
 </mx:Canvas>

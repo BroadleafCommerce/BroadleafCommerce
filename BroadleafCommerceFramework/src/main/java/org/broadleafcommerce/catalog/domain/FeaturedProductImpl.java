@@ -81,6 +81,10 @@ public class FeaturedProductImpl implements FeaturedProduct {
     public void setSequence(Long sequence) {
         this.sequence = sequence;
     }
+    
+    public Long getSequence() {
+    	return this.sequence;
+    }
 
     public String getPromotionMessage() {
         return promotionMessage;

@@ -24,6 +24,8 @@ package org.broadleafcommerce.admin.catalog.view.category
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
+	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
+	import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
 
 	public class CategoryCanvasViewHelper extends ViewHelper
 	{
@@ -37,8 +39,16 @@ package org.broadleafcommerce.admin.catalog.view.category
 			var  currentCategory:Category = CatalogModelLocator.getInstance().categoryModel.currentCategory;
 			 
 			if(currentCategory.id > 0){
-				var ece:EditCategoryEvent = new EditCategoryEvent(CatalogModelLocator.getInstance().categoryModel.currentCategory);
-				ece.dispatch();				
+				for each(var categoryTreeItem:CategoryTreeItem in catalogModel.catalogTreeItemArray){
+					if(currentCategory.id == categoryTreeItem.category.id){
+						// CategoryCanvas(this.view).categoryTreeCanvas.categoryTree.selectedItem = categoryTreeItem;
+						var ece:EditCategoryEvent = new EditCategoryEvent(categoryTreeItem.category);
+						ece.dispatch();										
+					}
+				} 
+			}else{
+				var nce:NewCategoryEvent = new NewCategoryEvent();
+				nce.dispatch();
 			}
 			var branchItems:ArrayCollection = new ArrayCollection();
 			for each(var cti:CategoryTreeItem in catalogModel.catalogTreeItemArray){
@@ -47,7 +57,6 @@ package org.broadleafcommerce.admin.catalog.view.category
 				}
 			}
 			CategoryCanvas(this.view).categoryTreeCanvas.categoryTree.openItems = branchItems;
-			
 		}
 		
 	}

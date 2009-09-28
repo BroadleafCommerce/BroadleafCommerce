@@ -40,10 +40,10 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			CatalogModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
-			CatalogModelLocator.getInstance().productModel.filteredCatalogProducts = ArrayCollection(event.result);
-			var bcte:BuildCatalogChainEvent = new BuildCatalogChainEvent();
-			bcte.dispatch();
+			CatalogModelLocator.getInstance().productModel.allCatalogProducts = ArrayCollection(event.result);
+			CatalogModelLocator.getInstance().productModel.allFilteredCatalogProducts = ArrayCollection(event.result);
+//			var bcte:BuildCatalogChainEvent = new BuildCatalogChainEvent();
+//			bcte.dispatch();
 		}
 		
 		public function fault(info:Object):void

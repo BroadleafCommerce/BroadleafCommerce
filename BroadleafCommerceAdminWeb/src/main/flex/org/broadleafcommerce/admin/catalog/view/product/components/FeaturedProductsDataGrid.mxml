@@ -17,24 +17,31 @@
  */
  -->
  <mx:DataGrid
-	xmlns:mx="http://www.adobe.com/2006/mxml" >
-		<mx:columns>
+	xmlns:mx="http://www.adobe.com/2006/mxml"  editable="true">
+	
+		<mx:columns>			
 			<mx:DataGridColumn
 				dataField="id"
 				headerText="Id"
+				editable="false"
 				width="50"/>
 			<mx:DataGridColumn
+				editable="false"
 				dataField="product.name"
-				headerText="Name"/>
+				headerText="Product"/>
 			<mx:DataGridColumn
-				dataField="category"
+				editable="false"
+				dataField="category.name"
 				headerText="Category"/>
 			<mx:DataGridColumn
+				editable="true"
 				dataField="sequence"
 				headerText="Sequence"/>
-			<mx:DataGridColumn
+			<mx:DataGridColumn 
+				editable="true" 
 				dataField="promotionMessage"
 				headerText="promotionMessage"/>
+
 			<!--mx:DataGridColumn
 				dataField="model"
 				headerText="Model"/>
@@ -44,5 +51,6 @@
 			<mx:DataGridColumn
 				dataField="weight"
 				headerText="Weight"/-->
+
 		</mx:columns>
 </mx:DataGrid>

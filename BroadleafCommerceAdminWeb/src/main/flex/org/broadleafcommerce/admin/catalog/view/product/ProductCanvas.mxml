@@ -98,6 +98,13 @@
 					clickAdd="handleAddClick(event)"
 					clickEdit="handleEditClick(event)"
 					clickDelete="handleDeleteClick(event)"/>
+				<product1:ProductCrossSale label="Cross Sale Products" id="crossSaleCanvas"
+					width="100%" height="100%"
+					/>
+				<product1:ProductUpSale label="Up Sale Products" id="upsaleCanva"
+					width="100%" height="100%"
+					/>
+				
 
 			</mx:TabNavigator>
 		</mx:HDividedBox>

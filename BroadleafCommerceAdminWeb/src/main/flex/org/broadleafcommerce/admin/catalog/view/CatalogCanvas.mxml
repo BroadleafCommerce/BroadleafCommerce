@@ -91,6 +91,8 @@
 	            destination="removeCategoryButton.enabled" />
 	<mx:Binding source="productModel.currentProduct.id > 0"
 	            destination="removeProductButton.enabled" />
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="productsLinkButton.enabled" />
 
 	<view:CatalogCanvasViewHelper id="catalogCanvas" />
 
