@@ -52,8 +52,8 @@ public class OrderState {
     public Order setOrder(Customer customer, Order order) {
         if (customer != null && order != null) {
             orders.put(customer.getId(), order.getId());
-            if (updatePrices && order.updatePrices()) {
-                order = orderDao.save(order);
+            if (updatePrices) {
+                order = orderDao.updatePrices(order);
             }
         }
         return order;

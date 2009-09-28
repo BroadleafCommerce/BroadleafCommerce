@@ -45,6 +45,8 @@ public interface OrderDao {
 
     public Order readOrderByOrderNumber(String orderNumber);
 
+    public Order updatePrices(Order order);
+
     //    removed methods
     //    public List<Order> readNamedOrdersForcustomer(Customer customer);
     //
