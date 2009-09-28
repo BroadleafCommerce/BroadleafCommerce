@@ -96,6 +96,9 @@ public class EmailTrackingOpensImpl implements EmailTrackingOpens {
      * @see org.broadleafcommerce.email.domain.EmailTrackingOpens#setUserAgent(java.lang.String)
      */
     public void setUserAgent(String userAgent) {
+        if (userAgent.length() > 255) {
+            userAgent = userAgent.substring(0,254);
+        }
         this.userAgent = userAgent;
     }
 
