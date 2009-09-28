@@ -122,6 +122,14 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
+    public Order updatePrices(Order order) {
+        order = em.merge(order);
+        if (order.updatePrices()) {
+            order = save(order);
+        }
+        return order;
+    }
+
     public Order readNamedOrderForCustomer(Customer customer, String name) {
         Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", customer.getId());
