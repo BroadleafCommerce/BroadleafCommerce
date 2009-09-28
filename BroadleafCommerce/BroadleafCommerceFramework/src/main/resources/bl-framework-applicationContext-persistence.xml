@@ -130,6 +130,11 @@
 		<aop:pointcut id="blOrderDaoOperation4" expression="execution(* org.broadleafcommerce.order.dao.OrderDao.create*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation4"/>
 	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blOrderDaoOperation5" expression="execution(* org.broadleafcommerce.order.dao.OrderDao.update*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderDaoOperation5"/>
+	</aop:config>
 
 	<aop:config>
 		<aop:pointcut id="blFulfillmentGroupServiceOperation" expression="execution(* org.broadleafcommerce.order.service.FulfillmentGroupService.save(..))"/>

@@ -44,6 +44,8 @@ public interface OrderDao {
     Order createNewCartForCustomer(Customer customer);
 
     Order readOrderByOrderNumber(String orderNumber);
+    
+    Order updatePrices(Order order);
 
     //    removed methods
     //    List<Order> readNamedOrdersForcustomer(Customer customer);
