@@ -143,4 +143,12 @@ public class OrderDaoImpl implements OrderDao {
         }
         return order;
     }
+    
+    public Order updatePrices(Order order) {
+        order = em.merge(order);
+        if (order.updatePrices()) {
+            order = save(order);
+        }
+        return order;
+    }
 }
