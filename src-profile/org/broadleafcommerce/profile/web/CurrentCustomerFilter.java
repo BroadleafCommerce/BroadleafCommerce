@@ -43,6 +43,10 @@ public class CurrentCustomerFilter implements Filter  {
     protected CustomerService customerService;
 
     public void init(FilterConfig filterConfig) throws ServletException {
+        String extensions = filterConfig.getInitParameter("validURIExtensions");
+        if (extensions != null) {
+            validURIExtensions = extensions.split(",");
+        }
         Arrays.sort(validURIExtensions);
     }
 
