@@ -1,0 +1,18 @@
+1|Store|||Store||store|
+1000|Coffee Products|||Coffee Products||coffee|1
+1001|Yuban|||Yuban||yuban|1000
+1002|Eight O'Clock|||Eight O'Clock||eight|1000
+1003|Seattle's Best|||Seattle's Best||seattle|1000
+1004|Millstone|||Millstone||millstone|1000
+1005|Chock Full o' Nuts|||Chock Full o' Nuts||chock|1000
+1006|Maxwell House|||Maxwell House||maxwell|1000
+1007|Folgers|||Folgers||folgers|1000
+1008|Starbucks|||Starbucks||starbucks|1000
+2000|Coffee Equipment|||Coffee Equipment||equipment|1
+2001|Espresso Machines|||Espresso Machines||espresso|2000
+2002|Coffee Brewers and Brewing Equipment|||Coffee Brewers and Brewing Equipment||brewers|2000
+2003|Timers and Thermostats|||Timers and Thermostats||timers_thermostats|2000
+2004|Coffee Roasters|||Coffee Roasters||roasters|2000
+2005|Cups & Spoons|||Cups & Spoons||cups|2000
+2006|Thermal Dispensers|||Thermal Dispensers||dispensers|2000
+2007|Grinders|||Grinders||grinders|2000
