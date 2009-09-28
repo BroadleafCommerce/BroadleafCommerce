@@ -30,6 +30,8 @@ public interface FeaturedProduct {
     void setProduct(Product product);
 
     void setSequence(Long sequence);
+    
+    Long getSequence();
 
     String getPromotionMessage();
 

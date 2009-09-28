@@ -21,12 +21,14 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.RetrieveCatalogCommand;
 	import org.broadleafcommerce.admin.catalog.commands.StandardizeCatalogObjectsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.AddCategoriesToCatalogTreeCommand;
+	import org.broadleafcommerce.admin.catalog.commands.category.AddFeaturedProductToCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.CopyCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.EditCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.FindAllCatalogCategoriesCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.MoveCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.NewCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.RemoveCategoryCommand;
+	import org.broadleafcommerce.admin.catalog.commands.category.RemoveFeaturedProductFromCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.SaveCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.category.ViewCategoriesCommand;
 	import org.broadleafcommerce.admin.catalog.commands.media.AddMediaCommand;
@@ -52,12 +54,14 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.AddCategoriesToCatalogTreeEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.category.AddFeaturedProductToCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.CopyCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.FindAllCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.MoveCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.RemoveCategoryEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.category.RemoveFeaturedProductFromCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.category.ViewCategoriesEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.media.AddMediaEvent;
@@ -103,6 +107,8 @@ package org.broadleafcommerce.admin.catalog.control
 			addCommand(MoveCategoryEvent.EVENT_MOVE_CATEGORY, MoveCategoryCommand);
 			addCommand(CopyCategoryEvent.EVENT_COPY_CATEGORY, CopyCategoryCommand);
 			addCommand(RemoveCategoryEvent.EVENT_REMOVE_CATEGORY, RemoveCategoryCommand);
+			addCommand(AddFeaturedProductToCategoryEvent.EVENT_ADD_FEATURED_PRODUCT_TO_CATEGORY, AddFeaturedProductToCategoryCommand);
+			addCommand(RemoveFeaturedProductFromCategoryEvent.EVENT_REMOVE_FEATURED_PRODUCT_FROM_CATEGORY, RemoveFeaturedProductFromCategoryCommand);
 
 			addCommand(FindAllProductsEvent.EVENT_FIND_ALL_PRODUCTS, FindAllProductsCommand);
 			addCommand(FindProductsByCategoryEvent.EVENT_FIND_PRODUCTS_BY_CATEGORY, FindProductsByCategoryCommand);

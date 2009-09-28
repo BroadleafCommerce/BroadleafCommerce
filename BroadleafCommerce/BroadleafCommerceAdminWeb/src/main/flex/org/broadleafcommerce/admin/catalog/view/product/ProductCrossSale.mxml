@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	show="onShow()" >
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.catalog.vo.product.Product;
+			import org.broadleafcommerce.admin.catalog.model.ProductModel;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+			import org.broadleafcommerce.admin.catalog.control.events.product.FindAllProductsEvent; 	
+			
+			[Bindable]
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel; 			
+			
+			[Bindable]
+			private var crossProductsAc:ArrayCollection = new ArrayCollection();
+			
+			private function onShow():void{
+				var fape:FindAllProductsEvent = new FindAllProductsEvent();
+				fape.dispatch();
+			}
+			
+			private function addProduct():void{
+				var product:Product = Product(allProductsList.selectedItem);
+				var crossProductListSource:ArrayCollection = (crossProductsList.dataProvider as ArrayCollection);
+				if(!crossProductListSource.contains(product)){
+					crossProductListSource.addItem(product);
+				}else{
+					Alert.show("Product is already a Cross Sale Product");
+				}
+			}
+			
+			private function removeProduct():void{
+				var crossProductListSource:ArrayCollection = (crossProductsList.dataProvider as ArrayCollection);
+				crossProductListSource.removeItemAt(crossProductsList.selectedIndex);				
+			}
+		]]>
+	</mx:Script>
+	
+	<mx:Binding source="crossProductsAc"
+	            destination="crossProductsList.dataProvider" />
+	
+	<mx:Binding source="productModel.allFilteredCatalogProducts"
+	            destination="allProductsList.dataProvider" />	
+	
+	<mx:Binding source="allProductsList.selectedItem != null"
+	            destination="addButton.enabled" />
+
+	<mx:Binding source="crossProductsList.selectedItem != null"
+	            destination="removeButton.enabled" />	            
+	
+	<mx:VBox height="100%" width="100%" styleName="padding10">
+		<mx:HBox>
+			<mx:Button id="addButton" x="267" y="135" label="Add" styleName="addButton" click="addProduct()" />
+			<mx:Button id="removeButton" x="267" y="165" label="Remove" styleName="deleteButton" click="removeProduct()"/>			
+		</mx:HBox>
+		<mx:HBox width="100%" height="100%">
+			<mx:VBox height="100%" width="25%" maxWidth="250" >				
+				<mx:Label text="All Products"/>
+				<mx:HBox width="100%"  >				
+					<mx:Label  text="Filter:"/>
+					<mx:TextInput />
+				</mx:HBox>				
+				<mx:List id="allProductsList" 
+					labelField="name"
+					width="100%" height="100%" 
+					dragEnabled="true"/>
+			</mx:VBox>			
+			<mx:VBox height="100%" width="25%" maxWidth="250" >
+				<mx:Label x="61" y="20" text="Upsale Sale Products"/>
+				<mx:HBox width="100%"  >				
+					<mx:Label  text=""/>
+				</mx:HBox>				
+				<mx:List id="crossProductsList"
+					width="100%" height="100%" 
+					labelField="name"
+					dropEnabled="true"/>
+			</mx:VBox>					
+		</mx:HBox>	
+	</mx:VBox>
+
+</mx:Canvas>

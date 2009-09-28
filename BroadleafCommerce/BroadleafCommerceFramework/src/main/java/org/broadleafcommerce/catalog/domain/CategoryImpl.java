@@ -163,6 +163,7 @@ public class CategoryImpl implements Category {
     protected String longDescription;
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
     
     @Transient
