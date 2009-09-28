@@ -43,7 +43,7 @@ package org.broadleafcommerce.admin.catalog.commands.category
 			var event:ResultEvent = ResultEvent(data);
 			CatalogModelLocator.getInstance().categoryModel.categoryArray = ArrayCollection(event.result);
 			var bcte:BuildCatalogChainEvent = new BuildCatalogChainEvent();
-			bcte.dispatch()
+			bcte.dispatch();
 		}
 		
 		public function fault(info:Object):void

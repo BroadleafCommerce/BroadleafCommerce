@@ -49,7 +49,7 @@ package org.broadleafcommerce.admin.catalog.business
 			call.addResponder(responder);
 		}
 		
-		public function updateCategoryParents(category:Category, oldParent:Category, newParent:Category){
+		public function updateCategoryParents(category:Category, oldParent:Category, newParent:Category):void{
 			trace("DEBUG: CatalogServiceDelegate.updatecategoryParents()");			
 			var call:AsyncToken = catalogService.updateCategoryParents(category, oldParent, newParent);
 			call.addResponder(responder);			
