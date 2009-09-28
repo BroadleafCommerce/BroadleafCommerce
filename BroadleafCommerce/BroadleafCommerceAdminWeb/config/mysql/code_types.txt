@@ -1,0 +1,4 @@
+1|CATEGORY_MEDIA|Large Category Media|large|N|
+2|CATEGORY_MEDIA|Small Category Media|small|N|
+3|PRODUCT_MEDIA|Large Product Media|large|N|
+4|PRODUCT_MEDIA|Small Product Media|small|N|
