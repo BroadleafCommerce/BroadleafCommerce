@@ -41,6 +41,7 @@ package org.broadleafcommerce.admin.core.commands
 					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).addModuleToView(ModuleConfig(modules[index]).loadedModule);
 					//Application.application.adminContent.contentViewStack.addChildAt(ModuleConfig(modules[index]).loadedModule,index);
 				}
+				AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).selectFirstModule();			
 			}else{
 				Alert.show("Error loading all modules");
 			}

@@ -35,15 +35,15 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.media.EditMediaCommand;
 	import org.broadleafcommerce.admin.catalog.commands.media.SaveMediaCommand;
 	import org.broadleafcommerce.admin.catalog.commands.media.ShowFileUploadCommand;
-	import org.broadleafcommerce.admin.catalog.commands.product.AddCrossSaleProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.AddProductsToCategoriesCommand;
+	import org.broadleafcommerce.admin.catalog.commands.product.AddRelatedSaleProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.EditProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.FilterProductsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.FindAllProductsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.FindProductsByCategoryCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.NewProductCommand;
-	import org.broadleafcommerce.admin.catalog.commands.product.RemoveCrossSaleProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.RemoveProductCommand;
+	import org.broadleafcommerce.admin.catalog.commands.product.RemoveRelatedSaleProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.SaveProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.UpdateParentsOfProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.ViewCurrentProductCommand;
@@ -70,15 +70,15 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.control.events.media.EditMediaEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.media.SaveMediaEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.media.ShowFileUploadEvent;
-	import org.broadleafcommerce.admin.catalog.control.events.product.AddCrossSaleProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.AddProductsToCategoriesEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.product.AddRelatedSaleProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.FilterProductsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.FindAllProductsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.FindProductsByCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.NewProductEvent;
-	import org.broadleafcommerce.admin.catalog.control.events.product.RemoveCrossSaleProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.RemoveProductEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.product.RemoveRelatedSaleProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.UpdateParentsOfProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.ViewCurrentProductEvent;
@@ -123,8 +123,8 @@ package org.broadleafcommerce.admin.catalog.control
 			addCommand(SaveProductEvent.EVENT_SAVE_CATALOG_PRODUCT, SaveProductCommand);
 			addCommand(FilterProductsEvent.EVENT_FILTER_PRODUCTS, FilterProductsCommand);
 			addCommand(RemoveProductEvent.EVENT_REMOVE_PRODUCT, RemoveProductCommand);
-			addCommand(AddCrossSaleProductEvent.EVENT_ADD_CROSSALE_PRODUCT, AddCrossSaleProductCommand);
-			addCommand(RemoveCrossSaleProductEvent.EVENT_REMOVE_CROSSSALE_PRODUCT, RemoveCrossSaleProductCommand);
+			addCommand(AddRelatedSaleProductEvent.EVENT_ADD_RELATED_PRODUCT, AddRelatedSaleProductCommand);
+			addCommand(RemoveRelatedSaleProductEvent.EVENT_REMOVE_RELATED_PRODUCT, RemoveRelatedSaleProductCommand);
 
 			addCommand(FindAllSkusEvent.EVENT_FIND_ALL_CATALOG_SKUS, FindAllCatalogSkusCommand);
 			addCommand(EditSkuEvent.EVENT_EDIT_SKU, EditSkuCommand);

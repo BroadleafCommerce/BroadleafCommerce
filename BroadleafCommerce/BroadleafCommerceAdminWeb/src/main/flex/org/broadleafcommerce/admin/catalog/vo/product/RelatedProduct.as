@@ -15,10 +15,13 @@
  */
 package org.broadleafcommerce.admin.catalog.vo.product
 {
-	[Bindable]
-	[RemoteClass(alias="org.broadleafcommerce.catalog.domain.CrossSaleProductImpl")]	
-	public class CrossSaleProduct extends RelatedProduct
+	public class RelatedProduct
 	{
-		// fields used from RelatedProduct
+		public var id:int;
+		public var product:Product;
+		public var relatedProduct:Product;
+		public var sequence:int;
+		public var promotionMessage:String;
+		
 	}
 }
