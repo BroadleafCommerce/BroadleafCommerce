@@ -27,7 +27,6 @@
 		import org.broadleafcommerce.admin.catalog.vo.product.Product;
 		import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 		import org.broadleafcommerce.admin.catalog.model.ProductModel;
-		import org.broadleafcommerce.admin.catalog.vo.product.FeaturedProduct;
 		import mx.collections.ArrayCollection;
 		import org.broadleafcommerce.admin.core.model.AppModelLocator;
 		import org.broadleafcommerce.admin.catalog.model.CategoryModel;

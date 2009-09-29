@@ -34,6 +34,7 @@ package org.broadleafcommerce.admin.catalog.view.product
 	import org.broadleafcommerce.admin.catalog.view.media.MediaNewWindow;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 	import org.broadleafcommerce.admin.catalog.vo.product.Product;
+	import mx.collections.ArrayCollection;
 
 	public class ProductCanvasViewHelper extends ViewHelper
 	{
@@ -53,10 +54,16 @@ package org.broadleafcommerce.admin.catalog.view.product
 		}
 		
 		public function selectCurrentProduct():void{
+			var products:ArrayCollection = CatalogModelLocator.getInstance().productModel.catalogProducts;
 			var currentProduct:Product = CatalogModelLocator.getInstance().productModel.currentProduct;
 			if(currentProduct.id > -1){				
-				var epe:EditProductEvent = new EditProductEvent(currentProduct,false);
-				epe.dispatch();
+				for each(var product:Product in products){
+					if(product.id == currentProduct.id){
+						var epe:EditProductEvent = new EditProductEvent(product,false);
+						epe.dispatch();
+						ProductCanvas(view).productsView.productsDataGrid.selectedItem = product;	
+					}
+				}
 			}
 		}
 		

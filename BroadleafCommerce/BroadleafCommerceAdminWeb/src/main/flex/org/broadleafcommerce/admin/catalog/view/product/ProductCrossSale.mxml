@@ -18,85 +18,124 @@
  -->
 <mx:Canvas 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
-	show="onShow()" >
-	
-	<mx:Script>
-		<![CDATA[
-			import mx.controls.Alert;
-			import mx.collections.ArrayCollection;
-			import org.broadleafcommerce.admin.catalog.vo.product.Product;
-			import org.broadleafcommerce.admin.catalog.model.ProductModel;
-			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
-			import org.broadleafcommerce.admin.catalog.control.events.product.FindAllProductsEvent; 	
+	xmlns:components="org.broadleafcommerce.admin.catalog.view.category.components.*" 
+	xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*"
+	show="onShow()">
+
+<mx:Script>
+	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.control.events.product.RemoveCrossSaleProductEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.product.FindAllProductsEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.product.AddCrossSaleProductEvent;
+		import org.broadleafcommerce.admin.catalog.vo.product.CrossSaleProduct;
+		import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.category.RemoveFeaturedProductFromCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.vo.category.Category;
+		import mx.events.DragEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.category.AddFeaturedProductToCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.model.ProductModel;
+		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+		import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
+		import org.broadleafcommerce.admin.catalog.vo.product.Product;
+		import org.broadleafcommerce.admin.catalog.model.CatalogModel;
+		import org.broadleafcommerce.admin.catalog.vo.product.FeaturedProduct;
+		import mx.collections.ArrayCollection;
+		import org.broadleafcommerce.admin.core.model.AppModelLocator;
+		import org.broadleafcommerce.admin.catalog.model.CategoryModel;
+
+		[Bindable]
+		private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+
+		[Bindable]
+		private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
+		private function onShow():void{
+			var fape:FindAllProductsEvent = new FindAllProductsEvent();
+			fape.dispatch();
+		}
+
+		 private function handleProductsDataGridClick(event:MouseEvent):void{
+//		 	var product:Product = Product(ProductsDataGrid(event.currentTarget).selectedItem);
+//		 	viewProduct(product, false);
+		 }
+
+		public function handleAddButtonClick(event:MouseEvent):void{
+			var crossProduct:Product = Product(allProductsList.selectedItem);
+			var product:Product = productModel.currentProduct;
+			var acpe:AddCrossSaleProductEvent = new AddCrossSaleProductEvent(crossProduct, product);
+			acpe.dispatch();
+		}
+
+		 private function handleViewEditButtonClick(event:MouseEvent):void{
+//		 	var product:Product = Product(categoryProductDataGrid.selectedItem);
+//		 	viewProduct(product, true);
+		 }
+
+		private function handleRemoveButtonClick(event:MouseEvent):void{
+			var product:Product = productModel.currentProduct;
+			var crossSaleProduct:CrossSaleProduct = CrossSaleProduct(crossProductsDataGrid.selectedItem);
+			var rcspe:RemoveCrossSaleProductEvent = new RemoveCrossSaleProductEvent(product, crossSaleProduct);
+			rcspe.dispatch();
+		}
+
+		private function handleGridDrop(event:DragEvent):void{
+			var crossProduct:Product = Product(List(event.dragInitiator).selectedItem);
+			var product:Product = productModel.currentProduct;
+			var index:int = crossProductsDataGrid.calculateDropIndex(event);
 			
-			[Bindable]
-			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel; 			
+			event.preventDefault();
 			
-			[Bindable]
-			private var crossProductsAc:ArrayCollection = new ArrayCollection();
+			var acpe:AddCrossSaleProductEvent = new AddCrossSaleProductEvent(crossProduct, product, index);
+			acpe.dispatch();
 			
-			private function onShow():void{
-				var fape:FindAllProductsEvent = new FindAllProductsEvent();
-				fape.dispatch();
-			}
-			
-			private function addProduct():void{
-				var product:Product = Product(allProductsList.selectedItem);
-				var crossProductListSource:ArrayCollection = (crossProductsList.dataProvider as ArrayCollection);
-				if(!crossProductListSource.contains(product)){
-					crossProductListSource.addItem(product);
-				}else{
-					Alert.show("Product is already a Cross Sale Product");
-				}
-			}
-			
-			private function removeProduct():void{
-				var crossProductListSource:ArrayCollection = (crossProductsList.dataProvider as ArrayCollection);
-				crossProductListSource.removeItemAt(crossProductsList.selectedIndex);				
-			}
-		]]>
-	</mx:Script>
-	
-	<mx:Binding source="crossProductsAc"
-	            destination="crossProductsList.dataProvider" />
-	
-	<mx:Binding source="productModel.allFilteredCatalogProducts"
+			crossProductsDataGrid.hideDropFeedback(event);
+		}
+		
+		private function handleEditItem(event:Event):void{
+			var product:Product = productModel.currentProduct;
+			var spe:SaveProductEvent = new SaveProductEvent(product);
+			spe.dispatch();
+		}
+		
+		private function handleProductLabel(item:Object):String{
+			var product:Product = Product(item);
+			return product.defaultCategory.name + " - " + product.name;
+		}
+
+	]]>
+</mx:Script>
+
+<mx:Binding source="productModel.currentProduct.crossSaleProducts"
+                   destination="crossProductsDataGrid.dataProvider" />
+                   
+<mx:Binding source="productModel.allFilteredCatalogProducts"
 	            destination="allProductsList.dataProvider" />	
 	
-	<mx:Binding source="allProductsList.selectedItem != null"
-	            destination="addButton.enabled" />
+<mx:Binding source="allProductsList.selectedItem != null"
+            destination="addButton.enabled" />            
 
-	<mx:Binding source="crossProductsList.selectedItem != null"
-	            destination="removeButton.enabled" />	            
-	
+<mx:Binding source="crossProductsDataGrid.selectedItem != null"
+            destination="removeButton.enabled" />            
+
+<!-- mx:Binding source="categoryFeaturedProductDataGrid.selectedItem != null"
+            destination="viewEditButton.enabled" /-->            
+
 	<mx:VBox height="100%" width="100%" styleName="padding10">
 		<mx:HBox>
-			<mx:Button id="addButton" x="267" y="135" label="Add" styleName="addButton" click="addProduct()" />
-			<mx:Button id="removeButton" x="267" y="165" label="Remove" styleName="deleteButton" click="removeProduct()"/>			
+			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddButtonClick(event)"/>
+			<!-- mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" styleName="viewEditButton" / -->
+			<mx:Button id="removeButton" label="Remove" styleName="deleteButton" click="handleRemoveButtonClick(event)"/>
 		</mx:HBox>
 		<mx:HBox width="100%" height="100%">
-			<mx:VBox height="100%" width="25%" maxWidth="250" >				
-				<mx:Label text="All Products"/>
-				<mx:HBox width="100%"  >				
-					<mx:Label  text="Filter:"/>
-					<mx:TextInput />
-				</mx:HBox>				
-				<mx:List id="allProductsList" 
-					labelField="name"
-					width="100%" height="100%" 
-					dragEnabled="true"/>
-			</mx:VBox>			
 			<mx:VBox height="100%" width="25%" maxWidth="250" >
-				<mx:Label x="61" y="20" text="Upsale Sale Products"/>
-				<mx:HBox width="100%"  >				
-					<mx:Label  text=""/>
-				</mx:HBox>				
-				<mx:List id="crossProductsList"
-					width="100%" height="100%" 
-					labelField="name"
-					dropEnabled="true"/>
+				<mx:Label text="All Products" />			
+				<mx:List id="allProductsList" width="100%" height="100%" labelFunction="handleProductLabel" dragEnabled="true"/>			
 			</mx:VBox>					
-		</mx:HBox>	
+			<components1:CrossProductsDataGrid id="crossProductsDataGrid" click="handleProductsDataGridClick(event)"
+				height="100%" width="75%" itemEditEnd="handleEditItem(event)"
+				dropEnabled="true" dragDrop="handleGridDrop(event)"/>
+		</mx:HBox>
 	</mx:VBox>
 
 </mx:Canvas>

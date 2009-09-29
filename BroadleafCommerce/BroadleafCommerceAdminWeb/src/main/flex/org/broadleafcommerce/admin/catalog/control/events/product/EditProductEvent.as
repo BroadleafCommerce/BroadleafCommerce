@@ -26,7 +26,7 @@ package org.broadleafcommerce.admin.catalog.control.events.product
 		public var product:Product;
 		public var switchView:Boolean;
 		
-		public function EditProductEvent(product:Product, switchToProductView:Boolean)
+		public function EditProductEvent(product:Product, switchToProductView:Boolean=false)
 		{
 			super(EVENT_EDIT_CATALOG_PRODUCT);
 			this.product = product;

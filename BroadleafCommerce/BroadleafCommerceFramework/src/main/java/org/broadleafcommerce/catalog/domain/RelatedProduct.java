@@ -20,7 +20,7 @@ public interface RelatedProduct {
 
     public Product getProduct();
 
-    public Product getRelatedSaleProduct();
+    public Product getRelatedProduct();
 
     public String getPromotionMessage();
 
