@@ -17,9 +17,11 @@ package org.broadleafcommerce.admin.catalog.commands.product
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-
+	import com.adobe.cairngorm.view.ViewLocator;
+	
 	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.catalog.view.product.ProductCanvasViewHelper;
 
 	public class ViewCurrentProductCommand implements Command
 	{
@@ -35,6 +37,8 @@ package org.broadleafcommerce.admin.catalog.commands.product
 
 			CatalogModelLocator.getInstance().categoriesSelected = false;
 			CatalogModelLocator.getInstance().productsSelected = true;
+			ProductCanvasViewHelper(ViewLocator.getInstance().getViewHelper("productCanvasViewHelper")).selectCurrentProduct();			
+			
 		}
 
 	}

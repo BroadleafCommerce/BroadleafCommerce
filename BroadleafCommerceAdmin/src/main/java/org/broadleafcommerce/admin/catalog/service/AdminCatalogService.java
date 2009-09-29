@@ -28,6 +28,7 @@ import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.CategoryXref;
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.catalog.domain.ProductWeight;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.springframework.stereotype.Service;
@@ -60,7 +61,10 @@ public class AdminCatalogService {
     }
     
     public Product findProductById(Long productId) {
-        return catalogService.findProductById(productId);
+    	Product product = catalogService.findProductById(productId);
+    	product.getUpSaleProducts().size();
+    	product.getCrossSaleProducts().size();
+        return product;
     }
 
     public List<Product> findProductsByName(String searchName) {
@@ -68,7 +72,14 @@ public class AdminCatalogService {
     }
 
     public List<Product> findProductsByCategory(Category category) {
-        return catalogService.findProductsForCategory(category); 
+    	List<Product> products = catalogService.findProductsForCategory(category); 
+    	if(products.size() > 0){
+    		for(Product product : products){
+    			product.getCrossSaleProducts().size();
+    			product.getUpSaleProducts().size();
+    		}
+    	}    	
+        return products;
     }
 
     public Product saveProduct(Product product) {
@@ -143,7 +154,14 @@ public class AdminCatalogService {
     }
 
     public List<Product> findAllProducts() {
-        return catalogService.findAllProducts();
+    	List<Product> products = catalogService.findAllProducts();
+    	if(products.size() > 0){
+    		for(Product product : products){
+    			product.getCrossSaleProducts().size();
+    			product.getUpSaleProducts().size();
+    		}
+    	}
+    	return products;
     }
 
     public List<Sku> findAllSkus() {

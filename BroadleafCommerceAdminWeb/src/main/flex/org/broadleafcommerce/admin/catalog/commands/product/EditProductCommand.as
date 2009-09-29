@@ -17,6 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.adobe.cairngorm.view.ViewLocator;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
@@ -26,8 +27,10 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.ProductModel;
 	import org.broadleafcommerce.admin.catalog.model.SkuModel;
+	import org.broadleafcommerce.admin.catalog.view.product.ProductCanvasViewHelper;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
+	import org.broadleafcommerce.admin.catalog.vo.product.Product;
 	import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	
@@ -48,6 +51,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 			}
 			
 			productModel.currentProduct = ecpc.product;
+			
 			var test:ArrayCollection = new ArrayCollection();
 			for each(var cat:Category in productModel.currentProduct.allParentCategories){
 				for each(var cat2:Category in CatalogModelLocator.getInstance().categoryModel.categoryArray){

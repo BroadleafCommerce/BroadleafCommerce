@@ -65,7 +65,7 @@ public class CrossSaleProductImpl implements RelatedProduct {
         return promotionMessage;
     }
 
-    public Product getRelatedSaleProduct() {
+    public Product getRelatedProduct() {
         return relatedSaleProduct;
     }
 

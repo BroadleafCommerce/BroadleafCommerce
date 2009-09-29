@@ -17,6 +17,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.adobe.cairngorm.view.ViewLocator;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
@@ -27,6 +28,8 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.control.events.product.FindProductsByCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.catalog.model.ProductModel;
+	import org.broadleafcommerce.admin.catalog.view.product.ProductCanvasViewHelper;
 
 	public class FindProductsByCategoryCommand implements Command, IResponder
 	{
@@ -46,8 +49,10 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		{
 			trace("DEBUG: FindProductsByCategoryCommand.result()");
 			var event:ResultEvent = ResultEvent(data);
-			CatalogModelLocator.getInstance().productModel.catalogProducts = ArrayCollection(event.result);
-			CatalogModelLocator.getInstance().productModel.filteredCatalogProducts = ArrayCollection(event.result);
+			var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+			productModel.catalogProducts = ArrayCollection(event.result);
+			productModel.filteredCatalogProducts = ArrayCollection(event.result);
+			ProductCanvasViewHelper(ViewLocator.getInstance().getViewHelper("productCanvasViewHelper")).selectCurrentProduct();			
 		}
 		
 		public function fault(info:Object):void
