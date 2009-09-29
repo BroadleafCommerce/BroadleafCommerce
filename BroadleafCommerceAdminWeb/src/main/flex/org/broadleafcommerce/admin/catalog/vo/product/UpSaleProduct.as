@@ -16,9 +16,9 @@
 package org.broadleafcommerce.admin.catalog.vo.product
 {
 	[Bindable]
-	[RemoteClass(alias="org.broadleafcommerce.catalog.domain.CrossSaleProductImpl")]	
-	public class CrossSaleProduct extends RelatedProduct
+	[RemoteClass(alias="org.broadleafcommerce.catalog.domain.UpSaleProductImpl")]	
+	public class UpSaleProduct extends RelatedProduct
 	{
-		// fields used from RelatedProduct
+		// using fields from RelatedProduct
 	}
 }

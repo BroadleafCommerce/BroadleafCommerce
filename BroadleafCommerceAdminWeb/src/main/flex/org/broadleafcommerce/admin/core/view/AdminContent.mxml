@@ -29,9 +29,9 @@
 		<mx:Label text="Welcome Username"/>
 		<mx:Button icon="@Embed(source='/assets/images/arrow_refresh_small.png')" id="refreshBtn" height="32" cornerRadius="2" />
 		<mx:VRule height="45" />
-		<mx:ButtonBar dataProvider="{contentViewStack}">
+		<mx:ToggleButtonBar id="bb" dataProvider="{contentViewStack}" >
 
-		</mx:ButtonBar>
+		</mx:ToggleButtonBar>
 	</mx:HBox>
 
 	<mx:ViewStack id="contentViewStack" top="75" left="8" right="8" bottom="8">

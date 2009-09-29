@@ -137,10 +137,10 @@
 		source="productModel.currentProduct.allParentCategories.getItemIndex(productModel.currentProduct.defaultCategory)"
 		destination="defaultParentCategoryComboBox.selectedIndex" />
 	<mx:Binding
-		source="String(skuModel.currentSku.retailPrice.amount)"
+		source="String(priceFormatter.format(skuModel.currentSku.retailPrice.amount))"
 		destination="retailPriceText.text" />
 	<mx:Binding
-		source="String(skuModel.currentSku.salePrice.amount)"
+		source="String(priceFormatter.format(skuModel.currentSku.salePrice.amount))"
 		destination="salePriceText.text" />
 	<mx:Binding
 		source="skuModel.currentSku.discountable"
@@ -149,6 +149,8 @@
 		source="skuModel.currentSku.taxable"
 		destination="taxableCheckBox.selected" />
 
+
+	<mx:NumberFormatter id="priceFormatter" rounding="nearest" precision="2" />
 
 	<mx:HBox>
 		<mx:VBox>

@@ -52,6 +52,10 @@ package org.broadleafcommerce.admin.core.view.helpers
     		//AdminContent(view).contentLinkBar.selectedIndex = 0;
     		AdminContent(view).invalidateDisplayList();
     	}
+    	
+    	public function selectFirstModule():void{
+    		AdminContent(view).bb.selectedIndex = 0;
+    	}
 
 	}
 }
