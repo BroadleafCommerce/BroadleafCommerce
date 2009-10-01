@@ -148,6 +148,7 @@ public class OrderItemImpl implements OrderItem {
     }
 
     public Money getCurrentPrice() {
+        updatePrices();
         Money currentPrice = null;
         if (adjustmentPrice != null) {
             currentPrice = new Money(adjustmentPrice);
