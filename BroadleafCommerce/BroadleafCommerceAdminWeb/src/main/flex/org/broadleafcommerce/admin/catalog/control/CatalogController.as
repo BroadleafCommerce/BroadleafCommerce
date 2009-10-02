@@ -51,7 +51,7 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.sku.EditSkuCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.FindAllCatalogSkusCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.NewSkuCommand;
-	import org.broadleafcommerce.admin.catalog.commands.sku.SaveCatalogSkuCommand;
+	import org.broadleafcommerce.admin.catalog.commands.sku.SaveSkuCommand;
 	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogChainEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.StandardizeCatalogObjectsEvent;
@@ -128,7 +128,7 @@ package org.broadleafcommerce.admin.catalog.control
 
 			addCommand(FindAllSkusEvent.EVENT_FIND_ALL_CATALOG_SKUS, FindAllCatalogSkusCommand);
 			addCommand(EditSkuEvent.EVENT_EDIT_SKU, EditSkuCommand);
-			addCommand(SaveSkuEvent.EVENT_SAVE_CATALOG_SKU, SaveCatalogSkuCommand);
+			addCommand(SaveSkuEvent.EVENT_SAVE_CATALOG_SKU, SaveSkuCommand);
 			addCommand(NewSkuEvent.EVENT_NEW_SKU, NewSkuCommand);
 
 			addCommand(AddMediaEvent.EVENT_ADD_MEDIA, AddMediaCommand);

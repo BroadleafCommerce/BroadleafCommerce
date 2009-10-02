@@ -27,7 +27,7 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 	import org.broadleafcommerce.admin.catalog.control.events.sku.SaveSkuEvent;
 	import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 	
-	public class SaveCatalogSkuCommand implements Command, IResponder
+	public class SaveSkuCommand implements Command, IResponder
 	{
 		public function execute(event:CairngormEvent):void{
 			var scse:SaveSkuEvent = SaveSkuEvent(event);
