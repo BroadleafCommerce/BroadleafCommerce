@@ -186,9 +186,14 @@ public class PricingTest extends BaseTest {
         order.setSubTotal(total);
         order.setTotal(total);
 
-        OrderItem item = new DiscreteOrderItemImpl();
+        DiscreteOrderItemImpl item = new DiscreteOrderItemImpl();
         item.setPrice(new Money(10D));
         item.setRetailPrice(new Money(15D));
+        Sku sku = new SkuImpl();
+        sku.setId(1234567L);
+        sku.setRetailPrice(new Money(15D));
+        sku.setDiscountable(true);
+        item.setSku(sku);
         item.setQuantity(1);
         List<OrderItem> items = new ArrayList<OrderItem>();
         items.add(item);
