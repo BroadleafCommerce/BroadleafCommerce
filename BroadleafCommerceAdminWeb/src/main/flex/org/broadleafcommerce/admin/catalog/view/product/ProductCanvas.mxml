@@ -92,7 +92,6 @@
 			<product1:ProductsView id="productsView"  width="300" height="100%"/>
 			<mx:TabNavigator id="tabNavigator"  width="100%" height="100%" click="handleNavigatorClick(event)">
 				<product1:ProductEditForm id="productEditForm" label="General" width="100%" height="100%" />
-				<!-- product1:ProductMediaCanvas  id="productMediaForm" label="Media" width="100%" height="100%" /-->
 				<media:MediaCanvas label="Media" id="productMediaCanvas"
 					width="100%" height="100%"
 					clickAdd="handleAddClick(event)"
@@ -102,6 +101,9 @@
 					width="100%" height="100%"
 					/>
 				<product1:ProductUpSale label="Up Sale Products" id="upsaleCanva"
+					width="100%" height="100%"
+					/>
+				<sku1:SkuCanvas label="SKUs" 
 					width="100%" height="100%"
 					/>
 				
