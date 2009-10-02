@@ -104,7 +104,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
             setRetailPrice(getSku().getRetailPrice());
             updated = true;
         }
-        if (!getSku().getSalePrice().equals(getSalePrice())) {
+        if (getSku().getSalePrice() != null && !getSku().getSalePrice().equals(getSalePrice())) {
             setSalePrice(getSku().getSalePrice());
             updated = true;
         }
