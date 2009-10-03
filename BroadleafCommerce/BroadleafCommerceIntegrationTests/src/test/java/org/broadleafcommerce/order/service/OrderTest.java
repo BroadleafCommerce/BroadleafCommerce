@@ -194,7 +194,8 @@ public class OrderTest extends OrderBaseTest {
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
-        item.setSalePrice(new Money(BigDecimal.valueOf(10000)));
+        //item.setSalePrice(new Money(BigDecimal.valueOf(10000)));
+        ((DiscreteOrderItem) item).getSku().setSalePrice(new Money(BigDecimal.valueOf(10000)));
         item.setQuantity(10);
         orderService.updateItemQuantity(order, item);
         OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
