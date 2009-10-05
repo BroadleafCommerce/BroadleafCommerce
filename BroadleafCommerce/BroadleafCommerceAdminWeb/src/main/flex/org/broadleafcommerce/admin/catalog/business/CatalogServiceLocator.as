@@ -19,7 +19,7 @@
 	import com.adobe.cairngorm.CairngormMessageCodes;
 	import com.adobe.cairngorm.business.ServiceLocator;
 	
-	import mx.rpc.remoting.RemoteObject;
+	import mx.rpc.remoting.mxml.RemoteObject;
 	
 	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	
