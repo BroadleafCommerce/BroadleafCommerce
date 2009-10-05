@@ -28,7 +28,6 @@ import org.broadleafcommerce.catalog.dao.SkuDao;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.CategoryXref;
 import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.catalog.domain.ProductWeight;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.springframework.stereotype.Service;
