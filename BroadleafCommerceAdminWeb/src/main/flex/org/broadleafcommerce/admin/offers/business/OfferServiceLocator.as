@@ -19,7 +19,7 @@ package org.broadleafcommerce.admin.offers.business
 	import com.adobe.cairngorm.CairngormMessageCodes;
 	import com.adobe.cairngorm.business.ServiceLocator;
 	
-	import mx.rpc.remoting.RemoteObject;
+	import mx.rpc.remoting.mxml.RemoteObject;
 	
 	import org.broadleafcommerce.admin.offers.model.OfferModel;
 	
