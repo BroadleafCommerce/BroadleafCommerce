@@ -17,7 +17,6 @@ package org.broadleafcommerce.admin.catalog.commands.product
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-	import com.adobe.cairngorm.view.ViewLocator;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
@@ -27,10 +26,8 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.ProductModel;
 	import org.broadleafcommerce.admin.catalog.model.SkuModel;
-	import org.broadleafcommerce.admin.catalog.view.product.ProductCanvasViewHelper;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
-	import org.broadleafcommerce.admin.catalog.vo.product.Product;
 	import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	
@@ -68,7 +65,9 @@ package org.broadleafcommerce.admin.catalog.commands.product
 				productModel.currentProduct.allSkus.addItem(new Sku());
 			}
 			
-			skuModel.currentSku = Sku(productModel.currentProduct.allSkus.getItemAt(0));
+			//skuModel.currentSku = Sku(productModel.currentProduct.allSkus.getItemAt(0));
+			// When a product is selected, reset the currently selected sku to a new/blank sku
+			skuModel.currentSku = new Sku();
 
 			productModel.productMedia = new ArrayCollection();
 			for (var x:String in ecpc.product.productMedia){

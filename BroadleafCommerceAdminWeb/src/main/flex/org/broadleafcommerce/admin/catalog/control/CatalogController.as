@@ -47,10 +47,12 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.commands.product.SaveProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.UpdateParentsOfProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.product.ViewCurrentProductCommand;
+	import org.broadleafcommerce.admin.catalog.commands.sku.AddSkuToProductCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.AddSkusToProductsCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.EditSkuCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.FindAllCatalogSkusCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.NewSkuCommand;
+	import org.broadleafcommerce.admin.catalog.commands.sku.RemoveSkuCommand;
 	import org.broadleafcommerce.admin.catalog.commands.sku.SaveSkuCommand;
 	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogChainEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
@@ -82,10 +84,12 @@ package org.broadleafcommerce.admin.catalog.control
 	import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.UpdateParentsOfProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.product.ViewCurrentProductEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.sku.AddSkuToProductEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.sku.AddSkusToProductsEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.sku.EditSkuEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.sku.FindAllSkusEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.sku.NewSkuEvent;
+	import org.broadleafcommerce.admin.catalog.control.events.sku.RemoveSkuEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.sku.SaveSkuEvent;
 	
 	public class CatalogController extends FrontController
@@ -135,8 +139,8 @@ package org.broadleafcommerce.admin.catalog.control
 			addCommand(SaveMediaEvent.EVENT_SAVE_MEDIA, SaveMediaCommand);
 			addCommand(EditMediaEvent.EVENT_EDIT_MEDIA_EVENT, EditMediaCommand);
 			
-
-
+			addCommand(AddSkuToProductEvent.EVENT_ADD_SKU_TO_PRODUCT, AddSkuToProductCommand);
+			addCommand(RemoveSkuEvent.EVENT_REMOVE_SKU, RemoveSkuCommand);
 		}
 		
 	}

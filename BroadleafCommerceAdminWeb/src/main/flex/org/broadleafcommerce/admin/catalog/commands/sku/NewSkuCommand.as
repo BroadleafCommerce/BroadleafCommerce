@@ -20,6 +20,7 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 	
 	import org.broadleafcommerce.admin.catalog.control.events.sku.NewSkuEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.catalog.model.SkuModel;
 	import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 
 	public class NewSkuCommand implements Command
@@ -30,9 +31,12 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 
 		public function execute(event:CairngormEvent):void
 		{
+			trace("DEBUG: NewSkuCommand.execute() ");
 			var nse:NewSkuEvent = NewSkuEvent(event);
-			CatalogModelLocator.getInstance().skuModel.currentSku = new Sku();
-			CatalogModelLocator.getInstance().skuModel.currentSku.allParentProducts.addItem(nse.product);
+			var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;
+			skuModel.currentSku = new Sku();
+			skuModel.currentSku.allParentProducts.addItem(nse.product);
+			skuModel.viewState = SkuModel.STATE_NEW;
 		}
 		
 	}

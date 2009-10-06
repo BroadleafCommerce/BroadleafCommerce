@@ -18,9 +18,10 @@
  -->
 <mx:Canvas 
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	>
+	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.control.events.sku.AddSkuToProductEvent;
 			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 			import org.broadleafcommerce.admin.catalog.model.SkuModel;
 			import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
@@ -42,11 +43,10 @@
 				updatedSku.activeStartDate = activeStartDateDateField.selectedDate;
 				updatedSku.activeEndDate = activeEndDateDateField.selectedDate;
 				updatedSku.retailPrice.amount = Number(retailPriceTextInput.text);
-				updatedSku.listPrice.amount = Number(salePriceTextInput.text);
+				updatedSku.salePrice.amount = Number(salePriceTextInput.text);
 				updatedSku.taxable = taxableCheckbox.selected;
 				updatedSku.discountable = discountableCheckbox.selected;				 
-				var scse:SaveSkuEvent = new SaveSkuEvent(updatedSku);
-				scse.dispatch();
+				new AddSkuToProductEvent(updatedSku).dispatch();
 			}
 		]]>
 	</mx:Script>
@@ -77,8 +77,10 @@
 	<mx:Binding
 		source="String(priceFormatter.format(skuModel.currentSku.retailPrice.amount))"
 		destination="retailPriceTextInput.text" />		
-
-	<mx:NumberFormatter id="priceFormatter" rounding="nearest" precision="2" />		
+	<mx:NumberFormatter 
+		id="priceFormatter" 
+		rounding="nearest" 
+		precision="2" />		
 	<mx:DateFormatter
 		id="dateFormatter"/>
 	<mx:StringValidator
@@ -92,7 +94,8 @@
 		allowNegative="false"
 		source="{retailPriceTextInput}"
 		required="true"/>
-	<mx:Form paddingTop="0" paddingBottom="0"
+	<mx:Form paddingTop="0" 
+		paddingBottom="0"
 		id="newSkuForm">
 		<mx:FormItem
 			label="Name:">

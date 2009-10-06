@@ -13,30 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.catalog.model
+package org.broadleafcommerce.admin.catalog.control.events.sku
 {
-	import mx.collections.ArrayCollection;
+	import com.adobe.cairngorm.control.CairngormEvent;
 	
 	import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 	
-	[Bindable]
-	public class SkuModel
+	public class RemoveSkuEvent extends CairngormEvent
 	{
-		public function SkuModel()
+		
+		public static const EVENT_REMOVE_SKU:String = "event_remove_sku";
+		
+		public var sku:Sku;
+		
+		public function RemoveSkuEvent(sku:Sku)
 		{
+			super(EVENT_REMOVE_SKU);
+			this.sku = sku;
 		}
-		
-		public static const STATE_NONE:String = "none";
-		public static const STATE_NEW:String = "new_sku";
-		public static const STATE_EDIT:String = "edit_sku";
-		
-		public var viewState:String = STATE_NONE;
-
-		public var catalogSkus:ArrayCollection = new ArrayCollection();
-
-		public var currentSku:Sku = new Sku();	
-		
-		public var viewSkus:ArrayCollection = new ArrayCollection();
 
 	}
 }

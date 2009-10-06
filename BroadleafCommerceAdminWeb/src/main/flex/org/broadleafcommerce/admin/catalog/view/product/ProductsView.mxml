@@ -50,7 +50,11 @@
 
 		<!--components1:ProductsDataGrid
 			id="productsDataGrid" width="100%" height="100%" click="handleDataGridClick(event)"/-->
-		<mx:DataGrid id="productsDataGrid" width="100%" height="100%" click="handleDataGridClick(event)">
+		<mx:DataGrid 
+			id="productsDataGrid" 
+			width="100%" 
+			height="100%" 
+			click="handleDataGridClick(event)">
 			<mx:columns>
 			<mx:DataGridColumn
 				dataField="id"
