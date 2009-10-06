@@ -61,7 +61,7 @@ public class EmailTrackingManagerImpl implements EmailTrackingManager {
 
         String newQuery = null;
 
-        if (queryParms.size() > 0) {
+        if (!queryParms.isEmpty()) {
 
             String[] p = queryParms.toArray(new String[queryParms.size()]);
             Arrays.sort(p);

@@ -31,7 +31,7 @@ public class CustomerPhoneServiceImpl implements CustomerPhoneService {
 
     public CustomerPhone saveCustomerPhone(CustomerPhone customerPhone) {
         List<CustomerPhone> activeCustomerPhones = readActiveCustomerPhonesByCustomerId(customerPhone.getCustomer().getId());
-        if (activeCustomerPhones != null && activeCustomerPhones.size() == 0) {
+        if (activeCustomerPhones != null && activeCustomerPhones.isEmpty()) {
             customerPhone.getPhone().setDefault(true);
         } else {
             // if parameter customerPhone is set as default, unset all other default phones
