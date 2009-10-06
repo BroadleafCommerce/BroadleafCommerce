@@ -22,7 +22,9 @@
 	currentState="view"
 	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*"
 	xmlns:product1="org.broadleafcommerce.admin.catalog.view.product.*"
-	xmlns:sku1="org.broadleafcommerce.admin.catalog.view.sku.*" xmlns:components="org.broadleafcommerce.admin.catalog.view.components.*" xmlns:media="org.broadleafcommerce.admin.catalog.view.media.*">
+	xmlns:sku1="org.broadleafcommerce.admin.catalog.view.sku.*" 
+	xmlns:components="org.broadleafcommerce.admin.catalog.view.components.*" 
+	xmlns:media="org.broadleafcommerce.admin.catalog.view.media.*">
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.catalog.view.media.MediaNewWindow;
@@ -75,38 +77,55 @@
 //				var sce:SaveCategoryEvent = new SaveCategoryEvent(categoryModel.currentCategory);
 //				sce.dispatch();				
 			}
-			
 
 		]]>
 	</mx:Script>
 	<mx:Binding
 		source="productModel.viewState"
 		destination="currentState"/>
-
-	<mx:Binding source="productModel.productMedia"
-	            destination="productMediaCanvas.dataProvider" />
-		
-	<product1:ProductCanvasViewHelper id="productCanvasViewHelper" />		
-
-		<mx:HDividedBox width="100%" height="100%" >
-			<product1:ProductsView id="productsView"  width="300" height="100%"/>
-			<mx:TabNavigator id="tabNavigator"  width="100%" height="100%" click="handleNavigatorClick(event)">
-				<product1:ProductEditForm id="productEditForm" label="General" width="100%" height="100%" />
-				<media:MediaCanvas label="Media" id="productMediaCanvas"
-					width="100%" height="100%"
+	<mx:Binding 
+		source="productModel.productMedia"
+	    destination="productMediaCanvas.dataProvider" />
+	<product1:ProductCanvasViewHelper 
+		id="productCanvasViewHelper" />		
+		<mx:HDividedBox 
+			width="100%" 
+			height="100%" >
+			<product1:ProductsView 
+				id="productsView"  
+				width="300" 
+				height="100%"/>
+			<mx:TabNavigator 
+				id="tabNavigator"  
+				width="100%" 
+				height="100%" 
+				click="handleNavigatorClick(event)">
+				<product1:ProductEditForm 
+					id="productEditForm" 
+					label="General" 
+					width="100%" 
+					height="100%" />
+				<media:MediaCanvas 
+					label="Media" 
+					id="productMediaCanvas"
+					width="100%" 
+					height="100%"
 					clickAdd="handleAddClick(event)"
 					clickEdit="handleEditClick(event)"
 					clickDelete="handleDeleteClick(event)"/>
-				<product1:ProductCrossSale label="Cross Sale Products" id="crossSaleCanvas"
-					width="100%" height="100%"
-					/>
-				<product1:ProductUpSale label="Up Sale Products" id="upsaleCanva"
-					width="100%" height="100%"
-					/>
-				<sku1:SkuCanvas label="SKUs" 
-					width="100%" height="100%"
-					/>
-				
+				<product1:ProductCrossSale 
+					label="Cross Sale Products" 
+					id="crossSaleCanvas"
+					width="100%" height="100%"/>
+				<product1:ProductUpSale 
+					label="Up Sale Products" 
+					id="upsaleCanva"
+					width="100%" 
+					height="100%"/>
+				<sku1:SkuCanvas 
+					label="SKUs" 
+					width="100%" 
+					height="100%"/>
 
 			</mx:TabNavigator>
 		</mx:HDividedBox>

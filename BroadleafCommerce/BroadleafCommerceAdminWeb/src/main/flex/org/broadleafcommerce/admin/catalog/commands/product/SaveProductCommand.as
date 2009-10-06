@@ -28,6 +28,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.vo.product.Product;
 	import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
+	import org.broadleafcommerce.admin.catalog.model.ProductModel;
 	
 	public class SaveProductCommand implements Command, IResponder
 	{
@@ -36,15 +37,13 @@ package org.broadleafcommerce.admin.catalog.commands.product
 			var scpe:SaveProductEvent = SaveProductEvent(event);
 			var product:Product = scpe.product;
 			var delegate:CatalogServiceDelegate = new CatalogServiceDelegate(this);			
-			delegate.saveProduct(product);			
+			delegate.saveProduct(product);	
 		}
 		
 		public function result(data:Object):void{
-			CatalogModelLocator.getInstance().productModel.currentProductChanged = false;
-			var currentProduct:Product = CatalogModelLocator.getInstance().productModel.currentProduct; 
-			var fpbce:FindProductsByCategoryEvent = new FindProductsByCategoryEvent(CatalogModelLocator.getInstance().categoryModel.currentCategory);
-			fpbce.dispatch();
-			
+			var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+			productModel.currentProductChanged = false;
+			new FindProductsByCategoryEvent(CatalogModelLocator.getInstance().categoryModel.currentCategory).dispatch();
 		}
 		
 		public function fault(info:Object):void{

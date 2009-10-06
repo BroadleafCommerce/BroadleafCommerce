@@ -27,6 +27,7 @@ package org.broadleafcommerce.admin.catalog.commands.product
 	import org.broadleafcommerce.admin.catalog.business.CatalogServiceDelegate;
 	import org.broadleafcommerce.admin.catalog.control.events.BuildCatalogChainEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+	import org.broadleafcommerce.admin.catalog.model.ProductModel;
 	
 	public class FindAllProductsCommand implements Command, IResponder
 	{
@@ -39,9 +40,10 @@ package org.broadleafcommerce.admin.catalog.commands.product
 		
 		public function result(data:Object):void
 		{
+			var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 			var event:ResultEvent = ResultEvent(data);
-			CatalogModelLocator.getInstance().productModel.allCatalogProducts = ArrayCollection(event.result);
-			CatalogModelLocator.getInstance().productModel.allFilteredCatalogProducts = ArrayCollection(event.result);
+			productModel.allCatalogProducts = ArrayCollection(event.result);
+			productModel.allFilteredCatalogProducts = ArrayCollection(event.result);
 //			var bcte:BuildCatalogChainEvent = new BuildCatalogChainEvent();
 //			bcte.dispatch();
 		}

@@ -17,11 +17,27 @@
  */
  -->
 <mx:Canvas
-	xmlns:mx="http://www.adobe.com/2006/mxml"
-	>
+	xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ListEvent;
+			import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
+			import org.broadleafcommerce.admin.catalog.control.events.sku.EditSkuEvent;
+			
+			private function handleSkuDataGridItemClick(event:ListEvent):void{
+				if(DataGrid(event.currentTarget).selectedItem != null){
+					var selectedSku:Sku = Sku(DataGrid(event.currentTarget).selectedItem);
+					var ese:EditSkuEvent = new EditSkuEvent(selectedSku, false);
+					ese.dispatch();
+				}
+			}
+		]]>
+	</mx:Script>
 	<mx:DataGrid
 		id="skuDataGrid"
-		width="100%" height="100%">
+		width="100%" 
+		height="100%"
+		itemClick="handleSkuDataGridItemClick(event)">
 		<mx:columns>
 			<mx:DataGridColumn
 				dataField="id"

@@ -37,8 +37,8 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 		}
 		
 		public function result(data:Object):void{
-//			var facse:FindAllSkusEvent = new FindAllSkusEvent();
-//			facse.dispatch();
+			var facse:FindAllSkusEvent = new FindAllSkusEvent();
+			facse.dispatch();
 		}
 		
 		public function fault(info:Object):void{
