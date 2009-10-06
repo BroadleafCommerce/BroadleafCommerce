@@ -1,8 +1,0 @@
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
-<suite name="MPower Open Test Suite" verbose="2" parallel="false">
-	<test name="mpower-tests">
-        <packages>
-        	<package name="com.mpower.test"></package>
-        </packages>
-    </test>
-</suite>
