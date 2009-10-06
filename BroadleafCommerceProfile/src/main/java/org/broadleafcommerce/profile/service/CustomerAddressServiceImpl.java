@@ -32,7 +32,7 @@ public class CustomerAddressServiceImpl implements CustomerAddressService {
     public CustomerAddress saveCustomerAddress(CustomerAddress customerAddress) {
         // if parameter address is set as default, unset all other default addresses
         List<CustomerAddress> activeCustomerAddresses = readActiveCustomerAddressesByCustomerId(customerAddress.getCustomer().getId());
-        if (activeCustomerAddresses.size() == 0) {
+        if (activeCustomerAddresses != null && activeCustomerAddresses.isEmpty()) {
             customerAddress.getAddress().setDefault(true);
         } else {
             if (customerAddress.getAddress().isDefault()) {
