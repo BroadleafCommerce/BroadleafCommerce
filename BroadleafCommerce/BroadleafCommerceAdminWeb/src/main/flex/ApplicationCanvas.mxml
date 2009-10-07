@@ -15,6 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
 -->
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="org.broadleafcommerce.admin.core.view.*">
 	<mx:Image source="{getStyle('adminLogo')}" top="12" left="14" autoLoad="true"/>
