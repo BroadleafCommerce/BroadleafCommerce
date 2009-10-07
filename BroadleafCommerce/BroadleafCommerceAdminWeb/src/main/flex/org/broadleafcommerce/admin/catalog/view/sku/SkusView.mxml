@@ -20,9 +20,19 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml">
 	<mx:Script>
 		<![CDATA[
+			import mx.effects.effectClasses.HideShowEffectTargetFilter;
+			import mx.core.DragSource;
+			import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
+			import mx.managers.DragManager;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+			import org.broadleafcommerce.admin.catalog.model.ProductModel;
+			import mx.controls.Alert;
+			import mx.events.DragEvent;
 			import mx.events.ListEvent;
 			import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
 			import org.broadleafcommerce.admin.catalog.control.events.sku.EditSkuEvent;
+			
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 			
 			private function handleSkuDataGridItemClick(event:ListEvent):void{
 				if(DataGrid(event.currentTarget).selectedItem != null){
@@ -31,13 +41,37 @@
 					ese.dispatch();
 				}
 			}
+			
+			private function handleDragDrop(event:DragEvent):void{
+				var dropIndex:int = skuDataGrid.calculateDropIndex(event);
+				var selectedIndex:int = DataGrid(event.currentTarget).selectedIndex;
+				//if the sku is not dropped to a new position, do not save the product, as nothing has changed
+				if(dropIndex != selectedIndex && (dropIndex != (selectedIndex + 1))){
+					new SaveProductEvent(productModel.currentProduct).dispatch();
+				}
+			}
+			
+ 			private function handleDragOver(event:DragEvent):void{
+ 				var dropIndex:int = skuDataGrid.calculateDropIndex(event);
+				var selectedIndex:int = DataGrid(event.currentTarget).selectedIndex;
+				//if the sku is not being dragged to a new position, hide the black line
+				if(dropIndex == selectedIndex || dropIndex == (selectedIndex + 1)){
+					skuDataGrid.hideDropFeedback(event);
+					event.preventDefault();
+				}
+			} 
 		]]>
 	</mx:Script>
 	<mx:DataGrid
 		id="skuDataGrid"
 		width="100%" 
 		height="100%"
-		itemClick="handleSkuDataGridItemClick(event)">
+		itemClick="handleSkuDataGridItemClick(event)"
+		dragDrop="handleDragDrop(event)"
+		dragOver="handleDragOver(event)"
+		dragEnabled="true"
+		dragMoveEnabled="true"
+		dropEnabled="true">
 		<mx:columns>
 			<mx:DataGridColumn
 				dataField="id"
@@ -49,5 +83,4 @@
 				width="160"/>
 		</mx:columns>
 	</mx:DataGrid>
-	
 </mx:Canvas>
