@@ -36,6 +36,7 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 			var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;
 			skuModel.currentSku = new Sku();
 			skuModel.currentSku.allParentProducts.addItem(nse.product);
+			skuModel.viewState = SkuModel.STATE_NONE;
 			skuModel.viewState = SkuModel.STATE_NEW;
 		}
 		

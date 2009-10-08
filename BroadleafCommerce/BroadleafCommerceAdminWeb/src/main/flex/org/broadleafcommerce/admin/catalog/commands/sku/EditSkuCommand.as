@@ -40,6 +40,8 @@ package org.broadleafcommerce.admin.catalog.commands.sku
 				var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
 				productModel.viewState = ProductModel.STATE_VIEW_SKUS;
 			}
+			skuModel.viewState = SkuModel.STATE_NONE;
+			skuModel.viewState = SkuModel.STATE_EDIT;
 		}
 		
 	}
