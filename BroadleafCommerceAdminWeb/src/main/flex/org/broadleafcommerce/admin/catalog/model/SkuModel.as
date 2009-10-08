@@ -30,7 +30,7 @@ package org.broadleafcommerce.admin.catalog.model
 		public static const STATE_NEW:String = "new_sku";
 		public static const STATE_EDIT:String = "edit_sku";
 		
-		public var viewState:String = STATE_NONE;
+		public var viewState:String = STATE_NEW;
 
 		public var catalogSkus:ArrayCollection = new ArrayCollection();
 

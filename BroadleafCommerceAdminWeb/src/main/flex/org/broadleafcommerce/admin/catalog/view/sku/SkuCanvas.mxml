@@ -17,10 +17,12 @@
  */
  -->
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 	 
-	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" xmlns:sku1="org.broadleafcommerce.admin.catalog.view.sku.*"
-	>
+	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" 
+	xmlns:sku1="org.broadleafcommerce.admin.catalog.view.sku.*">
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
 			import org.broadleafcommerce.admin.catalog.control.events.sku.RemoveSkuEvent;
 			import org.broadleafcommerce.admin.catalog.model.ProductModel;
 			import org.broadleafcommerce.admin.catalog.control.events.sku.NewSkuEvent;
@@ -38,6 +40,10 @@
 			private function handleRemoveButtonClick():void{
 				new RemoveSkuEvent(skuModel.currentSku).dispatch();
 			}
+			
+			private function handleEnterState():void{
+				skuEditForm.nameTextInput.setFocus();
+			}
 		]]>
 	</mx:Script>
 	<mx:Binding 
@@ -45,7 +51,10 @@
 		destination="skusView.skuDataGrid.dataProvider" />
 	<mx:Binding 
 		source="skusView.skuDataGrid.selectedItem !=null "
-		destination="removeButton.enabled" />				
+		destination="removeButton.enabled" />
+	<mx:Binding
+		source="skuModel.viewState"
+		destination="currentState"/>				
 	<mx:VBox 
 		height="100%" 
 		width="100%" 
@@ -91,8 +100,16 @@
 	
 	<mx:states>
 		<mx:State
-			name="{SkuModel.STATE_NEW}">
-			<mx:SetProperty target="{skuEditForm}" name="{visible}" value="true"/>			
+			name="{SkuModel.STATE_NEW}"
+			enterState="handleEnterState()">
+		</mx:State>
+		<mx:State
+			name="{SkuModel.STATE_EDIT}"
+			enterState="handleEnterState()">
+		</mx:State>
+		<mx:State
+			name="{SkuModel.STATE_NONE}"
+			enterState="handleEnterState()">
 		</mx:State>
 	</mx:states>
 </mx:Canvas>
