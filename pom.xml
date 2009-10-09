@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
   <name>BroadleafCommerce</name>
   <properties>
-     <blc.version>1.0.0</blc.version>
+     <blc.version>1.0.1</blc.version>
   </properties>
   <version>${blc.version}</version>
   <description>BroadleafCommerce Maven Build</description>
