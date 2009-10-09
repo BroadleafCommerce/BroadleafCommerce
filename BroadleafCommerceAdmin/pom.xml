@@ -2,13 +2,13 @@
   <parent>
     <artifactId>BroadleafCommerce</artifactId>
     <groupId>org.broadleafcommerce</groupId>
-    <version>1.0.0</version>
+    <version>${blc.version}</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.broadleafcommerce</groupId>
   <artifactId>broadleaf-admin</artifactId>
   <name>BroadleafCommerceAdmin</name>
-  <version>1.0.0</version>
+  <version>${blc.version}</version>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
