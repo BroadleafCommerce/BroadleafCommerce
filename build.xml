@@ -9,30 +9,12 @@
 
 	<path id="maven-ant-tasks.classpath" path="BroadleafCommerceDemo/lib/maven-ant-tasks-2.0.10.jar" />
 	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
-	<artifact:pom id="frameworkPom" file="BroadleafCommerceFrameworkWeb/pom.xml"/>
-	<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime"/>
-	<artifact:pom id="demoPom" file="BroadleafCommerceDemo/pom.xml"/>
-	<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="compile"/>
-	<artifact:pom id="adminPom" file="BroadleafCommerceAdmin/pom.xml"/>
-	<artifact:dependencies filesetId="adminDeps" pomRefId="adminPom" useScope="runtime"/>
 
 	<artifact:pom id="mypom" file="pom.xml"/>
 
 	<property file="build.properties" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
 	<property name="demo.build.finalName" value="${demoPom.artifactId}-${demoPom.version}"/>
-
-	<path id="build.runtime.classpath">
-		<fileset refid="frameworkDeps"/>
-	</path>
-
-	<path id="build.demo.runtime.classpath">
-		<fileset refid="demoDeps"/>
-	</path>
-
-	<path id="build.admin.runtime.classpath">
-		<fileset refid="adminDeps"/>
-	</path>
 
 	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-docs, build-dependencies, build-sql">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-dependencies.zip">
@@ -117,6 +99,23 @@
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="install"/>
 		</artifact:mvn>
+		
+		<artifact:pom id="frameworkPom" file="BroadleafCommerceFrameworkWeb/pom.xml"/>
+		<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime"/>
+		<artifact:pom id="demoPom" file="BroadleafCommerceDemo/pom.xml"/>
+		<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="compile"/>
+		<artifact:pom id="adminPom" file="BroadleafCommerceAdmin/pom.xml"/>
+		<artifact:dependencies filesetId="adminDeps" pomRefId="adminPom" useScope="runtime"/>
+		<path id="build.runtime.classpath">
+			<fileset refid="frameworkDeps"/>
+		</path>
+		<path id="build.demo.runtime.classpath">
+			<fileset refid="demoDeps"/>
+		</path>
+		<path id="build.admin.runtime.classpath">
+			<fileset refid="adminDeps"/>
+		</path>
+			
 		<copy todir="${maven.build.finalName}/dist">
 			<fileset dir="BroadleafCommerceAdmin/target">
 				<include name="*.jar"/>
