@@ -126,7 +126,7 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
         List<Order> orders = query.getResultList();
-        return orders == null ? null : orders.get(0);
+        return orders == null || orders.isEmpty() ? null : orders.get(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -135,14 +135,10 @@ public class OrderDaoImpl implements OrderDao {
             return null;
         }
 
-        Order order = null;
         final Query query = em.createNamedQuery("BC_READ_ORDER_BY_ORDER_NUMBER");
         query.setParameter("orderNumber", orderNumber);
-        final List<Order> result = query.getResultList();
-        if (result != null && !result.isEmpty()) {
-            order = result.get(0);
-        }
-        return order;
+        List<Order> orders = query.getResultList();
+        return orders == null || orders.isEmpty() ? null : orders.get(0);
     }
 
     public Order updatePrices(Order order) {

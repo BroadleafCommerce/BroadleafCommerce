@@ -43,7 +43,7 @@ public class ChallengeQuestionDaoImpl implements ChallengeQuestionDao {
         Query query = em.createNamedQuery("BC_READ_CHALLENGE_QUESTION_BY_ID");
         query.setParameter("question_id", challengeQuestionId);
         List<ChallengeQuestion> challengeQuestions = query.getResultList();
-        return challengeQuestions == null ? null : challengeQuestions.get(0);
+        return challengeQuestions == null || challengeQuestions.isEmpty() ? null : challengeQuestions.get(0);
     }
 
     public String getQueryCacheableKey() {
