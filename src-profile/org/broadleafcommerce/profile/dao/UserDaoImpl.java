@@ -41,7 +41,7 @@ public class UserDaoImpl implements UserDao {
         Query query = em.createNamedQuery("BC_sREAD_USER_BY_USER_NAME");
         query.setParameter("username", username);
         List<User> users = query.getResultList();
-        return users == null ? null : users.get(0);
+        return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -49,7 +49,7 @@ public class UserDaoImpl implements UserDao {
         Query query = em.createNamedQuery("BC_READ_USER_BY_EMAIL");
         query.setParameter("email", emailAddress);
         List<User> users = query.getResultList();
-        return users == null ? null : users.get(0);
+        return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     @SuppressWarnings("unchecked")

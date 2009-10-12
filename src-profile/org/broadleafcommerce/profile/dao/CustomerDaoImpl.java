@@ -46,7 +46,7 @@ public class CustomerDaoImpl implements CustomerDao {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
         query.setParameter("username", username);
         List<Customer> customers = query.getResultList();
-        return customers == null ? null : customers.get(0);
+        return customers == null || customers.isEmpty()? null : customers.get(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -54,7 +54,7 @@ public class CustomerDaoImpl implements CustomerDao {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL");
         query.setParameter("email", emailAddress);
         List<Customer> customers = query.getResultList();
-        return customers == null ? null : customers.get(0);
+        return customers == null || customers.isEmpty() ? null : customers.get(0);
     }
 
     public Customer save(Customer customer) {

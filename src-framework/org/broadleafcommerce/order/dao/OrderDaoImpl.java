@@ -137,7 +137,7 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
         List<Order> orders = query.getResultList();
-        return orders == null ? null : orders.get(0);
+        return orders == null || orders.isEmpty() ? null : orders.get(0);
     }
 
     @SuppressWarnings("unchecked")
