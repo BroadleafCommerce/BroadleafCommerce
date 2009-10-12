@@ -125,7 +125,8 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
-        return (Order) query.getSingleResult();
+        List<Order> orders = query.getResultList();
+        return orders == null ? null : orders.get(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -143,7 +144,7 @@ public class OrderDaoImpl implements OrderDao {
         }
         return order;
     }
-    
+
     public Order updatePrices(Order order) {
         order = em.merge(order);
         if (order.updatePrices()) {
