@@ -23,6 +23,25 @@
 				<br />
 				<blc:searchFilterItem property="skus[0].salePrice" displayTitle="Prices" displayType="sliderRange"/>
 			</blc:searchFilter>
+
+			<blc:displayFeaturedProducts products="${displayProducts}" var="featuredProducts" maxFeatures="3">
+				<br/><br/>
+				<c:if test="${!(empty featuredProducts)}">
+					<h3>Featured </h3>
+					<c:forEach var="product" items="${featuredProducts}" >
+						<div align="center">
+							<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
+								<c:out value="${product.name}"/>
+							</a><br>
+							<a href="/broadleafdemo/${currentCategory.generatedUrl}?productId=${product.id}">
+								<img border="0" src="/broadleafdemo${product.productImages.small}" width="75"/>
+							</a>
+						</div>	
+						<br/>
+					</c:forEach>
+				</c:if>
+			</blc:displayFeaturedProducts>
+
 		</form:form>
     </div>
     <div class="span-14" id="mainContent">
