@@ -40,21 +40,15 @@ public class UserDaoImpl implements UserDao {
     public User readUserByUsername(String username) {
         Query query = em.createNamedQuery("BC_sREAD_USER_BY_USER_NAME");
         query.setParameter("username", username);
-        try {
-            return (User) query.getSingleResult();
-        } catch (NoResultException ne) {
-            return null;
-        }
+        List<User> users = query.getResultList();
+        return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     public User readUserByEmail(String emailAddress) {
         Query query = em.createNamedQuery("BC_READ_USER_BY_EMAIL");
         query.setParameter("email", emailAddress);
-        try {
-            return (User) query.getSingleResult();
-        } catch (NoResultException ne) {
-            return null;
-        }
+        List<User> users = query.getResultList();
+        return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     @SuppressWarnings("unchecked")

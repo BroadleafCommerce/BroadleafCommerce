@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.order.dao;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -49,14 +51,8 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(final Order order) {
         final Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
-        FulfillmentGroupImpl result;
-        try {
-            result = (FulfillmentGroupImpl) query.getSingleResult();
-        } catch (NoResultException e) {
-            result = null;
-        }
-
-        return result;
+        List<FulfillmentGroupImpl> fulfillmentGroups = query.getResultList();
+        return fulfillmentGroups == null || fulfillmentGroups.isEmpty() ? null : fulfillmentGroups.get(0);
     }
 
     public void delete(FulfillmentGroup fulfillmentGroup) {

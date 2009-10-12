@@ -16,6 +16,7 @@
 package org.broadleafcommerce.profile.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -44,21 +45,15 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer readCustomerByUsername(String username) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
         query.setParameter("username", username);
-        try {
-            return (Customer) query.getSingleResult();
-        } catch (NoResultException ne) {
-            return null;
-        }
+        List<Customer> customers = query.getResultList();
+        return customers == null || customers.isEmpty() ? null : customers.get(0);
     }
 
     public Customer readCustomerByEmail(String emailAddress) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL");
         query.setParameter("email", emailAddress);
-        try {
-            return (Customer) query.getSingleResult();
-        } catch (NoResultException ne) {
-            return null;
-        }
+        List<Customer> customers = query.getResultList();
+        return customers == null || customers.isEmpty() ? null : customers.get(0);
     }
 
     public Customer save(Customer customer) {

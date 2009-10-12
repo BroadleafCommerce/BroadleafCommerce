@@ -36,10 +36,10 @@ public class OrderDaoImpl implements OrderDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @Resource(name="blCustomerDao")
+    @Resource(name = "blCustomerDao")
     protected CustomerDao customerDao;
 
     @SuppressWarnings("unchecked")
@@ -55,9 +55,9 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     public void delete(Order salesOrder) {
-    	if (!em.contains(salesOrder)) {
-    		salesOrder = readOrderById(salesOrder.getId());
-    	}
+        if (!em.contains(salesOrder)) {
+            salesOrder = readOrderById(salesOrder.getId());
+        }
         em.remove(salesOrder);
     }
 
@@ -125,7 +125,8 @@ public class OrderDaoImpl implements OrderDao {
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
-        return (Order) query.getSingleResult();
+        List<Order> orders = query.getResultList();
+        return orders == null || orders.isEmpty() ? null : orders.get(0);
     }
 
     @SuppressWarnings("unchecked")
@@ -134,16 +135,12 @@ public class OrderDaoImpl implements OrderDao {
             return null;
         }
 
-        Order order = null;
         final Query query = em.createNamedQuery("BC_READ_ORDER_BY_ORDER_NUMBER");
         query.setParameter("orderNumber", orderNumber);
-        final List<Order> result = query.getResultList();
-        if (result != null && !result.isEmpty()) {
-            order = result.get(0);
-        }
-        return order;
+        List<Order> orders = query.getResultList();
+        return orders == null || orders.isEmpty() ? null : orders.get(0);
     }
-    
+
     public Order updatePrices(Order order) {
         order = em.merge(order);
         if (order.updatePrices()) {
