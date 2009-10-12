@@ -19,7 +19,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -37,24 +36,20 @@ public class UserDaoImpl implements UserDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
+    @SuppressWarnings("unchecked")
     public User readUserByUsername(String username) {
         Query query = em.createNamedQuery("BC_sREAD_USER_BY_USER_NAME");
         query.setParameter("username", username);
-        try {
-            return (User) query.getSingleResult();
-        } catch (NoResultException ne) {
-            return null;
-        }
+        List<User> users = query.getResultList();
+        return users == null ? null : users.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     public User readUserByEmail(String emailAddress) {
         Query query = em.createNamedQuery("BC_READ_USER_BY_EMAIL");
         query.setParameter("email", emailAddress);
-        try {
-            return (User) query.getSingleResult();
-        } catch (NoResultException ne) {
-            return null;
-        }
+        List<User> users = query.getResultList();
+        return users == null ? null : users.get(0);
     }
 
     @SuppressWarnings("unchecked")

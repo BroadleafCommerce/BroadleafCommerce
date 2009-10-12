@@ -39,10 +39,12 @@ public class ChallengeQuestionDaoImpl implements ChallengeQuestionDao {
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
     public ChallengeQuestion readChallengeQuestionById(long challengeQuestionId) {
         Query query = em.createNamedQuery("BC_READ_CHALLENGE_QUESTION_BY_ID");
         query.setParameter("question_id", challengeQuestionId);
-        return (ChallengeQuestion) query.getSingleResult();
+        List<ChallengeQuestion> challengeQuestions = query.getResultList();
+        return challengeQuestions == null ? null : challengeQuestions.get(0);
     }
 
     public String getQueryCacheableKey() {

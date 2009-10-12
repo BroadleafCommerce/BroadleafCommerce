@@ -130,12 +130,14 @@ public class OrderDaoImpl implements OrderDao {
         return order;
     }
 
+    @SuppressWarnings("unchecked")
     public Order readNamedOrderForCustomer(Customer customer, String name) {
         Query query = em.createNamedQuery("BC_READ_NAMED_ORDER_FOR_CUSTOMER");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.NAMED.getType());
         query.setParameter("orderName", name);
-        return (Order) query.getSingleResult();
+        List<Order> orders = query.getResultList();
+        return orders == null ? null : orders.get(0);
     }
 
     @SuppressWarnings("unchecked")
