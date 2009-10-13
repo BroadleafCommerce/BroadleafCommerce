@@ -17,8 +17,14 @@
  */
  
 -->
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:view="org.broadleafcommerce.admin.core.view.*">
-	<mx:Image source="{getStyle('adminLogo')}" top="12" left="14" autoLoad="true"/>
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:view="org.broadleafcommerce.admin.core.view.*">
+	<mx:Image 
+		source="{getStyle('adminLogo')}" 
+		top="12" 
+		left="14" 
+		autoLoad="true"/>
 	<view:AdminContent
 		id="adminContent"
 		width="100%"

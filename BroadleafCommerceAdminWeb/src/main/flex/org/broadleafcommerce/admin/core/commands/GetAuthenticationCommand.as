@@ -54,7 +54,6 @@ package org.broadleafcommerce.admin.core.commands
 			authModel.authenticatedState = AuthenticationModel.STATE_APP_AUTHENTICATED;
 			var lme:LoadModulesEvent = new LoadModulesEvent(AppModelLocator.getInstance().configModel.modules);
 			lme.dispatch();	
-			
 		}
 		
 		public function fault(info:Object):void
@@ -67,7 +66,6 @@ package org.broadleafcommerce.admin.core.commands
 			}
 			var securityDelegate:AdminAuthenticationDelegate = new AdminAuthenticationDelegate(this);
 			securityDelegate.logout();
-			
 		}		
 		
 	}

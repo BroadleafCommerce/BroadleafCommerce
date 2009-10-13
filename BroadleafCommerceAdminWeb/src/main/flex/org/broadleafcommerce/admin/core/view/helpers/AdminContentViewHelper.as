@@ -53,6 +53,11 @@ package org.broadleafcommerce.admin.core.view.helpers
     		AdminContent(view).invalidateDisplayList();
     	}
     	
+    	public function removeModulesFromView(module:Module):void{
+    		AdminContent(view).contentViewStack.removeChild(module);
+    		AdminContent(view).invalidateDisplayList();
+    	}
+    	
     	public function selectFirstModule():void{
     		AdminContent(view).bb.selectedIndex = 0;
     	}

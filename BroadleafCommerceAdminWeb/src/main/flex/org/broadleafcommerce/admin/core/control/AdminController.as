@@ -18,6 +18,7 @@ package org.broadleafcommerce.admin.core.control
 	import com.adobe.cairngorm.control.FrontController;
 	
 	import org.broadleafcommerce.admin.core.commands.AddModulesToViewCommand;
+	import org.broadleafcommerce.admin.core.commands.AdminUserLogoutCommand;
 	import org.broadleafcommerce.admin.core.commands.GetAdminConfigCommand;
 	import org.broadleafcommerce.admin.core.commands.GetAuthenticationCommand;
 	import org.broadleafcommerce.admin.core.commands.InitializeApplicationCommand;
@@ -25,6 +26,7 @@ package org.broadleafcommerce.admin.core.control
 	import org.broadleafcommerce.admin.core.commands.codetype.AdminFindAllCodeTypesCommand;
 	import org.broadleafcommerce.admin.core.commands.codetype.AdminSearchCodeTypesCommand;
 	import org.broadleafcommerce.admin.core.control.events.AddModulesToViewEvent;
+	import org.broadleafcommerce.admin.core.control.events.AdminUserLogoutEvent;
 	import org.broadleafcommerce.admin.core.control.events.GetAdminConfigEvent;
 	import org.broadleafcommerce.admin.core.control.events.GetAuthenticationEvent;
 	import org.broadleafcommerce.admin.core.control.events.InitializeApplicationEvent;
@@ -46,7 +48,7 @@ package org.broadleafcommerce.admin.core.control
 			
 			addCommand(AdminFindAllCodeTypesEvent.EVENT_FIND_ALL_CODE_TYPES, AdminFindAllCodeTypesCommand);
 			addCommand(AdminSearchCodeTypesEvent.EVENT_SEARCH_CODE_TYPES, AdminSearchCodeTypesCommand);
-			
+			addCommand(AdminUserLogoutEvent.EVENT_ADMIN_USER_LOGOUT, AdminUserLogoutCommand);
 		}
 		
 	}
