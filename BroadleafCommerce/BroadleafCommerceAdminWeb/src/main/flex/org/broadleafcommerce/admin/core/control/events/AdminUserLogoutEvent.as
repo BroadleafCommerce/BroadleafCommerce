@@ -13,26 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.core.model
+package org.broadleafcommerce.admin.core.control.events
 {
-	import mx.collections.ArrayCollection;
-	import mx.core.Application;
+	import com.adobe.cairngorm.control.CairngormEvent;
 	
-	public class ConfigModel
+	public class AdminUserLogoutEvent extends CairngormEvent
 	{
-		public function ConfigModel()
+		
+		public static const EVENT_ADMIN_USER_LOGOUT:String = "event_admin_user_logout";
+		
+		public function AdminUserLogoutEvent()
 		{
+			super(EVENT_ADMIN_USER_LOGOUT);
 		}
 
-		public var urlPrefix:String;
-		
-		public var modulesLoaded:ArrayCollection = new ArrayCollection();
-		
-		public var modules:ArrayCollection = new ArrayCollection();
-
-		public var codeTypes:ArrayCollection = new ArrayCollection();
-
-		[Bindable]
-		public var currentCodeTypes:ArrayCollection = new ArrayCollection();
-	}	
+	}
 }

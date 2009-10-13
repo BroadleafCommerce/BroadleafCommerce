@@ -22,19 +22,74 @@
 	width="100%"
 	height="100%"
 	creationPolicy="all">
-
-	<helpers:AdminContentViewHelper id="adminContent" />
-
-	<mx:HBox left="320" verticalAlign="middle" top="10" horizontalGap="15">
-		<mx:Label text="Welcome Username"/>
-		<mx:Button icon="@Embed(source='/assets/images/arrow_refresh_small.png')" id="refreshBtn" height="32" cornerRadius="2" />
-		<mx:VRule height="45" />
-		<mx:ToggleButtonBar id="bb" dataProvider="{contentViewStack}" >
-
-		</mx:ToggleButtonBar>
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.core.control.events.AdminUserLogoutEvent;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
+			
+			[Bindable]
+			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
+			
+			private function handleManageAccountLabelClick():void{
+				
+			}
+			
+			private function handleLogoutLabelClick():void{
+				new AdminUserLogoutEvent().dispatch();
+			}
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="authModel.userPrincipal.login"
+		destination="usernameLabel.text"/>
+	<mx:Binding
+		source="contentViewStack"
+		destination="bb.dataProvider"/>
+	<helpers:AdminContentViewHelper 
+		id="adminContent" />
+	<mx:HBox 
+		left="320" 
+		verticalAlign="middle" 
+		top="10" 
+		horizontalGap="15">
+		<mx:HBox
+			horizontalGap="0">
+			<mx:Label 
+				text="Logged in as:"/>
+			<mx:Label
+				id="usernameLabel"
+				fontWeight="bold"/>
+			<mx:Label
+				text="|"/>
+			<mx:Label
+				text="Manage Account"
+				textDecoration="underline"
+				mouseChildren="false"
+				buttonMode="true"
+				useHandCursor="true"
+				click="handleManageAccountLabelClick()"/>
+			<mx:Label
+				text="|"/>
+			<mx:Label
+				text="Logout"
+				textDecoration="underline"
+				mouseChildren="false"
+				buttonMode="true"
+				useHandCursor="true"
+				click="handleLogoutLabelClick()"/>
+		</mx:HBox>
+		<mx:VRule 
+			height="45" />
+		<mx:ToggleButtonBar 
+			id="bb"/>
 	</mx:HBox>
-
-	<mx:ViewStack id="contentViewStack" top="75" left="8" right="8" bottom="8">
+	<mx:ViewStack 
+		id="contentViewStack" 
+		top="75" 
+		left="8" 
+		right="8" 
+		bottom="8">
 		<!--security:SecurityCanvas
 			id="securityCanvas"
 			label="Users"

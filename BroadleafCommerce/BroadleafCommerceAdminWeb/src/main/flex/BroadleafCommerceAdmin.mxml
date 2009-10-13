@@ -16,7 +16,8 @@
  * limitations under the License.
  */
 -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+<mx:Application 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
 	 applicationComplete="initApp()"
 	 layout="absolute"
 	 xmlns:business="org.broadleafcommerce.admin.core.business.*"
@@ -24,7 +25,6 @@
 	 xmlns:view="org.broadleafcommerce.admin.core.view.*"
 	 xmlns:local="*"
 	 currentState="app_anonymous_state">
-
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.core.vo.Money;
@@ -34,14 +34,14 @@
 			import org.broadleafcommerce.admin.core.control.events.InitializeApplicationEvent;
 			import com.adobe.cairngorm.control.CairngormEventDispatcher;
 
-			  import mx.managers.HistoryManager;
-			  import mx.managers.DragManager;
-			  import mx.managers.CursorManager;
-			  public var __dm:DragManager;
-			  public var __cm:CursorManager;
-			  public var __hm:HistoryManager;
-			  public var __dg:DataGrid;
-			  public var __money:Money;
+     		import mx.managers.HistoryManager;
+			import mx.managers.DragManager;
+			import mx.managers.CursorManager;
+			public var __dm:DragManager;
+			public var __cm:CursorManager;
+			public var __hm:HistoryManager;
+			public var __dg:DataGrid;
+			public var __money:Money;
 
 			[Bindable]
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
@@ -54,27 +54,45 @@
 			}
 		]]>
 	</mx:Script>
-
-	<mx:Style source="/assets/styles/broadleafadmin.css" />
-
-	<mx:Binding source="authModel.authenticatedState"
-	                   destination="this.currentState" />
-
+	<mx:Style 
+		source="/assets/styles/broadleafadmin.css" />
+	<mx:Binding 
+		source="authModel.authenticatedState"
+	    destination="this.currentState" />
 	<control:AdminController />
 	<business:AdminServices />
-
-	<view:LoginCanvas id="loginCanvas" width="100%" height="100%" visible="true" />
-
-	<local:ApplicationCanvas id="applicationCanvas" width="100%" height="100%" visible="false" />
-
+	<view:LoginCanvas 
+		id="loginCanvas" 
+		width="100%" 
+		height="100%" 
+		visible="true" />
+	<local:ApplicationCanvas 
+		id="applicationCanvas" 
+		width="100%" 
+		height="100%" 
+		visible="false" />
 	<mx:states>
-		<mx:State name="{AuthenticationModel.STATE_APP_ANONYMOUS}" >
-			<mx:SetProperty target="{loginCanvas}" name="visible" value="true" />
-			<mx:SetProperty target="{applicationCanvas}" name="visible" value="false" />
+		<mx:State 
+			name="{AuthenticationModel.STATE_APP_ANONYMOUS}" >
+			<mx:SetProperty 
+				target="{loginCanvas}" 
+				name="visible" 
+				value="true" />
+			<mx:SetProperty 
+				target="{applicationCanvas}" 
+				name="visible" 
+				value="false" />
 		</mx:State>
-		<mx:State name="{AuthenticationModel.STATE_APP_AUTHENTICATED}" >
-			<mx:SetProperty target="{loginCanvas}" name="visible" value="false" />
-			<mx:SetProperty target="{applicationCanvas}" name="visible" value="true" />
+		<mx:State 
+			name="{AuthenticationModel.STATE_APP_AUTHENTICATED}" >
+			<mx:SetProperty 
+				target="{loginCanvas}" 
+				name="visible" 
+				value="false" />
+			<mx:SetProperty 
+				target="{applicationCanvas}" 
+				name="visible" 
+				value="true" />
 		</mx:State>
 	</mx:states>
 </mx:Application>
