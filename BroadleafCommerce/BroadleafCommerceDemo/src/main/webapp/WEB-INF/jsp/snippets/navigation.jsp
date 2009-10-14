@@ -22,7 +22,14 @@
 	</c:choose>
 	</li>
 	<li><a class="noTextUnderline" href="/broadleafdemo/orders/findOrder.htm" > Find Order </a></li>
-		<li><a href="/broadleafdemo/account/myAccount.htm">My Account</a></li>
+	<c:choose>
+		<c:when test="${customer.anonymous}">
+			<li><a href="/broadleafdemo/registerCustomer/registerCustomer.htm">My Account</a></li>
+		</c:when>
+		<c:otherwise>
+			<li><a href="/broadleafdemo/account/myAccount.htm">My Account</a></li>
+		</c:otherwise>
+	</c:choose>
 		<li><a href="/broadleafdemo/storeLocator/findStores.htm">Store Locator</a></li>
 		<li class="last"><a class="cartLink" href="/broadleafdemo/basket/viewCart.htm">View Cart</a></li>
 	</ul>
