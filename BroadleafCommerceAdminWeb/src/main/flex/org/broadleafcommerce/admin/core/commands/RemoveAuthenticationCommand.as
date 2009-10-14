@@ -32,51 +32,56 @@ package org.broadleafcommerce.admin.core.commands
 	import org.broadleafcommerce.admin.core.view.helpers.AdminContentViewHelper;
 	import org.broadleafcommerce.admin.core.vo.ModuleConfig;
 	
-	public class AdminUserLogoutCommand implements Command, IResponder
+	public class RemoveAuthenticationCommand implements Command, IResponder
 	{
 		
 		private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
 		private var configModel:ConfigModel = AppModelLocator.getInstance().configModel;
 		
-		public function AdminUserLogoutCommand()
+		public function RemoveAuthenticationCommand()
 		{
 		}
 		
 		public function execute(event:CairngormEvent):void{
-			removeModulesFromView();
-			unloadModules();
-			clearModules();
+			var adminContentVH:AdminContentViewHelper = AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent"));
+
+			adminContentVH.unloadModules();
+					
+//			removeModulesFromView();
+//			unloadModules();
+//			clearModules();
 			authModel.authenticatedState = AuthenticationModel.STATE_APP_ANONYMOUS;
 			var aad:AdminAuthenticationDelegate = new AdminAuthenticationDelegate(this);
 			aad.logout();
 		}
 		
 		private function unloadModules():void{
-			for each(var moduleConfig:ModuleConfig in authModel.authenticatedModules){
-				var url:String = configModel.urlPrefix + moduleConfig.swf;
-				var moduleLoader:ModuleLoader = new ModuleLoader();
-				moduleLoader.url = url;
-				moduleLoader.unloadModule();
-			}				
+			var adminContentVH:AdminContentViewHelper = AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent"));
+//			for each(var moduleConfig:ModuleConfig in authModel.authenticatedModuleConfigs){
+//				var url:String = configModel.urlPrefix + moduleConfig.swf;
+//				var moduleLoader:ModuleLoader = new ModuleLoader();
+//				moduleLoader.url = url;
+//				moduleLoader.unloadModule();
+//			}				
 		}
 		
 		private function clearModules():void{
-			authModel.authenticatedModules = new ArrayCollection();
-			configModel.modulesLoaded = new ArrayCollection();
+//			authModel.authenticatedModuleConfigs = new ArrayCollection();
+//			configModel.modulesLoaded = new ArrayCollection();
 		} 
 		
 		private function removeModulesFromView():void{
-			var modulesLoaded:ArrayCollection = AppModelLocator.getInstance().configModel.modulesLoaded;
-			var modules:ArrayCollection = AppModelLocator.getInstance().authModel.authenticatedModules;
-			if(modulesLoaded.length == modules.length){
-				for (var index:String in modulesLoaded){
-					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).removeModulesFromView(ModuleConfig(modules[index]).loadedModule);
-					//Application.application.adminContent.contentViewStack.addChildAt(ModuleConfig(modules[index]).loadedModule,index);
-				}
-					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).selectFirstModule();			
-			}else{
-				Alert.show("Error loading all modules");
-			}
+//			var modulesLoaded:ArrayCollection = AppModelLocator.getInstance().configModel.modulesLoaded;
+//			var modules:ArrayCollection = AppModelLocator.getInstance().authModel.authenticatedModuleConfigs;
+//			if(modulesLoaded.length == modules.length){
+//				for (var index:String in modulesLoaded){
+//					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).removeModulesFromView(ModuleConfig(modules[index]).loadedModule);
+//					//Application.application.adminContent.contentViewStack.addChildAt(ModuleConfig(modules[index]).loadedModule,index);
+//				}
+//					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).selectFirstModule();			
+//			}else{
+//				Alert.show("Error loading all modules");
+//			}
 		}
 		
 		public function result(data:Object):void{

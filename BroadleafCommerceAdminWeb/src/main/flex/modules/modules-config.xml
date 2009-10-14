@@ -1,6 +1,6 @@
 <xml>
-	<menuitem label="Catalog" swf="/modules/catalog/CatalogModule.swf" displayOrder="2" authRoles="ROLE_ADMIN,asdfsdf" />
     <menuitem label="Security" swf="/modules/security/SecurityModule.swf" displayOrder="6" authRoles="ROLE_ADMIN" />
+	<menuitem label="Catalog" swf="/modules/catalog/CatalogModule.swf" displayOrder="2" authRoles="ROLE_ADMIN,asdfsdf" />
 	<menuitem label="Search" swf="/modules/search/SearchModule.swf" displayOrder="6" authRoles="ROLE_ADMIN" />
     <!--  
 	-->

@@ -42,18 +42,19 @@ package org.broadleafcommerce.admin.core.commands
 		{
 			var lme:LoadModulesEvent = LoadModulesEvent(event);
 			var userRoles:Object = AppModelLocator.getInstance().authModel.userPrincipal.allRoles;
-			var authModules:ArrayCollection = AppModelLocator.getInstance().authModel.authenticatedModules;
-			modules = lme.modules;
-			AppModelLocator.getInstance().authModel.authenticatedModules = new ArrayCollection();
+			var authModules:ArrayCollection = new ArrayCollection();
+			var adminContentVH:AdminContentViewHelper = AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent"));
 
-			for each(var module:ModuleConfig in modules){
+			modules = lme.modules;
+
+			for each(var moduleConfig:ModuleConfig in modules){
 				for each(var role:Object in userRoles){
 					if(role["name"] != null && role["name"] is String){
-						if(module.authenticatedRoles.indexOf(String(role["name"])) > -1){
+						if(moduleConfig.authenticatedRoles.indexOf(String(role["name"])) > -1){
 							try{
-								AppModelLocator.getInstance().authModel.authenticatedModules.addItem(module);								
+								authModules.addItem(moduleConfig);								
 							} catch (error:Error){
-								Alert.show("Error loading module: "+module.label+": "+error.message);
+								Alert.show("Error loading module: "+moduleConfig.label+": "+error.message);
 							}
 							
 						}
@@ -61,11 +62,7 @@ package org.broadleafcommerce.admin.core.commands
 				}
 			}
 
-//			for each(var module2:ModuleConfig in AppModelLocator.getInstance().authModel.authenticatedModules){
-//				AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).loadModule(module2);
-//			}
-
-			AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).loadModules(lme.modules);
+			adminContentVH.loadModules(authModules);
 		}
 
 

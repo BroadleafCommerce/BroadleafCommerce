@@ -47,20 +47,27 @@
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
 
 			private function initApp():void{
-				AppModelLocator.getInstance().configModel.urlPrefix = Application.application.loaderInfo.url.substr(0,
+				var urlPrefix = Application.application.loaderInfo.url.substr(0,
 			                                          	  Application.application.loaderInfo.url.lastIndexOf("/"))+"/";
-				var iae:InitializeApplicationEvent = new InitializeApplicationEvent();
-				CairngormEventDispatcher.getInstance().dispatchEvent(iae);
+
+				var iae:InitializeApplicationEvent = new InitializeApplicationEvent(urlPrefix);
+				iae.dispatch();
 			}
 		]]>
 	</mx:Script>
+
 	<mx:Style 
 		source="/assets/styles/broadleafadmin.css" />
+
+
 	<mx:Binding 
 		source="authModel.authenticatedState"
 	    destination="this.currentState" />
+	    
+	    
 	<control:AdminController />
 	<business:AdminServices />
+
 	<view:LoginCanvas 
 		id="loginCanvas" 
 		width="100%" 

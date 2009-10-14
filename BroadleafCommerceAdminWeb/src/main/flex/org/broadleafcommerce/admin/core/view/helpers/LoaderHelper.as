@@ -16,49 +16,49 @@
 package org.broadleafcommerce.admin.core.view.helpers
 {
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	
 	import mx.controls.Alert;
-	import mx.core.Application;
 	import mx.events.ModuleEvent;
 	import mx.modules.IModuleInfo;
 	import mx.modules.Module;
 	import mx.modules.ModuleManager;
 	
-	import org.broadleafcommerce.admin.core.control.events.AddModulesToViewEvent;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.vo.ModuleConfig;
 	
-	public class LoaderHelper
+	public class LoaderHelper extends EventDispatcher
 	{
-		public var module:ModuleConfig
+		public var moduleConfig:ModuleConfig;
+		public var loadedModule:Module;		
 		private var moduleInfo:IModuleInfo;
 		
-		public function LoaderHelper(module:ModuleConfig = null)
+		public function LoaderHelper(moduleConfig:ModuleConfig = null)
 		{
-			this.module = module;
+			this.moduleConfig = moduleConfig;
 		}
 		
 		public function load():void{      
-			var fullUrl:String = AppModelLocator.getInstance().configModel.urlPrefix+module.swf;
+		  var fullUrl:String = AppModelLocator.getInstance().configModel.urlPrefix+moduleConfig.swf;
 		  moduleInfo = ModuleManager.getModule(fullUrl); 	     
-	      moduleInfo.addEventListener(ModuleEvent.READY,addH);
+	      moduleInfo.addEventListener(ModuleEvent.READY,handleModuleReady);
 	      moduleInfo.addEventListener(ModuleEvent.ERROR, handleModuleError);
 	      moduleInfo.load();
 		}
 
-		public function addH(e:Event):void{  
+		public function handleModuleReady(e:Event):void{  
 			var mod:Module = moduleInfo.factory.create() as Module; 
-			module.loadedModule = mod;
-			AppModelLocator.getInstance().configModel.modulesLoaded.addItem(mod);
-			if(AppModelLocator.getInstance().authModel.authenticatedModules.length ==
-			  AppModelLocator.getInstance().configModel.modulesLoaded.length){
-			  var amtve:AddModulesToViewEvent = new AddModulesToViewEvent();
-			  amtve.dispatch();  
-			}
+			loadedModule = mod;
+			this.dispatchEvent(e);
 		}   
 
 		public function handleModuleError(e:ModuleEvent):void{
-			Alert.show("Module loading error: "+e.errorText);
+			dispatchEvent(e);
+		}
+		
+		public function unloadModule():void{
+			moduleInfo.unload();
+			moduleInfo.release();
 		}
 
 	}

@@ -20,13 +20,13 @@ package org.broadleafcommerce.admin.core.control.events.codetype
 	public class AdminSearchCodeTypesEvent extends CairngormEvent
 	{
 		
-		public static const EVENT_SEARCH_CODE_TYPES:String = "event_search_code_types_admin";
+		public static const EVENT_ID:String = "event_search_code_types_admin";
 		
 		public var keyword:String;
 		
 		public function AdminSearchCodeTypesEvent(keyword:String)
 		{
-			super(EVENT_SEARCH_CODE_TYPES);
+			super(EVENT_ID);
 			this.keyword = keyword;
 		}
 

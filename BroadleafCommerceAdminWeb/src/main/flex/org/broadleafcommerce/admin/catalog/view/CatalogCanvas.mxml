@@ -20,9 +20,13 @@
 	creationComplete="creationComplete()"
 	xmlns:category="org.broadleafcommerce.admin.catalog.view.category.*"
 	xmlns:product="org.broadleafcommerce.admin.catalog.view.product.*"
-	xmlns:view="org.broadleafcommerce.admin.catalog.view.*">
+	xmlns:view="org.broadleafcommerce.admin.catalog.view.*"
+	>
 	<mx:Script>
 		<![CDATA[
+			import mx.controls.Alert;
+			import com.adobe.cairngorm.view.ViewLocator;
+			import com.adobe.cairngorm.view.ViewHelper;
 			import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
 			import org.broadleafcommerce.admin.catalog.control.events.category.RemoveCategoryEvent;
 			import org.broadleafcommerce.admin.catalog.model.ProductModel;
@@ -81,7 +85,8 @@
 			private function handleRemoveProductButtonClick(event:Event):void{				
 				var rpe:RemoveProductEvent = new RemoveProductEvent(productModel.currentProduct);
 				rpe.dispatch();
-			}			
+			}
+			
 		]]>
 	</mx:Script>
 
@@ -93,8 +98,6 @@
 	            destination="removeProductButton.enabled" />
 	<mx:Binding source="categoryModel.currentCategory.id > 0"
 	            destination="productsLinkButton.enabled" />
-
-	<view:CatalogCanvasViewHelper id="catalogCanvas" />
 
 	<mx:VBox
 		width="100%"

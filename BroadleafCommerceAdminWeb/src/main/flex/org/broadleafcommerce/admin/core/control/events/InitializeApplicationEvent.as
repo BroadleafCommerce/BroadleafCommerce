@@ -19,11 +19,14 @@ package org.broadleafcommerce.admin.core.control.events
 
 	public class InitializeApplicationEvent extends CairngormEvent
 	{
-		public static const EVENT_INITIALIZE_APPLICATION:String = "event_initialize_Application";
+		public static const EVENT_ID:String = "event_initialize_Application";
 		
-		public function InitializeApplicationEvent()
+		public var urlPrefix:String;
+		
+		public function InitializeApplicationEvent(urlPrefix:String)
 		{
-			super(EVENT_INITIALIZE_APPLICATION);
+			super(EVENT_ID);
+			this.urlPrefix = urlPrefix;
 		}
 		
 	}

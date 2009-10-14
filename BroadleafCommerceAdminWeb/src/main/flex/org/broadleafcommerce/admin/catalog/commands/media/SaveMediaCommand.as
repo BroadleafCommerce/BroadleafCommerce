@@ -17,7 +17,6 @@ package org.broadleafcommerce.admin.catalog.commands.media
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-	import com.adobe.cairngorm.view.ViewLocator;
 	
 	import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
 	import org.broadleafcommerce.admin.catalog.control.events.media.SaveMediaEvent;
@@ -26,7 +25,6 @@ package org.broadleafcommerce.admin.catalog.commands.media
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.CategoryModel;
 	import org.broadleafcommerce.admin.catalog.model.ProductModel;
-	import org.broadleafcommerce.admin.catalog.view.CatalogCanvasViewHelper;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 
 	public class SaveMediaCommand implements Command
@@ -41,7 +39,8 @@ package org.broadleafcommerce.admin.catalog.commands.media
 			var sme:SaveMediaEvent = SaveMediaEvent(event);
 			var media:Media = sme.media;
 			var catalogModelLocator:CatalogModelLocator = CatalogModelLocator.getInstance();
-			var currentViewState:String = CatalogCanvasViewHelper(ViewLocator.getInstance().getViewHelper("catalogCanvas")).getViewIndex();
+//			var currentViewState:String = CatalogCanvasViewHelper(ViewLocator.getInstance().getViewHelper("catalogCanvas")).getViewIndex();
+			var currentViewState:String = catalogModelLocator.catalogModel.viewState;
 			var categoryViewState:String = CatalogModel.STATE_VIEW_CATEGORY;
 			var productViewState:String = CatalogModel.STATE_VIEW_PRODUCT;
 			

@@ -21,13 +21,13 @@ package org.broadleafcommerce.admin.core.control.events
 
 	public class LoadModulesEvent extends CairngormEvent
 	{
-		public static const EVENT_LOAD_MODULES:String = "load_modules_event";
+		public static const EVENT_ID:String = "load_modules_event";
 
 		public var modules:ArrayCollection;
 
 		public function LoadModulesEvent(modules:ArrayCollection)
 		{
-			super(EVENT_LOAD_MODULES);
+			super(EVENT_ID);
 			this.modules = modules;
 		}
 		

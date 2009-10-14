@@ -15,12 +15,11 @@
  */
 package org.broadleafcommerce.admin.core.commands.codetype
 {
-	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.universalmind.cairngorm.commands.Command;
 	
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
-	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	
@@ -29,15 +28,16 @@ package org.broadleafcommerce.admin.core.commands.codetype
 	import org.broadleafcommerce.admin.core.model.ConfigModel;
 	import org.broadleafcommerce.admin.core.vo.tools.CodeType;
 	
-	public class AdminFindAllCodeTypesCommand implements Command, IResponder
+	public class AdminFindAllCodeTypesCommand extends Command
 	{
-		public function execute(event:CairngormEvent):void{
+		override public function execute(event:CairngormEvent):void{
 			trace("DEBUG: AdminFindAllCodeTypesCommand.execute()");
+			super.execute(event);
 			var delegate:AdminToolsDelegate = new AdminToolsDelegate(this);
 			delegate.findAllCodeTypes();
 		}
 
-		public function result(data:Object):void{
+		override public function result(data:Object):void{
 			trace("DEBUG: AdminFindAllCodeTypesCommand.result()");
 			// The following line is needed so that the remoteObject is properly 
 			// created as a CodeType
@@ -50,7 +50,7 @@ package org.broadleafcommerce.admin.core.commands.codetype
 			
 		}
 		
-		public function fault(info:Object):void{
+		override public function fault(info:Object):void{
 			var event:FaultEvent = FaultEvent(info);
 			Alert.show("Error: " + event);
 		}		

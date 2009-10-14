@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.admin.core.commands
 {
-	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.universalmind.cairngorm.commands.Command;
 	
 	import flash.events.Event;
 	import flash.net.URLLoader;
@@ -29,7 +29,7 @@ package org.broadleafcommerce.admin.core.commands
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.vo.ModuleConfig;
 
-	public class GetAdminConfigCommand implements Command
+	public class GetAdminConfigCommand extends Command
 	{
 		private	var myXML:XML = new XML();
 		private var myLoader:URLLoader;
@@ -38,15 +38,19 @@ package org.broadleafcommerce.admin.core.commands
 		{
 		}
 
-		public function execute(event:CairngormEvent):void
+		override public function execute(event:CairngormEvent):void
 		{
+			super.execute(event);
+			trace("DEBUG: GetAdminConfigCommand.execute()");
 			var XML_URL:String = AppModelLocator.getInstance().configModel.urlPrefix+"modules/modules-config.xml";
 			var myXMLURL:URLRequest = new URLRequest(XML_URL);
 			myLoader = new URLLoader(myXMLURL);
 			myLoader.addEventListener("complete", xmlLoaded);
+			notifyCaller();			
 		}
 		
 		private function xmlLoaded(event:Event):void{
+			trace("DEBUG: GetAdminConfigCommand.xmlLoaded()");
 			var modules:ArrayCollection = new ArrayCollection();
 			myXML = XML(myLoader.data);
 			for each (var module:XML in myXML.menuitem){
@@ -68,9 +72,7 @@ package org.broadleafcommerce.admin.core.commands
 
 			modules.sort = numericDataSort;
 			modules.refresh();
-			AppModelLocator.getInstance().configModel.modules = modules;
-//			var lme:LoadModulesEvent = new LoadModulesEvent(modules);
-//			lme.dispatch();	
+			AppModelLocator.getInstance().configModel.moduleConfigs = modules;
 		}
 		
 	}
