@@ -102,7 +102,7 @@ public class SearchFilterItemTag extends SimpleTagSupport {
         out.println("<script>" +
                 " var " + propertyCss + "Checked = 0;\r\n" +
                 "    \r\n" +
-                "    $('.searchFilter-" + propertyCss + " li').click(function() {\r\n" +
+                "     $('.searchFilter-" + propertyCss + "Checkbox').click(function() {\r\n "+
                 "        var value = $(this).attr('value');\r\n" +
                 "        var checkbox = $(this).find(':checkbox');\r\n" +
                 "        if (" + propertyCss + "Checked == 0) {\r\n" +
