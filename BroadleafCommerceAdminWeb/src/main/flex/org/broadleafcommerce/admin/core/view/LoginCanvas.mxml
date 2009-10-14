@@ -71,7 +71,7 @@
 		</mx:HBox>
 
 
-		<mx:Text id="resultText" text="Text" />
+		<mx:Text id="resultText"  x="75" text="Text" />
 		<mx:Label text="Login Result: " visible="{resultText.visible}"/>
 	</mx:TitleWindow>
 </mx:Canvas>
