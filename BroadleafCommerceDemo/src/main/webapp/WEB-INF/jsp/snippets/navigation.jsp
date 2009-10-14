@@ -21,7 +21,7 @@
 		</c:otherwise>
 	</c:choose>
 	</li>
-	<li><a href="#">Help</a></li>
+	<li><a class="noTextUnderline" href="/broadleafdemo/orders/findOrder.htm" > Find Order </a></li>
 		<li><a href="/broadleafdemo/account/myAccount.htm">My Account</a></li>
 		<li><a href="/broadleafdemo/storeLocator/findStores.htm">Store Locator</a></li>
 		<li class="last"><a class="cartLink" href="/broadleafdemo/basket/viewCart.htm">View Cart</a></li>
