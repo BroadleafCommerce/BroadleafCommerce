@@ -24,7 +24,7 @@
 	creationPolicy="all">
 	<mx:Script>
 		<![CDATA[
-			import org.broadleafcommerce.admin.core.control.events.AdminUserLogoutEvent;
+			import org.broadleafcommerce.admin.core.control.events.RemoveAuthenticationEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
 			
@@ -36,7 +36,7 @@
 			}
 			
 			private function handleLogoutLabelClick():void{
-				new AdminUserLogoutEvent().dispatch();
+				new RemoveAuthenticationEvent().dispatch();
 			}
 		]]>
 	</mx:Script>

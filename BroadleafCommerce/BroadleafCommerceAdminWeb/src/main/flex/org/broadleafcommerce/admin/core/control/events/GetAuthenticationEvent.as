@@ -15,18 +15,20 @@
  */
 package org.broadleafcommerce.admin.core.control.events
 {
-	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.universalmind.cairngorm.events.UMEvent;
+	
+	import mx.rpc.IResponder;
 
-	public class GetAuthenticationEvent extends CairngormEvent
+	public class GetAuthenticationEvent extends UMEvent
 	{
-		public static const EVENT_GET_AUTHENTICATION:String = "get_authentication_event";
+		public static const EVENT_ID:String = "get_authentication_event";
 		
 		public var username:String;
 		public var password:String;
 		
-		public function GetAuthenticationEvent(username:String, password:String)
+		public function GetAuthenticationEvent(username:String, password:String, callbacks:IResponder=null)
 		{
-			super(EVENT_GET_AUTHENTICATION);
+			super(EVENT_ID,callbacks);
 			this.username = username;
 			this.password = password;
 		}

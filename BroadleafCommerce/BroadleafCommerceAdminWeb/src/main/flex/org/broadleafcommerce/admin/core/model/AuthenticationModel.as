@@ -33,7 +33,5 @@ package org.broadleafcommerce.admin.core.model
 		
 		public var userPrincipal:AdminUser = new AdminUser();
 		
-		public var authenticatedModules:ArrayCollection = new ArrayCollection();
-
 	}
 }

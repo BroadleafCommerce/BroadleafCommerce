@@ -16,15 +16,16 @@
 package org.broadleafcommerce.admin.core.control.events
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
-
-	public class AddModulesToViewEvent extends CairngormEvent
+	
+	public class RemoveAuthenticationEvent extends CairngormEvent
 	{
-		public static const EVENT_ADD_MODULES_TO_VIEW:String = "add_modules_to_view_event";
 		
-		public function AddModulesToViewEvent()
+		public static const EVENT_ID:String = "event_admin_user_logout";
+		
+		public function RemoveAuthenticationEvent()
 		{
-			super(EVENT_ADD_MODULES_TO_VIEW);
+			super(EVENT_ID);
 		}
-		
+
 	}
 }

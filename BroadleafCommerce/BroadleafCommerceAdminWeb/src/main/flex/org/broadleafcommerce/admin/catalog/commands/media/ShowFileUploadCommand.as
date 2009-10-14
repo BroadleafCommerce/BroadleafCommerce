@@ -22,11 +22,9 @@ package org.broadleafcommerce.admin.catalog.commands.media
 	import org.broadleafcommerce.admin.catalog.control.events.media.ShowFileUploadEvent;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModel;
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
-	import org.broadleafcommerce.admin.catalog.view.CatalogCanvasViewHelper;
 	import org.broadleafcommerce.admin.catalog.view.media.MediaNewWindowViewHelper;
-	import org.broadleafcommerce.admin.catalog.view.product.ProductCanvasViewHelper;
-	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
+	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 	import org.broadleafcommerce.admin.catalog.vo.product.Product;
 
 	public class ShowFileUploadCommand implements Command
@@ -39,7 +37,8 @@ package org.broadleafcommerce.admin.catalog.commands.media
 		{
 			trace("DEBUG: execute : ");
 			var catalogModelLocator:CatalogModelLocator = CatalogModelLocator.getInstance();
-			var currentViewState:String = CatalogCanvasViewHelper(ViewLocator.getInstance().getViewHelper("catalogCanvas")).getViewIndex();
+//			var currentViewState:String = CatalogCanvasViewHelper(ViewLocator.getInstance().getViewHelper("catalogCanvas")).getViewIndex();
+			var currentViewState:String = catalogModelLocator.catalogModel.viewState;
 			var categoryViewState:String = CatalogModel.STATE_VIEW_CATEGORY;
 			var productViewState:String = CatalogModel.STATE_VIEW_PRODUCT;
 			var sfue:ShowFileUploadEvent = ShowFileUploadEvent(event);

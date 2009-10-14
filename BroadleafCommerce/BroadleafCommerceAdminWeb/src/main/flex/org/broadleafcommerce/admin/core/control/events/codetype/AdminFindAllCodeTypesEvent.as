@@ -15,15 +15,15 @@
  */
 package org.broadleafcommerce.admin.core.control.events.codetype
 {
-	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.universalmind.cairngorm.events.UMEvent;
 	
-	public class AdminFindAllCodeTypesEvent extends CairngormEvent
+	public class AdminFindAllCodeTypesEvent extends UMEvent
 	{
-		public static const EVENT_FIND_ALL_CODE_TYPES:String = "event_find_all_code_types_admin";
+		public static const EVENT_ID:String = "event_find_all_code_types_admin";
 		
 		public function AdminFindAllCodeTypesEvent() 
 		{
-			super(EVENT_FIND_ALL_CODE_TYPES);
+			super(EVENT_ID);
 		}
 
 	}

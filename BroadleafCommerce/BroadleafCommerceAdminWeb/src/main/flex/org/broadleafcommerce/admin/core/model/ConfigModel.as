@@ -26,9 +26,7 @@ package org.broadleafcommerce.admin.core.model
 
 		public var urlPrefix:String;
 		
-		public var modulesLoaded:ArrayCollection = new ArrayCollection();
-		
-		public var modules:ArrayCollection = new ArrayCollection();
+		public var moduleConfigs:ArrayCollection = new ArrayCollection();
 
 		public var codeTypes:ArrayCollection = new ArrayCollection();
 

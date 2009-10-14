@@ -15,15 +15,15 @@
  */
 package org.broadleafcommerce.admin.core.control.events
 {
-	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.universalmind.cairngorm.events.UMEvent;
 
-	public class GetAdminConfigEvent extends CairngormEvent
+	public class GetAdminConfigEvent extends UMEvent
 	{
-		public static const EVENT_READ_ADMIN_CONFIG:String = "read_admin_config_event";
+		public static const EVENT_ID:String = "read_admin_config_event";
 		
 		public function GetAdminConfigEvent()
 		{
-			super(EVENT_READ_ADMIN_CONFIG);			
+			super(EVENT_ID);			
 		}
 		
 	}
