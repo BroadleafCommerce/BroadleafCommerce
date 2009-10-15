@@ -1,129 +1,129 @@
-1|1001|Original||0|1|||||||
-2|1001|Dark Roast||1|1|||||||
-3|1001|Decaffeinated||0|1|||||||
-4|1002|Original||1|1|||||||
-5|1002|50% Decaf||0|1|||||||
-6|1002|Mocha||1|1|||||||
-7|1002|Bokar||0|1|||||||
-8|1002|Decaf Original||1|1|||||||
-9|1002|French Vanilla||0|1|||||||
-10|1002|French Roast||1|1|||||||
-11|1002|100% Columbian||0|1|||||||
-12|1002|Hazelnut||0|1|||||||
-13|1002|Dark Italian Roast||0|1|||||||
-14|1002|Decaf 100% Columbian||1|1|||||||
-15|1003|BeachHouse Blend||0|1|||||||
-16|1003|Best Blend||0|1|||||||
-17|1003|Henry's Blend||1|1|||||||
-18|1003|6th Avenue Bistro Blend||1|1|||||||
-19|1003|Almond Roca||0|1|||||||
-20|1003|Cinnabon||0|1|||||||
-21|1003|Colombian||0|1|||||||
-22|1003|Creme Brulee||0|1|||||||
-23|1003|Organic Fair Trade - French Roast||1|1|||||||
-24|1003|Hazelnut||0|1|||||||
-25|1003|Breakfast Blend||1|1|||||||
-26|1003|Organic House Blend||1|1|||||||
-27|1003|Organic Sumatra||1|1|||||||
-28|1003|Portside||0|1|||||||
-29|1003|Post Alley Blend||0|1|||||||
-30|1003|Saturday's Blend||0|1|||||||
-31|1003|Vanilla Bean||0|1|||||||
-32|1004|Breakfast Blend - Light Roast||1|1|||||||
-33|1004|100% Colombian - Medium Roast||1|1|||||||
-34|1004|Bed & Breakfast Blend - Medium Dark Roast||1|1|||||||
-35|1004|Espresso||0|1|||||||
-36|1004|Organic Deep Peruvian Forest||1|1|||||||
-37|1004|Organic Mayan Black Oynx||0|1|||||||
-38|1004|Organic Mountain Fair Trade Certified||1|1|||||||
-39|1004|Organic Nicaraguan Mountain Twilight||0|1|||||||
-40|1004|Organic Rainforest Reserve||1|1|||||||
-41|1004|Caramel Trufle||0|1|||||||
-42|1004|Chocolate Velvet||1|1|||||||
-43|1004|Cinnamon Hazelnut||0|1|||||||
-44|1004|Decaf Caramel Truffle||1|1|||||||
-45|1004|Decaf Chocolate Velvet||1|1|||||||
-46|1004|Decaf French Vanilla||0|1|||||||
-47|1004|Decaf Hazelnut Cream Whole||1|1|||||||	
-48|1004|French Vanilla||0|1|||||||
-49|1004|Hazelnut Cream Whole||1|1|||||||
-50|1004|Hazelnut Cream Ground||1|1|||||||
-51|1004|Decaf Hazelnut Cream Ground||1|1||||||| 
-52|1004|Raspberries 'n Cream||0|1|||||||
-53|1004|Swiss Chocolate Almond||1|1|||||||
-54|1004|Vanilla Nut Cream||0|1|||||||
-55|1005|100% Columbian||1|1|||||||
-56|1005|Columbian Decaf||0|1|||||||
-57|1005|City Blend||1|1|||||||
-58|1005|Rich French Roast||0|1|||||||
-59|1005|French Roast Decaf||0|1|||||||
-60|1005|New York Roast||1|1|||||||
-61|1005|Original||1|1|||||||
-62|1005|Original Decaf||1|1|||||||
-63|1005|Hazelnut||1|1|||||||
-64|1005|Brick||0|1|||||||
-65|1005|SoHo Morning Roast||1|1|||||||
-66|1005|Upper West Side European Roast||0|1|||||||
-67|1005|Upper West Side European Roast Decaf||0|1|||||||
-68|1005|Midtown French||1|1|||||||
-69|1005|Greenwich Village||0|1|||||||
-70|1006|Dark Roast||1|1|||||||
-71|1006|Columbian Supreme||0|1|||||||
-72|1006|French Roast||1|1|||||||
-73|1006|South Pacific Blend||0|1|||||||
-74|1006|Slow Roast||1|1|||||||
-75|1006|Original||0|1|||||||
-76|1006|Lite||1|1|||||||
-77|1006|Master Blend||0|1|||||||
-78|1006|Breakfast Blend||1|1|||||||
-79|1006|Original Decaf||0|1|||||||
-80|1006|French Roast Decaf||1|1|||||||
-81|1006|Master Blend Decaf||0|1|||||||
-82|1006|Vanilla Flavored||1|1|||||||
-83|1006|Hazelnut Flavored||0|1|||||||
-84|1006|Original Instant||1|1|||||||
-85|1006|Decaf Instant||0|1|||||||
-86|1006|Sanka Instant Decaf||1|1|||||||
-87|1006|Coffee Singles||0|1|||||||
-88|1007|Classic Roast||0|1|||||||
-89|1007|Special Roast||0|1|||||||
-90|1007|Classic Roast Decaf||1|1|||||||
-91|1007|Bistro Blend||1|1|||||||
-92|1007|Hazelnut Creme||0|1|||||||
-93|1007|Vanilla Biscotti||1|1|||||||
-94|1007|Chocolate Truffle||0|1|||||||
-95|1007|Creme Brulee||1|1|||||||
-96|1007|Caramel Drizzle||0|1|||||||
-97|1007|Morning Cafe||1|1|||||||
-98|1007|Lively Columbian||0|1|||||||
-99|1007|Brazilian Blend||0|1|||||||
-100|1007|Bold Java||0|1|||||||
-101|1008|Arabian Mocha Sanani||1|1|||||||
-102|1008|Brazil Ipanema Bourbon||1|1|||||||
-103|1008|Bella Vista F.W. Tres Rios Costa Rica||1|1|||||||
-104|1008|Breakfast Blend||0|1|||||||
-105|1008|Guatemala Antigua||1|1|||||||
-106|1008|Guatemala Casi Cielo||0|1|||||||
-107|1008|House Blend||0|1|||||||
-108|1008|Decaf House Blend||1|1|||||||
-109|1008|Organic Shade Grown Mexico||1|1|||||||
-110|1008|Columbian Narino Supremo||1|1|||||||
-111|1008|Kenya||0|1|||||||
-112|1008|Ethiopia Sidamo||1|1|||||||
-113|1008|Sumatra||0|1|||||||
-114|1008|Komodo Dragon Blend||1|1|||||||
-115|1008|Decaf Sumatra||0|1|||||||
-116|1008|Cafe Estima Blend||1|1|||||||
-117|1008|Caffe Verona||0|1|||||||
-118|1008|Caffe Verona Decaf||1|1|||||||
-119|1008|Gold Coast Blend||1|1|||||||
-120|1008|Organic Serena Blend||0|1|||||||
-121|1008|Espresso Roast||1|1|||||||
-122|1008|Decaf Espresso Roast||0|1|||||||
-123|1008|French Roast||1|1||||||1 lb|
-124|1008|Italian Roast||1|1|||||||
-125|1008|Pike Place Roast||0|1|||||||
-126|1008|Decaf Pike Place Roast||0|1|||||||
+1|1001|Original||0|1||||Yuban|||
+2|1001|Dark Roast||1|1||||Yuban|||
+3|1001|Decaffeinated||0|1||||Yuban|||
+4|1002|Original||1|1||||Eight O'Clock|||
+5|1002|50% Decaf||0|1||||Eight O'Clock|||
+6|1002|Mocha||1|1||||Eight O'Clock|||
+7|1002|Bokar||0|1||||Eight O'Clock|||
+8|1002|Decaf Original||1|1||||Eight O'Clock|||
+9|1002|French Vanilla||0|1||||Eight O'Clock|||
+10|1002|French Roast||1|1||||Eight O'Clock|||
+11|1002|100% Columbian||0|1||||Eight O'Clock|||
+12|1002|Hazelnut||0|1||||Eight O'Clock|||
+13|1002|Dark Italian Roast||0|1||||Eight O'Clock|||
+14|1002|Decaf 100% Columbian||1|1||||Eight O'Clock|||
+15|1003|BeachHouse Blend||0|1||||Seattle's Best|||
+16|1003|Best Blend||0|1||||Seattle's Best|||
+17|1003|Henry's Blend||1|1||||Seattle's Best|||
+18|1003|6th Avenue Bistro Blend||1|1||||Seattle's Best|||
+19|1003|Almond Roca||0|1||||Seattle's Best|||
+20|1003|Cinnabon||0|1||||Seattle's Best|||
+21|1003|Colombian||0|1||||Seattle's Best|||
+22|1003|Creme Brulee||0|1||||Seattle's Best|||
+23|1003|Organic Fair Trade - French Roast||1|1||||Seattle's Best|||
+24|1003|Hazelnut||0|1||||Seattle's Best|||
+25|1003|Breakfast Blend||1|1||||Seattle's Best|||
+26|1003|Organic House Blend||1|1||||Seattle's Best|||
+27|1003|Organic Sumatra||1|1||||Seattle's Best|||
+28|1003|Portside||0|1||||Seattle's Best|||
+29|1003|Post Alley Blend||0|1||||Seattle's Best|||
+30|1003|Saturday's Blend||0|1||||Seattle's Best|||
+31|1003|Vanilla Bean||0|1||||Seattle's Best|||
+32|1004|Breakfast Blend - Light Roast||1|1||||Millstone|||
+33|1004|100% Colombian - Medium Roast||1|1||||Millstone|||
+34|1004|Bed & Breakfast Blend - Medium Dark Roast||1|1||||Millstone|||
+35|1004|Espresso||0|1||||Millstone|||
+36|1004|Organic Deep Peruvian Forest||1|1||||Millstone|||
+37|1004|Organic Mayan Black Oynx||0|1||||Millstone|||
+38|1004|Organic Mountain Fair Trade Certified||1|1||||Millstone|||
+39|1004|Organic Nicaraguan Mountain Twilight||0|1||||Millstone|||
+40|1004|Organic Rainforest Reserve||1|1||||Millstone|||
+41|1004|Caramel Trufle||0|1||||Millstone|||
+42|1004|Chocolate Velvet||1|1||||Millstone|||
+43|1004|Cinnamon Hazelnut||0|1||||Millstone|||
+44|1004|Decaf Caramel Truffle||1|1||||Millstone|||
+45|1004|Decaf Chocolate Velvet||1|1||||Millstone|||
+46|1004|Decaf French Vanilla||0|1||||Millstone|||
+47|1004|Decaf Hazelnut Cream Whole||1|1||||Millstone|||	
+48|1004|French Vanilla||0|1||||Millstone|||
+49|1004|Hazelnut Cream Whole||1|1||||Millstone|||
+50|1004|Hazelnut Cream Ground||1|1||||Millstone|||
+51|1004|Decaf Hazelnut Cream Ground||1|1||||Millstone||| 
+52|1004|Raspberries 'n Cream||0|1||||Millstone|||
+53|1004|Swiss Chocolate Almond||1|1||||Millstone|||
+54|1004|Vanilla Nut Cream||0|1||||Millstone|||
+55|1005|100% Columbian||1|1||||Chock Full o' Nuts|||
+56|1005|Columbian Decaf||0|1||||Chock Full o' Nuts|||
+57|1005|City Blend||1|1||||Chock Full o' Nuts|||
+58|1005|Rich French Roast||0|1||||Chock Full o' Nuts|||
+59|1005|French Roast Decaf||0|1||||Chock Full o' Nuts|||
+60|1005|New York Roast||1|1||||Chock Full o' Nuts|||
+61|1005|Original||1|1||||Chock Full o' Nuts|||
+62|1005|Original Decaf||1|1||||Chock Full o' Nuts|||
+63|1005|Hazelnut||1|1||||Chock Full o' Nuts|||
+64|1005|Brick||0|1||||Chock Full o' Nuts|||
+65|1005|SoHo Morning Roast||1|1||||Chock Full o' Nuts|||
+66|1005|Upper West Side European Roast||0|1||||Chock Full o' Nuts|||
+67|1005|Upper West Side European Roast Decaf||0|1||||Chock Full o' Nuts|||
+68|1005|Midtown French||1|1||||Chock Full o' Nuts|||
+69|1005|Greenwich Village||0|1||||Chock Full o' Nuts|||
+70|1006|Dark Roast||1|1||||Maxwell House|||
+71|1006|Columbian Supreme||0|1||||Maxwell House|||
+72|1006|French Roast||1|1||||Maxwell House|||
+73|1006|South Pacific Blend||0|1||||Maxwell House|||
+74|1006|Slow Roast||1|1||||Maxwell House|||
+75|1006|Original||0|1||||Maxwell House|||
+76|1006|Lite||1|1||||Maxwell House|||
+77|1006|Master Blend||0|1||||Maxwell House|||
+78|1006|Breakfast Blend||1|1||||Maxwell House|||
+79|1006|Original Decaf||0|1||||Maxwell House|||
+80|1006|French Roast Decaf||1|1||||Maxwell House|||
+81|1006|Master Blend Decaf||0|1||||Maxwell House|||
+82|1006|Vanilla Flavored||1|1||||Maxwell House|||
+83|1006|Hazelnut Flavored||0|1||||Maxwell House|||
+84|1006|Original Instant||1|1||||Maxwell House|||
+85|1006|Decaf Instant||0|1||||Maxwell House|||
+86|1006|Sanka Instant Decaf||1|1||||Maxwell House|||
+87|1006|Coffee Singles||0|1||||Maxwell House|||
+88|1007|Classic Roast||0|1||||Folgers|||
+89|1007|Special Roast||0|1||||Folgers|||
+90|1007|Classic Roast Decaf||1|1||||Folgers|||
+91|1007|Bistro Blend||1|1||||Folgers|||
+92|1007|Hazelnut Creme||0|1||||Folgers|||
+93|1007|Vanilla Biscotti||1|1||||Folgers|||
+94|1007|Chocolate Truffle||0|1||||Folgers|||
+95|1007|Creme Brulee||1|1||||Folgers|||
+96|1007|Caramel Drizzle||0|1||||Folgers|||
+97|1007|Morning Cafe||1|1||||Folgers|||
+98|1007|Lively Columbian||0|1||||Folgers|||
+99|1007|Brazilian Blend||0|1||||Folgers|||
+100|1007|Bold Java||0|1||||Folgers|||
+101|1008|Arabian Mocha Sanani||1|1||||Starbucks|||
+102|1008|Brazil Ipanema Bourbon||1|1||||Starbucks|||
+103|1008|Bella Vista F.W. Tres Rios Costa Rica||1|1||||Starbucks|||
+104|1008|Breakfast Blend||0|1||||Starbucks|||
+105|1008|Guatemala Antigua||1|1||||Starbucks|||
+106|1008|Guatemala Casi Cielo||0|1||||Starbucks|||
+107|1008|House Blend||0|1||||Starbucks|||
+108|1008|Decaf House Blend||1|1||||Starbucks|||
+109|1008|Organic Shade Grown Mexico||1|1||||Starbucks|||
+110|1008|Columbian Narino Supremo||1|1||||Starbucks|||
+111|1008|Kenya||0|1||||Starbucks|||
+112|1008|Ethiopia Sidamo||1|1||||Starbucks|||
+113|1008|Sumatra||0|1||||Starbucks|||
+114|1008|Komodo Dragon Blend||1|1||||Starbucks|||
+115|1008|Decaf Sumatra||0|1||||Starbucks|||
+116|1008|Cafe Estima Blend||1|1||||Starbucks|||
+117|1008|Caffe Verona||0|1||||Starbucks|||
+118|1008|Caffe Verona Decaf||1|1||||Starbucks|||
+119|1008|Gold Coast Blend||1|1||||Starbucks|||
+120|1008|Organic Serena Blend||0|1||||Starbucks|||
+121|1008|Espresso Roast||1|1||||Starbucks|||
+122|1008|Decaf Espresso Roast||0|1||||Starbucks|||
+123|1008|French Roast||1|1||||Starbucks|1 lb||
+124|1008|Italian Roast||1|1||||Starbucks|||
+125|1008|Pike Place Roast||0|1||||Starbucks|||
+126|1008|Decaf Pike Place Roast||0|1||||Starbucks|||
 127|2002|DeLonghi - 10 Cup Drip Coffee Maker|Seamless brushed aluminum body durable and stylish, it beautifully complements any kitchen decor. Permanent gold-tone filter durable and long-lasting, the gold-tone filter is specially designed to keep even the finest grounds out of your coffee. Ergonomic handle for comfortable use and easy handling.|0|1|15.59|7.4|14.13|DeLonghi|DCM900|6 lb
 128|2002|DeLonghi - 14 Cup Drip Coffee Maker|24-hour programmable timer is convenient and easy-to-use. Just set the timer the night before, and wake up to the aroma of fresh brewed coffee. Internal water level indicator lets you know how much water is in the tank. Permanent gold-tone filter durable and long lasting, the gold-tone filter is specially designed to keep even the finest grounds out of your coffee.|0|1|8.5|9.75|12.71|DeLonghi|DC514T|8.2 lb
 129|2002|DeLonghi - 12-Cup Drip Coffee Maker w/ Frontal Access|24-hour programmable digital timer with 2 hour automatic shut-off. Water level indicator lets you know when the unit needs refilling. Permanent gold-tone filter durable and long lasting, the gold-tone filter is specially designed to keep even the finest grounds out of your coffee.|1|1|9.25|10.43|12.32|DeLonghi|DCF212T|7.1 lb
