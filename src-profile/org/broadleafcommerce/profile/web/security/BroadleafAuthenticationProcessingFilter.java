@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.profile.web.MergeCartProcessor;
+import org.broadleafcommerce.util.StringUtil;
 import org.springframework.security.Authentication;
 import org.springframework.security.AuthenticationException;
 import org.springframework.security.CredentialsExpiredException;
@@ -98,7 +99,7 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
                 return passwordChangeUri;
             }
         }
-        String successUrlParam = request.getParameter("successUrl");
+        String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
         if (StringUtils.isNotEmpty(successUrlParam)) {
             return successUrlParam;
         }
@@ -107,8 +108,8 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
 
     @Override
     protected String determineFailureUrl(HttpServletRequest request, AuthenticationException failed) {
-        String failureUrlParam = request.getParameter("failureUrl");
-        String successUrlParam = request.getParameter("successUrl");
+        String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
+        String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
         String failureUrl = null;
         if (StringUtils.isNotEmpty(failureUrlParam)) {
             failureUrl = failureUrlParam;
