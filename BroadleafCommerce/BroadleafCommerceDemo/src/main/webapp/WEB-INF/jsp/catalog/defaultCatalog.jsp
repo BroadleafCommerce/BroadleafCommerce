@@ -17,8 +17,11 @@
 	<div class="catalogContainer columns mainContentAreaFull" style="padding:8px 0 8px 8px;">
     <div class="span-5" style="width:170px;margin-left:10px;">
   		<form:form method="post" id="refineSearch" commandName="doSearch">
-      	Narrow results by:
+  		<blc:searchFilter categories="${displayCategories}" queryString="">
+			<blc:searchFilterItem property="name" displayTitle="Categories" />  		
+  		</blc:searchFilter>
 			<blc:searchFilter products="${displayProducts}" queryString="">
+      	Narrow results by:
 				<blc:searchFilterItem property="manufacturer" displayTitle="Manufacturers"/>
 				<br />
 				<blc:searchFilterItem property="skus[0].salePrice" displayTitle="Prices" displayType="sliderRange"/>

@@ -19,11 +19,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
+import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.util.money.Money;
 
@@ -54,7 +57,7 @@ public class SearchFilterItemTag extends SimpleTagSupport {
     public void doTag() throws JspException, IOException {
 
         JspWriter out = getJspContext().getOut();
-        out.println("<h3>"+getDisplayTitle()+"</h3>");
+        out.println("<h3>"+getDisplayTitle()+"</h3>");        	
 
         if (displayType.equals("multiSelect")) {
             doMultiSelect(out);
@@ -66,7 +69,28 @@ public class SearchFilterItemTag extends SimpleTagSupport {
 
     private void doMultiSelect(JspWriter out) throws JspException, IOException {
         List<Product> products = ((SearchFilterTag) getParent()).getProducts();
+        List<Category> categories = ((SearchFilterTag) getParent()).getCategories();
 
+        if(products != null ){
+        	doProductMultiSelect(out, products);
+        }            
+          
+        if(categories != null){
+           	doCategoryMultiSelect(out, categories);
+        }
+    }
+    
+    private void doCategoryMultiSelect(JspWriter out, List<Category> categories) throws JspException, IOException{
+        String propertyCss = property.replaceAll("[\\.\\[\\]]", "_");
+    	out.println("<ul class='searchFilter-"+propertyCss+"'>");
+    	for (Category category : categories) {
+    		String catUrl = getUrl(category);
+    		out.println("<li vaue='"+category.getName()+"'>"+catUrl);
+    	}
+    	out.println("</ul>");
+    }
+    
+    private void doProductMultiSelect(JspWriter out, List<Product> products) throws JspException, IOException{
         BeanToPropertyValueTransformer valueTransformer = new BeanToPropertyValueTransformer(property, true);
         BeanToPropertyValueTransformer displayTransformer;
         if (propertyDisplay != null) {
@@ -150,8 +174,9 @@ public class SearchFilterItemTag extends SimpleTagSupport {
                 "        updateSearchFilterResults();\r\n" +
                 "    } );" +
         "</script>");
+    	
     }
-
+    
     private void doSliderRange(JspWriter out)  throws JspException, IOException {
         List<Product> products = ((SearchFilterTag) getParent()).getProducts();
 
@@ -187,6 +212,22 @@ public class SearchFilterItemTag extends SimpleTagSupport {
                 "        $('#searchFilter-"+propertyCss+"').bind('slidechange',  updateSearchFilterResults); \r\n" +
         "        </script>");
     }
+    
+    protected String getUrl(Category category) {
+        PageContext pageContext = (PageContext)getJspContext();
+        HttpServletRequest request = (HttpServletRequest)pageContext.getRequest();
+        StringBuffer sb = new StringBuffer();
+        sb.append("<a href=\"");
+        sb.append(request.getContextPath());
+        sb.append("/");
+        sb.append(category.getGeneratedUrl());
+        sb.append("\">");
+        sb.append(category.getName());
+        sb.append("</a>");
+
+        return sb.toString();
+    }
+    
 
     public String getProperty() {
         return property;
