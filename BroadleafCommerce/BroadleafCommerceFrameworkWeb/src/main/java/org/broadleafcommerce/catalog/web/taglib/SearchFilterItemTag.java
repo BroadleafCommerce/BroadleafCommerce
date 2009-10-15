@@ -94,14 +94,13 @@ public class SearchFilterItemTag extends SimpleTagSupport {
         for (Object value : countMap.keySet()) {
             Object display = valueDisplayMap.get(value);
             out.println("<li value='"+ value +"'><input type='checkbox' class='searchFilter-"+propertyCss+"Checkbox' name='"+property+"' value='" + value + "'/> " +
-                    display + " <span class='searchFilter"+propertyCss+"-count'>(" + countMap.get(value).toString() + ")</span></li>");
+                    "<span class='searchFilter-"+propertyCss+"Display'>"+display+"</span>" + " <span class='searchFilter"+propertyCss+"-count'>(" + countMap.get(value).toString() + ")</span></li>");
         }
         out.println("</ul>");
 
 
         out.println("<script>" +
                 " var " + propertyCss + "Checked = 0;\r\n" +
-                "    \r\n" +
                 "     $('.searchFilter-" + propertyCss + "Checkbox').click(function() {\r\n "+
                 "        var value = $(this).attr('value');\r\n" +
                 "        var checkbox = $(this).find(':checkbox');\r\n" +
@@ -120,6 +119,31 @@ public class SearchFilterItemTag extends SimpleTagSupport {
                 "            " + propertyCss + "Checked--;\r\n" +
                 "        } else {\r\n" +
                 "            $(this).removeClass('searchFilterDisabledSelect');\r\n" +
+                "            checkbox.attr('checked',true);\r\n" +
+                "            " + propertyCss + "Checked++;\r\n" +
+                "        }\r\n" +
+                "        updateSearchFilterResults();\r\n" +
+                "    } );" +
+                
+                "     $('.searchFilter-" + propertyCss + "Display').click(function() {\r\n "+
+                "        var value = $(this).attr('value');\r\n" +
+                "        var liObj = $(this).parent(); \r\n" +
+                "        var checkbox = liObj.find(':checkbox');\r\n" +                
+                "        if (" + propertyCss + "Checked == 0) {\r\n" +
+                "            $('.searchFilter-" + propertyCss + " li').each(function(){liObj.addClass('searchFilterDisabledSelect')});\r\n" +
+                "            liObj.removeClass('searchFilterDisabledSelect');\r\n" +
+                "            checkbox.attr('checked',true);\r\n" +
+                "            " + propertyCss + "Checked++;\r\n" +
+                "        } else if (checkbox.attr('checked') == true) {\r\n" +
+                "            liObj.addClass('searchFilterDisabledSelect');\r\n" +
+                "            if (" + propertyCss + "Checked == 1) {\r\n" +
+                "                // unchecking the only checked category, so reactivate all categories\r\n" +
+                "                $('.searchFilter-"+propertyCss+" li').each(function(){liObj.removeClass('searchFilterDisabledSelect')});\r\n" +
+                "            } \r\n" +
+                "            checkbox.attr('checked',false);\r\n" +
+                "            " + propertyCss + "Checked--;\r\n" +
+                "        } else {\r\n" +
+                "            liObj.removeClass('searchFilterDisabledSelect');\r\n" +
                 "            checkbox.attr('checked',true);\r\n" +
                 "            " + propertyCss + "Checked++;\r\n" +
                 "        }\r\n" +
