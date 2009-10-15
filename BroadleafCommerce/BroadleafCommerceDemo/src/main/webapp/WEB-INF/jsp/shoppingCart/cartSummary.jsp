@@ -128,7 +128,7 @@
 	                    to shop from our selection of fine coffees and brewing equipment.
 	                    <c:if test="${customer.firstName eq null}">
 		                    <br>&bull; &nbsp; If you are a registered user,
-		                    <a href="/profile/login.htm" class="link">sign in</a>
+		                    <a href="/broadleafdemo/registerCustomer/registerCustomer.htm" class="link">sign in</a>
 		                    to retrieve any saved items.
 	                    </c:if>
 	                </div>
