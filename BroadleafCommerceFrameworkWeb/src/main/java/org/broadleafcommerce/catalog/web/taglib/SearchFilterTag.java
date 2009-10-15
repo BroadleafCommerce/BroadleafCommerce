@@ -22,6 +22,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 
 /**
@@ -36,23 +37,37 @@ public class SearchFilterTag extends TagSupport {
     private static final long serialVersionUID = 1L;
 
     private List<Product> products;
+    private List<Category> categories;
     private String queryString;
     
     @Override
     public int doStartTag() throws JspException {
         JspWriter out = this.pageContext.getOut();
-        if (products == null || products.size() == 0) { return SKIP_BODY; }
-
-        if (queryString != null && !"".equals(queryString)) {
-            try {
-                out.println("<h3>Your Search</h3>");
-                out.println("<input type=\"text\"  class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
-                out.println("<input type=\"hidden\"  name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
-            } catch (IOException e) {
-            }
+//        if (products == null || products.size() == 0) { return SKIP_BODY; }
+        if(products != null && products.size() > 0 ){        	
+	        if (queryString != null && !"".equals(queryString)) {
+	            try {
+	                out.println("<h3>Your Search</h3>");
+	                out.println("<input type=\"text\"  class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
+	                out.println("<input type=\"hidden\"  name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
+	            } catch (IOException e) {
+	            }
+	        }
+	        return EVAL_BODY_INCLUDE;
         }
-
-        return EVAL_BODY_INCLUDE;
+        if(categories != null && categories.size() > 0){
+	        if (queryString != null && !"".equals(queryString)) {
+	            try {
+	                out.println("<h3>Your Search</h3>");
+	                out.println("<input type=\"text\"  class=\"searchQuery\" name=\"queryString\" id=\"queryString\" value='"+queryString+"' />");
+	                out.println("<input type=\"hidden\"  name=\"originalQueryString\" id=\"originalQueryString\" value='"+queryString+"' />");
+	            } catch (IOException e) {
+	            }
+	        }
+	        return EVAL_BODY_INCLUDE;        	
+        }
+        
+        return SKIP_BODY;
     }
 
     public List<Product> getProducts() {
@@ -63,7 +78,15 @@ public class SearchFilterTag extends TagSupport {
         this.products = products;
     }
 
-    public String getQueryString() {
+    public List<Category> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<Category> categories) {
+		this.categories = categories;
+	}
+
+	public String getQueryString() {
         return queryString;
     }
 

@@ -110,7 +110,12 @@
         <body-content>JSP</body-content>
        	<attribute>
 			<name>products</name>
-			<required>true</required>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>categories</name>
+			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
        	<attribute>

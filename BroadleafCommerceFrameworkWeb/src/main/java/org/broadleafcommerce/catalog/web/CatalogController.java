@@ -119,7 +119,7 @@ public class CatalogController {
         if (rootCategory == null) {
             throw new IllegalStateException("Catalog Controller configured incorrectly - root category not found: " + rootCategoryId);
         }
-
+        
         String url = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());
         String categoryId = request.getParameter("categoryId");
         if (categoryId != null) {
@@ -160,10 +160,17 @@ public class CatalogController {
                 categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
             }
         }
+        
+        List<Category> siblingCategories  = new ArrayList<Category>();
+        Category currentCategory = (Category) categoryList.get(categoryList.size()-1);        
+        siblingCategories = currentCategory.getAllChildCategories();
+        
 
         model.addAttribute("breadcrumbCategories", categoryList);
         model.addAttribute("currentCategory", categoryList.get(categoryList.size()-1));
         model.addAttribute("categoryError", categoryError);
+        model.addAttribute("displayCategories",siblingCategories);
+        
 
         return categoryError;
     }
