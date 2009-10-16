@@ -1,20 +1,9 @@
 1|What is your favorite sports team?
 2|What was your high school name?
-3|What was your childhood nickname? 
-4|What is the name of your favorite childhood friend? 
-5|What street did you live on in third grade?
-6|What is your oldest sibling’s birthday month and year? (e.g., January 1900) 
-7|What is the middle name of your youngest child?
-8|What is your oldest sibling's middle name?
-9|What school did you attend for sixth grade?
-10|What was your childhood phone number including area code? (e.g., 000-000-0000)
-11|What is your oldest cousin's first and last name?
-12|What was the name of your first stuffed animal?
-13|In what city or town did your mother and father meet? 
-14|What is the first name of the boy or girl that you first kissed?
-15|What was the last name of your third grade teacher?
-16|Where does your nearest sibling live? 
-17|What is your youngest brother’s birthday? 
-18|What was the name of your elementary / primary school?
-19|What is your maternal grandmother's maiden name?
-20|In what city or town was your first job?
+3|What was your childhood nickname?  
+4|What street did you live on in third grade?
+5|What is your oldest sibling's middle name?
+6|What school did you attend for sixth grade?
+7|Where does your nearest sibling live? 
+8|What is your youngest brother’s birthday? 
+9|In what city or town was your first job?
