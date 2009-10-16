@@ -10,26 +10,18 @@
 	<a href="/broadleafdemo"><img class="logo" src="/broadleafdemo/images/havalettaLogo.png" /></a>
 	<a href="http://www.broadleafcommerce.org/" class="promoCTA">This is a demo store. No payments accepted or orders fulfilled.</a>
 	<ul id="userNav" class="clearfix">
-	<li>
-	<c:choose>
-		<c:when test="${customer.anonymous}">
-			<a href="/broadleafdemo/registerCustomer/registerCustomer.htm">Login</a>
-		</c:when>
-		<c:otherwise>
-			<a href="/broadleafdemo/account/myAccount.htm">Hello <c:out value="${customer.firstName}"/></a></li>
-			<li><a href="/broadleafdemo/logout.htm">Logout</a>
-		</c:otherwise>
-	</c:choose>
-	</li>
-	<li><a class="noTextUnderline" href="/broadleafdemo/orders/findOrder.htm" > Find Order </a></li>
-	<c:choose>
-		<c:when test="${customer.anonymous}">
-			<li><a href="/broadleafdemo/registerCustomer/registerCustomer.htm">My Account</a></li>
-		</c:when>
-		<c:otherwise>
-			<li><a href="/broadleafdemo/account/myAccount.htm">My Account</a></li>
-		</c:otherwise>
-	</c:choose>
+		<li>
+			<c:choose>
+				<c:when test="${customer.anonymous}">
+					<a href="/broadleafdemo/registerCustomer/registerCustomer.htm">Login</a>
+				</c:when>
+				<c:otherwise>
+					<a href="/broadleafdemo/account/myAccount.htm">Hello <c:out value="${customer.firstName}"/></a></li>
+					<li><a href="/broadleafdemo/logout.htm">Logout</a>
+				</c:otherwise>
+			</c:choose>
+		</li>
+		<li><a class="noTextUnderline" href="/broadleafdemo/orders/findOrder.htm" > Find Order </a></li>
 		<li><a href="/broadleafdemo/storeLocator/findStores.htm">Store Locator</a></li>
 		<li class="last"><a class="cartLink" href="/broadleafdemo/basket/viewCart.htm">View Cart</a></li>
 	</ul>
