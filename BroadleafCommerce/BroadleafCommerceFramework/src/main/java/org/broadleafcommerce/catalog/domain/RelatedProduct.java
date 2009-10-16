@@ -30,7 +30,7 @@ public interface RelatedProduct {
 
     public void setProduct(Product product);
 
-    public void setRelatedProduct(Product relatedSaleProduct);
+    public void setRelatedProduct(Product relatedProduct);
 
     public void setPromotionMessage(String promotionMessage);
 
