@@ -124,4 +124,9 @@
         </taglib>
     </jsp-config>
 
+	<env-entry>
+	    <env-entry-name>appName</env-entry-name>
+	    <env-entry-type>java.lang.String</env-entry-type>
+	    <env-entry-value>broadleafdemo</env-entry-value>
+	</env-entry>
 </web-app>
