@@ -18,7 +18,7 @@
 
 	<context:component-scan base-package="org.broadleafcommerce" />
 
-    <bean class="org.springframework.jmx.export.MBeanExporter">
+    <bean id="hibernateExporter" class="org.springframework.jmx.export.MBeanExporter">
         <property name="autodetect" value="false" />
         <property name="assembler">
             <bean id="jmxAssembler"
@@ -31,7 +31,19 @@
         </property>
         <property name="beans">
             <map>
-                <entry key="org.broadleafcommerce:name=hibernate.statistics">
+                <entry>
+                	<key>
+                		<bean class="org.broadleafcommerce.jmx.ExplicitNameFactoryBean">
+                			<constructor-arg value="org.broadleafcommerce:name=hibernate.statistics"/>
+                			<constructor-arg>
+                				<bean class="org.springframework.jndi.JndiObjectFactoryBean">
+						        	<property name="jndiName">
+						            	<value>java:/comp/env/appName</value>
+						        	</property>
+								</bean>
+                			</constructor-arg>
+                		</bean>
+                	</key>
                     <bean class="org.hibernate.jmx.StatisticsService">
                         <property name="statisticsEnabled" value="true" />
                         <property name="sessionFactory">

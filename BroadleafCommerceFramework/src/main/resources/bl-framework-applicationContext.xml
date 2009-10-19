@@ -19,7 +19,15 @@
 	    <property name="namingStrategy" ref="namingStrategy"/>
 	</bean>
 	
-	<bean id="attributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
+	<bean id="attributeSource" class="org.broadleafcommerce.jmx.AnnotationJmxAttributeSource">
+        <constructor-arg>
+            <bean class="org.springframework.jndi.JndiObjectFactoryBean">
+	        	<property name="jndiName">
+	            	<value>java:/comp/env/appName</value>
+	        	</property>
+			</bean>
+        </constructor-arg>
+    </bean>
 	
 	<bean id="assembler" class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
 	    <property name="attributeSource" ref="attributeSource"/>

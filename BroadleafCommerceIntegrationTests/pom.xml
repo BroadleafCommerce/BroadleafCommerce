@@ -22,7 +22,7 @@
 		          <id>testng</id>
 		          <phase>test</phase>
 		          <configuration>
-		            <tasks>
+		            <tasks unless="maven.test.skip">
 		              <path id="test.path">
 		              	<pathelement location="../BroadleafCommerceFramework/target/instrumented"/>
 		              	<pathelement location="../BroadleafCommerceFrameworkWeb/target/instrumented"/>

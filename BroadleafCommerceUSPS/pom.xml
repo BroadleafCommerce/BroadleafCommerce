@@ -22,7 +22,7 @@
 		          <id>cobertura</id>
 		          <phase>package</phase>
 		          <configuration>
-		            <tasks>
+		            <tasks unless="maven.test.skip">
 		            	<taskdef classpathref="maven.test.classpath" resource="tasks.properties"/>
 		            	<cobertura-instrument todir="target/instrumented"
 							datafile="target/instrumented/cobertura.ser"
