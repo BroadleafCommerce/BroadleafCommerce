@@ -47,22 +47,24 @@ public class CheckoutServiceImpl implements CheckoutService {
      * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order, java.util.Map)
      */
     public CheckoutResponse performCheckout(Order order, final Map<PaymentInfo, Referenced> payments) throws CheckoutException {
-        /*
-         * TODO add validation that checks the order and payment information for validity.
-         */
-        /*
-         * TODO remove this simple validation and encapsulate using our real validation strategy
-         */
-        for (PaymentInfo info : payments.keySet()) {
-            if (info.getReferenceNumber() == null) {
-                throw new CheckoutException("PaymentInfo reference number cannot be null");
-            }
-        }
-        for (Referenced referenced : payments.values()) {
-            if (referenced.getReferenceNumber() == null) {
-                throw new CheckoutException("Referenced reference number cannot be null");
-            }
-        }
+    	if (payments != null) {
+	        /*
+	         * TODO add validation that checks the order and payment information for validity.
+	         */
+	        /*
+	         * TODO remove this simple validation and encapsulate using our real validation strategy
+	         */
+	        for (PaymentInfo info : payments.keySet()) {
+	            if (info.getReferenceNumber() == null) {
+	                throw new CheckoutException("PaymentInfo reference number cannot be null");
+	            }
+	        }
+	        for (Referenced referenced : payments.values()) {
+	            if (referenced.getReferenceNumber() == null) {
+	                throw new CheckoutException("Referenced reference number cannot be null");
+	            }
+	        }
+    	}
 
         try {
             order.setSubmitDate(new Date(DateUtil.getNow()));
