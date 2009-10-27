@@ -11,7 +11,10 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
-	<context:component-scan base-package="org.broadleafcommerce" />
+	<context:component-scan base-package="org.broadleafcommerce">
+        <context:include-filter type="regex" expression=".*web.*"/>
+        <context:exclude-filter type="regex" expression=".*"/>
+    </context:component-scan>
 	
 	<aop:config/>
 	
