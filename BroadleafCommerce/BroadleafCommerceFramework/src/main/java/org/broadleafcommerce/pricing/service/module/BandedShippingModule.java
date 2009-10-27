@@ -25,8 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.pricing.dao.ShippingRateDao;
 import org.broadleafcommerce.pricing.domain.ShippingRate;
+import org.broadleafcommerce.pricing.service.ShippingRateService;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.util.money.Money;
 
@@ -38,8 +38,8 @@ public class BandedShippingModule implements ShippingModule {
 
     protected String name = MODULENAME;
 
-    @Resource(name = "blShippingRatesDao")
-    private ShippingRateDao shippingRateDao;
+    @Resource(name = "blShippingRateService")
+    private ShippingRateService shippingRateService;
 
     private Map<String, String> feeTypeMapping;
     private Map<String, String> feeSubTypeMapping;
@@ -72,7 +72,7 @@ public class BandedShippingModule implements ShippingModule {
             retailTotal = retailTotal.add(price);
         }
 
-        ShippingRate sr = shippingRateDao.readShippingRateByFeeTypesUnityQty(feeType, feeSubType, retailTotal);
+        ShippingRate sr = shippingRateService.readShippingRateByFeeTypesUnityQty(feeType, feeSubType, retailTotal);
         if (sr == null) {
             throw new NotImplementedException("Shipping rate " + fulfillmentGroup.getMethod() + " not supported");
         }
@@ -94,14 +94,6 @@ public class BandedShippingModule implements ShippingModule {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public ShippingRateDao getShippingRateDao() {
-        return shippingRateDao;
-    }
-
-    public void setShippingRateDao(ShippingRateDao shippingRateDao) {
-        this.shippingRateDao = shippingRateDao;
     }
 
     public Map<String, String> getFeeTypeMapping() {
