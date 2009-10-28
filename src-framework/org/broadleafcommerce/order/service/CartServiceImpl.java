@@ -120,15 +120,23 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         ReconstructCartResponse reconstructCartResponse = reconstructCart(customer);
         mergeCartResponse.setRemovedItems(reconstructCartResponse.getRemovedItems());
         Order customerCart = reconstructCartResponse.getOrder();
-        /*
-         * Set the response to merged if the saved cart has any items available
-         * to merge in.
-         */
-        mergeCartResponse.setMerged(customerCart != null && customerCart.getOrderItems().size() > 0);
+        if (anonymousCart != null && customerCart != null && anonymousCart.getId().equals(customerCart.getId())) {
+            /*
+             * Set merged to false if the cart ids are equal (cookied customer
+             * logs in).
+             */
+            mergeCartResponse.setMerged(false);
+        } else {
+            /*
+             * Set the response to merged if the saved cart has any items
+             * available to merge in.
+             */
+            mergeCartResponse.setMerged(customerCart != null && customerCart.getOrderItems().size() > 0);
+        }
 
         // add anonymous cart items (make sure they are valid)
         if (anonymousCart != null && (customerCart == null || !customerCart.getId().equals(anonymousCart.getId()))) {
-            //Order anonymousCart = findOrderById(anonymousCartId);
+            // Order anonymousCart = findOrderById(anonymousCartId);
             if (anonymousCart != null && anonymousCart.getOrderItems() != null && !anonymousCart.getOrderItems().isEmpty()) {
                 if (customerCart == null) {
                     customerCart = createNewCartForCustomer(customer);
