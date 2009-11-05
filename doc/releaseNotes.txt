@@ -1,0 +1,11 @@
+Version 1.0.1
+-----------------------
+* fixed a possible NPE if retail or sale prices are null on an order item
+* prevent a situation whereby the order state may try to update prices on an order without an active session.
+* Truncating user agent if the field length exceeds 255 chars
+* replace getSingleResult() with getResultList() for situations where single result might not exist
+* Fixes defect #72 - admin and demo can't run together
+* Added config to allow cobertura to be skipped when tests are skipped
+* fix an NPE when callling performCheckout with just the order.
+* Updated Spring to fix an annotation/xml override inconsistency - Updated required libraries to remove redundancy - fixed the controller layer to only component scan web layer classes.
+* changed the banded shipping module to use the shipping rate service instead of the dao directly.

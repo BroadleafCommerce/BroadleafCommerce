@@ -108,7 +108,7 @@ public class HibernateToolTask extends Task {
 			loader.setParent(classLoader); // if this is not set, classes from the taskdef cannot be found - which is crucial for e.g. annotations.
 			loader.setThreadContextLoader();
 			// launch the service merge application context to get the entity configuration for the entire framework
-			String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.SERVICECONTEXTTYPE);
+			String[] contexts = StandardConfigLocations.retrieveAll(StandardConfigLocations.TESTCONTEXTTYPE);
 			mergeContext = new MergeClassPathXMLApplicationContext(contexts, new String[]{});
 		} catch (Exception e) {
 			throw new BuildException(e, getLocation());
