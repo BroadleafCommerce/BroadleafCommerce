@@ -128,31 +128,4 @@
     	<property name="defaultHandler" ref="compositeStatusHandler"/>
     </bean>
     
-    <bean id="attributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"/>
-    
-    <bean id="hibernateExporter" class="org.springframework.jmx.export.MBeanExporter">
-        <property name="autodetect" value="false" />
-        <property name="assembler">
-            <bean id="jmxAssembler"
-                class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
-                <property name="attributeSource">
-                    <bean
-                        class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
-                </property>
-            </bean>
-        </property>
-        <property name="beans">
-            <map>
-                <entry key="org.broadleafcommerce:name=hibernate.statistics">
-                    <bean class="org.hibernate.jmx.StatisticsService">
-                        <property name="statisticsEnabled" value="true" />
-                        <property name="sessionFactory">
-                            <util:property-path
-                                path="entityManagerFactory.sessionFactory" />
-                        </property>
-                    </bean>
-                </entry>
-            </map>
-        </property>
-    </bean>
 </beans>

@@ -143,10 +143,10 @@ The "dist" directory contains the following distinct jar files for use in applic
 
 4. WHERE TO START?
 
-* A Quick Start guide is available on the Broadleaf Commerce support wiki: [place quick start guide url here].
+* A Quick Start guide is available on the Broadleaf Commerce support wiki: http://broadleafcommerce.org/trac/wiki/quickStartGuide.
 This guide provides the minimum information needed to get up and running with the Broadleaf Commerce 
 framework in your own application.
 
-* A Broadleaf Commerce Demo guide is available on the support wiki: [place demo guide url here].
+* A Broadleaf Commerce Demo guide is available on the support wiki: http://broadleafcommerce.org/trac/wiki/quickStartGuide.
 This guide provides instructions for deploying and running a local instance of the Broadleaf Commerce
 Demo application in a local Tomcat instance backed by a MySQL database.

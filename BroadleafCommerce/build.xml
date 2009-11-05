@@ -239,6 +239,7 @@
 		<mkdir dir="${maven.build.finalName}"/>
 		<copy file="doc/readme.txt" todir="${maven.build.finalName}"/>
 		<copy file="doc/quickStartGuide.txt" todir="${maven.build.finalName}"/>
+		<copy file="doc/releaseNotes.txt" todir="${maven.build.finalName}"/>
 		<replace file="${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}"/>
 	</target>
 
