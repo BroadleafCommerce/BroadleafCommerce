@@ -75,6 +75,14 @@ public class ProductDaoImpl implements ProductDao {
         return query.getResultList();
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Product> readActiveProductsBySku(Long skuId) {
+        Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU");
+        query.setParameter("skuId", skuId);
+        query.setHint(getQueryCacheableKey(), true);
+        return query.getResultList();
+    }
+
     public String getQueryCacheableKey() {
         return queryCacheableKey;
     }

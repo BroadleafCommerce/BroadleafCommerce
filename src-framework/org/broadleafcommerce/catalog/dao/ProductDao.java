@@ -31,4 +31,5 @@ public interface ProductDao {
 
     public List<Product> readProductsBySku(Long skuId);
 
+    public List<Product> readActiveProductsBySku(Long skuId);
 }
