@@ -29,6 +29,8 @@ import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -38,12 +40,13 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(targetEntity = SkuImpl.class, optional=false)
+    @ManyToOne(targetEntity = SkuImpl.class, optional = false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     protected Sku sku;
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
+    @NotFound(action = NotFoundAction.IGNORE)
     protected Product product;
 
     @ManyToOne(targetEntity = BundleOrderItemImpl.class)
@@ -95,7 +98,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Override
     public boolean updatePrices() {
         boolean updated = false;
-        //use the sku prices - the retail and sale prices could be null
+        // use the sku prices - the retail and sale prices could be null
         if (!getSku().getRetailPrice().equals(getRetailPrice())) {
             setRetailPrice(getSku().getRetailPrice());
             updated = true;

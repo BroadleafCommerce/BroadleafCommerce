@@ -45,6 +45,8 @@ import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -62,6 +64,7 @@ public class OrderItemImpl implements OrderItem {
 
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
+    @NotFound(action = NotFoundAction.IGNORE)
     protected Category category;
 
     @ManyToOne(targetEntity = OrderImpl.class)
