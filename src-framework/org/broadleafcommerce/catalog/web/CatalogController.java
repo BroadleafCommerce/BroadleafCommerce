@@ -27,6 +27,7 @@ import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.search.util.SearchFilterUtil;
+import org.broadleafcommerce.web.ConfigurableRedirectView;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.util.UrlPathHelper;
@@ -42,10 +43,9 @@ public class CatalogController extends AbstractController {
     private String categoryTemplatePrefix;
 
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-            HttpServletResponse response) {
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 
-        HashMap<String,Object> model = new HashMap<String,Object>();
+        HashMap<String, Object> model = new HashMap<String, Object>();
 
         addCategoryToModel(request, model);
         boolean productFound = addProductsToModel(request, model);
@@ -57,7 +57,11 @@ public class CatalogController extends AbstractController {
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
             if (currentCategory.getUrl() != null && !"".equals(currentCategory.getUrl())) {
-                return new ModelAndView("redirect:"+currentCategory.getUrl());
+                ModelAndView modelAndView = new ModelAndView();
+                ConfigurableRedirectView redirectView = new ConfigurableRedirectView(currentCategory.getUrl());
+                redirectView.setResponseStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                modelAndView.setView(redirectView);
+                return modelAndView;
             } else if (currentCategory.getDisplayTemplate() != null && !"".equals(currentCategory.getUrl())) {
                 view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
             } else {
@@ -71,7 +75,7 @@ public class CatalogController extends AbstractController {
         return new ModelAndView(view, model);
     }
 
-    protected void addCategoryToModel(HttpServletRequest request, Map<String,Object> model ) {
+    protected void addCategoryToModel(HttpServletRequest request, Map<String, Object> model) {
         Category rootCategory = null;
         if (getRootCategoryId() != null) {
             rootCategory = catalogService.findCategoryById(getRootCategoryId());
@@ -98,16 +102,16 @@ public class CatalogController extends AbstractController {
     }
 
     protected int findProductPositionInList(Product product, List<Product> products) {
-        for (int i=0; i < products.size(); i++) {
+        for (int i = 0; i < products.size(); i++) {
             Product currentProduct = products.get(i);
             if (product.getId().equals(currentProduct.getId())) {
-                return i+1;
+                return i + 1;
             }
         }
         return 0;
     }
 
-    protected boolean addCategoryListToModel(List<Category> categoryList, Category rootCategory, String url, Map<String,Object> model) {
+    protected boolean addCategoryListToModel(List<Category> categoryList, Category rootCategory, String url, Map<String, Object> model) {
         boolean categoryError = false;
 
         while (categoryList == null) {
@@ -124,15 +128,15 @@ public class CatalogController extends AbstractController {
         }
 
         model.put("breadcrumbCategories", categoryList);
-        model.put("currentCategory", categoryList.get(categoryList.size()-1));
+        model.put("currentCategory", categoryList.get(categoryList.size() - 1));
         model.put("categoryError", categoryError);
         return categoryError;
     }
 
-    protected boolean validateProductAndAddToModel(Product product, Map<String,Object> model) {
+    protected boolean validateProductAndAddToModel(Product product, Map<String, Object> model) {
         Category currentCategory = (Category) model.get("currentCategory");
         Category rootCategory = (Category) model.get("rootCategory");
-        int productPosition=0;
+        int productPosition = 0;
 
         List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
         if (productList != null) {
@@ -140,7 +144,8 @@ public class CatalogController extends AbstractController {
         }
         productPosition = findProductPositionInList(product, productList);
         if (productPosition == 0) {
-            // look for product in its default category and override category from request URL
+            // look for product in its default category and override category
+            // from request URL
             currentCategory = product.getDefaultCategory();
             productList = catalogService.findActiveProductsByCategory(currentCategory);
             if (productList != null) {
@@ -150,7 +155,7 @@ public class CatalogController extends AbstractController {
 
             // override category list settings using this products default
             List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
-            if (categoryList != null && ! addCategoryListToModel(categoryList, rootCategory, url, model)) {
+            if (categoryList != null && !addCategoryListToModel(categoryList, rootCategory, url, model)) {
                 productPosition = findProductPositionInList(product, productList);
             }
         }
@@ -160,7 +165,7 @@ public class CatalogController extends AbstractController {
             model.put("currentProduct", product);
             model.put("productPosition", productPosition);
             if (productPosition != 1) {
-                model.put("previousProduct", productList.get(productPosition-2));
+                model.put("previousProduct", productList.get(productPosition - 2));
             }
             if (productPosition < productList.size()) {
                 model.put("nextProduct", productList.get(productPosition));
@@ -170,11 +175,11 @@ public class CatalogController extends AbstractController {
             model.put("productError", true);
         }
 
-        return (productPosition !=0);
+        return (productPosition != 0);
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean addProductsToModel(HttpServletRequest request, Map<String,Object> model ) {
+    protected boolean addProductsToModel(HttpServletRequest request, Map<String, Object> model) {
         boolean productFound = false;
 
         String productId = request.getParameter("productId");
@@ -186,7 +191,7 @@ public class CatalogController extends AbstractController {
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
             List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
-            SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "skus[0].salePrice"});
+            SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] { "manufacturer", "skus[0].salePrice" });
             model.put("currentProducts", productList);
         }
 

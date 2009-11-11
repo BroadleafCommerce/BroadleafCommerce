@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.web.ConfigurableRedirectView;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -39,10 +40,9 @@ public class SimpleCatalogController extends AbstractController {
     private String categoryTemplatePrefix;
 
     @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-            HttpServletResponse response) {
+    protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) {
 
-        HashMap<String,Object> model = new HashMap<String,Object>();
+        HashMap<String, Object> model = new HashMap<String, Object>();
 
         addCategoryToModel(request, model);
         boolean productFound = addProductsToModel(request, model);
@@ -55,9 +55,12 @@ public class SimpleCatalogController extends AbstractController {
             Category currentCategory = (Category) model.get("currentCategory");
             if (currentCategory == null) {
                 view = defaultCategoryView;
-            }
-            else if (currentCategory.getUrl() != null) {
-                return new ModelAndView("redirect:"+currentCategory.getUrl().replace("index.jhtml", ""));
+            } else if (currentCategory.getUrl() != null) {
+                ModelAndView modelAndView = new ModelAndView();
+                ConfigurableRedirectView redirectView = new ConfigurableRedirectView(currentCategory.getUrl().replace("index.jhtml", ""));
+                redirectView.setResponseStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                modelAndView.setView(redirectView);
+                return modelAndView;
             } else if (currentCategory.getDisplayTemplate() != null) {
                 view = categoryTemplatePrefix + currentCategory.getDisplayTemplate();
             } else {
@@ -96,10 +99,10 @@ public class SimpleCatalogController extends AbstractController {
     }
 
     protected int findProductPositionInList(Product product, List<Product> products) {
-        for (int i=0; i < products.size(); i++) {
+        for (int i = 0; i < products.size(); i++) {
             Product currentProduct = products.get(i);
             if (product.getId().equals(currentProduct.getId())) {
-                return i+1;
+                return i + 1;
             }
         }
         return 0;
@@ -119,10 +122,10 @@ public class SimpleCatalogController extends AbstractController {
         return categoryList;
     }
 
-    protected boolean validateProductAndAddToModel(Product product, Map<String,Object> model) {
+    protected boolean validateProductAndAddToModel(Product product, Map<String, Object> model) {
         Category currentCategory = (Category) model.get("currentCategory");
         Category rootCategory = (Category) model.get("rootCategory");
-        int productPosition=0;
+        int productPosition = 0;
 
         List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
         if (productList != null) {
@@ -130,7 +133,8 @@ public class SimpleCatalogController extends AbstractController {
         }
         productPosition = findProductPositionInList(product, productList);
         if (productPosition == 0) {
-            // look for product in its default category and override category from request URL
+            // look for product in its default category and override category
+            // from request URL
             currentCategory = product.getDefaultCategory();
             model.put("currentCategory", currentCategory);
             productList = catalogService.findActiveProductsByCategory(currentCategory);
@@ -151,7 +155,7 @@ public class SimpleCatalogController extends AbstractController {
             model.put("currentProduct", product);
             model.put("productPosition", productPosition);
             if (productPosition != 1) {
-                model.put("previousProduct", productList.get(productPosition-2));
+                model.put("previousProduct", productList.get(productPosition - 2));
             }
             if (productPosition < productList.size()) {
                 model.put("nextProduct", productList.get(productPosition));
@@ -161,10 +165,10 @@ public class SimpleCatalogController extends AbstractController {
             model.put("productError", true);
         }
 
-        return (productPosition !=0);
+        return (productPosition != 0);
     }
 
-    protected boolean addProductsToModel(HttpServletRequest request, Map<String,Object> model ) {
+    protected boolean addProductsToModel(HttpServletRequest request, Map<String, Object> model) {
         boolean productFound = false;
 
         String productId = request.getParameter("productId");
