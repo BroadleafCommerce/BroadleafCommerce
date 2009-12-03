@@ -47,10 +47,10 @@
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
 
 			private function initApp():void{
-				var urlPrefix = Application.application.loaderInfo.url.substr(0,
+				var urlPrefix:String = Application.application.loaderInfo.url.substr(0,
 			                                          	  Application.application.loaderInfo.url.lastIndexOf("/"))+"/";
 
-				var iae:InitializeApplicationEvent = new InitializeApplicationEvent(urlPrefix);
+				var iae:InitializeApplicationEvent = new InitializeApplicationEvent();
 				iae.dispatch();
 			}
 		]]>

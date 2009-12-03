@@ -28,6 +28,7 @@
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.MediaModel;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
+	import org.broadleafcommerce.admin.core.model.ConfigModel;
 
 	public class MediaNewWindowViewHelper extends ViewHelper
 	{
@@ -35,7 +36,7 @@
 		private var directory:String;
 		private var urlRequest:URLRequest;
 		private var media:Media;
-		private const FILE_UPLOAD_URL:String = "http://localhost:8080/broadleafadmin/spring/upload";		
+		private const FILE_UPLOAD_URL:String = ConfigModel.URL_FILE_UPLOAD;		
 
 		public function MediaNewWindowViewHelper()
 		{

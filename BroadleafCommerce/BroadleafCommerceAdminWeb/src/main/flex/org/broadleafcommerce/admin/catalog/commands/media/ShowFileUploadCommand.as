@@ -26,6 +26,7 @@ package org.broadleafcommerce.admin.catalog.commands.media
 	import org.broadleafcommerce.admin.catalog.vo.category.Category;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 	import org.broadleafcommerce.admin.catalog.vo.product.Product;
+	import org.broadleafcommerce.admin.core.model.ConfigModel;
 
 	public class ShowFileUploadCommand implements Command
 	{
@@ -44,11 +45,11 @@ package org.broadleafcommerce.admin.catalog.commands.media
 			var sfue:ShowFileUploadEvent = ShowFileUploadEvent(event);
 			if(currentViewState ==  categoryViewState){
 				var category:Category = catalogModelLocator.categoryModel.currentCategory;
-				MediaNewWindowViewHelper(ViewLocator.getInstance().getViewHelper("mediaNewWindowViewHelper")).uploadImage("/images/category/"+category.id+"/",Media(sfue.viewData));
+				MediaNewWindowViewHelper(ViewLocator.getInstance().getViewHelper("mediaNewWindowViewHelper")).uploadImage(ConfigModel.SERVER_IMAGES+"/category/"+category.id+"/",Media(sfue.viewData));
 			}
 			if(currentViewState == productViewState){
 				var product:Product = catalogModelLocator.productModel.currentProduct;
-				MediaNewWindowViewHelper(ViewLocator.getInstance().getViewHelper("mediaNewWindowViewHelper")).uploadImage("/images/product/"+product.id+"/",Media(sfue.viewData));			}
+				MediaNewWindowViewHelper(ViewLocator.getInstance().getViewHelper("mediaNewWindowViewHelper")).uploadImage(ConfigModel.SERVER_IMAGES+"/product/"+product.id+"/",Media(sfue.viewData));			}
 		}
 		
 	}

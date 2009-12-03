@@ -7,6 +7,12 @@
         <service-include file-path="messaging-config.xml" />        
     </services -->
 
+	<services>
+		    <default-channels>
+	            <channel ref="my-amf"/>
+	        </default-channels>		
+	</services>
+
     <security>
         <!-- Uncomment the correct app server
         <login-command class="flex.messaging.security.TomcatLoginCommand" server="JBoss">

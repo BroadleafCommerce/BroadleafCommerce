@@ -87,7 +87,7 @@
 	            destination="keyText.text" />
 	<mx:Binding source="data.url"
 	            destination="urlLabel.text" />
-	<mx:Binding source="'http://localhost:8080/broadleafadmin/'+data.url"
+	<mx:Binding source="ConfigModel.URL_SERVER+'/'+data.url"
 	            destination="thumbnail.source" />
 	<mx:Binding source="data.name" 
 		        destination="nameLabel.text"/>
@@ -95,7 +95,7 @@
 		        destination="labelLabel.text"/>
 	<mx:Binding source="configModel.currentCodeTypes"
 	            destination="keyTextBox.dataProvider" />	
-	<mx:Binding source="'http://localhost:8080/broadleafadmin/'+urlLabelEdit.text"
+	<mx:Binding source="ConfigModel.URL_SERVER+urlLabelEdit.text"
 	            destination="thumbnailEdit.source" />            
 
 	<mx:Binding source="selectCurrentCodeType(editedData.key)"

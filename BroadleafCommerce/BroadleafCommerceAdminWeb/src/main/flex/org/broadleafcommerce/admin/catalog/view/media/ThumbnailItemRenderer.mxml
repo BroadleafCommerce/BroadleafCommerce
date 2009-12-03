@@ -19,8 +19,9 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.core.model.ConfigModel;
 			override public function set data(value:Object):void{
-				super.data = "http://localhost:8080/broadleafadmin/"+value.media.url;
+				super.data = ConfigModel.URL_SERVER+value.media.url;
 			}
 		]]>
 	</mx:Script>	

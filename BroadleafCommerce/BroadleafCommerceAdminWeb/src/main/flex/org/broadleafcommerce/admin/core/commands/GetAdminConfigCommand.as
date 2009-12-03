@@ -27,6 +27,7 @@ package org.broadleafcommerce.admin.core.commands
 	import mx.collections.SortField;
 	
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	import org.broadleafcommerce.admin.core.model.ConfigModel;
 	import org.broadleafcommerce.admin.core.vo.ModuleConfig;
 
 	public class GetAdminConfigCommand extends Command
@@ -42,8 +43,7 @@ package org.broadleafcommerce.admin.core.commands
 		{
 			super.execute(event);
 			trace("DEBUG: GetAdminConfigCommand.execute()");
-			var XML_URL:String = AppModelLocator.getInstance().configModel.urlPrefix+"modules/modules-config.xml";
-			var myXMLURL:URLRequest = new URLRequest(XML_URL);
+			var myXMLURL:URLRequest = new URLRequest(ConfigModel.URL_CONFIG);
 			myLoader = new URLLoader(myXMLURL);
 			myLoader.addEventListener("complete", xmlLoaded);
 			notifyCaller();			

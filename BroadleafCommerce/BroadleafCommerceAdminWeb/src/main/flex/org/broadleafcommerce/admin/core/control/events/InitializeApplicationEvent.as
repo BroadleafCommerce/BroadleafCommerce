@@ -21,12 +21,9 @@ package org.broadleafcommerce.admin.core.control.events
 	{
 		public static const EVENT_ID:String = "event_initialize_Application";
 		
-		public var urlPrefix:String;
-		
-		public function InitializeApplicationEvent(urlPrefix:String)
+		public function InitializeApplicationEvent()
 		{
 			super(EVENT_ID);
-			this.urlPrefix = urlPrefix;
 		}
 		
 	}
