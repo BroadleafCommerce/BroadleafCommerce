@@ -18,13 +18,13 @@ package org.broadleafcommerce.admin.core.view.helpers
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
-	import mx.controls.Alert;
 	import mx.events.ModuleEvent;
 	import mx.modules.IModuleInfo;
 	import mx.modules.Module;
 	import mx.modules.ModuleManager;
 	
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
+	import org.broadleafcommerce.admin.core.model.ConfigModel;
 	import org.broadleafcommerce.admin.core.vo.ModuleConfig;
 	
 	public class LoaderHelper extends EventDispatcher
@@ -32,6 +32,7 @@ package org.broadleafcommerce.admin.core.view.helpers
 		public var moduleConfig:ModuleConfig;
 		public var loadedModule:Module;		
 		private var moduleInfo:IModuleInfo;
+		private var configModel:ConfigModel = AppModelLocator.getInstance().configModel;
 		
 		public function LoaderHelper(moduleConfig:ModuleConfig = null)
 		{
@@ -39,7 +40,7 @@ package org.broadleafcommerce.admin.core.view.helpers
 		}
 		
 		public function load():void{      
-		  var fullUrl:String = AppModelLocator.getInstance().configModel.urlPrefix+moduleConfig.swf;
+		  var fullUrl:String = ConfigModel.URL_MODULE_SERVER+moduleConfig.swf;
 		  moduleInfo = ModuleManager.getModule(fullUrl); 	     
 	      moduleInfo.addEventListener(ModuleEvent.READY,handleModuleReady);
 	      moduleInfo.addEventListener(ModuleEvent.ERROR, handleModuleError);

@@ -82,7 +82,6 @@ public class AdminCatalogService {
     }
 
     public Product saveProduct(Product product) {
-    	Product newProduct = catalogService.findProductById(product.getId());
     	List<Sku> skus = new ArrayList<Sku>(product.getAllSkus().size());
     	skus.addAll(product.getAllSkus());
     	product.getAllSkus().clear();

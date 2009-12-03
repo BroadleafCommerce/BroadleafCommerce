@@ -19,23 +19,28 @@
  <cairngorm:ServiceLocator 
 	xmlns:mx="http://www.adobe.com/2006/mxml" 
 	xmlns:cairngorm="com.adobe.cairngorm.business.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.core.model.ConfigModel;
+		]]>
+	</mx:Script>
 
-	<mx:RemoteObject
+	<mx:RemoteObject 
 		id="blcAdminService"
-		endpoint="http://localhost:8080/broadleafadmin/messagebroker/amf"  
+		endpoint="{ConfigModel.URL_ENDPOINT}"  
 		showBusyCursor="true">
 	</mx:RemoteObject>
 
 	<mx:RemoteObject
 		id="blcAdminSecurityService"
-		endpoint="http://localhost:8080/broadleafadmin/messagebroker/amf"
+		endpoint="{ConfigModel.URL_ENDPOINT}"
 		showBusyCursor="true"
 		destination="blAdminSecurityService">
 	</mx:RemoteObject>
 	
 	<mx:RemoteObject
 		id="blCodeTypeService"
-		endpoint="http://localhost:8080/broadleafadmin/messagebroker/amf"
+		endpoint="{ConfigModel.URL_ENDPOINT}"
 		showBusyCursor="true"
 		destination="blCodeTypeService">
 	</mx:RemoteObject>

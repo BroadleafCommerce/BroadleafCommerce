@@ -69,7 +69,7 @@
 	            destination="keyText.dataProvider" />	            
 	<mx:Binding source="data.url"
 	            destination="urlLabel.text" />
-	<mx:Binding source="'http://localhost:8080/broadleafadmin/'+data.url"
+	<mx:Binding source="{ConfigModel.URL_SERVER}+data.url"
 	            destination="thumbnail.source" />
 	<mx:Binding source="data.name" 
 		        destination="nameLabel.text"/>

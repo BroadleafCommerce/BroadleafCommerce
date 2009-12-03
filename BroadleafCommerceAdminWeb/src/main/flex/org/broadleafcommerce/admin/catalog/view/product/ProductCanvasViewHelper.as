@@ -23,6 +23,7 @@ package org.broadleafcommerce.admin.catalog.view.product
 	import flash.net.URLRequest;
 	import flash.net.URLVariables;
 	
+	import mx.collections.ArrayCollection;
 	import mx.containers.TitleWindow;
 	import mx.controls.Alert;
 	import mx.managers.PopUpManager;
@@ -34,7 +35,7 @@ package org.broadleafcommerce.admin.catalog.view.product
 	import org.broadleafcommerce.admin.catalog.view.media.MediaNewWindow;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
 	import org.broadleafcommerce.admin.catalog.vo.product.Product;
-	import mx.collections.ArrayCollection;
+	import org.broadleafcommerce.admin.core.model.ConfigModel;
 
 	public class ProductCanvasViewHelper extends ViewHelper
 	{
@@ -42,7 +43,7 @@ package org.broadleafcommerce.admin.catalog.view.product
 		private var directory:String;
 		private var urlRequest:URLRequest;
 		private var media:Media;
-		private const FILE_UPLOAD_URL:String = "http://localhost:8080/broadleafadmin/spring/upload";		
+		private const FILE_UPLOAD_URL:String = ConfigModel.URL_SERVER;		
 
 		public function ProductCanvasViewHelper()
 		{

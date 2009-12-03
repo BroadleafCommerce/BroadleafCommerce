@@ -34,7 +34,6 @@ package org.broadleafcommerce.admin.core.commands
 		public function execute(event:CairngormEvent):void
 		{
 			var iae:InitializeApplicationEvent = InitializeApplicationEvent(event);
-			AppModelLocator.getInstance().configModel.urlPrefix = iae.urlPrefix;
 			var events:Array = [GetAdminConfigEvent, AdminFindAllCodeTypesEvent];
 			var generator:EventGenerator = new EventGenerator(events,null,0,EventGenerator.TRIGGER_PARALLEL);
 			generator.dispatch();
