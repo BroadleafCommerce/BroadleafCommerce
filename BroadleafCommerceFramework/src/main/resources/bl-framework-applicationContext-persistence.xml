@@ -246,6 +246,11 @@
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blSearchServiceOperation"/>
 	</aop:config>
 
+	<aop:config>
+		<aop:pointcut id="blContentServiceOperation" expression="execution(* org.broadleafcommerce.content.service.ContentService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blContentServiceOperation"/>
+	</aop:config>
+
     <bean id="blCategoryDao" class="org.broadleafcommerce.catalog.dao.CategoryDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
@@ -263,6 +268,14 @@
 	</bean>
 
 	<bean id="blTargetContentDao" class="org.broadleafcommerce.marketing.dao.TargetContentDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blContentDao" class="org.broadleafcommerce.content.dao.ContentDaoImpl">
+		<property name="queryCacheableKey" value="${query.cacheable}"/>
+	</bean>
+
+	<bean id="blContentDetailsDao" class="org.broadleafcommerce.content.dao.ContentDetailsDaoImpl">
 		<property name="queryCacheableKey" value="${query.cacheable}"/>
 	</bean>
 

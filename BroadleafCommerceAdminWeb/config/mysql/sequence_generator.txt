@@ -19,3 +19,4 @@ CategoryProductImpl|500
 AdminRoleImpl|2
 SearchInterceptImpl|1
 SkuImpl|10000
+ContentImpl|500

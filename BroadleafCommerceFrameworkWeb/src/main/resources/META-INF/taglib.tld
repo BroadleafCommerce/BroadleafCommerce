@@ -110,6 +110,28 @@
 		</attribute>
     </tag>
     <tag>
+        <name>contentSpecified</name>
+        <tag-class>org.broadleafcommerce.layout.tags.ContentSpecifiedTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Looks up content by contentType and parameter map objects to evaluate MVEL expressions against</description>
+       	<attribute>
+			<name>contentType</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+       	<attribute>
+			<name>parameterMap</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Parameter Map contains the objects to evaluate the MVEL expressions against</description>
+		</attribute>
+		<attribute>
+			<name>contentDetailsProperty</name>
+			<required>true</required>
+			<description>Page scoped variable to put returned contentDetails.getXmlContent into</description>
+		</attribute>
+    </tag>
+    <tag>
         <name>contentDisplayRandom</name>
         <tag-class>org.broadleafcommerce.layout.tags.RandomContentDisplayTag</tag-class>
         <body-content>empty</body-content>
