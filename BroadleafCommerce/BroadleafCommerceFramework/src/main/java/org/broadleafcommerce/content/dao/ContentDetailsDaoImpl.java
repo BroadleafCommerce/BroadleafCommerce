@@ -1,0 +1,98 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.broadleafcommerce.content.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.broadleafcommerce.content.domain.Content;
+import org.broadleafcommerce.content.domain.ContentDetails;
+import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.springframework.stereotype.Repository;
+
+import edu.emory.mathcs.backport.java.util.Collections;
+
+/**
+ * @author btaylor
+ *
+ */
+@Repository("blContentDetailsDao")
+public class ContentDetailsDaoImpl implements ContentDetailsDao {
+
+	@PersistenceContext(unitName="blPU")
+    protected EntityManager em;
+
+    @Resource(name="blEntityConfiguration")
+    protected EntityConfiguration entityConfiguration;
+
+    protected String queryCacheableKey = "org.hibernate.cacheable";    
+    
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.dao.ContentDetailsDao#delete(org.broadleafcommerce.content.domain.ContentDetails)
+	 */
+	public void delete(ContentDetails contentDetails) {
+		if (!em.contains(contentDetails)){
+			contentDetails = readContentDetailsById(contentDetails.getId());
+		}
+		em.remove(contentDetails);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.dao.ContentDetailsDao#readContentDetailsById(java.lang.Long)
+	 */
+	@SuppressWarnings("unchecked")
+	public ContentDetails readContentDetailsById(Long id) {
+		return (ContentDetails) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.content.domain.ContentDetails"), id);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ContentDetails> readContentDetailsByOrderedIds(List<Long> ids){
+		Query query = em.createNamedQuery("BC_READ_CONTENT_DETAILS_BY_IDS");
+		query.setParameter("contentIds", ids);
+		List<ContentDetails> cds = (List<ContentDetails>)query.getResultList();
+		List<ContentDetails> orderedCds = new ArrayList<ContentDetails>();
+		for (Long id : ids){
+			for (ContentDetails cd : cds){
+				if(id.intValue() ==  cd.getId().intValue()){
+					orderedCds.add(cd);
+				}
+			}
+		}
+		return orderedCds;
+		
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.dao.ContentDetailsDao#save(org.broadleafcommerce.content.domain.ContentDetails)
+	 */
+	public ContentDetails save(ContentDetails contentDetails) {
+		return em.merge(contentDetails);
+	}
+	
+    public String getQueryCacheableKey() {
+        return queryCacheableKey;
+    }
+
+    public void setQueryCacheableKey(String queryCacheableKey) {
+        this.queryCacheableKey = queryCacheableKey;
+    }	
+}

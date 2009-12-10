@@ -23,6 +23,8 @@
 		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/SearchIntercept.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Content.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/ContentDetails.orm.xml</mapping-file>
         <class>org.broadleafcommerce.catalog.domain.BasePriceImpl</class>
         <class>org.broadleafcommerce.catalog.domain.CategoryImpl</class>
         <class>org.broadleafcommerce.media.domain.MediaImpl</class>
@@ -74,6 +76,8 @@
 		<class>org.broadleafcommerce.rating.domain.RatingDetailImpl</class>
 		<class>org.broadleafcommerce.rating.domain.ReviewDetailImpl</class>
 		<class>org.broadleafcommerce.rating.domain.ReviewFeedbackImpl</class>
+		<class>org.broadleafcommerce.content.domain.ContentImpl</class>
+		<class>org.broadleafcommerce.content.domain.ContentDetailsImpl</class>
         <exclude-unlisted-classes/>
         <properties>
             <property name="hibernate.show_sql" value="false"/>

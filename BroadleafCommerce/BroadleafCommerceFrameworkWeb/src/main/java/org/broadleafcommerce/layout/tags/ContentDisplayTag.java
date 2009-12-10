@@ -17,7 +17,9 @@ package org.broadleafcommerce.layout.tags;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.broadleafcommerce.marketing.domain.TargetContent;
