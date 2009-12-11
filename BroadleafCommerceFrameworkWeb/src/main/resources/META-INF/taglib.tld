@@ -119,16 +119,17 @@
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>xslt</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Stylesheet used to style XML</description>
+		</attribute>
        	<attribute>
 			<name>parameterMap</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<description>Parameter Map contains the objects to evaluate the MVEL expressions against</description>
-		</attribute>
-		<attribute>
-			<name>contentDetailsProperty</name>
-			<required>true</required>
-			<description>Page scoped variable to put returned contentDetails.getXmlContent into</description>
 		</attribute>
     </tag>
     <tag>
