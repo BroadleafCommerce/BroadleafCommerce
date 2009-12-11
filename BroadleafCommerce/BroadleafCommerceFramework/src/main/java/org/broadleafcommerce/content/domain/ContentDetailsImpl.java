@@ -45,7 +45,7 @@ public class ContentDetailsImpl implements ContentDetails {
     @Id
     @Column(name = "ID")
 	@OneToOne(targetEntity = ContentImpl.class, mappedBy="ID")
-	@JoinColumn(name = "ID")
+	@JoinColumn(name = "ID", unique=true, nullable=false, updatable=false)
 	@Index(name = "CONTENT_DETAILS_INDEX", columnNames={"ID"})
 	protected Long id;
     

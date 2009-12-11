@@ -25,7 +25,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
+import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.broadleafcommerce.content.domain.ContentDetails;
@@ -33,12 +35,12 @@ import org.broadleafcommerce.content.service.ContentService;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-public class ContentSpecifiedTag extends SimpleTagSupport {
+public class ContentSpecifiedTag extends BodyTagSupport {
     private static final long serialVersionUID = 1L;
 
     private Map<String, Object> parameterMap;
     private String contentType;
-    private String contentDetailsProperty;
+    private Object xslt;
 
     public String getContentType() {
         return contentType;
@@ -59,28 +61,28 @@ public class ContentSpecifiedTag extends SimpleTagSupport {
 	public void setParameterMap(Map<String, Object> parameterMap) {
 		this.parameterMap = parameterMap;
 	}
+	
 	/**
-	 * @return the contentDetailsProperty
+	 * @return the xslt
 	 */
-	public String getContentDetailsProperty() {
-		return contentDetailsProperty;
+	public Object getXslt() {
+		return xslt;
 	}
 	/**
-	 * @param contentDetailsProperty the contentDetailsProperty to set
+	 * @param xslt the xslt to set
 	 */
-	public void setContentDetailsProperty(String contentDetailsProperty) {
-		this.contentDetailsProperty = contentDetailsProperty;
+	public void setXslt(Object xslt) {
+		this.xslt = xslt;
 	}
 	
 	@Override
-    public void doTag() throws JspException, IOException {
-        PageContext pageContext = (PageContext)getJspContext();    	
+    public int doStartTag() throws JspException {
+//        PageContext pageContext = (PageContext)getJspContext();    	
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         ContentService contentService = (ContentService) applicationContext.getBean("blContentService");
         List<ContentDetails> contentDetailObjs;
         Date displayDate = null;
         String sandbox = "PROD";
-        List<String> contentXmls = new ArrayList<String>();
 
         HttpSession session = pageContext.getSession();
         if(session != null){
@@ -108,9 +110,14 @@ public class ContentSpecifiedTag extends SimpleTagSupport {
         	contentDetailObjs = contentService.findContentDetails(sandbox, contentType, parameterMap, displayDate);
         }
 
-        for(ContentDetails cd : contentDetailObjs){
-        	contentXmls.add(cd.getXmlContent());
+        JspWriter out = pageContext.getOut();
+        try{
+        	out.write(contentService.renderedContentDetails((String)xslt, contentDetailObjs));        	
+        }catch (Exception e){
+        	throw new JspException();
         }
-        pageContext.setAttribute(contentDetailsProperty, contentXmls);
+        
+        return EVAL_PAGE;
+        //        pageContext.setAttribute(contentDetailsProperty, contentXmls);
     }
 }
