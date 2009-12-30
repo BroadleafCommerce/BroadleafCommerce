@@ -30,6 +30,7 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.apache.taglibs.standard.tag.common.core.Util;
 import org.broadleafcommerce.content.domain.ContentDetails;
 import org.broadleafcommerce.content.service.ContentService;
 import org.springframework.web.context.WebApplicationContext;
@@ -41,7 +42,18 @@ public class ContentSpecifiedTag extends BodyTagSupport {
     private Map<String, Object> parameterMap;
     private String contentType;
     private Object xslt;
-
+    private boolean escapeXml;
+    
+    public ContentSpecifiedTag(){
+    	super();
+    	init();
+    }
+    
+    private void init(){
+    	escapeXml = true;
+    }
+    
+    
     public String getContentType() {
         return contentType;
     }
@@ -75,6 +87,18 @@ public class ContentSpecifiedTag extends BodyTagSupport {
 		this.xslt = xslt;
 	}
 	
+	/**
+	 * @return the escapeXml
+	 */
+	public boolean isEscapeXml() {
+		return escapeXml;
+	}
+	/**
+	 * @param escapeXml the escapeXml to set
+	 */
+	public void setEscapeXml(boolean escapeXml) {
+		this.escapeXml = escapeXml;
+	}
 	@Override
     public int doStartTag() throws JspException {
 //        PageContext pageContext = (PageContext)getJspContext();    	
@@ -112,12 +136,41 @@ public class ContentSpecifiedTag extends BodyTagSupport {
 
         JspWriter out = pageContext.getOut();
         try{
-        	out.write(contentService.renderedContentDetails((String)xslt, contentDetailObjs));        	
+        	String renderedText = contentService.renderedContentDetails((String)xslt, contentDetailObjs); 
+        	if(!escapeXml){
+        		out.write(renderedText);        	        		
+        	}else{
+        		writeEscapedXml(renderedText.toCharArray(), renderedText.length(), out);
+        	}
         }catch (Exception e){
         	throw new JspException();
         }
         
         return EVAL_PAGE;
         //        pageContext.setAttribute(contentDetailsProperty, contentXmls);
+    }
+	
+    private static void writeEscapedXml(char[] buffer, int length, JspWriter w) throws IOException{
+        int start = 0;
+
+        for (int i = 0; i < length; i++) {
+            char c = buffer[i];
+            if (c <= Util.HIGHEST_SPECIAL) {
+                char[] escaped = Util.specialCharactersRepresentation[c];
+                if (escaped != null) {
+                    // add unescaped portion
+                    if (start < i) {
+                        w.write(buffer,start,i-start);
+                    }
+                    // add escaped xml
+                    w.write(escaped);
+                    start = i + 1;
+                }
+            }
+        }
+        // add rest of unescaped portion
+        if (start < length) {
+            w.write(buffer,start,length-start);
+        }
     }
 }

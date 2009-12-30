@@ -31,6 +31,7 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.content.dao.ContentDao;
@@ -117,7 +118,7 @@ public class ContentServiceImpl implements ContentService {
 	    	}
 	    	
 	    }
-		return resultWriter.toString();
+		return StringEscapeUtils.unescapeXml(resultWriter.toString()) ;
 	}
 	
     protected Boolean executeExpression(String expression, Map<String, Object> vars) {
