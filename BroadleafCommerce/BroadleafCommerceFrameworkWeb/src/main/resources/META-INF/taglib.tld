@@ -131,6 +131,11 @@
 			<rtexprvalue>true</rtexprvalue>
 			<description>Parameter Map contains the objects to evaluate the MVEL expressions against</description>
 		</attribute>
+       	<attribute>
+			<name>escapeXml</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
     </tag>
     <tag>
         <name>contentDisplayRandom</name>
