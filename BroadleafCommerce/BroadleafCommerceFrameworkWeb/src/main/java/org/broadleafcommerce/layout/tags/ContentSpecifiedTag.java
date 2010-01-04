@@ -138,7 +138,7 @@ public class ContentSpecifiedTag extends BodyTagSupport {
 	        if(displayDateString != null && displayDateString != ""){
 	        	try{
 	        		
-	        		displayDate = new SimpleDateFormat("MMddyyyy").parse(displayDateString);
+	        		displayDate = new SimpleDateFormat("MM-dd-yyyy").parse(displayDateString);
 	        	}catch (ParseException exp){
 	        		throw new JspException();
 	        	}
