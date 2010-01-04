@@ -52,13 +52,13 @@ public class ContentSpecifiedFilter implements Filter {
 		session.setAttribute(SESSION_SANDBOX_VAR, sandbox);
 		session.setAttribute(SESSION_DATE_VAR, displayDate);
 		
-		String currentSessionSandbox = (session != null)?(String)session.getAttribute(SESSION_SANDBOX_VAR):"bullocks";
-		String currentSessionDate = (session != null)?(String)session.getAttribute(SESSION_DATE_VAR):"bullocks";
-		if((currentSessionDate == null || currentSessionDate == "") &&
-		   (currentSessionSandbox == null || currentSessionSandbox == "")){
-			req.getSession().removeAttribute("BLC_CONTENT_SANDBOX");
-			req.getSession().removeAttribute("BLC_CONTENT_DATE_TIME");
-		}
+//		String currentSessionSandbox = (session != null)?(String)session.getAttribute(SESSION_SANDBOX_VAR):"bullocks";
+//		String currentSessionDate = (session != null)?(String)session.getAttribute(SESSION_DATE_VAR):"bullocks";
+//		if((currentSessionDate == null || currentSessionDate == "") &&
+//		   (currentSessionSandbox == null || currentSessionSandbox == "")){
+//			req.getSession().removeAttribute("BLC_CONTENT_SANDBOX");
+//			req.getSession().removeAttribute("BLC_CONTENT_DATE_TIME");
+//		}
 		filterChain.doFilter(request, response);
 	}
 
