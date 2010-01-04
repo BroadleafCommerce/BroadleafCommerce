@@ -106,7 +106,7 @@ public class ContentServiceImpl implements ContentService {
 	
 	public String renderedContentDetails(String styleSheetString, List<ContentDetails> contentDetails, int rowCount) throws Exception{
 		Source xmlSource;
-		int maxCount = (rowCount > -1)? rowCount : contentDetails.size();
+		int maxCount = (rowCount > -1 && contentDetails.size() > 0)? rowCount : contentDetails.size();
 		
 		Writer resultWriter = new StringWriter();
 	    StreamResult result = new StreamResult(resultWriter);
@@ -114,7 +114,6 @@ public class ContentServiceImpl implements ContentService {
 	    TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	    Transformer transformer = transformerFactory.newTransformer(styleSheetSource);
 	    
-//	    for(ContentDetails contentDetail : contentDetails){
 	    for(int i=0; i < maxCount; i++){
 	    	ContentDetails contentDetail = contentDetails.get(i);
 	    	xmlSource = getSource(contentDetail.getXmlContent());	    	
