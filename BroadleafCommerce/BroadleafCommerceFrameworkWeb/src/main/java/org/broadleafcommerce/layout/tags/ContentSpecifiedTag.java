@@ -43,6 +43,7 @@ public class ContentSpecifiedTag extends BodyTagSupport {
     private String contentType;
     private Object xslt;
     private boolean escapeXml;
+    private int rowCount;
     
     public ContentSpecifiedTag(){
     	super();
@@ -51,6 +52,7 @@ public class ContentSpecifiedTag extends BodyTagSupport {
     
     private void init(){
     	escapeXml = true;
+    	rowCount = -1;
     }
     
     
@@ -99,6 +101,21 @@ public class ContentSpecifiedTag extends BodyTagSupport {
 	public void setEscapeXml(boolean escapeXml) {
 		this.escapeXml = escapeXml;
 	}
+	
+	/**
+	 * @return the rowCount
+	 */
+	public int getRowCount() {
+		return rowCount;
+	}
+
+	/**
+	 * @param rowCount the rowCount to set
+	 */
+	public void setRowCount(int rowCount) {
+		this.rowCount = rowCount;
+	}
+
 	@Override
     public int doStartTag() throws JspException {
 //        PageContext pageContext = (PageContext)getJspContext();    	
@@ -136,7 +153,7 @@ public class ContentSpecifiedTag extends BodyTagSupport {
 
         JspWriter out = pageContext.getOut();
         try{
-        	String renderedText = contentService.renderedContentDetails((String)xslt, contentDetailObjs); 
+        	String renderedText = contentService.renderedContentDetails((String)xslt, contentDetailObjs, rowCount); 
         	if(!escapeXml){
         		out.write(renderedText);        	        		
         	}else{

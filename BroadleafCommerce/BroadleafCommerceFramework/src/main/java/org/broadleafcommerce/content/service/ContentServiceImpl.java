@@ -99,16 +99,24 @@ public class ContentServiceImpl implements ContentService {
 		}
 		
 	}
-		
+
 	public String renderedContentDetails(String styleSheetString, List<ContentDetails> contentDetails) throws Exception{
+		return renderedContentDetails(styleSheetString, contentDetails, -1);
+	}
+	
+	public String renderedContentDetails(String styleSheetString, List<ContentDetails> contentDetails, int rowCount) throws Exception{
 		Source xmlSource;
+		int maxCount = (rowCount > -1)? rowCount : contentDetails.size();
+		
 		Writer resultWriter = new StringWriter();
 	    StreamResult result = new StreamResult(resultWriter);
 	    Source styleSheetSource = getSource(styleSheetString);
 	    TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	    Transformer transformer = transformerFactory.newTransformer(styleSheetSource);
 	    
-	    for(ContentDetails contentDetail : contentDetails){
+//	    for(ContentDetails contentDetail : contentDetails){
+	    for(int i=0; i < maxCount; i++){
+	    	ContentDetails contentDetail = contentDetails.get(i);
 	    	xmlSource = getSource(contentDetail.getXmlContent());	    	
 	    	try{
 	    		transformer.transform(xmlSource, result);	    	
