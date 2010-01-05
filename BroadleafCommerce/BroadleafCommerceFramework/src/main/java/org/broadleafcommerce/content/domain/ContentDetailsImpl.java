@@ -16,7 +16,6 @@
 package org.broadleafcommerce.content.domain;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
@@ -49,8 +48,8 @@ public class ContentDetailsImpl implements ContentDetails {
 	@Index(name = "CONTENT_DETAILS_INDEX", columnNames={"ID"})
 	protected Long id;
     
-    @Column(name = "HASH")
-    protected String hash;
+    @Column(name = "CONTENT_HASH")
+    protected String contentHash;
     
 	@Column(name = "XML_CONTENT")
 	protected String xmlContent;
@@ -72,15 +71,15 @@ public class ContentDetailsImpl implements ContentDetails {
 	/**
 	 * @return the hash
 	 */
-	public String getHash() {
-		return hash;
+	public String getContentHash() {
+		return contentHash;
 	}
 
 	/**
-	 * @param hash the hash to set
+	 * @param contentHash the hash to set
 	 */
-	public void setHash(String hash) {
-		this.hash = hash;
+	public void setContentHash(String contentHash) {
+		this.contentHash = contentHash;
 	}
 
 	/**

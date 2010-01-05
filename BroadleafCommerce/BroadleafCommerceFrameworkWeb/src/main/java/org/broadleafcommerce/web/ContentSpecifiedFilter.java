@@ -48,9 +48,15 @@ public class ContentSpecifiedFilter implements Filter {
 		HttpServletRequest req = (HttpServletRequest)request;
 		String sandbox = (String)request.getParameter("blcSandbox");
 		String displayDate = (String)request.getParameter("blcCurrentTime");		
-		HttpSession session = req.getSession(true);		
-		session.setAttribute(SESSION_SANDBOX_VAR, sandbox);
-		session.setAttribute(SESSION_DATE_VAR, displayDate);
+		HttpSession session = req.getSession(true);
+		
+		if(sandbox != null && sandbox != ""){
+			session.setAttribute(SESSION_SANDBOX_VAR, sandbox);			
+		}
+		
+		if(displayDate != null && displayDate != ""){
+			session.setAttribute(SESSION_DATE_VAR, displayDate);			
+		}
 		
 //		String currentSessionSandbox = (session != null)?(String)session.getAttribute(SESSION_SANDBOX_VAR):"bullocks";
 //		String currentSessionDate = (session != null)?(String)session.getAttribute(SESSION_DATE_VAR):"bullocks";
