@@ -25,9 +25,9 @@ public interface ContentDetails {
 	
 	public void setId(Long id);
 
-	public String getHash();
+	public String getContentHash();
 
-	public void setHash(String hash);
+	public void setContentHash(String contentHash);
 	
 	public String getXmlContent();
 	

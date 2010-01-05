@@ -72,8 +72,8 @@ public interface Content {
 	
 	public void setActiveEndDate(Date activeEndDate);
 	
-	public String getMvel();
+	public String getDisplayRule();
 	
-	public void setMvel(String mvel);
+	public void setDisplayRule(String displayRule);
 	
 }

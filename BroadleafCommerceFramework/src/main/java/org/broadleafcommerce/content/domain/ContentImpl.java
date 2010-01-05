@@ -15,11 +15,9 @@
  */
 package org.broadleafcommerce.content.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -78,8 +76,11 @@ public class ContentImpl implements Content {
     @Column(name = "ACTIVE_END_DATE")
     protected Date activeEndDate;
     
-    @Column(name = "MVEL")
-    protected String mvelWho;
+    @Column(name = "DISPLAY_RULE")
+    protected String displayRule;
+    
+    @Column(name = "LANGUAGE")
+    protected String language;
     
 	/**
 	 * @return the id
@@ -208,17 +209,33 @@ public class ContentImpl implements Content {
 	}
 
 	/**
-	 * @return the mvelWho
+	 * @return the displayRule
 	 */
-	public String getMvel() {
-		return mvelWho;
+	public String getDisplayRule() {
+		return displayRule;
 	}
 
 	/**
-	 * @param mvelWho the mvelWho to set
+	 * @param displayRule the displayRule to set
 	 */
-	public void setMvel(String mvelWho) {
-		this.mvelWho = mvelWho;
+	public void setDisplayRule(String displayRule) {
+		this.displayRule = displayRule;
 	}
+
+	/**
+	 * @return the language
+	 */
+	public String getLanguage() {
+		return language;
+	}
+
+	/**
+	 * @param language the language to set
+	 */
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
+	
 
 }

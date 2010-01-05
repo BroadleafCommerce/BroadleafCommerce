@@ -84,8 +84,8 @@ public class ContentServiceImpl implements ContentService {
 		List<Long> contentIds = new ArrayList<Long>();
 		
 		for (Content content : contents){
-			if(mvelParameters != null && content.getMvel() != null && content.getMvel() != ""){
-				if(!executeExpression(content.getMvel(), mvelParameters)){
+			if(mvelParameters != null && content.getDisplayRule() != null && content.getDisplayRule() != ""){
+				if(!executeExpression(content.getDisplayRule(), mvelParameters)){
 					contentIds.add(content.getId());
 				}
 			}else{
