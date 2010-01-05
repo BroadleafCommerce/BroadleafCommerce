@@ -34,7 +34,7 @@ public class ContentDaoDataProvider {
 		content.setActive(true);
 		content.setActiveStartDate(new Date(DateUtil.getNow()));
 		content.setActiveEndDate(new Date(DateUtil.getNow()+100000000));
-		content.setMvel("customer.location=tx");
+		content.setDisplayRule("customer.location=tx");
 		content.setContentType("HomePageArticle");
 		content.setSandbox("testEnvironment");
 		content.setFilePathName("/some/file/path");

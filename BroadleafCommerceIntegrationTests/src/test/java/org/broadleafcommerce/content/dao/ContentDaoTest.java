@@ -45,7 +45,7 @@ public class ContentDaoTest extends BaseTest {
 		assert newContent.getActiveEndDate() == content.getActiveEndDate();
 		assert newContent.getActiveStartDate() == content.getActiveStartDate();
 		assert newContent.getFilePathName() == content.getFilePathName();
-		assert newContent.getMvel() == content.getMvel();
+		assert newContent.getDisplayRule() == content.getDisplayRule();
 		assert newContent.getSandbox() == content.getSandbox();
 		assert newContent.getContentType() == content.getContentType();
 		contentId = content.getId();
