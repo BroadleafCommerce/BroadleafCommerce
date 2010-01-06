@@ -47,7 +47,7 @@ public class RegisterCustomerValidator implements Validator {
         Customer customerFromDb = customerService.readCustomerByUsername(form.getCustomer().getUsername());
 
         if (customerFromDb != null) {
-            errors.rejectValue("username", "username.used", null, null);
+            errors.rejectValue("customer.username", "username.used", null, null);
         }
 
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "password.required");
