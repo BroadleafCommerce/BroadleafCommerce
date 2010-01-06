@@ -137,6 +137,9 @@ public class CheckoutController {
         order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(new Date()));
         
         List<FulfillmentGroup> groups = order.getFulfillmentGroups();
+        if(groups.size() < 1){
+        	return "redirect:/basket/viewCart.htm";
+        }
         FulfillmentGroup group = groups.get(0);
         group.setOrder(order);
         group.setAddress(checkoutForm.getShippingAddress());
