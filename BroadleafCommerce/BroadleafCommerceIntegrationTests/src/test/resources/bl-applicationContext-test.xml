@@ -107,6 +107,12 @@
 			</bean>
 		</property>
 	</bean>
+	
+	<bean id="blCyberSourcePaymentService" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourcePaymentServiceImpl">
+		<property name="merchantId" value="${cybersource.merchant.id}"/>
+		<property name="transactionKey" value="${cybersource.transaction.key}"/>
+		<property name="serverUrl" value="${cybersource.server.url}"/>
+	</bean>
     
     <bean id="compositeStatusHandler" class="org.broadleafcommerce.vendor.service.monitor.handler.CompositeStatusHandler">
     	<property name="handlers">
