@@ -87,6 +87,8 @@
     <module>BroadleafCommerceDemo</module>
     <module>BroadleafCommerceAdmin</module>
     <module>BroadleafCommerceAdminWeb</module>
+    <module>BroadleafCommerceCyberSource</module>
+    <module>BroadleafCommerceCyberSourceAPI</module>
   </modules>
   <dependencies>
   </dependencies>
@@ -238,6 +240,20 @@
 	    <dependency>
 	  		<groupId>org.broadleafcommerce</groupId>
 	  		<artifactId>broadleaf-usps</artifactId>
+	  		<version>${blc.version}</version>
+	  		<type>jar</type>
+	  		<scope>compile</scope>
+	  	</dependency>
+	  	<dependency>
+	  		<groupId>org.broadleafcommerce</groupId>
+	  		<artifactId>broadleaf-cybersource-api</artifactId>
+	  		<version>${blc.version}</version>
+	  		<type>jar</type>
+	  		<scope>compile</scope>
+	  	</dependency>
+	    <dependency>
+	  		<groupId>org.broadleafcommerce</groupId>
+	  		<artifactId>broadleaf-cybersource</artifactId>
 	  		<version>${blc.version}</version>
 	  		<type>jar</type>
 	  		<scope>compile</scope>
@@ -607,6 +623,62 @@
 	    	<groupId>org.hibernate</groupId>
 	    	<artifactId>hibernate-tools</artifactId>
 	    	<version>3.2.3.GA</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.apache.axis</groupId>
+	    	<artifactId>axis</artifactId>
+	    	<version>1.4</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>wss4j</groupId>
+	    	<artifactId>wss4j</artifactId>
+	    	<version>1.5.1</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>org.apache.santuario</groupId>
+	    	<artifactId>xmlsec</artifactId>
+	    	<version>1.4.0</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>commons-discovery</groupId>
+	    	<artifactId>commons-discovery</artifactId>
+	    	<version>0.2</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>axis</groupId>
+	    	<artifactId>axis-jaxrpc</artifactId>
+	    	<version>1.4</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>axis</groupId>
+	    	<artifactId>axis-saaj</artifactId>
+	    	<version>1.4</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>axis</groupId>
+	    	<artifactId>axis-wsdl4j</artifactId>
+	    	<version>1.5.1</version>
+	    	<type>jar</type>
+	    	<scope>compile</scope>
+	    </dependency>
+	    <dependency>
+	    	<groupId>axis</groupId>
+	    	<artifactId>axis-ant</artifactId>
+	    	<version>1.4</version>
 	    	<type>jar</type>
 	    	<scope>compile</scope>
 	    </dependency>
