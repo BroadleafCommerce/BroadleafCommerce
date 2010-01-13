@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  <parent>
+    <artifactId>BroadleafCommerce</artifactId>
+    <groupId>org.broadleafcommerce</groupId>
+    <version>${blc.version}</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.broadleafcommerce</groupId>
+  <artifactId>BroadleafCommerceCyberSourceAPI</artifactId>
+  <name>BroadleafCommerceCyberSourceAPI</name>
+  <version>${blc.version}</version>
+  <url>http://maven.apache.org</url>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
