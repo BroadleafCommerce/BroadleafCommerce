@@ -11,7 +11,7 @@
 		<mapping-file>config/bc/jpa/domain/FulfillmentGroup.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/FulfillmentGroupItem.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
-		<mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
+		<mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
 		<class>org.broadleafcommerce.inventory.domain.SkuAvailabilityImpl</class>
 		<class>org.broadleafcommerce.marketing.domain.TargetContentImpl</class>
@@ -30,6 +30,7 @@
 		<class>org.broadleafcommerce.order.domain.DiscreteOrderItemImpl</class>
 		<class>org.broadleafcommerce.order.domain.FulfillmentGroupImpl</class>
 		<class>org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl</class>
+		<class>org.broadleafcommerce.order.domain.FulfillmentGroupFeeImpl</class>
 		<class>org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl</class>
 		<class>org.broadleafcommerce.order.domain.OrderImpl</class>
 		<class>org.broadleafcommerce.order.domain.OrderItemImpl</class>

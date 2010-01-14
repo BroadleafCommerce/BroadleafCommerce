@@ -18,6 +18,7 @@ package org.broadleafcommerce.pricing.service.workflow;
 import java.math.BigDecimal;
 
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.BaseActivity;
@@ -38,6 +39,11 @@ public class TotalActivity extends BaseActivity {
             fgTotal = fgTotal.add(fulfillmentGroup.getMerchandiseTotal());
             fgTotal = fgTotal.add(fulfillmentGroup.getShippingPrice());
             fgTotal = fgTotal.add(fulfillmentGroup.getTotalTax());
+
+            for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupfees()) {
+                fgTotal = fgTotal.add(fulfillmentGroupFee.getAmount());
+            }
+
             fulfillmentGroup.setTotal(fgTotal);
         }
 
