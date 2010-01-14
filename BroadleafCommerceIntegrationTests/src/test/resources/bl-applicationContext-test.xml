@@ -108,11 +108,16 @@
 		</property>
 	</bean>
 	
-	<bean id="blCyberSourcePaymentService" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourcePaymentServiceImpl">
+	<!--bean id="blCyberSourcePaymentService" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourcePaymentServiceImpl">
 		<property name="merchantId" value="${cybersource.merchant.id}"/>
-		<property name="transactionKey" value="${cybersource.transaction.key}"/>
 		<property name="serverUrl" value="${cybersource.server.url}"/>
+		<property name="libVersion" value="${cybersource.lib.version}"/>
+		<property name="failureReportingThreshold" value="10"/>
 	</bean>
+	
+	<bean id="cyberSourcePasswordCallback" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourcePasswordCallback">
+		<property name="transactionKey" value="${cybersource.transaction.key}"/>
+	</bean-->
     
     <bean id="compositeStatusHandler" class="org.broadleafcommerce.vendor.service.monitor.handler.CompositeStatusHandler">
     	<property name="handlers">
