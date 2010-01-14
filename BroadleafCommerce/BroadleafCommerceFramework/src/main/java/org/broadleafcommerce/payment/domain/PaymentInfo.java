@@ -16,6 +16,7 @@
 package org.broadleafcommerce.payment.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
@@ -52,5 +53,9 @@ public interface PaymentInfo extends Serializable {
     public PaymentInfoType getType();
 
     public void setType(PaymentInfoType type);
+    
+    public void setAmountItems(List<AmountItem> amountItems);
+    
+    public List<AmountItem> getAmountItems();
 
 }

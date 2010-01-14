@@ -60,6 +60,7 @@
 		<class>org.broadleafcommerce.order.domain.OrderItemImpl</class>
 		<class>org.broadleafcommerce.order.domain.PersonalMessageImpl</class>
 		<class>org.broadleafcommerce.payment.domain.PaymentInfoImpl</class>
+		<class>org.broadleafcommerce.payment.domain.AmountItemImpl</class>
 		<class>org.broadleafcommerce.payment.domain.PaymentLogImpl</class>
 		<class>org.broadleafcommerce.payment.domain.PaymentResponseItemImpl</class>
 		<class>org.broadleafcommerce.pricing.domain.ShippingRateImpl</class>

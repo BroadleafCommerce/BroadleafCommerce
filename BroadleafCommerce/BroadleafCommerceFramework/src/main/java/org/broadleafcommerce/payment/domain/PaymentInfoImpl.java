@@ -16,6 +16,7 @@
 package org.broadleafcommerce.payment.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
@@ -78,6 +80,9 @@ public class PaymentInfoImpl implements PaymentInfo {
     @Column(name = "PAYMENT_TYPE", nullable = false)
     @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
     protected String type;
+    
+    @OneToMany(mappedBy = "paymentInfo", targetEntity = AmountItemImpl.class, cascade = {CascadeType.ALL})
+    protected List<AmountItem> amountItems;
 
     public Money getAmount() {
         return amount == null ? null : new Money(amount);
@@ -135,7 +140,15 @@ public class PaymentInfoImpl implements PaymentInfo {
         this.type = type.getType();
     }
 
-    public boolean equals(Object obj) {
+    public List<AmountItem> getAmountItems() {
+		return amountItems;
+	}
+
+	public void setAmountItems(List<AmountItem> amountItems) {
+		this.amountItems = amountItems;
+	}
+
+	public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)

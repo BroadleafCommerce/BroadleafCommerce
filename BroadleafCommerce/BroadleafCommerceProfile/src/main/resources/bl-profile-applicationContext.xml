@@ -106,4 +106,6 @@
 	
 	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>
 	
+	<bean id="springAppContext" class="org.broadleafcommerce.util.SpringAppContext"/>
+	
 </beans>
