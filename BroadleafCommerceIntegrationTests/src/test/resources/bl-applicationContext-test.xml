@@ -116,6 +116,7 @@
 			<list>
 				<bean class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceCreditCardPaymentServiceImpl">
 					<property name="failureReportingThreshold" value="10"/>
+					<property name="idGenerationService" ref="blIdGenerationService"/>
 				</bean>
 			</list>
 		</property>

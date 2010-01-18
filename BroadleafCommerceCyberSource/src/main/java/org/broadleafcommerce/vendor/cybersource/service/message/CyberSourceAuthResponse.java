@@ -15,12 +15,14 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.message;
 
+import org.broadleafcommerce.util.money.Money;
+
 public class CyberSourceAuthResponse  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	private java.math.BigInteger reasonCode;
-    private java.lang.String amount;
+    private Money amount;
     private java.lang.String authorizationCode;
     private java.lang.String avsCode;
     private java.lang.String avsCodeRaw;
@@ -40,12 +42,12 @@ public class CyberSourceAuthResponse  implements java.io.Serializable {
     private java.lang.String authenticationXID;
     private java.lang.String authorizationXID;
     private java.lang.String processorCardType;
-    private java.lang.String accountBalance;
+    private Money accountBalance;
     private java.lang.String forwardCode;
     private java.lang.String enhancedDataEnabled;
     private java.lang.String referralResponseNumber;
     private java.lang.String subResponseCode;
-    private java.lang.String approvedAmount;
+    private Money approvedAmount;
     private java.lang.String creditLine;
     private java.lang.String approvedTerms;
     private java.lang.String paymentNetworkTransactionID;
@@ -74,7 +76,7 @@ public class CyberSourceAuthResponse  implements java.io.Serializable {
      * 
      * @return amount
      */
-    public java.lang.String getAmount() {
+    public Money getAmount() {
         return amount;
     }
 
@@ -83,7 +85,7 @@ public class CyberSourceAuthResponse  implements java.io.Serializable {
      * 
      * @param amount
      */
-    public void setAmount(java.lang.String amount) {
+    public void setAmount(Money amount) {
         this.amount = amount;
     }
 
@@ -435,7 +437,7 @@ public class CyberSourceAuthResponse  implements java.io.Serializable {
      * 
      * @return accountBalance
      */
-    public java.lang.String getAccountBalance() {
+    public Money getAccountBalance() {
         return accountBalance;
     }
 
@@ -444,7 +446,7 @@ public class CyberSourceAuthResponse  implements java.io.Serializable {
      * 
      * @param accountBalance
      */
-    public void setAccountBalance(java.lang.String accountBalance) {
+    public void setAccountBalance(Money accountBalance) {
         this.accountBalance = accountBalance;
     }
 
@@ -525,7 +527,7 @@ public class CyberSourceAuthResponse  implements java.io.Serializable {
      * 
      * @return approvedAmount
      */
-    public java.lang.String getApprovedAmount() {
+    public Money getApprovedAmount() {
         return approvedAmount;
     }
 
@@ -534,7 +536,7 @@ public class CyberSourceAuthResponse  implements java.io.Serializable {
      * 
      * @param approvedAmount
      */
-    public void setApprovedAmount(java.lang.String approvedAmount) {
+    public void setApprovedAmount(Money approvedAmount) {
         this.approvedAmount = approvedAmount;
     }
 

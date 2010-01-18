@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service;
 
+import java.math.BigInteger;
+
+import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthReply;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthService;
 import org.broadleafcommerce.vendor.cybersource.service.api.Card;
@@ -22,7 +25,7 @@ import org.broadleafcommerce.vendor.cybersource.service.api.ReplyMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceAuthResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardRequest;
-import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCreditCardResponse;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourcePaymentRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourcePaymentResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
@@ -77,9 +80,9 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 		if (CyberSourceTransactionType.AUTHORIZE.equals(paymentResponse.getTransactionType())) {
 			CCAuthReply authReply = reply.getCcAuthReply();
 			CyberSourceAuthResponse authResponse = new CyberSourceAuthResponse();
-			authResponse.setAccountBalance(authReply.getAccountBalance());
-			authResponse.setAmount(authReply.getAmount());
-			authResponse.setApprovedAmount(authReply.getApprovedAmount());
+			authResponse.setAccountBalance(new Money(authReply.getAccountBalance()));
+			authResponse.setAmount(new Money(authReply.getAmount()));
+			authResponse.setApprovedAmount(new Money(authReply.getApprovedAmount()));
 			authResponse.setApprovedTerms(authReply.getApprovedTerms());
 			authResponse.setAuthenticationXID(authReply.getAuthenticationXID());
 			authResponse.setAuthFactorCode(authReply.getAuthFactorCode());
@@ -108,7 +111,7 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 			authResponse.setReferralResponseNumber(authReply.getReferralResponseNumber());
 			authResponse.setSubResponseCode(authReply.getSubResponseCode());
 			
-			((CyberSourceCreditCardResponse) paymentResponse).setAuthResponse(authResponse);
+			((CyberSourceCardResponse) paymentResponse).setAuthResponse(authResponse);
 		}
 	}
 	
@@ -131,13 +134,21 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 		card.setCardType(cardRequest.getCardType());
 		card.setCvIndicator(cardRequest.getCvIndicator());
 		card.setCvNumber(cardRequest.getCvNumber());
-		card.setExpirationMonth(cardRequest.getExpirationMonth());
-		card.setExpirationYear(cardRequest.getExpirationYear());
+		if (cardRequest.getExpirationMonth() != null) {
+			card.setExpirationMonth(new BigInteger(String.valueOf(cardRequest.getExpirationMonth())));
+		}
+		if (cardRequest.getExpirationYear() != null) {
+			card.setExpirationYear(new BigInteger(String.valueOf(cardRequest.getExpirationYear())));
+		}
 		card.setFullName(cardRequest.getFullName());
 		card.setIssueNumber(cardRequest.getIssueNumber());
 		card.setPin(cardRequest.getPin());
-		card.setStartMonth(cardRequest.getStartMonth());
-		card.setStartYear(cardRequest.getStartYear());
+		if (cardRequest.getStartMonth() != null) {
+			card.setStartMonth(new BigInteger(String.valueOf(cardRequest.getStartMonth())));
+		}
+		if (cardRequest.getStartYear() != null) {
+			card.setStartYear(new BigInteger(String.valueOf(cardRequest.getStartYear())));
+		}
 		
         request.setCard(card);
 	}
