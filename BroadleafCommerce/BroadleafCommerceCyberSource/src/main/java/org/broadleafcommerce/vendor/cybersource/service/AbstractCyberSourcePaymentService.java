@@ -42,11 +42,11 @@ public abstract class AbstractCyberSourcePaymentService implements ServiceStatus
 	
 	private String merchantId;
 	private String serverUrl;
-	private IdGenerationService idGenerationService;
 	private String libVersion;
 	protected Integer failureReportingThreshold;
     protected Integer failureCount = 0;
     protected Boolean isUp = true;
+	private IdGenerationService idGenerationService;
     
     protected void clearStatus() {
         synchronized(failureCount) {

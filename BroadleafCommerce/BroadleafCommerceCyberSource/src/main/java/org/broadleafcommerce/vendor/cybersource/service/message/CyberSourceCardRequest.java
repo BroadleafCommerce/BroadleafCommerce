@@ -21,14 +21,14 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
 	
 	private java.lang.String fullName;
     private java.lang.String accountNumber;
-    private java.math.BigInteger expirationMonth;
-    private java.math.BigInteger expirationYear;
+    private Integer expirationMonth;
+    private Integer expirationYear;
     private java.lang.String cvIndicator;
     private java.lang.String cvNumber;
     private java.lang.String cardType;
     private java.lang.String issueNumber;
-    private java.math.BigInteger startMonth;
-    private java.math.BigInteger startYear;
+    private Integer startMonth;
+    private Integer startYear;
     private java.lang.String pin;
     private java.lang.String bin;
 
@@ -73,7 +73,7 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
      * 
      * @return expirationMonth
      */
-    public java.math.BigInteger getExpirationMonth() {
+    public Integer getExpirationMonth() {
         return expirationMonth;
     }
 
@@ -82,7 +82,7 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
      * 
      * @param expirationMonth
      */
-    public void setExpirationMonth(java.math.BigInteger expirationMonth) {
+    public void setExpirationMonth(Integer expirationMonth) {
         this.expirationMonth = expirationMonth;
     }
 
@@ -91,7 +91,7 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
      * 
      * @return expirationYear
      */
-    public java.math.BigInteger getExpirationYear() {
+    public Integer getExpirationYear() {
         return expirationYear;
     }
 
@@ -100,7 +100,7 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
      * 
      * @param expirationYear
      */
-    public void setExpirationYear(java.math.BigInteger expirationYear) {
+    public void setExpirationYear(Integer expirationYear) {
         this.expirationYear = expirationYear;
     }
 
@@ -181,7 +181,7 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
      * 
      * @return startMonth
      */
-    public java.math.BigInteger getStartMonth() {
+    public Integer getStartMonth() {
         return startMonth;
     }
 
@@ -190,7 +190,7 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
      * 
      * @param startMonth
      */
-    public void setStartMonth(java.math.BigInteger startMonth) {
+    public void setStartMonth(Integer startMonth) {
         this.startMonth = startMonth;
     }
 
@@ -199,7 +199,7 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
      * 
      * @return startYear
      */
-    public java.math.BigInteger getStartYear() {
+    public Integer getStartYear() {
         return startYear;
     }
 
@@ -208,7 +208,7 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
      * 
      * @param startYear
      */
-    public void setStartYear(java.math.BigInteger startYear) {
+    public void setStartYear(Integer startYear) {
         this.startYear = startYear;
     }
 
