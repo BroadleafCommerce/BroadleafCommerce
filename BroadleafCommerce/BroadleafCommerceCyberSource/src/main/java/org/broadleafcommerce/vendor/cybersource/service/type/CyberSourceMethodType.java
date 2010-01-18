@@ -24,27 +24,27 @@ import java.util.Map;
  * 
  * @author jfischer
  */
-public class CyberSourceVenueType implements Serializable {
+public class CyberSourceMethodType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, CyberSourceVenueType> TYPES = new HashMap<String, CyberSourceVenueType>();
+    private static final Map<String, CyberSourceMethodType> TYPES = new HashMap<String, CyberSourceMethodType>();
 
-    public static final CyberSourceVenueType CREDITCARD  = new CyberSourceVenueType("CREDITCARD");
-    public static final CyberSourceVenueType BANKACCOUNT = new CyberSourceVenueType("BANKACCOUNT");
-    public static final CyberSourceVenueType PAYPAL = new CyberSourceVenueType("PAYPAL");
+    public static final CyberSourceMethodType CREDITCARD  = new CyberSourceMethodType("CREDITCARD");
+    public static final CyberSourceMethodType BANKACCOUNT = new CyberSourceMethodType("BANKACCOUNT");
+    public static final CyberSourceMethodType PAYPAL = new CyberSourceMethodType("PAYPAL");
 
-    public static CyberSourceVenueType getInstance(final String type) {
+    public static CyberSourceMethodType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
 
-    public CyberSourceVenueType() {
+    public CyberSourceMethodType() {
         //do nothing
     }
 
-    public CyberSourceVenueType(final String type) {
+    public CyberSourceMethodType(final String type) {
         setType(type);
     }
 
@@ -75,7 +75,7 @@ public class CyberSourceVenueType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        CyberSourceVenueType other = (CyberSourceVenueType) obj;
+        CyberSourceMethodType other = (CyberSourceMethodType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

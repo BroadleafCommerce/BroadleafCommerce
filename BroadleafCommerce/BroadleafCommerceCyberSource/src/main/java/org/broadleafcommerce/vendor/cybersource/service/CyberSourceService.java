@@ -22,5 +22,9 @@ public interface CyberSourceService {
     public String getServerUrl();
     
     public void setServerUrl(String serverUrl);
+    
+    public String getLibVersion();
+	
+	public void setLibVersion(String libVersion);
 	
 }

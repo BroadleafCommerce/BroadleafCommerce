@@ -2,7 +2,7 @@ package org.broadleafcommerce.vendor.cybersource.service.message;
 
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceTransactionType;
-import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceVenueType;
+import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceMethodType;
 
 public class CyberSourceResponse implements java.io.Serializable {
 
@@ -10,7 +10,7 @@ private static final long serialVersionUID = 1L;
 	
 	private CyberSourceTransactionType transactionType;
 	private CyberSourceServiceType serviceType;
-	private CyberSourceVenueType venueType;
+	private CyberSourceMethodType venueType;
 	
 	public CyberSourceTransactionType getTransactionType() {
 		return transactionType;
@@ -28,11 +28,11 @@ private static final long serialVersionUID = 1L;
 		this.serviceType = serviceType;
 	}
 
-	public CyberSourceVenueType getVenueType() {
+	public CyberSourceMethodType getVenueType() {
 		return venueType;
 	}
 
-	public void setVenueType(CyberSourceVenueType venueType) {
+	public void setVenueType(CyberSourceMethodType venueType) {
 		this.venueType = venueType;
 	}
 	
