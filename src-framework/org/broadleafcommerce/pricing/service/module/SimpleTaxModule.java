@@ -35,7 +35,7 @@ public class SimpleTaxModule implements TaxModule {
     public Order calculateTaxForOrder(Order order) {
         Money orderSubtotal = order.getSubTotal();
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupfees()) {
+            for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
                 if (fulfillmentGroupFee.isTaxable()) {
                     orderSubtotal = orderSubtotal.add(fulfillmentGroupFee.getAmount());
                 }

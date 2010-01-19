@@ -151,7 +151,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL })
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
-    protected List<FulfillmentGroupFee> fulfillmentGroupfees = new ArrayList<FulfillmentGroupFee>();
+    protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
 
     public Long getId() {
         return id;
@@ -427,11 +427,24 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         this.status = status.getType();
     }
 
-    public List<FulfillmentGroupFee> getFulfillmentGroupfees() {
-        return fulfillmentGroupfees;
+    public List<FulfillmentGroupFee> getFulfillmentGroupFees() {
+        return fulfillmentGroupFees;
     }
 
-    public void setFulfillmentGroupfees(List<FulfillmentGroupFee> fulfillmentGroupfees) {
-        this.fulfillmentGroupfees = fulfillmentGroupfees;
+    public void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees) {
+        this.fulfillmentGroupFees = fulfillmentGroupFees;
+    }
+
+    public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee) {
+        if (fulfillmentGroupFees == null) {
+            fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
+        }
+        fulfillmentGroupFees.add(fulfillmentGroupFee);
+    }
+
+    public void removeAllFulfillmentGroupFee() {
+        if (fulfillmentGroupFees != null) {
+            fulfillmentGroupFees.clear();
+        }
     }
 }

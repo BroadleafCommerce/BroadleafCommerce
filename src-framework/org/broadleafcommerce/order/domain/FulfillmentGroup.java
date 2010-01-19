@@ -136,7 +136,11 @@ public interface FulfillmentGroup extends Serializable {
 
     public FulfillmentGroupStatusType getStatus();
 
-    public List<FulfillmentGroupFee> getFulfillmentGroupfees();
+    public List<FulfillmentGroupFee> getFulfillmentGroupFees();
 
-    public void setFulfillmentGroupfees(List<FulfillmentGroupFee> fulfillmentGroupfees);
+    public void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees);
+
+    public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee);
+
+    public void removeAllFulfillmentGroupFee();
 }
