@@ -142,5 +142,5 @@ public interface FulfillmentGroup extends Serializable {
 
     public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee);
 
-    public void removeAllFulfillmentGroupFee();
+    public void removeAllFulfillmentGroupFees();
 }

@@ -442,7 +442,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         fulfillmentGroupFees.add(fulfillmentGroupFee);
     }
 
-    public void removeAllFulfillmentGroupFee() {
+    public void removeAllFulfillmentGroupFees() {
         if (fulfillmentGroupFees != null) {
             fulfillmentGroupFees.clear();
         }
