@@ -17,6 +17,8 @@ package org.broadleafcommerce.vendor.cybersource.service;
 
 import java.math.BigInteger;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthReply;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthService;
@@ -36,6 +38,8 @@ import org.broadleafcommerce.vendor.service.exception.PaymentException;
 import org.broadleafcommerce.vendor.service.exception.PaymentHostException;
 
 public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSourcePaymentService implements CyberSourcePaymentService {
+	
+	private static final Log LOG = LogFactory.getLog(CyberSourceCreditCardPaymentServiceImpl.class);
 
 	public CyberSourcePaymentResponse process(CyberSourcePaymentRequest paymentRequest) throws PaymentException {
 		//TODO add validation for the request
@@ -81,7 +85,105 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
         return cardResponse;
 	}
 	
+	protected void logReply(ReplyMessage reply) {
+		if (LOG.isDebugEnabled()) {
+			StringBuffer sb = new StringBuffer();
+			sb.append("Decision: ");
+			sb.append(reply.getDecision());
+			sb.append("\nMerchant Reference Code: ");
+			sb.append(reply.getMerchantReferenceCode());
+			sb.append("\nInvalid Fields[]: ");
+			if (reply.getInvalidField() != null) {
+				for (String invalidField: reply.getInvalidField()) {
+					sb.append(invalidField);
+					sb.append(";");
+				}
+			}
+			sb.append("\nMissing Fields[]: ");
+			if (reply.getMissingField() != null) {
+				for (String missingField: reply.getMissingField()) {
+					sb.append(missingField);
+					sb.append(";");
+				}
+			}
+			sb.append("\nReason Code: ");
+			sb.append(reply.getReasonCode());
+			sb.append("\nRequest ID: ");
+			sb.append(reply.getRequestID());
+			sb.append("\nRequest Token: ");
+			sb.append(reply.getRequestToken());
+			
+			if (reply.getCcAuthReply() != null) {
+				CCAuthReply authReply = reply.getCcAuthReply();
+				sb.append("\nAccount Balance: ");
+				sb.append(authReply.getAccountBalance());
+				sb.append("\nAmount: ");
+				sb.append(authReply.getAmount());
+				sb.append("\nApproved Amount: ");
+				sb.append(authReply.getApprovedAmount());
+				sb.append("\nApproved Terms: ");
+				sb.append(authReply.getApprovedTerms());
+				sb.append("\nAuthentication XID: ");
+				sb.append(authReply.getAuthenticationXID());
+				sb.append("\nAuth Factor Code: ");
+				sb.append(authReply.getAuthFactorCode());
+				sb.append("\nAuthorization Code: ");
+				sb.append(authReply.getAuthorizationCode());
+				sb.append("\nAuthorization XID: ");
+				sb.append(authReply.getAuthorizationXID());
+				sb.append("\nAuthorized Date Time: ");
+				sb.append(authReply.getAuthorizedDateTime());
+				sb.append("\nAuth Record: ");
+				sb.append(authReply.getAuthRecord());
+				sb.append(("\nAvs Code: "));
+				sb.append(authReply.getAvsCode());
+				sb.append("\nAvs Code Raw: ");
+				sb.append(authReply.getAvsCodeRaw());
+				sb.append("\nBML Account Number: ");
+				sb.append(authReply.getBmlAccountNumber());
+				sb.append("\nCard Category: ");
+				sb.append(authReply.getCardCategory());
+				sb.append("\nCAVV Response Code: ");
+				sb.append(authReply.getCavvResponseCode());
+				sb.append("\nCAVV Response Code Raw: ");
+				sb.append(authReply.getCavvResponseCodeRaw());
+				sb.append("\nCredit Line: ");
+				sb.append(authReply.getCreditLine());
+				sb.append("\nCv Code: ");
+				sb.append(authReply.getCvCode());
+				sb.append("\nCv Code Raw: ");
+				sb.append(authReply.getCvCodeRaw());
+				sb.append("\nEnhanced Data Enabled: ");
+				sb.append(authReply.getEnhancedDataEnabled());
+				sb.append("\nForward Code: ");
+				sb.append(authReply.getForwardCode());
+				sb.append("\nMerchant Advice Code: ");
+				sb.append(authReply.getMerchantAdviceCode());
+				sb.append("\nMerchant Advice Code Raw: ");
+				sb.append(authReply.getMerchantAdviceCodeRaw());
+				sb.append("\nPayment Network Transaction ID: ");
+				sb.append(authReply.getPaymentNetworkTransactionID());
+				sb.append("\nPersonal ID Code: ");
+				sb.append(authReply.getPersonalIDCode());
+				sb.append("\nProcessor Card Type: ");
+				sb.append(authReply.getProcessorCardType());
+				sb.append("\nProcessor Response: ");
+				sb.append(authReply.getProcessorResponse());
+				sb.append("\nReason Code: ");
+				sb.append(authReply.getReasonCode());
+				sb.append("\nReconciliation ID: ");
+				sb.append(authReply.getReconciliationID());
+				sb.append("\nReferral Response Number: ");
+				sb.append(authReply.getReferralResponseNumber());
+				sb.append("\nSub Response Code: ");
+				sb.append(authReply.getSubResponseCode());
+			}
+			LOG.debug("CyberSource Response:\n" + sb.toString());
+		}
+	}
+	
 	protected void buildResponse(CyberSourcePaymentResponse paymentResponse, ReplyMessage reply) {
+		logReply(reply);
 		paymentResponse.setDecision(reply.getDecision());
 		paymentResponse.setInvalidField(reply.getInvalidField());
 		paymentResponse.setMerchantReferenceCode(reply.getMerchantReferenceCode());

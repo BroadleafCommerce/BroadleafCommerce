@@ -50,6 +50,10 @@ public class CyberSourceCreditCardModuleTest extends BaseTest {
 	@Test(groups = { "testSuccessfulCyberSourceCCModulePayment" })
     @Rollback(false)
     public void testSuccessfulCyberSourceCCModulePayment() throws Exception {
+		if (serviceManager.getMerchantId().equals("?")) {
+            return;
+        }
+		
 		CyberSourceCreditCardModule module = new CyberSourceCreditCardModule();
 		module.setServiceManager(serviceManager);
 		
