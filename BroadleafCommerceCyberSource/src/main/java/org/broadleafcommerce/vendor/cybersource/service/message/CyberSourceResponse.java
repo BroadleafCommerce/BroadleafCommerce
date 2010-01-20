@@ -10,7 +10,7 @@ private static final long serialVersionUID = 1L;
 	
 	private CyberSourceTransactionType transactionType;
 	private CyberSourceServiceType serviceType;
-	private CyberSourceMethodType venueType;
+	private CyberSourceMethodType methodType;
 	
 	public CyberSourceTransactionType getTransactionType() {
 		return transactionType;
@@ -28,12 +28,12 @@ private static final long serialVersionUID = 1L;
 		this.serviceType = serviceType;
 	}
 
-	public CyberSourceMethodType getVenueType() {
-		return venueType;
+	public CyberSourceMethodType getMethodType() {
+		return methodType;
 	}
 
-	public void setVenueType(CyberSourceMethodType venueType) {
-		this.venueType = venueType;
+	public void setMethodType(CyberSourceMethodType venueType) {
+		this.methodType = venueType;
 	}
 	
 }
