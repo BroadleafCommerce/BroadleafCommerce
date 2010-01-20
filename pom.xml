@@ -68,6 +68,11 @@
 	   <name>flex-mojos</name>
 	   <url>http://repository.sonatype.org/content/groups/flexgroup</url>
 	  </repository>
+	<repository>
+	   <id>eviware</id>
+	   <name>eviware</name>
+	   <url>http://www.eviware.com/repository/maven2</url>
+	  </repository>
   </repositories>
   <pluginRepositories>
 	  <pluginRepository>
@@ -641,7 +646,7 @@
 	    	<scope>compile</scope>
 	    </dependency>
 	    <dependency>
-	    	<groupId>org.apache.santuario</groupId>
+	    	<groupId>xml-security</groupId>
 	    	<artifactId>xmlsec</artifactId>
 	    	<version>1.4.0</version>
 	    	<type>jar</type>
