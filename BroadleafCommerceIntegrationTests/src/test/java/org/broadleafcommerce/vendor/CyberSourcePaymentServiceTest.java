@@ -41,7 +41,7 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
 
     @Test(groups = { "testSuccessfulCyberSourceCCPayment" })
     @Rollback(false)
-    public void testSuccessfulShippingCalc() throws Exception {
+    public void testSuccessfulCyberSourceCCPayment() throws Exception {
         if (serviceManager.getMerchantId().equals("?")) {
             return;
         }

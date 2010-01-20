@@ -83,6 +83,9 @@ public class PaymentInfoImpl implements PaymentInfo {
     
     @OneToMany(mappedBy = "paymentInfo", targetEntity = AmountItemImpl.class, cascade = {CascadeType.ALL})
     protected List<AmountItem> amountItems;
+    
+    @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
+    protected String customerIpAddress;
 
     public Money getAmount() {
         return amount == null ? null : new Money(amount);
@@ -146,6 +149,14 @@ public class PaymentInfoImpl implements PaymentInfo {
 
 	public void setAmountItems(List<AmountItem> amountItems) {
 		this.amountItems = amountItems;
+	}
+
+	public String getCustomerIpAddress() {
+		return customerIpAddress;
+	}
+
+	public void setCustomerIpAddress(String customerIpAddress) {
+		this.customerIpAddress = customerIpAddress;
 	}
 
 	public boolean equals(Object obj) {
