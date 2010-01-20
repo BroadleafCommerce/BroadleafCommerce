@@ -57,5 +57,9 @@ public interface PaymentInfo extends Serializable {
     public void setAmountItems(List<AmountItem> amountItems);
     
     public List<AmountItem> getAmountItems();
+    
+    public String getCustomerIpAddress();
+
+	public void setCustomerIpAddress(String customerIpAddress);
 
 }

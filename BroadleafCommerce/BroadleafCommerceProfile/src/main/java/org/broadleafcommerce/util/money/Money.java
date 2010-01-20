@@ -301,7 +301,7 @@ public final class Money implements Serializable, Cloneable, Comparable, Externa
      * system property.
      * @return The default currency to use when none is specified
      */
-    private static Currency defaultCurrency() {
+    public static Currency defaultCurrency() {
         Locale locale = Locale.getDefault();
         if (locale.getCountry() != null && locale.getCountry().length() == 2) {
             return Currency.getInstance(locale);
