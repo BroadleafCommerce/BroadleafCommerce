@@ -59,7 +59,7 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 		responseItem.setTransactionId(response.getRequestToken());
 		responseItem.setAvsCode(response.getAuthResponse().getAvsCode());
 		responseItem.setAuthorizationCode(response.getAuthResponse().getAuthorizationCode());
-		responseItem.setTransactionSuccess(true);
+		responseItem.setTransactionSuccess(response.getReasonCode().intValue() == 100);
 		responseItem.setAmountPaid(response.getAuthResponse().getAmount());
         
         return responseItem;
