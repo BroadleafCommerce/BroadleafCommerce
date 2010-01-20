@@ -108,16 +108,18 @@
 		</property>
 	</bean>
 	
+	<bean id="blCyberSourceCreditCardPaymentService" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceCreditCardPaymentServiceImpl">
+		<property name="failureReportingThreshold" value="10"/>
+		<property name="idGenerationService" ref="blIdGenerationService"/>
+	</bean>
+	
 	<bean id="blCyberSourceServiceManager" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManagerImpl">
 		<property name="merchantId" value="${cybersource.merchant.id}"/>
 		<property name="serverUrl" value="${cybersource.server.url}"/>
 		<property name="libVersion" value="${cybersource.lib.version}"/>
 		<property name="registeredServices">
 			<list>
-				<bean class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceCreditCardPaymentServiceImpl">
-					<property name="failureReportingThreshold" value="10"/>
-					<property name="idGenerationService" ref="blIdGenerationService"/>
-				</bean>
+				<ref bean="blCyberSourceCreditCardPaymentService"/>
 			</list>
 		</property>
 	</bean>
@@ -144,6 +146,12 @@
     
     <bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init">
     	<property name="defaultHandler" ref="compositeStatusHandler"/>
+    	<property name="serviceHandlers">
+    		<map>
+                <entry key-ref="blShippingCalculationService" value-ref="compositeStatusHandler"/>
+                <entry key-ref="blCyberSourceCreditCardPaymentService" value-ref="compositeStatusHandler"/>
+            </map>
+    	</property>
     </bean>
     
 </beans>

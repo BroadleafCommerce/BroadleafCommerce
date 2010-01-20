@@ -68,7 +68,7 @@
     	<artifactId>wss4j</artifactId>
     </dependency>
     <dependency>
-    	<groupId>org.apache.santuario</groupId>
+    	<groupId>xml-security</groupId>
     	<artifactId>xmlsec</artifactId>
     </dependency>
     <dependency>
