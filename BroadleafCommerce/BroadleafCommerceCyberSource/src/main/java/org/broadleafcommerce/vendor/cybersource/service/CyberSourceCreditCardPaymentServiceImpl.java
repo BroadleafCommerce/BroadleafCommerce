@@ -39,10 +39,10 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 
 	public CyberSourcePaymentResponse process(CyberSourcePaymentRequest paymentRequest) throws PaymentException {
 		//TODO add validation for the request
-		CyberSourcePaymentResponse paymentResponse = new CyberSourcePaymentResponse();
-		paymentResponse.setServiceType(paymentRequest.getServiceType());
-		paymentResponse.setTransactionType(paymentRequest.getTransactionType());
-		paymentResponse.setVenueType(paymentRequest.getMethodType());
+		CyberSourceCardResponse cardResponse = new CyberSourceCardResponse();
+		cardResponse.setServiceType(paymentRequest.getServiceType());
+		cardResponse.setTransactionType(paymentRequest.getTransactionType());
+		cardResponse.setMethodType(paymentRequest.getMethodType());
 		RequestMessage request = buildRequestMessage(paymentRequest);
 		ReplyMessage reply;
 		try {
@@ -52,40 +52,61 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
             throw new PaymentException(e);
         }
         clearStatus();
+        buildResponse(cardResponse, reply);
         String[] invalidFields = reply.getInvalidField();
         String[] missingFields = reply.getMissingField();
         if ((invalidFields != null && invalidFields.length > 0) || (missingFields != null && missingFields.length > 0)) {
             PaymentHostException e = new PaymentHostException();
-            paymentResponse.setErrorDetected(true);
+            cardResponse.setErrorDetected(true);
             StringBuffer sb = new StringBuffer();
-            sb.append("invalid fields :[ ");
-            for (String invalidField : invalidFields) {
-            	sb.append(invalidField);
+            if (invalidFields != null && invalidFields.length > 0) {
+	            sb.append("invalid fields :[ ");
+	            for (String invalidField : invalidFields) {
+	            	sb.append(invalidField);
+	            }
+	            sb.append(" ]\n");
             }
-            sb.append(" ]\nmissing fields: [ ");
-            for (String missingField : missingFields) {
-            	sb.append(missingField);
+            if (missingFields != null && missingFields.length > 0) {
+	            sb.append("missing fields: [ ");
+	            for (String missingField : missingFields) {
+	            	sb.append(missingField);
+	            }
+	            sb.append(" ]");
             }
-            sb.append(" ]");
-            paymentResponse.setErrorText(sb.toString());
-            e.setPaymentResponse(paymentResponse);
+            cardResponse.setErrorText(sb.toString());
+            e.setPaymentResponse(cardResponse);
             throw e;
         }
-        buildResponse(paymentResponse, reply);
         
-        return paymentResponse;
+        return cardResponse;
 	}
 	
 	protected void buildResponse(CyberSourcePaymentResponse paymentResponse, ReplyMessage reply) {
+		paymentResponse.setDecision(reply.getDecision());
+		paymentResponse.setInvalidField(reply.getInvalidField());
+		paymentResponse.setMerchantReferenceCode(reply.getMerchantReferenceCode());
+		paymentResponse.setMissingField(reply.getMissingField());
+		if (reply.getReasonCode() != null) {
+			paymentResponse.setReasonCode(reply.getReasonCode().intValue());
+		}
+		paymentResponse.setRequestID(reply.getRequestID());
+		paymentResponse.setRequestToken(reply.getRequestToken());
 		if (CyberSourceTransactionType.AUTHORIZE.equals(paymentResponse.getTransactionType())) {
 			CCAuthReply authReply = reply.getCcAuthReply();
 			CyberSourceAuthResponse authResponse = new CyberSourceAuthResponse();
-			authResponse.setAccountBalance(new Money(authReply.getAccountBalance()));
-			authResponse.setAmount(new Money(authReply.getAmount()));
-			authResponse.setApprovedAmount(new Money(authReply.getApprovedAmount()));
+			if (authReply.getAccountBalance() != null) {
+				authResponse.setAccountBalance(new Money(authReply.getAccountBalance()));
+			}
+			if (authReply.getAmount() != null) {
+				authResponse.setAmount(new Money(authReply.getAmount()));
+			}
+			if (authReply.getApprovedAmount() != null) {
+				authResponse.setApprovedAmount(new Money(authReply.getApprovedAmount()));
+			}
 			authResponse.setApprovedTerms(authReply.getApprovedTerms());
 			authResponse.setAuthenticationXID(authReply.getAuthenticationXID());
 			authResponse.setAuthFactorCode(authReply.getAuthFactorCode());
+			authResponse.setAuthorizationCode(authReply.getAuthorizationCode());
 			authResponse.setAuthorizationXID(authReply.getAuthorizationXID());
 			authResponse.setAuthorizedDateTime(authReply.getAuthorizedDateTime());
 			authResponse.setAuthRecord(authReply.getAuthRecord());

@@ -23,6 +23,13 @@ public class CyberSourcePaymentResponse extends CyberSourceResponse implements P
 	
 	protected boolean isErrorDetected = false;
     protected String errorText;
+	protected String merchantReferenceCode;
+    protected String requestID;
+    protected String decision;
+    protected Integer reasonCode;
+    protected String[] missingField;
+    protected String[] invalidField;
+    protected String requestToken;
 
 	public String getErrorCode() {
 		throw new RuntimeException("ErrorCode not supported");
@@ -46,6 +53,62 @@ public class CyberSourcePaymentResponse extends CyberSourceResponse implements P
 
 	public void setErrorText(String errorText) {
 		this.errorText = errorText;
+	}
+	
+	public String getMerchantReferenceCode() {
+		return merchantReferenceCode;
+	}
+
+	public void setMerchantReferenceCode(String merchantReferenceCode) {
+		this.merchantReferenceCode = merchantReferenceCode;
+	}
+
+	public String getRequestID() {
+		return requestID;
+	}
+
+	public void setRequestID(String requestID) {
+		this.requestID = requestID;
+	}
+
+	public String getDecision() {
+		return decision;
+	}
+
+	public void setDecision(String decision) {
+		this.decision = decision;
+	}
+
+	public Integer getReasonCode() {
+		return reasonCode;
+	}
+
+	public void setReasonCode(Integer reasonCode) {
+		this.reasonCode = reasonCode;
+	}
+
+	public String[] getMissingField() {
+		return missingField;
+	}
+
+	public void setMissingField(String[] missingField) {
+		this.missingField = missingField;
+	}
+
+	public String[] getInvalidField() {
+		return invalidField;
+	}
+
+	public void setInvalidField(String[] invalidField) {
+		this.invalidField = invalidField;
+	}
+
+	public String getRequestToken() {
+		return requestToken;
+	}
+
+	public void setRequestToken(String requestToken) {
+		this.requestToken = requestToken;
 	}
 
 }
