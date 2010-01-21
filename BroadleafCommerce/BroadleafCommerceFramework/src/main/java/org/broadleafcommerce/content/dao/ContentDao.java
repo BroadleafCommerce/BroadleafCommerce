@@ -21,16 +21,31 @@ import java.util.List;
 import org.broadleafcommerce.content.domain.Content;
 
 /**
- * @author btaylor
- *
+* DOCUMENT ME!
+*
+* @author btaylor
  */
 public interface ContentDao {
+    public void delete(Content content);
 
-	public Content readContentById(Long id);
-	
-	public List<Content> readContentSpecified(String sandbox, String contentType, Date date);
-	
-	public Content saveContent(Content content);
-	
-	public void delete(Content content);
+    public void delete(List<Content> contentList);
+
+    public List<Content> readContentAwaitingApproval();
+
+    public Content readContentById(Long id);
+
+    public List<Content> readContentByIdsAndSandbox(List<Long> ids, String sandbox);
+
+    public List<Content> readContentBySandbox(String sandbox);
+
+    public List<Content> readContentBySandboxAndType(String sandbox, String contentType);
+
+    public List<Content> readContentSpecified(String sandbox, String contentType, Date date);
+
+    public Content saveContent(Content content);
+
+    public List<Content> saveContent(List<Content> contentList);
+    
+    public List<Content> readStagedContent();
+    
 }

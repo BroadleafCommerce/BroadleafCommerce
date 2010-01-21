@@ -38,6 +38,8 @@ import org.broadleafcommerce.content.dao.ContentDao;
 import org.broadleafcommerce.content.dao.ContentDetailsDao;
 import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
+import org.broadleafcommerce.content.domain.ContentDetailsImpl;
+import org.broadleafcommerce.content.domain.ContentImpl;
 import org.broadleafcommerce.util.DateUtil;
 import org.compass.core.util.reader.StringReader;
 import org.mvel2.MVEL;
@@ -74,7 +76,7 @@ public class ContentServiceImpl implements ContentService {
 	public Content findContentDetailsById(Long id) {
 		return contentDao.readContentById(id);
 	}
-
+	
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters){
 		return findContentDetails(sandbox, contentType, mvelParameters, new Date(DateUtil.getNow()));
 	}
@@ -146,5 +148,162 @@ public class ContentServiceImpl implements ContentService {
 	    return new SAXSource(inputStyleSheetSource);
     	
     }
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#approveContent(java.util.List, java.lang.String, java.lang.String)
+	 */
+	public void approveContent(List<Long> contentIds, String sandboxName, String username) {
+		// deletes any content and associated contentDetail from the staging sandbox that
+	    // matches the passed in contentKey (i.e. type and filename).
+	    // Updates the sandBoxName for all matching content to null and sets the
+	    // approved by and approved date values
+		
+		List<Content> contentList = contentDao.readContentByIdsAndSandbox(contentIds, sandboxName);
+		List <Content> stageContentList = contentDao.readStagedContent();
+		
+		List<Content> deleteList = new ArrayList<Content>();
+		List<Content> saveList = new ArrayList<Content>();
+		
+		for (Content content:contentList) {
+			for (Content stageContent: stageContentList) {
+				if (stageContent.getFilePathName().equals(content.getFilePathName())
+				    && stageContent.getContentType().equals(content.getContentType())) {
+					deleteList.add(stageContent);
+				}
+			}
+
+			content.setSandbox(null);
+			content.setApprovedBy(username);
+			content.setApprovedDate(new Date());
+			
+			saveList.add(content);
+		}
+		
+		contentDao.saveContent(saveList);
+		contentDao.delete(deleteList);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#checkoutContentToSandbox(java.util.List, java.lang.String)
+	 */
+	public List<Content> checkoutContentToSandbox(List<Long> contentIds, String sandboxName) {
+		// copies all matching content items where sandbox = null
+		// to the new records where sandbox = the passed in value
+		// sets the deployed_flag to false for all items in the new sandbox
+		
+		List<Content> contentList = contentDao.readContentByIdsAndSandbox(contentIds, null);
+		List<ContentDetails> contentDetailsList = contentDetailsDao.readContentDetailsByOrderedIds(contentIds);
+		
+		List<Content> newContentList = new ArrayList<Content>();
+		
+		for (Content content:contentList) {
+			// copy content and set deployed to false
+			Content newContent = new ContentImpl(content, sandboxName, false);
+			Content createdContent = contentDao.saveContent(newContent);
+			
+			newContentList.add(createdContent);
+			
+			// look up the corresponding contact detail
+			
+			for (ContentDetails contentDetails:contentDetailsList) {
+				if (contentDetails.getId().equals(content.getId())) {
+					ContentDetails newContentDetails = new ContentDetailsImpl(contentDetails, createdContent.getId());
+					contentDetailsDao.save(newContentDetails);
+					
+					break;
+				}
+			}
+		}
+		
+		return newContentList;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#readContentAwaitingApproval()
+	 */
+	public List<Content> readContentAwaitingApproval() {
+		// This method retrieves all content headers with sandbox that starts with AwaitingApproval
+		return contentDao.readContentAwaitingApproval();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#readContentForSandbox(java.lang.String)
+	 */
+	public List<Content> readContentForSandbox(String sandbox) {
+		return contentDao.readContentBySandbox(sandbox);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#readContentForSandboxAndType(java.lang.String, java.lang.String)
+	 */
+	public List<Content> readContentForSandboxAndType(String sandbox, String contentType) {
+		return contentDao.readContentBySandboxAndType(sandbox, contentType);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#rejectContent(java.util.List, java.lang.String, java.lang.String)
+	 */
+	public void rejectContent(List<Long> contentIds, String sandbox, String username) {
+	     // modifies the sandbox name for the matching content to equal the value in its submitted_by field
+	     //  (e.g. update content set sandbox = submitted_by where id in (....)
+	     // updates rejected by and rejected date
+		
+		List<Content> contentList = contentDao.readContentByIdsAndSandbox(contentIds, sandbox);
+		
+		for (Content content:contentList) {
+			content.setRejectedBy(username);
+			content.setRejectedDate(new Date());
+			content.setSandbox(content.getSubmittedBy());
+			content.setSubmittedBy(null);
+			content.setSubmittedDate(null);
+		}
+		
+		contentDao.saveContent(contentList);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#removeContentFromSandbox(java.util.List, java.lang.String)
+	 */
+	public void removeContentFromSandbox(List<Long> contentIds, String sandbox) {
+		// if sandbox is not null, deletes the content and associated content detail from the sandbox
+	    // otherwise, ignores the request
+		
+		if (sandbox != null) {
+			List<Content> contentList = contentDao.readContentByIdsAndSandbox(contentIds, sandbox);
+			contentDao.delete(contentList);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#submitContentFromSandbox(java.util.List, java.lang.String, java.lang.String)
+	 */
+	public void submitContentFromSandbox(List<Long> contentIds, String sandboxName, String username) {
+		// updates the sandboxName to AwaitingApproval_$username_$timestamp and sets
+		// the submitted by and submitted date values
+		
+		List<Content> contentList = contentDao.readContentByIdsAndSandbox(contentIds, sandboxName);
+		
+		for (Content content:contentList) {
+			content.setSubmittedBy(username);
+			content.setSubmittedDate(new Date());
+			content.setSandbox("AwaitingApproval_" + username + "_" + new Date().getTime());
+		}
+		
+		contentDao.saveContent(contentList);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.service.ContentService#saveContent(org.broadleafcommerce.content.domain.Content, org.broadleafcommerce.content.domain.ContentDetails)
+	 */
+	public Content saveContent(Content content, ContentDetails contentDetails) {
+		Content contentFromDB = contentDao.saveContent(content);
+		
+		if (content != null) {
+			contentDetails.setId(contentFromDB.getId());
+			contentDetailsDao.save(contentDetails);
+		}
+		
+		return null;
+	}
     
 }
