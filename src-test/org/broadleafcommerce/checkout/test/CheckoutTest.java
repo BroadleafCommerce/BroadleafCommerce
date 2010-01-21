@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.checkout.service.CheckoutService;
+import org.broadleafcommerce.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
@@ -95,10 +96,11 @@ public class CheckoutTest extends BaseTest {
         Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
         map.put(payment, cc);
 
-        checkoutService.performCheckout(order, map);
+        CheckoutResponse response = checkoutService.performCheckout(order, map);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().multiply(0.05D)));
         assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax())));
+        assert (response.getPaymentResponse().getResponseItems().size() > 0);
     }
 }

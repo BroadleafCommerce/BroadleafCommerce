@@ -135,4 +135,6 @@
           parent="baseEmailInfo">
     </bean>
     
+    <bean id="blCreditCardModule" class="org.broadleafcommerce.checkout.test.DummyCreditCardModule"/>
+    
 </beans>
