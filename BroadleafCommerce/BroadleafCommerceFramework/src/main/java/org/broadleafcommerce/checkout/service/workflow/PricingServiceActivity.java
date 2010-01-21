@@ -30,8 +30,7 @@ public class PricingServiceActivity extends BaseActivity {
     public ProcessContext execute(ProcessContext context) throws Exception {
         CheckoutSeed seed = ((CheckoutContext) context).getSeedData();
         Order order = pricingService.executePricing(seed.getOrder());
-        CheckoutSeed newSeed = new CheckoutSeed(order, seed.getInfos(), seed.getUserDefinedFields());
-        context.setSeedData(newSeed);
+        seed.setOrder(order);
 
         return context;
     }

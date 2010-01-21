@@ -26,6 +26,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.checkout.service.workflow.CheckoutResponse;
 import org.broadleafcommerce.encryption.EncryptionModule;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
@@ -144,6 +145,7 @@ public class CheckoutTest extends BaseTest {
         payment.setAmount(new Money(15D + (15D * 0.05D)));
         payment.setReferenceNumber("1234");
         payment.setType(PaymentInfoType.CREDIT_CARD);
+        payment.setOrder(order);
 
         CreditCardPaymentInfo cc = new CreditCardPaymentInfo() {
 
@@ -208,10 +210,11 @@ public class CheckoutTest extends BaseTest {
         Map<PaymentInfo, Referenced> map = new HashMap<PaymentInfo, Referenced>();
         map.put(payment, cc);
 
-        checkoutService.performCheckout(order, map);
+        CheckoutResponse response = checkoutService.performCheckout(order, map);
 
         assert (order.getTotal().greaterThan(order.getSubTotal()));
         assert (order.getTotalTax().equals(order.getSubTotal().add(order.getTotalShipping()).multiply(0.05D)));
+        assert (response.getPaymentResponse().getResponseItems().size() > 0);
         //assert (order.getTotal().equals(order.getSubTotal().add(order.getTotalTax()).add(order.getTotalShipping())));
     }
 }

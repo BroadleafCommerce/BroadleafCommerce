@@ -77,6 +77,8 @@
           parent="baseEmailInfo">
     </bean>
     
+    <bean id="blCreditCardModule" class="org.broadleafcommerce.checkout.service.DummyCreditCardModule"/>
+    
     <bean id="blShippingCalculationService" class="org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationServiceImpl">
 		<property name="uspsCharSet" value="${usps.charset}"/>
 		<property name="uspsPassword" value="${usps.password}"/>
