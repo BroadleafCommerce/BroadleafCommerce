@@ -18,27 +18,51 @@ package org.broadleafcommerce.content;
 import java.util.Date;
 
 import org.broadleafcommerce.content.domain.Content;
+import org.broadleafcommerce.content.domain.ContentDetails;
+import org.broadleafcommerce.content.domain.ContentDetailsImpl;
 import org.broadleafcommerce.content.domain.ContentImpl;
 import org.broadleafcommerce.util.DateUtil;
+
 import org.testng.annotations.DataProvider;
 
 /**
- * @author btaylor
- *
+* DOCUMENT ME!
+*
+* @author btaylor
  */
 public class ContentDaoDataProvider {
+    @DataProvider(name = "basicContent")
+    public static Object[][] provideBasicContent() {
+        Content content = new ContentImpl();
+        content.setActive(true);
+        content.setActiveStartDate(new Date(DateUtil.getNow()));
+        content.setActiveEndDate(new Date(DateUtil.getNow() + 100000000));
+        content.setDisplayRule("customer.location=tx");
+        content.setContentType("HomePageArticle");
+        content.setSandbox("AwaitingApproval_TestUser_123");
+        content.setFilePathName("/some/file/path");
 
-	@DataProvider(name = "basicContent")
-	public static Object[][] provideBasicContent() {
-		Content content = new ContentImpl();
-		content.setActive(true);
-		content.setActiveStartDate(new Date(DateUtil.getNow()));
-		content.setActiveEndDate(new Date(DateUtil.getNow()+100000000));
-		content.setDisplayRule("customer.location=tx");
-		content.setContentType("HomePageArticle");
-		content.setSandbox("testEnvironment");
-		content.setFilePathName("/some/file/path");
-		return new Object[][] {{ content}};
-	}
-	
+        return new Object[][] {
+                   { content }
+               };
+    }
+
+    @DataProvider(name = "basicContentAndDetail")
+    public static Object[][] provideBasicContentAndDetail() {
+        Content content = new ContentImpl();
+        content.setActive(true);
+        content.setActiveStartDate(new Date(DateUtil.getNow()));
+        content.setActiveEndDate(new Date(DateUtil.getNow() + 100000000));
+        content.setDisplayRule("customer.location=tx");
+        content.setContentType("HomePageArticle");
+        content.setFilePathName("/some/file/path");
+
+        ContentDetails contentDetails = new ContentDetailsImpl();
+        contentDetails.setContentHash("abc123");
+        contentDetails.setXmlContent("abc123");
+
+        return new Object[][] {
+                   { content, contentDetails }
+               };
+    }
 }
