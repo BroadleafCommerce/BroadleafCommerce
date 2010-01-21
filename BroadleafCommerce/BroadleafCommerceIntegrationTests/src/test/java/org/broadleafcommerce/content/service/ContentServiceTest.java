@@ -15,12 +15,110 @@
  */
 package org.broadleafcommerce.content.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.broadleafcommerce.content.ContentDaoDataProvider;
+import org.broadleafcommerce.content.dao.ContentDao;
+import org.broadleafcommerce.content.dao.ContentDetailsDao;
+import org.broadleafcommerce.content.domain.Content;
+import org.broadleafcommerce.content.domain.ContentDetails;
 import org.broadleafcommerce.test.BaseTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+import org.testng.annotations.Test;
 
 /**
  * @author btaylor
  *
  */
 public class ContentServiceTest extends BaseTest {
+	
+	@Resource
+	private ContentService contentService;
+	
+	@Resource
+	private ContentDao contentDao;
+	
+	@Resource
+	private ContentDetailsDao contentDetailsDao;
+	
+	private Long contentId;
+	private Long checkedOutContentId;
+	private String readyForApprovalSandbox;
+	
+	@Test(groups = {"testContentService"})
+	public void testCanary() {
+		assert contentService != null;
+	}
 
+	@Test(groups = {"testSaveContent"}, dataProvider = "basicContentAndDetail", dataProviderClass = ContentDaoDataProvider.class)
+	@Transactional
+	@Rollback(false)
+	public void testSaveContent(Content content, ContentDetails contentDetails){
+		Content contentCreated = contentDao.saveContent(content);
+		assert contentCreated.getId() != null;
+		
+		contentDetails.setId(contentCreated.getId());
+		ContentDetails contentDetailsCreated = contentDetailsDao.save(contentDetails);
+		
+		Content contentFromDB = contentDao.readContentById(contentCreated.getId());
+		ContentDetails contentDetailsFromDB = contentDetailsDao.readContentDetailsById(contentCreated.getId());
+		
+		assert contentFromDB != null;
+		assert contentDetailsFromDB != null;
+		
+		contentId = contentCreated.getId();
+	}
+	
+	@Test(groups = {"testCheckoutContentToSandbox"}, dependsOnGroups = {"testSaveContent"})
+	@Transactional
+	@Rollback(false)
+	public void testCheckoutContentToSandbox() {
+		List<Long> contentIds = new ArrayList<Long>();
+		contentIds.add(contentId);
+		
+		List<Content> newContent = contentService.checkoutContentToSandbox(contentIds, "UserSandBox");
+		
+		assert newContent != null && !(newContent.isEmpty());
+		assert newContent.get(0).getId() != null;
+		
+		checkedOutContentId = newContent.get(0).getId();
+	}
+	
+	@Test(groups = {"testSubmitContent"}, dependsOnGroups = {"testCheckoutContentToSandbox"})
+	@Transactional
+	@Rollback(false)
+	public void testSubmitContent() {
+		assert checkedOutContentId != null;
+		assert checkedOutContentId != contentId;
+		
+		List<Long> contentIds = new ArrayList<Long>();
+		contentIds.add(checkedOutContentId);
+		
+		contentService.submitContentFromSandbox(contentIds, "UserSandBox", "NumeroUno");
+		
+		List<Content> awaitingApproval = contentDao.readContentAwaitingApproval();
+		assert awaitingApproval != null && !awaitingApproval.isEmpty();
+		
+		readyForApprovalSandbox = awaitingApproval.get(0).getSandbox();
+	}
+	
+	@Test(groups = {"testApproveContent"}, dependsOnGroups = {"testSubmitContent"})
+	@Transactional
+	public void testApproveContent() {
+		List<Content> awaitingApproval = contentDao.readContentAwaitingApproval();
+		assert awaitingApproval != null && !awaitingApproval.isEmpty();
+		
+		List<Long> contentIds = new ArrayList<Long>();
+		contentIds.add(checkedOutContentId);
+		
+		contentService.approveContent(contentIds, readyForApprovalSandbox, "NumeroUno");
+
+		awaitingApproval = contentDao.readContentAwaitingApproval();
+		assert awaitingApproval == null || awaitingApproval.isEmpty();
+	}
+	
 }
