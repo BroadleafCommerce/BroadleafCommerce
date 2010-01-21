@@ -18,62 +18,76 @@ package org.broadleafcommerce.content.domain;
 import java.util.Date;
 
 /**
- * @author btaylor
- *
+* DOCUMENT ME!
+*
+* @author btaylor
  */
 public interface Content {
+    public Date getActiveEndDate();
 
-	public Long getId();
-	
-	public void setId(Long id);
-	
-	public String getContentType();
-	
-	public void setContentType(String contentType);
-	
-	public String getSandbox();
-	
-	public void setSandbox(String sandbox);
-	
-	public String getFilePathName();
-	
-	public void setFilePathName(String filePathName);
+    public Date getActiveStartDate();
 
-	/**
-	 * @return the maxCount
-	 */
-	public Integer getMaxCount();
+    public String getApprovedBy();
 
-	/**
-	 * @param maxCount the maxCount to set
-	 */
-	public void setMaxCount(Integer maxCount);
+    public Date getApprovedDate();
 
-	/**
-	 * @return the priority
-	 */
-	public Integer getPriority();
+    public String getContentType();
 
-	/**
-	 * @param priority the priority to set
-	 */
-	public void setPriority(Integer priority);
-	
-	
-	public Boolean isActive();
-	
-	public void setActive(Boolean active);
-	
-	public Date getActiveStartDate();
-	
-	public void setActiveStartDate(Date activeStartDate);
-	
-	public Date getActiveEndDate();
-	
-	public void setActiveEndDate(Date activeEndDate);
-	
-	public String getDisplayRule();
-	
-	public void setDisplayRule(String displayRule);
-	
+    public String getDisplayRule();
+
+    public String getFilePathName();
+
+    public Long getId();
+
+    public Integer getMaxCount();
+
+    public String getNote();
+
+    public Integer getPriority();
+
+    public String getRejectedBy();
+
+    public Date getRejectedDate();
+
+    public String getSandbox();
+
+    public String getSubmittedBy();
+
+    public Date getSubmittedDate();
+
+    public Boolean isActive();
+
+    public boolean isDeployed();
+
+    public void setActive(Boolean active);
+
+    public void setActiveEndDate(Date activeEndDate);
+
+    public void setActiveStartDate(Date activeStartDate);
+
+    public void setApprovedBy(String approvedBy);
+
+    public void setApprovedDate(Date approvedDate);
+
+    public void setContentType(String contentType);
+
+    public void setDisplayRule(String displayRule);
+
+    public void setFilePathName(String filePathName);
+
+    public void setId(Long id);
+
+    public void setMaxCount(Integer maxCount);
+
+    public void setPriority(Integer priority);
+
+    public void setRejectedBy(String rejectedBy);
+
+    public void setRejectedDate(Date rejectedDate);
+
+    public void setSandbox(String sandbox);
+
+    public void setSubmittedBy(String submimttedBy);
+
+    public void setSubmittedDate(Date submittedDate);
 }

@@ -25,66 +25,148 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
+
 import org.springframework.stereotype.Repository;
 
 /**
- * @author btaylor
- *
+*
+* @author btaylor
  */
 @Repository("blContentDao")
 public class ContentDaoImpl implements ContentDao {
-
-	@PersistenceContext(unitName="blPU")
-	protected EntityManager em;
-
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
+    @PersistenceContext(unitName = "blPU")
+    protected EntityManager em;
+    protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";    
-    
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.content.dao.ContentDao#delete(org.broadleafcommerce.content.domain.Content)
-	 */
-	public void delete(Content content) {
-		if (!em.contains(content)){
-			content = readContentById(content.getId());
-		}
-		em.remove(content);
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#delete(org.broadleafcommerce.content.domain.Content)
+     */
+    public void delete(Content content) {
+        if (!em.contains(content)) {
+            content = readContentById(content.getId());
+        }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.content.dao.ContentDao#readContentById(java.lang.Long)
-	 */
-	@SuppressWarnings("unchecked")
-	public Content readContentById(Long id) {
-		return (Content) em.find(entityConfiguration.lookupEntityClass("com.broadleafcommerce.content.domain.Content"), id);
-	}
+        em.remove(content);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.content.dao.ContentDao#readContentByVersionSandboxFile(java.lang.Long, java.lang.String, java.lang.String)
-	 */
-	@SuppressWarnings("unchecked")
-	public List<Content> readContentSpecified(String sandbox, String contentType, Date displayDate) {
-		Query query = em.createNamedQuery("BC_READ_CONTENT_SPECIFIED");
-		query.setParameter("sandbox", sandbox);
-		query.setParameter("contentType", contentType);
-		query.setParameter("displayDate", displayDate);
-        query.setHint(getQueryCacheableKey(), true);		
-		return (List<Content>)query.getResultList();
-	}
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#delete(java.util.List)
+     */
+    public void delete(List<Content> contentList) {
+        for (Content content : contentList) {
+            this.delete(content);
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.content.dao.ContentDao#saveContent(org.broadleafcommerce.content.domain.Content)
-	 */
-	public Content saveContent(Content content) {
-		return em.merge(content);
-	}
-	
     public String getQueryCacheableKey() {
         return queryCacheableKey;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#readContentAwaitingApproval()
+     */
+    public List<Content> readContentAwaitingApproval() {
+        Query query = em.createNamedQuery("BC_READ_CONTENT_AWAITING_APPROVAL");
+
+        return (List<Content>) query.getResultList();
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#readContentById(java.lang.Long)
+     */
+    @SuppressWarnings("unchecked")
+    public Content readContentById(Long id) {
+        return (Content) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.content.domain.Content"), id);
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#readContentByIds(java.util.List)
+     */
+    public List<Content> readContentByIdsAndSandbox(List<Long> ids, String sandbox) {
+    	Query query;
+    	
+    	if (sandbox == null) {
+    		query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_WHERE_SANDBOX_IS_NULL");
+    		query.setParameter("idList", ids);
+        } else {
+        	query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_AND_SANDBOX");
+        	query.setParameter("idList", ids);
+            query.setParameter("sandbox", sandbox);
+        }
+        
+        query.setHint(getQueryCacheableKey(), true);
+
+        return (List<Content>) query.getResultList();
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#readContentBySandbox(java.lang.String)
+     */
+    public List<Content> readContentBySandbox(String sandbox) {
+        Query query = em.createNamedQuery("BC_READ_CONTENT_BY_SANDBOX");
+        query.setParameter("sandbox", sandbox);
+        query.setHint(getQueryCacheableKey(), true);
+
+        return (List<Content>) query.getResultList();
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#readContentBySandboxAndType(java.lang.String, java.lang.String)
+     */
+    public List<Content> readContentBySandboxAndType(String sandbox, String contentType) {
+        Query query = em.createNamedQuery("BC_READ_CONTENT_BY_SANDBOX_AND_CONTENT_TYPE");
+        query.setParameter("sandbox", sandbox);
+        query.setParameter("contentType", contentType);
+        query.setHint(getQueryCacheableKey(), true);
+
+        return (List<Content>) query.getResultList();
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#readContentByVersionSandboxFile(java.lang.Long, java.lang.String, java.lang.String)
+     */
+    @SuppressWarnings("unchecked")
+    public List<Content> readContentSpecified(String sandbox, String contentType, Date displayDate) {
+        Query query = em.createNamedQuery("BC_READ_CONTENT_SPECIFIED");
+        query.setParameter("sandbox", sandbox);
+        query.setParameter("contentType", contentType);
+        query.setParameter("displayDate", displayDate);
+        query.setHint(getQueryCacheableKey(), true);
+
+        return (List<Content>) query.getResultList();
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#saveContent(org.broadleafcommerce.content.domain.Content)
+     */
+    public Content saveContent(Content content) {
+        return em.merge(content);
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.dao.ContentDao#saveContent(java.util.List)
+     */
+    public List<Content> saveContent(List<Content> contentList) {
+        for (Content content : contentList) {
+            this.saveContent(content);
+        }
+
+        return contentList;
+    }
+
     public void setQueryCacheableKey(String queryCacheableKey) {
         this.queryCacheableKey = queryCacheableKey;
-    }	
+    }
+
+	/* (non-Javadoc)
+	 * @see org.broadleafcommerce.content.dao.ContentDao#readStagedContent()
+	 */
+	public List<Content> readStagedContent() {
+		Query query = em.createNamedQuery("BC_READ_STAGED_CONTENT");
+
+        return (List<Content>) query.getResultList();
+	}
+
 }

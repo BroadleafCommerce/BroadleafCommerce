@@ -54,6 +54,15 @@ public class ContentDetailsImpl implements ContentDetails {
 	@Column(name = "XML_CONTENT")
 	protected String xmlContent;
 	
+	public ContentDetailsImpl() {}
+	
+	public ContentDetailsImpl(ContentDetails cnt, Long id) {
+		this.contentHash = cnt.getContentHash();
+		this.xmlContent = cnt.getXmlContent();
+		this.id = id;
+	}
+	
+	
 	/**
 	 * @return the id
 	 */
