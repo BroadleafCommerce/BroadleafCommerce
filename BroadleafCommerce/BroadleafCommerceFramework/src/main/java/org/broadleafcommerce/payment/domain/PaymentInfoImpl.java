@@ -16,7 +16,9 @@
 package org.broadleafcommerce.payment.domain;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -40,7 +43,9 @@ import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.domain.PhoneImpl;
 import org.broadleafcommerce.util.money.Money;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.MapKey;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -86,6 +91,12 @@ public class PaymentInfoImpl implements PaymentInfo {
     
     @Column(name = "CUSTOMER_IP_ADDRESS", nullable = true)
     protected String customerIpAddress;
+    
+    @CollectionOfElements
+    @JoinTable(name = "BLC_PAYINFO_ADDITIONAL_FIELDS", joinColumns = @JoinColumn(name = "PAYMENT_ID"))
+    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150) })
+    @Column(name = "FIELD_VALUE")
+    protected Map<String, String> additionalFields = new HashMap<String, String>();
 
     public Money getAmount() {
         return amount == null ? null : new Money(amount);
@@ -157,6 +168,14 @@ public class PaymentInfoImpl implements PaymentInfo {
 
 	public void setCustomerIpAddress(String customerIpAddress) {
 		this.customerIpAddress = customerIpAddress;
+	}
+
+	public Map<String, String> getAdditionalFields() {
+		return additionalFields;
+	}
+
+	public void setAdditionalFields(Map<String, String> additionalFields) {
+		this.additionalFields = additionalFields;
 	}
 
 	public boolean equals(Object obj) {
