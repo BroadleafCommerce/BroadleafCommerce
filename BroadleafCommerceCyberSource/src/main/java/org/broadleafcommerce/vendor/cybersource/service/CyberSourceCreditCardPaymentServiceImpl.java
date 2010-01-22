@@ -25,6 +25,8 @@ import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthReply;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthService;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCCaptureReply;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCCaptureService;
+import org.broadleafcommerce.vendor.cybersource.service.api.CCCreditReply;
+import org.broadleafcommerce.vendor.cybersource.service.api.CCCreditService;
 import org.broadleafcommerce.vendor.cybersource.service.api.Card;
 import org.broadleafcommerce.vendor.cybersource.service.api.Item;
 import org.broadleafcommerce.vendor.cybersource.service.api.ReplyMessage;
@@ -33,6 +35,7 @@ import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceAuthR
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCaptureResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardResponse;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCreditResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourcePaymentRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourcePaymentResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
@@ -156,6 +159,18 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 			
 			((CyberSourceCardResponse) paymentResponse).setCaptureResponse(captureResponse);
 		}
+		if (CyberSourceTransactionType.CREDIT.equals(paymentResponse.getTransactionType())) {
+			CCCreditReply creditReply = reply.getCcCreditReply();
+			CyberSourceCreditResponse creditResponse = new CyberSourceCreditResponse();
+			if (creditReply.getAmount() != null) {
+				creditResponse.setAmount(new Money(creditReply.getAmount()));
+			}
+			creditResponse.setReasonCode(creditReply.getReasonCode());
+			creditResponse.setReconciliationID(creditReply.getReconciliationID());
+			creditResponse.setRequestDateTime(creditReply.getRequestDateTime());
+			
+			((CyberSourceCardResponse) paymentResponse).setCreditResponse(creditResponse);
+		}
 	}
 	
 	protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
@@ -178,6 +193,14 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 			request.getCcCaptureService().setRun("true");
 			request.getCcCaptureService().setAuthRequestID(captureRequest.getRequestID());
 			request.getCcCaptureService().setAuthRequestToken(captureRequest.getRequestToken());
+		}
+		if (CyberSourceTransactionType.CREDIT.equals(paymentRequest.getTransactionType())) {
+			CyberSourceCardRequest captureRequest = (CyberSourceCardRequest) paymentRequest;
+			setItemInformation(paymentRequest, request);
+			request.setCcCreditService(new CCCreditService());
+			request.getCcCreditService().setRun("true");
+			request.getCcCreditService().setCaptureRequestID(captureRequest.getRequestID());
+			request.getCcCreditService().setCaptureRequestToken(captureRequest.getRequestToken());
 		}
 		
 		return request;
@@ -360,6 +383,18 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 				sb.append(captureReply.getRequestDateTime());
 				sb.append("\nReason Code: ");
 				sb.append(captureReply.getReasonCode());
+			}
+			if (reply.getCcCreditReply() != null) {
+				sb.append("\nCREDIT REPLY");
+				CCCreditReply creditReply = reply.getCcCreditReply();
+				sb.append("\nAmount: ");
+				sb.append(creditReply.getAmount());
+				sb.append("\nReconciliation Id: ");
+				sb.append(creditReply.getReconciliationID());
+				sb.append("\nRequest Date Time: ");
+				sb.append(creditReply.getRequestDateTime());
+				sb.append("\nReason Code: ");
+				sb.append(creditReply.getReasonCode());
 			}
 			LOG.debug("CyberSource Response:\n" + sb.toString());
 		}
