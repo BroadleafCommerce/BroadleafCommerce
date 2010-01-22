@@ -18,6 +18,7 @@ package org.broadleafcommerce.vendor.cybersource.service.message;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public abstract class CyberSourcePaymentRequest extends CyberSourceRequest {
 	
 	private static final long serialVersionUID = 1L;

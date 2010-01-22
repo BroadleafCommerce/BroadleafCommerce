@@ -20,12 +20,17 @@ import java.math.BigInteger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.vendor.cybersource.service.api.BillTo;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthReply;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthService;
+import org.broadleafcommerce.vendor.cybersource.service.api.CCCaptureReply;
+import org.broadleafcommerce.vendor.cybersource.service.api.CCCaptureService;
 import org.broadleafcommerce.vendor.cybersource.service.api.Card;
+import org.broadleafcommerce.vendor.cybersource.service.api.Item;
 import org.broadleafcommerce.vendor.cybersource.service.api.ReplyMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceAuthResponse;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCaptureResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourcePaymentRequest;
@@ -83,6 +88,171 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
         }
         
         return cardResponse;
+	}
+	
+	protected void buildResponse(CyberSourcePaymentResponse paymentResponse, ReplyMessage reply) {
+		logReply(reply);
+		paymentResponse.setDecision(reply.getDecision());
+		paymentResponse.setInvalidField(reply.getInvalidField());
+		paymentResponse.setMerchantReferenceCode(reply.getMerchantReferenceCode());
+		paymentResponse.setMissingField(reply.getMissingField());
+		if (reply.getReasonCode() != null) {
+			paymentResponse.setReasonCode(reply.getReasonCode().intValue());
+		}
+		paymentResponse.setRequestID(reply.getRequestID());
+		paymentResponse.setRequestToken(reply.getRequestToken());
+		if (CyberSourceTransactionType.AUTHORIZE.equals(paymentResponse.getTransactionType()) || CyberSourceTransactionType.AUTHORIZEANDCAPTURE.equals(paymentResponse.getTransactionType())) {
+			CCAuthReply authReply = reply.getCcAuthReply();
+			CyberSourceAuthResponse authResponse = new CyberSourceAuthResponse();
+			if (authReply.getAccountBalance() != null) {
+				authResponse.setAccountBalance(new Money(authReply.getAccountBalance()));
+			}
+			if (authReply.getAmount() != null) {
+				authResponse.setAmount(new Money(authReply.getAmount()));
+			}
+			if (authReply.getApprovedAmount() != null) {
+				authResponse.setApprovedAmount(new Money(authReply.getApprovedAmount()));
+			}
+			authResponse.setApprovedTerms(authReply.getApprovedTerms());
+			authResponse.setAuthenticationXID(authReply.getAuthenticationXID());
+			authResponse.setAuthFactorCode(authReply.getAuthFactorCode());
+			authResponse.setAuthorizationCode(authReply.getAuthorizationCode());
+			authResponse.setAuthorizationXID(authReply.getAuthorizationXID());
+			authResponse.setAuthorizedDateTime(authReply.getAuthorizedDateTime());
+			authResponse.setAuthRecord(authReply.getAuthRecord());
+			authResponse.setAvsCode(authReply.getAvsCode());
+			authResponse.setAvsCodeRaw(authReply.getAvsCodeRaw());
+			authResponse.setBmlAccountNumber(authReply.getBmlAccountNumber());
+			authResponse.setCardCategory(authReply.getCardCategory());
+			authResponse.setCavvResponseCode(authReply.getCavvResponseCode());
+			authResponse.setCavvResponseCodeRaw(authReply.getCavvResponseCodeRaw());
+			authResponse.setCreditLine(authReply.getCreditLine());
+			authResponse.setCvCode(authReply.getCvCode());
+			authResponse.setCvCodeRaw(authReply.getCvCodeRaw());
+			authResponse.setEnhancedDataEnabled(authReply.getEnhancedDataEnabled());
+			authResponse.setForwardCode(authReply.getForwardCode());
+			authResponse.setMerchantAdviceCode(authReply.getMerchantAdviceCode());
+			authResponse.setMerchantAdviceCodeRaw(authReply.getMerchantAdviceCodeRaw());
+			authResponse.setPaymentNetworkTransactionID(authReply.getPaymentNetworkTransactionID());
+			authResponse.setPersonalIDCode(authReply.getPersonalIDCode());
+			authResponse.setProcessorCardType(authReply.getProcessorCardType());
+			authResponse.setProcessorResponse(authReply.getProcessorResponse());
+			authResponse.setReasonCode(authReply.getReasonCode());
+			authResponse.setReconciliationID(authReply.getReconciliationID());
+			authResponse.setReferralResponseNumber(authReply.getReferralResponseNumber());
+			authResponse.setSubResponseCode(authReply.getSubResponseCode());
+			
+			((CyberSourceCardResponse) paymentResponse).setAuthResponse(authResponse);
+		}
+		if (CyberSourceTransactionType.AUTHORIZEANDCAPTURE.equals(paymentResponse.getTransactionType()) || CyberSourceTransactionType.CAPTURE.equals(paymentResponse.getTransactionType())) {
+			CCCaptureReply captureReply = reply.getCcCaptureReply();
+			CyberSourceCaptureResponse captureResponse = new CyberSourceCaptureResponse();
+			if (captureReply.getAmount() != null) {
+				captureResponse.setAmount(new Money(captureReply.getAmount()));
+			}
+			captureResponse.setReasonCode(captureReply.getReasonCode());
+			captureResponse.setRequestDateTime(captureResponse.getRequestDateTime());
+			captureResponse.setReconciliationID(captureReply.getReconciliationID());
+			
+			((CyberSourceCardResponse) paymentResponse).setCaptureResponse(captureResponse);
+		}
+	}
+	
+	protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
+		RequestMessage request = super.buildRequestMessage(paymentRequest);
+		if (CyberSourceTransactionType.AUTHORIZE.equals(paymentRequest.getTransactionType()) || CyberSourceTransactionType.AUTHORIZEANDCAPTURE.equals(paymentRequest.getTransactionType())) {
+			setCardInformation(paymentRequest, request);
+			setBillingInformation(paymentRequest, request);
+			setItemInformation(paymentRequest, request);
+			request.setCcAuthService(new CCAuthService());
+	        request.getCcAuthService().setRun("true");
+		}
+		if (CyberSourceTransactionType.AUTHORIZEANDCAPTURE.equals(paymentRequest.getTransactionType())) {
+			request.setCcCaptureService(new CCCaptureService());
+			request.getCcCaptureService().setRun("true");
+		}
+		if (CyberSourceTransactionType.CAPTURE.equals(paymentRequest.getTransactionType())) {
+			CyberSourceCardRequest captureRequest = (CyberSourceCardRequest) paymentRequest;
+			setItemInformation(paymentRequest, request);
+			request.setCcCaptureService(new CCCaptureService());
+			request.getCcCaptureService().setRun("true");
+			request.getCcCaptureService().setAuthRequestID(captureRequest.getRequestID());
+			request.getCcCaptureService().setAuthRequestToken(captureRequest.getRequestToken());
+		}
+		
+		return request;
+	}
+	
+	protected void setBillingInformation(CyberSourcePaymentRequest paymentRequest, RequestMessage request) {
+		BillTo billTo = new BillTo();
+		billTo.setCity(paymentRequest.getBillingRequest().getCity());
+		billTo.setCompany(paymentRequest.getBillingRequest().getCompany());
+		billTo.setCompanyTaxID(paymentRequest.getBillingRequest().getCompanyTaxID());
+		billTo.setCountry(paymentRequest.getBillingRequest().getCountry());
+		billTo.setCounty(paymentRequest.getBillingRequest().getCounty());
+		billTo.setDateOfBirth(paymentRequest.getBillingRequest().getDateOfBirth());
+		billTo.setDriversLicenseNumber(paymentRequest.getBillingRequest().getDriversLicenseNumber());
+		billTo.setDriversLicenseState(paymentRequest.getBillingRequest().getDriversLicenseState());
+		billTo.setEmail(paymentRequest.getBillingRequest().getEmail());
+		billTo.setFirstName(paymentRequest.getBillingRequest().getFirstName());
+		billTo.setIpAddress(paymentRequest.getBillingRequest().getIpAddress());
+		billTo.setIpNetworkAddress(paymentRequest.getBillingRequest().getIpNetworkAddress());
+		billTo.setLastName(paymentRequest.getBillingRequest().getLastName());
+		billTo.setMiddleName(paymentRequest.getBillingRequest().getMiddleName());
+		billTo.setPhoneNumber(paymentRequest.getBillingRequest().getPhoneNumber());
+		billTo.setPostalCode(paymentRequest.getBillingRequest().getPostalCode());
+		billTo.setSsn(paymentRequest.getBillingRequest().getSsn());
+		billTo.setState(paymentRequest.getBillingRequest().getState());
+		billTo.setStreet1(paymentRequest.getBillingRequest().getStreet1());
+		billTo.setStreet2(paymentRequest.getBillingRequest().getStreet2());
+		billTo.setStreet3(paymentRequest.getBillingRequest().getStreet3());
+		billTo.setStreet4(paymentRequest.getBillingRequest().getStreet4());
+		billTo.setSuffix(paymentRequest.getBillingRequest().getSuffix());
+		billTo.setTitle(paymentRequest.getBillingRequest().getTitle());
+
+        request.setBillTo( billTo );
+	}
+
+	protected void setCardInformation(CyberSourcePaymentRequest paymentRequest, RequestMessage request) {
+		CyberSourceCardRequest cardRequest = (CyberSourceCardRequest) paymentRequest;
+		Card card = new Card();
+		card.setAccountNumber(cardRequest.getAccountNumber());
+		card.setBin(cardRequest.getBin());
+		card.setCardType(cardRequest.getCardType());
+		card.setCvIndicator(cardRequest.getCvIndicator());
+		card.setCvNumber(cardRequest.getCvNumber());
+		if (cardRequest.getExpirationMonth() != null) {
+			card.setExpirationMonth(new BigInteger(String.valueOf(cardRequest.getExpirationMonth())));
+		}
+		if (cardRequest.getExpirationYear() != null) {
+			card.setExpirationYear(new BigInteger(String.valueOf(cardRequest.getExpirationYear())));
+		}
+		card.setFullName(cardRequest.getFullName());
+		card.setIssueNumber(cardRequest.getIssueNumber());
+		card.setPin(cardRequest.getPin());
+		if (cardRequest.getStartMonth() != null) {
+			card.setStartMonth(new BigInteger(String.valueOf(cardRequest.getStartMonth())));
+		}
+		if (cardRequest.getStartYear() != null) {
+			card.setStartYear(new BigInteger(String.valueOf(cardRequest.getStartYear())));
+		}
+		
+        request.setCard(card);
+	}
+	
+	protected void setItemInformation(CyberSourcePaymentRequest paymentRequest, RequestMessage request) {
+		Item[] items = new Item[paymentRequest.getItemRequests().size()];
+        for (int j=0;j<items.length;j++) {
+        	items[j] = new Item();
+        	items[j].setId(new BigInteger(String.valueOf(paymentRequest.getItemRequests().get(j).getId())));
+        	items[j].setUnitPrice(paymentRequest.getItemRequests().get(j).getUnitPrice().toString());
+        	items[j].setQuantity(new BigInteger(String.valueOf(paymentRequest.getItemRequests().get(j).getQuantity())));
+        }
+        request.setItem(items);
+	}
+
+	public boolean isValidService(CyberSourceRequest request) {
+		return CyberSourceServiceType.PAYMENT.equals(request.getServiceType()) && CyberSourceMethodType.CREDITCARD.equals(request.getMethodType());
 	}
 	
 	protected void logReply(ReplyMessage reply) {
@@ -180,104 +350,6 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 			}
 			LOG.debug("CyberSource Response:\n" + sb.toString());
 		}
-	}
-	
-	protected void buildResponse(CyberSourcePaymentResponse paymentResponse, ReplyMessage reply) {
-		logReply(reply);
-		paymentResponse.setDecision(reply.getDecision());
-		paymentResponse.setInvalidField(reply.getInvalidField());
-		paymentResponse.setMerchantReferenceCode(reply.getMerchantReferenceCode());
-		paymentResponse.setMissingField(reply.getMissingField());
-		if (reply.getReasonCode() != null) {
-			paymentResponse.setReasonCode(reply.getReasonCode().intValue());
-		}
-		paymentResponse.setRequestID(reply.getRequestID());
-		paymentResponse.setRequestToken(reply.getRequestToken());
-		if (CyberSourceTransactionType.AUTHORIZE.equals(paymentResponse.getTransactionType())) {
-			CCAuthReply authReply = reply.getCcAuthReply();
-			CyberSourceAuthResponse authResponse = new CyberSourceAuthResponse();
-			if (authReply.getAccountBalance() != null) {
-				authResponse.setAccountBalance(new Money(authReply.getAccountBalance()));
-			}
-			if (authReply.getAmount() != null) {
-				authResponse.setAmount(new Money(authReply.getAmount()));
-			}
-			if (authReply.getApprovedAmount() != null) {
-				authResponse.setApprovedAmount(new Money(authReply.getApprovedAmount()));
-			}
-			authResponse.setApprovedTerms(authReply.getApprovedTerms());
-			authResponse.setAuthenticationXID(authReply.getAuthenticationXID());
-			authResponse.setAuthFactorCode(authReply.getAuthFactorCode());
-			authResponse.setAuthorizationCode(authReply.getAuthorizationCode());
-			authResponse.setAuthorizationXID(authReply.getAuthorizationXID());
-			authResponse.setAuthorizedDateTime(authReply.getAuthorizedDateTime());
-			authResponse.setAuthRecord(authReply.getAuthRecord());
-			authResponse.setAvsCode(authReply.getAvsCode());
-			authResponse.setAvsCodeRaw(authReply.getAvsCodeRaw());
-			authResponse.setBmlAccountNumber(authReply.getBmlAccountNumber());
-			authResponse.setCardCategory(authReply.getCardCategory());
-			authResponse.setCavvResponseCode(authReply.getCavvResponseCode());
-			authResponse.setCavvResponseCodeRaw(authReply.getCavvResponseCodeRaw());
-			authResponse.setCreditLine(authReply.getCreditLine());
-			authResponse.setCvCode(authReply.getCvCode());
-			authResponse.setCvCodeRaw(authReply.getCvCodeRaw());
-			authResponse.setEnhancedDataEnabled(authReply.getEnhancedDataEnabled());
-			authResponse.setForwardCode(authReply.getForwardCode());
-			authResponse.setMerchantAdviceCode(authReply.getMerchantAdviceCode());
-			authResponse.setMerchantAdviceCodeRaw(authReply.getMerchantAdviceCodeRaw());
-			authResponse.setPaymentNetworkTransactionID(authReply.getPaymentNetworkTransactionID());
-			authResponse.setPersonalIDCode(authReply.getPersonalIDCode());
-			authResponse.setProcessorCardType(authReply.getProcessorCardType());
-			authResponse.setProcessorResponse(authReply.getProcessorResponse());
-			authResponse.setReasonCode(authReply.getReasonCode());
-			authResponse.setReconciliationID(authReply.getReconciliationID());
-			authResponse.setReferralResponseNumber(authReply.getReferralResponseNumber());
-			authResponse.setSubResponseCode(authReply.getSubResponseCode());
-			
-			((CyberSourceCardResponse) paymentResponse).setAuthResponse(authResponse);
-		}
-	}
-	
-	protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
-		RequestMessage request = super.buildRequestMessage(paymentRequest);
-		setCardInformation(paymentRequest, request);
-		if (CyberSourceTransactionType.AUTHORIZE.equals(paymentRequest.getTransactionType())) {
-			request.setCcAuthService(new CCAuthService());
-	        request.getCcAuthService().setRun("true");
-		}
-		
-		return request;
-	}
-
-	protected void setCardInformation(CyberSourcePaymentRequest paymentRequest, RequestMessage request) {
-		CyberSourceCardRequest cardRequest = (CyberSourceCardRequest) paymentRequest;
-		Card card = new Card();
-		card.setAccountNumber(cardRequest.getAccountNumber());
-		card.setBin(cardRequest.getBin());
-		card.setCardType(cardRequest.getCardType());
-		card.setCvIndicator(cardRequest.getCvIndicator());
-		card.setCvNumber(cardRequest.getCvNumber());
-		if (cardRequest.getExpirationMonth() != null) {
-			card.setExpirationMonth(new BigInteger(String.valueOf(cardRequest.getExpirationMonth())));
-		}
-		if (cardRequest.getExpirationYear() != null) {
-			card.setExpirationYear(new BigInteger(String.valueOf(cardRequest.getExpirationYear())));
-		}
-		card.setFullName(cardRequest.getFullName());
-		card.setIssueNumber(cardRequest.getIssueNumber());
-		card.setPin(cardRequest.getPin());
-		if (cardRequest.getStartMonth() != null) {
-			card.setStartMonth(new BigInteger(String.valueOf(cardRequest.getStartMonth())));
-		}
-		if (cardRequest.getStartYear() != null) {
-			card.setStartYear(new BigInteger(String.valueOf(cardRequest.getStartYear())));
-		}
-		
-        request.setCard(card);
-	}
-
-	public boolean isValidService(CyberSourceRequest request) {
-		return CyberSourceServiceType.PAYMENT.equals(request.getServiceType()) && CyberSourceMethodType.CREDITCARD.equals(request.getMethodType());
 	}
 	
 }

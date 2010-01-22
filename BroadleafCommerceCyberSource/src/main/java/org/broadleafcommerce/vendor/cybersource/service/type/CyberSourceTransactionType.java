@@ -32,6 +32,7 @@ public class CyberSourceTransactionType implements Serializable {
 
     public static final CyberSourceTransactionType AUTHORIZE  = new CyberSourceTransactionType("AUTHORIZE");
     public static final CyberSourceTransactionType CAPTURE = new CyberSourceTransactionType("CAPTURE");
+    public static final CyberSourceTransactionType AUTHORIZEANDCAPTURE  = new CyberSourceTransactionType("AUTHORIZEANDCAPTURE");
     public static final CyberSourceTransactionType CREDIT = new CyberSourceTransactionType("CREDIT");
     public static final CyberSourceTransactionType VOIDTRANSACTION = new CyberSourceTransactionType("VOIDTRANSACTION");
     public static final CyberSourceTransactionType REVERSEAUTHORIZE = new CyberSourceTransactionType("REVERSEAUTHORIZE");
