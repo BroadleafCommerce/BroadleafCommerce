@@ -107,6 +107,15 @@ public class CyberSourceCreditCardModuleTest extends BaseTest {
 		 */
 		PaymentResponseItem responseItem3 = module.authorizeAndDebit(context);
 		assert(responseItem3.getAmountPaid().equals(amount));
+		
+		/*
+		 * credit
+		 */
+		paymentInfo.getAdditionalFields().put("requestId", responseItem3.getAdditionalFields().get("requestId"));
+		paymentInfo.getAdditionalFields().put("requestToken", responseItem3.getAdditionalFields().get("requestToken"));
+		
+		PaymentResponseItem responseItem4 = module.credit(context);
+		assert(responseItem4.getAmountPaid().equals(amount));
 	}
 	
 	private Referenced createCreditCardPaymentInfo(final String pan, final Integer month, final Integer year, final String cvv) {
