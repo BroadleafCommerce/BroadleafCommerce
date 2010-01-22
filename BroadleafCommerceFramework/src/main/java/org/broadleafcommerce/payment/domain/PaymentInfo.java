@@ -17,6 +17,7 @@ package org.broadleafcommerce.payment.domain;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
@@ -62,4 +63,7 @@ public interface PaymentInfo extends Serializable {
 
 	public void setCustomerIpAddress(String customerIpAddress);
 
+	public Map<String, String> getAdditionalFields();
+
+    public void setAdditionalFields(Map<String, String> additionalFields);
 }

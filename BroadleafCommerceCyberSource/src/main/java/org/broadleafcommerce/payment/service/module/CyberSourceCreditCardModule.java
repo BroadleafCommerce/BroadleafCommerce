@@ -28,12 +28,9 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 
 	public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
 		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		setCardInfo(paymentContext, cardRequest);
         cardRequest.setTransactionType(CyberSourceTransactionType.AUTHORIZE);
-        Currency currency = paymentContext.getPaymentInfo().getAmount().getCurrency();
-        if (currency == null) {
-        	currency = Money.defaultCurrency();
-        }
-        cardRequest.setCurrency(currency.getCurrencyCode());
+        setCurrency(paymentContext, cardRequest);
         
         CyberSourceBillingRequest billingRequest = createBillingRequest(paymentContext);
         cardRequest.setBillingRequest(billingRequest);
@@ -41,26 +38,14 @@ public class CyberSourceCreditCardModule implements PaymentModule {
         CyberSourceItemRequest itemRequest = createItemRequest(paymentContext);
         cardRequest.getItemRequests().add(itemRequest);
 
-        CyberSourcePaymentService service = (CyberSourcePaymentService) serviceManager.getValidService(cardRequest);
-        CyberSourceCardResponse response;
-		try {
-			response = (CyberSourceCardResponse) service.process(cardRequest);
-		} catch (org.broadleafcommerce.vendor.service.exception.PaymentException e) {
-			throw new PaymentException(e);
-		}
+        CyberSourceCardResponse response = callService(cardRequest);
 		
-		PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-		responseItem.setTransactionTimestamp(new Date());
-		responseItem.setProcessorResponseCode(response.getAuthResponse().getProcessorResponse());
-		responseItem.setProcessorResponseText(response.getAuthResponse().getProcessorResponse());
-		responseItem.setMiddlewareResponseCode(response.getReasonCode().toString());
-		responseItem.setMiddlewareResponseText(response.getDecision());
-		responseItem.setReferenceNumber(response.getMerchantReferenceCode());
-		responseItem.setTransactionId(response.getRequestToken());
+        PaymentResponseItem responseItem = buildBasicResponse(response);
 		responseItem.setAvsCode(response.getAuthResponse().getAvsCode());
 		responseItem.setAuthorizationCode(response.getAuthResponse().getAuthorizationCode());
-		responseItem.setTransactionSuccess(response.getReasonCode().intValue() == 100);
 		responseItem.setAmountPaid(response.getAuthResponse().getAmount());
+		responseItem.setProcessorResponseCode(response.getAuthResponse().getProcessorResponse());
+		responseItem.setProcessorResponseText(response.getAuthResponse().getProcessorResponse());
         
         return responseItem;
 	}
@@ -78,7 +63,22 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 	}
 
 	public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-		throw new PaymentException("debit not yet supported");
+		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		cardRequest.setTransactionType(CyberSourceTransactionType.CAPTURE);
+		setCurrency(paymentContext, cardRequest);
+		
+		CyberSourceItemRequest itemRequest = createItemRequest(paymentContext);
+        cardRequest.getItemRequests().add(itemRequest);
+        
+        cardRequest.setRequestID(paymentContext.getPaymentInfo().getAdditionalFields().get("requestId"));
+        cardRequest.setRequestToken(paymentContext.getPaymentInfo().getAdditionalFields().get("requestToken"));
+        
+        CyberSourceCardResponse response = callService(cardRequest);
+        
+        PaymentResponseItem responseItem = buildBasicResponse(response);
+        responseItem.setAmountPaid(response.getCaptureResponse().getAmount());
+        
+        return responseItem;
 	}
 
 	public Boolean isValidCandidate(PaymentInfoType paymentType) {
@@ -89,16 +89,53 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 		throw new PaymentException("voidPayment not yet supported");
 	}
 	
+	private CyberSourceCardResponse callService(CyberSourceCardRequest cardRequest) throws PaymentException {
+		CyberSourcePaymentService service = (CyberSourcePaymentService) serviceManager.getValidService(cardRequest);
+        CyberSourceCardResponse response;
+		try {
+			response = (CyberSourceCardResponse) service.process(cardRequest);
+		} catch (org.broadleafcommerce.vendor.service.exception.PaymentException e) {
+			throw new PaymentException(e);
+		}
+		
+		return response;
+	}
+	
+	private PaymentResponseItem buildBasicResponse(CyberSourceCardResponse response) {
+		PaymentResponseItem responseItem = new PaymentResponseItemImpl();
+		responseItem.setTransactionTimestamp(new Date());
+		responseItem.setMiddlewareResponseCode(response.getReasonCode().toString());
+		responseItem.setMiddlewareResponseText(response.getDecision());
+		responseItem.setReferenceNumber(response.getMerchantReferenceCode());
+		responseItem.setTransactionId(response.getRequestToken());
+		responseItem.setTransactionSuccess(response.getReasonCode().intValue() == 100);
+		responseItem.getAdditionalFields().put("requestId", response.getRequestID());
+		responseItem.getAdditionalFields().put("requestToken", response.getRequestToken());
+		
+		return responseItem;
+	}
+	
 	private CyberSourceCardRequest createCardRequest(PaymentContext paymentContext) {
 		CyberSourceCardRequest cardRequest = new CyberSourceCardRequest();
 		cardRequest.setServiceType(CyberSourceServiceType.PAYMENT);
         cardRequest.setMethodType(CyberSourceMethodType.CREDITCARD);
-        CreditCardPaymentInfo ccInfo = (CreditCardPaymentInfo) paymentContext.getReferencedPaymentInfo();
+        
+        return cardRequest;
+	}
+	
+	private void setCardInfo(PaymentContext paymentContext, CyberSourceCardRequest cardRequest) {
+		CreditCardPaymentInfo ccInfo = (CreditCardPaymentInfo) paymentContext.getReferencedPaymentInfo();
         cardRequest.setAccountNumber(ccInfo.getPan());
         cardRequest.setExpirationMonth(ccInfo.getExpirationMonth());
         cardRequest.setExpirationYear(ccInfo.getExpirationYear());
-        
-        return cardRequest;
+	}
+	
+	private void setCurrency(PaymentContext paymentContext, CyberSourceCardRequest cardRequest) {
+		Currency currency = paymentContext.getPaymentInfo().getAmount().getCurrency();
+        if (currency == null) {
+        	currency = Money.defaultCurrency();
+        }
+        cardRequest.setCurrency(currency.getCurrencyCode());
 	}
 	
 	private CyberSourceItemRequest createItemRequest(PaymentContext paymentContext) {
