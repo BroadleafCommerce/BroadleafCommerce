@@ -37,43 +37,49 @@ import org.springframework.stereotype.Service;
 @Service("blCheckoutService")
 public class CheckoutServiceImpl implements CheckoutService {
 
-    @Resource(name="blCheckoutWorkflow")
+    @Resource(name = "blCheckoutWorkflow")
     protected SequenceProcessor checkoutWorkflow;
 
-    @Resource(name="blCartService")
+    @Resource(name = "blCartService")
     protected CartService cartService;
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order, java.util.Map)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.checkout.service.CheckoutService#performCheckout
+     * (org.broadleafcommerce.order.domain.Order, java.util.Map)
      */
     public CheckoutResponse performCheckout(Order order, Map<PaymentInfo, Referenced> payments) throws CheckoutException {
         /*
-         * TODO add validation that checks the order and payment information for validity.
+         * TODO add validation that checks the order and payment information for
+         * validity.
          */
         /*
-         * TODO remove this simple validation and encapsulate using our real validation strategy
+         * TODO remove this simple validation and encapsulate using our real
+         * validation strategy
          */
         for (PaymentInfo info : payments.keySet()) {
             if (info.getReferenceNumber() == null) {
-                throw new CheckoutException("PaymentInfo reference number cannot be null");
+                throw new CheckoutException("PaymentInfo reference number cannot be null", null);
             }
         }
         for (Referenced referenced : payments.values()) {
             if (referenced.getReferenceNumber() == null) {
-                throw new CheckoutException("Referenced reference number cannot be null");
+                throw new CheckoutException("Referenced reference number cannot be null", null);
             }
         }
 
+        CheckoutSeed seed = null;
         try {
             order.setSubmitDate(new Date(DateUtil.getNow()));
             order = cartService.save(order, false);
 
-            CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
+            seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);
 
             return seed;
         } catch (PricingException e) {
-            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e);
+            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e, seed);
         } catch (WorkflowException e) {
             Throwable cause = e;
             while (e.getCause() != null) {
@@ -82,15 +88,17 @@ public class CheckoutServiceImpl implements CheckoutService {
                 }
                 cause = e.getCause();
             }
-            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), cause);
+            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), cause, seed);
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.broadleafcommerce.checkout.service.CheckoutService#performCheckout(org.broadleafcommerce.order.domain.Order)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.broadleafcommerce.checkout.service.CheckoutService#performCheckout
+     * (org.broadleafcommerce.order.domain.Order)
      */
     public CheckoutResponse performCheckout(Order order) throws CheckoutException {
         return performCheckout(order, null);
     }
-
 }
