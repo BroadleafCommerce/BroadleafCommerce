@@ -27,7 +27,6 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.broadleafcommerce.profile.service.IdGenerationService;
-import org.broadleafcommerce.vendor.cybersource.service.api.BillTo;
 import org.broadleafcommerce.vendor.cybersource.service.api.ITransactionProcessorStub;
 import org.broadleafcommerce.vendor.cybersource.service.api.Item;
 import org.broadleafcommerce.vendor.cybersource.service.api.PurchaseTotals;
@@ -143,49 +142,11 @@ public abstract class AbstractCyberSourcePaymentService implements ServiceStatus
           System.getProperty("java.version")
         );
         
-        setBillingInformation(paymentRequest, request);
         PurchaseTotals purchaseTotals = new PurchaseTotals();
         purchaseTotals.setCurrency(paymentRequest.getCurrency());
         request.setPurchaseTotals(purchaseTotals);
-        Item[] items = new Item[paymentRequest.getItemRequests().size()];
-        for (int j=0;j<items.length;j++) {
-        	items[j] = new Item();
-        	items[j].setId(new BigInteger(String.valueOf(paymentRequest.getItemRequests().get(j).getId())));
-        	items[j].setUnitPrice(paymentRequest.getItemRequests().get(j).getUnitPrice().toString());
-        	items[j].setQuantity(new BigInteger(String.valueOf(paymentRequest.getItemRequests().get(j).getQuantity())));
-        }
-        request.setItem(items);
+        
         return request;
-	}
-	
-	protected void setBillingInformation(CyberSourcePaymentRequest paymentRequest, RequestMessage request) {
-		BillTo billTo = new BillTo();
-		billTo.setCity(paymentRequest.getBillingRequest().getCity());
-		billTo.setCompany(paymentRequest.getBillingRequest().getCompany());
-		billTo.setCompanyTaxID(paymentRequest.getBillingRequest().getCompanyTaxID());
-		billTo.setCountry(paymentRequest.getBillingRequest().getCountry());
-		billTo.setCounty(paymentRequest.getBillingRequest().getCounty());
-		billTo.setDateOfBirth(paymentRequest.getBillingRequest().getDateOfBirth());
-		billTo.setDriversLicenseNumber(paymentRequest.getBillingRequest().getDriversLicenseNumber());
-		billTo.setDriversLicenseState(paymentRequest.getBillingRequest().getDriversLicenseState());
-		billTo.setEmail(paymentRequest.getBillingRequest().getEmail());
-		billTo.setFirstName(paymentRequest.getBillingRequest().getFirstName());
-		billTo.setIpAddress(paymentRequest.getBillingRequest().getIpAddress());
-		billTo.setIpNetworkAddress(paymentRequest.getBillingRequest().getIpNetworkAddress());
-		billTo.setLastName(paymentRequest.getBillingRequest().getLastName());
-		billTo.setMiddleName(paymentRequest.getBillingRequest().getMiddleName());
-		billTo.setPhoneNumber(paymentRequest.getBillingRequest().getPhoneNumber());
-		billTo.setPostalCode(paymentRequest.getBillingRequest().getPostalCode());
-		billTo.setSsn(paymentRequest.getBillingRequest().getSsn());
-		billTo.setState(paymentRequest.getBillingRequest().getState());
-		billTo.setStreet1(paymentRequest.getBillingRequest().getStreet1());
-		billTo.setStreet2(paymentRequest.getBillingRequest().getStreet2());
-		billTo.setStreet3(paymentRequest.getBillingRequest().getStreet3());
-		billTo.setStreet4(paymentRequest.getBillingRequest().getStreet4());
-		billTo.setSuffix(paymentRequest.getBillingRequest().getSuffix());
-		billTo.setTitle(paymentRequest.getBillingRequest().getTitle());
-
-        request.setBillTo( billTo );
 	}
 
 }

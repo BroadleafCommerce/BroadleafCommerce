@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.message;
 
+
 public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
 	
 	private static final long serialVersionUID = 1L;
@@ -31,6 +32,24 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
     private Integer startYear;
     private java.lang.String pin;
     private java.lang.String bin;
+    protected String requestID;
+	protected String requestToken;
+	
+	public String getRequestID() {
+		return requestID;
+	}
+	
+	public void setRequestID(String requestID) {
+		this.requestID = requestID;
+	}
+	
+	public String getRequestToken() {
+		return requestToken;
+	}
+	
+	public void setRequestToken(String requestToken) {
+		this.requestToken = requestToken;
+	}
 
     /**
      * Gets the fullName value for this Card.
