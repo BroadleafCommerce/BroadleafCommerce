@@ -59,6 +59,8 @@ public class PaymentActivity extends BaseActivity {
                     paymentResponseItem = paymentService.debit(paymentContext);
                 } else if (seed.getActionType().equals(PaymentActionType.VOID)) {
                     paymentResponseItem = paymentService.voidPayment(paymentContext);
+                } else if (seed.getActionType().equals(PaymentActionType.REVERSEAUTHORIZE)) {
+                    paymentResponseItem = paymentService.reverseAuthorize(paymentContext);
                 } else {
                     throw new PaymentException("Module ("+paymentService.getClass().getName()+") does not support payment type of: " + seed.getActionType().toString());
                 }

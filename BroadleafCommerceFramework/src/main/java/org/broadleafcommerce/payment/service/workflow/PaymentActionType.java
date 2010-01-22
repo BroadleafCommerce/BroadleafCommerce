@@ -37,6 +37,7 @@ public class PaymentActionType implements Serializable {
     public static final PaymentActionType CREDIT = new PaymentActionType("CREDIT");
     public static final PaymentActionType VOID = new PaymentActionType("VOID");
     public static final PaymentActionType BALANCE = new PaymentActionType("BALANCE");
+    public static final PaymentActionType REVERSEAUTHORIZE = new PaymentActionType("REVERSEAUTHORIZE");
 
     public static PaymentActionType getInstance(final String type) {
         return TYPES.get(type);

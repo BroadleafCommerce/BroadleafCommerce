@@ -22,6 +22,8 @@ import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.api.BillTo;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthReply;
+import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthReversalReply;
+import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthReversalService;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCAuthService;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCCaptureReply;
 import org.broadleafcommerce.vendor.cybersource.service.api.CCCaptureService;
@@ -34,6 +36,7 @@ import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.VoidReply;
 import org.broadleafcommerce.vendor.cybersource.service.api.VoidService;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceAuthResponse;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceAuthReverseResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCaptureResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardResponse;
@@ -185,6 +188,19 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 			
 			((CyberSourceCardResponse) paymentResponse).setVoidResponse(voidResponse);
 		}
+		if (CyberSourceTransactionType.REVERSEAUTHORIZE.equals(paymentResponse.getTransactionType())) {
+			CCAuthReversalReply authReverseReply = reply.getCcAuthReversalReply();
+			CyberSourceAuthReverseResponse authReverseResponse = new CyberSourceAuthReverseResponse();
+			if (authReverseReply.getAmount() != null) {
+				authReverseResponse.setAmount(new Money(authReverseReply.getAmount()));
+			}
+			authReverseResponse.setReasonCode(authReverseReply.getReasonCode());
+			authReverseResponse.setRequestDateTime(authReverseReply.getRequestDateTime());
+			authReverseResponse.setAuthorizationCode(authReverseReply.getAuthorizationCode());
+			authReverseResponse.setProcessorResponse(authReverseReply.getProcessorResponse());
+			
+			((CyberSourceCardResponse) paymentResponse).setAuthReverseResponse(authReverseResponse);
+		}
 	}
 	
 	protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {
@@ -222,6 +238,14 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 			request.getVoidService().setRun("true");
 			request.getVoidService().setVoidRequestID(cardRequest.getRequestID());
 			request.getVoidService().setVoidRequestToken(cardRequest.getRequestToken());
+		}
+		if (CyberSourceTransactionType.REVERSEAUTHORIZE.equals(paymentRequest.getTransactionType())) {
+			CyberSourceCardRequest cardRequest = (CyberSourceCardRequest) paymentRequest;
+			setItemInformation(paymentRequest, request);
+			request.setCcAuthReversalService(new CCAuthReversalService());
+			request.getCcAuthReversalService().setRun("true");
+			request.getCcAuthReversalService().setAuthRequestID(cardRequest.getRequestID());
+			request.getCcAuthReversalService().setAuthRequestToken(cardRequest.getRequestToken());
 		}
 		
 		return request;
@@ -426,6 +450,20 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 				sb.append(voidReply.getRequestDateTime());
 				sb.append("\nReason Code: ");
 				sb.append(voidReply.getReasonCode());
+			}
+			if (reply.getCcAuthReversalReply() != null) {
+				sb.append("\nAUTH REVERSE REPLY");
+				CCAuthReversalReply authReverseReply = reply.getCcAuthReversalReply();
+				sb.append("\nAmount: ");
+				sb.append(authReverseReply.getAmount());
+				sb.append("\nAuthorization Code: ");
+				sb.append(authReverseReply.getAuthorizationCode());
+				sb.append("\nRequest Date Time: ");
+				sb.append(authReverseReply.getRequestDateTime());
+				sb.append("\nReason Code: ");
+				sb.append(authReverseReply.getReasonCode());
+				sb.append("\nProcessor Response: ");
+				sb.append(authReverseReply.getProcessorResponse());
 			}
 			LOG.debug("CyberSource Response:\n" + sb.toString());
 		}

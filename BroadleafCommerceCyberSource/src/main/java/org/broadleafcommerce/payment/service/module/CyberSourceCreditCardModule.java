@@ -100,6 +100,28 @@ public class CyberSourceCreditCardModule implements PaymentModule {
         return responseItem;
 	}
 	
+	public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
+		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		cardRequest.setTransactionType(CyberSourceTransactionType.REVERSEAUTHORIZE);
+		setCurrency(paymentContext, cardRequest);
+		
+		CyberSourceItemRequest itemRequest = createItemRequest(paymentContext);
+        cardRequest.getItemRequests().add(itemRequest);
+        
+        cardRequest.setRequestID(paymentContext.getPaymentInfo().getAdditionalFields().get("requestId"));
+        cardRequest.setRequestToken(paymentContext.getPaymentInfo().getAdditionalFields().get("requestToken"));
+        
+        CyberSourceCardResponse response = callService(cardRequest);
+        
+        PaymentResponseItem responseItem = buildBasicResponse(response);
+        responseItem.setAmountPaid(response.getAuthReverseResponse().getAmount());
+        responseItem.setAuthorizationCode(response.getAuthReverseResponse().getAuthorizationCode());
+        responseItem.setProcessorResponseCode(response.getAuthReverseResponse().getProcessorResponse());
+        responseItem.setProcessorResponseText(response.getAuthReverseResponse().getProcessorResponse());
+        
+        return responseItem;
+	}
+
 	public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
 		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
 		cardRequest.setTransactionType(CyberSourceTransactionType.VOIDTRANSACTION);

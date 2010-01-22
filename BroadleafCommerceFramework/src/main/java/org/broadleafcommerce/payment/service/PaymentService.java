@@ -34,5 +34,7 @@ public interface PaymentService {
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException;
 
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException;
+    
+    public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException;
 
 }
