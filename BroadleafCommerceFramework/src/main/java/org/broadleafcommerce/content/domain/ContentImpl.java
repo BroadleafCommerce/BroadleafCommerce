@@ -384,4 +384,8 @@ public class ContentImpl implements Content {
     public void setSubmittedDate(Date submittedDate) {
         this.submittedDate = submittedDate;
     }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 }
