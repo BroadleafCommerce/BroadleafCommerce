@@ -99,13 +99,28 @@ public class CyberSourceCreditCardModule implements PaymentModule {
         
         return responseItem;
 	}
+	
+	public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
+		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		cardRequest.setTransactionType(CyberSourceTransactionType.VOIDTRANSACTION);
+		setCurrency(paymentContext, cardRequest);
+		
+		CyberSourceItemRequest itemRequest = createItemRequest(paymentContext);
+        cardRequest.getItemRequests().add(itemRequest);
+        
+        cardRequest.setRequestID(paymentContext.getPaymentInfo().getAdditionalFields().get("requestId"));
+        cardRequest.setRequestToken(paymentContext.getPaymentInfo().getAdditionalFields().get("requestToken"));
+        
+        CyberSourceCardResponse response = callService(cardRequest);
+        
+        PaymentResponseItem responseItem = buildBasicResponse(response);
+        responseItem.setAmountPaid(response.getVoidResponse().getAmount());
+        
+        return responseItem;
+	}
 
 	public Boolean isValidCandidate(PaymentInfoType paymentType) {
 		return PaymentInfoType.CREDIT_CARD.equals(paymentType);
-	}
-
-	public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-		throw new PaymentException("voidPayment not yet supported");
 	}
 	
 	private CyberSourceCardResponse callService(CyberSourceCardRequest cardRequest) throws PaymentException {

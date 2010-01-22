@@ -139,6 +139,27 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
         CyberSourceCardResponse response4 = (CyberSourceCardResponse) service.process(cardRequest4);
         
         assert(response4.getReasonCode().intValue() == 100);
+        
+        /*
+         * void
+         */
+        //TODO does not appear to be working in the CyberSource test environment
+        /*
+        cardRequest.setTransactionType(CyberSourceTransactionType.AUTHORIZEANDCAPTURE);
+        CyberSourceCardResponse response5 = (CyberSourceCardResponse) service.process(cardRequest);
+        
+        CyberSourceCardRequest cardRequest6 = new CyberSourceCardRequest();
+        cardRequest6.setTransactionType(CyberSourceTransactionType.VOIDTRANSACTION);
+        cardRequest6.setServiceType(CyberSourceServiceType.PAYMENT);
+        cardRequest6.setMethodType(CyberSourceMethodType.CREDITCARD);
+        cardRequest6.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
+        cardRequest6.setRequestID(response5.getRequestID());
+        cardRequest6.setRequestToken(response5.getRequestToken());
+        
+        CyberSourceCardResponse response6 = (CyberSourceCardResponse) service.process(cardRequest6);
+        
+        assert(response6.getReasonCode().intValue() == 100);
+        */
     }
 
 }

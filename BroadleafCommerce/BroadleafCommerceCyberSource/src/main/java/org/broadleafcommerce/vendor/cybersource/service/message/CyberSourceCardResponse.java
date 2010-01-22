@@ -8,6 +8,7 @@ public class CyberSourceCardResponse extends CyberSourcePaymentResponse {
 	private CyberSourceAuthResponse authResponse;
 	private CyberSourceCaptureResponse captureResponse;
 	private CyberSourceCreditResponse creditResponse;
+	private CyberSourceVoidResponse voidResponse;
 
 	public CyberSourceAuthResponse getAuthResponse() {
 		return authResponse;
@@ -31,6 +32,14 @@ public class CyberSourceCardResponse extends CyberSourcePaymentResponse {
 
 	public void setCreditResponse(CyberSourceCreditResponse creditResponse) {
 		this.creditResponse = creditResponse;
+	}
+
+	public CyberSourceVoidResponse getVoidResponse() {
+		return voidResponse;
+	}
+
+	public void setVoidResponse(CyberSourceVoidResponse voidResponse) {
+		this.voidResponse = voidResponse;
 	}
 
 }
