@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service;
 
-import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -28,7 +27,6 @@ import org.apache.axis.configuration.FileProvider;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.broadleafcommerce.profile.service.IdGenerationService;
 import org.broadleafcommerce.vendor.cybersource.service.api.ITransactionProcessorStub;
-import org.broadleafcommerce.vendor.cybersource.service.api.Item;
 import org.broadleafcommerce.vendor.cybersource.service.api.PurchaseTotals;
 import org.broadleafcommerce.vendor.cybersource.service.api.ReplyMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;

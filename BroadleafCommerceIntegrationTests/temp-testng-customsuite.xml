@@ -1,8 +1,8 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="BroadleafCommerceIntegrationTests">
-  <test verbose="2" name="org.broadleafcommerce.vendor.CyberSourcePaymentServiceTest" annotations="JDK">
+  <test verbose="2" name="org.broadleafcommerce.vendor.CyberSourceCreditCardModuleTest" annotations="JDK">
     <classes>
-      <class name="org.broadleafcommerce.vendor.CyberSourcePaymentServiceTest"/>
+      <class name="org.broadleafcommerce.vendor.CyberSourceCreditCardModuleTest"/>
     </classes>
   </test>
 </suite>
