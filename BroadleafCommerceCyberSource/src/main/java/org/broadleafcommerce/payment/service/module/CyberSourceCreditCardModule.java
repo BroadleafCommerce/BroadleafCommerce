@@ -27,9 +27,17 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 	private CyberSourceServiceManager serviceManager;
 
 	public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
+		return authTypeTransaction(paymentContext, CyberSourceTransactionType.AUTHORIZE);
+	}
+	
+	public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
+		return authTypeTransaction(paymentContext, CyberSourceTransactionType.AUTHORIZEANDCAPTURE);
+	}
+	
+	private PaymentResponseItem authTypeTransaction(PaymentContext paymentContext, CyberSourceTransactionType transactionType) throws PaymentException {
 		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
 		setCardInfo(paymentContext, cardRequest);
-        cardRequest.setTransactionType(CyberSourceTransactionType.AUTHORIZE);
+        cardRequest.setTransactionType(transactionType);
         setCurrency(paymentContext, cardRequest);
         
         CyberSourceBillingRequest billingRequest = createBillingRequest(paymentContext);
@@ -48,10 +56,6 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 		responseItem.setProcessorResponseText(response.getAuthResponse().getProcessorResponse());
         
         return responseItem;
-	}
-	
-	public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-		throw new PaymentException("authorize and debit not yet supported");
 	}
 
 	public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
