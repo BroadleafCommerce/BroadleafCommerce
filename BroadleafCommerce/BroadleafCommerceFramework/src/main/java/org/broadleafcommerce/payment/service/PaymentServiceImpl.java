@@ -163,6 +163,26 @@ public class PaymentServiceImpl implements PaymentService {
 
         return response;
     }
+    
+    public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
+        logPaymentStartEvent(paymentContext, TransactionType.REVERSEAUTHORIZE);
+        PaymentResponseItem response = null;
+        PaymentException paymentException = null;
+        try {
+            response = paymentModule.reverseAuthorize(paymentContext);
+        } catch (PaymentException e) {
+            if (e instanceof PaymentProcessorException) {
+                response = ((PaymentProcessorException) e).getPaymentResponseItem();
+            }
+            paymentException = e;
+            throw e;
+        } finally {
+            logResponseItem(paymentContext, response, TransactionType.REVERSEAUTHORIZE);
+            logPaymentFinishEvent(paymentContext, TransactionType.REVERSEAUTHORIZE, paymentException);
+        }
+
+        return response;
+    }
 
     public Boolean isValidCandidate(PaymentInfoType paymentType) {
         return paymentModule.isValidCandidate(paymentType);

@@ -54,7 +54,11 @@ public class DummyCreditCardModule extends AbstractModule {
     	return createResponse(paymentContext);
     }
     
-    private PaymentResponseItem createResponse(PaymentContext paymentContext) {
+    public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
+    	return createResponse(paymentContext);
+	}
+
+	private PaymentResponseItem createResponse(PaymentContext paymentContext) {
     	PaymentResponseItem responseItem = new PaymentResponseItemImpl();
 		responseItem.setTransactionTimestamp(new Date());
 		responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());

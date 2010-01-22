@@ -160,6 +160,26 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
         
         assert(response6.getReasonCode().intValue() == 100);
         */
+        
+        /*
+         * reverse authorize
+         */
+        cardRequest.setTransactionType(CyberSourceTransactionType.AUTHORIZE);
+        CyberSourceCardResponse response7 = (CyberSourceCardResponse) service.process(cardRequest);
+        
+        CyberSourceCardRequest cardRequest7 = new CyberSourceCardRequest();
+        cardRequest7.setTransactionType(CyberSourceTransactionType.REVERSEAUTHORIZE);
+        cardRequest7.setServiceType(CyberSourceServiceType.PAYMENT);
+        cardRequest7.setMethodType(CyberSourceMethodType.CREDITCARD);
+        cardRequest7.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
+        cardRequest7.setRequestID(response7.getRequestID());
+        cardRequest7.setRequestToken(response7.getRequestToken());
+        cardRequest7.getItemRequests().add(itemRequest1);
+        cardRequest7.getItemRequests().add(itemRequest2);
+        
+        CyberSourceCardResponse response8 = (CyberSourceCardResponse) service.process(cardRequest7);
+        
+        assert(response8.getReasonCode().intValue() == 100);
     }
 
 }

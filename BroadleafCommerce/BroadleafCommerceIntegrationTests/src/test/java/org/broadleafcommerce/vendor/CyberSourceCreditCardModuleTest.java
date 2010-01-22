@@ -129,6 +129,17 @@ public class CyberSourceCreditCardModuleTest extends BaseTest {
 		assert(responseItem6.getTransactionSuccess());
 		assert(responseItem6.getAmountPaid().equals(amount));*/
 		
+		/*
+		 * auth reverse
+		 */
+		PaymentResponseItem responseItem5 = module.authorize(context);
+		
+		paymentInfo.getAdditionalFields().put("requestId", responseItem5.getAdditionalFields().get("requestId"));
+		paymentInfo.getAdditionalFields().put("requestToken", responseItem5.getAdditionalFields().get("requestToken"));
+		
+		PaymentResponseItem responseItem6 = module.reverseAuthorize(context);
+		assert(responseItem6.getAmountPaid().equals(amount));
+		
 	}
 	
 	private Referenced createCreditCardPaymentInfo(final String pan, final Integer month, final Integer year, final String cvv) {

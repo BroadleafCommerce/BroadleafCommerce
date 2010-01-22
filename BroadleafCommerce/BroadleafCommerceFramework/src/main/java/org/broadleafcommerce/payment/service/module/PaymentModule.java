@@ -23,6 +23,8 @@ import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 public interface PaymentModule {
 
     public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException;
+    
+    public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException;
 
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException;
 

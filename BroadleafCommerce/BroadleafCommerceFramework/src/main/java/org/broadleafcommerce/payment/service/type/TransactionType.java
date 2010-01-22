@@ -37,6 +37,7 @@ public class TransactionType implements Serializable {
     public static final TransactionType CREDIT = new TransactionType("CREDIT");
     public static final TransactionType VOIDPAYMENT = new TransactionType("VOIDPAYMENT");
     public static final TransactionType BALANCE = new TransactionType("BALANCE");
+    public static final TransactionType REVERSEAUTHORIZE = new TransactionType("REVERSEAUTHORIZE");
 
     public static TransactionType getInstance(final String type) {
         return TYPES.get(type);
