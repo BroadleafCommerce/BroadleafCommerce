@@ -284,6 +284,7 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 			sb.append(reply.getRequestToken());
 			
 			if (reply.getCcAuthReply() != null) {
+				sb.append("\nAUTH REPLY");
 				CCAuthReply authReply = reply.getCcAuthReply();
 				sb.append("\nAccount Balance: ");
 				sb.append(authReply.getAccountBalance());
@@ -347,6 +348,18 @@ public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSource
 				sb.append(authReply.getReferralResponseNumber());
 				sb.append("\nSub Response Code: ");
 				sb.append(authReply.getSubResponseCode());
+			}
+			if (reply.getCcCaptureReply() != null) {
+				sb.append("\nCAPTURE REPLY");
+				CCCaptureReply captureReply = reply.getCcCaptureReply();
+				sb.append("\nAmount: ");
+				sb.append(captureReply.getAmount());
+				sb.append("\nReconciliation Id: ");
+				sb.append(captureReply.getReconciliationID());
+				sb.append("\nRequest Date Time: ");
+				sb.append(captureReply.getRequestDateTime());
+				sb.append("\nReason Code: ");
+				sb.append(captureReply.getReasonCode());
 			}
 			LOG.debug("CyberSource Response:\n" + sb.toString());
 		}

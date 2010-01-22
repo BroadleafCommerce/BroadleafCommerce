@@ -112,6 +112,16 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
         CyberSourceCardResponse response2 = (CyberSourceCardResponse) service.process(cardRequest2);
         
         assert(response2.getReasonCode().intValue() == 100);
+        
+        /*
+         * authorize and capture
+         */
+        cardRequest.setTransactionType(CyberSourceTransactionType.AUTHORIZEANDCAPTURE);
+        CyberSourceCardResponse response3 = (CyberSourceCardResponse) service.process(cardRequest);
+
+        assert(response3.getAuthResponse().getAmount().doubleValue() > 0D);
+        assert(response3.getCaptureResponse().getAmount().doubleValue() > 0D);
+        assert(response3.getReasonCode().intValue() == 100);
     }
 
 }
