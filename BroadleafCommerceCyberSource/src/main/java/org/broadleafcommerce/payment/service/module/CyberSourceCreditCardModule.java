@@ -184,6 +184,7 @@ public class CyberSourceCreditCardModule implements PaymentModule {
         cardRequest.setAccountNumber(ccInfo.getPan());
         cardRequest.setExpirationMonth(ccInfo.getExpirationMonth());
         cardRequest.setExpirationYear(ccInfo.getExpirationYear());
+        cardRequest.setCvNumber(ccInfo.getCvvCode());
 	}
 	
 	private void setCurrency(PaymentContext paymentContext, CyberSourceCardRequest cardRequest) {
