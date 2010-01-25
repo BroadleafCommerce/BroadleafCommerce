@@ -20,8 +20,8 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.util.money.Money;
 
 /**
- * TODO investigate how taxware is used and how tax rate information is
- * populated into the database. We would like to have a taxware tax module.
+ * Simple factor-based tax module.
+ * 
  * @author jfischer
  */
 public class SimpleTaxModule implements TaxModule {
