@@ -1,3 +1,18 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.broadleafcommerce.vendor.cybersource.service.tax;
 
 import java.math.BigInteger;
@@ -6,6 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.AbstractCyberSourceService;
+import org.broadleafcommerce.vendor.cybersource.service.api.BillTo;
 import org.broadleafcommerce.vendor.cybersource.service.api.Item;
 import org.broadleafcommerce.vendor.cybersource.service.api.PurchaseTotals;
 import org.broadleafcommerce.vendor.cybersource.service.api.ReplyMessage;
@@ -85,57 +101,59 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 		taxResponse.setRequestToken(reply.getRequestToken());
 		
 		TaxReply taxReply = reply.getTaxReply();
-		taxResponse.setCity(taxReply.getCity());
-		taxResponse.setCounty(taxReply.getCounty());
-		taxResponse.setCurrency(taxReply.getCurrency());
-		taxResponse.setGeocode(taxReply.getGeocode());
-		if (taxReply.getGrandTotalAmount() != null) {
-			taxResponse.setGrandTotalAmount(new Money(taxReply.getGrandTotalAmount()));
-		}
-		taxResponse.setPostalCode(taxReply.getPostalCode());
-		taxResponse.setState(taxReply.getState());
-		if (taxReply.getTotalCityTaxAmount() != null) {
-			taxResponse.setTotalCityTaxAmount(new Money(taxReply.getTotalCityTaxAmount()));
-		}
-		if (taxReply.getTotalCountyTaxAmount() != null) {
-			taxResponse.setTotalCountyTaxAmount(new Money(taxReply.getTotalCountyTaxAmount()));
-		}
-		if (taxReply.getTotalDistrictTaxAmount() != null) {
-			taxResponse.setTotalDistrictTaxAmount(new Money(taxReply.getTotalDistrictTaxAmount()));
-		}
-		if (taxReply.getTotalStateTaxAmount() != null) {
-			taxResponse.setTotalStateTaxAmount(new Money(taxReply.getTotalStateTaxAmount()));
-		}
-		if (taxReply.getTotalTaxAmount() != null) {
-			taxResponse.setTotalTaxAmount(new Money(taxReply.getTotalTaxAmount()));
-		}
-		
-		TaxReplyItem[] replyItems = taxReply.getItem();
-		CyberSourceTaxItemResponse[] itemResponses = new CyberSourceTaxItemResponse[replyItems.length];
-		if (replyItems != null) {
-			for (int j=0;j<replyItems.length;j++) {
-				TaxReplyItem replyItem = replyItems[j];
-				CyberSourceTaxItemResponse taxItem = new CyberSourceTaxItemResponse();
-				if (replyItem.getCityTaxAmount() != null) {
-					taxItem.setCityTaxAmount(new Money(replyItem.getCityTaxAmount()));
+		if (reply != null) {
+			taxResponse.setCity(taxReply.getCity());
+			taxResponse.setCounty(taxReply.getCounty());
+			taxResponse.setCurrency(taxReply.getCurrency());
+			taxResponse.setGeocode(taxReply.getGeocode());
+			if (taxReply.getGrandTotalAmount() != null) {
+				taxResponse.setGrandTotalAmount(new Money(taxReply.getGrandTotalAmount()));
+			}
+			taxResponse.setPostalCode(taxReply.getPostalCode());
+			taxResponse.setState(taxReply.getState());
+			if (taxReply.getTotalCityTaxAmount() != null) {
+				taxResponse.setTotalCityTaxAmount(new Money(taxReply.getTotalCityTaxAmount()));
+			}
+			if (taxReply.getTotalCountyTaxAmount() != null) {
+				taxResponse.setTotalCountyTaxAmount(new Money(taxReply.getTotalCountyTaxAmount()));
+			}
+			if (taxReply.getTotalDistrictTaxAmount() != null) {
+				taxResponse.setTotalDistrictTaxAmount(new Money(taxReply.getTotalDistrictTaxAmount()));
+			}
+			if (taxReply.getTotalStateTaxAmount() != null) {
+				taxResponse.setTotalStateTaxAmount(new Money(taxReply.getTotalStateTaxAmount()));
+			}
+			if (taxReply.getTotalTaxAmount() != null) {
+				taxResponse.setTotalTaxAmount(new Money(taxReply.getTotalTaxAmount()));
+			}
+			
+			TaxReplyItem[] replyItems = taxReply.getItem();
+			if (replyItems != null) {
+				CyberSourceTaxItemResponse[] itemResponses = new CyberSourceTaxItemResponse[replyItems.length];
+				for (int j=0;j<replyItems.length;j++) {
+					TaxReplyItem replyItem = replyItems[j];
+					CyberSourceTaxItemResponse taxItem = new CyberSourceTaxItemResponse();
+					if (replyItem.getCityTaxAmount() != null) {
+						taxItem.setCityTaxAmount(new Money(replyItem.getCityTaxAmount()));
+					}
+					if (replyItem.getCountyTaxAmount() != null) {
+						taxItem.setCountyTaxAmount(new Money(replyItem.getCountyTaxAmount()));
+					}
+					if (replyItem.getDistrictTaxAmount() != null) {
+						taxItem.setDistrictTaxAmount(new Money(replyItem.getDistrictTaxAmount()));
+					}
+					taxItem.setId(replyItem.getId());
+					if (replyItem.getStateTaxAmount() != null) {
+						taxItem.setStateTaxAmount(new Money(replyItem.getStateTaxAmount()));
+					}
+					if (replyItem.getTotalTaxAmount() != null) {
+						taxItem.setTotalTaxAmount(new Money(replyItem.getTotalTaxAmount()));
+					}
+					itemResponses[j] = taxItem;
 				}
-				if (replyItem.getCountyTaxAmount() != null) {
-					taxItem.setCountyTaxAmount(new Money(replyItem.getCountyTaxAmount()));
-				}
-				if (replyItem.getDistrictTaxAmount() != null) {
-					taxItem.setDistrictTaxAmount(new Money(replyItem.getDistrictTaxAmount()));
-				}
-				taxItem.setId(replyItem.getId());
-				if (replyItem.getStateTaxAmount() != null) {
-					taxItem.setStateTaxAmount(new Money(replyItem.getStateTaxAmount()));
-				}
-				if (replyItem.getTotalTaxAmount() != null) {
-					taxItem.setTotalTaxAmount(new Money(replyItem.getTotalTaxAmount()));
-				}
-				itemResponses[j] = taxItem;
+				taxResponse.setItemResponses(itemResponses);
 			}
 		}
-		taxResponse.setItemResponses(itemResponses);
 	}
 
 	protected RequestMessage buildRequestMessage(CyberSourceTaxRequest taxRequest) {
@@ -159,6 +177,7 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
         request.setPurchaseTotals(purchaseTotals);
         
         setItemInformation(taxRequest, request);
+        setBillingInformation(taxRequest, request);
         
         TaxService taxService = new TaxService();
         taxService.setNexus(taxRequest.getNexus());
@@ -301,6 +320,36 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
         request.setItem(items);
 	}
 	
+	protected void setBillingInformation(CyberSourceTaxRequest taxRequest, RequestMessage request) {
+		BillTo billTo = new BillTo();
+		billTo.setCity(taxRequest.getBillingRequest().getCity());
+		billTo.setCompany(taxRequest.getBillingRequest().getCompany());
+		billTo.setCompanyTaxID(taxRequest.getBillingRequest().getCompanyTaxID());
+		billTo.setCountry(taxRequest.getBillingRequest().getCountry());
+		billTo.setCounty(taxRequest.getBillingRequest().getCounty());
+		billTo.setDateOfBirth(taxRequest.getBillingRequest().getDateOfBirth());
+		billTo.setDriversLicenseNumber(taxRequest.getBillingRequest().getDriversLicenseNumber());
+		billTo.setDriversLicenseState(taxRequest.getBillingRequest().getDriversLicenseState());
+		billTo.setEmail(taxRequest.getBillingRequest().getEmail());
+		billTo.setFirstName(taxRequest.getBillingRequest().getFirstName());
+		billTo.setIpAddress(taxRequest.getBillingRequest().getIpAddress());
+		billTo.setIpNetworkAddress(taxRequest.getBillingRequest().getIpNetworkAddress());
+		billTo.setLastName(taxRequest.getBillingRequest().getLastName());
+		billTo.setMiddleName(taxRequest.getBillingRequest().getMiddleName());
+		billTo.setPhoneNumber(taxRequest.getBillingRequest().getPhoneNumber());
+		billTo.setPostalCode(taxRequest.getBillingRequest().getPostalCode());
+		billTo.setSsn(taxRequest.getBillingRequest().getSsn());
+		billTo.setState(taxRequest.getBillingRequest().getState());
+		billTo.setStreet1(taxRequest.getBillingRequest().getStreet1());
+		billTo.setStreet2(taxRequest.getBillingRequest().getStreet2());
+		billTo.setStreet3(taxRequest.getBillingRequest().getStreet3());
+		billTo.setStreet4(taxRequest.getBillingRequest().getStreet4());
+		billTo.setSuffix(taxRequest.getBillingRequest().getSuffix());
+		billTo.setTitle(taxRequest.getBillingRequest().getTitle());
+
+        request.setBillTo( billTo );
+	}
+	
 	protected void logReply(ReplyMessage reply) {
 		if (LOG.isDebugEnabled()) {
 			StringBuffer sb = new StringBuffer();
@@ -330,46 +379,50 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 			sb.append(reply.getRequestToken());
 			
 			TaxReply taxReply = reply.getTaxReply();
-			sb.append("\nCity: ");
-			sb.append(taxReply.getCity());
-			sb.append("\nCounty: ");
-			sb.append(taxReply.getCounty());
-			sb.append("\nCurrency: ");
-			sb.append(taxReply.getCurrency());
-			sb.append("\nGeoCode: ");
-			sb.append(taxReply.getGeocode());
-			sb.append("\nGrand Total Amount: ");
-			sb.append(taxReply.getGrandTotalAmount());
-			sb.append("\nPostal Code: ");
-			sb.append(taxReply.getPostalCode());
-			sb.append("\nState: ");
-			sb.append(taxReply.getState());
-			sb.append("\nTotal City Tax: ");
-			sb.append(taxReply.getTotalCityTaxAmount());
-			sb.append("\nTotal County Tax: ");
-			sb.append(taxReply.getTotalCountyTaxAmount());
-			sb.append("\nTotal District Tax: ");
-			sb.append(taxReply.getTotalDistrictTaxAmount());
-			sb.append("\nTotal State Tax: ");
-			sb.append(taxReply.getTotalStateTaxAmount());
-			sb.append("\nTotal Tax: ");
-			sb.append(taxReply.getTotalTaxAmount());
-			
-			TaxReplyItem[] replies = taxReply.getItem();
-			for (TaxReplyItem item : replies) {
-				sb.append("\nITEM");
-				sb.append("\nCity Tax: ");
-				sb.append(item.getCityTaxAmount());
-				sb.append("\nCounty Tax: ");
-				sb.append(item.getCountyTaxAmount());
-				sb.append("\nDistrict Tax: ");
-				sb.append(item.getDistrictTaxAmount());
-				sb.append("\nState Tax: ");
-				sb.append(item.getStateTaxAmount());
+			if (taxReply != null) {
+				sb.append("\nCity: ");
+				sb.append(taxReply.getCity());
+				sb.append("\nCounty: ");
+				sb.append(taxReply.getCounty());
+				sb.append("\nCurrency: ");
+				sb.append(taxReply.getCurrency());
+				sb.append("\nGeoCode: ");
+				sb.append(taxReply.getGeocode());
+				sb.append("\nGrand Total Amount: ");
+				sb.append(taxReply.getGrandTotalAmount());
+				sb.append("\nPostal Code: ");
+				sb.append(taxReply.getPostalCode());
+				sb.append("\nState: ");
+				sb.append(taxReply.getState());
+				sb.append("\nTotal City Tax: ");
+				sb.append(taxReply.getTotalCityTaxAmount());
+				sb.append("\nTotal County Tax: ");
+				sb.append(taxReply.getTotalCountyTaxAmount());
+				sb.append("\nTotal District Tax: ");
+				sb.append(taxReply.getTotalDistrictTaxAmount());
+				sb.append("\nTotal State Tax: ");
+				sb.append(taxReply.getTotalStateTaxAmount());
 				sb.append("\nTotal Tax: ");
-				sb.append(item.getTotalTaxAmount());
-				sb.append("\nId: ");
-				sb.append(item.getId());
+				sb.append(taxReply.getTotalTaxAmount());
+				
+				TaxReplyItem[] replies = taxReply.getItem();
+				if (replies != null) {
+					for (TaxReplyItem item : replies) {
+						sb.append("\nITEM");
+						sb.append("\nCity Tax: ");
+						sb.append(item.getCityTaxAmount());
+						sb.append("\nCounty Tax: ");
+						sb.append(item.getCountyTaxAmount());
+						sb.append("\nDistrict Tax: ");
+						sb.append(item.getDistrictTaxAmount());
+						sb.append("\nState Tax: ");
+						sb.append(item.getStateTaxAmount());
+						sb.append("\nTotal Tax: ");
+						sb.append(item.getTotalTaxAmount());
+						sb.append("\nId: ");
+						sb.append(item.getId());
+					}
+				}
 			}
 			
 			LOG.debug("CyberSource Response:\n" + sb.toString());

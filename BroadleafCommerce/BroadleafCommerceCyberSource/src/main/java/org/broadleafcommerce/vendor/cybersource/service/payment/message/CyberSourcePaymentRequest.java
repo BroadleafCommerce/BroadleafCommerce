@@ -19,23 +19,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceMethodType;
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
+import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 
 
 public abstract class CyberSourcePaymentRequest extends CyberSourceRequest {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private CyberSourceBillingRequest billingRequest;
-	private String currency;
-	private List<CyberSourceItemRequest> itemRequests = new ArrayList<CyberSourceItemRequest>();
-	private CyberSourceTransactionType transactionType;
-	private CyberSourceMethodType methodType;
-	private Money grandTotal;
-	private Boolean useGrandTotal;
+	protected CyberSourceBillingRequest billingRequest;
+	protected String currency;
+	protected List<CyberSourceItemRequest> itemRequests = new ArrayList<CyberSourceItemRequest>();
+	protected CyberSourceTransactionType transactionType;
+	protected CyberSourceMethodType methodType;
+	protected Money grandTotal;
+	protected Boolean useGrandTotal;
+
+	public CyberSourcePaymentRequest(CyberSourceMethodType methodType) {
+		super(CyberSourceServiceType.PAYMENT);
+		this.methodType = methodType;
+	}
 
 	public CyberSourceTransactionType getTransactionType() {
 		return transactionType;
@@ -47,10 +54,6 @@ public abstract class CyberSourcePaymentRequest extends CyberSourceRequest {
 	
 	public CyberSourceMethodType getMethodType() {
 		return methodType;
-	}
-
-	public void setMethodType(CyberSourceMethodType methodType) {
-		this.methodType = methodType;
 	}
 	
 	public CyberSourceBillingRequest getBillingRequest() {

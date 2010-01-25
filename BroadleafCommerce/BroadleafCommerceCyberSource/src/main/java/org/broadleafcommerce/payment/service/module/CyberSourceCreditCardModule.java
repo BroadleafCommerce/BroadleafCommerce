@@ -13,14 +13,12 @@ import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.CyberSourcePaymentService;
-import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceCardRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceCardResponse;
-import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceMethodType;
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
-import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 
 public class CyberSourceCreditCardModule implements PaymentModule {
 	
@@ -35,7 +33,7 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 	}
 	
 	private PaymentResponseItem authTypeTransaction(PaymentContext paymentContext, CyberSourceTransactionType transactionType) throws PaymentException {
-		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		CyberSourceCardRequest cardRequest = new CyberSourceCardRequest();
 		setCardInfo(paymentContext, cardRequest);
         cardRequest.setTransactionType(transactionType);
         setCurrency(paymentContext, cardRequest);
@@ -63,7 +61,7 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 	}
 
 	public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		CyberSourceCardRequest cardRequest = new CyberSourceCardRequest();
 		cardRequest.setTransactionType(CyberSourceTransactionType.CREDIT);
 		setCurrency(paymentContext, cardRequest);
 		
@@ -82,7 +80,7 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 	}
 
 	public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		CyberSourceCardRequest cardRequest = new CyberSourceCardRequest();
 		cardRequest.setTransactionType(CyberSourceTransactionType.CAPTURE);
 		setCurrency(paymentContext, cardRequest);
 		
@@ -101,7 +99,7 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 	}
 	
 	public PaymentResponseItem reverseAuthorize(PaymentContext paymentContext) throws PaymentException {
-		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		CyberSourceCardRequest cardRequest = new CyberSourceCardRequest();
 		cardRequest.setTransactionType(CyberSourceTransactionType.REVERSEAUTHORIZE);
 		setCurrency(paymentContext, cardRequest);
 		
@@ -123,7 +121,7 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 	}
 
 	public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-		CyberSourceCardRequest cardRequest = createCardRequest(paymentContext);
+		CyberSourceCardRequest cardRequest = new CyberSourceCardRequest();
 		cardRequest.setTransactionType(CyberSourceTransactionType.VOIDTRANSACTION);
 		setCurrency(paymentContext, cardRequest);
 		
@@ -169,14 +167,6 @@ public class CyberSourceCreditCardModule implements PaymentModule {
 		responseItem.getAdditionalFields().put("requestToken", response.getRequestToken());
 		
 		return responseItem;
-	}
-	
-	private CyberSourceCardRequest createCardRequest(PaymentContext paymentContext) {
-		CyberSourceCardRequest cardRequest = new CyberSourceCardRequest();
-		cardRequest.setServiceType(CyberSourceServiceType.PAYMENT);
-        cardRequest.setMethodType(CyberSourceMethodType.CREDITCARD);
-        
-        return cardRequest;
 	}
 	
 	private void setCardInfo(PaymentContext paymentContext, CyberSourceCardRequest cardRequest) {

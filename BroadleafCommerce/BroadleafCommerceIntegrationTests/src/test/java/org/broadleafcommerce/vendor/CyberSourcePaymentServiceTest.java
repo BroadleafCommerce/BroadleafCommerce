@@ -23,14 +23,12 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.CyberSourcePaymentService;
-import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceCardRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceCardResponse;
-import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceMethodType;
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
-import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
@@ -51,8 +49,6 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
          */
         CyberSourceCardRequest cardRequest = new CyberSourceCardRequest();
         cardRequest.setTransactionType(CyberSourceTransactionType.AUTHORIZE);
-        cardRequest.setServiceType(CyberSourceServiceType.PAYMENT);
-        cardRequest.setMethodType(CyberSourceMethodType.CREDITCARD);
         cardRequest.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
         
         CyberSourceBillingRequest billingRequest = new CyberSourceBillingRequest();
@@ -101,8 +97,6 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
          */
         CyberSourceCardRequest cardRequest2 = new CyberSourceCardRequest();
         cardRequest2.setTransactionType(CyberSourceTransactionType.CAPTURE);
-        cardRequest2.setServiceType(CyberSourceServiceType.PAYMENT);
-        cardRequest2.setMethodType(CyberSourceMethodType.CREDITCARD);
         cardRequest2.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
         cardRequest2.setRequestID(response.getRequestID());
         cardRequest2.setRequestToken(response.getRequestToken());
@@ -128,8 +122,6 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
          */
         CyberSourceCardRequest cardRequest4 = new CyberSourceCardRequest();
         cardRequest4.setTransactionType(CyberSourceTransactionType.CREDIT);
-        cardRequest4.setServiceType(CyberSourceServiceType.PAYMENT);
-        cardRequest4.setMethodType(CyberSourceMethodType.CREDITCARD);
         cardRequest4.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
         cardRequest4.setRequestID(response3.getRequestID());
         cardRequest4.setRequestToken(response3.getRequestToken());
@@ -169,8 +161,6 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
         
         CyberSourceCardRequest cardRequest7 = new CyberSourceCardRequest();
         cardRequest7.setTransactionType(CyberSourceTransactionType.REVERSEAUTHORIZE);
-        cardRequest7.setServiceType(CyberSourceServiceType.PAYMENT);
-        cardRequest7.setMethodType(CyberSourceMethodType.CREDITCARD);
         cardRequest7.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
         cardRequest7.setRequestID(response7.getRequestID());
         cardRequest7.setRequestToken(response7.getRequestToken());
