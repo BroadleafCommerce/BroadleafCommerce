@@ -24,12 +24,12 @@ import org.broadleafcommerce.content.domain.ContentDetails;
  *
  */
 public interface ContentDetailsDao {
-	public ContentDetails readContentDetailsById(Long id);
-	
-	public List<ContentDetails> readContentDetailsByOrderedIds(List<Long> ids);
-	
+	public ContentDetails readContentDetailsById(Integer id);
+
+	public List<ContentDetails> readContentDetailsByOrderedIds(List<Integer> ids);
+
 	public ContentDetails save(ContentDetails contentDetails);
-	
+
 	public void delete(ContentDetails contentDetails);
 
 }

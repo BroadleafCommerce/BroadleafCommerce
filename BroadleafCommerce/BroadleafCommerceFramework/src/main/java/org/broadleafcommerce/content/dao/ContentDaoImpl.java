@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.content.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -77,16 +78,16 @@ public class ContentDaoImpl implements ContentDao {
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentById(java.lang.Long)
      */
     @SuppressWarnings("unchecked")
-    public Content readContentById(Long id) {
+    public Content readContentById(Integer id) {
         return (Content) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.content.domain.Content"), id);
     }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentByIds(java.util.List)
      */
-    public List<Content> readContentByIdsAndSandbox(List<Long> ids, String sandbox) {
+    public List<Content> readContentByIdsAndSandbox(List<Integer> ids, String sandbox) {
     	Query query;
-    	
+
     	if (sandbox == null) {
     		query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_WHERE_SANDBOX_IS_NULL");
     		query.setParameter("idList", ids);
@@ -95,7 +96,7 @@ public class ContentDaoImpl implements ContentDao {
         	query.setParameter("idList", ids);
             query.setParameter("sandbox", sandbox);
         }
-        
+
         query.setHint(getQueryCacheableKey(), true);
 
         return (List<Content>) query.getResultList();

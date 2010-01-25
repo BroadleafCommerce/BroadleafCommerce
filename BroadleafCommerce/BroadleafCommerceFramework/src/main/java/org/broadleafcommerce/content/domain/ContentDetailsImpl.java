@@ -46,37 +46,37 @@ public class ContentDetailsImpl implements ContentDetails {
 	@OneToOne(targetEntity = ContentImpl.class, mappedBy="ID")
 	@JoinColumn(name = "ID", unique=true, nullable=false, updatable=false)
 	@Index(name = "CONTENT_DETAILS_INDEX", columnNames={"ID"})
-	protected Long id;
-    
+	protected Integer id;
+
     @Column(name = "CONTENT_HASH")
     protected String contentHash;
-    
+
 	@Column(name = "XML_CONTENT")
 	protected String xmlContent;
-	
+
 	public ContentDetailsImpl() {}
-	
-	public ContentDetailsImpl(ContentDetails cnt, Long id) {
+
+	public ContentDetailsImpl(ContentDetails cnt, Integer id) {
 		this.contentHash = cnt.getContentHash();
 		this.xmlContent = cnt.getXmlContent();
 		this.id = id;
 	}
-	
-	
+
+
 	/**
 	 * @return the id
 	 */
-	public Long getId() {
+	public Integer getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Long id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * @return the hash
 	 */
@@ -104,5 +104,5 @@ public class ContentDetailsImpl implements ContentDetails {
 	public void setXmlContent(String xmlContent) {
 		this.xmlContent = xmlContent;
 	}
-	
+
 }
