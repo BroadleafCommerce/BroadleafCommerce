@@ -13,14 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.cybersource.service;
+package org.broadleafcommerce.vendor.service.exception;
 
-import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentRequest;
-import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentResponse;
-import org.broadleafcommerce.vendor.service.exception.PaymentException;
 
-public interface CyberSourcePaymentService extends CyberSourceService {
+public class TaxHostException extends TaxException {
 
-	public CyberSourcePaymentResponse process(CyberSourcePaymentRequest paymentRequest) throws PaymentException;
-    
+    private static final long serialVersionUID = 1L;
+
+    public TaxHostException() {
+        super();
+    }
+
+    public TaxHostException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public TaxHostException(String message) {
+        super(message);
+    }
+
+    public TaxHostException(Throwable cause) {
+        super(cause);
+    }
+
 }

@@ -22,15 +22,15 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
-import org.broadleafcommerce.vendor.cybersource.service.CyberSourcePaymentService;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
-import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
-import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardRequest;
-import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceCardResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
-import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceMethodType;
+import org.broadleafcommerce.vendor.cybersource.service.payment.CyberSourcePaymentService;
+import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceBillingRequest;
+import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceCardRequest;
+import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceCardResponse;
+import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceMethodType;
+import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
-import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceTransactionType;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

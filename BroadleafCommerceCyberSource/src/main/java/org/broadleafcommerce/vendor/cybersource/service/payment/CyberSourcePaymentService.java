@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.cybersource.service;
+package org.broadleafcommerce.vendor.cybersource.service.payment;
 
+import org.broadleafcommerce.vendor.cybersource.service.CyberSourceService;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentRequest;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentResponse;
 import org.broadleafcommerce.vendor.service.exception.PaymentException;
