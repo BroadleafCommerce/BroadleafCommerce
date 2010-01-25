@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.cybersource.service;
+package org.broadleafcommerce.vendor.cybersource.service.tax;
 
-import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentRequest;
-import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentResponse;
-import org.broadleafcommerce.vendor.service.exception.PaymentException;
+import org.broadleafcommerce.vendor.cybersource.service.CyberSourceService;
+import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
+import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
+import org.broadleafcommerce.vendor.service.exception.TaxException;
 
-public interface CyberSourcePaymentService extends CyberSourceService {
+public interface CyberSourceTaxService extends CyberSourceService {
 
-	public CyberSourcePaymentResponse process(CyberSourcePaymentRequest paymentRequest) throws PaymentException;
+	public CyberSourceTaxResponse process(CyberSourceTaxRequest taxRequest) throws TaxException;
     
 }
