@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 
+import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceMethodType;
+
 
 public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
 	
@@ -34,7 +36,11 @@ public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
     private java.lang.String bin;
     protected String requestID;
 	protected String requestToken;
-	
+
+	public CyberSourceCardRequest() {
+		super(CyberSourceMethodType.CREDITCARD);
+	}
+
 	public String getRequestID() {
 		return requestID;
 	}

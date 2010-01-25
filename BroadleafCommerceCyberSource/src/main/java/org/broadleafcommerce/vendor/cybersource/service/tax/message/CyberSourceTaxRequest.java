@@ -4,29 +4,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
+import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 
 public class CyberSourceTaxRequest extends CyberSourceRequest {
 
 private static final long serialVersionUID = 1L;
 	
-	private String currency;
-	private List<CyberSourceTaxItemRequest> itemRequests = new ArrayList<CyberSourceTaxItemRequest>();
-	private Money grandTotal;
-	private Boolean useGrandTotal;
-	private java.lang.String nexus;
-    private java.lang.String noNexus;
-    private java.lang.String orderAcceptanceCity;
-    private java.lang.String orderAcceptanceCounty;
-    private java.lang.String orderAcceptanceCountry;
-    private java.lang.String orderAcceptanceState;
-    private java.lang.String orderAcceptancePostalCode;
-    private java.lang.String orderOriginCity;
-    private java.lang.String orderOriginCounty;
-    private java.lang.String orderOriginCountry;
-    private java.lang.String orderOriginState;
-    private java.lang.String orderOriginPostalCode;
+	protected String currency;
+	protected List<CyberSourceTaxItemRequest> itemRequests = new ArrayList<CyberSourceTaxItemRequest>();
+	protected CyberSourceBillingRequest billingRequest;
+	protected Money grandTotal;
+	protected Boolean useGrandTotal = Boolean.FALSE;
+	protected java.lang.String nexus;
+	protected java.lang.String noNexus;
+	protected java.lang.String orderAcceptanceCity;
+	protected java.lang.String orderAcceptanceCounty;
+	protected java.lang.String orderAcceptanceCountry;
+	protected java.lang.String orderAcceptanceState;
+	protected java.lang.String orderAcceptancePostalCode;
+	protected java.lang.String orderOriginCity;
+	protected java.lang.String orderOriginCounty;
+	protected java.lang.String orderOriginCountry;
+	protected java.lang.String orderOriginState;
+	protected java.lang.String orderOriginPostalCode;
     
+	public CyberSourceTaxRequest() {
+		super(CyberSourceServiceType.TAX);
+	}
+
 	public String getCurrency() {
 		return currency;
 	}
@@ -153,6 +160,14 @@ private static final long serialVersionUID = 1L;
 	
 	public void setOrderOriginPostalCode(java.lang.String orderOriginPostalCode) {
 		this.orderOriginPostalCode = orderOriginPostalCode;
+	}
+
+	public CyberSourceBillingRequest getBillingRequest() {
+		return billingRequest;
+	}
+	
+	public void setBillingRequest(CyberSourceBillingRequest billingRequest) {
+		this.billingRequest = billingRequest;
 	}
 	
 }

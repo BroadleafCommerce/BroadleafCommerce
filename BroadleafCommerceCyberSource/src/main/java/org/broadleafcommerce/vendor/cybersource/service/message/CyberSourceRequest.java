@@ -6,13 +6,13 @@ public abstract class CyberSourceRequest implements java.io.Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private CyberSourceServiceType serviceType;
+	protected CyberSourceServiceType serviceType;
 	
 	public CyberSourceServiceType getServiceType() {
 		return serviceType;
 	}
 	
-	public void setServiceType(CyberSourceServiceType serviceType) {
+	public CyberSourceRequest(CyberSourceServiceType serviceType) {
 		this.serviceType = serviceType;
 	}
 

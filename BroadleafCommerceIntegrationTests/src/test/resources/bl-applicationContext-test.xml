@@ -115,6 +115,11 @@
 		<property name="idGenerationService" ref="blIdGenerationService"/>
 	</bean>
 	
+	<bean id="blCyberSourceTaxService" class="org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxServiceImpl">
+		<property name="failureReportingThreshold" value="10"/>
+		<property name="idGenerationService" ref="blIdGenerationService"/>
+	</bean>
+	
 	<bean id="blCyberSourceServiceManager" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManagerImpl">
 		<property name="merchantId" value="${cybersource.merchant.id}"/>
 		<property name="serverUrl" value="${cybersource.server.url}"/>
@@ -122,6 +127,7 @@
 		<property name="registeredServices">
 			<list>
 				<ref bean="blCyberSourceCreditCardPaymentService"/>
+				<ref bean="blCyberSourceTaxService"/>
 			</list>
 		</property>
 	</bean>

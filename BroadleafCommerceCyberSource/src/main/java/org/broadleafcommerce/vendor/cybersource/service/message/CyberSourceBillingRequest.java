@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.cybersource.service.payment.message;
+package org.broadleafcommerce.vendor.cybersource.service.message;
 
 public class CyberSourceBillingRequest  implements java.io.Serializable {
 	
