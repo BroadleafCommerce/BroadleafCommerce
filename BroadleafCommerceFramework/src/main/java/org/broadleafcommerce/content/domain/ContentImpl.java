@@ -67,7 +67,7 @@ public class ContentImpl implements Content {
     @GeneratedValue(generator = "ContentId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ContentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ContentImpl", allocationSize = 50)
     @Column(name = "ID")
-    protected Long id;
+    protected Integer id;
     @Column(name = "APPROVED_BY")
     protected String approvedBy;
     @Column(name = "CONTENT_TYPE")
@@ -177,7 +177,7 @@ public class ContentImpl implements Content {
     *
     * @return the id
     */
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -331,7 +331,7 @@ public class ContentImpl implements Content {
     *
     * @param id the id to set
     */
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

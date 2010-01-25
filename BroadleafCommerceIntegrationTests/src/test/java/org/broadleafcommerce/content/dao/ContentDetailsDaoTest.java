@@ -30,9 +30,9 @@ public class ContentDetailsDaoTest extends BaseTest {
 
 	@Resource
 	private ContentDetailsDao contentDetailsDao;
-	
-	private Long contentDetailsId;
-	
+
+	private Integer contentDetailsId;
+
 	@Test(groups = {"testSaveContentDetails"}, dataProvider = "basicContentDetails", dataProviderClass = ContentDetailsDaoProvider.class, dependsOnGroups = {"testSaveContent"})
 	public void testSaveContentDetails(ContentDetails contentDetails){
 		ContentDetails newContentDetails = contentDetailsDao.save(contentDetails);
@@ -40,7 +40,7 @@ public class ContentDetailsDaoTest extends BaseTest {
 		assert newContentDetails.getId() != null;
 		contentDetailsId = newContentDetails.getId();
 	}
-	
+
 	@Test(groups = {"testReadContentDetailsById"}, dependsOnGroups = {"testSaveContentDetails"})
 	public void testReadContentDetailsById(){
 		ContentDetails contentDetails = contentDetailsDao.readContentDetailsById(contentDetailsId);

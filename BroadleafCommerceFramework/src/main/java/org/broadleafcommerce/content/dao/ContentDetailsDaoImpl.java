@@ -43,8 +43,8 @@ public class ContentDetailsDaoImpl implements ContentDetailsDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    protected String queryCacheableKey = "org.hibernate.cacheable";    
-    
+    protected String queryCacheableKey = "org.hibernate.cacheable";
+
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.content.dao.ContentDetailsDao#delete(org.broadleafcommerce.content.domain.ContentDetails)
 	 */
@@ -54,22 +54,22 @@ public class ContentDetailsDaoImpl implements ContentDetailsDao {
 		}
 		em.remove(contentDetails);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.content.dao.ContentDetailsDao#readContentDetailsById(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
-	public ContentDetails readContentDetailsById(Long id) {
+	public ContentDetails readContentDetailsById(Integer id) {
 		return (ContentDetails) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.content.domain.ContentDetails"), id);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ContentDetails> readContentDetailsByOrderedIds(List<Long> ids){
+	public List<ContentDetails> readContentDetailsByOrderedIds(List<Integer> ids){
 		Query query = em.createNamedQuery("BC_READ_CONTENT_DETAILS_BY_IDS");
 		query.setParameter("contentIds", ids);
 		List<ContentDetails> cds = (List<ContentDetails>)query.getResultList();
 		List<ContentDetails> orderedCds = new ArrayList<ContentDetails>();
-		for (Long id : ids){
+		for (Integer id : ids){
 			for (ContentDetails cd : cds){
 				if(id.intValue() ==  cd.getId().intValue()){
 					orderedCds.add(cd);
@@ -77,22 +77,22 @@ public class ContentDetailsDaoImpl implements ContentDetailsDao {
 			}
 		}
 		return orderedCds;
-		
+
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.content.dao.ContentDetailsDao#save(org.broadleafcommerce.content.domain.ContentDetails)
 	 */
 	public ContentDetails save(ContentDetails contentDetails) {
 		return em.merge(contentDetails);
 	}
-	
+
     public String getQueryCacheableKey() {
         return queryCacheableKey;
     }
 
     public void setQueryCacheableKey(String queryCacheableKey) {
         this.queryCacheableKey = queryCacheableKey;
-    }	
+    }
 }

@@ -32,9 +32,9 @@ public interface ContentDao {
 
     public List<Content> readContentAwaitingApproval();
 
-    public Content readContentById(Long id);
+    public Content readContentById(Integer id);
 
-    public List<Content> readContentByIdsAndSandbox(List<Long> ids, String sandbox);
+    public List<Content> readContentByIdsAndSandbox(List<Integer> ids, String sandbox);
 
     public List<Content> readContentBySandbox(String sandbox);
 
@@ -45,7 +45,7 @@ public interface ContentDao {
     public Content saveContent(Content content);
 
     public List<Content> saveContent(List<Content> contentList);
-    
+
     public List<Content> readStagedContent();
-    
+
 }

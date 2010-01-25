@@ -37,7 +37,7 @@ public interface Content {
 
     public String getFilePathName();
 
-    public Long getId();
+    public Integer getId();
 
     public Integer getMaxCount();
 
@@ -75,7 +75,7 @@ public interface Content {
 
     public void setFilePathName(String filePathName);
 
-    public void setId(Long id);
+    public void setId(Integer id);
 
     public void setMaxCount(Integer maxCount);
 

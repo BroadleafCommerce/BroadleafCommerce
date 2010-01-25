@@ -28,33 +28,33 @@ import org.broadleafcommerce.content.domain.ContentDetails;
  */
 public interface ContentService {
 
-	public Content findContentById(Long id);
-	
-	public Content findContentDetailsById(Long id);
-	
+	public Content findContentById(Integer id);
+
+	public Content findContentDetailsById(Integer id);
+
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters);
-	
+
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate);
-	
+
 	public String renderedContentDetails(String styleSheet, List<ContentDetails> contentDetails) throws Exception;
 
 	public String renderedContentDetails(String styleSheetString, List<ContentDetails> contentDetails, int rowCount) throws Exception;
 
-	public List<Content> checkoutContentToSandbox(List<Long> contentIds, String sandboxName);
-	
-	public void submitContentFromSandbox(List<Long> contentIds, String sandboxName, String username);
-	 
-	public void approveContent(List<Long> contentIds,  String sandboxName, String username);
-	 
-	public void removeContentFromSandbox(List<Long> contentIds, String sandbox);
-	 
-	public void rejectContent(List<Long> contentIds, String sandbox, String username);
-	 
+	public List<Content> checkoutContentToSandbox(List<Integer> contentIds, String sandboxName);
+
+	public void submitContentFromSandbox(List<Integer> contentIds, String sandboxName, String username);
+
+	public void approveContent(List<Integer> contentIds,  String sandboxName, String username);
+
+	public void removeContentFromSandbox(List<Integer> contentIds, String sandbox);
+
+	public void rejectContent(List<Integer> contentIds, String sandbox, String username);
+
 	public List<Content> readContentForSandbox(String sandbox);
-	 
+
 	public List<Content> readContentForSandboxAndType(String sandbox, String contentType);
-	 
-	public List<Content> readContentAwaitingApproval(); 
+
+	public List<Content> readContentAwaitingApproval();
 
 	public Content saveContent(Content content, ContentDetails contentDetails);
 }
