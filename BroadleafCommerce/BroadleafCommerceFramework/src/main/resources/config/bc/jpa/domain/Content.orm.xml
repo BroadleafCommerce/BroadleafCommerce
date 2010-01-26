@@ -44,6 +44,14 @@
 		  </query>
 	</named-query>
 	
+	<named-query name="BC_READ_CONTENT_BY_LIKE_SANDBOX">
+		<query>SELECT content FROM org.broadleafcommerce.content.domain.Content content
+				WHERE content.sandbox LIKE :sandbox
+				  AND content.online = TRUE
+		     ORDER BY priority
+		  </query>
+	</named-query>
+	
 	<named-query name="BC_READ_CONTENT_BY_SANDBOX_AND_CONTENT_TYPE">
 		<query>SELECT content FROM org.broadleafcommerce.content.domain.Content content
 				WHERE content.sandbox = :sandbox
