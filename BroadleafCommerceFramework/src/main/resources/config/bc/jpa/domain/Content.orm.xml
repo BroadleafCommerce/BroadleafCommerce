@@ -10,7 +10,7 @@
 				  AND content.contentType = :contentType
 				  AND content.activeStartDate &lt; :displayDate
 				  AND content.activeEndDate &gt; :displayDate
-				  AND content.active = TRUE
+				  AND content.online = TRUE
 		     ORDER BY priority
 		  </query>
 	</named-query>
@@ -39,7 +39,7 @@
 	<named-query name="BC_READ_CONTENT_BY_SANDBOX">
 		<query>SELECT content FROM org.broadleafcommerce.content.domain.Content content
 				WHERE content.sandbox = :sandbox
-				  AND content.active = TRUE
+				  AND content.online = TRUE
 		     ORDER BY priority
 		  </query>
 	</named-query>
@@ -48,7 +48,7 @@
 		<query>SELECT content FROM org.broadleafcommerce.content.domain.Content content
 				WHERE content.sandbox = :sandbox
 				  AND content.contentType = :contentType
-				  AND content.active = TRUE
+				  AND content.online = TRUE
 		     ORDER BY priority
 		  </query>
 	</named-query>

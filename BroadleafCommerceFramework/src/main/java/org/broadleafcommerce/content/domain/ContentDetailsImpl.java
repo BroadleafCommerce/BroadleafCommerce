@@ -18,6 +18,7 @@ package org.broadleafcommerce.content.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -47,10 +48,9 @@ public class ContentDetailsImpl implements ContentDetails {
 	@JoinColumn(name = "ID", unique=true, nullable=false, updatable=false)
 	@Index(name = "CONTENT_DETAILS_INDEX", columnNames={"ID"})
 	protected Integer id;
-
     @Column(name = "CONTENT_HASH")
     protected String contentHash;
-
+    @Lob
 	@Column(name = "XML_CONTENT")
 	protected String xmlContent;
 

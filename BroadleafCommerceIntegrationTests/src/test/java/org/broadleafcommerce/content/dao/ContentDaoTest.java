@@ -53,7 +53,7 @@ public class ContentDaoTest extends BaseTest {
 		assert newContent.getId() != null;
 		assert (newContent.getActiveEndDate() == null && content.getActiveEndDate() == null) || newContent.getActiveEndDate().equals(content.getActiveEndDate());
 		assert (newContent.getActiveStartDate() == null && content.getActiveStartDate() == null) || newContent.getActiveStartDate().equals(content.getActiveStartDate());
-		assert (newContent.getFilePathName() == null && content.getFilePathName() == null) || newContent.getFilePathName().equals(content.getFilePathName());
+		assert (newContent.getTitle() == null && content.getTitle() == null) || newContent.getTitle().equals(content.getTitle());
 		assert (newContent.getDisplayRule() == null && content.getDisplayRule() == null) || newContent.getDisplayRule().equals(content.getDisplayRule());
 		assert (newContent.getSandbox() == null && content.getSandbox() == null) || newContent.getSandbox().equals(content.getSandbox());
 		assert (newContent.getContentType() == null && content.getContentType() == null) || newContent.getContentType().equals(content.getContentType());
@@ -83,16 +83,16 @@ public class ContentDaoTest extends BaseTest {
 	@Test(groups = {"testUpdateContent"}, dependsOnGroups = {"testSaveContent"})
 	@Transactional
 	public void testUpdateContent(){
-		String newFilePath = "/new/file/path";
+		String title = "/new/file/path";
 		Content content = contentDao.readContentById(contentId);
-		String oldFilePath = content.getFilePathName();
-		content.setFilePathName(newFilePath);
+		String oldtitle = content.getTitle();
+		content.setTitle(title);
 		contentDao.saveContent(content);
 		Content newContent = contentDao.readContentById(contentId);
 		assert newContent != null;
 		assert newContent.getId().equals(content.getId());
-		assert !newContent.getFilePathName().equals(oldFilePath);
-		assert newContent.getFilePathName().equals(newFilePath);
+		assert !newContent.getTitle().equals(oldtitle);
+		assert newContent.getTitle().equals(title);
 	}
 
 	@Test(groups = {"testRreadContentByIdsAndSandbox"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
