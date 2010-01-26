@@ -34,13 +34,13 @@ public class ContentDaoDataProvider {
     @DataProvider(name = "basicContent")
     public static Object[][] provideBasicContent() {
         Content content = new ContentImpl();
-        content.setActive(true);
+        content.setOnline(true);
         content.setActiveStartDate(new Date(DateUtil.getNow()));
         content.setActiveEndDate(new Date(DateUtil.getNow() + 100000000));
         content.setDisplayRule("customer.location=tx");
         content.setContentType("HomePageArticle");
         content.setSandbox("AwaitingApproval_TestUser_123");
-        content.setFilePathName("/some/file/path");
+        content.setTitle("/some/file/path");
 
         return new Object[][] {
                    { content }
@@ -50,12 +50,12 @@ public class ContentDaoDataProvider {
     @DataProvider(name = "basicContentAndDetail")
     public static Object[][] provideBasicContentAndDetail() {
         Content content = new ContentImpl();
-        content.setActive(true);
+        content.setOnline(true);
         content.setActiveStartDate(new Date(DateUtil.getNow()));
         content.setActiveEndDate(new Date(DateUtil.getNow() + 100000000));
         content.setDisplayRule("customer.location=tx");
         content.setContentType("HomePageArticle");
-        content.setFilePathName("/some/file/path");
+        content.setTitle("/some/file/path");
 
         ContentDetails contentDetails = new ContentDetailsImpl();
         contentDetails.setContentHash("abc123");

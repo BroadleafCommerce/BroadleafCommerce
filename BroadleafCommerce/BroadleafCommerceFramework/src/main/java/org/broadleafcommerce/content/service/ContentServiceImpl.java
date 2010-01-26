@@ -166,7 +166,7 @@ public class ContentServiceImpl implements ContentService {
 
 		for (Content content:contentList) {
 			for (Content stageContent: stageContentList) {
-				if (stageContent.getFilePathName().equals(content.getFilePathName())
+				if (stageContent.getTitle().equals(content.getTitle())
 				    && stageContent.getContentType().equals(content.getContentType())) {
 					deleteList.add(stageContent);
 				}

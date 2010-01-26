@@ -22,6 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
@@ -37,7 +38,7 @@ import org.hibernate.annotations.Index;
 /**
 * DOCUMENT ME!
 *
-* @author btaylor
+* @author dwtalk
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -47,51 +48,66 @@ public class ContentImpl implements Content {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
-    @Column(name = "ACTIVE")
-    protected Boolean active;
     @Column(name = "ACTIVE_END_DATE")
     protected Date activeEndDate;
     @Column(name = "ACTIVE_START_DATE")
     protected Date activeStartDate;
+    @Column(name = "APPROVED_BY")
+    protected String approvedBy;
     @Column(name = "APPROVED_DATE")
     protected Date approvedDate;
-    @Column(name = "REJECTED_DATE")
-    protected Date rejectedDate;
-    @Column(name = "SUBMITTED_DATE")
-    protected Date submittedDate;
-    @Column(name = "MAX_COUNT")
-    protected Integer maxCount;
-    @Column(name = "priority")
-    protected Integer priority;
+    @Column(name = "BROWSER_TITLE")
+    protected String browserTitle;
+    @Column(name = "CONTENT_TYPE")
+    protected String contentType;
+    @Column(name = "DISPLAY_RULE")
+    protected String displayRule;
+    @Column(name = "DEPLOYED")
+    protected Boolean deployed;
+    @Lob
+    @Column(name = "DESCRIPTION")
+    protected String description;
     @Id
     @GeneratedValue(generator = "ContentId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "ContentId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ContentImpl", allocationSize = 50)
     @Column(name = "ID")
     protected Integer id;
-    @Column(name = "APPROVED_BY")
-    protected String approvedBy;
-    @Column(name = "CONTENT_TYPE")
-    protected String contentType;
-    @Column(name = "DISPLAY_RULE")
-    protected String displayRule;
-    @Column(name = "FILE_PATH_NAME")
-    protected String filePathName;
-    @Column(name = "LANGUAGE")
-    protected String language;
+    @Column(name = "KEYWORDS")
+    protected String keywords;
+    @Column(name = "LANGUAGE_CODE")
+    protected String languageCode;
+    @Column(name = "LAST_MODIFIED_DATE")
+    protected Date lastModifiedDate;
+    @Column(name = "LAST_MODIFIED_BY")
+    protected String lastModifiedBy;
+    @Column(name = "META_DESCRIPTION")
+    protected String metaDescription;
     @Column(name = "NOTE")
     protected String note;
+    @Column(name = "ONLINE")
+    protected Boolean online;
+    @Column(name = "PARENT_CONTENT_ID")
+    protected Integer parentContentId;
+    @Column(name = "PRIORITY")
+    protected Integer priority;
     @Column(name = "REJECTED_BY")
     protected String rejectedBy;
+    @Column(name = "REJECTED_DATE")
+    protected Date rejectedDate;
+    @Column(name = "RENDER_TEMPLATE")
+    protected String renderTemplate;
     @Column(name = "SANDBOX")
     @Index(name = "CONTENT_INDEX", columnNames =  {
-        "SANDBOX", "FILE_PATH_NAME"}
+        "SANDBOX", "TITLE"}
     )
     protected String sandbox;
     @Column(name = "SUBMITTED_BY")
     protected String submittedBy;
-    @Column(name = "DEPLOYED")
-    protected boolean deployed;
-
+    @Column(name = "SUBMITTED_DATE")
+    protected Date submittedDate;
+    @Column(name = "TITLE")
+    protected String title;
+    
     public ContentImpl() {
     }
 
@@ -99,36 +115,40 @@ public class ContentImpl implements Content {
         super();
         this.activeEndDate = cnt.getActiveEndDate();
         this.activeStartDate = cnt.getActiveStartDate();
-        this.approvedDate = cnt.getApprovedDate();
-        this.rejectedDate = cnt.getRejectedDate();
-        this.submittedDate = cnt.getSubmittedDate();
-        this.maxCount = cnt.getMaxCount();
-        this.priority = cnt.getPriority();
         this.approvedBy = cnt.getApprovedBy();
+        this.approvedDate = cnt.getApprovedDate();
+        this.browserTitle = cnt.getBrowserTitle();
         this.contentType = cnt.getContentType();
         this.displayRule = cnt.getDisplayRule();
-        this.filePathName = cnt.getFilePathName();
+        this.description = cnt.getDescription();
+        this.deployed = deployed;
+        this.keywords = cnt.getKeywords();
+        this.languageCode = cnt.getLanguageCode();
+        this.lastModifiedBy = cnt.getLastModifiedBy();
+        this.lastModifiedDate = cnt.getLastModifiedDate();
+        this.metaDescription = cnt.getMetaDescription();
         this.note = cnt.getNote();
+        this.parentContentId = cnt.getParentContentId();
+        this.priority = cnt.getPriority();
         this.rejectedBy = cnt.getRejectedBy();
+        this.rejectedDate = cnt.getRejectedDate();
+        this.renderTemplate = cnt.getRenderTemplate();
         this.sandbox = sandbox;
         this.submittedBy = cnt.getSubmittedBy();
-        this.deployed = deployed;
+        this.submittedDate = cnt.getSubmittedDate();
+        this.title = cnt.getTitle();
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the activeEndDate
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getActiveEndDate()
+     */
     public Date getActiveEndDate() {
         return activeEndDate;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the activeStartDate
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getActiveStartDate()
+     */
     public Date getActiveStartDate() {
         return activeStartDate;
     }
@@ -147,70 +167,107 @@ public class ContentImpl implements Content {
         return approvedDate;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the contentType
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getBrowserTitle()
+     */
+    public String getBrowserTitle() {
+        return browserTitle;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getContentType()
+     */
     public String getContentType() {
         return contentType;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the displayRule
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getDisplayRule()
+     */
     public String getDisplayRule() {
         return displayRule;
     }
-
+    
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.content.domain.Content#getFilePathName()
+     * @see org.broadleafcommerce.content.domain.Content#isDeployed()
      */
-    public String getFilePathName() {
-        return filePathName;
+    public Boolean isDeployed() {
+        return deployed;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getDescription()
+     */
+    public String getDescription() {
+        return description;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the id
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getId()
+     */
     public Integer getId() {
         return id;
     }
-
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the language
-    */
-    public String getLanguage() {
-        return language;
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getKeywords()
+     */
+    public String getKeywords() {
+        return keywords;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the maxCount
-    */
-    public Integer getMaxCount() {
-        return maxCount;
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getLanguage()
+     */
+    public String getLanguageCode() {
+        return languageCode;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getLastModifiedBy()
+     */
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getLastModifiedDate()
+     */
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getMetaDescription()
+     */
+    public String getMetaDescription() {
+        return metaDescription;
+    }
+    
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getNote()
      */
     public String getNote() {
         return note;
     }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#isOnline()
+     */
+    public Boolean isOnline() {
+        return online;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getParentContentId()
+     */
+    public Integer getParentContentId() {
+        return parentContentId;
+    }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the priority
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getPriority()
+     */
     public Integer getPriority() {
         return priority;
     }
@@ -227,6 +284,13 @@ public class ContentImpl implements Content {
      */
     public Date getRejectedDate() {
         return rejectedDate;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getRenderTemplate()
+     */
+    public String getRenderTemplate() {
+        return renderTemplate;
     }
 
     /* (non-Javadoc)
@@ -250,124 +314,165 @@ public class ContentImpl implements Content {
         return submittedDate;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @return the active
-    */
-    public Boolean isActive() {
-        return active;
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getTitle()
+     */
+    public String getTitle() {
+        return title;
     }
 
     /* (non-Javadoc)
-     * @see org.broadleafcommerce.content.domain.Content#isDeployed()
+     * @see org.broadleafcommerce.content.domain.Content#setActiveEndDate(java.util.Date)
      */
-    public boolean isDeployed() {
-        return deployed;
-    }
-
-    /**
-    * DOCUMENT ME!
-    *
-    * @param active the active to set
-    */
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
-    /**
-    * DOCUMENT ME!
-    *
-    * @param activeEndDate the activeEndDate to set
-    */
     public void setActiveEndDate(Date activeEndDate) {
         this.activeEndDate = activeEndDate;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @param activeStartDate the activeStartDate to set
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setActiveStartDate(java.util.Date)
+     */
     public void setActiveStartDate(Date activeStartDate) {
         this.activeStartDate = activeStartDate;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setApprovedBy(java.lang.String)
+     */
     public void setApprovedBy(String approvedBy) {
         this.approvedBy = approvedBy;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setApprovedDate(java.util.Date)
+     */
     public void setApprovedDate(Date approvedDate) {
         this.approvedDate = approvedDate;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @param contentType the contentType to set
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setContentType(java.lang.String)
+     */
+    public void setBrowserTitle(String browserTitle) {
+        this.contentType = contentType;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setContentType(java.lang.String)
+     */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @param displayRule the displayRule to set
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setDisplayRule(java.lang.String)
+     */
     public void setDisplayRule(String displayRule) {
         this.displayRule = displayRule;
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setDeployed(java.lang.Boolean)
+     */
+    public void setDeployed(Boolean deployed) {
+        this.deployed = deployed;
+    }
+  
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setFilePathName(java.lang.String)
      */
-    public void setFilePathName(String filePathName) {
-        this.filePathName = filePathName;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @param id the id to set
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setId(java.lang.Integer)
+     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @param language the language to set
-    */
-    public void setLanguage(String language) {
-        this.language = language;
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setKeywords(java.lang.String)
+     */
+    public void setKeywords(String keywords) {
+        this.keywords = keywords;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setLanguageCode(java.lang.String)
+     */
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @param maxCount the maxCount to set
-    */
-    public void setMaxCount(Integer maxCount) {
-        this.maxCount = maxCount;
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setLastModifiedBy(java.lang.String)
+     */
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
     }
 
-    /**
-    * DOCUMENT ME!
-    *
-    * @param priority the priority to set
-    */
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setLastModifiedDate(java.util.Date)
+     */
+    public void setLastModifiedDate(Date lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setMetaDescription(java.lang.String)
+     */
+    public void setMetaDescription(String metaDescription) {
+        this.metaDescription = metaDescription;
+    }
+
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setNote(java.lang.String)
+     */
+    public void setNote(String note) {
+        this.note = note;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setOnline(java.lang.Boolean)
+     */
+    public void setOnline(Boolean online) {
+        this.online = online;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setParentContentId(java.lang.Integer)
+     */
+    public void setParentContentId(Integer parentContentId) {
+        this.parentContentId = parentContentId;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setPriority(java.lang.Integer)
+     */
     public void setPriority(Integer priority) {
         this.priority = priority;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setRejectedBy(java.lang.String)
+     */
     public void setRejectedBy(String rejectedBy) {
         this.rejectedBy = rejectedBy;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setRejectedDate(java.util.Date)
+     */
     public void setRejectedDate(Date rejectedDate) {
         this.rejectedDate = rejectedDate;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setRenderTemplate(java.lang.String)
+     */
+    public void setRenderTemplate(String renderTemplate) {
+        this.renderTemplate = renderTemplate;
     }
 
     /* (non-Javadoc)
@@ -377,15 +482,24 @@ public class ContentImpl implements Content {
         this.sandbox = sandbox;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setSubmittedBy(java.lang.String)
+     */
     public void setSubmittedBy(String submittedBy) {
         this.submittedBy = submittedBy;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setSubmittedDate(java.util.Date)
+     */
     public void setSubmittedDate(Date submittedDate) {
         this.submittedDate = submittedDate;
     }
-
-    public void setNote(String note) {
-        this.note = note;
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setTitle(java.lang.String)
+     */
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
