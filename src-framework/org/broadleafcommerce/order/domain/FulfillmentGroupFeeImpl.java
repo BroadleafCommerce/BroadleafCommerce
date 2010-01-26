@@ -59,6 +59,9 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     @Column(name = "NAME")
     private String name;
 
+    @Column(name = "REPORTING_CODE")
+    private String reportingCode;
+
     @Column(name = "IS_TAXABLE")
     private boolean isTaxable = false;
 
@@ -102,6 +105,14 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
         this.isTaxable = isTaxable;
     }
 
+    public String getReportingCode() {
+        return reportingCode;
+    }
+
+    public void setReportingCode(String reportingCode) {
+        this.reportingCode = reportingCode;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -111,6 +122,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (isTaxable ? 1231 : 1237);
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((reportingCode == null) ? 0 : reportingCode.hashCode());
         return result;
     }
 
@@ -144,6 +156,11 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
             if (other.name != null)
                 return false;
         } else if (!name.equals(other.name))
+            return false;
+        if (reportingCode == null) {
+            if (other.reportingCode != null)
+                return false;
+        } else if (!reportingCode.equals(other.reportingCode))
             return false;
         return true;
     }
