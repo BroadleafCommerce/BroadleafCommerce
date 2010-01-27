@@ -27,6 +27,7 @@ import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
 import org.broadleafcommerce.search.util.SearchFilterUtil;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.web.ConfigurableRedirectView;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -138,7 +139,7 @@ public class CatalogController extends AbstractController {
         Category rootCategory = (Category) model.get("rootCategory");
         int productPosition = 0;
 
-        List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+        List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
         if (productList != null) {
             model.put("currentProducts", productList);
         }
@@ -147,7 +148,7 @@ public class CatalogController extends AbstractController {
             // look for product in its default category and override category
             // from request URL
             currentCategory = product.getDefaultCategory();
-            productList = catalogService.findActiveProductsByCategory(currentCategory);
+            productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
             if (productList != null) {
                 model.put("currentProducts", productList);
             }
@@ -190,7 +191,7 @@ public class CatalogController extends AbstractController {
             }
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
-            List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+            List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
             SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] { "manufacturer", "skus[0].salePrice" });
             model.put("currentProducts", productList);
         }

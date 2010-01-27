@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Product;
@@ -27,9 +28,9 @@ public interface ProductDao {
 
     public List<Product> readProductsByName(String searchName);
 
-    public List<Product> readActiveProductsByCategory(Long categoryId);
+    public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate);
 
     public List<Product> readProductsBySku(Long skuId);
 
-    public List<Product> readActiveProductsBySku(Long skuId);
+    public List<Product> readActiveProductsBySku(Long skuId, Date currentDate);
 }

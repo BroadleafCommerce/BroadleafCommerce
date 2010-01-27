@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.web.ConfigurableRedirectView;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -127,7 +128,7 @@ public class SimpleCatalogController extends AbstractController {
         Category rootCategory = (Category) model.get("rootCategory");
         int productPosition = 0;
 
-        List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+        List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
         if (productList != null) {
             model.put("currentProducts", productList);
         }
@@ -137,7 +138,7 @@ public class SimpleCatalogController extends AbstractController {
             // from request URL
             currentCategory = product.getDefaultCategory();
             model.put("currentCategory", currentCategory);
-            productList = catalogService.findActiveProductsByCategory(currentCategory);
+            productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
             if (productList != null) {
                 model.put("currentProducts", productList);
             }
@@ -179,7 +180,7 @@ public class SimpleCatalogController extends AbstractController {
             }
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
-            List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+            List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
             model.put("currentProducts", productList);
         }
 

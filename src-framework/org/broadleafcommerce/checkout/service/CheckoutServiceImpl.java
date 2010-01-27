@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.checkout.service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
-import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.workflow.SequenceProcessor;
 import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
@@ -71,7 +70,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         CheckoutSeed seed = null;
         try {
-            order.setSubmitDate(new Date(DateUtil.getNow()));
+            order.setSubmitDate(SystemTime.asDate());
             order = cartService.save(order, false);
 
             seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());

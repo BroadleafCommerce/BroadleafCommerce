@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,8 +49,8 @@ public class CatalogServiceImpl implements CatalogService {
         return productDao.readProductsByName(searchName);
     }
 
-    public List<Product> findActiveProductsByCategory(Category category) {
-        return productDao.readActiveProductsByCategory(category.getId());
+    public List<Product> findActiveProductsByCategory(Category category, Date currentDate) {
+        return productDao.readActiveProductsByCategory(category.getId(), currentDate);
     }
 
     public Product saveProduct(Product product) {
