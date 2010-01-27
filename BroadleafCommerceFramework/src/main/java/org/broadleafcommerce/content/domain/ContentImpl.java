@@ -107,6 +107,8 @@ public class ContentImpl implements Content {
     protected Date submittedDate;
     @Column(name = "TITLE")
     protected String title;
+    @Column(name = "URL_TITLE")
+    protected String urlTitle;
     
     public ContentImpl() {
     }
@@ -137,6 +139,7 @@ public class ContentImpl implements Content {
         this.submittedBy = cnt.getSubmittedBy();
         this.submittedDate = cnt.getSubmittedDate();
         this.title = cnt.getTitle();
+        this.urlTitle = cnt.getUrlTitle();
     }
 
     /* (non-Javadoc)
@@ -320,6 +323,13 @@ public class ContentImpl implements Content {
     public String getTitle() {
         return title;
     }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getUrlTitle()
+     */
+    public String getUrlTitle() {
+        return urlTitle;
+    }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setActiveEndDate(java.util.Date)
@@ -501,5 +511,12 @@ public class ContentImpl implements Content {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setUrlTitle(java.lang.String)
+     */
+    public void setUrlTitle(String urlTitle) {
+        this.urlTitle = urlTitle;
     }
 }

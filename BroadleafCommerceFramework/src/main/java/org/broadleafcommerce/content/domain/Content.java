@@ -76,6 +76,8 @@ public interface Content {
     public Date getSubmittedDate();
     
     public String getTitle();
+    
+    public String getUrlTitle();
 
     public void setActiveEndDate(Date activeEndDate);
 
@@ -128,4 +130,6 @@ public interface Content {
     public void setSubmittedDate(Date submittedDate);
     
     public void setTitle(String title);
+    
+    public void setUrlTitle(String urlTitle);
 }
