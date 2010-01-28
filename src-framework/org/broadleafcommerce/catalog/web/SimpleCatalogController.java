@@ -137,17 +137,19 @@ public class SimpleCatalogController extends AbstractController {
             // look for product in its default category and override category
             // from request URL
             currentCategory = product.getDefaultCategory();
-            model.put("currentCategory", currentCategory);
-            productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
-            if (productList != null) {
-                model.put("currentProducts", productList);
-            }
-            String url = currentCategory.getGeneratedUrl();
+            if (currentCategory.isActive()) {
+                model.put("currentCategory", currentCategory);
+                productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
+                if (productList != null) {
+                    model.put("currentProducts", productList);
+                }
+                String url = currentCategory.getGeneratedUrl();
 
-            // override category list settings using this products default
-            List<Category> categoryList = buildCategoryList(rootCategory, currentCategory, url);
-            if (categoryList != null) {
-                productPosition = findProductPositionInList(product, productList);
+                // override category list settings using this products default
+                List<Category> categoryList = buildCategoryList(rootCategory, currentCategory, url);
+                if (categoryList != null) {
+                    productPosition = findProductPositionInList(product, productList);
+                }
             }
         }
 
@@ -175,7 +177,7 @@ public class SimpleCatalogController extends AbstractController {
         String productId = request.getParameter("productId");
         if (productId != null) {
             Product product = catalogService.findProductById(new Long(productId));
-            if (product != null) {
+            if (product != null && product.isActive()) {
                 productFound = validateProductAndAddToModel(product, model);
             }
         } else {
