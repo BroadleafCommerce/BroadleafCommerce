@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
+import org.broadleafcommerce.content.domain.ContentXmlData;
 
 /**
  * @author btaylor
@@ -31,10 +32,12 @@ public interface ContentService {
 	public Content findContentById(Integer id);
 
 	public ContentDetails findContentDetailsById(Integer id);
-	
+
 	public String findContentDetailsXmlById(Integer id);
-	
+
 	public Map<String, Object> findContentDetailsMapById(Integer id) throws Exception;
+
+	public List<ContentXmlData> findContentDetailsListById(Integer id) throws Exception;
 
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters);
 

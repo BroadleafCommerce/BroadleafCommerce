@@ -21,6 +21,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
 import org.broadleafcommerce.content.domain.ContentDetailsImpl;
 import org.broadleafcommerce.content.domain.ContentImpl;
+import org.broadleafcommerce.content.domain.ContentXmlData;
 import org.broadleafcommerce.util.DateUtil;
 import org.compass.core.util.reader.StringReader;
 import org.mvel2.MVEL;
@@ -84,21 +86,21 @@ public class ContentServiceImpl implements ContentService {
 	public ContentDetails findContentDetailsById(Integer id) {
 		return contentDetailsDao.readContentDetailsById(id);
 	}
-	
+
 	/* (non-Javadoc)
      * @see org.broadleafcommerce.content.service.ContentService#findContentDetailsXmlById(java.lang.Long)
      */
     public String findContentDetailsXmlById(Integer id) {
         return findContentDetailsById(id).getXmlContent();
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.service.ContentService#findContentDetailsMapById(java.lang.Long)
      */
     public Map<String, Object> findContentDetailsMapById(Integer id) throws Exception{
-        
+
         Map<String, Object> root = new HashMap<String, Object>();
-        
+
         String xmlContent = findContentDetailsXmlById(id);
         StringReader reader = new StringReader(xmlContent);
         InputSource inputSource = new InputSource(reader);
@@ -111,7 +113,7 @@ public class ContentServiceImpl implements ContentService {
             LOG.error("Parse exception. ",e);
             throw e;
         }
-        
+
         Element rootElm = doc.getDocumentElement();
         NodeList nodeLst = rootElm.getChildNodes();
 
@@ -132,10 +134,10 @@ public class ContentServiceImpl implements ContentService {
                         LOG.error("Error during decode. ",e);
                         throw e;
                     }
-                } 
+                }
                 else if(nodeData.contains("<![CDATA["))
                 {
-                    
+
                     nodeData.replace("<![CDATA[", "");
                     nodeData.replace("]]>", "");
                     root.put(elName, nodeData);
@@ -145,8 +147,23 @@ public class ContentServiceImpl implements ContentService {
                 }
             }
         }
-        
+
         return root;
+    }
+
+    public List<ContentXmlData>  findContentDetailsListById(Integer id) throws Exception{
+    	Map<String, Object> map = this.findContentDetailsMapById(id);
+    	List<ContentXmlData> xmlDataList = new ArrayList<ContentXmlData>();
+
+    	for (Iterator<String> itr = map.keySet().iterator(); itr.hasNext();){
+    		ContentXmlData xmlData = new ContentXmlData();
+    		String name = itr.next();
+    		xmlData.setName(name);
+    		xmlData.setData(map.get(name));
+    		xmlDataList.add(xmlData);
+    	}
+
+    	return xmlDataList;
     }
 
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters){
