@@ -17,6 +17,9 @@
 <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/catalog/CatalogModule.swf" optimize="true" sourcePath="src/main/flex/modules/catalog/CatalogModule.mxml"/>
 <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/search/SearchModule.swf" optimize="true" sourcePath="src/main/flex/modules/search/SearchModule.mxml"/>
 <module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/security/SecurityModule.swf" optimize="true" sourcePath="src/main/flex/modules/security/SecurityModule.mxml"/>
+<module application="src/main/flex/BroadleafCommerceAdmin.mxml" destPath="modules/cms/ContentModule.swf" optimize="true" sourcePath="src/main/flex/modules/cms/ContentModule.mxml"/>
 </modules>
-<buildCSSFiles/>
+<buildCSSFiles>
+<buildCSSFileEntry destPath="bin-debug" sourcePath="src/main/flex/assets/styles/broadleafadmin.css"/>
+</buildCSSFiles>
 </actionScriptProperties>

@@ -19,6 +19,7 @@
 <mx:Canvas
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:helpers="org.broadleafcommerce.admin.core.view.helpers.*"
+	xmlns:view="org.broadleafcommerce.admin.cms.view.*"
 	width="100%"
 	height="100%"
 	creationPolicy="all">
@@ -27,14 +28,14 @@
 			import org.broadleafcommerce.admin.core.control.events.RemoveAuthenticationEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
-			
+
 			[Bindable]
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
-			
+
 			private function handleManageAccountLabelClick():void{
-				
+
 			}
-			
+
 			private function handleLogoutLabelClick():void{
 				new RemoveAuthenticationEvent().dispatch();
 			}
@@ -46,16 +47,16 @@
 	<mx:Binding
 		source="contentViewStack"
 		destination="bb.dataProvider"/>
-	<helpers:AdminContentViewHelper 
+	<helpers:AdminContentViewHelper
 		id="adminContent" />
-	<mx:HBox 
-		left="320" 
-		verticalAlign="middle" 
-		top="10" 
+	<mx:HBox
+		left="320"
+		verticalAlign="middle"
+		top="10"
 		horizontalGap="15">
 		<mx:HBox
 			horizontalGap="0">
-			<mx:Label 
+			<mx:Label
 				text="Logged in as:"/>
 			<mx:Label
 				id="usernameLabel"
@@ -79,16 +80,16 @@
 				useHandCursor="true"
 				click="handleLogoutLabelClick()"/>
 		</mx:HBox>
-		<mx:VRule 
+		<mx:VRule
 			height="45" />
-		<mx:ToggleButtonBar 
+		<mx:ToggleButtonBar
 			id="bb"/>
 	</mx:HBox>
-	<mx:ViewStack 
-		id="contentViewStack" 
-		top="75" 
-		left="8" 
-		right="8" 
+	<mx:ViewStack
+		id="contentViewStack"
+		top="75"
+		left="8"
+		right="8"
 		bottom="8">
 		<!--security:SecurityCanvas
 			id="securityCanvas"
@@ -99,6 +100,8 @@
 			id="codeTypeCanvas"
 			label="Code Types"
 			height="100%"
-			width="100%"/ -->
+			width="100%"/
+			<view:ContentCanvas width="100%" height="100%" />
+			-->
 	</mx:ViewStack>
 </mx:Canvas>

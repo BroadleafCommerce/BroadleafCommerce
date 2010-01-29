@@ -47,7 +47,7 @@
 		<property name="mappings">
         	<props>
         		<prop key="/*">_messageBroker</prop>
-        	</props>		
+        	</props>
 		</property>
 	</bean>
 
@@ -58,10 +58,11 @@
 
 	<!-- Expose the Service beans for BlazeDS remoting
 	-->
-	<flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />	
-	<flex:remoting-destination ref="blAdminSecurityService"/>	
-	<flex:remoting-destination ref="blOfferService" />		
+	<flex:remoting-destination ref="blAdminCatalogService" destination-id="blCatalogService" />
+	<flex:remoting-destination ref="blAdminSecurityService"/>
+	<flex:remoting-destination ref="blOfferService" />
 	<flex:remoting-destination ref="blCodeTypeService"/>
 	<flex:remoting-destination ref="blSearchService"/>
+	<flex:remoting-destination ref="blContentService"/>
 
 </beans>
