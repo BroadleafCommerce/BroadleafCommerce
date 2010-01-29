@@ -30,7 +30,11 @@ public interface ContentService {
 
 	public Content findContentById(Integer id);
 
-	public Content findContentDetailsById(Integer id);
+	public ContentDetails findContentDetailsById(Integer id);
+	
+	public String findContentDetailsXmlById(Integer id);
+	
+	public Map<String, Object> findContentDetailsMapById(Integer id) throws Exception;
 
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters);
 

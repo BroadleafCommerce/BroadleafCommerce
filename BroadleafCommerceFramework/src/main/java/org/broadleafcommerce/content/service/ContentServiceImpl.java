@@ -20,16 +20,20 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
@@ -45,10 +49,14 @@ import org.compass.core.util.reader.StringReader;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /**
- * @author btaylor
+ * @author dwtalk
  *
  */
 @Service("blContentService")
@@ -73,9 +81,73 @@ public class ContentServiceImpl implements ContentService {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.content.service.ContentService#findContentDetailsById(java.lang.Long)
 	 */
-	public Content findContentDetailsById(Integer id) {
-		return contentDao.readContentById(id);
+	public ContentDetails findContentDetailsById(Integer id) {
+		return contentDetailsDao.readContentDetailsById(id);
 	}
+	
+	/* (non-Javadoc)
+     * @see org.broadleafcommerce.content.service.ContentService#findContentDetailsXmlById(java.lang.Long)
+     */
+    public String findContentDetailsXmlById(Integer id) {
+        return findContentDetailsById(id).getXmlContent();
+    }
+    
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.service.ContentService#findContentDetailsMapById(java.lang.Long)
+     */
+    public Map<String, Object> findContentDetailsMapById(Integer id) throws Exception{
+        
+        Map<String, Object> root = new HashMap<String, Object>();
+        
+        String xmlContent = findContentDetailsXmlById(id);
+        StringReader reader = new StringReader(xmlContent);
+        InputSource inputSource = new InputSource(reader);
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        Document doc = null;
+        try{
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            doc = db.parse(inputSource);
+        }catch (Exception e){
+            LOG.error("Parse exception. ",e);
+            throw e;
+        }
+        
+        Element rootElm = doc.getDocumentElement();
+        NodeList nodeLst = rootElm.getChildNodes();
+
+        for (int s = 0; s < nodeLst.getLength(); s++) {
+
+            Node fstNode = nodeLst.item(s);
+
+            if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element fstElmnt = (Element) fstNode;
+                String elName = fstNode.getNodeName();
+                NodeList nl = fstElmnt.getChildNodes();
+                Node dataNode = nl.item(0);
+                String nodeData = dataNode.getNodeValue();
+                if (elName.contains("64")) {
+                    try{
+                        root.put(elName, new String(Base64.decodeBase64(nodeData.getBytes()), "UTF-8"));
+                    }catch (Exception e){
+                        LOG.error("Error during decode. ",e);
+                        throw e;
+                    }
+                } 
+                else if(nodeData.contains("<![CDATA["))
+                {
+                    
+                    nodeData.replace("<![CDATA[", "");
+                    nodeData.replace("]]>", "");
+                    root.put(elName, nodeData);
+                }
+                else {
+                    root.put(elName, nodeData);
+                }
+            }
+        }
+        
+        return root;
+    }
 
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters){
 		return findContentDetails(sandbox, contentType, mvelParameters, new Date(DateUtil.getNow()));
@@ -111,7 +183,7 @@ public class ContentServiceImpl implements ContentService {
 		int maxCount = (rowCount > -1 && contentDetails.size() > 0)? rowCount : contentDetails.size();
 
 		Writer resultWriter = new StringWriter();
-	    StreamResult result = new StreamResult(resultWriter);
+		 StreamResult result = new StreamResult(resultWriter);
 	    Source styleSheetSource = getSource(styleSheetString);
 	    TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	    Transformer transformer = transformerFactory.newTransformer(styleSheetSource);
