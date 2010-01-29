@@ -1,1 +1,4 @@
 1|Admin Master Access|ROLE_ADMIN|
+2|Content Approver|ROLE_CONTENT_APPROVER|
+3|Content Editor|ROLE_CONTENT_EDITOR|
+4|Content Deployer|ROLE_CONTENT_DEPLOYER|

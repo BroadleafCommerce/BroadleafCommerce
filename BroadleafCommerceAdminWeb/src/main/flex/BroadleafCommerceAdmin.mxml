@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 -->
-<mx:Application 
+<mx:Application
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	 applicationComplete="initApp()"
 	 layout="absolute"
@@ -56,49 +56,50 @@
 		]]>
 	</mx:Script>
 
-	<mx:Style 
+	<mx:Style
 		source="/assets/styles/broadleafadmin.css" />
 
 
-	<mx:Binding 
+	<mx:Binding
 		source="authModel.authenticatedState"
 	    destination="this.currentState" />
-	    
-	    
+
+
 	<control:AdminController />
 	<business:AdminServices />
 
-	<view:LoginCanvas 
-		id="loginCanvas" 
-		width="100%" 
-		height="100%" 
+	<view:LoginCanvas
+		id="loginCanvas"
+		width="100%"
+		height="100%"
 		visible="true" />
-	<local:ApplicationCanvas 
-		id="applicationCanvas" 
-		width="100%" 
-		height="100%" 
-		visible="false" />
+	<local:ApplicationCanvas
+		id="applicationCanvas"
+		width="100%"
+		height="100%"
+		visible="false" >
+	</local:ApplicationCanvas>
 	<mx:states>
-		<mx:State 
+		<mx:State
 			name="{AuthenticationModel.STATE_APP_ANONYMOUS}" >
-			<mx:SetProperty 
-				target="{loginCanvas}" 
-				name="visible" 
+			<mx:SetProperty
+				target="{loginCanvas}"
+				name="visible"
 				value="true" />
-			<mx:SetProperty 
-				target="{applicationCanvas}" 
-				name="visible" 
+			<mx:SetProperty
+				target="{applicationCanvas}"
+				name="visible"
 				value="false" />
 		</mx:State>
-		<mx:State 
+		<mx:State
 			name="{AuthenticationModel.STATE_APP_AUTHENTICATED}" >
-			<mx:SetProperty 
-				target="{loginCanvas}" 
-				name="visible" 
+			<mx:SetProperty
+				target="{loginCanvas}"
+				name="visible"
 				value="false" />
-			<mx:SetProperty 
-				target="{applicationCanvas}" 
-				name="visible" 
+			<mx:SetProperty
+				target="{applicationCanvas}"
+				name="visible"
 				value="true" />
 		</mx:State>
 	</mx:states>

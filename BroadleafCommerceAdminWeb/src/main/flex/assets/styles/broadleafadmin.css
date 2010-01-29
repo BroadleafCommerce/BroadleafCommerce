@@ -134,7 +134,10 @@ ToggleButtonBar {
 	cornerRadius: 2;
 	icon: Embed(source='/assets/images/cross.png');
 }
-
+.previewButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/eye.png');
+}
 .padding10 {
 	paddingLeft: 10;
 	paddingRight: 10;

@@ -1,0 +1,6 @@
+1|true|promo1|customer.location=TX|promo1.xml|EN|1|1|AwaitingApproval_content_editor_123|false|This content is awaiting approval: AwaitingApproval_content_editor_123|content_editor
+2|true|promo2|customer.location=CA|promo2.xml|EN|1|1|content_editor|false|This is content in the user sandbox:content_editor.|content_editor
+3|true|promo3|customer.location=NY|promo3.xml|EN|1|1|null|false|This content is in Stage and is not deployed|admin
+4|true|promo4|customer.location=FL|promo4.xml|EN|1|1|null|true|This content is in Stage and is deployed|admin
+5|true|promo5|customer.location=TX|promo5.xml|EN|1|1|AwaitingApproval_content_editor_456|false|This content is awaiting approval: AwaitingApproval_content_editor_456|content_editor
+6|true|promo6|customer.location=TX|promo6.xml|EN|1|1|AwaitingApproval_content_editor_123|false|This content is awaiting approval: AwaitingApproval_content_editor_123|content_editor
