@@ -190,6 +190,10 @@ public class ContentServiceImpl implements ContentService {
 		}
 
 	}
+	
+	public List<Content> findContent(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate){
+             return contentDao.readContentSpecified(sandbox, contentType, displayDate);
+    }
 
 	public String renderedContentDetails(String styleSheetString, List<ContentDetails> contentDetails) throws Exception{
 		return renderedContentDetails(styleSheetString, contentDetails, -1);
