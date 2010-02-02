@@ -109,7 +109,7 @@ public class ContentImpl implements Content {
     protected String title;
     @Column(name = "URL_TITLE")
     protected String urlTitle;
-    
+
     public ContentImpl() {
     }
 
@@ -176,7 +176,7 @@ public class ContentImpl implements Content {
     public String getBrowserTitle() {
         return browserTitle;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getContentType()
      */
@@ -190,14 +190,14 @@ public class ContentImpl implements Content {
     public String getDisplayRule() {
         return displayRule;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#isDeployed()
      */
-    public Boolean isDeployed() {
+    public Boolean getDeployed() {
         return deployed;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getDescription()
      */
@@ -211,7 +211,7 @@ public class ContentImpl implements Content {
     public Integer getId() {
         return id;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getKeywords()
      */
@@ -246,21 +246,21 @@ public class ContentImpl implements Content {
     public String getMetaDescription() {
         return metaDescription;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getNote()
      */
     public String getNote() {
         return note;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#isOnline()
      */
-    public Boolean isOnline() {
+    public Boolean getOnline() {
         return online;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getParentContentId()
      */
@@ -288,7 +288,7 @@ public class ContentImpl implements Content {
     public Date getRejectedDate() {
         return rejectedDate;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getRenderTemplate()
      */
@@ -323,7 +323,7 @@ public class ContentImpl implements Content {
     public String getTitle() {
         return title;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getUrlTitle()
      */
@@ -363,9 +363,9 @@ public class ContentImpl implements Content {
      * @see org.broadleafcommerce.content.domain.Content#setContentType(java.lang.String)
      */
     public void setBrowserTitle(String browserTitle) {
-        this.contentType = contentType;
+        this.browserTitle = browserTitle;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setContentType(java.lang.String)
      */
@@ -379,14 +379,14 @@ public class ContentImpl implements Content {
     public void setDisplayRule(String displayRule) {
         this.displayRule = displayRule;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setDeployed(java.lang.Boolean)
      */
     public void setDeployed(Boolean deployed) {
         this.deployed = deployed;
     }
-  
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setFilePathName(java.lang.String)
      */
@@ -407,7 +407,7 @@ public class ContentImpl implements Content {
     public void setKeywords(String keywords) {
         this.keywords = keywords;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setLanguageCode(java.lang.String)
      */
@@ -428,7 +428,7 @@ public class ContentImpl implements Content {
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setMetaDescription(java.lang.String)
      */
@@ -442,21 +442,21 @@ public class ContentImpl implements Content {
     public void setNote(String note) {
         this.note = note;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setOnline(java.lang.Boolean)
      */
     public void setOnline(Boolean online) {
         this.online = online;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setParentContentId(java.lang.Integer)
      */
     public void setParentContentId(Integer parentContentId) {
         this.parentContentId = parentContentId;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setPriority(java.lang.Integer)
      */
@@ -477,7 +477,7 @@ public class ContentImpl implements Content {
     public void setRejectedDate(Date rejectedDate) {
         this.rejectedDate = rejectedDate;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setRenderTemplate(java.lang.String)
      */
@@ -505,14 +505,14 @@ public class ContentImpl implements Content {
     public void setSubmittedDate(Date submittedDate) {
         this.submittedDate = submittedDate;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setTitle(java.lang.String)
      */
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setUrlTitle(java.lang.String)
      */
