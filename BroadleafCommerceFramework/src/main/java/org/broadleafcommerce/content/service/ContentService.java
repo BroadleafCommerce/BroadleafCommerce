@@ -42,7 +42,7 @@ public interface ContentService {
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters);
 
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate);
-	
+
 	public List<Content> findContent(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate);
 
 	public String renderedContentDetails(String styleSheet, List<ContentDetails> contentDetails) throws Exception;
@@ -65,5 +65,5 @@ public interface ContentService {
 
 	public List<Content> readContentAwaitingApproval();
 
-	public Content saveContent(Content content, ContentDetails contentDetails);
+	public Content saveContent(Content content, List<ContentXmlData> details);
 }

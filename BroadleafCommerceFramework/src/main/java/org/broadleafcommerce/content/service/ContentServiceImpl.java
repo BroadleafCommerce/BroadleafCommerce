@@ -17,7 +17,10 @@ package org.broadleafcommerce.content.service;
 
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -126,24 +129,26 @@ public class ContentServiceImpl implements ContentService {
                 String elName = fstNode.getNodeName();
                 NodeList nl = fstElmnt.getChildNodes();
                 Node dataNode = nl.item(0);
-                String nodeData = dataNode.getNodeValue();
-                if (elName.contains("64")) {
-                    try{
-                        root.put(elName, new String(Base64.decodeBase64(nodeData.getBytes()), "UTF-8"));
-                    }catch (Exception e){
-                        LOG.error("Error during decode. ",e);
-                        throw e;
-                    }
-                }
-                else if(nodeData.contains("<![CDATA["))
-                {
+                if (dataNode != null) {
+	                String nodeData = dataNode.getNodeValue();
+	                if (elName.contains("64")) {
+	                    try{
+	                        root.put(elName, new String(Base64.decodeBase64(nodeData.getBytes()), "UTF-8"));
+	                    }catch (Exception e){
+	                        LOG.error("Error during decode. ",e);
+	                        throw e;
+	                    }
+	                }
+	                else if(nodeData.contains("<![CDATA["))
+	                {
 
-                    nodeData.replace("<![CDATA[", "");
-                    nodeData.replace("]]>", "");
-                    root.put(elName, nodeData);
-                }
-                else {
-                    root.put(elName, nodeData);
+	                    nodeData.replace("<![CDATA[", "");
+	                    nodeData.replace("]]>", "");
+	                    root.put(elName, nodeData);
+	                }
+	                else {
+	                    root.put(elName, nodeData);
+	                }
                 }
             }
         }
@@ -190,7 +195,7 @@ public class ContentServiceImpl implements ContentService {
 		}
 
 	}
-	
+
 	public List<Content> findContent(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate){
              return contentDao.readContentSpecified(sandbox, contentType, displayDate);
     }
@@ -323,7 +328,8 @@ public class ContentServiceImpl implements ContentService {
 	 * @see org.broadleafcommerce.content.service.ContentService#readContentForSandbox(java.lang.String)
 	 */
 	public List<Content> readContentForSandbox(String sandbox) {
-		return contentDao.readContentBySandbox(sandbox);
+		List<Content> list =  contentDao.readContentBySandbox(sandbox);
+		return list;
 	}
 
 	/* (non-Javadoc)
@@ -388,15 +394,77 @@ public class ContentServiceImpl implements ContentService {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.content.service.ContentService#saveContent(org.broadleafcommerce.content.domain.Content, org.broadleafcommerce.content.domain.ContentDetails)
 	 */
-	public Content saveContent(Content content, ContentDetails contentDetails) {
-		Content contentFromDB = contentDao.saveContent(content);
+	public Content saveContent(Content content, List<ContentXmlData> details){
 
-		if (content != null) {
-			contentDetails.setId(contentFromDB.getId());
+		ContentDetails contentDetails = contentDetailsDao.readContentDetailsById(content.getId());
+		if (contentDetails == null){
+		    contentDetails = new ContentDetailsImpl();
+		}
+
+		String xmlContent = constructXmlContent(details);
+		if (xmlContent!= null){
+			contentDetails.setXmlContent(xmlContent);
+			try {
+				contentDetails.setContentHash(SHA1(xmlContent));
+			} catch (NoSuchAlgorithmException e) {
+				LOG.error("NoSuchAlgorithmException", e);
+			} catch (UnsupportedEncodingException e) {
+				LOG.error("UnsupportedEncodingException", e);
+			}
+
+			Content saved = contentDao.saveContent(content);
+			contentDetails.setId(saved.getId());
 			contentDetailsDao.save(contentDetails);
 		}
 
 		return null;
+	}
+
+	private String constructXmlContent(List<ContentXmlData> details) {
+		if (details != null) {
+			String xml = "";
+			xml += "<?xml version=\"1.0\" encoding=\"UTF-8\"?><content>";
+
+			for (Iterator<ContentXmlData> itr = details.iterator(); itr.hasNext();){
+				ContentXmlData data = itr.next();
+				xml += "<"+data.getName()+">";
+				xml += "<![CDATA[";
+				xml += data.getData().toString();
+				xml += "]]>";
+				xml += "</"+data.getName()+">";
+			}
+
+			xml += "</content>";
+			return xml;
+		}
+
+		return null;
+
+	}
+
+	private String convertToHex(byte[] data) {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < data.length; i++) {
+			int halfbyte = (data[i] >>> 4) & 0x0F;
+			int two_halfs = 0;
+			do {
+				if ((0 <= halfbyte) && (halfbyte <= 9))
+					buf.append((char) ('0' + halfbyte));
+				else
+					buf.append((char) ('a' + (halfbyte - 10)));
+				halfbyte = data[i] & 0x0F;
+			} while (two_halfs++ < 1);
+		}
+		return buf.toString();
+	}
+
+	private String SHA1(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		MessageDigest md;
+		md = MessageDigest.getInstance("SHA-1");
+		byte[] sha1hash = new byte[40];
+		md.update(text.getBytes("iso-8859-1"), 0, text.length());
+		sha1hash = md.digest();
+		return convertToHex(sha1hash);
 	}
 
 }
