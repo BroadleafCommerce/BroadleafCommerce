@@ -63,7 +63,6 @@
 					Alert.show("Error: contentType and sandbox should not be null");
 				}
 
-				populateRenderTemplates();
 				refreshDynamicForm();
 				if (content != null && contentDetailsList != null){
 					populateFields();
@@ -82,9 +81,7 @@
 
 			private function populateFields():void{
 				this.txtTitle.text = content.title;
-				this.txtBrowserTitle.text = content.browserTitle;
-				this.txtKeywords.text = content.keywords;
-				this.txtMeta.text = content.metaDescription;
+				this.txtDisplayRule.text = content.displayRule;
 				this.txtPriority.text = content.priority.toString();
 				this.cbxLanguage.selectedItem = content.languageCode;
 
@@ -99,22 +96,9 @@
 				this.chkOnline.selected = content.online;
 			}
 
-			private function populateRenderTemplates():void {
-				var options:ArrayCollection = contentModel.renderTemplateComboBoxOptions;
-				var filteredOptions:ArrayCollection = new ArrayCollection();
-				for each (var obj:Object in options){
-					if (String(obj.type).toLowerCase() == contentType.toLowerCase()){
-						filteredOptions.addItem(obj);
-					}
-				}
-
-				this.cbxTemplate.dataProvider = filteredOptions;
-			}
-
 			private function refreshDynamicForm():void{
 				this.removeDynamicForm();
 				createDynamicForm();
-				createTemplateFields();
 			}
 
 			private function removeDynamicForm():void{
@@ -127,16 +111,6 @@
 				for each(var contentItem:ContentItem in contentTypes){
 					if (contentItem.type.toLowerCase() == contentType.toLowerCase()){
 						var customFields:ArrayCollection = contentItem.contentFields;
-						ContentFormCreator.createCustomFields(this.dynamicForm, customFields, contentDetailsList);
-					}
-				}
-			}
-
-			private function createTemplateFields():void{
-				var renderTypes:ArrayCollection = contentModel.renderTypes;
-				for each (var renderItem:RenderItem in renderTypes){
-					if (renderItem.name == this.cbxTemplate.selectedLabel){
-						var customFields:ArrayCollection = renderItem.renderFields;
 						ContentFormCreator.createCustomFields(this.dynamicForm, customFields, contentDetailsList);
 					}
 				}
@@ -167,21 +141,8 @@
 	                <mx:FormItem label="Title" name="title">
 	                    <mx:TextInput id="txtTitle" width="220"/>
 	                </mx:FormItem>
-	                <mx:FormItem label="Parent URI" name="parentContentId">
-	                	<mx:TextInput id="txtParentURI" width="220"/>
-	                </mx:FormItem>
-	                <mx:FormItem label="Template" name="renderTemplate">
-						<mx:ComboBox
-							id="cbxTemplate" change="refreshDynamicForm()" width="220"/>
-	                </mx:FormItem>
-	                 <mx:FormItem label="Browser Title" name="browserTitle">
-						<mx:TextInput id="txtBrowserTitle" width="220"/>
-	                </mx:FormItem>
-	                <mx:FormItem label="Keywords" name="keywords">
-	                	<mx:TextArea id="txtKeywords" width="220" height="100"/>
-	                </mx:FormItem>
-	                <mx:FormItem label="Meta Description" name="metaDescription">
-	                	<mx:TextArea id="txtMeta" width="220" height="100"/>
+	                <mx:FormItem label="Display Rule" name="displayRule">
+	                	<mx:TextArea id="txtDisplayRule" width="220" height="100"/>
 	                </mx:FormItem>
 	                <mx:FormItem label="Priority" name="priority">
 	                	<mx:TextInput id="txtPriority" width="220"/>

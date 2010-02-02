@@ -18,35 +18,55 @@ package org.broadleafcommerce.admin.cms.commands.contentCreation
 	import com.adobe.cairngorm.commands.ICommand;
 	import com.adobe.cairngorm.control.CairngormEvent;
 
+	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 
 	import org.broadleafcommerce.admin.cms.business.ContentServiceDelegate;
+	import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
 	import org.broadleafcommerce.admin.cms.control.events.CreateEditContentEvent;
-	import org.broadleafcommerce.admin.cms.control.events.ReadContentDetailsListByIdEvent;
+	import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditNonPage;
+	import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditPage;
 	import org.broadleafcommerce.admin.cms.vo.Content;
-	import org.broadleafcommerce.admin.cms.vo.ContentDetails;
 
 	public class CreateEditContentCommand implements ICommand, IResponder
 	{
 		private var content:Content;
+		private var sandbox:String;
+		private var isPage:Boolean;
 
 		public function execute(event:CairngormEvent):void
 		{
 			var ce:CreateEditContentEvent = event as CreateEditContentEvent;
 			var delegate:ContentServiceDelegate = new ContentServiceDelegate(this);
-			delegate.findContentDetailsById(ce.content.id);
+			delegate.findContentDetailsListById(ce.content.id);
 			content = ce.content;
+			sandbox = ce.sandbox;
+			isPage = ce.isPage;
 		}
 
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			var contentDetails:ContentDetails = event.result as ContentDetails;
+			var contentDetailsList:ArrayCollection = event.result as ArrayCollection;
 
-			new ReadContentDetailsListByIdEvent(content, contentDetails).dispatch();
+			if (isPage){
+				var editPage:ContentAddEditPage = new ContentAddEditPage();
+				editPage.contentType = content.contentType;
+				editPage.content = content;
+				editPage.contentDetailsList = contentDetailsList;
+				editPage.sandbox = sandbox;
+				new AddContentTabEvent("Edit " + content.contentType, editPage, null).dispatch();
+			} else {
+				var editNonPage:ContentAddEditNonPage = new ContentAddEditNonPage();
+				editNonPage.contentType = content.contentType;
+				editNonPage.content = content;
+				editNonPage.contentDetailsList = contentDetailsList;
+				editNonPage.sandbox = sandbox;
+				new AddContentTabEvent("Edit " + content.contentType, editNonPage, null).dispatch();
+			}
 		}
 
 		public function fault(info:Object):void

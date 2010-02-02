@@ -35,6 +35,7 @@ package org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms
 		public static function createCustomFields(dynamicForm:Form, customFields:ArrayCollection, contentDetailsList:ArrayCollection):void{
 			for each(var customField:CustomField in customFields) {
 				var frmItem:FormItem = new FormItem();
+				frmItem.name = customField.tagName;
 				var spacer:Spacer = new Spacer();
 				spacer.height=10;
 				var data:String = findDataByDisplayName(customField.displayName, contentDetailsList);
@@ -44,13 +45,15 @@ package org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms
 					rte.width=600;
 					rte.height=300;
 					if ( data != null){
-						rte.htmlText = data;
+						//TODO change to .htmlText
+						rte.text = data;
 					}
 					frmItem.addChild(rte);
 					dynamicForm.addChild(frmItem);
 				} else if (customField.type == 'text'){
 					frmItem.label = customField.displayName;
 					var ti:TextInput = new TextInput();
+					ti.width=220;
 					if ( data != null){
 						ti.text = data;
 					}
@@ -59,6 +62,7 @@ package org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms
 				} else if (customField.type == 'date'){
 					frmItem.label = customField.displayName;
 					var df:DateField = new DateField();
+					df.width=220;
 					if ( data != null){
 						df.text = data;
 					}

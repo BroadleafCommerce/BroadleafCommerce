@@ -23,11 +23,15 @@ package org.broadleafcommerce.admin.cms.control.events
 	{
 		public static const EVENT_CREATE_EDIT_CONTENT:String = "create_edit_content_event";
 		public var content:Content;
+		public var sandbox:String;
+		public var isPage:Boolean;
 
-		public function CreateEditContentEvent(content:Content)
+		public function CreateEditContentEvent(content:Content, sandbox:String, isPage:Boolean)
 		{
 			super(EVENT_CREATE_EDIT_CONTENT);
 			this.content = content;
+			this.sandbox = sandbox;
+			this.isPage = isPage;
 		}
 
 	}

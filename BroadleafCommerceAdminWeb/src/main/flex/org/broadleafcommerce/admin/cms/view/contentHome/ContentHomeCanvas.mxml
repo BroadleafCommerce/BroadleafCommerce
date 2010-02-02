@@ -26,6 +26,7 @@
 	xmlns:code="http://code.google.com/p/flexlib/">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditNonPage;
 			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
 			import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
 			import mx.controls.Alert;
@@ -73,9 +74,13 @@
 				if (ContentUtil.isContentTypePage(createContentComboBox.selectedLabel)){
 					var contentAddEditPage:ContentAddEditPage = new ContentAddEditPage();
 					contentAddEditPage.contentType = createContentComboBox.selectedLabel;
+					contentAddEditPage.sandbox = authModel.userPrincipal.login;
 					new AddContentTabEvent("New Content", contentAddEditPage, null).dispatch();
 				} else {
-					Alert.show("Chose non page", "Chose non page");
+					var contentAddEditNonPage:ContentAddEditNonPage = new ContentAddEditNonPage();
+					contentAddEditNonPage.contentType = createContentComboBox.selectedLabel;
+					contentAddEditNonPage.sandbox = authModel.userPrincipal.login;
+					new AddContentTabEvent("New Content", contentAddEditNonPage, null).dispatch();
 				}
 			}
 

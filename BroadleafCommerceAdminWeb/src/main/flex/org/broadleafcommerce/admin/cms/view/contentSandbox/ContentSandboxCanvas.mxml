@@ -24,7 +24,6 @@
 	<mx:Script>
 		<![CDATA[
 			import org.broadleafcommerce.admin.cms.control.events.CreateEditContentEvent;
-			import org.broadleafcommerce.admin.cms.control.events.ReadContentDetailsListByIdEvent;
 			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
 			import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
 			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditPage;
@@ -62,17 +61,6 @@
 
 			private function handleAddClick(event:Event):void{
 				//var newContentModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, ContentAddEditModal , true));
-			}
-
-			private function handleEditClick(event:Event):void{
-				var temp:Content = content.getItemAt(contentSandboxDataGrid.selectedIndex) as Content;
-
-				if (ContentUtil.isContentTypePage(temp.contentType)){
-					new CreateEditContentEvent(temp).dispatch();
-				} else {
-					Alert.show("Chose non page");
-				}
-
 			}
 
 			private function handleSubmitClick(event:Event):void{
@@ -116,7 +104,6 @@
 
 		<mx:HBox>
 			<mx:Button id="previewButton" label="Preview" click="//handlePreviewClick(event)" styleName="previewButton" />
-			<mx:Button id="editButton" label="Edit" enabled="{contentSandboxDataGrid.selectedIndex > -1}" click="handleEditClick(event)" styleName="viewEditButton" />
 			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/>
 		</mx:HBox>
 		<mx:HBox

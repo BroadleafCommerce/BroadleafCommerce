@@ -21,38 +21,104 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:component="org.broadleafcommerce.util.components.*"
 	change="handleItemChange(event)"
-	allowMultipleSelection="true">
+	allowMultipleSelection="true"
+	verticalAlign="middle">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.util.DataGridUtil;
 			import mx.controls.Alert;
 			import org.broadleafcommerce.util.components.CheckBoxListRenderer;
 
 			private function handleItemChange(event:Event):void{
 				//new EditCodeTypeEvent(CodeType(this.selectedItem)).dispatch();
 			}
+
 		]]>
 	</mx:Script>
+	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
 	<component:columns>
 		<mx:DataGridColumn
 			dataField="title"
 			headerText=" "
-			width="20"
+			width="25"
 			sortable="false"
 			itemRenderer="org.broadleafcommerce.util.components.CheckBoxListRenderer" />
 		<mx:DataGridColumn
 			dataField="contentType"
-			headerText="Type"/>
+			headerText="Type"
+			width="120"/>
 		<mx:DataGridColumn
 			dataField="title"
-			headerText="Title"/>
+			headerText="Title">
+	        <mx:itemRenderer>
+	            <mx:Component>
+	                <mx:VBox height="40" verticalGap="0">
+	                    <mx:Label text="{data.title}" fontWeight="bold"/>
+	                    <mx:Label text="{data.browserTitle}" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
 		<mx:DataGridColumn
 			dataField="lastModifiedDate"
-			headerText="Last Modified"/>
+			headerText="Last Modified"
+			width="200">
+			<mx:itemRenderer>
+	            <mx:Component>
+	            	<mx:VBox height="40" verticalGap="0">
+	                	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
+	                    <mx:Label text="{df.format(data.lastModifiedDate)}" />
+	                    <mx:Label text="by {data.lastModifiedBy}" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
 		<mx:DataGridColumn
 			dataField="activeStartDate"
-			headerText="Display Dates"/>
+			headerText="Display Dates"
+			width="120">
+			<mx:itemRenderer>
+	            <mx:Component>
+	                <mx:VBox height="40" verticalGap="0">
+	                	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
+	                    <mx:Label text="{df.format(data.activeStartDate)} -" />
+	                    <mx:Label text="{df.format(data.activeEndDate)}" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
 		<mx:DataGridColumn
 			dataField="online"
-			headerText="Online"/>
+			headerText="Online"
+			width="60"
+			textAlign="center"/>
+		<mx:DataGridColumn
+			dataField="title"
+			headerText=" "
+			width="100">
+			<mx:itemRenderer>
+	            <mx:Component>
+	                <mx:VBox height="40" verticalGap="0" horizontalAlign="center" verticalAlign="middle">
+		            	<mx:Script>
+		            		<![CDATA[
+		            			import org.broadleafcommerce.admin.cms.vo.Content;
+		            			import org.broadleafcommerce.admin.cms.control.events.CreateEditContentEvent;
+		            			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
+
+	    						private function handleEditClick(event:Event):void{
+									if (ContentUtil.isContentTypePage(data.contentType)){
+										new CreateEditContentEvent(data as Content, data.sandbox, true).dispatch();
+									} else {
+										new CreateEditContentEvent(data as Content, data.sandbox, false).dispatch();
+									}
+
+								}
+		            		]]>
+		            	</mx:Script>
+						<mx:Button id="editButton" label="Edit" click="handleEditClick(event)" styleName="viewEditButton" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
 	</component:columns>
 </component:CheckBoxDataGrid>

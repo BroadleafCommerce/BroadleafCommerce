@@ -23,5 +23,13 @@ package org.broadleafcommerce.admin.cms.vo
 		public var name:String;
 		public var data:String;
 
+		public function toString():String{
+			var contents:String = "";
+			contents += "name: " + name + "\n";
+			contents += "data: " + data + "\n";
+
+			return contents;
+		}
+
 	}
 }
