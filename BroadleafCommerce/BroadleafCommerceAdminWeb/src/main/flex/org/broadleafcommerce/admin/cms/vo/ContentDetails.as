@@ -24,5 +24,13 @@ package org.broadleafcommerce.admin.cms.vo
 		public var contentHash:String;
 		public var xmlContent:String;
 
+		public function toString():String{
+			var contents:String = "";
+			contents += "id: " + id + "\n";
+			contents += "contentHash: " + contentHash + "\n";
+			contents += "xmlContent: " + xmlContent + "\n";
+
+			return contents;
+		}
 	}
 }

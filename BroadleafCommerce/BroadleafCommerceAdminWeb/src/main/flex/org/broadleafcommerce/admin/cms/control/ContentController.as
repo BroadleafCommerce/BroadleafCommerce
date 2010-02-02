@@ -22,7 +22,7 @@ package org.broadleafcommerce.admin.cms.control
 	import org.broadleafcommerce.admin.cms.commands.contentBrowser.ReadContentForBrowserCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentBrowser.ViewContentBrowserCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentCreation.CreateEditContentCommand;
-	import org.broadleafcommerce.admin.cms.commands.contentCreation.ReadContentDetailsListByIdCommand;
+	import org.broadleafcommerce.admin.cms.commands.contentCreation.SaveContentCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.AddContentTabCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.InitializeContentRolesCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.InitializeContentTypesCommand;
@@ -39,10 +39,10 @@ package org.broadleafcommerce.admin.cms.control
 	import org.broadleafcommerce.admin.cms.control.events.InitializeContentTypesEvent;
 	import org.broadleafcommerce.admin.cms.control.events.InitializeRenderTypesEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
-	import org.broadleafcommerce.admin.cms.control.events.ReadContentDetailsListByIdEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentForBrowserEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
 	import org.broadleafcommerce.admin.cms.control.events.RemoveContentTabEvent;
+	import org.broadleafcommerce.admin.cms.control.events.SaveContentEvent;
 	import org.broadleafcommerce.admin.cms.control.events.SubmitContentFromSandboxEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ViewContentApprovalEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ViewContentBrowserEvent;
@@ -65,9 +65,9 @@ package org.broadleafcommerce.admin.cms.control
 			addCommand(ReadContentForSandboxEvent.EVENT_READ_CONTENT_FOR_SANDBOX, ReadContentForSandboxCommand);
 			addCommand(ReadContentForBrowserEvent.EVENT_READ_CONTENT_FOR_BROWSER, ReadContentForBrowserCommand);
 			addCommand(CreateEditContentEvent.EVENT_CREATE_EDIT_CONTENT, CreateEditContentCommand);
-			addCommand(ReadContentDetailsListByIdEvent.EVENT_READ_CONTENT_DETAILS_LIST_BY_ID, ReadContentDetailsListByIdCommand);
 			addCommand(SubmitContentFromSandboxEvent.EVENT_SUBMIT_CONTENT_FROM_SANDBOX, SubmitContentFromSandboxCommand);
 			addCommand(ApproveContentEvent.EVENT_APPROVE_CONTENT, ApproveContentCommand);
+			addCommand(SaveContentEvent.EVENT_SAVE_CONTENT, SaveContentCommand);
 		}
 
 	}

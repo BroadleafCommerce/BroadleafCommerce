@@ -26,36 +26,22 @@ package org.broadleafcommerce.admin.cms.commands.contentCreation
 
 	import org.broadleafcommerce.admin.cms.business.ContentServiceDelegate;
 	import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
-	import org.broadleafcommerce.admin.cms.control.events.ReadContentDetailsListByIdEvent;
+	import org.broadleafcommerce.admin.cms.control.events.SaveContentEvent;
 	import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditPage;
-	import org.broadleafcommerce.admin.cms.vo.Content;
-	import org.broadleafcommerce.admin.cms.vo.ContentDetails;
 
-	public class ReadContentDetailsListByIdCommand implements ICommand, IResponder
+	public class SaveContentCommand implements ICommand, IResponder
 	{
-		private var content:Content;
-		private var contentDetails:ContentDetails;
-
 		public function execute(event:CairngormEvent):void
 		{
-			var rcd:ReadContentDetailsListByIdEvent = event as ReadContentDetailsListByIdEvent;
+			var sc:SaveContentEvent = event as SaveContentEvent;
 			var delegate:ContentServiceDelegate = new ContentServiceDelegate(this);
-			delegate.findContentDetailsListById(rcd.content.id);
-			content = rcd.content;
-			contentDetails = rcd.contentDetails;
+			delegate.saveContent(sc.content, sc.contentDetailsList);
 		}
 
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			var contentDetailsList:ArrayCollection = event.result as ArrayCollection;
-
-			var editScreen:ContentAddEditPage = new ContentAddEditPage();
-			editScreen.contentType = content.contentType;
-			editScreen.content = content;
-			editScreen.contentDetails = contentDetails;
-			editScreen.contentDetailsList = contentDetailsList;
-			new AddContentTabEvent("Edit " + content.contentType, editScreen, null).dispatch();
+			//refresh sandbox list
 		}
 
 		public function fault(info:Object):void

@@ -17,20 +17,21 @@ package org.broadleafcommerce.admin.cms.control.events
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 
+	import mx.collections.ArrayCollection;
+
 	import org.broadleafcommerce.admin.cms.vo.Content;
-	import org.broadleafcommerce.admin.cms.vo.ContentDetails;
 
-	public class ReadContentDetailsListByIdEvent extends CairngormEvent
+	public class SaveContentEvent extends CairngormEvent
 	{
-		public static const EVENT_READ_CONTENT_DETAILS_LIST_BY_ID:String = "read_content_details_list_by_id_event";
+		public static const EVENT_SAVE_CONTENT:String = "save_content_event";
 		public var content:Content;
-		public var contentDetails:ContentDetails;
+		public var contentDetailsList:ArrayCollection;
 
-		public function ReadContentDetailsListByIdEvent(content:Content, contentDetails:ContentDetails)
+		public function SaveContentEvent(content:Content, contentDetailsList:ArrayCollection)
 		{
-			super(EVENT_READ_CONTENT_DETAILS_LIST_BY_ID);
+			super(EVENT_SAVE_CONTENT);
 			this.content = content;
-			this.contentDetails = contentDetails;
+			this.contentDetailsList = contentDetailsList;
 		}
 
 	}

@@ -21,7 +21,6 @@ package org.broadleafcommerce.admin.cms.business
 	import mx.rpc.remoting.RemoteObject;
 
 	import org.broadleafcommerce.admin.cms.vo.Content;
-	import org.broadleafcommerce.admin.cms.vo.ContentDetails;
 
 
 	public class ContentServiceDelegate
@@ -103,9 +102,9 @@ package org.broadleafcommerce.admin.cms.business
 			call.addResponder(responder);
 		}
 
-		public function saveContent(content:Content, contentDetails:ContentDetails):void {
+		public function saveContent(content:Content, contentDetailsList:ArrayCollection):void {
 			trace("DEBUG: ContentServiceDelegate.saveContent()");
-			var call:AsyncToken = contentService.saveContent(content, contentDetails);
+			var call:AsyncToken = contentService.saveContent(content, contentDetailsList);
 			call.addResponder(responder);
 		}
 	}
