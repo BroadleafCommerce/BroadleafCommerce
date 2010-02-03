@@ -98,7 +98,7 @@ public class ContentServiceTest extends BaseTest {
 		List<Integer> contentIds = new ArrayList<Integer>();
 		contentIds.add(checkedOutContentId);
 
-		contentService.submitContentFromSandbox(contentIds, "UserSandBox", "NumeroUno");
+		contentService.submitContentFromSandbox(contentIds, "UserSandBox", "NumeroUno", "NoteTest");
 
 		List<Content> awaitingApproval = contentDao.readContentAwaitingApproval();
 		assert awaitingApproval != null && !awaitingApproval.isEmpty();
