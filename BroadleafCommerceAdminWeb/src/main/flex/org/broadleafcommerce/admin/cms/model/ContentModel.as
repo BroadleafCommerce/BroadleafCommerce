@@ -54,9 +54,11 @@ package org.broadleafcommerce.admin.cms.model
 		public var contentAwaitingApproval:ArrayCollection = new ArrayCollection();
 
 		//ArrayCollection <Content>
+		//TODO get rid of this
 		public var contentForSandbox:ArrayCollection = new ArrayCollection();
 
 		//ArrayCollection <Content>
+		//TODO get rid of this
 		public var contentForBrowser:ArrayCollection = new ArrayCollection();
 
 		//ArrayCollection <ContentItem>

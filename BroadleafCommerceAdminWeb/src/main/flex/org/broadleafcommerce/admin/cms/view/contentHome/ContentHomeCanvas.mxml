@@ -54,16 +54,11 @@
 				tnContentHomeCanvas.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
 				contentModel.contentTabNavigator = tnContentHomeCanvas;
 				//new ReadContentForSandboxEvent(contentModel.loggedInUserSandbox).dispatch();
-				//new ReadContentAwaitingApprovalEvent().dispatch();
+				new ReadContentAwaitingApprovalEvent().dispatch();
 			}
 
 			private function handleViewClick(event:Event):void{
-				//var content:Content = contentModel.contentAwaitingApproval.getItemAt(contentApprovalDataGrid.selectedIndex) as Content;
-
 				new ReadContentForSandboxEvent(contentModel.loggedInUserSandbox, null).dispatch();
-				//contentModel.currentSandbox = content.sandbox;
-				//new ReadContentForSandboxEvent(contentModel.currentSandbox).dispatch();
-				//new ViewContentSandboxEvent().dispatch();
 			}
 
 			private function handleAddClick(event:Event):void{
@@ -102,49 +97,53 @@
     <flexlib:SuperTabNavigator id="tnContentHomeCanvas"  width="100%" height="100%" styleName="padding10">
 
 	<mx:VBox height="100%" width="100%" label="Summary">
-		<mx:HBox width="100%">
-			<mx:Panel id="createContentPanel" title="Create Content" layout="vertical" color="0x323232" height="150" borderAlpha="1"
-         		styleName="padding10" horizontalAlign="center" width="48%">
-				<mx:VBox>
-					<mx:Label text="To create a new content item, first choose the content item below and then press 'New'."/>
-		        	<mx:VBox>
-		        		<mx:Label text="Content Type"/>
-			        	<mx:HBox>
-			            	<mx:ComboBox id="createContentComboBox"/>
-			        		<mx:Button label="New" click="handleCreateContentClick(event);"/>
-			        	</mx:HBox>
-		        	</mx:VBox>
-				</mx:VBox>
+		<mx:VBox width="1024" styleName="padding10">
+			<mx:HBox width="100%">
+				<mx:Panel id="createContentPanel" title="Create Content" layout="vertical" color="0x323232" height="150" borderAlpha="1"
+	         		styleName="padding10" horizontalAlign="center" width="485">
+					<mx:VBox width="420">
+						<mx:Text text="To create a new content item, first choose the content item below and then press 'New'." width="100%" fontWeight="bold"/>
+			        	<mx:VBox>
+			        		<mx:Label text="Content Type"/>
+				        	<mx:HBox>
+				            	<mx:ComboBox id="createContentComboBox"/>
+				        		<mx:Button label="New" click="handleCreateContentClick(event);"/>
+				        	</mx:HBox>
+			        	</mx:VBox>
+					</mx:VBox>
+				</mx:Panel>
+				<mx:Panel id="modifyContentPanel" title="Checkout Content" layout="vertical" color="0x323232" height="150" borderAlpha="1"
+	         		styleName="padding10" horizontalAlign="center" width="485">
+					<mx:VBox width="420">
+						<mx:Text text="Choose the content type you would like to modify and then press 'Find Content' to locate the specific item." width="100%" fontWeight="bold"/>
+			        	<mx:VBox>
+			        		<mx:Label text="Content Type"/>
+				        	<mx:HBox>
+				            	<mx:ComboBox id="checkoutContentComboBox"/>
+				        		<mx:Button label="Find"/>
+				        	</mx:HBox>
+			        	</mx:VBox>
+					</mx:VBox>
+				</mx:Panel>
+			</mx:HBox>
+			<mx:Spacer height="10" width="100%"/>
+			<mx:Panel id="sandboxesPanel" title="Your Sandboxes" layout="vertical" color="0x323232" height="200" borderAlpha="1"
+	         		styleName="padding10" horizontalAlign="center" width="980">
+	         		<mx:VBox>
+	         			<mx:HBox>
+	         				<mx:Label text="Sandbox {contentModel.loggedInUserSandbox} has xx items." fontSize="14"/>
+	         				<mx:Button id="viewButton" label="View" styleName="viewEditButton" click="handleViewClick(event);"/>
+	         				<mx:Button id="addButton" label="Add Content" styleName="addButton" click="handleAddClick(event)"/>
+	         			</mx:HBox>
+	         		</mx:VBox>
 			</mx:Panel>
-			<mx:Panel id="modifyContentPanel" title="Checkout Content" layout="vertical" color="0x323232" height="150" borderAlpha="1"
-         		styleName="padding10" horizontalAlign="center" width="48%">
-				<mx:VBox>
-					<mx:Label text="Choose the content type you would like to modify and then press 'Find Content' to locate the specific item."/>
-		        	<mx:VBox>
-		        		<mx:Label text="Content Type"/>
-			        	<mx:HBox>
-			            	<mx:ComboBox id="checkoutContentComboBox"/>
-			        		<mx:Button label="Find"/>
-			        	</mx:HBox>
-		        	</mx:VBox>
-				</mx:VBox>
+			<mx:Spacer height="10" width="100%"/>
+			<mx:Panel id="contentAwaitingApprovalPanel" title="Content Awaiting Approval" layout="vertical" color="0x323232" height="250" borderAlpha="1"
+	         		styleName="padding10" horizontalAlign="center" width="980">
+				<contentApproval:ContentApprovalDataGrid
+					id="contentApprovalDataGrid" height="100%" width="100%"/>
 			</mx:Panel>
-		</mx:HBox>
-		<mx:Panel id="sandboxesPanel" title="Your Sandboxes" layout="vertical" color="0x323232" height="200" borderAlpha="1"
-         		styleName="padding10" horizontalAlign="center" width="98%">
-         		<mx:VBox>
-         			<mx:HBox>
-         				<mx:Label text="Sandbox {contentModel.loggedInUserSandbox} has xx items."/>
-         				<mx:Button id="viewButton" label="View" styleName="viewEditButton" click="handleViewClick(event);"/>
-         				<mx:Button id="addButton" label="Add Content" styleName="addButton" click="handleAddClick(event)"/>
-         			</mx:HBox>
-         		</mx:VBox>
-		</mx:Panel>
-		<mx:Panel id="contentAwaitingApprovalPanel" title="Content Awaiting Approval" layout="vertical" color="0x323232" height="200" borderAlpha="1"
-         		styleName="padding10" horizontalAlign="center" width="98%">
-			<contentApproval:ContentApprovalDataGrid
-				id="contentApprovalDataGrid" height="100%" width="100%"/>
-		</mx:Panel>
+		</mx:VBox>
 	</mx:VBox>
 
 	</flexlib:SuperTabNavigator>

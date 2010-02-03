@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+HydraMVC - Copyright (c) 2009 andCulture, Inc. Some rights reserved.
+Your reuse is governed by the Creative Commons Attribution 3.0 United States License    
+-->    
+<GraphicBorderSkin xmlns:mx="http://www.adobe.com/2006/mxml"  
+	xmlns="http://www.degrafa.com/2007" 
+	xmlns:filters="flash.filters.*" xmlns:paint="com.degrafa.paint.*">
+	
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			private var awidth:Number=0;
+			
+			[Bindable]
+			private var aheight:Number=0;
+			
+			[Bindable]
+			private var corners:Number = 6;
+			
+			[Bindable]
+			private var emphasized:Boolean;
+			
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				awidth = unscaledWidth;
+				aheight = unscaledHeight;
+				var button:DefaultGrowlActionButton = this.parent as DefaultGrowlActionButton;
+				if(button)
+				{
+					this.colorFill.color = button.fillColor;					
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<fills>
+		<SolidFill id="colorFill" alpha="1" color="0xE7E7E7" />
+		<LinearGradientFill id="upFill" angle="90" >
+			<GradientStop ratio="0" alpha="0.5" color="#FFFFFF"/>
+			<GradientStop ratio="1" alpha="0" color="#FFFFFF"/>
+		</LinearGradientFill>
+		
+		<LinearGradientFill id="overFill" angle="90" >
+			<GradientStop ratio="0" alpha="0.6" color="#FFFFFF"/>
+			<GradientStop ratio="1" alpha="0" color="#FFFFFF"/>
+		</LinearGradientFill>
+
+		<LinearGradientFill id="downFill" angle="90" >
+			<GradientStop ratio="0.7" alpha="0.2" color="#FFFFFF" />
+			<GradientStop ratio="1" alpha="0.6" color="#FFFFFF" />
+		</LinearGradientFill>
+
+		<LinearGradientFill id="disabledFill" angle="90">
+			<GradientStop ratio="0" alpha="1" color="#f2f2f2" />
+			<GradientStop ratio="1" alpha="1" color="#e7e7e7" />
+		</LinearGradientFill>
+	</fills>
+
+	<geometry>
+		<RoundedRectangleComplex
+			topLeftRadius="{aheight * 0.5}"
+			topRightRadius="{aheight * 0.5}"
+			bottomLeftRadius="{aheight * 0.5}"
+			bottomRightRadius="{aheight * 0.5}"
+			height="{aheight}"
+			width="{awidth}"
+			x="0" y="0"
+			fill="{colorFill}"
+			/>
+		<RoundedRectangleComplex
+			state="upSkin"
+			topLeftRadius="{aheight * 0.5}"
+			topRightRadius="{aheight * 0.5}"
+			bottomLeftRadius="{aheight * 0.5}"
+			bottomRightRadius="{aheight * 0.5}"
+			height="{aheight}"
+			width="{awidth}"
+			x="0" y="0"
+			fill="{upFill}"
+			/>
+			
+		<RoundedRectangleComplex
+			state="overSkin"
+			topLeftRadius="{aheight * 0.5}"
+			topRightRadius="{aheight * 0.5}"
+			bottomLeftRadius="{aheight * 0.5}"
+			bottomRightRadius="{aheight * 0.5}"
+			height="{aheight}"
+			width="{awidth}"
+			x="0" y="0"
+			fill="{overFill}"
+			/>
+			
+		<RoundedRectangleComplex
+			state="downSkin"
+			topLeftRadius="{aheight * 0.5}"
+			topRightRadius="{aheight * 0.5}"
+			bottomLeftRadius="{aheight * 0.5}"
+			bottomRightRadius="{aheight * 0.5}"
+			height="{aheight}"
+			width="{awidth}"
+			x="0" y="0"
+			fill="{downFill}"
+			/>
+			
+		<RoundedRectangleComplex
+			state="disabledSkin"
+			topLeftRadius="{aheight * 0.5}"
+			topRightRadius="{aheight * 0.5}"
+			bottomLeftRadius="{aheight * 0.5}"
+			bottomRightRadius="{aheight * 0.5}"
+			height="{aheight}"
+			width="{awidth}"
+			x="0" y="0"
+			fill="{disabledFill}"
+			/>
+	</geometry>
+	
+</GraphicBorderSkin>

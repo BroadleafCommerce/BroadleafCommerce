@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+HydraMVC - Copyright (c) 2009 andCulture, Inc. Some rights reserved.
+Your reuse is governed by the Creative Commons Attribution 3.0 United States License
+-->
+<mx:Button
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	useHandCursor="true"
+	buttonMode="true"
+	mouseChildren="false"
+	styleName="growlButton"
+	>
+	<mx:Style>
+		.growlButton {
+			padding-top: 2;
+			color: #FFFFFF;
+			text-roll-over-color: #FFFFFF;
+			text-selected-color: #FFFFFF;
+			skin: ClassReference("org.broadleafcommerce.util.growlSkins.DefaultGrowlActionButtonSkin");
+		}
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[
+
+			public var fillColor:Number = 0xFF0000;
+
+		]]>
+	</mx:Script>
+</mx:Button>

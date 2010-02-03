@@ -23,6 +23,7 @@
 	xmlns:contentSandbox="org.broadleafcommerce.admin.cms.view.contentSandbox.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentChooseTypeModal;
 			import org.broadleafcommerce.admin.cms.control.events.CreateEditContentEvent;
 			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
 			import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
@@ -60,33 +61,36 @@
 			}
 
 			private function handleAddClick(event:Event):void{
-				//var newContentModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, ContentAddEditModal , true));
+				var newContentModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, ContentChooseTypeModal, true));
+				ContentChooseTypeModal(newContentModal).sandboxName = sandboxName;
 			}
 
 			private function handleSubmitClick(event:Event):void{
 				var contentIds:ArrayCollection = retrieveSelectedContentIds();
 				if (contentIds != null) {
-					new SubmitContentFromSandboxEvent(contentIds, contentModel.currentSandbox, contentModel.currentSandbox).dispatch();
+					var submissionModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, ContentSubmitModal , true));
+					ContentSubmitModal(submissionModal).contentIds = contentIds;
+					ContentSubmitModal(submissionModal).sandboxName = sandboxName;
+					ContentSubmitModal(submissionModal).user = authModel.userPrincipal.login;
+					ContentSubmitModal(submissionModal).tabName = this.parent.name;
 				}
 			}
 
 			private function handleApproveClick(event:Event):void{
 				var contentIds:ArrayCollection = retrieveSelectedContentIds();
-				Alert.show(contentIds.toString(), "Contentids");
 				if (contentIds != null) {
-					new ApproveContentEvent(contentIds, contentModel.currentSandbox, contentModel.currentSandbox).dispatch();
+					new ApproveContentEvent(contentIds, sandboxName, authModel.userPrincipal.login).dispatch();
 				}
 			}
 
 			private function retrieveSelectedContentIds():ArrayCollection{
 				var selectedIndices:Array = this.contentSandboxDataGrid.selectedIndices;
 				if (selectedIndices.length > 0) {
-					var contentForSandbox:ArrayCollection = contentModel.contentForSandbox;
 					var contentIds:ArrayCollection = new ArrayCollection();
 
 					for(var i:Number = 0; i<selectedIndices.length; i++){
-						var content:Content = contentForSandbox.getItemAt(selectedIndices[i]) as Content;
-						contentIds.addItem(content.id);
+						var contentItem:Content = content.getItemAt(selectedIndices[i]) as Content;
+						contentIds.addItem(contentItem.id);
 					}
 					return contentIds;
 				} else {
@@ -104,7 +108,7 @@
 
 		<mx:HBox>
 			<mx:Button id="previewButton" label="Preview" click="//handlePreviewClick(event)" styleName="previewButton" />
-			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/>
+			<mx:Button id="addButton" label="Create New Content" styleName="addButton" click="handleAddClick(event)"/>
 		</mx:HBox>
 		<mx:HBox
 			width="100%" height="100%">
@@ -113,13 +117,13 @@
 		</mx:HBox>
 		<mx:HBox>
 			<!-- If role == CONTENT_APPROVER -->
-			<mx:Button id="approveButton" label="Approve" click="handleApproveClick(event)"/>
+			<mx:Button id="approveButton" label="Approve" click="handleApproveClick(event)" visible="{contentModel.contentRoles.isContentApprover}"/>
 
 			<!-- If role == CONTENT_EDITOR -->
-			<mx:Button id="submitButton" label="Submit" click="handleSubmitClick(event)"/>
+			<mx:Button id="submitButton" label="Submit" click="handleSubmitClick(event)" visible="{contentModel.contentRoles.isContentEditor || contentModel.contentRoles.isContentApprover}"/>
 
 			<!-- If role == CONTENT_DELETER -->
-			<mx:Button id="deleteButton" label="Delete"/>
+			<mx:Button id="deleteButton" label="Delete" visible="{contentModel.contentRoles.isContentDeleter}"/>
 		</mx:HBox>
 
 </mx:VBox>

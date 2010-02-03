@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+HydraMVC - Copyright (c) 2009 andCulture, Inc. Some rights reserved.
+Your reuse is governed by the Creative Commons Attribution 3.0 United States License
+-->
+<BaseGrowl
+	xmlns="com.hydraframework.components.growler.view.components.*"
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="215" height="115"
+	filters="{[new DropShadowFilter(1, 90, 0, 0.1, 3, 3, 2, 2, false, false, false)]}"
+	addedToStage="handleAdded(event)"
+	borderSkin="org.broadleafcommerce.util.growlSkins.ErrorGrowlSkin"
+	alpha="0"
+	xmlns:growls="org.broadleafcommerce.util.growlSkins.*"
+	fadeTimeout="7000"
+	fadeDuration="1000"
+	>
+	<mx:Style>
+		.growlTitle {
+			color: #444444;
+			font-size: 15;
+			font-weight: normal;
+			leading: -2;
+			text-align: center;
+		}
+		.growlDescription {
+			color: #888888;
+			font-size: 12;
+			font-weight: normal;
+			leading: -2;
+			text-align: center;
+		}
+	</mx:Style>
+	<mx:Script>
+		<![CDATA[
+			import com.hydraframework.components.growler.view.events.GrowlEvent;
+			private function handleAdded(event:Event):void
+			{
+				this.addEventListener(Event.ENTER_FRAME, handleEnterFrame);
+			}
+
+			private function handleRemoved(event:Event):void
+			{
+				this.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+			}
+
+			private function handleEnterFrame(event:Event):void
+			{
+				this.alpha += 0.1;
+				if(this.alpha >= 1)
+				{
+					this.alpha = 1;
+					this.removeEventListener(Event.ENTER_FRAME, handleEnterFrame);
+				}
+			}
+
+			private function handleActionClick(event:MouseEvent):void
+			{
+				var growlEvent:GrowlEvent = new GrowlEvent(GrowlEvent.CLICK, this.growl, true);
+				this.dispatchEvent(growlEvent);
+				close();
+			}
+
+		]]>
+	</mx:Script>
+	<mx:Button skin="org.broadleafcommerce.util.growlSkins.CloseButtonSkin"
+		top="4" right="4" width="20" height="20" click="close()"
+		/>
+	<mx:VBox clipContent="false" horizontalAlign="center" verticalGap="0" horizontalCenter="0" verticalCenter="0">
+		<mx:Text width="175" text="{growl.title}" styleName="growlTitle" />
+		<mx:Text width="175" text="{growl.description}" styleName="growlDescription" />
+		<mx:Spacer width="1" height="3" />
+		<growls:DefaultGrowlActionButton
+			visible="{growl.action}"
+			includeInLayout="{growl.action}"
+			click="handleActionClick(event)"
+			label="{growl.action}"
+			fillColor="{growl.color}"
+			height="18" />
+	</mx:VBox>
+</BaseGrowl>
