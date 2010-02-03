@@ -376,7 +376,7 @@ public class ContentServiceImpl implements ContentService {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.content.service.ContentService#submitContentFromSandbox(java.util.List, java.lang.String, java.lang.String)
 	 */
-	public void submitContentFromSandbox(List<Integer> contentIds, String sandboxName, String username) {
+	public void submitContentFromSandbox(List<Integer> contentIds, String sandboxName, String username, String note) {
 		// updates the sandboxName to AwaitingApproval_$username_$timestamp and sets
 		// the submitted by and submitted date values
 
@@ -385,6 +385,7 @@ public class ContentServiceImpl implements ContentService {
 		for (Content content:contentList) {
 			content.setSubmittedBy(username);
 			content.setSubmittedDate(new Date());
+			content.setNote(note);
 			content.setSandbox("AwaitingApproval_" + username + "_" + new Date().getTime());
 		}
 
