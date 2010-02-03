@@ -13,63 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.cms.commands.contentApproval
+package org.broadleafcommerce.admin.cms.commands.contentSandbox
 {
 	import com.adobe.cairngorm.commands.ICommand;
 	import com.adobe.cairngorm.control.CairngormEvent;
 
+	import flash.display.DisplayObject;
+
 	import mx.collections.ArrayCollection;
+	import mx.containers.VBox;
 	import mx.controls.Alert;
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 
 	import org.broadleafcommerce.admin.cms.business.ContentServiceDelegate;
+	import org.broadleafcommerce.admin.cms.control.events.RefreshSandboxEvent;
 	import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
-	import org.broadleafcommerce.admin.cms.vo.Content;
+	import org.broadleafcommerce.admin.cms.view.contentSandbox.ContentSandboxCanvas;
 
-	public class ReadContentAwaitingApprovalCommand implements ICommand, IResponder
+	public class RefreshSandboxCommand implements ICommand, IResponder
 	{
+		private var tabName:String;
+
 		public function execute(event:CairngormEvent):void
 		{
+			var rs:RefreshSandboxEvent = event as RefreshSandboxEvent;
 			var delegate:ContentServiceDelegate = new ContentServiceDelegate(this);
-			delegate.readContentAwaitingApproval();
+			delegate.readContentForSandbox(rs.sandboxName);
+			tabName = rs.tabName;
 		}
 
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
 			var content:ArrayCollection = event.result as ArrayCollection;
-			var grouped:ArrayCollection = new ArrayCollection();
+			var tab:DisplayObject = ContentModelLocator.getInstance().contentModel.contentTabNavigator.getChildByName(tabName);
 
-			//transform content into groupings for datagrid
-			for each (var itm:Content in content){
-				var found:Boolean = false;
-				var foundObject:Object = null;
-				for each (var grpObj:Object in grouped){
-					if (itm.sandbox == grpObj.sandbox){
-						found = true;
-						foundObject = grpObj;
-						break;
-					}
-				}
-
-				if (found){
-					foundObject.numItems = Number(foundObject.numItems) + 1;
-				} else {
-					var aa:Object = new Object();
-					aa.sandbox = itm.sandbox;
-					aa.submittedBy = itm.submittedBy;
-					aa.submittedDate = itm.submittedDate;
-					aa.note = itm.note;
-					aa.numItems = 1;
-
-					grouped.addItem(aa);
-				}
+			if (tab != null) {
+				var contentCanvas:ContentSandboxCanvas = VBox(tab).getChildAt(0) as ContentSandboxCanvas;
+				contentCanvas.content = content;
 			}
-
-
-			ContentModelLocator.getInstance().contentModel.contentAwaitingApproval = grouped;
 		}
 
 		public function fault(info:Object):void

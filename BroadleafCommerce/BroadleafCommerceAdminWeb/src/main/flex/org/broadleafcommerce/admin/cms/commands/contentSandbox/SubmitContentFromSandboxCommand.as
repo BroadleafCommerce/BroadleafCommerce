@@ -17,6 +17,8 @@ package org.broadleafcommerce.admin.cms.commands.contentSandbox
 {
 	import com.adobe.cairngorm.commands.ICommand;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.hydraframework.components.growler.Growler;
+	import com.hydraframework.components.growler.model.GrowlDescriptor;
 
 	import mx.controls.Alert;
 	import mx.rpc.IResponder;
@@ -24,25 +26,36 @@ package org.broadleafcommerce.admin.cms.commands.contentSandbox
 	import mx.rpc.events.ResultEvent;
 
 	import org.broadleafcommerce.admin.cms.business.ContentServiceDelegate;
-	import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
+	import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
+	import org.broadleafcommerce.admin.cms.control.events.RefreshSandboxEvent;
 	import org.broadleafcommerce.admin.cms.control.events.SubmitContentFromSandboxEvent;
-	import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
+	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 	public class SubmitContentFromSandboxCommand implements ICommand, IResponder
 	{
+		private var tabName:String;
+		private var sandbox:String;
+
 		public function execute(event:CairngormEvent):void
 		{
 			var scs:SubmitContentFromSandboxEvent = event as SubmitContentFromSandboxEvent;
 			var delegate:ContentServiceDelegate = new ContentServiceDelegate(this);
-			delegate.submitContentFromSandbox(scs.contentIds, scs.sandbox, scs.username);
+			delegate.submitContentFromSandbox(scs.contentIds, scs.sandbox, scs.username, scs.note);
+			tabName = scs.tabName;
+			sandbox = scs.sandbox;
 		}
 
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
 			//Refresh the Sandbox
+			new RefreshSandboxEvent(tabName, sandbox).dispatch();
+			new ReadContentAwaitingApprovalEvent().dispatch();
 
-			//new ReadContentForSandboxEvent(ContentModelLocator.getInstance().contentModel.currentSandbox).dispatch();
+			var growler:Growler = AppModelLocator.getInstance().notificationModel.growlerRef;
+			var color:Number = 0xCCCCCC;
+			var growlDescriptor:GrowlDescriptor = new GrowlDescriptor("Submitted", "Your content will now be reviewed by a content approver","OK", color);
+			growler.growl(growlDescriptor);
 		}
 
 		public function fault(info:Object):void

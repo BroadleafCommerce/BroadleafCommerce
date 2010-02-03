@@ -30,6 +30,7 @@ package org.broadleafcommerce.admin.cms.control
 	import org.broadleafcommerce.admin.cms.commands.contentHome.RemoveContentTabCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.ApproveContentCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.ReadContentForSandboxCommand;
+	import org.broadleafcommerce.admin.cms.commands.contentSandbox.RefreshSandboxCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.SubmitContentFromSandboxCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.ViewContentSandboxCommand;
 	import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
@@ -41,6 +42,7 @@ package org.broadleafcommerce.admin.cms.control
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentForBrowserEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
+	import org.broadleafcommerce.admin.cms.control.events.RefreshSandboxEvent;
 	import org.broadleafcommerce.admin.cms.control.events.RemoveContentTabEvent;
 	import org.broadleafcommerce.admin.cms.control.events.SaveContentEvent;
 	import org.broadleafcommerce.admin.cms.control.events.SubmitContentFromSandboxEvent;
@@ -68,6 +70,7 @@ package org.broadleafcommerce.admin.cms.control
 			addCommand(SubmitContentFromSandboxEvent.EVENT_SUBMIT_CONTENT_FROM_SANDBOX, SubmitContentFromSandboxCommand);
 			addCommand(ApproveContentEvent.EVENT_APPROVE_CONTENT, ApproveContentCommand);
 			addCommand(SaveContentEvent.EVENT_SAVE_CONTENT, SaveContentCommand);
+			addCommand(RefreshSandboxEvent.EVENT_REFRESH_SANDBOX, RefreshSandboxCommand);
 		}
 
 	}

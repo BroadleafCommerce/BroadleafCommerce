@@ -65,7 +65,7 @@
 			width="200">
 			<mx:itemRenderer>
 	            <mx:Component>
-	            	<mx:VBox height="40" verticalGap="0">
+	            	<mx:VBox height="40" verticalGap="0" horizontalAlign="center">
 	                	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
 	                    <mx:Label text="{df.format(data.lastModifiedDate)}" />
 	                    <mx:Label text="by {data.lastModifiedBy}" />
@@ -79,7 +79,7 @@
 			width="120">
 			<mx:itemRenderer>
 	            <mx:Component>
-	                <mx:VBox height="40" verticalGap="0">
+	                <mx:VBox height="40" verticalGap="0" horizontalAlign="center">
 	                	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
 	                    <mx:Label text="{df.format(data.activeStartDate)} -" />
 	                    <mx:Label text="{df.format(data.activeEndDate)}" />

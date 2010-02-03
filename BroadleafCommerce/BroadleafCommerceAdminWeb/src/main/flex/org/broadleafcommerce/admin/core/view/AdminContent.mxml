@@ -20,17 +20,29 @@
 	xmlns:mx="http://www.adobe.com/2006/mxml"
 	xmlns:helpers="org.broadleafcommerce.admin.core.view.helpers.*"
 	xmlns:view="org.broadleafcommerce.admin.cms.view.*"
+	xmlns:growl="com.hydraframework.components.growler.*"
 	width="100%"
 	height="100%"
-	creationPolicy="all">
+	creationPolicy="all"
+	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.util.growlSkins.DefaultGrowl;
+			import org.broadleafcommerce.admin.core.model.NotificationModel;
 			import org.broadleafcommerce.admin.core.control.events.RemoveAuthenticationEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
+			//import com.flexspy.FlexSpy;
 
 			[Bindable]
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
+
+			[Bindable]
+			private var notificationModel:NotificationModel = AppModelLocator.getInstance().notificationModel;
+
+			private function handleCreationComplete():void{
+				notificationModel.growlerRef = this.growler;
+			}
 
 			private function handleManageAccountLabelClick():void{
 
@@ -79,6 +91,7 @@
 				buttonMode="true"
 				useHandCursor="true"
 				click="handleLogoutLabelClick()"/>
+				<!--mx:Button id="btnFlexSpy" label="FlexSpy" click="FlexSpy.show()" /-->
 		</mx:HBox>
 		<mx:VRule
 			height="45" />
@@ -104,4 +117,13 @@
 			<view:ContentCanvas width="100%" height="100%" />
 			-->
 	</mx:ViewStack>
+	<growl:Growler
+		top="5"
+		height="{this.height-10}"
+		growlerClass="{DefaultGrowl}"
+		id="growler"
+		x="{this.width-growler.width}"
+		horizontalGap="5"
+		verticalGap="5"
+		/>
 </mx:Canvas>

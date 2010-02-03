@@ -60,9 +60,9 @@ package org.broadleafcommerce.admin.cms.business
 			call.addResponder(responder);
 		}
 
-		public function submitContentFromSandbox(contentIds:ArrayCollection, sandboxName:String, username:String):void {
+		public function submitContentFromSandbox(contentIds:ArrayCollection, sandboxName:String, username:String, note:String):void {
 			trace("DEBUG: ContentServiceDelegate.submitContentFromSandbox()");
-			var call:AsyncToken = contentService.submitContentFromSandbox(contentIds, sandboxName, username);
+			var call:AsyncToken = contentService.submitContentFromSandbox(contentIds, sandboxName, username, note);
 			call.addResponder(responder);
 		}
 

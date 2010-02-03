@@ -17,25 +17,17 @@ package org.broadleafcommerce.admin.cms.control.events
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 
-	import mx.collections.ArrayCollection;
-
-	public class SubmitContentFromSandboxEvent extends CairngormEvent
+	public class RefreshSandboxEvent extends CairngormEvent
 	{
-		public static const EVENT_SUBMIT_CONTENT_FROM_SANDBOX:String = "submit_content_from_sandbox_event";
-		public var sandbox:String;
-		public var contentIds:ArrayCollection;
-		public var username:String;
+		public static const EVENT_REFRESH_SANDBOX:String = "refresh_sandbox_event";
 		public var tabName:String;
-		public var note:String;
+		public var sandboxName:String;
 
-		public function SubmitContentFromSandboxEvent(tabName:String, contentIds:ArrayCollection, sandbox:String, username:String, note:String)
+		public function RefreshSandboxEvent(tabName:String, sandboxName:String)
 		{
-			super(EVENT_SUBMIT_CONTENT_FROM_SANDBOX);
+			super(EVENT_REFRESH_SANDBOX);
 			this.tabName = tabName;
-			this.sandbox = sandbox;
-			this.contentIds = contentIds;
-			this.username = username;
-			this.note = note;
+			this.sandboxName = sandboxName;
 		}
 
 	}

@@ -18,7 +18,8 @@
 -->
 <mx:DataGrid
 	xmlns:mx="http://www.adobe.com/2006/mxml"
-	change="handleItemChange(event)">
+	change="handleItemChange(event)"
+	verticalAlign="middle">
 	<mx:Script>
 		<![CDATA[
 			import mx.controls.Alert;
@@ -33,9 +34,43 @@
 			headerText="Submitted By"/>
 		<mx:DataGridColumn
 			dataField="submittedDate"
-			headerText="Submitted Date"/>
+			headerText="Submitted Date"
+			width="120">
+			<mx:itemRenderer>
+	            <mx:Component>
+	            	<mx:VBox height="40" verticalGap="0" horizontalAlign="center" verticalAlign="middle">
+	                	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
+	                    <mx:Label text="{df.format(data.submittedDate)}" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
+		<mx:DataGridColumn
+			dataField="numItems"
+			headerText="No. of Items" width="100"/>
 		<mx:DataGridColumn
 			dataField="note"
 			headerText="Notes"/>
+		<mx:DataGridColumn
+			dataField="sandbox"
+			headerText=" "
+			width="100">
+			<mx:itemRenderer>
+	            <mx:Component>
+	                <mx:VBox height="40" verticalGap="0" horizontalAlign="center" verticalAlign="middle">
+		            	<mx:Script>
+		            		<![CDATA[
+		            			import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
+
+	    						private function handleViewClick(event:Event):void{
+									new ReadContentForSandboxEvent(data.sandbox, null).dispatch();
+								}
+		            		]]>
+		            	</mx:Script>
+						<mx:Button id="viewButton" label="View" click="handleViewClick(event)" styleName="viewEditButton" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
 	</mx:columns>
 </mx:DataGrid>

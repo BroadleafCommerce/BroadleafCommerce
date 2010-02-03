@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+HydraMVC - Copyright (c) 2009 andCulture, Inc. Some rights reserved.
+Your reuse is governed by the Creative Commons Attribution 3.0 United States License    
+-->    
+<Surface 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:effects="com.darronschall.effects.*" 
+	xmlns="http://www.degrafa.com/2007" 
+	>
+
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			private var awidth:Number = 0;
+			
+			[Bindable]
+			private var aheight:Number = 0;
+			
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				awidth = unscaledWidth > 0 ? unscaledWidth : 20;
+				aheight = unscaledHeight > 0 ? unscaledWidth : 20;
+			}
+		]]>
+	</mx:Script>
+	<fills>
+		<SolidFill color="0xFFFFFF" id="xOverFill" />
+		<SolidFill color="0x000000" alpha="0.1" id="xHighlightFill" />
+		<SolidFill alpha="1" id="buttonOverFill" color="0xf47c6f" />
+		<LinearGradientFill angle="90" id="darkenFill">
+			<GradientStop ratio="0" alpha="0" color="0x000000" />
+			<GradientStop ratio="1" alpha="0.3" color="0x000000" />
+		</LinearGradientFill>
+		<LinearGradientFill angle="90" id="lightenFill">
+			<GradientStop ratio="0" alpha="0.7" color="0xFFFFFF" />
+			<GradientStop ratio="1" alpha="0" color="0xFFFFFF" />
+		</LinearGradientFill>
+	</fills>
+	
+	<graphicsData>
+		<GeometryGroup
+			alpha="1"
+			id="wBackground"
+			>
+			<RoundedRectangle
+				x="0" y="0" 
+				width="{awidth}" height="{aheight}" 
+				cornerRadius="10"
+				fill="{buttonOverFill}"
+				/>
+			<RoundedRectangle
+				x="0" y="0" 
+				width="{awidth}" height="{aheight}" 
+				cornerRadius="10"
+				fill="{darkenFill}"
+				/>
+		</GeometryGroup>
+		<GeometryGroup
+			id="wXOver"
+			x="3" y="3"
+			>
+			<Polygon
+				fill="{xHighlightFill}">
+				<points>
+					<GraphicPoint x="0" y="4" />
+					<GraphicPoint x="4" y="0" />
+					<GraphicPoint x="14" y="10" />
+					<GraphicPoint x="10" y="14" />
+				</points>
+			</Polygon>
+			<Polygon
+				fill="{xHighlightFill}">
+				<points>
+					<GraphicPoint x="10" y="0" />
+					<GraphicPoint x="14" y="4" />
+					<GraphicPoint x="4" y="14" />
+					<GraphicPoint x="0" y="10" />
+				</points>
+			</Polygon>
+			<Polygon
+				fill="{xOverFill}">
+				<points>
+					<GraphicPoint x="2" y="4" />
+					<GraphicPoint x="4" y="2" />
+					<GraphicPoint x="12" y="10" />
+					<GraphicPoint x="10" y="12" />
+				</points>
+			</Polygon>
+			<Polygon
+				fill="{xOverFill}">
+				<points>
+					<GraphicPoint x="10" y="2" />
+					<GraphicPoint x="12" y="4" />
+					<GraphicPoint x="4" y="12" />
+					<GraphicPoint x="2" y="10" />
+				</points>
+			</Polygon>
+		</GeometryGroup>
+		<GeometryGroup
+			alpha="0"
+			id="wForeground"
+			>
+			<RoundedRectangle
+				x="0" y="0" 
+				width="{awidth}" height="{aheight}" 
+				cornerRadius="10"
+				fill="{lightenFill}"
+				/>
+		</GeometryGroup>
+	</graphicsData>
+	
+	<states>
+		<mx:State name="up">
+			<mx:SetProperty target="{wForeground}" name="alpha" value="0" />
+		</mx:State>	
+		<mx:State name="over">
+			<mx:SetProperty target="{wForeground}" name="alpha" value="0.2" />
+		</mx:State>	
+		<mx:State name="down">
+			<mx:SetProperty target="{wForeground}" name="alpha" value="0.2" />
+		</mx:State>
+		<mx:State name="selectedUp">
+			<mx:SetProperty target="{wForeground}" name="alpha" value="0.2" />
+		</mx:State>	
+		<mx:State name="selectedOver">
+			<mx:SetProperty target="{wForeground}" name="alpha" value="0.2" />
+		</mx:State>	
+		<mx:State name="selectedDown">
+			<mx:SetProperty target="{wForeground}" name="alpha" value="0.2" />
+		</mx:State>	
+		<mx:State name="disabled">
+			<mx:SetProperty target="{wForeground}" name="alpha" value="0.2" />
+		</mx:State>
+	</states>
+ 	
+</Surface>
