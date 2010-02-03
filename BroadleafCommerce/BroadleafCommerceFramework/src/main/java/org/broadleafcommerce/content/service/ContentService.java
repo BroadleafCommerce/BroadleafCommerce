@@ -51,7 +51,7 @@ public interface ContentService {
 
 	public List<Content> checkoutContentToSandbox(List<Integer> contentIds, String sandboxName);
 
-	public void submitContentFromSandbox(List<Integer> contentIds, String sandboxName, String username);
+	public void submitContentFromSandbox(List<Integer> contentIds, String sandboxName, String username, String note);
 
 	public void approveContent(List<Integer> contentIds,  String sandboxName, String username);
 
