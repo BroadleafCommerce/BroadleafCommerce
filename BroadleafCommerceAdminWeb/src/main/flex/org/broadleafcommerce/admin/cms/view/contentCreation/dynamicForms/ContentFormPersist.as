@@ -38,11 +38,9 @@ package org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms
 		{
 		}
 
-		public static function persistForms(headerForm:Form, dynamicForm:Form, content:Content, contentDetailsList:ArrayCollection, contentType:String, user:String, sandbox:String):void{
+		public static function persistForms(headerForm:Form, dynamicForm:Form, content:Content, contentDetailsList:ArrayCollection, contentType:String, user:String, sandbox:String, callingTabName:String):void{
 			var headerFormItems:Array = headerForm.getChildren();
 			var contentCopy:Content = new Content();
-			contentCopy.submittedDate = new Date();
-			contentCopy.submittedBy = user;
 			var contentDetailsListCopy:ArrayCollection = new ArrayCollection();
 
 			if (content != null){
@@ -127,7 +125,7 @@ package org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms
 //
 //			Alert.show(t, "Content Details");
 
-			new SaveContentEvent(contentCopy, contentDetailsListCopy).dispatch();
+			new SaveContentEvent(contentCopy, contentDetailsListCopy, sandbox, callingTabName).dispatch();
 		}
 
 		private static function findXmlDataByTagName(contentDetailsList:ArrayCollection, tagName:String):ContentXmlData{

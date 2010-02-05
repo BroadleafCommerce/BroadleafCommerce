@@ -17,40 +17,41 @@ package org.broadleafcommerce.admin.core.model
 {
 	import mx.collections.ArrayCollection;
 	import mx.core.Application;
-	
+
 	public class ConfigModel
 	{
 		public static const SERVER_PROTOCOL:String 			= "http";
 		public static const SERVER_HOST:String 				= "localhost";
-		public static const SERVER_PORT:String 				= "8080";
+		//TODO change back to 8080
+		public static const SERVER_PORT:String 				= "8081";
 		public static const SERVER_CONTEXT:String 			= "broadleafadmin";
 		private static const SERVER_MESSAGE_BROKER:String 	= "messagebroker/amf";
 		public static const SERVER_IMAGES:String			= "/images";
 		private static const SERVER_CONFIG:String 			= "modules/modules-config.xml";
 		private static const SERVER_FILE_UPLOAD:String 		= "spring/upload";
-		 
+
 		public static const URL_SERVER:String = SERVER_PROTOCOL+"://"+SERVER_HOST+":"+SERVER_PORT+"/"+SERVER_CONTEXT;
-		public static const URL_CONFIG:String = URL_SERVER+"/"+SERVER_CONFIG; 
+		public static const URL_CONFIG:String = URL_SERVER+"/"+SERVER_CONFIG;
 		public static const URL_ENDPOINT:String = URL_SERVER+"/"+SERVER_MESSAGE_BROKER;
 		public static const URL_FILE_UPLOAD:String = URL_SERVER+"/"+SERVER_FILE_UPLOAD;
-		
+
 		private static const defaultUrl:String = "";
-		
+
 		public function ConfigModel()
 		{
 		}
 
 		public static function get URL_MODULE_SERVER():String{
 			var url:String = Application.application.loaderInfo.url;
-			return url.substr(0,url.lastIndexOf("/"))+"/";			
-			
+			return url.substr(0,url.lastIndexOf("/"))+"/";
+
 		}
-		
+
 		public var moduleConfigs:ArrayCollection = new ArrayCollection();
 
 		public var codeTypes:ArrayCollection = new ArrayCollection();
 
 		[Bindable]
 		public var currentCodeTypes:ArrayCollection = new ArrayCollection();
-	}	
+	}
 }

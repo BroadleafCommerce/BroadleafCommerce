@@ -17,6 +17,8 @@ package org.broadleafcommerce.admin.cms.commands.contentSandbox
 {
 	import com.adobe.cairngorm.commands.ICommand;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import com.hydraframework.components.growler.Growler;
+	import com.hydraframework.components.growler.model.GrowlDescriptor;
 
 	import mx.controls.Alert;
 	import mx.rpc.IResponder;
@@ -25,16 +27,22 @@ package org.broadleafcommerce.admin.cms.commands.contentSandbox
 
 	import org.broadleafcommerce.admin.cms.business.ContentServiceDelegate;
 	import org.broadleafcommerce.admin.cms.control.events.ApproveContentEvent;
-	import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
-	import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
+	import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
+	import org.broadleafcommerce.admin.cms.control.events.RefreshSandboxEvent;
+	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 	public class ApproveContentCommand implements ICommand, IResponder
 	{
+		private var tabName:String;
+		private var sandbox:String;
+
 		public function execute(event:CairngormEvent):void
 		{
 			var ac:ApproveContentEvent = event as ApproveContentEvent;
 			var delegate:ContentServiceDelegate = new ContentServiceDelegate(this);
 			delegate.approveContent(ac.contentIds, ac.sandbox, ac.username);
+			tabName = ac.tabName;
+			sandbox = ac.sandbox;
 		}
 
 		public function result(data:Object):void
@@ -42,7 +50,13 @@ package org.broadleafcommerce.admin.cms.commands.contentSandbox
 			var event:ResultEvent = ResultEvent(data);
 
 			//Refresh the Sandbox
-			//new ReadContentForSandboxEvent(ContentModelLocator.getInstance().contentModel.currentSandbox).dispatch();
+			new RefreshSandboxEvent(tabName,sandbox).dispatch();
+			new ReadContentAwaitingApprovalEvent().dispatch();
+
+			var growler:Growler = AppModelLocator.getInstance().notificationModel.growlerRef;
+			var color:Number = 0xCCCCCC;
+			var growlDescriptor:GrowlDescriptor = new GrowlDescriptor("Approved", "This content has been approved to staging.","OK", color);
+			growler.growl(growlDescriptor);
 		}
 
 		public function fault(info:Object):void

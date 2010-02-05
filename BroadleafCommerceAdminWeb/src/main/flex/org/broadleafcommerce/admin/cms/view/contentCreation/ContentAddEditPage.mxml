@@ -56,6 +56,9 @@
 			[Bindable]
 			public var sandbox:String;
 
+			[Bindable]
+			public var callingTabName:String;
+
 			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
 
 			private function creationComplete():void {
@@ -70,6 +73,7 @@
 				}
 
 				this.buttonSave.addEventListener(MouseEvent.CLICK, save);
+
 			}
 
 			private function handleCancelClick(event:Event):void{
@@ -77,7 +81,7 @@
 			}
 
 			private function save(e:Event):void{
-				ContentFormPersist.persistForms(headerForm, dynamicForm, content, contentDetailsList, contentType, authModel.userPrincipal.login, sandbox);
+				ContentFormPersist.persistForms(headerForm, dynamicForm, content, contentDetailsList, contentType, authModel.userPrincipal.login, sandbox, callingTabName);
 			}
 
 			private function populateFields():void{

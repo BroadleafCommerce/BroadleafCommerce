@@ -36,6 +36,7 @@ package org.broadleafcommerce.admin.cms.commands.contentCreation
 		private var content:Content;
 		private var sandbox:String;
 		private var isPage:Boolean;
+		private var callingTabName:String;
 
 		public function execute(event:CairngormEvent):void
 		{
@@ -45,6 +46,7 @@ package org.broadleafcommerce.admin.cms.commands.contentCreation
 			content = ce.content;
 			sandbox = ce.sandbox;
 			isPage = ce.isPage;
+			callingTabName = ce.callingTabName;
 		}
 
 		public function result(data:Object):void
@@ -58,6 +60,7 @@ package org.broadleafcommerce.admin.cms.commands.contentCreation
 				editPage.content = content;
 				editPage.contentDetailsList = contentDetailsList;
 				editPage.sandbox = sandbox;
+				editPage.callingTabName = callingTabName;
 				new AddContentTabEvent("Edit " + content.contentType, editPage, null).dispatch();
 			} else {
 				var editNonPage:ContentAddEditNonPage = new ContentAddEditNonPage();
@@ -65,6 +68,7 @@ package org.broadleafcommerce.admin.cms.commands.contentCreation
 				editNonPage.content = content;
 				editNonPage.contentDetailsList = contentDetailsList;
 				editNonPage.sandbox = sandbox;
+				editNonPage.callingTabName = callingTabName;
 				new AddContentTabEvent("Edit " + content.contentType, editNonPage, null).dispatch();
 			}
 		}
