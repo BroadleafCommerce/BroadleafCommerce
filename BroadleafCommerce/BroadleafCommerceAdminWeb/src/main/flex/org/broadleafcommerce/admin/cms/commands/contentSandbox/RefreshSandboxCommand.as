@@ -48,11 +48,13 @@ package org.broadleafcommerce.admin.cms.commands.contentSandbox
 		{
 			var event:ResultEvent = ResultEvent(data);
 			var content:ArrayCollection = event.result as ArrayCollection;
-			var tab:DisplayObject = ContentModelLocator.getInstance().contentModel.contentTabNavigator.getChildByName(tabName);
+			if (tabName != null){
+				var tab:DisplayObject = ContentModelLocator.getInstance().contentModel.contentTabNavigator.getChildByName(tabName);
 
-			if (tab != null) {
-				var contentCanvas:ContentSandboxCanvas = VBox(tab).getChildAt(0) as ContentSandboxCanvas;
-				contentCanvas.content = content;
+				if (tab != null) {
+					var contentCanvas:ContentSandboxCanvas = VBox(tab).getChildAt(0) as ContentSandboxCanvas;
+					contentCanvas.content = content;
+				}
 			}
 		}
 

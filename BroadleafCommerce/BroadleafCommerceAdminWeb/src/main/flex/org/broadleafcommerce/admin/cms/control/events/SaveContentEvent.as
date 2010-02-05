@@ -26,12 +26,16 @@ package org.broadleafcommerce.admin.cms.control.events
 		public static const EVENT_SAVE_CONTENT:String = "save_content_event";
 		public var content:Content;
 		public var contentDetailsList:ArrayCollection;
+		public var sandbox:String;
+		public var callingTabName:String;
 
-		public function SaveContentEvent(content:Content, contentDetailsList:ArrayCollection)
+		public function SaveContentEvent(content:Content, contentDetailsList:ArrayCollection, sandbox:String, callingTabName:String)
 		{
 			super(EVENT_SAVE_CONTENT);
 			this.content = content;
 			this.contentDetailsList = contentDetailsList;
+			this.sandbox = sandbox;
+			this.callingTabName = callingTabName;
 		}
 
 	}

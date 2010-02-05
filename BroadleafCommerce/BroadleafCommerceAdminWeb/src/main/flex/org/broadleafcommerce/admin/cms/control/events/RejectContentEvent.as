@@ -19,17 +19,17 @@ package org.broadleafcommerce.admin.cms.control.events
 
 	import mx.collections.ArrayCollection;
 
-	public class ApproveContentEvent extends CairngormEvent
+	public class RejectContentEvent extends CairngormEvent
 	{
-		public static const EVENT_APPROVE_CONTENT:String = "approve_content_event";
+		public static const EVENT_REJECT_CONTENT:String = "reject_content_event";
 		public var sandbox:String;
 		public var contentIds:ArrayCollection;
 		public var username:String;
 		public var tabName:String;
 
-		public function ApproveContentEvent(contentIds:ArrayCollection, sandbox:String, username:String, tabName:String)
+		public function RejectContentEvent(contentIds:ArrayCollection, sandbox:String, username:String, tabName:String)
 		{
-			super(EVENT_APPROVE_CONTENT);
+			super(EVENT_REJECT_CONTENT);
 			this.sandbox = sandbox;
 			this.contentIds = contentIds;
 			this.username = username;

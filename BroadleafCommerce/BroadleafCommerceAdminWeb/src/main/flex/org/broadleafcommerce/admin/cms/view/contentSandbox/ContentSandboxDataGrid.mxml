@@ -29,6 +29,9 @@
 			import mx.controls.Alert;
 			import org.broadleafcommerce.util.components.CheckBoxListRenderer;
 
+			[Bindable]
+			public var tabName:String;
+
 			private function handleItemChange(event:Event):void{
 				//new EditCodeTypeEvent(CodeType(this.selectedItem)).dispatch();
 			}
@@ -107,9 +110,9 @@
 
 	    						private function handleEditClick(event:Event):void{
 									if (ContentUtil.isContentTypePage(data.contentType)){
-										new CreateEditContentEvent(data as Content, data.sandbox, true).dispatch();
+										new CreateEditContentEvent(data as Content, data.sandbox, true, outerDocument.tabName).dispatch();
 									} else {
-										new CreateEditContentEvent(data as Content, data.sandbox, false).dispatch();
+										new CreateEditContentEvent(data as Content, data.sandbox, false, outerDocument.tabName).dispatch();
 									}
 
 								}

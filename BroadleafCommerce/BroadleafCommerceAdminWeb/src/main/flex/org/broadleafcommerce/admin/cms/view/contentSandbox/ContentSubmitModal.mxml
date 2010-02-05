@@ -57,7 +57,7 @@
 		]]>
 	</mx:Script>
 
-    <mx:VBox label="Submit Content" verticalAlign="middle" width="451" styleName="padding10" height="313" verticalGap="0" verticalScrollPolicy="off">
+    <mx:VBox label="Submit Content" verticalAlign="middle" width="451" styleName="padding10" height="313" verticalGap="0" verticalScrollPolicy="off" horizontalScrollPolicy="off">
 		<mx:Text text="Your content will now be reviewed by a content approver. Please enter a note before submitting." fontWeight="bold" fontSize="14" width="433" textAlign="center"/>
         <mx:Form width="433" verticalScrollPolicy="off" horizontalScrollPolicy="off">
         	<mx:Label text="Note" fontWeight="bold"/>

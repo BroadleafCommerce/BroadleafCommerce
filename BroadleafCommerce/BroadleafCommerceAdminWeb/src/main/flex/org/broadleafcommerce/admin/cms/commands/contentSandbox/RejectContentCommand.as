@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.cms.commands.contentCreation
+package org.broadleafcommerce.admin.cms.commands.contentSandbox
 {
 	import com.adobe.cairngorm.commands.ICommand;
 	import com.adobe.cairngorm.control.CairngormEvent;
@@ -26,34 +26,37 @@ package org.broadleafcommerce.admin.cms.commands.contentCreation
 	import mx.rpc.events.ResultEvent;
 
 	import org.broadleafcommerce.admin.cms.business.ContentServiceDelegate;
+	import org.broadleafcommerce.admin.cms.control.events.ApproveContentEvent;
+	import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
 	import org.broadleafcommerce.admin.cms.control.events.RefreshSandboxEvent;
-	import org.broadleafcommerce.admin.cms.control.events.SaveContentEvent;
+	import org.broadleafcommerce.admin.cms.control.events.RejectContentEvent;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
-	public class SaveContentCommand implements ICommand, IResponder
+	public class RejectContentCommand implements ICommand, IResponder
 	{
+		private var tabName:String;
 		private var sandbox:String;
-		private var callingTabName:String;
 
 		public function execute(event:CairngormEvent):void
 		{
-			var sc:SaveContentEvent = event as SaveContentEvent;
+			var rc:RejectContentEvent = event as RejectContentEvent;
 			var delegate:ContentServiceDelegate = new ContentServiceDelegate(this);
-			delegate.saveContent(sc.content, sc.contentDetailsList);
-			sandbox = sc.sandbox;
-			callingTabName = sc.callingTabName;
-
+			delegate.rejectContent(rc.contentIds, rc.sandbox, rc.username);
+			tabName = rc.tabName;
+			sandbox = rc.sandbox;
 		}
 
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
-			//refresh sandbox list
-			new RefreshSandboxEvent(callingTabName, sandbox).dispatch();
+
+			//Refresh the Sandbox
+			new RefreshSandboxEvent(tabName,sandbox).dispatch();
+			new ReadContentAwaitingApprovalEvent().dispatch();
 
 			var growler:Growler = AppModelLocator.getInstance().notificationModel.growlerRef;
 			var color:Number = 0xCCCCCC;
-			var growlDescriptor:GrowlDescriptor = new GrowlDescriptor("Saved!", "Your content has been saved","OK", color);
+			var growlDescriptor:GrowlDescriptor = new GrowlDescriptor("Rejected", "This content has been rejected.","OK", color);
 			growler.growl(growlDescriptor);
 		}
 

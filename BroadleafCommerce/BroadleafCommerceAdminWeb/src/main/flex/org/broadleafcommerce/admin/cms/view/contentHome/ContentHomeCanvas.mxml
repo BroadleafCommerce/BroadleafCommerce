@@ -26,6 +26,9 @@
 	xmlns:code="http://code.google.com/p/flexlib/">
 	<mx:Script>
 		<![CDATA[
+			import mx.managers.PopUpManager;
+			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentChooseTypeModal;
+			import mx.containers.TitleWindow;
 			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditNonPage;
 			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
 			import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
@@ -62,7 +65,9 @@
 			}
 
 			private function handleAddClick(event:Event):void{
-
+				var newContentModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, ContentChooseTypeModal, true));
+				ContentChooseTypeModal(newContentModal).sandboxName = contentModel.loggedInUserSandbox;
+				ContentChooseTypeModal(newContentModal).tabName = this.parent.name;
 			}
 
 			private function handleCreateContentClick(event:Event):void{
@@ -139,7 +144,7 @@
 			</mx:Panel>
 			<mx:Spacer height="10" width="100%"/>
 			<mx:Panel id="contentAwaitingApprovalPanel" title="Content Awaiting Approval" layout="vertical" color="0x323232" height="250" borderAlpha="1"
-	         		styleName="padding10" horizontalAlign="center" width="980">
+	         		styleName="padding10" horizontalAlign="center" width="980" visible="{contentModel.contentRoles.isContentApprover}" includeInLayout="{contentModel.contentRoles.isContentApprover}">
 				<contentApproval:ContentApprovalDataGrid
 					id="contentApprovalDataGrid" height="100%" width="100%"/>
 			</mx:Panel>
