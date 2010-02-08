@@ -26,6 +26,7 @@
 	xmlns:code="http://code.google.com/p/flexlib/">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.cms.control.events.ReadContentForCheckoutEvent;
 			import mx.managers.PopUpManager;
 			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentChooseTypeModal;
 			import mx.containers.TitleWindow;
@@ -40,7 +41,6 @@
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
 			import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
-			import org.broadleafcommerce.admin.cms.control.events.ViewContentSandboxEvent;
 			import org.broadleafcommerce.admin.cms.vo.Content;
 			import org.broadleafcommerce.admin.cms.model.ContentModel;
 			import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
@@ -69,6 +69,11 @@
 				ContentChooseTypeModal(newContentModal).sandboxName = contentModel.loggedInUserSandbox;
 				ContentChooseTypeModal(newContentModal).tabName = this.parent.name;
 			}
+
+			private function handleFindContentClick(event:Event):void{
+				new ReadContentForCheckoutEvent(checkoutContentComboBox.selectedLabel, this).dispatch();
+			}
+
 
 			private function handleCreateContentClick(event:Event):void{
 				if (ContentUtil.isContentTypePage(createContentComboBox.selectedLabel)){
@@ -125,7 +130,7 @@
 			        		<mx:Label text="Content Type"/>
 				        	<mx:HBox>
 				            	<mx:ComboBox id="checkoutContentComboBox"/>
-				        		<mx:Button label="Find"/>
+				        		<mx:Button label="Find" click="handleFindContentClick(event);"/>
 				        	</mx:HBox>
 			        	</mx:VBox>
 					</mx:VBox>

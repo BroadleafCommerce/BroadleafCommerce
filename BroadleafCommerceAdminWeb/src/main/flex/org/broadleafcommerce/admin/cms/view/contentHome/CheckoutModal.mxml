@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:components="org.broadleafcommerce.util.components.*"
+	width="800"
+	height="500"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this)"
+	creationComplete="creationComplete()"
+	verticalAlign="middle" horizontalAlign="center"
+	xmlns:contentHome="org.broadleafcommerce.admin.cms.view.contentHome.*">
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.cms.vo.Content;
+			import org.broadleafcommerce.admin.cms.control.events.CheckoutContentToSandboxEvent;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
+			import org.broadleafcommerce.admin.cms.control.events.SubmitContentFromSandboxEvent;
+			import org.broadleafcommerce.admin.security.control.events.SaveAdminUserEvent;
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+
+			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
+
+			[Bindable]
+			public var contentType:String;
+
+			[Bindable]
+			public var content:ArrayCollection;
+
+			private function creationComplete():void {
+				PopUpManager.centerPopUp(this);
+				this.title = "Checkout " + contentType;
+				var sandboxes:ArrayCollection = new ArrayCollection([authModel.userPrincipal.login]);
+				this.destinationComboBox.dataProvider = sandboxes;
+			}
+
+			private function handleCheckoutContentClick(event:Event):void{
+				var selectedIds:ArrayCollection = retrieveSelectedContentIds();
+				if (selectedIds != null){
+					new CheckoutContentToSandboxEvent(selectedIds, this.destinationComboBox.selectedLabel).dispatch();
+				}
+			}
+
+			private function handleCancelClick(event:Event):void{
+				PopUpManager.removePopUp(this);
+			}
+
+			private function retrieveSelectedContentIds():ArrayCollection{
+				var selectedIndices:Array = this.checkoutModalDataGrid.selectedIndices;
+				if (selectedIndices.length > 0) {
+					var contentIds:ArrayCollection = new ArrayCollection();
+
+					for(var i:Number = 0; i<selectedIndices.length; i++){
+						var contentItem:Content = content.getItemAt(selectedIndices[i]) as Content;
+						contentIds.addItem(contentItem.id);
+					}
+					return contentIds;
+				} else {
+					return null;
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Binding
+		source="content"
+		destination="checkoutModalDataGrid.dataProvider"/>
+
+    <mx:VBox verticalAlign="middle" width="790" styleName="padding10" height="450" verticalGap="0" verticalScrollPolicy="off" horizontalScrollPolicy="off" horizontalAlign="right">
+
+		<contentHome:CheckoutModalDataGrid id="checkoutModalDataGrid" height="100%"
+			width="100%" />
+
+        <mx:HBox horizontalAlign="right">
+	        <mx:Form verticalScrollPolicy="off" horizontalScrollPolicy="off">
+	            <mx:FormItem label="Destination Sandbox">
+	                <mx:ComboBox id="destinationComboBox"/>
+	            </mx:FormItem>
+	        </mx:Form>
+	        <mx:HBox styleName="padding10">
+		       	<mx:Button label="Cancel" click="handleCancelClick(event)" id="buttonCancel" visible="true"/>
+		     	<mx:Button label="Checkout" click="handleCheckoutContentClick(event)" id="buttonCheckout" visible="true"/>
+	        </mx:HBox>
+        </mx:HBox>
+    </mx:VBox>
+
+</mx:TitleWindow>

@@ -18,35 +18,35 @@ package org.broadleafcommerce.admin.core.commands
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
 	import com.adobe.cairngorm.view.ViewLocator;
-	
-	import mx.collections.ArrayCollection;
+
+	import flash.net.URLRequest;
+
 	import mx.controls.Alert;
-	import mx.modules.ModuleLoader;
+	import mx.core.Application;
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
-	
+
 	import org.broadleafcommerce.admin.core.business.AdminAuthenticationDelegate;
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.model.AuthenticationModel;
 	import org.broadleafcommerce.admin.core.model.ConfigModel;
 	import org.broadleafcommerce.admin.core.view.helpers.AdminContentViewHelper;
-	import org.broadleafcommerce.admin.core.vo.ModuleConfig;
-	
+
 	public class RemoveAuthenticationCommand implements Command, IResponder
 	{
-		
+
 		private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
 		private var configModel:ConfigModel = AppModelLocator.getInstance().configModel;
-		
+
 		public function RemoveAuthenticationCommand()
 		{
 		}
-		
+
 		public function execute(event:CairngormEvent):void{
 			var adminContentVH:AdminContentViewHelper = AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent"));
 
 			adminContentVH.unloadModules();
-					
+
 //			removeModulesFromView();
 //			unloadModules();
 //			clearModules();
@@ -54,7 +54,7 @@ package org.broadleafcommerce.admin.core.commands
 			var aad:AdminAuthenticationDelegate = new AdminAuthenticationDelegate(this);
 			aad.logout();
 		}
-		
+
 		private function unloadModules():void{
 			var adminContentVH:AdminContentViewHelper = AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent"));
 //			for each(var moduleConfig:ModuleConfig in authModel.authenticatedModuleConfigs){
@@ -62,14 +62,14 @@ package org.broadleafcommerce.admin.core.commands
 //				var moduleLoader:ModuleLoader = new ModuleLoader();
 //				moduleLoader.url = url;
 //				moduleLoader.unloadModule();
-//			}				
+//			}
 		}
-		
+
 		private function clearModules():void{
 //			authModel.authenticatedModuleConfigs = new ArrayCollection();
 //			configModel.modulesLoaded = new ArrayCollection();
-		} 
-		
+		}
+
 		private function removeModulesFromView():void{
 //			var modulesLoaded:ArrayCollection = AppModelLocator.getInstance().configModel.modulesLoaded;
 //			var modules:ArrayCollection = AppModelLocator.getInstance().authModel.authenticatedModuleConfigs;
@@ -78,20 +78,22 @@ package org.broadleafcommerce.admin.core.commands
 //					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).removeModulesFromView(ModuleConfig(modules[index]).loadedModule);
 //					//Application.application.adminContent.contentViewStack.addChildAt(ModuleConfig(modules[index]).loadedModule,index);
 //				}
-//					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).selectFirstModule();			
+//					AdminContentViewHelper(ViewLocator.getInstance().getViewHelper("adminContent")).selectFirstModule();
 //			}else{
 //				Alert.show("Error loading all modules");
 //			}
 		}
-		
+
 		public function result(data:Object):void{
-			
+			var url:String = Application.application.url;
+			url = url.substr( 0, url.lastIndexOf( ".swf" ) + 4 );
+			flash.net.navigateToURL(new URLRequest(url), '_self');
 		}
-		
+
 		public function fault(info:Object):void{
 			var event:FaultEvent = FaultEvent(info);
 			Alert.show("ERROR: " + event);
 		}
-		
+
 	}
 }

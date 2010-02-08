@@ -17,13 +17,13 @@ package org.broadleafcommerce.admin.cms.control.events
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 
-	public class ViewContentApprovalEvent extends CairngormEvent
+	public class ViewContentHomeEvent extends CairngormEvent
 	{
-		public static const EVENT_VIEW_CONTENT_APPROVAL:String = "view_content_approval_event";
+		public static const EVENT_VIEW_CONTENT_HOME:String = "view_content_home_event";
 
-		public function ViewContentApprovalEvent()
+		public function ViewContentHomeEvent()
 		{
-			super(EVENT_VIEW_CONTENT_APPROVAL);
+			super(EVENT_VIEW_CONTENT_HOME);
 		}
 
 	}

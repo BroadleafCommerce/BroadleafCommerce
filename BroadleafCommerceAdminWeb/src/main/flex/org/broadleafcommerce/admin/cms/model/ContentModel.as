@@ -31,9 +31,6 @@ package org.broadleafcommerce.admin.cms.model
 
 		public static const STATE_VIEW_CONTENT_HOME:String = "view_content_home";
 		public static const STATE_VIEW_FILE_MANAGER:String = "view_file_manager";
-		public static const STATE_VIEW_CONTENT_APPROVAL:String = "view_content_approval";
-		public static const STATE_VIEW_CONTENT_BROWSER:String = "view_content_browser";
-		public static const STATE_VIEW_CONTENT_SANDBOX:String = "view_content_sandbox";
 
 		public static const LANGUAGE_CODES:ArrayCollection = new ArrayCollection(["EN"]);
 

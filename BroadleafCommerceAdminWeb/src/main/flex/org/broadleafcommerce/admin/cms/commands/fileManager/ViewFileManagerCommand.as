@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.cms.commands.contentApproval
+package org.broadleafcommerce.admin.cms.commands.fileManager
 {
 	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
-
 	import org.broadleafcommerce.admin.cms.model.ContentModel;
 	import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
 
-	public class ViewContentApprovalCommand implements Command
+	public class ViewFileManagerCommand implements Command
 	{
-		public function ViewContentApprovalCommand()
+		public function ViewFileManagerCommand()
 		{
 		}
 
 		public function execute(event:CairngormEvent):void
 		{
 			var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
-			contentModel.viewState = ContentModel.STATE_VIEW_CONTENT_APPROVAL;
+			contentModel.viewState = ContentModel.STATE_VIEW_FILE_MANAGER;
 		}
 
 	}

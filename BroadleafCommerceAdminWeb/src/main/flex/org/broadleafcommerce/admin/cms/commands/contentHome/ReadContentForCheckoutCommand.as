@@ -13,35 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.cms.commands.contentBrowser
+package org.broadleafcommerce.admin.cms.commands.contentHome
 {
 	import com.adobe.cairngorm.commands.ICommand;
 	import com.adobe.cairngorm.control.CairngormEvent;
 
+	import flash.display.DisplayObject;
+
 	import mx.collections.ArrayCollection;
+	import mx.containers.TitleWindow;
 	import mx.controls.Alert;
+	import mx.managers.PopUpManager;
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 
 	import org.broadleafcommerce.admin.cms.business.ContentServiceDelegate;
-	import org.broadleafcommerce.admin.cms.control.events.ReadContentForBrowserEvent;
-	import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
+	import org.broadleafcommerce.admin.cms.control.events.ReadContentForCheckoutEvent;
+	import org.broadleafcommerce.admin.cms.view.contentHome.CheckoutModal;
 
-	public class ReadContentForBrowserCommand implements ICommand, IResponder
+	public class ReadContentForCheckoutCommand implements ICommand, IResponder
 	{
+		private var contentType:String;
+		private var parentObj:DisplayObject;
+
 		public function execute(event:CairngormEvent):void
 		{
-			var rcb:ReadContentForBrowserEvent = event as ReadContentForBrowserEvent;
+			var rc:ReadContentForCheckoutEvent = event as ReadContentForCheckoutEvent;
 			var delegate:ContentServiceDelegate = new ContentServiceDelegate(this);
-			delegate.readContentForSandbox(null);
+			delegate.readContentForSandboxAndType(null, rc.contentType);
+			contentType = rc.contentType;
+			parentObj = rc.parentObj;
 		}
 
 		public function result(data:Object):void
 		{
 			var event:ResultEvent = ResultEvent(data);
 			var content:ArrayCollection = event.result as ArrayCollection;
-			ContentModelLocator.getInstance().contentModel.contentForBrowser = content;
+
+			var newFindModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(parentObj, CheckoutModal, true));
+			CheckoutModal(newFindModal).contentType = contentType;
+			CheckoutModal(newFindModal).content = content;
 		}
 
 		public function fault(info:Object):void

@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.cms.control.events
+package org.broadleafcommerce.admin.cms.commands.contentHome
 {
+	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
+	import org.broadleafcommerce.admin.cms.model.ContentModel;
+	import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
 
-	public class ReadContentForBrowserEvent extends CairngormEvent
+	public class ViewContentHomeCommand implements Command
 	{
-		public static const EVENT_READ_CONTENT_FOR_BROWSER:String = "read_content_for_browser_event";
-
-		public function ReadContentForBrowserEvent()
+		public function ViewContentHomeCommand()
 		{
-			super(EVENT_READ_CONTENT_FOR_BROWSER);
+		}
+
+		public function execute(event:CairngormEvent):void
+		{
+			var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
+			contentModel.viewState = ContentModel.STATE_VIEW_CONTENT_HOME;
 		}
 
 	}
