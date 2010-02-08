@@ -18,39 +18,39 @@ package org.broadleafcommerce.admin.cms.control
 	import com.adobe.cairngorm.control.FrontController;
 
 	import org.broadleafcommerce.admin.cms.commands.contentApproval.ReadContentAwaitingApprovalCommand;
-	import org.broadleafcommerce.admin.cms.commands.contentApproval.ViewContentApprovalCommand;
-	import org.broadleafcommerce.admin.cms.commands.contentBrowser.ReadContentForBrowserCommand;
-	import org.broadleafcommerce.admin.cms.commands.contentBrowser.ViewContentBrowserCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentCreation.CreateEditContentCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentCreation.SaveContentCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.AddContentTabCommand;
+	import org.broadleafcommerce.admin.cms.commands.contentHome.CheckoutContentToSandboxCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.InitializeContentRolesCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.InitializeContentTypesCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.InitializeRenderTypesCommand;
+	import org.broadleafcommerce.admin.cms.commands.contentHome.ReadContentForCheckoutCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.RemoveContentTabCommand;
+	import org.broadleafcommerce.admin.cms.commands.contentHome.ViewContentHomeCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.ApproveContentCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.ReadContentForSandboxCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.RefreshSandboxCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.RejectContentCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentSandbox.SubmitContentFromSandboxCommand;
-	import org.broadleafcommerce.admin.cms.commands.contentSandbox.ViewContentSandboxCommand;
+	import org.broadleafcommerce.admin.cms.commands.fileManager.ViewFileManagerCommand;
 	import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ApproveContentEvent;
+	import org.broadleafcommerce.admin.cms.control.events.CheckoutContentToSandboxEvent;
 	import org.broadleafcommerce.admin.cms.control.events.CreateEditContentEvent;
 	import org.broadleafcommerce.admin.cms.control.events.InitializeContentRolesEvent;
 	import org.broadleafcommerce.admin.cms.control.events.InitializeContentTypesEvent;
 	import org.broadleafcommerce.admin.cms.control.events.InitializeRenderTypesEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
-	import org.broadleafcommerce.admin.cms.control.events.ReadContentForBrowserEvent;
+	import org.broadleafcommerce.admin.cms.control.events.ReadContentForCheckoutEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
 	import org.broadleafcommerce.admin.cms.control.events.RefreshSandboxEvent;
 	import org.broadleafcommerce.admin.cms.control.events.RejectContentEvent;
 	import org.broadleafcommerce.admin.cms.control.events.RemoveContentTabEvent;
 	import org.broadleafcommerce.admin.cms.control.events.SaveContentEvent;
 	import org.broadleafcommerce.admin.cms.control.events.SubmitContentFromSandboxEvent;
-	import org.broadleafcommerce.admin.cms.control.events.ViewContentApprovalEvent;
-	import org.broadleafcommerce.admin.cms.control.events.ViewContentBrowserEvent;
-	import org.broadleafcommerce.admin.cms.control.events.ViewContentSandboxEvent;
+	import org.broadleafcommerce.admin.cms.control.events.ViewContentHomeEvent;
+	import org.broadleafcommerce.admin.cms.control.events.ViewFileManagerEvent;
 
 	public class ContentController extends FrontController
 	{
@@ -62,18 +62,18 @@ package org.broadleafcommerce.admin.cms.control
 			addCommand(InitializeRenderTypesEvent.EVENT_INITIALIZE_RENDER_TYPES, InitializeRenderTypesCommand);
 			addCommand(AddContentTabEvent.EVENT_ADD_CONTENT_TAB, AddContentTabCommand);
 			addCommand(RemoveContentTabEvent.EVENT_REMOVE_CONTENT_TAB, RemoveContentTabCommand);
-			addCommand(ViewContentApprovalEvent.EVENT_VIEW_CONTENT_APPROVAL, ViewContentApprovalCommand);
-			addCommand(ViewContentBrowserEvent.EVENT_VIEW_CONTENT_BROWSER, ViewContentBrowserCommand);
-			addCommand(ViewContentSandboxEvent.EVENT_VIEW_CONTENT_SANDBOX, ViewContentSandboxCommand);
 			addCommand(ReadContentAwaitingApprovalEvent.EVENT_READ_CONTENT_AWAITING_APPROVAL, ReadContentAwaitingApprovalCommand);
 			addCommand(ReadContentForSandboxEvent.EVENT_READ_CONTENT_FOR_SANDBOX, ReadContentForSandboxCommand);
-			addCommand(ReadContentForBrowserEvent.EVENT_READ_CONTENT_FOR_BROWSER, ReadContentForBrowserCommand);
 			addCommand(CreateEditContentEvent.EVENT_CREATE_EDIT_CONTENT, CreateEditContentCommand);
 			addCommand(SubmitContentFromSandboxEvent.EVENT_SUBMIT_CONTENT_FROM_SANDBOX, SubmitContentFromSandboxCommand);
 			addCommand(ApproveContentEvent.EVENT_APPROVE_CONTENT, ApproveContentCommand);
 			addCommand(RejectContentEvent.EVENT_REJECT_CONTENT, RejectContentCommand);
 			addCommand(SaveContentEvent.EVENT_SAVE_CONTENT, SaveContentCommand);
 			addCommand(RefreshSandboxEvent.EVENT_REFRESH_SANDBOX, RefreshSandboxCommand);
+			addCommand(ReadContentForCheckoutEvent.EVENT_READ_CONTENT_FOR_CHECKOUT, ReadContentForCheckoutCommand);
+			addCommand(CheckoutContentToSandboxEvent.EVENT_CHECKOUT_CONTENT_TO_SANDBOX, CheckoutContentToSandboxCommand);
+			addCommand(ViewContentHomeEvent.EVENT_VIEW_CONTENT_HOME, ViewContentHomeCommand);
+			addCommand(ViewFileManagerEvent.EVENT_VIEW_FILE_MANAGER, ViewFileManagerCommand);
 		}
 
 	}

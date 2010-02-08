@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.admin.cms.commands.contentBrowser
+package org.broadleafcommerce.admin.cms.control.events
 {
-	import com.adobe.cairngorm.commands.Command;
 	import com.adobe.cairngorm.control.CairngormEvent;
 
-	import org.broadleafcommerce.admin.cms.model.ContentModel;
-	import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
-
-	public class ViewContentBrowserCommand implements Command
+	public class ViewFileManagerEvent extends CairngormEvent
 	{
-		public function ViewContentBrowserCommand()
-		{
-		}
+		public static const EVENT_VIEW_FILE_MANAGER:String = "view_file_manager_event";
 
-		public function execute(event:CairngormEvent):void
+		public function ViewFileManagerEvent()
 		{
-			var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
-			contentModel.viewState = ContentModel.STATE_VIEW_CONTENT_BROWSER;
+			super(EVENT_VIEW_FILE_MANAGER);
 		}
 
 	}

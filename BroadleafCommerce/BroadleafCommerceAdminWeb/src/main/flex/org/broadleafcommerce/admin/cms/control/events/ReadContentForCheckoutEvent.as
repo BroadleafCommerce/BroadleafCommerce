@@ -17,13 +17,19 @@ package org.broadleafcommerce.admin.cms.control.events
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 
-	public class ViewContentBrowserEvent extends CairngormEvent
-	{
-		public static const EVENT_VIEW_CONTENT_BROWSER:String = "view_content_browser_event";
+	import flash.display.DisplayObject;
 
-		public function ViewContentBrowserEvent()
+	public class ReadContentForCheckoutEvent extends CairngormEvent
+	{
+		public static const EVENT_READ_CONTENT_FOR_CHECKOUT:String = "read_content_for_checkout_event";
+		public var contentType:String;
+		public var parentObj:DisplayObject;
+
+		public function ReadContentForCheckoutEvent(contentType:String, parentObj:DisplayObject)
 		{
-			super(EVENT_VIEW_CONTENT_BROWSER);
+			super(EVENT_READ_CONTENT_FOR_CHECKOUT);
+			this.contentType = contentType;
+			this.parentObj = parentObj;
 		}
 
 	}

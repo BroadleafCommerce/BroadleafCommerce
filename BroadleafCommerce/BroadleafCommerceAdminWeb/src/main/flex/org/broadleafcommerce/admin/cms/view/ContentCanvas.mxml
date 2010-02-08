@@ -23,9 +23,11 @@
 	xmlns:contentApproval="org.broadleafcommerce.admin.cms.view.contentApproval.*"
 	xmlns:contentBrowser="org.broadleafcommerce.admin.cms.view.contentBrowser.*"
 	xmlns:contentSandbox="org.broadleafcommerce.admin.cms.view.contentSandbox.*"
-	xmlns:contentHome="org.broadleafcommerce.admin.cms.view.contentHome.*">
+	xmlns:contentHome="org.broadleafcommerce.admin.cms.view.contentHome.*" xmlns:fileManager="org.broadleafcommerce.admin.cms.view.fileManager.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.cms.control.events.ViewFileManagerEvent;
+			import org.broadleafcommerce.admin.cms.control.events.ViewContentHomeEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
 			import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
@@ -64,7 +66,16 @@
 			}
 
 			private function handleView(event:Event):void {
+				this.contentManagementLink.selected = false;
+				this.fileManagerLink.selected = false;
 
+				if(event.target == this.contentManagementLink){
+					this.contentManagementLink.selected = true;
+					new ViewContentHomeEvent().dispatch();
+				} else if (event.target == this.fileManagerLink){
+					this.fileManagerLink.selected = true;
+					new ViewFileManagerEvent().dispatch();
+				}
 			}
 
 
@@ -96,12 +107,16 @@
 			width="100%"
 			height="100%">
 			<contentHome:ContentHomeCanvas width="100%" height="100%" id="contentHomeCanvas"/>
+			<fileManager:FileManagerCanvas width="100%" height="100%" id="fileManagerCanvas"/>
 		</mx:ViewStack>
 	</mx:VBox>
 
 	<mx:states>
 		<mx:State name="{ContentModel.STATE_VIEW_CONTENT_HOME}">
 			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="0"/>
+		</mx:State>
+		<mx:State name="{ContentModel.STATE_VIEW_FILE_MANAGER}">
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="1"/>
 		</mx:State>
 	</mx:states>
 

@@ -17,13 +17,19 @@ package org.broadleafcommerce.admin.cms.control.events
 {
 	import com.adobe.cairngorm.control.CairngormEvent;
 
-	public class ViewContentSandboxEvent extends CairngormEvent
-	{
-		public static const EVENT_VIEW_CONTENT_SANDBOX:String = "view_content_sandbox_event";
+	import mx.collections.ArrayCollection;
 
-		public function ViewContentSandboxEvent()
+	public class CheckoutContentToSandboxEvent extends CairngormEvent
+	{
+		public static const EVENT_CHECKOUT_CONTENT_TO_SANDBOX:String = "checkout_content_to_sandbox_event";
+		public var sandbox:String;
+		public var contentIds:ArrayCollection;
+
+		public function CheckoutContentToSandboxEvent(contentIds:ArrayCollection, sandbox:String)
 		{
-			super(EVENT_VIEW_CONTENT_SANDBOX);
+			super(EVENT_CHECKOUT_CONTENT_TO_SANDBOX);
+			this.sandbox = sandbox;
+			this.contentIds = contentIds;
 		}
 
 	}

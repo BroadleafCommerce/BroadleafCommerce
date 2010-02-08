@@ -27,6 +27,7 @@
 	creationComplete="handleCreationComplete()">
 	<mx:Script>
 		<![CDATA[
+			import mx.core.Application;
 			import org.broadleafcommerce.util.growlSkins.DefaultGrowl;
 			import org.broadleafcommerce.admin.core.model.NotificationModel;
 			import org.broadleafcommerce.admin.core.control.events.RemoveAuthenticationEvent;
