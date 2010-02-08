@@ -107,11 +107,11 @@ public class ContentDaoImpl implements ContentDao {
      */
     public List<Content> readContentBySandbox(String sandbox) {
         Query query = null;
-        if(sandbox.endsWith("*"))
+        if(sandbox!=null && sandbox.endsWith("*"))
             query = em.createNamedQuery("BC_READ_CONTENT_BY_LIKE_SANDBOX");
         else
             query = em.createNamedQuery("BC_READ_CONTENT_BY_SANDBOX");
-        
+
         query.setParameter("sandbox", sandbox);
         query.setHint(getQueryCacheableKey(), true);
 
@@ -122,8 +122,14 @@ public class ContentDaoImpl implements ContentDao {
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentBySandboxAndType(java.lang.String, java.lang.String)
      */
     public List<Content> readContentBySandboxAndType(String sandbox, String contentType) {
-        Query query = em.createNamedQuery("BC_READ_CONTENT_BY_SANDBOX_AND_CONTENT_TYPE");
-        query.setParameter("sandbox", sandbox);
+    	Query query = null;
+    	if (sandbox == null){
+    		query = em.createNamedQuery("BC_READ_CONTENT_BY_NULL_SANDBOX_AND_CONTENT_TYPE");
+    	} else {
+    		query = em.createNamedQuery("BC_READ_CONTENT_BY_SANDBOX_AND_CONTENT_TYPE");
+            query.setParameter("sandbox", sandbox);
+    	}
+
         query.setParameter("contentType", contentType);
         query.setHint(getQueryCacheableKey(), true);
 

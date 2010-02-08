@@ -336,7 +336,8 @@ public class ContentServiceImpl implements ContentService {
 	 * @see org.broadleafcommerce.content.service.ContentService#readContentForSandboxAndType(java.lang.String, java.lang.String)
 	 */
 	public List<Content> readContentForSandboxAndType(String sandbox, String contentType) {
-		return contentDao.readContentBySandboxAndType(sandbox, contentType);
+		List<Content> list = contentDao.readContentBySandboxAndType(sandbox, contentType);
+		return list;
 	}
 
 	/* (non-Javadoc)
