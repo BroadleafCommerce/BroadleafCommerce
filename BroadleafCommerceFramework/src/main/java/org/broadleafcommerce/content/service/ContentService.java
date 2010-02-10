@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
+import org.broadleafcommerce.content.domain.ContentPageInfo;
 import org.broadleafcommerce.content.domain.ContentXmlData;
 
 /**
@@ -66,4 +67,8 @@ public interface ContentService {
 	public List<Content> readContentAwaitingApproval();
 
 	public Content saveContent(Content content, List<ContentXmlData> details);
+
+	public List<ContentPageInfo> readAllContentPageInfos();
+
+	public Map<Integer, String> constructParentUrlMap();
 }
