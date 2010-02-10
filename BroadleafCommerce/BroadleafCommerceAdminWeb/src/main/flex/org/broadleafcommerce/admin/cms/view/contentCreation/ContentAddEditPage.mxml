@@ -22,6 +22,10 @@
 
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
+			import org.broadleafcommerce.admin.cms.control.events.ReadAllContentPageInfosEvent;
+			import mx.containers.TitleWindow;
+			import mx.managers.PopUpManager;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
 			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
 			import org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms.ContentFormPersist;
@@ -82,6 +86,14 @@
 
 			private function save(e:Event):void{
 				ContentFormPersist.persistForms(headerForm, dynamicForm, content, contentDetailsList, contentType, authModel.userPrincipal.login, sandbox, callingTabName);
+				new ReadAllContentPageInfosEvent().dispatch();
+			}
+
+			private function handleParentMenuClick(event:Event):void{
+				var parentModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, ParentUrlListModal, true));
+				ParentUrlListModal(parentModal).parentUrlList = contentModel.parentUrlList;
+				ParentUrlListModal(parentModal).fullUrlTxtBox = this.txtParentURI;
+				ParentUrlListModal(parentModal).hiddenIdTxtBox = this.txtHiddenParentId;
 			}
 
 			private function populateFields():void{
@@ -91,6 +103,8 @@
 				this.txtMeta.text = content.metaDescription;
 				this.txtPriority.text = content.priority.toString();
 				this.cbxLanguage.selectedItem = content.languageCode;
+				this.txtHiddenParentId.text = content.parentContentId.toString();
+				this.txtParentURI.text = ContentUtil.findFullUrl(content.parentContentId);
 
 				if (content.activeStartDate != null){
 					this.dateBegin.selectedDate = new Date(content.activeStartDate);
@@ -101,6 +115,14 @@
 				}
 
 				this.chkOnline.selected = content.online;
+
+				var options:ArrayCollection = this.cbxTemplate.dataProvider as ArrayCollection;
+				for each(var obj:String in options) {
+					if (obj.toLowerCase() == content.renderTemplate.toLowerCase()){
+						this.cbxTemplate.selectedItem = obj;
+					}
+				}
+
 			}
 
 			private function populateRenderTemplates():void {
@@ -108,7 +130,7 @@
 				var filteredOptions:ArrayCollection = new ArrayCollection();
 				for each (var obj:Object in options){
 					if (String(obj.type).toLowerCase() == contentType.toLowerCase()){
-						filteredOptions.addItem(obj);
+						filteredOptions.addItem(obj.data);
 					}
 				}
 
@@ -139,7 +161,7 @@
 			private function createTemplateFields():void{
 				var renderTypes:ArrayCollection = contentModel.renderTypes;
 				for each (var renderItem:RenderItem in renderTypes){
-					if (renderItem.name == this.cbxTemplate.selectedLabel){
+					if (renderItem.name == this.cbxTemplate.selectedItem){
 						var customFields:ArrayCollection = renderItem.renderFields;
 						ContentFormCreator.createCustomFields(this.dynamicForm, customFields, contentDetailsList);
 					}
@@ -172,7 +194,11 @@
 	                    <mx:TextInput id="txtTitle" width="220"/>
 	                </mx:FormItem>
 	                <mx:FormItem label="Parent URI" name="parentContentId">
-	                	<mx:TextInput id="txtParentURI" width="220"/>
+	                	<mx:HBox>
+	                		<mx:Text id="txtParentURI" width="155" />
+	                		<mx:TextInput id="txtHiddenParentId" visible="false" text="0" width="2"/>
+	                		<mx:Button id="parentMenuButton" label="" click="handleParentMenuClick(event)" styleName="viewEditButton"/>
+	                	</mx:HBox>
 	                </mx:FormItem>
 	                <mx:FormItem label="Template" name="renderTemplate">
 						<mx:ComboBox

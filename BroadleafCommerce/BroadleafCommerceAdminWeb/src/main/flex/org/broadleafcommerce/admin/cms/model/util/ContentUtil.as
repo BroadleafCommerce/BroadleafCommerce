@@ -36,5 +36,16 @@ package org.broadleafcommerce.admin.cms.model.util
 			}
 			return false;
 		}
+
+		public static function findFullUrl(id:Number):String {
+			var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
+			for each (var pageInfo:Object in contentModel.parentUrlList){
+				if(pageInfo.id == id){
+					return String(pageInfo.fullUrl);
+				}
+			}
+
+			return "/";
+		}
 	}
 }

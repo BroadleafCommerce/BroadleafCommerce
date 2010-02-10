@@ -44,8 +44,13 @@
 	        <mx:itemRenderer>
 	            <mx:Component>
 	                <mx:VBox height="40" verticalGap="0">
+	                    <mx:Script>
+	                    	<![CDATA[
+	                    		import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
+	                    	]]>
+	                    </mx:Script>
 	                    <mx:Label text="{data.title}" fontWeight="bold"/>
-	                    <mx:Label text="{data.browserTitle}" />
+	                    <mx:Label text="{ContentUtil.findFullUrl(data.id)}" />
 	                </mx:VBox>
 	            </mx:Component>
 	        </mx:itemRenderer>
