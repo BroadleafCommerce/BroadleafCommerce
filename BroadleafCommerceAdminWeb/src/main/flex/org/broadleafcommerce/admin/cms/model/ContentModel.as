@@ -41,22 +41,11 @@ package org.broadleafcommerce.admin.cms.model
 		//reference to the main content tab navigator;
 		public var contentTabNavigator:SuperTabNavigator;
 
-		//TODO get rid of this
-		public var currentSandbox:String = "";
-
 		//This var is populated on application load;
 		public var loggedInUserSandbox:String = "";
 
 		//ArrayCollection <Content>
 		public var contentAwaitingApproval:ArrayCollection = new ArrayCollection();
-
-		//ArrayCollection <Content>
-		//TODO get rid of this
-		public var contentForSandbox:ArrayCollection = new ArrayCollection();
-
-		//ArrayCollection <Content>
-		//TODO get rid of this
-		public var contentForBrowser:ArrayCollection = new ArrayCollection();
 
 		//ArrayCollection <ContentItem>
 		public var contentTypes:ArrayCollection = new ArrayCollection();
@@ -69,6 +58,9 @@ package org.broadleafcommerce.admin.cms.model
 
 		//ArrayCollection <Object> for ComboBox
 		public var renderTemplateComboBoxOptions:ArrayCollection = new ArrayCollection();
+
+		//ArrayCollection <Object> for ParentUrl List
+		public var parentUrlList:ArrayCollection = new ArrayCollection();
 
 	}
 }

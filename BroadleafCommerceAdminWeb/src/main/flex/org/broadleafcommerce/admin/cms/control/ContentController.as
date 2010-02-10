@@ -19,6 +19,7 @@ package org.broadleafcommerce.admin.cms.control
 
 	import org.broadleafcommerce.admin.cms.commands.contentApproval.ReadContentAwaitingApprovalCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentCreation.CreateEditContentCommand;
+	import org.broadleafcommerce.admin.cms.commands.contentCreation.ReadAllContentPageInfosCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentCreation.SaveContentCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.AddContentTabCommand;
 	import org.broadleafcommerce.admin.cms.commands.contentHome.CheckoutContentToSandboxCommand;
@@ -41,6 +42,7 @@ package org.broadleafcommerce.admin.cms.control
 	import org.broadleafcommerce.admin.cms.control.events.InitializeContentRolesEvent;
 	import org.broadleafcommerce.admin.cms.control.events.InitializeContentTypesEvent;
 	import org.broadleafcommerce.admin.cms.control.events.InitializeRenderTypesEvent;
+	import org.broadleafcommerce.admin.cms.control.events.ReadAllContentPageInfosEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentForCheckoutEvent;
 	import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
@@ -74,6 +76,7 @@ package org.broadleafcommerce.admin.cms.control
 			addCommand(CheckoutContentToSandboxEvent.EVENT_CHECKOUT_CONTENT_TO_SANDBOX, CheckoutContentToSandboxCommand);
 			addCommand(ViewContentHomeEvent.EVENT_VIEW_CONTENT_HOME, ViewContentHomeCommand);
 			addCommand(ViewFileManagerEvent.EVENT_VIEW_FILE_MANAGER, ViewFileManagerCommand);
+			addCommand(ReadAllContentPageInfosEvent.EVENT_READ_ALL_CONTENT_PAGE_INFOS, ReadAllContentPageInfosCommand);
 		}
 
 	}

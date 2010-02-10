@@ -26,6 +26,7 @@
 	xmlns:contentHome="org.broadleafcommerce.admin.cms.view.contentHome.*" xmlns:fileManager="org.broadleafcommerce.admin.cms.view.fileManager.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.cms.control.events.ReadAllContentPageInfosEvent;
 			import org.broadleafcommerce.admin.cms.control.events.ViewFileManagerEvent;
 			import org.broadleafcommerce.admin.cms.control.events.ViewContentHomeEvent;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
@@ -47,6 +48,7 @@
 
 			private function creationComplete():void{
 				new InitializeContentRolesEvent().dispatch();
+				new ReadAllContentPageInfosEvent().dispatch();
 				contentTypeService.send();
 				renderTypeService.send();
 

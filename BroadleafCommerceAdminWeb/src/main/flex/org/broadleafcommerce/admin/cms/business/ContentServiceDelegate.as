@@ -107,5 +107,11 @@ package org.broadleafcommerce.admin.cms.business
 			var call:AsyncToken = contentService.saveContent(content, contentDetailsList);
 			call.addResponder(responder);
 		}
+
+		public function readAllContentPageInfos():void {
+			trace("DEBUG: ContentServiceDelegate.readAllContentPageInfos()");
+			var call:AsyncToken = contentService.readAllContentPageInfos();
+			call.addResponder(responder);
+		}
 	}
 }

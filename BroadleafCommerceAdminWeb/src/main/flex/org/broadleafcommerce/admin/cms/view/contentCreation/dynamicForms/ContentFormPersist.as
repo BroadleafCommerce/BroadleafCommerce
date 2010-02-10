@@ -20,6 +20,7 @@ package org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms
 	import mx.collections.ArrayCollection;
 	import mx.containers.Form;
 	import mx.containers.FormItem;
+	import mx.containers.HBox;
 	import mx.controls.CheckBox;
 	import mx.controls.ComboBox;
 	import mx.controls.DateField;
@@ -55,16 +56,22 @@ package org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms
 			for each(var frmItem:FormItem in headerFormItems){
 				var input:DisplayObject = frmItem.getChildAt(0);
 
-				if (input is TextInput){
-					contentCopy[frmItem.name] = TextInput(input).text;
-				} else if (input is ComboBox){
-					contentCopy[frmItem.name] = ComboBox(input).selectedLabel;
-				} else if (input is TextArea){
-					contentCopy[frmItem.name] = TextArea(input).text;
-				} else if (input is DateField){
-					contentCopy[frmItem.name] = DateField(input).selectedDate;
-				} else if (input is CheckBox){
-					contentCopy[frmItem.name] = CheckBox(input).selected;
+				if (frmItem.name != 'parentContentId') {
+					if (input is TextInput){
+						contentCopy[frmItem.name] = TextInput(input).text;
+					} else if (input is ComboBox){
+						contentCopy[frmItem.name] = ComboBox(input).selectedLabel;
+					} else if (input is TextArea){
+						contentCopy[frmItem.name] = TextArea(input).text;
+					} else if (input is DateField){
+						contentCopy[frmItem.name] = DateField(input).selectedDate;
+					} else if (input is CheckBox){
+						contentCopy[frmItem.name] = CheckBox(input).selected;
+					}
+				} else {
+					var hbox:HBox = input as HBox;
+					var hiddenTxt:TextInput = hbox.getChildAt(1) as TextInput;
+					contentCopy['parentContentId'] = hiddenTxt.text;
 				}
 			}
 			//update other info on header
@@ -94,6 +101,7 @@ package org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms
 							//TODO change to .htmlText
 							xmlData.data = RichTextEditor(inputDetails).text;
 						}
+
 					} else {
 						var xmlDataNew:ContentXmlData = new ContentXmlData();
 						xmlDataNew.name = detailFrmItem.name;
