@@ -181,4 +181,10 @@ public class ContentDaoImpl implements ContentDao {
         return (List<Content>) query.getResultList();
 	}
 
+	public List<Content> readAllContent() {
+		Query query = em.createNamedQuery("BC_READ_ALL_CONTENT");
+
+        return (List<Content>) query.getResultList();
+	}
+
 }

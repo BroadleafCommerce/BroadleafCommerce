@@ -48,6 +48,7 @@ import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
 import org.broadleafcommerce.content.domain.ContentDetailsImpl;
 import org.broadleafcommerce.content.domain.ContentImpl;
+import org.broadleafcommerce.content.domain.ContentPageInfo;
 import org.broadleafcommerce.content.domain.ContentXmlData;
 import org.broadleafcommerce.util.DateUtil;
 import org.compass.core.util.reader.StringReader;
@@ -421,6 +422,56 @@ public class ContentServiceImpl implements ContentService {
 
 		return null;
 	}
+
+	public List<ContentPageInfo> readAllContentPageInfos(){
+		Map<Integer,String> parentMap = constructParentUrlMap();
+		if (parentMap != null) {
+			List<ContentPageInfo> pageInfoList = new ArrayList<ContentPageInfo>();
+
+			for (Iterator<Integer> itr = parentMap.keySet().iterator(); itr.hasNext();){
+				Integer key = itr.next();
+				ContentPageInfo pageInfo = new ContentPageInfo();
+				pageInfo.setId(key);
+				pageInfo.setFullUrl(parentMap.get(key));
+				pageInfoList.add(pageInfo);
+			}
+
+			return pageInfoList;
+		}
+		return null;
+	}
+
+	public Map<Integer, String> constructParentUrlMap(){
+		List<Content> content = contentDao.readAllContent();
+
+		if (content != null){
+			Map<Integer, Content> idContentMap = new HashMap<Integer, Content>();
+			Map<Integer, String> parentUrlMap = new HashMap<Integer, String>();
+			for (Content c : content){
+				idContentMap.put(c.getId(), c);
+			}
+
+			for (Content c: content) {
+				String fullPath = constructFullPath(c.getUrlTitle(), c.getParentContentId(), idContentMap);
+				parentUrlMap.put(c.getId(), fullPath);
+			}
+
+			return parentUrlMap;
+		}
+
+		return null;
+
+	}
+
+	private String constructFullPath(String path, Integer parentId, Map<Integer, Content> idContentMap){
+
+		if (idContentMap.get(parentId) != null && parentId != 0){
+			path = idContentMap.get(parentId).getUrlTitle() + "/" + path;
+			constructFullPath(path, idContentMap.get(parentId).getParentContentId(), idContentMap);
+		}
+		return path;
+	}
+
 
 	private String constructXmlContent(List<ContentXmlData> details) {
 		if (details != null) {

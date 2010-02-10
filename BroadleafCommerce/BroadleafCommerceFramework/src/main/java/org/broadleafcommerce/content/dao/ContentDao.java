@@ -48,4 +48,6 @@ public interface ContentDao {
 
     public List<Content> readStagedContent();
 
+    public List<Content> readAllContent();
+
 }

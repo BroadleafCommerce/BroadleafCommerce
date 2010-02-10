@@ -15,6 +15,11 @@
 		  </query>
 	</named-query>
 
+	<named-query name="BC_READ_ALL_CONTENT">
+		<query>SELECT content FROM org.broadleafcommerce.content.domain.Content content
+				ORDER BY id
+		  </query>
+	</named-query>
 
 	<named-query name="BC_READ_CONTENT_BY_IDS_AND_SANDBOX">
 		<query>SELECT content FROM org.broadleafcommerce.content.domain.Content content
