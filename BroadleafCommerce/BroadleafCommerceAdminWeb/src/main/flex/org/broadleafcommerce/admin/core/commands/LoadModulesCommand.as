@@ -51,10 +51,12 @@ package org.broadleafcommerce.admin.core.commands
 				for each(var role:Object in userRoles){
 					if(role["name"] != null && role["name"] is String){
 						if(moduleConfig.authenticatedRoles.indexOf(String(role["name"])) > -1){
-							try{
-								authModules.addItem(moduleConfig);								
-							} catch (error:Error){
-								Alert.show("Error loading module: "+moduleConfig.label+": "+error.message);
+							if(!authModules.contains(moduleConfig)){								
+								try{
+									authModules.addItem(moduleConfig);								
+								} catch (error:Error){
+									Alert.show("Error loading module: "+moduleConfig.label+": "+error.message);
+								}
 							}
 							
 						}
