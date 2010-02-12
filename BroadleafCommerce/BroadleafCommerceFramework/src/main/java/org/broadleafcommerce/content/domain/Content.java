@@ -34,9 +34,11 @@ public interface Content {
     public Date getApprovedDate();
 
     public String getBrowserTitle();
+    
+    public Date getContentDate();
 
     public String getContentType();
-
+    
     public String getDisplayRule();
 
     public Boolean getDeployed();
@@ -88,6 +90,8 @@ public interface Content {
     public void setApprovedDate(Date approvedDate);
 
     public void setBrowserTitle(String browserTitle);
+    
+    public void setContentDate(Date contentDate);
 
     public void setContentType(String contentType);
 

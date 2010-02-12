@@ -58,6 +58,8 @@ public class ContentImpl implements Content {
     protected Date approvedDate;
     @Column(name = "BROWSER_TITLE")
     protected String browserTitle;
+    @Column(name = "CONTENT_DATE")
+    protected Date contentDate;
     @Column(name = "CONTENT_TYPE")
     protected String contentType;
     @Column(name = "DISPLAY_RULE")
@@ -120,6 +122,7 @@ public class ContentImpl implements Content {
         this.approvedBy = cnt.getApprovedBy();
         this.approvedDate = cnt.getApprovedDate();
         this.browserTitle = cnt.getBrowserTitle();
+        this.contentDate = cnt.getContentDate();
         this.contentType = cnt.getContentType();
         this.displayRule = cnt.getDisplayRule();
         this.description = cnt.getDescription();
@@ -177,6 +180,13 @@ public class ContentImpl implements Content {
         return browserTitle;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#getContentDate()
+     */
+    public Date getContentDate() {
+        return contentDate;
+    }
+    
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#getContentType()
      */
@@ -366,6 +376,13 @@ public class ContentImpl implements Content {
         this.browserTitle = browserTitle;
     }
 
+    /* (non-Javadoc)
+     * @see org.broadleafcommerce.content.domain.Content#setContentDate(java.util.Date)
+     */
+    public void setContentDate(Date contentDate) {
+        this.contentDate = contentDate;
+    }
+    
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.domain.Content#setContentType(java.lang.String)
      */

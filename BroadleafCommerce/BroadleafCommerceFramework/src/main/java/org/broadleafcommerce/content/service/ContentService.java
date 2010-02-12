@@ -50,6 +50,8 @@ public interface ContentService {
 
 	public String renderedContentDetails(String styleSheetString, List<ContentDetails> contentDetails, int rowCount) throws Exception;
 
+	public String renderedContent(String styleSheetString, List<Content> contentList, int rowCount) throws Exception;
+	
 	public List<Content> checkoutContentToSandbox(List<Integer> contentIds, String sandboxName);
 
 	public void submitContentFromSandbox(List<Integer> contentIds, String sandboxName, String username, String note);

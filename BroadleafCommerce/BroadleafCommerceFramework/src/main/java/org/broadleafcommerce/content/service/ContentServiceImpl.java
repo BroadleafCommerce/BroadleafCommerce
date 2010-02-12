@@ -22,6 +22,8 @@ import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -228,6 +230,34 @@ public class ContentServiceImpl implements ContentService {
 	    }
 		return StringEscapeUtils.unescapeXml(resultWriter.toString()) ;
 	}
+	
+	public String renderedContent(String styleSheetString, List<Content> contentList, int rowCount) throws Exception{
+        Source xmlSource;
+        int maxCount = (rowCount > -1 && contentList.size() > 0)? rowCount : contentList.size();
+
+        Writer resultWriter = new StringWriter();
+         StreamResult result = new StreamResult(resultWriter);
+        Source styleSheetSource = getSource(styleSheetString);
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer(styleSheetSource);
+
+        //TODO: some code here to group and show random item within priority group
+        Comparator<Content> cntntCompare = new ContentComparator();
+        Collections.sort(contentList, cntntCompare);
+             
+        for(int i=0; i < maxCount; i++){
+            ContentDetails contentDetail = findContentDetailsById(contentList.get(i).getId());
+            xmlSource = getSource(contentDetail.getXmlContent());
+            try{
+                transformer.transform(xmlSource, result);
+            }catch (Exception e){
+                LOG.error("Error during transformation. ",e);
+                throw e;
+            }
+
+        }
+        return StringEscapeUtils.unescapeXml(resultWriter.toString()) ;
+    }
 
     protected Boolean executeExpression(String expression, Map<String, Object> vars) {
         Serializable exp = (Serializable)EXPRESSION_CACHE.get(expression);
@@ -520,4 +550,22 @@ public class ContentServiceImpl implements ContentService {
 		return convertToHex(sha1hash);
 	}
 
+}
+
+//To sort content by priority
+class ContentComparator implements Comparator<org.broadleafcommerce.content.domain.Content> {
+
+    @Override
+    public int compare(org.broadleafcommerce.content.domain.Content o1, org.broadleafcommerce.content.domain.Content o2) {
+
+        if (o1.getPriority() < o2.getPriority()) {
+            return -1;
+
+        } else if (o1.getPriority() > o2.getPriority()) {
+            return 1;
+
+        } else
+            return 0;
+
+    }
 }

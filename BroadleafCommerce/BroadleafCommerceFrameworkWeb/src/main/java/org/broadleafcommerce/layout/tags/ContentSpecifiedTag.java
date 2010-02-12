@@ -31,6 +31,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 import org.apache.taglibs.standard.tag.common.core.Util;
+import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
 import org.broadleafcommerce.content.service.ContentService;
 import org.springframework.web.context.WebApplicationContext;
@@ -39,6 +40,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class ContentSpecifiedTag extends BodyTagSupport {
     private static final long serialVersionUID = 1L;
 
+    
     private Map<String, Object> parameterMap;
     private String contentType;
     private Object xslt;
@@ -121,7 +123,7 @@ public class ContentSpecifiedTag extends BodyTagSupport {
 //        PageContext pageContext = (PageContext)getJspContext();    	
         WebApplicationContext applicationContext = WebApplicationContextUtils.getWebApplicationContext(pageContext.getServletContext());
         ContentService contentService = (ContentService) applicationContext.getBean("blContentService");
-        List<ContentDetails> contentDetailObjs;
+        List<Content> contentObjs;
         Date displayDate = null;
         String sandbox = "PROD";
 
@@ -146,14 +148,14 @@ public class ContentSpecifiedTag extends BodyTagSupport {
         }
         
         if(displayDate == null){
-        	contentDetailObjs = contentService.findContentDetails(sandbox, contentType, parameterMap);
+        	contentObjs = contentService.findContent(sandbox, contentType, parameterMap, new Date());
         }else{
-        	contentDetailObjs = contentService.findContentDetails(sandbox, contentType, parameterMap, displayDate);
+        	contentObjs = contentService.findContent(sandbox, contentType, parameterMap, displayDate);
         }
 
         JspWriter out = pageContext.getOut();
         try{
-        	String renderedText = contentService.renderedContentDetails((String)xslt, contentDetailObjs, rowCount); 
+        	String renderedText = contentService.renderedContent((String)xslt, contentObjs, rowCount); 
         	if(!escapeXml){
         		out.write(renderedText);        	        		
         	}else{
