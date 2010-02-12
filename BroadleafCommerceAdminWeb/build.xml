@@ -94,6 +94,11 @@
 			<param name="module" value="ToolsModule" />
 		</antcall>
 
+		<antcall target="build-module">
+			<param name="module.dir" value="modules/cms" />
+			<param name="module" value="ContentModule" />
+		</antcall>
+
 		<html-wrapper
 			swf="BroadleafCommerceAdmin"
 			title="Broadleaf Commerce Admin"
@@ -121,6 +126,10 @@
 		</copy-->
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/assets">
 			<fileset dir="src/main/flex/assets" />
+		</copy>
+
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/forms">
+			<fileset dir="src/main/flex/forms" />
 		</copy>
 
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/modules">
