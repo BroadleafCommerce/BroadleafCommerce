@@ -18,9 +18,8 @@ package org.broadleafcommerce.admin.cms.commands.contentSandbox
 	import com.adobe.cairngorm.commands.ICommand;
 	import com.adobe.cairngorm.control.CairngormEvent;
 
-	import flexlib.containers.SuperTabNavigator;
-
 	import mx.collections.ArrayCollection;
+	import mx.containers.TabNavigator;
 	import mx.controls.Alert;
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
@@ -50,7 +49,7 @@ package org.broadleafcommerce.admin.cms.commands.contentSandbox
 		{
 			var event:ResultEvent = ResultEvent(data);
 			var content:ArrayCollection = event.result as ArrayCollection;
-			var navigator:SuperTabNavigator = ContentModelLocator.getInstance().contentModel.contentTabNavigator;
+			var navigator:TabNavigator = ContentModelLocator.getInstance().contentModel.contentTabNavigator;
 
 			var sandboxTab:ContentSandboxCanvas = new ContentSandboxCanvas();
 			sandboxTab.content = content;

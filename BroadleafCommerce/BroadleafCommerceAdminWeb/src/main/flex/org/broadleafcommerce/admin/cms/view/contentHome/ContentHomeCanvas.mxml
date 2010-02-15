@@ -35,7 +35,6 @@
 			import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
 			import mx.controls.Alert;
 			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditPage;
-			import flexlib.controls.tabBarClasses.SuperTab;
 			import mx.collections.ArrayCollection;
 			import org.broadleafcommerce.admin.cms.model.dynamicForms.ContentItem;
 			import org.broadleafcommerce.admin.core.model.AppModelLocator;
@@ -54,7 +53,7 @@
 
 			private function handleCreationComplete():void{
 				trace("DEBUG: ContentHomeCanvas.handleCreationComplete()");
-				tnContentHomeCanvas.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
+				//tnContentHomeCanvas.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
 				contentModel.contentTabNavigator = tnContentHomeCanvas;
 				//new ReadContentForSandboxEvent(contentModel.loggedInUserSandbox).dispatch();
 				new ReadContentAwaitingApprovalEvent().dispatch();
@@ -104,7 +103,7 @@
 		source="contentModel.contentTypeComboBoxOptions"
 		destination="checkoutContentComboBox.dataProvider"/>
 
-    <flexlib:SuperTabNavigator id="tnContentHomeCanvas"  width="100%" height="100%" styleName="padding10">
+    <mx:TabNavigator id="tnContentHomeCanvas"  width="100%" height="100%" styleName="padding10">
 
 	<mx:VBox height="100%" width="100%" label="Summary">
 		<mx:VBox width="1024" styleName="padding10">
@@ -156,6 +155,6 @@
 		</mx:VBox>
 	</mx:VBox>
 
-	</flexlib:SuperTabNavigator>
+	</mx:TabNavigator>
 
 </mx:Canvas>

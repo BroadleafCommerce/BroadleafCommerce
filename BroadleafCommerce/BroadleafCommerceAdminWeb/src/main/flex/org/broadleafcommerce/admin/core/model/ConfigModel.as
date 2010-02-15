@@ -29,11 +29,13 @@ package org.broadleafcommerce.admin.core.model
 		public static const SERVER_IMAGES:String			= "/images";
 		private static const SERVER_CONFIG:String 			= "modules/modules-config.xml";
 		private static const SERVER_FILE_UPLOAD:String 		= "spring/upload";
+		private static const SERVER_FILE_LIST:String 		= "spring/ls";
 
 		public static const URL_SERVER:String = SERVER_PROTOCOL+"://"+SERVER_HOST+":"+SERVER_PORT+"/"+SERVER_CONTEXT;
 		public static const URL_CONFIG:String = URL_SERVER+"/"+SERVER_CONFIG;
 		public static const URL_ENDPOINT:String = URL_SERVER+"/"+SERVER_MESSAGE_BROKER;
 		public static const URL_FILE_UPLOAD:String = URL_SERVER+"/"+SERVER_FILE_UPLOAD;
+		public static const URL_FILE_LIST:String = URL_SERVER+"/"+SERVER_FILE_LIST;
 
 		private static const defaultUrl:String = "";
 
