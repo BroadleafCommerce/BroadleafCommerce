@@ -230,7 +230,7 @@ public class ContentServiceImpl implements ContentService {
 	    }
 		return StringEscapeUtils.unescapeXml(resultWriter.toString()) ;
 	}
-	
+
 	public String renderedContent(String styleSheetString, List<Content> contentList, int rowCount) throws Exception{
         Source xmlSource;
         int maxCount = (rowCount > -1 && contentList.size() > 0)? rowCount : contentList.size();
@@ -244,7 +244,7 @@ public class ContentServiceImpl implements ContentService {
         //TODO: some code here to group and show random item within priority group
         Comparator<Content> cntntCompare = new ContentComparator();
         Collections.sort(contentList, cntntCompare);
-             
+
         for(int i=0; i < maxCount; i++){
             ContentDetails contentDetail = findContentDetailsById(contentList.get(i).getId());
             xmlSource = getSource(contentDetail.getXmlContent());
@@ -555,7 +555,6 @@ public class ContentServiceImpl implements ContentService {
 //To sort content by priority
 class ContentComparator implements Comparator<org.broadleafcommerce.content.domain.Content> {
 
-    @Override
     public int compare(org.broadleafcommerce.content.domain.Content o1, org.broadleafcommerce.content.domain.Content o2) {
 
         if (o1.getPriority() < o2.getPriority()) {
