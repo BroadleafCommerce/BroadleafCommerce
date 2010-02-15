@@ -15,9 +15,8 @@
  */
 package org.broadleafcommerce.admin.cms.model
 {
-	import flexlib.containers.SuperTabNavigator;
-
 	import mx.collections.ArrayCollection;
+	import mx.containers.TabNavigator;
 
 	import org.broadleafcommerce.admin.cms.model.contentRoles.ContentRoles;
 
@@ -39,10 +38,13 @@ package org.broadleafcommerce.admin.cms.model
 		public var contentRoles:ContentRoles = new ContentRoles();
 
 		//reference to the main content tab navigator;
-		public var contentTabNavigator:SuperTabNavigator;
+		public var contentTabNavigator:TabNavigator;
 
 		//This var is populated on application load;
 		public var loggedInUserSandbox:String = "";
+
+		//XML Directory for File Manager
+		public var fileManagerTree:XML;
 
 		//ArrayCollection <Content>
 		public var contentAwaitingApproval:ArrayCollection = new ArrayCollection();

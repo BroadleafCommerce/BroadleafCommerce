@@ -20,9 +20,8 @@ package org.broadleafcommerce.admin.cms.commands.contentHome
 
 	import flash.display.DisplayObject;
 
-	import flexlib.containers.SuperTabNavigator;
-
 	import mx.containers.Canvas;
+	import mx.containers.TabNavigator;
 	import mx.containers.VBox;
 
 	import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
@@ -41,7 +40,7 @@ package org.broadleafcommerce.admin.cms.commands.contentHome
 		}
 
 		private function addTab(lbl:String, displayObject:DisplayObject = null, icon:Class=null):void {
-			var navigator:SuperTabNavigator = ContentModelLocator.getInstance().contentModel.contentTabNavigator;
+			var navigator:TabNavigator = ContentModelLocator.getInstance().contentModel.contentTabNavigator;
 
 			if(lbl=="") lbl = "(Untitled)";
 			var curNum:Number = navigator.numChildren + 1;
@@ -58,7 +57,7 @@ package org.broadleafcommerce.admin.cms.commands.contentHome
 			}
 
 			navigator.addChild(child);
-			invalidateNav(navigator);
+			//invalidateNav(navigator);
 			navigator.selectedIndex = navigator.numChildren - 1;
 
 		}
@@ -72,11 +71,11 @@ package org.broadleafcommerce.admin.cms.commands.contentHome
 		 * I don't know, but just don't change tabWdith or horizontalGap or whatever
 		 * else at runtime, OK? Pick some values and stick with them.
 		 */
-		private function invalidateNav(nav:SuperTabNavigator):void {
-			var child:Canvas = new Canvas();
-			nav.addChild(child);
-			nav.removeChild(child);
-			nav.invalidateDisplayList();
-		}
+//		private function invalidateNav(nav:SuperTabNavigator):void {
+//			var child:Canvas = new Canvas();
+//			nav.addChild(child);
+//			nav.removeChild(child);
+//			nav.invalidateDisplayList();
+//		}
 	}
 }

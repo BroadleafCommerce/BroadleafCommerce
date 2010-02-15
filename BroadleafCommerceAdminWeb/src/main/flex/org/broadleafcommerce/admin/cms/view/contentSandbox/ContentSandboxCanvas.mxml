@@ -23,6 +23,7 @@
 	xmlns:contentSandbox="org.broadleafcommerce.admin.cms.view.contentSandbox.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.cms.control.events.RemoveContentTabEvent;
 			import org.broadleafcommerce.admin.cms.control.events.RejectContentEvent;
 			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentChooseTypeModal;
 			import org.broadleafcommerce.admin.cms.control.events.CreateEditContentEvent;
@@ -99,6 +100,10 @@
 				}
 			}
 
+			private function handleCancelClick(event:Event):void{
+				new RemoveContentTabEvent(this.parent.name).dispatch();
+			}
+
 			private function retrieveSelectedContentIds():ArrayCollection{
 				var selectedIndices:Array = this.contentSandboxDataGrid.selectedIndices;
 				if (selectedIndices.length > 0) {
@@ -143,6 +148,9 @@
 
 			<!-- If role == CONTENT_DELETER -->
 			<mx:Button id="deleteButton" label="Delete" visible="{contentModel.contentRoles.isContentDeleter}" includeInLayout="{contentModel.contentRoles.isContentDeleter}"/>
+
+			<mx:Button id="cancelButton" label="Cancel" click="handleCancelClick(event)"/>
+
 		</mx:HBox>
 
 </mx:VBox>
