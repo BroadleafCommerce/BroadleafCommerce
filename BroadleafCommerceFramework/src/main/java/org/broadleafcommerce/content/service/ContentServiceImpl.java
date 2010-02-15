@@ -71,6 +71,23 @@ import org.xml.sax.InputSource;
 public class ContentServiceImpl implements ContentService {
     private static final Log LOG = LogFactory.getLog(ContentServiceImpl.class);
     private static final LRUMap EXPRESSION_CACHE = new LRUMap(100);
+    
+    //To sort content by priority
+    public class ContentComparator implements Comparator<org.broadleafcommerce.content.domain.Content> {
+
+        public int compare(org.broadleafcommerce.content.domain.Content o1, org.broadleafcommerce.content.domain.Content o2) {
+
+            if (o1.getPriority() < o2.getPriority()) {
+                return -1;
+
+            } else if (o1.getPriority() > o2.getPriority()) {
+                return 1;
+
+            } else
+                return 0;
+
+        }
+    }
 
 
     @Resource(name="blContentDao")
@@ -230,7 +247,7 @@ public class ContentServiceImpl implements ContentService {
 	    }
 		return StringEscapeUtils.unescapeXml(resultWriter.toString()) ;
 	}
-
+	
 	public String renderedContent(String styleSheetString, List<Content> contentList, int rowCount) throws Exception{
         Source xmlSource;
         int maxCount = (rowCount > -1 && contentList.size() > 0)? rowCount : contentList.size();
@@ -244,7 +261,7 @@ public class ContentServiceImpl implements ContentService {
         //TODO: some code here to group and show random item within priority group
         Comparator<Content> cntntCompare = new ContentComparator();
         Collections.sort(contentList, cntntCompare);
-
+             
         for(int i=0; i < maxCount; i++){
             ContentDetails contentDetail = findContentDetailsById(contentList.get(i).getId());
             xmlSource = getSource(contentDetail.getXmlContent());
@@ -550,21 +567,4 @@ public class ContentServiceImpl implements ContentService {
 		return convertToHex(sha1hash);
 	}
 
-}
-
-//To sort content by priority
-class ContentComparator implements Comparator<org.broadleafcommerce.content.domain.Content> {
-
-    public int compare(org.broadleafcommerce.content.domain.Content o1, org.broadleafcommerce.content.domain.Content o2) {
-
-        if (o1.getPriority() < o2.getPriority()) {
-            return -1;
-
-        } else if (o1.getPriority() > o2.getPriority()) {
-            return 1;
-
-        } else
-            return 0;
-
-    }
 }
