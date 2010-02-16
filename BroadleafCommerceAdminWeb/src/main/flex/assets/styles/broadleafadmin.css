@@ -138,6 +138,18 @@ ToggleButtonBar {
 	cornerRadius: 2;
 	icon: Embed(source='/assets/images/eye.png');
 }
+.folderNewButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/folder_add.png');
+}
+.folderUploadButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/folder_go.png');
+}
+.folderDeleteButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/folder_delete.png');
+}
 .padding10 {
 	paddingLeft: 10;
 	paddingRight: 10;

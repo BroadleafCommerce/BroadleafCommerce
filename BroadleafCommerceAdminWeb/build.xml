@@ -132,6 +132,10 @@
 			<fileset dir="src/main/flex/forms" />
 		</copy>
 
+		<copy todir="${maven.build.dir}/${maven.build.finalName}/content">
+			<fileset dir="config/content" />
+		</copy>
+
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/modules">
 		<fileset dir="src/main/flex/modules">
 			<exclude name="**/*.mxml" />
