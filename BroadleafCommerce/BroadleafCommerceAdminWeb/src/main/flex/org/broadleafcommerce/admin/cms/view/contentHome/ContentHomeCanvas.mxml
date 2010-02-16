@@ -140,7 +140,7 @@
 	         		styleName="padding10" horizontalAlign="center" width="980">
 	         		<mx:VBox>
 	         			<mx:HBox>
-	         				<mx:Label text="Sandbox {contentModel.loggedInUserSandbox} has xx items." fontSize="14"/>
+	         				<mx:Label text="Sandbox {contentModel.loggedInUserSandbox}" fontSize="14"/>
 	         				<mx:Button id="viewButton" label="View" styleName="viewEditButton" click="handleViewClick(event);"/>
 	         				<mx:Button id="addButton" label="Add Content" styleName="addButton" click="handleAddClick(event)"/>
 	         			</mx:HBox>

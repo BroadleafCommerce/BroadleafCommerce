@@ -23,6 +23,7 @@
 	xmlns:contentSandbox="org.broadleafcommerce.admin.cms.view.contentSandbox.*">
 	<mx:Script>
 		<![CDATA[
+			import org.broadleafcommerce.admin.core.model.ConfigModel;
 			import org.broadleafcommerce.admin.cms.control.events.RemoveContentTabEvent;
 			import org.broadleafcommerce.admin.cms.control.events.RejectContentEvent;
 			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentChooseTypeModal;
@@ -65,7 +66,7 @@
 			}
 
 			private function handlePreviewClick(event:Event):void{
-				var urlRequest:URLRequest = new URLRequest("http://localhost:8080/pbywebdev?blcSandbox=" + sandboxName);
+				var urlRequest:URLRequest = new URLRequest(ConfigModel.CMS_PREVIEW_URL + "?blcSandbox=" + sandboxName);
                 navigateToURL(urlRequest, "_blank");
 			}
 
