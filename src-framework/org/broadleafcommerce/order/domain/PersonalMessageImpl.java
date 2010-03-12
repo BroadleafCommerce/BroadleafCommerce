@@ -135,4 +135,5 @@ public class PersonalMessageImpl implements PersonalMessage {
             return false;
         return true;
     }
+
 }
