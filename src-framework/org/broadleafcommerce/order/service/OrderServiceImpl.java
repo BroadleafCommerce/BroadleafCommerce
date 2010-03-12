@@ -538,16 +538,19 @@ public class OrderServiceImpl implements OrderService {
         itemRequest.setQuantity(discreteOrderItem.getQuantity());
         itemRequest.setSku(discreteOrderItem.getSku());
 
-        PersonalMessage personalMessage = orderItemService.createPersonalMessage();
-        try {
-            BeanUtils.copyProperties(personalMessage, discreteOrderItem.getPersonalMessage());
-            personalMessage.setId(null);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+        if (discreteOrderItem.getPersonalMessage() != null) {
+            PersonalMessage personalMessage = orderItemService.createPersonalMessage();
+            try {
+                BeanUtils.copyProperties(personalMessage, discreteOrderItem.getPersonalMessage());
+                personalMessage.setId(null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            itemRequest.setPersonalMessage(personalMessage);
         }
-        itemRequest.setPersonalMessage(personalMessage);
+
         return itemRequest;
     }
 
