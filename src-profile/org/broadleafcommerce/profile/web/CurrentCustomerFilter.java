@@ -79,8 +79,13 @@ public class CurrentCustomerFilter implements Filter  {
                 }
                 String cookieCustomerIdVal = CookieUtils.getCookieValue((HttpServletRequest) request, CookieUtils.CUSTOMER_COOKIE_NAME);
                 Long cookieCustomerId = null;
-                if (cookieCustomerIdVal != null) {
-                    cookieCustomerId = new Long(cookieCustomerIdVal);
+                if ((cookieCustomerIdVal != null) && (!cookieCustomerIdVal.isEmpty())) {
+                    try {
+                        cookieCustomerId = new Long(cookieCustomerIdVal);
+                    }
+                    catch (Exception e) {
+                        //unable to parse String to long
+                    }
                 }
 
                 if (cookieCustomerId != null) {
