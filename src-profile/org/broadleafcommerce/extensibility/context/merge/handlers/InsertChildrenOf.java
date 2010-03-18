@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.extensibility.context.merge.handlers;
 
+import java.util.List;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -26,7 +28,7 @@ import org.w3c.dom.NodeList;
  */
 public class InsertChildrenOf extends BaseHandler {
 
-    public Node[] merge(NodeList nodeList1, NodeList nodeList2, Node[] exhaustedNodes) {
+    public Node[] merge(NodeList nodeList1, NodeList nodeList2, List<Node> exhaustedNodes) {
         if (nodeList1 == null || nodeList2 == null || nodeList1.getLength() == 0 || nodeList2.getLength() == 0) {
             return null;
         }
