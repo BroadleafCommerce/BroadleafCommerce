@@ -156,6 +156,11 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Column(name = "STATUS")
     @Index(name="FG_STATUS_INDEX", columnNames={"STATUS"})
     protected String status;
+    
+    @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL })
+    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
+    protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
 
     public Long getId() {
         return id;
@@ -431,4 +436,24 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         this.status = status.getType();
     }
 
+    public List<FulfillmentGroupFee> getFulfillmentGroupFees() {
+        return fulfillmentGroupFees;
+    }
+
+    public void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees) {
+        this.fulfillmentGroupFees = fulfillmentGroupFees;
+    }
+
+    public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee) {
+        if (fulfillmentGroupFees == null) {
+            fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
+        }
+        fulfillmentGroupFees.add(fulfillmentGroupFee);
+    }
+
+    public void removeAllFulfillmentGroupFees() {
+        if (fulfillmentGroupFees != null) {
+            fulfillmentGroupFees.clear();
+        }
+    }
 }

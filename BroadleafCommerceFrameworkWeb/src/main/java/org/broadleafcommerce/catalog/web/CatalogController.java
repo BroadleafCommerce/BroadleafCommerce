@@ -37,6 +37,7 @@ import org.broadleafcommerce.rating.domain.RatingSummary;
 import org.broadleafcommerce.rating.service.RatingService;
 import org.broadleafcommerce.rating.service.type.RatingType;
 import org.broadleafcommerce.search.util.SearchFilterUtil;
+import org.broadleafcommerce.time.SystemTime;
 import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -180,7 +181,7 @@ public class CatalogController {
         Category rootCategory = (Category) model.get("rootCategory");
         int productPosition=0;
 
-        List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+        List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
         if (productList != null) {
             populateProducts(productList, currentCategory);
             model.addAttribute("products", productList);
@@ -189,17 +190,19 @@ public class CatalogController {
         if (productPosition == 0) {
             // look for product in its default category and override category from request URL
             currentCategory = product.getDefaultCategory();
-            productList = catalogService.findActiveProductsByCategory(currentCategory);
-            if (productList != null) {
-	            populateProducts(productList, currentCategory);
-	            model.addAttribute("products", productList);
-	        }
-            String url = currentCategory.getGeneratedUrl();
+            if (currentCategory.isActive()) {
+                model.put("currentCategory", currentCategory);
+                productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
+                if (productList != null) {
+                    model.put("currentProducts", productList);
+                }
+                String url = currentCategory.getGeneratedUrl();
 
-            // override category list settings using this products default
-            List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
-            if (categoryList != null && ! addCategoryListToModel(categoryList, rootCategory, url, model)) {
-                productPosition = findProductPositionInList(product, productList);
+                // override category list settings using this products default
+                List<Category> categoryList = catalogService.getChildCategoryURLMapByCategoryId(rootCategory.getId()).get(url);
+                if (categoryList != null && !addCategoryListToModel(categoryList, rootCategory, url, model)) {
+                    productPosition = findProductPositionInList(product, productList);
+                }
             }
         }
 
@@ -235,13 +238,13 @@ public class CatalogController {
         String productId = request.getParameter("productId");
         if (productId != null) {
             Product product = catalogService.findProductById(new Long(productId));
-            if (product != null) {
+            if (product != null && product.isActive()) {
                 productFound = validateProductAndAddToModel(product, model);
                 addRatingSummaryToModel(productId, model);
             }
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
-            List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory);
+            List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
             SearchFilterUtil.filterProducts(productList, request.getParameterMap(), new String[] {"manufacturer", "skus[0].salePrice"});
 
             if ((catalogSort != null) && (catalogSort.getSort() != null)) {

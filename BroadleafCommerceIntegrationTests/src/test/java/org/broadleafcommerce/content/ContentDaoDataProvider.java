@@ -21,8 +21,8 @@ import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
 import org.broadleafcommerce.content.domain.ContentDetailsImpl;
 import org.broadleafcommerce.content.domain.ContentImpl;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.DateUtil;
-
 import org.testng.annotations.DataProvider;
 
 /**
@@ -35,8 +35,8 @@ public class ContentDaoDataProvider {
     public static Object[][] provideBasicContent() {
         Content content = new ContentImpl();
         content.setOnline(true);
-        content.setActiveStartDate(new Date(DateUtil.getNow()));
-        content.setActiveEndDate(new Date(DateUtil.getNow() + 100000000));
+        content.setActiveStartDate(SystemTime.asDate());
+        content.setActiveEndDate(new Date(SystemTime.asMillis() + 100000000));
         content.setDisplayRule("customer.location=tx");
         content.setContentType("HomePageArticle");
         content.setSandbox("AwaitingApproval_TestUser_123");
@@ -51,8 +51,8 @@ public class ContentDaoDataProvider {
     public static Object[][] provideBasicContentAndDetail() {
         Content content = new ContentImpl();
         content.setOnline(true);
-        content.setActiveStartDate(new Date(DateUtil.getNow()));
-        content.setActiveEndDate(new Date(DateUtil.getNow() + 100000000));
+        content.setActiveStartDate(SystemTime.asDate());
+        content.setActiveEndDate(new Date(SystemTime.asMillis() + 100000000));
         content.setDisplayRule("customer.location=tx");
         content.setContentType("HomePageArticle");
         content.setTitle("/some/file/path");

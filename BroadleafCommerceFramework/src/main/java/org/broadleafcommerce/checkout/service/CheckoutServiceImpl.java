@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.checkout.service;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
-import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.workflow.SequenceProcessor;
 import org.broadleafcommerce.workflow.WorkflowException;
 import org.springframework.stereotype.Service;
@@ -56,26 +55,27 @@ public class CheckoutServiceImpl implements CheckoutService {
 	         */
 	        for (PaymentInfo info : payments.keySet()) {
 	            if (info.getReferenceNumber() == null) {
-	                throw new CheckoutException("PaymentInfo reference number cannot be null");
+	                throw new CheckoutException("PaymentInfo reference number cannot be null", null);
 	            }
 	        }
 	        for (Referenced referenced : payments.values()) {
 	            if (referenced.getReferenceNumber() == null) {
-	                throw new CheckoutException("Referenced reference number cannot be null");
+	                throw new CheckoutException("Referenced reference number cannot be null", null);
 	            }
 	        }
     	}
 
+    	CheckoutSeed seed = null;
         try {
-            order.setSubmitDate(new Date(DateUtil.getNow()));
+            order.setSubmitDate(SystemTime.asDate());
             order = cartService.save(order, false);
 
-            final CheckoutSeed seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
+            seed = new CheckoutSeed(order, payments, new HashMap<String, Object>());
             checkoutWorkflow.doActivities(seed);
 
             return seed;
         } catch (PricingException e) {
-            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e);
+            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), e, seed);
         } catch (WorkflowException e) {
             Throwable cause = e;
             while (e.getCause() != null) {
@@ -84,7 +84,7 @@ public class CheckoutServiceImpl implements CheckoutService {
                 }
                 cause = e.getCause();
             }
-            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), cause);
+            throw new CheckoutException("Unable to checkout order -- id: " + order.getId(), cause, seed);
         }
     }
 

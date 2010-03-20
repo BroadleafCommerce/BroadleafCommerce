@@ -55,6 +55,7 @@
 		<class>org.broadleafcommerce.order.domain.DiscreteOrderItemImpl</class>
 		<class>org.broadleafcommerce.order.domain.FulfillmentGroupImpl</class>
 		<class>org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl</class>
+		<class>org.broadleafcommerce.order.domain.FulfillmentGroupFeeImpl</class>
 		<class>org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl</class>
 		<class>org.broadleafcommerce.order.domain.OrderImpl</class>
 		<class>org.broadleafcommerce.order.domain.OrderItemImpl</class>

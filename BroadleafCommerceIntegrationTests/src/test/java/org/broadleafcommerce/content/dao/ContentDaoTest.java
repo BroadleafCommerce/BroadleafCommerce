@@ -16,7 +16,6 @@
 package org.broadleafcommerce.content.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -25,7 +24,7 @@ import org.broadleafcommerce.content.ContentDaoDataProvider;
 import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
 import org.broadleafcommerce.test.BaseTest;
-import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.time.SystemTime;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -71,7 +70,7 @@ public class ContentDaoTest extends BaseTest {
 	@Test(groups = {"testReadContentByVersionSandboxFile"}, dataProvider = "basicContent", dataProviderClass=ContentDaoDataProvider.class, dependsOnGroups = {"testSaveContent"})
 	@Transactional
 	public void testReadContentByVersionSandboxFile(Content content){
-		List<Content> newContents = contentDao.readContentSpecified(content.getSandbox(), content.getContentType(), new Date(DateUtil.getNow()));
+		List<Content> newContents = contentDao.readContentSpecified(content.getSandbox(), content.getContentType(), SystemTime.asDate());
 		assert newContents != null && !newContents.isEmpty();
 		Content newContent = newContents.get(0);
 

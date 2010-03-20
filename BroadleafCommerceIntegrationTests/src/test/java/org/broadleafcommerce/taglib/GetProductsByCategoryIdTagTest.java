@@ -23,6 +23,7 @@ import javax.servlet.jsp.JspException;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.web.taglib.GetProductsByCategoryIdTag;
+import org.broadleafcommerce.time.SystemTime;
 import org.easymock.classextension.EasyMock;
 import org.testng.annotations.Test;
 
@@ -53,7 +54,7 @@ public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {
         EasyMock.expect(pageContext.getAttribute("productListVar")).andReturn(productList);
 
         EasyMock.expect(catalogService.findCategoryById(0L)).andReturn(c);
-        EasyMock.expect(catalogService.findActiveProductsByCategory(c)).andReturn(productList);
+        EasyMock.expect(catalogService.findActiveProductsByCategory(c, SystemTime.asDate())).andReturn(productList);
 
         EasyMock.replay(p1, p2, c);
 

@@ -82,5 +82,9 @@
   		<groupId>commons-collections</groupId>
   		<artifactId>commons-collections</artifactId>
   	</dependency>
+  	<dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
   </dependencies>
 </project>

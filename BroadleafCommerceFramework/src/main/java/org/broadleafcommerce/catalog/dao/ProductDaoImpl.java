@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -55,9 +56,10 @@ public class ProductDaoImpl implements ProductDao {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Product> readActiveProductsByCategory(Long categoryId) {
+    public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate) {
         Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY");
         query.setParameter("categoryId", categoryId);
+        query.setParameter("currentDate", currentDate);
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
@@ -74,6 +76,15 @@ public class ProductDaoImpl implements ProductDao {
     public List<Product> readProductsBySku(Long skuId) {
         Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU");
         query.setParameter("skuId", skuId);
+        query.setHint(getQueryCacheableKey(), true);
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Product> readActiveProductsBySku(Long skuId, Date currentDate) {
+        Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU");
+        query.setParameter("skuId", skuId);
+        query.setParameter("currentDate", currentDate);
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }

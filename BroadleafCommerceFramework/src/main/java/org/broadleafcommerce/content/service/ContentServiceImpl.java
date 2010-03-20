@@ -52,7 +52,7 @@ import org.broadleafcommerce.content.domain.ContentDetailsImpl;
 import org.broadleafcommerce.content.domain.ContentImpl;
 import org.broadleafcommerce.content.domain.ContentPageInfo;
 import org.broadleafcommerce.content.domain.ContentXmlData;
-import org.broadleafcommerce.util.DateUtil;
+import org.broadleafcommerce.time.SystemTime;
 import org.compass.core.util.reader.StringReader;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -192,7 +192,7 @@ public class ContentServiceImpl implements ContentService {
     }
 
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters){
-		return findContentDetails(sandbox, contentType, mvelParameters, new Date(DateUtil.getNow()));
+		return findContentDetails(sandbox, contentType, mvelParameters, SystemTime.asDate());
 	}
 
 	public List<ContentDetails> findContentDetails(String sandbox, String contentType, Map<String, Object> mvelParameters, Date displayDate){

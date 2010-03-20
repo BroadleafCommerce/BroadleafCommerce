@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import org.broadleafcommerce.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.domain.OrderItemImpl;
+import org.broadleafcommerce.order.domain.PersonalMessage;
 import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
@@ -61,6 +62,11 @@ public class OrderItemDaoImpl implements OrderItemDao {
         final OrderItem item = (OrderItem) entityConfiguration.createEntityInstance(orderItemType.getType());
         item.setOrderItemType(orderItemType);
         return item;
+    }
+    
+    public PersonalMessage createPersonalMessage() {
+        PersonalMessage personalMessage = (PersonalMessage) entityConfiguration.createEntityInstance(PersonalMessage.class.getName());
+        return personalMessage;
     }
 
     public OrderItem saveOrderItem(final OrderItem orderItem) {

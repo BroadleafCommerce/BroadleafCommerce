@@ -135,4 +135,12 @@ public interface FulfillmentGroup extends Serializable {
     void setTotal(Money orderTotal);
 
     FulfillmentGroupStatusType getStatus();
+    
+    public List<FulfillmentGroupFee> getFulfillmentGroupFees();
+
+    public void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees);
+
+    public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee);
+
+    public void removeAllFulfillmentGroupFees();
 }

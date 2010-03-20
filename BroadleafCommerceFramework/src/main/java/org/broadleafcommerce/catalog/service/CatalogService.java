@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.catalog.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public interface CatalogService {
 
     public List<Product> findProductsByName(String searchName);
 
-    public List<Product> findActiveProductsByCategory(Category category);
+    public List<Product> findActiveProductsByCategory(Category category, Date currentDate);
 
     public Category saveCategory(Category category);
     
