@@ -15,12 +15,14 @@
  */
 package org.broadleafcommerce.order.service;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.dao.CategoryDao;
@@ -41,6 +43,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.domain.PersonalMessage;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.call.FulfillmentGroupItemRequest;
@@ -607,7 +610,20 @@ public class OrderServiceImpl implements OrderService {
         itemRequest.setProduct(discreteOrderItem.getProduct());
         itemRequest.setQuantity(discreteOrderItem.getQuantity());
         itemRequest.setSku(discreteOrderItem.getSku());
-        itemRequest.setPersonalMessage(discreteOrderItem.getPersonalMessage());
+        
+        if (discreteOrderItem.getPersonalMessage() != null) {
+            PersonalMessage personalMessage = orderItemService.createPersonalMessage();
+            try {
+                BeanUtils.copyProperties(personalMessage, discreteOrderItem.getPersonalMessage());
+                personalMessage.setId(null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            itemRequest.setPersonalMessage(personalMessage);
+        }
+        
         return itemRequest;
     }
 

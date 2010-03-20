@@ -16,6 +16,7 @@
 package org.broadleafcommerce.pricing.service.module;
 
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.util.money.Money;
 
@@ -32,7 +33,16 @@ public class SimpleTaxModule implements TaxModule {
     protected Double factor;
 
     public Order calculateTaxForOrder(Order order) {
-        Money totalTax = order.getSubTotal().multiply(factor);
+    	Money orderSubtotal = order.getSubTotal();
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
+                if (fulfillmentGroupFee.isTaxable()) {
+                    orderSubtotal = orderSubtotal.add(fulfillmentGroupFee.getAmount());
+                }
+            }
+        }
+
+        Money totalTax = orderSubtotal.multiply(factor);
 
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             Money fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);

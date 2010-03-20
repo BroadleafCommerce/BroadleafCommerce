@@ -47,6 +47,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -65,6 +67,7 @@ public class OrderItemImpl implements OrderItem {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="ORDERITEM_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
+    @NotFound(action = NotFoundAction.IGNORE)
     protected Category category;
 
     @ManyToOne(targetEntity = OrderImpl.class)

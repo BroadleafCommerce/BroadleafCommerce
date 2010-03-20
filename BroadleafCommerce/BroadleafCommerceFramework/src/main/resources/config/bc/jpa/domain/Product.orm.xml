@@ -16,12 +16,19 @@
 		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product, IN(product.allSkus) sku
 		WHERE sku.id = :skuId</query>
 	</named-query>
+	
+	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_SKU" >
+		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product, IN(product.allSkus) sku
+		WHERE sku.id = :skuId
+		AND product.activeStartDate &lt;= :currentDate
+		AND (product.activeEndDate &gt; :currentDate OR product.activeEndDate = null)</query>
+	</named-query>
 
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
 		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.catalog.domain.CategoryProductImpl categoryProduct
 		WHERE categoryProduct.categoryProductXref.category.id = :categoryId
-		AND categoryProduct.categoryProductXref.product.activeStartDate &lt;= CURRENT_DATE
-		AND (categoryProduct.categoryProductXref.product.activeEndDate &gt; CURRENT_DATE OR categoryProduct.categoryProductXref.product.activeEndDate = null)
+		AND categoryProduct.categoryProductXref.product.activeStartDate &lt;= :currentDate
+		AND (categoryProduct.categoryProductXref.product.activeEndDate &gt; :currentDate OR categoryProduct.categoryProductXref.product.activeEndDate = null)
 		ORDER BY categoryProduct.displayOrder
 		</query>
 	</named-query>

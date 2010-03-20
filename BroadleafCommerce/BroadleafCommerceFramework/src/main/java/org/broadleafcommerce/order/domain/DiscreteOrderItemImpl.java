@@ -30,6 +30,8 @@ import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -47,6 +49,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="DISCRETE_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
+    @NotFound(action = NotFoundAction.IGNORE)
     protected Product product;
 
     @ManyToOne(targetEntity = BundleOrderItemImpl.class)

@@ -15,24 +15,40 @@
  */
 package org.broadleafcommerce.checkout.service.exception;
 
+import org.broadleafcommerce.checkout.service.workflow.CheckoutResponse;
+import org.broadleafcommerce.checkout.service.workflow.CheckoutSeed;
+
 public class CheckoutException extends Exception {
 
     private static final long serialVersionUID = 1L;
+    
+    private CheckoutResponse checkoutResponse;
 
     public CheckoutException() {
         super();
     }
 
-    public CheckoutException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public CheckoutException(String message) {
+    public CheckoutException(String message, CheckoutSeed seed) {
         super(message);
+        checkoutResponse = seed;
     }
 
-    public CheckoutException(Throwable cause) {
+    public CheckoutException(Throwable cause, CheckoutSeed seed) {
         super(cause);
+        checkoutResponse = seed;
+    }
+
+    public CheckoutException(String message, Throwable cause, CheckoutSeed seed) {
+        super(message, cause);
+        checkoutResponse = seed;
+    }
+
+    public CheckoutResponse getCheckoutResponse() {
+        return checkoutResponse;
+    }
+
+    public void setCheckoutResponse(CheckoutResponse checkoutResponse) {
+        this.checkoutResponse = checkoutResponse;
     }
 
 }

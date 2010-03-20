@@ -17,6 +17,8 @@ package org.broadleafcommerce.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.zip.Adler32;
 import java.util.zip.CheckedInputStream;
 
@@ -46,5 +48,30 @@ public class StringUtil {
         calc.enter(originalChecksum);
         calc.enter(myChecksum);
         return calc.getStandardDeviation();
+    }
+    
+    /**
+     * Protect against HTTP Response Splitting
+     * @return
+     */
+    public static String cleanseUrlString(String input){
+        return removeSpecialCharacters(decodeUrl(input));
+    }
+
+    public static String decodeUrl(String encodedUrl) {
+        try {
+            return encodedUrl == null ? null : URLDecoder.decode(encodedUrl, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // this should not happen
+            e.printStackTrace();
+            return encodedUrl;
+        }
+    }
+
+    public static String removeSpecialCharacters(String input) {
+        if (input != null) {
+            input = input.replaceAll("[ \\r\\n]", "");
+        }
+        return input;
     }
 }

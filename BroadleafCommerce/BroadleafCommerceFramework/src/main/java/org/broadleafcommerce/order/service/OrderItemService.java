@@ -19,6 +19,7 @@ import org.broadleafcommerce.order.domain.BundleOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.GiftWrapOrderItem;
 import org.broadleafcommerce.order.domain.OrderItem;
+import org.broadleafcommerce.order.domain.PersonalMessage;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.call.GiftWrapOrderItemRequest;
@@ -36,5 +37,7 @@ public interface OrderItemService {
     public void delete(OrderItem item);
 
     public OrderItem saveOrderItem(OrderItem orderItem);
+    
+    public PersonalMessage createPersonalMessage();
 
 }
