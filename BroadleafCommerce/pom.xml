@@ -9,7 +9,7 @@
      <blc.version>0.0.0</blc.version>
   </properties>
   <version>${blc.version}</version>
-  <description>BroadleafCommerce Maven Build</description>
+  <description>BroadleafCommerce Maven Build </description>
   <build>
   	<pluginManagement>
   		<plugins>
