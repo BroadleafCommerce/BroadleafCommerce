@@ -8,8 +8,8 @@
 		<non-jta-data-source>jdbc/web</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.dialect" value="org.broadleafcommerce.util.sql.MySQLInnoDBDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
 	</persistence-unit>
 	
@@ -18,7 +18,7 @@
 		<exclude-unlisted-classes/>
 		<properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.dialect" value="org.broadleafcommerce.util.sql.MySQLInnoDBDialect"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
         </properties>
 	</persistence-unit>
 </persistence>
