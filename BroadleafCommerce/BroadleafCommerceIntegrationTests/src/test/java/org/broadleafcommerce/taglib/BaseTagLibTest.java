@@ -32,7 +32,7 @@ abstract public class BaseTagLibTest extends TestCase {
     public BaseTagLibTest() {
         pageContext = EasyMock.createMock(PageContext.class);
         request = EasyMock.createMock(HttpServletRequest.class);
-        catalogService = EasyMock.createNiceMock(CatalogService.class);
+        catalogService = EasyMock.createMock(CatalogService.class);
         setup();
     }
 

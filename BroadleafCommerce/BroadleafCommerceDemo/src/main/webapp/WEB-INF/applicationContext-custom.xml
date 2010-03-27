@@ -10,7 +10,7 @@
           class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
         <property name="persistenceXmlLocations">
             <list>
-                <value>classpath*:/META-INF/persistence-container.xml</value>
+                <value>classpath*:/META-INF/persistence-demo.xml</value>
             </list>
         </property>
         <property name="dataSources">
@@ -23,21 +23,10 @@
     </bean>
     
     <bean id="blDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="@@MYSQL_URL@@" />
-		<property name="username" value="@@MYSQL_USERNAME@@" />
-		<property name="password" value="@@MYSQL_PASSWORD@@" />
+		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+		<property name="url" value="jdbc:hsqldb:mem:broadleaf" />
+		<property name="username" value="sa" />
+		<property name="password" value="" />
 	</bean>
-    
-	<!--
-	<bean id="customerStateAOP" class="org.broadleafcommerce.profile.aop.test.CustomerStateAOP"/>
-
-    <aop:config>
-        <aop:aspect id="customerAspect" ref="customerStateAOP">
-            <aop:pointcut id="customerRetrievalMethod" expression="execution(* org.broadleafcommerce.profile.web.CustomerState.getCustomer(javax.servlet.http.HttpServletRequest))"/>
-            <aop:around method="processCustomerRetrieval" pointcut-ref="customerRetrievalMethod"/>
-        </aop:aspect>
-    </aop:config>
-    -->
 	
 </beans>

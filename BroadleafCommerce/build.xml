@@ -65,13 +65,10 @@
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SybaseDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SQLServerDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.SAPDBDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.InformixDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.HSQLDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.IngresDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.ProgressDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.MckoiDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.InterbaseDialect" />
-			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.PointbaseDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.FirebirdDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.DB2Dialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
@@ -80,13 +77,10 @@
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SybaseDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SQLServerDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.SAPDBDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.InformixDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.HSQLDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.IngresDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.ProgressDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.MckoiDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.InterbaseDialect" />
-			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.PointbaseDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.FirebirdDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.DB2Dialect" />
 			<classpath refid="build.admin.runtime.classpath" />

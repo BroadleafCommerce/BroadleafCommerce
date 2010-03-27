@@ -1,9 +1,0 @@
-1|What is your favorite sports team?
-2|What was your high school name?
-3|What was your childhood nickname?  
-4|What street did you live on in third grade?
-5|What is your oldest sibling's middle name?
-6|What school did you attend for sixth grade?
-7|Where does your nearest sibling live? 
-8|What is your youngest brother’s birthday? 
-9|In what city or town was your first job?
