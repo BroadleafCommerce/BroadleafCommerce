@@ -1,6 +1,0 @@
-1|abc123|<promo1><imgLink>/domain/email_signup/</imgLink><imgAlt>Great Savings!</imgAlt><imgSrc>/domain/images/promotions/promo1.jpg</imgSrc></promo1>
-2|abc123|<promo2><imgLink>/domain/email_signup/</imgLink><imgAlt>Great Savings!</imgAlt><imgSrc>/domain/images/promotions/promo2.jpg</imgSrc></promo2>
-3|abc123|<promo3><imgLink>/domain/email_signup/</imgLink><imgAlt>Great Savings!</imgAlt><imgSrc>/domain/images/promotions/promo3.jpg</imgSrc></promo3>
-4|abc123|<promo4><imgLink>/domain/email_signup/</imgLink><imgAlt>Great Savings!</imgAlt><imgSrc>/domain/images/promotions/promo4.jpg</imgSrc></promo4>
-5|abc123|<promo5><imgLink>/domain/email_signup/</imgLink><imgAlt>Great Savings!</imgAlt><imgSrc>/domain/images/promotions/promo5.jpg</imgSrc></promo5>
-6|abc123|<promo6><imgLink>/domain/email_signup/</imgLink><imgAlt>Great Savings!</imgAlt><imgSrc>/domain/images/promotions/promo6.jpg</imgSrc></promo6>

@@ -1,4 +1,0 @@
-1|admin@yourdomain.com|admin|Administrator|blc_admin|
-2|content@yourdomain.com|content_approver|Content Approver|blc_admin|
-3|content@yourdomain.com|content_editor|Content Editor|blc_admin|
-4|content@yourdomain.com|content_deployer|Content Deployer|blc_admin|
