@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%">
+	<mx:RadioButtonGroup id="discountType" />
+	<mx:RadioButtonGroup id="offerPrice" />
+	<mx:RadioButtonGroup id="offerActive" />
+	<mx:VBox verticalGap="15"
+		paddingLeft="10"
+		paddingRight="10"
+		paddingTop="50"
+		width="100%">
+		<mx:VBox verticalGap="5"
+			width="100%">
+			<mx:Label fontWeight="bold"
+				text="Details"/>
+			<!--text="How is the offer applied?"-->
+			<mx:HRule strokeColor="#94B12D"
+				width="100%"/>
+		</mx:VBox>
+		<mx:Grid>
+			<mx:GridRow verticalAlign="middle">
+				<mx:GridItem styleName="fieldLabel">
+					<mx:Label text="Offer Priority:"/>
+				</mx:GridItem>
+				<mx:GridItem>
+					<mx:TextInput id="offerPriorityText"
+						width="47"
+						toolTip="The priority of this offer in relationship to other offers."/>
+				</mx:GridItem>
+			</mx:GridRow>
+		</mx:Grid>
+		<mx:VBox>
+			<mx:Label text="Number Of Uses:"/>
+			<mx:VBox paddingLeft="15">
+				<mx:RadioButton id="usesUnlimtedRadio"
+					label="Unlimited"
+					selected="{Number(usesText.text)==0}"/>
+				<mx:HBox verticalAlign="middle">
+					<mx:RadioButton id="usesRadio"
+						label="Up to"
+						selected="{Number(usesText.text)>0}"/>
+					<mx:TextInput id="usesText"
+						width="46"/>
+					<mx:Label text="times"/>
+				</mx:HBox>
+			</mx:VBox>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Text text="How is this offer applied with other offers?"
+				width="289"/>
+			<mx:VBox paddingLeft="15">
+				<mx:CheckBox id="stackableCheckbox"
+					label="Stackable"/>
+				<mx:CheckBox id="combinableCheckbox"
+					label="Combinable"/>
+			</mx:VBox>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Text text="Only give the offer to Order/Items/Fulfillment Groups that meet the following condition:"
+				height="39"
+				width="380"/>
+			<mx:Canvas>
+				<mx:TextInput id="appliesOrderText"
+					x="15"
+					width="160"/>
+			</mx:Canvas>
+		</mx:VBox>
+	</mx:VBox>
+</mx:Canvas>

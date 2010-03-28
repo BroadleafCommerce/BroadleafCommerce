@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+HydraMVC - Copyright (c) 2009 andCulture, Inc. Some rights reserved.
+Your reuse is governed by the Creative Commons Attribution 3.0 United States License    
+-->    
+<Surface 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:effects="com.darronschall.effects.*" 
+	xmlns="http://www.degrafa.com/2007" 
+	>
+
+	<mx:Script>
+		<![CDATA[
+			[Bindable]
+			private var awidth:Number = 0;
+			
+			[Bindable]
+			private var aheight:Number = 0;
+			
+			[Bindable]
+			private var color:Number = 0;
+			
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void{
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				awidth = unscaledWidth;
+				aheight = unscaledHeight;
+				
+				var growl:ErrorGrowl = this.parent as ErrorGrowl;
+				if(growl)
+				{
+					color = growl.growl.color;	
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<fills>
+		<SolidFill id="outerBorderFill" alpha="1" color="0xFFFFFF" />
+		<LinearGradientFill id="innerBorderFill" angle="90">
+			<GradientStop ratio="0" alpha="0.25" color="{color}" />
+			<GradientStop ratio="1" alpha="0.65" color="{color}" />
+		</LinearGradientFill>
+		<SolidFill id="innerGlossFill" alpha="0.06" color="0x000000" />
+		<LinearGradientFill id="innerBackgroundFill" angle="90">
+			<GradientStop ratio="0" color="0xfafafa" />
+			<GradientStop ratio="1" color="0xefefef" />
+		</LinearGradientFill>
+		<LinearGradientFill id="glossFill" angle="90">
+			<GradientStop ratio="0" alpha="0.4" color="0xFFFFFF" />
+			<GradientStop ratio="0.3" alpha="0.2" color="0xFFFFFF" />
+			<GradientStop ratio="0.3" alpha="0" color="0xFFFFFF" />
+		</LinearGradientFill>
+	</fills> 
+	
+	<graphicsData>
+		<GeometryGroup>
+			<RoundedRectangleComplex
+				x="0" y="0" 
+				width="{awidth}" height="{aheight}" 
+				fill="{outerBorderFill}"
+				topLeftRadius="8"
+				topRightRadius="8"
+				bottomLeftRadius="8"
+				bottomRightRadius="8"
+				/>
+				
+			<RoundedRectangleComplex
+				x="2" y="2" 
+				width="{awidth-4}" height="{aheight-4}" 
+				fill="{innerBorderFill}"
+				topLeftRadius="6"
+				topRightRadius="6"
+				bottomLeftRadius="6"
+				bottomRightRadius="6"
+				/>
+			<RoundedRectangleComplex
+				topLeftRadius="5"
+				topRightRadius="5"
+				bottomLeftRadius="5"
+				bottomRightRadius="5"
+				x="9" y="9"
+				width="{awidth-18}" height="{aheight-18}"
+				fill="{innerGlossFill}"
+				/>
+			<RoundedRectangleComplex
+				topLeftRadius="4"
+				topRightRadius="4"
+				bottomLeftRadius="4"
+				bottomRightRadius="4"
+				x="10" y="10"
+				width="{awidth-20}" height="{aheight-20}"
+				fill="{innerBackgroundFill}"
+				/>
+			<RoundedRectangleComplex
+				topLeftRadius="4"
+				topRightRadius="4"
+				bottomLeftRadius="0"
+				bottomRightRadius="0"
+				x="10" y="10"
+				width="{awidth-20}" height="{aheight-20}"
+				fill="{glossFill}"
+				/>
+					
+		</GeometryGroup>
+	</graphicsData>
+	
+</Surface>

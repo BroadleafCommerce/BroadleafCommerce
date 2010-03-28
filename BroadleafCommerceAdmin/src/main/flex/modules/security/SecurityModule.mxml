@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute" 
+	width="100%" height="100%"
+	creationComplete="handleCreationComplete()"
+	xmlns:control="org.broadleafcommerce.admin.security.control.*" xmlns:view="org.broadleafcommerce.admin.security.view.*">
+<mx:Script>
+	<![CDATA[
+		import mx.controls.Alert;
+
+		private function handleCreationComplete():void{
+			this.label = "Users";
+		}
+	]]>
+</mx:Script>
+
+	<view:SecurityCanvas width="100%" height="100%" />	
+</mx:Module>

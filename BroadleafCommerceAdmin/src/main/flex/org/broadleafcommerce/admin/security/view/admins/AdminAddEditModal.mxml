@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:components="org.broadleafcommerce.util.components.*"
+	width="700"
+	height="400"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this)"
+	creationComplete="creationComplete()"
+	verticalAlign="middle" horizontalAlign="center">
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.security.view.roles.RoleAddEditModal;
+			import org.broadleafcommerce.admin.core.vo.security.AdminRole;
+			import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
+			import org.broadleafcommerce.admin.security.control.events.SaveAdminUserEvent;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.core.vo.security.AdminUser;
+			import org.broadleafcommerce.admin.security.control.events.SaveAdminPermissionEvent;
+			import mx.managers.PopUpManager;
+
+			[Bindable]
+			public var editAdminUser:AdminUser;
+
+			private function creationComplete():void {
+				PopUpManager.centerPopUp(this);
+
+				if (editAdminUser != null) {
+					this.title = "Edit Administrator User";
+					this.formHeading.label = "Editing " + editAdminUser.name;
+					this.txtName.text = editAdminUser.name;
+					this.txtEmail.text = editAdminUser.email;
+					this.txtLogin.text = editAdminUser.login;
+					var selectedRoles:Array = new Array();
+					for (var x:Number=0; x<editAdminUser.allRoles.length; x++){
+						for (var i:Number=0; i<SecurityModelLocator.getInstance().adminRoles.length; i++){
+							if (AdminRole(editAdminUser.allRoles.getItemAt(x)).id == AdminRole(SecurityModelLocator.getInstance().adminRoles.getItemAt(i)).id){
+								selectedRoles.push(i);
+							}
+						}
+					}
+
+					this.roleList.selectedIndices = selectedRoles;
+					this.buttonUpdate.visible = true;
+				} else {
+					this.title = "Add New Administrator";
+					this.formHeading.label = "New Administrator";
+					this.buttonSave.visible = true;
+				}
+			}
+
+			private function handleNewRoleClick(event:Event):void{
+				var newRoleModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, RoleAddEditModal , true));
+			}
+
+			private function handleUpdateClick(event:Event):void{
+				editAdminUser.name = this.txtName.text;
+				editAdminUser.email = this.txtEmail.text;
+				editAdminUser.login = this.txtLogin.text;
+				editAdminUser.password = this.txtPassword.text;
+				var allRoles:ArrayCollection = new ArrayCollection(this.roleList.selectedItems);
+				editAdminUser.allRoles = allRoles;
+
+				var saveAdmin:SaveAdminUserEvent = new SaveAdminUserEvent(editAdminUser);
+				saveAdmin.dispatch();
+
+				PopUpManager.removePopUp(this);
+			}
+
+			private function handleSaveClick(event:Event):void{
+				var adminUser:AdminUser = new AdminUser();
+				adminUser.id = null;
+				adminUser.name = this.txtName.text;
+				adminUser.login = this.txtLogin.text;
+				adminUser.email = this.txtEmail.text;
+				adminUser.password = this.txtPassword.text;
+				var roles:ArrayCollection = new ArrayCollection(this.roleList.selectedItems);
+				adminUser.allRoles = roles;
+
+				var saveAdmin:SaveAdminUserEvent = new SaveAdminUserEvent(adminUser);
+				saveAdmin.dispatch();
+
+				PopUpManager.removePopUp(this);
+			}
+		]]>
+	</mx:Script>
+    <mx:StringValidator
+        id="nameValidator"
+        source="{txtName}"
+        property="text"
+        minLength="2"
+    />
+    <mx:StringValidator
+        id="loginValidator"
+        source="{txtLogin}"
+        property="text"
+        minLength="2"
+    />
+    <mx:StringValidator
+        id="emailValidator"
+        source="{txtEmail}"
+        property="text"
+        minLength="2"
+    />
+    <mx:VBox label="Administrator Details" verticalAlign="middle" horizontalAlign="right" >
+        <mx:VBox width="100%">
+        	<mx:FormHeading id="formHeading"/>
+        	<mx:HBox>
+                <mx:Form width="350">
+                    <mx:FormItem label="Name">
+                        <mx:TextInput id="txtName"/>
+                    </mx:FormItem>
+                    <mx:FormItem label="Login">
+                        <mx:TextInput id="txtLogin"/>
+                    </mx:FormItem>
+                    <mx:FormItem label="Password">
+                        <mx:TextInput id="txtPassword" displayAsPassword="true"/>
+                    </mx:FormItem>
+                    <mx:FormItem label="Confirm Password">
+                        <mx:TextInput  id="txtPasswordConfirm" displayAsPassword="true"/>
+                    </mx:FormItem>
+                    <mx:FormItem label="Email">
+                        <mx:TextInput id="txtEmail"/>
+                    </mx:FormItem>
+                </mx:Form>
+
+                <mx:VBox height="100%">
+	                <mx:Label text="Roles"/>
+		            <components:CheckBoxList id="roleList" allowMultipleSelection="true" dataProvider="{SecurityModelLocator.getInstance().adminRoles}" labelField="name"
+	       				width="300">
+	                </components:CheckBoxList>
+	               	<mx:LinkButton label="Create New Role" click="handleNewRoleClick(event)"/>
+	            </mx:VBox>
+
+        	</mx:HBox>
+        </mx:VBox>
+
+
+     	<mx:Button label="Save" click="handleSaveClick(event)" id="buttonSave" visible="false"/>
+     	<mx:Button label="Update" click="handleUpdateClick(event)" id="buttonUpdate" visible="false"/>
+    </mx:VBox>
+
+</mx:TitleWindow>

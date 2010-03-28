@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute" 
+	width="100%" height="100%"
+	creationComplete="handleCreationComplete()"
+	xmlns:control="org.broadleafcommerce.admin.tools.control.*" xmlns:view="org.broadleafcommerce.admin.tools.view.*" xmlns:codetype="org.broadleafcommerce.admin.tools.view.codetype.*">
+<mx:Script>
+	<![CDATA[
+		import org.broadleafcommerce.admin.core.control.events.codetype.AdminFindAllCodeTypesEvent;
+		import mx.controls.Alert;
+
+		private function handleCreationComplete():void{
+			this.label = "Tools";
+			// new FindAllCodeTypesEvent().dispatch();
+		}
+	]]>
+</mx:Script>
+
+	<control:ToolsController />
+	
+	<!--codetype:CodeTypeCanvas width="100%" height="100%" / -->
+	<view:ToolsCanvas width="100%" height="100%" />
+	
+	
+</mx:Module>

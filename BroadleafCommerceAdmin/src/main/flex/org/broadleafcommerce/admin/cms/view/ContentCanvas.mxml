@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="creationComplete();"
+	xmlns:view="org.broadleafcommerce.admin.cms.view.*"
+	xmlns:control="org.broadleafcommerce.admin.cms.control.*"
+	xmlns:contentApproval="org.broadleafcommerce.admin.cms.view.contentApproval.*"
+	xmlns:contentBrowser="org.broadleafcommerce.admin.cms.view.contentBrowser.*"
+	xmlns:contentSandbox="org.broadleafcommerce.admin.cms.view.contentSandbox.*"
+	xmlns:contentHome="org.broadleafcommerce.admin.cms.view.contentHome.*" xmlns:fileManager="org.broadleafcommerce.admin.cms.view.fileManager.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.cms.control.events.ReadAllContentPageInfosEvent;
+			import org.broadleafcommerce.admin.cms.control.events.ViewFileManagerEvent;
+			import org.broadleafcommerce.admin.cms.control.events.ViewContentHomeEvent;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
+			import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
+			import org.broadleafcommerce.admin.cms.model.ContentModel;
+			import org.broadleafcommerce.admin.cms.control.events.InitializeContentRolesEvent;
+			import org.broadleafcommerce.admin.cms.control.events.InitializeRenderTypesEvent;
+			import org.broadleafcommerce.admin.cms.control.events.InitializeContentTypesEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
+
+			[Bindable]
+			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
+
+			[Bindable]
+			private var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
+
+			private function creationComplete():void{
+				new InitializeContentRolesEvent().dispatch();
+				new ReadAllContentPageInfosEvent().dispatch();
+				contentTypeService.send();
+				renderTypeService.send();
+
+				this.contentManagementLink.selected = true;
+			}
+
+			private function errorHandler(evt:FaultEvent):void {
+				Alert.show("Error: " + evt.fault.message);
+			}
+
+			private function resultContentTypeHandler(evt:ResultEvent):void {
+				new InitializeContentTypesEvent(new XML(evt.result)).dispatch();
+			}
+
+			private function resultRenderTypeHandler(evt:ResultEvent):void {
+				new InitializeRenderTypesEvent(new XML(evt.result)).dispatch();
+			}
+
+			private function handleView(event:Event):void {
+				this.contentManagementLink.selected = false;
+				this.fileManagerLink.selected = false;
+
+				if(event.target == this.contentManagementLink){
+					this.contentManagementLink.selected = true;
+					new ViewContentHomeEvent().dispatch();
+				} else if (event.target == this.fileManagerLink){
+					this.fileManagerLink.selected = true;
+					new ViewFileManagerEvent().dispatch();
+				}
+			}
+
+
+		]]>
+
+	</mx:Script>
+
+	<mx:Binding source="contentModel.viewState" destination="currentState" />
+
+	<mx:VBox verticalGap="20"
+		width="100%"
+		height="100%">
+
+		<mx:HBox id="linkBar"
+			verticalAlign="middle">
+			<mx:LinkButton
+				id="contentManagementLink"
+				label="Content Management"
+				click="this.handleView(event)"/>
+			<mx:VRule
+				height="10"/>
+			<mx:LinkButton
+				id="fileManagerLink"
+				label="File Manager"
+				click="this.handleView(event)"/>
+		</mx:HBox>
+		<mx:ViewStack id="viewStack"
+			top="75" left="8" right="8" bottom="8"
+			width="100%"
+			height="100%">
+			<contentHome:ContentHomeCanvas width="100%" height="100%" id="contentHomeCanvas"/>
+			<fileManager:FileManagerCanvas width="100%" height="100%" id="fileManagerCanvas"/>
+		</mx:ViewStack>
+	</mx:VBox>
+
+	<mx:states>
+		<mx:State name="{ContentModel.STATE_VIEW_CONTENT_HOME}">
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="0"/>
+		</mx:State>
+		<mx:State name="{ContentModel.STATE_VIEW_FILE_MANAGER}">
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="1"/>
+		</mx:State>
+	</mx:states>
+
+	<mx:HTTPService fault="errorHandler(event)" id="contentTypeService" resultFormat="e4x" url="forms/contentTypes.xml" result="resultContentTypeHandler(event)" />
+	<mx:HTTPService fault="errorHandler(event)" id="renderTypeService" resultFormat="e4x" url="forms/renderTypes.xml" result="resultRenderTypeHandler(event)" />
+
+	<control:ContentController />
+</mx:Canvas>

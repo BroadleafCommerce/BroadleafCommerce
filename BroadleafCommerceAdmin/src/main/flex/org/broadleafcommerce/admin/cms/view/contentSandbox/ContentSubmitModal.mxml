@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:components="org.broadleafcommerce.util.components.*"
+	width="500"
+	height="400"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this)"
+	creationComplete="creationComplete()"
+	verticalAlign="middle" horizontalAlign="center"
+	title="Submit Content">
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.cms.control.events.SubmitContentFromSandboxEvent;
+			import org.broadleafcommerce.admin.security.control.events.SaveAdminUserEvent;
+			import mx.collections.ArrayCollection;
+			import mx.managers.PopUpManager;
+
+			[Bindable]
+			public var contentIds:ArrayCollection;
+			[Bindable]
+			public var sandboxName:String;
+			[Bindable]
+			public var user:String;
+			[Bindable]
+			public var tabName:String
+
+			private function creationComplete():void {
+				PopUpManager.centerPopUp(this);
+			}
+
+			private function handleSubmitClick(event:Event):void{
+				new SubmitContentFromSandboxEvent(tabName, contentIds, sandboxName, user, this.txtNote.text).dispatch();
+				PopUpManager.removePopUp(this);
+			}
+
+			private function handleCancelClick(event:Event):void{
+				PopUpManager.removePopUp(this);
+			}
+		]]>
+	</mx:Script>
+
+    <mx:VBox label="Submit Content" verticalAlign="middle" width="451" styleName="padding10" height="313" verticalGap="0" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+		<mx:Text text="Your content will now be reviewed by a content approver. Please enter a note before submitting." fontWeight="bold" fontSize="14" width="433" textAlign="center"/>
+        <mx:Form width="433" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+        	<mx:Label text="Note" fontWeight="bold"/>
+            <mx:FormItem>
+                <mx:TextArea id="txtNote" height="100" width="375"/>
+            </mx:FormItem>
+        </mx:Form>
+        <mx:HBox width="423" horizontalAlign="right" height="41">
+        	<mx:Button label="Cancel" click="handleCancelClick(event)" id="buttonCancel" visible="true"/>
+     		<mx:Button label="Submit" click="handleSubmitClick(event)" id="buttonSubmit" visible="true"/>
+        </mx:HBox>
+    </mx:VBox>
+
+</mx:TitleWindow>

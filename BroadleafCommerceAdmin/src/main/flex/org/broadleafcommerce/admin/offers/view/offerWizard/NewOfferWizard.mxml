@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" 
+	width="550" 
+	height="500" 
+	currentState="{STATE_WHAT}" 
+	creationComplete="handleCreationComplete()"
+	showCloseButton="true"
+	headerColors="[#666666, #000000]"
+	title="New Offer Wizard"
+	color="white"
+	fontSize="14"
+	close="PopUpManager.removePopUp(this)" xmlns:offerWizard="org.broadleafcommerce.admin.offers.view.offerWizard.*">
+	
+	<mx:Metadata>
+		[Event(name="wizardCancelEvent", type="org.broadleafcommerce.admin.offers.view.events.WizardEvent")]
+		[Event(name="wizardDoneEvent", type="org.broadleafcommerce.admin.offers.view.events.WizardEvent")]
+	</mx:Metadata>
+
+<mx:Script>
+	<![CDATA[
+		import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
+		import org.broadleafcommerce.admin.offers.control.events.AddUpdateOfferEvent;
+		import mx.events.ItemClickEvent;
+		import org.broadleafcommerce.admin.offers.vo.Offer;
+		import mx.controls.Alert;
+		import mx.collections.ArrayCollection;
+		import org.broadleafcommerce.admin.offers.commands.AddUpdateOfferCommand;
+		import org.broadleafcommerce.admin.core.model.AppModelLocator;
+		import mx.managers.PopUpManager;
+		import org.broadleafcommerce.admin.offers.view.events.WizardEvent;
+		[Bindable]
+		private static var STATE_WHO:String = "state_who";
+		[Bindable]
+		private static var STATE_WHAT:String = "state_what";
+		[Bindable]
+		private static var STATE_HOW:String = "state_how";
+		
+		[Bindable]
+		private var currentOffer:Offer = OfferModelLocator.getInstance().offerModel.currentOffer;
+		[Bindable]
+		private var editOffer:Offer = new Offer();
+
+		private function handleCreationComplete():void {
+            // Center the TitleWindow container 
+            // over the control that created it.
+            PopUpManager.centerPopUp(this);
+        }
+
+		private function handleNextButtonClick(event:Event):void{
+			switch(currentState){
+				case STATE_WHAT:
+					currentState = STATE_HOW;
+					this.offerEditorToggleButtonBar.selectedIndex = 1;
+					break;
+				case STATE_HOW:
+					currentState = STATE_WHO;
+					this.offerEditorToggleButtonBar.selectedIndex = 2;
+					break;
+				case STATE_WHO:
+					dispatchEvent(new WizardEvent(WizardEvent.WIZARD_DONE_EVENT));
+					updateOffer();
+	                PopUpManager.removePopUp(this);
+					currentState = STATE_WHAT;
+					break;
+			}
+		}
+
+		private function handlePreviousButtonClick(event:Event):void{
+			switch(currentState){
+				case STATE_WHAT:
+					dispatchEvent(new WizardEvent(WizardEvent.WIZARD_CANCEL_EVENT));
+	                PopUpManager.removePopUp(this);
+					break;
+				case STATE_HOW:
+					currentState = STATE_WHAT;
+					this.offerEditorToggleButtonBar.selectedIndex = 0;
+					break;
+				case STATE_WHO:
+					currentState = STATE_HOW;
+					this.offerEditorToggleButtonBar.selectedIndex = 1;
+					break;
+			}
+		}
+
+		private function updateOffer():void{
+			editOffer.uses = currentOffer.uses;
+			editOffer.id = currentOffer.id;			
+			var auoe:AddUpdateOfferEvent = new AddUpdateOfferEvent(editOffer);
+			auoe.dispatch();
+		}
+		
+		private function handleToggleButtonBarClick(event:ItemClickEvent):void{
+			if(event.label == "Offer"){
+				currentState = STATE_WHAT;
+			}else if(event.label == "Detail"){
+				currentState = STATE_HOW;
+			}else if(event.label == "Customer"){
+				currentState = STATE_WHO;			
+			}
+		}
+		
+	]]>
+</mx:Script>
+
+<mx:Binding destination="editOffer.name" source="whatCanvas.offerNameText.text" />
+<mx:Binding destination="editOffer.description" source="whatCanvas.offerDescriptionText.text" />
+<mx:Binding destination="editOffer.startDate" source="whatCanvas.offerDateFrom.selectedDate" />
+<mx:Binding destination="editOffer.endDate" source="whatCanvas.offerDateTo.selectedDate" />
+<mx:Binding destination="editOffer.typeString" source="whatCanvas.offerType.selectedItem.valueOf()" />
+<mx:Binding destination="editOffer.applyDiscountToSalePrice" source="whatCanvas.saleRadio.selected" />
+<mx:Binding destination="editOffer.value.amount" source="Number(whatCanvas.discountValue.text)" />
+<mx:Binding destination="editOffer.discountTypeString" source="whatCanvas.discountType.selectedItem.toString()" />
+
+<mx:Binding destination="editOffer.priority" source="Number(howCanvas.offerPriorityText.text)" />
+<mx:Binding destination="editOffer.applyDiscountToMarkedItems" source="howCanvas.stackableCheckbox.selected" />
+<mx:Binding destination="editOffer.combinableWithOtherOffers" source="howCanvas.combinableCheckbox.selected" />
+<mx:Binding destination="editOffer.maxUses" source="Number(howCanvas.usesText.text) " />  
+<mx:Binding destination="editOffer.appliesToOrderRules" source="howCanvas.appliesOrderText.text" />  
+
+<mx:Binding destination="editOffer.appliesToCustomerRules" source="whoCanvas.appliesCustomerText.text" />  
+<mx:Binding destination="editOffer.deliveryTypeString" source="whoCanvas.customersRadioGroup.selectedValue.toString()" />
+
+
+<mx:Binding source="{currentOffer.name}" destination="whatCanvas.offerNameText.text" />
+<mx:Binding source="{currentOffer.description}" destination="whatCanvas.offerDescriptionText.text" />
+<mx:Binding source="{currentOffer.startDate}" destination="whatCanvas.offerDateFrom.selectedDate" />
+<mx:Binding source="{currentOffer.endDate}" destination="whatCanvas.offerDateTo.selectedDate" />
+<mx:Binding source="{currentOffer.typeString}" destination="whatCanvas.offerType.selectedItem" />
+<mx:Binding source="{currentOffer.applyDiscountToSalePrice}" destination="whatCanvas.saleRadio.selected" />
+<mx:Binding source="{!currentOffer.applyDiscountToSalePrice}" destination="whatCanvas.retailRadio.selected" />
+<mx:Binding source="{currentOffer.value.amount.toString()}" destination="whatCanvas.discountValue.text" />
+<mx:Binding source="{currentOffer.discountTypeString}" destination="whatCanvas.discountType.selectedItem" />
+
+<mx:Binding source="{currentOffer.priority.toString()}" destination="howCanvas.offerPriorityText.text" />
+<mx:Binding source="{currentOffer.applyDiscountToMarkedItems}" destination="howCanvas.stackableCheckbox.selected" />
+<mx:Binding source="{currentOffer.combinableWithOtherOffers}" destination="howCanvas.combinableCheckbox.selected" />
+<mx:Binding source="{currentOffer.maxUses.toString()}" destination="howCanvas.usesText.text" />  
+<mx:Binding source="{currentOffer.appliesToOrderRules}" destination="howCanvas.appliesOrderText.text" />  
+
+<mx:Binding source="{currentOffer.appliesToCustomerRules}" destination="whoCanvas.appliesCustomerText.text" />  
+<mx:Binding source="{currentOffer.deliveryTypeString}" destination="whoCanvas.customersRadioGroup.selectedValue" />
+
+	<mx:ToggleButtonBar id="offerEditorToggleButtonBar"
+		direction="horizontal" 
+		paddingLeft="10"
+		paddingTop="10"
+		color="black"
+		fontSize="10"
+		itemClick="handleToggleButtonBarClick(event)"
+		includeInLayout="false">
+		<mx:dataProvider>
+			<mx:String>Offer</mx:String>
+			<mx:String>Detail</mx:String>
+			<mx:String>Customer</mx:String>
+		</mx:dataProvider>
+	</mx:ToggleButtonBar>
+	<mx:Canvas id="canvas1" 
+		width="100%" 
+		height="100%" 
+		color="black"
+		fontSize="10"
+		backgroundAlpha="1.0" 
+		horizontalScrollPolicy="off" 
+		verticalScrollPolicy="off">
+	<offerWizard:NameCanvas id="whatCanvas" 
+		height="100%" 
+		width="100%" 
+		visible="false"/> 
+	<offerWizard:DetailCanvas id="howCanvas" 
+		height="100%" 
+		width="100%" 
+		visible="false"/> 
+	<offerWizard:CustomerCanvas id="whoCanvas" 
+		height="100%" 
+		width="100%" 
+		visible="false"/> 
+	<mx:Button id="nextButton"
+		label="Next"
+		right="10"
+		bottom="10"
+		click="handleNextButtonClick(event)"/>
+	<mx:Button id="previousButton"
+		label="Previous"
+		left="10"
+		bottom="10"
+		click="handlePreviousButtonClick(event)"
+		visible="false"/>
+	</mx:Canvas>
+	<mx:states>
+		<mx:State name="{STATE_WHAT}">
+			<mx:SetProperty target="{whatCanvas}" 
+				name="visible" 
+				value="true"/>
+			<mx:SetProperty target="{this.previousButton}"
+				name="visible"
+				value="false"/>
+		</mx:State>
+		<mx:State name="{STATE_HOW}">
+			<mx:SetProperty target="{howCanvas}" 
+				name="visible" 
+				value="true"/>
+			<mx:SetProperty target="{this.previousButton}"
+				name="visible"
+				value="true"/>
+		</mx:State>
+		<mx:State name="{STATE_WHO}">
+			<mx:SetProperty target="{whoCanvas}" 
+				name="visible" 
+				value="true"/>
+			<mx:SetProperty target="{this.nextButton}"
+				name="label"
+				value="Done"/>
+			<mx:SetProperty target="{this.previousButton}"
+				name="visible"
+				value="true"/>
+		</mx:State>
+	</mx:states>
+</mx:TitleWindow>

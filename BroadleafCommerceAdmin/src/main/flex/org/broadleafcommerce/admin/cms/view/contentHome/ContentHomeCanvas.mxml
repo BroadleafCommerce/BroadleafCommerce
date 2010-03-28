@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:flexlib="http://code.google.com/p/flexlib/"
+	xmlns:view="org.broadleafcommerce.admin.cms.view.*"
+	creationComplete="handleCreationComplete()"
+	xmlns:control="org.broadleafcommerce.admin.cms.control.*"
+	xmlns:contentHome="org.broadleafcommerce.admin.cms.view.contentHome.*"
+	xmlns:contentApproval="org.broadleafcommerce.admin.cms.view.contentApproval.*"
+	xmlns:code="http://code.google.com/p/flexlib/">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.cms.control.events.ReadContentForCheckoutEvent;
+			import mx.managers.PopUpManager;
+			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentChooseTypeModal;
+			import mx.containers.TitleWindow;
+			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditNonPage;
+			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
+			import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
+			import mx.controls.Alert;
+			import org.broadleafcommerce.admin.cms.view.contentCreation.ContentAddEditPage;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.cms.model.dynamicForms.ContentItem;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
+			import org.broadleafcommerce.admin.cms.control.events.ReadContentForSandboxEvent;
+			import org.broadleafcommerce.admin.cms.vo.Content;
+			import org.broadleafcommerce.admin.cms.model.ContentModel;
+			import org.broadleafcommerce.admin.cms.control.events.ReadContentAwaitingApprovalEvent;
+			import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
+
+			[Bindable]
+			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
+
+			[Bindable]
+			private var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
+
+			private function handleCreationComplete():void{
+				trace("DEBUG: ContentHomeCanvas.handleCreationComplete()");
+				//tnContentHomeCanvas.setClosePolicyForTab(0, SuperTab.CLOSE_NEVER);
+				contentModel.contentTabNavigator = tnContentHomeCanvas;
+				//new ReadContentForSandboxEvent(contentModel.loggedInUserSandbox).dispatch();
+				new ReadContentAwaitingApprovalEvent().dispatch();
+			}
+
+			private function handleViewClick(event:Event):void{
+				new ReadContentForSandboxEvent(contentModel.loggedInUserSandbox, null).dispatch();
+			}
+
+			private function handleAddClick(event:Event):void{
+				var newContentModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, ContentChooseTypeModal, true));
+				ContentChooseTypeModal(newContentModal).sandboxName = contentModel.loggedInUserSandbox;
+				ContentChooseTypeModal(newContentModal).tabName = this.parent.name;
+			}
+
+			private function handleFindContentClick(event:Event):void{
+				new ReadContentForCheckoutEvent(checkoutContentComboBox.selectedLabel, this).dispatch();
+			}
+
+
+			private function handleCreateContentClick(event:Event):void{
+				if (ContentUtil.isContentTypePage(createContentComboBox.selectedLabel)){
+					var contentAddEditPage:ContentAddEditPage = new ContentAddEditPage();
+					contentAddEditPage.contentType = createContentComboBox.selectedLabel;
+					contentAddEditPage.sandbox = authModel.userPrincipal.login;
+					new AddContentTabEvent("New Content", contentAddEditPage, null).dispatch();
+				} else {
+					var contentAddEditNonPage:ContentAddEditNonPage = new ContentAddEditNonPage();
+					contentAddEditNonPage.contentType = createContentComboBox.selectedLabel;
+					contentAddEditNonPage.sandbox = authModel.userPrincipal.login;
+					new AddContentTabEvent("New Content", contentAddEditNonPage, null).dispatch();
+				}
+			}
+
+		]]>
+	</mx:Script>
+
+	<mx:Binding
+		source="contentModel.contentAwaitingApproval"
+		destination="contentApprovalDataGrid.dataProvider"/>
+
+	<mx:Binding
+		source="contentModel.contentTypeComboBoxOptions"
+		destination="createContentComboBox.dataProvider"/>
+
+	<mx:Binding
+		source="contentModel.contentTypeComboBoxOptions"
+		destination="checkoutContentComboBox.dataProvider"/>
+
+    <mx:TabNavigator id="tnContentHomeCanvas"  width="100%" height="100%" styleName="padding10">
+
+	<mx:VBox height="100%" width="100%" label="Summary">
+		<mx:VBox width="1024" styleName="padding10">
+			<mx:HBox width="100%">
+				<mx:Panel id="createContentPanel" title="Create Content" layout="vertical" color="0x323232" height="150" borderAlpha="1"
+	         		styleName="padding10" horizontalAlign="center" width="485">
+					<mx:VBox width="420">
+						<mx:Text text="To create a new content item, first choose the content item below and then press 'New'." width="100%" fontWeight="bold"/>
+			        	<mx:VBox>
+			        		<mx:Label text="Content Type"/>
+				        	<mx:HBox>
+				            	<mx:ComboBox id="createContentComboBox"/>
+				        		<mx:Button label="New" click="handleCreateContentClick(event);"/>
+				        	</mx:HBox>
+			        	</mx:VBox>
+					</mx:VBox>
+				</mx:Panel>
+				<mx:Panel id="modifyContentPanel" title="Checkout Content" layout="vertical" color="0x323232" height="150" borderAlpha="1"
+	         		styleName="padding10" horizontalAlign="center" width="485">
+					<mx:VBox width="420">
+						<mx:Text text="Choose the content type you would like to modify and then press 'Find Content' to locate the specific item." width="100%" fontWeight="bold"/>
+			        	<mx:VBox>
+			        		<mx:Label text="Content Type"/>
+				        	<mx:HBox>
+				            	<mx:ComboBox id="checkoutContentComboBox"/>
+				        		<mx:Button label="Find" click="handleFindContentClick(event);"/>
+				        	</mx:HBox>
+			        	</mx:VBox>
+					</mx:VBox>
+				</mx:Panel>
+			</mx:HBox>
+			<mx:Spacer height="10" width="100%"/>
+			<mx:Panel id="sandboxesPanel" title="Your Sandboxes" layout="vertical" color="0x323232" height="200" borderAlpha="1"
+	         		styleName="padding10" horizontalAlign="center" width="980">
+	         		<mx:VBox>
+	         			<mx:HBox>
+	         				<mx:Label text="Sandbox {contentModel.loggedInUserSandbox}" fontSize="14"/>
+	         				<mx:Button id="viewButton" label="View" styleName="viewEditButton" click="handleViewClick(event);"/>
+	         				<mx:Button id="addButton" label="Add Content" styleName="addButton" click="handleAddClick(event)"/>
+	         			</mx:HBox>
+	         		</mx:VBox>
+			</mx:Panel>
+			<mx:Spacer height="10" width="100%"/>
+			<mx:Panel id="contentAwaitingApprovalPanel" title="Content Awaiting Approval" layout="vertical" color="0x323232" height="250" borderAlpha="1"
+	         		styleName="padding10" horizontalAlign="center" width="980" visible="{contentModel.contentRoles.isContentApprover}" includeInLayout="{contentModel.contentRoles.isContentApprover}">
+				<contentApproval:ContentApprovalDataGrid
+					id="contentApprovalDataGrid" height="100%" width="100%"/>
+			</mx:Panel>
+		</mx:VBox>
+	</mx:VBox>
+
+	</mx:TabNavigator>
+
+</mx:Canvas>

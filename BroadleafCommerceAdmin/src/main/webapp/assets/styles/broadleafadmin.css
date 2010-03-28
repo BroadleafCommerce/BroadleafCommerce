@@ -1,0 +1,165 @@
+/* CSS file */
+@font-face
+{
+    src: url("/assets/fonts/DejaVuSans.ttf");
+    font-family: main;
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face
+{
+    src: url("/assets/fonts/DejaVuSans-Bold.ttf");
+    font-family: main;
+    font-style: normal;
+    font-weight: bold;
+}
+global {
+	adminLogo: Embed(source="/assets/images/broadleaf_logo.png");
+}
+Application {
+	font-family: main;
+	color: #333333;
+	font-size: 11;
+	theme-color: #006699;
+	background-image: Embed("/assets/images/broadleaf_skin.png",
+			scaleGridLeft="5",
+			scaleGridRight="10",
+			scaleGridTop="70",
+			scaleGridBottom="85");
+}
+VRule {
+   strokeColor: #bbbbbb;
+   shadowColor: #f2f2f2;
+   strokeWidth: 2;
+}
+ButtonBar {
+   buttonHeight: 32;
+   horizontalGap: -1;
+   buttonStyleName: "mybuttonBarButtonStyle";
+   firstButtonStyleName: "mybuttonBarFirstButtonStyle";
+   lastButtonStyleName: "mybuttonBarLastButtonStyle";
+}
+TitleWindow {
+	font-family: main;
+	color: #333333;
+	font-size: 12;
+   	borderStyle: solid;
+   	borderAlpha: 0.57;
+   	borderThickness: 1;
+   	borderThicknessLeft: 0;
+   	borderThicknessTop: 0;
+   	borderThicknessBottom: 0;
+   	borderThicknessRight: 0;
+   	roundedBottomCorners: false;
+   	cornerRadius: 5;
+   	headerHeight: 27;
+   	backgroundAlpha: 1;
+   	highlightAlphas: 0.48, 0;
+   	headerColors: #efefef, #dcdcdc;
+   	backgroundColor: #d9d9d9;
+   	dropShadowEnabled: true;
+   	shadowDistance: 4;
+   	shadowDirection: right;
+}
+LinkButton
+{
+	font-weight: bold;
+	selectionColor: #7fb2cc;;
+	skin: ClassReference("org.broadleafcommerce.util.ToggleLinkButtonSkin");
+}
+.mybuttonBarButtonStyle {
+   highlightAlphas: 0.23, 0;
+   fillAlphas: 0.88, 0.27, 0.75, 0.65;
+   fillColors: #fafafa, #e5e5e5, #ffffff, #eeeeee;
+   color: #343434;
+   borderColor: #b9b9b9;
+}
+
+.mybuttonBarFirstButtonStyle {
+   cornerRadius: 2;
+}
+
+.mybuttonBarLastButtonStyle {
+   cornerRadius: 2;
+}
+
+ToggleButtonBar {
+   buttonHeight: 28;
+   horizontalGap: -1;
+   textIndent: 0;
+   letterSpacing: 0;
+   buttonStyleName: "mytoggleButtonBarButtonStyle";
+   firstButtonStyleName: "mytoggleButtonBarFirstButtonStyle";
+   lastButtonStyleName: "mytoggleButtonBarLastButtonStyle";
+   selectedButtonTextStyleName: "mytoggleButtonBarSelectedButtonStyle";
+}
+
+.mytoggleButtonBarButtonStyle {
+   highlightAlphas: 0.22, 0;
+   fillAlphas: 1, 1, 1, 1;
+   borderColor: #b9b9b9;
+}
+
+.mytoggleButtonBarFirstButtonStyle {
+   cornerRadius: 3;
+}
+
+.mytoggleButtonBarLastButtonStyle {
+   cornerRadius: 3;
+}
+
+.mytoggleButtonBarSelectedButtonStyle {
+   color: #343434;
+}
+
+.title {
+	color:#666666;
+    font-family: main;
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+.addButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/add.png');
+}
+
+.viewEditButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/zoom.png');
+}
+
+.deleteButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/cross.png');
+}
+.previewButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/eye.png');
+}
+.folderNewButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/folder_add.png');
+}
+.folderUploadButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/folder_go.png');
+}
+.folderDeleteButton {
+	cornerRadius: 2;
+	icon: Embed(source='/assets/images/folder_delete.png');
+}
+.padding10 {
+	paddingLeft: 10;
+	paddingRight: 10;
+	paddingTop: 10;
+	paddingBottom: 10;
+}
+
+.padding25 {
+	paddingLeft: 25;
+	paddingRight: 25;
+	paddingTop: 25;
+	paddingBottom: 25;
+}

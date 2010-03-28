@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:components="org.broadleafcommerce.util.components.*"
+	creationComplete="creationComplete()">
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.core.model.AuthenticationModel;
+			import org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms.ContentFormPersist;
+			import org.broadleafcommerce.admin.cms.control.events.RemoveContentTabEvent;
+			import org.broadleafcommerce.admin.cms.vo.ContentDetails;
+			import org.broadleafcommerce.admin.cms.vo.Content;
+			import org.broadleafcommerce.admin.cms.view.contentCreation.dynamicForms.ContentFormCreator;
+			import mx.controls.Spacer;
+			import org.broadleafcommerce.admin.cms.model.dynamicForms.RenderItem;
+			import mx.controls.Alert;
+			import mx.controls.Label;
+			import mx.controls.RichTextEditor;
+			import mx.containers.FormItem;
+			import org.broadleafcommerce.admin.cms.model.dynamicForms.CustomField;
+			import org.broadleafcommerce.admin.cms.model.dynamicForms.ContentItem;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
+			import org.broadleafcommerce.admin.cms.model.ContentModel;
+
+			[Bindable]
+			private var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
+
+			[Bindable]
+			public var contentType:String;
+
+			[Bindable]
+			public var content:Content;
+
+			[Bindable]
+			public var contentDetailsList:ArrayCollection;
+
+			[Bindable]
+			public var sandbox:String;
+
+			[Bindable]
+			public var callingTabName:String;
+
+			private var authModel:AuthenticationModel = AppModelLocator.getInstance().authModel;
+
+			private function creationComplete():void {
+				if (contentType == null || sandbox == null) {
+					Alert.show("Error: contentType and sandbox should not be null");
+				}
+
+				refreshDynamicForm();
+				if (content != null && contentDetailsList != null){
+					populateFields();
+				}
+
+				this.buttonSave.addEventListener(MouseEvent.CLICK, save);
+			}
+
+			private function handleCancelClick(event:Event):void{
+				new RemoveContentTabEvent(this.parent.name).dispatch();
+			}
+
+			private function save(e:Event):void{
+				ContentFormPersist.persistForms(headerForm, dynamicForm, content, contentDetailsList, contentType, authModel.userPrincipal.login, sandbox, callingTabName);
+			}
+
+			private function populateFields():void{
+				this.txtTitle.text = content.title;
+				this.txtDisplayRule.text = content.displayRule;
+				this.txtPriority.text = content.priority.toString();
+				this.cbxLanguage.selectedItem = content.languageCode;
+
+				if (content.activeStartDate != null){
+					this.dateBegin.selectedDate = new Date(content.activeStartDate);
+				}
+
+				if (content.activeEndDate != null){
+					this.dateEnd.selectedDate = new Date(content.activeEndDate);
+				}
+
+				this.chkOnline.selected = content.online;
+			}
+
+			private function refreshDynamicForm():void{
+				this.removeDynamicForm();
+				createDynamicForm();
+			}
+
+			private function removeDynamicForm():void{
+				this.dynamicForm.removeAllChildren();
+			}
+
+			private function createDynamicForm():void{
+				var contentTypes:ArrayCollection = contentModel.contentTypes;
+
+				for each(var contentItem:ContentItem in contentTypes){
+					if (contentItem.type.toLowerCase() == contentType.toLowerCase()){
+						var customFields:ArrayCollection = contentItem.contentFields;
+						ContentFormCreator.createCustomFields(this.dynamicForm, customFields, contentDetailsList);
+					}
+				}
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Binding source="ContentModel.LANGUAGE_CODES" destination="cbxLanguage.dataProvider" />
+
+    <mx:StringValidator
+        id="nameValidator"
+        source="{txtTitle}"
+        property="text"
+        minLength="2"
+    />
+
+    <mx:NumberValidator
+    	id="priorityValidator"
+    	source="{txtPriority}"
+    	property="text"
+    />
+
+    <mx:VBox width="100%" height="100%">
+    	<mx:FormHeading id="formHeading" label="{(content == null)? 'Create a new ' + contentType : 'Edit ' + contentType}" fontSize="20"/>
+    	<mx:HBox width="100%" height="100%">
+    		<mx:VBox>
+	            <mx:Form id="headerForm">
+	                <mx:FormItem label="Title" name="title">
+	                    <mx:TextInput id="txtTitle" width="220"/>
+	                </mx:FormItem>
+	                <mx:FormItem label="Display Rule" name="displayRule">
+	                	<mx:TextArea id="txtDisplayRule" width="220" height="100"/>
+	                </mx:FormItem>
+	                <mx:FormItem label="Priority" name="priority">
+	                	<mx:TextInput id="txtPriority" width="220"/>
+	                </mx:FormItem>
+	                 <mx:FormItem label="Language" name="languageCode">
+						<mx:ComboBox
+							id="cbxLanguage"
+							labelField="Language"
+							width="220" selectedIndex="1"/>
+	                </mx:FormItem>
+	                <mx:FormItem label="Begin Date" name="activeStartDate">
+	                	<mx:DateField id="dateBegin" width="220"/>
+	                </mx:FormItem>
+	                <mx:FormItem label="End Date" name="activeEndDate">
+	                	<mx:DateField id="dateEnd" width="220"/>
+	                </mx:FormItem>
+	                <mx:FormItem label="Online" name="online">
+	                	<mx:CheckBox selected="true" id="chkOnline"/>
+	                </mx:FormItem>
+	            </mx:Form>
+				<mx:HBox>
+					<mx:Spacer width="100%"/>
+				 	<mx:Button label="Cancel" click="handleCancelClick(event)" id="buttonCancel" />
+				 	<mx:Button label="Save" id="buttonSave" />
+				</mx:HBox>
+    		</mx:VBox>
+
+			<mx:VRule height="100%"/>
+
+			<mx:VBox id="dynamicFormArea">
+				<mx:Form id="dynamicForm" />
+			</mx:VBox>
+    	</mx:HBox>
+    </mx:VBox>
+
+</mx:VBox>

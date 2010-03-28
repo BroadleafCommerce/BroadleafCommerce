@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:components="org.broadleafcommerce.util.components.*"
+	width="500"
+	height="275"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this)"
+	creationComplete="creationComplete()"
+	verticalAlign="middle" horizontalAlign="center"
+	title="Choose Content Type">
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.cms.control.events.AddContentTabEvent;
+			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
+			import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
+			import org.broadleafcommerce.admin.cms.model.ContentModel;
+			import org.broadleafcommerce.admin.cms.control.events.SubmitContentFromSandboxEvent;
+			import org.broadleafcommerce.admin.security.control.events.SaveAdminUserEvent;
+			import mx.managers.PopUpManager;
+
+			private var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
+
+			[Bindable]
+			public var sandboxName:String;
+
+			[Bindable]
+			public var tabName:String;
+
+			private function creationComplete():void {
+				PopUpManager.centerPopUp(this);
+			}
+
+			private function handleCreateContentClick(event:Event):void{
+				if (ContentUtil.isContentTypePage(createContentComboBox.selectedLabel)){
+					var contentAddEditPage:ContentAddEditPage = new ContentAddEditPage();
+					contentAddEditPage.contentType = createContentComboBox.selectedLabel;
+					contentAddEditPage.sandbox = sandboxName;
+					contentAddEditPage.callingTabName = tabName;
+					new AddContentTabEvent("New Content", contentAddEditPage, null).dispatch();
+				} else {
+					var contentAddEditNonPage:ContentAddEditNonPage = new ContentAddEditNonPage();
+					contentAddEditNonPage.contentType = createContentComboBox.selectedLabel;
+					contentAddEditNonPage.sandbox = sandboxName;
+					contentAddEditNonPage.callingTabName = tabName;
+					new AddContentTabEvent("New Content", contentAddEditNonPage, null).dispatch();
+				}
+
+				PopUpManager.removePopUp(this);
+			}
+
+			private function handleCancelClick(event:Event):void{
+				PopUpManager.removePopUp(this);
+			}
+		]]>
+	</mx:Script>
+
+	<mx:Binding
+		source="contentModel.contentTypeComboBoxOptions"
+		destination="createContentComboBox.dataProvider"/>
+
+    <mx:VBox label="Submit Content" verticalAlign="middle" width="451" styleName="padding10" height="215" verticalGap="0" verticalScrollPolicy="off">
+		<mx:Text text="To create a new content item, please choose a content type below." fontWeight="bold" fontSize="14" width="431" height="23" textAlign="center"/>
+        <mx:Form width="430" verticalScrollPolicy="off" horizontalScrollPolicy="off">
+            <mx:FormItem label="Content Type">
+                <mx:ComboBox id="createContentComboBox" width="300"/>
+            </mx:FormItem>
+        </mx:Form>
+        <mx:HBox width="400" horizontalAlign="right" height="41">
+        	<mx:Button label="Cancel" click="handleCancelClick(event)" id="buttonCancel" visible="true"/>
+     		<mx:Button label="Submit" click="handleCreateContentClick(event)" id="buttonSubmit" visible="true"/>
+        </mx:HBox>
+    </mx:VBox>
+
+</mx:TitleWindow>

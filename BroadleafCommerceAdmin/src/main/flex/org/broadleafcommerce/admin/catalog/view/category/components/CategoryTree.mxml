@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Tree xmlns:mx="http://www.adobe.com/2006/mxml" 
+		labelField="name"
+		iconFunction="determineIcon"
+		dragEnabled="true"
+		dropEnabled="true" 
+		dragComplete="handleDragComplete(event)"
+		dragDrop="handleDragDrop(event)"
+		itemClick="handleItemClick(event)"
+		dragStart="handleDragStart(event)"
+		>
+		<mx:Script>
+			<![CDATA[
+				import mx.controls.Alert;
+				import mx.utils.ObjectUtil;
+				import mx.collections.ArrayCollection;
+				import org.broadleafcommerce.admin.catalog.control.events.category.CopyCategoryEvent;
+				import mx.managers.DragManager;
+				import org.broadleafcommerce.admin.catalog.control.events.category.MoveCategoryEvent;
+				import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
+				import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
+				import mx.events.ListEvent;
+				import mx.events.DragEvent;
+				import org.broadleafcommerce.admin.catalog.vo.category.Category; 
+
+            public var previousSelectedItem:Object;
+
+				
+			[Bindable]
+            [Embed("/assets/images/3D-Documents.png")]
+            private var categoryHasIcon:Class;
+
+            [Bindable]
+            [Embed("/assets/images/Blank.png")]
+            private var categoryHasNotIcon:Class;
+            
+            private function isBranch(item:Object):Boolean{
+            	return (item && item.hasOwnProperty("children") && item.children.length > 0);
+            }
+            
+			private function determineIcon(item:Object):Class{
+				var iconClass:Class;
+					if(isBranch(item)){
+						iconClass = categoryHasIcon;
+					}else{
+						iconClass = categoryHasNotIcon;
+					}
+                return iconClass;				
+			}			
+			
+			private function handleDragStart(event:DragEvent):void{
+				super.dragStartHandler(event);
+				event.draggedItem = selectedItem;
+				var e:DragEvent = event;
+			}
+			
+			private function handleDragComplete(event:DragEvent):void{
+				super.dragCompleteHandler(event);
+			}
+			
+			private function handleDragDrop(event:DragEvent):void{
+				if(event.action == DragManager.COPY){
+					Alert.show("Categories do not currently support multiple parents.");
+					event.preventDefault();
+					return;
+				}
+				try{						
+					var items:Array = event.dragSource.dataForFormat("treeItems") as Array;					
+					var draggedItem:CategoryTreeItem = CategoryTreeItem(items[0]);
+					var index:int = this.calculateDropIndex(event);
+					var newParent:CategoryTreeItem;
+					if(isItemOpen(this.indexToItemRenderer(index-1).data)){
+						var x:Object = this.indexToItemRenderer(index-1);
+						newParent = (this.indexToItemRenderer(index-1).data as CategoryTreeItem);					
+					}else{					
+						newParent = (this.getParentItem(this.indexToItemRenderer(index-1).data) as CategoryTreeItem);										
+					}
+					var oldParent:CategoryTreeItem = (getParentItem(draggedItem) as CategoryTreeItem);
+					if(draggedItem.catId == newParent.catId){
+						event.preventDefault();
+						Alert.show("Can not drag a Category onto itself");
+						this.hideDropFeedback(event);					
+						return;
+					}
+
+					super.dragDropHandler(event);
+					var childIndex:int = newParent.children.getItemIndex(draggedItem);
+					if(event.action == DragManager.COPY){
+						var cce:CopyCategoryEvent = new CopyCategoryEvent(childIndex,Category(draggedItem.category), Category(newParent.category));
+						cce.dispatch();	
+					}else{
+						var mce:MoveCategoryEvent = new MoveCategoryEvent(childIndex,Category(draggedItem.category), Category(oldParent.category), Category(newParent.category));
+						mce.dispatch();
+					}				
+			   }catch (error:Error){
+					Alert.show("Could not complete drag and drop : "+error.message);
+					event.stopImmediatePropagation();
+					this.hideDropFeedback(event);
+				}
+			}
+
+			private function handleItemClick(event:ListEvent):void{
+				previousSelectedItem = this.selectedItem;
+				var selectedItem:Category = Category(this.selectedItem.category); 
+				var ecce:EditCategoryEvent = new EditCategoryEvent(selectedItem);
+				ecce.dispatch();
+			}				
+				
+			]]>
+		</mx:Script>
+	
+</mx:Tree>

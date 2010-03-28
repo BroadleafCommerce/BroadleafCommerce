@@ -94,7 +94,6 @@
     <module>BroadleafCommerceUSPSSchemas</module>
     <module>BroadleafCommerceDemo</module>
     <module>BroadleafCommerceAdmin</module>
-    <module>BroadleafCommerceAdminWeb</module>
     <module>BroadleafCommerceCyberSource</module>
     <module>BroadleafCommerceCyberSourceAPI</module>
   </modules>
@@ -298,14 +297,14 @@
 	      <groupId>org.broadleafcommerce</groupId>
 	      <artifactId>broadleaf-demo</artifactId>
 	      <version>1.0.2-SNAPSHOT</version>
-	      <type>jar</type>
+	      <type>war</type>
 	      <scope>compile</scope>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.broadleafcommerce</groupId>
 	      <artifactId>broadleaf-admin</artifactId>
 	      <version>1.0.2-SNAPSHOT</version>
-	      <type>jar</type>
+	      <type>war</type>
 	      <scope>compile</scope>
 	    </dependency>
 	    <dependency>
@@ -708,6 +707,41 @@
 			<groupId>org.apache.tiles</groupId>
 			<artifactId>tiles-jsp</artifactId>
 			<version>2.0.5</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta-regexp</groupId>
+			<artifactId>jakarta-regexp</artifactId>
+			<version>1.4</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.1</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.1</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.4</version>
+			<type>jar</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.1</version>
 			<type>jar</type>
 			<scope>runtime</scope>
 		</dependency>

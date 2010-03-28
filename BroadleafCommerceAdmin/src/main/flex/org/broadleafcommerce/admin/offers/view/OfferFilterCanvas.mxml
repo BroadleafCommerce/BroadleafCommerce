@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
+			import org.broadleafcommerce.admin.offers.vo.Offer;
+			import mx.utils.StringUtil;
+			import org.broadleafcommerce.admin.offers.vo.Offer;
+			import org.broadleafcommerce.admin.offers.model.OfferModel;
+			
+			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
+			private var filterTextInputLastChangedDate:Date;
+			
+			private function handleFilterChange():void{
+				var now:Date = new Date();
+				var filterText:String = StringUtil.trim(this.filterTextInput.text);
+				this.offerModel.offersListFiltered.removeAll();
+				if(this.notStartedCheckBox.selected && filterText == ""){
+					for each(var offerFilteredByNotStarted:Offer in this.offerModel.offersList){
+						if(offerFilteredByNotStarted.startDate > now){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByNotStarted);
+						}
+					}
+				}else if(this.completeCheckBox.selected && filterText == ""){
+					for each(var offerFilteredByCompleted:Offer in this.offerModel.offersList){
+						if(offerFilteredByCompleted.endDate < now){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByCompleted);
+						}
+					}					
+				}else if(this.inProgressCheckBox.selected && filterText == ""){
+					for each(var offerFilteredByInProgress:Offer in this.offerModel.offersList){
+						if(offerFilteredByInProgress.startDate < now && offerFilteredByInProgress.endDate > now){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByInProgress);
+						}
+					}					
+				}else if(!this.notStartedCheckBox.selected && !this.inProgressCheckBox.selected && !this.completeCheckBox.selected  && filterText == ""){
+					for each(var offerNotFilteredByDateOrName:Offer in this.offerModel.offersList){
+						this.offerModel.offersListFiltered.addItem(offerNotFilteredByDateOrName);
+					}					
+				}else if(this.notStartedCheckBox.selected && filterText != ""){
+					for each(var offerFilteredByNotStartedAndName:Offer in this.offerModel.offersList){
+						if(offerFilteredByNotStartedAndName.startDate > now && offerFilteredByNotStartedAndName.name.match(filterText)){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByNotStartedAndName);
+						}
+					}					
+				}else if(this.completeCheckBox.selected && filterText != ""){
+					for each(var offerFilteredByCompletedAndName:Offer in this.offerModel.offersList){
+						if(offerFilteredByCompletedAndName.endDate < now && offerFilteredByCompletedAndName.name.match(filterText)){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByCompletedAndName);
+						}
+					}					
+				}else if(this.inProgressCheckBox.selected && filterText != ""){
+					for each(var offerFilteredByInProgressAndName:Offer in this.offerModel.offersList){
+						if(offerFilteredByInProgressAndName.startDate < now && offerFilteredByInProgressAndName.endDate > now && offerFilteredByInProgressAndName.name.match(filterText)){
+							this.offerModel.offersListFiltered.addItem(offerFilteredByInProgressAndName);
+						}
+					}					
+				}else if(!this.notStartedCheckBox.selected && !this.inProgressCheckBox.selected && !this.completeCheckBox.selected  && filterText != ""){
+					for each(var offerNotFilteredByDateOnlyName:Offer in this.offerModel.offersList){
+						if(offerNotFilteredByDateOnlyName.name.match(filterText)){
+							this.offerModel.offersListFiltered.addItem(offerNotFilteredByDateOnlyName);
+						}
+					}						
+				}
+			}
+			
+			// handler for the 'Not Started' filter
+			private function handleNotStartedCheckBoxChange():void{
+				if(this.notStartedCheckBox.selected){
+					this.inProgressCheckBox.enabled = false;
+					this.completeCheckBox.enabled = false;
+				}else{
+					this.inProgressCheckBox.enabled = true;
+					this.completeCheckBox.enabled = true;
+				}
+				this.handleFilterChange();
+			}
+			
+			// handler for the 'In Progress' filter
+			private function handleInProgressCheckBoxChange():void{
+				if(this.inProgressCheckBox.selected){
+					this.notStartedCheckBox.enabled = false;
+					this.completeCheckBox.enabled = false;
+				}else{
+					this.notStartedCheckBox.enabled = true;
+					this.completeCheckBox.enabled = true;
+				}
+				this.handleFilterChange();
+			}
+			
+			// handler for the 'Complete' filter
+			private function handleCompleteCheckBoxChange():void{
+				if(this.completeCheckBox.selected){
+					this.notStartedCheckBox.enabled = false;
+					this.inProgressCheckBox.enabled = false;
+				}else{
+					this.notStartedCheckBox.enabled = true;
+					this.inProgressCheckBox.enabled = true;
+				}
+				this.handleFilterChange();
+			}
+			
+			// handles a change in the filter for the offer name
+			private function handleFilterTextInputChange():void{
+				this.filterTextInputLastChangedDate = new Date();
+				this.waitOnUserInput();
+			}
+			
+			// waits a predetermined amount of time before calling the function that filters through the list of offers
+			private function waitOnUserInput():void{
+				var millisecondsToWait:Number = 200;
+				if((this.filterTextInputLastChangedDate.getTime() + millisecondsToWait) < (new Date().getTime())){
+					this.handleFilterChange();
+				}else{
+					// if the predetermined amount of time has not elapsed, call this function again until it does
+					callLater(this.waitOnUserInput);
+				}			
+			}
+		]]>
+	</mx:Script>
+	<mx:Grid>
+		<mx:GridRow verticalAlign="middle">
+			<mx:GridItem horizontalAlign="right"
+				verticalAlign="middle">
+				<mx:Label id="filterByNameLabel"
+					text="Filter By Name:"/>
+			</mx:GridItem>
+			<mx:GridItem verticalAlign="middle">
+				<mx:TextInput id="filterTextInput"
+					x="50"
+					width="160"
+					change="handleFilterTextInputChange()"/>
+			</mx:GridItem>
+			<mx:GridItem textAlign="right"
+				verticalAlign="middle"
+				paddingLeft="40">
+					<mx:Label id="filterByDateLabel" 
+						text="Filter By Date:"/>
+			</mx:GridItem>
+			<mx:GridItem verticalAlign="middle">
+				<mx:HBox horizontalGap="20"
+					verticalAlign="middle">
+					<mx:CheckBox id="notStartedCheckBox"
+						label="Not Started"
+						labelPlacement="right"
+						change="handleNotStartedCheckBoxChange()"/>
+					<mx:CheckBox id="inProgressCheckBox"
+						label="In Progress"
+						labelPlacement="right"
+						change="handleInProgressCheckBoxChange()"/>
+					<mx:CheckBox id="completeCheckBox"
+						label="Complete"
+						labelPlacement="right"
+						change="handleCompleteCheckBoxChange()"/>
+				</mx:HBox>
+			</mx:GridItem>
+		</mx:GridRow>
+	</mx:Grid>
+</mx:Canvas>

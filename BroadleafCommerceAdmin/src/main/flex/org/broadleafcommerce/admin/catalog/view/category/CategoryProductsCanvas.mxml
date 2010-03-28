@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:components="org.broadleafcommerce.admin.catalog.view.category.components.*" xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*">
+
+<mx:Script>
+	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.control.events.product.RemoveProductEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.product.NewProductEvent;
+		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+		import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
+		import org.broadleafcommerce.admin.catalog.vo.product.Product;
+		import org.broadleafcommerce.admin.catalog.model.CatalogModel;
+		import org.broadleafcommerce.admin.catalog.model.ProductModel;
+		import mx.collections.ArrayCollection;
+		import org.broadleafcommerce.admin.core.model.AppModelLocator;
+		import org.broadleafcommerce.admin.catalog.model.CategoryModel;
+
+		[Bindable]
+		private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+
+		[Bindable]
+		private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
+
+		private function handleAddClick(event:MouseEvent):void{
+				new NewProductEvent().dispatch();			
+		}
+
+		 private function handleProductsDataGridClick(event:MouseEvent):void{
+		 	if(ProductsDataGrid(event.currentTarget).selectedItem != null){
+			 	var product:Product = Product(ProductsDataGrid(event.currentTarget).selectedItem);
+			 	viewProduct(product, false);		 		
+		 	}
+		 }
+
+		 private function handleViewEditButtonClick(event:MouseEvent):void{
+		 	var product:Product = Product(categoryProductDataGrid.selectedItem);
+		 	viewProduct(product, true);
+		 }
+
+		 private function viewProduct(product:Product, view:Boolean):void{
+		 	var epe:EditProductEvent = new EditProductEvent(product, view);
+		 	epe.dispatch();
+		 }
+
+		private function handleRemoveButtonClick(event:MouseEvent):void{
+			var rpe:RemoveProductEvent = new RemoveProductEvent(Product(categoryProductDataGrid.selectedItem));
+			rpe.dispatch();
+		}
+
+	]]>
+</mx:Script>
+
+	<mx:Binding source="productModel.filteredCatalogProducts"
+	            destination="categoryProductDataGrid.dataProvider" />
+	<mx:Binding source="categoryProductDataGrid.selectedItem != null"
+				destination="removeButton.enabled" />
+	<mx:Binding source="categoryProductDataGrid.selectedItem != null"
+				destination="viewEditButton.enabled" />
+
+	<mx:VBox height="100%" width="100%" styleName="padding10">
+		<mx:HBox>
+			<components:ProductFilter/>
+			<mx:VRule
+				height="25"/>
+			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/>
+			<mx:Button id="viewEditButton" label="View/Edit" click="handleViewEditButtonClick(event)" styleName="viewEditButton" />
+			<mx:Button id="removeButton" label="Remove" styleName="deleteButton" click="handleRemoveButtonClick(event)"/>
+		</mx:HBox>
+		<components1:ProductsDataGrid id="categoryProductDataGrid" click="handleProductsDataGridClick(event)"
+			height="100%" width="100%"/>
+
+	</mx:VBox>
+
+</mx:Canvas>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Grid 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	defaultButton="{submitButton}">
+	<mx:Script>
+		<![CDATA[
+			private function handleAdminSearch(event:Event):void{
+				
+			}
+			
+			private function handleAdvancedAdminSearch(event:Event):void{
+				
+			}
+		]]>
+	</mx:Script>	
+	<mx:GridRow>
+		<mx:GridItem 
+			styleName="fieldLabel">
+			<mx:Label
+				text="Search By Name:"/>
+		</mx:GridItem>
+		<mx:GridItem>
+			<mx:TextInput
+				id="nameTextInput"
+				width="160"/>
+		</mx:GridItem>
+		<mx:GridItem> 
+			<mx:Button
+				id="submitButton"
+				label="Search"
+				click="handleAdminSearch(event)"/>
+		</mx:GridItem>
+		<mx:GridItem>
+			<mx:LinkButton
+				id="advancedSearchLinkButton"
+				label="Advanced Search"
+				click="handleAdvancedAdminSearch(event)"/>
+		</mx:GridItem>
+	</mx:GridRow>
+</mx:Grid>

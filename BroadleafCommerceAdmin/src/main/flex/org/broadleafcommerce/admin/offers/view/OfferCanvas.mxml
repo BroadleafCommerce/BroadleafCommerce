@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:offer="org.broadleafcommerce.admin.view.offer.*" 
+	xmlns:view1="org.broadleafcommerce.admin.offers.view.*"
+	creationComplete="handleCreationComplete()" >
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.offers.control.events.FindAllOffersEvent;
+			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
+			import org.broadleafcommerce.admin.offers.model.OfferModel;
+			import org.broadleafcommerce.admin.offers.vo.Offer;
+			import org.broadleafcommerce.admin.offers.model.OfferModel;
+			import org.broadleafcommerce.admin.offers.vo.Offer;
+			import org.broadleafcommerce.admin.offers.control.events.ShowOfferWindowEvent;
+			import mx.containers.TitleWindow;
+			import mx.managers.PopUpManager;
+			import mx.core.IFlexDisplayObject;
+			import org.broadleafcommerce.admin.offers.view.events.WizardEvent;
+
+			[Bindable]
+			private static var STATE_LIST:String = "state_list";
+			[Bindable]
+			private static var STATE_NEW:String = "state_new";
+
+			[Bindable]
+			private var offerModel:OfferModel = OfferModelLocator.getInstance().offerModel;
+
+			private function handleCreationComplete():void{
+				var faoe:FindAllOffersEvent = new FindAllOffersEvent();
+				faoe.dispatch();				
+			}
+
+			private function handleNewClick(event:Event):void{
+					var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent();
+					sowe.dispatch()
+			}
+
+			private function handleOffersDataGridDoubleClick(event:Event):void{
+				var sowe:ShowOfferWindowEvent = new ShowOfferWindowEvent(Offer(offersDataGrid.selectedItem));
+				sowe.dispatch();
+			}
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="offerModel.offersListFiltered"
+		destination="offersDataGrid.dataProvider"/>
+
+	<view1:OfferCanvasViewHelper id="offerCanvasViewHelper" />
+
+	<mx:TabNavigator id="offerTN" width="100%" height="100%" >
+		<mx:Canvas width="100%" height="100%" label="Offers" >
+			<mx:VBox styleName="padding10" width="100%" height="100%">
+				<mx:HBox verticalAlign="middle">
+					<mx:Button styleName="addButton" id="addOfferBtn" height="28" label="New Offer"
+						click="handleNewClick(event)" />
+
+					<view1:OfferFilterCanvas/>
+				</mx:HBox>
+				<view1:OfferDataGrid
+				id="offersDataGrid"
+				width="100%"
+				height="100%"
+				doubleClickEnabled="true"
+				doubleClick="handleOffersDataGridDoubleClick(event)"/>
+			</mx:VBox>
+
+		</mx:Canvas>
+	</mx:TabNavigator>
+
+
+	<!--	<mx:DataGrid id="offersDataGrid" x="10" y="37" width="75%" height="75%" doubleClickEnabled="true" doubleClick="handleOffersDataGridDoubleClick(event)">
+		</mx:DataGrid>
+		-->
+</mx:Canvas>
+
+

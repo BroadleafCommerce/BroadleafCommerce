@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="creationComplete()"
+	xmlns:category="org.broadleafcommerce.admin.catalog.view.category.*"
+	xmlns:product="org.broadleafcommerce.admin.catalog.view.product.*"
+	xmlns:view="org.broadleafcommerce.admin.catalog.view.*"
+	>
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import com.adobe.cairngorm.view.ViewLocator;
+			import com.adobe.cairngorm.view.ViewHelper;
+			import org.broadleafcommerce.admin.catalog.model.CategoryTreeItem;
+			import org.broadleafcommerce.admin.catalog.control.events.category.RemoveCategoryEvent;
+			import org.broadleafcommerce.admin.catalog.model.ProductModel;
+			import org.broadleafcommerce.admin.catalog.control.events.product.RemoveProductEvent;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModel;
+			import org.broadleafcommerce.admin.catalog.control.events.category.ViewCategoriesEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.product.ViewCurrentProductEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.product.AddProductsToCategoriesEvent;
+			import org.broadleafcommerce.admin.catalog.vo.product.Product;
+			import org.broadleafcommerce.admin.catalog.vo.category.Category;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
+			import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.product.NewProductEvent;
+
+			[Bindable]
+			private var catalogModel:CatalogModel = CatalogModelLocator.getInstance().catalogModel;
+
+			[Bindable]
+			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+			
+			[Bindable]
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
+			private function creationComplete():void{
+			}
+
+			private function handleView(event:Event):void{
+				if(event.target == this.categoriesLinkButton){
+					var vce:ViewCategoriesEvent = new ViewCategoriesEvent();
+					vce.dispatch();
+				}else if(event.target == this.productsLinkButton){
+					var vcpe:ViewCurrentProductEvent = new ViewCurrentProductEvent();
+					vcpe.dispatch();
+				}
+			}
+
+			private function handleNewCategory(event:Event):void{
+				var ncce:NewCategoryEvent = new NewCategoryEvent();
+				ncce.dispatch();
+			}
+
+			private function handleNewProduct(event:Event):void{
+				new NewProductEvent().dispatch();
+			}
+			
+			private function handleRemoveCategoryButtonClick(event:Event):void{
+				var category:Category = CategoryTreeItem(categoryCanvas.categoryTreeCanvas.categoryTree.selectedItem).category;
+				var parentCategory:Category = CategoryTreeItem(categoryCanvas.categoryTreeCanvas.categoryTree.getParentItem(categoryCanvas.categoryTreeCanvas.categoryTree.selectedItem)).category;
+				var rce:RemoveCategoryEvent = new RemoveCategoryEvent(category, parentCategory);
+				rce.dispatch();
+			}			
+
+			private function handleRemoveProductButtonClick(event:Event):void{				
+				var rpe:RemoveProductEvent = new RemoveProductEvent(productModel.currentProduct);
+				rpe.dispatch();
+			}
+			
+		]]>
+	</mx:Script>
+
+	<mx:Binding source="catalogModel.viewState"
+					   destination="currentState" />
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="removeCategoryButton.enabled" />
+	<mx:Binding source="productModel.currentProduct.id > 0"
+	            destination="removeProductButton.enabled" />
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="productsLinkButton.enabled" />
+
+	<mx:VBox
+		width="100%"
+		height="100%">
+		<mx:HBox
+			verticalAlign="middle">
+			<mx:ViewStack id="addViewStack" width="100%" height="100%">
+				<mx:Canvas width="100%" height="100%">
+					<mx:HBox>
+						
+					<mx:Button
+						id="addCategorytBtn"
+						height="28"
+						styleName="addButton"
+						label="New Category"
+						click="handleNewCategory(event)" />
+					<mx:Button 
+						id="removeCategoryButton" 
+						height="28"
+						label="Remove" 
+						styleName="deleteButton" 
+						click="handleRemoveCategoryButtonClick(event)"/>
+					</mx:HBox>
+						
+				</mx:Canvas>
+				<mx:Canvas width="100%" height="100%">
+					<mx:HBox>
+						<mx:Button
+							id="addProductBtn"
+							styleName="addButton"
+							height="28"
+							label="New Product"
+							click="handleNewProduct(event)" />
+						<mx:Button 
+							id="removeProductButton" 
+							height="28"
+							label="Remove" 
+							styleName="deleteButton" 
+							click="handleRemoveProductButtonClick(event)"/>
+					</mx:HBox>
+						
+				</mx:Canvas>
+			</mx:ViewStack>
+			<mx:LinkButton
+				id="categoriesLinkButton"
+				label="Categories"
+				click="this.handleView(event)"
+				selected="{CatalogModelLocator.getInstance().categoriesSelected}"/>
+			<mx:VRule
+				height="10"/>
+			<mx:LinkButton
+				id="productsLinkButton"
+				label="Products"
+				click="this.handleView(event)"
+				selected="{CatalogModelLocator.getInstance().productsSelected}"/>
+			<mx:VRule
+				height="10"/>
+		</mx:HBox>
+
+		<mx:ViewStack id="canvasViewStack" top="75" left="8" right="8" bottom="8" width="100%" height="100%">
+			<category:CategoryCanvas id="categoryCanvas" width="100%" height="100%" />
+			<product:ProductCanvas  id="productCanvas" width="100%" height="100%" />
+		</mx:ViewStack>
+
+	</mx:VBox>
+	<mx:states>
+		<mx:State name="{CatalogModel.STATE_VIEW_CATEGORY}">
+			<mx:SetProperty target="{canvasViewStack}" name="selectedIndex" value="0"/>
+			<mx:SetProperty target="{addViewStack}" name="selectedIndex" value="0"/>
+		</mx:State>
+		<mx:State name="{CatalogModel.STATE_VIEW_PRODUCT}">
+			<mx:SetProperty target="{canvasViewStack}" name="selectedIndex" value="1"/>
+			<mx:SetProperty target="{addViewStack}" name="selectedIndex" value="1"/>
+		</mx:State>
+	</mx:states>
+
+</mx:Canvas>

@@ -15,26 +15,27 @@
 	
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
 	    <property name="autodetect" value="true"/>
-	    <property name="assembler" ref="assembler"/>
-	    <property name="namingStrategy" ref="namingStrategy"/>
+	    <property name="assembler" ref="blAssembler"/>
+	    <property name="namingStrategy" ref="blNamingStrategy"/>
 	</bean>
 	
-	<bean id="attributeSource" class="org.broadleafcommerce.jmx.AnnotationJmxAttributeSource">
+	<bean id="blAttributeSource" class="org.broadleafcommerce.jmx.AnnotationJmxAttributeSource">
         <constructor-arg>
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
 	        	<property name="jndiName">
 	            	<value>java:/comp/env/appName</value>
 	        	</property>
+	        	<property name="defaultObject" value="broadleaf"/>
 			</bean>
         </constructor-arg>
     </bean>
 	
-	<bean id="assembler" class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
-	    <property name="attributeSource" ref="attributeSource"/>
+	<bean id="blAssembler" class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
+	    <property name="attributeSource" ref="blAttributeSource"/>
 	</bean>
 	
-	<bean id="namingStrategy" class="org.broadleafcommerce.jmx.MetadataNamingStrategy">
-	    <property name="attributeSource" ref="attributeSource"/>
+	<bean id="blNamingStrategy" class="org.broadleafcommerce.jmx.MetadataNamingStrategy">
+	    <property name="attributeSource" ref="blAttributeSource"/>
 	</bean>
 	
 	<bean id="blEncryptionModule" class="org.broadleafcommerce.encryption.DefaultEncryptionModule"/>

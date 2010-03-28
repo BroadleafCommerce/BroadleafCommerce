@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="400"
+	height="250"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this)"
+	creationComplete="creationComplete()"
+	verticalAlign="middle" horizontalAlign="center">
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.security.control.events.SaveAdminPermissionEvent;
+			import org.broadleafcommerce.admin.core.vo.security.AdminPermission;
+			import mx.managers.PopUpManager;
+
+			[Bindable]
+			public var editPermission:AdminPermission;
+
+			private function creationComplete():void {
+				PopUpManager.centerPopUp(this);
+
+				if (editPermission != null) {
+					this.title = "Edit Permission";
+					this.formHeading.label = "Editing " + editPermission.name;
+					this.txtName.text = editPermission.name;
+					this.txtDescription.text = editPermission.description;
+					this.buttonUpdate.visible = true;
+				} else {
+					this.title = "Add New Permission";
+					this.formHeading.label = "New Permission";
+					this.buttonSave.visible = true;
+				}
+			}
+
+			private function handleUpdateClick(event:Event):void{
+				editPermission.name = this.txtName.text;
+				editPermission.description = this.txtDescription.text;
+				var savePermission:SaveAdminPermissionEvent = new SaveAdminPermissionEvent(editPermission);
+				savePermission.dispatch();
+
+				PopUpManager.removePopUp(this);
+			}
+
+			private function handleSaveClick(event:Event):void{
+				var permission:AdminPermission = new AdminPermission();
+				permission.id = this.hiddenId.text;
+				permission.description = this.txtDescription.text;
+				permission.name = this.txtName.text;
+
+				var savePermission:SaveAdminPermissionEvent = new SaveAdminPermissionEvent(permission);
+				savePermission.dispatch();
+
+				PopUpManager.removePopUp(this);
+			}
+		]]>
+	</mx:Script>
+    <mx:StringValidator
+        id="nameValidator"
+        source="{txtName}"
+        property="text"
+        minLength="2"
+    />
+    <mx:StringValidator
+        id="descriptionValidator"
+        source="{txtDescription}"
+        property="text"
+        minLength="2"
+    />
+	<mx:VBox label="Add New Permission" verticalAlign="middle" horizontalAlign="right">
+        <mx:VBox width="100%">
+        	<mx:FormHeading id="formHeading"/>
+        	<mx:HBox width="50%">
+                <mx:Form>
+                	<mx:Text id="hiddenId" includeInLayout="false"/>
+                    <mx:FormItem label="Name">
+                        <mx:TextInput id="txtName" />
+                    </mx:FormItem>
+                    <mx:FormItem label="Description">
+                        <mx:TextInput id="txtDescription"/>
+                    </mx:FormItem>
+                </mx:Form>
+        	</mx:HBox>
+        </mx:VBox>
+
+     	<mx:Button label="Save" click="handleSaveClick(event)" id="buttonSave" visible="false"/>
+     	<mx:Button label="Update" click="handleUpdateClick(event)" id="buttonUpdate" visible="false"/>
+    </mx:VBox>
+</mx:TitleWindow>
