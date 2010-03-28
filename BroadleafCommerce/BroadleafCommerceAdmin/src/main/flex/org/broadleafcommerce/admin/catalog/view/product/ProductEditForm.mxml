@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:view="org.broadleafcommerce.admin.view.*"
+	xmlns:view1="org.broadleafcommerce.admin.core.view.*"
+	xmlns:components="org.broadleafcommerce.admin.view.catalog.product.components.*"
+	xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*">
+	<mx:Script>
+		<![CDATA[
+//	defaultButton="{saveButton}"
+			import org.broadleafcommerce.admin.catalog.control.events.sku.SaveSkuEvent;
+			import org.broadleafcommerce.admin.catalog.model.SkuModel;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+			import org.broadleafcommerce.admin.catalog.vo.sku.Sku;
+			import org.broadleafcommerce.admin.catalog.model.ProductModel;
+			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
+			import org.broadleafcommerce.admin.catalog.vo.category.Category;
+			import org.broadleafcommerce.admin.catalog.control.events.sku.EditSkuEvent;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.catalog.vo.product.ProductDimension;
+			import org.broadleafcommerce.admin.catalog.vo.product.ProductWeight;
+			import org.broadleafcommerce.admin.catalog.control.events.product.UpdateParentsOfProductEvent;
+			import mx.events.ListEvent;
+			import org.broadleafcommerce.admin.catalog.vo.product.Product;
+			import mx.utils.ObjectUtil;
+			import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+
+			[Bindable]
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
+			[Bindable]
+			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+
+			[Bindable]
+			private var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;
+
+			private function handleSaveProduct(event:Event):void{
+				var product:Product = Product(ObjectUtil.copy(productModel.currentProduct));
+				if( product.id == 0){
+					product.id = -1;
+				}
+				product.name = nameTextInput.text;
+				product.description = descriptionTextInput.text;
+				product.longDescription = longDescriptionTextInput.text;
+				product.activeStartDate = activeStartDateDateField.selectedDate;
+				product.activeEndDate = activeEndDateDateField.selectedDate;
+				product.model = modelTextInput.text;
+				product.manufacturer = manufacturerTextInput.text;
+				if(product.weight == null)
+					product.weight = new ProductWeight();
+				product.weight.weight = uint(weightTextInput.text);
+				if(product.dimension == null) product.dimension = new ProductDimension();
+				product.dimension.depth = Number(depthTextInput.text);
+				product.dimension.width = Number(widthTextInput.text);
+				product.dimension.height = Number(heightTextInput.text);
+				product.defaultCategory = Category(defaultParentCategoryComboBox.selectedItem);
+				product.allParentCategories = new ArrayCollection(parentList.selectedItems);
+				skuModel.currentSku.name = product.name;
+				skuModel.currentSku.retailPrice.amount = Number(retailPriceText.text);
+				skuModel.currentSku.salePrice.amount = Number(salePriceText.text);
+				skuModel.currentSku.discountable = discountableCheckbox.selected;
+				skuModel.currentSku.taxable = taxableCheckBox.selected;
+				product.allSkus.removeItemAt(0);
+				product.allSkus.addItemAt(skuModel.currentSku,0);
+				new SaveProductEvent(product).dispatch();
+
+			}
+
+			private function handleProductParentsListClick(event:MouseEvent):void{
+				// call add parent to product event
+				var aptpe:UpdateParentsOfProductEvent = new UpdateParentsOfProductEvent(productModel.currentProduct, new ArrayCollection(ProductParentsList(event.currentTarget).selectedItems));
+				aptpe.dispatch();
+			}
+
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="productModel.currentProduct.name"
+		destination="nameTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.description"
+		destination="descriptionTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.longDescription"
+		destination="longDescriptionTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.activeStartDate"
+		destination="activeStartDateDateField.selectedDate"/>
+	<mx:Binding
+		source="productModel.currentProduct.activeEndDate"
+		destination="activeEndDateDateField.selectedDate"/>
+	<mx:Binding
+		source="productModel.currentProduct.model"
+		destination="modelTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.manufacturer"
+		destination="manufacturerTextInput.text"/>
+	<!--mx:Binding
+		source="productModel.currentProduct.weight.weight.toString()"
+		destination="weightTextInput.text"/-->
+	<mx:Binding
+		source="productModel.currentProduct.depth.toString()"
+		destination="depthTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.width.toString()"
+		destination="widthTextInput.text"/>
+	<mx:Binding
+		source="productModel.currentProduct.height.toString()"
+		destination="heightTextInput.text"/>
+	<mx:Binding
+		source="categoryModel.categoryArray"
+		destination="parentList.dataProvider" />
+	<mx:Binding
+		source="productModel.selectedCategories"
+		destination="parentList.selectedItems" />
+	<mx:Binding
+		source="productModel.currentProduct.allParentCategories"
+		destination="defaultParentCategoryComboBox.dataProvider"  />
+	<mx:Binding
+		source="productModel.currentProduct.allParentCategories.getItemIndex(productModel.currentProduct.defaultCategory)"
+		destination="defaultParentCategoryComboBox.selectedIndex" />
+	<mx:Binding
+		source="String(priceFormatter.format(skuModel.currentSku.retailPrice.amount))"
+		destination="retailPriceText.text" />
+	<mx:Binding
+		source="String(priceFormatter.format(skuModel.currentSku.salePrice.amount))"
+		destination="salePriceText.text" />
+	<mx:Binding
+		source="skuModel.currentSku.discountable"
+		destination="discountableCheckbox.selected" />
+	<mx:Binding
+		source="skuModel.currentSku.taxable"
+		destination="taxableCheckBox.selected" />
+
+
+	<mx:NumberFormatter id="priceFormatter" rounding="nearest" precision="2" />
+
+	<mx:HBox>
+		<mx:VBox>
+			<mx:Form>
+				<mx:FormItem
+					label="Name:">
+					<mx:TextInput
+						id="nameTextInput" width="300"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Description:">
+					<mx:TextArea
+						id="descriptionTextInput" width="300" height="100"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Long Description:">
+					<mx:TextArea
+						id="longDescriptionTextInput" width="300" height="200"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Active Start Date:">
+					<view1:BroadleafCommerceDateField
+						id="activeStartDateDateField"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Active End Date:">
+					<view1:BroadleafCommerceDateField
+						id="activeEndDateDateField"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Model:">
+					<mx:TextInput
+						id="modelTextInput" width="300"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Manufacturer:">
+					<mx:TextInput
+						id="manufacturerTextInput" width="300"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Depth:">
+					<mx:TextInput
+						id="depthTextInput"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Width:">
+						<mx:TextInput
+							id="widthTextInput"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Height:">
+						<mx:TextInput
+							id="heightTextInput"/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Weight:">
+					<mx:TextInput
+						id="weightTextInput"/>
+				</mx:FormItem>
+			</mx:Form>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Form>
+				<mx:FormItem label="Default Category Parent:">
+						<mx:ComboBox
+						id="defaultParentCategoryComboBox"
+						labelField="name"
+						/>
+				</mx:FormItem>
+				<mx:FormItem
+					label="Parent Categories" >
+					<components1:ProductParentsList id="parentList" labelField="name"
+						allowMultipleSelection="true" width="300" click="handleProductParentsListClick(event)"/>
+				</mx:FormItem>
+				<mx:FormItem label="Retail Price:">
+					<mx:TextInput id="retailPriceText" />
+				</mx:FormItem>
+				<mx:FormItem label="Sale Price:">
+					<mx:TextInput id="salePriceText" />
+				</mx:FormItem>
+				<mx:FormItem label="Taxable: ">
+					<mx:CheckBox id="taxableCheckBox" />
+				</mx:FormItem>
+				<mx:FormItem label="Discountable:" >
+					<mx:CheckBox id="discountableCheckbox" />
+				</mx:FormItem>
+
+				<mx:FormItem>
+					<mx:Button
+						id="saveButton"
+						label="Save"
+						click="handleSaveProduct(event)"/>
+				</mx:FormItem>
+			</mx:Form>
+		</mx:VBox>
+	</mx:HBox>
+</mx:Canvas>

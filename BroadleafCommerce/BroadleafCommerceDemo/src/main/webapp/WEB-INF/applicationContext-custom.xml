@@ -24,9 +24,19 @@
     
     <bean id="blDS" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
 		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:mem:broadleaf" />
+		<property name="url" value="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true" />
 		<property name="username" value="sa" />
 		<property name="password" value="" />
 	</bean>
+	
+	<bean id="blCacheManager"
+          class="org.broadleafcommerce.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
+        <property name="shared" value="true"/>
+        <property name="configLocations">
+            <list>
+                <value>classpath:bl-override-ehcache.xml</value>
+            </list>
+        </property>
+    </bean>
 	
 </beans>

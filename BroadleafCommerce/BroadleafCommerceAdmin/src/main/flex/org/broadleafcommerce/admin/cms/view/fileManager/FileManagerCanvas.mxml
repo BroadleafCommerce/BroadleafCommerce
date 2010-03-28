@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:flexlib="http://code.google.com/p/flexlib/"
+	xmlns:view="org.broadleafcommerce.admin.cms.view.*"
+	creationComplete="handleCreationComplete()">
+	<mx:Script>
+		<![CDATA[
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			import mx.containers.TitleWindow;
+			import mx.containers.HBox;
+			import org.broadleafcommerce.admin.cms.control.events.RefreshFileManagerTreeEvent;
+			import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
+			import org.broadleafcommerce.admin.cms.model.ContentModel;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import org.broadleafcommerce.admin.core.model.ConfigModel;
+			import mx.collections.XMLListCollection;
+			import mx.rpc.events.ResultEvent;
+			import mx.controls.Alert;
+			import mx.rpc.events.FaultEvent;
+
+			[Bindable]
+			private var contentModel:ContentModel = ContentModelLocator.getInstance().contentModel;
+
+ 			private var fileRef:FileReference;
+
+			private function handleCreationComplete():void{
+				trace("DEBUG: FileManagerCanvas.handleCreationComplete()");
+				new RefreshFileManagerTreeEvent().dispatch();
+				fileRef = new FileReference();
+                fileRef.addEventListener(Event.SELECT, fileRef_select);
+                fileRef.addEventListener(ProgressEvent.PROGRESS, fileRef_progress);
+                fileRef.addEventListener(Event.COMPLETE, fileRef_complete);
+
+			}
+
+			private function treeLabel(item:Object):String{
+                var node:XML = XML(item);
+                return node.@name;
+            }
+
+            private function treeChanged(event:Event):void {
+                var selectedNode:XML = Tree(event.target).selectedItem as XML;
+                this.fileInfo.removeAllChildren();
+	            this.btnNewDir.enabled = false;
+	            this.btnUpload.enabled = false;
+
+                var hbox1:HBox = new HBox;
+                var labelName:Label = new Label();
+                labelName.text = "Name: ";
+                var labelNameI:Label = new Label();
+                labelNameI.text = selectedNode.@name;
+                hbox1.addChild(labelName);
+                hbox1.addChild(labelNameI);
+                this.fileInfo.addChild(hbox1);
+
+                var hbox2:HBox = new HBox;
+                var labelLM:Label = new Label();
+                labelLM.text = "Last Modified: ";
+                var labelLMI:Label = new Label();
+                labelLMI.text = df.format(new Date(selectedNode.@lastModified));
+                hbox2.addChild(labelLM);
+                hbox2.addChild(labelLMI);
+                this.fileInfo.addChild(hbox2);
+
+                if (selectedNode.localName() == 'directory'){
+	                var hbox3:HBox = new HBox;
+	                var labelFileCount:Label = new Label();
+	                labelFileCount.text = "Number of Files: ";
+	                var labelFileCountI:Label = new Label();
+	                labelFileCountI.text = selectedNode.children().length();
+	                hbox3.addChild(labelFileCount);
+	                hbox3.addChild(labelFileCountI);
+	                this.fileInfo.addChild(hbox3);
+
+	                this.btnNewDir.enabled = true;
+	                this.btnUpload.enabled = true;
+                } else {
+	                var hbox4:HBox = new HBox;
+	                var labelSize:Label = new Label();
+	                labelSize.text = "Size: ";
+	                var labelSizeI:Label = new Label();
+	                labelSizeI.text = selectedNode.@size + "bytes";
+	                hbox4.addChild(labelSize);
+	                hbox4.addChild(labelSizeI);
+	                this.fileInfo.addChild(hbox4);
+                }
+            }
+
+            private function fileRef_select(evt:Event):void {
+                try {
+                    message.text = "size (bytes): " + numberFormatter.format(fileRef.size);
+                    var request:URLRequest = new URLRequest(ConfigModel.URL_FILE_UPLOAD);
+                    var params:URLVariables = new URLVariables();
+                    var absPath:String = this.fileTree.selectedItem.@absolutePath;
+                    var dirPath:String =  absPath.substr(absPath.lastIndexOf(ConfigModel.CMS_ROOT_DIR), (absPath.length - absPath.lastIndexOf(ConfigModel.CMS_ROOT_DIR)));
+    				params.directory = dirPath;
+    				request.method = URLRequestMethod.POST;
+					request.data = params;
+                    fileRef.upload(request, "file");
+                } catch (err:Error) {
+                    message.text = "ERROR: zero-byte file";
+                }
+            }
+
+            private function fileRef_progress(evt:ProgressEvent):void {
+                progressBar.visible = true;
+            }
+
+            private function fileRef_complete(evt:Event):void {
+                message.text += " (complete)";
+                progressBar.visible = false;
+                new RefreshFileManagerTreeEvent().dispatch();
+            }
+
+            private function handleUpload(event:Event):void{
+                fileRef.browse();
+                message.text = "";
+            }
+
+            private function handlerMkDir(event:Event):void{
+            	var mkDirModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, MakeDirectoryModal, true));
+            	var selectedNode:XML = this.fileTree.selectedItem as XML;
+            	MakeDirectoryModal(mkDirModal).selectedItem = selectedNode;
+            }
+
+            private function handleDelete(event:Event):void{
+                Alert.yesLabel = "Yes";
+                Alert.noLabel = "No";
+                Alert.show("Are you sure you want to delete this file?", "Delete", 3, this, alertDeleteHandler);
+            }
+
+            private function alertDeleteHandler(event:CloseEvent):void {
+                if (event.detail==Alert.YES){
+					var myData:URLRequest = new URLRequest(ConfigModel.URL_FILE_REMOVE);
+				    myData.method = URLRequestMethod.POST;
+				    var params:URLVariables = new URLVariables();
+				    params.absolutePath = this.fileTree.selectedItem.@absolutePath;
+				    myData.data = params;
+				    var loader:URLLoader = new URLLoader();
+				    loader.dataFormat = URLLoaderDataFormat.TEXT;
+				    loader.addEventListener(Event.COMPLETE, rmOnLoad);
+				    loader.load(myData);
+                }
+            }
+
+		    private function rmOnLoad(evt:Event):void{
+		    	new RefreshFileManagerTreeEvent().dispatch();
+		    }
+		]]>
+	</mx:Script>
+
+	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
+	<mx:NumberFormatter id="numberFormatter" />
+
+	<mx:Binding
+		source="contentModel.fileManagerTree"
+		destination="fileTree.dataProvider"/>
+
+	<mx:HDividedBox width="100%" height="100%" >
+		<mx:Tree id="fileTree" width="300" height="100%" labelFunction="treeLabel" change="treeChanged(event)"/>
+		<mx:TabNavigator id="fileMenu" width="100%" height="100%">
+			<mx:VBox label="File Menu" width="100%" height="100%" styleName="padding10">
+				<mx:Label text="File Information" fontSize="20"/>
+				<mx:VBox id="fileInfo" width="100%" verticalGap="0"/>
+				<mx:HBox id="controls" width="100%" height="100%">
+					<mx:Button id="btnNewDir" label="Create New Directory" styleName="folderNewButton" enabled="false" click="handlerMkDir(event)"/>
+					<mx:Button id="btnUpload" label="Upload File"  styleName="folderUploadButton" enabled="false" click="handleUpload(event)"/>
+					<mx:Button id="btnDelete" label="Delete" styleName="folderDeleteButton"  click="handleDelete(event)"/>
+				</mx:HBox>
+				<mx:Label id="message" />
+				<mx:ProgressBar id="progressBar"
+		            indeterminate="true"
+		            visible="false" />
+			</mx:VBox>
+		</mx:TabNavigator>
+	</mx:HDividedBox>
+
+</mx:Canvas>

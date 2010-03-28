@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:security="org.broadleafcommerce.admin.security.view.*"
+	xmlns:admins="org.broadleafcommerce.admin.security.view.admins.*"
+	xmlns:roles="org.broadleafcommerce.admin.security.view.roles.*"
+	xmlns:permissions="org.broadleafcommerce.admin.security.view.permissions.*"
+	xmlns:events="org.broadleafcommerce.admin.security.control.events.*"
+	xmlns:control="org.broadleafcommerce.admin.security.control.*"
+	creationComplete="creationComplete();">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.security.control.events.FindAllAdminUsersEvent;
+			import org.broadleafcommerce.admin.security.control.events.ViewPermissionsEvent;
+			import mx.controls.Alert;
+			import org.broadleafcommerce.admin.security.control.events.ViewRolesEvent;
+			import org.broadleafcommerce.admin.security.control.events.ViewAdminsEvent;
+			import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
+			import org.broadleafcommerce.admin.security.model.SecurityModel;
+			//import com.adobeflexspy.FlexSpy;
+
+			[Bindable]
+			private var securityModel:SecurityModel = SecurityModelLocator.getInstance().securityModel;
+
+			private function creationComplete():void{
+				this.manageAdminsLink.selected = true;
+			}
+
+			private function handleView(event:Event):void{
+				this.manageAdminsLink.selected = false;
+				this.manageRolesLink.selected = false;
+				this.managePermissionsLink.selected = false;
+
+				if(event.target == this.manageAdminsLink){
+					this.manageAdminsLink.selected = true;
+					var vae:ViewAdminsEvent = new ViewAdminsEvent();
+					vae.dispatch();
+				}else if(event.target == this.manageRolesLink){
+					this.manageRolesLink.selected = true;
+					var vre:ViewRolesEvent = new ViewRolesEvent();
+					vre.dispatch();
+				}else if(event.target == this.managePermissionsLink){
+					this.managePermissionsLink.selected = true;
+					var vpe:ViewPermissionsEvent = new ViewPermissionsEvent();
+					vpe.dispatch();
+				}
+			}
+
+		]]>
+
+	</mx:Script>
+
+	<mx:Binding source="securityModel.viewState" destination="currentState" />
+
+	<mx:VBox verticalGap="20"
+		width="100%"
+		height="100%">
+
+		<mx:HBox
+			verticalAlign="middle">
+			<mx:LinkButton
+				id="manageAdminsLink"
+				label="Manage Administrators"
+				click="this.handleView(event)"/>
+			<mx:VRule
+				height="10"/>
+			<mx:LinkButton
+				id="manageRolesLink"
+				label="Manage Roles"
+				click="this.handleView(event)"/>
+			<mx:VRule
+				height="10"/>
+			<mx:LinkButton
+				id="managePermissionsLink"
+				label="Manage Permissions"
+				click="this.handleView(event)"/>
+			<mx:VRule
+				height="10"/>
+			<!--mx:Button id="btnFlexSpy" label="FlexSpy" click="FlexSpy.show()" /-->
+		</mx:HBox>
+		<mx:ViewStack id="viewStack"
+			top="75" left="8" right="8" bottom="8"
+			width="100%"
+			height="100%">
+				<admins:AdminCanvas id="adminCanvas" width="100%" height="100%"/>
+				<roles:RoleCanvas id="roleCanvas" width="100%" height="100%"/>
+				<permissions:PermissionCanvas id="permissionCanvas" width="100%" height="100%"/>
+		</mx:ViewStack>
+	</mx:VBox>
+
+	<mx:states>
+		<mx:State name="{SecurityModel.STATE_VIEW_ADMINS}">
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="0"/>
+		</mx:State>
+		<mx:State name="{SecurityModel.STATE_VIEW_ROLES}">
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="1"/>
+		</mx:State>
+		<mx:State name="{SecurityModel.STATE_VIEW_PERMISSIONS}">
+			<mx:SetProperty target="{viewStack}" name="selectedIndex" value="2"/>
+		</mx:State>
+	</mx:states>
+
+	<control:SecurityController />
+</mx:Canvas>

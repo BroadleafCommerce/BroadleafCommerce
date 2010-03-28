@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:view="org.broadleafcommerce.admin.tools.view.*"
+	creationComplete="handleCreationComplete()" 
+	xmlns:control="org.broadleafcommerce.admin.tools.control.*" xmlns:codetype="org.broadleafcommerce.admin.tools.view.codetype.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.tools.control.events.codetype.RemoveCodeTypeEvent;
+			import org.broadleafcommerce.admin.core.vo.tools.CodeType;
+			import org.broadleafcommerce.admin.tools.control.events.codetype.EditCodeTypeEvent;
+			import org.broadleafcommerce.admin.tools.control.events.codetype.CreateCodeTypeEvent;
+			import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
+			import org.broadleafcommerce.admin.tools.model.ToolsModel;
+			import org.broadleafcommerce.admin.tools.control.events.codetype.FindAllCodeTypesEvent;
+			import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
+			
+			[Bindable]
+			private var codeTypeModel:CodeTypeModel = ToolsModelLocator.getInstance().codeTypeModel;
+		
+			private function handleCreationComplete():void{
+				trace("DEBUG: CodeTypeCanvas.handleCreationComplete()");
+				new FindAllCodeTypesEvent().dispatch();
+			}
+			
+			private function handleAddClick(event:Event):void{
+				new CreateCodeTypeEvent().dispatch();
+			}
+			
+			private function handleRemoveClick(event:Event):void{
+				var rcte:RemoveCodeTypeEvent = new RemoveCodeTypeEvent(CodeType(codeTypeDataGrid.selectedItem));
+				rcte.dispatch();
+			}
+			
+			private function handleViewEditClick(event:Event):void{
+				new EditCodeTypeEvent(CodeType(codeTypeDataGrid.selectedItem)).dispatch();				
+			} 
+			
+		]]>
+	</mx:Script>
+	<mx:Binding 
+		source="codeTypeModel.codeTypes" 
+		destination="codeTypeDataGrid.dataProvider"/>
+	<mx:Binding
+		source="codeTypeModel.viewState"
+		destination="currentState"/>
+	<!--mx:Binding
+		source="toolsModel.currentCodeType"
+		destination="codeTypeDataGrid.selectedItem"/-->
+
+    <mx:TabNavigator id="tnCodeTypeCanvas"  width="100%" height="100%" styleName="padding10">
+
+
+	<mx:VBox height="100%" width="100%" label="Code Types">
+		<mx:HBox>
+			<codetype:CodeTypeSearchGrid/>
+			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/> 
+			<mx:Button id="viewEditButton" label="View/Edit" enabled="{codeTypeDataGrid.selectedIndex > -1}" click="handleViewEditClick(event)" styleName="viewEditButton" />
+			<mx:Button id="removeButton" label="Remove" styleName="deleteButton" enabled="{codeTypeModel.currentCodeType.modifiable == 'true'}" click="handleRemoveClick(event)"/>
+			
+		</mx:HBox>
+		<mx:HBox
+			width="100%" height="100%">
+			<codetype:CodeTypeDataGrid
+				id="codeTypeDataGrid" height="100%" width="100%"/>
+			<mx:Canvas>
+				<codetype:CodeTypeEditForm
+					id="codeTypeEditForm"/>
+				<codetype:CodeTypeViewForm
+					id="codeTypeViewForm"/>
+			</mx:Canvas>
+		</mx:HBox>
+	</mx:VBox>
+	</mx:TabNavigator>
+	
+	
+	<mx:states>
+		<mx:State 
+			name="{CodeTypeModel.STATE_VIEW}">
+			<mx:SetProperty 
+				target="{codeTypeViewForm}" 
+				name="visible" 
+				value="true"/>
+			<mx:SetProperty 
+				target="{codeTypeEditForm}" 
+				name="visible" 
+				value="false"/>
+		</mx:State>
+		<mx:State 
+			name="{CodeTypeModel.STATE_EDIT}">
+			<mx:SetProperty 
+				target="{codeTypeViewForm}" 
+				name="visible" 
+				value="false"/>
+			<mx:SetProperty 
+				target="{codeTypeEditForm}" 
+				name="visible" 
+				value="true"/>
+		</mx:State>
+		<mx:State 
+			name="{CodeTypeModel.STATE_NONE}">
+			<mx:SetProperty 
+				target="{codeTypeViewForm}" 
+				name="visible" 
+				value="false"/>
+			<mx:SetProperty 
+				target="{codeTypeEditForm}" 
+				name="visible" 
+				value="false"/>
+		</mx:State>
+	</mx:states>
+</mx:Canvas>

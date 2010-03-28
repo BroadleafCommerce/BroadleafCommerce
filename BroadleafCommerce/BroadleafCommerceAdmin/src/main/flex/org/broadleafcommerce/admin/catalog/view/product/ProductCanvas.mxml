@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:product="org.broadleafcommerce.admin.view.catalog.product.*"
+	currentState="view"
+	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*"
+	xmlns:product1="org.broadleafcommerce.admin.catalog.view.product.*"
+	xmlns:sku1="org.broadleafcommerce.admin.catalog.view.sku.*" 
+	xmlns:components="org.broadleafcommerce.admin.catalog.view.components.*" 
+	xmlns:media="org.broadleafcommerce.admin.catalog.view.media.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.view.media.MediaNewWindow;
+			import mx.managers.PopUpManager;
+			import mx.containers.TitleWindow;
+			import org.broadleafcommerce.admin.catalog.control.events.media.AddMediaEvent;
+			import mx.controls.List;
+			import org.broadleafcommerce.admin.catalog.vo.media.Media;
+			import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+			import org.broadleafcommerce.admin.catalog.model.ProductModel;
+			import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.product.NewProductEvent;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+
+			[Bindable]
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
+			private function handleNewProduct(event:Event):void{
+				new NewProductEvent().dispatch();
+			}
+
+			private function handleNavigatorClick(event:MouseEvent):void{
+				if(tabNavigator.selectedChild == productEditForm){
+					productModel.viewState = ProductModel.STATE_VIEW_EDIT;
+				}
+				if(tabNavigator.selectedChild == productMediaCanvas){
+					productModel.viewState = ProductModel.STATE_VIEW_MEDIA;
+				}
+			}
+			
+			private function handleAddClick(event:Event):void{
+				var ame:AddMediaEvent = new AddMediaEvent();
+				ame.dispatch();
+				var newMediaWindow:TitleWindow = 
+					TitleWindow(PopUpManager.createPopUp(this,MediaNewWindow, true));				
+			}
+			
+			private function handleEditClick(event:Event):void{
+//				var media:Media = Media(categoryMediaCanvas.mediaDataGrid.selectedItem);
+//				var ecme:EditCategoryMediaEvent = new EditCategoryMediaEvent(Media(ObjectUtil.copy(media)));
+//				ecme.dispatch();
+			}
+			
+			private function handleDeleteClick(event:Event):void{
+				var deleteMedia:Media = Media(List(MediaCanvas(event.currentTarget).mediaDataGrid).selectedItem);;
+				delete productModel.currentProduct.productMedia[deleteMedia.key];
+				var spe:SaveProductEvent = new SaveProductEvent(productModel.currentProduct);
+				spe.dispatch();
+//				var sce:SaveCategoryEvent = new SaveCategoryEvent(categoryModel.currentCategory);
+//				sce.dispatch();				
+			}
+
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="productModel.viewState"
+		destination="currentState"/>
+	<mx:Binding 
+		source="productModel.productMedia"
+	    destination="productMediaCanvas.dataProvider" />
+	<product1:ProductCanvasViewHelper 
+		id="productCanvasViewHelper" />		
+		<mx:HDividedBox 
+			width="100%" 
+			height="100%" >
+			<product1:ProductsView 
+				id="productsView"  
+				width="300" 
+				height="100%"/>
+			<mx:TabNavigator 
+				id="tabNavigator"  
+				width="100%" 
+				height="100%" 
+				click="handleNavigatorClick(event)">
+				<product1:ProductEditForm 
+					id="productEditForm" 
+					label="General" 
+					width="100%" 
+					height="100%" />
+				<media:MediaCanvas 
+					label="Media" 
+					id="productMediaCanvas"
+					width="100%" 
+					height="100%"
+					clickAdd="handleAddClick(event)"
+					clickEdit="handleEditClick(event)"
+					clickDelete="handleDeleteClick(event)"/>
+				<product1:ProductCrossSale 
+					label="Cross Sale Products" 
+					id="crossSaleCanvas"
+					width="100%" height="100%"/>
+				<product1:ProductUpSale 
+					label="Up Sale Products" 
+					id="upsaleCanva"
+					width="100%" 
+					height="100%"/>
+				<sku1:SkuCanvas 
+					label="SKUs" 
+					width="100%" 
+					height="100%"/>
+
+			</mx:TabNavigator>
+		</mx:HDividedBox>
+	<mx:states>
+		<mx:State
+			name="{ProductModel.STATE_VIEW_EDIT}">
+			<mx:SetProperty target="{tabNavigator}" name="selectedChild" value="{productEditForm}" />
+		</mx:State>
+		<mx:State
+			name="{ProductModel.STATE_VIEW_MEDIA}">
+			<mx:SetProperty target="{tabNavigator}" name="selectedChild" value="{productMediaCanvas}" />
+		</mx:State>
+	</mx:states>
+</mx:Canvas>

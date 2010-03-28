@@ -13,7 +13,7 @@ public class ExplicitNameFactoryBean implements FactoryBean {
 	}
 
 	public Object getObject() throws Exception {
-		return name + "." + suffix;
+		return name + "-" + suffix;
 	}
 
 	@SuppressWarnings("unchecked")

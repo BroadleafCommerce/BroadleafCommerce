@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:category="org.broadleafcommerce.admin.view.catalog.category.*"
+	currentState="none"
+	creationComplete="handleCreationComplete()"
+	xmlns:category1="org.broadleafcommerce.admin.catalog.view.category.*"
+	xmlns:components="org.broadleafcommerce.admin.catalog.view.category.components.*"
+	xmlns:components1="org.broadleafcommerce.admin.catalog.view.components.*" xmlns:media="org.broadleafcommerce.admin.catalog.view.media.*">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.catalog.view.media.MediaNewWindow;
+			import mx.managers.PopUpManager;
+			import org.broadleafcommerce.admin.catalog.view.media.MediaNewWindow;
+			import mx.containers.TitleWindow;
+			import mx.controls.List;
+			import mx.utils.ObjectUtil;
+			import org.broadleafcommerce.admin.catalog.vo.media.Media;
+			import org.broadleafcommerce.admin.catalog.control.events.media.EditMediaEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.media.AddMediaEvent;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+			import org.broadleafcommerce.admin.catalog.model.CategoryModel;
+			import org.broadleafcommerce.admin.catalog.control.events.category.NewCategoryEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.category.EditCategoryEvent;
+			import org.broadleafcommerce.admin.catalog.vo.category.Category;
+			import org.broadleafcommerce.admin.core.model.AppModelLocator;
+			import mx.events.ListEvent;
+
+			[Bindable]
+			private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+
+			private function handleCreationComplete():void{
+
+			}
+
+			private function handleAddClick(event:Event):void{
+				var acme:AddMediaEvent = new AddMediaEvent();
+				acme.dispatch();
+				var newMediaWindow:TitleWindow = 
+					TitleWindow(PopUpManager.createPopUp(this,MediaNewWindow, true));
+			}
+			
+			private function handleEditClick(event:Event):void{
+				var media:Media = Media(categoryMediaCanvas.mediaDataGrid.selectedItem);
+				var ecme:EditMediaEvent = new EditMediaEvent(Media(ObjectUtil.copy(media)));
+				ecme.dispatch();
+				var newMediaWindow:TitleWindow = 
+					TitleWindow(PopUpManager.createPopUp(this,MediaNewWindow, true));
+			}
+			
+			private function handleDeleteClick(event:Event):void{
+				var deleteMedia:Media = Media(List(MediaCanvas(event.currentTarget).mediaDataGrid).selectedItem);;
+				delete categoryModel.currentCategory.categoryMedia[deleteMedia.key];
+				var sce:SaveCategoryEvent = new SaveCategoryEvent(categoryModel.currentCategory);
+				sce.dispatch();				
+			}
+
+		]]>
+	</mx:Script>
+
+	<mx:Binding source="categoryModel.viewState"
+					   destination="this.currentState" />
+
+	<mx:Binding source="categoryModel.categoryMedia"
+	            destination="categoryMediaCanvas.dataProvider" />
+
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="productsCanvas.enabled" />	            
+
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="categoryMediaCanvas.enabled" />	            
+
+	<mx:Binding source="categoryModel.currentCategory.id > 0"
+	            destination="featuredProductsCanvas.enabled" />	            
+
+		<category1:CategoryCanvasViewHelper id="categoryCanvasViewHelper" />
+
+		<mx:HDividedBox width="100%" height="100%" >
+			<category1:CategoryTreeCanvas id="categoryTreeCanvas" width="300" height="100%" />
+			<mx:TabNavigator id="categoryTabNavigator" width="100%" height="100%">
+				<category1:CategoryEditFormCanvas id="editCategoryCanvas"  label="General" width="100%" height="100%" />
+				<category1:CategoryProductsCanvas id="productsCanvas" label="Products" width="100%" height="100%" />
+				<media:MediaCanvas label="Media" id="categoryMediaCanvas"
+					width="100%" height="100%"
+					clickAdd="handleAddClick(event)"
+					clickEdit="handleEditClick(event)"
+					clickDelete="handleDeleteClick(event)"/>
+				<category1:CategoryFeaturedProductsCanvas id="featuredProductsCanvas" label="Featured Products" width="100%" height="100%" />
+			</mx:TabNavigator>
+		</mx:HDividedBox>
+	<mx:states>
+		<mx:State name="{CategoryModel.STATE_NONE}">
+			<mx:SetProperty target="{editCategoryCanvas}" name="visible" value="true" />
+		</mx:State>
+		<mx:State name="{CategoryModel.STATE_NEW}">
+			<mx:SetProperty target="{editCategoryCanvas}" name="visible" value="true" />
+		</mx:State>
+		<mx:State name="{CategoryModel.STATE_EDIT}">
+			<mx:SetProperty target="{editCategoryCanvas}" name="visible" value="true" />
+		</mx:State>
+	</mx:states>
+</mx:Canvas>

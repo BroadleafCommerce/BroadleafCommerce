@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:mx="http://www.adobe.com/2006/mxml" 
+	layout="absolute" 
+	percentWidth="100"  percentHeight="100"
+	creationComplete="handleCreationComplete()" 
+	xmlns:control="org.broadleafcommerce.admin.catalog.control.*" 
+	xmlns:view="org.broadleafcommerce.admin.catalog.view.*" xmlns:business="org.broadleafcommerce.admin.catalog.business.*"
+	remove="handleRemove()">
+
+<mx:Script>
+	<![CDATA[
+		import mx.core.UIComponentDescriptor;
+		import com.adobe.cairngorm.view.ViewLocator;
+		import com.adobe.cairngorm.view.ViewHelper;
+		import mx.core.UIComponent;
+		import mx.core.Container;
+		import mx.controls.Alert;
+		import org.broadleafcommerce.admin.catalog.control.events.RetrieveCatalogEvent;
+
+		private function handleCreationComplete():void{
+			this.label = "Catalog";
+			var rce:RetrieveCatalogEvent = new RetrieveCatalogEvent();
+			rce.dispatch(); 
+		}
+		
+		private function handleRemove():void{
+			Alert.show("removing");
+			removeViewHandlers(this.childDescriptors[0].document.childDescriptors);
+			
+			this.removeAllChildren();
+		}
+		
+		private function removeViewHandlers(displayObjects:Array):void{
+			for each(var dobts:UIComponentDescriptor in displayObjects){
+				if(dobts.type is Container){
+					removeViewHandlers(Container(dobts).childDescriptors);
+				}
+				if(dobts is ViewHelper){
+					var x:ViewHelper = ViewHelper(dobts);
+				}
+			}
+		}
+	]]>
+</mx:Script>
+	<control:CatalogController />
+	
+	<view:CatalogCanvas id="catalogCanvas" label="Catalog"  width="100%" height="100%" />
+</mx:Module>

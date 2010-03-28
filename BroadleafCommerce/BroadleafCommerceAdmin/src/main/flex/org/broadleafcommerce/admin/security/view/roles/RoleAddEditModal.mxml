@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:components="org.broadleafcommerce.util.components.*"
+	width="650"
+	height="400"
+	showCloseButton="true"
+	close="PopUpManager.removePopUp(this)"
+	creationComplete="creationComplete()"
+	verticalAlign="middle" horizontalAlign="center">
+
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.security.view.permissions.PermissionAddEditModal;
+			import org.broadleafcommerce.admin.core.vo.security.AdminPermission;
+			import org.broadleafcommerce.admin.security.model.SecurityModelLocator;
+			import org.broadleafcommerce.admin.security.control.events.SaveRoleEvent;
+			import mx.collections.ArrayCollection;
+			import org.broadleafcommerce.admin.core.vo.security.AdminRole;
+			import mx.managers.PopUpManager;
+
+			[Bindable]
+			public var editRole:AdminRole
+
+			private function creationComplete():void {
+				PopUpManager.centerPopUp(this);
+
+				if (editRole != null) {
+					this.title = "Edit Role";
+					this.formHeading.label = "Editing " + editRole.name;
+					this.txtName.text = editRole.name;
+					this.txtDescription.text = editRole.description;
+					var selectedPermissions:Array = new Array();
+					for (var x:Number=0; x<editRole.allPermissions.length; x++){
+						for (var i:Number=0; i<SecurityModelLocator.getInstance().adminPermissions.length; i++){
+							if (AdminPermission(editRole.allPermissions.getItemAt(x)).id == AdminPermission(SecurityModelLocator.getInstance().adminPermissions.getItemAt(i)).id){
+								selectedPermissions.push(i);
+							}
+						}
+					}
+					this.permissionsList.selectedIndices = selectedPermissions;
+					this.title = selectedPermissions.toString();
+					this.buttonUpdate.visible = true;
+				} else {
+					this.title = "Add New Role";
+					this.formHeading.label = "New Role";
+					this.buttonSave.visible = true;
+				}
+			}
+			private function handleSaveClick(event:Event):void{
+				var role:AdminRole = new AdminRole();
+				role.id = null;
+				role.name = this.txtName.text;
+				role.description = this.txtDescription.text;
+
+				var permissions:ArrayCollection = new ArrayCollection(this.permissionsList.selectedItems);
+				role.allPermissions = permissions;
+
+				var saveRole:SaveRoleEvent = new SaveRoleEvent(role);
+				saveRole.dispatch();
+
+				PopUpManager.removePopUp(this);
+			}
+
+			private function handleUpdateClick(event:Event):void{
+				editRole.name = this.txtName.text;
+				editRole.description = this.txtDescription.text;
+
+				var permissions:ArrayCollection = new ArrayCollection(this.permissionsList.selectedItems);
+				editRole.allPermissions = permissions;
+
+				var saveRole:SaveRoleEvent = new SaveRoleEvent(editRole);
+				saveRole.dispatch();
+
+				PopUpManager.removePopUp(this);
+			}
+
+			private function handleNewPermissionClick(event:Event):void{
+				var newPermissionModal:TitleWindow = TitleWindow(PopUpManager.createPopUp(this, PermissionAddEditModal , true));
+			}
+		]]>
+	</mx:Script>
+    <mx:StringValidator
+        id="nameValidator"
+        source="{txtName}"
+        property="text"
+        minLength="2"
+    />
+    <mx:StringValidator
+        id="descriptionValidator"
+        source="{txtDescription}"
+        property="text"
+        minLength="2"
+    />
+
+    <mx:VBox label="Add New Role" verticalAlign="middle" horizontalAlign="right">
+        <mx:VBox width="100%">
+        	<mx:FormHeading id="formHeading"/>
+        	<mx:HBox width="50%">
+                <mx:Form width="300">
+                    <mx:FormItem label="Name">
+                        <mx:TextInput id="txtName"/>
+                    </mx:FormItem>
+                    <mx:FormItem label="Description">
+                        <mx:TextInput id="txtDescription"/>
+                    </mx:FormItem>
+                </mx:Form>
+
+                <mx:VBox height="100%">
+	                <mx:Label text="Permissions"/>
+	                <components:CheckBoxList id="permissionsList" allowMultipleSelection="true" dataProvider="{SecurityModelLocator.getInstance().adminPermissions}" labelField="name" width="300">
+	                </components:CheckBoxList>
+
+	               	<mx:LinkButton label="Create New Permission" click="handleNewPermissionClick(event)"/>
+	            </mx:VBox>
+
+        	</mx:HBox>
+        </mx:VBox>
+
+     	<mx:Button label="Save" click="handleSaveClick(event)" id="buttonSave" visible="false"/>
+     	<mx:Button label="Update" click="handleUpdateClick(event)" id="buttonUpdate" visible="false"/>
+    </mx:VBox>
+</mx:TitleWindow>

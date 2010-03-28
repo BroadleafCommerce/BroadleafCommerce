@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" 
+	>
+<mx:Script>
+	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.control.events.media.ShowFileUploadEvent;
+		import org.broadleafcommerce.admin.core.model.ConfigModel;
+		import mx.events.ListEventReason;
+		import mx.events.ListEvent;
+		import org.broadleafcommerce.admin.core.vo.tools.CodeType;
+		import mx.collections.ArrayCollection;
+		import org.broadleafcommerce.admin.core.model.AdminToolsModel;
+		import org.broadleafcommerce.admin.core.model.AppModelLocator;
+
+	[Bindable]
+	private var configModel:ConfigModel = AppModelLocator.getInstance().configModel;
+	
+	public var action:String = "none";
+
+	private function handleUploadClick(event:Event):void{
+		action = "upload";
+		var sfue:ShowFileUploadEvent = new ShowFileUploadEvent("",this.data);
+		sfue.dispatch();
+	}		
+	
+	private function selectCurrentCodeType(key:String):int{
+		if(keyText.dataProvider != null && keyText.dataProvider is ArrayCollection){
+			var x:int =  0;
+			for each(var codeType:CodeType in ArrayCollection(keyText.dataProvider)){
+				if(codeType.key == key){
+					return x;
+				}
+				x++;
+			}
+		}
+		return -1;
+	}
+	
+	private function handleSave():void{
+		var event:ListEvent = new ListEvent("itemEditEnd");
+		action = "save";
+		this.dispatchEvent(event);
+	}
+	
+	]]>
+</mx:Script>
+
+
+	<mx:Binding source="selectCurrentCodeType(data.key)"
+	            destination="keyText.selectedIndex" />
+	<mx:Binding source="configModel.currentCodeTypes"
+	            destination="keyText.dataProvider" />	            
+	<mx:Binding source="data.url"
+	            destination="urlLabel.text" />
+	<mx:Binding source="{ConfigModel.URL_SERVER}+data.url"
+	            destination="thumbnail.source" />
+	<mx:Binding source="data.name" 
+		        destination="nameLabel.text"/>
+	<mx:Binding source="data.label" 
+		        destination="labelLabel.text"/>
+		        
+
+	<mx:HBox width="100%">
+		<mx:VBox>
+			<mx:Image id="thumbnail" maxHeight="75" maxWidth="75" maintainAspectRatio="true" 
+				horizontalAlign="center" horizontalCenter="0" y="27" width="75" height="75"/>
+			<mx:LinkButton x="10" y="4" label="Upload" horizontalCenter="0" click="handleUploadClick(event)"/>			
+		</mx:VBox>
+		<mx:VBox>
+		 <mx:HBox>		 	
+			<mx:VBox>				
+				<mx:HBox>
+					<mx:Text text="Name:" /><mx:TextInput id="nameLabel"  y="0" x="40"/>				
+				</mx:HBox>
+				<mx:HBox>
+					<mx:Text text="Label:"  x="2" y="23"/>	<mx:TextInput id="labelLabel"  y="23" x="40"/>				
+				</mx:HBox>
+			</mx:VBox>
+			<mx:VBox>
+				<mx:ComboBox id="keyText" labelField="key" />
+				<mx:HBox>					
+					<mx:Button label="Save" click="handleSave()"/>			
+				</mx:HBox>
+			</mx:VBox>
+		 </mx:HBox>
+			<mx:HBox>
+				<mx:Text text="URL:"  y="45" x="10"/> <mx:Text id="urlLabel"  y="45" x="40"/>					
+			</mx:HBox>
+		</mx:VBox>
+	</mx:HBox>
+</mx:Canvas>

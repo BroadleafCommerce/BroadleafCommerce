@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:components="org.broadleafcommerce.admin.catalog.view.components.*">
+<mx:Metadata>
+	[Event(name="clickAdd", type="flash.events.Event")]
+	[Event(name="clickEdit", type="flash.events.Event")]
+	[Event(name="clickDelete", type="flash.events.Event")]
+</mx:Metadata>
+<mx:Script>
+	<![CDATA[
+		import mx.controls.Alert;
+		import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
+		import mx.events.ListEventReason;
+		import mx.events.ListEvent;
+		import org.broadleafcommerce.admin.catalog.vo.media.Media;
+		import mx.collections.ArrayCollection;
+		
+		[Bindable]
+		public var viewType:String;
+		
+		[Bindable]
+		public var dataProvider:ArrayCollection = new ArrayCollection();
+		
+		[Bindable]
+		public function set mediaMap(map:Object):void{
+			dataProvider = new ArrayCollection();
+			for (var x:String in map){
+				if(x is String && map[x] is Media){
+					var dpObject:Object = new Object();
+					dpObject["key"] = x;
+					dpObject["media"] = map[x];
+					dataProvider.addItem(dpObject);
+				}
+			}
+		}
+		
+		public function get mediaMap():Object{
+			var mediaMap:Object = new Object();
+			for each(var item:Object in dataProvider){
+				mediaMap[item["key"]] = Media(item["media"]);
+			}
+			return mediaMap;
+		}
+		
+		private function handleAddClick(event:MouseEvent):void{
+			this.dispatchEvent(new Event("clickAdd"));
+		}
+
+		private function handleEditClick(event:MouseEvent):void{
+			this.dispatchEvent(new Event("clickEdit"));
+		}
+		
+		private function handleDeleteClick(event:Event):void{
+			this.dispatchEvent(new Event("clickDelete"));
+		}			
+		
+		private function handleItemEdit(event:ListEvent):void{
+            event.preventDefault();
+			var media:Media = Media(mediaDataGrid.editedItemRenderer.data);
+			var editor:MediaEditRenderer = MediaEditRenderer(List(event.target).itemEditorInstance);
+			if(editor.action == "save"){				
+				if(editor.labelLabel.text != "" &&
+				   editor.nameLabel.text != "" &&
+				   editor.keyText.selectedIndex > -1) {
+					media.label = editor.labelLabel.text;
+					media.name = editor.nameLabel.text;
+					media.key = editor.keyText.selectedItem.key;
+					mediaDataGrid.destroyItemEditor();										   	
+					//this.dispatchEvent(new Event("clickSave"));
+					
+				}
+				if(editor.action == "upload"){
+					mediaDataGrid.editedItemPosition = mediaDataGrid.editedItemPosition;
+				}
+				if(editor.action == "ucomplete"){
+					Alert.show("state ucomplete");						
+				}
+				if(editor.action == "none"){
+					if(media.id < 0){				
+						ArrayCollection(dataProvider).removeItemAt(mediaDataGrid.selectedIndex);
+					}
+					mediaDataGrid.destroyItemEditor();
+				}
+			}				
+		}
+		
+		private function handleItemEditEnd(event:Event):void{
+			event.preventDefault();
+		}
+		
+		private function handleDataChange(event:Event):void{
+			Alert.show("data change");
+		}
+		
+		private function handleItemEditBegin(event:Event):void{
+			event.preventDefault();
+//			if(event.target.id != "cancelButton" && Media(ListEvent(event).itemRenderer.data).id < 0){
+//				MediaListRenderer(ListEvent(event).itemRenderer).handleEdit();
+//			}
+		}
+		
+		private function handleClick(event:Event):void{
+			event.preventDefault();
+			if(event.target.hasOwnProperty("id") ){
+				var media:Media = Media(mediaDataGrid.selectedItem);				
+				if(event.target.id == "editButton" || event.target.id == "uploadButton"){
+					mediaDataGrid.editedItemPosition = {columnIndex:0, rowIndex:mediaDataGrid.selectedIndex};
+				}
+				if(event.target.id == "saveButton"){
+					//save stuff
+//				var editor:MediaListRenderer = MediaListRenderer(mediaDataGrid.selectedItem); 
+//				if(editor.labelLabelEdit.text != "" &&
+//				   editor.nameLabelEdit.text != "" &&
+//				   editor.keyTextBox.selectedIndex > -1 &&
+//				   editor.urlLabelEdit.text != "") {					
+						this.dispatchEvent(new Event("clickSave"));
+						mediaDataGrid.destroyItemEditor();
+//				   }else{
+//				   	Alert.show("Please fill out all Fields");
+//				   }
+					
+				}
+				if(event.target.id == "cancelButton"){
+					if(media.id < -1){
+						ArrayCollection(dataProvider).removeItemAt(mediaDataGrid.selectedIndex);						
+					}
+					mediaDataGrid.destroyItemEditor();
+				}
+			}
+		}
+		
+		// editable="true" itemEditEnd="handleItemEdit(event)" 
+	]]>
+</mx:Script>
+
+<mx:Binding source="dataProvider"
+            destination="mediaDataGrid.dataProvider" />
+                        
+	<mx:VBox height="100%" width="100%" styleName="padding10">
+		<mx:HBox>
+			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddClick(event)"/>
+			<mx:Button id="viewEditButton" label="View/Edit" click="handleEditClick(event)" enabled="{mediaDataGrid.selectedIndex > -1}"  styleName="viewEditButton" />
+			<mx:Button id="removeButton" label="Remove" click="handleDeleteClick(event)" enabled="{mediaDataGrid.selectedIndex > -1}" styleName="deleteButton"/>
+		</mx:HBox>
+	
+		<mx:List id="mediaDataGrid" width="100%" height="100%" labelField=""  
+			editable="false" rendererIsEditor="true" editorDataField="editedData"
+			itemRenderer="org.broadleafcommerce.admin.catalog.view.media.MediaListRenderer"
+			dataChange="handleDataChange(event)"  
+			itemEditEnd="handleItemEditEnd(event)"
+			itemEditBegin="handleItemEditBegin(event)"
+			click="handleClick(event)" />
+	</mx:VBox>
+</mx:Canvas>

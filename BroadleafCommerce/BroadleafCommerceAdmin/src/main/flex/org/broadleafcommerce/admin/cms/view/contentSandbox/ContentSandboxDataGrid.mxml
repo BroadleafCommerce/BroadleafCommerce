@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+
+<component:CheckBoxDataGrid
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:component="org.broadleafcommerce.util.components.*"
+	change="handleItemChange(event)"
+	allowMultipleSelection="true"
+	verticalAlign="middle">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.util.DataGridUtil;
+			import mx.controls.Alert;
+			import org.broadleafcommerce.util.components.CheckBoxListRenderer;
+
+			[Bindable]
+			public var tabName:String;
+
+			private function handleItemChange(event:Event):void{
+				//new EditCodeTypeEvent(CodeType(this.selectedItem)).dispatch();
+			}
+
+		]]>
+	</mx:Script>
+	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
+	<component:columns>
+		<mx:DataGridColumn
+			dataField="title"
+			headerText=" "
+			width="25"
+			sortable="false"
+			itemRenderer="org.broadleafcommerce.util.components.CheckBoxListRenderer" />
+		<mx:DataGridColumn
+			dataField="contentType"
+			headerText="Type"
+			width="120"/>
+		<mx:DataGridColumn
+			dataField="title"
+			headerText="Title">
+	        <mx:itemRenderer>
+	            <mx:Component>
+	                <mx:VBox height="40" verticalGap="0">
+	                    <mx:Script>
+	                    	<![CDATA[
+	                    		import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
+	                    	]]>
+	                    </mx:Script>
+	                    <mx:Label text="{data.title}" fontWeight="bold"/>
+	                    <mx:Label text="{ContentUtil.findFullUrl(data.id)}" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
+		<mx:DataGridColumn
+			dataField="lastModifiedDate"
+			headerText="Last Modified"
+			width="200">
+			<mx:itemRenderer>
+	            <mx:Component>
+	            	<mx:VBox height="40" verticalGap="0" horizontalAlign="center">
+	                	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
+	                    <mx:Label text="{df.format(data.lastModifiedDate)}" />
+	                    <mx:Label text="by {data.lastModifiedBy}" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
+		<mx:DataGridColumn
+			dataField="activeStartDate"
+			headerText="Display Dates"
+			width="120">
+			<mx:itemRenderer>
+	            <mx:Component>
+	                <mx:VBox height="40" verticalGap="0" horizontalAlign="center">
+	                	<mx:DateFormatter id="df" formatString="MMM DD, YYYY"/>
+	                    <mx:Label text="{df.format(data.activeStartDate)} -" />
+	                    <mx:Label text="{df.format(data.activeEndDate)}" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
+		<mx:DataGridColumn
+			dataField="online"
+			headerText="Online"
+			width="60"
+			textAlign="center"/>
+		<mx:DataGridColumn
+			dataField="title"
+			headerText=" "
+			width="100">
+			<mx:itemRenderer>
+	            <mx:Component>
+	                <mx:VBox height="40" verticalGap="0" horizontalAlign="center" verticalAlign="middle">
+		            	<mx:Script>
+		            		<![CDATA[
+		            			import org.broadleafcommerce.admin.cms.vo.Content;
+		            			import org.broadleafcommerce.admin.cms.control.events.CreateEditContentEvent;
+		            			import org.broadleafcommerce.admin.cms.model.util.ContentUtil;
+
+	    						private function handleEditClick(event:Event):void{
+									if (ContentUtil.isContentTypePage(data.contentType)){
+										new CreateEditContentEvent(data as Content, data.sandbox, true, outerDocument.tabName).dispatch();
+									} else {
+										new CreateEditContentEvent(data as Content, data.sandbox, false, outerDocument.tabName).dispatch();
+									}
+
+								}
+		            		]]>
+		            	</mx:Script>
+						<mx:Button id="editButton" label="Edit" click="handleEditClick(event)" styleName="viewEditButton" />
+	                </mx:VBox>
+	            </mx:Component>
+	        </mx:itemRenderer>
+		</mx:DataGridColumn>
+	</component:columns>
+</component:CheckBoxDataGrid>

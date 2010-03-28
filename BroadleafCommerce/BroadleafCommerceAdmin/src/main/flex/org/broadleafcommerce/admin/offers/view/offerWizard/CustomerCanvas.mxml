@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml"
+	width="100%">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.offers.model.OfferModelLocator;
+			import mx.collections.ArrayCollection;
+
+			[Bindable]
+			private var customerRulesArray:ArrayCollection = OfferModelLocator.getInstance().offerModel.deliveryTypes;
+		]]>
+	</mx:Script>
+	<mx:RadioButtonGroup id="customersRadioGroup"
+		enabled="true" />
+	<mx:VBox verticalGap="15"
+		paddingLeft="10"
+		paddingRight="10"
+		paddingTop="50"
+		width="100%">
+		<mx:VBox verticalGap="5"
+			width="100%">
+			<mx:Label
+				fontWeight="bold"
+				text="Customers"/>
+			<mx:HRule strokeColor="#94B12D"
+				width="100%"/>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Label text="Who do you want to distribute this offer to?"/>
+			<mx:VBox paddingLeft="15">
+				<mx:RadioButton id="allRadio"
+					value="{customerRulesArray.getItemAt(0)}"
+					label="All Customers Automatically"
+					groupName="customersRadioGroup"/>
+				<mx:RadioButton id="codeRadio"
+					value="{customerRulesArray.getItemAt(1)}"
+					label="Any Customer who enters global offer code"
+					groupName="customersRadioGroup"/>
+				<mx:RadioButton id="manualRadio"
+					value="{customerRulesArray.getItemAt(2)}"
+					label="Customers set Manually "
+					groupName="customersRadioGroup"/>
+				<mx:RadioButton enabled="false"
+					label="Any Customer who enters one of many codes" groupName="customersRadioGroup"/>
+			</mx:VBox>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Text text="Codes will be entered on a following screen"
+				fontStyle="italic"/>
+			<mx:Canvas>
+				<mx:TextInput id="appliesCustomerText"
+					x="15"
+					width="164"/>
+			</mx:Canvas>
+		</mx:VBox>
+		<mx:VBox>
+			<mx:Text text="Only give offer to customers who meet the following condition:"/>
+			<mx:Canvas>
+				<mx:TextInput id="offerCodeText"
+					x="15"
+					enabled="{codeRadio.selected}"/>
+			</mx:Canvas>
+		</mx:VBox>
+	</mx:VBox>
+</mx:Canvas>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" 	 
+	xmlns:sku="org.broadleafcommerce.admin.view.catalog.sku.*" 
+	xmlns:sku1="org.broadleafcommerce.admin.catalog.view.sku.*">
+	<mx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import org.broadleafcommerce.admin.catalog.control.events.sku.RemoveSkuEvent;
+			import org.broadleafcommerce.admin.catalog.model.ProductModel;
+			import org.broadleafcommerce.admin.catalog.control.events.sku.NewSkuEvent;
+			import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+			import org.broadleafcommerce.admin.catalog.model.SkuModel;
+			
+			[Bindable]
+			private var skuModel:SkuModel = CatalogModelLocator.getInstance().skuModel;
+			private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+			
+			private function handleAddButtonClick():void{
+				new NewSkuEvent(productModel.currentProduct).dispatch();
+			}
+			
+			private function handleRemoveButtonClick():void{
+				new RemoveSkuEvent(skuModel.currentSku).dispatch();
+			}
+			
+			private function handleEnterState():void{
+				skuEditForm.nameTextInput.setFocus();
+			}
+		]]>
+	</mx:Script>
+	<mx:Binding 
+		source="skuModel.viewSkus" 
+		destination="skusView.skuDataGrid.dataProvider" />
+	<mx:Binding 
+		source="skusView.skuDataGrid.selectedItem !=null "
+		destination="removeButton.enabled" />
+	<mx:Binding
+		source="skuModel.viewState"
+		destination="currentState"/>				
+	<mx:VBox 
+		height="100%" 
+		width="100%" 
+		styleName="padding10">
+		<mx:HBox>
+			<mx:Button 
+				id="addButton" 
+				label="New SKU" 
+				styleName="addButton"
+				click="handleAddButtonClick()"/>
+			<mx:Button 
+				id="removeButton" 
+				label="Remove" 
+				styleName="deleteButton" 
+				click="handleRemoveButtonClick()"/>
+		</mx:HBox>		
+		<mx:HBox 
+			width="100%" 
+			height="100%">
+			<mx:VBox 
+				height="100%" 
+				width="25%" 
+				maxWidth="250" >
+				<mx:Label 
+					text="All Product SKUs" />
+				<sku1:SkusView 
+					id="skusView" 
+					width="300" 
+					height="100%" />
+			</mx:VBox>
+			<mx:VBox 
+				width="100%" 
+				height="100%" >
+				<mx:Label 
+					text="SKU Details" />			
+				<sku1:SkuEditFormCanvas 
+					id="skuEditForm" 
+					width="100%" 
+					height="100%" />
+			</mx:VBox>		
+		</mx:HBox>	
+	</mx:VBox>
+	
+	<mx:states>
+		<mx:State
+			name="{SkuModel.STATE_NEW}"
+			enterState="handleEnterState()">
+		</mx:State>
+		<mx:State
+			name="{SkuModel.STATE_EDIT}"
+			enterState="handleEnterState()">
+		</mx:State>
+		<mx:State
+			name="{SkuModel.STATE_NONE}"
+			enterState="handleEnterState()">
+		</mx:State>
+	</mx:states>
+</mx:Canvas>

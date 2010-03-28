@@ -31,6 +31,7 @@ public class StandardConfigLocations {
     public static final int WEBCONTEXTTYPE = 1;
     public static final int SERVICECONTEXTTYPE = 2;
     public static final int TESTCONTEXTTYPE = 3;
+    public static final int APPCONTEXTTYPE = 4;
 
     public static String[] retrieveAll(int contextType) throws IOException {
         String[] response;
@@ -47,8 +48,8 @@ public class StandardConfigLocations {
                     if (!temp.startsWith("#") && temp.trim().length() > 0 && StandardConfigLocations.class.getClassLoader().getResource(temp.trim()) != null) {
                     	if (
                     			contextType == ALLCONTEXTTYPE  ||
-                    			(contextType == WEBCONTEXTTYPE && temp.indexOf("-web-") >= 0) ||
-                    			((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE) && temp.indexOf("-web-") < 0) ||
+                    			((contextType == WEBCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") >= 0) ||
+                    			((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") < 0 && temp.indexOf("-test") < 0) ||
                     			(contextType == TESTCONTEXTTYPE && temp.indexOf("-test") >= 0)
                     	){
                     		items.add(temp.trim());

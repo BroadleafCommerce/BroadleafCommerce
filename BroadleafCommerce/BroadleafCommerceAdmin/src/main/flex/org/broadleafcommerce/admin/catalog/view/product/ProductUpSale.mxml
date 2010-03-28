@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ -->
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:components="org.broadleafcommerce.admin.catalog.view.category.components.*" 
+	xmlns:components1="org.broadleafcommerce.admin.catalog.view.product.components.*"
+	show="onShow()">
+
+<mx:Script>
+	<![CDATA[
+		import org.broadleafcommerce.admin.catalog.vo.product.UpSaleProduct;
+		import org.broadleafcommerce.admin.catalog.control.events.product.RemoveRelatedSaleProductEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.product.AddRelatedSaleProductEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.product.FindAllProductsEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.product.SaveProductEvent;
+		import org.broadleafcommerce.admin.catalog.vo.product.CrossSaleProduct;
+		import org.broadleafcommerce.admin.catalog.control.events.category.SaveCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.category.RemoveFeaturedProductFromCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.vo.category.Category;
+		import mx.events.DragEvent;
+		import org.broadleafcommerce.admin.catalog.control.events.category.AddFeaturedProductToCategoryEvent;
+		import org.broadleafcommerce.admin.catalog.model.ProductModel;
+		import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
+		import org.broadleafcommerce.admin.catalog.control.events.product.EditProductEvent;
+		import org.broadleafcommerce.admin.catalog.vo.product.Product;
+		import org.broadleafcommerce.admin.catalog.model.CatalogModel;
+		import org.broadleafcommerce.admin.catalog.vo.product.FeaturedProduct;
+		import mx.collections.ArrayCollection;
+		import org.broadleafcommerce.admin.core.model.AppModelLocator;
+		import org.broadleafcommerce.admin.catalog.model.CategoryModel;
+
+		[Bindable]
+		private var categoryModel:CategoryModel = CatalogModelLocator.getInstance().categoryModel;
+
+		[Bindable]
+		private var productModel:ProductModel = CatalogModelLocator.getInstance().productModel;
+
+		private function onShow():void{
+			var fape:FindAllProductsEvent = new FindAllProductsEvent();
+			fape.dispatch();
+		}
+
+		 private function handleProductsDataGridClick(event:MouseEvent):void{
+//		 	var product:Product = Product(ProductsDataGrid(event.currentTarget).selectedItem);
+//		 	viewProduct(product, false);
+		 }
+
+		public function handleAddButtonClick(event:MouseEvent):void{
+			var crossProduct:Product = Product(allProductsList.selectedItem);
+			var product:Product = productModel.currentProduct;
+			var relatedProduct:UpSaleProduct = new UpSaleProduct();
+			relatedProduct.product = productModel.currentProduct;
+			relatedProduct.promotionMessage = "";
+			relatedProduct.relatedProduct = Product(allProductsList.selectedItem);
+			relatedProduct.sequence = product.upSaleProducts.length;
+			var arpe:AddRelatedSaleProductEvent = new AddRelatedSaleProductEvent(relatedProduct, "upSaleProducts", product.upSaleProducts.length);
+			arpe.dispatch();
+		}
+
+		 private function handleViewEditButtonClick(event:MouseEvent):void{
+//		 	var product:Product = Product(categoryProductDataGrid.selectedItem);
+//		 	viewProduct(product, true);
+		 }
+
+		private function handleRemoveButtonClick(event:MouseEvent):void{
+			var product:Product = productModel.currentProduct;
+			var upSaleProduct:UpSaleProduct = UpSaleProduct(upProductsDataGrid.selectedItem);
+			var rrpe:RemoveRelatedSaleProductEvent = new RemoveRelatedSaleProductEvent(upSaleProduct, "upSaleProducts");
+			rrpe.dispatch();
+		}
+
+		private function handleGridDrop(event:DragEvent):void{
+			var crossProduct:Product = Product(List(event.dragInitiator).selectedItem);
+			var product:Product = productModel.currentProduct;
+			var index:int = upProductsDataGrid.calculateDropIndex(event);
+			
+			event.preventDefault();
+
+			var relatedProduct:UpSaleProduct = new UpSaleProduct();
+			relatedProduct.product = productModel.currentProduct;
+			relatedProduct.promotionMessage = "";
+			relatedProduct.relatedProduct = Product(allProductsList.selectedItem);
+			relatedProduct.sequence = index;
+			
+			var arpe:AddRelatedSaleProductEvent = new AddRelatedSaleProductEvent(relatedProduct, "upSaleProducts", index);
+			arpe.dispatch();
+			
+			upProductsDataGrid.hideDropFeedback(event);
+		}
+		
+		private function handleEditItem(event:Event):void{
+			var product:Product = productModel.currentProduct;
+			var spe:SaveProductEvent = new SaveProductEvent(product);
+			spe.dispatch();
+		}
+		
+		private function handleProductLabel(item:Object):String{
+			var product:Product = Product(item);
+			return product.defaultCategory.name + " - " + product.name;
+		}
+
+	]]>
+</mx:Script>
+
+<mx:Binding source="productModel.currentProduct.upSaleProducts"
+                   destination="upProductsDataGrid.dataProvider" />
+                   
+<mx:Binding source="productModel.allFilteredCatalogProducts"
+	            destination="allProductsList.dataProvider" />	
+	
+<mx:Binding source="allProductsList.selectedItem != null"
+            destination="addButton.enabled" />            
+
+<mx:Binding source="upProductsDataGrid.selectedItem != null"
+            destination="removeButton.enabled" />            
+
+<!-- mx:Binding source="categoryFeaturedProductDataGrid.selectedItem != null"
+            destination="viewEditButton.enabled" /-->            
+
+	<mx:VBox height="100%" width="100%" styleName="padding10">
+		<mx:HBox>
+			<mx:Button id="addButton" label="Add" styleName="addButton" click="handleAddButtonClick(event)"/>
+			<mx:Button id="removeButton" label="Remove" styleName="deleteButton" click="handleRemoveButtonClick(event)"/>
+		</mx:HBox>
+		<mx:HBox width="100%" height="100%">
+			<mx:VBox height="100%" width="25%" maxWidth="250" >
+				<mx:Label text="All Products" />			
+				<mx:List id="allProductsList" width="100%" height="100%" labelFunction="handleProductLabel" dragEnabled="true"/>			
+			</mx:VBox>					
+			<components1:RelatedProductsDataGrid id="upProductsDataGrid" click="handleProductsDataGridClick(event)"
+				height="100%" width="75%" itemEditEnd="handleEditItem(event)"
+				dropEnabled="true" dragDrop="handleGridDrop(event)"/>
+		</mx:HBox>
+	</mx:VBox>
+
+</mx:Canvas>

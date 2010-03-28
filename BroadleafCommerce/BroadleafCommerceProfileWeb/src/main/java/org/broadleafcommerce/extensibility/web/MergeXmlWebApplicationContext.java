@@ -83,7 +83,7 @@ public class MergeXmlWebApplicationContext extends XmlWebApplicationContext {
      * @see #getResourcePatternResolver
      */
     protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws BeansException, IOException {
-        String[] broadleafConfigLocations = StandardConfigLocations.retrieveAll(StandardConfigLocations.ALLCONTEXTTYPE);
+        String[] broadleafConfigLocations = StandardConfigLocations.retrieveAll(StandardConfigLocations.APPCONTEXTTYPE);
 
         ArrayList<InputStream> sources = new ArrayList<InputStream>();
         for (String location : broadleafConfigLocations) {

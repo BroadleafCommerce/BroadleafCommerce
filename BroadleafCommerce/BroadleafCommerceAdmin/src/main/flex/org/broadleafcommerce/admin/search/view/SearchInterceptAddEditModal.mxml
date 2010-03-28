@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="304" height="202"
+	showCloseButton="true"
+	headerColors="[#666666, #000000]"
+	close="PopUpManager.removePopUp(this)" 
+	creationComplete="creationComplete()"
+	verticalAlign="middle" horizontalAlign="center">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.search.control.events.UpdateSearchInterceptEvent;
+		
+			import org.broadleafcommerce.admin.search.vo.SearchIntercept;	
+			import org.broadleafcommerce.admin.search.control.events.CreateSearchInterceptEvent;
+			import org.broadleafcommerce.admin.search.control.events.CreateSearchInterceptEvent;
+			import mx.managers.PopUpManager;
+			
+			[Bindable]
+			public var searchIntercept:SearchIntercept;
+			
+			private function creationComplete():void {
+				PopUpManager.centerPopUp(this);
+				
+				if (searchIntercept != null) {
+					this.title = "Edit Search Intercept";
+					this.formHeading.label = "Editing " + searchIntercept.term;
+					this.buttonUpdate.visible = true;
+				} else {
+					searchIntercept = new SearchIntercept();
+					this.buttonSave.visible = true;
+					this.title = "Add New Search Intercept";
+					this.formHeading.label = "New Search Intercept";
+				}
+				this.txtTerm.text = searchIntercept.term;
+				this.txtRedirect.text = searchIntercept.redirect;
+			}
+			
+			private function handleSaveClick(event:Event):void{
+				searchIntercept.term = txtTerm.text;
+				searchIntercept.redirect = txtRedirect.text;
+				
+				var saveIntercept:CreateSearchInterceptEvent = new CreateSearchInterceptEvent(searchIntercept);
+				saveIntercept.dispatch();
+				
+				PopUpManager.removePopUp(this);
+
+			}
+			
+			private function handleUpdateClick(event:Event):void{
+				searchIntercept.term = txtTerm.text;
+				searchIntercept.redirect = txtRedirect.text;
+				
+				var updateIntercept:UpdateSearchInterceptEvent = new UpdateSearchInterceptEvent(searchIntercept);
+				updateIntercept.dispatch();
+				
+				PopUpManager.removePopUp(this);
+			}
+			
+		]]>
+	</mx:Script>
+    <mx:VBox width="100%">
+    	<mx:FormHeading id="formHeading"/>	            	
+    	<mx:HBox>
+            <mx:Form width="300">
+                <mx:FormItem label="Term">
+                    <mx:TextInput id="txtTerm"/>
+                </mx:FormItem>
+                <mx:FormItem label="Redirect">
+                    <mx:TextInput id="txtRedirect"/>
+                </mx:FormItem>
+            </mx:Form>
+    	</mx:HBox>
+        
+     	<mx:Button label="Save" click="handleSaveClick(event)" id="buttonSave" visible="false"/>
+     	<mx:Button label="Update" click="handleUpdateClick(event)" id="buttonUpdate" visible="false"/>
+    </mx:VBox>    
+</mx:TitleWindow>

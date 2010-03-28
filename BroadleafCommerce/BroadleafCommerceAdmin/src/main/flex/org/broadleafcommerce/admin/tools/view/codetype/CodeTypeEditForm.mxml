@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<mx:Form 
+	xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+		<![CDATA[
+			import org.broadleafcommerce.admin.core.vo.tools.CodeType;
+			import org.broadleafcommerce.admin.tools.control.events.codetype.RemoveCodeTypeFormEvent;
+			import mx.utils.ObjectUtil;
+			import org.broadleafcommerce.admin.tools.model.ToolsModelLocator;
+			import org.broadleafcommerce.admin.tools.model.CodeTypeModel;
+			import org.broadleafcommerce.admin.tools.control.events.codetype.SaveCodeTypeEvent;
+			
+			[Bindable]
+			private var toolsModel:CodeTypeModel = ToolsModelLocator.getInstance().codeTypeModel;
+			
+			private function handleSaveButtonClick(event:Event):void{
+				var editCodeType:CodeType = CodeType(ObjectUtil.copy(toolsModel.currentCodeType));
+				editCodeType.codeType = codeTypeTextInput.text;
+				editCodeType.description = descriptionTextInput.text;
+				editCodeType.key = keyTextInput.text;
+				//editCodeType.modifiable = modifiableTrueRadioButton.selected.toString();
+				editCodeType.modifiable = "True";
+				new SaveCodeTypeEvent(editCodeType).dispatch();
+			}
+			
+			private function handleCancelButtonClick(event:Event):void{
+				new RemoveCodeTypeFormEvent().dispatch();
+			}
+		]]>
+	</mx:Script>
+	<mx:Binding
+		source="toolsModel.currentCodeType.codeType"
+		destination="codeTypeTextInput.text"/>
+	<mx:Binding
+		source="toolsModel.currentCodeType.description"
+		destination="descriptionTextInput.text"/>
+	<mx:Binding
+		source="toolsModel.currentCodeType.key"
+		destination="keyTextInput.text"/>
+	<!--mx:Binding
+		source="toolsModel.currentCodeType.modifiable == 'true'"
+		destination="modifiableTrueRadioButton.selected"/>
+	<mx:Binding
+		source="toolsModel.currentCodeType.modifiable == 'false'"
+		destination="modifiableFalseRadioButton.selected"/-->
+	<mx:FormItem
+		label="Code Type:">
+		<mx:TextInput 
+			id="codeTypeTextInput"
+			width="160"/> 
+	</mx:FormItem> 
+	<mx:FormItem
+		label="Key:">
+		<mx:TextInput 
+			id="keyTextInput"
+			width="160"/> 
+	</mx:FormItem> 
+	<mx:FormItem
+		label="Description:">
+		<mx:TextInput 
+			id="descriptionTextInput"
+			width="160"/> 
+	</mx:FormItem> 
+	<!--mx:FormItem
+		label="Modifiable:">
+		<mx:RadioButtonGroup
+			id="modifiableRadioButtonGroup"/>
+		<mx:HBox> 
+			<mx:RadioButton 
+				id="modifiableTrueRadioButton" 
+				groupName="modifiableRadioButtonGroup"
+				label="True"/>
+			<mx:RadioButton 
+				id="modifiableFalseRadioButton"
+				groupName="modifiableRadioButtonGroup" 
+				label="False"/>
+		</mx:HBox>
+	</mx:FormItem-->
+	<mx:FormItem>
+		<mx:HBox>
+			<mx:Button
+				id="saveButton"
+				label="Save"
+				click="handleSaveButtonClick(event)"/> 
+			<mx:Button
+				id="cancelButton"
+				label="Cancel"
+				click="handleCancelButtonClick(event)"/>
+		</mx:HBox>
+	</mx:FormItem> 
+</mx:Form>
