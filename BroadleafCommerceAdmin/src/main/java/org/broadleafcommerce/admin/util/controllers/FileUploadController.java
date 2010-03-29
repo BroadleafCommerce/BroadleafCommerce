@@ -43,44 +43,43 @@ public class FileUploadController extends SimpleFormController {
             Object command,
             BindException errors) throws ServletException, IOException {
 
-             // cast the bean
-            FileUploadBean bean = (FileUploadBean) command;
+         // cast the bean
+        FileUploadBean bean = (FileUploadBean) command;
 
-            // let's see if there's content there
-            MultipartFile file = bean.getFile();
-            if (file == null) {
-                 // hmm, that's strange, the user did not upload anything
-            }
-
-            try {
-                String uriBegining = request.getRequestURI().substring(1,request.getRequestURI().indexOf("/",2));
-                String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf(uriBegining)+uriBegining.length());
-                String absoluteFilename = basepath+File.separator+bean.getDirectory()+File.separator+file.getOriginalFilename();
-                FileSystemResource fileResource = new FileSystemResource(absoluteFilename);
-
-                checkDirectory(basepath+bean.getDirectory());
-
-                backupExistingFile(fileResource, basepath+bean.getDirectory());
-                
-                
-                FileOutputStream fout = new FileOutputStream(new FileSystemResource(basepath+File.separator+bean.getDirectory()+File.separator+file.getOriginalFilename()).getFile());
-                BufferedOutputStream bout = new BufferedOutputStream(fout);
-                BufferedInputStream bin = new BufferedInputStream(file.getInputStream());
-                int x;
-                while((x = bin.read()) != -1) {
-                    bout.write(x);
-                }
-                bout.flush();
-                bout.close();
-                bin.close();
-                return super.onSubmit(request, response, command, errors);                
-            }catch(Exception e) {
-                //Exception occured;
-                e.printStackTrace();
-                throw new RuntimeException(e);
-                // return null;                
-            }
+        // let's see if there's content there
+        MultipartFile file = bean.getFile();
+        if (file == null) {
+             // hmm, that's strange, the user did not upload anything
         }
+
+        try {
+            String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf("/upload"));
+            String absoluteFilename = basepath+File.separator+bean.getDirectory()+File.separator+file.getOriginalFilename();
+            FileSystemResource fileResource = new FileSystemResource(absoluteFilename);
+
+            checkDirectory(basepath+bean.getDirectory());
+
+            backupExistingFile(fileResource, basepath+bean.getDirectory());
+            
+            
+            FileOutputStream fout = new FileOutputStream(new FileSystemResource(basepath+File.separator+bean.getDirectory()+File.separator+file.getOriginalFilename()).getFile());
+            BufferedOutputStream bout = new BufferedOutputStream(fout);
+            BufferedInputStream bin = new BufferedInputStream(file.getInputStream());
+            int x;
+            while((x = bin.read()) != -1) {
+                bout.write(x);
+            }
+            bout.flush();
+            bout.close();
+            bin.close();
+            return super.onSubmit(request, response, command, errors);                
+        }catch(Exception e) {
+            //Exception occured;
+            e.printStackTrace();
+            throw new RuntimeException(e);
+            // return null;                
+        }
+    }
     
     private void checkDirectory(String basepath) {
         FileSystemResource dirResource = new FileSystemResource(basepath);
