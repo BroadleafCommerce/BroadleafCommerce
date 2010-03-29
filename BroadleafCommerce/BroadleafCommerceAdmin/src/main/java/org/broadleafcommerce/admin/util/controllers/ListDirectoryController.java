@@ -38,9 +38,7 @@ public class ListDirectoryController extends AbstractController {
 		response.setContentType("text/xml");
 		dirs.setDateFormat("MMM DD, yyyy");
 
-		String uriBegining = request.getRequestURI().substring(1,request.getRequestURI().indexOf("/",2));
-		String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf(uriBegining)+uriBegining.length());
-
+		String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf("ls"));
 		dirs.generateXmlDirectoryListing(new File(basepath + rootDirectory), response.getOutputStream());
 
 		return null;
