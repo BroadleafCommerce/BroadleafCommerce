@@ -53,6 +53,16 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>BroadleafCommerceIntegrationTests</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>cobertura</groupId>
+					<artifactId>cobertura</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.flex</groupId>
 			<artifactId>spring-flex</artifactId>
 			<exclusions>

@@ -15,8 +15,23 @@
 	<property file="build.properties" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}"/>
 	<property name="demo.build.finalName" value="${demoPom.artifactId}-${demoPom.version}"/>
+	
+	<artifact:pom id="frameworkPom" file="BroadleafCommerceFrameworkWeb/pom.xml"/>
+	<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime"/>
+	<artifact:pom id="adminPom" file="BroadleafCommerceAdmin/pom.xml"/>
+	<artifact:dependencies filesetId="adminDeps" pomRefId="adminPom" useScope="runtime"/>
+	<artifact:dependencies filesetId="adminDeps2" pomRefId="adminPom" useScope="compile"/>
+	<path id="build.runtime.classpath">
+		<fileset refid="frameworkDeps"/>
+	</path>
+	<path id="build.admin.compile.classpath">
+		<fileset refid="adminDeps2"/>
+	</path>
+	<path id="build.admin.runtime.classpath">
+		<fileset refid="adminDeps"/>
+	</path>
 
-	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-docs, build-dependencies, build-sql">
+	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-sql, build-docs, build-dependencies">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-dependencies.zip">
 			<fileset dir="${maven.build.finalName}">
 				<include name="dist/**/*.*"/>
@@ -57,7 +72,10 @@
 
 	<target name="build-sql">
 		<mkdir dir="${maven.build.finalName}/sql"/>
-		<taskdef name="hibernatetool" classname="org.broadleafcommerce.util.sql.HibernateToolTask" classpathref="build.admin.runtime.classpath" />
+		<path id="combined.path">
+			<union id="union"><path refid="build.admin.compile.classpath"/><path refid="build.admin.runtime.classpath"/></union>
+		</path>
+		<taskdef name="hibernatetool" classname="org.broadleafcommerce.util.sql.HibernateToolTask" classpathref="combined.path" />
 		<hibernatetool destDir="${maven.build.finalName}/sql" combinePersistenceUnits="false" refineFileNames="true">
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.hibernate.dialect.PostgreSQLDialect" />
 			<jpaconfiguration persistenceUnit="blPU" dialect="org.broadleafcommerce.util.sql.MySQLInnoDBDialect" />
@@ -83,7 +101,7 @@
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.InterbaseDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.FirebirdDialect" />
 			<jpaconfiguration persistenceUnit="blSecurePU" dialect="org.hibernate.dialect.DB2Dialect" />
-			<classpath refid="build.admin.runtime.classpath" />
+			<classpath refid="combined.path" />
 			<hbm2ddl export="false"/>
 		</hibernatetool>
 	</target>
@@ -93,22 +111,6 @@
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="install"/>
 		</artifact:mvn>
-		
-		<artifact:pom id="frameworkPom" file="BroadleafCommerceFrameworkWeb/pom.xml"/>
-		<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime"/>
-		<artifact:pom id="demoPom" file="BroadleafCommerceDemo/pom.xml"/>
-		<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="compile"/>
-		<artifact:pom id="adminPom" file="BroadleafCommerceAdmin/pom.xml"/>
-		<artifact:dependencies filesetId="adminDeps" pomRefId="adminPom" useScope="runtime"/>
-		<path id="build.runtime.classpath">
-			<fileset refid="frameworkDeps"/>
-		</path>
-		<path id="build.demo.runtime.classpath">
-			<fileset refid="demoDeps"/>
-		</path>
-		<path id="build.admin.runtime.classpath">
-			<fileset refid="adminDeps"/>
-		</path>
 			
 		<copy todir="${maven.build.finalName}/dist">
 			<fileset dir="BroadleafCommerceAdmin/target">
