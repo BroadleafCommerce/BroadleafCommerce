@@ -113,9 +113,6 @@
 		</artifact:mvn>
 			
 		<copy todir="${maven.build.finalName}/dist">
-			<fileset dir="BroadleafCommerceAdmin/target">
-				<include name="*.jar"/>
-			</fileset>
 			<fileset dir="BroadleafCommerceFramework/target">
 				<include name="*.jar"/>
 			</fileset>
@@ -132,6 +129,12 @@
 				<include name="*.jar"/>
 			</fileset>
 			<fileset dir="BroadleafCommerceUSPSSchemas/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceCyberSource/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceCyberSourceAPI/target">
 				<include name="*.jar"/>
 			</fileset>
 		</copy>
@@ -152,6 +155,8 @@
 				<include name="BroadleafCommerceProfileWeb/**/*.*"/>
 				<include name="BroadleafCommerceUSPS/**/*.*"/>
 				<include name="BroadleafCommerceUSPSSchemas/**/*.*"/>
+				<include name="BroadleafCommerceCyberSource/**/*.*"/>
+				<include name="BroadleafCommerceCyberSourceAPI/**/*.*"/>
 				<include name="pom.xml"/>
 				<exclude name="**/.*/*.*"/>
 				<exclude name="**/.*"/>
@@ -184,6 +189,12 @@
 				<include name="*sources.jar"/>
 			</fileset>
 			<fileset dir="BroadleafCommerceUSPSSchemas/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceCyberSource/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceCyberSourceAPI/target">
 				<include name="*sources.jar"/>
 			</fileset>
 		</copy>
