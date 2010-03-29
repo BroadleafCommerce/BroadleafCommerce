@@ -308,6 +308,13 @@
 	      <scope>compile</scope>
 	    </dependency>
 	    <dependency>
+	      <groupId>org.broadleafcommerce</groupId>
+	      <artifactId>BroadleafCommerceIntegrationTests</artifactId>
+	      <version>1.0.2-SNAPSHOT</version>
+	      <type>jar</type>
+	      <scope>provided</scope>
+	    </dependency>
+	    <dependency>
 	    	<groupId>javax.servlet</groupId>
 	    	<artifactId>servlet-api</artifactId>
 	    	<version>2.5</version>

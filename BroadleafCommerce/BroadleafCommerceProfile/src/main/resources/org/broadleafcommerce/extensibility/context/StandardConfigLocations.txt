@@ -10,3 +10,5 @@ bl-framework-applicationContext-persistence.xml
 bl-framework-applicationContext-workflow.xml
 bl-framework-web-applicationContext.xml
 bl-framework-applicationContext-test.xml
+bl-applicationContext-test.xml
+bl-applicationContext-test-security.xml
