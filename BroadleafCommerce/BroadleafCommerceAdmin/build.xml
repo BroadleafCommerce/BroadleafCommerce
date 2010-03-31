@@ -106,6 +106,12 @@
 		<minimal-maven-launch basedir="${basedir}/../BroadleafCommerceDemo" goal="clean compile war:inplace" resultproperty="maven.build.result" />
 		<maven-launch basedir="${basedir}" goal="clean compile war:inplace jetty:run" resultproperty="maven.build.result" />
 	</target>
+	
+	<target name="build-all">
+		<minimal-maven-launch basedir="${basedir}/.." goal="-Dmaven.test.skip=true install" resultproperty="maven.build.result" />
+	</target>
+	
+	<target name="build-all-and-launch-admin" depends="build-all, launch-admin"/>
 
 	<target name="stop-admin" depends="stop-db">
 		<minimal-maven-launch basedir="${basedir}" goal="jetty:stop" resultproperty="maven.build.result" />
