@@ -118,6 +118,7 @@
 		<delete dir="${maven.build.dir}/forms"/>
 		<delete dir="${maven.build.dir}/history"/>
 		<delete dir="${maven.build.dir}/modules"/>
+		<delete dir="${maven.build.dir}/images"/>
 		<delete>
 	    	<fileset dir="${maven.build.dir}" includes="*.*"/>
 			<fileset dir="${maven.build.dir}/WEB-INF/lib" includes="*.*"/>
