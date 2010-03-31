@@ -45,6 +45,7 @@
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-framework-web</artifactId>
+			<version>1.0.2-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>cobertura</groupId>
@@ -55,6 +56,7 @@
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>BroadleafCommerceIntegrationTests</artifactId>
+			<version>1.0.2-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>cobertura</groupId>
