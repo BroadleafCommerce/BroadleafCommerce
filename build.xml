@@ -146,7 +146,6 @@
 		<copy todir="${maven.build.finalName}/src">
 			<fileset dir="./">
 				<include name="BroadleafCommerceAdmin/**/*.*"/>
-				<include name="BroadleafCommerceAdminWeb/**/*.*"/>
 				<include name="BroadleafCommerceDemo/**/*.*"/>
 				<include name="BroadleafCommerceFramework/**/*.*"/>
 				<include name="BroadleafCommerceFrameworkWeb/**/*.*"/>
@@ -158,6 +157,7 @@
 				<include name="BroadleafCommerceCyberSource/**/*.*"/>
 				<include name="BroadleafCommerceCyberSourceAPI/**/*.*"/>
 				<include name="pom.xml"/>
+				<include name="build.properties"/>
 				<exclude name="**/.*/*.*"/>
 				<exclude name="**/.*"/>
 			</fileset>
@@ -171,6 +171,9 @@
 		</artifact:mvn>
 		<copy todir="${maven.build.finalName}/dist">
 			<fileset dir="BroadleafCommerceAdmin/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceDemo/target">
 				<include name="*sources.jar"/>
 			</fileset>
 			<fileset dir="BroadleafCommerceFramework/target">
