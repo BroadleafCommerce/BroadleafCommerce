@@ -65,6 +65,7 @@
   	<dependency>
   		<groupId>org.broadleafcommerce</groupId>
   		<artifactId>broadleaf-profile</artifactId>
+  		<version>1.0.2-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>cobertura</groupId>
