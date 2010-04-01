@@ -27,20 +27,17 @@
 
 	<mx:RemoteObject 
 		id="blcAdminService"
-		endpoint="{ConfigModel.URL_ENDPOINT}"  
 		showBusyCursor="true">
 	</mx:RemoteObject>
 
 	<mx:RemoteObject
 		id="blcAdminSecurityService"
-		endpoint="{ConfigModel.URL_ENDPOINT}"
 		showBusyCursor="true"
 		destination="blAdminSecurityService">
 	</mx:RemoteObject>
 	
 	<mx:RemoteObject
 		id="blCodeTypeService"
-		endpoint="{ConfigModel.URL_ENDPOINT}"
 		showBusyCursor="true"
 		destination="blCodeTypeService">
 	</mx:RemoteObject>
