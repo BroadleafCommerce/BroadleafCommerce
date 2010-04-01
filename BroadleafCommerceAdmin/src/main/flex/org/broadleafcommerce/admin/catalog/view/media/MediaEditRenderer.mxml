@@ -69,7 +69,7 @@
 	            destination="keyText.dataProvider" />	            
 	<mx:Binding source="data.url"
 	            destination="urlLabel.text" />
-	<mx:Binding source="{ConfigModel.URL_SERVER}+data.url"
+	<mx:Binding source="{configModel.urlServer}+data.url"
 	            destination="thumbnail.source" />
 	<mx:Binding source="data.name" 
 		        destination="nameLabel.text"/>

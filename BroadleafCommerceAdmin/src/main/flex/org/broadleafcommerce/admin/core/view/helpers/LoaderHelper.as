@@ -40,7 +40,7 @@ package org.broadleafcommerce.admin.core.view.helpers
 		}
 		
 		public function load():void{      
-		  var fullUrl:String = ConfigModel.URL_MODULE_SERVER+moduleConfig.swf;
+		  var fullUrl:String = AppModelLocator.getInstance().configModel.urlServer+moduleConfig.swf;
 		  moduleInfo = ModuleManager.getModule(fullUrl); 	     
 	      moduleInfo.addEventListener(ModuleEvent.READY,handleModuleReady);
 	      moduleInfo.addEventListener(ModuleEvent.ERROR, handleModuleError);

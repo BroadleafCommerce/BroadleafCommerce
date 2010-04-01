@@ -27,26 +27,26 @@ package org.broadleafcommerce.admin.core.model
 		public static const SERVER_CONTEXT:String 			= "broadleafadmin";
 		private static const SERVER_MESSAGE_BROKER:String 	= "messagebroker/amf";
 		public static const SERVER_IMAGES:String			= "/images";
-		private static const SERVER_CONFIG:String 			= "modules/modules-config.xml";
+		public static const SERVER_CONFIG:String 			= "modules/modules-config.xml";
 		private static const SERVER_FILE_UPLOAD:String 		= "spring/upload";
 		private static const SERVER_FILE_LIST:String 		= "spring/ls";
 		private static const SERVER_FILE_MKDIR:String 		= "spring/mkDir";
 		private static const SERVER_FILE_REMOVE:String 		= "spring/rm";
 
-		public static const URL_SERVER:String = SERVER_PROTOCOL+"://"+SERVER_HOST+":"+SERVER_PORT+"/"+SERVER_CONTEXT;
-		public static const URL_CONFIG:String = URL_SERVER+"/"+SERVER_CONFIG;
-		public static const URL_ENDPOINT:String = URL_SERVER+"/"+SERVER_MESSAGE_BROKER;
-		public static const URL_FILE_UPLOAD:String = URL_SERVER+"/"+SERVER_FILE_UPLOAD;
-		public static const URL_FILE_LIST:String = URL_SERVER+"/"+SERVER_FILE_LIST;
-		public static const URL_FILE_MKDIR:String = URL_SERVER+"/"+SERVER_FILE_MKDIR;
-		public static const URL_FILE_REMOVE:String = URL_SERVER+"/"+SERVER_FILE_REMOVE;
+//		public static const URL_SERVER:String = SERVER_PROTOCOL+"://"+SERVER_HOST+":"+SERVER_PORT+"/"+SERVER_CONTEXT;
+//		public static const URL_CONFIG:String = URL_SERVER+"/"+SERVER_CONFIG;
+//		public static const URL_ENDPOINT:String = URL_SERVER+"/"+SERVER_MESSAGE_BROKER;
+//		public static const URL_FILE_UPLOAD:String = URL_SERVER+"/"+SERVER_FILE_UPLOAD;
+//		public static const URL_FILE_LIST:String = URL_SERVER+"/"+SERVER_FILE_LIST;
+//		public static const URL_FILE_MKDIR:String = URL_SERVER+"/"+SERVER_FILE_MKDIR;
+//		public static const URL_FILE_REMOVE:String = URL_SERVER+"/"+SERVER_FILE_REMOVE;
 
 		public static const CMS_ROOT_DIR:String 			= "\\content\\admin";
-		public static const CMS_SERVER_PROTOCOL:String 		= "http";
-		public static const CMS_SERVER_HOST:String 			= "localhost";
-		public static const CMS_SERVER_PORT:String 			= "8080";
-		public static const CMS_SERVER_CONTEXT:String 		= "";
-		public static const CMS_PREVIEW_URL:String = CMS_SERVER_PROTOCOL+"://"+CMS_SERVER_HOST+":"+CMS_SERVER_PORT+"/"+CMS_SERVER_CONTEXT;
+//		public static const CMS_SERVER_PROTOCOL:String 		= "http";
+//		public static const CMS_SERVER_HOST:String 			= "localhost";
+//		public static const CMS_SERVER_PORT:String 			= "8080";
+//		public static const CMS_SERVER_CONTEXT:String 		= "";
+//		public static const CMS_PREVIEW_URL:String = CMS_SERVER_PROTOCOL+"://"+CMS_SERVER_HOST+":"+CMS_SERVER_PORT+"/"+CMS_SERVER_CONTEXT;
 
 		private static const defaultUrl:String = "";
 
@@ -54,11 +54,36 @@ package org.broadleafcommerce.admin.core.model
 		{
 		}
 
-		public static function get URL_MODULE_SERVER():String{
+		public function get urlServer():String{
 			var url:String = Application.application.loaderInfo.url;
 			return url.substr(0,url.lastIndexOf("/"))+"/";
 
 		}
+		
+		public function get urlConfig():String {
+			return urlServer+"/"+SERVER_CONFIG;
+		}
+		
+//		public static const URL_FILE_LIST:String = URL_SERVER+"/"+SERVER_FILE_LIST;
+		public function get urlFileList():String {
+			return urlServer+"/"+SERVER_FILE_LIST;
+		}
+
+//		public static const URL_FILE_UPLOAD:String = URL_SERVER+"/"+SERVER_FILE_UPLOAD;
+		public function get urlFileUpload():String {
+			return urlServer+"/"+SERVER_FILE_UPLOAD;
+		}
+
+//		public static const URL_FILE_MKDIR:String = URL_SERVER+"/"+SERVER_FILE_MKDIR;
+		public function get urlFileMkdir():String {
+			return urlServer+"/"+SERVER_FILE_MKDIR;
+		}
+
+//		public static const URL_FILE_REMOVE:String = URL_SERVER+"/"+SERVER_FILE_REMOVE;
+		public function get urlFileRemove():String {
+			return urlServer+"/"+SERVER_FILE_REMOVE;
+		}
+		
 
 		public var moduleConfigs:ArrayCollection = new ArrayCollection();
 

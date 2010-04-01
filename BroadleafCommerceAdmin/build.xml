@@ -136,7 +136,7 @@
 	</target>
 
 	<target name="compile-flex">
-		<mxmlc file="src/main/flex/BroadleafCommerceAdmin.mxml" output="${maven.build.dir}/BroadleafCommerceAdmin.swf" incremental="true" services="src/main/webapp/WEB-INF/flex/services-config.xml" context-root="/" fork="true" maxmemory="512m">
+		<mxmlc file="src/main/flex/BroadleafCommerceAdmin.mxml" output="${maven.build.dir}/BroadleafCommerceAdmin.swf" incremental="true" services="src/main/webapp/WEB-INF/flex/services-config.xml" context-root="/${app.name}" fork="true" maxmemory="512m">
 			<load-config filename="${flex.sdk.dir}/frameworks/flex-config.xml" />
 			<source-path path-element="${flex.sdk.dir}/frameworks" />
 			<include-libraries file="lib/*.swc" />
