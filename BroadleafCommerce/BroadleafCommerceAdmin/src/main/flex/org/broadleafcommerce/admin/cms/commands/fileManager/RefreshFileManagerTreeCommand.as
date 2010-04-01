@@ -17,21 +17,21 @@ package org.broadleafcommerce.admin.cms.commands.fileManager
 {
 	import com.adobe.cairngorm.commands.ICommand;
 	import com.adobe.cairngorm.control.CairngormEvent;
-
+	
 	import mx.controls.Alert;
 	import mx.rpc.AsyncToken;
 	import mx.rpc.IResponder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.http.HTTPService;
-
+	
 	import org.broadleafcommerce.admin.cms.control.events.RefreshFileManagerTreeEvent;
 	import org.broadleafcommerce.admin.cms.model.ContentModelLocator;
-	import org.broadleafcommerce.admin.core.model.ConfigModel;
+	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 	public class RefreshFileManagerTreeCommand implements ICommand, IResponder
 	{
-		private static const FILE_LIST:String = "http://localhost:8080/broadleafadmin/spring/ls";
+		private static const FILE_LIST:String = AppModelLocator.getInstance().configModel.urlServer+"spring/ls";
 
 		public function execute(event:CairngormEvent):void
 		{

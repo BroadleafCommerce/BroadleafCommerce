@@ -107,7 +107,7 @@
             private function fileRef_select(evt:Event):void {
                 try {
                     message.text = "size (bytes): " + numberFormatter.format(fileRef.size);
-                    var request:URLRequest = new URLRequest(ConfigModel.URL_FILE_UPLOAD);
+                    var request:URLRequest = new URLRequest(AppModelLocator.getInstance().configModel.urlFileUpload);
                     var params:URLVariables = new URLVariables();
                     var absPath:String = this.fileTree.selectedItem.@absolutePath;
                     var dirPath:String =  absPath.substr(absPath.lastIndexOf(ConfigModel.CMS_ROOT_DIR), (absPath.length - absPath.lastIndexOf(ConfigModel.CMS_ROOT_DIR)));
@@ -149,7 +149,7 @@
 
             private function alertDeleteHandler(event:CloseEvent):void {
                 if (event.detail==Alert.YES){
-					var myData:URLRequest = new URLRequest(ConfigModel.URL_FILE_REMOVE);
+					var myData:URLRequest = new URLRequest(AppModelLocator.getInstance().configModel.urlFileRemove);
 				    myData.method = URLRequestMethod.POST;
 				    var params:URLVariables = new URLVariables();
 				    params.absolutePath = this.fileTree.selectedItem.@absolutePath;

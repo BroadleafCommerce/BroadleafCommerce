@@ -28,15 +28,15 @@
 	import org.broadleafcommerce.admin.catalog.model.CatalogModelLocator;
 	import org.broadleafcommerce.admin.catalog.model.MediaModel;
 	import org.broadleafcommerce.admin.catalog.vo.media.Media;
-	import org.broadleafcommerce.admin.core.model.ConfigModel;
+	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 
 	public class MediaNewWindowViewHelper extends ViewHelper
 	{
 		private var fileRef:FileReference;
 		private var directory:String;
-		private var urlRequest:URLRequest;
+		private var urlRequest:URLRequest; 
 		private var media:Media;
-		private const FILE_UPLOAD_URL:String = ConfigModel.URL_FILE_UPLOAD;		
+		private const FILE_UPLOAD_URL:String = AppModelLocator.getInstance().configModel.urlFileUpload;		
 
 		public function MediaNewWindowViewHelper()
 		{

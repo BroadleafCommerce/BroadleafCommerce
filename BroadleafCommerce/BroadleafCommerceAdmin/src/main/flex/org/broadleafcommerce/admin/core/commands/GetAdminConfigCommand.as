@@ -29,6 +29,8 @@ package org.broadleafcommerce.admin.core.commands
 	import org.broadleafcommerce.admin.core.model.AppModelLocator;
 	import org.broadleafcommerce.admin.core.model.ConfigModel;
 	import org.broadleafcommerce.admin.core.vo.ModuleConfig;
+	import mx.utils.URLUtil;
+	import mx.core.Application;
 
 	public class GetAdminConfigCommand extends Command
 	{
@@ -43,7 +45,8 @@ package org.broadleafcommerce.admin.core.commands
 		{
 			super.execute(event);
 			trace("DEBUG: GetAdminConfigCommand.execute()");
-			var myXMLURL:URLRequest = new URLRequest(ConfigModel.URL_CONFIG);
+//			var myXMLURL:URLRequest = new URLRequest(ConfigModel.URL_CONFIG);
+			var myXMLURL:URLRequest = new URLRequest(getCurrentUrl()+"/"+ConfigModel.SERVER_CONFIG);
 			myLoader = new URLLoader(myXMLURL);
 			myLoader.addEventListener("complete", xmlLoaded);
 			notifyCaller();			
@@ -75,5 +78,9 @@ package org.broadleafcommerce.admin.core.commands
 			AppModelLocator.getInstance().configModel.moduleConfigs = modules;
 		}
 		
+		private function getCurrentUrl():String {
+			var fullUrl:String = Application.application.loaderInfo.url;
+			return fullUrl.substr(0,fullUrl.lastIndexOf("/"));
+		}
 	}
 }
