@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><project>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>BroadleafCommerce</artifactId>
     <groupId>org.broadleafcommerce</groupId>
-    <version>1.1.0-M1-SNAPSHOT</version>
+    <version>1.1.0-M1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.broadleafcommerce</groupId>
   <artifactId>broadleaf-cybersource-api</artifactId>
   <name>BroadleafCommerceCyberSourceAPI</name>
-  <version>1.1.0-M1-SNAPSHOT</version>
+  <version>1.1.0-M1</version>
   <properties>
      <cybersource.version>1.49</cybersource.version>
   </properties>
@@ -26,17 +26,10 @@
 		          <phase>generate-sources</phase>
 		          <configuration>
 		            <tasks>
-		            	<taskdef resource="axis-tasks.properties" classpathref="maven.compile.classpath"/>
-		            	<axis-wsdl2java
-						    output="src/main/java"
-						    verbose="true"
-						    url="https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_${cybersource.version}.wsdl" >
-						  <mapping
-						    namespace="urn:schemas-cybersource-com:transaction-data:TransactionProcessor"
-						    package="org.broadleafcommerce.vendor.cybersource.service.api" />
-						  <mapping
-						    namespace="urn:schemas-cybersource-com:transaction-data-1.49"
-						    package="org.broadleafcommerce.vendor.cybersource.service.api" />
+		            	<taskdef resource="axis-tasks.properties" classpathref="maven.compile.classpath" />
+		            	<axis-wsdl2java output="src/main/java" verbose="true" url="https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor/CyberSourceTransaction_${cybersource.version}.wsdl">
+						  <mapping namespace="urn:schemas-cybersource-com:transaction-data:TransactionProcessor" package="org.broadleafcommerce.vendor.cybersource.service.api" />
+						  <mapping namespace="urn:schemas-cybersource-com:transaction-data-1.49" package="org.broadleafcommerce.vendor.cybersource.service.api" />
 						</axis-wsdl2java>
 		            </tasks>
 		          </configuration>
