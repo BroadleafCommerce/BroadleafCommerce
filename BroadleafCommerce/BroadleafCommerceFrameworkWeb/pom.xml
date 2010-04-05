@@ -65,12 +65,10 @@
     <dependency>
   		<groupId>org.broadleafcommerce</groupId>
   		<artifactId>broadleaf-profile</artifactId>
-  		<version>1.1.0-M1-SNAPSHOT</version>
   	</dependency>
   	<dependency>
   		<groupId>org.broadleafcommerce</groupId>
   		<artifactId>broadleaf-profile-web</artifactId>
-  		<version>1.1.0-M1-SNAPSHOT</version>
   	</dependency>
     <dependency>
     	<groupId>javax.servlet</groupId>
@@ -79,7 +77,6 @@
     <dependency>
     	<groupId>org.broadleafcommerce</groupId>
     	<artifactId>broadleaf-framework</artifactId>
-    	<version>1.1.0-M1-SNAPSHOT</version>
     </dependency>
     <dependency>
   		<groupId>commons-collections</groupId>
