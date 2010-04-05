@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><project>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>BroadleafCommerce</artifactId>
     <groupId>org.broadleafcommerce</groupId>
-    <version>1.1.0-M1-SNAPSHOT</version>
+    <version>1.1.0-M1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.broadleafcommerce</groupId>
   <artifactId>BroadleafCommerceIntegrationTests</artifactId>
   <name>BroadleafCommerceIntegrationTests</name>
-  <version>1.1.0-M1-SNAPSHOT</version>
+  <version>1.1.0-M1</version>
   <url>http://maven.apache.org</url>
   <build>
   	<plugins>
@@ -24,17 +24,17 @@
 		          <configuration>
 		            <tasks unless="maven.test.skip">
 		              <path id="test.path">
-		              	<pathelement location="../BroadleafCommerceFramework/target/instrumented"/>
-		              	<pathelement location="../BroadleafCommerceFrameworkWeb/target/instrumented"/>
-		              	<pathelement location="../BroadleafCommerceProfile/target/instrumented"/>
-		              	<pathelement location="../BroadleafCommerceProfileWeb/target/instrumented"/>
-		              	<pathelement location="../BroadleafCommerceUSPS/target/instrumented"/>
-		              	<path refid="maven.test.classpath"/>
-		              	<pathelement location="../../BroadleafCommerceConfig/src"/>
+		              	<pathelement location="../BroadleafCommerceFramework/target/instrumented" />
+		              	<pathelement location="../BroadleafCommerceFrameworkWeb/target/instrumented" />
+		              	<pathelement location="../BroadleafCommerceProfile/target/instrumented" />
+		              	<pathelement location="../BroadleafCommerceProfileWeb/target/instrumented" />
+		              	<pathelement location="../BroadleafCommerceUSPS/target/instrumented" />
+		              	<path refid="maven.test.classpath" />
+		              	<pathelement location="../../BroadleafCommerceConfig/src" />
 		              </path>
-		              <taskdef resource="testngtasks" classpath="testng.jar" classpathref="test.path"/>
-		              <taskdef classpathref="test.path" resource="tasks.properties"/>
-		              <copy file="../BroadleafCommerceFramework/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser"/>
+		              <taskdef resource="testngtasks" classpath="testng.jar" classpathref="test.path" />
+		              <taskdef classpathref="test.path" resource="tasks.properties" />
+		              <copy file="../BroadleafCommerceFramework/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser" />
 		              <cobertura-merge datafile="target/instrumented/cobertura.ser">
 					    <fileset dir="../BroadleafCommerceFrameworkWeb/target/instrumented">
 					        <include name="cobertura.ser" />
@@ -52,7 +52,7 @@
 		              <testng classpathref="test.path" outputdir="target/test-reports" haltonfailure="true">
 		              	<jvmarg value="-Xmx512M" />
 		                <sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/cobertura.ser" />
-		                <xmlfileset dir="src/test/resources" includes="*testng.xml"/>
+		                <xmlfileset dir="src/test/resources" includes="*testng.xml" />
 		              </testng>
 		              <junitreport todir="target/test-reports">
 		                <fileset dir="target/test-reports">
