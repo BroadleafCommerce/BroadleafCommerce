@@ -9,3 +9,18 @@ Version 1.0.1
 * fix an NPE when callling performCheckout with just the order.
 * Updated Spring to fix an annotation/xml override inconsistency - Updated required libraries to remove redundancy - fixed the controller layer to only component scan web layer classes.
 * changed the banded shipping module to use the shipping rate service instead of the dao directly.
+
+Version 1.1.0
+________________________
+* Added content support for basic CMS
+* Fix for trac ticket #80: Error if creating account with existing username. 
+* Work around fix for trac ticket #66: Demo Checkout Submit/Back Error
+* Added CyberSource support
+* Fixed an issue where the PaymentInfoItems were not showing up in the PaymentResponse associated with the CheckoutSeed in the CheckoutContext during a call to the checkout workflow.
+* Simplified build and execution for the Demo and Admin Modules
+* Fix for admin so that requests follow the hostname specified in the browser url, instead of hard-coded localhost.
+* Add support for personal message during merge cart
+* Only display products when category is active and the products are active
+* Fixed an issue where the PaymentInfoItems were not showing up in the PaymentResponse associated with the CheckoutSeed in the CheckoutContext during a call to the checkout workflow.
+* Add Support for fees at the fulfillment group level 1) a fee can be taxable or not 2) has a name 3) has an amount
+* Add ability to perform a 301 permanent redirect instead of Spring's hard-coded 302 temporary redirect via SpringTemporaryOverrideRedirectFilter

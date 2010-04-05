@@ -85,24 +85,21 @@ interaction history.
 
 Broadleaf Commerce %%version%% requires JDK 1.5 (or above) to build and/or run.
 
-Basic release contents (~2 MB):
+Basic release contents (~3 MB):
 * "dist" contains the Broadleaf Commerce binary jar files
 
-Contents of the "-with-docs" distribution (~6 MB):
+Contents of the "-with-docs" distribution (~9 MB):
 * "dist" contains the Broadleaf Commerce binary jar files, as well as corresponding source jars
 * "docs" contains the Broadleaf Commerce API javadocs
 
-Contents of the "-with-dependencies" distribution (~52 MB):
+Contents of the "-with-dependencies" distribution (~58 MB):
 * "dist" contains the Broadleaf Commerce binary jar files, as well as corresponding source jars
 * "docs" contains the Broadleaf Commerce API javadocs
 * "lib" contains all third-party libraries needed for building the framework and/or running the demo
 * "src" contains the general Java source files for the framework
 
 The "lib" directory is only included in the "-with-dependencies" download. The "-with-dependencies"
-download is required to build and run the demo application. Ant build scripts are provided for 
-creating standard WAR modules for both the demo application and the admin application (see the
-BroadleafCommerceDemo and BroadeleafCommerceAdminWeb directories). Maven2 POM files are provided for
-building the framework (see pom.xml in the "src" directory).
+download is required to build and run the demo application. 
 
 Latest info is available at the public website: http://www.broadleafcommerce.org
 Project info at the SourceForge site: http://sourceforge.net/projects/broadleafcommerce
@@ -115,38 +112,40 @@ This product includes software developed by the Apache Software Foundation (http
 
 The "dist" directory contains the following distinct jar files for use in applications. 
 
-* "broadleaf-admin" (~12 KB)
-- Contents: Broadleaf Commerce admin application
-- Dependencies: broadleaf-framework, broadleaf-framework-web, broadleaf-profile, broadleaf-profile-web
-
-* "broadleaf-framework" (~364 KB)
+* "broadleaf-framework"
 - Contents: Core Broadleaf Commerce framework classes
 - Dependencies: broadleaf-profile
 
-* "broadleaf-framework-web" (~88 KB)
+* "broadleaf-framework-web"
 - Contents: Spring MVC controllers (and related items) supporting the core Broadleaf Commerce classes
 - Dependencies: broadleaf-framework, broadleaf-profile, broadleaf-profile-web
 
-* "broadleaf-profile" (~221 KB)
+* "broadleaf-profile"
 - Contents: Broadleaf Commerce Customer profile related classes, utility classes, email, configuration merge
 
-* "broadleaf-profile-web" (~49 KB)
+* "broadleaf-profile-web"
 - Contents: Spring MVC controllers (and related items) supporting the core Broadleaf Commerce profile classes
 - Dependencies: broadleaf-profile
 
-* "broadleaf-usps" (~49 KB)
+* "broadleaf-usps"
 - Contents: Broadleaf Commerce shipping modules and support classes for USPS
 - Dependencies: broadleaf-framework, broadleaf-usps-schemas
 
-* "broadleaf-usps-schemas" (~193 KB)
+* "broadleaf-usps-schemas"
 - Contents: Compiled XMLBeans support for USPS shipping API
 
+* "broadleaf-cybersource"
+- Contents: Broadleaf Commerce payment modules and support classes for CyberSource
+- Dependencies: broadleaf-framework, broadleaf-cybersource-api
+
+* "broadleaf-cybersource-api"
+- Contents: Compiled axis support for CyberSource API
+
 4. WHERE TO START?
+
+* A Broadleaf Commerce Demo/Admin guide is available on the support wiki: http://broadleafcommerce.org/trac/wiki/quickStartGuide.
+This guide provides instructions for deploying and running a local instance of the Broadleaf Commerce Demo and/or Admin.
 
 * A Quick Start guide is available on the Broadleaf Commerce support wiki: http://broadleafcommerce.org/trac/wiki/quickStartGuide.
 This guide provides the minimum information needed to get up and running with the Broadleaf Commerce 
 framework in your own application.
-
-* A Broadleaf Commerce Demo guide is available on the support wiki: http://broadleafcommerce.org/trac/wiki/quickStartGuide.
-This guide provides instructions for deploying and running a local instance of the Broadleaf Commerce
-Demo application in a local Tomcat instance backed by a MySQL database.
