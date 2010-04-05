@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><project>
+<?xml version="1.0" encoding="UTF-8"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <artifactId>BroadleafCommerce</artifactId>
     <groupId>org.broadleafcommerce</groupId>
-    <version>1.1.0-M1-SNAPSHOT</version>
+    <version>1.1.0-M1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.broadleafcommerce</groupId>
   <artifactId>broadleaf-profile-web</artifactId>
   <name>BroadleafCommerceProfileWeb</name>
-  <version>1.1.0-M1-SNAPSHOT</version>
+  <version>1.1.0-M1</version>
   <url>http://maven.apache.org</url>
   <build>
   	<plugins>
@@ -23,10 +23,8 @@
 		          <phase>package</phase>
 		          <configuration>
 		            <tasks unless="maven.test.skip">
-		            	<taskdef classpathref="maven.test.classpath" resource="tasks.properties"/>
-		            	<cobertura-instrument todir="target/instrumented"
-							datafile="target/instrumented/cobertura.ser"
-							classpathref="maven.test.classpath">
+		            	<taskdef classpathref="maven.test.classpath" resource="tasks.properties" />
+		            	<cobertura-instrument todir="target/instrumented" datafile="target/instrumented/cobertura.ser" classpathref="maven.test.classpath">
 							<ignore regex="org.apache.log4j.*" />
 							<fileset dir="${project.build.outputDirectory}">
 						        <include name="**/*.class" />
