@@ -7,6 +7,9 @@
 	<name>BroadleafCommerce</name>
 	<version>1.1.0-M2-SNAPSHOT</version>
 	<description>BroadleafCommerce Maven Build </description>
+	<properties>
+    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  	</properties>
 	<scm>
 		<developerConnection>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/trunk</developerConnection>
 		<url>http://broadleaf.svn.sourceforge.net/viewvc/broadleaf/</url>
