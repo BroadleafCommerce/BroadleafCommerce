@@ -20,6 +20,7 @@ Build and Run the Demo Application:
    * '''mvn install''' (or '''mvn -Dmaven.test.skip=true install''' to build without running the tests)
  * Execute the following commands at the "BroadleafCommerceDemo" directory (inside src). These steps will build and run the demo application.
    * '''ant launch-demo'''
+   * Wait until you see the 'Started Jetty Server' message in the console before attempting to access the demo in a browser
 
 At this point, you should be able to access the demo application using your favorite web browser. Open the site at http://localhost:8080/broadleafdemo.
 
@@ -44,8 +45,9 @@ Build and Deploy the Admin Tool
    * '''mvn install''' (or '''mvn -Dmaven.test.skip=true install''' to build without running the tests)
  * Execute the following commands at the "BroadleafCommerceAdmin" directory (inside src). These steps will build and run the demo and admin applications.
    * '''ant launch-admin'''
+   * Wait until you see the 'Started Jetty Server' message in the console before attempting to access the demo or admin in a browser
 
-At this point, you should be able to access the Admin Tool using your favorite web browser. Open the site at http://localhost:8080/broadleafadmin/BroadleafCommerceAdmin.html.  You can log onto the Admin Tool with the username admin and password blc_admin.
+At this point, you should be able to access the Admin Tool using your favorite web browser. Open the site at http://localhost:8080/broadleafadmin/BroadleafCommerceAdmin.html.  You can log onto the Admin Tool with the username admin and password blc_admin. You should also be able to access the demo application using your favorite web browser. Open the site at http://localhost:8080/broadleafdemo.
 
 
 == Preparing Your Custom Application to Run with Broadleaf Commerce ==
