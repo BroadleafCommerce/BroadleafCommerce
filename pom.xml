@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.broadleafcommerce</groupId>
 	<artifactId>BroadleafCommerce</artifactId>
 	<packaging>pom</packaging>
 	<name>BroadleafCommerce</name>
-	<version>1.1.0-M2-SNAPSHOT</version>
+	<version>1.1.0-M1-SNAPSHOT</version>
 	<description>BroadleafCommerce Maven Build </description>
 	<properties>
-    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  	</properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<scm>
 		<developerConnection>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/trunk</developerConnection>
 		<url>http://broadleaf.svn.sourceforge.net/viewvc/broadleaf/</url>
@@ -58,10 +59,10 @@
 				<artifactId>maven-release-plugin</artifactId>
 				<version>2.0</version>
 				<configuration>
-		          <tagBase>
-		            https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/tags
+					<tagBase>
+						https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/tags
 		          </tagBase>
-		        </configuration>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -122,82 +123,89 @@
 			</plugin>
 		</plugins>
 	</reporting>
+	<distributionManagement>
+		<repository>
+			<id>sourceforge</id>
+			<name>SourceForge</name>
+			<url>sftp://broadleaf.sourceforge.net:/home/broadleaf/project/b/br/Broadleaf%20Commerce/repo</url>
+		</repository>
+	</distributionManagement>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-usps-schemas</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-usps</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-cybersource-api</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-cybersource</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-profile</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-profile-web</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-framework</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-framework-web</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-demo</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>war</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-admin</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>war</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>BroadleafCommerceIntegrationTests</artifactId>
-				<version>1.1.0-M2-SNAPSHOT</version>
+				<version>1.1.0-M1-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
