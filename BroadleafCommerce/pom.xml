@@ -61,7 +61,10 @@
 				<configuration>
 					<tagBase>
 						https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/tags
-		          </tagBase>
+		            </tagBase>
+		            <workingDirectory>
+		            	${project.build.directory}/checkout/BroadleafCommerce
+		            </workingDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
