@@ -11,7 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<scm>
-		<developerConnection>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/trunk</developerConnection>
+		<developerConnection>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/trunk/BroadleafCommerce</developerConnection>
 		<url>http://broadleaf.svn.sourceforge.net/viewvc/broadleaf/</url>
 	</scm>
 	<build>
@@ -61,9 +61,6 @@
 					<tagBase>
 						https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/tags
 		            </tagBase>
-		            <workingDirectory>
-		            	${project.build.directory}/checkout/BroadleafCommerce
-		            </workingDirectory>
 				</configuration>
 			</plugin>
 		</plugins>
