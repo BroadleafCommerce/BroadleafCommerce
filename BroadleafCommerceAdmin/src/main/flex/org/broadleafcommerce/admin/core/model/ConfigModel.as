@@ -26,7 +26,7 @@ package org.broadleafcommerce.admin.core.model
 		public static const SERVER_PORT:String 				= "8080";
 		public static const SERVER_CONTEXT:String 			= "broadleafadmin";
 		private static const SERVER_MESSAGE_BROKER:String 	= "messagebroker/amf";
-		public static const SERVER_IMAGES:String			= "/images";
+		public static const SERVER_IMAGES:String			= "images";
 		public static const SERVER_CONFIG:String 			= "modules/modules-config.xml";
 		private static const SERVER_FILE_UPLOAD:String 		= "spring/upload";
 		private static const SERVER_FILE_LIST:String 		= "spring/ls";
@@ -58,30 +58,30 @@ package org.broadleafcommerce.admin.core.model
 			var url:String = Application.application.loaderInfo.url;
 			return url.substr(0,url.lastIndexOf("/"))+"/";
 
-		}
-		
+		} 
+		 
 		public function get urlConfig():String {
-			return urlServer+"/"+SERVER_CONFIG;
-		}
+			return urlServer+SERVER_CONFIG; 
+		} 
 		
 //		public static const URL_FILE_LIST:String = URL_SERVER+"/"+SERVER_FILE_LIST;
-		public function get urlFileList():String {
-			return urlServer+"/"+SERVER_FILE_LIST;
+		public function get urlFileList():String {  
+			return urlServer+SERVER_FILE_LIST;   
 		}
 
 //		public static const URL_FILE_UPLOAD:String = URL_SERVER+"/"+SERVER_FILE_UPLOAD;
 		public function get urlFileUpload():String {
-			return urlServer+"/"+SERVER_FILE_UPLOAD;
+			return urlServer+SERVER_FILE_UPLOAD;
 		}
 
 //		public static const URL_FILE_MKDIR:String = URL_SERVER+"/"+SERVER_FILE_MKDIR;
 		public function get urlFileMkdir():String {
-			return urlServer+"/"+SERVER_FILE_MKDIR;
+			return urlServer+SERVER_FILE_MKDIR;
 		}
 
 //		public static const URL_FILE_REMOVE:String = URL_SERVER+"/"+SERVER_FILE_REMOVE;
 		public function get urlFileRemove():String {
-			return urlServer+"/"+SERVER_FILE_REMOVE;
+			return urlServer+SERVER_FILE_REMOVE;
 		}
 		
 

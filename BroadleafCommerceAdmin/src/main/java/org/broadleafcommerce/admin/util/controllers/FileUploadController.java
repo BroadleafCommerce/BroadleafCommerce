@@ -53,11 +53,11 @@ public class FileUploadController extends SimpleFormController {
         }
 
         try {
-            String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf("/upload"));
+            String basepath = request.getPathTranslated().substring(0,request.getPathTranslated().indexOf(File.separator+"upload"));
             String absoluteFilename = basepath+File.separator+bean.getDirectory()+File.separator+file.getOriginalFilename();
             FileSystemResource fileResource = new FileSystemResource(absoluteFilename);
 
-            checkDirectory(basepath+bean.getDirectory());
+            checkDirectory(basepath+File.separator+bean.getDirectory());
 
             backupExistingFile(fileResource, basepath+bean.getDirectory());
             
