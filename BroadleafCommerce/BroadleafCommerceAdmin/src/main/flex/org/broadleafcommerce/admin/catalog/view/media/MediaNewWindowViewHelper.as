@@ -46,7 +46,7 @@
 			fileRef = new FileReference();
             fileRef.addEventListener(Event.SELECT, selectHandler);
             fileRef.addEventListener(Event.COMPLETE, completeHandler);
-			this.urlRequest = new URLRequest(FILE_UPLOAD_URL);			
+			this.urlRequest = new URLRequest(FILE_UPLOAD_URL);
 	    	var params:URLVariables = new URLVariables();
 	    	this.directory = directory;
 	    	params.directory = directory;

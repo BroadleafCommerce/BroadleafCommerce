@@ -42,13 +42,13 @@ package org.broadleafcommerce.admin.core.view.helpers
 		public function load():void{      
 		  var fullUrl:String = AppModelLocator.getInstance().configModel.urlServer+moduleConfig.swf;
 		  moduleInfo = ModuleManager.getModule(fullUrl); 	     
-	      moduleInfo.addEventListener(ModuleEvent.READY,handleModuleReady);
+	      moduleInfo.addEventListener(ModuleEvent.READY,handleModuleReady); 
 	      moduleInfo.addEventListener(ModuleEvent.ERROR, handleModuleError);
 	      moduleInfo.load();
 		}
 
 		public function handleModuleReady(e:Event):void{  
-			var mod:Module = moduleInfo.factory.create() as Module; 
+			var mod:Module = moduleInfo.factory.create() as Module;  
 			loadedModule = mod;
 			this.dispatchEvent(e);
 		}   
