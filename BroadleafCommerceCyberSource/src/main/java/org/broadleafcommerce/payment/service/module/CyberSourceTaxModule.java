@@ -62,7 +62,7 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 
     public Order calculateTaxForOrder(Order order) throws TaxException {
     	if (orderAcceptanceCountry != null && !orderAcceptanceCountry.equalsIgnoreCase("CA") && !orderAcceptanceCountry.equalsIgnoreCase("US")) {
-    		throw new RuntimeException("CyberSource tax calculation only supported for the United States and Canada.");
+    		throw new TaxException("CyberSource tax calculation only supported for the United States and Canada.");
     	}
     	HashMap<Long, CyberSourceTaxItemRequest> requestLibrary = new HashMap<Long, CyberSourceTaxItemRequest>();
     	CyberSourceTaxRequest taxRequest = createTaxRequest(order, requestLibrary);
@@ -111,7 +111,10 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 		}
 	}
 
-	private CyberSourceTaxRequest createTaxRequest(Order order, HashMap<Long, CyberSourceTaxItemRequest> requestLibrary) {
+	private CyberSourceTaxRequest createTaxRequest(Order order, HashMap<Long, CyberSourceTaxItemRequest> requestLibrary) throws TaxException {
+		if (order.getPaymentInfos() == null || order.getPaymentInfos().get(0) == null || order.getPaymentInfos().get(0).getAddress() == null) {
+			throw new TaxException("The order must have at least one PaymentInfo instance associated with a completed Address in order to calculate tax.");
+		}
 		CyberSourceTaxRequest taxRequest = new CyberSourceTaxRequest();
 		setCurrency(order, taxRequest);
 		CyberSourceBillingRequest billingRequest = createBillingRequest(order.getPaymentInfos().get(0));
@@ -127,7 +130,7 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 		Long idCounter = 1L;
 		for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
 			if (fulfillmentGroup.getAddress().getCountry() != null && !fulfillmentGroup.getAddress().getCountry().getAbbreviation().equalsIgnoreCase("CA") && !fulfillmentGroup.getAddress().getCountry().getAbbreviation().equalsIgnoreCase("US")) {
-				throw new RuntimeException("CyberSource tax calculation only supported for the United States and Canada.");
+				throw new TaxException("CyberSource tax calculation only supported for the United States and Canada.");
 			}
 			for (FulfillmentGroupItem item : fulfillmentGroup.getFulfillmentGroupItems()) {
 				OrderItem orderItem = item.getOrderItem();
@@ -139,7 +142,7 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 						DiscreteOrderItem discreteItem = (DiscreteOrderItem) orderItem;
 						itemRequest.setProductName(discreteItem.getName());
 						itemRequest.setProductSKU(discreteItem.getSku().getName());
-						itemRequest.setDescription(discreteItem.getProduct().getDescription());
+						itemRequest.setDescription(discreteItem.getSku().getDescription());
 					} else if (BundleOrderItem.class.isAssignableFrom(orderItem.getClass())){
 						BundleOrderItem bundleItem = (BundleOrderItem) orderItem;
 						itemRequest.setProductName(bundleItem.getName());
