@@ -4,13 +4,11 @@ import java.util.Currency;
 import java.util.Date;
 
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
-import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
@@ -20,7 +18,7 @@ import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSou
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourceCardResponse;
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
 
-public class CyberSourceCreditCardModule implements PaymentModule {
+public class CyberSourceCreditCardModule extends CyberSourceModule implements PaymentModule {
 	
 	private CyberSourceServiceManager serviceManager;
 
@@ -38,7 +36,7 @@ public class CyberSourceCreditCardModule implements PaymentModule {
         cardRequest.setTransactionType(transactionType);
         setCurrency(paymentContext, cardRequest);
         
-        CyberSourceBillingRequest billingRequest = createBillingRequest(paymentContext);
+        CyberSourceBillingRequest billingRequest = createBillingRequest(paymentContext.getPaymentInfo());
         cardRequest.setBillingRequest(billingRequest);
         
         CyberSourceItemRequest itemRequest = createItemRequest(paymentContext);
@@ -194,26 +192,6 @@ public class CyberSourceCreditCardModule implements PaymentModule {
         itemRequest.setUnitPrice(paymentContext.getPaymentInfo().getAmount());
         
         return itemRequest;
-	}
-	
-	private CyberSourceBillingRequest createBillingRequest(PaymentContext paymentContext) {
-		CyberSourceBillingRequest billingRequest = new CyberSourceBillingRequest();
-		PaymentInfo info = paymentContext.getPaymentInfo();
-		Address address = info.getAddress();
-		billingRequest.setCity(address.getCity());
-		billingRequest.setCountry(address.getCountry().getAbbreviation());
-		billingRequest.setCounty(address.getCounty());
-		billingRequest.setEmail(info.getOrder().getEmailAddress());
-		billingRequest.setFirstName(address.getFirstName());
-		billingRequest.setIpAddress(info.getCustomerIpAddress());
-		billingRequest.setLastName(address.getLastName());
-		billingRequest.setPhoneNumber(address.getPrimaryPhone());
-		billingRequest.setPostalCode(address.getPostalCode());
-		billingRequest.setState(address.getState().getAbbreviation());
-		billingRequest.setStreet1(address.getAddressLine1());
-		billingRequest.setStreet2(address.getAddressLine2());
-		
-		return billingRequest;
 	}
 
 	public CyberSourceServiceManager getServiceManager() {

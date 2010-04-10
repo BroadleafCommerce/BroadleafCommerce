@@ -63,7 +63,7 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
     private String reportingCode;
 
     @Column(name = "IS_TAXABLE")
-    private boolean isTaxable = false;
+    private Boolean isTaxable = Boolean.FALSE;
 
     public Long getId() {
         return id;
@@ -97,11 +97,11 @@ public class FulfillmentGroupFeeImpl implements FulfillmentGroupFee {
         this.name = name;
     }
 
-    public boolean isTaxable() {
+    public Boolean isTaxable() {
         return isTaxable;
     }
 
-    public void setTaxable(boolean isTaxable) {
+    public void setTaxable(Boolean isTaxable) {
         this.isTaxable = isTaxable;
     }
 

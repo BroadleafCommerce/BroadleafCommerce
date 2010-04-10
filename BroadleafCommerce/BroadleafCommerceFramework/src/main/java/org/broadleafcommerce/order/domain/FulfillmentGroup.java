@@ -105,6 +105,10 @@ public interface FulfillmentGroup extends Serializable {
     Money getStateTax();
 
     void setStateTax(Money stateTax);
+    
+    public Money getDistrictTax();
+
+    public void setDistrictTax(Money districtTax);
 
     Money getCountryTax();
 

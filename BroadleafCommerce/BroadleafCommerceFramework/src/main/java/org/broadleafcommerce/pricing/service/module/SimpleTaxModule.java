@@ -18,10 +18,12 @@ package org.broadleafcommerce.pricing.service.module;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.pricing.service.exception.TaxException;
 import org.broadleafcommerce.util.money.Money;
 
 /**
- * Simple factor-based tax module.
+ * Simple factor-based tax module. Not really useful for anything
+ * other than demonstration.
  * 
  * @author jfischer
  */
@@ -32,31 +34,42 @@ public class SimpleTaxModule implements TaxModule {
     protected String name = MODULENAME;
     protected Double factor;
 
-    public Order calculateTaxForOrder(Order order) {
-    	Money orderSubtotal = order.getSubTotal();
-        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-            for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
-                if (fulfillmentGroupFee.isTaxable()) {
-                    orderSubtotal = orderSubtotal.add(fulfillmentGroupFee.getAmount());
-                }
-            }
-        }
-
-        Money totalTax = orderSubtotal.multiply(factor);
+    public Order calculateTaxForOrder(Order order) throws TaxException {
+        Money totalTax = getFulfillmentGroupFeeTotal(order).multiply(factor);
 
         for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
             Money fgTotalTax = fulfillmentGroup.getShippingPrice().multiply(factor);
             fulfillmentGroup.setTotalTax(fgTotalTax);
             fulfillmentGroup.setCityTax(new Money(0D));
+            fulfillmentGroup.setStateTax(new Money(0D));
+            fulfillmentGroup.setDistrictTax(new Money(0D));
             fulfillmentGroup.setCountyTax(new Money(0D));
             fulfillmentGroup.setCountryTax(new Money(0D));
 
             totalTax = totalTax.add(fgTotalTax);
         }
 
+        order.setCityTax(new Money(0D));
+        order.setStateTax(new Money(0D));
+        order.setDistrictTax(new Money(0D));
+        order.setCountyTax(new Money(0D));
+        order.setCountryTax(new Money(0D));
         order.setTotalTax(totalTax);
 
         return order;
+    }
+    
+    protected Money getFulfillmentGroupFeeTotal(Order order) {
+    	Money feeSubtotal = order.getSubTotal();
+        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+            for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
+                if (fulfillmentGroupFee.isTaxable()) {
+                    feeSubtotal = feeSubtotal.add(fulfillmentGroupFee.getAmount());
+                }
+            }
+        }
+        
+        return feeSubtotal;
     }
 
     public String getName() {

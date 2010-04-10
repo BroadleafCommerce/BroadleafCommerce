@@ -1,5 +1,8 @@
 package org.broadleafcommerce.vendor.cybersource.service.message;
 
+import org.broadleafcommerce.payment.domain.PaymentInfo;
+import org.broadleafcommerce.payment.service.PaymentContext;
+import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 
 public abstract class CyberSourceRequest implements java.io.Serializable {
