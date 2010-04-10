@@ -13,17 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.pricing.service.module;
+package org.broadleafcommerce.pricing.service.exception;
 
-import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.pricing.service.exception.TaxException;
+/**
+ * @author jfischer
+ *
+ */
+public class TaxException extends Exception {
 
-public interface TaxModule {
-	
-	public String getName();
-	
-	public void setName(String name);
-	
-	public Order calculateTaxForOrder(Order order) throws TaxException;
-	
+	/**
+	 * 
+	 */
+	public TaxException() {
+		super();
+	}
+
+	/**
+	 * @param message
+	 * @param cause
+	 */
+	public TaxException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	/**
+	 * @param message
+	 */
+	public TaxException(String message) {
+		super(message);
+	}
+
+	/**
+	 * @param cause
+	 */
+	public TaxException(Throwable cause) {
+		super(cause);
+	}
+
 }

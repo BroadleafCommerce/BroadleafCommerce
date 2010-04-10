@@ -128,6 +128,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "STATE_TAX")
     protected BigDecimal stateTax;
+    
+    @Column(name = "DISTRICT_TAX")
+    protected BigDecimal districtTax;
 
     @Column(name = "COUNTRY_TAX")
     protected BigDecimal countryTax;
@@ -161,6 +164,9 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Cascade(value = { org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "blOrderElements")
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
+    
+    @Column(name = "SHIPPING_PRICE_TAXABLE")
+    protected Boolean isShippingPriceTaxable = Boolean.FALSE;
 
     public Long getId() {
         return id;
@@ -337,6 +343,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     public void setStateTax(Money stateTax) {
         this.stateTax = Money.toAmount(stateTax);
     }
+    
+    public Money getDistrictTax() {
+        return districtTax == null ? null : new Money(districtTax);
+    }
+
+    public void setDistrictTax(Money districtTax) {
+        this.districtTax = Money.toAmount(districtTax);
+    }
 
     public Money getCountryTax() {
         return countryTax == null ? null : new Money(countryTax);
@@ -393,8 +407,45 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     public void setTotal(Money orderTotal) {
         this.total = Money.toAmount(orderTotal);
     }
+    
+    public FulfillmentGroupStatusType getStatus() {
+        return FulfillmentGroupStatusType.getInstance(status);
+    }
 
-    public int hashCode() {
+    public void setStatus(FulfillmentGroupStatusType status) {
+        this.status = status.getType();
+    }
+
+    public List<FulfillmentGroupFee> getFulfillmentGroupFees() {
+        return fulfillmentGroupFees;
+    }
+
+    public void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees) {
+        this.fulfillmentGroupFees = fulfillmentGroupFees;
+    }
+
+    public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee) {
+        if (fulfillmentGroupFees == null) {
+            fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
+        }
+        fulfillmentGroupFees.add(fulfillmentGroupFee);
+    }
+
+    public void removeAllFulfillmentGroupFees() {
+        if (fulfillmentGroupFees != null) {
+            fulfillmentGroupFees.clear();
+        }
+    }
+
+    public Boolean getIsShippingPriceTaxable() {
+		return isShippingPriceTaxable;
+	}
+
+	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
+		this.isShippingPriceTaxable = isShippingPriceTaxable;
+	}
+
+	public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((address == null) ? 0 : address.hashCode());
@@ -428,32 +479,4 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return true;
     }
 
-    public FulfillmentGroupStatusType getStatus() {
-        return FulfillmentGroupStatusType.getInstance(status);
-    }
-
-    public void setStatus(FulfillmentGroupStatusType status) {
-        this.status = status.getType();
-    }
-
-    public List<FulfillmentGroupFee> getFulfillmentGroupFees() {
-        return fulfillmentGroupFees;
-    }
-
-    public void setFulfillmentGroupFees(List<FulfillmentGroupFee> fulfillmentGroupFees) {
-        this.fulfillmentGroupFees = fulfillmentGroupFees;
-    }
-
-    public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee) {
-        if (fulfillmentGroupFees == null) {
-            fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
-        }
-        fulfillmentGroupFees.add(fulfillmentGroupFee);
-    }
-
-    public void removeAllFulfillmentGroupFees() {
-        if (fulfillmentGroupFees != null) {
-            fulfillmentGroupFees.clear();
-        }
-    }
 }

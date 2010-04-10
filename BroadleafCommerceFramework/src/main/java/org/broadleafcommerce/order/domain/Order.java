@@ -118,6 +118,10 @@ public interface Order extends Serializable {
     public Money getStateTax();
 
     public void setStateTax(Money stateTax);
+    
+    public Money getDistrictTax();
+
+    public void setDistrictTax(Money districtTax);
 
     public Money getCountryTax();
 

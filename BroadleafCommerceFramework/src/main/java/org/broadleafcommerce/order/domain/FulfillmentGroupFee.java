@@ -41,7 +41,7 @@ public interface FulfillmentGroupFee extends Serializable {
 
     public void setReportingCode(String reportingCode);
     
-    public boolean isTaxable();
+    public Boolean isTaxable();
 
-    public void setTaxable(boolean isTaxable);
+    public void setTaxable(Boolean isTaxable);
 }

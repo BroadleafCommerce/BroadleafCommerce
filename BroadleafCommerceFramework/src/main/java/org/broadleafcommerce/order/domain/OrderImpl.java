@@ -104,6 +104,9 @@ public class OrderImpl implements Order {
 
     @Column(name = "STATE_TAX")
     protected BigDecimal stateTax;
+    
+    @Column(name = "DISTRICT_TAX")
+    protected BigDecimal districtTax;
 
     @Column(name = "COUNTRY_TAX")
     protected BigDecimal countryTax;
@@ -366,6 +369,14 @@ public class OrderImpl implements Order {
 
     public void setStateTax(Money stateTax) {
         this.stateTax = Money.toAmount(stateTax);
+    }
+    
+    public Money getDistrictTax() {
+        return districtTax == null ? null : new Money(districtTax);
+    }
+
+    public void setDistrictTax(Money districtTax) {
+        this.districtTax = Money.toAmount(districtTax);
     }
 
     public Money getCountryTax() {
