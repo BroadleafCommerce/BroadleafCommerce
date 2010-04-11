@@ -51,11 +51,10 @@ public class CyberSourceTaxModuleTest extends BaseTest {
 	@Resource
     private CyberSourceServiceManager serviceManager;
 	
-	@Test(groups = { "testSuccessfulCyberSourceTaxModuleNoStateTax" })
+	@Test(groups = { "testSuccessfulCyberSourceTaxModule" })
     @Rollback(false)
-    public void testSuccessfulCyberSourceTaxModuleNoStateTax() throws Exception {
-		//TODO the tax module needs to be fixed - it is not currently working
-		/*if (serviceManager.getMerchantId().equals("?")) {
+    public void testSuccessfulCyberSourceTaxModule() throws Exception {
+		if (serviceManager.getMerchantId().equals("?")) {
             return;
         }
 		
@@ -84,6 +83,7 @@ public class CyberSourceTaxModuleTest extends BaseTest {
 		item1.setPrice(new Money(10D));
 		
 		FulfillmentGroup fg1 = new FulfillmentGroupImpl();
+		fg1.setId(1L);
 		FulfillmentGroupItem fgi1 = new FulfillmentGroupItemImpl();
 		fgi1.setOrderItem(item1);
 		fgi1.setQuantity(2);
@@ -100,6 +100,7 @@ public class CyberSourceTaxModuleTest extends BaseTest {
 		item2.setPrice(new Money(30D));
 		
 		FulfillmentGroup fg2 = new FulfillmentGroupImpl();
+		fg2.setId(2L);
 		FulfillmentGroupItem fgi2 = new FulfillmentGroupItemImpl();
 		fgi2.setOrderItem(item2);
 		fgi2.setQuantity(1);
@@ -110,7 +111,8 @@ public class CyberSourceTaxModuleTest extends BaseTest {
 		
 		assert(order.getTotalTax() == null);
 		order = module.calculateTaxForOrder(order);
-		assert(order.getTotalTax() != null);*/
+		assert(order.getTotalTax() != null && order.getTotalTax().greaterThan(new Money(0D)));
+		assert(order.getFulfillmentGroups().get(0).getTotalTax().add(order.getFulfillmentGroups().get(1).getTotalTax()).equals(order.getTotalTax()));
 	}
 	
 	private PaymentInfo createPaymentInfo(String line1, String city, final String country, String name, String lastName, String postalCode, final String state) {

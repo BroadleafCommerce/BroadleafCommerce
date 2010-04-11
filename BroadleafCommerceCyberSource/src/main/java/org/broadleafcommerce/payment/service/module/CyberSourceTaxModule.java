@@ -61,6 +61,10 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
     private String orderAcceptancePostalCode;
 
     public Order calculateTaxForOrder(Order order) throws TaxException {
+    	/*
+    	 * TODO add in an AOP cache mechanism for repeated calls for the same tax calculation at
+    	 * the tax service call level.
+    	 */
     	if (orderAcceptanceCountry != null && !orderAcceptanceCountry.equalsIgnoreCase("CA") && !orderAcceptanceCountry.equalsIgnoreCase("US")) {
     		throw new TaxException("CyberSource tax calculation only supported for the United States and Canada.");
     	}
@@ -119,15 +123,17 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 		setCurrency(order, taxRequest);
 		CyberSourceBillingRequest billingRequest = createBillingRequest(order.getPaymentInfos().get(0));
 		taxRequest.setBillingRequest(billingRequest);
-		taxRequest.setNexus(StringUtils.join(nexus.toArray(), ","));
-		taxRequest.setNoNexus(StringUtils.join(nonexus.toArray(), ","));
+		String myNexus = StringUtils.join(nexus.toArray(), ",");
+		if (StringUtils.isNotEmpty(myNexus)) taxRequest.setNexus(myNexus);
+		String myNoNexus = StringUtils.join(nonexus.toArray(), ",");
+		if (StringUtils.isNotEmpty(myNoNexus)) taxRequest.setNoNexus(myNoNexus);
 		taxRequest.setOrderAcceptanceCity(orderAcceptanceCity);
 		taxRequest.setOrderAcceptanceCounty(orderAcceptanceCounty);
 		taxRequest.setOrderAcceptanceCountry(orderAcceptanceCountry);
 		taxRequest.setOrderAcceptanceState(orderAcceptanceState);
 		taxRequest.setOrderAcceptancePostalCode(orderAcceptancePostalCode);
 		
-		Long idCounter = 1L;
+		Long idCounter = 0L;
 		for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
 			if (fulfillmentGroup.getAddress().getCountry() != null && !fulfillmentGroup.getAddress().getCountry().getAbbreviation().equalsIgnoreCase("CA") && !fulfillmentGroup.getAddress().getCountry().getAbbreviation().equalsIgnoreCase("US")) {
 				throw new TaxException("CyberSource tax calculation only supported for the United States and Canada.");
