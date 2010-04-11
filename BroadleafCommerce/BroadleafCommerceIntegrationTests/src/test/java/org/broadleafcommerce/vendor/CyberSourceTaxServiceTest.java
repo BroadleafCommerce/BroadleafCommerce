@@ -47,7 +47,7 @@ public class CyberSourceTaxServiceTest extends BaseTest {
         taxRequest.setCurrency(Currency.getInstance(Locale.US).getCurrencyCode());
         taxRequest.setNexus("CA");
         taxRequest.setOrderAcceptancePostalCode("94043");
-        taxRequest.setOrderOriginPostalCode("94043");
+        //taxRequest.setOrderOriginPostalCode("94043");
         
         CyberSourceBillingRequest billingRequest = new CyberSourceBillingRequest();
         billingRequest.setCity("Mountain View");
