@@ -15,14 +15,13 @@
  */
 package org.broadleafcommerce.checkout.test;
 
-import java.util.Date;
-
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.module.AbstractModule;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.time.SystemTime;
 
 /**
  * @author jfischer
@@ -30,38 +29,38 @@ import org.broadleafcommerce.payment.service.type.PaymentInfoType;
  */
 public class DummyCreditCardModule extends AbstractModule {
 
-	public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
+    public PaymentResponseItem authorize(PaymentContext paymentContext) throws PaymentException {
         return createResponse(paymentContext);
     }
 
     public PaymentResponseItem authorizeAndDebit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     public PaymentResponseItem debit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     public PaymentResponseItem credit(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     public PaymentResponseItem voidPayment(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
 
     public PaymentResponseItem balance(PaymentContext paymentContext) throws PaymentException {
-    	return createResponse(paymentContext);
+        return createResponse(paymentContext);
     }
-    
+
     private PaymentResponseItem createResponse(PaymentContext paymentContext) {
-    	PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-		responseItem.setTransactionTimestamp(new Date());
-		responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
-		responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
-		responseItem.setTransactionSuccess(true);
-		responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
-        
+        PaymentResponseItem responseItem = new PaymentResponseItemImpl();
+        responseItem.setTransactionTimestamp(SystemTime.asDate());
+        responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
+        responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
+        responseItem.setTransactionSuccess(true);
+        responseItem.setAmountPaid(paymentContext.getPaymentInfo().getAmount());
+
         return responseItem;
     }
 

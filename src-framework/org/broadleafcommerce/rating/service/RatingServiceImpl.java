@@ -17,7 +17,6 @@ package org.broadleafcommerce.rating.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,7 @@ import org.broadleafcommerce.rating.domain.ReviewFeedback;
 import org.broadleafcommerce.rating.domain.ReviewFeedbackImpl;
 import org.broadleafcommerce.rating.service.type.RatingSortType;
 import org.broadleafcommerce.rating.service.type.RatingType;
+import org.broadleafcommerce.time.SystemTime;
 
 public class RatingServiceImpl implements RatingService {
 
@@ -69,7 +69,7 @@ public class RatingServiceImpl implements RatingService {
             ratingSummary = new RatingSummaryImpl(itemId, type);
         }
 
-        RatingDetail ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+        RatingDetail ratingDetail = new RatingDetailImpl(ratingSummary, rating, SystemTime.asDate(), customer);
         ratingSummary.getRatings().add(ratingDetail);
         ratingSummaryDao.saveRatingSummary(ratingSummary);
     }
@@ -128,7 +128,7 @@ public class RatingServiceImpl implements RatingService {
             ratingSummary = new RatingSummaryImpl(itemId, type);
         }
 
-        ReviewDetail reviewDetail = new ReviewDetailImpl(customer, new Date(), reviewText, ratingSummary);
+        ReviewDetail reviewDetail = new ReviewDetailImpl(customer, SystemTime.asDate(), reviewText, ratingSummary);
         ratingSummary.getReviews().add(reviewDetail);
         ratingSummaryDao.saveRatingSummary(ratingSummary);
     }

@@ -18,7 +18,6 @@ package org.broadleafcommerce.offer.test;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -50,6 +49,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.dataprovider.SkuDaoDataProvider;
 import org.broadleafcommerce.test.integration.BaseTest;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
@@ -593,7 +593,7 @@ public class OfferTest extends BaseTest {
     private Offer createOffer(String offerName, OfferType offerType, OfferDiscountType discountType, double value, String customerRule, String orderRule, boolean stackable, boolean combinable, int priority) {
         Offer offer = offerDao.create();
         offer.setName(offerName);
-        offer.setStartDate(new Date());
+        offer.setStartDate(SystemTime.asDate());
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DATE, -1);
         offer.setStartDate(calendar.getTime());
