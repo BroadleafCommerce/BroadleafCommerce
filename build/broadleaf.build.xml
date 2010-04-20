@@ -3,6 +3,8 @@
 	<description>
             Broadleaf Build File
     </description>
+
+    <property name="thirdparty.lib.dir" value="Z:/thirdparty" />
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="framework.src.dir" value="${basedir}/src-framework" />
 	<property name="profile.src.dir" value="${basedir}/src-profile" />
@@ -214,23 +216,14 @@
     <target name="publish-jars"
             depends="build-jars, build-source-jars"
             description="Publishes all artifacts from this build to the shared repository">
-    	<copy file="${stage.dir}/broadleaf-framework.jar" tofile="${basedir}/../libraries/artifacts/developer/org.broadleafcommerce/framework/${build.version}/jars/framework.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-web.jar" tofile="${basedir}/../libraries/artifacts/developer/org.broadleafcommerce/framework-web/${build.version}/jars/framework-web.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-sources.jar" tofile="${basedir}/../libraries/artifacts/developer/org.broadleafcommerce/framework/${build.version}/sources/framework-sources.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-web-sources.jar" tofile="${basedir}/../libraries/artifacts/developer/org.broadleafcommerce/framework-web/${build.version}/sources/framework-web-sources.jar" overwrite="true"/>
-       	<copy file="${stage.dir}/broadleaf-profile.jar" tofile="${basedir}/../libraries/artifacts/developer/org.broadleafcommerce/profile/${build.version}/jars/profile.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-profile-web.jar" tofile="${basedir}/../libraries/artifacts/developer/org.broadleafcommerce/profile-web/${build.version}/jars/profile-web.jar" overwrite="true"/>
-       	<copy file="${stage.dir}/broadleaf-profile-sources.jar" tofile="${basedir}/../libraries/artifacts/developer/org.broadleafcommerce/profile/${build.version}/sources/profile-sources.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-profile-web-sources.jar" tofile="${basedir}/../libraries/artifacts/developer/org.broadleafcommerce/profile-web/${build.version}/sources/profile-web-sources.jar" overwrite="true"/>
-
-    	<copy file="${stage.dir}/broadleaf-framework.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/framework/jars/broadleaf-framework-${build.version}.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-web.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/framework-web/jars/broadleaf-framework-web-${build.version}.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-sources.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/framework/sources/broadleaf-framework-sources-${build.version}.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-framework-web-sources.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/framework-web/sources/broadleaf-framework-web-sources-${build.version}.jar" overwrite="true"/>
-       	<copy file="${stage.dir}/broadleaf-profile.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/profile/jars/broadleaf-profile-${build.version}.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-profile-web.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/profile-web/jars/broadleaf-profile-web-${build.version}.jar" overwrite="true"/>
-       	<copy file="${stage.dir}/broadleaf-profile-sources.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/profile/sources/broadleaf-profile-sources-${build.version}.jar" overwrite="true"/>
-    	<copy file="${stage.dir}/broadleaf-profile-web-sources.jar" tofile="${basedir}/../libraries/cache/org.broadleafcommerce/profile-web/sources/broadleaf-profile-web-sources-${build.version}.jar" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework.jar" todir="${thirdparty.lib.dir}/org.broadleafcommerce/framework/${build.version}/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework-sources.jar" todir="${thirdparty.lib.dir}/org.broadleafcommerce/framework/${build.version}/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework-web.jar" todir="${thirdparty.lib.dir}/org.broadleafcommerce/framework-web/${build.version}/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-framework-web-sources.jar" todir="${thirdparty.lib.dir}/org.broadleafcommerce/framework-web/${build.version}/sources" overwrite="true"/>
+       	<copy file="${stage.dir}/broadleaf-profile.jar" todir="${thirdparty.lib.dir}/org.broadleafcommerce/profile/${build.version}/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-profile-sources.jar" todir="${thirdparty.lib.dir}/org.broadleafcommerce/profile/${build.version}/sources" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-profile-web.jar" todir="${thirdparty.lib.dir}/org.broadleafcommerce/profile-web/${build.version}/jars" overwrite="true"/>
+    	<copy file="${stage.dir}/broadleaf-profile-web-sources.jar" todir="${thirdparty.lib.dir}/org.broadleafcommerce/profile-web/${build.version}/sources" overwrite="true"/>
     </target>
 
 	<target name="clean">
