@@ -203,7 +203,7 @@ public class OfferTest extends CommonSetupBaseTest {
         assert (order.getSubTotal().equals(new Money(240D)));
     }
 
-    @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOfferAndInformation"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer", "testShippingInsert"})
+    @Test(groups =  {"testOfferLowerSalePriceWithNotCombinableOfferAndInformation"}, dependsOnGroups = { "testOfferLowerSalePriceWithNotCombinableOffer"})
     @Transactional
     public void testOfferLowerSalePriceWithNotCombinableOfferAndInformation() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
@@ -383,6 +383,7 @@ public class OfferTest extends CommonSetupBaseTest {
     }
 
     @Test(groups =  {"testFulfillmentGroupOffers"}, dependsOnGroups = { "testCustomerAssociatedOffers2"})
+    @Transactional
     public void testFulfillmentGroupOffers() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
         
@@ -397,6 +398,8 @@ public class OfferTest extends CommonSetupBaseTest {
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
         offerService.applyFulfillmentGroupOffers(order.getFulfillmentGroups().get(0));
+        
+        cartService.save( order, false );
 
         assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(1.6D)));
     }
