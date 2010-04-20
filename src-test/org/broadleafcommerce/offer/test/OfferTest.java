@@ -454,7 +454,16 @@ public class OfferTest extends BaseTest {
         offerService.applyOffersToOrder(offers, order);
         offerService.applyFulfillmentGroupOffers(order.getFulfillmentGroups().get(0));
 
+        cartService.save(order, false);
+
         assert (order.getFulfillmentGroups().get(0).getShippingPrice().equals(new Money(1.6D)));
+
+        for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+            fg.setOrder(null);
+        }
+        order.getFulfillmentGroups().clear();
+
+        cartService.save(order, false);
     }
 
     @Test(groups =  {"testOfferDelete"}, dependsOnGroups = { "testFulfillmentGroupOffers"})

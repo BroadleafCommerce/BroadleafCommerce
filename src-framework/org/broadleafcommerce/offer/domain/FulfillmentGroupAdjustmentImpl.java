@@ -31,6 +31,7 @@ import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,11 +50,11 @@ public class FulfillmentGroupAdjustmentImpl implements FulfillmentGroupAdjustmen
     @Column(name = "FG_ADJUSTMENT_ID")
     protected Long id;
 
-    @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class, optional=false)
+    @ManyToOne(targetEntity = FulfillmentGroupImpl.class, optional=false)
     @JoinColumn(name = "FULFILLMENT_GROUP_ID")
     protected FulfillmentGroup fulfillmentGroup;
 
-    @ManyToOne(targetEntity = FulfillmentGroupAdjustmentImpl.class, optional=false)
+    @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     protected Offer offer;
 
