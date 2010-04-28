@@ -48,7 +48,7 @@ public class OfferInfoImpl implements OfferInfo {
 
     @CollectionOfElements
     @JoinTable(name = "BLC_OFFER_INFO_FIELDS", joinColumns = @JoinColumn(name = "OFFER_INFO_FIELDS_ID"))
-    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150) })
+    @MapKey(columns = { @Column(name = "FIELD_NAME", length = 150, nullable = false) })
     @Column(name = "FIELD_VALUE")
     protected Map<String, String> fieldValues = new HashMap<String, String>();
 

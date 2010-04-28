@@ -136,7 +136,7 @@ public class SkuImpl implements Sku {
     /** The sku images. */
     @CollectionOfElements
     @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
-    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
+    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, String> skuImages = new HashMap<String, String>();
@@ -144,7 +144,7 @@ public class SkuImpl implements Sku {
     /** The sku media. */
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_SKU_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY")})
+    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
