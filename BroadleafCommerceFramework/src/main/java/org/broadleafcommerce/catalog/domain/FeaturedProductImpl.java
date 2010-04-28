@@ -18,12 +18,14 @@ package org.broadleafcommerce.catalog.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Index;
 
@@ -34,7 +36,8 @@ public class FeaturedProductImpl implements FeaturedProduct {
 
     /** The id. */
     @Id
-    @GeneratedValue
+    @GeneratedValue(generator = "FeaturedProductId", strategy = GenerationType.TABLE)
+    @TableGenerator(name = "FeaturedProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FeaturedProductImpl", allocationSize = 50)
     @Column(name = "FEATURED_PRODUCT_ID")
     protected Long id;
 

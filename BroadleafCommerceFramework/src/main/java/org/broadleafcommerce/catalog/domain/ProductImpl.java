@@ -157,7 +157,7 @@ public class ProductImpl implements Product {
     /** The product images. */
     @CollectionOfElements
     @JoinTable(name = "BLC_PRODUCT_IMAGE", joinColumns = @JoinColumn(name = "PRODUCT_ID"))
-    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5) })
+    @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, String> productImages = new HashMap<String, String>();
@@ -165,7 +165,7 @@ public class ProductImpl implements Product {
     /** The product media. */
     @ManyToMany(targetEntity = MediaImpl.class)
     @JoinTable(name = "BLC_PRODUCT_MEDIA_MAP", inverseJoinColumns = @JoinColumn(name = "MEDIA_ID", referencedColumnName = "MEDIA_ID"))
-    @MapKey(columns = {@Column(name = "MAP_KEY")})
+    @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     protected Map<String, Media> productMedia = new HashMap<String , Media>();
