@@ -334,7 +334,7 @@ public interface Product extends Serializable {
      * Returns whether or not the product is featured
      * @return isFeaturedProduct as Boolean
      */
-    boolean getIsFeaturedProduct();
+    boolean isFeaturedProduct();
 
     /**
      * Sets whether or not the product is featured

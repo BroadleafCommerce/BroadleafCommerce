@@ -115,7 +115,7 @@ public class ProductDaoTest extends BaseTest {
         product.setFeaturedProduct(true);
         catalogService.saveProduct(product);
         Product testProduct = productDao.readProductById(productId);
-        assert (testProduct.getIsFeaturedProduct() == true);
+        assert (testProduct.isFeaturedProduct() == true);
     }
 
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)

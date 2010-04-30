@@ -456,11 +456,11 @@ public class ProductImpl implements Product {
     }
 
     public void setDimension(ProductDimension dimension) {
-        this.dimension = dimension;
+    	this.dimension = dimension;
     }
 
     public BigDecimal getWidth() {
-        return dimension.getWidth();
+        return dimension==null?null:dimension.getWidth();
     }
 
     public void setWidth(BigDecimal width) {
@@ -468,7 +468,7 @@ public class ProductImpl implements Product {
     }
 
     public BigDecimal getHeight() {
-        return dimension.getHeight();
+        return dimension==null?null:dimension.getHeight();
     }
 
     public void setHeight(BigDecimal height) {
@@ -476,7 +476,7 @@ public class ProductImpl implements Product {
     }
 
     public BigDecimal getDepth() {
-        return dimension.getDepth();
+        return dimension==null?null:dimension.getDepth();
     }
 
     public void setDepth(BigDecimal depth) {
@@ -488,11 +488,11 @@ public class ProductImpl implements Product {
     }
 
     public BigDecimal getGirth() {
-        return dimension.getGirth();
+        return dimension==null?null:dimension.getGirth();
     }
 
     public ContainerSizeType getSize() {
-        return dimension.getSize();
+        return dimension==null?null:dimension.getSize();
     }
 
     public void setSize(ContainerSizeType size) {
@@ -500,7 +500,7 @@ public class ProductImpl implements Product {
     }
 
     public ContainerShapeType getContainer() {
-        return dimension.getContainer();
+        return dimension==null?null:dimension.getContainer();
     }
 
     public void setContainer(ContainerShapeType container) {
@@ -512,7 +512,7 @@ public class ProductImpl implements Product {
      * @return a String value of the product dimensions
      */
     public String getDimensionString() {
-        return dimension.getDimensionString();
+        return dimension==null?null:dimension.getDimensionString();
     }
 
     public List<RelatedProduct> getUpSaleProducts() {
@@ -527,7 +527,7 @@ public class ProductImpl implements Product {
         this.upSaleProducts = upSaleProducts;
     }
 
-    public boolean getIsFeaturedProduct() {
+    public boolean isFeaturedProduct() {
         return isFeaturedProduct;
     }
 
