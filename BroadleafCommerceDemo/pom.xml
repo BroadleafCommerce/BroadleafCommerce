@@ -18,6 +18,7 @@
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
+				<version>6.1.22</version>
 				<configuration>
 					<contextPath>/broadleafdemo</contextPath>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
