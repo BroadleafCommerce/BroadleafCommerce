@@ -50,7 +50,7 @@ public class DisplayFeaturedProductsTag extends TagSupport {
 	    	
 	    	while (i.hasNext()) {
 	    		Product p = i.next();
-	    		if (p.getIsFeaturedProduct()) {
+	    		if (p.isFeaturedProduct()) {
 	    			featuredProducts.add(p);
 	    		}
 	    	}
