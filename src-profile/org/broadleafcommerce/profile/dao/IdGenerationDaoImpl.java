@@ -39,7 +39,7 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
-    @Resource(name="blEntityConfiguration")
+    @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
@@ -50,12 +50,31 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
         query.setParameter("idType", idType);
         query.setHint(getQueryCacheableKey(), false);
         try {
-            IdGeneration idGeneration =  (IdGeneration) query.getSingleResult();
-            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.IdGeneration");
+            IdGeneration idGeneration = (IdGeneration) query.getSingleResult();
+            response = (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.IdGeneration");
             response.setBatchSize(idGeneration.getBatchSize());
             response.setBatchStart(idGeneration.getBatchStart());
+            Long originalBatchStart = idGeneration.getBatchStart();
+            idGeneration.setBatchStart(originalBatchStart + idGeneration.getBatchSize());
+            if (idGeneration.getBegin() != null) {
+                response.setBegin(idGeneration.getBegin());
+                if (idGeneration.getBatchStart() < idGeneration.getBegin()) {
+                    idGeneration.setBatchStart(idGeneration.getBegin());
+                    response.setBatchStart(idGeneration.getBatchStart());
+                }
+            }
+            if (idGeneration.getEnd() != null) {
+                response.setEnd(idGeneration.getEnd());
+                if (idGeneration.getBatchStart() > idGeneration.getEnd()) {
+                    response.setBatchSize(idGeneration.getEnd() - originalBatchStart + 1);
+                    if (idGeneration.getBegin() != null) {
+                        idGeneration.setBatchStart(idGeneration.getBegin());
+                    } else {
+                        idGeneration.setBatchStart(getDefaultBatchStart());
+                    }
+                }
+            }
             response.setType(idGeneration.getType());
-            idGeneration.setBatchStart(idGeneration.getBatchStart() + idGeneration.getBatchSize());
             em.merge(idGeneration);
             em.flush();
         } catch (NoResultException nre) {
@@ -63,8 +82,10 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No row found in idGenerator table for " + idType + " creating row.");
             }
-            response =  (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.IdGeneration");
+            response = (IdGeneration) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.IdGeneration");
             response.setType(idType);
+            response.setBegin(null);
+            response.setEnd(null);
             response.setBatchStart(getDefaultBatchStart());
             response.setBatchSize(getDefaultBatchSize());
             try {

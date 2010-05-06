@@ -4,7 +4,7 @@
             Broadleaf Build File
     </description>
 
-    <property name="thirdparty.lib.dir" value="Z:/thirdparty" />
+    <property name="thirdparty.lib.dir" value="//integration/artifacts/thirdparty" />
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="framework.src.dir" value="${basedir}/src-framework" />
 	<property name="profile.src.dir" value="${basedir}/src-profile" />
