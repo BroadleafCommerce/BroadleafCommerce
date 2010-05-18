@@ -34,7 +34,13 @@ public class IdGenerationImpl implements IdGeneration {
     @Column(name = "ID_TYPE", nullable=false)
     protected String type;
 
-    @Column(name = "BATCH_START", nullable=false)
+    @Column(name = "ID_MIN", nullable = true)
+    protected Long begin;
+
+    @Column(name = "ID_MAX", nullable = true)
+    protected Long end;
+
+    @Column(name = "BATCH_START", nullable = false)
     protected Long batchStart;
 
     @Column(name = "BATCH_SIZE", nullable=false)
@@ -49,6 +55,22 @@ public class IdGenerationImpl implements IdGeneration {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Long getBegin() {
+        return begin;
+    }
+
+    public void setBegin(Long begin) {
+        this.begin = begin;
+    }
+
+    public Long getEnd() {
+        return end;
+    }
+
+    public void setEnd(Long end) {
+        this.end = end;
     }
 
     public Long getBatchStart() {
@@ -77,6 +99,8 @@ public class IdGenerationImpl implements IdGeneration {
         int result = 1;
         result = prime * result + ((batchSize == null) ? 0 : batchSize.hashCode());
         result = prime * result + ((batchStart == null) ? 0 : batchStart.hashCode());
+        result = prime * result + ((begin == null) ? 0 : begin.hashCode());
+        result = prime * result + ((end == null) ? 0 : end.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
@@ -101,6 +125,16 @@ public class IdGenerationImpl implements IdGeneration {
                 return false;
         } else if (!batchStart.equals(other.batchStart))
             return false;
+        if (begin == null) {
+            if (other.begin != null)
+                return false;
+        } else if (!begin.equals(other.begin))
+            return false;
+        if (end == null) {
+            if (other.end != null)
+                return false;
+        } else if (!end.equals(other.end))
+            return false;
         if (type == null) {
             if (other.type != null)
                 return false;
@@ -113,4 +147,5 @@ public class IdGenerationImpl implements IdGeneration {
             return false;
         return true;
     }
+
 }

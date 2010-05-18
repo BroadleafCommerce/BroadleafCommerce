@@ -24,6 +24,7 @@ import org.broadleafcommerce.profile.domain.IdGeneration;
 import org.broadleafcommerce.profile.domain.IdGenerationImpl;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 
 public class IdGenerationTest extends BaseTest {
@@ -51,6 +52,33 @@ public class IdGenerationTest extends BaseTest {
         for (int i = 1; i < 101; i++) {
             Long id = idGenerationService.findNextId("IdGenerationTest");
             assert id == i;
+        }
+    }
+
+    @Test(groups = "createIdForBeginEndSequence")
+    @Rollback(false)
+    @Transactional
+    public void createIdForBeginEndSequence() {
+        IdGeneration idGeneration = new IdGenerationImpl();
+        idGeneration.setType("IdGenerationBeginEndTest");
+        idGeneration.setBegin(1L);
+        idGeneration.setEnd(10L);
+        idGeneration.setBatchStart(1L);
+        idGeneration.setBatchSize(3L);
+        em.persist(idGeneration);
+    }
+
+    @Test(groups = "findIdsForBeginEndSequence", dependsOnGroups = "createIdForBeginEndSequence")
+    @Rollback(true)
+    public void findIdsForBeginEndSequence() {
+        for (int i = 1; i < 101; i++) {
+            Long id = idGenerationService.findNextId("IdGenerationBeginEndTest");
+            int expected = i % 10;
+            if (expected == 0) {
+                expected = 10;
+            }
+            System.out.println("jbtest: i=" + i + ", id=" + id + ", expected=" + expected);
+            assert id == expected;
         }
     }
 }
