@@ -18,7 +18,6 @@ package org.broadleafcommerce.profile.domain.listener;
 import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -29,6 +28,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.broadleafcommerce.profile.domain.annotation.AutoPopulate;
+import org.broadleafcommerce.time.SystemTime;
 
 public class TemporalTimestampListener {
 
@@ -55,12 +55,12 @@ public class TemporalTimestampListener {
                             if (field.get(entity) == null || field.getAnnotation(AutoPopulate.class).autoUpdateValue()) {
                                 if (type.isAssignableFrom(Date.class)) {
                                     if (cal == null) {
-                                        cal = new GregorianCalendar();
+                                        cal = SystemTime.asCalendar();
                                     }
                                     field.set(entity, cal.getTime());
                                 } else if (type.isAssignableFrom(Calendar.class)) {
                                     if (cal == null) {
-                                        cal = new GregorianCalendar();
+                                        cal = SystemTime.asCalendar();
                                     }
                                     field.set(entity, cal);
                                 }
