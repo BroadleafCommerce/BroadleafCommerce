@@ -115,6 +115,22 @@ public class OfferTest extends CommonSetupBaseTest {
         assert sku.getId() != null;
         sku2 = sku.getId();
     }
+    
+    @Test(groups =  {"testPercentageOffOffer"}, dependsOnGroups = { "offerCreateSku1", "offerCreateSku2" })
+    public void testPercentOffOfferWithScaleGreaterThanTwo() throws Exception {
+        Order order = cartService.createNewCartForCustomer(createCustomer());
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+
+        order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2));
+        order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 1));
+        order.addAddedOfferCode( createOfferCode( "20.5 Percent Off Item Offer", OfferType.ORDER_ITEM, OfferDiscountType.PERCENT_OFF, 20.5, null, null, true, true, 10) );
+
+        List<Offer> offers = offerService.buildOfferListForOrder(order);
+        offerService.applyOffersToOrder(offers, order);
+
+        // 20% results in $240.  20.5% off results in $238.50
+        assert ( order.getSubTotal().equals(new Money(238.50D) ));
+    }
 
     @Test(groups =  {"offerUsedForPricing"}, dependsOnGroups = { "offerCreateSku1", "offerCreateSku2" })
     public void testOfferUsedForPricing() throws Exception {
