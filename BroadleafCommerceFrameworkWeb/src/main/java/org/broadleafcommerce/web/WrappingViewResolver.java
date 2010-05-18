@@ -13,14 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.web;
+package org.broadleafcommerce.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ViewResolver;
 
-public interface MergeCartProcessor {
+/**
+ * @author jfischer
+ *
+ */
+public class WrappingViewResolver implements ViewResolver {
+	
+	private View view;
+	
+	public WrappingViewResolver(View view) {
+		this.view = view;
+	}
 
-    public void execute(HttpServletRequest request, HttpServletResponse response, Authentication authResult);
+	/* (non-Javadoc)
+	 * @see org.springframework.web.servlet.ViewResolver#resolveViewName(java.lang.String, java.util.Locale)
+	 */
+	public View resolveViewName(String arg0, Locale arg1) throws Exception {
+		return view;
+	}
+
 }

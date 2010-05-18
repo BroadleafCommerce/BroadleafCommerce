@@ -89,7 +89,7 @@ public class WishlistController extends CartController {
         CartSummary cartSummary = new CartSummary();
         
         if (wishlist == null) {
-        	return "redirect:/basket/viewCart.htm";
+        	return "redirect:/basket/currentCart.htm";
         }
 
         if (wishlist.getOrderItems() != null ) {
@@ -189,7 +189,7 @@ public class WishlistController extends CartController {
             LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
             //TODO: handle this properly from a UI perspective
         }
-        return "redirect:/basket/viewCart.htm";
+        return "redirect:/basket/currentCart.htm";
     }
 
     // override the retreiveOrder method in CartController to return a name wishlist order

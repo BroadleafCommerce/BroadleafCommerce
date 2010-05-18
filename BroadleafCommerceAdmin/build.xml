@@ -103,6 +103,9 @@
     </target> 
 
 	<target name="launch-admin" depends="compile-flex, start-db">
+		<delete>
+			<fileset dir="${maven.build.dir}/WEB-INF/lib" includes="*.*"/>
+	  	</delete>
 		<minimal-maven-launch basedir="${basedir}/../BroadleafCommerceDemo" goal="clean compile war:inplace" resultproperty="maven.build.result" />
 		<maven-launch basedir="${basedir}" goal="clean compile war:inplace jetty:run" resultproperty="maven.build.result" />
 	</target>

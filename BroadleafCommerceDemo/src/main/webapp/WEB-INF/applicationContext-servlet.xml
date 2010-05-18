@@ -5,12 +5,12 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:aop="http://www.springframework.org/schema/aop"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/aop
-       http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
-
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
 	<context:component-scan base-package="org.broadleafcommerce">
         <context:include-filter type="regex" expression=".*web.*"/>
         <context:exclude-filter type="regex" expression=".*"/>
@@ -79,7 +79,6 @@
 		<property name="deletePhoneSuccessView" value="myAccount/phone/customerPhones"/>
 	</bean>
 	
-
 	<bean id="urlMapping"
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="order" value="0" />
@@ -97,10 +96,8 @@
 				<prop key="/orders">viewOrderController</prop>
 				<prop key="/orders/*">viewOrderController</prop>
 				<prop key="/store">store</prop>
-				<prop key="/store/*">catalogController</prop>
-				<prop key="/store/*/*">catalogController</prop>
-				<prop key="/store/*/*/*">catalogController</prop>
-				<prop key="/basket/*">cartController</prop>
+				<prop key="/store/**">catalogController</prop>
+				<prop key="/basket/**">cartController</prop>
 				<prop key="/search">compassSearchController</prop>
 				<prop key="/search/*">compassSearchController</prop>
 				<prop key="/checkout/*">checkoutController</prop>
@@ -110,12 +107,6 @@
 				<prop key="/wishlist/*">blWishlistController</prop>
 			</props>
 		</property>
-	</bean>
-		
-		
-	<bean id="beanNameUrlMapping"
-		class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">
-		<property name="order" value="1" />
 	</bean>
 
 </beans>

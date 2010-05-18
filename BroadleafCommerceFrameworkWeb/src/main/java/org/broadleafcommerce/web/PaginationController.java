@@ -62,7 +62,7 @@ public abstract class PaginationController extends AjaxFormController {
      * @param model
      * @param object
      */
-    protected abstract void populatePaginatedList(Map<Object, Object> model, PaginationCommandObject object);
+    protected abstract void populatePaginatedList(Map<String, Object> model, PaginationCommandObject object);
     
     @Override
     protected Object formBackingObject(HttpServletRequest request)throws ServletException {
@@ -76,13 +76,13 @@ public abstract class PaginationController extends AjaxFormController {
     }
     
     @Override
-    protected void populateAjax(Map<Object, Object> model, Object object) {
+    protected void populateAjax(Map<String, Object> model, Object object) {
         populatePaginatedList(model, (PaginationCommandObject) object);
         model.put(getPaginationObjectName(), object);
     }
 
     @Override
-    protected void populateStandard(Map<Object, Object> model, Object object) {
+    protected void populateStandard(Map<String, Object> model, Object object) {
         populatePaginatedList(model, (PaginationCommandObject) object);
         model.put(getPaginationObjectName(), object);
     }

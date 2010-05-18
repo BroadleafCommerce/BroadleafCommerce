@@ -5,6 +5,8 @@ import java.io.IOException;
 import javax.annotation.Resource;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,13 +17,13 @@ import org.broadleafcommerce.profile.service.CustomerService;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.security.Authentication;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.providers.rememberme.RememberMeAuthenticationToken;
-import org.springframework.security.ui.FilterChainOrder;
-import org.springframework.security.ui.SpringSecurityFilter;
+import org.springframework.core.Ordered;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
 @Component("blCustomerStateFilter")
 /**
@@ -35,7 +37,7 @@ import org.springframework.stereotype.Component;
  *
  * @author bpolster
  */
-public class CustomerStateFilter extends SpringSecurityFilter implements ApplicationEventPublisherAware {
+public class CustomerStateFilter extends GenericFilterBean implements ApplicationEventPublisherAware, Ordered {
 
     /** Logger for this class and subclasses */
     protected final Log logger = LogFactory.getLog(getClass());
@@ -49,9 +51,9 @@ public class CustomerStateFilter extends SpringSecurityFilter implements Applica
     private static final String ANONYMOUS_CUSTOMER_SESSION_ATTRIBUTE_NAME="_blc_anonymousCustomer";
     private static final String LAST_PUBLISHED_EVENT_SESSION_ATTRIBUTED_NAME="_blc_lastPublishedEvent";
 
-    @Override
-    protected void doFilterHttp(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-
+	public void doFilter(ServletRequest baseRequest, ServletResponse baseResponse, FilterChain chain) throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) baseRequest;
+		HttpServletResponse response = (HttpServletResponse) baseResponse;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Customer customer = null;
         if (authentication != null) {
@@ -122,7 +124,9 @@ public class CustomerStateFilter extends SpringSecurityFilter implements Applica
     }
 
     public int getOrder() {
-        return FilterChainOrder.REMEMBER_ME_FILTER+1;
+    	//FilterChainOrder has been dropped from Spring Security 3
+        //return FilterChainOrder.REMEMBER_ME_FILTER+1;
+    	return 1501;
     }
 
     public void setApplicationEventPublisher(ApplicationEventPublisher eventPublisher) {
