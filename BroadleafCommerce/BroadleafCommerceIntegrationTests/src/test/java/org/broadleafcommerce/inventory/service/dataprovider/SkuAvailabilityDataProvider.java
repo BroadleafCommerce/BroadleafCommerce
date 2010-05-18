@@ -19,6 +19,7 @@ import java.util.Date;
 
 import org.broadleafcommerce.inventory.domain.SkuAvailability;
 import org.broadleafcommerce.inventory.domain.SkuAvailabilityImpl;
+import org.broadleafcommerce.time.SystemTime;
 import org.testng.annotations.DataProvider;
 
 public class SkuAvailabilityDataProvider {
@@ -26,7 +27,7 @@ public class SkuAvailabilityDataProvider {
     @DataProvider(name = "setupSkuAvailability")
     public static Object[][] createSkuAvailabilityRecords() {
     	Object[][] paramArray = new Object[10][1];
-    	Date AVAILABLE_TODAY = new Date();
+    	Date AVAILABLE_TODAY = SystemTime.asDate();
     	Date AVAILABLE_NULL = null;
     	Long LOCATION_NULL = null;
     	Long LOCATION_ONE = 1L;

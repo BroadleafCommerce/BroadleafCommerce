@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.catalog.web.taglib;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.jsp.JspException;
@@ -25,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.time.SystemTime;
 
 /*NOTE:
  * Was referred to as the ProductsTag.  Class name changed to be more descriptive
@@ -50,7 +50,7 @@ public class GetProductsByCategoryIdTag extends AbstractCatalogTag {
             }
         }
 
-        List<Product> productList = catalogService.findActiveProductsByCategory(c, new Date());
+        List<Product> productList = catalogService.findActiveProductsByCategory(c, SystemTime.asDate());
 
         if(CollectionUtils.isEmpty(productList) && LOG.isDebugEnabled()){
             LOG.debug("The productList returned was null for categoryId: " + categoryId);

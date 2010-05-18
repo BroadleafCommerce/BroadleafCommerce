@@ -16,7 +16,6 @@
 package org.broadleafcommerce.checkout.service;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +51,7 @@ import org.broadleafcommerce.profile.domain.State;
 import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.test.BaseTest;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.money.Money;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
@@ -120,7 +120,7 @@ public class CheckoutTest extends BaseTest {
         Sku newSku = new SkuImpl();
         newSku.setName("Under Armor T-Shirt -- Red");
         newSku.setRetailPrice(new Money(14.99));
-        newSku.setActiveStartDate(new Date());
+        newSku.setActiveStartDate(SystemTime.asDate());
         newSku.setDiscountable(false);
         newSku = catalogService.saveSku(newSku);
         item.setSku(newSku);

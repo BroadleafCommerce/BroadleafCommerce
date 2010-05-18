@@ -17,7 +17,6 @@ package org.broadleafcommerce.rating.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +38,7 @@ import org.broadleafcommerce.rating.domain.ReviewFeedbackImpl;
 import org.broadleafcommerce.rating.service.type.RatingSortType;
 import org.broadleafcommerce.rating.service.type.RatingType;
 import org.springframework.stereotype.Service;
+import org.broadleafcommerce.time.SystemTime;
 
 @Service("blRatingService")
 public class RatingServiceImpl implements RatingService {
@@ -74,7 +74,7 @@ public class RatingServiceImpl implements RatingService {
         RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
 
         if (ratingDetail == null) {
-            ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+            ratingDetail = new RatingDetailImpl(ratingSummary, rating, SystemTime.asDate(), customer);
         }
 
         ratingDetail.setRating(rating);
@@ -140,7 +140,7 @@ public class RatingServiceImpl implements RatingService {
         RatingDetail ratingDetail = ratingSummaryDao.readRating(customer.getId(), ratingSummary.getId());
 
         if (ratingDetail == null) {
-            ratingDetail = new RatingDetailImpl(ratingSummary, rating, new Date(), customer);
+            ratingDetail = new RatingDetailImpl(ratingSummary, rating, SystemTime.asDate(), customer);
         } else {
             ratingDetail.setRating(rating);        	
         }
@@ -150,7 +150,7 @@ public class RatingServiceImpl implements RatingService {
         ReviewDetail reviewDetail = ratingSummaryDao.readReview(customer.getId(), ratingSummary.getId());
 
         if (reviewDetail == null) {
-            reviewDetail = new ReviewDetailImpl(customer, new Date(), ratingDetail, reviewText, ratingSummary);
+            reviewDetail = new ReviewDetailImpl(customer, SystemTime.asDate(), ratingDetail, reviewText, ratingSummary);
         } else {
             reviewDetail.setReviewText(reviewText);        	
         }

@@ -15,11 +15,10 @@
  */
 package org.broadleafcommerce.profile.dataprovider;
 
-import java.util.Date;
-
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.broadleafcommerce.time.SystemTime;
 import org.testng.annotations.DataProvider;
 
 public class CustomerDataProvider {
@@ -28,14 +27,14 @@ public class CustomerDataProvider {
     public static Object[][] createCustomers() {
         Customer customer1 = new CustomerImpl();
         Auditable auditable = new Auditable();
-        auditable.setDateCreated(new Date());
+        auditable.setDateCreated(SystemTime.asDate());
         customer1.setAuditable(auditable);
         customer1.setPassword("customer1Password");
         customer1.setUsername("customer1");
 
         Customer customer2 = new CustomerImpl();
         Auditable auditable2 = new Auditable();
-        auditable2.setDateCreated(new Date());
+        auditable2.setDateCreated(SystemTime.asDate());
         customer2.setAuditable(auditable2);
         customer2.setPassword("customer2Password");
         customer2.setUsername("customer2");

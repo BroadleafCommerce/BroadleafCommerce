@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.order.dao;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,6 +27,7 @@ import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOrderDao")
@@ -49,7 +49,7 @@ public class OrderDaoImpl implements OrderDao {
 
     public Order save(final Order order) {
         if (order.getAuditable() != null) {
-            order.getAuditable().setDateUpdated(new Date());
+            order.getAuditable().setDateUpdated(SystemTime.asDate());
         }
         return em.merge(order);
     }
@@ -115,7 +115,7 @@ public class OrderDaoImpl implements OrderDao {
 
     public Order create() {
         final Order order = ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order"));
-        order.getAuditable().setDateCreated(new Date());
+        order.getAuditable().setDateCreated(SystemTime.asDate());
 
         return order;
     }

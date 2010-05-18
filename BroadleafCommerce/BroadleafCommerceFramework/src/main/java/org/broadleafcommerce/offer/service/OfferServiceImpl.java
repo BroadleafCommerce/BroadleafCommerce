@@ -47,6 +47,7 @@ import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.money.Money;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
@@ -189,7 +190,7 @@ public class OfferServiceImpl implements OfferService {
      * @return a List of non-expired offers
      */
     protected List<OfferCode> removeOutOfDateOfferCodes(List<OfferCode> offerCodes){
-        Date now = new Date();
+        Date now = SystemTime.asDate();
         List<OfferCode> offerCodesToRemove = new ArrayList<OfferCode>();
         for (OfferCode offerCode : offerCodes) {
             if ((offerCode.getStartDate() != null) && (offerCode.getStartDate().after(now))){
@@ -412,7 +413,7 @@ public class OfferServiceImpl implements OfferService {
      * @return List of Offers with valid dates
      */
     protected List<Offer> removeOutOfDateOffers(List<Offer> offers){
-        Date now = new Date();
+        Date now = SystemTime.asDate();
         List<Offer> offersToRemove = new ArrayList<Offer>();
         for (Offer offer : offers) {
             if ((offer.getStartDate() == null) || (offer.getStartDate().after(now))){

@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.email.dao;
 
-import java.util.Date;
-
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,6 +25,7 @@ import org.broadleafcommerce.email.domain.EmailTrackingClicks;
 import org.broadleafcommerce.email.domain.EmailTrackingOpens;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -47,7 +46,7 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
      */
     public Long createTracking(String emailAddress, String type, String extraValue) {
         EmailTracking tracking = (EmailTracking) entityConfiguration.createEntityInstance("org.broadleafcommerce.email.domain.EmailTracking");
-        tracking.setDateSent(new Date());
+        tracking.setDateSent(SystemTime.asDate());
         tracking.setEmailAddress(emailAddress);
         tracking.setType(type);
 
@@ -69,7 +68,7 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
     public void recordOpen(Long emailId, String userAgent) {
         EmailTrackingOpens opens = (EmailTrackingOpens) entityConfiguration.createEntityInstance("org.broadleafcommerce.email.domain.EmailTrackingOpens");
         opens.setEmailTracking(retrieveTracking(emailId));
-        opens.setDateOpened(new Date());
+        opens.setDateOpened(SystemTime.asDate());
         opens.setUserAgent(userAgent);
 
         em.persist(opens);
@@ -78,7 +77,7 @@ public class EmailReportingDaoImpl implements EmailReportingDao {
     public void recordClick(Long emailId, Customer customer, String destinationUri, String queryString) {
         EmailTrackingClicks clicks = (EmailTrackingClicks) entityConfiguration.createEntityInstance("org.broadleafcommerce.email.domain.EmailTrackingClicks");
         clicks.setEmailTracking(retrieveTracking(emailId));
-        clicks.setDateClicked(new Date());
+        clicks.setDateClicked(SystemTime.asDate());
         clicks.setDestinationUri(destinationUri);
         clicks.setQueryString(queryString);
         clicks.setCustomer(customer);
