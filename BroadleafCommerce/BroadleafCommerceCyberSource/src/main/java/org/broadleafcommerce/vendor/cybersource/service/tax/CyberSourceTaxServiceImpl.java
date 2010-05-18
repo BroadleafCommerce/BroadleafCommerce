@@ -17,6 +17,9 @@ package org.broadleafcommerce.vendor.cybersource.service.tax;
 
 import java.math.BigInteger;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.util.money.Money;
@@ -35,26 +38,38 @@ import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceT
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
+import org.broadleafcommerce.vendor.service.cache.ServiceResponseCacheable;
 import org.broadleafcommerce.vendor.service.exception.TaxException;
 import org.broadleafcommerce.vendor.service.exception.TaxHostException;
 
-public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implements CyberSourceTaxService {
+public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implements CyberSourceTaxService, ServiceResponseCacheable {
 	
 	private static final Log LOG = LogFactory.getLog(CyberSourceTaxServiceImpl.class);
+	
+	public Cache cache = CacheManager.getInstance().getCache("CyberSourceTaxRequests");
 
 	public CyberSourceTaxResponse process(CyberSourceTaxRequest taxRequest) throws TaxException {
 		//TODO add validation for the request
 		CyberSourceTaxResponse taxResponse = new CyberSourceTaxResponse();
 		taxResponse.setServiceType(taxRequest.getServiceType());
-		RequestMessage request = buildRequestMessage(taxRequest);
 		ReplyMessage reply;
-		try {
-			reply = sendRequest(request);
-        } catch (Exception e) {
-            incrementFailure();
-            throw new TaxException(e);
-        }
-        clearStatus();
+		RequestMessage request = buildRequestMessage(taxRequest);
+		if (taxRequest.getItemRequests().size() > 0) {
+			try {
+				reply = sendRequest(request);
+	        } catch (Exception e) {
+	            incrementFailure();
+	            throw new TaxException(e);
+	        }
+	        clearStatus();
+		} else {
+			/*
+			 * We need to at least create a basic reply even when there are
+			 * no item requests because it may be that this is a minimal
+			 * request via the ServiceResponseCache
+			 */
+			reply = createDefaultReply(taxRequest, request);
+		}
         buildResponse(taxResponse, reply);
         String[] invalidFields = reply.getInvalidField();
         String[] missingFields = reply.getMissingField();
@@ -86,6 +101,32 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 
 	public boolean isValidService(CyberSourceRequest request) {
 		return CyberSourceServiceType.TAX.equals(request.getServiceType());
+	}
+	
+	public void clearCache() {
+		cache.removeAll();
+	}
+
+	public Cache getCache() {
+		return cache;
+	}
+
+	protected ReplyMessage createDefaultReply(CyberSourceTaxRequest taxRequest, RequestMessage request) {
+		ReplyMessage reply = new ReplyMessage();
+		reply.setDecision("ACCEPT");
+		reply.setMerchantReferenceCode(request.getMerchantReferenceCode());
+		reply.setInvalidField(new String[]{});
+		reply.setMissingField(new String[]{});
+		reply.setReasonCode(new BigInteger("100"));
+		reply.setRequestToken("from-cache");
+		TaxReply taxReply = new TaxReply();
+		taxReply.setCity(taxRequest.getBillingRequest().getCity());
+		taxReply.setCounty(taxRequest.getBillingRequest().getCounty());
+		taxReply.setCurrency(taxRequest.getCurrency());
+		taxReply.setPostalCode(taxRequest.getBillingRequest().getPostalCode());
+		taxReply.setState(taxRequest.getBillingRequest().getState());
+		reply.setTaxReply(taxReply);
+		return reply;
 	}
 	
 	protected void buildResponse(CyberSourceTaxResponse taxResponse, ReplyMessage reply) {
@@ -394,6 +435,7 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 				sb.append(taxReply.getPostalCode());
 				sb.append("\nState: ");
 				sb.append(taxReply.getState());
+				sb.append("\nWarning! If response caching is enabled, the total tax values logged here may not be correct.");
 				sb.append("\nTotal City Tax: ");
 				sb.append(taxReply.getTotalCityTaxAmount());
 				sb.append("\nTotal County Tax: ");
