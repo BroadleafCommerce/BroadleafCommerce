@@ -171,11 +171,15 @@ public class SimpleCatalogController extends AbstractController {
         boolean productFound = false;
 
         String productId = request.getParameter("productId");
-        if (productId != null) {
-            Product product = catalogService.findProductById(new Long(productId));
-            if (product != null && product.isActive()) {
-                productFound = validateProductAndAddToModel(product, model);
-            }
+        Product product = null;
+        try {
+            product = catalogService.findProductById(new Long(productId));
+        } catch(Exception e) {
+            //If product is not found, return all values in category
+        }
+
+        if (product != null && product.isActive()) {
+            productFound = validateProductAndAddToModel(product, model);
         } else {
             Category currentCategory = (Category) model.get("currentCategory");
             List<Product> productList = catalogService.findActiveProductsByCategory(currentCategory, SystemTime.asDate());
