@@ -23,6 +23,14 @@ public interface IdGeneration extends Serializable {
 
     public void setType(String type);
 
+    public Long getBegin();
+
+    public void setBegin(Long begin);
+
+    public Long getEnd();
+
+    public void setEnd(Long end);
+
     public Long getBatchStart();
 
     public void setBatchStart(Long batchStart);
