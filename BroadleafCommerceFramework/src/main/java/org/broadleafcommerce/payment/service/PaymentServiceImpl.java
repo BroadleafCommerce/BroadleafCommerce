@@ -15,8 +15,6 @@
  */
 package org.broadleafcommerce.payment.service;
 
-import java.util.Date;
-
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.payment.domain.PaymentInfo;
@@ -28,6 +26,7 @@ import org.broadleafcommerce.payment.service.module.PaymentModule;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.payment.service.type.PaymentLogEventType;
 import org.broadleafcommerce.payment.service.type.TransactionType;
+import org.broadleafcommerce.time.SystemTime;
 
 public class PaymentServiceImpl implements PaymentService {
 
@@ -207,7 +206,7 @@ public class PaymentServiceImpl implements PaymentService {
     protected void logPaymentStartEvent(PaymentContext paymentContext, TransactionType transactionType) {
         PaymentLog log = paymentInfoService.createLog();
         log.setLogType(PaymentLogEventType.START);
-        log.setTransactionTimestamp(new Date());
+        log.setTransactionTimestamp(SystemTime.asDate());
         log.setTransactionSuccess(Boolean.TRUE);
         log.setTransactionType(transactionType);
         log.setUserName(paymentContext.getUserName());
@@ -226,7 +225,7 @@ public class PaymentServiceImpl implements PaymentService {
     protected void logPaymentFinishEvent(PaymentContext paymentContext, TransactionType transactionType, Exception e) {
         PaymentLog log = paymentInfoService.createLog();
         log.setLogType(PaymentLogEventType.FINISHED);
-        log.setTransactionTimestamp(new Date());
+        log.setTransactionTimestamp(SystemTime.asDate());
         log.setTransactionSuccess(e == null ? Boolean.TRUE : Boolean.FALSE);
         log.setTransactionType(transactionType);
         log.setUserName(paymentContext.getUserName());

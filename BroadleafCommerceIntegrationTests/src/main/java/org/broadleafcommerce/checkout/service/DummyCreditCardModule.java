@@ -15,14 +15,13 @@
  */
 package org.broadleafcommerce.checkout.service;
 
-import java.util.Date;
-
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.module.AbstractModule;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.time.SystemTime;
 
 /**
  * @author jfischer
@@ -60,7 +59,7 @@ public class DummyCreditCardModule extends AbstractModule {
 
 	private PaymentResponseItem createResponse(PaymentContext paymentContext) {
     	PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-		responseItem.setTransactionTimestamp(new Date());
+		responseItem.setTransactionTimestamp(SystemTime.asDate());
 		responseItem.setReferenceNumber(paymentContext.getPaymentInfo().getReferenceNumber());
 		responseItem.setTransactionId(paymentContext.getPaymentInfo().getReferenceNumber());
 		responseItem.setTransactionSuccess(true);

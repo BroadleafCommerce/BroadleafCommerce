@@ -19,7 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +53,7 @@ import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
 import org.broadleafcommerce.profile.service.StateService;
 import org.broadleafcommerce.profile.web.CustomerState;
+import org.broadleafcommerce.time.SystemTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -134,8 +134,8 @@ public class CheckoutController {
         checkoutForm.getShippingAddress().setState(stateService.findStateByAbbreviation(checkoutForm.getShippingAddress().getState().getAbbreviation()));
         
         Order order = retrieveCartOrder(request, model);
-        order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(new Date()));
-        
+        order.setOrderNumber(new SimpleDateFormat("yyyyMMddHHmmssS").format(SystemTime.asDate()));
+
         List<FulfillmentGroup> groups = order.getFulfillmentGroups();
         if(groups.size() < 1){
         	return "redirect:/basket/currentCart.htm";

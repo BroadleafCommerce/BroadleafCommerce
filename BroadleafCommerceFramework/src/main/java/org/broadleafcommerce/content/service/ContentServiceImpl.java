@@ -320,7 +320,7 @@ public class ContentServiceImpl implements ContentService {
 
 			content.setSandbox(null);
 			content.setApprovedBy(username);
-			content.setApprovedDate(new Date());
+			content.setApprovedDate(SystemTime.asDate());
 
 			saveList.add(content);
 		}
@@ -400,7 +400,7 @@ public class ContentServiceImpl implements ContentService {
 
 		for (Content content:contentList) {
 			content.setRejectedBy(username);
-			content.setRejectedDate(new Date());
+			content.setRejectedDate(SystemTime.asDate());
 			content.setSandbox(content.getSubmittedBy());
 			content.setSubmittedBy(null);
 			content.setSubmittedDate(null);
@@ -433,9 +433,9 @@ public class ContentServiceImpl implements ContentService {
 
 		for (Content content:contentList) {
 			content.setSubmittedBy(username);
-			content.setSubmittedDate(new Date());
+			content.setSubmittedDate(SystemTime.asDate());
 			content.setNote(note);
-			content.setSandbox("AwaitingApproval_" + username + "_" + new Date().getTime());
+			content.setSandbox("AwaitingApproval_" + username + "_" + SystemTime.asDate().getTime());
 		}
 
 		contentDao.saveContent(contentList);

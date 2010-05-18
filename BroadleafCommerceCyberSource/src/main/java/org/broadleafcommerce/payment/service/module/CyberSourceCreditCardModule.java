@@ -1,7 +1,6 @@
 package org.broadleafcommerce.payment.service.module;
 
 import java.util.Currency;
-import java.util.Date;
 
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
@@ -9,6 +8,7 @@ import org.broadleafcommerce.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
@@ -155,7 +155,7 @@ public class CyberSourceCreditCardModule extends CyberSourceModule implements Pa
 	
 	private PaymentResponseItem buildBasicResponse(CyberSourceCardResponse response) {
 		PaymentResponseItem responseItem = new PaymentResponseItemImpl();
-		responseItem.setTransactionTimestamp(new Date());
+		responseItem.setTransactionTimestamp(SystemTime.asDate());
 		responseItem.setMiddlewareResponseCode(response.getReasonCode().toString());
 		responseItem.setMiddlewareResponseText(response.getDecision());
 		responseItem.setReferenceNumber(response.getMerchantReferenceCode());

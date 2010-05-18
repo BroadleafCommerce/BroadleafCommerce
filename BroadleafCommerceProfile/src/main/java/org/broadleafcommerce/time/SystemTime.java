@@ -2,7 +2,6 @@ package org.broadleafcommerce.time;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -47,41 +46,46 @@ public class SystemTime {
     }
 
     public static long asMillis() {
-        return getTimeSource().timeInMillis();
-    }
-
-    public static Date asDate() {
-        return new Date(asMillis());
-    }
-
-    public static Calendar asCalendar() {
-        return asCalendar(Locale.getDefault(), TimeZone.getDefault());
-    }
-
-    public static Calendar asCalendar(Locale locale) {
-        return asCalendar(locale, TimeZone.getDefault());
-    }
-
-    public static Calendar asCalendar(TimeZone timeZone) {
-        return asCalendar(Locale.getDefault(), timeZone);
-    }
-
-    public static Calendar asCalendar(Locale locale, TimeZone timeZone) {
-        Calendar calendar = Calendar.getInstance(timeZone, locale);
-        // Use intentionally as setTimeInMillis() is not available pre 1.4
-        calendar.setTime(asDate());
-        return calendar;
+        return asMillis(true);
     }
 
     public static long asMillis(boolean includeTime) {
-        Calendar cal = Calendar.getInstance();
-        cal.getTime().setTime(getTimeSource().timeInMillis());
-        Calendar calToday = new GregorianCalendar(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
-        return calToday.getTimeInMillis();
+        if (includeTime) {
+            return getTimeSource().timeInMillis();
+        }
+        return asCalendar(includeTime).getTimeInMillis();
+    }
+
+    public static Date asDate() {
+        return asDate(true);
+    }
+
+    public static Date asDate(boolean includeTime) {
+        if (includeTime) {
+            return new Date(asMillis());
+        }
+        return asCalendar(includeTime).getTime();
+    }
+
+    public static Calendar asCalendar() {
+        return asCalendar(true);
     }
 
     public static Calendar asCalendar(boolean includeTime) {
-        Calendar calendar = asCalendar(Locale.getDefault(), TimeZone.getDefault());
+        return asCalendar(Locale.getDefault(), TimeZone.getDefault(), includeTime);
+    }
+
+    public static Calendar asCalendar(Locale locale) {
+        return asCalendar(locale, TimeZone.getDefault(), true);
+    }
+
+    public static Calendar asCalendar(TimeZone timeZone) {
+        return asCalendar(Locale.getDefault(), timeZone, true);
+    }
+
+    public static Calendar asCalendar(Locale locale, TimeZone timeZone, boolean includeTime) {
+        Calendar calendar = Calendar.getInstance(timeZone, locale);
+        calendar.setTimeInMillis(asMillis());
         if (!includeTime) {
             calendar.set(Calendar.HOUR_OF_DAY, 0);
             calendar.set(Calendar.MINUTE, 0);
@@ -89,16 +93,5 @@ public class SystemTime {
             calendar.set(Calendar.MILLISECOND, 0);
         }
         return calendar;
-    }
-
-    @SuppressWarnings("deprecation")
-    public static Date asDate(boolean includeTime) {
-        Date date = new Date(asMillis());
-        if (!includeTime) {
-            date.setHours(0);
-            date.setMinutes(0);
-            date.setSeconds(0);
-        }
-        return date;
     }
 }

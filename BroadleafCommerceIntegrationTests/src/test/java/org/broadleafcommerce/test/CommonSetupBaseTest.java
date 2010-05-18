@@ -3,7 +3,6 @@ package org.broadleafcommerce.test;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -37,6 +36,7 @@ import org.broadleafcommerce.profile.service.CountryService;
 import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.service.StateService;
+import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.money.Money;
 
 public abstract class CommonSetupBaseTest extends BaseTest {
@@ -149,7 +149,7 @@ public abstract class CommonSetupBaseTest extends BaseTest {
     	Customer customer = createCustomerWithAddresses();
         Order order = new OrderImpl();
         Auditable auditable = new Auditable();
-        auditable.setDateCreated(new Date());
+        auditable.setDateCreated(SystemTime.asDate());
         order.setAuditable(auditable);
         order.setStatus(OrderStatus.IN_PROCESS);
         order.setTotal(new Money(BigDecimal.valueOf(1000)));
