@@ -1,4 +1,4 @@
-package org.broadleafcommerce.payment.service.module;
+package org.broadleafcommerce.service.module;
 
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.profile.domain.Address;

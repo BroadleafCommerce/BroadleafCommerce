@@ -8,6 +8,7 @@ import org.broadleafcommerce.payment.domain.PaymentResponseItemImpl;
 import org.broadleafcommerce.payment.service.PaymentContext;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.service.module.CyberSourceModule;
 import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;

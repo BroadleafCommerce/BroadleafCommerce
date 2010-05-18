@@ -31,7 +31,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
-import org.broadleafcommerce.payment.service.module.CyberSourceTaxModule;
+import org.broadleafcommerce.pricing.service.module.CyberSourceTaxModule;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.CountryImpl;
