@@ -123,7 +123,7 @@ public class AdminCatalogService {
         	}
         	index++;
         }
-        if(cat.getAllParentCategories().indexOf(cat.getDefaultParentCategory()) < 0){
+        if(cat.getDefaultParentCategory() != null && cat.getAllParentCategories().indexOf(cat.getDefaultParentCategory()) < 0){
 //        	cat.getAllParentCategories().add(cat.getDefaultParentCategory());
         	cat.getDefaultParentCategory().getAllChildCategories().add(cat);
         	catalogService.saveCategory(cat.getDefaultParentCategory());
