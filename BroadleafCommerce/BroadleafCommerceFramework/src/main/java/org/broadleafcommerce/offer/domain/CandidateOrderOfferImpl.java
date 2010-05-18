@@ -122,7 +122,7 @@ public class CandidateOrderOfferImpl implements CandidateOrderOffer {
                 } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
                     discountAmount = priceToUse.subtract(offer.getValue());
                 } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                    discountAmount = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount());
+                    discountAmount = priceToUse.multiply(offer.getValue().getAmount().divide(new BigDecimal("100")));
                 }
                 if (discountAmount.greaterThan(priceToUse)) {
                     discountAmount = priceToUse;

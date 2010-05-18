@@ -138,7 +138,7 @@ public final class Money implements Serializable, Cloneable, Comparable, Externa
     }
 
     public Money divide(BigDecimal divisor) {
-        return new Money(BankersRounding.divide(amount, divisor), currency);
+        return new Money(amount.divide(divisor), currency);
     }
 
     public Money abs() {
@@ -320,4 +320,5 @@ public final class Money implements Serializable, Cloneable, Comparable, Externa
         out.writeFloat(amount.floatValue());
         // out.writeObject(currency);
     }
+    
 }
