@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.payment.service.module;
+package org.broadleafcommerce.pricing.service.module;
 
 import java.util.ArrayList;
 import java.util.Currency;
@@ -31,6 +31,7 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.pricing.service.exception.TaxException;
 import org.broadleafcommerce.pricing.service.module.TaxModule;
+import org.broadleafcommerce.service.module.CyberSourceModule;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
