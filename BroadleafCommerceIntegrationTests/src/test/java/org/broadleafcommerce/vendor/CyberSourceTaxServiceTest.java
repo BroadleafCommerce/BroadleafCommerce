@@ -29,6 +29,7 @@ import org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxServic
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
+import org.broadleafcommerce.vendor.service.cache.ServiceResponseCacheable;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 
@@ -70,9 +71,21 @@ public class CyberSourceTaxServiceTest extends BaseTest {
         taxRequest.setItemRequests(itemRequests);
         
         CyberSourceTaxService service = (CyberSourceTaxService) serviceManager.getValidService(taxRequest);
+        ((ServiceResponseCacheable) service).clearCache();
         CyberSourceTaxResponse response = (CyberSourceTaxResponse) service.process(taxRequest);
 
         assert(response.getReasonCode().intValue() == 100);
+        assert(!response.getRequestToken().equals("from-cache"));
+        Money totalTaxAmount = response.getItemResponses()[0].getTotalTaxAmount();
+        assert(totalTaxAmount != null && totalTaxAmount.greaterThan(new Money(0D)));
+        
+        //confirm that we used the cache
+        CyberSourceTaxResponse response2 = (CyberSourceTaxResponse) service.process(taxRequest);
+        assert(response2.getReasonCode().intValue() == 100);
+        assert(response2.getRequestToken().equals("from-cache"));
+        Money totalTaxAmount2 = response2.getItemResponses()[0].getTotalTaxAmount();
+        assert(totalTaxAmount2 != null && totalTaxAmount2.greaterThan(new Money(0D)));
+        assert(totalTaxAmount.equals(totalTaxAmount2));
     }
 
 }

@@ -7,6 +7,7 @@ import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
+import org.broadleafcommerce.vendor.service.cache.CacheRequest;
 
 /*
  * Copyright 2008-2009 the original author or authors.
@@ -23,7 +24,7 @@ import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceT
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class CyberSourceTaxRequest extends CyberSourceRequest {
+public class CyberSourceTaxRequest extends CyberSourceRequest implements CacheRequest {
 
 private static final long serialVersionUID = 1L;
 	
@@ -183,6 +184,10 @@ private static final long serialVersionUID = 1L;
 	
 	public void setBillingRequest(CyberSourceBillingRequest billingRequest) {
 		this.billingRequest = billingRequest;
+	}
+
+	public List<?> getCacheItemRequests() {
+		return getItemRequests();
 	}
 	
 }

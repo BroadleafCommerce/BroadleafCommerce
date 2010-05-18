@@ -17,9 +17,10 @@ package org.broadleafcommerce.vendor.cybersource.service.tax.message;
 
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceResponse;
+import org.broadleafcommerce.vendor.service.cache.CacheResponse;
 import org.broadleafcommerce.vendor.service.message.TaxResponse;
 
-public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxResponse {
+public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxResponse, CacheResponse {
 		
 	private static final long serialVersionUID = 1L;
 	
@@ -228,6 +229,16 @@ public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxRe
 
 	public void setItemResponses(CyberSourceTaxItemResponse[] itemResponses) {
 		this.itemResponses = itemResponses;
+	}
+
+	public Object[] getCacheItemResponses() {
+		return getItemResponses();
+	}
+
+	public void setCacheItemResponses(Object[] cacheItemResponses) {
+		CyberSourceTaxItemResponse[] temp = new CyberSourceTaxItemResponse[cacheItemResponses.length];
+		System.arraycopy(cacheItemResponses, 0, temp, 0, cacheItemResponses.length);
+		setItemResponses(temp);
 	}
 
 }
