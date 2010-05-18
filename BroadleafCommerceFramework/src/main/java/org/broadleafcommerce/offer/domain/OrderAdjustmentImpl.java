@@ -128,7 +128,7 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
                 value = adjustmentPrice.subtract(offer.getValue()).getAmount();
             }
             if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                value = adjustmentPrice.multiply(offer.getValue().divide(new BigDecimal("100")).getAmount()).getAmount();
+                value = adjustmentPrice.multiply(offer.getValue().getAmount().divide(new BigDecimal("100"))).getAmount();
             }
             if (adjustmentPrice.lessThan(value)) {
                 value = adjustmentPrice.getAmount();
