@@ -27,15 +27,15 @@ import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public abstract class AjaxFormController extends SimpleFormController {
     
-    protected abstract void populateAjax(Map<Object,Object> model, Object object);
-    protected abstract void populateStandard(Map<Object,Object> model, Object object);
+    protected abstract void populateAjax(Map<String,Object> model, Object object);
+    protected abstract void populateStandard(Map<String,Object> model, Object object);
  
     private String ajaxView;
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request,
             HttpServletResponse response, Object command, BindException errors)
             throws Exception {
-        Map<Object,Object> map = new HashMap<Object,Object>();
+        Map<String,Object> map = new HashMap<String,Object>();
         String view;
         if (((AjaxFormCommandObject)command).isAjaxRequest()) {
             populateAjax(map, command);

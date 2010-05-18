@@ -32,6 +32,10 @@
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
+    <filter>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
+        <filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+    </filter>
 
     <filter-mapping>
         <filter-name>entityManagerInViewFilter</filter-name>
@@ -39,6 +43,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>hiddenHttpMethodFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     
@@ -66,7 +74,7 @@
         <listener-class>org.broadleafcommerce.extensibility.web.MergeContextLoaderListener</listener-class>
     </listener>
     <listener>
-        <listener-class>org.springframework.security.ui.session.HttpSessionEventPublisher</listener-class>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
     </listener>
 
     <servlet>
@@ -98,7 +106,6 @@
         <servlet-name>bl</servlet-name>
         <url-pattern>/store/*/*/*</url-pattern>
     </servlet-mapping>
-
 
     <servlet-mapping>
         <servlet-name>bl</servlet-name>

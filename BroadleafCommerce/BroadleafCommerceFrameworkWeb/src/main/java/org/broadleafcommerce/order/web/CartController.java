@@ -44,7 +44,7 @@ import org.broadleafcommerce.order.web.model.CartSummary;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.web.CustomerState;
-import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -71,7 +71,7 @@ public class CartController {
     @Resource(name="blFulfillmentGroupService")
     protected final FulfillmentGroupService fulfillmentGroupService;
     @Resource(name="blOfferService")
-    private OfferService offerService;
+    protected OfferService offerService;
     protected String cartView;
     protected boolean cartViewRedirect;
     protected String addItemView;
@@ -309,7 +309,7 @@ public class CartController {
         return cartView;
     }
     
-    private Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
+    protected Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
         FulfillmentGroup fg = cartSummary.getFulfillmentGroup();
         if (fg.getId() == null) {
 	        cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
@@ -322,7 +322,7 @@ public class CartController {
         return cartService.save(currentCartOrder, true);
     }
 
-    private CartSummary createFulfillmentGroup (CartSummary cartSummary, String shippingMethod, Order cart) {
+    protected CartSummary createFulfillmentGroup (CartSummary cartSummary, String shippingMethod, Order cart) {
         FulfillmentGroup fulfillmentGroup = new FulfillmentGroupImpl();
         fulfillmentGroup.setMethod(shippingMethod);
         fulfillmentGroup.setOrder(cart);
