@@ -62,10 +62,6 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
     private String orderAcceptancePostalCode;
 
     public Order calculateTaxForOrder(Order order) throws TaxException {
-    	/*
-    	 * TODO add in an AOP cache mechanism for repeated calls for the same tax calculation at
-    	 * the tax service call level.
-    	 */
     	if (orderAcceptanceCountry != null && !orderAcceptanceCountry.equalsIgnoreCase("CA") && !orderAcceptanceCountry.equalsIgnoreCase("US")) {
     		throw new TaxException("CyberSource tax calculation only supported for the United States and Canada.");
     	}
