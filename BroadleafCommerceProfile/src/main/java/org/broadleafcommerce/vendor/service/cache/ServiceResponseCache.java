@@ -16,11 +16,11 @@ public class ServiceResponseCache {
     	CacheRequest cacheRequest = (CacheRequest) call.getArgs()[0];
     	Cache cache = ((ServiceResponseCacheable) call.getTarget()).getCache();
     	List<Serializable> cacheItemResponses = new ArrayList<Serializable>();
-    	Iterator<?> itr = cacheRequest.getCacheItemRequests().iterator();
+    	Iterator<CacheItemRequest> itr = cacheRequest.getCacheItemRequests().iterator();
     	while(itr.hasNext()) {
-    		Object itemRequest = itr.next();
-    		if (cache.isKeyInCache(itemRequest.hashCode())) {
-    			cacheItemResponses.add(cache.get(itemRequest.hashCode()).getValue()); 
+    		CacheItemRequest itemRequest = itr.next();
+    		if (cache.isKeyInCache(itemRequest.key())) {
+    			cacheItemResponses.add(cache.get(itemRequest.key()).getValue()); 
     			itr.remove();
     		}
     	}
@@ -29,7 +29,7 @@ public class ServiceResponseCache {
     	Object[] responses = new Object[cacheItemResponses.size() + returnValue.getCacheItemResponses().length];
     	responses = cacheItemResponses.toArray(responses);
     	for (int j=0; j<returnValue.getCacheItemResponses().length; j++) {
-    		Element element = new Element(cacheRequest.getCacheItemRequests().get(j).hashCode(), returnValue.getCacheItemResponses()[j]);
+    		Element element = new Element(cacheRequest.getCacheItemRequests().get(j).key(), returnValue.getCacheItemResponses()[j]);
     		cache.put(element);
     	}
     	System.arraycopy(returnValue.getCacheItemResponses(), 0, responses, cacheItemResponses.size(), returnValue.getCacheItemResponses().length);

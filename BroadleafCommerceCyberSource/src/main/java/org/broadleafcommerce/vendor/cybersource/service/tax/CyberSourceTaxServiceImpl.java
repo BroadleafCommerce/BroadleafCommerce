@@ -15,10 +15,14 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.tax;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Comparator;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +36,7 @@ import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.TaxReply;
 import org.broadleafcommerce.vendor.cybersource.service.api.TaxReplyItem;
 import org.broadleafcommerce.vendor.cybersource.service.api.TaxService;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxItemResponse;
@@ -42,19 +47,25 @@ import org.broadleafcommerce.vendor.service.cache.ServiceResponseCacheable;
 import org.broadleafcommerce.vendor.service.exception.TaxException;
 import org.broadleafcommerce.vendor.service.exception.TaxHostException;
 
+import edu.emory.mathcs.backport.java.util.Arrays;
+
 public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implements CyberSourceTaxService, ServiceResponseCacheable {
 	
 	private static final Log LOG = LogFactory.getLog(CyberSourceTaxServiceImpl.class);
 	
-	public Cache cache = CacheManager.getInstance().getCache("CyberSourceTaxRequests");
+	protected Cache cache = CacheManager.getInstance().getCache("CyberSourceTaxRequests");
+	protected Boolean isCacheEnabled = false;
 
 	public CyberSourceTaxResponse process(CyberSourceTaxRequest taxRequest) throws TaxException {
 		//TODO add validation for the request
 		CyberSourceTaxResponse taxResponse = new CyberSourceTaxResponse();
 		taxResponse.setServiceType(taxRequest.getServiceType());
-		ReplyMessage reply;
-		RequestMessage request = buildRequestMessage(taxRequest);
-		if (taxRequest.getItemRequests().size() > 0) {
+		if (cache.isKeyInCache(taxRequest.cacheKey())) {
+			CyberSourceTaxResponse cachedResponse = (CyberSourceTaxResponse) cache.get(taxRequest.cacheKey()).getValue();
+			buildResponse(taxResponse, cachedResponse, taxRequest);
+		} else {
+			ReplyMessage reply;
+			RequestMessage request = buildRequestMessage(taxRequest);
 			try {
 				reply = sendRequest(request);
 	        } catch (Exception e) {
@@ -62,40 +73,37 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 	            throw new TaxException(e);
 	        }
 	        clearStatus();
-		} else {
-			/*
-			 * We need to at least create a basic reply even when there are
-			 * no item requests because it may be that this is a minimal
-			 * request via the ServiceResponseCache
-			 */
-			reply = createDefaultReply(taxRequest, request);
+	        buildResponse(taxResponse, reply, taxRequest);
+	        String[] invalidFields = reply.getInvalidField();
+	        String[] missingFields = reply.getMissingField();
+	        if ((invalidFields != null && invalidFields.length > 0) || (missingFields != null && missingFields.length > 0)) {
+	            TaxHostException e = new TaxHostException();
+	            taxResponse.setErrorDetected(true);
+	            StringBuffer sb = new StringBuffer();
+	            if (invalidFields != null && invalidFields.length > 0) {
+		            sb.append("invalid fields :[ ");
+		            for (String invalidField : invalidFields) {
+		            	sb.append(invalidField);
+		            }
+		            sb.append(" ]\n");
+	            }
+	            if (missingFields != null && missingFields.length > 0) {
+		            sb.append("missing fields: [ ");
+		            for (String missingField : missingFields) {
+		            	sb.append(missingField);
+		            }
+		            sb.append(" ]");
+	            }
+	            taxResponse.setErrorText(sb.toString());
+	            e.setTaxResponse(taxResponse);
+	            throw e;
+	        }
+	        if (taxResponse.getDecision().equals("ACCEPT") && taxResponse.getReasonCode().equals(100)) {
+	        	Element element = new Element(taxRequest.cacheKey(), taxResponse);
+	        	cache.put(element);
+	        }
 		}
-        buildResponse(taxResponse, reply);
-        String[] invalidFields = reply.getInvalidField();
-        String[] missingFields = reply.getMissingField();
-        if ((invalidFields != null && invalidFields.length > 0) || (missingFields != null && missingFields.length > 0)) {
-            TaxHostException e = new TaxHostException();
-            taxResponse.setErrorDetected(true);
-            StringBuffer sb = new StringBuffer();
-            if (invalidFields != null && invalidFields.length > 0) {
-	            sb.append("invalid fields :[ ");
-	            for (String invalidField : invalidFields) {
-	            	sb.append(invalidField);
-	            }
-	            sb.append(" ]\n");
-            }
-            if (missingFields != null && missingFields.length > 0) {
-	            sb.append("missing fields: [ ");
-	            for (String missingField : missingFields) {
-	            	sb.append(missingField);
-	            }
-	            sb.append(" ]");
-            }
-            taxResponse.setErrorText(sb.toString());
-            e.setTaxResponse(taxResponse);
-            throw e;
-        }
-        
+		
         return taxResponse;
 	}
 
@@ -110,26 +118,39 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 	public Cache getCache() {
 		return cache;
 	}
-
-	protected ReplyMessage createDefaultReply(CyberSourceTaxRequest taxRequest, RequestMessage request) {
-		ReplyMessage reply = new ReplyMessage();
-		reply.setDecision("ACCEPT");
-		reply.setMerchantReferenceCode(request.getMerchantReferenceCode());
-		reply.setInvalidField(new String[]{});
-		reply.setMissingField(new String[]{});
-		reply.setReasonCode(new BigInteger("100"));
-		reply.setRequestToken("from-cache");
-		TaxReply taxReply = new TaxReply();
-		taxReply.setCity(taxRequest.getBillingRequest().getCity());
-		taxReply.setCounty(taxRequest.getBillingRequest().getCounty());
-		taxReply.setCurrency(taxRequest.getCurrency());
-		taxReply.setPostalCode(taxRequest.getBillingRequest().getPostalCode());
-		taxReply.setState(taxRequest.getBillingRequest().getState());
-		reply.setTaxReply(taxReply);
-		return reply;
+	
+	protected void buildResponse(CyberSourceTaxResponse taxResponse, CyberSourceTaxResponse cachedResponse, CyberSourceTaxRequest taxRequest) throws TaxException {
+		if (
+				cachedResponse.getCityRate() == null ||
+				cachedResponse.getCountyRate() == null ||
+				cachedResponse.getDistrictRate() == null ||
+				cachedResponse.getTotalRate() == null
+		) {
+			throw new TaxException("The cached response [merchant reference code: " + cachedResponse.getMerchantReferenceCode() + "] is missing one or more tax rates. Cannot use the cached response to calculate tax.");
+		}
+		taxResponse.setDecision("ACCEPT");
+		taxResponse.setInvalidField(new String[]{});
+		taxResponse.setMerchantReferenceCode(cachedResponse.getMerchantReferenceCode());
+		taxResponse.setMissingField(new String[]{});
+		taxResponse.setReasonCode(100);
+		taxResponse.setRequestToken("from-cache");
+		taxResponse.setPostalCode(cachedResponse.getPostalCode());
+		CyberSourceTaxItemResponse[] itemResponses = new CyberSourceTaxItemResponse[taxRequest.getItemRequests().size()];
+		int counter = 0;
+		for (CyberSourceItemRequest itemRequest : taxRequest.getItemRequests()) {
+			CyberSourceTaxItemResponse itemResponse = new CyberSourceTaxItemResponse();
+			itemResponse.setId(itemRequest.getId());
+			itemResponse.setCityTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getCityRate()));
+			itemResponse.setCountyTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getCountyRate()));
+			itemResponse.setDistrictTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getDistrictRate()));
+			itemResponse.setTotalTaxAmount(itemRequest.getUnitPrice().multiply(cachedResponse.getTotalRate()));
+			itemResponses[counter] = itemResponse;
+			counter++;
+		}
+		taxResponse.setItemResponses(itemResponses);
 	}
 	
-	protected void buildResponse(CyberSourceTaxResponse taxResponse, ReplyMessage reply) {
+	protected void buildResponse(CyberSourceTaxResponse taxResponse, ReplyMessage reply, CyberSourceTaxRequest taxRequest) {
 		logReply(reply);
 		taxResponse.setDecision(reply.getDecision());
 		taxResponse.setInvalidField(reply.getInvalidField());
@@ -167,8 +188,8 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 			if (taxReply.getTotalTaxAmount() != null) {
 				taxResponse.setTotalTaxAmount(new Money(taxReply.getTotalTaxAmount()));
 			}
-			
 			TaxReplyItem[] replyItems = taxReply.getItem();
+			setTaxRates(taxResponse, taxRequest, replyItems);
 			if (replyItems != null) {
 				CyberSourceTaxItemResponse[] itemResponses = new CyberSourceTaxItemResponse[replyItems.length];
 				for (int j=0;j<replyItems.length;j++) {
@@ -183,7 +204,7 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 					if (replyItem.getDistrictTaxAmount() != null) {
 						taxItem.setDistrictTaxAmount(new Money(replyItem.getDistrictTaxAmount()));
 					}
-					taxItem.setId(replyItem.getId());
+					taxItem.setId(replyItem.getId().longValue());
 					if (replyItem.getStateTaxAmount() != null) {
 						taxItem.setStateTaxAmount(new Money(replyItem.getStateTaxAmount()));
 					}
@@ -193,6 +214,44 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 					itemResponses[j] = taxItem;
 				}
 				taxResponse.setItemResponses(itemResponses);
+			}
+		}
+	}
+
+	protected void setTaxRates(CyberSourceTaxResponse taxResponse, CyberSourceTaxRequest taxRequest, TaxReplyItem[] replyItems) {
+		CyberSourceTaxItemRequest requestItem = (CyberSourceTaxItemRequest) taxRequest.getItemRequests().get(0);
+		BigDecimal unitPrice = requestItem.getUnitPrice().getAmount();
+		BigInteger requestId = new BigInteger(String.valueOf(requestItem.getId()));
+		TaxReplyItem key = new TaxReplyItem();
+		key.setId(requestId);
+		int pos = Arrays.binarySearch(replyItems, key, new Comparator<TaxReplyItem>() {
+
+			public int compare(TaxReplyItem one, TaxReplyItem two) {
+				return one.getId().compareTo(two.getId());
+			}
+			
+		});
+		if (pos >= 0) {
+			TaxReplyItem replyItem = replyItems[pos];
+			if (replyItem.getCityTaxAmount() != null) {
+				BigDecimal cityRate = new BigDecimal(replyItem.getCityTaxAmount()).divide(unitPrice, 5, RoundingMode.HALF_EVEN);
+				taxResponse.setCityRate(cityRate);
+			}
+			if (replyItem.getCountyTaxAmount() != null) {
+				BigDecimal countyRate = new BigDecimal(replyItem.getCountyTaxAmount()).divide(unitPrice, 5, RoundingMode.HALF_EVEN);
+				taxResponse.setCountyRate(countyRate);
+			}
+			if (replyItem.getDistrictTaxAmount() != null) {
+				BigDecimal districtRate = new BigDecimal(replyItem.getDistrictTaxAmount()).divide(unitPrice, 5, RoundingMode.HALF_EVEN);
+				taxResponse.setDistrictRate(districtRate);
+			}
+			if (replyItem.getStateTaxAmount() != null) {
+				BigDecimal stateRate = new BigDecimal(replyItem.getStateTaxAmount()).divide(unitPrice, 5, RoundingMode.HALF_EVEN);
+				taxResponse.setStateRate(stateRate);
+			}
+			if (replyItem.getTotalTaxAmount() != null) {
+				BigDecimal totalRate = new BigDecimal(replyItem.getTotalTaxAmount()).divide(unitPrice, 5, RoundingMode.HALF_EVEN);
+				taxResponse.setTotalRate(totalRate);
 			}
 		}
 	}
@@ -243,7 +302,7 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 	protected void setItemInformation(CyberSourceTaxRequest taxRequest, RequestMessage request) {
 		Item[] items = new Item[taxRequest.getItemRequests().size()];
         for (int j=0;j<items.length;j++) {
-        	CyberSourceTaxItemRequest itemRequest = taxRequest.getItemRequests().get(j);
+        	CyberSourceTaxItemRequest itemRequest = (CyberSourceTaxItemRequest) taxRequest.getItemRequests().get(j);
         	items[j] = new Item();
         	items[j].setId(new BigInteger(String.valueOf(itemRequest.getId())));
         	if (itemRequest.getUnitPrice() != null) {
@@ -469,5 +528,13 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 			
 			LOG.debug("CyberSource Response:\n" + sb.toString());
 		}
+	}
+
+	public Boolean isCacheEnabled() {
+		return isCacheEnabled;
+	}
+
+	public void setIsCacheEnabled(Boolean isCacheEnabled) {
+		this.isCacheEnabled = isCacheEnabled;
 	}
 }

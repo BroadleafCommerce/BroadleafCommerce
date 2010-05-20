@@ -23,6 +23,6 @@ import java.util.List;
  */
 public interface CacheRequest {
 
-	List<?> getCacheItemRequests();
+	public List<CacheItemRequest> getCacheItemRequests();
 	
 }

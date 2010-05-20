@@ -48,7 +48,11 @@ public class CyberSourceItemRequest implements java.io.Serializable {
 		return id;
 	}
 
-	public void setId(Long id) {
+	protected void setId(Long id) {
+		/*
+		 * This value should only be controlled by the 
+		 * Broadleaf internal CyberSource implementation code
+		 */
 		this.id = id;
 	}
 

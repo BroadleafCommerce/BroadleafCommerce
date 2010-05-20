@@ -187,7 +187,6 @@ public class CyberSourceCreditCardModule extends CyberSourceModule implements Pa
 	private CyberSourceItemRequest createItemRequest(PaymentContext paymentContext) {
 		CyberSourceItemRequest itemRequest = new CyberSourceItemRequest();
         itemRequest.setDescription("Order Charge");
-        itemRequest.setId(1L);
         itemRequest.setQuantity(1L);
         itemRequest.setShortDescription("Order Charge");
         itemRequest.setUnitPrice(paymentContext.getPaymentInfo().getAmount());
