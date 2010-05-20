@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.pricing.service.module;
+package org.broadleafcommerce.vendor.service.cache;
 
-import org.broadleafcommerce.order.domain.FulfillmentGroup;
-
-public class USPSShippingModule implements ShippingModule {
-
-    private String name = "USPSShippingPriceModule";
-
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+/**
+ * @author jfischer
+ *
+ */
+public interface CacheItemRequest {
+	
+	public int key();
 
 }

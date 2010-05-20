@@ -26,7 +26,7 @@ public class CyberSourceTaxItemResponse implements java.io.Serializable {
     private Money districtTaxAmount;
     private Money stateTaxAmount;
     private Money totalTaxAmount;
-    private java.math.BigInteger id;  // attribute
+    private Long id;  // attribute
 
     /**
      * Gets the cityTaxAmount value for this TaxReplyItem.
@@ -133,7 +133,7 @@ public class CyberSourceTaxItemResponse implements java.io.Serializable {
      * 
      * @return id
      */
-    public java.math.BigInteger getId() {
+    public Long getId() {
         return id;
     }
 
@@ -143,7 +143,7 @@ public class CyberSourceTaxItemResponse implements java.io.Serializable {
      * 
      * @param id
      */
-    public void setId(java.math.BigInteger id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

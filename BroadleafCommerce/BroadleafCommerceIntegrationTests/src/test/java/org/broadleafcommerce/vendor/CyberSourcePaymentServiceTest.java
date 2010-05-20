@@ -66,7 +66,6 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
         
         CyberSourceItemRequest itemRequest1 = new CyberSourceItemRequest();
         itemRequest1.setDescription("First Item");
-        itemRequest1.setId(1L);
         itemRequest1.setQuantity(2L);
         itemRequest1.setShortDescription("firstItem");
         itemRequest1.setUnitPrice(new Money(12.34));
@@ -75,7 +74,6 @@ public class CyberSourcePaymentServiceTest extends BaseTest {
         
         CyberSourceItemRequest itemRequest2 = new CyberSourceItemRequest();
         itemRequest2.setDescription("Second Item");
-        itemRequest2.setId(2L);
         itemRequest2.setQuantity(1L);
         itemRequest2.setShortDescription("secondItem");
         itemRequest2.setUnitPrice(new Money(56.78));

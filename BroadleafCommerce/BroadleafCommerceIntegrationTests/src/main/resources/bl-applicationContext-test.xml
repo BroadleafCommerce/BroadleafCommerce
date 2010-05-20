@@ -128,16 +128,8 @@
 	<bean id="blCyberSourceTaxService" class="org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxServiceImpl">
 		<property name="failureReportingThreshold" value="10"/>
 		<property name="idGenerationService" ref="blIdGenerationService"/>
+		<property name="isCacheEnabled" value="true"/>
 	</bean>
-	
-	<bean id="blResponseCache" class="org.broadleafcommerce.vendor.service.cache.ServiceResponseCache"/>
-
-    <aop:config>
-        <aop:aspect id="cyberSourceTaxRequestAspect" ref="blResponseCache">
-            <aop:pointcut id="processMethod" expression="execution(* org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxService.process(org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest))"/>
-            <aop:around method="processRequest" pointcut-ref="processMethod"/>
-        </aop:aspect>
-    </aop:config>
 	
 	<bean id="blCyberSourceServiceManager" class="org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManagerImpl">
 		<property name="merchantId" value="${cybersource.merchant.id}"/>

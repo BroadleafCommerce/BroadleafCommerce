@@ -15,10 +15,10 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.vendor.cybersource.service.message.AutoNumberMemberIdList;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
@@ -33,7 +33,7 @@ public abstract class CyberSourcePaymentRequest extends CyberSourceRequest {
 	
 	protected CyberSourceBillingRequest billingRequest;
 	protected String currency;
-	protected List<CyberSourceItemRequest> itemRequests = new ArrayList<CyberSourceItemRequest>();
+	protected List<CyberSourceItemRequest> itemRequests = new AutoNumberMemberIdList();
 	protected CyberSourceTransactionType transactionType;
 	protected CyberSourceMethodType methodType;
 	protected Money grandTotal;

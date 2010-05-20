@@ -130,7 +130,6 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 		taxRequest.setOrderAcceptanceState(orderAcceptanceState);
 		taxRequest.setOrderAcceptancePostalCode(orderAcceptancePostalCode);
 		
-		Long idCounter = 0L;
 		for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
 			if (fulfillmentGroup.getAddress().getCountry() != null && !fulfillmentGroup.getAddress().getCountry().getAbbreviation().equalsIgnoreCase("CA") && !fulfillmentGroup.getAddress().getCountry().getAbbreviation().equalsIgnoreCase("US")) {
 				throw new TaxException("CyberSource tax calculation only supported for the United States and Canada.");
@@ -139,7 +138,6 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 				OrderItem orderItem = item.getOrderItem();
 				if (orderItem.getTaxablePrice().greaterThan(Money.zero(taxRequest.getCurrency()))) {
 					CyberSourceTaxItemRequest itemRequest = new CyberSourceTaxItemRequest();
-					itemRequest.setId(idCounter++);
 					itemRequest.setNonCyberSourceFulfillmentGroupId(fulfillmentGroup.getId());
 					if (DiscreteOrderItem.class.isAssignableFrom(orderItem.getClass())) {
 						DiscreteOrderItem discreteItem = (DiscreteOrderItem) orderItem;
@@ -164,7 +162,6 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 			for (FulfillmentGroupFee fulfillmentGroupFee : fulfillmentGroup.getFulfillmentGroupFees()) {
                 if (fulfillmentGroupFee.isTaxable() && fulfillmentGroupFee.getAmount().greaterThan(Money.zero(taxRequest.getCurrency()))) {
                 	CyberSourceTaxItemRequest itemRequest = new CyberSourceTaxItemRequest();
-                	itemRequest.setId(idCounter++);
                 	itemRequest.setNonCyberSourceFulfillmentGroupId(fulfillmentGroup.getId());
                 	itemRequest.setProductName(fulfillmentGroupFee.getName()==null?"Fee":fulfillmentGroupFee.getName());
 					itemRequest.setDescription(fulfillmentGroupFee.getReportingCode()==null?"None":fulfillmentGroupFee.getReportingCode());
@@ -175,6 +172,17 @@ public class CyberSourceTaxModule extends CyberSourceModule implements TaxModule
 					requestLibrary.put(itemRequest.getId(), itemRequest);
                 }
             }
+			if (fulfillmentGroup.isShippingPriceTaxable() && fulfillmentGroup.getShippingPrice().greaterThan(Money.zero(taxRequest.getCurrency()))) {
+				CyberSourceTaxItemRequest itemRequest = new CyberSourceTaxItemRequest();
+            	itemRequest.setNonCyberSourceFulfillmentGroupId(fulfillmentGroup.getId());
+            	itemRequest.setProductName("Shipping Cost");
+				itemRequest.setDescription("Taxable Shipping Cost");
+				itemRequest.setQuantity(1L);
+				itemRequest.setNonCyberSourceQuantity(1L);
+				itemRequest.setUnitPrice(fulfillmentGroup.getShippingPrice());
+				taxRequest.getItemRequests().add(itemRequest);
+				requestLibrary.put(itemRequest.getId(), itemRequest);
+			}
         }
 		return taxRequest;
 	}

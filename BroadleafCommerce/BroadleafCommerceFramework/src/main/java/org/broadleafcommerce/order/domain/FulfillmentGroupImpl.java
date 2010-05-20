@@ -437,7 +437,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         }
     }
 
-    public Boolean getIsShippingPriceTaxable() {
+    public Boolean isShippingPriceTaxable() {
 		return isShippingPriceTaxable;
 	}
 

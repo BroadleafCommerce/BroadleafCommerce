@@ -1,13 +1,13 @@
 package org.broadleafcommerce.vendor.cybersource.service.tax.message;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.vendor.cybersource.service.message.AutoNumberMemberIdList;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
-import org.broadleafcommerce.vendor.service.cache.CacheRequest;
 
 /*
  * Copyright 2008-2009 the original author or authors.
@@ -24,12 +24,12 @@ import org.broadleafcommerce.vendor.service.cache.CacheRequest;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-public class CyberSourceTaxRequest extends CyberSourceRequest implements CacheRequest {
+public class CyberSourceTaxRequest extends CyberSourceRequest {
 
 private static final long serialVersionUID = 1L;
 	
 	protected String currency;
-	protected List<CyberSourceTaxItemRequest> itemRequests = new ArrayList<CyberSourceTaxItemRequest>();
+	protected List<CyberSourceItemRequest> itemRequests = new AutoNumberMemberIdList();
 	protected CyberSourceBillingRequest billingRequest;
 	protected Money grandTotal;
 	protected Boolean useGrandTotal = Boolean.FALSE;
@@ -58,12 +58,8 @@ private static final long serialVersionUID = 1L;
 		this.currency = currency;
 	}
 	
-	public List<CyberSourceTaxItemRequest> getItemRequests() {
+	public List<CyberSourceItemRequest> getItemRequests() {
 		return itemRequests;
-	}
-	
-	public void setItemRequests(List<CyberSourceTaxItemRequest> itemRequests) {
-		this.itemRequests = itemRequests;
 	}
 	
 	public Money getGrandTotal() {
@@ -185,9 +181,12 @@ private static final long serialVersionUID = 1L;
 	public void setBillingRequest(CyberSourceBillingRequest billingRequest) {
 		this.billingRequest = billingRequest;
 	}
-
-	public List<?> getCacheItemRequests() {
-		return getItemRequests();
-	}
 	
+	public int cacheKey() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((orderAcceptancePostalCode == null) ? 0 : orderAcceptancePostalCode.hashCode());
+		result = prime * result + ((billingRequest == null || billingRequest.getPostalCode() == null) ? 0 : billingRequest.getPostalCode().hashCode());
+		return result;
+	}
 }

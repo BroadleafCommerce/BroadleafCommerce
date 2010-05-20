@@ -25,6 +25,7 @@ import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxService;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
@@ -40,7 +41,7 @@ public class CyberSourceTaxServiceTest extends BaseTest {
 
     @Test(groups = { "testSuccessfulCyberSourceTax" })
     @Rollback(false)
-    public void testSuccessfulCyberSourceCCPayment() throws Exception {
+    public void testSuccessfulCyberSourceTax() throws Exception {
         if (serviceManager.getMerchantId().equals("?")) {
             return;
         }
@@ -61,14 +62,11 @@ public class CyberSourceTaxServiceTest extends BaseTest {
         
         CyberSourceTaxItemRequest itemRequest1 = new CyberSourceTaxItemRequest();
         itemRequest1.setDescription("First Item");
-        itemRequest1.setId(1L);
         itemRequest1.setQuantity(2L);
         itemRequest1.setShortDescription("firstItem");
         itemRequest1.setUnitPrice(new Money(12.34));
         
-        ArrayList<CyberSourceTaxItemRequest> itemRequests = new ArrayList<CyberSourceTaxItemRequest>();
-        itemRequests.add(itemRequest1);
-        taxRequest.setItemRequests(itemRequests);
+        taxRequest.getItemRequests().add(itemRequest1);
         
         CyberSourceTaxService service = (CyberSourceTaxService) serviceManager.getValidService(taxRequest);
         ((ServiceResponseCacheable) service).clearCache();

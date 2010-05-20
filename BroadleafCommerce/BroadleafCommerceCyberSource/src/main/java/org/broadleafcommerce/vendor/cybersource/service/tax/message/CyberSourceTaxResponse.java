@@ -15,12 +15,13 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.tax.message;
 
+import java.math.BigDecimal;
+
 import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceResponse;
-import org.broadleafcommerce.vendor.service.cache.CacheResponse;
 import org.broadleafcommerce.vendor.service.message.TaxResponse;
 
-public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxResponse, CacheResponse {
+public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxResponse {
 		
 	private static final long serialVersionUID = 1L;
 	
@@ -46,6 +47,11 @@ public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxRe
     protected java.lang.String postalCode;
     protected java.lang.String geocode;
     protected CyberSourceTaxItemResponse[] itemResponses = new CyberSourceTaxItemResponse[]{};
+    protected BigDecimal cityRate;
+    protected BigDecimal stateRate;
+    protected BigDecimal districtRate;
+    protected BigDecimal countyRate;
+    protected BigDecimal totalRate;
 	
 	public String getErrorCode() {
 		throw new RuntimeException("ErrorCode not supported");
@@ -231,14 +237,44 @@ public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxRe
 		this.itemResponses = itemResponses;
 	}
 
-	public Object[] getCacheItemResponses() {
-		return getItemResponses();
+	public BigDecimal getCityRate() {
+		return cityRate;
 	}
 
-	public void setCacheItemResponses(Object[] cacheItemResponses) {
-		CyberSourceTaxItemResponse[] temp = new CyberSourceTaxItemResponse[cacheItemResponses.length];
-		System.arraycopy(cacheItemResponses, 0, temp, 0, cacheItemResponses.length);
-		setItemResponses(temp);
+	public void setCityRate(BigDecimal cityRate) {
+		this.cityRate = cityRate;
+	}
+
+	public BigDecimal getStateRate() {
+		return stateRate;
+	}
+
+	public void setStateRate(BigDecimal stateRate) {
+		this.stateRate = stateRate;
+	}
+
+	public BigDecimal getDistrictRate() {
+		return districtRate;
+	}
+
+	public void setDistrictRate(BigDecimal districtRate) {
+		this.districtRate = districtRate;
+	}
+
+	public BigDecimal getCountyRate() {
+		return countyRate;
+	}
+
+	public void setCountyRate(BigDecimal countyRate) {
+		this.countyRate = countyRate;
+	}
+
+	public BigDecimal getTotalRate() {
+		return totalRate;
+	}
+
+	public void setTotalRate(BigDecimal totalRate) {
+		this.totalRate = totalRate;
 	}
 
 }

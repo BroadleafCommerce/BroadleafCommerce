@@ -147,4 +147,9 @@ public interface FulfillmentGroup extends Serializable {
     public void addFulfillmentGroupFee(FulfillmentGroupFee fulfillmentGroupFee);
 
     public void removeAllFulfillmentGroupFees();
+    
+    public Boolean isShippingPriceTaxable();
+
+	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
+	
 }
