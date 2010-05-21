@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+	<context:component-scan base-package="com.containerstore" />
+
+	<bean id="persistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
+		<property name="persistenceXmlLocations">
+			<list>
+				<value>classpath*:/META-INF/persistence.xml</value>
+			</list>
+		</property>
+		<property name="defaultDataSource" ref="tcsDS"/>
+	</bean>
+
+	<bean id="tcsDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:/comp/env/jdbc/tcs</value>
+        </property>
+	</bean>
+
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@labdevdb1:1521:webd" />
+		<property name="username" value="tcsweb" />
+		<property name="password" value="web$ale$" />
+	</bean>-->
+
+	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="persistenceUnitManager" ref="persistenceUnitManager"/>
+		<property name="persistenceUnitName" value="blPU"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="showSql" value="true" />
+				<property name="databasePlatform" value="org.hibernate.dialect.Oracle10gDialect" />
+			</bean>
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.transaction.flush_before_completion" value="false" />
+				<entry key="hibernate.connection.autocommit" value="false" />
+				<entry key="hibernate.cache.use_second_level_cache" value="true"/>
+            	<entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
+				<entry key="hibernate.cache.use_query_cache" value="true" />
+				<entry key="hibernate.cache.provider_configuration_file_resource_path" value="tcs_ehcache.xml" />
+			</map>
+		</property>
+	</bean>
+
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+	<bean id="serverInfo" class="com.containerstore.web.email.info.ServerInfo">
+		<property name="serverName" value="${site.http.server.name}"/>
+		<property name="serverPort" value="${site.http.server.port}"/>
+	</bean>
+
+	<bean id="posdDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:/comp/env/jdbc/posd</value>
+        </property>
+	</bean>
+	
+	<bean id="entityManagerFactoryPosd"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="posdDS"/>
+		<property name="persistenceXmlLocation" value="classpath*:META-INF/persistence-posd.xml"/>
+		<property name="persistenceUnitName" value="posdPU"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="showSql" value="true" />
+				<property name="databasePlatform" value="org.hibernate.dialect.Oracle10gDialect" />
+			</bean>
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.transaction.flush_before_completion"
+					value="false" />
+				<entry key="hibernate.connection.autocommit" value="false" />
+				<entry key="hibernate.cache.use_query_cache" value="false" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="webrepdDS" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>java:/comp/env/jdbc/webrepd</value>
+        </property>
+	</bean>
+	
+	<bean id="entityManagerFactoryWebrepd"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="webrepdDS"/>
+		<property name="persistenceXmlLocation" value="classpath*:META-INF/persistence-webrepd.xml"/>
+		<property name="persistenceUnitName" value="webrepdPU"/>
+		<property name="jpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<property name="generateDdl" value="false" />
+				<property name="showSql" value="true" />
+				<property name="databasePlatform" value="org.hibernate.dialect.Oracle10gDialect" />
+			</bean>
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.transaction.flush_before_completion"
+					value="false" />
+				<entry key="hibernate.connection.autocommit" value="false" />
+				<entry key="hibernate.cache.use_query_cache" value="false" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="transactionManagerPosd" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactoryPosd" />
+	</bean>
+
+	<bean id="transactionManagerWebrepd" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactoryWebrepd" />
+	</bean>
+
+	<tx:advice id="txAdvicePosd" transaction-manager="transactionManagerPosd">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+
+	<tx:advice id="txAdviceWebrepd" transaction-manager="transactionManagerWebrepd">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+
+	<bean id="emailClickTrackingFilter" class="com.containerstore.web.email.track.EmailClickTrackingFilter">
+		<property name="emailTrackingManager" ref="emailTrackingManager"/>
+	</bean>
+
+	<aop:config>
+		<aop:pointcut id="emailWebTaskServiceOperation" expression="execution(* com.containerstore.web.email.service.EmailWebService.*(..))"/>
+	    <aop:advisor advice-ref="txAdvicePosd" pointcut-ref="emailWebTaskServiceOperation"/>
+	</aop:config>
+
+	<aop:config>
+		<aop:pointcut id="emailTrackingManagerOperation" expression="execution(* com.containerstore.web.email.service.EmailTrackingManager.*(..))"/>
+	    <aop:advisor advice-ref="txAdviceWebrepd" pointcut-ref="emailTrackingManagerOperation"/>
+	</aop:config>
+
+	<!-- Default handler which just raises exceptions for all rest operations -->
+    <bean id="defaultHandler" class="com.containerstore.core.rest.spi.ResourceAdapter"/>
+
+    <bean id="genericServiceHandler" class="com.containerstore.web.email.rest.GenericServiceHandler"/>
+
+    <bean class="com.containerstore.core.rest.spi.RestServiceConfiguration" init-method="inject">
+         <property name="service" ref="com.containerstore.core.rest.spi.ResourceHandler"/>
+         <property name="map">
+             <map>
+                 <entry key="resource:*" value-ref="defaultHandler"/>
+                 <entry key="resource:/rest/emailWebService/sendClickAndPickupSurveys" value-ref="genericServiceHandler"/>
+             </map>
+         </property>
+    </bean>
+
+    <!-- Used by SpringRestServlet -->
+    <bean id="com.containerstore.core.rest.spi.ResourceHandler" class="com.containerstore.core.rest.spi.ResourceDispatcher"/>
+
+
+   	<bean id="dimensionsInfo" class="com.containerstore.web.catalog.info.SpecialDimensionsInfo"/>
+    <!--
+    Uncomment the following to override your dao's search for email targets from the database.
+    This allows you to develop your email and send the result to an email address of your choice without
+    worrying about the database values. You will also need to change the @Resource for emailWebTaskDao
+    in the service so that it reads @Resource(name="emailWebTaskDaoProxy").
+    -->
+    <!--
+    <bean name="emailAddressOverrideAdvice" class="com.containerstore.web.email.test.Advice" />
+
+	<bean name="pointcut.advisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">
+	 <property name="advice" ref="emailAddressOverrideAdvice"/>
+	 <property name="mappedName" value="retrieveClickAndPickSurveyTargets"/>
+	</bean>
+
+	<bean name="emailWebTaskDaoProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="target" ref="emailWebTaskDao"/>
+		<property name="interceptorNames">
+			<list>
+				<value>pointcut.advisor</value>
+			</list>
+		</property>
+	</bean>
+	-->
+</beans>

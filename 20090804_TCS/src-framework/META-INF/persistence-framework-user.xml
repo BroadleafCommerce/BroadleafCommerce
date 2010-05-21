@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+             version="1.0">
+	<persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+		<mapping-file>config/bc/jpa/domain/Order.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/OrderItem.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/PaymentInfo.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Offer.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/FulfillmentGroup.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/FulfillmentGroupItem.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file>
+		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
+		<class>org.broadleafcommerce.inventory.domain.SkuAvailabilityImpl</class>
+		<class>org.broadleafcommerce.marketing.domain.TargetContentImpl</class>
+		<class>org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl</class>
+		<class>org.broadleafcommerce.offer.domain.CandidateItemOfferImpl</class>
+		<class>org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl</class>
+		<class>org.broadleafcommerce.offer.domain.CustomerOfferImpl</class>
+		<class>org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustmentImpl</class>
+		<class>org.broadleafcommerce.offer.domain.OfferAuditImpl</class>
+		<class>org.broadleafcommerce.offer.domain.OfferCodeImpl</class>
+		<class>org.broadleafcommerce.offer.domain.OfferImpl</class>
+		<class>org.broadleafcommerce.offer.domain.OfferInfoImpl</class>
+		<class>org.broadleafcommerce.offer.domain.OrderAdjustmentImpl</class>
+		<class>org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl</class>
+		<class>org.broadleafcommerce.order.domain.BundleOrderItemImpl</class>
+		<class>org.broadleafcommerce.order.domain.DiscreteOrderItemImpl</class>
+		<class>org.broadleafcommerce.order.domain.FulfillmentGroupImpl</class>
+		<class>org.broadleafcommerce.order.domain.FulfillmentGroupItemImpl</class>
+		<class>org.broadleafcommerce.order.domain.FulfillmentGroupFeeImpl</class>
+		<class>org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl</class>
+		<class>org.broadleafcommerce.order.domain.OrderImpl</class>
+		<class>org.broadleafcommerce.order.domain.OrderItemImpl</class>
+		<class>org.broadleafcommerce.order.domain.PersonalMessageImpl</class>
+		<class>org.broadleafcommerce.payment.domain.PaymentInfoImpl</class>
+		<class>org.broadleafcommerce.payment.domain.PaymentLogImpl</class>
+		<class>org.broadleafcommerce.payment.domain.PaymentResponseItemImpl</class>
+		<class>org.broadleafcommerce.pricing.domain.ShippingRateImpl</class>
+		<class>org.broadleafcommerce.store.domain.StoreImpl</class>
+		<class>org.broadleafcommerce.store.domain.ZipCodeImpl</class>
+		<class>org.broadleafcommerce.security.domain.AdminPermissionImpl</class>
+		<class>org.broadleafcommerce.security.domain.AdminRoleImpl</class>
+		<class>org.broadleafcommerce.security.domain.AdminUserImpl</class>
+		<class>org.broadleafcommerce.security.domain.AdminUserPermissionXref</class>
+		<class>org.broadleafcommerce.security.domain.AdminUserRoleXref</class>
+		<exclude-unlisted-classes/>
+		<properties>
+			<property name="hibernate.archive.autodetection" value="false" />
+        </properties>
+	</persistence-unit>
+</persistence>
