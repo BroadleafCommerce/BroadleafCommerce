@@ -15,43 +15,26 @@
  */
 package org.broadleafcommerce.profile.web.security;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
-import org.broadleafcommerce.profile.web.MergeCartProcessor;
-import org.broadleafcommerce.util.StringUtil;
-import org.springframework.security.Authentication;
-import org.springframework.security.AuthenticationException;
-import org.springframework.security.CredentialsExpiredException;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.ui.webapp.AuthenticationProcessingFilter;
-import org.springframework.security.util.TextUtils;
+import org.springframework.security.authentication.CredentialsExpiredException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.web.authentication.AuthenticationProcessingFilter;
+import org.springframework.security.web.util.TextEscapeUtils;
 
 public class BroadleafAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
 
-    private final List<PostLoginObserver> postLoginListeners = new ArrayList<PostLoginObserver>();
-
-    @Resource(name="blMergeCartProcessor")
-    private MergeCartProcessor mergeCartProcessor;
-
-    private String passwordChangeUri = "/passwordChange.htm";
-
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         Authentication auth = null;
         try {
-            auth = super.attemptAuthentication(request);
+            auth = super.attemptAuthentication(request, response);
         } catch (CredentialsExpiredException e) {
             String username = obtainUsername(request);
             String password = obtainPassword(request);
@@ -72,7 +55,7 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
             HttpSession session = request.getSession(false);
 
             if (session != null || getAllowSessionCreation()) {
-                request.getSession().setAttribute(SPRING_SECURITY_LAST_USERNAME_KEY, TextUtils.escapeEntities(username));
+                request.getSession().setAttribute(SPRING_SECURITY_LAST_USERNAME_KEY, TextEscapeUtils.escapeEntities(username));
             }
 
             // Allow subclasses to set the "details" property
@@ -82,16 +65,7 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
         return auth;
     }
 
-    @Override
-    protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
-        super.onSuccessfulAuthentication(request, response, authResult);
-        if (mergeCartProcessor != null) {
-            mergeCartProcessor.execute(request, response, authResult);
-        }
-        notifyPostLoginListeners(request, response, authResult);
-    }
-
-    @Override
+    /*@Override
     protected String determineTargetUrl(HttpServletRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         for (GrantedAuthority ga : auth.getAuthorities()) {
@@ -104,9 +78,9 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
             return successUrlParam;
         }
         return super.determineTargetUrl(request);
-    }
+    }*/
 
-    @Override
+    /*@Override
     protected String determineFailureUrl(HttpServletRequest request, AuthenticationException failed) {
         String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
@@ -124,26 +98,6 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
             }
         }
         return failureUrl;
-    }
+    }*/
 
-    public void addPostLoginListener(PostLoginObserver postLoginObserver) {
-        this.postLoginListeners.add(postLoginObserver);
-    }
-
-    public void removePostLoginListener(PostLoginObserver postLoginObserver) {
-        if (this.postLoginListeners.contains(postLoginObserver)) {
-            this.postLoginListeners.remove(postLoginObserver);
-        }
-    }
-
-    public void notifyPostLoginListeners(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
-        for (Iterator<PostLoginObserver> iter = postLoginListeners.iterator(); iter.hasNext();) {
-            PostLoginObserver listener = iter.next();
-            listener.processPostLogin(request, response, authResult);
-        }
-    }
-
-    public void setPasswordChangeUri(String passwordChangeUri) {
-        this.passwordChangeUri = passwordChangeUri;
-    }
 }

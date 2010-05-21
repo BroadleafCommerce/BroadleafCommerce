@@ -18,8 +18,8 @@ package org.broadleafcommerce.profile.web.security;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.ui.logout.LogoutFilter;
-import org.springframework.security.ui.logout.LogoutHandler;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 /**
  * Allows the logout URL to be specified dynamically in the session by setting the
@@ -40,7 +40,7 @@ public class BroadleafLogoutFilter extends LogoutFilter {
             removeLogoutSuccessUrl(request);
             return sessionUrl;
         }
-        return super.determineTargetUrl(request, response);
+        return null;
     }
 
     public void setLogoutSuccessUrl(HttpServletRequest request, String refererUrl) {

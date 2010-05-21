@@ -26,16 +26,16 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.SimpleFormController;
 
 public abstract class AjaxFormController extends SimpleFormController {
-    
-    protected abstract void populateAjax(Map<Object,Object> model, Object object);
-    protected abstract void populateStandard(Map<Object,Object> model, Object object);
- 
+
+    protected abstract void populateAjax(Map<String,Object> model, Object object);
+    protected abstract void populateStandard(Map<String,Object> model, Object object);
+
     private String ajaxView;
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request,
             HttpServletResponse response, Object command, BindException errors)
-            throws Exception {
-        Map<Object,Object> map = new HashMap<Object,Object>();
+    throws Exception {
+        Map<String,Object> map = new HashMap<String,Object>();
         String view;
         if (((AjaxFormCommandObject)command).isAjaxRequest()) {
             populateAjax(map, command);
@@ -46,7 +46,7 @@ public abstract class AjaxFormController extends SimpleFormController {
         }
         return new ModelAndView(view, map);
     }
-    
+
     public String getAjaxView() {
         return ajaxView;
     }
@@ -54,11 +54,11 @@ public abstract class AjaxFormController extends SimpleFormController {
     public void setAjaxView(String ajaxView) {
         this.ajaxView = ajaxView;
     }
-    
+
     @Override
     protected boolean isFormSubmission(HttpServletRequest request) {
         return true;
     }
-    
-    
+
+
 }

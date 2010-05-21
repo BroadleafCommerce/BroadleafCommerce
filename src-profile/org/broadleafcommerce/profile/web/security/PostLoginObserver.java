@@ -18,7 +18,7 @@ package org.broadleafcommerce.profile.web.security;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.Authentication;
+import org.springframework.security.core.Authentication;
 
 public interface PostLoginObserver {
 

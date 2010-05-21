@@ -22,11 +22,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.web.CustomerCookie;
-import org.springframework.security.Authentication;
-import org.springframework.security.ui.rememberme.AbstractRememberMeServices;
-import org.springframework.security.ui.rememberme.RememberMeAuthenticationException;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
 
 public class BroadleafRememberMeServices extends AbstractRememberMeServices {
 

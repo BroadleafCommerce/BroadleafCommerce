@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
  * is the <sc:paginatedList/>
  * 
  * The most basic implementation only needs to implement populatePaginatedList, setting the list on the
- * default PaginationCommandObject. For more advanced pagination scenarios, such as search strings, 
+ * default PaginationCommandObject. For more advanced pagination scenarios, such as search strings,
  * filters, or sorting, PaginationControllerObject should be subclassed and formBackingObject overriden.
  * 
  * To populate additional elements of the model, override populateStandard and call super.populateStandard.
@@ -35,9 +35,9 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 public abstract class PaginationController extends AjaxFormController {
-    
+
     private String paginationObjectName = "paginationObject";
-    
+
     public String getPaginationObjectName() {
         return paginationObjectName;
     }
@@ -55,15 +55,15 @@ public abstract class PaginationController extends AjaxFormController {
      * strategies, pulling all items or only pulling the displayed subset. The easiest to implement is
      * to retrieve all items that are in the list and call PaginationCommandObject.setFullList, and the
      * paginatedList will determine what items to display. For expensive retrievals of large lists,
-     * only pull the PaginationCommandObject.getPageSize() subset starting at 
+     * only pull the PaginationCommandObject.getPageSize() subset starting at
      * PaginationCommandObject.getStartIndex(). If using setDisplayList, the next button will not display
-     * unless PaginationCommandObject.setListSize is called with a number greater then or equal to 
+     * unless PaginationCommandObject.setListSize is called with a number greater then or equal to
      * PaginationCommandObject.getEndIndex()
      * @param model
      * @param object
      */
-    protected abstract void populatePaginatedList(Map<Object, Object> model, PaginationCommandObject object);
-    
+    protected abstract void populatePaginatedList(Map<String, Object> model, PaginationCommandObject object);
+
     @Override
     protected Object formBackingObject(HttpServletRequest request)throws ServletException {
         PaginationCommandObject object = new PaginationCommandObject();
@@ -74,15 +74,15 @@ public abstract class PaginationController extends AjaxFormController {
         object.setContainerId("listContainer");
         return object;
     }
-    
+
     @Override
-    protected void populateAjax(Map<Object, Object> model, Object object) {
+    protected void populateAjax(Map<String, Object> model, Object object) {
         populatePaginatedList(model, (PaginationCommandObject) object);
         model.put(getPaginationObjectName(), object);
     }
 
     @Override
-    protected void populateStandard(Map<Object, Object> model, Object object) {
+    protected void populateStandard(Map<String, Object> model, Object object) {
         populatePaginatedList(model, (PaginationCommandObject) object);
         model.put(getPaginationObjectName(), object);
     }

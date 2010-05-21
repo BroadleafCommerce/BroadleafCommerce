@@ -23,7 +23,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.web.security.PostLoginObserver;
 import org.broadleafcommerce.profile.web.security.PreLogoutObserver;
-import org.springframework.security.Authentication;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 @Component("blCustomerStateStore")

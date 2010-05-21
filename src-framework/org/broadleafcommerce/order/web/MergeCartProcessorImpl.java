@@ -27,7 +27,7 @@ import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.web.CustomerState;
 import org.broadleafcommerce.profile.web.MergeCartProcessor;
-import org.springframework.security.Authentication;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service("blMergeCartProcessor")
