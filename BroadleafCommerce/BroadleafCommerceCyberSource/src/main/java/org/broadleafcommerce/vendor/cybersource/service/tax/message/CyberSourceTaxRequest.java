@@ -183,10 +183,23 @@ private static final long serialVersionUID = 1L;
 	}
 	
 	public int cacheKey() {
+		/*
+		 * Postal code alone is not specific enough for accurate geocode / tax jurisdiction
+		 * determination. For example, the same postal code can sometimes span more than
+		 * one city or county, especially in rural areas.
+		 */
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((orderAcceptancePostalCode == null) ? 0 : orderAcceptancePostalCode.hashCode());
+		result = prime * result + ((orderAcceptanceCity == null) ? 0 : orderAcceptanceCity.hashCode());
+		result = prime * result + ((orderAcceptanceCounty == null) ? 0 : orderAcceptanceCounty.hashCode());
+		result = prime * result + ((orderAcceptanceState == null) ? 0 : orderAcceptanceState.hashCode());
+		result = prime * result + ((orderAcceptanceCountry == null) ? 0 : orderAcceptanceCountry.hashCode());
 		result = prime * result + ((billingRequest == null || billingRequest.getPostalCode() == null) ? 0 : billingRequest.getPostalCode().hashCode());
+		result = prime * result + ((billingRequest == null || billingRequest.getCity() == null) ? 0 : billingRequest.getCity().hashCode());
+		result = prime * result + ((billingRequest == null || billingRequest.getCounty() == null) ? 0 : billingRequest.getCounty().hashCode());
+		result = prime * result + ((billingRequest == null || billingRequest.getState() == null) ? 0 : billingRequest.getState().hashCode());
+		result = prime * result + ((billingRequest == null || billingRequest.getCountry() == null) ? 0 : billingRequest.getCountry().hashCode());
 		return result;
 	}
 }
