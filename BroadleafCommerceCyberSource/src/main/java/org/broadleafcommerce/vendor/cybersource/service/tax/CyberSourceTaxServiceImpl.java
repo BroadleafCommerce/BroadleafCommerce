@@ -53,14 +53,21 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 	
 	private static final Log LOG = LogFactory.getLog(CyberSourceTaxServiceImpl.class);
 	
-	protected Cache cache = CacheManager.getInstance().getCache("CyberSourceTaxRequests");
+	protected Cache cache = null;
 	protected Boolean isCacheEnabled = false;
 
 	public CyberSourceTaxResponse process(CyberSourceTaxRequest taxRequest) throws TaxException {
 		//TODO add validation for the request
+		if (isCacheEnabled) {
+			synchronized(this) {
+				if (cache == null) {
+					cache = CacheManager.getInstance().getCache("CyberSourceTaxRequests");
+				}
+			}
+		}
 		CyberSourceTaxResponse taxResponse = new CyberSourceTaxResponse();
 		taxResponse.setServiceType(taxRequest.getServiceType());
-		if (cache.isKeyInCache(taxRequest.cacheKey())) {
+		if (isCacheEnabled && cache.isKeyInCache(taxRequest.cacheKey())) {
 			CyberSourceTaxResponse cachedResponse = (CyberSourceTaxResponse) cache.get(taxRequest.cacheKey()).getValue();
 			buildResponse(taxResponse, cachedResponse, taxRequest);
 		} else {
@@ -98,7 +105,7 @@ public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implem
 	            e.setTaxResponse(taxResponse);
 	            throw e;
 	        }
-	        if (taxResponse.getDecision().equals("ACCEPT") && taxResponse.getReasonCode().equals(100)) {
+	        if (isCacheEnabled && taxResponse.getDecision().equals("ACCEPT") && taxResponse.getReasonCode().equals(100)) {
 	        	Element element = new Element(taxRequest.cacheKey(), taxResponse);
 	        	cache.put(element);
 	        }
