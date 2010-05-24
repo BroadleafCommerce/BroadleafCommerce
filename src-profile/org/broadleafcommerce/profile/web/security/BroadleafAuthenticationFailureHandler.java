@@ -35,17 +35,17 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
         String failureUrl = null;
         if (StringUtils.isNotEmpty(failureUrlParam)) {
             failureUrl = failureUrlParam;
+            if (StringUtils.isNotEmpty(successUrlParam)) {
+                if (!failureUrl.contains("?")) {
+                    failureUrl += "?successUrl=" + successUrlParam;
+                } else {
+                    failureUrl += "&successUrl=" + successUrlParam;
+                }
+            }
+            request.getRequestDispatcher(failureUrl).forward(request, response);
         } else {
             super.onAuthenticationFailure(request, response, exception);
         }
-        if (StringUtils.isNotEmpty(successUrlParam)) {
-            if (!failureUrl.contains("?")) {
-                failureUrl += "?successUrl=" + successUrlParam;
-            } else {
-                failureUrl += "&successUrl=" + successUrlParam;
-            }
-        }
-        request.getRequestDispatcher(failureUrl).forward(request, response);
     }
 
 }
