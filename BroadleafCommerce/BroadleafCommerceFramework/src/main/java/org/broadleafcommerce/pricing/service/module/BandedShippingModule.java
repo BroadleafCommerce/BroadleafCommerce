@@ -27,6 +27,7 @@ import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.pricing.domain.ShippingRate;
 import org.broadleafcommerce.pricing.service.ShippingRateService;
+import org.broadleafcommerce.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.util.money.Money;
 
@@ -37,6 +38,7 @@ public class BandedShippingModule implements ShippingModule {
     public static final String MODULENAME = "bandedShippingModule";
 
     protected String name = MODULENAME;
+    protected Boolean isDefaultModule = false;
 
     @Resource(name = "blShippingRateService")
     private ShippingRateService shippingRateService;
@@ -51,6 +53,10 @@ public class BandedShippingModule implements ShippingModule {
     }
 
     private void calculateShipping(FulfillmentGroup fulfillmentGroup) {
+    	if (!isValidModuleForService(fulfillmentGroup.getService()) && !isDefaultModule()) {
+    		LOG.info("fulfillment group (" + fulfillmentGroup.getId() + ") with a service type of (" + fulfillmentGroup.getService() + ") is not valid for this module service type (" + getServiceName() + ")");
+    		return;
+    	}
     	if (fulfillmentGroup.getFulfillmentGroupItems().size() == 0) {
     		LOG.warn("fulfillment group (" + fulfillmentGroup.getId() + ") does not contain any fulfillment group items. Unable to price banded shipping");
     		fulfillmentGroup.setShippingPrice(new Money(0D));
@@ -111,5 +117,21 @@ public class BandedShippingModule implements ShippingModule {
     public void setFeeSubTypeMapping(Map<String, String> feeSubTypeMapping) {
         this.feeSubTypeMapping = feeSubTypeMapping;
     }
+
+	public String getServiceName() {
+		return ShippingServiceType.BANDED_SHIPPING.getType();
+	}
+
+	public Boolean isValidModuleForService(String serviceName) {
+		return getServiceName().equals(serviceName);
+	}
+
+	public Boolean isDefaultModule() {
+		return isDefaultModule;
+	}
+
+	public void setDefaultModule(Boolean isDefaultModule) {
+		this.isDefaultModule = isDefaultModule;
+	}
 
 }

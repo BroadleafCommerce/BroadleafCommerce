@@ -58,6 +58,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Controller("blCartController")
 @SessionAttributes("cartSummary")
+@RequestMapping("/basket")
 public class CartController {
 
     private static final Log LOG = LogFactory.getLog(CartController.class);
@@ -98,7 +99,7 @@ public class CartController {
         return fulfillmentGroups;
     }
 
-    @RequestMapping(value = "viewCart.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/viewCart.htm", method = RequestMethod.GET)
     public String viewCart(ModelMap model, HttpServletRequest request) throws PricingException {
         Order cart = retrieveCartOrder(request, model);
         CartSummary cartSummary = new CartSummary();
@@ -137,13 +138,14 @@ public class CartController {
 
         if ((cart.getFulfillmentGroups() != null) && (cart.getFulfillmentGroups().isEmpty() == false)) {
             String cartShippingMethod = cart.getFulfillmentGroups().get(0).getMethod();
+            String cartShippingService = cart.getFulfillmentGroups().get(0).getService();
 
             if (cartShippingMethod != null) {
                 if (cartShippingMethod.equals("standard")) {
-                    cartSummary = createFulfillmentGroup(cartSummary, "standard", cart);
+                    cartSummary = createFulfillmentGroup(cartSummary, "standard", cartShippingService, cart);
                 }
                 else if (cartShippingMethod.equals("expedited")) {
-                    cartSummary = createFulfillmentGroup(cartSummary, "expedited", cart);
+                    cartSummary = createFulfillmentGroup(cartSummary, "expedited", cartShippingService, cart);
                 }
             }
         }
@@ -158,7 +160,7 @@ public class CartController {
      * The addItem method adds a product items with one or more quantity to the cart by adding thes
      * item to a list and calling the addItems method.
      */
-    @RequestMapping(value = "addItem.htm", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/addItem.htm", method = {RequestMethod.GET, RequestMethod.POST})
     public String addItem(@RequestParam(required=false) Boolean ajax,
             @ModelAttribute AddToCartItem addToCartItem,
             BindingResult errors,
@@ -202,7 +204,7 @@ public class CartController {
         }
     }
 
-    @RequestMapping(value = "viewCart.htm", params="removeItemFromCart", method = {RequestMethod.GET, RequestMethod.POST})
+    @RequestMapping(value = "/viewCart.htm", params="removeItemFromCart", method = {RequestMethod.GET, RequestMethod.POST})
     public String removeItem(@RequestParam long orderItemId, @ModelAttribute CartSummary cartSummary, ModelMap model, HttpServletRequest request) {
         Order currentCartOrder = retrieveCartOrder(request, model);
         try {
@@ -216,7 +218,7 @@ public class CartController {
         return removeItemViewRedirect ? "redirect:" + removeItemView : removeItemView;
     }
 
-    @RequestMapping(value = "beginCheckout.htm", method = RequestMethod.GET)
+    @RequestMapping(value = "/beginCheckout.htm", method = RequestMethod.GET)
     public String beginCheckout(@ModelAttribute CartSummary cartSummary, BindingResult errors, @RequestParam (required = false) Boolean isStorePickup, ModelMap model, HttpServletRequest request) {
         String view = "error"; //updateItemQuantity(orderItemList, errors, model, request);
         if (!view.equals("error")) {
@@ -229,7 +231,7 @@ public class CartController {
         return view;
     }
 
-    @RequestMapping(value = "viewCart.htm", params="updateItemQuantity", method = RequestMethod.POST)
+    @RequestMapping(value = "/viewCart.htm", params="updateItemQuantity", method = RequestMethod.POST)
     public String updateItemQuantity(@ModelAttribute(value="cartSummary") CartSummary cartSummary, Errors errors, ModelMap model, HttpServletRequest request) throws PricingException {
         if (errors.hasErrors()) {
             model.addAttribute("cartSummary", cartSummary);
@@ -277,13 +279,13 @@ public class CartController {
     @RequestMapping(params="updateShipping", method = RequestMethod.POST)
     public String updateShipping (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         Order currentCartOrder = retrieveCartOrder(request, model);
-        cartSummary = createFulfillmentGroup(cartSummary, cartSummary.getFulfillmentGroup().getMethod(), currentCartOrder);
+        cartSummary = createFulfillmentGroup(cartSummary, cartSummary.getFulfillmentGroup().getMethod(), cartSummary.getFulfillmentGroup().getService(), currentCartOrder);
         model.addAttribute("currentCartOrder", updateFulfillmentGroups(cartSummary, currentCartOrder));
         model.addAttribute("cartSummary", cartSummary);
         return cartView;
     }
 
-    @RequestMapping(value = "viewCart.htm", params="updatePromo", method = RequestMethod.POST)
+    @RequestMapping(value = "/viewCart.htm", params="updatePromo", method = RequestMethod.POST)
     public String updatePromoCode (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         Order currentCartOrder = retrieveCartOrder(request, model);
 
@@ -322,9 +324,10 @@ public class CartController {
         return cartService.save(currentCartOrder, true);
     }
 
-    protected CartSummary createFulfillmentGroup (CartSummary cartSummary, String shippingMethod, Order cart) {
+    protected CartSummary createFulfillmentGroup (CartSummary cartSummary, String shippingMethod, String service, Order cart) {
         FulfillmentGroup fulfillmentGroup = new FulfillmentGroupImpl();
         fulfillmentGroup.setMethod(shippingMethod);
+        fulfillmentGroup.setService(service);
         fulfillmentGroup.setOrder(cart);
         cartSummary.setFulfillmentGroup(fulfillmentGroup);
         return cartSummary;

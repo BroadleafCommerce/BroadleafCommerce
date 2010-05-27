@@ -152,4 +152,8 @@ public interface FulfillmentGroup extends Serializable {
 
 	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable);
 	
+	public String getService();
+
+	public void setService(String service);
+	
 }

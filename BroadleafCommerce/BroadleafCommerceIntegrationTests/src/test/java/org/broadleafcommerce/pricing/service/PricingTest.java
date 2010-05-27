@@ -40,6 +40,8 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.pricing.ShippingRateDataProvider;
 import org.broadleafcommerce.pricing.domain.ShippingRate;
+import org.broadleafcommerce.pricing.service.module.BandedShippingModule;
+import org.broadleafcommerce.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Country;
@@ -105,6 +107,7 @@ public class PricingTest extends BaseTest {
         group.setAddress(address);
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         group.setMethod("standard");
+        group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         groups.add(group);
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
@@ -165,6 +168,7 @@ public class PricingTest extends BaseTest {
 
         // setup group1 - standard
         group1.setMethod("standard");
+        group1.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         Address address = new AddressImpl();
         State state = new StateImpl();
         state.setAbbreviation("hi");
@@ -173,6 +177,7 @@ public class PricingTest extends BaseTest {
 
         // setup group2 - truck
         group2.setMethod("truck");
+        group2.setService(ShippingServiceType.BANDED_SHIPPING.getType());
 
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         groups.add(group1);

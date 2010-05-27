@@ -59,6 +59,7 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
         newFG.setAddress(address);
         newFG.setRetailShippingPrice(fulfillmentGroup.getRetailShippingPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
+        newFG.setService(fulfillmentGroup.getService());
         newFG.setOrder(salesOrder);
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
 
@@ -101,6 +102,7 @@ public class FulfillmentGroupDaoTest extends CommonSetupBaseTest {
         newFG.setAddress(address);
         newFG.setRetailShippingPrice(fulfillmentGroup.getRetailShippingPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
+        newFG.setService(fulfillmentGroup.getService());
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
         newFG.setOrder(salesOrder);
 

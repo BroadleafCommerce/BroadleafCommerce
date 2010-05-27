@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 @Controller
+@RequestMapping("/store")
 public class CatalogController {
 
 	//TODO Instead of mixing and matching - we should prob be autowiring all the dependencies for this controller.

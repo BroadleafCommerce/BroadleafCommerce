@@ -33,6 +33,7 @@
 	 			<entry key="hawi" value="hawi" />
 			</map>
 		</property>
+		<property name="defaultModule" value="true"/>
 	</bean>
 
 	<bean id="blPricingWorkflow" class="org.broadleafcommerce.workflow.SequenceProcessor">
@@ -61,6 +62,12 @@
 
 	<bean id="blCreditCardModule" class="org.broadleafcommerce.payment.service.module.DefaultModule"/>
 
+	<bean id="blEncryptionModule" class="org.broadleafcommerce.encryption.DefaultEncryptionModule"/>
+
+	<bean id="blShippingService" class="org.broadleafcommerce.pricing.service.ShippingServiceImpl">
+		<property name="shippingModule" ref="blShippingModule"/>
+	</bean>
+	
 	<bean id="blGiftCardService" class="org.broadleafcommerce.payment.service.PaymentServiceImpl">
 		<property name="paymentModule" ref="blGiftCardModule"/>
 	</bean>

@@ -16,6 +16,7 @@
 package org.broadleafcommerce.pricing.service.module;
 
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 
 public interface ShippingModule {
 
@@ -23,6 +24,14 @@ public interface ShippingModule {
 
     public void setName(String name);
 
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup);
+    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException;
+    
+    public String getServiceName();
+    
+    public Boolean isValidModuleForService(String serviceName);
+    
+    public void setDefaultModule(Boolean isDefaultModule);
+    
+    public Boolean isDefaultModule();
 
 }

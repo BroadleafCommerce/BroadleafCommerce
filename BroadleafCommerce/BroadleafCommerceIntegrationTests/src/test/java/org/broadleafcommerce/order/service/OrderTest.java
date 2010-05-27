@@ -49,6 +49,8 @@ import org.broadleafcommerce.pricing.ShippingRateDataProvider;
 import org.broadleafcommerce.pricing.domain.ShippingRate;
 import org.broadleafcommerce.pricing.service.ShippingRateService;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
+import org.broadleafcommerce.pricing.service.module.BandedShippingModule;
+import org.broadleafcommerce.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
@@ -314,6 +316,7 @@ public class OrderTest extends OrderBaseTest {
         FulfillmentGroup newFg = new FulfillmentGroupImpl();
         newFg.setAddress(address);
         newFg.setMethod("standard");
+        newFg.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         try {
             newFg = orderService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
         } catch (PricingException e) {
@@ -669,6 +672,7 @@ public class OrderTest extends OrderBaseTest {
     	fgRequest.setFulfillmentGroupItemRequests(fgiRequests);
     	fgRequest.setOrder(cartService.findCartForCustomer(customer));
     	fgRequest.setMethod("standard");
+    	fgRequest.setService(ShippingServiceType.BANDED_SHIPPING.getType());
     	orderService.addFulfillmentGroupToOrder(fgRequest);
     	
     	Order resultOrder = orderService.findOrderById(order.getId());
@@ -681,6 +685,7 @@ public class OrderTest extends OrderBaseTest {
     	
     	FulfillmentGroup defaultFg = orderService.createDefaultFulfillmentGroup(order, customerAddress.getAddress());
     	defaultFg.setMethod("standard");
+    	defaultFg.setService(ShippingServiceType.BANDED_SHIPPING.getType());
     	assert defaultFg.isPrimary();
     	orderService.addFulfillmentGroupToOrder(order, defaultFg);
     	resultOrder = orderService.findOrderById(order.getId());

@@ -16,6 +16,8 @@
 package org.broadleafcommerce.order;
 
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
+import org.broadleafcommerce.pricing.service.module.BandedShippingModule;
+import org.broadleafcommerce.pricing.service.workflow.type.ShippingServiceType;
 import org.testng.annotations.DataProvider;
 
 public class FulfillmentGroupDataProvider {
@@ -25,6 +27,7 @@ public class FulfillmentGroupDataProvider {
         FulfillmentGroupImpl sos = new FulfillmentGroupImpl();
         sos.setReferenceNumber("123456789");
         sos.setMethod("standard");
+        sos.setService(ShippingServiceType.BANDED_SHIPPING.getType());
         return new Object[][] { { sos } };
     }
 }

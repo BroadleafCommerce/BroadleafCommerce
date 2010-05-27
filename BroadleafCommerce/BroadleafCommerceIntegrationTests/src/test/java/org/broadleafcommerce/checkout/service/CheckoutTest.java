@@ -42,6 +42,8 @@ import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.pricing.service.module.BandedShippingModule;
+import org.broadleafcommerce.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Country;
@@ -110,6 +112,7 @@ public class CheckoutTest extends BaseTest {
         Money total = new Money(5D);
         group.setShippingPrice(total);
         group.setMethod("standard");
+        group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
 
         DiscreteOrderItem item = new DiscreteOrderItemImpl();
         item.setOrder(order);

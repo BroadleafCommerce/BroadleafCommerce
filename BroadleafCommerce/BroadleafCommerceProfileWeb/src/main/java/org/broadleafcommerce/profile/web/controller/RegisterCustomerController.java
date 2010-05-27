@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller("blRegisterCustomerController")
-
+@RequestMapping("/registerCustomer")
 /**
  * RegisterCustomerController is used to register a customer.
  *

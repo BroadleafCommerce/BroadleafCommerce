@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author sconlon
  */
 @Controller("blCustomerPhoneController")
+@RequestMapping("/myaccount/phone")
 public class CustomerPhoneController {
     private static final String prefix = "myAccount/phone/customerPhones";
     private static final String redirect = "redirect:/myaccount/phone/viewPhone.htm";
