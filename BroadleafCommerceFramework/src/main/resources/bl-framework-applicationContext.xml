@@ -37,12 +37,6 @@
 	<bean id="blNamingStrategy" class="org.broadleafcommerce.jmx.MetadataNamingStrategy">
 	    <property name="attributeSource" ref="blAttributeSource"/>
 	</bean>
-	
-	<bean id="blEncryptionModule" class="org.broadleafcommerce.encryption.DefaultEncryptionModule"/>
-
-	<bean id="blShippingService" class="org.broadleafcommerce.pricing.service.ShippingServiceImpl">
-		<property name="shippingModule" ref="blShippingModule"/>
-	</bean>
 
 	<bean id="blAccountNumberMask" class="org.broadleafcommerce.payment.AccountNumberMask">
 		<constructor-arg>

@@ -13,34 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.vendor.service.type;
+package org.broadleafcommerce.pricing.service.workflow.type;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * An extendible enumeration of container shape types.
+ * An extendible enumeration of shipping service types.
  * 
  * @author jfischer
+ *
  */
-public class ContainerShapeType implements Serializable {
+public class ShippingServiceType implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Map<String, ContainerShapeType> TYPES = new HashMap<String, ContainerShapeType>();
+    private static final Map<String, ShippingServiceType> TYPES = new HashMap<String, ShippingServiceType>();
 
-    public static ContainerShapeType getInstance(final String type) {
+    public static final ShippingServiceType BANDED_SHIPPING = new ShippingServiceType("BANDED_SHIPPING");
+    public static final ShippingServiceType USPS = new ShippingServiceType("USPS");
+    public static final ShippingServiceType FED_EX = new ShippingServiceType("FED_EX");
+    public static final ShippingServiceType UPS = new ShippingServiceType("UPS");
+    public static final ShippingServiceType DHL = new ShippingServiceType("DHL");
+
+    public static ShippingServiceType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
 
-    public ContainerShapeType() {
+    public ShippingServiceType() {
         //do nothing
     }
 
-    public ContainerShapeType(final String type) {
+    public ShippingServiceType(final String type) {
         setType(type);
     }
 
@@ -52,8 +59,6 @@ public class ContainerShapeType implements Serializable {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
-        } else {
-        	throw new RuntimeException("Cannot add the type: (" + type + "). It already exists as a type via " + getInstance(type).getClass().getName());
         }
     }
 
@@ -73,7 +78,7 @@ public class ContainerShapeType implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ContainerShapeType other = (ContainerShapeType) obj;
+        ShippingServiceType other = (ShippingServiceType) obj;
         if (type == null) {
             if (other.type != null)
                 return false;

@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * 8) Override the retrieveOrder method to return a wishlist order
  */
 @Controller("blWishlistController")
+@RequestMapping("/wishlist")
 public class WishlistController extends CartController {
 
     private static final Log LOG = LogFactory.getLog(WishlistController.class);

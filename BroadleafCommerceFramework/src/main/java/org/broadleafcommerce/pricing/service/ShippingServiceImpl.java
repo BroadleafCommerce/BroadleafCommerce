@@ -20,6 +20,7 @@ import javax.annotation.Resource;
 import org.broadleafcommerce.offer.service.OfferService;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.pricing.service.module.ShippingModule;
+import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 
 public class ShippingServiceImpl implements ShippingService {
 
@@ -28,7 +29,7 @@ public class ShippingServiceImpl implements ShippingService {
 
     protected ShippingModule shippingModule;
 
-    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
+    public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
         FulfillmentGroup group = shippingModule.calculateShippingForFulfillmentGroup(fulfillmentGroup);
         offerService.applyFulfillmentGroupOffers(fulfillmentGroup);
         return group;

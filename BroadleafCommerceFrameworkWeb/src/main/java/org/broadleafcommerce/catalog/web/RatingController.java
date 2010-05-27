@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller("blRatingController")
+@RequestMapping("/rating")
 public class RatingController {
 	
     private static final Log LOG = LogFactory.getLog(RatingController.class);
@@ -22,7 +23,7 @@ public class RatingController {
     @Resource(name="blRatingService")
     private RatingService ratingService;
 	
-    @RequestMapping(value = "saveReview.htm", method = {RequestMethod.GET})
+    @RequestMapping(value = "/saveReview.htm", method = {RequestMethod.GET})
     public String saveReview(HttpServletRequest request) {
     	LOG.debug("Save Review Request recieved");
     	LOG.debug("Product Id = " + request.getParameter("productId"));    	

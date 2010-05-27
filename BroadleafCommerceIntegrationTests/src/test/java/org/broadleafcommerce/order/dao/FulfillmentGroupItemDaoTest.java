@@ -85,6 +85,7 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
         newFG.setAddress(address);
         newFG.setRetailShippingPrice(fulfillmentGroup.getRetailShippingPrice());
         newFG.setMethod(fulfillmentGroup.getMethod());
+        newFG.setService(fulfillmentGroup.getService());
         newFG.setOrder(salesOrder);
         newFG.setReferenceNumber(fulfillmentGroup.getReferenceNumber());
 

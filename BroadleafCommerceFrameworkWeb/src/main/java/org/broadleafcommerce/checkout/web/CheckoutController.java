@@ -62,6 +62,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller("blCheckoutController")
+@RequestMapping("/checkout")
 public class CheckoutController {
 
     private static final Log LOG = LogFactory.getLog(CheckoutController.class);
@@ -112,7 +113,7 @@ public class CheckoutController {
         return checkoutForm;
     }
 
-    @RequestMapping(value = "checkout.htm", method = {RequestMethod.POST})
+    @RequestMapping(value = "/checkout.htm", method = {RequestMethod.POST})
     public String processCheckout(@ModelAttribute CheckoutForm checkoutForm,
             BindingResult errors,
             ModelMap model,
@@ -180,7 +181,7 @@ public class CheckoutController {
     }
 
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "checkout.htm", method = {RequestMethod.GET})
+    @RequestMapping(value = "/checkout.htm", method = {RequestMethod.GET})
     public String checkout(@ModelAttribute CheckoutForm checkoutForm,
             BindingResult errors,
             ModelMap model,

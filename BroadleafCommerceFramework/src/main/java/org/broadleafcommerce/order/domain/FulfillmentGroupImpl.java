@@ -91,6 +91,10 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @Column(name = "METHOD")
     @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
     protected String method;
+    
+    @Column(name = "SERVICE")
+    @Index(name="FG_SERVICE_INDEX", columnNames={"SERVICE"})
+    protected String service;
 
     //TODO change column name to RETAIL_SHIPPING_PRICE
     @Column(name = "RETAIL_PRICE")
@@ -443,6 +447,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
 	public void setIsShippingPriceTaxable(Boolean isShippingPriceTaxable) {
 		this.isShippingPriceTaxable = isShippingPriceTaxable;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
 	}
 
 	public int hashCode() {

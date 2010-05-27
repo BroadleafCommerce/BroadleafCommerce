@@ -48,6 +48,8 @@ import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderItem;
 import org.broadleafcommerce.order.service.CartService;
 import org.broadleafcommerce.order.service.OrderItemService;
+import org.broadleafcommerce.pricing.service.module.BandedShippingModule;
+import org.broadleafcommerce.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Country;
@@ -119,7 +121,7 @@ public class OfferTest extends CommonSetupBaseTest {
     @Test(groups =  {"testPercentageOffOffer"}, dependsOnGroups = { "offerCreateSku1", "offerCreateSku2" })
     public void testPercentOffOfferWithScaleGreaterThanTwo() throws Exception {
         Order order = cartService.createNewCartForCustomer(createCustomer());
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", ShippingServiceType.BANDED_SHIPPING.getType(), 5D, order));
 
         order.addOrderItem(createDiscreteOrderItem(sku1, 100D, null, true, 2));
         order.addOrderItem(createDiscreteOrderItem(sku2, 100D, null, true, 1));
@@ -408,7 +410,7 @@ public class OfferTest extends CommonSetupBaseTest {
         order.addAddedOfferCode(createOfferCode("20 Percent Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.PERCENT_OFF, 20, null, null, true, true, 10));
         order.addAddedOfferCode(createOfferCode("3 Dollars Off Item Offer", OfferType.FULFILLMENT_GROUP, OfferDiscountType.AMOUNT_OFF, 3, null, null, true, true, 10));
 
-        order.setFulfillmentGroups(createFulfillmentGroups("standard", 5D, order));
+        order.setFulfillmentGroups(createFulfillmentGroups("standard", ShippingServiceType.BANDED_SHIPPING.getType(), 5D, order));
         
         List<Offer> offers = offerService.buildOfferListForOrder(order);
         offerService.applyOffersToOrder(offers, order);
@@ -503,10 +505,11 @@ public class OfferTest extends CommonSetupBaseTest {
         assert (customerOffer.getId().equals(customerOfferTest.getId()));
     }
 
-    private List<FulfillmentGroup> createFulfillmentGroups(String method, Double shippingPrice, Order order) {
+    private List<FulfillmentGroup> createFulfillmentGroups(String method, String service, Double shippingPrice, Order order) {
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         FulfillmentGroup group = new FulfillmentGroupImpl();
         group.setMethod(method);
+        group.setService(service);
         groups.add(group);
         group.setRetailShippingPrice(new Money(shippingPrice));
         group.setOrder(order);
