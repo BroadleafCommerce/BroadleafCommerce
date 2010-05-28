@@ -38,7 +38,6 @@
 	<classpathentry kind="lib" path="lib/test/bin/easymockclassextension.jar" sourcepath="lib/test/sources/easymockclassextension-src.zip"/>
 	<classpathentry kind="lib" path="lib/test/bin/junit-4.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/compile/bin/jsp-api-2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/compile/bin/servlet-api-2.4.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/hibernate-3.3.1.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xbean.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xmlpublic.jar"/>
@@ -83,5 +82,6 @@
 	<classpathentry kind="lib" path="lib/common/bin/spring-security-web.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/spring-tx.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/spring-web.jar"/>
+	<classpathentry kind="lib" path="lib/compile/bin/servlet-api-2.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

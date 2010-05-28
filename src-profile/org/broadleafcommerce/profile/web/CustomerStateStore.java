@@ -35,13 +35,16 @@ public class CustomerStateStore implements PostLoginObserver, PreLogoutObserver 
     @Resource(name="blCustomerState")
     private CustomerState customerState;
 
+    @Resource(name="blCookieUtils")
+    private CookieUtils cookieUtils;
+
     public void processPostLogin(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
         Customer customer = customerService.readCustomerByUsername((String) authResult.getPrincipal());
-        CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, customer.getId() + "","/",604800);
+        cookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, customer.getId() + "","/",604800);
         customerState.setCustomer(customer, request);
     }
 
     public void processPreLogout(HttpServletRequest request, HttpServletResponse response, Authentication authResult) {
-        CookieUtils.invalidateCookie(response, CookieUtils.CUSTOMER_COOKIE_NAME);
+        cookieUtils.invalidateCookie(response, CookieUtils.CUSTOMER_COOKIE_NAME);
     }
 }

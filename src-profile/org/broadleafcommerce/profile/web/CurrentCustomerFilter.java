@@ -42,6 +42,9 @@ public class CurrentCustomerFilter implements Filter  {
     @Resource(name="blCustomerService")
     protected CustomerService customerService;
 
+    @Resource(name="blCookieUtils")
+    protected CookieUtils cookieUtils;
+
     public void init(FilterConfig filterConfig) throws ServletException {
         String extensions = filterConfig.getInitParameter("validURIExtensions");
         if (extensions != null) {
@@ -77,7 +80,7 @@ public class CurrentCustomerFilter implements Filter  {
                     requestCustomer = sessionCustomer;
                     break checkSession;
                 }
-                String cookieCustomerIdVal = CookieUtils.getCookieValue((HttpServletRequest) request, CookieUtils.CUSTOMER_COOKIE_NAME);
+                String cookieCustomerIdVal = cookieUtils.getCookieValue((HttpServletRequest) request, CookieUtils.CUSTOMER_COOKIE_NAME);
                 Long cookieCustomerId = null;
                 if ((cookieCustomerIdVal != null) && (!cookieCustomerIdVal.isEmpty())) {
                     try {
@@ -96,7 +99,7 @@ public class CurrentCustomerFilter implements Filter  {
                 } else {
                     // if no customer in session or cookie, create a new one
                     Customer firstTimeCustomer = customerService.createCustomerFromId(null);
-                    CookieUtils.setCookieValue((HttpServletResponse) response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "", "/", 604800);
+                    cookieUtils.setCookieValue((HttpServletResponse) response, CookieUtils.CUSTOMER_COOKIE_NAME, firstTimeCustomer.getId() + "", "/", 604800);
                     customerState.setCustomer(firstTimeCustomer, (HttpServletRequest) request);
                     requestCustomer = firstTimeCustomer;
                     break checkSession;

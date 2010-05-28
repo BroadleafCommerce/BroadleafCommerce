@@ -61,6 +61,7 @@
 		<copy todir="${stage.dir}/framework-jar">
 			<fileset dir="${spring.config.dir}">
 				<include name="bl-*" />
+				<exclude name="bl-web-applicationContext.xml"/>
 			</fileset>
 		</copy>
 
@@ -166,6 +167,12 @@
 				<include name="**/*.vm" />
 			</fileset>
 		</copy>
+		
+		<copy todir="${stage.dir}/framework-jar">
+			<fileset dir="${spring.config.dir}">
+				<include name="bl-web-applicationContext.xml"/>
+			</fileset>
+		</copy>
 
 		<jar jarfile="${stage.dir}/broadleaf-profile.jar">
 			<fileset dir="${stage.dir}/profile-jar">
@@ -178,6 +185,7 @@
 				<include name="META-INF/**" />
 				<exclude name="**/test/**/*.class" />
 				<exclude name="**/web/**/*.*" />
+				<exclude name="bl-web-applicationContext.xml"/>
 			</fileset>
 		</jar>
 
@@ -185,6 +193,7 @@
 			<fileset dir="${stage.dir}/profile-jar">
 				<include name="META-INF/**" />
 				<include name="**/web/**/*.*" />
+				<include name="bl-web-applicationContext.xml"/>
 			</fileset>
 		</jar>
 	</target>

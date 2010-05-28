@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.service.CustomerService;
+import org.broadleafcommerce.profile.web.CookieUtils;
 import org.broadleafcommerce.profile.web.CustomerCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,19 +34,22 @@ public class BroadleafRememberMeServices extends AbstractRememberMeServices {
     @Resource(name="blCustomerService")
     private CustomerService customerService;
 
+    @Resource(name="blCookieUtils")
+    private CookieUtils cookieUtils;
+
     @Override
     protected void onLoginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) {
         Customer customer = customerService.readCustomerByUsername((String) successfulAuthentication.getPrincipal());
-        CustomerCookie.getInstance().write(response, customer.getId());
+        CustomerCookie.getInstance(cookieUtils).write(response, customer.getId());
     }
 
     @Override
     protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request, HttpServletResponse response) throws RememberMeAuthenticationException, UsernameNotFoundException {
-        if (!CustomerCookie.getInstance().isValid(request)) {
+        if (!CustomerCookie.getInstance(cookieUtils).isValid(request)) {
             throw new RememberMeAuthenticationException("Invalid Authentication");
         }
 
-        Long customerId = CustomerCookie.getInstance().getCustomerIdFromCookie(request);
+        Long customerId = CustomerCookie.getInstance(cookieUtils).getCustomerIdFromCookie(request);
         Customer customer = customerService.readCustomerById(customerId);
         return this.getUserDetailsService().loadUserByUsername(customer.getUsername());
     }

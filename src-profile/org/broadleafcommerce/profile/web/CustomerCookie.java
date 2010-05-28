@@ -25,23 +25,26 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CustomerCookie {
 
-    @Resource
-    private String salt;
-
     private static CustomerCookie instance;
 
-    private CustomerCookie() {}
+    @Resource
+    private String salt;
+    private CookieUtils cookieUtils;
 
-    public synchronized static CustomerCookie getInstance() {
+    private CustomerCookie(CookieUtils cookieUtils) {
+        this.cookieUtils = cookieUtils;
+    }
+
+    public synchronized static CustomerCookie getInstance(CookieUtils cookieUtils) {
         if (instance == null) {
-            instance = new CustomerCookie();
+            instance = new CustomerCookie(cookieUtils);
         }
 
         return instance;
     }
 
     public String read(HttpServletRequest request) {
-        return CookieUtils.getCookieValue(request, CookieUtils.CUSTOMER_COOKIE_NAME);
+        return cookieUtils.getCookieValue(request, CookieUtils.CUSTOMER_COOKIE_NAME);
     }
 
     public Long getCustomerIdFromCookie(HttpServletRequest request) {
@@ -51,7 +54,7 @@ public class CustomerCookie {
 
     public void write(HttpServletResponse response, Long customerId) {
         try {
-            CookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, customerId + "|" + getHash(customerId.toString()));
+            cookieUtils.setCookieValue(response, CookieUtils.CUSTOMER_COOKIE_NAME, customerId + "|" + getHash(customerId.toString()));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
