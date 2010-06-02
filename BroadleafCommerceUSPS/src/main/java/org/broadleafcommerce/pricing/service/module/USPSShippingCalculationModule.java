@@ -51,7 +51,7 @@ private static final Log LOG = LogFactory.getLog(USPSSingleItemPerPackageShippin
     protected Boolean isDefaultModule = false;
     
     @Resource
-    private USPSShippingCalculationService shippingCalculationService;
+    protected USPSShippingCalculationService shippingCalculationService;
     
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
     	if (!isValidModuleForService(fulfillmentGroup.getService()) && !isDefaultModule()) {
@@ -71,13 +71,13 @@ private static final Log LOG = LogFactory.getLog(USPSSingleItemPerPackageShippin
 		USPSShippingPriceResponse response = shippingCalculationService.retrieveShippingRates(request);
 		Stack<USPSContainerItemResponse> itemResponses = response.getResponses();
 		
-		USPSServiceResponseType responseType = USPSServiceResponseType.getInstance(fulfillmentGroup.getMethod());
+		USPSServiceResponseType responseType = USPSServiceResponseType.getInstanceByName(fulfillmentGroup.getMethod());
 		if (responseType == null) {
 			throw new ShippingPriceException("No USPSServiceResponseType found for the shipping method (" + fulfillmentGroup.getMethod() + ") and service type (" + getServiceName() + ")");
 		}
 		Money shippingPrice = new Money(0D);
 		for(USPSContainerItemResponse itemResponse : itemResponses) {
-			USPSPostage postage = itemResponse.getPostage().get(responseType);
+			USPSPostage postage = deducePostage(responseType, requestItems, itemResponse);
 			if (postage == null) {
 				throw new ShippingPriceException("No postage found in the USPS response for the USPSServiceResponseType (" + responseType.getDescription() + ")");
 			}
@@ -88,6 +88,35 @@ private static final Log LOG = LogFactory.getLog(USPSSingleItemPerPackageShippin
         fulfillmentGroup.setRetailShippingPrice(fulfillmentGroup.getSaleShippingPrice());
         
         return fulfillmentGroup;
+    }
+    
+    protected USPSPostage deducePostage(USPSServiceResponseType responseType, List<USPSContainerItemRequest> requestItems, USPSContainerItemResponse itemResponse) {
+    	USPSPostage postage = itemResponse.getPostage().get(responseType);
+    	if (postage == null) {
+    		USPSContainerItemRequest itemRequest = findRequestByPackageId(itemResponse.getPackageId(), requestItems);
+    		if (itemRequest != null) {
+    			String shape = itemRequest.getContainerShape().getType().replaceAll(" ", "");
+    			String moreSpecificResponseType = responseType.getName() + shape;
+    			USPSServiceResponseType nextResponseType = USPSServiceResponseType.getInstanceByName(moreSpecificResponseType);
+        		if (nextResponseType != null) {
+        			postage = itemResponse.getPostage().get(nextResponseType);
+        		}
+    		}
+    		if (postage == null && itemResponse.getPostage().size() == 1) {
+    			postage = itemResponse.getPostage().values().iterator().next();
+    		}
+    	}
+    	
+    	return postage;
+    }
+    
+    protected USPSContainerItemRequest findRequestByPackageId(String packageId, List<USPSContainerItemRequest> requestItems) {
+    	for (USPSContainerItemRequest itemRequest : requestItems) {
+    		if (itemRequest.getPackageId().equals(packageId)) {
+    			return itemRequest;
+    		}
+    	}
+    	return null;
     }
     
     public String getName() {

@@ -89,6 +89,11 @@
     
     <bean id="blCreditCardModule" class="org.broadleafcommerce.checkout.service.DummyCreditCardModule"/>
     
+    <bean id="blUSPSShippingModule" class="org.broadleafcommerce.pricing.service.module.USPSSingleItemPerPackageShippingCalculationModule">
+		<property name="defaultModule" value="true"/>
+		<property name="originationPostalCode" value="10022"/>
+	</bean>
+	
     <bean id="blShippingCalculationService" class="org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationServiceImpl">
 		<property name="uspsCharSet" value="${usps.charset}"/>
 		<property name="uspsPassword" value="${usps.password}"/>

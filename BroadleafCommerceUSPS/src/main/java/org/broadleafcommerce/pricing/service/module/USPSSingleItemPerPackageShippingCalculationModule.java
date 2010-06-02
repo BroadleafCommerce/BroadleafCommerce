@@ -18,8 +18,6 @@ package org.broadleafcommerce.pricing.service.module;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.order.domain.BundleOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
@@ -32,7 +30,9 @@ import org.broadleafcommerce.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItem;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
+import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 
 /**
@@ -47,9 +47,7 @@ import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
  */
 public class USPSSingleItemPerPackageShippingCalculationModule extends USPSShippingCalculationModule {
 
-	private static final Log LOG = LogFactory.getLog(USPSSingleItemPerPackageShippingCalculationModule.class);
-    
-    @Override
+	@Override
 	protected List<USPSContainerItemRequest> createPackages(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
     	List<USPSContainerItemRequest> itemRequests = new ArrayList<USPSContainerItemRequest>();
     	for (FulfillmentGroupItem fgItem : fulfillmentGroup.getFulfillmentGroupItems()) {
@@ -82,7 +80,9 @@ public class USPSSingleItemPerPackageShippingCalculationModule extends USPSShipp
 	}
 
 	protected USPSContainerItemRequest createRequest(FulfillmentGroup fulfillmentGroup, DiscreteOrderItem discreteItem, int counter) throws ShippingPriceException {
-    	USPSServiceMethod uspsMethod = USPSServiceMethod.getInstance(fulfillmentGroup.getMethod());
+    	String method = fulfillmentGroup.getMethod();
+    	String[] methods = method.split("_");
+		USPSServiceMethod uspsMethod = USPSServiceMethod.getInstance(methods[0]);
     	if (uspsMethod == null) {
     		throw new ShippingPriceException("Unable to find a USPSShippingMethod for the method found on the fulfillment group: (" + fulfillmentGroup.getMethod() + ")");
     	}
@@ -94,12 +94,23 @@ public class USPSSingleItemPerPackageShippingCalculationModule extends USPSShipp
         itemRequest.setService(serviceType);
         Product product = discreteItem.getProduct();
         itemRequest.setContainerSize((USPSContainerSizeType) product.getSize());
+        itemRequest.setContainerShape((USPSContainerShapeType) product.getContainer());
+        itemRequest.setDepth(product.getDepth());
+        itemRequest.setDimensionUnitOfMeasureType(product.getDimension().getDimensionUnitOfMeasure());
+        if (serviceType.equals(USPSServiceType.FIRSTCLASS) && methods.length > 1) {
+        	itemRequest.setFirstClassType(USPSFirstClassType.getInstance(methods[1]));
+        }
+        itemRequest.setGirth(product.getGirth());
+        itemRequest.setHeight(product.getHeight());
+        if (serviceType.equals(USPSServiceType.ALL) || serviceType.equals(USPSServiceType.PARCEL)) {
+        	itemRequest.setMachineSortable(product.isMachineSortable());
+        }
         itemRequest.setPackageId(String.valueOf(counter));
         itemRequest.setWeight(product.getWeight().getWeight());
         itemRequest.setWeightUnitOfMeasureType(product.getWeight().getWeightUnitOfMeasure());
+        itemRequest.setWidth(product.getWidth());
         itemRequest.setZipDestination(fulfillmentGroup.getAddress().getPostalCode());
         itemRequest.setZipOrigination(getOriginationPostalCode());
-        itemRequest.setMachineSortable(product.isMachineSortable());
         
         return itemRequest;
     }

@@ -89,6 +89,7 @@ public class USPSServiceResponseType implements Serializable {
     public USPSServiceResponseType(final String type, final String name, final String description) {
         this.description = description;
         setType(type);
+        setName(name);
     }
 
     public String getType() {
