@@ -102,7 +102,7 @@ public class USPSSingleItemPerPackageShippingCalculationModule extends USPSShipp
         }
         itemRequest.setGirth(product.getGirth());
         itemRequest.setHeight(product.getHeight());
-        if (serviceType.equals(USPSServiceType.ALL) || serviceType.equals(USPSServiceType.PARCEL)) {
+        if (serviceType.equals(USPSServiceType.ALL) || serviceType.equals(USPSServiceType.PARCEL) || serviceType.equals(USPSServiceType.ONLINE) || (serviceType.equals(USPSServiceType.FIRSTCLASS) && (itemRequest.getFirstClassType().equals(USPSFirstClassType.LETTER) || itemRequest.getFirstClassType().equals(USPSFirstClassType.FLAT)))) {
         	itemRequest.setMachineSortable(product.isMachineSortable());
         }
         itemRequest.setPackageId(String.valueOf(counter));
