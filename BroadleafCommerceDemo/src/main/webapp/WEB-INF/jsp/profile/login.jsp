@@ -38,6 +38,10 @@
 							<td><input size="30" class="loginField" type="password" name="j_password" id="j_password" /></td>
 			    		</tr>
 			    		<tr>
+			    			<td style="text-align:right"><label for="_spring_security_remember_me">Remember Me:</label></td>
+			    			<td><input type="checkbox" name="_spring_security_remember_me" id="_spring_security_remember_me" /></td>
+			    		</tr>
+			    		<tr>
 				    		<td>&nbsp;</td>
 							<td class="instructions">Note: Password is case sensitive</td>
                         </tr>

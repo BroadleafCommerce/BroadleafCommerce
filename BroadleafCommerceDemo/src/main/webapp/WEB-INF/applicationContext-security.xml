@@ -16,7 +16,7 @@
         				login-processing-url="/login_post.htm"
         				 />
    		<sec:logout logout-url="/logout.htm"/>
-   		<sec:remember-me />
+   		<sec:remember-me services-ref="blRememberMeServices"/>
    		<sec:custom-filter after="REMEMBER_ME_FILTER" ref="blCustomerStateFilter"/>
     </sec:http>
     
@@ -29,8 +29,17 @@
 		<sec:authentication-provider user-service-ref="blUserDetailsService" >
 			<sec:password-encoder ref="blPasswordEncoder"/>
 		</sec:authentication-provider>
+		<sec:authentication-provider ref="blRememberMeAuthenticationProvider"/>
 	</sec:authentication-manager>
+	
+	<bean id="blRememberMeServices" class="org.broadleafcommerce.profile.web.security.EnhancedTokenBasedRememberMeServices">
+		<property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
+	</bean>
 
+	<bean id="blRememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+		<property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE"/>
+	</bean>
+	
 	<sec:jdbc-user-service 
 			data-source-ref="blDS"
 		    id="blUserDetailsService" 
