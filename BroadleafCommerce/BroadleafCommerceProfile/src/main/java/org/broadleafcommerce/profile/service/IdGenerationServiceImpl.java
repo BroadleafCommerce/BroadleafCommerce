@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.persistence.OptimisticLockException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,7 +48,7 @@ public class IdGenerationServiceImpl implements IdGenerationService {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Getting the initial id from the database.");
                     }
-                    IdGeneration idGeneration = idGenerationDao.findNextId(idType);
+                    IdGeneration idGeneration = getCurrentIdRange(idType);
                     id = new Id(idGeneration.getBatchStart(), idGeneration.getBatchSize());
                 }
                 idTypeIdMap.put(idType, id);
@@ -59,7 +60,7 @@ public class IdGenerationServiceImpl implements IdGenerationService {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Updating batch size for idType " + idType);
                 }
-                IdGeneration idGeneration = idGenerationDao.findNextId(idType);
+                IdGeneration idGeneration = getCurrentIdRange(idType);
                 id.nextId = idGeneration.getBatchStart();
                 id.batchSize = idGeneration.getBatchSize();
             }
@@ -68,6 +69,30 @@ public class IdGenerationServiceImpl implements IdGenerationService {
 
             return retId;
         }
+    }
+    
+    private IdGeneration getCurrentIdRange(String idType) {
+        IdGeneration idGeneration = null;
+        int retryCount = 0;
+        boolean stale = true;
+        while (stale) {
+            try {
+                idGeneration = idGenerationDao.findNextId(idType);
+                stale = false;
+            } catch (OptimisticLockException e) {
+                //do nothing -- we will try again
+                if (LOG.isWarnEnabled()) {
+                    LOG.warn("Error saving batch start for " + idType + ".  Requerying table.");
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to retrieve id range for " + idType, e);
+            }
+            if (retryCount >= 10) {
+                throw new RuntimeException("Unable to retrieve id range for " + idType + ". Tried " + retryCount + " times, but the version for this entity continues to be concurrently modified.");
+            }
+            retryCount++;
+        }
+        return idGeneration;
     }
 
     private class Id {

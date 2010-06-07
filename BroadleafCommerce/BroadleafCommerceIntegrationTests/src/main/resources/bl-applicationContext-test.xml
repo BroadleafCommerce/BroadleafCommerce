@@ -178,4 +178,10 @@
     	</property>
     </bean>
     
+    <tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
+	    <tx:attributes>
+	      <tx:method name="*" propagation="REQUIRED"/>
+	    </tx:attributes>
+	</tx:advice>
+    
 </beans>

@@ -89,6 +89,7 @@
 	<tx:advice id="blTxAdvice" transaction-manager="blTransactionManager">
 	    <tx:attributes>
 	      <tx:method name="*" propagation="REQUIRED"/>
+	      <tx:method name="findNextId" propagation="REQUIRES_NEW"/>
 	    </tx:attributes>
 	</tx:advice>
 
@@ -168,8 +169,8 @@
 	</aop:config>
 
 	<aop:config>
-		<aop:pointcut id="blIdGenerationServiceOperation" expression="execution(* org.broadleafcommerce.profile.service.IdGenerationService.*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blIdGenerationServiceOperation"/>
+		<aop:pointcut id="blIdGenerationDaoOperation" expression="execution(* org.broadleafcommerce.profile.dao.IdGenerationDao.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blIdGenerationDaoOperation"/>
 	</aop:config>
 
 	<aop:config>

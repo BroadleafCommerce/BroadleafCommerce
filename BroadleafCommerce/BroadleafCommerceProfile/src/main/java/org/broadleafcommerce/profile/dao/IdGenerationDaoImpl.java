@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -44,7 +45,7 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    public IdGeneration findNextId(String idType) {
+    public IdGeneration findNextId(String idType) throws OptimisticLockException, Exception {
         IdGeneration response;
         Query query = em.createNamedQuery("BC_FIND_NEXT_ID");
         query.setParameter("idType", idType);
@@ -97,13 +98,8 @@ public class IdGenerationDaoImpl implements IdGenerationDao {
                 }
                 return findNextId(idType);
             }
-        } catch (Exception e) {
-            em.clear();
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Error saving batch start for " + idType + ".  Requerying table.");
-            }
-            return findNextId(idType);
         }
+        
         return response;
     }
 
