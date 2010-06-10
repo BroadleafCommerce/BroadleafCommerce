@@ -30,11 +30,15 @@
 	<path id="build.admin.runtime.classpath">
 		<fileset refid="adminDeps"/>
 	</path>
+	
+	<artifact:pom id="demoLauncherPom" file="BroadleafCommerceDemoLauncher/pom.xml"/>
+	<artifact:dependencies filesetId="demoLauncherDeps" pomRefId="demoLauncherPom" useScope="compile"/>
 
-	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-src-jars, build-sql, build-docs, build-dependencies">
+	<target name="create-with-dependencies" depends="setup, build-src, build-bin, build-demo-launcher, build-src-jars, build-sql, build-docs, build-dependencies">
 		<zip destfile="${maven.build.finalName}/${maven.build.finalName}-with-dependencies.zip">
 			<fileset dir="${maven.build.finalName}">
 				<include name="dist/**/*.*"/>
+				<include name="demo/**/*.*"/>
 				<include name="src/**/*.*"/>
 				<include name="docs/**/*.*"/>
 				<include name="lib/**/*.*"/>
@@ -147,6 +151,7 @@
 			<fileset dir="./">
 				<include name="BroadleafCommerceAdmin/**/*.*"/>
 				<include name="BroadleafCommerceDemo/**/*.*"/>
+				<include name="BroadleafCommerceDemoLauncher/**/*.*"/>
 				<include name="BroadleafCommerceFramework/**/*.*"/>
 				<include name="BroadleafCommerceFrameworkWeb/**/*.*"/>
 				<include name="BroadleafCommerceIntegrationTests/**/*.*"/>
@@ -174,6 +179,9 @@
 				<include name="*sources.jar"/>
 			</fileset>
 			<fileset dir="BroadleafCommerceDemo/target">
+				<include name="*sources.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceDemoLauncher/target">
 				<include name="*sources.jar"/>
 			</fileset>
 			<fileset dir="BroadleafCommerceFramework/target">
@@ -251,6 +259,26 @@
 		<copy file="doc/quickStartGuide.txt" todir="${maven.build.finalName}"/>
 		<copy file="doc/releaseNotes.txt" todir="${maven.build.finalName}"/>
 		<replace file="${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}"/>
+	</target>
+	
+	<target name="build-demo-launcher">
+		<copy todir="${maven.build.finalName}/demo/libs" flatten="true">
+			<fileset refid="demoLauncherDeps"/>
+	  	</copy>
+		<copy todir="${maven.build.finalName}/demo">
+			<fileset dir="BroadleafCommerceAdmin/target">
+				<include name="*.war"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceDemo/target">
+				<include name="*.war"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceDemoLauncher/target">
+				<include name="*.jar"/>
+			</fileset>
+			<fileset dir="BroadleafCommerceDemoLauncher">
+				<include name="jetty.xml"/>
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="clean">

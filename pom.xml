@@ -98,7 +98,8 @@
 		<module>BroadleafCommerceAdmin</module>
 		<module>BroadleafCommerceCyberSource</module>
 		<module>BroadleafCommerceCyberSourceAPI</module>
-	</modules>
+    	<module>BroadleafCommerceDemoLauncher</module>
+  </modules>
 	<dependencies>
 	</dependencies>
 	<reporting>
@@ -748,6 +749,54 @@
 				<type>jar</type>
 				<scope>runtime</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty</artifactId>
+				<version>6.1.22</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-plus</artifactId>
+				<version>6.1.22</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-naming</artifactId>
+				<version>6.1.22</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-management</artifactId>
+				<version>6.1.22</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jsp-2.1-jetty</artifactId>
+				<version>6.1.22</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-annotations</artifactId>
+				<version>6.1.22</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>start</artifactId>
+				<version>6.1.22</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+	        	<groupId>org.apache.ant</groupId>
+	        	<artifactId>ant</artifactId>
+	        	<version>1.7.1</version>
+	        	<scope>compile</scope>
+	        </dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>
