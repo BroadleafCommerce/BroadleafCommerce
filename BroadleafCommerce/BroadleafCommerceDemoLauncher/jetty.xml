@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<!DOCTYPE Configure PUBLIC "-//Mort Bay Consulting//DTD Configure//EN" "http://jetty.mortbay.org/configure.dtd">
+
+<Configure id="Server" class="org.mortbay.jetty.Server">
+
+    <!-- =========================================================== -->
+    <!-- Set connectors                                              -->
+    <!-- =========================================================== -->
+
+    <Call name="addConnector">
+      <Arg>
+          <New class="org.mortbay.jetty.nio.SelectChannelConnector">
+            <!-- the ip address or domain to bind -->
+            <Set name="host"><SystemProperty name="jetty.host" /></Set>
+
+            <!-- the port to use/bind, defaults to 8080 if property not set -->
+            <Set name="port"><SystemProperty name="jetty.port" default="8080"/></Set>
+          </New>
+      </Arg>
+    </Call>
+
+    <!-- =========================================================== -->
+    <!-- Set handler Collection Structure                            -->
+    <!-- =========================================================== -->
+    <Set name="handler">
+      <!-- the collection of handlers that will handle the request -->
+      <New id="Handlers" class="org.mortbay.jetty.handler.HandlerCollection">
+        <Set name="handlers">
+         <Array type="org.mortbay.jetty.Handler">
+           <!-- primarily handles the request and maps the request to a ContextHandler -->
+           <Item>
+             <New id="Contexts" class="org.mortbay.jetty.handler.ContextHandlerCollection"/>
+           </Item>
+
+           <!-- The default handler ... handles the request if not yet handled -->
+           <Item>
+             <New id="DefaultHandler" class="org.mortbay.jetty.handler.DefaultHandler"/>
+           </Item>
+         </Array>
+        </Set>
+      </New>
+    </Set>
+    
+    <Array id="plusConfig" type="java.lang.String">
+	  <Item>org.mortbay.jetty.webapp.WebInfConfiguration</Item>
+	  <Item>org.mortbay.jetty.plus.webapp.EnvConfiguration</Item>
+	  <Item>org.mortbay.jetty.plus.webapp.Configuration</Item>
+	  <Item>org.mortbay.jetty.webapp.JettyWebXmlConfiguration</Item>
+	  <Item>org.mortbay.jetty.webapp.TagLibConfiguration</Item>
+	</Array>
+    
+    <New class="org.mortbay.jetty.webapp.WebAppContext">
+        <Arg><Ref id="Contexts"/></Arg>
+        <Arg>broadleafdemo.war</Arg>
+        <Arg>/broadleafdemo</Arg>
+        <Set name="ConfigurationClasses"><Ref id="plusConfig"/></Set>
+    </New>
+    
+    <New class="org.mortbay.jetty.webapp.WebAppContext">
+        <Arg><Ref id="Contexts"/></Arg>
+        <Arg>broadleafadmin.war</Arg>
+        <Arg>/broadleafadmin</Arg>
+        <Set name="ConfigurationClasses"><Ref id="plusConfig"/></Set>
+    </New>
+
+    <!-- =========================================================== -->
+    <!-- extra options                                               -->
+    <!-- =========================================================== -->
+
+    <!-- Stops the server when ctrl+c is pressed (registers to Runtime.addShutdownHook) -->
+    <Set name="stopAtShutdown">true</Set>
+
+    <!-- send the server version in the response header? -->
+    <Set name="sendServerVersion">true</Set>
+
+    <!-- send the date header in the response header? -->
+    <Set name="sendDateHeader">true</Set>
+
+    <!-- allows requests(prior to shutdown) to finish gracefully -->
+    <Set name="gracefulShutdown">1000</Set>
+</Configure>
