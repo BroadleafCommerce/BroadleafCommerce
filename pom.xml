@@ -78,6 +78,11 @@
 			<name>eviware</name>
 			<url>http://www.eviware.com/repository/maven2</url>
 		</repository>
+		<repository>
+			<id>localrepo</id>
+			<name>localrepo</name>
+			<url>file://${basedir}/lib</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -797,6 +802,12 @@
 	        	<version>1.7.1</version>
 	        	<scope>compile</scope>
 	        </dependency>
+	        <dependency>
+				<groupId>xml-dir-listing</groupId>
+				<artifactId>xml-dir-listing</artifactId>
+				<version>0.2</version>
+				<scope>compile</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>
