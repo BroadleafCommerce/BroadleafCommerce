@@ -8,13 +8,15 @@
 	<macrodef name="jetty-start">
 	    <attribute name="arg1" default=""/>
 	    <attribute name="arg2" default=""/>
+		<attribute name="arg3" default=""/>
 	    <sequential>
 	        <java fork="true" classname="org.mortbay.start.Main" classpathref="build.runtime.classpath" dir="./">
 	            <jvmarg value="-Dfile.encoding=UTF-8"/>
 	            <jvmarg value="-DSTOP.PORT=8079"/>
 	            <jvmarg value="-DSTOP.KEY=secret"/>
 	            <jvmarg value="@{arg1}"/>
-	        	<arg value="@{arg2}"/>
+	        	<jvmarg value="@{arg2}"/>
+	        	<arg value="@{arg3}"/>
 	        </java>
 	    </sequential>
 	</macrodef>
@@ -30,7 +32,8 @@
 		<echo message="${temp}"/>
 		<jetty-start
 	        arg1="-Xmx1024M"
-	        arg2="jetty.xml"/>
+			arg2="-XX:MaxPermSize=512M"
+	        arg3="jetty.xml"/>
 	</target>
 
 	<target name="jetty-stop" depends="jetty-check-status, stop-db" if="jetty.started">
