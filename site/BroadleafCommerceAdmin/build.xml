@@ -16,7 +16,7 @@
 		<fileset refid="mydeps"/>
 	</path>
 	
-	<property file="../build.properties" />
+	<property file="../../build.properties" />
 	<property file="build.properties" />
 	<property name="FLEX_HOME" value="${flex.sdk.dir}" />
 	<property name="flex.home" value="${flex.sdk.dir}" />
