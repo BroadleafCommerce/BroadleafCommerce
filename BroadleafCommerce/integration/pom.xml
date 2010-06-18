@@ -65,11 +65,12 @@
 									<sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/cobertura.ser" />
 									<xmlfileset dir="src/test/resources" includes="*testng.xml" />
 								</testng>
-								<junitreport todir="target/test-reports">
+								<mkdir dir="target/surefire-reports"/>
+								<junitreport todir="target/surefire-reports">
 									<fileset dir="target/test-reports">
 										<include name="**/*.xml" />
 									</fileset>
-									<report format="noframes" todir="target/test-reports" />
+									<report format="noframes" todir="target/surefire-reports" />
 								</junitreport>
 								<cobertura-report format="html" destdir="target/cobertura-reports" datafile="target/instrumented/cobertura.ser">
 									<fileset dir="${framework}/src/main/java">
