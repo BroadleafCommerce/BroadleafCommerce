@@ -16,7 +16,7 @@
 						<div class="result">
 					</c:if>
 							<blc:productLink product="${product}" />
-							<c:if test="${product.isFeaturedProduct == true}" >
+							<c:if test="${product.featuredProduct == true}" >
 								--FEATURED PRODUCT!-- 
 							</c:if>
 							<br />
