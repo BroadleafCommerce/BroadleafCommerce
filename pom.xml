@@ -92,19 +92,12 @@
 		</pluginRepository>
 	</pluginRepositories>
 	<modules>
-		<module>BroadleafCommerceProfile</module>
-		<module>BroadleafCommerceProfileWeb</module>
-		<module>BroadleafCommerceFramework</module>
-		<module>BroadleafCommerceFrameworkWeb</module>
-		<module>BroadleafCommerceIntegrationTests</module>
-		<module>BroadleafCommerceUSPS</module>
-		<module>BroadleafCommerceUSPSSchemas</module>
-		<module>BroadleafCommerceDemo</module>
-		<module>BroadleafCommerceAdmin</module>
-		<module>BroadleafCommerceCyberSource</module>
-		<module>BroadleafCommerceCyberSourceAPI</module>
-    	<module>BroadleafCommerceDemoLauncher</module>
-  </modules>
+		<module>distribute</module>
+		<module>module</module>
+		<module>core</module>
+		<module>integration</module>
+		<module>site</module>
+	</modules>
 	<dependencies>
 	</dependencies>
 	<reporting>
@@ -126,6 +119,19 @@
 			<url>sftp://frs.sourceforge.net:/home/pfs/project/b/br/broadleaf/Broadleaf_Commerce/repo</url>
 		</repository>
 	</distributionManagement>
+	<profiles>
+		<profile>
+			<id>flex.skip</id>
+			<activation>
+		      <property>
+		        <name>flex.skip</name>
+		      </property>
+		    </activation>
+			<properties>
+				<flex.skip>true</flex.skip>
+			</properties>
+		</profile>
+	</profiles>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -200,7 +206,14 @@
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
-				<artifactId>BroadleafCommerceIntegrationTests</artifactId>
+				<artifactId>integration</artifactId>
+				<version>1.1.0-M3-SNAPSHOT</version>
+				<type>jar</type>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.broadleafcommerce</groupId>
+				<artifactId>broadleaf-demo-launcher</artifactId>
 				<version>1.1.0-M3-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>provided</scope>
@@ -504,12 +517,6 @@
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
-				<groupId>ant</groupId>
-				<artifactId>ant</artifactId>
-				<version>1.7.0</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
 				<groupId>cobertura</groupId>
 				<artifactId>cobertura</artifactId>
 				<version>1.8</version>
@@ -797,12 +804,12 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-	        	<groupId>org.apache.ant</groupId>
-	        	<artifactId>ant</artifactId>
-	        	<version>1.7.1</version>
-	        	<scope>compile</scope>
-	        </dependency>
-	        <dependency>
+				<groupId>org.apache.ant</groupId>
+				<artifactId>ant</artifactId>
+				<version>1.7.1</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
 				<groupId>xml-dir-listing</groupId>
 				<artifactId>xml-dir-listing</artifactId>
 				<version>0.2</version>
