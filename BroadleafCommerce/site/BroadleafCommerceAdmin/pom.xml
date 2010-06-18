@@ -48,7 +48,7 @@
 				<executions>
 					<execution>
 						<id>flex</id>
-						<phase>prepare-package</phase>
+						<phase>compile</phase>
 						<configuration>
 							<tasks unless="flex.skip">
 								<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
