@@ -129,7 +129,7 @@
 				<include name="site/BroadleafCommerceDemoLauncher/**/*.*" />
 				<include name="core/BroadleafCommerceFramework/**/*.*" />
 				<include name="core/BroadleafCommerceFrameworkWeb/**/*.*" />
-				<include name="integration/BroadleafCommerceIntegrationTests/**/*.*" />
+				<include name="integration/**/*.*" />
 				<include name="core/BroadleafCommerceProfile/**/*.*" />
 				<include name="core/BroadleafCommerceProfileWeb/**/*.*" />
 				<include name="module/BroadleafCommerceUSPS/**/*.*" />
