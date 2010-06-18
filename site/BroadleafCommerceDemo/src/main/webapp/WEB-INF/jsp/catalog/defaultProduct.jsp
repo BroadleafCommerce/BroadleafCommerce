@@ -23,7 +23,7 @@
 			</div>
 			<div class="column productSummary span-11">
 				<div class="bottomRule">
-					<c:if test="${currentProduct.isFeaturedProduct}">
+					<c:if test="${currentProduct.featuredProduct}">
 						<img class="featuredSmall" src="/broadleafdemo/images/featuredSmallRed.gif" /><br/>
 					</c:if>
 					<c:if test="${!empty currentProduct.manufacturer}" >
