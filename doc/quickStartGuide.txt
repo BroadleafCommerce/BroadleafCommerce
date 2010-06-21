@@ -2,7 +2,7 @@
 
 This quick-start guide is intended to give you the bare minimum information you will need to get up and running using the Broadleaf Commerce framework. It is split into two sections: Building and Running the Broadleaf Commerce Demo Application, and Preparing Your Custom Application to Run with Broadleaf Commerce.
 
-== Building and Running the Broadleaf Commerce Demo Application ==
+== Running the Broadleaf Commerce Demo Application ==
 
 Demo Application Prerequisites:
  * JDK 1.5 or greater (http://java.sun.com/javase/downloads/index_jdk5.jsp)
@@ -18,6 +18,10 @@ Run the Demo and Admin Applications:
 
 At this point, you should be able to access the demo application using your favorite web browser. Open the site at http://localhost:8080/broadleafdemo.
 You should also be able to access the admin application. Open the admin site at http://localhost:8080/broadleafadmin. You can log onto the Admin Tool with the username 'admin' and password 'blc_admin'.
+
+Stop the Demo and Admin Applications:
+  * Execute the following command at the 'demo' directory of the Broadleaf Commerce distribution.
+    * '''java -jar broadleaf-demo-launcher-[version].jar stop'''
 
 == Preparing Your Custom Application to Run with Broadleaf Commerce ==
 
