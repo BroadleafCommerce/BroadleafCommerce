@@ -5,50 +5,19 @@ This quick-start guide is intended to give you the bare minimum information you 
 == Building and Running the Broadleaf Commerce Demo Application ==
 
 Demo Application Prerequisites:
- * JDK 1.5 (http://java.sun.com/javase/downloads/index_jdk5.jsp)
- * Maven 2.2.1 (http://archive.apache.org/dist/maven/binaries/)
- * Ant 1.7.1 (http://ant.apache.org/bindownload.cgi)
+ * JDK 1.5 or greater (http://java.sun.com/javase/downloads/index_jdk5.jsp)
 
-Make sure you have the prerequisite items installed and confirm that each is in an operational state on your test machine. Also confirm that the "ant" and "mvn" commands are operational at the command prompt - refer to the installation instructions at the Apache Ant and Apache Maven download sites.
+Make sure you have the prerequisite items installed and confirm that each is in an operational state on your test machine.
 
-Build and Run the Demo Application:
- * Download the "-with-dependencies" distribution of the Broadleaf Commerce framework (http://broadleafcommerce.org/download.html). This distribution contains the source code necessary to build and run the demo.
+Run the Demo and Admin Applications:
+ * Download the "-with-dependencies" distribution of the Broadleaf Commerce framework (http://broadleafcommerce.org/download.html). This distribution contains libraries required to run the demo.
  * Unzip the Broadleaf Commerce distribution to a suitable directory
- * Edit the [Broadleaf install directory]/src/build.properties file. 
-   * Change maven.home value to the installation directory for Maven
- * Execute the following command at the src directory of the Broadleaf Commerce distribution. This may take some time, as maven will need to download additional dependencies and compile the Broadleaf Commerce framework.
-   * '''mvn install''' (or '''mvn -Dmaven.test.skip=true install''' to build without running the tests)
- * Execute the following commands at the "BroadleafCommerceDemo" directory (inside src). These steps will build and run the demo application.
-   * '''ant launch-demo'''
-   * Wait until you see the 'Started Jetty Server' message in the console before attempting to access the demo in a browser
+ * Execute the following command at the 'demo' directory of the Broadleaf Commerce distribution.
+   * '''java -jar broadleaf-demo-launcher-[version].jar'''
+   * Wait until you see the 'Started SelectChannelConnector@0.0.0.0:8080' message in the console before attempting to access the demo or admin in a browser.
 
 At this point, you should be able to access the demo application using your favorite web browser. Open the site at http://localhost:8080/broadleafdemo.
-
-== Building and Running the Broadleaf Commerce Admin Tool ==
-
-Admin Tool Prerequisites in addition to ones listed above:
- * JDK 1.5 (http://java.sun.com/javase/downloads/index_jdk5.jsp)
- * Maven 2.2.1 (http://archive.apache.org/dist/maven/binaries/)
- * Ant 1.7.1 (http://ant.apache.org/bindownload.cgi)
- * Flex 3.4 SDK (http://opensource.adobe.com/wiki/display/flexsdk/Flex+SDK)
- 
-WARNING - It's a good idea to install everything to a directory whose absolute path does not include any spaces. This is especially important for the flex sdk, as the flex compilation phase of the build will fail if the flex sdk has spaces in the path to its installed directory.
-
-Build and Deploy the Admin Tool
- * Download the "-with-dependencies" distribution of the Broadleaf Commerce framework from our SourceForge site (http://sourceforge.net/projects/broadleaf/). This distribution contains the source code necessary to build and run the Admin Tool.
- * Unzip the Broadleaf Commerce distribution to a suitable directory
- * Edit the [Broadleaf install directory]/src/build.properties file. 
-   * Change maven.home value to the installation directory for Maven
- * Edit the [Broadleaf install directory]/src/BroadleafCommerceAdmin/build.properties
-   * Change the flex.sdk.dir value to the installation directory for the flex sdk
- * Execute the following command at the src directory of the Broadleaf Commerce distribution. This may take some time, as maven will need to download additional dependencies and compile the Broadleaf Commerce framework.
-   * '''mvn install''' (or '''mvn -Dmaven.test.skip=true install''' to build without running the tests)
- * Execute the following commands at the "BroadleafCommerceAdmin" directory (inside src). These steps will build and run the demo and admin applications.
-   * '''ant launch-admin'''
-   * Wait until you see the 'Started Jetty Server' message in the console before attempting to access the demo or admin in a browser
-
-At this point, you should be able to access the Admin Tool using your favorite web browser. Open the site at http://localhost:8080/broadleafadmin/BroadleafCommerceAdmin.html.  You can log onto the Admin Tool with the username admin and password blc_admin. You should also be able to access the demo application using your favorite web browser. Open the site at http://localhost:8080/broadleafdemo.
-
+You should also be able to access the admin application. Open the admin site at http://localhost:8080/broadleafadmin. You can log onto the Admin Tool with the username 'admin' and password 'blc_admin'.
 
 == Preparing Your Custom Application to Run with Broadleaf Commerce ==
 
@@ -59,59 +28,46 @@ Prerequisites:
 
 Dependencies:
 
-Many of these dependencies have dependencies of their own. For the complete list, refer to the lib directory of the Broadleaf Commerce "-with-dependencies" distribution.
-
- * Service Layer
-   * hibernate-core 3.3.1.GA
-   * hibernate-entitymanager 3.4.0.GA
-   * hibernate-jmx 3.3.1.GA
-   * commons-logging 1.1.1
-   * log4j 1.2.12
-   * aspectjweaver 1.6.5
-   * slf4j 1.5.2
-   * jsr250-api 1.0
-   * velocity 1.6.2
-   * velocity-tools 2.0-beta4
-   * mail 1.4.1
-   * xmlbeans 2.4.0
-   * geronimo-jms_1.1_spec 1.1.1
-   * ehcache 1.2.3
-   * compass 2.2.0
-   * mvel2 2.0.11
-   * asm 2.2.1
-   * cglib 2.1_3
-   * oro 2.0.8
-   * jsr107cache 1.0
-   * jsr173_api 1.0
-   * lucene 2.4.1
-   * spring security 2.0.5
-   * spring framework 2.5.6
- * Web Layer
-   * spring webmvc 2.5.6
-   * servlet-api 2.5
-   * jsp-api 2.1
-   * jstl 1.1.2
-   * taglibs standard 1.1.2
-
 The Broadleaf Commerce framework minimum jar requirements are:
 
  * broadleaf-framework.jar
  * broadleaf-profile.jar
+ 
+ '''Service Layer Dependencies'''
+ %%service-dependencies%%
 
 To add in authentication / authorization support as well as pre-made controllers and taglibs:
 
  * broadleaf-framework-web.jar
  * broadleaf-profile-web.jar
+ 
+ '''Web Layer Dependencies'''
+ %%web-dependencies%%
 
 To add in USPS shipping support:
 
  * broadleaf-usps.jar
  * broadleaf-usps-schemas.jar
  
+ '''USPS Dependencies'''
+ %%usps-dependencies%%
+ 
 To add in CyberSource support:
 
  * broadleaf-cybersource.jar
  * broadleaf-cybersource-api.jar
+ 
+ '''CyberSource Dependencies'''
+ %%cybersource-dependencies%%
+ 
+Other Dependencies:
+
+ '''Demo Dependencies'''
+ %%demo-dependencies%%
+ 
+ '''Admin Dependencies'''
+ %%admin-dependencies%%
+
 
 '''The following represents the general considerations that will need to be addressed to launch a custom application on top of Broadleaf Commerce:'''
 
