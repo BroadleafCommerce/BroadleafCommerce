@@ -4,11 +4,11 @@
 	<parent>
 		<artifactId>site</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.1.0-M3-SNAPSHOT</version>
+		<version>1.1.0-M3</version>
 	</parent>
 	<groupId>org.broadleafcommerce</groupId>
 	<artifactId>broadleaf-demo-launcher</artifactId>
-	<version>1.1.0-M3-SNAPSHOT</version>
+	<version>1.1.0-M3</version>
 	<name>BroadleafCommerceDemoLauncher</name>
 	<url>http://maven.apache.org</url>
 	<properties>
