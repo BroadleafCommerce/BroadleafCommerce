@@ -116,7 +116,7 @@
 		<repository>
 			<id>sourceforge</id>
 			<name>SourceForge</name>
-			<url>sftp://frs.sourceforge.net:/home/pfs/project/b/br/broadleaf/Broadleaf_Commerce/repo</url>
+			<url>scp://frs.sourceforge.net:/home/pfs/project/b/br/broadleaf/Broadleaf_Commerce/repo</url>
 		</repository>
 	</distributionManagement>
 	<profiles>
