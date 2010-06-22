@@ -28,49 +28,49 @@ Stop the Demo and Admin Applications:
 We've prepared the following quick-start overview to help you out as you prepare your custom JEE module based on Broadleaf Commerce.
 
 Prerequisites:
- * JDK 1.5 (http://java.sun.com/javase/downloads/index_jdk5.jsp)
+ * JDK 1.5 or greater (http://java.sun.com/javase/downloads/index_jdk5.jsp)
 
 Dependencies:
 
-The Broadleaf Commerce framework minimum jar requirements are:
+The Broadleaf Commerce framework minimum jar requirements are (service layer):
 
  * broadleaf-framework.jar
  * broadleaf-profile.jar
  
- '''Service Layer Dependencies'''
- %%service-dependencies%%
+'''Service Layer Dependencies'''
+[%%service-dependencies%%]
 
-To add in authentication / authorization support as well as pre-made controllers and taglibs:
+To add in authentication / authorization support as well as pre-made controllers and taglibs (web layer):
 
  * broadleaf-framework-web.jar
  * broadleaf-profile-web.jar
  
- '''Web Layer Dependencies'''
- %%web-dependencies%%
+'''Web Layer Additional Dependencies'''
+[%%web-dependencies%%]
 
 To add in USPS shipping support:
 
  * broadleaf-usps.jar
  * broadleaf-usps-schemas.jar
  
- '''USPS Dependencies'''
- %%usps-dependencies%%
+'''USPS Additional Dependencies'''
+[%%usps-dependencies%%]
  
 To add in CyberSource support:
 
  * broadleaf-cybersource.jar
  * broadleaf-cybersource-api.jar
  
- '''CyberSource Dependencies'''
- %%cybersource-dependencies%%
+'''CyberSource Additional Dependencies'''
+[%%cybersource-dependencies%%]
  
 Other Dependencies:
 
- '''Demo Dependencies'''
- %%demo-dependencies%%
+'''Demo Additional Dependencies'''
+[%%demo-dependencies%%]
  
- '''Admin Dependencies'''
- %%admin-dependencies%%
+'''Admin Additional Dependencies'''
+[%%admin-dependencies%%]
 
 
 '''The following represents the general considerations that will need to be addressed to launch a custom application on top of Broadleaf Commerce:'''
