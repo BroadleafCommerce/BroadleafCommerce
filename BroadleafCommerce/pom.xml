@@ -53,6 +53,13 @@
 						https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/tags
 		            </tagBase>
 				</configuration>
+				<dependencies>
+				    <dependency>
+						<groupId>com.jcraft</groupId>
+						<artifactId>jsch</artifactId>
+						<version>0.1.42</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
@@ -116,7 +123,7 @@
 		<repository>
 			<id>sourceforge</id>
 			<name>SourceForge</name>
-			<url>scp://frs.sourceforge.net:/home/pfs/project/b/br/broadleaf/Broadleaf_Commerce/repo</url>
+			<url>sftp://frs.sourceforge.net:/home/pfs/project/b/br/broadleaf/Broadleaf_Commerce/repo</url>
 		</repository>
 	</distributionManagement>
 	<profiles>
