@@ -16,7 +16,11 @@
 	<property name="maven.build.dir" value="${releaseParentDir}/distribute/target" />
 	<property name="maven.build.finalName" value="${mypom.artifactId}-${mypom.version}" />
 
-	<artifact:pom id="frameworkPom" file="${releaseParentDir}/core/BroadleafCommerceFrameworkWeb/pom.xml" />
+	<artifact:pom id="uspsPom" file="${releaseParentDir}/module/BroadleafCommerceUSPS/pom.xml" />
+	<artifact:pom id="cybersourcePom" file="${releaseParentDir}/module/BroadleafCommerceCyberSource/pom.xml" />
+	<artifact:pom id="frameworkPom" file="${releaseParentDir}/core/BroadleafCommerceFramework/pom.xml" />
+	<artifact:pom id="frameworkWebPom" file="${releaseParentDir}/core/BroadleafCommerceFrameworkWeb/pom.xml" />
+	<artifact:pom id="demoPom" file="${releaseParentDir}/site/BroadleafCommerceDemo/pom.xml" />
 	<artifact:pom id="adminPom" file="${releaseParentDir}/site/BroadleafCommerceAdmin/pom.xml" />
 	<artifact:pom id="demoLauncherPom" file="${releaseParentDir}/site/BroadleafCommerceDemoLauncher/pom.xml" />
 	<artifact:pom id="distributionPom" file="${releaseParentDir}/distribute/pom.xml" />
@@ -186,14 +190,18 @@
 	</target>
 
 	<target name="setup-dependencies">
+		<artifact:dependencies filesetId="uspsDeps" pomRefId="uspsPom" useScope="runtime" />
+		<artifact:dependencies filesetId="cybersourceDeps" pomRefId="cybersourcePom" useScope="runtime" />
 		<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime" />
+		<artifact:dependencies filesetId="frameworkWebDeps" pomRefId="frameworkWebPom" useScope="runtime" />
+		<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="runtime"/>
 		<artifact:dependencies filesetId="adminDeps" pomRefId="adminPom" useScope="runtime"/>
 		<artifact:dependencies filesetId="adminDeps2" pomRefId="adminPom" useScope="compile"/>
 		<artifact:dependencies filesetId="distributionDeps" pomRefId="distributionPom" versionsId="distributionVersions" />
 		<artifact:dependencies filesetId="integrationDeps" pomRefId="integrationPom" />
 		<artifact:dependencies filesetId="demoLauncherDeps" pomRefId="demoLauncherPom" useScope="compile" />
 		<path id="build.runtime.classpath">
-			<fileset refid="frameworkDeps" />
+			<fileset refid="frameworkWebDeps" />
 		</path>
 		<path id="build.admin.compile.classpath">
 			<fileset refid="adminDeps2"/>
@@ -210,7 +218,7 @@
 		<taskdef name="licenseCopy" classname="org.broadleafcommerce.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
 		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/framework" licenseDir="doc/dependency-licenses">
 			<restrict>
-				<fileset refid="frameworkDeps" />
+				<fileset refid="frameworkWebDeps" />
 				<rsel:not>
 					<rsel:name name="org/broadleafcommerce*.jar" />
 				</rsel:not>
@@ -221,7 +229,7 @@
 				<fileset refid="adminDeps" />
 				<intersect>
 					<fileset refid="adminDeps" />
-					<fileset refid="frameworkDeps" />
+					<fileset refid="frameworkWebDeps" />
 				</intersect>
 			</difference>
 		</licenseCopy>
@@ -238,6 +246,114 @@
 		<copy file="${releaseParentDir}/doc/quickStartGuide.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
 		<copy file="${releaseParentDir}/doc/releaseNotes.txt" todir="${maven.build.dir}/${maven.build.finalName}" />
 		<replace file="${maven.build.dir}/${maven.build.finalName}/readme.txt" token="%%version%%" value="${mypom.version}" />
+		
+		<path id="service-dependencies">
+			<restrict>
+				<fileset refid="frameworkDeps" />
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</path>
+		<pathconvert property="prop-service-dependencies" pathsep="${line.separator}" refid="service-dependencies">
+	        <mapper type="flatten"/>
+	    </pathconvert>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%service-dependencies%%" value="${prop-service-dependencies}" />
+		
+		<path id="web-dependencies">
+			<restrict>
+				<difference>
+					<fileset refid="frameworkWebDeps" />
+					<intersect>
+						<fileset refid="frameworkWebDeps" />
+						<fileset refid="frameworkDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</path>
+		<pathconvert property="prop-web-dependencies" pathsep="${line.separator}" refid="web-dependencies">
+	        <mapper type="flatten"/>
+	    </pathconvert>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%web-dependencies%%" value="${prop-web-dependencies}" />
+		
+		<path id="usps-dependencies">
+			<restrict>
+				<difference>
+					<fileset refid="uspsDeps" />
+					<intersect>
+						<fileset refid="uspsDeps" />
+						<fileset refid="frameworkDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</path>
+		<pathconvert property="prop-usps-dependencies" pathsep="${line.separator}" refid="usps-dependencies">
+	        <mapper type="flatten"/>
+	    </pathconvert>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%usps-dependencies%%" value="${prop-usps-dependencies}" />
+		
+		<path id="cybersource-dependencies">
+			<restrict>
+				<difference>
+					<fileset refid="cybersourceDeps" />
+					<intersect>
+						<fileset refid="cybersourceDeps" />
+						<fileset refid="frameworkDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</path>
+		<pathconvert property="prop-cybersource-dependencies" pathsep="${line.separator}" refid="cybersource-dependencies">
+	        <mapper type="flatten"/>
+	    </pathconvert>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%cybersource-dependencies%%" value="${prop-cybersource-dependencies}" />
+		
+		<path id="demo-dependencies">
+			<restrict>
+				<difference>
+					<fileset refid="demoDeps" />
+					<intersect>
+						<fileset refid="demoDeps" />
+						<fileset refid="frameworkWebDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</path>
+		<pathconvert property="prop-demo-dependencies" pathsep="${line.separator}" refid="demo-dependencies">
+	        <mapper type="flatten"/>
+	    </pathconvert>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%demo-dependencies%%" value="${prop-demo-dependencies}" />
+		
+		<path id="admin-dependencies">
+			<restrict>
+				<difference>
+					<fileset refid="adminDeps" />
+					<intersect>
+						<fileset refid="adminDeps" />
+						<fileset refid="frameworkWebDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</path>
+		<pathconvert property="prop-admin-dependencies" pathsep="${line.separator}" refid="admin-dependencies">
+	        <mapper type="flatten"/>
+	    </pathconvert>
+		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%admin-dependencies%%" value="${prop-admin-dependencies}" />
 	</target>
 
 	<target name="build-demo-launcher">
