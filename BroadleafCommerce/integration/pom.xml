@@ -3,13 +3,13 @@
 	<parent>
 		<artifactId>BroadleafCommerce</artifactId>
 		<groupId>org.broadleafcommerce</groupId>
-		<version>1.1.0-M4-SNAPSHOT</version>
+		<version>1.1.0-M3-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.broadleafcommerce</groupId>
 	<artifactId>integration</artifactId>
 	<name>integration</name>
-	<version>1.1.0-M4-SNAPSHOT</version>
+	<version>1.1.0-M3-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<build>
 		<plugins>
@@ -65,7 +65,7 @@
 									<sysproperty key="net.sourceforge.cobertura.datafile" file="target/instrumented/cobertura.ser" />
 									<xmlfileset dir="src/test/resources" includes="*testng.xml" />
 								</testng>
-								<mkdir dir="target/surefire-reports" />
+								<mkdir dir="target/surefire-reports"/>
 								<junitreport todir="target/surefire-reports">
 									<fileset dir="target/test-reports">
 										<include name="**/*.xml" />
