@@ -115,6 +115,8 @@
 				<version>2.0</version>
 				<configuration>
 					<aggregate>true</aggregate>
+					<minmemory>128m</minmemory>
+          			<maxmemory>1g</maxmemory>
 				</configuration>
 			</plugin>
 		</plugins>

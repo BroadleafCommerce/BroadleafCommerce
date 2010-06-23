@@ -179,7 +179,7 @@
 	<target name="build-docs" depends="setup">
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/docs/api" />
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-Xmx512M" pom="${releaseParentDir}/pom.xml">
+		<artifact:mvn mavenHome="${maven.home}" fork="true" pom="${releaseParentDir}/pom.xml">
 			<arg value="javadoc:javadoc" />
 		</artifact:mvn>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/docs/api">
