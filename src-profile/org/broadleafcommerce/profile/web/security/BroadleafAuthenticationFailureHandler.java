@@ -28,13 +28,26 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 
 public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
+    private String defaultFailureUrl;
+
+    public BroadleafAuthenticationFailureHandler() {
+        super();
+    }
+
+    public BroadleafAuthenticationFailureHandler(String defaultFailureUrl) {
+        super(defaultFailureUrl);
+        this.defaultFailureUrl = defaultFailureUrl;
+    }
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         String failureUrlParam = StringUtil.cleanseUrlString(request.getParameter("failureUrl"));
         String successUrlParam = StringUtil.cleanseUrlString(request.getParameter("successUrl"));
-        String failureUrl = null;
-        if (StringUtils.isNotEmpty(failureUrlParam)) {
-            failureUrl = failureUrlParam;
+        String failureUrl = StringUtils.trimToNull(failureUrlParam);
+        if (failureUrl == null) {
+            failureUrl = StringUtils.trimToNull(defaultFailureUrl);
+        }
+        if (failureUrl != null) {
             if (StringUtils.isNotEmpty(successUrlParam)) {
                 if (!failureUrl.contains("?")) {
                     failureUrl += "?successUrl=" + successUrlParam;
@@ -42,7 +55,7 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
                     failureUrl += "&successUrl=" + successUrlParam;
                 }
             }
-            request.getRequestDispatcher(failureUrl).forward(request, response);
+            getRedirectStrategy().sendRedirect(request, response, failureUrl);
         } else {
             super.onAuthenticationFailure(request, response, exception);
         }
