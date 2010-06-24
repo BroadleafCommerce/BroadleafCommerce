@@ -15,6 +15,9 @@
  */
 package org.broadleafcommerce.profile.web.security;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -25,10 +28,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
-import org.springframework.security.web.authentication.AuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.TextEscapeUtils;
 
-public class BroadleafAuthenticationProcessingFilter extends AuthenticationProcessingFilter {
+public class BroadleafAuthenticationProcessingFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -49,7 +52,9 @@ public class BroadleafAuthenticationProcessingFilter extends AuthenticationProce
 
             username = username.trim();
 
-            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password, new GrantedAuthority[] { new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED") });
+            List<GrantedAuthority> grantedAuthorities =  new ArrayList<GrantedAuthority>();
+            grantedAuthorities.add(new GrantedAuthorityImpl("ROLE_PASSWORD_CHANGE_REQUIRED"));
+            UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password, grantedAuthorities);
 
             // Place the last username attempted into HttpSession for views
             HttpSession session = request.getSession(false);
