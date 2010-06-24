@@ -43,11 +43,11 @@ public class BroadleafAuthenticationSuccessHandler extends SavedRequestAwareAuth
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        super.onAuthenticationSuccess(request, response, authentication);
         if (mergeCartProcessor != null) {
             mergeCartProcessor.execute(request, response, authentication);
         }
         notifyPostLoginListeners(request, response, authentication);
+        super.onAuthenticationSuccess(request, response, authentication);
     }
 
     public void addPostLoginListener(PostLoginObserver postLoginObserver) {
