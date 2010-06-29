@@ -56,7 +56,10 @@ public class LocalRedirectStrategy implements RedirectStrategy {
         channelServer = "://" + requestServerName;
 
         // strip off protocol and server
-        url = url.substring(url.indexOf(channelServer) + channelServer.length());
+        url = url.substring(url.indexOf("://") + 3);
+        if (url.indexOf(requestServerName) > -1) {
+            url = url.substring(url.indexOf(requestServerName) + requestServerName.length());
+        }
         if (url.startsWith(":") && url.indexOf('/') > -1) {
             url = url.substring(url.indexOf('/'));
         }
