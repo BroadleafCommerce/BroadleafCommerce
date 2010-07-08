@@ -102,7 +102,7 @@
     </target> 
 
 	<target name="launch-admin" depends="start-db">
-		<delete>
+		<delete quiet="true" failonerror="false">
 			<fileset dir="${maven.build.dir}/WEB-INF/lib" includes="*.*"/>
 	  	</delete>
 		<minimal-maven-launch basedir="${basedir}/../BroadleafCommerceDemo" goal="clean compile war:inplace" resultproperty="maven.build.result" />

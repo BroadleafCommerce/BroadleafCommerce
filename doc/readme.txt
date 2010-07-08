@@ -145,4 +145,4 @@ The "dist" directory contains the following distinct jar files for use in applic
 
 4. WHERE TO START?
 
-* Please refer to the Broadleaf Commerce documentation wiki for information on running the demonstration and developing applications on top of Broadleaf Commerce (http://www.broadleafcommerce.org/trac).
+* Please refer to the Broadleaf Commerce documentation wiki for information on running the demonstration and developing applications on top of Broadleaf Commerce (http://www.broadleafcommerce.org/confluence).
