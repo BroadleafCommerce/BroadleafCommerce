@@ -10,15 +10,32 @@
 
     <sec:http auto-config="true" >
     	<sec:intercept-url pattern="/wishlist/**" access="ROLE_USER"/>
-        <sec:form-login login-page='/registerCustomer/registerCustomer.htm' 
-        				default-target-url='/welcome.htm'
-        				authentication-failure-url="/registerCustomer/registerCustomer.htm?error=true"
+        <sec:form-login login-page="/registerCustomer/registerCustomer.htm"
+        				authentication-failure-handler-ref="broadleafAuthenticationFailureHandler"
+        				authentication-success-handler-ref="springAuthenticationSuccessHandler"
         				login-processing-url="/login_post.htm"
         				 />
    		<sec:logout logout-url="/logout.htm"/>
    		<sec:remember-me services-ref="blRememberMeServices"/>
    		<sec:custom-filter after="REMEMBER_ME_FILTER" ref="blCustomerStateFilter"/>
     </sec:http>
+    
+    <bean id="broadleafAuthenticationFailureHandler"
+    	class="org.broadleafcommerce.profile.web.security.BroadleafAuthenticationFailureHandler">
+    	<constructor-arg value="/registerCustomer/registerCustomer.htm?error=true"/>
+    	<property name="redirectStrategy" ref="redirectStrategy"/>
+    </bean>
+    
+    <bean id="springAuthenticationSuccessHandler"
+    	class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+    	<property name="redirectStrategy" ref="redirectStrategy"/>
+    	<property name="defaultTargetUrl" value="/welcome.htm"/>
+    	<property name="alwaysUseDefaultTargetUrl" value="true"/>
+    </bean>
+    
+    <bean id="redirectStrategy" class="org.broadleafcommerce.profile.web.security.LocalRedirectStrategy">
+    	<property name="enforcePortMatch" value="true"/>
+    </bean>
     
     <!--  bean id="passwordEncoder" class="org.springframework.security.providers.encoding.Md5PasswordEncoder"/ -->    
 
