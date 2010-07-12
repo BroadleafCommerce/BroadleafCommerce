@@ -49,3 +49,8 @@ Version 1.1.0-M3
 * added a simplified demo launching mechanism
 * Updated project structure to better separate concepts
 * fixed an el expression problem in the demo
+
+Version 1.1.0
+--------------------------
+* upgrade to spring 3.0.3 to remedy some security issues that were present in spring 3.0.2
+* Add new redirect strategy that protects against success and failure url authentication exploits

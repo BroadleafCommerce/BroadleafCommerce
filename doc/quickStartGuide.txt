@@ -13,7 +13,7 @@ Run the Demo and Admin Applications:
  * Download the "-with-dependencies" distribution of the Broadleaf Commerce framework (http://broadleafcommerce.org/download.html). This distribution contains libraries required to run the demo.
  * Unzip the Broadleaf Commerce distribution to a suitable directory
  * Execute the following command at the 'demo' directory of the Broadleaf Commerce distribution.
-   * '''java -jar broadleaf-demo-launcher-[version].jar'''
+   * java -jar broadleaf-demo-launcher-[version].jar
    * Wait until you see the 'Started SelectChannelConnector@0.0.0.0:8080' message in the console before attempting to access the demo or admin in a browser.
 
 At this point, you should be able to access the demo application using your favorite web browser. Open the site at http://localhost:8080/broadleafdemo.
@@ -21,7 +21,7 @@ You should also be able to access the admin application. Open the admin site at 
 
 Stop the Demo and Admin Applications:
   * Execute the following command at the 'demo' directory of the Broadleaf Commerce distribution.
-    * '''java -jar broadleaf-demo-launcher-[version].jar stop'''
+    * java -jar broadleaf-demo-launcher-[version].jar stop
 
 == Preparing Your Custom Application to Run with Broadleaf Commerce ==
 
@@ -32,55 +32,53 @@ Prerequisites:
 
 Dependencies:
 
-The Broadleaf Commerce framework minimum jar requirements are (service layer):
-
+Service Layer
+Internal Dependencies:
  * broadleaf-framework.jar
  * broadleaf-profile.jar
  
-'''Service Layer Dependencies'''
-[%%service-dependencies%%]
+External Dependencies
+ * %%service-dependencies%%
 
-To add in authentication / authorization support as well as pre-made controllers and taglibs (web layer):
-
+Web Layer
+Internal Dependencies:
  * broadleaf-framework-web.jar
  * broadleaf-profile-web.jar
  
-'''Web Layer Additional Dependencies'''
-[%%web-dependencies%%]
+External Dependencies
+ * %%web-dependencies%%
 
-To add in USPS shipping support:
-
+USPS Support
+Internal Dependencies:
  * broadleaf-usps.jar
  * broadleaf-usps-schemas.jar
  
-'''USPS Additional Dependencies'''
-[%%usps-dependencies%%]
+External Dependencies:
+ * %%usps-dependencies%%
  
-To add in CyberSource support:
-
+CyberSource Support
+Internal Dependencies:
  * broadleaf-cybersource.jar
  * broadleaf-cybersource-api.jar
  
-'''CyberSource Additional Dependencies'''
-[%%cybersource-dependencies%%]
+External Dependencies:
+ * %%cybersource-dependencies%%
  
-Other Dependencies:
-
-'''Demo Additional Dependencies'''
-[%%demo-dependencies%%]
+Demo Additional Dependencies:
+ * %%demo-dependencies%%
  
-'''Admin Additional Dependencies'''
-[%%admin-dependencies%%]
+Admin Additional Dependencies:
+ * %%admin-dependencies%%
 
+The following represents the general considerations that will need to be addressed to launch a custom application on top of Broadleaf Commerce:
 
-'''The following represents the general considerations that will need to be addressed to launch a custom application on top of Broadleaf Commerce:'''
-
- * Review the [wiki:dataModel Broadleaf Commerce data model]. We have made every effort to create a rich data model that should cover most, if not all, of our user's needs. However, should you encounter a situation where you need to extend/override the Broadleaf Commerce data model, you will need to refer to the [wiki:entityExtension Entity Extension Guide].
- * Broadleaf Commerce is a Spring-based framework. Your application will need to use Spring as well to interact with Broadleaf Commerce. As a result, you will need to merge the Spring configuration for your application with that of Broadleaf Commerce. Thankfully, this is easy to do, but there are some guidelines. Refer to the [wiki:mergeConfiguration Merge Configuration].
+ * Review the data model (http://www.broadleafcommerce.org/confluence/display/core/Data+Model). We have made every effort to create a rich data model that should cover most, if not all, of our user's needs. However, should you encounter a situation where you need to extend/override the Broadleaf Commerce data model, you will need to refer to the Entity Extension Guide (http://www.broadleafcommerce.org/confluence/display/core/Extending+Entities).
+ * Broadleaf Commerce is a Spring-based framework. Your application will need to use Spring as well to interact with Broadleaf Commerce. As a result, you will need to merge the Spring configuration for your application with that of Broadleaf Commerce. Thankfully, this is easy to do, but there are some guidelines. Refer to the Merge Configuration (http://www.broadleafcommerce.org/confluence/display/core/Merge+Configuration).
  * Broadleaf Commerce will also work with most modern database platforms for which a valid JDBC driver exists. We include ddl creation scripts for a handful of major database platforms in the sql directory of our distributions.
- * Broadleaf Commerce requires at least some minimal entity manager configuration to work with your database. Refer to the [wiki:persistenceConfiguration Persistence Configuration].
- * Should you need to add custom configuration for you application based on environment (i.e. development, test, prod, etc...), Broadleaf Commerce provides an environment configuration facility. Refer to the [wiki:environmentConfiguration Environment Configuration].
- * Should you need to override / alter the behavior specified in a Broadleaf Commerce service, then refer to the [wiki:serviceExtension Service Extension Guide].
- * Broadleaf Commerce provides highly-configurable workflows for both pricing and checkout. The default behavior of these workflows will fulfill many user's needs. However, if you wish to re-order workflows or add activities, refer to the [wiki:workflowConfiguration Workflow Configuration].
- * Broadleaf Commerce performs a number of key functions through the use of modules. For example, Pricing (including shipping, tax, etc...) and Payment (credit card, gift card, bank account, etc...) are all handled through the use of Broadleaf Commerce modules. Refer to the [wiki:moduleGuide Module Guide] for more information.
- * While not required, Broadleaf Commerce suggests that users implement the presentation layer of their applications using Spring MVC. Broadleaf Commerce includes a number of pre-built controllers and tag libraries that work with Spring MVC (our demo application was also built using Spring MVC). Refer to the [wiki:presentationLayer Presentation Layer Guide].
+ * Broadleaf Commerce requires at least some minimal entity manager configuration to work with your database. Refer to the Persistence Configuration (http://www.broadleafcommerce.org/confluence/display/core/Persistence+Configuration).
+ * Should you need to add custom configuration for you application based on environment (i.e. development, test, prod, etc...), Broadleaf Commerce provides an environment configuration facility. Refer to the Runtime Environment Configuration (http://www.broadleafcommerce.org/confluence/display/core/Runtime+Environment+Configuration).
+ * Should you need to override / alter the behavior specified in a Broadleaf Commerce service, then refer to the Service Extension Guide (http://www.broadleafcommerce.org/confluence/display/core/Extending+Services).
+ * Broadleaf Commerce provides highly-configurable workflows for both pricing and checkout. The default behavior of these workflows will fulfill many user's needs. However, if you wish to re-order workflows or add activities, refer to the Workflow Configuration (http://www.broadleafcommerce.org/confluence/display/core/Workflow+Configuration).
+ * Broadleaf Commerce performs a number of key functions through the use of modules. For example, Pricing (including shipping, tax, etc...) and Payment (credit card, gift card, bank account, etc...) are all handled through the use of Broadleaf Commerce modules. Refer to the Module Guide (http://www.broadleafcommerce.org/confluence/display/core/Creating+Modules) for more information.
+ * While not required, Broadleaf Commerce suggests that users implement the presentation layer of their applications using Spring MVC. Broadleaf Commerce includes a number of pre-built controllers and tag libraries that work with Spring MVC (our demo application was also built using Spring MVC). Refer to the Presentation Layer (http://www.broadleafcommerce.org/confluence/display/core/Presentation+Layer).
+ 
