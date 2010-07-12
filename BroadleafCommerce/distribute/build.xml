@@ -255,7 +255,7 @@
 				</rsel:not>
 			</restrict>
 		</path>
-		<pathconvert property="prop-service-dependencies" pathsep="${line.separator}" refid="service-dependencies">
+		<pathconvert property="prop-service-dependencies" pathsep="${line.separator} * " refid="service-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
 		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%service-dependencies%%" value="${prop-service-dependencies}" />
@@ -274,7 +274,7 @@
 				</rsel:not>
 			</restrict>
 		</path>
-		<pathconvert property="prop-web-dependencies" pathsep="${line.separator}" refid="web-dependencies">
+		<pathconvert property="prop-web-dependencies" pathsep="${line.separator} * " refid="web-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
 		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%web-dependencies%%" value="${prop-web-dependencies}" />
@@ -293,7 +293,7 @@
 				</rsel:not>
 			</restrict>
 		</path>
-		<pathconvert property="prop-usps-dependencies" pathsep="${line.separator}" refid="usps-dependencies">
+		<pathconvert property="prop-usps-dependencies" pathsep="${line.separator} * " refid="usps-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
 		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%usps-dependencies%%" value="${prop-usps-dependencies}" />
@@ -312,7 +312,7 @@
 				</rsel:not>
 			</restrict>
 		</path>
-		<pathconvert property="prop-cybersource-dependencies" pathsep="${line.separator}" refid="cybersource-dependencies">
+		<pathconvert property="prop-cybersource-dependencies" pathsep="${line.separator} * " refid="cybersource-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
 		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%cybersource-dependencies%%" value="${prop-cybersource-dependencies}" />
@@ -331,7 +331,7 @@
 				</rsel:not>
 			</restrict>
 		</path>
-		<pathconvert property="prop-demo-dependencies" pathsep="${line.separator}" refid="demo-dependencies">
+		<pathconvert property="prop-demo-dependencies" pathsep="${line.separator} * " refid="demo-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
 		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%demo-dependencies%%" value="${prop-demo-dependencies}" />
@@ -350,7 +350,7 @@
 				</rsel:not>
 			</restrict>
 		</path>
-		<pathconvert property="prop-admin-dependencies" pathsep="${line.separator}" refid="admin-dependencies">
+		<pathconvert property="prop-admin-dependencies" pathsep="${line.separator} * " refid="admin-dependencies">
 	        <mapper type="flatten"/>
 	    </pathconvert>
 		<replace file="${maven.build.dir}/${maven.build.finalName}/quickStartGuide.txt" token="%%admin-dependencies%%" value="${prop-admin-dependencies}" />

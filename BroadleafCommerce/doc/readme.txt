@@ -92,7 +92,7 @@ Contents of the "-with-docs" distribution (~9 MB):
 * "dist" contains the Broadleaf Commerce binary jar files, as well as corresponding source jars
 * "docs" contains the Broadleaf Commerce API javadocs
 
-Contents of the "-with-dependencies" distribution (~197 MB):
+Contents of the "-with-dependencies" distribution (~136 MB):
 * "demo" contains the Broadleaf Commerce standalone demonstration, including the demo coffee store and admin applications
 * "dist" contains the Broadleaf Commerce binary jar files, as well as corresponding source jars
 * "docs" contains the Broadleaf Commerce API javadocs
@@ -145,4 +145,4 @@ The "dist" directory contains the following distinct jar files for use in applic
 
 4. WHERE TO START?
 
-* Please refer to the Broadleaf Commerce documentation wiki for information on running the demonstration and developing applications on top of Broadleaf Commerce (http://www.broadleafcommerce.org/confluence).
+* Please refer to the Broadleaf Commerce documentation wiki for information on running the demonstration and developing applications on top of Broadleaf Commerce (http://www.broadleafcommerce.org/confluence/display/core/Home).
