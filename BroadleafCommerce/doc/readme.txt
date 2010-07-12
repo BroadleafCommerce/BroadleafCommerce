@@ -106,7 +106,7 @@ download is required to build and run the demo application.
 Latest info is available at the public website: http://www.broadleafcommerce.org
 Project info at the SourceForge site: http://sourceforge.net/projects/broadleafcommerce
 
-Broadleaf Commerce is released under the terms of the Apache Software License (see license.txt).
+Broadleaf Commerce is released under the terms of the Apache Software License 2 (see license.txt).
 All libraries included in the "-with-dependencies" download are subject to their respective licenses.
 This product includes software developed by the Apache Software Foundation (http://www.apache.org).
 
