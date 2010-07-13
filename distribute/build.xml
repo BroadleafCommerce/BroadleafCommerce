@@ -215,8 +215,11 @@
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/framework" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/admin" />
+		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/demo" />
+		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/usps" />
+		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" />
 		<taskdef name="licenseCopy" classname="org.broadleafcommerce.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
-		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/framework" licenseDir="doc/dependency-licenses">
+		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/framework" licenseDir="${releaseParentDir}/doc/dependency-licenses">
 			<restrict>
 				<fileset refid="frameworkWebDeps" />
 				<rsel:not>
@@ -224,16 +227,64 @@
 				</rsel:not>
 			</restrict>
 		</licenseCopy>
-		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/admin" licenseDir="doc/dependency-licenses">
-			<difference>
-				<fileset refid="adminDeps" />
-				<intersect>
+		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/admin" licenseDir="${releaseParentDir}/doc/dependency-licenses">
+			<restrict>
+				<difference>
 					<fileset refid="adminDeps" />
-					<fileset refid="frameworkWebDeps" />
-				</intersect>
-			</difference>
+					<intersect>
+						<fileset refid="adminDeps" />
+						<fileset refid="frameworkWebDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</licenseCopy>
+		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/demo" licenseDir="${releaseParentDir}/doc/dependency-licenses">
+			<restrict>
+				<difference>
+					<fileset refid="demoDeps" />
+					<intersect>
+						<fileset refid="demoDeps" />
+						<fileset refid="frameworkWebDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</licenseCopy>
+		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/usps" licenseDir="${releaseParentDir}/doc/dependency-licenses">
+			<restrict>
+				<difference>
+					<fileset refid="uspsDeps" />
+					<intersect>
+						<fileset refid="uspsDeps" />
+						<fileset refid="frameworkDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
+		</licenseCopy>
+		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" licenseDir="${releaseParentDir}/doc/dependency-licenses">
+			<restrict>
+				<difference>
+					<fileset refid="cybersourceDeps" />
+					<intersect>
+						<fileset refid="cybersourceDeps" />
+						<fileset refid="frameworkDeps" />
+					</intersect>
+				</difference>
+				<rsel:not>
+					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+			</restrict>
 		</licenseCopy>
 		<copy file="${releaseParentDir}/doc/dependency-licenses/readme.txt" todir="${maven.build.dir}/${maven.build.finalName}/lib" />
+		<copy file="${releaseParentDir}/doc/dependency-licenses/build.xml" todir="${maven.build.dir}/${maven.build.finalName}/lib" />
 	</target>
 
 	<target name="setup" depends="setup-dependencies">
