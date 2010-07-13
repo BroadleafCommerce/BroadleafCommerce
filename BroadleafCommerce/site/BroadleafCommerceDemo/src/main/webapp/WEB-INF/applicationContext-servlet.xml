@@ -33,7 +33,7 @@
 	
 	<!-- Configures the Tiles layout system -->
 	<bean id="tilesConfigurer"
-		class="org.broadleafcommerce.adapt.TilesConfigurer">
+		class="org.springframework.web.servlet.view.tiles2.TilesConfigurer">
 		<property name="definitions">
 			<list>
 				<value>/WEB-INF/tiles-broadleafdemo.xml</value>
