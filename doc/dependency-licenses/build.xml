@@ -9,6 +9,8 @@
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
+			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
+			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
 		</copy>
 		<copy flatten="true" todir="${copy.destination}">
 			<fileset dir="../dist">
@@ -25,6 +27,8 @@
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
+			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
+			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
 		</copy>
 	</target>
 	
@@ -34,6 +38,8 @@
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
+			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
+			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
 		</copy>
 	</target>
 	
@@ -43,6 +49,8 @@
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
+			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
+			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
 		</copy>
 		<copy flatten="true" todir="${copy.destination}">
 			<fileset dir="../dist">
@@ -58,6 +66,8 @@
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
+			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
+			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
 		</copy>
 		<copy flatten="true" todir="${copy.destination}">
 			<fileset dir="../dist">
