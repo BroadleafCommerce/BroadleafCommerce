@@ -4,13 +4,15 @@
 	<property name="copy.destination" value="${destination}"/>
 	
 	<target name="core">
-		<copy flatten="true" todir="${copy.destination}">
+		<copy todir="${copy.destination}">
 			<fileset dir="framework">
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
-			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
-			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
+			<chainedmapper>
+				<regexpmapper from="^(.*)?-[0-9].*\.jar$$" to="\1.jar"/>
+				<flattenmapper/>
+			</chainedmapper>
 		</copy>
 		<copy flatten="true" todir="${copy.destination}">
 			<fileset dir="../dist">
@@ -22,36 +24,32 @@
 	</target>
 	
 	<target name="demo">
-		<copy flatten="true" todir="${copy.destination}">
+		<copy todir="${copy.destination}">
 			<fileset dir="demo">
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
-			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
-			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
+			<chainedmapper>
+				<regexpmapper from="^(.*)?-[0-9].*\.jar$$" to="\1.jar"/>
+				<flattenmapper/>
+			</chainedmapper>
 		</copy>
 	</target>
 	
 	<target name="admin">
-		<copy flatten="true" todir="${copy.destination}">
+		<copy todir="${copy.destination}">
 			<fileset dir="admin">
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
-			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
-			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
+			<chainedmapper>
+				<regexpmapper from="^(.*)?-[0-9].*\.jar$$" to="\1.jar"/>
+				<flattenmapper/>
+			</chainedmapper>
 		</copy>
 	</target>
 	
 	<target name="usps">
-		<copy flatten="true" todir="${copy.destination}">
-			<fileset dir="usps">
-				<include name="**/*.jar"/>
-				<include name="**/*.zip"/>
-			</fileset>
-			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
-			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
-		</copy>
 		<copy flatten="true" todir="${copy.destination}">
 			<fileset dir="../dist">
 				<include name="**/*-usps-*.jar"/>
@@ -61,13 +59,15 @@
 	</target>
 	
 	<target name="cybersource">
-		<copy flatten="true" todir="${copy.destination}">
+		<copy todir="${copy.destination}">
 			<fileset dir="cybersource">
 				<include name="**/*.jar"/>
 				<include name="**/*.zip"/>
 			</fileset>
-			<regexpmapper from="^(.*)?[0-9]*\.jar$$" to="\1.jar"/>
-			<regexpmapper from="^(.*)?[0-9]*\.zip$$" to="\1.zip"/>
+			<chainedmapper>
+				<regexpmapper from="^(.*)?-[0-9].*\.jar$$" to="\1.jar"/>
+				<flattenmapper/>
+			</chainedmapper>
 		</copy>
 		<copy flatten="true" todir="${copy.destination}">
 			<fileset dir="../dist">
