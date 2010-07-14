@@ -5,7 +5,7 @@
 	<artifactId>BroadleafCommerce</artifactId>
 	<packaging>pom</packaging>
 	<name>BroadleafCommerce</name>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.1.0-RC2-SNAPSHOT</version>
 	<description>BroadleafCommerce Maven Build </description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
