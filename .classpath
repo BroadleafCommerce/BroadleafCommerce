@@ -15,7 +15,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/commons-validator-1.3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/test/bin/testng-5.8-jdk15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/dom4j-1.6.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/common/bin/spring-webmvc.jar" sourcepath="lib/common/source/spring-webmvc-sources-3.0.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/log4j-1.2.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/mail-1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/common/bin/velocity-1.6.1.jar"/>
@@ -64,24 +63,25 @@
 	<classpathentry kind="lib" path="lib/common/bin/USPSV2ShippingRates.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/USPSV3ShippingRates.jar"/>
 	<classpathentry kind="lib" path="lib/common/bin/xmlbeans-qname.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-aop.jar" sourcepath="lib/common/source/spring-aop-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-asm.jar" sourcepath="lib/common/source/spring-asm-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-beans.jar" sourcepath="lib/common/source/spring-beans-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-context-support.jar" sourcepath="lib/common/source/spring-context-support-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-context.jar" sourcepath="lib/common/source/spring-context-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-core.jar" sourcepath="lib/common/source/spring-core-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-expression.jar" sourcepath="lib/common/source/spring-expression-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-jdbc.jar" sourcepath="lib/common/source/spring-jdbc-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-jms.jar" sourcepath="lib/common/source/spring-jms-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-orm.jar" sourcepath="lib/common/source/spring-orm-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-acl.jar" sourcepath="lib/common/source/spring-security-acl-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-config.jar" sourcepath="lib/common/source/spring-security-config-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-core.jar" sourcepath="lib/common/source/spring-security-core-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-taglibs.jar" sourcepath="lib/common/source/spring-security-taglibs-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-security-web.jar" sourcepath="lib/common/source/spring-security-web-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-tx.jar" sourcepath="lib/common/source/spring-tx-sources-3.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/common/bin/spring-web.jar" sourcepath="lib/common/source/spring-web-sources-3.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/compile/bin/servlet-api-2.5.jar"/>
 	<classpathentry kind="lib" path="lib/test/bin/spring-test.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-security-acl-3.0.3.jar" sourcepath="lib/common/source/spring-security-acl-sources-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-security-config-3.0.3.jar" sourcepath="lib/common/source/spring-security-config-sources-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-security-core-3.0.3.jar" sourcepath="lib/common/source/spring-security-core-sources-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-security-taglibs-3.0.3.jar" sourcepath="lib/common/source/spring-security-taglibs-sources-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-security-web-3.0.3.jar" sourcepath="lib/common/source/spring-security-web-sources-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-aop-3.0.3.jar" sourcepath="lib/common/source/spring-aop-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-asm-3.0.3.jar" sourcepath="lib/common/source/spring-asm-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-beans-3.0.3.jar" sourcepath="lib/common/source/spring-beans-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-context-3.0.3.jar" sourcepath="lib/common/source/spring-context-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-context-support-3.0.3.jar" sourcepath="lib/common/source/spring-context-support-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-core-3.0.3.jar" sourcepath="lib/common/source/spring-core-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-expression-3.0.3.jar" sourcepath="lib/common/source/spring-expression-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-jdbc-3.0.3.jar" sourcepath="lib/common/source/spring-jdbc-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-jms-3.0.3.jar" sourcepath="lib/common/source/spring-jms-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-orm-3.0.3.jar" sourcepath="lib/common/source/spring-orm-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-tx-3.0.3.jar" sourcepath="lib/common/source/spring-tx-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-web-3.0.3.jar" sourcepath="lib/common/source/spring-web-sources-3.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/common/bin/spring-webmvc-3.0.3.jar" sourcepath="lib/common/source/spring-webmvc-sources-3.0.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

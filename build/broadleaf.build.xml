@@ -4,7 +4,7 @@
             Broadleaf Build File
     </description>
 
-    <property name="thirdparty.lib.dir" value="//integration/artifacts/thirdparty" />
+    <property name="thirdparty.lib.dir" value="${basedir}/../libraries/artifacts/developer" />
 	<property name="stage.dir" value="${basedir}/build/stage" />
 	<property name="framework.src.dir" value="${basedir}/src-framework" />
 	<property name="profile.src.dir" value="${basedir}/src-profile" />
@@ -167,7 +167,7 @@
 				<include name="**/*.vm" />
 			</fileset>
 		</copy>
-		
+
 		<copy todir="${stage.dir}/framework-jar">
 			<fileset dir="${spring.config.dir}">
 				<include name="bl-web-applicationContext.xml"/>

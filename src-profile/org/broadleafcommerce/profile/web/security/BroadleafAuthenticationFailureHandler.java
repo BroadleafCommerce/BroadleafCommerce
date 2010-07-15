@@ -55,6 +55,7 @@ public class BroadleafAuthenticationFailureHandler extends SimpleUrlAuthenticati
                     failureUrl += "&successUrl=" + successUrlParam;
                 }
             }
+            saveException(request, exception);
             getRedirectStrategy().sendRedirect(request, response, failureUrl);
         } else {
             super.onAuthenticationFailure(request, response, exception);
