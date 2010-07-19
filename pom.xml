@@ -65,39 +65,11 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>java.net</id>
-			<name>java.net</name>
-			<url>http://download.java.net/maven/1</url>
-			<layout>legacy</layout>
-		</repository>
-		<repository>
-			<id>jboss.com</id>
-			<name>jboss.com</name>
-			<url>http://repository.jboss.com/maven2</url>
-		</repository>
-		<repository>
-			<id>flex-mojos-repository</id>
-			<name>flex-mojos</name>
-			<url>http://repository.sonatype.org/content/groups/flexgroup</url>
-		</repository>
-		<repository>
-			<id>eviware</id>
-			<name>eviware</name>
-			<url>http://www.eviware.com/repository/maven2</url>
-		</repository>
-		<repository>
 			<id>localrepo</id>
 			<name>localrepo</name>
 			<url>file://${basedir}/lib</url>
 		</repository>
 	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>flex-mojos-repository</id>
-			<name>flex-mojos-plugins</name>
-			<url>http://repository.sonatype.org/content/groups/flexgroup</url>
-		</pluginRepository>
-	</pluginRepositories>
 	<modules>
 		<module>distribute</module>
 		<module>module</module>
@@ -570,7 +542,7 @@
 			<dependency>
 				<groupId>xml-security</groupId>
 				<artifactId>xmlsec</artifactId>
-				<version>1.4.0</version>
+				<version>1.3.0</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
