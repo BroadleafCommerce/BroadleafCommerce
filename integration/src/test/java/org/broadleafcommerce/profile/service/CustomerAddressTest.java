@@ -62,6 +62,7 @@ public class CustomerAddressTest extends CommonSetupBaseTest {
     	address.setDefault(true);
     	ca.setAddress(address);
     	ca.setCustomer(customer);
+    	ca.setAddressName("address3");
     	CustomerAddress savedAddress = saveCustomerAddress(ca);
     	
     	List<CustomerAddress> customerAddressList = customerAddressService.readActiveCustomerAddressesByCustomerId(customer.getId());

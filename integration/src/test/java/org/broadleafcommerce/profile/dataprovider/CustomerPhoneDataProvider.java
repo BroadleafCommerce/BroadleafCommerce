@@ -29,11 +29,13 @@ public class CustomerPhoneDataProvider {
         Phone phone1 = new PhoneImpl();
         phone1.setPhoneNumber("111-111-1111");
         cp1.setPhone(phone1);
+        cp1.setPhoneName("phone1");
 
         CustomerPhone cp2 = new CustomerPhoneImpl();
         Phone phone2 = new PhoneImpl();
         phone1.setPhoneNumber("222-222-2222");
         cp2.setPhone(phone2);
+        cp2.setPhoneName("phone2");
 
         return new Object[][] { new Object[] { cp1 }, new Object[] { cp2 } };
     }

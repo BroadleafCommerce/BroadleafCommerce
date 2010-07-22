@@ -98,6 +98,7 @@ public abstract class CommonSetupBaseTest extends BaseTest {
         address1.setCity("Bozeman");
         address1.setPostalCode("75251");
         ca1.setAddress(address1);
+        ca1.setAddressName("address1");
         CustomerAddress caResult = createCustomerWithAddress(ca1);
         assert caResult != null;
         assert caResult.getCustomer() != null;
@@ -109,6 +110,7 @@ public abstract class CommonSetupBaseTest extends BaseTest {
         address2.setCity("Portland");
         address2.setPostalCode("75251");
         ca2.setAddress(address2);
+        ca2.setAddressName("address2");
         ca2.setCustomer(customer);
         CustomerAddress addResult = saveCustomerAddress(ca2);
         assert addResult != null;
