@@ -86,7 +86,7 @@ public class ContentImpl implements Content {
     protected String metaDescription;
     @Column(name = "NOTE")
     protected String note;
-    @Column(name = "ONLINE")
+    @Column(name = "ONLINE_STATE")
     protected Boolean online;
     @Column(name = "PARENT_CONTENT_ID")
     protected Integer parentContentId;
