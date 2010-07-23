@@ -26,10 +26,7 @@
 			          <id>distribution</id>
 			          <phase>deploy</phase>
 			          <configuration>
-			            <tasks>
-			            	<property name="distribution.username" value="${distribution.username}" />
-			            	<property name="distribution.password" value="${distribution.password}" />
-			            	<property name="distribution.host" value="${distribution.host}" />
+			            <tasks if="distribution.enable">
 			            	<property name="distribution.location" value="${distribution.location}" />
 			            	<property name="distributionPom.version" value="${distributionPom.version}" />
 			              	<ant antfile="build.xml" target="create-all-and-deploy" />
