@@ -82,7 +82,8 @@ public abstract class CommonSetupBaseTest extends BaseTest {
     }
     
     public Customer createCustomer() {
-    	return customerService.createCustomerFromId(null);
+    	Customer customer = customerService.createCustomerFromId(null);
+    	return customer;
     }
     
     /**
@@ -126,6 +127,7 @@ public abstract class CommonSetupBaseTest extends BaseTest {
     	createCountry();
     	createState();
         Customer customer = createCustomer();
+        customer.setUsername(String.valueOf(customer.getId()));
         customerAddress.setCustomer(customer);
         return saveCustomerAddress(customerAddress);
     }

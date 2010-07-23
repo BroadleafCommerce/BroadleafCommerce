@@ -120,13 +120,17 @@ public class ProductDaoTest extends BaseTest {
 
     @Test(dataProvider="basicProduct", dataProviderClass=ProductDataProvider.class)
     public void testProductAttributes(Product product) {
-        product.setWidth(new BigDecimal(25.5));
-        product.setHeight(new BigDecimal(50D));
-        product.setDepth(new BigDecimal(75.5D));
+        product.setWidth(new BigDecimal("25.5"));
+        product.setHeight(new BigDecimal("50"));
+        product.setDepth(new BigDecimal("75.5"));
         ProductWeight weight = new ProductWeight();
         weight.setWeightUnitOfMeasure(WeightUnitOfMeasureType.POUNDS);
-        weight.setWeight(new BigDecimal(100.1));
+        weight.setWeight(new BigDecimal("100.1"));
         product.setWeight(weight);
+        System.out.println(product.getWidth().toString());
+        System.out.println(product.getHeight().toString());
+        System.out.println(product.getDepth().toString());
+        System.out.println(product.getWeight().getWeight().toString());
         product = catalogService.saveProduct(product);
         Product result = productDao.readProductById(product.getId());
         assert result.getWidth().doubleValue() == 25.5D;
