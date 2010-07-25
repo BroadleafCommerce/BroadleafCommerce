@@ -553,7 +553,7 @@ public class OrderTest extends OrderBaseTest {
     @Test(groups = { "testOrderPaymentInfos" }, dataProvider = "basicPaymentInfo", dataProviderClass = PaymentInfoDataProvider.class)
     @Transactional
     public void testOrderPaymentInfos(PaymentInfo info) throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+        Customer customer = customerService.saveCustomer(createNamedCustomer());
         Order order = cartService.createNewCartForCustomer(customer);
         orderService.addPaymentToOrder(order, info);
 

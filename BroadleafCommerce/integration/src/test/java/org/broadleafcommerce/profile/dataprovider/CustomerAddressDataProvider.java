@@ -31,6 +31,7 @@ public class CustomerAddressDataProvider {
         address1.setCity("Bozeman");
         address1.setPostalCode("75251");
         ca1.setAddress(address1);
+        ca1.setAddressName("address4");
 
         CustomerAddress ca2 = new CustomerAddressImpl();
         Address address2 = new AddressImpl();
@@ -38,6 +39,7 @@ public class CustomerAddressDataProvider {
         address2.setCity("Portland");
         address2.setPostalCode("75251");
         ca2.setAddress(address2);
+        ca2.setAddressName("address5");
 
         return new Object[][] { new Object[] { ca1 }, new Object[] { ca2 } };
     }

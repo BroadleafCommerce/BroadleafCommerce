@@ -94,11 +94,14 @@
 		</plugins>
 	</reporting>
 	<distributionManagement>
-		<repository>
-			<id>sourceforge</id>
-			<name>SourceForge</name>
-			<url>file:///usr/local/distribution/repo</url>
-		</repository>
+	  <repository>
+	    <id>releases</id>
+	    <url>http://www.broadleafcommerce.org/nexus/content/repositories/releases</url>
+	  </repository>
+	  <snapshotRepository>
+	    <id>snapshots</id>
+	    <url>http://www.broadleafcommerce.org/nexus/content/repositories/snapshots</url>
+	  </snapshotRepository>
 	</distributionManagement>
 	<profiles>
 		<profile>
@@ -110,6 +113,17 @@
 		    </activation>
 			<properties>
 				<flex.skip>true</flex.skip>
+			</properties>
+		</profile>
+		<profile>
+			<id>distribution.enable</id>
+			<activation>
+		      <property>
+		        <name>distribution.enable</name>
+		      </property>
+		    </activation>
+			<properties>
+				<distribution.enable>true</distribution.enable>
 			</properties>
 		</profile>
 	</profiles>

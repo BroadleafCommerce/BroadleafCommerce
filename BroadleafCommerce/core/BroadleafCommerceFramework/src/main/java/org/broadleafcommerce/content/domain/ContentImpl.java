@@ -36,7 +36,7 @@ import org.broadleafcommerce.catalog.domain.CategoryImpl;
 import org.hibernate.annotations.Index;
 
 /**
-* DOCUMENT ME!
+* Basic content item for the BLC CMS support
 *
 * @author dwtalk
  */
@@ -86,7 +86,7 @@ public class ContentImpl implements Content {
     protected String metaDescription;
     @Column(name = "NOTE")
     protected String note;
-    @Column(name = "ONLINE")
+    @Column(name = "ONLINE_STATE")
     protected Boolean online;
     @Column(name = "PARENT_CONTENT_ID")
     protected Integer parentContentId;

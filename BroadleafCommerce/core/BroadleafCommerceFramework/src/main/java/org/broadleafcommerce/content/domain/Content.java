@@ -19,9 +19,9 @@ import java.util.Date;
 
 
 /**
- * DOCUMENT ME!
- * @author btaylor
- * @author dwtalk
+* Basic content item for the BLC CMS support
+*
+* @author dwtalk
  */
 public interface Content {
 
