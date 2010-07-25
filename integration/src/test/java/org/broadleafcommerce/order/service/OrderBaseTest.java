@@ -22,8 +22,14 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     
     private int bundleCount = 0;
     
+    protected Customer createNamedCustomer() {
+    	Customer customer = customerService.createCustomerFromId(null);
+    	customer.setUsername(String.valueOf(customer.getId()));
+    	return customer;
+    }
+    
     public Order setUpNamedOrder() throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+        Customer customer = customerService.saveCustomer(createNamedCustomer());
 
         Sku newSku = addTestSku("Small Cube Box", "Cube Box", "Boxes");
 
@@ -39,7 +45,7 @@ public class OrderBaseTest extends CommonSetupBaseTest {
     }
     
     public Order setUpAnonymousCartWithInactiveSku() throws PricingException {
-        Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+        Customer customer = customerService.saveCustomer(createNamedCustomer());
 
         Order order = cartService.createNewCartForCustomer(customer);
 

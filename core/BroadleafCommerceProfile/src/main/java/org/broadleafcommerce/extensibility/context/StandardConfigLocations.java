@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 public class StandardConfigLocations {
 
     private static final Log LOG = LogFactory.getLog(StandardConfigLocations.class);
+    public static final String EXTRACONFIGLOCATIONSKEY = "extra.config.locations";
     
     public static final int ALLCONTEXTTYPE = 0;
     public static final int WEBCONTEXTTYPE = 1;
@@ -45,18 +46,18 @@ public class StandardConfigLocations {
                 if (temp == null) {
                     eof = true;
                 } else {
-                    if (!temp.startsWith("#") && temp.trim().length() > 0 && StandardConfigLocations.class.getClassLoader().getResource(temp.trim()) != null) {
-                    	if (
-                    			contextType == ALLCONTEXTTYPE  ||
-                    			((contextType == WEBCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") >= 0) ||
-                    			((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") < 0 && temp.indexOf("-test") < 0) ||
-                    			(contextType == TESTCONTEXTTYPE && temp.indexOf("-test") >= 0)
-                    	){
-                    		items.add(temp.trim());
-                    	}
-                    }
+                    addContextFile(contextType, items, temp);
                 }
             }
+            
+            String extraConfigFiles = System.getProperty(EXTRACONFIGLOCATIONSKEY);
+            if (extraConfigFiles != null) {
+            	String[] files = extraConfigFiles.split(" ");
+            	for (String file : files) {
+            		addContextFile(contextType, items, file);
+            	}
+            }
+            
             response = new String[]{};
             response = items.toArray(response);
         } finally {
@@ -69,5 +70,18 @@ public class StandardConfigLocations {
 
         return response;
     }
+
+	private static void addContextFile(int contextType, ArrayList<String> items, String temp) {
+		if (!temp.startsWith("#") && temp.trim().length() > 0 && StandardConfigLocations.class.getClassLoader().getResource(temp.trim()) != null) {
+			if (
+					contextType == ALLCONTEXTTYPE  ||
+					((contextType == WEBCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") >= 0) ||
+					((contextType == SERVICECONTEXTTYPE || contextType == TESTCONTEXTTYPE || contextType == APPCONTEXTTYPE) && temp.indexOf("-web-") < 0 && temp.indexOf("-test") < 0) ||
+					(contextType == TESTCONTEXTTYPE && temp.indexOf("-test") >= 0)
+			){
+				items.add(temp.trim());
+			}
+		}
+	}
 
 }

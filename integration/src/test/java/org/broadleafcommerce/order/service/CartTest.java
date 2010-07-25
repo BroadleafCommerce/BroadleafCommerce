@@ -133,7 +133,7 @@ public class CartTest extends OrderBaseTest {
     @Test(groups = { "testMergeCart" }) 
     public void testMergeToEmptyCart() throws PricingException {
     	Order anonymousCart = setUpAnonymousCartWithInactiveSku();
-    	Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+    	Customer customer = customerService.saveCustomer(createNamedCustomer());
     	MergeCartResponse response = cartService.mergeCart(customer, anonymousCart);
     	assert response.getAddedItems().size() == 2;
     	assert response.getOrder().getOrderItems().size() == 2;
@@ -146,7 +146,7 @@ public class CartTest extends OrderBaseTest {
     public void testMergeToExistingCart() throws PricingException {
     	//sets up anonymous cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
     	Order anonymousCart = setUpAnonymousCartWithInactiveSku();
-    	Customer customer = customerService.saveCustomer(customerService.createCustomerFromId(null));
+    	Customer customer = customerService.saveCustomer(createNamedCustomer());
     	
     	//sets up existing cart with a DiscreteOrderItem, inactive DiscreteOrderItem, BundleOrderItem, and inactive BundleOrderItem
     	setUpExistingCartWithInactiveSkuAndInactiveBundle(customer);
