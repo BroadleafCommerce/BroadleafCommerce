@@ -36,7 +36,7 @@ import org.broadleafcommerce.catalog.domain.CategoryImpl;
 import org.hibernate.annotations.Index;
 
 /**
-* Basic content item for the BLC CMS support....
+* Basic content item for the BLC CMS support
 *
 * @author dwtalk
  */
