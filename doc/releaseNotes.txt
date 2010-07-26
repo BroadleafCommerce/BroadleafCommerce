@@ -54,3 +54,12 @@ Version 1.1.0
 --------------------------
 * upgrade to spring 3.0.3 to remedy some security issues that were present in spring 3.0.2
 * Add new redirect strategy that protects against success and failure url authentication exploits
+
+
+New ReleaseNotes Location
+--------------------------
+All Release Notes for version 1.1.1 and beyond are now maintained online. Please visit our JIRA site at:
+
+http://www.broadleafcommerce.org/jira/browse/BLC
+
+to view the issue roadmap by version - including structured release notes.
