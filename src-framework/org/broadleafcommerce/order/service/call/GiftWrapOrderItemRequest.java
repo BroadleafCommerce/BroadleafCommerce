@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.order.domain.OrderItem;
 
-public class GiftWrapOrderItemRequest extends DiscreteOrderItemRequest {
+public class GiftWrapOrderItemRequest extends DiscreteOrderItemRequest implements OrderItemRequest {
 
     private List<OrderItem> wrappedItems = new ArrayList<OrderItem>();
 

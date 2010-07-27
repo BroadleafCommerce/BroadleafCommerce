@@ -130,7 +130,7 @@ public class CartController {
 
         if (addToCartItem.getQuantity() > 0) {
             try {
-                OrderItem orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity());
+                OrderItem orderItem = cartService.addSkuToOrder(currentCartOrder.getId(), addToCartItem.getSkuId(), addToCartItem.getProductId(), addToCartItem.getCategoryId(), addToCartItem.getQuantity(), true);
                 orderItemsAdded.add(orderItem);
             } catch (PricingException e) {
                 LOG.error("Unable to price the order: ("+currentCartOrder.getId()+")", e);
@@ -156,7 +156,7 @@ public class CartController {
     public String removeItem(@RequestParam long orderItemId, ModelMap model, HttpServletRequest request) {
         Order currentCartOrder = retrieveCartOrder(request, model);
         try {
-            currentCartOrder = cartService.removeItemFromOrder(currentCartOrder.getId(), orderItemId);
+            currentCartOrder = cartService.removeItemFromOrder(currentCartOrder.getId(), orderItemId, true);
         } catch (PricingException e) {
             model.addAttribute("error", "remove");
             LOG.error("An error occurred while removing an item from the cart: ("+orderItemId+")", e);
@@ -194,7 +194,7 @@ public class CartController {
                 if (cartOrderItem.getQuantity() > 0) {
                     orderItem.setQuantity(cartOrderItem.getQuantity());
                     try {
-                        cartService.updateItemQuantity(currentCartOrder, orderItem);
+                        cartService.updateItemQuantity(currentCartOrder, orderItem, true);
                     } catch (ItemNotFoundException e) {
                         LOG.error("Item not found in order: ("+orderItem.getId()+")", e);
                     } catch (PricingException e) {
@@ -202,7 +202,7 @@ public class CartController {
                     }
                 } else {
                     try {
-                        cartService.removeItemFromOrder(currentCartOrder, orderItem);
+                        cartService.removeItemFromOrder(currentCartOrder, orderItem, true);
                     } catch (Exception e) {
                         // TODO: handle exception gracefully
                         LOG.error("Unable to remove item from the order: ("+currentCartOrder.getId()+")");
@@ -230,7 +230,7 @@ public class CartController {
 
     private Order updateFulfillmentGroups (CartSummary cartSummary, Order currentCartOrder) throws PricingException {
         cartService.removeAllFulfillmentGroupsFromOrder(currentCartOrder, false);
-        cartService.addFulfillmentGroupToOrder(currentCartOrder, cartSummary.getFulfillmentGroup());
+        cartService.addFulfillmentGroupToOrder(currentCartOrder, cartSummary.getFulfillmentGroup(), false);
         return cartService.save(currentCartOrder, true);
     }
 

@@ -70,8 +70,8 @@ public class DependencyTest extends BaseTest {
         targetPackages.add("org.broadleafcommerce.search");
         targetPackages.add("org.broadleafcommerce.util");
         targetPackages.add("org.broadleafcommerce.workflow");
-        targetPackages.add("org.broadleafcommerce.profile");
 
+        acceptablePackages.add("org.broadleafcommerce.profile");
         acceptablePackages.add("org.broadleafcommerce.catalog.web");
         acceptablePackages.add("org.broadleafcommerce.email.web");
         acceptablePackages.add("org.broadleafcommerce.order.web");

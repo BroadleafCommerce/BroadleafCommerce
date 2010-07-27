@@ -28,13 +28,13 @@ public interface CartService extends OrderService {
 
     public Order findCartForCustomer(Customer customer);
 
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
+    public Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException;
 
-    public OrderItem moveItemToCartFromNamedOrder(Order order, OrderItem orderItem) throws PricingException;
+    public OrderItem moveItemToCartFromNamedOrder(Order order, OrderItem orderItem, boolean priceOrder) throws PricingException;
 
-    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException;
+    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity, boolean priceOrder) throws PricingException;
 
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException;
+    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException;
 
     /**
      * Merge the anonymous cart with the customer's cart taking into

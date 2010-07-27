@@ -50,7 +50,7 @@ public class ProductDaoTest extends BaseTest {
         assert(product.getId() != null);
     }
 
-    @Test(groups="testReadProductsWithUpSaleValues", dataProvider="basicUpSaleValue", dataProviderClass=ProductDataProvider.class, dependsOnGroups="createUpSaleValues")
+    @Test(groups="testReadProductsWithUpSaleValues", dataProvider="basicUpSaleValue", dataProviderClass=ProductDataProvider.class, dependsOnGroups="createUpSaleValues-broken")
     public void testReadProductsWithUpSaleValues(Product product) {
         Product result = productDao.readProductById(product.getId());
         List<RelatedProduct> related = result.getUpSaleProducts();

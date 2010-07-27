@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Category;
 
-public class BundleOrderItemRequest {
+public class BundleOrderItemRequest implements OrderItemRequest {
 
     private String name;
     private Category category;

@@ -20,7 +20,7 @@ import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.order.domain.PersonalMessage;
 
-public class DiscreteOrderItemRequest {
+public class DiscreteOrderItemRequest implements OrderItemRequest {
 
     private Sku sku;
     private Category category;

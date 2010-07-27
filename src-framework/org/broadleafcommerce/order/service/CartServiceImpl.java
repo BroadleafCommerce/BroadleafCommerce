@@ -66,43 +66,41 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
         return orderDao.readCartForCustomer(customer);
     }
 
-    public Order addAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
-        if (cartOrder == null) {
-            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
-        }
-        for (OrderItem orderItem : namedOrder.getOrderItems()) {
-            if (moveNamedOrderItems) {
-                removeItemFromOrder(namedOrder, orderItem);
-            }
-            addOrderItemToOrder(cartOrder, orderItem);
-        }
-        return cartOrder;
-    }
-
-    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity) throws PricingException {
-        Order wishlistOrder = findNamedOrderForCustomer(orderName, customerService.createCustomerFromId(customerId));
-        OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
-        orderItem.setQuantity(quantity);
-        return moveItemToCartFromNamedOrder(wishlistOrder, orderItem);
-    }
-
-    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem) throws PricingException {
+    public Order addAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
         Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
         if (cartOrder == null) {
             cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
         }
         if (moveNamedOrderItems) {
-            Order updatedNamedOrder = removeItemFromOrder(namedOrder, orderItem);
+            removeItemsFromOrder(namedOrder, namedOrder.getOrderItems(), priceOrder);
+        }
+        addOrderItemsToOrder(cartOrder, namedOrder.getOrderItems(), priceOrder);
+        return cartOrder;
+    }
+
+    public OrderItem moveItemToCartFromNamedOrder(Long customerId, String orderName, Long orderItemId, Integer quantity, boolean priceOrder) throws PricingException {
+        Order wishlistOrder = findNamedOrderForCustomer(orderName, customerService.createCustomerFromId(customerId));
+        OrderItem orderItem = orderItemService.readOrderItemById(orderItemId);
+        orderItem.setQuantity(quantity);
+        return moveItemToCartFromNamedOrder(wishlistOrder, orderItem, priceOrder);
+    }
+
+    public OrderItem moveItemToCartFromNamedOrder(Order namedOrder, OrderItem orderItem, boolean priceOrder) throws PricingException {
+        Order cartOrder = orderDao.readCartForCustomer(namedOrder.getCustomer());
+        if (cartOrder == null) {
+            cartOrder = createNewCartForCustomer(namedOrder.getCustomer());
+        }
+        if (moveNamedOrderItems) {
+            Order updatedNamedOrder = removeItemFromOrder(namedOrder, orderItem, priceOrder);
             if (updatedNamedOrder.getOrderItems().size() == 0 && deleteEmptyNamedOrders) {
                 cancelOrder(updatedNamedOrder);
             }
         }
-        return addOrderItemToOrder(cartOrder, orderItem);
+        return addOrderItemToOrder(cartOrder, orderItem, priceOrder);
     }
 
-    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder) throws PricingException {
-        Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder);
+    public Order moveAllItemsToCartFromNamedOrder(Order namedOrder, boolean priceOrder) throws PricingException {
+        Order cartOrder = addAllItemsToCartFromNamedOrder(namedOrder, priceOrder);
         if (deleteEmptyNamedOrders) {
             cancelOrder(namedOrder);
         }
@@ -149,7 +147,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                         if (discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
                             DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(discreteOrderItem);
-                            addDiscreteItemToOrder(customerCart, itemRequest);
+                            addDiscreteItemToOrder(customerCart, itemRequest, false);
                             mergeCartResponse.getAddedItems().add(orderItem);
                         } else {
                             mergeCartResponse.getRemovedItems().add(orderItem);
@@ -175,7 +173,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                         }
                         BundleOrderItemRequest bundleOrderItemRequest = createBundleOrderItemRequest(bundleOrderItem, discreteOrderItemRequests);
                         if (!removeBundle) {
-                            addBundleItemToOrder(customerCart, bundleOrderItemRequest);
+                            addBundleItemToOrder(customerCart, bundleOrderItemRequest, false);
                             mergeCartResponse.getAddedItems().add(orderItem);
                         } else {
                             mergeCartResponse.getRemovedItems().add(orderItem);
@@ -224,7 +222,7 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                     DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem) orderItem;
                     if (!discreteOrderItem.getSku().isActive(discreteOrderItem.getProduct(), orderItem.getCategory())) {
                         reconstructCartResponse.getRemovedItems().add(orderItem);
-                        removeItemFromOrder(customerCart, discreteOrderItem);
+                        removeItemFromOrder(customerCart, discreteOrderItem, false);
                     }
                 } else if (orderItem instanceof BundleOrderItem) {
                     BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItem;
@@ -241,10 +239,11 @@ public class CartServiceImpl extends OrderServiceImpl implements CartService {
                     }
                     if (removeBundle) {
                         reconstructCartResponse.getRemovedItems().add(orderItem);
-                        removeItemFromOrder(customerCart, bundleOrderItem);
+                        removeItemFromOrder(customerCart, bundleOrderItem, false);
                     }
                 }
             }
+            updateOrder(customerCart, true);
         }
         reconstructCartResponse.setOrder(customerCart);
         return reconstructCartResponse;

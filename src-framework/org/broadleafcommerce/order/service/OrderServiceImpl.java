@@ -49,6 +49,7 @@ import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.call.FulfillmentGroupItemRequest;
 import org.broadleafcommerce.order.service.call.FulfillmentGroupRequest;
 import org.broadleafcommerce.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.order.service.exception.ItemNotFoundException;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.dao.PaymentInfoDao;
@@ -112,7 +113,7 @@ public class OrderServiceImpl implements OrderService {
         return persistOrder(namedOrder);
     }
 
-    public Order save(Order order, Boolean priceOrder) throws PricingException {
+    public Order save(Order order, boolean priceOrder) throws PricingException {
         return updateOrder(order, priceOrder);
     }
 
@@ -138,7 +139,7 @@ public class OrderServiceImpl implements OrderService {
         return fg;
     }
 
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
         if (orderId == null || skuId == null || quantity == null) {
             return null;
         }
@@ -165,36 +166,74 @@ public class OrderServiceImpl implements OrderService {
         itemRequest.setQuantity(quantity);
         itemRequest.setSku(sku);
 
-        return addDiscreteItemToOrder(order, itemRequest);
+        return addDiscreteItemToOrder(order, itemRequest, priceOrder);
     }
 
-    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest) throws PricingException {
+    public Order addOrderItemToOrder(Order order, List<OrderItemRequest> orderItemRequest) {
+        return order;
+    }
+
+    public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
-        return addOrderItemToOrder(order, item);
+        return addOrderItemToOrder(order, item, priceOrder);
     }
 
-    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest) throws PricingException {
+    public OrderItem addGiftWrapItemToOrder(Order order, GiftWrapOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         GiftWrapOrderItem item = orderItemService.createGiftWrapOrderItem(itemRequest);
-        return addOrderItemToOrder(order, item);
+        return addOrderItemToOrder(order, item, priceOrder);
     }
 
-    public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest) throws PricingException {
+    public OrderItem addBundleItemToOrder(Order order, BundleOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         BundleOrderItem item = orderItemService.createBundleOrderItem(itemRequest);
-        return addOrderItemToOrder(order, item);
+        return addOrderItemToOrder(order, item, priceOrder);
     }
 
-    public Order removeItemFromOrder(Long orderId, Long itemId) throws PricingException {
+    public List<OrderItem> addItemsToOrder(Order order, List<OrderItemRequest> orderItemRequests, boolean priceOrder) throws PricingException {
+        List<OrderItem> orderItems = new ArrayList<OrderItem>();
+        for (OrderItemRequest orderItemRequest : orderItemRequests) {
+            if (orderItemRequest instanceof DiscreteOrderItemRequest) {
+                orderItems.add(orderItemService.createDiscreteOrderItem((DiscreteOrderItemRequest) orderItemRequest));
+            } else if (orderItemRequest instanceof BundleOrderItemRequest) {
+                orderItems.add(orderItemService.createBundleOrderItem((BundleOrderItemRequest) orderItemRequest));
+            } else if (orderItemRequest instanceof GiftWrapOrderItemRequest) {
+                orderItems.add(orderItemService.createGiftWrapOrderItem((GiftWrapOrderItemRequest) orderItemRequest));
+            }
+        }
+        List<OrderItem> addedItems = addOrderItemsToOrder(order, orderItems, priceOrder);
+        return addedItems;
+    }
+
+    public Order removeItemFromOrder(Long orderId, Long itemId, boolean priceOrder) throws PricingException {
         Order order = findOrderById(orderId);
         OrderItem orderItem = orderItemService.readOrderItemById(itemId);
-
-        return removeItemFromOrder(order, orderItem);
+        return removeItemFromOrder(order, orderItem, priceOrder);
     }
 
-    public Order removeItemFromOrder(Order order, OrderItem item) throws PricingException {
+    public Order removeItemFromOrder(Order order, OrderItem item, boolean priceOrder) throws PricingException {
         removeOrderItemFromFullfillmentGroup(order, item);
         OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
         orderItemService.delete(itemFromOrder);
-        order = updateOrder(order, true);
+        order = updateOrder(order, priceOrder);
+        return order;
+    }
+
+    public Order removeItemsFromOrder(Order order, List<OrderItem> items, boolean priceOrder) throws PricingException {
+        for (OrderItem item : items) {
+            OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
+            orderItemService.delete(itemFromOrder);
+            removeOrderItemFromFullfillmentGroup(order, item);
+        }
+        order = updateOrder(order, priceOrder);
+        return order;
+    }
+
+    public Order removeItemFromOrder(Order order, List<OrderItem> items, boolean priceOrder) throws PricingException {
+        for (OrderItem item : items) {
+            OrderItem itemFromOrder = order.getOrderItems().remove(order.getOrderItems().indexOf(item));
+            orderItemService.delete(itemFromOrder);
+            removeOrderItemFromFullfillmentGroup(order, item);
+        }
+        order = updateOrder(order, priceOrder);
         return order;
     }
 
@@ -240,20 +279,21 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest) throws PricingException {
+    public FulfillmentGroup addFulfillmentGroupToOrder(FulfillmentGroupRequest fulfillmentGroupRequest, boolean priceOrder) throws PricingException {
         FulfillmentGroup fg = fulfillmentGroupDao.create();
         fg.setAddress(fulfillmentGroupRequest.getAddress());
         fg.setOrder(fulfillmentGroupRequest.getOrder());
         fg.setPhone(fulfillmentGroupRequest.getPhone());
         fg.setMethod(fulfillmentGroupRequest.getMethod());
         for (FulfillmentGroupItemRequest request : fulfillmentGroupRequest.getFulfillmentGroupItemRequests()) {
-            fg = addItemToFulfillmentGroup(request.getOrderItem(), fg, request.getQuantity());
+            fg = addItemToFulfillmentGroup(request.getOrderItem(), fg, request.getQuantity(), false);
         }
+        updateOrder(fg.getOrder(), priceOrder);
 
         return fg;
     }
 
-    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
+    public FulfillmentGroup addFulfillmentGroupToOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
         FulfillmentGroup dfg = findDefaultFulfillmentGroupForOrder(order);
         if (dfg == null) {
             fulfillmentGroup.setPrimary(true);
@@ -282,16 +322,16 @@ public class OrderServiceImpl implements OrderService {
         fulfillmentGroup = fulfillmentGroupDao.save(fulfillmentGroup);
         order.getFulfillmentGroups().add(fulfillmentGroup);
         int fulfillmentGroupIndex = order.getFulfillmentGroups().size() - 1;
-        order = updateOrder(order, true);
+        order = updateOrder(order, priceOrder);
         return order.getFulfillmentGroups().get(fulfillmentGroupIndex);
     }
 
-    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity) throws PricingException {
+    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, int quantity, boolean priceOrder) throws PricingException {
         Order order = item.getOrder();
         if (fulfillmentGroup.getId() == null) {
             // API user is trying to add an item to a fulfillment group not
             // created
-            fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup);
+            fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup, priceOrder);
         }
         // API user is trying to add an item to an existing fulfillment group
         // Steps are
@@ -312,20 +352,58 @@ public class OrderServiceImpl implements OrderService {
 
         // 3) add the item to the new fulfillment group
         fulfillmentGroup.addFulfillmentGroupItem(fgi);
-        order = updateOrder(order, true);
+        order = updateOrder(order, priceOrder);
+        fulfillmentGroup.setOrder(order);
 
         return fulfillmentGroup;
     }
 
-    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup) throws PricingException {
-        return addItemToFulfillmentGroup(item, fulfillmentGroup, item.getQuantity());
+    public FulfillmentGroup addItemsToFulfillmentGroup(List<OrderItem> items, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
+        Order order = null;
+        if (fulfillmentGroup.getId() == null && items != null && !items.isEmpty()) {
+            // API user is trying to add an item to a fulfillment group not
+            // created
+            order = items.get(0).getOrder();
+            fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup, priceOrder);
+        } else {
+            order = fulfillmentGroup.getOrder();
+        }
+
+        for (OrderItem item : items) {
+            // API user is trying to add an item to an existing fulfillment
+            // group
+            // Steps are
+            // 1) Find the item's existing fulfillment group
+            for (FulfillmentGroup fg : order.getFulfillmentGroups()) {
+                Iterator<FulfillmentGroupItem> itr = fg.getFulfillmentGroupItems().iterator();
+                while (itr.hasNext()) {
+                    FulfillmentGroupItem fgItem = itr.next();
+                    if (fgItem.getOrderItem().equals(item)) {
+                        // 2) remove item from it's existing fulfillment group
+                        itr.remove();
+                        fulfillmentGroupItemDao.delete(fgItem);
+                    }
+                }
+            }
+            FulfillmentGroupItem fgi = createFulfillmentGroupItemFromOrderItem(item, fulfillmentGroup, item.getQuantity());
+            fgi = fulfillmentGroupItemDao.save(fgi);
+
+            // 3) add the item to the new fulfillment group
+            fulfillmentGroup.addFulfillmentGroupItem(fgi);
+        }
+        order = updateOrder(order, priceOrder);
+        return fulfillmentGroup;
+    }
+
+    public FulfillmentGroup addItemToFulfillmentGroup(OrderItem item, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
+        return addItemToFulfillmentGroup(item, fulfillmentGroup, item.getQuantity(), true);
     }
 
     public Order addOfferToOrder(Order order, String offerCode) {
         throw new UnsupportedOperationException();
     }
 
-    public void updateItemQuantity(Order order, OrderItem item) throws ItemNotFoundException, PricingException {
+    public void updateItemQuantity(Order order, OrderItem item, boolean priceOrder) throws ItemNotFoundException, PricingException {
         // This isn't quite right. It will need to be changed later to reflect
         // the exact requirements we want.
         // item.setQuantity(quantity);
@@ -336,11 +414,7 @@ public class OrderServiceImpl implements OrderService {
         OrderItem itemFromOrder = order.getOrderItems().get(order.getOrderItems().indexOf(item));
         itemFromOrder.setQuantity(item.getQuantity());
 
-        order = updateOrder(order, true);
-    }
-
-    public void removeAllFulfillmentGroupsFromOrder(Order order) throws PricingException {
-        removeAllFulfillmentGroupsFromOrder(order, false);
+        order = updateOrder(order, priceOrder);
     }
 
     public void removeAllFulfillmentGroupsFromOrder(Order order, boolean priceOrder) throws PricingException {
@@ -354,22 +428,22 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup) throws PricingException {
+    public void removeFulfillmentGroupFromOrder(Order order, FulfillmentGroup fulfillmentGroup, boolean priceOrder) throws PricingException {
         order.getFulfillmentGroups().remove(fulfillmentGroup);
         fulfillmentGroupDao.delete(fulfillmentGroup);
-        updateOrder(order, true);
+        updateOrder(order, priceOrder);
     }
 
-    public Order removeOfferFromOrder(Order order, Offer offer) throws PricingException {
+    public Order removeOfferFromOrder(Order order, Offer offer, boolean priceOrder) throws PricingException {
         order.getCandidateOrderOffers().remove(offer);
         offerDao.delete(offer);
-        order = updateOrder(order, true);
+        order = updateOrder(order, priceOrder);
         return order;
     }
 
-    public Order removeAllOffersFromOrder(Order order) throws PricingException {
+    public Order removeAllOffersFromOrder(Order order, boolean priceOrder) throws PricingException {
         order.getCandidateOrderOffers().clear();
-        order = updateOrder(order, true);
+        order = updateOrder(order, priceOrder);
         return order;
     }
 
@@ -394,7 +468,7 @@ public class OrderServiceImpl implements OrderService {
         return paymentInfoDao.readPaymentInfosForOrder(order);
     }
 
-    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem) throws PricingException {
+    public OrderItem addOrderItemToOrder(Order order, OrderItem newOrderItem, boolean priceOrder) throws PricingException {
         int orderItemIndex;
         List<OrderItem> orderItems = order.getOrderItems();
         boolean containsItem = orderItems.contains(newOrderItem);
@@ -411,9 +485,35 @@ public class OrderServiceImpl implements OrderService {
         // don't worry about fulfillment groups, since the phase for adding
         // items occurs before shipping arrangements
 
-        order = updateOrder(order, true);
+        order = updateOrder(order, priceOrder);
 
         return order.getOrderItems().get(orderItemIndex);
+    }
+
+    public List<OrderItem> addOrderItemsToOrder(Order order, List<OrderItem> newOrderItems, boolean priceOrder) throws PricingException {
+        List<Integer> orderItemIndexes = new ArrayList<Integer>();
+        List<OrderItem> orderItems = order.getOrderItems();
+        for (OrderItem newOrderItem : newOrderItems) {
+            boolean containsItem = orderItems.contains(newOrderItem);
+            if (rollupOrderItems && containsItem) {
+                OrderItem itemFromOrder = orderItems.get(orderItems.indexOf(newOrderItem));
+                itemFromOrder.setQuantity(itemFromOrder.getQuantity() + newOrderItem.getQuantity());
+                orderItemIndexes.add(orderItems.indexOf(itemFromOrder));
+            } else {
+                orderItems.add(newOrderItem);
+                newOrderItem.setOrder(order);
+                orderItemIndexes.add(orderItems.size() - 1);
+            }
+        }
+
+        // don't worry about fulfillment groups, since the phase for adding
+        // items occurs before shipping arrangements
+        order = updateOrder(order, priceOrder);
+        List<OrderItem> returnedOrderItems = new ArrayList<OrderItem>();
+        for (Integer orderItemIndex : orderItemIndexes) {
+            returnedOrderItems.add(order.getOrderItems().get(orderItemIndex));
+        }
+        return returnedOrderItems;
     }
 
     public FulfillmentGroup createDefaultFulfillmentGroup(Order order, Address address) {

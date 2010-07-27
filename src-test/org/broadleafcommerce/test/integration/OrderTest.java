@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.test.integration;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -62,7 +61,6 @@ public class OrderTest extends BaseTest {
     private Long orderId = null;
     private int numOrderItems = 0;
     private Long fulfillmentGroupId;
-    private Long bundleOrderItemId;
 
     @Resource
     private CustomerAddressService customerAddressService;
@@ -114,7 +112,7 @@ public class OrderTest extends BaseTest {
         DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setQuantity(1);
         itemRequest.setSku(sku);
-        DiscreteOrderItem item = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest);
+        DiscreteOrderItem item = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest, true);
         assert item != null;
         assert item.getQuantity() == numOrderItems;
         assert item.getSku() != null;
@@ -131,7 +129,7 @@ public class OrderTest extends BaseTest {
         DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setQuantity(1);
         itemRequest.setSku(sku);
-        DiscreteOrderItem item = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest);
+        DiscreteOrderItem item = (DiscreteOrderItem) cartService.addDiscreteItemToOrder(order, itemRequest, true);
         assert item != null;
         assert item.getQuantity() == 2;
         assert item.getSku() != null;
@@ -155,8 +153,7 @@ public class OrderTest extends BaseTest {
         itemRequest.setSku(sku);
         bundleRequest.getDiscreteOrderItems().add(itemRequest);
 
-        BundleOrderItem item = (BundleOrderItem) cartService.addBundleItemToOrder(order, bundleRequest);
-        bundleOrderItemId = item.getId();
+        BundleOrderItem item = (BundleOrderItem) cartService.addBundleItemToOrder(order, bundleRequest, true);
         assert item != null;
         assert item.getQuantity() == 1;
     }
@@ -168,11 +165,16 @@ public class OrderTest extends BaseTest {
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() == numOrderItems;
         int startingSize = orderItems.size();
-        BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemService.readOrderItemById(bundleOrderItemId);
+        BundleOrderItem bundleOrderItem = null;
+        for (OrderItem item : orderItems) {
+            if (item instanceof BundleOrderItem) {
+                bundleOrderItem = (BundleOrderItem) item;
+            }
+        }
         assert bundleOrderItem != null;
         assert bundleOrderItem.getDiscreteOrderItems() != null;
         assert bundleOrderItem.getDiscreteOrderItems().size() == 1;
-        cartService.removeItemFromOrder(order, bundleOrderItem);
+        cartService.removeItemFromOrder(order, bundleOrderItem, true);
         order = cartService.findOrderById(orderId);
         List<OrderItem> items = order.getOrderItems();
         assert items != null;
@@ -193,17 +195,15 @@ public class OrderTest extends BaseTest {
         List<OrderItem> orderItems = order.getOrderItems();
         assert orderItems.size() > 0;
         OrderItem item = orderItems.get(0);
-        item.setSalePrice(new Money(BigDecimal.valueOf(10000)));
         item.setQuantity(10);
-        orderService.updateItemQuantity(order, item);
+        orderService.updateItemQuantity(order, item, true);
         OrderItem updatedItem = orderItemService.readOrderItemById(item.getId());
         assert updatedItem != null;
-        assert updatedItem.getPrice().equals(new Money(BigDecimal.valueOf(10000)));
         assert updatedItem.getQuantity() == 10;
 
         List<OrderItem> updateItems = new ArrayList<OrderItem> (order.getOrderItems());
         updateItems.get(0).setQuantity(15);
-        orderService.updateItemQuantity(order, updatedItem);
+        orderService.updateItemQuantity(order, updatedItem, true);
         order = orderService.findOrderById(orderId);
         assert order.getOrderItems().get(0).getQuantity() == 15;
 
@@ -217,7 +217,7 @@ public class OrderTest extends BaseTest {
         int startingSize = orderItems.size();
         OrderItem item = orderItems.get(0);
         assert item != null;
-        cartService.removeItemFromOrder(order, item);
+        cartService.removeItemFromOrder(order, item, true);
         order = cartService.findOrderById(orderId);
         List<OrderItem> items = order.getOrderItems();
         assert items != null;
@@ -228,7 +228,13 @@ public class OrderTest extends BaseTest {
     public void checkOrderItems() throws PricingException {
         Order order = cartService.findOrderById(orderId);
         assert order.getOrderItems().size() == 1;
-        BundleOrderItem bundleOrderItem = (BundleOrderItem) orderItemService.readOrderItemById(bundleOrderItemId);
+        BundleOrderItem bundleOrderItem = null;
+        for (OrderItem item : order.getOrderItems()){
+            if (item instanceof BundleOrderItem){
+                bundleOrderItem = (BundleOrderItem) item;
+                break;
+            }
+        }
         assert bundleOrderItem == null;
     }
 
@@ -256,7 +262,7 @@ public class OrderTest extends BaseTest {
 
         fulfillmentGroup.setOrder(order);
         fulfillmentGroup.setAddress(address);
-        FulfillmentGroup fg = cartService.addFulfillmentGroupToOrder(order, fulfillmentGroup);
+        FulfillmentGroup fg = cartService.addFulfillmentGroupToOrder(order, fulfillmentGroup, true);
         assert fg != null;
         assert fg.getId() != null;
         assert fg.getAddress().equals(fulfillmentGroup.getAddress());
@@ -274,7 +280,7 @@ public class OrderTest extends BaseTest {
         int startingSize = fgItems.size();
         FulfillmentGroup item = fgItems.get(0);
         assert item != null;
-        cartService.removeFulfillmentGroupFromOrder(order, item);
+        cartService.removeFulfillmentGroupFromOrder(order, item, true);
         order = cartService.findOrderById(orderId);
         List<FulfillmentGroup> items = order.getFulfillmentGroups();
         assert items != null;
@@ -306,7 +312,7 @@ public class OrderTest extends BaseTest {
         newFg.setAddress(address);
         newFg.setMethod("standard");
         try {
-            newFg = cartService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1);
+            newFg = cartService.addItemToFulfillmentGroup(orderItems.get(0), newFg, 1, true);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }
@@ -361,7 +367,7 @@ public class OrderTest extends BaseTest {
         OrderItem item = orderItems.get(0);
         assert item != null;
         try {
-            cartService.removeItemFromOrder(order, item);
+            cartService.removeItemFromOrder(order, item, true);
         } catch (PricingException e) {
             throw new RuntimeException(e);
         }
@@ -510,17 +516,17 @@ public class OrderTest extends BaseTest {
         Order order = orderService.createNamedOrderForCustomer("Pants Order", customer);
 
         OrderItem orderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), category.getId(), 2);
+                newProduct.getId(), category.getId(), 2, true);
         OrderItem quantityNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), category.getId(), null);
+                newProduct.getId(), category.getId(), null, true);
         OrderItem skuNullOrderItem = orderService.addSkuToOrder(order.getId(), null,
-                newProduct.getId(), category.getId(), 2);
+                newProduct.getId(), category.getId(), 2, true);
         OrderItem orderNullOrderItem = orderService.addSkuToOrder(null, newSku.getId(),
-                newProduct.getId(), category.getId(), 2);
+                newProduct.getId(), category.getId(), 2, true);
         OrderItem productNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                null, category.getId(), 2);
+                null, category.getId(), 2, true);
         OrderItem categoryNullOrderItem = orderService.addSkuToOrder(order.getId(), newSku.getId(),
-                newProduct.getId(), null, 2);
+                newProduct.getId(), null, 2, true);
 
         assert orderItem != null;
         assert skuNullOrderItem == null;

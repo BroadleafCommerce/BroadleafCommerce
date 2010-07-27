@@ -44,12 +44,12 @@ public class FulfillmentGroupItemDaoTest extends BaseTest {
     @Resource
     private OrderDao orderDao;
 
-    @Test(groups = { "createFulfillmentGroupItem" }, dependsOnGroups = { "createOrder", "createDiscreteOrderItem", "createDefaultFulfillmentGroup" })
+    @Test(groups = { "createFulfillmentGroupItem" }, dependsOnGroups = { "createOrder", "createDiscreteOrderItem", "createDefaultFulfillmentGroup-broken" })
     @Rollback(false)
     public void createFulfillmentGroupItem() {
         String userName = "customer1";
         Customer customer = customerService.readCustomerByUsername(userName);
-        Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(0);
+        Order salesOrder = (orderDao.readOrdersForCustomer(customer.getId())).get(1);
         OrderItem orderItem = salesOrder.getOrderItems().get(0);
         fulfillmentGroup = salesOrder.getFulfillmentGroups().get(0);
 

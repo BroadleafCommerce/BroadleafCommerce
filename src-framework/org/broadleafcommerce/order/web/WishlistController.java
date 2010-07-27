@@ -68,7 +68,7 @@ public class WishlistController extends CartController {
             if (productItemList != null) {
                 for (ProductItem productItem : productItemList) {
                     try {
-                        cartService.addSkuToOrder(wishlistOrder.getId(), productItem.getSkuId(), productItem.getProductId(),productItem.getCategoryId(), productItem.getQuantity());
+                        cartService.addSkuToOrder(wishlistOrder.getId(), productItem.getSkuId(), productItem.getProductId(),productItem.getCategoryId(), productItem.getQuantity(), true);
                     } catch (PricingException e) {
                         LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
                         //TODO How to handle from the UI perspective???
@@ -91,7 +91,7 @@ public class WishlistController extends CartController {
     public String moveItemToCart(@ModelAttribute OrderItem orderItem, @RequestParam String wishlistName, ModelMap model, HttpServletRequest request) {
         Order wishlistOrder = cartService.findNamedOrderForCustomer(wishlistName, customerState.getCustomer(request));
         try {
-            cartService.moveItemToCartFromNamedOrder(wishlistOrder, orderItem);
+            cartService.moveItemToCartFromNamedOrder(wishlistOrder, orderItem, true);
         } catch (Exception e) {
             LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
             //TODO: handle this properly from a UI perspective
@@ -103,7 +103,7 @@ public class WishlistController extends CartController {
     public String moveAllItemsToCart(@RequestParam String wishlistName, ModelMap model, HttpServletRequest request) {
         Order wishlistOrder = cartService.findNamedOrderForCustomer(wishlistName, customerState.getCustomer(request));
         try {
-            cartService.moveAllItemsToCartFromNamedOrder(wishlistOrder);
+            cartService.moveAllItemsToCartFromNamedOrder(wishlistOrder, true);
         } catch (PricingException e) {
             LOG.error("An exception occured while pricing the order: ("+wishlistOrder.getId()+")", e);
             //TODO: handle this properly from a UI perspective
