@@ -364,7 +364,7 @@ public class OrderServiceImpl implements OrderService {
             // API user is trying to add an item to a fulfillment group not
             // created
             order = items.get(0).getOrder();
-            fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup, priceOrder);
+            fulfillmentGroup = addFulfillmentGroupToOrder(order, fulfillmentGroup, false);
         } else {
             order = fulfillmentGroup.getOrder();
         }
