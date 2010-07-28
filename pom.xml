@@ -11,8 +11,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<scm>
-		<developerConnection>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/tags/BroadleafCommerce-1.1.1-SNAPSHOT</developerConnection>
-		<url>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/tags/BroadleafCommerce-1.1.1-SNAPSHOT</url>
+		<developerConnection>scm:svn:https://broadleaf.svn.sourceforge.net/svnroot/broadleaf/branches/BroadleafCommerce-1.1.x</developerConnection>
+		<url>http://broadleaf.svn.sourceforge.net/viewvc/broadleaf/</url>
 	</scm>
 	<build>
 		<pluginManagement>
