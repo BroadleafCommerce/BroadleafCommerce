@@ -516,7 +516,7 @@
 				<artifactId>cobertura</artifactId>
 				<version>1.8</version>
 				<type>jar</type>
-				<scope>test</scope>
+				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>asm</groupId>
