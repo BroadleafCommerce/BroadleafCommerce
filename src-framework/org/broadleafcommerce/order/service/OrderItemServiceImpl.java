@@ -26,6 +26,7 @@ import org.broadleafcommerce.order.domain.PersonalMessage;
 import org.broadleafcommerce.order.service.call.BundleOrderItemRequest;
 import org.broadleafcommerce.order.service.call.DiscreteOrderItemRequest;
 import org.broadleafcommerce.order.service.call.GiftWrapOrderItemRequest;
+import org.broadleafcommerce.order.service.call.OrderItemRequest;
 import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,18 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     public OrderItem saveOrderItem(OrderItem orderItem) {
         return orderItemDao.saveOrderItem(orderItem);
+    }
+
+    public OrderItem createOrderItem(OrderItemRequest itemRequest) {
+        OrderItem orderItem = null;
+        if (itemRequest instanceof DiscreteOrderItem) {
+            orderItem = createDiscreteOrderItem((DiscreteOrderItemRequest) itemRequest);
+        } else if (itemRequest instanceof GiftWrapOrderItem) {
+            orderItem = createGiftWrapOrderItem((GiftWrapOrderItemRequest) itemRequest);
+        } else if (itemRequest instanceof BundleOrderItemRequest) {
+            orderItem = createBundleOrderItem((BundleOrderItemRequest) itemRequest);
+        }
+        return orderItem;
     }
 
     public DiscreteOrderItem createDiscreteOrderItem(DiscreteOrderItemRequest itemRequest) {

@@ -169,10 +169,6 @@ public class OrderServiceImpl implements OrderService {
         return addDiscreteItemToOrder(order, itemRequest, priceOrder);
     }
 
-    public Order addOrderItemToOrder(Order order, List<OrderItemRequest> orderItemRequest) {
-        return order;
-    }
-
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
         return addOrderItemToOrder(order, item, priceOrder);
