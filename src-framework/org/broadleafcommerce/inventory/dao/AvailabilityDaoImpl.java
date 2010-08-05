@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.inventory.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -27,30 +28,46 @@ import org.springframework.stereotype.Repository;
 @Repository("blAvailabilityDao")
 public class AvailabilityDaoImpl implements AvailabilityDao {
 
-    @PersistenceContext(unitName="blPU")
+    @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
+    private final static int inBatchSize = 300;
+
     @SuppressWarnings("unchecked")
     public List<SkuAvailability> readSKUAvailability(List<Long> skuIds, boolean realTime) {
-        Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_SKU_IDS");
-        if (! realTime) {
-            query.setHint(getQueryCacheableKey(), true);
+        List<SkuAvailability> skuAvailabilities = new ArrayList<SkuAvailability>();
+        int start = 0;
+        while (start < skuIds.size()) {
+            List<Long> batchSkuIds = skuIds.subList(start, skuIds.size() < inBatchSize ? skuIds.size() : inBatchSize);
+            Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_SKU_IDS");
+            if (!realTime) {
+                query.setHint(getQueryCacheableKey(), true);
+            }
+            query.setParameter("skuIds", batchSkuIds);
+            skuAvailabilities.addAll(query.getResultList());
+            start += inBatchSize;
         }
-        query.setParameter("skuIds", skuIds);
-        return query.getResultList();
+        return skuAvailabilities;
     }
 
     @SuppressWarnings("unchecked")
     public List<SkuAvailability> readSKUAvailabilityForLocation(List<Long> skuIds, Long locationId, boolean realTime) {
-        Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_LOCATION_ID_AND_SKU_IDS");
-        if (! realTime) {
-            query.setHint(getQueryCacheableKey(), true);
+        List<SkuAvailability> skuAvailabilities = new ArrayList<SkuAvailability>();
+        int start = 0;
+        while (start < skuIds.size()) {
+            List<Long> batchSkuIds = skuIds.subList(start, skuIds.size() < inBatchSize ? skuIds.size() : inBatchSize);
+            Query query = em.createNamedQuery("BC_READ_SKU_AVAILABILITIES_BY_LOCATION_ID_AND_SKU_IDS");
+            if (!realTime) {
+                query.setHint(getQueryCacheableKey(), true);
+            }
+            query.setParameter("skuIds", batchSkuIds);
+            query.setParameter("locationId", locationId);
+            skuAvailabilities.addAll(query.getResultList());
+            start += inBatchSize;
         }
-        query.setParameter("skuIds", skuIds);
-        query.setParameter("locationId", locationId);
-        return query.getResultList();
+        return skuAvailabilities;
     }
 
     public void save(SkuAvailability skuAvailability) {
