@@ -31,6 +31,7 @@ import org.broadleafcommerce.offer.domain.OfferInfo;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOfferDao")
@@ -111,6 +112,7 @@ public class OfferDaoImpl implements OfferDao {
     @SuppressWarnings("unchecked")
     public List<Offer> readOffersByAutomaticDeliveryType() {
         Query query = em.createNamedQuery("BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE");
+        query.setParameter("specifiedDate", SystemTime.asDate());
         List<Offer> result = query.getResultList();
         return result;
     }
