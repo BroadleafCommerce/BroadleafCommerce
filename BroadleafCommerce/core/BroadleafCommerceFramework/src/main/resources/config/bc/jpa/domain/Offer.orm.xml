@@ -5,7 +5,9 @@
 
 	<named-query name="BC_READ_OFFERS_BY_AUTOMATIC_DELIVERY_TYPE" >
 		<query>SELECT offer FROM org.broadleafcommerce.offer.domain.Offer offer
-		WHERE offer.deliveryType = 'AUTOMATIC'</query>
+		WHERE offer.deliveryType = 'AUTOMATIC'
+		AND (offer.startDate &lt;= :specifiedDate OR offer.startDate = null)
+		AND (offer.endDate &gt; :specifiedDate OR offer.endDate = null)</query>
 	</named-query>
 
 	<named-query name="BC_READ_CUSTOMER_OFFER_BY_CUSTOMER_ID" >
