@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.content.dao;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +25,7 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
-
+import org.broadleafcommerce.util.dao.BatchRetrieveDao;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -34,7 +33,8 @@ import org.springframework.stereotype.Repository;
 * @author btaylor
  */
 @Repository("blContentDao")
-public class ContentDaoImpl implements ContentDao {
+public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
+	
     @Resource(name = "blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
     @PersistenceContext(unitName = "blPU")
@@ -90,16 +90,14 @@ public class ContentDaoImpl implements ContentDao {
 
     	if (sandbox == null) {
     		query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_WHERE_SANDBOX_IS_NULL");
-    		query.setParameter("idList", ids);
         } else {
         	query = em.createNamedQuery("BC_READ_CONTENT_BY_IDS_AND_SANDBOX");
-        	query.setParameter("idList", ids);
             query.setParameter("sandbox", sandbox);
         }
 
         query.setHint(getQueryCacheableKey(), true);
-
-        return (List<Content>) query.getResultList();
+        
+        return batchExecuteReadQuery(query, ids, "idList");
     }
 
     /* (non-Javadoc)
