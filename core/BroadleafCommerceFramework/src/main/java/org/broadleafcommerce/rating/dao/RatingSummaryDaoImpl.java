@@ -28,10 +28,11 @@ import org.broadleafcommerce.rating.domain.RatingDetail;
 import org.broadleafcommerce.rating.domain.RatingSummary;
 import org.broadleafcommerce.rating.domain.ReviewDetail;
 import org.broadleafcommerce.rating.service.type.RatingType;
+import org.broadleafcommerce.util.dao.BatchRetrieveDao;
 import org.springframework.stereotype.Repository;
 
 @Repository("blRatingSummaryDao")
-public class RatingSummaryDaoImpl implements RatingSummaryDao {
+public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSummaryDao {
 
     @PersistenceContext(unitName = "blPU")
     protected EntityManager em;
@@ -55,12 +56,10 @@ public class RatingSummaryDaoImpl implements RatingSummaryDao {
         return em.merge(summary);
     }
 
-    @SuppressWarnings("unchecked")
     public List<RatingSummary> readRatingSummaries(final List<String> itemIds, final RatingType type) {
         final Query query = em.createNamedQuery("BC_READ_RATING_SUMMARIES_BY_ITEM_ID_AND_TYPE");
-        query.setParameter("itemIds", itemIds);
         query.setParameter("ratingType", type.getType());
-        final List<RatingSummary> ratings = query.getResultList();
+        List<RatingSummary> ratings = batchExecuteReadQuery(query, itemIds, "itemIds");
 
         return ratings;
     }

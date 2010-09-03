@@ -23,19 +23,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.content.domain.Content;
 import org.broadleafcommerce.content.domain.ContentDetails;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.util.dao.BatchRetrieveDao;
 import org.springframework.stereotype.Repository;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * @author btaylor
  *
  */
 @Repository("blContentDetailsDao")
-public class ContentDetailsDaoImpl implements ContentDetailsDao {
+public class ContentDetailsDaoImpl extends BatchRetrieveDao implements ContentDetailsDao {
 
 	@PersistenceContext(unitName="blPU")
     protected EntityManager em;
@@ -63,11 +61,9 @@ public class ContentDetailsDaoImpl implements ContentDetailsDao {
 		return (ContentDetails) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.content.domain.ContentDetails"), id);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<ContentDetails> readContentDetailsByOrderedIds(List<Integer> ids){
 		Query query = em.createNamedQuery("BC_READ_CONTENT_DETAILS_BY_IDS");
-		query.setParameter("contentIds", ids);
-		List<ContentDetails> cds = (List<ContentDetails>)query.getResultList();
+		List<ContentDetails> cds = batchExecuteReadQuery(query, ids, "contentIds");
 		List<ContentDetails> orderedCds = new ArrayList<ContentDetails>();
 		for (Integer id : ids){
 			for (ContentDetails cd : cds){
