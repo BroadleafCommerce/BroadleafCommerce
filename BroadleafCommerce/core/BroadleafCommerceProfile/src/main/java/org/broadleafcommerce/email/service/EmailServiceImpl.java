@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.email.dao.EmailReportingDao;
 import org.broadleafcommerce.email.domain.EmailTarget;
+import org.broadleafcommerce.email.service.exception.EmailException;
 import org.broadleafcommerce.email.service.info.EmailInfo;
 import org.broadleafcommerce.email.service.info.NullEmailInfo;
 import org.broadleafcommerce.email.service.info.ServerInfo;
@@ -87,6 +88,9 @@ public class EmailServiceImpl implements EmailService {
         props.put(EmailPropertyType.USER.getType(), emailTarget);
 
         if (Boolean.parseBoolean(emailInfo.getSendEmailReliableAsync())) {
+        	if (emailServiceProducer == null) {
+        		throw new EmailException("The property sendEmailReliableAsync on EmailInfo is true, but the EmailService does not have an instance of EmailServiceProducer set.");
+        	}
             emailServiceProducer.send(props);
         } else {
             messageCreator.sendMessage(props);
