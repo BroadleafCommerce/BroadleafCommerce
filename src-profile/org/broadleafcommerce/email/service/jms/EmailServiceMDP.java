@@ -23,7 +23,12 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.email.domain.EmailTarget;
 import org.broadleafcommerce.email.service.exception.EmailException;
+import org.broadleafcommerce.email.service.info.EmailInfo;
+import org.broadleafcommerce.email.service.message.EmailPropertyType;
 import org.broadleafcommerce.email.service.message.MessageCreator;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.MailParseException;
@@ -35,6 +40,8 @@ import org.springframework.mail.MailSendException;
  */
 public class EmailServiceMDP implements MessageListener {
 
+    private static final Log LOG = LogFactory.getLog(EmailServiceMDP.class);
+
     @Resource(name = "blMessageCreator")
     private MessageCreator messageCreator;
 
@@ -42,10 +49,15 @@ public class EmailServiceMDP implements MessageListener {
      * (non-Javadoc)
      * @see javax.jms.MessageListener#onMessage(javax.jms.Message)
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public void onMessage(Message message) {
         try {
             HashMap props = (HashMap) ((ObjectMessage) message).getObject();
+            if (LOG.isDebugEnabled()) {
+                EmailTarget emailUser = (EmailTarget) props.get(EmailPropertyType.USER.getType());
+                EmailInfo info = (EmailInfo) props.get(EmailPropertyType.INFO.getType());
+                LOG.debug("Attempt email send type=" + info.getEmailType() + " to=" + emailUser.getEmailAddress() + " from=" + info.getFromAddress() + " subject=" + info.getSubject());
+            }
             messageCreator.sendMessage(props);
         } catch (MailAuthenticationException e) {
             throw new EmailException(e);
