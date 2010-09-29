@@ -38,67 +38,17 @@
 	    <aop:pointcut id="blCatalogServiceOperation" expression="execution(* org.broadleafcommerce.catalog.service.CatalogService.*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blCatalogServiceOperation"/>
 	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.order.service.OrderService.create*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation"/>
-	</aop:config>
 
 	<bean id="blPricingExecutionManager" class="org.broadleafcommerce.pricing.service.advice.PricingExecutionManagerImpl">
         <property name="order" value="2"/>
     </bean>
 
 	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation2" expression="execution(* org.broadleafcommerce.order.service.OrderService.save(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation2" order="1"/>
+		<aop:pointcut id="blOrderServiceOperation" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation" order="1"/>
 	    <aop:aspect ref="blPricingExecutionManager">
-            <aop:pointcut id="blServiceMethodWithReturnValue1" expression="execution(* org.broadleafcommerce.order.service.OrderService.save(..))"/>
+            <aop:pointcut id="blServiceMethodWithReturnValue1" expression="execution(* org.broadleafcommerce.order.service.OrderService.*(..))"/>
             <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue1"/>
-        </aop:aspect>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation3" expression="execution(* org.broadleafcommerce.order.service.OrderService.add*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation3" order="1"/>
-	    <aop:aspect ref="blPricingExecutionManager">
-            <aop:pointcut id="blServiceMethodWithReturnValue3" expression="execution(* org.broadleafcommerce.order.service.OrderService.add*(..))"/>
-            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue3"/>
-        </aop:aspect>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation4" expression="execution(* org.broadleafcommerce.order.service.OrderService.update*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation4" order="1"/>
-	    <aop:aspect ref="blPricingExecutionManager">
-            <aop:pointcut id="blServiceMethodWithReturnValue4" expression="execution(* org.broadleafcommerce.order.service.OrderService.update*(..))"/>
-            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue4"/>
-        </aop:aspect>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation5" expression="execution(* org.broadleafcommerce.order.service.OrderService.remove*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation5" order="1"/>
-	    <aop:aspect ref="blPricingExecutionManager">
-            <aop:pointcut id="blServiceMethodWithReturnValue5" expression="execution(* org.broadleafcommerce.order.service.OrderService.remove*(..))"/>
-            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue5"/>
-        </aop:aspect>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation6" expression="execution(* org.broadleafcommerce.order.service.OrderService.confirmOrder*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation6" order="1"/>
-	    <aop:aspect ref="blPricingExecutionManager">
-            <aop:pointcut id="blServiceMethodWithReturnValue6" expression="execution(* org.broadleafcommerce.order.service.OrderService.confirmOrder*(..))"/>
-            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue6"/>
-        </aop:aspect>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blOrderServiceOperation7" expression="execution(* org.broadleafcommerce.order.service.OrderService.cancel*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOrderServiceOperation7" order="1"/>
-	    <aop:aspect ref="blPricingExecutionManager">
-            <aop:pointcut id="blServiceMethodWithReturnValue7" expression="execution(* org.broadleafcommerce.order.service.OrderService.cancel*(..))"/>
-            <aop:around method="priceOrder" pointcut-ref="blServiceMethodWithReturnValue7"/>
         </aop:aspect>
 	</aop:config>
 	
