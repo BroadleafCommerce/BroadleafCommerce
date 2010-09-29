@@ -47,6 +47,38 @@
 		</sequential>
 	</macrodef>
 	
+	<macrodef name="maven-launch-jrebel">
+		<attribute name="options" default="" />
+		<attribute name="goal" />
+		<attribute name="basedir" />
+		<attribute name="resultproperty" default="maven.result" />
+		<element name="args" implicit="true" optional="true" />
+		<sequential>
+			<java classname="org.codehaus.classworlds.Launcher" fork="true" dir="@{basedir}" resultproperty="@{resultproperty}">
+				<jvmarg value="-Xdebug"/>
+				<jvmarg value="-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"/>
+				<jvmarg value="-Xmx512m" />
+				<jvmarg value="-XX:MaxPermSize=512M" />
+				<jvmarg value="-Dcom.sun.management.jmxremote=true" />
+		    	<jvmarg value="-Dcom.sun.management.jmxremote.port=1616" />
+		    	<jvmarg value="-Dcom.sun.management.jmxremote.authenticate=false" />
+		    	<jvmarg value="-Dcom.sun.management.jmxremote.ssl=false" />
+				<jvmarg line="-noverify -javaagent:${jrebel.path}" />
+				<classpath>
+					<fileset dir="${maven.home}/boot">
+						<include name="*.jar" />
+					</fileset>
+					<fileset dir="${maven.home}/lib">
+						<include name="*.jar" />
+					</fileset>
+				</classpath>
+				<sysproperty key="classworlds.conf" value="${maven.home}/bin/m2.conf" />
+				<sysproperty key="maven.home" value="${maven.home}" />
+				<arg line="--batch-mode @{options} @{goal}" />
+			</java>
+		</sequential>
+	</macrodef>
+	
 	<macrodef name="maven-stop">
 		<attribute name="options" default="" />
 		<attribute name="goal" />
@@ -97,6 +129,13 @@
 			<fileset dir="src/main/webapp/WEB-INF/lib" includes="*.*"/>
 	  	</delete>
 		<maven-launch basedir="${basedir}" goal="clean compile war:inplace jetty:run" resultproperty="maven.build.result"/>
+	</target>
+	
+	<target name="launch-demo-jrebel" depends="start-db">
+		<delete>
+			<fileset dir="src/main/webapp/WEB-INF/lib" includes="*.*"/>
+	  	</delete>
+		<maven-launch-jrebel basedir="${basedir}" goal="clean compile war:inplace jetty:run" resultproperty="maven.build.result"/>
 	</target>
 	
 	<target name="stop-demo" depends="stop-db">
