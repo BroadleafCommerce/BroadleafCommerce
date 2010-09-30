@@ -150,7 +150,7 @@ public class CartController {
             }
         }
         
-        if (cart.getFulfillmentGroups() != null && cart.getFulfillmentGroups().size() != 1) {
+        if (cart.getFulfillmentGroups() != null && (cart.getFulfillmentGroups().size() != 1 || cart.getOrderItems().size() == 0)) {
         	updateFulfillmentGroups(cartSummary, cart);
         } else {
         	cartSummary.setFulfillmentGroup(cart.getFulfillmentGroups().get(0));
