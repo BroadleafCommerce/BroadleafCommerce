@@ -149,12 +149,8 @@ public class CartController {
                 }
             }
         }
-        
-        if (cart.getFulfillmentGroups() != null && cart.getFulfillmentGroups().size() != 1) {
-        	updateFulfillmentGroups(cartSummary, cart);
-        } else {
-        	cartSummary.setFulfillmentGroup(cart.getFulfillmentGroups().get(0));
-        }
+
+        updateFulfillmentGroups(cartSummary, cart);
         cartSummary.setOrderDiscounts(cart.getTotalAdjustmentsValue().getAmount());
         model.addAttribute("cartSummary", cartSummary);
         return cartViewRedirect ? "redirect:" + cartView : cartView;
