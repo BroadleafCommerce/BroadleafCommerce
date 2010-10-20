@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.broadleafcommerce</groupId>
+		<artifactId>BroadleafCommerce</artifactId>
+		<version>0.9.40</version>
+	</parent>
+  <groupId>org.broadleafcommerce</groupId>
+  <artifactId>broadleaf-framework</artifactId>
+  <name>BroadleafCommerceFramework</name>
+  <version>0.9.40</version>
+	<dependencies>
+		<dependency>
+			<groupId>org.compass-project</groupId>
+			<artifactId>compass</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mvel</groupId>
+			<artifactId>mvel2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-profile</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>cobertura</groupId>
+			<artifactId>cobertura</artifactId>
+		</dependency>
+	</dependencies>
+</project>
