@@ -55,7 +55,7 @@
 -->
 		<dependency>
 
-			<groupId>hibernate</groupId>
+			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 		</dependency>
 <!--
