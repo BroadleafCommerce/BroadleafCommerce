@@ -171,6 +171,10 @@ public class OrderImpl implements Order {
     @Transient
     protected boolean hasOrderAdjustments = false;
 
+    @Transient
+    protected Money shippingPriceWithoutOffers = new Money(0);
+
+
     public Long getId() {
         return id;
     }
@@ -630,6 +634,21 @@ public class OrderImpl implements Order {
         Date myDateCreated = auditable != null ? auditable.getDateCreated() : null;
         result = prime * result + ((myDateCreated == null) ? 0 : myDateCreated.hashCode());
         return result;
+    }
+
+    public void setShippingPriceWithoutOffers(Money shippingPriceWithoutOffers) {
+        this.shippingPriceWithoutOffers = shippingPriceWithoutOffers;
+
+    }
+
+    public void addToShippingPriceWithoutOffers(Money price) {
+        if (price != null) {
+            this.shippingPriceWithoutOffers = this.shippingPriceWithoutOffers.add(price);
+        }
+    }
+
+    public Money getShippingPriceWithoutOffers() {
+        return shippingPriceWithoutOffers;
     }
 
 }

@@ -214,4 +214,8 @@ public interface Order extends Serializable {
     public boolean isHasOrderAdjustments();
 
     public boolean updatePrices();
+
+    public void setShippingPriceWithoutOffers(Money shippingPriceWithoutOffers);
+    public Money getShippingPriceWithoutOffers();
+    public void addToShippingPriceWithoutOffers(Money shippingPriceWithoutOffers);
 }

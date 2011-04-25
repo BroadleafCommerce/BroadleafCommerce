@@ -87,6 +87,15 @@ public interface OfferService {
      */
     public void applyFulfillmentGroupsOffers(List<FulfillmentGroup> fulfillmentGroups);
 
+    /**
+     * Visit all offers on an order including order offers, order item offers and fulfillment offers. If any offer is
+     * defined non-combinable, then evaluate that offer against the rest combined to finally apply best offer.
+     * @param order
+     * @return
+     * @throws PricingException
+     */
+    public boolean reviewAllOffersAndApplyBest(Order order) throws PricingException;
+
 
 
 

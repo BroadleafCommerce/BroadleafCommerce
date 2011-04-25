@@ -712,6 +712,7 @@ public class OfferServiceImpl implements OfferService {
         if (qualifiedFulfillmentGroupOffers.size() > 0) {
             Collections.sort(qualifiedFulfillmentGroupOffers, new BeanComparator("discountedPrice"));
             Collections.sort(qualifiedFulfillmentGroupOffers, new BeanComparator("priority"));
+            Collections.sort(qualifiedFulfillmentGroupOffers, new BeanComparator("offer.combinableWithOtherOffers", Collections.reverseOrder()));
             applyAllFulfillmentGroupOffers(qualifiedFulfillmentGroupOffers, fulfillmentGroup);
         }
         if (fulfillmentGroup.getAdjustmentPrice() != null) {
@@ -736,11 +737,18 @@ public class OfferServiceImpl implements OfferService {
      */
     protected void applyAllFulfillmentGroupOffers(List<CandidateFulfillmentGroupOffer> fulfillmentGroupOffers, FulfillmentGroup fulfillmentGroup) {
         // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
+        Money appliedDiscounts = new Money(0D);
         for (CandidateFulfillmentGroupOffer fulfillmentGroupOffer : fulfillmentGroupOffers) {
             if ((fulfillmentGroupOffer.getOffer().isStackable()) || fulfillmentGroup.getFulfillmentGroupAdjustments().size() == 0) {
-                applyFulfillmentGroupOffer(fulfillmentGroupOffer);
                 if (!fulfillmentGroupOffer.getOffer().isCombinableWithOtherOffers()) {
-                    break;
+                    if (fulfillmentGroupOffer.getDiscountAmount().greaterThan(appliedDiscounts)) {
+                        fulfillmentGroup.removeAllAdjustments();
+                        applyFulfillmentGroupOffer(fulfillmentGroupOffer);
+                        break;
+                    }
+                } else {
+                    applyFulfillmentGroupOffer(fulfillmentGroupOffer);
+                    appliedDiscounts = appliedDiscounts.add(fulfillmentGroupOffer.getDiscountAmount());
                 }
             }
         }
@@ -762,5 +770,267 @@ public class OfferServiceImpl implements OfferService {
     public OfferCode lookupOfferCodeByCode(String code){
         return offerCodeDao.readOfferCodeByCode(code);
     }
+
+
+    /*
+     *
+     * Assumptions:
+     * 1) Order and Order Item Offers have been applied and amounts adjusted
+     * 2) Fulfillment Offers have been applied and shipping costs adjusted
+     * 3) This feature is applicable only if any Fulfillment offer is Non-Combinable.
+     *    If not, this code does not execute.
+     * 4) The goal is to determine whether applying a non-combinable fulfillment offer
+     *    to retail prices is better than applying the order+items offer with retail shipping.
+     * 
+     * Review Offers Logic:
+     * 1) Determine if any fulfillment offer is non-combinable
+     * 2) if there are no non-combinable shipping, return. everything has been calculated already.
+     * 3) if any shipping offer is non-combinable, continue to next step
+     * 4) get total shipping cost without fulfillment offers
+     * 5) get total order cost without order and item offers applied
+     * 5) get total shipping adjustment cost applying fulfillment offers
+     * 6) get order total with offers applied
+     * 7) compare (Ord_with_off + Ret_Shipping) and (Ord_with_no_off + Adj_Shipping)
+     * 8) if (Ord_with_off + Ret_Shipping) is lesser
+     *    - remove fulfillment adjustments and fulfillment candidate offers
+     *    - keep order + item offers and applied adjustments as-is
+     * 9) if (Ord_with_no_off + Adj_Shipping) is lesser
+     *    - remove all order and item offers and adjustments
+     *    - remove all fulfillments offers and adjustments
+     *    - apply fulfillment candidate offers
+     * 10) return a boolean whether review logic was executed or not
+     * 11) Iff review logic was executed, the caller of this method (ReviewOffersActivity)
+     *     will apply fulfillment offers and calculate fulfillments adjustments.
+     * 
+     */
+    public boolean reviewAllOffersAndApplyBest(Order order)  throws PricingException {
+
+        List<Offer> allFulfillmentOffers = new ArrayList<Offer>();
+        boolean atLeastOneFulfillmentOfferNotCombinable = isAnyOneFulfillmentOfferNotCombinable(order, allFulfillmentOffers);
+
+        if (atLeastOneFulfillmentOfferNotCombinable && order.getAdjustmentPrice() != null) {
+            Money orderAdjustmentPriceWithOffers = order.getAdjustmentPrice();
+            Money totalShippingPriceWithOffers = order.getTotalShipping();
+
+            Money orderAdjustmentPriceWithoutOffers = order.getAdjustmentPrice().add(order.getTotalAdjustmentsValue());
+            Money totalShippingPriceWithoutOffers = order.getShippingPriceWithoutOffers();
+            if ((orderAdjustmentPriceWithOffers.add(totalShippingPriceWithoutOffers)).greaterThan((orderAdjustmentPriceWithoutOffers.add(totalShippingPriceWithOffers)))) {
+                // remove order and item offers
+                // recalculate order and item totals without offers
+                // recalculate shipping with fulfillment offers
+                applyOffersToOrder(allFulfillmentOffers, order);
+            } else {
+                // remove shipping offer and keep order and item offers
+                // recalculate shipping without fulfillment offers
+                for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+                    fulfillmentGroup.removeAllAdjustments();
+                    fulfillmentGroup.removeAllCandidateOffers();
+                }
+            }
+            order.setShippingPriceWithoutOffers(new Money(0));
+        }
+
+        return atLeastOneFulfillmentOfferNotCombinable;
+    }
+
+    /**
+     * Private method used by reviewAllOffersAndApplyBest to determine whether there is at least one
+     * non-combinable fulfillment offer. It also collects all candidate fulfillment offers to be used
+     * in case they need to be reapplied.
+     *
+     * @param order the order
+     * @param allOffers a collection to hold all candidate fulfillment offers for use later
+     */
+    private boolean isAnyOneFulfillmentOfferNotCombinable(Order order, List<Offer> allOffers) {
+        List<FulfillmentGroup> groups = order.getFulfillmentGroups();
+        boolean hasNonCombinable = false;
+        for (FulfillmentGroup group:groups){
+            List<CandidateFulfillmentGroupOffer> groupOfferCandidates = group.getCandidateFulfillmentGroupOffers();
+            for (CandidateFulfillmentGroupOffer candidate:groupOfferCandidates){
+                Offer offer = candidate.getOffer();
+                if (!offer.isCombinableWithOtherOffers()) {
+                    hasNonCombinable = true;
+                }
+                allOffers.add(offer);
+            }
+        }
+        return hasNonCombinable;
+    }
+
+    //    @SuppressWarnings("unchecked")
+    //    public void reviewAllOffersAndApplyBest(Order order) {
+    //
+    //        // determine if any shipping offer is non-combinable
+    //        // if there are no non-combinable shipping, return. everything has been calculated already.
+    //        // if any shipping offer is non-combinable
+    //        //          get retail shipping RSH
+    //        //          get total shipping adjustment cost (using current logic. this will return considering all offers based on combinable flag ASH
+    //        // get all candidate offers
+    //        // get order total with offers applied ORF
+    //        // get order total without applying any offers ORD
+    //        // compare (Ord_with_off + Ret_Shipping) and (Ord_no_off + Adj_Shipping)
+    //        // apply whichever is lesser.
+    //        //
+    //        //
+    //
+    //        // loop through candidate offers for all types of offers.
+    //        // Determine all offers (order, order item, fulfillment) that are non-combinable
+    //        // keep a list of all candidate offers
+    //        //if any non-combinable offers found
+    //        //   (a) remove all adjustments and offers
+    //        //   (b) apply order item offers
+    //        //   (c) apply order offer over the previous result
+    //        //   (d) apply fulfillment offers over the previous result
+    //        List<Offer> allOffers = new ArrayList<Offer>();
+    //        List<CandidateOrderOffer> orderOfferCandidates = order.getCandidateOrderOffers();
+    //        boolean isAnyOrderOfferNotCombinable = false;
+    //        for (CandidateOrderOffer candidate:orderOfferCandidates){
+    //            Offer offer = candidate.getOffer();
+    //            if (!offer.isCombinableWithOtherOffers()) {
+    //                isAnyOrderOfferNotCombinable = true;
+    //            }
+    //            allOffers.add(offer);
+    //        }
+    //
+    //        boolean isAnyOrderItemOfferNotCombinable = false;
+    //        List<OrderItem> items = order.getOrderItems();
+    //        for (OrderItem item:items){
+    //            List<CandidateItemOffer> itemOfferCandidates = item.getCandidateItemOffers();
+    //            for (CandidateItemOffer candidate:itemOfferCandidates){
+    //                Offer offer = candidate.getOffer();
+    //                if (!offer.isCombinableWithOtherOffers()) {
+    //                    isAnyOrderItemOfferNotCombinable = true;
+    //                }
+    //                allOffers.add(offer);
+    //            }
+    //        }
+    //
+    //        boolean isAnyFulfillmentOfferNotCombinable = false;
+    //        List<FulfillmentGroup> groups = order.getFulfillmentGroups();
+    //        for (FulfillmentGroup group:groups){
+    //            List<CandidateFulfillmentGroupOffer> groupOfferCandidates = group.getCandidateFulfillmentGroupOffers();
+    //            for (CandidateFulfillmentGroupOffer candidate:groupOfferCandidates){
+    //                Offer offer = candidate.getOffer();
+    //                if (!offer.isCombinableWithOtherOffers()) {
+    //                    isAnyFulfillmentOfferNotCombinable = true;
+    //                }
+    //                allOffers.add(offer);
+    //            }
+    //        }
+    //
+    //        if (isAnyOrderOfferNotCombinable || isAnyOrderItemOfferNotCombinable || isAnyFulfillmentOfferNotCombinable) {
+    //            clearOffersandAdjustments(order);
+    //            List<CandidateOrderOffer> qualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
+    //            List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
+    //            List<Offer> qualifiedFulfillmentOffers = new ArrayList<Offer>();
+    //            // set order subtotal price to total item price without adjustments
+    //            order.setSubTotal(order.calculateOrderItemsCurrentPrice());
+    //            List<DiscreteOrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
+    //            for (Offer offer : allOffers) {
+    //                if(offer.getType().equals(OfferType.ORDER)){
+    //                    if (couldOfferApplyToOrder(offer, order)) {
+    //                        CandidateOrderOffer candidateOffer = offerDao.createCandidateOrderOffer();
+    //                        candidateOffer.setOrder(order);
+    //                        candidateOffer.setOffer(offer);
+    //                        // Why do we add offers here when we set the sorted list later
+    //                        order.addCandidateOrderOffer(candidateOffer);
+    //                        qualifiedOrderOffers.add(candidateOffer);
+    //                    }
+    //                } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
+    //                    for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+    //                        if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
+    //                            CandidateItemOffer candidateOffer = offerDao.createCandidateItemOffer();
+    //                            candidateOffer.setOrderItem(discreteOrderItem);
+    //                            candidateOffer.setOffer(offer);
+    //                            discreteOrderItem.addCandidateItemOffer(candidateOffer);
+    //                            qualifiedItemOffers.add(candidateOffer);
+    //                        }
+    //                    }
+    //                } else if(offer.getType().equals(OfferType.FULFILLMENT_GROUP)){
+    //                    qualifiedFulfillmentOffers.add(offer);
+    //                }
+    //            }
+    //
+    //            for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+    //                for (Offer fulfillmentOffer : qualifiedFulfillmentOffers) {
+    //                    if(couldOfferApplyToOrder(fulfillmentOffer, order, fulfillmentGroup)) {
+    //                        CandidateFulfillmentGroupOffer candidateOffer = offerDao.createCandidateFulfillmentGroupOffer();
+    //                        candidateOffer.setFulfillmentGroup(fulfillmentGroup);
+    //                        candidateOffer.setOffer(fulfillmentOffer);
+    //                        fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
+    //                    }
+    //                }
+    //            }
+    //
+    //            if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
+    //                order.assignOrderItemsFinalPrice();
+    //                order.setSubTotal(order.calculateOrderItemsFinalPrice());
+    //                applyFulfillmentGroupsOffers(order.getFulfillmentGroups());
+    //            } else {
+    //                if (!qualifiedItemOffers.isEmpty()) {
+    //                    // Sort order item offers by priority and total discount
+    //                    Collections.sort(qualifiedItemOffers, new BeanComparator("discountAmount", Collections.reverseOrder()));
+    //                    Collections.sort(qualifiedItemOffers, new BeanComparator("priority"));
+    //                    applyAllItemOffers(qualifiedItemOffers, discreteOrderItems);
+    //                    // TODO: some notStackable offers may not have applied which changes the total discount of that offer
+    //                    // Do we need to resort the list again?
+    //                }
+    //
+    //                if (!qualifiedOrderOffers.isEmpty()) {
+    //                    // Sort order offers by priority and discount
+    //                    Collections.sort(qualifiedOrderOffers, new BeanComparator("discountAmount", Collections.reverseOrder()));
+    //                    Collections.sort(qualifiedOrderOffers, new BeanComparator("priority"));
+    //                    qualifiedOrderOffers = removeTrailingNotCombinableOrderOffers(qualifiedOrderOffers);
+    //                    applyAllOrderOffers(qualifiedOrderOffers, order);
+    //                }
+    //
+    //                if (!qualifiedFulfillmentOffers.isEmpty()) {
+    //                    applyAllFulfillmentOffers(order);
+    //                }
+    //            }
+    //
+    //
+    //        }
+    //    }
+    //
+    //    @SuppressWarnings("unchecked")
+    //    protected boolean applyAllFulfillmentOffers(Order order) {
+    //        boolean fulfillmentOffersApplied = false;
+    //        for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+    //            List<CandidateFulfillmentGroupOffer> qualifiedFulfillmentGroupOffers = fulfillmentGroup.getCandidateFulfillmentGroupOffers();
+    //            if (qualifiedFulfillmentGroupOffers.size() > 0) {
+    //                Collections.sort(qualifiedFulfillmentGroupOffers, new BeanComparator("discountedPrice"));
+    //                Collections.sort(qualifiedFulfillmentGroupOffers, new BeanComparator("priority"));
+    //                // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
+    //                for (CandidateFulfillmentGroupOffer fulfillmentGroupOffer : qualifiedFulfillmentGroupOffers) {
+    //                    if ((fulfillmentGroupOffer.getOffer().isStackable()) || fulfillmentGroup.getFulfillmentGroupAdjustments().size() == 0) {
+    //                        applyFulfillmentGroupOffer(fulfillmentGroupOffer);
+    //                        fulfillmentOffersApplied = true;
+    //                        if (!fulfillmentGroupOffer.getOffer().isCombinableWithOtherOffers()) {
+    //                            if (fulfillmentGroup.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
+    //                                // item offer is better; remove not combinable order offer and process other order offers
+    //                                order.removeAllOrderAdjustments();
+    //                                fulfillmentOffersApplied = false;
+    //                            } else {
+    //                                // not combinable order offer is better; remove all item offers
+    //                                order.removeAllItemAdjustments();
+    //                                break;
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //
+    //
+    //            }
+    //            if (fulfillmentGroup.getAdjustmentPrice() != null) {
+    //                fulfillmentGroup.setShippingPrice(fulfillmentGroup.getAdjustmentPrice());
+    //            } else if (fulfillmentGroup.getSaleShippingPrice() != null) {
+    //                fulfillmentGroup.setShippingPrice(fulfillmentGroup.getSaleShippingPrice());
+    //            } else {
+    //                fulfillmentGroup.setShippingPrice(fulfillmentGroup.getRetailShippingPrice());
+    //            }
+    //        }
+    //        return fulfillmentOffersApplied;
+    //    }
 
 }

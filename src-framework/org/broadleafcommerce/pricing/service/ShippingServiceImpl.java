@@ -30,6 +30,9 @@ public class ShippingServiceImpl implements ShippingService {
 
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) {
         FulfillmentGroup group = shippingModule.calculateShippingForFulfillmentGroup(fulfillmentGroup);
+        if (fulfillmentGroup.getOrder() != null) {
+            fulfillmentGroup.getOrder().addToShippingPriceWithoutOffers(group.getShippingPrice());
+        }
         offerService.applyFulfillmentGroupOffers(fulfillmentGroup);
         return group;
     }
