@@ -2,6 +2,7 @@ package org.broadleafcommerce.payment.service.module;
 
 import java.util.Currency;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.domain.PaymentResponseItemImpl;
@@ -10,7 +11,6 @@ import org.broadleafcommerce.payment.service.exception.PaymentException;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.service.module.CyberSourceModule;
 import org.broadleafcommerce.time.SystemTime;
-import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;

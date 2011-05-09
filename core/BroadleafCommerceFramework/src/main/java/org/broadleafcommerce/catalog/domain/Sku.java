@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.media.domain.Media;
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 /**
  * Implementations of this interface are used to hold data about a SKU.  A SKU is
  * a specific item that can be sold including any specific attributes of the item such as

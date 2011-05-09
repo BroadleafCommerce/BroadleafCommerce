@@ -19,10 +19,10 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.broadleafcommerce.catalog.domain.Category;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.order.service.type.OrderItemType;
-import org.broadleafcommerce.util.money.Money;
 
 public interface OrderItem extends Serializable {
 

@@ -19,8 +19,8 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blAddressDao")
@@ -36,7 +36,6 @@ public class AddressDaoImpl implements AddressDao {
         return em.merge(address);
     }
 
-    @SuppressWarnings("unchecked")
     public Address readAddressById(Long id) {
         return (Address) em.find(entityConfiguration.lookupEntityClass(Address.class.getName()), id);
     }

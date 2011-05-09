@@ -22,9 +22,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blFulfillmentGroupItemDao")
@@ -47,7 +47,6 @@ public class FulfillmentGroupItemDaoImpl implements FulfillmentGroupItemDao {
         return em.merge(fulfillmentGroupItem);
     }
 
-    @SuppressWarnings("unchecked")
     public FulfillmentGroupItem readFulfillmentGroupItemById(final Long fulfillmentGroupItemId) {
         return (FulfillmentGroupItem) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroupItem"), fulfillmentGroupItemId);
     }

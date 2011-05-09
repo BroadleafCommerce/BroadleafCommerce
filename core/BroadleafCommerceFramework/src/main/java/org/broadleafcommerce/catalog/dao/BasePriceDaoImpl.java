@@ -20,7 +20,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.broadleafcommerce.catalog.domain.BasePrice;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blBasePriceDao")
@@ -36,7 +36,6 @@ public class BasePriceDaoImpl implements BasePriceDao {
         return em.merge(basePrice);
     }
 
-    @SuppressWarnings("unchecked")
     public BasePrice readBasePriceById(Long basePriceId) {
         return (BasePrice) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.BasePrice"), basePriceId);
     }

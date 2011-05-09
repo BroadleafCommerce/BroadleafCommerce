@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 public class CyberSourceVoidResponse  implements java.io.Serializable {
 	

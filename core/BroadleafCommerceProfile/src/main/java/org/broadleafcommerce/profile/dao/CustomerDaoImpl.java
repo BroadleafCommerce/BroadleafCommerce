@@ -22,8 +22,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerDao")
@@ -35,7 +35,6 @@ public class CustomerDaoImpl implements CustomerDao {
     @Resource(name="blEntityConfiguration")
     protected EntityConfiguration entityConfiguration;
 
-    @SuppressWarnings("unchecked")
     public Customer readCustomerById(Long id) {
         return (Customer) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Customer"), id);
     }
@@ -43,14 +42,16 @@ public class CustomerDaoImpl implements CustomerDao {
     public Customer readCustomerByUsername(String username) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_USER_NAME");
         query.setParameter("username", username);
-        List<Customer> customers = query.getResultList();
+        @SuppressWarnings("unchecked")
+		List<Customer> customers = query.getResultList();
         return customers == null || customers.isEmpty() ? null : customers.get(0);
     }
 
     public Customer readCustomerByEmail(String emailAddress) {
         Query query = em.createNamedQuery("BC_READ_CUSTOMER_BY_EMAIL");
         query.setParameter("email", emailAddress);
-        List<Customer> customers = query.getResultList();
+        @SuppressWarnings("unchecked")
+		List<Customer> customers = query.getResultList();
         return customers == null || customers.isEmpty() ? null : customers.get(0);
     }
 

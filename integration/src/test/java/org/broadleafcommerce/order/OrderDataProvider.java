@@ -17,9 +17,9 @@ package org.broadleafcommerce.order;
 
 import java.math.BigDecimal;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.service.type.OrderStatus;
-import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.DataProvider;
 
 public class OrderDataProvider {

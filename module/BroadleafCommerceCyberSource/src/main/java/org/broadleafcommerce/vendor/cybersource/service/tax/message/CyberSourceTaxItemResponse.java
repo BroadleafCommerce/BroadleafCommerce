@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.tax.message;
 
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 public class CyberSourceTaxItemResponse implements java.io.Serializable {
 	

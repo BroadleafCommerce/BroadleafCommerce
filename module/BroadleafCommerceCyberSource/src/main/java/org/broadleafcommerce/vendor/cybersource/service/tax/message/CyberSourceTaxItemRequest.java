@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.tax.message;
 
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 
 public class CyberSourceTaxItemRequest extends CyberSourceItemRequest {

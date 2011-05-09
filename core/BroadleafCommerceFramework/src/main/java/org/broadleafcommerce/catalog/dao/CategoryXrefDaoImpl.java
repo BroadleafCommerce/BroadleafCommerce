@@ -23,7 +23,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.CategoryXref;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCategoryXrefDao")

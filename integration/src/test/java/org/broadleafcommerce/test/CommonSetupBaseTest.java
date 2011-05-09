@@ -14,6 +14,7 @@ import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
@@ -35,7 +36,6 @@ import org.broadleafcommerce.profile.service.CountryService;
 import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.service.StateService;
-import org.broadleafcommerce.util.money.Money;
 
 public abstract class CommonSetupBaseTest extends BaseTest {
     

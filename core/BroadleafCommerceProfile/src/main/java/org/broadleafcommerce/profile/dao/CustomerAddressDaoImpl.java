@@ -22,8 +22,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.CustomerAddress;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerAddressDao")
@@ -50,7 +50,6 @@ public class CustomerAddressDaoImpl implements CustomerAddressDao {
         return (CustomerAddress) entityConfiguration.createEntityInstance(CustomerAddress.class.getName());
     }
 
-    @SuppressWarnings("unchecked")
     public CustomerAddress readCustomerAddressById(Long customerAddressId) {
         return (CustomerAddress) em.find(entityConfiguration.lookupEntityClass(CustomerAddress.class.getName()), customerAddressId);
     }

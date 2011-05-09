@@ -22,11 +22,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentLog;
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blPaymentInfoDao")
@@ -50,7 +50,6 @@ public class PaymentInfoDaoImpl implements PaymentInfoDao {
         return em.merge(log);
     }
 
-    @SuppressWarnings("unchecked")
     public PaymentInfo readPaymentInfoById(Long paymentId) {
         return (PaymentInfo) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.payment.domain.PaymentInfo"), paymentId);
     }

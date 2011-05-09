@@ -24,7 +24,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.web.taglib.SearchFilterItemTag;
 import org.broadleafcommerce.catalog.web.taglib.SearchFilterTag;
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 /**
  * SearchFilterUtil exposes a simple static method for filtering out products that do not match the

@@ -2,9 +2,9 @@
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
-         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" id="WebApp_ID">
 
-	<display-name>BroadleafCommerceDemo</display-name>
+	<display-name>broadleaf-demo</display-name>
 
 	<context-param>
 		<param-name>webAppRootKey</param-name>
@@ -18,7 +18,6 @@
             /WEB-INF/applicationContext-email.xml
             /WEB-INF/applicationContext-search.xml
             /WEB-INF/applicationContext-security.xml
-            classpath:/applicationContext-demo-admin.xml
         </param-value>
 	</context-param>
 
@@ -138,16 +137,20 @@
         <servlet-name>demo</servlet-name>
         <url-pattern>/store</url-pattern>
     </servlet-mapping>
-    
-    <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
 
 	<env-entry>
 		<env-entry-name>appName</env-entry-name>
 		<env-entry-type>java.lang.String</env-entry-type>
 		<env-entry-value>broadleafdemo</env-entry-value>
 	</env-entry>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
 
 	<jsp-config>
         <taglib>

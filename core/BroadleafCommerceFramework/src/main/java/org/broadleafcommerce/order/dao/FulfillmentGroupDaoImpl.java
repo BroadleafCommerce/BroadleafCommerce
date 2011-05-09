@@ -22,11 +22,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupImpl;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blFulfillmentGroupDao")
@@ -42,7 +42,6 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
         return em.merge(fulfillmentGroup);
     }
 
-    @SuppressWarnings("unchecked")
     public FulfillmentGroup readFulfillmentGroupById(final Long fulfillmentGroupId) {
         return (FulfillmentGroup) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.FulfillmentGroup"), fulfillmentGroupId);
     }
@@ -50,7 +49,8 @@ public class FulfillmentGroupDaoImpl implements FulfillmentGroupDao {
     public FulfillmentGroupImpl readDefaultFulfillmentGroupForOrder(final Order order) {
         final Query query = em.createNamedQuery("BC_READ_DEFAULT_FULFILLMENT_GROUP_BY_ORDER_ID");
         query.setParameter("orderId", order.getId());
-        List<FulfillmentGroupImpl> fulfillmentGroups = query.getResultList();
+        @SuppressWarnings("unchecked")
+		List<FulfillmentGroupImpl> fulfillmentGroups = query.getResultList();
         return fulfillmentGroups == null || fulfillmentGroups.isEmpty() ? null : fulfillmentGroups.get(0);
     }
 

@@ -23,8 +23,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.pricing.domain.ShippingRate;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blShippingRatesDao")
@@ -40,7 +40,6 @@ public class ShippingRateDaoImpl implements ShippingRateDao {
         return em.merge(shippingRate);
     }
 
-    @SuppressWarnings("unchecked")
     public ShippingRate readShippingRateById(Long id) {
         return (ShippingRate) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.pricing.domain.ShippingRate"), id);
     }

@@ -22,7 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.util.domain.CodeType;
 import org.springframework.stereotype.Repository;
 
@@ -46,7 +46,6 @@ public class CodeTypeDaoImpl implements CodeTypeDao {
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public void delete(CodeType codeType) {
     	if (!em.contains(codeType)) {
         	codeType = (CodeType) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.util.domain.CodeType"), codeType.getId());
@@ -54,7 +53,6 @@ public class CodeTypeDaoImpl implements CodeTypeDao {
         em.remove(codeType);
     }
 
-    @SuppressWarnings("unchecked")
     public CodeType readCodeTypeById(Long codeTypeId) {
         return (CodeType) em.find(entityConfiguration.lookupEntityClass(CodeType.class.getName()), codeTypeId);
     }

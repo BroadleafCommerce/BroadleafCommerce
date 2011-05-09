@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.rating.domain.ReviewDetail;
 import org.springframework.stereotype.Repository;
 

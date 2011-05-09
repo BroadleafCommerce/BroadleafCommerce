@@ -22,8 +22,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.Country;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCountryDao")
@@ -37,7 +37,6 @@ public class CountryDaoImpl implements CountryDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @SuppressWarnings("unchecked")
     public Country findCountryByAbbreviation(String abbreviation) {
         return (Country) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Country"), abbreviation);
     }

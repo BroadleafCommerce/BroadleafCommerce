@@ -32,11 +32,11 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.payment.service.type.PaymentLogEventType;
 import org.broadleafcommerce.payment.service.type.TransactionType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
-import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Index;
 
 @Entity

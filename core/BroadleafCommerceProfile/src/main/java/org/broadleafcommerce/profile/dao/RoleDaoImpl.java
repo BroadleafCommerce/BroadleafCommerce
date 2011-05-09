@@ -22,10 +22,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.CustomerRole;
 import org.broadleafcommerce.profile.domain.Role;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blRoleDao")
@@ -39,7 +39,6 @@ public class RoleDaoImpl implements RoleDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @SuppressWarnings("unchecked")
     public Address readAddressById(Long id) {
         return (Address) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Address"), id);
     }

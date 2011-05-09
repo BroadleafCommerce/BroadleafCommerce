@@ -35,6 +35,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl;
 import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
@@ -47,7 +48,6 @@ import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.domain.PhoneImpl;
-import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;

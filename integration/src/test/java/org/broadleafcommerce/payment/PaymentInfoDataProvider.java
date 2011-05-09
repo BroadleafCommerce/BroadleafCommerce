@@ -17,10 +17,10 @@ package org.broadleafcommerce.payment;
 
 import java.math.BigDecimal;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
-import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.DataProvider;
 
 public class PaymentInfoDataProvider {

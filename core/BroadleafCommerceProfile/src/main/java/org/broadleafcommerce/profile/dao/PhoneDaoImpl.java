@@ -19,8 +19,8 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.Phone;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blPhoneDao")
@@ -36,7 +36,6 @@ public class PhoneDaoImpl implements PhoneDao {
         return em.merge(phone);
     }
 
-    @SuppressWarnings("unchecked")
     public Phone readPhoneById(Long phoneId) {
         return (Phone) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Phone"), phoneId);
     }

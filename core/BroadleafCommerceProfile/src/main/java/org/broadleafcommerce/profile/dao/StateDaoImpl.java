@@ -22,9 +22,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.Country;
 import org.broadleafcommerce.profile.domain.State;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blStateDao")
@@ -38,7 +38,6 @@ public class StateDaoImpl implements StateDao {
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @SuppressWarnings("unchecked")
     public State findStateByAbbreviation(String abbreviation) {
         return (State) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.State"), abbreviation);
     }
@@ -58,7 +57,6 @@ public class StateDaoImpl implements StateDao {
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public Country findCountryByShortName(String shortName) {
         return (Country) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.Country"), shortName);
     }

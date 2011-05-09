@@ -84,10 +84,16 @@
 			<fileset dir="../../module/BroadleafCommerceCyberSource/src/main/resources">
 				<include name="**/*.*"/>
 			</fileset>
-			<fileset dir="../../admin/BroadleafCommerceAdminSite/src/main/java">
+			<fileset dir="../../admin/BroadleafCommerceAdminModule/src/main/java">
 				<include name="**/*.*"/>
 			</fileset>
-			<fileset dir="../../admin/BroadleafCommerceAdminSite/src/main/resources">
+			<fileset dir="../../admin/BroadleafCommerceAdminModule/src/main/resources">
+				<include name="**/*.*"/>
+			</fileset>
+			<fileset dir="../../admin/BroadleafCommerceCMSModule/src/main/java">
+				<include name="**/*.*"/>
+			</fileset>
+			<fileset dir="../../admin/BroadleafCommerceCMSModule/src/main/resources">
 				<include name="**/*.*"/>
 			</fileset>
 			<fileset dir="../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java">

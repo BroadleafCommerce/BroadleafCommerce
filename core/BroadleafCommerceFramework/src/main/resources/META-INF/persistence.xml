@@ -20,7 +20,6 @@
 		<mapping-file>config/bc/jpa/domain/FulfillmentGroupItem.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Store.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/ZipCode.orm.xml</mapping-file> 
-		<mapping-file>config/bc/jpa/domain/Admin.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/SearchIntercept.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Rating.orm.xml</mapping-file>
 		<mapping-file>config/bc/jpa/domain/Content.orm.xml</mapping-file>
@@ -68,11 +67,6 @@
 		<class>org.broadleafcommerce.pricing.domain.ShippingRateImpl</class>
 		<class>org.broadleafcommerce.store.domain.StoreImpl</class>
 		<class>org.broadleafcommerce.store.domain.ZipCodeImpl</class>
-		<class>org.broadleafcommerce.security.domain.AdminPermissionImpl</class>
-		<class>org.broadleafcommerce.security.domain.AdminRoleImpl</class>
-		<class>org.broadleafcommerce.security.domain.AdminUserImpl</class>
-		<class>org.broadleafcommerce.security.domain.AdminUserPermissionXref</class>
-		<class>org.broadleafcommerce.security.domain.AdminUserRoleXref</class>
 		<class>org.broadleafcommerce.search.domain.SearchInterceptImpl</class>
 		<class>org.broadleafcommerce.search.domain.SearchSynonymImpl</class>
 		<class>org.broadleafcommerce.rating.domain.RatingSummaryImpl</class>

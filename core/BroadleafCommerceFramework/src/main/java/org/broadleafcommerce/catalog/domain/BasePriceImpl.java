@@ -35,8 +35,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.profile.domain.listener.AuditableListener;
-import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Index;
 
 /**

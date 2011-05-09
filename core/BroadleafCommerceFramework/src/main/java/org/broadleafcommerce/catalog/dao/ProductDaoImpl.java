@@ -24,7 +24,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blProductDao")
@@ -42,7 +42,6 @@ public class ProductDaoImpl implements ProductDao {
         return em.merge(product);
     }
 
-    @SuppressWarnings("unchecked")
     public Product readProductById(Long productId) {
         return (Product) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Product"), productId);
     }

@@ -28,7 +28,7 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 import org.apache.commons.beanutils.BeanToPropertyValueTransformer;
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 /**
  * <p>The SearchFilterItemTag renders form elements designed to help filter a list of products. There

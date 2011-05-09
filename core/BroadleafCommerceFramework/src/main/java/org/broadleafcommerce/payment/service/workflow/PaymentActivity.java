@@ -18,13 +18,13 @@ package org.broadleafcommerce.payment.service.workflow;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentResponseItem;
 import org.broadleafcommerce.payment.domain.Referenced;
 import org.broadleafcommerce.payment.service.PaymentContextImpl;
 import org.broadleafcommerce.payment.service.PaymentService;
 import org.broadleafcommerce.payment.service.exception.PaymentException;
-import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 

@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.map.LRUMap;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.dao.CustomerOfferDao;
 import org.broadleafcommerce.offer.dao.OfferCodeDao;
 import org.broadleafcommerce.offer.dao.OfferDao;
@@ -48,7 +49,6 @@ import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.time.SystemTime;
-import org.broadleafcommerce.util.money.Money;
 import org.mvel2.MVEL;
 import org.mvel2.ParserContext;
 import org.springframework.stereotype.Service;

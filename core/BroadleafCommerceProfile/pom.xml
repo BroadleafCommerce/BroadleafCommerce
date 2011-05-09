@@ -120,6 +120,10 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-open-admin-platform</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.hibernate.javax.persistence</groupId> 
 			<artifactId>hibernate-jpa-2.0-api</artifactId> 
 		</dependency>

@@ -31,8 +31,8 @@ import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.test.BaseTest;
-import org.broadleafcommerce.util.money.Money;
 import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 

@@ -20,13 +20,12 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferImpl;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferType;
 import org.broadleafcommerce.time.SystemTime;
-import org.broadleafcommerce.util.DateUtil;
-import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.DataProvider;
 
 

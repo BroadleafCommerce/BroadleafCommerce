@@ -23,7 +23,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blSkuDao")
@@ -39,7 +39,6 @@ public class SkuDaoImpl implements SkuDao {
         return em.merge(sku);
     }
 
-    @SuppressWarnings("unchecked")
     public Sku readSkuById(Long skuId) {
         return (Sku) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Sku"), skuId);
     }

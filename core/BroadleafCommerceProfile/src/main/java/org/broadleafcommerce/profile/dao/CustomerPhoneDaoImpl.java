@@ -22,8 +22,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerPhoneDao")
@@ -46,7 +46,6 @@ public class CustomerPhoneDaoImpl implements CustomerPhoneDao {
         return em.merge(customerPhone);
     }
 
-    @SuppressWarnings("unchecked")
     public CustomerPhone readCustomerPhoneById(Long customerPhoneId) {
         return (CustomerPhone) em.find(entityConfiguration.lookupEntityClass(CustomerPhone.class.getName()), customerPhoneId);
     }

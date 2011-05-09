@@ -17,7 +17,7 @@ package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 
 import java.util.List;
 
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.message.AutoNumberMemberIdList;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;

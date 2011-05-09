@@ -23,7 +23,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.rating.domain.RatingDetail;
 import org.broadleafcommerce.rating.domain.RatingSummary;
 import org.broadleafcommerce.rating.domain.ReviewDetail;
@@ -42,7 +42,6 @@ public class RatingSummaryDaoImpl extends BatchRetrieveDao implements RatingSumm
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
 
-    @SuppressWarnings("unchecked")
 	public void deleteRatingSummary(final RatingSummary summary) {
     	RatingSummary lSummary = summary;
     	if (!em.contains(lSummary)) {
