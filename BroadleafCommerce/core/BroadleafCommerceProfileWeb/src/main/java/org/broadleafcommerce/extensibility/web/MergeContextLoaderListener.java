@@ -19,7 +19,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 /**
- * Bootstrap listener to start up BroadleafCommerce's root {@link MergeWebApplicationContext}.
+ * Bootstrap listener to start up BroadleafCommerce's rootId {@link MergeWebApplicationContext}.
  * Simply delegates to {@link MergeContextLoader}.
  *
  * <p>This listener should be registered after
@@ -34,7 +34,7 @@ public class MergeContextLoaderListener implements ServletContextListener {
 
 
 	/**
-	 * Initialize the root web application context.
+	 * Initialize the rootId web application context.
 	 */
 	public void contextInitialized(ServletContextEvent event) {
 		this.contextLoader = createContextLoader();
@@ -59,7 +59,7 @@ public class MergeContextLoaderListener implements ServletContextListener {
 
 
 	/**
-	 * Close the root web application context.
+	 * Close the rootId web application context.
 	 */
 	public void contextDestroyed(ServletContextEvent event) {
 		if (this.contextLoader != null) {

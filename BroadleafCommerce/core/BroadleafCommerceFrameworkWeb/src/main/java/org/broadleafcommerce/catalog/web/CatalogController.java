@@ -119,7 +119,7 @@ public class CatalogController {
         }
 
         if (rootCategory == null) {
-            throw new IllegalStateException("Catalog Controller configured incorrectly - root category not found: " + rootCategoryId);
+            throw new IllegalStateException("Catalog Controller configured incorrectly - rootId category not found: " + rootCategoryId);
         }
         
         String url = pathHelper.getRequestUri(request).substring(pathHelper.getContextPath(request).length());

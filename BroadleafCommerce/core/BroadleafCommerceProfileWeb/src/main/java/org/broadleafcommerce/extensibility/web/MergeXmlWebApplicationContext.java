@@ -36,7 +36,7 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
  * {@link org.springframework.beans.factory.xml.XmlBeanDefinitionReader}.
  *
  * <p>By default, the configuration will be taken from "/WEB-INF/applicationContext.xml"
- * for the root context, and "/WEB-INF/test-servlet.xml" for a context with the namespace
+ * for the rootId context, and "/WEB-INF/test-servlet.xml" for a context with the namespace
  * "test-servlet" (like for a DispatcherServlet instance with the servlet-name "test").
  *
  * <p>The config location defaults can be overridden via the "contextConfigLocation"

@@ -34,7 +34,8 @@ import javax.persistence.PersistenceContext;
 
 import org.broadleafcommerce.changeset.dao.ChangeSetDao;
 import org.broadleafcommerce.changeset.dao.EJB3ConfigurationDao;
-import org.broadleafcommerce.gwt.client.datasource.ForeignKey;
+import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
+import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.util.money.Money;
@@ -83,6 +84,14 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	public void flush() {
 		em.flush();
 	}
+	
+	public void detach(Serializable entity) {
+		em.detach(entity);
+	}
+	
+	public void refresh(Serializable entity) {
+		em.refresh(entity);
+	}
  	
 	public Serializable retrieve(Class<?> entityClass, Object primaryKey) {
 		return (Serializable) em.find(entityClass, primaryKey);
@@ -129,7 +138,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		return sortedEntities;
 	}
 	
-	protected FieldMetadata getFieldMetadata(String propertyName, PersistentClass persistentClass, SupportedFieldType type, Type entityType, Class<?> targetClass, FieldPresentationAttributes presentationAttribute) {
+	protected FieldMetadata getFieldMetadata(String propertyName, PersistentClass persistentClass, SupportedFieldType type, Type entityType, Class<?> targetClass, FieldPresentationAttributes presentationAttribute, MergedPropertyType mergedPropertyType) {
 		FieldMetadata fieldMetadata = new FieldMetadata();
 		fieldMetadata.setFieldType(type);
 		if (entityType != null && !entityType.isCollectionType()) {
@@ -147,6 +156,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		fieldMetadata.setInheritedFromType(targetClass.getName());
 		fieldMetadata.setAvailableToTypes(targetClass.getName());
 		fieldMetadata.setPresentationAttributes(presentationAttribute);
+		fieldMetadata.setMergedPropertyType(mergedPropertyType);
 		
 		return fieldMetadata;
 	}
@@ -172,9 +182,59 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		return attributes;
 	}
 	
-	public Map<String, FieldMetadata> getPropertiesForEntityClass(Class<?> targetClass, ForeignKey[] foreignFields, String[] additionalNonPersistentProperties) throws ClassNotFoundException {
+	public PersistentClass getPersistentClass(String targetClassName) {
+		return ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClassName);
+	}
+	
+	public Map<String, FieldMetadata> getPropertiesForPrimitiveClass(String propertyName, String friendlyPropertyName, Class<?> targetClass, Class<?> parentClass, MergedPropertyType mergedPropertyType) throws ClassNotFoundException {
+		Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
+		FieldPresentationAttributes presentationAttribute = new FieldPresentationAttributes();
+		presentationAttribute.setFriendlyName(friendlyPropertyName);
+		if (String.class.isAssignableFrom(targetClass)) {
+			presentationAttribute.setFieldType(SupportedFieldType.STRING);
+			presentationAttribute.setHidden(true);
+			fields.put(propertyName, getFieldMetadata(propertyName, null, SupportedFieldType.STRING, null, parentClass, presentationAttribute, mergedPropertyType));
+		} else if (Boolean.class.isAssignableFrom(targetClass)) {
+			presentationAttribute.setFieldType(SupportedFieldType.BOOLEAN);
+			presentationAttribute.setHidden(true);
+			fields.put(propertyName, getFieldMetadata(propertyName, null, SupportedFieldType.BOOLEAN, null, parentClass, presentationAttribute, mergedPropertyType));
+		} else if (Date.class.isAssignableFrom(targetClass)) {
+			presentationAttribute.setFieldType(SupportedFieldType.DATE);
+			presentationAttribute.setHidden(true);
+			fields.put(propertyName, getFieldMetadata(propertyName, null, SupportedFieldType.DATE, null, parentClass, presentationAttribute, mergedPropertyType));
+		} else if (Money.class.isAssignableFrom(targetClass)) {
+			presentationAttribute.setFieldType(SupportedFieldType.MONEY);
+			presentationAttribute.setHidden(true);
+			fields.put(propertyName, getFieldMetadata(propertyName, null, SupportedFieldType.MONEY, null, parentClass, presentationAttribute, mergedPropertyType));
+		} else if (
+				Byte.class.isAssignableFrom(targetClass) ||
+				Integer.class.isAssignableFrom(targetClass) ||
+				Long.class.isAssignableFrom(targetClass) ||
+				Short.class.isAssignableFrom(targetClass)
+			) {
+			presentationAttribute.setFieldType(SupportedFieldType.INTEGER);
+			presentationAttribute.setHidden(true);
+			fields.put(propertyName, getFieldMetadata(propertyName, null, SupportedFieldType.INTEGER, null, parentClass, presentationAttribute, mergedPropertyType));
+		} else if (
+				Double.class.isAssignableFrom(targetClass) ||
+				BigDecimal.class.isAssignableFrom(targetClass)
+			) {
+			presentationAttribute.setFieldType(SupportedFieldType.DECIMAL);
+			presentationAttribute.setHidden(true);
+			fields.put(propertyName, getFieldMetadata(propertyName, null, SupportedFieldType.DECIMAL, null, parentClass, presentationAttribute, mergedPropertyType));
+		}
+		fields.get(propertyName).setLength(255);
+		fields.get(propertyName).setCollection(false);
+		fields.get(propertyName).setRequired(true);
+		fields.get(propertyName).setUnique(true);
+		fields.get(propertyName).setScale(100);
+		fields.get(propertyName).setPrecision(100);
+		return fields;
+	}
+	
+	public Map<String, FieldMetadata> getPropertiesForEntityClass(Class<?> targetClass, ForeignKey foreignField, String[] additionalNonPersistentProperties, ForeignKey[] additionalForeignFields, MergedPropertyType mergedPropertyType) throws ClassNotFoundException {
 		Map<String, FieldPresentationAttributes> presentationAttributes = getFieldPresentationAttributes(targetClass);
-		PersistentClass persistentClass = ejb3ConfigurationDao.getConfiguration().getClassMapping(targetClass.getName());
+		PersistentClass persistentClass = getPersistentClass(targetClass.getName());
 		ClassMetadata metadata = sessionFactory.getClassMetadata(targetClass);
 		Map<String, FieldMetadata> fields = new HashMap<String, FieldMetadata>();
 		List<String> propertyNames = new ArrayList<String>();
@@ -185,9 +245,13 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		propertyNames.add(idProperty);
 		for (String propertyName : propertyNames) {
 			Type type = metadata.getPropertyType(propertyName);
-			int foreignKeyIndexPosition = -1;
-			if (foreignFields != null) {
-				foreignKeyIndexPosition = Arrays.binarySearch(foreignFields, new ForeignKey(propertyName, null, null), new Comparator<ForeignKey>() {
+			boolean isPropertyForeignKey = false;
+			if (foreignField != null) {
+				isPropertyForeignKey = foreignField.getManyToField().equals(propertyName);
+			}
+			int additionalForeignKeyIndexPosition = -1;
+			if (additionalForeignFields != null) {
+				additionalForeignKeyIndexPosition = Arrays.binarySearch(additionalForeignFields, new ForeignKey(propertyName, null, null), new Comparator<ForeignKey>() {
 					public int compare(ForeignKey o1, ForeignKey o2) {
 						return o1.getManyToField().compareTo(o2.getManyToField());
 					}
@@ -195,7 +259,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			}
 			if (
 					(!type.isAnyType() && !type.isEntityType() && !type.isAssociationType() && !type.isCollectionType() && !type.isComponentType()) || 
-					foreignKeyIndexPosition >= 0 ||
+					isPropertyForeignKey ||
+					additionalForeignKeyIndexPosition >= 0 ||
 					presentationAttributes.containsKey(propertyName)
 			) {
 				FieldPresentationAttributes presentationAttribute = presentationAttributes.get(propertyName);
@@ -205,7 +270,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				}
 				Class<?> returnedClass = type.getReturnedClass();
 				if ((explicitType != null && explicitType.equals(SupportedFieldType.BOOLEAN)) || returnedClass.equals(Boolean.class)) {
-					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.BOOLEAN, type, targetClass, presentationAttribute));
+					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.BOOLEAN, type, targetClass, presentationAttribute, mergedPropertyType));
 					continue;
 				}
 				if (
@@ -213,9 +278,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 						returnedClass.equals(Byte.class) || returnedClass.equals(Short.class) || returnedClass.equals(Integer.class) || returnedClass.equals(Long.class)
 				) {
 					if (propertyName.equals(idProperty)) {
-						fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.ID, type, targetClass, presentationAttribute));
+						fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.ID, type, targetClass, presentationAttribute, mergedPropertyType));
 					} else {
-						fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.INTEGER, type, targetClass, presentationAttribute));
+						fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.INTEGER, type, targetClass, presentationAttribute, mergedPropertyType));
 					}
 					continue;
 				}
@@ -223,7 +288,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 						(explicitType != null && explicitType.equals(SupportedFieldType.DATE)) || 
 						returnedClass.equals(Calendar.class) || returnedClass.equals(Date.class) || returnedClass.equals(Timestamp.class)
 				) {
-					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.DATE, type, targetClass, presentationAttribute));
+					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.DATE, type, targetClass, presentationAttribute, mergedPropertyType));
 					continue;
 				}
 				if (
@@ -231,9 +296,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 						returnedClass.equals(Character.class) || returnedClass.equals(String.class)
 				) {
 					if (propertyName.equals(idProperty)) {
-						fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.ID, type, targetClass, presentationAttribute));
+						fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.ID, type, targetClass, presentationAttribute, mergedPropertyType));
 					} else {
-						fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.STRING, type, targetClass, presentationAttribute));
+						fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.STRING, type, targetClass, presentationAttribute, mergedPropertyType));
 					}
 					continue;
 				}
@@ -241,20 +306,28 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 						(explicitType != null && explicitType.equals(SupportedFieldType.DECIMAL)) || 
 						returnedClass.equals(Double.class) || returnedClass.equals(BigDecimal.class)
 				) {
-					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.DECIMAL, type, targetClass, presentationAttribute));
+					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.DECIMAL, type, targetClass, presentationAttribute, mergedPropertyType));
 					continue;
 				}
 				if ((explicitType != null && explicitType.equals(SupportedFieldType.DECIMAL)) || returnedClass.equals(Money.class)) {
-					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.MONEY, type, targetClass, presentationAttribute));
+					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.MONEY, type, targetClass, presentationAttribute, mergedPropertyType));
 					continue;
 				}
-				if ((explicitType != null && explicitType.equals(SupportedFieldType.FOREIGN_KEY)) || foreignFields != null && foreignKeyIndexPosition >= 0) {
-					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.FOREIGN_KEY, type, targetClass, presentationAttribute));
+				if ((explicitType != null && explicitType.equals(SupportedFieldType.FOREIGN_KEY)) || foreignField != null && isPropertyForeignKey) {
+					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.FOREIGN_KEY, type, targetClass, presentationAttribute, mergedPropertyType));
 					ClassMetadata foreignMetadata;
-					foreignMetadata = sessionFactory.getClassMetadata(Class.forName(foreignFields[foreignKeyIndexPosition].getForeignKeyClass()));
+					foreignMetadata = sessionFactory.getClassMetadata(Class.forName(foreignField.getForeignKeyClass()));
 					fields.get(propertyName).setComplexIdProperty(foreignMetadata.getIdentifierPropertyName());
 					//fields.get(propertyName).setComplexType(returnedClass.getName());
-					fields.get(propertyName).setProvidedForeignKeyClass(foreignFields[foreignKeyIndexPosition].getForeignKeyClass());
+					fields.get(propertyName).setProvidedForeignKeyClass(foreignField.getForeignKeyClass());
+					continue;
+				}
+				if ((explicitType != null && explicitType.equals(SupportedFieldType.ADDITIONAL_FOREIGN_KEY)) || additionalForeignFields != null && additionalForeignKeyIndexPosition >= 0) {
+					fields.put(propertyName, getFieldMetadata(propertyName, persistentClass, SupportedFieldType.ADDITIONAL_FOREIGN_KEY, type, targetClass, presentationAttribute, mergedPropertyType));
+					ClassMetadata foreignMetadata;
+					foreignMetadata = sessionFactory.getClassMetadata(Class.forName(additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass()));
+					fields.get(propertyName).setComplexIdProperty(foreignMetadata.getIdentifierPropertyName());
+					fields.get(propertyName).setProvidedForeignKeyClass(additionalForeignFields[additionalForeignKeyIndexPosition].getForeignKeyClass());
 					continue;
 				}
 				//return type not supported - just skip this property
@@ -264,7 +337,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		presentationAttribute.setFieldType(SupportedFieldType.STRING);
 		presentationAttribute.setHidden(true);
 		for (String additionalNonPersistentProperty : additionalNonPersistentProperties) {
-			fields.put(additionalNonPersistentProperty, getFieldMetadata(additionalNonPersistentProperty, persistentClass, SupportedFieldType.STRING, null, targetClass, presentationAttribute));
+			fields.put(additionalNonPersistentProperty, getFieldMetadata(additionalNonPersistentProperty, persistentClass, SupportedFieldType.STRING, null, targetClass, presentationAttribute, mergedPropertyType));
 		}
 		
 		return fields;

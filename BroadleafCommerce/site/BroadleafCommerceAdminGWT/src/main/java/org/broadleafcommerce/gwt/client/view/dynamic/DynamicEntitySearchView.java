@@ -25,7 +25,8 @@ public class DynamicEntitySearchView extends Window {
 	private IButton saveButton;
 	private SearchItemSelectedEventHandler handler;
 	
-	public DynamicEntitySearchView() {
+	public DynamicEntitySearchView(ListGridDataSource dataSource) {
+		super();
 		this.setIsModal(true);
 		this.setShowModalMask(true);
 		this.setShowMinimizeButton(false);
@@ -33,14 +34,20 @@ public class DynamicEntitySearchView extends Window {
 		this.setHeight(300);
 		this.setCanDragResize(true);
 		this.setOverflow(Overflow.AUTO);
-		
+		this.setVisible(false);
+        
 		searchGrid = new ListGrid();
+		dataSource.setAssociatedGrid(searchGrid);
+		dataSource.setupFields(new String[]{}, new Boolean[]{});
         searchGrid.setAlternateRecordStyles(true);
         searchGrid.setSelectionType(SelectionStyle.SINGLE);
         searchGrid.setAutoFetchData(false);
-        searchGrid.setDrawAheadRatio(4);
+        searchGrid.setDataSource(dataSource);
+        searchGrid.setShowAllColumns(false);
+        searchGrid.setShowAllRecords(false);
+        searchGrid.setDrawAllMaxCells(20);
         searchGrid.setShowFilterEditor(true);
-        searchGrid.setHeight100();
+        searchGrid.setHeight(230);
         
         searchGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
@@ -57,7 +64,6 @@ public class DynamicEntitySearchView extends Window {
             	AppController.getInstance().getEventBus().addHandler(SearchItemSelectedEvent.TYPE, DynamicEntitySearchView.this.handler);
             	AppController.getInstance().getEventBus().fireEvent(new SearchItemSelectedEvent((ListGridRecord) selectedRecord, searchGrid.getDataSource()));
             	AppController.getInstance().getEventBus().removeHandler(SearchItemSelectedEvent.TYPE, DynamicEntitySearchView.this.handler);
-            	//destinationGrid.addData(selectedRecord);
             	hide();
             }
         });
@@ -75,16 +81,13 @@ public class DynamicEntitySearchView extends Window {
         hLayout.addMember(cancelButton);
         hLayout.setLayoutTopMargin(10);
         hLayout.setLayoutBottomMargin(10);
+        
         addItem(hLayout);
 	}
 	
-	public void search(ListGridDataSource dataSource, String title, SearchItemSelectedEventHandler handler) {
+	public void search(String title, SearchItemSelectedEventHandler handler) {
 		this.setTitle(title);
 		this.handler = handler;
-		dataSource.setAssociatedGrid(searchGrid);
-		dataSource.setupFields();
-		searchGrid.setDataSource(dataSource);
-		searchGrid.fetchData();
 		centerInPage();
 		saveButton.disable();
 		show();

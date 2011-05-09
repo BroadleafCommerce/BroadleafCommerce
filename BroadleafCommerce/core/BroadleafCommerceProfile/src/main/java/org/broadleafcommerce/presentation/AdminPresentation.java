@@ -82,4 +82,13 @@ public @interface AdminPresentation {
 	 * @return whether or not this is a prominent field
 	 */
 	boolean prominent() default false;
+	
+	/**
+	 * Specify the column space this field will occupy in grid widgets.
+	 * This value can be an absolute integer or a percentage. A value
+	 * of "*" will make this field use up equally distributed space.
+	 * 
+	 * @return the space utilized in grids for this field
+	 */
+	String columnWidth() default "*";
 }

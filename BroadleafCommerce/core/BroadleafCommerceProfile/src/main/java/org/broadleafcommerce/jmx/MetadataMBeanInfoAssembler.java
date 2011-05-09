@@ -28,7 +28,7 @@ import javax.management.modelmbean.ModelMBeanOperationInfo;
  * or necessary to use constructor injection for the service definition, since CGLIB proxies require a default, no argument
  * constructor.
  * 
- * This class enhances the behavior of the Spring implementation to retrieve the root object inside the proxy for the sake of
+ * This class enhances the behavior of the Spring implementation to retrieve the rootId object inside the proxy for the sake of
  * metadata retrieval, thereby working around these shortcomings.
  * 
  * @author jfischer

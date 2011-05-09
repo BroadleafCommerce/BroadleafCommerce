@@ -4,24 +4,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.gwt.client.Main;
-import org.broadleafcommerce.gwt.client.datasource.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.event.CategorySelectionChangedEvent;
 import org.broadleafcommerce.gwt.client.event.CategorySelectionChangedEventHandler;
+import org.broadleafcommerce.gwt.client.event.NewItemCreatedEvent;
+import org.broadleafcommerce.gwt.client.event.NewItemCreatedEventHandler;
 import org.broadleafcommerce.gwt.client.event.ProductSelectionChangedEvent;
 import org.broadleafcommerce.gwt.client.presenter.dynamic.DynamicListPresenter;
 
 import com.smartgwt.client.data.Criteria;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class ProductPresenter extends DynamicListPresenter {
 
 	protected String categoryId;
 	
 	@Override
-	protected void changeSelection() {
-		eventBus.fireEvent(new ProductSelectionChangedEvent(lastSelectedRecord, display.getGrid().getDataSource()));
+	protected void changeSelection(Record selectedRecord) {
+		eventBus.fireEvent(new ProductSelectionChangedEvent((ListGridRecord) selectedRecord, display.getGrid().getDataSource()));
 	}
 	
 	@Override
@@ -35,7 +37,7 @@ public class ProductPresenter extends DynamicListPresenter {
 				ForeignKey currentForeignKey = new ForeignKey();
 				currentForeignKey.setManyToField("defaultCategory");
 				currentForeignKey.setCurrentValue(categoryId);
-				((DynamicEntityDataSource) display.getGrid().getDataSource()).setCurrentForeignKey(currentForeignKey);
+				//((DynamicEntityDataSource) display.getGrid().getDataSource()).setCurrentForeignKey(currentForeignKey);
 				display.getGrid().clearCriteria();
 				display.getGrid().fetchData(criteria);
 				display.getAddButton().enable();
@@ -45,18 +47,22 @@ public class ProductPresenter extends DynamicListPresenter {
 	}
 	
 	@Override
-	protected ClickHandler getAddHandler() {
-		return new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					Map<String, String> initialValues = new HashMap<String, String>();
-					initialValues.put("defaultCategory", categoryId);
-					initialValues.put("name", "Untitled");
-					initialValues.put("type", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname());
-					Main.ENTITY_ADD.editNewRecord((DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues);
-				}
+	protected void addClicked() {
+		Map<String, String> initialValues = new HashMap<String, String>();
+		initialValues.put("defaultCategory", categoryId);
+		initialValues.put("name", "Untitled");
+		initialValues.put("type", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname());
+		Main.ENTITY_ADD.editNewRecord((DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+			public void onNewItemCreated(NewItemCreatedEvent event) {
+				// TODO Auto-generated method stub
+				
 			}
-        };
+		});
+	}
+
+	@Override
+	protected void removeClicked() {
+		//do nothing
 	}
 
 }

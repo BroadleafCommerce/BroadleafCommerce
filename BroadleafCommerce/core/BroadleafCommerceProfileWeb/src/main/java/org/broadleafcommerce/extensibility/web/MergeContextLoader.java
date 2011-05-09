@@ -24,7 +24,7 @@ import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Performs the actual initialization work for the root application context.
+ * Performs the actual initialization work for the rootId application context.
  * Called by {@link MergeContextLoaderListener}.
  *
  * <p>Processes a {@link #CONFIG_LOCATION_PARAM "contextConfigLocation"}
@@ -41,9 +41,9 @@ import org.springframework.web.context.WebApplicationContext;
  * Spring's default ApplicationContext implementations. This can be leveraged
  * to deliberately override certain bean definitions via an extra XML file.
  *
- * <p>Above and beyond loading the root application context, this class
+ * <p>Above and beyond loading the rootId application context, this class
  * can optionally load or obtain and hook up a shared parent context to
- * the root application context. See the
+ * the rootId application context. See the
  * {@link #loadParentContext(ServletContext)} method for more information.
  *
  * <p>Additionally, Processes a {@link #PATCH_LOCATION_PARAM "patchConfigLocation"}
@@ -61,7 +61,7 @@ public class MergeContextLoader extends ContextLoader {
 
 	/**
 	 * Name of servlet context parameter (i.e., "<code>patchConfigLocation</code>")
-	 * that can specify the config location for the root context.
+	 * that can specify the config location for the rootId context.
 	 */
 	public static final String PATCH_LOCATION_PARAM = "patchConfigLocation";
 	
@@ -78,7 +78,7 @@ public class MergeContextLoader extends ContextLoader {
 	public static final String SHUTDOWN_HOOK_METHOD = "shutdownHookMethod";
 
 	/**
-	 * Instantiate the root WebApplicationContext for this loader, either the
+	 * Instantiate the rootId WebApplicationContext for this loader, either the
 	 * default context class or a custom context class if specified.
 	 * <p>This implementation expects custom contexts to implement the
 	 * {@link ConfigurableWebApplicationContext} interface.
@@ -87,7 +87,7 @@ public class MergeContextLoader extends ContextLoader {
 	 * context, allowing subclasses to perform custom modifications to the context.
 	 * @param servletContext current servlet context
 	 * @param parent the parent ApplicationContext to use, or <code>null</code> if none
-	 * @return the root WebApplicationContext
+	 * @return the rootId WebApplicationContext
 	 * @throws BeansException if the context couldn't be initialized
 	 * @see ConfigurableWebApplicationContext
 	 */
