@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.admin.client.datasource.catalog.category.AllProductsDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.catalog.category.CategoryListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.catalog.category.CategorySearchDataSourceFactory;
@@ -64,9 +65,9 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
 		initialValues.put("defaultParentCategory", ((AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource()).getPrimaryKeyValue(display.getListDisplay().getGrid().getSelectedRecord()));
-		initialValues.put("name", "Untitled");
+		initialValues.put("name", AdminModule.ADMINMESSAGES.defaultCategoryName());
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord("Create New Category", (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+		BLCMain.ENTITY_ADD.editNewRecord(AdminModule.ADMINMESSAGES.newCategoryTitle(), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
 				reloadParentTreeNodeRecords(false);
 				getDisplay().getAllCategoriesDisplay().getGrid().clearCriteria();
@@ -79,11 +80,9 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	protected void removeClicked() {
 		display.getListDisplay().getGrid().removeSelectedData(new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				if (response.getErrors().isEmpty()) {
-					getDisplay().getOrphanedCategoryGrid().invalidateCache();
-					getDisplay().getRemoveOrphanedButton().disable();
-					getDisplay().getInsertOrphanButton().disable();
-				}
+				getDisplay().getOrphanedCategoryGrid().invalidateCache();
+				getDisplay().getRemoveOrphanedButton().disable();
+				getDisplay().getInsertOrphanButton().disable();
 			}
 		}, null);
 		formPresenter.disable();
@@ -100,23 +99,23 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		}
 		allChildCategoriesPresenter.load(selectedRecord, dataSource, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				if (response.getErrors().isEmpty()) {
+				try {
+					if (response.getErrors().size() > 0) {
+						getDisplay().getInsertOrphanButton().disable();
+					}
+				} catch (Exception e) {
 					if (getDisplay().getOrphanedCategoryGrid().getSelectedRecord() != null) {
 						getDisplay().getInsertOrphanButton().enable();
 					}
 					allChildCategoriesPresenter.setStartState();
 					mediaPresenter.load(selectedRecord, dataSource, null);
-				} else {
-					getDisplay().getInsertOrphanButton().disable();
 				}
 			}
 		});
 		display.getListDisplay().getAddButton().disable();
 		featuredPresenter.load(selectedRecord, dataSource, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				if (response.getErrors().isEmpty()) {
-					display.getListDisplay().getAddButton().enable();
-				}
+				display.getListDisplay().getAddButton().enable();
 			}
 		});
 		childProductsPresenter.load(selectedRecord, dataSource, null);
@@ -144,7 +143,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		getDisplay().getRemoveOrphanedButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					SC.confirm("Are your sure you want to delete this entity ("+getDisplay().getOrphanedCategoryGrid().getSelectedRecord().getAttribute("name")+")?", new BooleanCallback() {
+					SC.confirm(AdminModule.ADMINMESSAGES.confirmDelete(getDisplay().getOrphanedCategoryGrid().getSelectedRecord().getAttribute("name")), new BooleanCallback() {
 						public void execute(Boolean value) {
 							if (value) {
 								getDisplay().getOrphanedCategoryGrid().removeSelectedData();
@@ -161,12 +160,10 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 				if (event.isLeftButtonDown()) {
 					getDisplay().getAllCategoriesDisplay().getGrid().addData(getDisplay().getOrphanedCategoryGrid().getSelectedRecord(), new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							if (response.getErrors().isEmpty()) {
-								reloadParentTreeNodeRecords(true);
-								getDisplay().getOrphanedCategoryGrid().invalidateCache();
-								getDisplay().getRemoveOrphanedButton().disable();
-								getDisplay().getInsertOrphanButton().disable();
-							}
+							reloadParentTreeNodeRecords(true);
+							getDisplay().getOrphanedCategoryGrid().invalidateCache();
+							getDisplay().getRemoveOrphanedButton().disable();
+							getDisplay().getInsertOrphanButton().disable();
 						}
 					});
 				}
@@ -278,7 +275,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 								
 								CategoryListDataSourceFactory.createDataSource("allChildCategoriesDS", new AsyncCallbackAdapter() {
 									public void onSuccess(DataSource result) {
-										allChildCategoriesPresenter = new AllChildCategoriesPresenter(CategoryPresenter.this, ((CategoryDisplay) getDisplay()).getAllCategoriesDisplay(), categorySearchView, "Category Search");
+										allChildCategoriesPresenter = new AllChildCategoriesPresenter(CategoryPresenter.this, ((CategoryDisplay) getDisplay()).getAllCategoriesDisplay(), categorySearchView, AdminModule.ADMINMESSAGES.categorySearchTitle());
 										allChildCategoriesPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "urlKey"}, new Boolean[]{false, false});
 										
 										OrphanedCategoryListDataSourceFactory.createDataSource("orphanedCategoriesDS", rootId, new AsyncCallbackAdapter() {
@@ -307,20 +304,20 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 														
 														FeaturedProductListDataSourceFactory.createDataSource("featuredProductsDS", new AsyncCallbackAdapter() {
 															public void onSuccess(DataSource result) {
-																featuredPresenter = new EditableJoinStructurePresenter(((CategoryDisplay) getDisplay()).getFeaturedDisplay(), productSearchView, "Product Search", "Set Promotion Message", "promotionMessage");
+																featuredPresenter = new EditableJoinStructurePresenter(((CategoryDisplay) getDisplay()).getFeaturedDisplay(), productSearchView, AdminModule.ADMINMESSAGES.productSearchTitle(), AdminModule.ADMINMESSAGES.setPromotionMessageTitle(), "promotionMessage");
 																featuredPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "promotionMessage"}, new Boolean[]{false, true});
 																
 																AllProductsDataSourceFactory.createDataSource("allChildProductsDS", new AsyncCallbackAdapter() {
 																	public void onSuccess(DataSource result) {
-																		childProductsPresenter = new SimpleSearchJoinStructurePresenter(((CategoryDisplay) getDisplay()).getAllProductsDisplay(), productSearchView, "Search For a Product");
+																		childProductsPresenter = new SimpleSearchJoinStructurePresenter(((CategoryDisplay) getDisplay()).getAllProductsDisplay(), productSearchView, AdminModule.ADMINMESSAGES.productSearchPrompt());
 																		childProductsPresenter.setDataSource((ListGridDataSource) result, new String[]{"name", "model", "manufacturer"}, new Boolean[]{false, false, false});
 																
 																		MediaMapDataSourceFactory.createDataSource("mediaMapDS", getMediaMapKeys(), ((CategoryDisplay) getDisplay()).getMediaDisplay().getGrid(), new AsyncCallbackAdapter() {
 																			public void onSuccess(DataSource result) {
 																				Map<String, Object> initialValues = new HashMap<String, Object>();
-																				initialValues.put("name", "Untitled");
-																				initialValues.put("label", "untitled");
-																				mediaPresenter = new MapStructurePresenter(((CategoryDisplay) getDisplay()).getMediaDisplay(), getMediaEntityView(), "Add New Media", initialValues);
+																				initialValues.put("name", AdminModule.ADMINMESSAGES.mediaNameDefault());
+																				initialValues.put("label", AdminModule.ADMINMESSAGES.mediaLabelDefault());
+																				mediaPresenter = new MapStructurePresenter(((CategoryDisplay) getDisplay()).getMediaDisplay(), getMediaEntityView(), AdminModule.ADMINMESSAGES.newMediaTitle(), initialValues);
 																				mediaPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "name", "url", "label"}, new Boolean[]{true, true, true, true});
 																				
 																				CategoryPresenter.super.go(container);
@@ -368,9 +365,9 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 	
 	protected LinkedHashMap<String, String> getMediaMapKeys() {
 		LinkedHashMap<String, String> keys = new LinkedHashMap<String, String>();
-		keys.put("small", "Small");
-		keys.put("medium", "Medium");
-		keys.put("large", "Large");
+		keys.put("small", AdminModule.ADMINMESSAGES.mediaSizeSmall());
+		keys.put("medium", AdminModule.ADMINMESSAGES.mediaSizeMedium());
+		keys.put("large", AdminModule.ADMINMESSAGES.mediaSizeLarge());
 		
 		return keys;
 	}

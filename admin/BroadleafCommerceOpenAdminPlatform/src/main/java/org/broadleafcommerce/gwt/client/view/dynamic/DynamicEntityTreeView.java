@@ -62,10 +62,6 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
         grid.setAlternateRecordStyles(true);
         grid.setSelectionType(SelectionStyle.SINGLE);
         grid.setCanEdit(false);
-        //grid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
-        //grid.setEditByCell(true);
-        //grid.setAutoSaveEdits(true);
-        //grid.setSaveByCell(true);
         grid.setDataSource(dataSource);
         grid.setAutoFetchData(true);
         grid.setDrawAheadRatio(4);

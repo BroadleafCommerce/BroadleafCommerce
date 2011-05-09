@@ -25,31 +25,37 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class WeightUnitOfMeasureType implements Serializable {
+public class WeightUnitOfMeasureType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, WeightUnitOfMeasureType> TYPES = new HashMap<String, WeightUnitOfMeasureType>();
 
-    public static final WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS");
-    public static final WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS");
+    public static final WeightUnitOfMeasureType POUNDS  = new WeightUnitOfMeasureType("POUNDS", "Pounds");
+    public static final WeightUnitOfMeasureType KILOGRAMS  = new WeightUnitOfMeasureType("KILOGRAMS", "Kilograms");
 
     public static WeightUnitOfMeasureType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public WeightUnitOfMeasureType() {
         //do nothing
     }
 
-    public WeightUnitOfMeasureType(final String type) {
+    public WeightUnitOfMeasureType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
     public String getType() {
         return type;
+    }
+    
+    public String getFriendlyType() {
+    	return friendlyType;
     }
 
     private void setType(final String type) {

@@ -1,75 +1,114 @@
 package org.broadleafcommerce.gwt.admin.client.view.promotion.offer;
 
+import java.util.LinkedHashMap;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.IntegerItem;
+import com.smartgwt.client.widgets.form.fields.TextAreaItem;
+import com.smartgwt.client.widgets.form.validator.IsIntegerValidator;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 	
-	protected IntegerItem itemQuantity;
+	protected FormItem itemQuantity;
 	protected FilterBuilder itemFilterBuilder;
 	protected ImgButton removeButton;
+	protected Label label;
+	protected DynamicForm itemForm;
+	protected DynamicForm rawItemForm;
+	protected TextAreaItem rawItemTextArea;
+	protected Record record;
+	protected Boolean incompatibleMVEL = false;
+	protected Boolean dirty = false;
+	
 
-	public ItemBuilderView(DataSource itemDataSource) {
+	public ItemBuilderView(DataSource itemDataSource, Boolean allowDelete, Boolean allowInfiniteQuantity) {
 		super(10);
-		
-		VLayout removeLayout = new VLayout();
-		removeLayout.setAlign(VerticalAlignment.CENTER);
-		removeLayout.setWidth(16);
-		removeButton = new ImgButton();
-		removeButton.setSrc(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/remove.png");
-		removeButton.setShowRollOver(false);
-		removeButton.setShowDownIcon(false);
-		removeButton.setShowDown(false);
-		removeButton.setWidth(16);
-		removeButton.setHeight(16);
-		removeButton.setDisabled(true);
-		removeLayout.addMember(removeButton);
-		addMember(removeLayout);
+		if (allowDelete) {
+			VLayout removeLayout = new VLayout();
+			removeLayout.setAlign(VerticalAlignment.CENTER);
+			removeLayout.setHeight(40);
+			removeLayout.setWidth(16);
+			removeButton = new ImgButton();
+			removeButton.setSrc(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/actions/remove.png");
+			removeButton.setShowRollOver(false);
+			removeButton.setShowDownIcon(false);
+			removeButton.setShowDown(false);
+			removeButton.setWidth(16);
+			removeButton.setHeight(16);
+			removeLayout.addMember(removeButton);
+			addMember(removeLayout);
+		}
         
 		VLayout formLayout = new VLayout();
 		formLayout.setAlign(VerticalAlignment.CENTER);
 		formLayout.setWidth(30);
-		DynamicForm itemForm = new DynamicForm();
-		itemQuantity = new IntegerItem();
-		itemQuantity.setShowTitle(false);
-		//itemQuantity.setWidth(40);
-		itemQuantity.setValue(1);
+		formLayout.setHeight(40);
+		itemForm = new DynamicForm();
+		if (!allowInfiniteQuantity) {
+			itemQuantity = new IntegerItem();
+			itemQuantity.setShowTitle(false);
+			itemQuantity.setValue(1);
+			itemQuantity.setWidth(40);
+		} else {
+			itemQuantity = new ComboBoxItem();
+			itemQuantity.setType("comboBox");  
+			LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();
+			valueMap.put("-1", "All");
+			itemQuantity.setValueMap(valueMap);
+			itemQuantity.setShowTitle(false);
+			itemQuantity.setValue(1);
+			itemQuantity.setWidth(60);
+			itemQuantity.setValidators(new IsIntegerValidator());
+		}
 		itemForm.setItems(itemQuantity);
-		itemQuantity.setDisabled(true);
 		formLayout.addMember(itemForm);
 		addMember(formLayout);
 		
 		VLayout labelLayout = new VLayout();
 		labelLayout.setAlign(VerticalAlignment.CENTER);
 		labelLayout.setWidth(20);
-		Label label = new Label("Of");
+		labelLayout.setHeight(40);
+		label = new Label("Of");
 		label.setWidth(20);
 		label.setHeight(20);
 		labelLayout.addMember(label);
 		addMember(labelLayout);
 		
 		VLayout builderLayout = new VLayout();
-		builderLayout.setAlign(VerticalAlignment.CENTER);
+		builderLayout.setHeight(40);
+		builderLayout.setAlign(VerticalAlignment.TOP);
 		itemFilterBuilder = new FilterBuilder();  
 		itemFilterBuilder.setDataSource(itemDataSource);
-		itemFilterBuilder.setDisabled(true);
 		itemFilterBuilder.setLayoutBottomMargin(10);
 		builderLayout.addMember(itemFilterBuilder);
+		
+		rawItemForm = new DynamicForm();
+		rawItemForm.setVisible(false);
+        rawItemTextArea = new TextAreaItem();
+        rawItemTextArea.setHeight(70);
+        rawItemTextArea.setWidth("600");
+        rawItemTextArea.setShowTitle(false);
+        rawItemForm.setFields(rawItemTextArea);
+        builderLayout.addMember(rawItemForm);
+        
 		addMember(builderLayout);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.gwt.admin.client.view.promotion.offer.ItemBuilderDisplay#getItemQuantity()
 	 */
-	public IntegerItem getItemQuantity() {
+	public FormItem getItemQuantity() {
 		return itemQuantity;
 	}
 
@@ -84,6 +123,42 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		return removeButton;
 	}
 	
+	public DynamicForm getRawItemForm() {
+		return rawItemForm;
+	}
+
+	public TextAreaItem getRawItemTextArea() {
+		return rawItemTextArea;
+	}
+	
+	public DynamicForm getItemForm() {
+		return itemForm;
+	}
+
+	public Boolean getIncompatibleMVEL() {
+		return incompatibleMVEL;
+	}
+
+	public void setIncompatibleMVEL(Boolean incompatibleMVEL) {
+		this.incompatibleMVEL = incompatibleMVEL;
+	}
+
+	public Boolean getDirty() {
+		return dirty;
+	}
+
+	public void setDirty(Boolean dirty) {
+		this.dirty = dirty;
+	}
+
+	public Record getRecord() {
+		return record;
+	}
+
+	public void setRecord(Record record) {
+		this.record = record;
+	}
+
 	public void enable() {
 		removeButton.enable();
 		itemQuantity.enable();
@@ -95,4 +170,44 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		itemQuantity.disable();
 		itemFilterBuilder.disable();
 	}
+	
+	public void hide() {
+		removeButton.setVisible(false);
+		itemForm.setVisible(false);
+		itemFilterBuilder.setVisible(false);
+		label.setVisible(false);
+	}
+	
+	public void show() {
+		removeButton.setVisible(true);
+		itemForm.setVisible(true);
+		itemFilterBuilder.setVisible(true);
+		label.setVisible(true);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((itemForm == null) ? 0 : itemForm.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ItemBuilderView other = (ItemBuilderView) obj;
+		if (itemForm == null) {
+			if (other.itemForm != null)
+				return false;
+		} else if (!itemForm.equals(other.itemForm))
+			return false;
+		return true;
+	}
+	
 }

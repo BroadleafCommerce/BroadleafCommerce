@@ -25,28 +25,30 @@ import java.util.Map;
  * @author jfischer
  *
  */
-public class DimensionUnitOfMeasureType implements Serializable {
+public class DimensionUnitOfMeasureType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, DimensionUnitOfMeasureType> TYPES = new HashMap<String, DimensionUnitOfMeasureType>();
 
-    public static final DimensionUnitOfMeasureType CENTIMETERS  = new DimensionUnitOfMeasureType("CENTIMETERS");
-    public static final DimensionUnitOfMeasureType METERS  = new DimensionUnitOfMeasureType("METERS");
-    public static final DimensionUnitOfMeasureType INCHES  = new DimensionUnitOfMeasureType("INCHES");
-    public static final DimensionUnitOfMeasureType FEET  = new DimensionUnitOfMeasureType("FEET");
+    public static final DimensionUnitOfMeasureType CENTIMETERS  = new DimensionUnitOfMeasureType("CENTIMETERS", "Centimeters");
+    public static final DimensionUnitOfMeasureType METERS  = new DimensionUnitOfMeasureType("METERS", "Meters");
+    public static final DimensionUnitOfMeasureType INCHES  = new DimensionUnitOfMeasureType("INCHES", "Inches");
+    public static final DimensionUnitOfMeasureType FEET  = new DimensionUnitOfMeasureType("FEET", "Feet");
 
     public static DimensionUnitOfMeasureType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public DimensionUnitOfMeasureType() {
         //do nothing
     }
 
-    public DimensionUnitOfMeasureType(final String type) {
+    public DimensionUnitOfMeasureType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -54,7 +56,11 @@ public class DimensionUnitOfMeasureType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)){
             TYPES.put(type, this);

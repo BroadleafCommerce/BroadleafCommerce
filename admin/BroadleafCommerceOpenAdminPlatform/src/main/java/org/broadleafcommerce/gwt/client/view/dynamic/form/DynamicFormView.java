@@ -32,7 +32,6 @@ public class DynamicFormView extends VLayout implements DynamicFormDisplay {
         refreshButton = new ToolStripButton();  
         refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");   
         toolbar.addButton(refreshButton);
-        //toolbar.setDisabled(true);
         toolbar.addSpacer(6);
         Label productDetailsLabel = new Label();
         productDetailsLabel.setContents(title);

@@ -34,9 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -44,11 +42,10 @@ import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldPresentationAttributes;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
-import org.broadleafcommerce.gwt.server.changeset.dao.ChangeSetDao;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.server.changeset.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -60,29 +57,19 @@ import org.hibernate.mapping.Property;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.Type;
-import org.springframework.stereotype.Repository;
 
-@Repository("blDynamicEntityDao")
 public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable> implements DynamicEntityDao {
     	
 	private static final Hashtable<String, Map<String, FieldMetadata>> mergedPropertyLibrary = new Hashtable<String, Map<String, FieldMetadata>>();
 	
-	@PersistenceContext(unitName = "blPU")
-    protected EntityManager em;
+    protected EntityManager entityManager;
 	
-	@Resource (name = "sessionFactory")
 	protected SessionFactory sessionFactory;
     
-    @Resource(name = "blEJB3ConfigurationDao")
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
     
-    @Resource(name = "blChangeSetDao")
-    protected ChangeSetDao changeSetDao;
-    
-    @Override
-	public EntityManager getEntityManager() {
-		return em;
-	}
+    //@Resource(name = "blChangeSetDao")
+    //protected ChangeSetDao changeSetDao;
 
 	@Override
 	public Class<? extends Serializable> getEntityClass() {
@@ -90,36 +77,36 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	}
 	
 	public Serializable persist(Serializable entity) {
-		em.persist(entity);
+		entityManager.persist(entity);
 		return entity;
 	}
 	
 	public Serializable merge(Serializable entity) {
-		return em.merge(entity);
+		return entityManager.merge(entity);
 	}
 	
 	public void flush() {
-		em.flush();
+		entityManager.flush();
 	}
 	
 	public void detach(Serializable entity) {
-		em.detach(entity);
+		entityManager.detach(entity);
 	}
 	
 	public void refresh(Serializable entity) {
-		em.refresh(entity);
+		entityManager.refresh(entity);
 	}
  	
 	public Serializable retrieve(Class<?> entityClass, Object primaryKey) {
-		return (Serializable) em.find(entityClass, primaryKey);
+		return (Serializable) entityManager.find(entityClass, primaryKey);
 	}
 	
 	public void remove(Serializable entity) {
-		em.remove(entity);
+		entityManager.remove(entity);
 	}
 	
 	public void clear() {
-		em.clear();
+		entityManager.clear();
 	}
 	
 	/* (non-Javadoc)
@@ -194,7 +181,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 	}
 
 	protected void buildPropertiesFromPolymorphicEntities(
-		Class<?>[] entities, ForeignKey foreignField, 
+		Class<?>[] entities, 
+		ForeignKey foreignField, 
 		String[] additionalNonPersistentProperties, 
 		ForeignKey[] additionalForeignFields, 
 		MergedPropertyType mergedPropertyType, 
@@ -258,6 +246,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     		if (localMetadata.getEnumerationValues() != null) {
     			serverMetadata.setEnumerationValues(localMetadata.getEnumerationValues());
     		}
+    		if (localMetadata.getEnumerationClass() != null) {
+    			serverMetadata.setEnumerationClass(localMetadata.getEnumerationClass());
+    		}
     		if (localMetadata.getFieldType() != null) {
     			serverMetadata.setFieldType(localMetadata.getFieldType());
     		}
@@ -312,6 +303,9 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
     		if (localMetadata.getPresentationAttributes().getOrder() != null) {
     			serverMetadata.getPresentationAttributes().setOrder(localMetadata.getPresentationAttributes().getOrder());
     		}
+    		if (localMetadata.getPresentationAttributes().getGroupOrder() != null) {
+    			serverMetadata.getPresentationAttributes().setGroupOrder(localMetadata.getPresentationAttributes().getGroupOrder());
+    		}
     	}
     }
 	
@@ -363,20 +357,27 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		 * their entity class overrides
 		 */
 		if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(type)) {
-			List<String> enumVals = new ArrayList<String>();
+			Map<String, String> enumVals = new HashMap<String, String>();
 			Class<?> broadleafEnumeration = Class.forName(presentationAttribute.getBroadleafEnumeration());
 			Method typeMethod = broadleafEnumeration.getMethod("getType", new Class<?>[]{});
+			Method friendlyTypeMethod = broadleafEnumeration.getMethod("getFriendlyType", new Class<?>[]{});
 			Field[] fields = broadleafEnumeration.getFields();
 			for (Field field : fields) {
 				boolean isStatic = Modifier.isStatic(field.getModifiers());
 				boolean isNameEqual = field.getType().getName().equals(broadleafEnumeration.getName());
 				if (isStatic && isNameEqual){
-					enumVals.add((String) typeMethod.invoke(field.get(null), new Object[]{}));
+					enumVals.put((String) typeMethod.invoke(field.get(null), new Object[]{}), (String) friendlyTypeMethod.invoke(field.get(null), new Object[]{}));
 				}
 			}
-			String[] enumerationValues = new String[enumVals.size()];
-			enumerationValues = enumVals.toArray(enumerationValues);
+			String[][] enumerationValues = new String[enumVals.size()][2];
+			int j = 0;
+			for (String key : enumVals.keySet()) {
+				enumerationValues[j][0] = key;
+				enumerationValues[j][1] = enumVals.get(key);
+				j++;
+			}
 			fieldMetadata.setEnumerationValues(enumerationValues);
+			fieldMetadata.setEnumerationClass(presentationAttribute.getBroadleafEnumeration());
 		}
 		
 		overrideMetadata(metadataOverrides, fieldMetadata, prefix + propertyName);
@@ -397,6 +398,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setOrder(annot.order());
 				attr.setExplicitFieldType(annot.fieldType());
 				attr.setGroup(annot.group());
+				attr.setGroupOrder(annot.groupOrder());
 				attr.setLargeEntry(annot.largeEntry());
 				attr.setProminent(annot.prominent());
 				attr.setColumnWidth(annot.columnWidth());
@@ -830,6 +832,31 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			return !(Arrays.binarySearch(excludeFields, propertyName) >= 0);
 		}
 		return true;
+	}
+
+	@Override
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	public EJB3ConfigurationDao getEjb3ConfigurationDao() {
+		return ejb3ConfigurationDao;
+	}
+
+	public void setEjb3ConfigurationDao(EJB3ConfigurationDao ejb3ConfigurationDao) {
+		this.ejb3ConfigurationDao = ejb3ConfigurationDao;
 	}
     
 }

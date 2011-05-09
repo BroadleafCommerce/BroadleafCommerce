@@ -2,18 +2,14 @@ package org.broadleafcommerce.gwt.server.changeset.dao;
 
 import java.util.HashMap;
 
-import javax.annotation.Resource;
 import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.hibernate.ejb.Ejb3Configuration;
-import org.springframework.stereotype.Repository;
 
-@Repository("blEJB3ConfigurationDao")
 public class EJB3ConfigurationDaoImpl implements EJB3ConfigurationDao {
 
 	private Ejb3Configuration configuration = null;
 	
-	@Resource (name = "persistenceUnitInfo")
 	protected PersistenceUnitInfo persistenceUnitInfo;
 	
 	/* (non-Javadoc)
@@ -28,4 +24,13 @@ public class EJB3ConfigurationDaoImpl implements EJB3ConfigurationDao {
 		}
 		return configuration;
 	}
+
+	public PersistenceUnitInfo getPersistenceUnitInfo() {
+		return persistenceUnitInfo;
+	}
+
+	public void setPersistenceUnitInfo(PersistenceUnitInfo persistenceUnitInfo) {
+		this.persistenceUnitInfo = persistenceUnitInfo;
+	}
+	
 }

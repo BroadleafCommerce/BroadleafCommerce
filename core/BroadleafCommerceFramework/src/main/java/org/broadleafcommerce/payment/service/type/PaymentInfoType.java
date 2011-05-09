@@ -19,33 +19,37 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of payment info types.
  * 
  * @author jfischer
  *
  */
-public class PaymentInfoType implements Serializable {
+public class PaymentInfoType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, PaymentInfoType> TYPES = new HashMap<String, PaymentInfoType>();
 
-    public static final PaymentInfoType GIFT_CARD = new PaymentInfoType("GIFT_CARD");
-    public static final PaymentInfoType CREDIT_CARD = new PaymentInfoType("CREDIT_CARD");
-    public static final PaymentInfoType BANK_ACCOUNT = new PaymentInfoType("BANK_ACCOUNT");
+    public static final PaymentInfoType GIFT_CARD = new PaymentInfoType("GIFT_CARD", "Gift Card");
+    public static final PaymentInfoType CREDIT_CARD = new PaymentInfoType("CREDIT_CARD", "Credit Card");
+    public static final PaymentInfoType BANK_ACCOUNT = new PaymentInfoType("BANK_ACCOUNT", "Bank Account");
 
     public static PaymentInfoType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public PaymentInfoType() {
         //do nothing
     }
 
-    public PaymentInfoType(final String type) {
+    public PaymentInfoType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -53,7 +57,11 @@ public class PaymentInfoType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

@@ -26,19 +26,19 @@ public class USPSContainerShapeType extends ContainerShapeType {
 
     private static final long serialVersionUID = 1L;
 
-    public static final USPSContainerShapeType RECTANGULAR  = new USPSContainerShapeType("RECTANGULAR");
-    public static final USPSContainerShapeType NONRECTANGULAR = new USPSContainerShapeType("NONRECTANGULAR");
-    public static final USPSContainerShapeType VARIABLE = new USPSContainerShapeType("VARIABLE");
-    public static final USPSContainerShapeType FLATRATEBOX = new USPSContainerShapeType("FLAT RATE BOX");
-    public static final USPSContainerShapeType FLATRATEENVELOPE= new USPSContainerShapeType("FLAT RATE ENVELOPE");
-    public static final USPSContainerShapeType LGFLATRATEBOX= new USPSContainerShapeType("LG FLAT RATE BOX");
+    public static final USPSContainerShapeType RECTANGULAR  = new USPSContainerShapeType("RECTANGULAR", "Rectangular");
+    public static final USPSContainerShapeType NONRECTANGULAR = new USPSContainerShapeType("NONRECTANGULAR", "Non-Rectangular");
+    public static final USPSContainerShapeType VARIABLE = new USPSContainerShapeType("VARIABLE", "Variable");
+    public static final USPSContainerShapeType FLATRATEBOX = new USPSContainerShapeType("FLAT RATE BOX", "Flat Rate Box");
+    public static final USPSContainerShapeType FLATRATEENVELOPE= new USPSContainerShapeType("FLAT RATE ENVELOPE", "Flat Rate Envelope");
+    public static final USPSContainerShapeType LGFLATRATEBOX= new USPSContainerShapeType("LG FLAT RATE BOX", "Large Flat Rate Box");
 
     public USPSContainerShapeType() {
         //do nothing
     }
 
-    public USPSContainerShapeType(final String type) {
-        super(type);
+    public USPSContainerShapeType(final String type, final String friendlyType) {
+        super(type, friendlyType);
     }
 
 }

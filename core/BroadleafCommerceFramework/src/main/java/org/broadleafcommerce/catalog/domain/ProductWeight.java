@@ -21,8 +21,8 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 
 @Embeddable

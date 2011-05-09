@@ -19,32 +19,36 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of payment log types.
  * 
  * @author jfischer
  *
  */
-public class PaymentLogEventType implements Serializable {
+public class PaymentLogEventType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, PaymentLogEventType> TYPES = new HashMap<String, PaymentLogEventType>();
 
-    public static final PaymentLogEventType START  = new PaymentLogEventType("START");
-    public static final PaymentLogEventType FINISHED = new PaymentLogEventType("FINISHED");
+    public static final PaymentLogEventType START  = new PaymentLogEventType("START", "Start");
+    public static final PaymentLogEventType FINISHED = new PaymentLogEventType("FINISHED", "Finished");
 
     public static PaymentLogEventType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public PaymentLogEventType() {
         //do nothing
     }
 
-    public PaymentLogEventType(final String type) {
+    public PaymentLogEventType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -52,7 +56,11 @@ public class PaymentLogEventType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

@@ -19,32 +19,36 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of first class types.
  * 
  * @author jfischer
  */
-public class USPSFirstClassType implements Serializable {
+public class USPSFirstClassType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, USPSFirstClassType> TYPES = new HashMap<String, USPSFirstClassType>();
 
-    public static final USPSFirstClassType LETTER  = new USPSFirstClassType("LETTER");
-    public static final USPSFirstClassType FLAT = new USPSFirstClassType("FLAT");
-    public static final USPSFirstClassType PARCEL = new USPSFirstClassType("PARCEL");
+    public static final USPSFirstClassType LETTER  = new USPSFirstClassType("LETTER", "Letter");
+    public static final USPSFirstClassType FLAT = new USPSFirstClassType("FLAT", "Flat");
+    public static final USPSFirstClassType PARCEL = new USPSFirstClassType("PARCEL", "Parcel");
 
     public static USPSFirstClassType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public USPSFirstClassType() {
         //do nothing
     }
 
-    public USPSFirstClassType(final String type) {
+    public USPSFirstClassType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -52,7 +56,11 @@ public class USPSFirstClassType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

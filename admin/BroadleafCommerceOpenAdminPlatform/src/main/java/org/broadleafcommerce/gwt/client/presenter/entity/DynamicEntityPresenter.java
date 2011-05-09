@@ -168,4 +168,24 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 		});
 	}
 
+	public HandlerRegistration getSelectionChangedHandlerRegistration() {
+		return selectionChangedHandlerRegistration;
+	}
+
+	public HandlerRegistration getRemoveClickHandlerRegistration() {
+		return removeClickHandlerRegistration;
+	}
+
+	public HandlerRegistration getAddClickHandlerRegistration() {
+		return addClickHandlerRegistration;
+	}
+
+	public HandlerRegistration getEntityTypeChangedHandlerRegistration() {
+		return entityTypeChangedHandlerRegistration;
+	}
+
+	public HandlerRegistration getCellSavedHandlerRegistration() {
+		return cellSavedHandlerRegistration;
+	}
+
 }

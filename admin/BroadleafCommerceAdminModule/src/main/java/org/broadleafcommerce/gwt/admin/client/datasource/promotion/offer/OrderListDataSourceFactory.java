@@ -22,7 +22,24 @@ public class OrderListDataSourceFactory {
 			OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(new String[]{"customer"});
+			persistencePerspective.setExcludeFields(new String[]{
+				"customer", 
+				"status", 
+				"name", 
+				"cityTax", 
+				"countyTax", 
+				"stateTax", 
+				"districtTax", 
+				"countryTax", 
+				"totalTax", 
+				"totalShipping", 
+				"total", 
+				"submitDate", 
+				"orderNumber", 
+				"emailAddress",
+				"auditable.dateCreated",
+				"auditable.dateUpdated"
+			});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicEntityModule(CeilingEntities.ORDER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

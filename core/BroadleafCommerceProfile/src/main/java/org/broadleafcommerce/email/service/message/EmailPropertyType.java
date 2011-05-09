@@ -19,33 +19,37 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of email property types.
  * 
  * @author jfischer
  *
  */
-public class EmailPropertyType implements Serializable {
+public class EmailPropertyType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, EmailPropertyType> TYPES = new HashMap<String, EmailPropertyType>();
 
-    public static final EmailPropertyType USER = new EmailPropertyType("user");
-    public static final EmailPropertyType INFO = new EmailPropertyType("info");
-    public static final EmailPropertyType SERVERINFO = new EmailPropertyType("serverInfo");
+    public static final EmailPropertyType USER = new EmailPropertyType("user", "User");
+    public static final EmailPropertyType INFO = new EmailPropertyType("info", "Info");
+    public static final EmailPropertyType SERVERINFO = new EmailPropertyType("serverInfo", "Server Info");
 
     public static EmailPropertyType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public EmailPropertyType() {
         //do nothing
     }
 
-    public EmailPropertyType(final String type) {
+    public EmailPropertyType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -53,7 +57,11 @@ public class EmailPropertyType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

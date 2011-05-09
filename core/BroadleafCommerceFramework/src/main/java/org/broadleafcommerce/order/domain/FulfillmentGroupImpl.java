@@ -35,6 +35,7 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOfferImpl;
@@ -43,7 +44,6 @@ import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;

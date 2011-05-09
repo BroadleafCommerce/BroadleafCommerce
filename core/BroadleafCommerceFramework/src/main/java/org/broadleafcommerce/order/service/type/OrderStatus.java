@@ -15,35 +15,40 @@
  */
 package org.broadleafcommerce.order.service.type;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.broadleafcommerce.util.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of order status types.
  * 
  * @author jfischer
  */
-public class OrderStatus {
+public class OrderStatus implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OrderStatus> TYPES = new HashMap<String, OrderStatus>();
 
-    public static final OrderStatus NAMED = new OrderStatus("NAMED");
-    public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS");
-    public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED");
+    public static final OrderStatus NAMED = new OrderStatus("NAMED", "Named");
+    public static final OrderStatus IN_PROCESS = new OrderStatus("IN_PROCESS", "In Process");
+    public static final OrderStatus SUBMITTED = new OrderStatus("SUBMITTED", "Submitted");
 
     public static OrderStatus getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public OrderStatus() {
         //do nothing
     }
 
-    public OrderStatus(final String type) {
+    public OrderStatus(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -51,7 +56,11 @@ public class OrderStatus {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

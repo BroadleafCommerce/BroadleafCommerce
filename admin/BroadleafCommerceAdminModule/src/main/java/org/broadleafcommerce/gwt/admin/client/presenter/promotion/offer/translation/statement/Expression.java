@@ -6,7 +6,7 @@ public class Expression {
 
 	protected String field;
 	protected OperatorId operator;
-	protected Object value;
+	protected String value;
 	
 	public String getField() {
 		return field;
@@ -24,11 +24,11 @@ public class Expression {
 		this.operator = operator;
 	}
 	
-	public Object getValue() {
+	public String getValue() {
 		return value;
 	}
 	
-	public void setValue(Object value) {
+	public void setValue(String value) {
 		this.value = value;
 	}
 	

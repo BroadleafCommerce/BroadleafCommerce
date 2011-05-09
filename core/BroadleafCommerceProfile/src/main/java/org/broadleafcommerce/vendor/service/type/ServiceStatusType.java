@@ -19,33 +19,37 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of service status types.
  * 
  * @author jfischer
  *
  */
-public class ServiceStatusType implements Serializable {
+public class ServiceStatusType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, ServiceStatusType> TYPES = new HashMap<String, ServiceStatusType>();
 
-    public static final ServiceStatusType UP  = new ServiceStatusType("UP");
-    public static final ServiceStatusType DOWN  = new ServiceStatusType("DOWN");
-    public static final ServiceStatusType PAUSED  = new ServiceStatusType("PAUSED");
+    public static final ServiceStatusType UP  = new ServiceStatusType("UP", "Up");
+    public static final ServiceStatusType DOWN  = new ServiceStatusType("DOWN", "Down");
+    public static final ServiceStatusType PAUSED  = new ServiceStatusType("PAUSED", "Paused");
 
     public static ServiceStatusType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public ServiceStatusType() {
         //do nothing
     }
 
-    public ServiceStatusType(final String type) {
+    public ServiceStatusType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -53,7 +57,11 @@ public class ServiceStatusType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)){
             TYPES.put(type, this);

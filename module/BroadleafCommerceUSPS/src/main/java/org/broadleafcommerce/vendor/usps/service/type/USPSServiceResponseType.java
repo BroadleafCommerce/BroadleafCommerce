@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
 import org.broadleafcommerce.util.StringUtil;
 
 /**
@@ -26,7 +27,7 @@ import org.broadleafcommerce.util.StringUtil;
  * 
  * @author jfischer
  */
-public class USPSServiceResponseType implements Serializable {
+public class USPSServiceResponseType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
@@ -96,7 +97,11 @@ public class USPSServiceResponseType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return description;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

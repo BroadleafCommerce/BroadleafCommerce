@@ -20,6 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+
 
 /**
  * 
@@ -66,6 +68,14 @@ public @interface AdminPresentation {
 	 * @return the group for this field
 	 */
 	String group() default "General";
+	
+	/**
+	 * Specify an order for this group. Groups will be sorted in the resulting
+	 * form in ascending order based on this parameter.
+	 * 
+	 * @return the order for this group
+	 */
+	int groupOrder() default 99999;
 	
 	/**
 	 * If the field is a string, specify that the GUI

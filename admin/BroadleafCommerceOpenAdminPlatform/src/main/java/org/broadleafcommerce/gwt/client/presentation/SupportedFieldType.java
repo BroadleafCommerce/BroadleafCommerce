@@ -1,4 +1,4 @@
-package org.broadleafcommerce.presentation;
+package org.broadleafcommerce.gwt.client.presentation;
 
 public enum SupportedFieldType {
 	UNKNOWN,

@@ -19,37 +19,41 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of payment action types.
  * 
  * @author jfischer
  *
  */
-public class PaymentActionType implements Serializable {
+public class PaymentActionType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, PaymentActionType> TYPES = new HashMap<String, PaymentActionType>();
 
-    public static final PaymentActionType AUTHORIZE = new PaymentActionType("AUTHORIZE");
-    public static final PaymentActionType DEBIT = new PaymentActionType("DEBIT");
-    public static final PaymentActionType AUTHORIZEANDDEBIT = new PaymentActionType("AUTHORIZEANDDEBIT");
-    public static final PaymentActionType CREDIT = new PaymentActionType("CREDIT");
-    public static final PaymentActionType VOID = new PaymentActionType("VOID");
-    public static final PaymentActionType BALANCE = new PaymentActionType("BALANCE");
-    public static final PaymentActionType REVERSEAUTHORIZE = new PaymentActionType("REVERSEAUTHORIZE");
+    public static final PaymentActionType AUTHORIZE = new PaymentActionType("AUTHORIZE", "Authorize");
+    public static final PaymentActionType DEBIT = new PaymentActionType("DEBIT", "Debit");
+    public static final PaymentActionType AUTHORIZEANDDEBIT = new PaymentActionType("AUTHORIZEANDDEBIT", "Authorize and Debit");
+    public static final PaymentActionType CREDIT = new PaymentActionType("CREDIT", "Credit");
+    public static final PaymentActionType VOID = new PaymentActionType("VOID", "Void");
+    public static final PaymentActionType BALANCE = new PaymentActionType("BALANCE", "Check Balance");
+    public static final PaymentActionType REVERSEAUTHORIZE = new PaymentActionType("REVERSEAUTHORIZE", "Reverse Authorize");
 
     public static PaymentActionType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public PaymentActionType() {
         //do nothing
     }
 
-    public PaymentActionType(final String type) {
+    public PaymentActionType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -57,7 +61,11 @@ public class PaymentActionType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

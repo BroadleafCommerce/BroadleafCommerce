@@ -45,6 +45,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl;
@@ -60,7 +61,6 @@ import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.listener.AuditableListener;

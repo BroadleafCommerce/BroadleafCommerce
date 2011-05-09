@@ -19,31 +19,35 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of discount types.
  *
  */
-public class OfferDiscountType implements Serializable
-{
+public class OfferDiscountType implements Serializable, BroadleafEnumerationType {
+	
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferDiscountType> TYPES = new HashMap<String, OfferDiscountType>();
 
-    public static final OfferDiscountType PERCENT_OFF = new OfferDiscountType("PERCENT_OFF");
-    public static final OfferDiscountType AMOUNT_OFF = new OfferDiscountType("AMOUNT_OFF");
-    public static final OfferDiscountType FIX_PRICE = new OfferDiscountType("FIX_PRICE");
+    public static final OfferDiscountType PERCENT_OFF = new OfferDiscountType("PERCENT_OFF", "Percent Off");
+    public static final OfferDiscountType AMOUNT_OFF = new OfferDiscountType("AMOUNT_OFF", "Amount Off");
+    public static final OfferDiscountType FIX_PRICE = new OfferDiscountType("FIX_PRICE", "Fixed Price");
 
     public static OfferDiscountType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public OfferDiscountType() {
         //do nothing
     }
 
-    public OfferDiscountType(final String type) {
+    public OfferDiscountType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -58,7 +62,11 @@ public class OfferDiscountType implements Serializable
         return type;
     }
 
-    @Override
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

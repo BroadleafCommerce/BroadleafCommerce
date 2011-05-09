@@ -19,37 +19,41 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of credit card types.
  * 
  * @author jfischer
  *
  */
-public class CreditCardType implements Serializable {
+public class CreditCardType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, CreditCardType> TYPES = new HashMap<String, CreditCardType>();
 
-    public static final CreditCardType MASTERCARD  = new CreditCardType("MASTERCARD");
-    public static final CreditCardType VISA  = new CreditCardType("VISA");
-    public static final CreditCardType AMEX  = new CreditCardType("AMEX");
-    public static final CreditCardType DINERSCLUB_CARTEBLANCHE  = new CreditCardType("DINERSCLUB_CARTEBLANCHE");
-    public static final CreditCardType DISCOVER  = new CreditCardType("DISCOVER");
-    public static final CreditCardType ENROUTE  = new CreditCardType("ENROUTE");
-    public static final CreditCardType JCB  = new CreditCardType("JCB");
+    public static final CreditCardType MASTERCARD  = new CreditCardType("MASTERCARD", "Master Card");
+    public static final CreditCardType VISA  = new CreditCardType("VISA", "Visa");
+    public static final CreditCardType AMEX  = new CreditCardType("AMEX", "American Express");
+    public static final CreditCardType DINERSCLUB_CARTEBLANCHE  = new CreditCardType("DINERSCLUB_CARTEBLANCHE", "Diner's Club / Carte Blanche");
+    public static final CreditCardType DISCOVER  = new CreditCardType("DISCOVER", "Discover");
+    public static final CreditCardType ENROUTE  = new CreditCardType("ENROUTE", "En Route");
+    public static final CreditCardType JCB  = new CreditCardType("JCB", "JCB");
 
     public static CreditCardType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public CreditCardType() {
         //do nothing
     }
 
-    public CreditCardType(final String type) {
+    public CreditCardType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -57,7 +61,11 @@ public class CreditCardType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)){
             TYPES.put(type, this);

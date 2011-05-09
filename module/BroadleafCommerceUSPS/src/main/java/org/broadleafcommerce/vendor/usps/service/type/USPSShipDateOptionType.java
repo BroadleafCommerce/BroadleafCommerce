@@ -19,31 +19,35 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of ship date option types.
  * 
  * @author jfischer
  */
-public class USPSShipDateOptionType implements Serializable {
+public class USPSShipDateOptionType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, USPSShipDateOptionType> TYPES = new HashMap<String, USPSShipDateOptionType>();
 
-    public static final USPSShipDateOptionType EMSH  = new USPSShipDateOptionType("EMSH");
-    public static final USPSShipDateOptionType HFP = new USPSShipDateOptionType("HFP");
+    public static final USPSShipDateOptionType EMSH  = new USPSShipDateOptionType("EMSH", "EMSH");
+    public static final USPSShipDateOptionType HFP = new USPSShipDateOptionType("HFP", "HFP");
 
     public static USPSShipDateOptionType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public USPSShipDateOptionType() {
         //do nothing
     }
 
-    public USPSShipDateOptionType(final String type) {
+    public USPSShipDateOptionType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -58,7 +62,11 @@ public class USPSShipDateOptionType implements Serializable {
         }
     }
 
-    @Override
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

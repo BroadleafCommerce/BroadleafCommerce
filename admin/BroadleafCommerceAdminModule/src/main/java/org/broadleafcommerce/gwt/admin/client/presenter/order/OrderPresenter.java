@@ -3,6 +3,7 @@ package org.broadleafcommerce.gwt.admin.client.presenter.order;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.BundledOrderItemListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.CountryListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.FulfillmentGroupAdjustmentListDataSourceFactory;
@@ -122,7 +123,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 					Map<String, Object> initialValues = new HashMap<String, Object>();
 					initialValues.put("order", display.getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
 					initialValues.put("_type", new String[]{((DynamicEntityDataSource) ((OrderDisplay) display).getPaymentInfoDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-					Main.ENTITY_ADD.editNewRecord("Create New Payment Info", (DynamicEntityDataSource) ((OrderDisplay) display).getPaymentInfoDisplay().getGrid().getDataSource(), initialValues, null, "90%", null, null);
+					AdminModule.ENTITY_ADD.editNewRecord("Create New Payment Info", (DynamicEntityDataSource) ((OrderDisplay) display).getPaymentInfoDisplay().getGrid().getDataSource(), initialValues, null, "90%", null, null);
 				}
 			}
         });
@@ -132,7 +133,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 					Map<String, Object> initialValues = new HashMap<String, Object>();
 					initialValues.put("orders", display.getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
 					initialValues.put("_type", new String[]{((DynamicEntityDataSource) ((OrderDisplay) display).getOfferCodeDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-					Main.ENTITY_ADD.editNewRecord("Create Offer Code", (DynamicEntityDataSource) ((OrderDisplay) display).getOfferCodeDisplay().getGrid().getDataSource(), initialValues, null, "90%", null, null);
+					AdminModule.ENTITY_ADD.editNewRecord("Create Offer Code", (DynamicEntityDataSource) ((OrderDisplay) display).getOfferCodeDisplay().getGrid().getDataSource(), initialValues, null, "90%", null, null);
 				}
 			}
         });*/
@@ -183,7 +184,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 												getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 													"address.country", 
 													countrySearchView, 
-													"Search For A Country", 
+													AdminModule.ADMINMESSAGES.countrySearchPrompt(), 
 													(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
 												);
 												
@@ -198,7 +199,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 														getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 															"address.state", 
 															stateSearchView, 
-															"Search For A State", 
+															AdminModule.ADMINMESSAGES.stateSearchPrompt(), 
 															(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
 														);
 															
@@ -218,23 +219,23 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 																		getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 																			"address.country", 
 																			countrySearchView, 
-																			"Search For A Country", 
+																			AdminModule.ADMINMESSAGES.countrySearchPrompt(), 
 																			(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
 																		);
 																		((DynamicEntityDataSource) paymentInfoDS).
 																		getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 																			"address.state", 
 																			stateSearchView, 
-																			"Search For A State", 
+																			AdminModule.ADMINMESSAGES.stateSearchPrompt(), 
 																			(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
 																		);
 																		
 																		PaymentAdditionalAttributesDataSourceFactory.createDataSource("paymentAdditionalAttributesDS", ((OrderDisplay) getDisplay()).getAdditionalAttributesDisplay().getGrid(), new AsyncCallbackAdapter() {
 																			public void onSuccess(DataSource attributeDS) {
 																				Map<String, Object> initialValues = new HashMap<String, Object>();
-																				initialValues.put("key", "Untitled");
-																				initialValues.put("value", "Untitled");
-																				additionalPaymentAttributesPresenter = new MapStructurePresenter(((OrderDisplay) getDisplay()).getAdditionalAttributesDisplay(), new MapStructureEntityEditDialog(), "Add New Attribute", initialValues);
+																				initialValues.put("key", AdminModule.ADMINMESSAGES.paymentAttributeKeyDefault());
+																				initialValues.put("value", AdminModule.ADMINMESSAGES.paymentAttributeValueDefault());
+																				additionalPaymentAttributesPresenter = new MapStructurePresenter(((OrderDisplay) getDisplay()).getAdditionalAttributesDisplay(), new MapStructureEntityEditDialog(), AdminModule.ADMINMESSAGES.newAttributeTitle(), initialValues);
 																				additionalPaymentAttributesPresenter.setDataSource((ListGridDataSource) attributeDS, new String[]{"key", "value"}, new Boolean[]{true, true});
 																				additionalPaymentAttributesPresenter.setReadOnly(true);
 																				
@@ -246,19 +247,19 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 																						
 																						OrderAdjustmentListDataSourceFactory.createDataSource("orderAdjustmentDS", new AsyncCallbackAdapter() {
 																							public void onSuccess(DataSource orderAdjustmentDS) {
-																								orderAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderAdjustmentDisplay(), "Add An Order Ajustment");
+																								orderAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newOrderAdjustmentTitle());
 																								orderAdjustmentPresenter.setDataSource((ListGridDataSource) orderAdjustmentDS, new String[]{"reason", "value", "offer.name", "offer.type"}, new Boolean[]{false, false, false, false});
 																								orderAdjustmentPresenter.setReadOnly(true);
 																								
 																								OrderItemAdjustmentListDataSourceFactory.createDataSource("orderItemAdjustmentDS", new AsyncCallbackAdapter() {
 																									public void onSuccess(DataSource orderItemAdjustmentDS) {
-																										orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderItemAdjustmentDisplay(), "Add An Order Item Adjustment");
+																										orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderItemAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newOrderItemAdjustmentTitle());
 																										orderItemAdjustmentPresenter.setDataSource((ListGridDataSource) orderItemAdjustmentDS, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
 																										orderItemAdjustmentPresenter.setReadOnly(true);
 																										
 																										FulfillmentGroupAdjustmentListDataSourceFactory.createDataSource("fulfillmentGroupAdjustmentDS", new AsyncCallbackAdapter() {
 																											public void onSuccess(DataSource fulfillmentGroupAdjustmentDS) {
-																												fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupAdjustmentDisplay(), "Add A Fulfillment Group Adjustment");
+																												fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newFGAdjustmentTitle());
 																												fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) fulfillmentGroupAdjustmentDS, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
 																												fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
 																						

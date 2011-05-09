@@ -22,7 +22,7 @@ public class CustomerListDataSourceFactory {
 			OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(new String[]{"password", "challengeAnswer", "passwordChangeRequired", "challengeQuestion"});
+			persistencePerspective.setExcludeFields(new String[]{"password", "challengeAnswer", "passwordChangeRequired", "challengeQuestion", "firstName", "lastName", "emailAddress", "auditable.dateCreated", "auditable.dateUpdated"});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicEntityModule(CeilingEntities.CUSTOMER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

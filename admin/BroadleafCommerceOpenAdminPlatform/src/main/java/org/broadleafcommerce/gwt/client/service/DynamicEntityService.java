@@ -7,9 +7,7 @@ import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("dynamic.entity.service")
 public interface DynamicEntityService extends RemoteService {
     
 	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, String[] metadataOverrideKeys, FieldMetadata[] metadataOverrideValues) throws ServiceException;

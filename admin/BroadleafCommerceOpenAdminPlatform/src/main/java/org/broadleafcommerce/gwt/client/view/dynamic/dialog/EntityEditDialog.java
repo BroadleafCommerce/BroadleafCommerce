@@ -58,15 +58,13 @@ public class EntityEditDialog extends Window {
             	if (dynamicForm.validate()) {
             		dynamicForm.saveData(new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							if (response.getErrors().isEmpty()) {
-								TreeNode record = new TreeNode(request.getData());
-								if (handler != null) {
-									AppController.getInstance().getEventBus().addHandler(NewItemCreatedEvent.TYPE, handler);
-									try {
-										AppController.getInstance().getEventBus().fireEvent(new NewItemCreatedEvent((ListGridRecord) record, dynamicForm.getDataSource()));
-									} finally {
-										AppController.getInstance().getEventBus().removeHandler(NewItemCreatedEvent.TYPE, handler);
-									}
+							TreeNode record = new TreeNode(request.getData());
+							if (handler != null) {
+								AppController.getInstance().getEventBus().addHandler(NewItemCreatedEvent.TYPE, handler);
+								try {
+									AppController.getInstance().getEventBus().fireEvent(new NewItemCreatedEvent((ListGridRecord) record, dynamicForm.getDataSource()));
+								} finally {
+									AppController.getInstance().getEventBus().removeHandler(NewItemCreatedEvent.TYPE, handler);
 								}
 							}
 						}
@@ -109,7 +107,7 @@ public class EntityEditDialog extends Window {
 			setHeight(heightOverride);
 		}
 		if (fieldNames != null && fieldNames.length > 0) {
-			dataSource.resetPermanentFieldVisibility(fieldNames);
+			dataSource.resetVisibilityOnly(fieldNames);
 		} else {
 			dataSource.resetPermanentFieldVisibility();
 		}

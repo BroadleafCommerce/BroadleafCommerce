@@ -21,7 +21,8 @@
 	<artifact:pom id="frameworkPom" file="${releaseParentDir}/core/BroadleafCommerceFramework/pom.xml" />
 	<artifact:pom id="frameworkWebPom" file="${releaseParentDir}/core/BroadleafCommerceFrameworkWeb/pom.xml" />
 	<artifact:pom id="demoPom" file="${releaseParentDir}/site/BroadleafCommerceDemo/pom.xml" />
-	<artifact:pom id="adminPom" file="${releaseParentDir}/site/BroadleafCommerceAdmin/pom.xml" />
+	<artifact:pom id="adminModulePom" file="${releaseParentDir}/admin/BroadleafCommerceAdminModule/pom.xml" />
+	<artifact:pom id="openAdminModulePom" file="${releaseParentDir}/admin/BroadleafCommerceOpenAdminPlatform/pom.xml" />
 	<artifact:pom id="demoLauncherPom" file="${releaseParentDir}/site/BroadleafCommerceDemoLauncher/pom.xml" />
 	<artifact:pom id="distributionPom" file="${releaseParentDir}/distribute/pom.xml" />
 	<artifact:pom id="integrationPom" file="${releaseParentDir}/integration/pom.xml" />
@@ -77,7 +78,7 @@
 		</copy>
 	</target>
 
-	<target name="build-sql">
+	<target name="build-sql" depends="setup">
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/sql"/>
 		<path id="combined.path">
 			<union id="union"><path refid="build.admin.compile.classpath"/><path refid="build.admin.runtime.classpath"/></union>
@@ -195,13 +196,21 @@
 		<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime" />
 		<artifact:dependencies filesetId="frameworkWebDeps" pomRefId="frameworkWebPom" useScope="runtime" />
 		<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="runtime"/>
-		<artifact:dependencies filesetId="adminDeps" pomRefId="adminPom" useScope="runtime"/>
-		<artifact:dependencies filesetId="adminDeps2" pomRefId="adminPom" useScope="compile"/>
+		<artifact:dependencies filesetId="adminDeps" pomRefId="adminModulePom" useScope="runtime"/>
+		<artifact:dependencies filesetId="adminDeps2" pomRefId="adminModulePom" useScope="compile"/>
+		<artifact:dependencies filesetId="openAdminDeps" pomRefId="openAdminModulePom" useScope="runtime"/>
+		<artifact:dependencies filesetId="openAdminDeps2" pomRefId="openAdminModulePom" useScope="compile"/>
 		<artifact:dependencies filesetId="distributionDeps" pomRefId="distributionPom" versionsId="distributionVersions" />
 		<artifact:dependencies filesetId="integrationDeps" pomRefId="integrationPom" />
 		<artifact:dependencies filesetId="demoLauncherDeps" pomRefId="demoLauncherPom" useScope="compile" />
 		<path id="build.runtime.classpath">
 			<fileset refid="frameworkWebDeps" />
+		</path>
+		<path id="build.open.admin.compile.classpath">
+			<fileset refid="openAdminDeps2"/>
+		</path>
+		<path id="build.open.admin.runtime.classpath">
+			<fileset refid="openAdminDeps"/>
 		</path>
 		<path id="build.admin.compile.classpath">
 			<fileset refid="adminDeps2"/>
@@ -233,6 +242,7 @@
 					<fileset refid="adminDeps" />
 					<intersect>
 						<fileset refid="adminDeps" />
+						<fileset refid="openAdminDeps" />
 						<fileset refid="frameworkWebDeps" />
 					</intersect>
 				</difference>

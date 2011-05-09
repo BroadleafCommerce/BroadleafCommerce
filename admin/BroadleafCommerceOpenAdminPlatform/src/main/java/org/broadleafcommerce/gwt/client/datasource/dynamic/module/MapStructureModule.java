@@ -14,10 +14,10 @@ import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.gwt.client.datasource.results.PolymorphicEntity;
 import org.broadleafcommerce.gwt.client.datasource.results.Property;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.client.service.AbstractCallback;
 import org.broadleafcommerce.gwt.client.service.AppServices;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.core.client.JavaScriptObject;

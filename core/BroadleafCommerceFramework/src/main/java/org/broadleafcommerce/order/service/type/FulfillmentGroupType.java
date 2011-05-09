@@ -19,32 +19,36 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of fulfillment group types.
  * 
  * @author jfischer
  *
  */
-public class FulfillmentGroupType implements Serializable {
+public class FulfillmentGroupType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, FulfillmentGroupType> TYPES = new HashMap<String, FulfillmentGroupType>();
 
-    public static final FulfillmentGroupType PICK_UP_AT_STORE = new FulfillmentGroupType("PICK_UP_AT_STORE");
-    public static final FulfillmentGroupType SHIPPING = new FulfillmentGroupType("SHIPPING");
+    public static final FulfillmentGroupType PICK_UP_AT_STORE = new FulfillmentGroupType("PICK_UP_AT_STORE", "Pick Up At Store");
+    public static final FulfillmentGroupType SHIPPING = new FulfillmentGroupType("SHIPPING", "Shipping");
 
     public static FulfillmentGroupType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public FulfillmentGroupType() {
         //do nothing
     }
 
-    public FulfillmentGroupType(final String type) {
+    public FulfillmentGroupType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -52,7 +56,11 @@ public class FulfillmentGroupType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);
