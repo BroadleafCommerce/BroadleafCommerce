@@ -13,7 +13,6 @@
 	<name>site</name>
 	<modules>
 		<module>BroadleafCommerceDemo</module>
-		<module>BroadleafCommerceAdmin</module>
 		<module>BroadleafCommerceDemoLauncher</module>
     	<module>BroadleafCommerceAdminGWT</module>
   </modules>
