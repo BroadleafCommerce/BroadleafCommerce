@@ -19,10 +19,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.CustomerPhone;
 import org.broadleafcommerce.profile.domain.Phone;
 import org.broadleafcommerce.profile.service.CustomerPhoneService;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.profile.web.CustomerState;
 import org.broadleafcommerce.profile.web.controller.validator.CustomerPhoneValidator;
 import org.broadleafcommerce.profile.web.controller.validator.PhoneValidator;

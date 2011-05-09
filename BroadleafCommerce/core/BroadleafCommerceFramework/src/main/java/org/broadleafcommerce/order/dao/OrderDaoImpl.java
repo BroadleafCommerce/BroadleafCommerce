@@ -22,11 +22,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOrderDao")
@@ -41,7 +41,6 @@ public class OrderDaoImpl implements OrderDao {
     @Resource(name = "blCustomerDao")
     protected CustomerDao customerDao;
 
-    @SuppressWarnings("unchecked")
     public Order readOrderById(final Long orderId) {
         return (Order) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.order.domain.Order"), orderId);
     }

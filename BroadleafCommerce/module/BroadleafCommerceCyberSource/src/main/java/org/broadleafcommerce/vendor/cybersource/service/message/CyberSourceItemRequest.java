@@ -1,6 +1,6 @@
 package org.broadleafcommerce.vendor.cybersource.service.message;
 
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 public class CyberSourceItemRequest implements java.io.Serializable {
 

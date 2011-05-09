@@ -187,4 +187,13 @@
     <bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
 	<bean id="persistenceUnitInfo" factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
 	
+	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService">
+		<constructor-arg>
+			<list>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.BasicEntityModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.JoinStructureModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.MapModule"/>
+			</list>
+		</constructor-arg>
+	</bean>
 </beans>

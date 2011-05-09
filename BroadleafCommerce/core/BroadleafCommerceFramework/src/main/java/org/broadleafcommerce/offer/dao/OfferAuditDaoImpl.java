@@ -19,8 +19,8 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.offer.domain.OfferAudit;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOfferAuditDao")
@@ -48,7 +48,6 @@ public class OfferAuditDaoImpl implements OfferAuditDao {
         return em.merge(offerAudit);
     }
 
-    @SuppressWarnings("unchecked")
     public OfferAudit readAuditById(final Long offerAuditId) {
         return (OfferAudit) em.find(entityConfiguration.lookupEntityClass(OfferAudit.class.getName()), offerAuditId);
     }

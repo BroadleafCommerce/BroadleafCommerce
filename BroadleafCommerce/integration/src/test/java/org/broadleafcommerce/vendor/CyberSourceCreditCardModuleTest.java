@@ -18,6 +18,7 @@ package org.broadleafcommerce.vendor;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.encryption.EncryptionModule;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
@@ -33,7 +34,6 @@ import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.CountryImpl;
 import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.test.BaseTest;
-import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;

@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.security.service.dataprovider;
 
-import org.broadleafcommerce.security.domain.AdminPermission;
-import org.broadleafcommerce.security.domain.AdminPermissionImpl;
+import org.broadleafcommerce.gwt.server.security.domain.AdminPermission;
+import org.broadleafcommerce.gwt.server.security.domain.AdminPermissionImpl;
 import org.testng.annotations.DataProvider;
 
 public class AdminPermissionDataProvider {

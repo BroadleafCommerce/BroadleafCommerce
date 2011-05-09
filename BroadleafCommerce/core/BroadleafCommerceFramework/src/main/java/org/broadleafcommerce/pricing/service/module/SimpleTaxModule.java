@@ -15,11 +15,11 @@
  */
 package org.broadleafcommerce.pricing.service.module;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.pricing.service.exception.TaxException;
-import org.broadleafcommerce.util.money.Money;
 
 /**
  * Simple factor-based tax module. Not really useful for anything

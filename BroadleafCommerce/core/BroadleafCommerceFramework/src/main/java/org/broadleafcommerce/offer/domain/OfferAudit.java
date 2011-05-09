@@ -18,7 +18,7 @@ package org.broadleafcommerce.offer.domain;
 import java.io.Serializable;
 import java.sql.Date;
 
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 public interface OfferAudit extends Serializable {
 

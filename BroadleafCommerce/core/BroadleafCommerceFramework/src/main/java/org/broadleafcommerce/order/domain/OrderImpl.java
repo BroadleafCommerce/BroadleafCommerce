@@ -45,6 +45,7 @@ import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.offer.domain.CandidateOrderOfferImpl;
 import org.broadleafcommerce.offer.domain.Offer;
@@ -63,7 +64,6 @@ import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.domain.listener.AuditableListener;
-import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;

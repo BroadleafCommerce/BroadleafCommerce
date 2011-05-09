@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
@@ -37,7 +38,6 @@ import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.CountryImpl;
 import org.broadleafcommerce.profile.domain.StateImpl;
 import org.broadleafcommerce.test.BaseTest;
-import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;

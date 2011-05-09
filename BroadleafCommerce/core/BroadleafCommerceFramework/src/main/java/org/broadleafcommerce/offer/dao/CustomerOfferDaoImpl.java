@@ -22,9 +22,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.offer.domain.CustomerOffer;
 import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerOfferDao")
@@ -51,7 +51,6 @@ public class CustomerOfferDaoImpl implements CustomerOfferDao {
         return em.merge(customerOffer);
     }
 
-    @SuppressWarnings("unchecked")
     public CustomerOffer readCustomerOfferById(final Long customerOfferId) {
         return (CustomerOffer) em.find(entityConfiguration.lookupEntityClass(CustomerOffer.class.getName()), customerOfferId);
     }

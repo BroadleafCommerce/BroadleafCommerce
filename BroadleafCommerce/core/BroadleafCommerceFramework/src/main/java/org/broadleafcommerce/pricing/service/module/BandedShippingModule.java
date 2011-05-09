@@ -23,13 +23,13 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupItem;
 import org.broadleafcommerce.pricing.domain.ShippingRate;
 import org.broadleafcommerce.pricing.service.ShippingRateService;
 import org.broadleafcommerce.pricing.service.workflow.type.ShippingServiceType;
 import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.util.money.Money;
 
 public class BandedShippingModule implements ShippingModule {
 	

@@ -23,8 +23,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.content.domain.Content;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.util.dao.BatchRetrieveDao;
 import org.springframework.stereotype.Repository;
 
@@ -68,7 +68,8 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentAwaitingApproval()
      */
-    public List<Content> readContentAwaitingApproval() {
+    @SuppressWarnings("unchecked")
+	public List<Content> readContentAwaitingApproval() {
         Query query = em.createNamedQuery("BC_READ_CONTENT_AWAITING_APPROVAL");
 
         return (List<Content>) query.getResultList();
@@ -77,7 +78,6 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentById(java.lang.Long)
      */
-    @SuppressWarnings("unchecked")
     public Content readContentById(Integer id) {
         return (Content) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.content.domain.Content"), id);
     }
@@ -103,7 +103,8 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentBySandbox(java.lang.String)
      */
-    public List<Content> readContentBySandbox(String sandbox) {
+    @SuppressWarnings("unchecked")
+	public List<Content> readContentBySandbox(String sandbox) {
         Query query = null;
         if(sandbox!=null && sandbox.endsWith("*"))
             query = em.createNamedQuery("BC_READ_CONTENT_BY_LIKE_SANDBOX");
@@ -119,7 +120,8 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
     /* (non-Javadoc)
      * @see org.broadleafcommerce.content.dao.ContentDao#readContentBySandboxAndType(java.lang.String, java.lang.String)
      */
-    public List<Content> readContentBySandboxAndType(String sandbox, String contentType) {
+    @SuppressWarnings("unchecked")
+	public List<Content> readContentBySandboxAndType(String sandbox, String contentType) {
     	Query query = null;
     	if (sandbox == null){
     		query = em.createNamedQuery("BC_READ_CONTENT_BY_NULL_SANDBOX_AND_CONTENT_TYPE");
@@ -173,12 +175,14 @@ public class ContentDaoImpl extends BatchRetrieveDao implements ContentDao {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.content.dao.ContentDao#readStagedContent()
 	 */
+	@SuppressWarnings("unchecked")
 	public List<Content> readStagedContent() {
 		Query query = em.createNamedQuery("BC_READ_STAGED_CONTENT");
 
         return (List<Content>) query.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Content> readAllContent() {
 		Query query = em.createNamedQuery("BC_READ_ALL_CONTENT");
 

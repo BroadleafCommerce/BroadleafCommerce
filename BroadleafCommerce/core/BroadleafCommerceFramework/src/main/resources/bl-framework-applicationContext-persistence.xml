@@ -160,16 +160,6 @@
 		<aop:pointcut id="blOfferServiceOperation4" expression="execution(* org.broadleafcommerce.offer.service.OfferService.build*(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blOfferServiceOperation4"/>
 	</aop:config>
-
-	<aop:config>
-		<aop:pointcut id="blAdminSecurityServiceOperation" expression="execution(* org.broadleafcommerce.security.service.AdminSecurityService.save*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceOperation"/>
-	</aop:config>
-	
-	<aop:config>
-		<aop:pointcut id="blAdminSecurityServiceOperation2" expression="execution(* org.broadleafcommerce.security.service.AdminSecurityService.delete*(..))"/>
-	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blAdminSecurityServiceOperation2"/>
-	</aop:config>
 	
 	<aop:config>
 		<aop:pointcut id="blShippingRateServiceOperation" expression="execution(* org.broadleafcommerce.pricing.service.ShippingRateService.*(..))"/>

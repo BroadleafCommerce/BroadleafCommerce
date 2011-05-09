@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.security.service.dataprovider;
 
-import org.broadleafcommerce.security.domain.AdminRole;
-import org.broadleafcommerce.security.domain.AdminRoleImpl;
+import org.broadleafcommerce.gwt.server.security.domain.AdminRole;
+import org.broadleafcommerce.gwt.server.security.domain.AdminRoleImpl;
 import org.testng.annotations.DataProvider;
 
 public class AdminRoleDataProvider {

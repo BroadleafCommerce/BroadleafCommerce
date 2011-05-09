@@ -17,7 +17,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 public interface FulfillmentGroupFee extends Serializable {
 

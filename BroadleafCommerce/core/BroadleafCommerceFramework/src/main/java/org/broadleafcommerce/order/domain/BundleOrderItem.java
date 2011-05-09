@@ -17,7 +17,7 @@ package org.broadleafcommerce.order.domain;
 
 import java.util.List;
 
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 
 public interface BundleOrderItem extends OrderItem {

@@ -17,10 +17,10 @@ package org.broadleafcommerce.order;
 
 import java.math.BigDecimal;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.DiscreteOrderItemImpl;
 import org.broadleafcommerce.order.domain.GiftWrapOrderItemImpl;
 import org.broadleafcommerce.order.domain.OrderItemImpl;
-import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.DataProvider;
 
 public class OrderItemDataProvider {

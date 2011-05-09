@@ -22,8 +22,8 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationService;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;

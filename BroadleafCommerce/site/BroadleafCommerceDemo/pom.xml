@@ -118,7 +118,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-admin-site</artifactId>
+			<artifactId>broadleaf-admin-module</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>cobertura</groupId>
@@ -128,7 +128,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-admin-site</artifactId>
+			<artifactId>broadleaf-admin-module</artifactId>
 			<classifier>sources</classifier>
 			<exclusions>
 				<exclusion>

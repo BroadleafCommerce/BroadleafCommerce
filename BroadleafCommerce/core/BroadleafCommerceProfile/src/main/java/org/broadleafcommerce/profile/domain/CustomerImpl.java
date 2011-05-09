@@ -46,6 +46,7 @@ public class CustomerImpl implements Customer {
 
     @Id
     @Column(name = "CUSTOMER_ID")
+    @AdminPresentation(friendlyName="Customer Id", group="Primary Key", hidden=true)
     protected Long id;
 
     @Embedded

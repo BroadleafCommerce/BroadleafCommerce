@@ -17,8 +17,8 @@ package org.broadleafcommerce.offer.domain;
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.OrderItem;
-import org.broadleafcommerce.util.money.Money;
 
 public interface CandidateItemOffer extends Serializable {
 

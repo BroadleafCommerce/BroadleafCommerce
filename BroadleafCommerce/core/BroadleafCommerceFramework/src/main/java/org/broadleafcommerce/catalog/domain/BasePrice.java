@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.broadleafcommerce.common.domain.Auditable;
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 /**
  * The Interface BasePrice.

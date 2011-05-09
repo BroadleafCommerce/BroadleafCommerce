@@ -19,13 +19,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.profile.domain.User;
 import org.broadleafcommerce.profile.domain.UserRole;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blUserDao")
@@ -40,14 +39,16 @@ public class UserDaoImpl implements UserDao {
     public User readUserByUsername(String username) {
         Query query = em.createNamedQuery("BC_sREAD_USER_BY_USER_NAME");
         query.setParameter("username", username);
-        List<User> users = query.getResultList();
+        @SuppressWarnings("unchecked")
+		List<User> users = query.getResultList();
         return users == null || users.isEmpty() ? null : users.get(0);
     }
 
     public User readUserByEmail(String emailAddress) {
         Query query = em.createNamedQuery("BC_READ_USER_BY_EMAIL");
         query.setParameter("email", emailAddress);
-        List<User> users = query.getResultList();
+        @SuppressWarnings("unchecked")
+		List<User> users = query.getResultList();
         return users == null || users.isEmpty() ? null : users.get(0);
     }
 
@@ -62,7 +63,6 @@ public class UserDaoImpl implements UserDao {
         return em.merge(user);
     }
 
-    @SuppressWarnings("unchecked")
     public User readUserById(Long id) {
         return (User) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.profile.domain.User"), id);
     }

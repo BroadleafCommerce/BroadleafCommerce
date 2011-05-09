@@ -17,7 +17,7 @@ package org.broadleafcommerce.order.domain;
 
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.util.money.Money;
+import org.broadleafcommerce.money.Money;
 
 public interface DiscreteOrderItem extends OrderItem {
 

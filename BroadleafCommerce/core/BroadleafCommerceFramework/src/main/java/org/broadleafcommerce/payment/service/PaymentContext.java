@@ -15,9 +15,9 @@
  */
 package org.broadleafcommerce.payment.service;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.Referenced;
-import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentContext {
 

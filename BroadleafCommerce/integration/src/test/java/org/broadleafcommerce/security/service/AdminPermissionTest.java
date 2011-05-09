@@ -17,8 +17,8 @@ package org.broadleafcommerce.security.service;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.security.domain.AdminPermission;
-import org.broadleafcommerce.security.service.AdminSecurityService;
+import org.broadleafcommerce.gwt.server.security.domain.AdminPermission;
+import org.broadleafcommerce.gwt.server.security.service.AdminSecurityService;
 import org.broadleafcommerce.security.service.dataprovider.AdminPermissionDataProvider;
 import org.broadleafcommerce.test.BaseTest;
 import org.springframework.test.annotation.Rollback;

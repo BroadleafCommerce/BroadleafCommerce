@@ -22,8 +22,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.offer.domain.OfferCode;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOfferCodeDao")
@@ -50,7 +50,6 @@ public class OfferCodeDaoImpl implements OfferCodeDao {
         return em.merge(offerCode);
     }
 
-    @SuppressWarnings("unchecked")
     public OfferCode readOfferCodeById(Long offerCodeId) {
         return (OfferCode) em.find(entityConfiguration.lookupEntityClass(OfferCode.class.getName()), offerCodeId);
     }

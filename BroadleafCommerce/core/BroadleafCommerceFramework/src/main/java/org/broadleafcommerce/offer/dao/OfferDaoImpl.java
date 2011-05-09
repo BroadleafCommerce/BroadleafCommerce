@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateOrderOffer;
@@ -30,7 +31,6 @@ import org.broadleafcommerce.offer.domain.Offer;
 import org.broadleafcommerce.offer.domain.OfferInfo;
 import org.broadleafcommerce.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.broadleafcommerce.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
@@ -82,7 +82,6 @@ public class OfferDaoImpl implements OfferDao {
         em.remove(offer);
     }
 
-    @SuppressWarnings("unchecked")
 	public void delete(OfferInfo offerInfo) {
     	if (!em.contains(offerInfo)) {
     		offerInfo = (OfferInfo) em.find(entityConfiguration.lookupEntityClass(OfferInfo.class.getName()), offerInfo.getId());
@@ -104,7 +103,6 @@ public class OfferDaoImpl implements OfferDao {
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public Offer readOfferById(Long offerId) {
         return (Offer) em.find(entityConfiguration.lookupEntityClass(Offer.class.getName()), offerId);
     }

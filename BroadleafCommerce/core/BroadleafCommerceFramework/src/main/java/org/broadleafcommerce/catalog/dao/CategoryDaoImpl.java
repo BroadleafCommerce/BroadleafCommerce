@@ -24,7 +24,7 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.profile.util.EntityConfiguration;
+import org.broadleafcommerce.config.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCategoryDao")
@@ -42,7 +42,6 @@ public class CategoryDaoImpl implements CategoryDao {
         return em.merge(category);
     }
 
-    @SuppressWarnings("unchecked")
     public Category readCategoryById(Long categoryId) {
         return (Category) em.find(entityConfiguration.lookupEntityClass("org.broadleafcommerce.catalog.domain.Category"), categoryId);
     }

@@ -17,10 +17,10 @@ package org.broadleafcommerce.pricing.service.workflow;
 
 import java.math.BigDecimal;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.order.domain.FulfillmentGroupFee;
 import org.broadleafcommerce.order.domain.Order;
-import org.broadleafcommerce.util.money.Money;
 import org.broadleafcommerce.workflow.BaseActivity;
 import org.broadleafcommerce.workflow.ProcessContext;
 

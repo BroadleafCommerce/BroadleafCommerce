@@ -19,11 +19,11 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Phone;
-import org.broadleafcommerce.util.money.Money;
 
 public interface PaymentInfo extends Serializable {
 

@@ -18,13 +18,13 @@ package org.broadleafcommerce.order.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.domain.CandidateFulfillmentGroupOffer;
 import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.Phone;
-import org.broadleafcommerce.util.money.Money;
 
 public interface FulfillmentGroup extends Serializable {
 
