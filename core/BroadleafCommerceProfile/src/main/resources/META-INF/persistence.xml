@@ -39,7 +39,7 @@
             <property name="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider"/>
             <property name="hibernate.cache.use_second_level_cache" value="true"/>
             <property name="hibernate.cache.use_query_cache" value="true"/>
-            <property name="hibernate.generate_statistics" value="true" />
+            <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.archive.autodetection" value="false" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <!--<property name="hibernate.ejb.event.post-load" value="org.hibernate.ejb.event.EJB3PostLoadEventListener,org.broadleafcommerce.gwt.server.changeset.ChangeSetListener" />

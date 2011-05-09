@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import java.util.HashMap;
+
 import org.broadleafcommerce.core.order.domain.BundleOrderItem;
 import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.GiftWrapOrderItem;
@@ -31,6 +33,8 @@ public interface OrderItemService {
     public GiftWrapOrderItem createGiftWrapOrderItem(GiftWrapOrderItemRequest itemRequest);
 
     public BundleOrderItem createBundleOrderItem(BundleOrderItemRequest itemRequest);
+    
+    public DiscreteOrderItem createDynamicPriceDiscreteOrderItem(final DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations);
 
     public OrderItem readOrderItemById(Long orderItemId);
 

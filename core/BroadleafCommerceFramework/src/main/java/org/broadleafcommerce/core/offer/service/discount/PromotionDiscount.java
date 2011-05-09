@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.offer.service.candidate;
+package org.broadleafcommerce.core.offer.service.discount;
 
 import java.io.Serializable;
 
@@ -40,6 +40,7 @@ public class PromotionDiscount implements Serializable{
 		this.itemCriteria = itemCriteria;
 	}
 	
+	//TODO this discountAmount field never appears to be used.
 	public Money getDiscountAmount() {
 		return discountAmount;
 	}

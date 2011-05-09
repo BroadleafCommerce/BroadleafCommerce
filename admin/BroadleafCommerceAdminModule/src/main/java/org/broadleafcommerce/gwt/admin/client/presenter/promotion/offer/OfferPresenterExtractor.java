@@ -81,10 +81,11 @@ public class OfferPresenterExtractor {
 	}
 	
 	protected void extractQualifierData(final Record selectedRecord, final String type, boolean isValidation) throws IncompatibleMVELTranslationException {
-		if ((getDisplay().getBogoRadio().getValue().equals("YES") && type.equals("ORDER_ITEM")) || getDisplay().getItemRuleRadio().equals("ITEM_RULE") && !type.equals("ORDER_ITEM")) {
+		if ((getDisplay().getBogoRadio().getValue().equals("YES") && type.equals("ORDER_ITEM")) || getDisplay().getItemRuleRadio().getValue().equals("ITEM_RULE") && !type.equals("ORDER_ITEM")) {
 			for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
 				if (builder.getDirty()) {
-					Integer quantity = (Integer) builder.getItemQuantity().getValue();
+					String temper = builder.getItemQuantity().getValue().toString();
+					Integer quantity = Integer.parseInt(temper);
 					String mvel;
 					if (builder.getIncompatibleMVEL()) {
 						mvel = builder.getRawItemTextArea().getValueAsString();
@@ -93,8 +94,7 @@ public class OfferPresenterExtractor {
 					}
 					if (!isValidation) {
 						if (builder.getRecord() != null) {
-							builder.getRecord().setAttribute("requiresQuantity", quantity);
-							builder.getRecord().setAttribute("receiveQuantity", 0);
+							builder.getRecord().setAttribute("quantity", quantity);
 							builder.getRecord().setAttribute("orderItemMatchRule", mvel);
 							presenter.offerItemCriteriaDataSource.updateData(builder.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
@@ -103,8 +103,7 @@ public class OfferPresenterExtractor {
 							});
 						} else {
 							final Record temp = new Record();
-							temp.setAttribute("requiresQuantity", quantity);
-							temp.setAttribute("receiveQuantity", 0);
+							temp.setAttribute("quantity", quantity);
 							temp.setAttribute("orderItemMatchRule", mvel);
 							temp.setAttribute("_type", new String[]{((DynamicEntityDataSource) presenter.offerItemCriteriaDataSource).getDefaultNewEntityFullyQualifiedClassname()});
 							temp.setAttribute(OfferItemCriteriaListDataSourceFactory.foreignKeyName, presenter.entityDataSource.getPrimaryKeyValue(selectedRecord));
@@ -131,7 +130,7 @@ public class OfferPresenterExtractor {
 
 	protected void extractFulfillmentGroupData(final Record selectedRecord, final String type) throws IncompatibleMVELTranslationException {
 		if (type.equals("FULFILLMENT_GROUP")) {
-			if (getDisplay().getOrderRuleRadio().getValue().equals("FG_RULE")) {
+			if (getDisplay().getFgRuleRadio().getValue().equals("FG_RULE")) {
 				if (!presenter.initializer.fgRuleIncompatible) {
 					selectedRecord.setAttribute("appliesToFulfillmentGroupRules", TRANSLATOR.createMVEL(getDisplay().getFulfillmentGroupFilterBuilder().getCriteria(), FilterType.FULFILLMENT_GROUP, getDisplay().getFulfillmentGroupFilterBuilder().getDataSource()));
 				} else {
@@ -176,15 +175,15 @@ public class OfferPresenterExtractor {
 
 	protected void extractTargetItemData(final Record selectedRecord, final String type) throws IncompatibleMVELTranslationException {
 		if (type.equals("ORDER_ITEM")) {
-			Integer quantity = (Integer) getDisplay().getTargetItemBuilder().getItemQuantity().getValue();
+			String temp = getDisplay().getTargetItemBuilder().getItemQuantity().getValue().toString();
+			Integer quantity = Integer.parseInt(temp);
 			String mvel;
 			if (getDisplay().getTargetItemBuilder().getIncompatibleMVEL()) {
 				mvel = getDisplay().getTargetItemBuilder().getRawItemTextArea().getValueAsString();
 			} else {
 				mvel = TRANSLATOR.createMVEL(getDisplay().getTargetItemBuilder().getItemFilterBuilder().getCriteria(), FilterType.ORDER_ITEM, getDisplay().getTargetItemBuilder().getItemFilterBuilder().getDataSource());
 			}
-			selectedRecord.setAttribute("targetItemCriteria.receiveQuantity", quantity);
-			selectedRecord.setAttribute("targetItemCriteria.requiresQuantity", 0);
+			selectedRecord.setAttribute("targetItemCriteria.quantity", quantity);
 			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", mvel);
 		} else {
 			Object value = null;

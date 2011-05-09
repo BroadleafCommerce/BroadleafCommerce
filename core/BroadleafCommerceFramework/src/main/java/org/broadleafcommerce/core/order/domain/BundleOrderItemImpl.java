@@ -65,7 +65,7 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
         return removedAdjustmentCount;
     }
 
-    @Override
+	@Override
     public void assignFinalPrice() {
         for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
             discreteOrderItem.assignFinalPrice();

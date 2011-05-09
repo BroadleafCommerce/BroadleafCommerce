@@ -85,7 +85,7 @@ public class CandidateFulfillmentGroupOfferImpl extends CandidateQualifiedOfferI
         discountedPrice = null;
     }
 
-    /*public Money getDiscountedPrice() {
+    public Money getDiscountedPrice() {
         if (discountedPrice == null) {
             computeDiscountedPriceAndAmount();
         }
@@ -97,7 +97,7 @@ public class CandidateFulfillmentGroupOfferImpl extends CandidateQualifiedOfferI
             computeDiscountedPriceAndAmount();
         }
         return discountAmount == null ? null : new Money(discountAmount);
-    }*/
+    }
 
     public FulfillmentGroup getFulfillmentGroup() {
         return fulfillmentGroup;
@@ -112,7 +112,7 @@ public class CandidateFulfillmentGroupOfferImpl extends CandidateQualifiedOfferI
         return offer.getPriority();
     }
 
-    /*protected void computeDiscountedPriceAndAmount() {
+    protected void computeDiscountedPriceAndAmount() {
         if (offer != null && fulfillmentGroup != null){
 
             if (fulfillmentGroup.getRetailShippingPrice() != null) {
@@ -123,11 +123,11 @@ public class CandidateFulfillmentGroupOfferImpl extends CandidateQualifiedOfferI
                 }
 
                 if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountAmount = offer.getValue();
+                    discountAmount = new Money(offer.getValue());
                 } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountAmount = priceToUse.subtract(offer.getValue());
+                    discountAmount = priceToUse.subtract(new Money(offer.getValue()));
                 } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                    discountAmount = priceToUse.multiply(offer.getValue().getAmount().divide(new BigDecimal("100")));
+                    discountAmount = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")));
                 }
                 if (discountAmount.greaterThan(priceToUse)) {
                     discountAmount = priceToUse;
@@ -137,7 +137,7 @@ public class CandidateFulfillmentGroupOfferImpl extends CandidateQualifiedOfferI
                 this.discountAmount = discountAmount.getAmount();
             }
         }
-    }*/
+    }
 
 	@Override
     public int hashCode() {

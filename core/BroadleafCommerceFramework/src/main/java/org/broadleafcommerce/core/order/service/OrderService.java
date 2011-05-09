@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.order.service;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.broadleafcommerce.core.offer.domain.Offer;
@@ -137,5 +138,9 @@ public interface OrderService {
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
     
     public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);
+    
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException;
+
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException;
     
 }

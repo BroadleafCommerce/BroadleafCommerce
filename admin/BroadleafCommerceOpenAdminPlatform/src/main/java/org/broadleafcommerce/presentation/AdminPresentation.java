@@ -40,6 +40,15 @@ public @interface AdminPresentation {
 	String friendlyName();
 	
 	/**
+	 * If a security level is specified, it is registered with org.broadleafcommerce.gwt.client.security.SecurityManager
+	 * The SecurityManager checks the permission of the current user to 
+	 * determine if this field should be disabled based on the specified level.
+	 * 
+	 * @return the security level
+	 */
+	String securityLevel() default "";
+	
+	/**
 	 * The order in which this field will appear in a GUI relative to other fields from the same class
 	 * 
 	 * @return the display order

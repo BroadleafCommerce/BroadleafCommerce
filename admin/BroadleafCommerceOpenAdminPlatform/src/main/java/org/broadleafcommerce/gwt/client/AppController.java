@@ -3,6 +3,7 @@ package org.broadleafcommerce.gwt.client;
 import java.util.HashMap;
 
 import org.broadleafcommerce.gwt.client.presenter.entity.EntityPresenter;
+import org.broadleafcommerce.gwt.client.security.SecurityManager;
 import org.broadleafcommerce.gwt.client.view.Display;
 import org.broadleafcommerce.gwt.client.view.UIFactory;
 
@@ -41,7 +42,12 @@ public class AppController implements ValueChangeHandler<String> {
 		this.container = container;
 
 		if ("".equals(History.getToken())) {
-			History.newItem(pages.keySet().iterator().next());
+			for (String sectionTitle : pages.keySet()){
+				if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(sectionTitle)[0])){
+					History.newItem(sectionTitle);
+					break;
+				}
+			}
 		} else {
 			History.fireCurrentHistoryState();
 		}
@@ -63,11 +69,13 @@ public class AppController implements ValueChangeHandler<String> {
 	}
 	
 	protected void showView(String viewKey, String presenterKey) {
-		uiFactory.clearCurrentView();
-		Display view = uiFactory.getView(viewKey, false, false);
-		EntityPresenter presenter = uiFactory.getPresenter(presenterKey);
-		presenter.setDisplay(view);
-		presenter.setEventBus(eventBus);
-		presenter.go(container);
+		if (SecurityManager.getInstance().isUserAuthorizedToViewSection(viewKey)){
+			uiFactory.clearCurrentView();
+			Display view = uiFactory.getView(viewKey, false, false);
+			EntityPresenter presenter = uiFactory.getPresenter(presenterKey);
+			presenter.setDisplay(view);
+			presenter.setEventBus(eventBus);
+			presenter.go(container);
+		}
 	}
 }

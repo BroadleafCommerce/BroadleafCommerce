@@ -102,6 +102,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		initialValues.put("type", "ORDER_ITEM");
 		initialValues.put("value", 0);
 		initialValues.put("stackable", true);
+		initialValues.put("treatAsNewFormat", true);
 		initialValues.put("deliveryType", "AUTOMATIC");
 		initialValues.put("discountType", "PERCENT_OFF");
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
@@ -208,7 +209,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 			public void onClick(ClickEvent event) {
 				if (((ToolStripButton) event.getSource()).getSelected()) {
 					entityDataSource.resetPermanentFieldVisibilityBasedOnType(getDisplay().getListDisplay().getGrid().getSelectedRecord().getAttributeAsStringArray("_type"));
-					entityDataSource.permanentlyHideFields("deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "uses", "targetItemCriteria.id", "targetItemCriteria.receiveQuantity", "targetItemCriteria.requiresQuantity", "targetItemCriteria.orderItemMatchRule");
+					entityDataSource.permanentlyHideFields("deliveryType", "offerItemQualifierRuleType", "offerItemTargetRuleType", "uses", "targetItemCriteria.id", "targetItemCriteria.quantity", "targetItemCriteria.orderItemMatchRule");
 					getDisplay().getAdvancedItemCriteria().setVisible(true);
 					getDisplay().getAdvancedItemCriteriaTarget().setVisible(true);
 					getDisplay().getRestrictionSectionView().setVisible(true);

@@ -11,8 +11,10 @@ public interface CandidateQualifiedOffer extends CandidateOffer {
 	public HashMap<OfferItemCriteria, List<OrderItem>> getCandidateQualifiersMap();
 
 	public void setCandidateQualifiersMap(HashMap<OfferItemCriteria, List<OrderItem>> candidateItemsMap);
+	
+	public List<OrderItem> getCandidateTargets();
 
-	public Money getPotentialSavings();
+	public void setCandidateTargets(List<OrderItem> candidateTargets);
 	
 	public Money calculateSavingsForOrderItem(OrderItem chgItem, int qtyToReceiveSavings);
 	

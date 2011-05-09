@@ -11,4 +11,8 @@ public interface FulfillmentGroupOfferProcessor extends OrderOfferProcessor {
 
 	public void filterFulfillmentGroupLevelOffer(Order order, List<CandidateFulfillmentGroupOffer> qualifiedFGOffers, List<OrderItem> discreteOrderItems, Offer offer);
 
+	public void calculateFulfillmentGroupTotal(Order order);
+	
+	public boolean applyAllFulfillmentGroupOffers(List<CandidateFulfillmentGroupOffer> qualifiedFGOffers, Order order);
+	
 }

@@ -15,23 +15,16 @@
  */
 package org.broadleafcommerce.core.pricing.service;
 
-import javax.annotation.Resource;
-
-import org.broadleafcommerce.core.offer.service.OfferService;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.pricing.service.module.ShippingModule;
 import org.broadleafcommerce.profile.vendor.service.exception.ShippingPriceException;
 
 public class ShippingServiceImpl implements ShippingService {
 
-    @Resource(name="blOfferService")
-    private OfferService offerService;
-
     protected ShippingModule shippingModule;
 
     public FulfillmentGroup calculateShippingForFulfillmentGroup(FulfillmentGroup fulfillmentGroup) throws ShippingPriceException {
         FulfillmentGroup group = shippingModule.calculateShippingForFulfillmentGroup(fulfillmentGroup);
-        offerService.applyFulfillmentGroupOffers(fulfillmentGroup);
         return group;
     }
 

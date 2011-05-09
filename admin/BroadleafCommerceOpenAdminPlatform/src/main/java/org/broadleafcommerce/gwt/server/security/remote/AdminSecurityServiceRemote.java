@@ -15,9 +15,14 @@
  */
 package org.broadleafcommerce.gwt.server.security.remote;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.gwt.client.service.AdminSecurityService;
+import org.broadleafcommerce.gwt.client.service.ServiceException;
+import org.broadleafcommerce.gwt.security.SecurityConfig;
 import org.broadleafcommerce.gwt.server.security.domain.AdminPermission;
 import org.broadleafcommerce.gwt.server.security.domain.AdminRole;
 import org.broadleafcommerce.gwt.server.security.domain.AdminUser;
@@ -34,7 +39,13 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 	
 	@Resource(name="blAdminSecurityService")
 	protected org.broadleafcommerce.gwt.server.security.service.AdminSecurityService securityService;
-
+	
+	private List<SecurityConfig> securityConfigs;
+	
+	public void setupSecurity(List<SecurityConfig> securityConfigs) {
+		this.securityConfigs = securityConfigs;
+	}
+	
 	public org.broadleafcommerce.gwt.client.security.AdminUser getAdminUser() {
 		SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
@@ -55,6 +66,35 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
         }
 
         return null;
+	}
+	
+	public void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType  operationType) throws ServiceException {
+		
+		if (securityConfigs != null) {
+			for (SecurityConfig sc : securityConfigs){
+				if (ceilingEntityFullyQualifiedName != null && 
+						ceilingEntityFullyQualifiedName.equals(sc.getCeilingEntityFullyQualifiedName()) &&
+						operationType != null &&
+						sc.getRequiredTypes().contains(operationType)){
+					
+					boolean authorized = false;
+					org.broadleafcommerce.gwt.client.security.AdminUser adminUser = getAdminUser();
+					for (String permission : sc.getPermissions()){
+						if (adminUser.getPermissions() != null && adminUser.getPermissions().contains(permission)){
+							authorized = true;
+							break;
+						}
+					}
+					
+					if (!authorized){
+						throw new ServiceException("Security Check Failed: AdminSecurityServiceRemote");
+					}
+					
+					break;
+				}
+			}	
+		}
+		
 	}
 
 }

@@ -25,7 +25,6 @@ import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
-import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
@@ -81,18 +80,6 @@ public interface OfferService {
      */
     public List<Offer> buildOfferListForOrder(Order order);
 
-    /**
-     * Apply offers for a fulfillmentGroup
-     * @param fulfillmentGroup
-     */
-    public void applyFulfillmentGroupOffers(FulfillmentGroup fulfillmentGroup);
-
-    /**
-     * Apply offers for a List of FulfillmentGroup
-     * @param fulfillmentGroups
-     */
-    public void applyFulfillmentGroupsOffers(List<FulfillmentGroup> fulfillmentGroups);
-
     public CustomerOfferDao getCustomerOfferDao();
 
 	public void setCustomerOfferDao(CustomerOfferDao customerOfferDao);
@@ -116,5 +103,7 @@ public interface OfferService {
 	public FulfillmentGroupOfferProcessor getFulfillmentGroupOfferProcessor();
 
 	public void setFulfillmentGroupOfferProcessor(FulfillmentGroupOfferProcessor fulfillmentGroupOfferProcessor);
+	
+	public void applyFulfillmentGroupOffersToOrder(List<Offer> offers, Order order) throws PricingException;
 
 }

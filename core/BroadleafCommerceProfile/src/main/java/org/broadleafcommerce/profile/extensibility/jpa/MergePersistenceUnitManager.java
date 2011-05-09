@@ -17,16 +17,20 @@ package org.broadleafcommerce.profile.extensibility.jpa;
 
 import java.lang.reflect.Proxy;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
 import javax.persistence.spi.PersistenceUnitInfo;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.profile.extensibility.jpa.convert.BroadleafClassTransformer;
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
+import org.springframework.orm.jpa.persistenceunit.Jpa2PersistenceUnitInfoDecorator;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
 import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
-import org.springframework.orm.jpa.persistenceunit.Jpa2PersistenceUnitInfoDecorator;
 import org.springframework.util.ClassUtils;
 
 /**
@@ -43,8 +47,10 @@ import org.springframework.util.ClassUtils;
  */
 public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
-    private HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
-    private final boolean jpa2ApiPresent = ClassUtils.hasMethod(PersistenceUnitInfo.class, "getSharedCacheMode");
+	private static final Log LOG = LogFactory.getLog(MergePersistenceUnitManager.class);
+    protected HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
+    protected final boolean jpa2ApiPresent = ClassUtils.hasMethod(PersistenceUnitInfo.class, "getSharedCacheMode");
+    protected List<BroadleafClassTransformer> classTransformers = new ArrayList<BroadleafClassTransformer>();
 
     protected PersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
         if (!mergedPus.containsKey(persistenceUnitName)) {
@@ -52,6 +58,15 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 			if (jpa2ApiPresent) {
 				puiToStore = (PersistenceUnitInfo) Proxy.newProxyInstance(SmartPersistenceUnitInfo.class.getClassLoader(),
 						new Class[] {SmartPersistenceUnitInfo.class}, new Jpa2PersistenceUnitInfoDecorator(newPU));
+			}
+			for (BroadleafClassTransformer transformer : classTransformers) {
+				try {
+					puiToStore.addTransformer(transformer);
+				} catch (IllegalStateException e) {
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("Spring reported that a LoadTimeWeaver is not registered. As a result, the Broadleaf Commerce SingleTableInheritanceClassTransformer is not being registered with the persistence unit. This is only impactful if you are trying to provide SingleTable inheritance strategy overrides for Broadleaf Commerce entity hierarchies.");
+					}
+				}
 			}
             mergedPus.put(persistenceUnitName, puiToStore);
         }
@@ -103,10 +118,23 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         	if (props != null) {
         		for (Object key : props.keySet()) {
         			temp.getProperties().setProperty((String) key, props.getProperty((String) key)); 
+        			for (BroadleafClassTransformer transformer : classTransformers) {
+        				try {
+							transformer.compileJPAProperties(props, key);
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+        			}
         		}
         	}
         }
         temp.setTransactionType(newPU.getTransactionType());
+        if (newPU.getPersistenceProviderClassName() != null) {
+        	temp.setPersistenceProviderClassName(newPU.getPersistenceProviderClassName());
+        }
+        if (newPU.getPersistenceProviderPackageName() != null) {
+        	temp.setPersistenceProviderPackageName(newPU.getPersistenceProviderPackageName());
+        }
     }
 
     /* (non-Javadoc)
@@ -125,4 +153,11 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         throw new IllegalStateException("Default Persistence Unit is not supported. The persistence unit name must be specified at the entity manager factory.");
     }
 
+	public List<BroadleafClassTransformer> getClassTransformers() {
+		return classTransformers;
+	}
+
+	public void setClassTransformers(List<BroadleafClassTransformer> classTransformers) {
+		this.classTransformers = classTransformers;
+	}
 }

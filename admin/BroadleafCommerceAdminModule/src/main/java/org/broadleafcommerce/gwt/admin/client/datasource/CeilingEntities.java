@@ -22,5 +22,8 @@ public class CeilingEntities {
 	public static final String CHALLENGE_QUESTION = "org.broadleafcommerce.profile.core.domain.ChallengeQuestion";
 	public static final String OFFER = "org.broadleafcommerce.core.offer.domain.Offer";
 	public static final String OFFER_ITEM_CRITERIA = "org.broadleafcommerce.core.offer.domain.OfferItemCriteria";
+	public static final String ADMIN_USER = "org.broadleafcommerce.gwt.server.security.domain.AdminUser";
+	public static final String ADMIN_ROLE = "org.broadleafcommerce.gwt.server.security.domain.AdminRole";
+	public static final String ADMIN_PERMISSION = "org.broadleafcommerce.gwt.server.security.domain.AdminPermission";
 	
 }

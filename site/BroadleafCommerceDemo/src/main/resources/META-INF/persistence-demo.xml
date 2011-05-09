@@ -5,6 +5,7 @@
              version="2.0">
              
     <persistence-unit name="blPU" transaction-type="RESOURCE_LOCAL">
+    	<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<non-jta-data-source>jdbc/web</non-jta-data-source>
 		<class>com.other.domain.OtherProductImpl</class>
 		<exclude-unlisted-classes/>
@@ -16,6 +17,7 @@
 	</persistence-unit>
 	
 	<persistence-unit name="blSecurePU" transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		<non-jta-data-source>jdbc/webSecure</non-jta-data-source>
 		<exclude-unlisted-classes/>
 		<properties>

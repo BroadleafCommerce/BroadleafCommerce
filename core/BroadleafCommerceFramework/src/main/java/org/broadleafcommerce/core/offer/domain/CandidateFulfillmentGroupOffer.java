@@ -20,9 +20,9 @@ import org.broadleafcommerce.money.Money;
 
 public interface CandidateFulfillmentGroupOffer extends CandidateQualifiedOffer {
 
-    //public Money getDiscountedPrice(); //transient, computed
+    public Money getDiscountedPrice(); //transient, computed
 
-    //public Money getDiscountAmount(); //transient, computed
+    public Money getDiscountAmount(); //transient, computed
 
     public FulfillmentGroup getFulfillmentGroup();
 

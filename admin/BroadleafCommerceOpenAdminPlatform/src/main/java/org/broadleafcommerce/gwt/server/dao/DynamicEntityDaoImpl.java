@@ -413,6 +413,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				FieldPresentationAttributes attr = new FieldPresentationAttributes();
 				attr.setName(field.getName());
 				attr.setFriendlyName(annot.friendlyName());
+				attr.setSecurityLevel(annot.securityLevel());
 				attr.setHidden(annot.hidden());
 				attr.setOrder(annot.order());
 				attr.setExplicitFieldType(annot.fieldType());
@@ -712,7 +713,22 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		if (includeField) {
 			//check to make sure we're not locked into an infinite recursion
 			if (!StringUtils.isEmpty(prefix) && prefix.contains(propertyName)) {
-				includeField = false;
+				int start = 0;
+				int count = 0;
+				boolean eof = false;
+				while (!eof) {
+					int pos = prefix.indexOf(propertyName, start);
+					if (pos >= 0) {
+						start += pos + propertyName.length();
+						count++;
+						if (count > 6) {
+							includeField = false;
+							eof = true;
+						}
+					} else {
+						eof = true;
+					}
+				}
 			}
 		}
 		return includeField;

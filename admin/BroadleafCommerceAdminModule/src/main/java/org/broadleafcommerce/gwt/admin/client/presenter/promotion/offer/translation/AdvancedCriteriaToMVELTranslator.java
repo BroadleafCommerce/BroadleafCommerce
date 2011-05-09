@@ -326,13 +326,14 @@ public class AdvancedCriteriaToMVELTranslator {
 	protected void buildExpression(StringBuffer sb, String entityKey, String field, Object[] value, SupportedFieldType type, SupportedFieldType secondaryType, String operator, boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase, boolean isNegation, boolean ignoreQuotes) throws IncompatibleMVELTranslationException {
 		if (operator.equals("==") && !isFieldComparison && value.length > 1) {
 			sb.append("(");
-			sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
-			if (ignoreCase) {
-				sb.append(" toUpperCase()");
-			}
-			sb.append(" in [");
+			sb.append("[");
 			sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
-			sb.append("])");
+			sb.append("] contains ");
+			sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+			if ((type.equals(SupportedFieldType.ID) && secondaryType != null && secondaryType.equals(SupportedFieldType.INTEGER)) || type.equals(SupportedFieldType.INTEGER)) {
+				sb.append(".intValue()");
+			}
+			sb.append(")");
 		} else {
 			sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
 			sb.append(operator);
@@ -364,7 +365,7 @@ public class AdvancedCriteriaToMVELTranslator {
 			response.append(field);
 			response.append(".getAmount()");
 			break;
-		default:
+		case STRING:
 			if (ignoreCase) {
 				response.append("MVEL.eval(\"toUpperCase()\",");
 			}
@@ -374,6 +375,11 @@ public class AdvancedCriteriaToMVELTranslator {
 			if (ignoreCase) {
 				response.append(")");
 			}
+			break;
+		default:
+			response.append(entityKey);
+			response.append(".");
+			response.append(field);
 			break;
 		}
 		return response.toString();
@@ -389,7 +395,7 @@ public class AdvancedCriteriaToMVELTranslator {
 				response.append(value[0]);
 				response.append(".getAmount()");
 				break;
-			default:
+			case STRING:
 				if (ignoreCase) {
 					response.append("MVEL.eval(\"toUpperCase()\",");
 				}
@@ -399,6 +405,11 @@ public class AdvancedCriteriaToMVELTranslator {
 				if (ignoreCase) {
 					response.append(")");
 				}
+				break;
+			default:
+				response.append(entityKey);
+				response.append(".");
+				response.append(value[0]);
 				break;
 			}
 		} else {

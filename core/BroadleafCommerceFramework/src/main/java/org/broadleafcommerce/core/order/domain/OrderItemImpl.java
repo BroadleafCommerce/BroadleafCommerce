@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.naming.OperationNotSupportedException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,8 +44,8 @@ import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustmentImpl;
-import org.broadleafcommerce.core.offer.service.candidate.PromotionDiscount;
-import org.broadleafcommerce.core.offer.service.candidate.PromotionQualifier;
+import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
+import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
@@ -328,9 +327,10 @@ public class OrderItemImpl implements OrderItem {
         }
         adjustmentPrice = adjustmentPrice.subtract(orderItemAdjustment.getValue().getAmount());
         this.orderItemAdjustments.add(orderItemAdjustment);
-        if (!orderItemAdjustment.getOffer().isCombinableWithOtherOffers()) {
+        if (!orderItemAdjustment.getOffer().isCombinableWithOtherOffers() || (orderItemAdjustment.getOffer().isTotalitarianOffer() != null && orderItemAdjustment.getOffer().isTotalitarianOffer())) {
         	notCombinableOfferApplied = true;
         }
+        getOrder().resetTotalitarianOfferApplied();
         hasOrderItemAdjustments = true;
     }
 
@@ -343,6 +343,10 @@ public class OrderItemImpl implements OrderItem {
         adjustmentPrice = null;
         notCombinableOfferApplied = false;
         hasOrderItemAdjustments = false;
+        if (getOrder() != null) {
+        	getOrder().resetTotalitarianOfferApplied();
+        }
+        
         return removedAdjustmentCount;
     }
 
@@ -437,9 +441,9 @@ public class OrderItemImpl implements OrderItem {
 				qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
 			} else {
 				// Item's that receive discounts are also qualifiers
-				OfferItemRestrictionRuleType qualifierType = promotion.getOfferItemTargetRuleType();
+				OfferItemRestrictionRuleType qualifierType = promotionDiscount.getPromotion().getOfferItemTargetRuleType();
 				if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.TARGET.equals(qualifierType)) {
-					qtyAvailable = qtyAvailable - qtyAvailable;
+					qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
 				}
 			}
 		}
@@ -450,9 +454,9 @@ public class OrderItemImpl implements OrderItem {
 			if (promotionQualifier.getPromotion().equals(promotion)) {
 				qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
 			} else {
-				OfferItemRestrictionRuleType qualifierType = promotion.getOfferItemQualifierRuleType();
+				OfferItemRestrictionRuleType qualifierType = promotionQualifier.getPromotion().getOfferItemQualifierRuleType();
 				if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.TARGET.equals(qualifierType)) {
-					qtyAvailable = qtyAvailable - qtyAvailable;
+					qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
 				}
 			}
 		}
@@ -478,7 +482,7 @@ public class OrderItemImpl implements OrderItem {
 				// it to be reused as a target.   
 				OfferItemRestrictionRuleType qualifierType = promotionDiscount.getPromotion().getOfferItemTargetRuleType();
 				if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.QUALIFIER.equals(qualifierType)) {
-					qtyAvailable = qtyAvailable - qtyAvailable;
+					qtyAvailable = qtyAvailable - promotionDiscount.getQuantity();
 				}
 			}
 		}
@@ -492,7 +496,7 @@ public class OrderItemImpl implements OrderItem {
 			} else {
 				OfferItemRestrictionRuleType qualifierType = promotionQualifier.getPromotion().getOfferItemQualifierRuleType();
 				if (OfferItemRestrictionRuleType.NONE.equals(qualifierType) || OfferItemRestrictionRuleType.QUALIFIER.equals(qualifierType)) {
-					qtyAvailable = qtyAvailable - qtyAvailable;
+					qtyAvailable = qtyAvailable - promotionQualifier.getQuantity();
 				}
 			}
 		}
@@ -513,6 +517,7 @@ public class OrderItemImpl implements OrderItem {
 		}
 		pd.incrementQuantity(quantity);
 		pd.setItemCriteria(itemCriteria);
+		pd.setCandidateItemOffer(candidatePromotion);
 	}
 	
 	protected PromotionQualifier lookupOrCreatePromotionQualifier(CandidateItemOffer candidatePromotion) {
@@ -550,6 +555,14 @@ public class OrderItemImpl implements OrderItem {
 	public void clearAllNonFinalizedQuantities() {
 		clearAllNonFinalizedDiscounts();
 		clearAllNonFinalizedQualifiers();
+	}
+	
+	public void clearAllDiscount() {
+		promotionDiscounts.clear();
+	}
+	
+	public void clearAllQualifiers() {
+		promotionQualifiers.clear();
 	}
 	
 	protected void clearAllNonFinalizedDiscounts() {
@@ -613,6 +626,10 @@ public class OrderItemImpl implements OrderItem {
 				chargeableItems = new ArrayList<OrderItem>();
 				OrderItem firstItem = clone();
 				OrderItem secondItem = clone();
+				firstItem.clearAllDiscount();
+				firstItem.clearAllQualifiers();
+				secondItem.clearAllDiscount();
+				secondItem.clearAllQualifiers();
 				chargeableItems.add(firstItem);
 				chargeableItems.add(secondItem);
 				
@@ -630,7 +647,7 @@ public class OrderItemImpl implements OrderItem {
 						firstItem.getPromotionQualifiers().add(pq1);
 						
 						PromotionQualifier pq2 = pq.copy();
-						pq2.resetQty(pq1.getQuantity() - firstItemQty);
+						pq2.resetQty(pq.getQuantity() - firstItemQty);
 						secondItem.getPromotionQualifiers().add(pq2);
 						
 					} else {
@@ -647,7 +664,7 @@ public class OrderItemImpl implements OrderItem {
 						firstItem.getPromotionDiscounts().add(pd1);
 						
 						PromotionDiscount pd2 = pd.copy();
-						pd2.resetQty(pd1.getQuantity() - firstItemQty);
+						pd2.resetQty(pd.getQuantity() - firstItemQty);
 						secondItem.getPromotionDiscounts().add(pd2);
 					} else {
 						firstItem.getPromotionDiscounts().add(pd);

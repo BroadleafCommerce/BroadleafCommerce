@@ -28,10 +28,17 @@
           container.style.marginTop=height;/* half elements height*/
           container.style.marginLeft=width;/* half elements width*/
       }
+      
+      function setSubmitUrl(form)
+      {
+   	  	var hash = unescape(self.document.location.hash.substring(1));
+   	  	form.action = "admin/login_admin_post#" + hash;
+   	  	return true;
+   	  }
       </script>
    </head>
    <body onload="centerObj()">
-   		<form action="admin/login_admin_post" method="post">
+   		<form onSubmit="return setSubmitUrl(this);" method="post">
    		<div style="position:absolute; left: 0px; top: 0px; width: 450px; height: 170px; background-image: url(org.broadleafcommerce.gwt.demoAdmin/admin/images/admin_login.jpg)" id="login">
  			<div style="position: relative; left: 200px; top: 40px">
  					<c:if test="${not empty param.login_error}">

@@ -7,9 +7,9 @@ import com.smartgwt.client.types.OperatorId;
 public class PhraseTranslator {
 	
 	private static final String[] SPECIALCASES = {
-		"startsWith",
-		"endsWith",
-		"contains"
+		".startsWith",
+		".endsWith",
+		".contains"
 	};
 	
 	private static final String[] STANDARDOPERATORS = {
@@ -32,6 +32,29 @@ public class PhraseTranslator {
 		if (field.startsWith(caseInsensitivityKey)) {
 			isIgnoreCase = true;
 			field = field.substring(caseInsensitivityKey.length(), field.length()-1);
+		}
+		while(value.contains(caseInsensitivityKey)) {
+			value = value.substring(0, value.indexOf(caseInsensitivityKey)) + value.substring(value.indexOf(caseInsensitivityKey) + caseInsensitivityKey.length(), value.length());
+			value = value.substring(0, value.indexOf(")")) + value.substring(value.indexOf(")")+1, value.length());
+		}
+		if (value.startsWith("[") && value.endsWith("]")) {
+			value = value.substring(1, value.length() - 1);
+			String[] temps = value.split(",");
+			for (int j = 0;j<temps.length;j++) {
+				if (temps[j].startsWith("\"") && temps[j].endsWith("\"")) {
+					temps[j] = temps[j].substring(1, temps[j].length()-1);
+				}
+			}
+			StringBuffer sb = new StringBuffer();
+			sb.append("[");
+			for (int j = 0;j<temps.length;j++) {
+				sb.append(temps[j]);
+				if (j < temps.length - 1) {
+					sb.append(",");
+				}
+			}
+			sb.append("]");
+			value = sb.toString();
 		}
 		String dateFormatKey = "java.text.DateFormat.getDateTimeInstance(3,3).parse(";
 		if (value.startsWith(dateFormatKey)) {
@@ -120,10 +143,10 @@ public class PhraseTranslator {
 	
 	protected String[] extractProjection(String[] components) {
 		String[] temp = new String[3];
-		int startsWithIndex = components[0].indexOf("in");
-		temp[0] = components[0].substring(0, startsWithIndex-1).trim();
-		if (temp[0].endsWith("toUpperCase()")) {
-			temp[0] = temp[0].substring(0, temp[0].lastIndexOf("toUpperCase()")).trim();
+		int startsWithIndex = components[0].indexOf("contains");
+		temp[0] = components[0].substring(startsWithIndex+"contains".length()+1, components[0].length()).trim();
+		if (temp[0].endsWith(".intValue()")) {
+			temp[0] = temp[0].substring(0, temp[0].indexOf(".intValue()"));
 		}
 		temp[1] = "==";
 		temp[2] = components[0].substring(components[0].indexOf("["), components[0].indexOf("]") + 1);

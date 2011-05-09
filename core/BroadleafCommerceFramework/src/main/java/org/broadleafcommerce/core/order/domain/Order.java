@@ -66,6 +66,8 @@ public interface Order extends Serializable {
     public Money calculateOrderItemsCurrentPrice();
 
     public Money calculateOrderItemsFinalPrice();
+    
+    public Money calculateOrderItemsPriceWithoutAdjustments();
 
     public Money getTotal();
 
@@ -100,7 +102,10 @@ public interface Order extends Serializable {
     public void removeAllCandidateOffers();
 
     public void removeAllCandidateOrderOffers();
+    
+    public void removeAllCandidateFulfillmentGroupOffers();
 
+    @Deprecated
     public void setMarkedForOffer(boolean markForOffer);
 
     public Date getSubmitDate();
@@ -242,5 +247,23 @@ public interface Order extends Serializable {
 	public boolean isHasOrderAdjustments();
 
 	public boolean updatePrices();
+	
+	public List<OrderItem> getSplitItems();
+
+	public void setSplitItems(List<OrderItem> splitItems);
+	
+	public void removeAllFulfillmentAdjustments();
+	
+	public boolean containsNotStackableFulfillmentGroupOffer();
+	
+	public void resetTotalitarianOfferApplied();
+	
+	public boolean isTotalitarianOfferApplied();
+
+	public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied);
+	
+	public boolean isNotCombinableOfferAppliedAtAnyLevel();
+
+	public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel);
 	
 }

@@ -15,24 +15,31 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.SerializationUtils;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
 import org.broadleafcommerce.money.Money;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -43,6 +50,12 @@ import org.hibernate.annotations.NotFoundAction;
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
     private static final long serialVersionUID = 1L;
+    
+    @Column(name="BASE_RETAIL_PRICE")
+    protected BigDecimal baseRetailPrice;
+    
+    @Column(name="BASE_SALE_PRICE")
+    protected BigDecimal baseSalePrice;
     
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
@@ -59,6 +72,22 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @JoinColumn(name = "BUNDLE_ORDER_ITEM_ID")
     @Index(name="DISCRETE_BUNDLE_INDEX", columnNames={"BUNDLE_ORDER_ITEM_ID"})
     protected BundleOrderItem bundleOrderItem;
+    
+    @CollectionOfElements
+    @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
+    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
+    @Column(name = "VALUE")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
+	protected Map<String, String> additionalAttributes;
+    
+    @CollectionOfElements
+    @JoinTable(name = "BLC_ORDER_ITEM_ADD_FEE", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
+    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
+    @Column(name = "VALUE")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
+	protected Map<String, BigDecimal> additionalFees;
 
     public Sku getSku() {
         return sku;
@@ -67,10 +96,10 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     public void setSku(Sku sku) {
         this.sku = sku;
         if (sku.getRetailPrice() != null) {
-            this.retailPrice = sku.getRetailPrice().getAmount();
+            this.baseRetailPrice = sku.getRetailPrice().getAmount();
         }
         if (sku.getSalePrice() != null) {
-            this.salePrice = sku.getSalePrice().getAmount();
+            this.baseSalePrice = sku.getSalePrice().getAmount();
         }
         setName(sku.getName());
     }
@@ -113,20 +142,59 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null
         if (!getSku().getRetailPrice().equals(getRetailPrice())) {
+            setBaseRetailPrice(getSku().getRetailPrice());
             setRetailPrice(getSku().getRetailPrice());
             updated = true;
         }
         if (getSku().getSalePrice() != null && !getSku().getSalePrice().equals(getSalePrice())) {
+            setBaseSalePrice(getSku().getSalePrice());
             setSalePrice(getSku().getSalePrice());
             updated = true;
+        }
+        for (BigDecimal fee : getAdditionalFees().values()) {
+        	setSalePrice(getSalePrice().add(new Money(fee)));
+        	setRetailPrice(getRetailPrice().add(new Money(fee)));
         }
         return updated;
     }
 
-    @Override
+    public Map<String, String> getAdditionalAttributes() {
+		return additionalAttributes;
+	}
+
+	public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
+		this.additionalAttributes = additionalAttributes;
+	}
+
+	public Map<String, BigDecimal> getAdditionalFees() {
+		return additionalFees==null?new HashMap<String, BigDecimal>():additionalFees;
+	}
+
+	public void setAdditionalFees(Map<String, BigDecimal> additionalFees) {
+		this.additionalFees = additionalFees;
+	}
+
+	public Money getBaseRetailPrice() {
+		return baseRetailPrice != null?new Money(baseRetailPrice):null;
+	}
+
+	public void setBaseRetailPrice(Money baseRetailPrice) {
+		this.baseRetailPrice = baseRetailPrice.getAmount();
+	}
+
+	public Money getBaseSalePrice() {
+		return baseSalePrice!=null?new Money(baseRetailPrice):null;
+	}
+
+	public void setBaseSalePrice(Money baseSalePrice) {
+		this.baseSalePrice = baseSalePrice==null?null:baseSalePrice.getAmount();
+	}
+
+	@Override
 	public OrderItem clone() {
 		try {
-			OrderItem clone = (OrderItem) BeanUtils.cloneBean(this);
+			//deep clone
+			OrderItem clone = (OrderItem) SerializationUtils.clone(this);
 			clone.setId(null);
 			return clone;
 		} catch (Exception e) {

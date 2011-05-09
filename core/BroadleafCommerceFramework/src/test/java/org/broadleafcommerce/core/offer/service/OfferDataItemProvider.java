@@ -1,0 +1,350 @@
+package org.broadleafcommerce.core.offer.service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductImpl;
+import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.offer.domain.OfferImpl;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
+import org.broadleafcommerce.core.offer.domain.OfferItemCriteriaImpl;
+import org.broadleafcommerce.core.offer.domain.OfferRule;
+import org.broadleafcommerce.core.offer.domain.OfferRuleImpl;
+import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferItemRestrictionRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItemImpl;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupImpl;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItem;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroupItemImpl;
+import org.broadleafcommerce.core.order.domain.Order;
+import org.broadleafcommerce.core.order.domain.OrderImpl;
+import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.core.order.service.type.OrderItemType;
+import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.Country;
+import org.broadleafcommerce.profile.core.domain.CountryImpl;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
+import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.profile.core.domain.StateImpl;
+
+public class OfferDataItemProvider {
+
+	public Order createBasicOrder() {
+		Order order = new OrderImpl();
+		
+		Category category1 = new CategoryImpl();
+		category1.setName("test1");
+		category1.setId(1L);
+		
+		Product product1 = new ProductImpl();
+		product1.setName("test1");
+		
+		Sku sku1 = new SkuImpl();
+		sku1.setName("test1");
+		sku1.setDiscountable(true);
+		sku1.setRetailPrice(new Money(19.99D));
+		product1.getAllSkus().add(sku1);
+		
+		category1.getAllProducts().add(product1);
+		
+		Category category2 = new CategoryImpl();
+		category2.setName("test2");
+		category2.setId(2L);
+		
+		Product product2 = new ProductImpl();
+		product2.setName("test2");
+		
+		Sku sku2 = new SkuImpl();
+		sku2.setName("test2");
+		sku2.setDiscountable(true);
+		sku2.setRetailPrice(new Money(29.99D));
+		product2.getAllSkus().add(sku2);
+		
+		category2.getAllProducts().add(product2);
+		
+		DiscreteOrderItem orderItem1 = new DiscreteOrderItemImpl();
+		orderItem1.setCategory(category1);
+		orderItem1.setName("test1");
+		orderItem1.setOrder(order);
+		orderItem1.setOrderItemType(OrderItemType.DISCRETE);
+		orderItem1.setProduct(product1);
+		orderItem1.setQuantity(2);
+		orderItem1.setSku(sku1);
+		orderItem1.setRetailPrice(new Money(19.99D));
+		orderItem1.setPrice(new Money(19.99D));
+		
+		order.getOrderItems().add(orderItem1);
+		
+		DiscreteOrderItem orderItem2 = new DiscreteOrderItemImpl();
+		orderItem2.setCategory(category2);
+		orderItem2.setName("test2");
+		orderItem2.setOrder(order);
+		orderItem2.setOrderItemType(OrderItemType.DISCRETE);
+		orderItem2.setProduct(product2);
+		orderItem2.setQuantity(3);
+		orderItem2.setSku(sku2);
+		orderItem2.setRetailPrice(new Money(29.99D));
+		orderItem2.setPrice(new Money(29.99D));
+		
+		order.getOrderItems().add(orderItem2);
+		
+		Customer customer = new CustomerImpl();
+		customer.setEmailAddress("test@test.com");
+		customer.setFirstName("John");
+		customer.setLastName("Tester");
+		customer.setReceiveEmail(true);
+		customer.setRegistered(true);
+		
+		order.setCustomer(customer);
+		
+		order.setEmailAddress("test@test.com");
+		
+		FulfillmentGroup fg1 = new FulfillmentGroupImpl();
+		fg1.setId(1L);
+		Address address1 = new AddressImpl();
+		address1.setAddressLine1("123 Test Road");
+		address1.setCity("Dallas");
+		
+		Country country = new CountryImpl();
+		country.setAbbreviation("US");
+		country.setName("United States");
+		
+		address1.setCountry(country);
+		address1.setDefault(true);
+		address1.setFirstName("John");
+		address1.setLastName("Tester");
+		address1.setPostalCode("75244");
+		address1.setPrimaryPhone("972-976-1234");
+		
+		State state = new StateImpl();
+		state.setAbbreviation("TX");
+		state.setCountry(country);
+		state.setName("Texas");
+		
+		address1.setState(state);
+		fg1.setAddress(address1);
+		fg1.setOrder(order);
+		fg1.setPrimary(true);
+		fg1.setRetailShippingPrice(new Money(10D));
+		fg1.setShippingPrice(new Money(10D));
+		fg1.setType(FulfillmentGroupType.SHIPPING);
+		
+		FulfillmentGroupItem fgItem1 = new FulfillmentGroupItemImpl();
+		fgItem1.setFulfillmentGroup(fg1);
+		fgItem1.setOrderItem(orderItem1);
+		fgItem1.setQuantity(2);
+		fgItem1.setRetailPrice(new Money(19.99D));
+		fg1.getFulfillmentGroupItems().add(fgItem1);
+		
+		order.getFulfillmentGroups().add(fg1);
+		
+		FulfillmentGroup fg2 = new FulfillmentGroupImpl();
+		fg2.setId(2L);
+		Address address2 = new AddressImpl();
+		address2.setAddressLine1("124 Test Road");
+		address2.setCity("Dallas");
+		
+		Country country2 = new CountryImpl();
+		country2.setAbbreviation("US");
+		country2.setName("United States");
+		
+		address2.setCountry(country2);
+		address2.setDefault(true);
+		address2.setFirstName("John");
+		address2.setLastName("Tester");
+		address2.setPostalCode("75244");
+		address2.setPrimaryPhone("972-976-1234");
+		
+		State state2 = new StateImpl();
+		state2.setAbbreviation("TX");
+		state2.setCountry(country2);
+		state2.setName("Texas");
+		
+		address2.setState(state2);
+		fg2.setAddress(address2);
+		fg2.setOrder(order);
+		fg2.setPrimary(true);
+		fg2.setRetailShippingPrice(new Money(20D));
+		fg2.setShippingPrice(new Money(20D));
+		fg2.setType(FulfillmentGroupType.SHIPPING);
+		
+		FulfillmentGroupItem fgItem2 = new FulfillmentGroupItemImpl();
+		fgItem2.setFulfillmentGroup(fg2);
+		fgItem2.setOrderItem(orderItem2);
+		fgItem2.setQuantity(3);
+		fgItem2.setRetailPrice(new Money(29.99D));
+		fg2.getFulfillmentGroupItems().add(fgItem2);
+		
+		order.getFulfillmentGroups().add(fg2);
+		
+		order.setSubTotal(new Money((2 * 19.99D) + (3 * 29.99D)));
+		
+		return order;
+	}
+	
+	public Offer createOffer(
+		String appliesToCustomerRules, 
+		String appliesToFulfillmentGroupRules, 
+		String appliesToRules, 
+		boolean applyToSalePrice,
+		boolean combinableWithOtherOffers,
+		OfferDeliveryType deliveryType,
+		OfferDiscountType type,
+		Date endDate,
+		int maxUses,
+		OfferItemRestrictionRuleType qualifierType,
+		OfferItemRestrictionRuleType targetType,
+		int priority,
+		List<OfferItemCriteria> qualifyingItemCriteria,
+		boolean stackable,
+		Date startDate,
+		OfferItemCriteria targetItemCriteria,
+		boolean totalitarianOffer,
+		OfferType offerType,
+		BigDecimal value
+	) {
+		Offer offer = new OfferImpl();
+		OfferRule customerRule = new OfferRuleImpl();
+		customerRule.setMatchRule(appliesToCustomerRules);
+		offer.getOfferMatchRules().put(OfferRuleType.CUSTOMER.getType(), customerRule);
+		OfferRule fgRule = new OfferRuleImpl();
+		fgRule.setMatchRule(appliesToFulfillmentGroupRules);
+		offer.getOfferMatchRules().put(OfferRuleType.FULFILLMENT_GROUP.getType(), fgRule);
+		OfferRule orderRule = new OfferRuleImpl();
+		orderRule.setMatchRule(appliesToRules);
+		offer.getOfferMatchRules().put(OfferRuleType.ORDER.getType(), orderRule);
+		offer.setApplyDiscountToSalePrice(applyToSalePrice);
+		offer.setCombinableWithOtherOffers(combinableWithOtherOffers);
+		offer.setDeliveryType(deliveryType);
+		offer.setDiscountType(type);
+		offer.setEndDate(endDate);
+		offer.setMaxUses(maxUses);
+		offer.setOfferItemQualifierRuleType(qualifierType);
+		offer.setOfferItemTargetRuleType(targetType);
+		offer.setPriority(priority);
+		offer.setQualifyingItemCriteria(qualifyingItemCriteria);
+		offer.setStackable(stackable);
+		offer.setStartDate(startDate);
+		offer.setTargetItemCriteria(targetItemCriteria);
+		offer.setTotalitarianOffer(totalitarianOffer);
+		offer.setType(offerType);
+		offer.setValue(value);
+		offer.setTreatAsNewFormat(true);
+		
+		return offer;
+	}
+	
+	public Date yesterday() {
+		long now = System.currentTimeMillis();
+		long then = now - (1000 * 60 * 60 * 24);
+		return new Date(then);
+	}
+	
+	public Date tomorrow() {
+		long now = System.currentTimeMillis();
+		long then = now + (1000 * 60 * 60 * 24);
+		return new Date(then);
+	}
+	
+	public List<Offer> createCustomerBasedOffer(String customerRule, Date startDate, Date endDate, OfferDiscountType discountType) {
+		Offer offer = createOffer(customerRule, null, null, true, true, OfferDeliveryType.AUTOMATIC, discountType, endDate, 1, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, startDate, null, false, OfferType.ORDER, BigDecimal.valueOf(10));
+		List<Offer> offers = new ArrayList<Offer>();
+		offers.add(offer);
+		
+		return offers;
+	}
+	
+	public List<Offer> createOrderBasedOffer(String orderRule, OfferDiscountType discountType) {
+		Offer offer = createOffer(null, null, orderRule, true, true, OfferDeliveryType.AUTOMATIC, discountType, tomorrow(), 1, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.ORDER, BigDecimal.valueOf(10));
+		List<Offer> offers = new ArrayList<Offer>();
+		offers.add(offer);
+		
+		return offers;
+	}
+	
+	public List<Offer> createFGBasedOffer(String orderRule, String fgRule, OfferDiscountType discountType) {
+		Offer offer = createOffer(null, fgRule, orderRule, true, true, OfferDeliveryType.AUTOMATIC, discountType, tomorrow(), 1, OfferItemRestrictionRuleType.NONE, OfferItemRestrictionRuleType.NONE, 1, null, true, yesterday(), null, false, OfferType.FULFILLMENT_GROUP, BigDecimal.valueOf(10));
+		List<Offer> offers = new ArrayList<Offer>();
+		offers.add(offer);
+		
+		return offers;
+	}
+	
+	public List<Offer> createItemBasedOffer(String orderRule, String targetRule, OfferDiscountType discountType) {
+		List<Offer> offers = createOrderBasedOffer(orderRule, discountType);
+		offers.get(0).setType(OfferType.ORDER_ITEM);
+		
+		if (targetRule != null) {
+			OfferItemCriteria targetCriteria = new OfferItemCriteriaImpl();
+			targetCriteria.setOffer(offers.get(0));
+			targetCriteria.setQuantity(1);
+			targetCriteria.setOrderItemMatchRule(targetRule);
+			
+			offers.get(0).setTargetItemCriteria(targetCriteria);
+		}
+		
+		return offers;
+	}
+	
+	public List<Offer> createOrderBasedOfferWithItemCriteria(String orderRule, OfferDiscountType discountType, String orderItemMatchRule) {
+		List<Offer> offers = createOrderBasedOffer(orderRule, discountType);
+		
+		OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
+		qualCriteria.setOffer(offers.get(0));
+		qualCriteria.setQuantity(1);
+		qualCriteria.setOrderItemMatchRule(orderItemMatchRule);
+		List<OfferItemCriteria> criterias = new ArrayList<OfferItemCriteria>();
+		criterias.add(qualCriteria);
+		
+		offers.get(0).setQualifyingItemCriteria(criterias);
+		
+		return offers;
+	}
+	
+	public List<Offer> createFGBasedOfferWithItemCriteria(String orderRule, String fgRule, OfferDiscountType discountType, String orderItemMatchRule) {
+		List<Offer> offers = createFGBasedOffer(orderRule, fgRule, discountType);
+		
+		OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
+		qualCriteria.setOffer(offers.get(0));
+		qualCriteria.setQuantity(1);
+		qualCriteria.setOrderItemMatchRule(orderItemMatchRule);
+		List<OfferItemCriteria> criterias = new ArrayList<OfferItemCriteria>();
+		criterias.add(qualCriteria);
+		
+		offers.get(0).setQualifyingItemCriteria(criterias);
+		
+		return offers;
+	}
+	
+	public List<Offer> createItemBasedOfferWithItemCriteria(String orderRule, OfferDiscountType discountType, String qualRule, String targetRule) {
+		List<Offer> offers = createItemBasedOffer(orderRule, targetRule, discountType);
+		
+		if (qualRule != null) {
+			OfferItemCriteria qualCriteria = new OfferItemCriteriaImpl();
+			qualCriteria.setOffer(offers.get(0));
+			qualCriteria.setQuantity(1);
+			qualCriteria.setOrderItemMatchRule(qualRule);
+			List<OfferItemCriteria> criterias = new ArrayList<OfferItemCriteria>();
+			criterias.add(qualCriteria);
+			
+			offers.get(0).setQualifyingItemCriteria(criterias);
+		}
+		
+		return offers;
+	}
+}

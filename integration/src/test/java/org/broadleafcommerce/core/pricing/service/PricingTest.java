@@ -108,6 +108,7 @@ public class PricingTest extends BaseTest {
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         group.setMethod("standard");
         group.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+        group.setOrder(order);
         groups.add(group);
         order.setFulfillmentGroups(groups);
         Money total = new Money(5D);
@@ -120,6 +121,7 @@ public class PricingTest extends BaseTest {
         sku.setDiscountable(true);
         item.setSku(sku);
         item.setQuantity(2);
+        item.setOrder(order);
         order.addOrderItem(item);
         
         FulfillmentGroupItem fgItem = new FulfillmentGroupItemImpl();
@@ -136,6 +138,7 @@ public class PricingTest extends BaseTest {
         sku.setDiscountable(true);
         item.setSku(sku);
         item.setQuantity(1);
+        item.setOrder(order);
         order.addOrderItem(item);
         
         fgItem = new FulfillmentGroupItemImpl();
@@ -174,10 +177,12 @@ public class PricingTest extends BaseTest {
         state.setAbbreviation("hi");
         address.setState(state);
         group1.setAddress(address);
+        group1.setOrder(order);
 
         // setup group2 - truck
         group2.setMethod("truck");
         group2.setService(ShippingServiceType.BANDED_SHIPPING.getType());
+        group2.setOrder(order);
 
         List<FulfillmentGroup> groups = new ArrayList<FulfillmentGroup>();
         groups.add(group1);
@@ -200,6 +205,7 @@ public class PricingTest extends BaseTest {
         sku.setDiscountable(true);
         item.setSku(sku);
         item.setQuantity(1);
+        item.setOrder(order);
         List<OrderItem> items = new ArrayList<OrderItem>();
         items.add(item);
         order.setOrderItems(items);

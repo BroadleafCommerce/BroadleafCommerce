@@ -17,6 +17,7 @@ package org.broadleafcommerce.core.order.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -183,6 +184,15 @@ public class OrderServiceImpl implements OrderService {
 
     public OrderItem addDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, boolean priceOrder) throws PricingException {
         DiscreteOrderItem item = orderItemService.createDiscreteOrderItem(itemRequest);
+        return addOrderItemToOrder(order, item, priceOrder);
+    }
+    
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations) throws PricingException {
+    	return addDynamicPriceDiscreteItemToOrder(order, itemRequest, skuPricingConsiderations, true);
+    }
+
+    public OrderItem addDynamicPriceDiscreteItemToOrder(Order order, DiscreteOrderItemRequest itemRequest, @SuppressWarnings("rawtypes") HashMap skuPricingConsiderations, boolean priceOrder) throws PricingException {
+        DiscreteOrderItem item = orderItemService.createDynamicPriceDiscreteOrderItem(itemRequest, skuPricingConsiderations);
         return addOrderItemToOrder(order, item, priceOrder);
     }
     

@@ -35,9 +35,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.catalog.service.dynamic.DynamicSkuPrices;
+import org.broadleafcommerce.core.catalog.service.dynamic.SkuPricingConsiderationContext;
 import org.broadleafcommerce.core.media.domain.Media;
 import org.broadleafcommerce.core.media.domain.MediaImpl;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
@@ -170,6 +173,9 @@ public class SkuImpl implements Sku {
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = ProductImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_XREF", joinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID", nullable = true), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID", nullable = true))
     protected List<Product> allParentProducts = new ArrayList<Product>();
+    
+    @Transient
+    protected DynamicSkuPrices dynamicPrices = null;
 
     /*
      * (non-Javadoc)
@@ -192,6 +198,17 @@ public class SkuImpl implements Sku {
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getSalePrice()
      */
     public Money getSalePrice() {
+    	if (dynamicPrices != null) {
+    		return dynamicPrices.getSalePrice();
+    	}
+    	if (
+    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
+    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
+    			SkuPricingConsiderationContext.getSkuPricingService() != null
+    	) {
+    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(this, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+    		return dynamicPrices.getSalePrice();
+    	}
         return salePrice == null ? null : new Money(salePrice);
     }
 
@@ -210,6 +227,17 @@ public class SkuImpl implements Sku {
      * @see org.broadleafcommerce.core.catalog.domain.Sku#getRetailPrice()
      */
     public Money getRetailPrice() {
+    	if (dynamicPrices != null) {
+    		return dynamicPrices.getRetailPrice();
+    	}
+    	if (
+    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext() != null && 
+    			SkuPricingConsiderationContext.getSkuPricingConsiderationContext().size() > 0 &&
+    			SkuPricingConsiderationContext.getSkuPricingService() != null
+    	) {
+    		dynamicPrices = SkuPricingConsiderationContext.getSkuPricingService().getSkuPrices(this, SkuPricingConsiderationContext.getSkuPricingConsiderationContext());
+    		return dynamicPrices.getRetailPrice();
+    	}
         return retailPrice == null ? null : new Money(retailPrice);
     }
 

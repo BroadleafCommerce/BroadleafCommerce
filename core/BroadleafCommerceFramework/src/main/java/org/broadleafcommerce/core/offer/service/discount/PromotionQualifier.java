@@ -1,4 +1,4 @@
-package org.broadleafcommerce.core.offer.service.candidate;
+package org.broadleafcommerce.core.offer.service.discount;
 
 import java.io.Serializable;
 

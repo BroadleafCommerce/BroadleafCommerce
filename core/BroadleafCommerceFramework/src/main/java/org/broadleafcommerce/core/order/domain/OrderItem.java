@@ -23,8 +23,8 @@ import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
 import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
-import org.broadleafcommerce.core.offer.service.candidate.PromotionDiscount;
-import org.broadleafcommerce.core.offer.service.candidate.PromotionQualifier;
+import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
+import org.broadleafcommerce.core.offer.service.discount.PromotionQualifier;
 import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.money.Money;
 
@@ -160,5 +160,9 @@ public interface OrderItem extends Serializable {
 	public OrderItem clone();
 	
 	public List<OrderItem> split();
+	
+	public void clearAllDiscount();
+	
+	public void clearAllQualifiers();
 	
 }

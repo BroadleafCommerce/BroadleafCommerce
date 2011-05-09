@@ -221,6 +221,44 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     public List<FulfillmentGroupItem> getFulfillmentGroupItems() {
         return fulfillmentGroupItems;
     }
+    
+    public List<OrderItem> getDiscreteOrderItems() {
+    	List<OrderItem> discreteOrderItems = new ArrayList<OrderItem>();
+        for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
+        	OrderItem orderItem = fgItem.getOrderItem();
+            if (orderItem instanceof BundleOrderItemImpl) {
+                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
+                for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                    discreteOrderItems.add(discreteOrderItem);
+                }
+            } else {
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+                discreteOrderItems.add(discreteOrderItem);
+            }
+        }
+        return discreteOrderItems;
+    }
+    
+    public List<OrderItem> getDiscountableDiscreteOrderItems() {
+        List<OrderItem> discreteOrderItems = new ArrayList<OrderItem>();
+        for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
+        	OrderItem orderItem = fgItem.getOrderItem();
+            if (orderItem instanceof BundleOrderItemImpl) {
+                BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
+                for (DiscreteOrderItem discreteOrderItem : bundleOrderItem.getDiscreteOrderItems()) {
+                    if (discreteOrderItem.getSku().isDiscountable()) {
+                        discreteOrderItems.add(discreteOrderItem);
+                    }
+                }
+            } else {
+                DiscreteOrderItem discreteOrderItem = (DiscreteOrderItem)orderItem;
+                if (discreteOrderItem.getSku().isDiscountable()) {
+                    discreteOrderItems.add(discreteOrderItem);
+                }
+            }
+        }
+        return discreteOrderItems;
+    }
 
     public void setFulfillmentGroupItems(List<FulfillmentGroupItem> fulfillmentGroupItems) {
         this.fulfillmentGroupItems = fulfillmentGroupItems;
@@ -307,6 +345,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         }
         adjustmentPrice = adjustmentPrice.subtract(fulfillmentGroupAdjustment.getValue().getAmount());
         this.fulfillmentGroupAdjustments.add(fulfillmentGroupAdjustment);
+        getOrder().resetTotalitarianOfferApplied();
+        
         return this.fulfillmentGroupAdjustments;
     }
 
@@ -314,8 +354,18 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         if (fulfillmentGroupAdjustments != null) {
             fulfillmentGroupAdjustments.clear();
         }
+        getOrder().resetTotalitarianOfferApplied();
         adjustmentPrice = null;
-
+    }
+    
+    public Money getPriceBeforeAdjustments(boolean allowSalesPrice) {
+        Money currentPrice = null;
+        if (saleShippingPrice != null && allowSalesPrice) {
+            currentPrice = new Money(saleShippingPrice);
+        } else {
+            currentPrice = new Money(retailShippingPrice);
+        }
+        return currentPrice;
     }
 
     public void setFulfillmentGroupAdjustments(List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments) {

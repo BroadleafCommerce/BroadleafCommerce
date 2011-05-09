@@ -41,7 +41,7 @@ public class OfferPresenterInitializer {
 	
 	public void initItemTargets(final Record selectedRecord) {
 		getDisplay().getTargetItemBuilder().getItemFilterBuilder().clearCriteria();
-		String targetQuantity = selectedRecord.getAttribute("targetItemCriteria.receiveQuantity");
+		String targetQuantity = selectedRecord.getAttribute("targetItemCriteria.quantity");
 		if (targetQuantity != null) {
 			getDisplay().getTargetItemBuilder().getItemQuantity().setValue(Integer.parseInt(targetQuantity));
 			String itemTargetRules = selectedRecord.getAttribute("targetItemCriteria.orderItemMatchRule");
@@ -171,7 +171,7 @@ public class OfferPresenterInitializer {
 				boolean isItemQualifierCriteria = false;
 				if (response.getTotalRows() > 0) {
 					for (Record record : response.getData()) {
-						if (Integer.parseInt(record.getAttribute("requiresQuantity")) > 0) {
+						if (Integer.parseInt(record.getAttribute("quantity")) > 0) {
 							isItemQualifierCriteria = true;
 							break;
 						}
@@ -182,18 +182,18 @@ public class OfferPresenterInitializer {
 					if (type.equals("ORDER_ITEM")) {
 						initBogoRule("YES");
 					} else {
-						initItemRule("YES");
+						initItemRule("ITEM_RULE");
 					}
 					getDisplay().getBogoRadio().setValue("YES");
-					getDisplay().getItemRuleRadio().setValue("YES");
+					getDisplay().getItemRuleRadio().setValue("ITEM_RULE");
 					getDisplay().removeAllItemBuilders();
 					for (Record record : response.getData()) {
-						if (Integer.parseInt(record.getAttribute("requiresQuantity")) > 0) {
+						if (Integer.parseInt(record.getAttribute("quantity")) > 0) {
 							final ItemBuilderDisplay display = getDisplay().addItemBuilder(orderItemDataSource);
 							presenter.bindItemBuilderEvents(display);
 							display.getItemFilterBuilder().clearCriteria();
 							display.setRecord(record);
-							display.getItemQuantity().setValue(Integer.parseInt(record.getAttribute("requiresQuantity")));
+							display.getItemQuantity().setValue(Integer.parseInt(record.getAttribute("quantity")));
 							try {
 								display.getItemFilterBuilder().setVisible(true);
 								display.getRawItemForm().setVisible(false);

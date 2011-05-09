@@ -15,6 +15,10 @@
  */
 package org.broadleafcommerce.core.order.service.call;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
@@ -27,6 +31,7 @@ public class DiscreteOrderItemRequest {
     private Product product;
     private int quantity;
     private PersonalMessage personalMessage;
+    private Map<String, BigDecimal> additionalFees = new HashMap<String, BigDecimal>();
 
     public Sku getSku() {
         return sku;
@@ -60,7 +65,15 @@ public class DiscreteOrderItemRequest {
         this.quantity = quantity;
     }
 
-    @Override
+	public Map<String, BigDecimal> getAdditionalFees() {
+		return additionalFees;
+	}
+
+	public void setAdditionalFees(Map<String, BigDecimal> additionalFees) {
+		this.additionalFees = additionalFees;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof DiscreteOrderItemRequest)) return false;

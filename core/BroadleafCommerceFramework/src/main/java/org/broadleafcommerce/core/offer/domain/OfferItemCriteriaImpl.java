@@ -33,13 +33,9 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     @AdminPresentation(friendlyName="Item Criteria Id", group="Description", hidden=true)
     protected Long id;
     
-    @Column(name = "RECEIVE_QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="Receive Quantity", group="Description", hidden=true)
-	protected Integer receiveQuantity;
-    
-    @Column(name = "REQUIRES_QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="Requires Quantity", group="Description", hidden=true)
-	protected Integer requiresQuantity;
+    @Column(name = "QUANTITY", nullable=false)
+    @AdminPresentation(friendlyName="Quantity", group="Description", hidden=true)
+	protected Integer quantity;
     
     @Lob
     @Column(name = "ORDER_ITEM_MATCH_RULE", nullable=false)
@@ -48,7 +44,7 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
     
     @ManyToOne(targetEntity = OfferImpl.class)
     @JoinTable(name = "BLC_QUALIFIER_CRITERIA_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID", referencedColumnName = "OFFER_ITEM_CRITERIA_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "OFFER_ID"))
-    protected OfferImpl offer;
+    protected Offer offer;
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getId()
@@ -67,29 +63,15 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getReceiveQuantity()
 	 */
-	public Integer getReceiveQuantity() {
-		return receiveQuantity;
+	public Integer getQuantity() {
+		return quantity;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setReceiveQuantity(java.lang.Integer)
 	 */
-	public void setReceiveQuantity(Integer receiveQuantity) {
-		this.receiveQuantity = receiveQuantity;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#getRequiresQuantity()
-	 */
-	public Integer getRequiresQuantity() {
-		return requiresQuantity;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.broadleafcommerce.core.offer.domain.OfferItemCriteria#setRequiresQuantity(java.lang.Integer)
-	 */
-	public void setRequiresQuantity(Integer requiresQuantity) {
-		this.requiresQuantity = requiresQuantity;
+	public void setQuantity(Integer receiveQuantity) {
+		this.quantity = receiveQuantity;
 	}
 
 	/* (non-Javadoc)
@@ -106,11 +88,11 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 		this.orderItemMatchRule = orderItemMatchRule;
 	}
 
-	public OfferImpl getOffer() {
+	public Offer getOffer() {
 		return offer;
 	}
 
-	public void setOffer(OfferImpl offer) {
+	public void setOffer(Offer offer) {
 		this.offer = offer;
 	}
 
@@ -120,8 +102,7 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		result = prime * result + ((orderItemMatchRule == null) ? 0 : orderItemMatchRule.hashCode());
-		result = prime * result + ((receiveQuantity == null) ? 0 : receiveQuantity.hashCode());
-		result = prime * result + ((requiresQuantity == null) ? 0 : requiresQuantity.hashCode());
+		result = prime * result + ((quantity == null) ? 0 : quantity.hashCode());
 		return result;
 	}
 
@@ -144,15 +125,10 @@ public class OfferItemCriteriaImpl implements OfferItemCriteria {
 				return false;
 		} else if (!orderItemMatchRule.equals(other.orderItemMatchRule))
 			return false;
-		if (receiveQuantity == null) {
-			if (other.receiveQuantity != null)
+		if (quantity == null) {
+			if (other.quantity != null)
 				return false;
-		} else if (!receiveQuantity.equals(other.receiveQuantity))
-			return false;
-		if (requiresQuantity == null) {
-			if (other.requiresQuantity != null)
-				return false;
-		} else if (!requiresQuantity.equals(other.requiresQuantity))
+		} else if (!quantity.equals(other.quantity))
 			return false;
 		return true;
 	}

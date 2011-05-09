@@ -33,6 +33,7 @@ public class OrderItemType implements Serializable, BroadleafEnumerationType {
     private static final Map<String, OrderItemType> TYPES = new HashMap<String, OrderItemType>();
 
     public static final OrderItemType DISCRETE  = new OrderItemType("org.broadleafcommerce.core.order.domain.DiscreteOrderItem", "Discrete Order Item");
+    public static final OrderItemType EXTERNALLY_PRICED  = new OrderItemType("org.broadleafcommerce.core.order.domain.DynamicPriceDiscreteOrderItem", "Externally Priced Discrete Order Item");
     public static final OrderItemType BUNDLE = new OrderItemType("org.broadleafcommerce.core.order.domain.BundleOrderItem", "Bundle Order Item");
     public static final OrderItemType GIFTWRAP = new OrderItemType("org.broadleafcommerce.core.order.domain.GiftWrapOrderItem", "Gift Wrap Order Item");
 

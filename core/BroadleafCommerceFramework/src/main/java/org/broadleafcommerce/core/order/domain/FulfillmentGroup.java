@@ -156,4 +156,10 @@ public interface FulfillmentGroup extends Serializable {
 
 	public void setService(String service);
 	
+	public List<OrderItem> getDiscreteOrderItems();
+	
+	public List<OrderItem> getDiscountableDiscreteOrderItems();
+	
+	public Money getPriceBeforeAdjustments(boolean allowSalesPrice);
+	
 }

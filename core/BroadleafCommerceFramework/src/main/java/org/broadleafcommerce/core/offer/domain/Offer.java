@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.broadleafcommerce.core.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
@@ -75,12 +76,16 @@ public interface Offer extends Serializable {
 
     public void setApplyDiscountToSalePrice(boolean applyToSalePrice);
 
+    @Deprecated
     public String getAppliesToOrderRules();
 
+    @Deprecated
     public void setAppliesToOrderRules(String appliesToRules);
 
+    @Deprecated
     public String getAppliesToCustomerRules();
 
+    @Deprecated
     public void setAppliesToCustomerRules(String appliesToCustomerRules);
 
     @Deprecated
@@ -125,8 +130,12 @@ public interface Offer extends Serializable {
 
 	public void setTotalitarianOffer(Boolean totalitarianOffer);
 	
-	public String getAppliesToFulfillmentGroupRules();
+	public Map<String, OfferRule> getOfferMatchRules();
 
-	public void setAppliesToFulfillmentGroupRules(String appliesToFulfillmentGroupRules);
+	public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules);
+	
+	public Boolean getTreatAsNewFormat();
+
+	public void setTreatAsNewFormat(Boolean treatAsNewFormat);
 	
 }
