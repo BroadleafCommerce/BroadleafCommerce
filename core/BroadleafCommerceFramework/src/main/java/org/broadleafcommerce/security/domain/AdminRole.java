@@ -15,7 +15,9 @@
  */
 package org.broadleafcommerce.security.domain;
 
-public interface AdminRole {
+import java.io.Serializable;
+
+public interface AdminRole extends Serializable {
     public Long getId();
     public String getName();
     public void setName(String name);

@@ -15,7 +15,10 @@
  */
 package org.broadleafcommerce.security.domain;
 
-public interface AdminUser {
+import java.io.Serializable;
+import java.util.Set;
+
+public interface AdminUser extends Serializable {
     public Long getId();
     public String getName();
     public void setName(String name);
@@ -25,4 +28,6 @@ public interface AdminUser {
     public void setPassword(String password);
     public String getEmail();
     public void setEmail(String email);
+    public Set<AdminRole> getAllRoles();
+    public void setAllRoles(Set<AdminRole> allRoles);
 }

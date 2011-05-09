@@ -1,0 +1,11 @@
+<!DOCTYPE module SYSTEM "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
+<module>
+	<!-- Inherit the core Google Web Toolkit stuff. -->
+	<inherits name="com.google.gwt.core.Core"/>
+	<inherits name="com.google.gwt.xml.XML"/>
+	<inherits name="com.google.gwt.http.HTTP" />
+
+	<source path="client" />
+	<source path="exception" />
+
+</module>

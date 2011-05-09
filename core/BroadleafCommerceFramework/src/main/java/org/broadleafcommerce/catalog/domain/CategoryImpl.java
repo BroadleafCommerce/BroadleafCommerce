@@ -38,6 +38,8 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
+import net.sf.gilead.annotations.ServerOnly;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cache.CacheFactoryException;
@@ -167,9 +169,11 @@ public class CategoryImpl implements Category {
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
     
     @Transient
+    @ServerOnly
     protected Map<String, List<Category>> childCategoryURLMap;
     
     @Transient
+    @ServerOnly
     protected List<Category> childCategories = new ArrayList<Category>();
 
     /*
@@ -550,11 +554,11 @@ public class CategoryImpl implements Category {
          * lazy collection in the category hierarchy of elements.
          */
         //populate some lazy items for our cached map
-        category.getCategoryImages().size();
-        category.getCategoryMedia().size();
-        category.getAllParentCategories().size();
-        category.getAllChildCategories().size();
-        category.getFeaturedProducts().size();
+		category.getCategoryImages().size();
+		category.getCategoryMedia().size();
+		category.getAllParentCategories().size();
+		category.getAllChildCategories().size();
+		category.getFeaturedProducts().size();
 
         categoryUrlMap.put(currentPath, newCategoryList);
         for (Category currentCategory : category.getChildCategories()) {
