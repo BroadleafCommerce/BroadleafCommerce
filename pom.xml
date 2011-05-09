@@ -75,11 +75,6 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>localrepo</id>
-			<name>localrepo</name>
-			<url>file://${basedir}/lib</url>
-		</repository>
-		<repository>
 			<id>gilead</id>
 			<name>gilead</name>
 			<url>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
@@ -230,13 +225,6 @@
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-demo</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
-				<type>war</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.broadleafcommerce</groupId>
-				<artifactId>broadleaf-admin</artifactId>
 				<version>1.5.0-SNAPSHOT</version>
 				<type>war</type>
 				<scope>compile</scope>
@@ -688,13 +676,6 @@
 				<scope>runtime</scope>
 			</dependency>
 			<dependency>
-				<groupId>xalan</groupId>
-				<artifactId>xalan</artifactId>
-				<version>2.7.1</version>
-				<type>jar</type>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
 				<groupId>org.apache.tiles</groupId>
 				<artifactId>tiles-api</artifactId>
 				<version>2.1.4</version>
@@ -712,13 +693,6 @@
 				<groupId>org.apache.tiles</groupId>
 				<artifactId>tiles-jsp</artifactId>
 				<version>2.1.4</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework.flex</groupId>
-				<artifactId>spring-flex</artifactId>
-				<version>1.0.3.RELEASE</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
@@ -867,12 +841,6 @@
 				<artifactId>ant</artifactId>
 				<version>1.7.1</version>
 				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>xml-dir-listing</groupId>
-				<artifactId>xml-dir-listing</artifactId>
-				<version>0.2</version>
-				<scope>compile</scope>
 			</dependency>
 			<dependency>
                 <groupId>com.google.gwt</groupId>
