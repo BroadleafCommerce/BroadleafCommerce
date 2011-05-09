@@ -1,7 +1,7 @@
 package org.broadleafcommerce.gwt.client.service;
 
 /**
- * Exception thrown when a {@link GridService service} method fails.
+ * Exception thrown when a {@link EntityService service} method fails.
  */
 public class ServiceException extends Exception {
     

@@ -55,6 +55,27 @@ public final class FilterCriterionProviders {
         }
     };
     
+    public static final FilterCriterionProvider BETWEEN = new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
+        public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
+        	String[] values;
+        	String filter = (String) directValues[0];
+        	int dashIndex = filter.indexOf("-");
+        	if (dashIndex > 0) {
+        		values = new String[2];
+        		values[0] = filter.substring(0, dashIndex).trim();
+        		values[1] = filter.substring(dashIndex + 1, filter.length()).trim();
+        	} else {
+        		values = new String[1];
+        		values[0] = filter;
+        	}
+        	if (values.length > 1) {
+            	return Restrictions.between(targetPropertyName, values[0], values[1]);
+        	} else {
+        		return Restrictions.eq(targetPropertyName, values[0]);
+        	}
+        }
+    };
+    
     public static final FilterCriterionProvider COLLECTION_SIZE_EQ = new SimpleFilterCriterionProvider(FilterDataStrategy.DIRECT, 1) {
         public Criterion getCriterion(String targetPropertyName, Object[] filterObjectValues, Object[] directValues) {
             return Restrictions.sizeEq(targetPropertyName, (Integer) directValues[0]);

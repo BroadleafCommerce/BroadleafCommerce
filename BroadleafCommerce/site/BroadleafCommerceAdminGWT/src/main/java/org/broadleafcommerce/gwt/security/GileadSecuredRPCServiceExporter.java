@@ -24,7 +24,6 @@ import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.server.rpc.RPC;
 import com.google.gwt.user.server.rpc.RPCRequest;
 import com.google.gwt.user.server.rpc.UnexpectedException;
-import com.gwtincubator.security.server.SecurityExceptionFactory;
 
 /**
  * Inspired by GWTRPCSecuredServiceExporter by David Martin http://code.google.com/p/gwt-incubator-lib/
@@ -57,6 +56,7 @@ public class GileadSecuredRPCServiceExporter extends GileadRPCServiceExporter {
 		try {
 			response = super.processCall(payload);
 		} catch (final Throwable e) { // Security Exceptions (preciousException here) are wrapped into an UnexpectedException (cause1), which is wrapped into a RuntimeException (e)...
+			LOGGER.error("Problem processing call", e);
 			final Throwable cause1 = e.getCause();
 			if (cause1 != null && cause1 instanceof UnexpectedException) {
 				final Throwable preciousException = cause1.getCause();

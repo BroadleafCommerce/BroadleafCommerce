@@ -15,9 +15,6 @@
  */
 package org.broadleafcommerce.gwt.server;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.catalog.domain.Category;
@@ -38,18 +35,6 @@ public class CatalogRemoteService implements CatalogService {
 		return catalogService.saveProduct(product);
 	}
 
-	public Product findProductById(Long productId) throws ApplicationSecurityException {
-		return catalogService.findProductById(productId);
-	}
-
-	public List<Product> findProductsByName(String searchName) throws ApplicationSecurityException {
-		return catalogService.findProductsByName(searchName);
-	}
-
-	public List<Product> findActiveProductsByCategory(Category category, Date currentDate) throws ApplicationSecurityException {
-		return catalogService.findActiveProductsByCategory(category, currentDate);
-	}
-
 	public Category saveCategory(Category category) throws ApplicationSecurityException {
 		return catalogService.saveCategory(category);
 	}
@@ -58,28 +43,14 @@ public class CatalogRemoteService implements CatalogService {
 		catalogService.removeCategory(category);
 	}
 
-	public Category findCategoryById(Long categoryId) throws ApplicationSecurityException {
-		return catalogService.findCategoryById(categoryId);
-	}
-
-	public Category findCategoryByName(String categoryName) throws ApplicationSecurityException {
-		return catalogService.findCategoryByName(categoryName);
-	}
-
-	public List<Product> findProductsForCategory(Category category) throws ApplicationSecurityException {
-		return catalogService.findProductsForCategory(category);
-	}
-
 	public Sku saveSku(Sku sku) throws ApplicationSecurityException {
 		return catalogService.saveSku(sku);
 	}
 
-	public List<Sku> findSkusByIds(List<Long> ids) throws ApplicationSecurityException {
-		return catalogService.findSkusByIds(ids);
-	}
-
-	public Sku findSkuById(Long skuId) throws ApplicationSecurityException {
-		return catalogService.findSkuById(skuId);
+	public Category createCategory() throws ApplicationSecurityException {
+		Category category = catalogService.createCategory();
+		category.setUrlKey("/");
+		return category;
 	}
 
 }

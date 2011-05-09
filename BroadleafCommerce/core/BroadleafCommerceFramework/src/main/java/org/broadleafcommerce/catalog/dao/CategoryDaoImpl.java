@@ -24,6 +24,8 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 
@@ -87,6 +89,11 @@ public class CategoryDaoImpl implements CategoryDao {
     		category = readCategoryById(category.getId());
     	}
         em.remove(category);    	
+    }
+    
+    public Category create() {
+        final Category category =  ((Category) entityConfiguration.createEntityInstance(Category.class.getName()));
+        return category;
     }
     
 }

@@ -87,12 +87,6 @@
 			<fileset dir="../../module/BroadleafCommerceCyberSource/src/main/resources">
 				<include name="**/*.*"/>
 			</fileset>
-			<fileset dir="../../external/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../external/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
 		</copy>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="gwt:debug"/>
@@ -120,5 +114,27 @@
 			<arg value="install"/>
 		</artifact:mvn>
 	</target>
+	
+	<target name="start-db">  
+        <echo message="Starting Data Base..." />  
+        <java fork="true"  spawn="true" classname="org.hsqldb.Server" classpathref="build.runtime.classpath">  
+            <arg  line="-database.0 file:data/broadleaf -dbname.0 broadleaf"/>  
+        </java>  
+    </target>
+	
+	<target name="stop-db">  
+        <echo message="Execute SQL on new Data Base..." />  
+        <sql  
+            autocommit="true"  
+            print="true"  
+            classpathref="build.runtime.classpath"  
+            driver="org.hsqldb.jdbcDriver"  
+            url="jdbc:hsqldb:hsql://localhost/broadleaf;ifexists=true"  
+            userid="sa"  
+            password="">
+            <transaction>SHUTDOWN</transaction>  
+        </sql>  
+        <echo message="SQL Executed on data base..." />  
+    </target>
 
 </project>

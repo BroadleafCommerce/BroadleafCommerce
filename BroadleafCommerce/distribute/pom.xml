@@ -80,11 +80,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-admin-gwt</artifactId>
-			<type>war</type>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-demo</artifactId>
 			<type>war</type>
 		</dependency>

@@ -24,9 +24,9 @@ import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 
 public interface BaseCriteriaDao<T extends Serializable> {
 
-	public abstract List<T> query(PersistentEntityCriteria entityCriteria, Class<? extends Serializable> targetEntityClass);
+	public abstract List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
 
-	public abstract int count(PersistentEntityCriteria entityCriteria, Class<? extends Serializable> targetEntityClass);
+	public abstract int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);
 
 	public abstract EntityManager getEntityManager();
 	
