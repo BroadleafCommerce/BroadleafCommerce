@@ -40,7 +40,7 @@ public class CategoryXref implements Serializable {
 
     /** The category id. */
     @EmbeddedId
-    CategoryXrefPK categoryXrefPK;
+    CategoryXrefPK categoryXrefPK = new CategoryXrefPK();
 
     public CategoryXrefPK getCategoryXrefPK() {
         return categoryXrefPK;
@@ -62,16 +62,17 @@ public class CategoryXref implements Serializable {
     }
 
     public static class CategoryXrefPK implements Serializable {
+    	
         /** The Constant serialVersionUID. */
         private static final long serialVersionUID = 1L;
 
         @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
         @JoinColumn(name = "CATEGORY_ID")
-        protected Category category;
+        protected Category category = new CategoryImpl();
         
         @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
         @JoinColumn(name = "SUB_CATEGORY_ID")
-        protected Category subCategory;
+        protected Category subCategory = new CategoryImpl();
 
         public Category getCategory() {
 			return category;

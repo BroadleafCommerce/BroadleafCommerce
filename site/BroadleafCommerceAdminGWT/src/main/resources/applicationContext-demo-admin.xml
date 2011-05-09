@@ -58,5 +58,20 @@
 	
 	<bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
 	<bean id="persistenceUnitInfo" factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
+	
+	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.DynamicEntityRemoteService">
+		<constructor-arg>
+			<list>
+				<bean class="org.broadleafcommerce.gwt.server.module.BasicEntityModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.module.JoinTableModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.module.MapModule"/>
+			</list>
+		</constructor-arg>
+		<property name="customPersistenceHandlers">
+			<list>
+				<bean class="org.broadleafcommerce.gwt.server.CategoryCustomPersistenceHandler"/>
+			</list>
+		</property>
+	</bean>
 
 </beans>

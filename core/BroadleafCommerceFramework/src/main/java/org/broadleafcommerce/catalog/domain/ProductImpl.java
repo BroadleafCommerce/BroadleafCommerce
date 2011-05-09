@@ -46,6 +46,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.vendor.service.type.ContainerSizeType;
@@ -103,10 +104,12 @@ public class ProductImpl implements Product {
     @Column(name = "NAME", nullable=false)
     @SearchableProperty(name="productName")
     @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName="Name", order=1, group="Description", prominent=true, columnWidth="15%")
     protected String name;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
+    @AdminPresentation(friendlyName="Description", order=2, group="Description", prominent=true)
     protected String description;
 
     /** The long description. */
@@ -116,20 +119,24 @@ public class ProductImpl implements Product {
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
+    @AdminPresentation(friendlyName="Active Start Date", order=5, group="Active Date Range")
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
+    @AdminPresentation(friendlyName="Active End Date", order=6, group="Active Date Range")
     protected Date activeEndDate;
 
     /** The product model number */
     @Column(name = "MODEL")
     @SearchableProperty(name="productModel")
+    @AdminPresentation(friendlyName="Model", order=3, group="Description", prominent=true)
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
     @SearchableProperty(name="productManufacturer")
+    @AdminPresentation(friendlyName="Manufacturer", order=4, group="Description", prominent=true)
     protected String manufacturer;
 
     /** The product dimensions **/

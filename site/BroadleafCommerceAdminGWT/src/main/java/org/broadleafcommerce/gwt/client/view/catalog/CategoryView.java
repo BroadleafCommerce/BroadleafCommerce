@@ -17,8 +17,8 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.layout.VStack;
@@ -28,33 +28,48 @@ import com.smartgwt.client.widgets.tree.TreeGrid;
 
 public class CategoryView extends AbstractView implements Instantiable, CategoryDisplay {
 	
-	private ToolStripButton addButton;
-	private ToolStripButton removeButton;
-	private TreeGrid categoryTreeGrid;
-	private DynamicForm dynamicForm;
-	private ToolStripButton saveFormButton;
-	private ToolStripButton refreshButton;
-	private SelectItem entityType = new SelectItem();
-	private ToolStrip formToolBar;
-	private ToolStrip allParentCategoryToolBar;
-	private ToolStripButton addParentCategoryButton;
-	private ToolStripButton removeParentCategoryButton;
-	private HStack additionalContainer;
-	private ListGrid allParentCategoryGrid;
+	protected ToolStripButton addButton;
+	protected ToolStripButton removeButton;
+	protected TreeGrid categoryTreeGrid;
+	protected DynamicForm dynamicForm;
+	protected ToolStripButton saveFormButton;
+	protected ToolStripButton refreshButton;
+	protected SelectItem entityType = new SelectItem();
+	protected ToolStrip formToolBar;
+	protected ToolStrip allChildCategoryToolBar;
+	protected ToolStripButton addChildCategoryButton;
+	protected ToolStripButton removeChildCategoryButton;
+	protected HStack additionalContainer;
+	protected ListGrid allChildCategoryGrid;
+	protected ToolStripButton removeOrphanedButton;
+	protected ToolStripButton insertOrphanButton;
+	protected ListGrid orphanedCategoryGrid;
+	protected ToolStripButton addDefaultParentCategoryButton;
+	protected TextItem defaultParentCategoryTextItem;
+	protected ToolStrip featuredProductToolBar;
+	protected ToolStripButton addFeaturedProductButton;
+	protected ToolStripButton removeFeaturedProductButton;
+	protected ListGrid featuredProductGrid;
+	protected ToolStrip mediaToolBar;
+	protected ToolStripButton addMediaButton;
+	protected ToolStripButton removeMediaButton;
+	protected ListGrid mediaGrid;
     
 	public void build(final DataSource dataSource) {
-		VLayout gridlayout = new VLayout();
-		gridlayout.setHeight100();
-		gridlayout.setWidth("30%");
-		gridlayout.setShowResizeBar(true);
+		VLayout leftVerticalLayout = new VLayout();
+		leftVerticalLayout.setHeight100();
+		leftVerticalLayout.setWidth("30%");
+		leftVerticalLayout.setShowResizeBar(true);
         
-        ToolStrip topBar = new ToolStrip();
-        topBar.setHeight(20);
-        topBar.setWidth100();
-        topBar.addSpacer(6);
+		VLayout categoryVerticalLayout = new VLayout();
+        ToolStrip categoryTopBar = new ToolStrip();
+        categoryTopBar.setHeight(20);
+        categoryTopBar.setWidth100();
+        categoryTopBar.addSpacer(6);
         addButton = new ToolStripButton();  
+        addButton.setDisabled(true);
         addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png");   
-        topBar.addButton(addButton);
+        categoryTopBar.addButton(addButton);
         HashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
         if (polymorphicEntities.size() > 1) { 
             entityType.setShowTitle(false);  
@@ -66,13 +81,13 @@ public class CategoryView extends AbstractView implements Instantiable, Category
             }
             entityType.setValueMap(valueMap);  
             entityType.setDefaultValue(((DynamicEntityDataSource) dataSource).getCeilingEntityFullyQualifiedClassname()); 
-            topBar.addFormItem(entityType);
+            categoryTopBar.addFormItem(entityType);
         }
         removeButton = new ToolStripButton(); 
         removeButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
         removeButton.setDisabled(true);
-        topBar.addButton(removeButton);
-        gridlayout.addMember(topBar);
+        categoryTopBar.addButton(removeButton);
+        categoryVerticalLayout.addMember(categoryTopBar);
         categoryTreeGrid = new TreeGrid();
         categoryTreeGrid.setAlternateRecordStyles(true);
         categoryTreeGrid.setSelectionType(SelectionStyle.SINGLE);
@@ -84,10 +99,42 @@ public class CategoryView extends AbstractView implements Instantiable, Category
         categoryTreeGrid.setDataSource(dataSource);
         categoryTreeGrid.setAutoFetchData(true);
         categoryTreeGrid.setDrawAheadRatio(4);
-        categoryTreeGrid.setShowRoot(false);
-        categoryTreeGrid.setTreeRootValue("1");
+        categoryTreeGrid.setCanSort(false);
+        categoryTreeGrid.setCanResizeFields(true);
+        categoryVerticalLayout.setShowResizeBar(true);
+        categoryVerticalLayout.addMember(categoryTreeGrid);
         
-        gridlayout.addMember(categoryTreeGrid);
+        VLayout abandonedCategoryVerticalLayout = new VLayout();
+        abandonedCategoryVerticalLayout.setHeight("30%");
+        ToolStrip abandonedCategoryTopBar = new ToolStrip();
+        abandonedCategoryTopBar.setHeight(20);
+        abandonedCategoryTopBar.setWidth100();
+        abandonedCategoryTopBar.addSpacer(6);
+        insertOrphanButton = new ToolStripButton();  
+        insertOrphanButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_up.png");  
+        insertOrphanButton.setDisabled(true);
+        abandonedCategoryTopBar.addButton(insertOrphanButton);
+        removeOrphanedButton = new ToolStripButton(); 
+        removeOrphanedButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+        removeOrphanedButton.setDisabled(true);
+        abandonedCategoryTopBar.addButton(removeOrphanedButton);
+        abandonedCategoryTopBar.addFill();
+        Label abandonedLabel = new Label();
+        abandonedLabel.setContents("Orphaned Categories");
+        abandonedLabel.setWrap(false);
+        abandonedCategoryTopBar.addMember(abandonedLabel);
+        abandonedCategoryTopBar.addSpacer(6);
+        abandonedCategoryVerticalLayout.addMember(abandonedCategoryTopBar);
+        orphanedCategoryGrid = new ListGrid();
+        orphanedCategoryGrid.setAlternateRecordStyles(true);
+        orphanedCategoryGrid.setSelectionType(SelectionStyle.SINGLE);
+        orphanedCategoryGrid.setDrawAheadRatio(4);
+        orphanedCategoryGrid.setCanSort(false);
+        orphanedCategoryGrid.setCellPadding(5);
+        abandonedCategoryVerticalLayout.addMember(orphanedCategoryGrid);
+        
+        leftVerticalLayout.addMember(categoryVerticalLayout);
+        leftVerticalLayout.addMember(abandonedCategoryVerticalLayout);
         
         VLayout formlayout = new VLayout();
         formlayout.setHeight100();
@@ -122,11 +169,10 @@ public class CategoryView extends AbstractView implements Instantiable, Category
         formlayout2.setOverflow(Overflow.AUTO);
         formlayout.addMember(formlayout2);
         
-        addMember(gridlayout);
+        addMember(leftVerticalLayout);
         addMember(formlayout);
         
         additionalContainer = new HStack(10);
-        additionalContainer.setLayoutMargin(12);
         additionalContainer.setHeight(180);
         additionalContainer.setWidth100();
         additionalContainer.setBackgroundColor("#eaeaea");
@@ -134,42 +180,157 @@ public class CategoryView extends AbstractView implements Instantiable, Category
         
         VStack allPStack = new VStack();
         allPStack.setHeight(150);
-        allPStack.setWidth("40%");
-        allParentCategoryToolBar = new ToolStrip();
-        allParentCategoryToolBar.setHeight(20);
-        allParentCategoryToolBar.setWidth100();
-        allParentCategoryToolBar.addSpacer(6);
-        addParentCategoryButton = new ToolStripButton();  
-        addParentCategoryButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png");   
-        allParentCategoryToolBar.addButton(addParentCategoryButton);
-        removeParentCategoryButton = new ToolStripButton();
-        removeParentCategoryButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
-        removeParentCategoryButton.setDisabled(true);
-        allParentCategoryToolBar.addButton(removeParentCategoryButton);
-        allParentCategoryToolBar.addFill();
-        allParentCategoryToolBar.setDisabled(true);
+        allPStack.setWidth100();
+        allPStack.setLayoutMargin(12);
+        
+        allChildCategoryToolBar = new ToolStrip();
+        allChildCategoryToolBar.setHeight(26);
+        allChildCategoryToolBar.setWidth100();
+        allChildCategoryToolBar.addSpacer(6);
+        addChildCategoryButton = new ToolStripButton();  
+        addChildCategoryButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png");   
+        allChildCategoryToolBar.addButton(addChildCategoryButton);
+        removeChildCategoryButton = new ToolStripButton();
+        removeChildCategoryButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+        removeChildCategoryButton.setDisabled(true);
+        allChildCategoryToolBar.addButton(removeChildCategoryButton);
+        allChildCategoryToolBar.setDisabled(true);
         Label allPLabel = new Label();
         allPLabel.setContents("All Child Categories");
         allPLabel.setWrap(false);
-        allParentCategoryToolBar.addMember(allPLabel);
-        allParentCategoryToolBar.addSpacer(6);
+        allChildCategoryToolBar.addSpacer(6);
+        allChildCategoryToolBar.addMember(allPLabel);
+        allChildCategoryToolBar.addFill();
+        defaultParentCategoryTextItem = new TextItem();
+        defaultParentCategoryTextItem.setShowTitle(false);
+        defaultParentCategoryTextItem.setWrapTitle(false);
+        defaultParentCategoryTextItem.setDisabled(true);
+        defaultParentCategoryTextItem.setHeight(18);
+        defaultParentCategoryTextItem.setValue("Default Parent Category");
+        allChildCategoryToolBar.addFormItem(defaultParentCategoryTextItem);
+        addDefaultParentCategoryButton = new ToolStripButton();  
+        addDefaultParentCategoryButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png");
+        addDefaultParentCategoryButton.setDisabled(true);
+        allChildCategoryToolBar.addButton(addDefaultParentCategoryButton);
+        allChildCategoryToolBar.addSpacer(6);
 
-        allPStack.addMember(allParentCategoryToolBar);
-        allParentCategoryGrid = new ListGrid();
-        allParentCategoryGrid.setCanEdit(false);
-        allParentCategoryGrid.setAutoFetchData(false);
-        allParentCategoryGrid.setShowHeader(true);
-        allParentCategoryGrid.setShowHeaderContextMenu(false);
-        ListGridField idField = new ListGridField("id");
-        allParentCategoryGrid.setFields(idField);  
-        allParentCategoryGrid.setPreventDuplicates(true);
-        allParentCategoryGrid.setCanReorderRecords(true);
-        allParentCategoryGrid.setHeight100();
-        allParentCategoryGrid.setDisabled(true);
-        allPStack.addMember(allParentCategoryGrid);
+        allPStack.addMember(allChildCategoryToolBar);
+        allChildCategoryGrid = new ListGrid();
+        allChildCategoryGrid.setCanEdit(false);
+        allChildCategoryGrid.setAutoFetchData(false);
+        allChildCategoryGrid.setShowHeader(true);
+        allChildCategoryGrid.setShowHeaderContextMenu(false);
+        allChildCategoryGrid.setPreventDuplicates(true);
+        allChildCategoryGrid.setCanReorderRecords(true);
+        allChildCategoryGrid.setHeight100();
+        allChildCategoryGrid.setDisabled(true);
+        allChildCategoryGrid.setCanSort(false);
+        allChildCategoryGrid.setCellPadding(5);
+        allPStack.addMember(allChildCategoryGrid);
         
         additionalContainer.addMember(allPStack);
+        
+        HStack additionalContainer3 = new HStack(10);
+        additionalContainer3.setHeight(180);
+        additionalContainer3.setWidth100();
+        additionalContainer3.setBackgroundColor("#eaeaea");
+        additionalContainer3.setAlign(Alignment.CENTER);
+        
+        VStack mediaStack = new VStack();
+        mediaStack.setHeight(150);
+        mediaStack.setWidth100();
+        mediaStack.setLayoutMargin(12);
+        
+        mediaToolBar = new ToolStrip();
+        mediaToolBar.setHeight(26);
+        mediaToolBar.setWidth100();
+        mediaToolBar.addSpacer(6);
+        addMediaButton = new ToolStripButton();  
+        addMediaButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png");   
+        addMediaButton.setDisabled(true);
+        mediaToolBar.addButton(addMediaButton);
+        removeMediaButton = new ToolStripButton();
+        removeMediaButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+        removeMediaButton.setDisabled(true);
+        mediaToolBar.addButton(removeMediaButton);
+        Label mediaLabel = new Label();
+        mediaLabel.setContents("Category Media");
+        mediaLabel.setWrap(false);
+        mediaToolBar.addSpacer(6);
+        mediaToolBar.addMember(mediaLabel);
+
+        mediaStack.addMember(mediaToolBar);
+        mediaGrid = new ListGrid();
+        mediaGrid.setAutoFetchData(false);
+        mediaGrid.setShowHeader(true);
+        mediaGrid.setShowHeaderContextMenu(false);
+        mediaGrid.setPreventDuplicates(true);
+        mediaGrid.setHeight100();
+        mediaGrid.setDisabled(true);
+        mediaGrid.setCanSort(true);
+        mediaGrid.setCanEdit(true);
+        mediaGrid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
+        mediaGrid.setEditByCell(true);
+        mediaGrid.setAutoSaveEdits(true);
+        mediaGrid.setSaveByCell(true);
+        mediaGrid.setCellPadding(5);
+        mediaStack.addMember(mediaGrid);
+        
+        additionalContainer3.addMember(mediaStack);
+        
+        HStack additionalContainer2 = new HStack(10);
+        additionalContainer2.setHeight(180);
+        additionalContainer2.setWidth100();
+        additionalContainer2.setBackgroundColor("#eaeaea");
+        additionalContainer2.setAlign(Alignment.CENTER);
+        
+        VStack featuredPStack = new VStack();
+        featuredPStack.setHeight(150);
+        featuredPStack.setWidth100();
+        featuredPStack.setLayoutMargin(12);
+        
+        featuredProductToolBar = new ToolStrip();
+        featuredProductToolBar.setHeight(26);
+        featuredProductToolBar.setWidth100();
+        featuredProductToolBar.setMinWidth(300);
+        featuredProductToolBar.addSpacer(6);
+        addFeaturedProductButton = new ToolStripButton();  
+        addFeaturedProductButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png"); 
+        addFeaturedProductButton.setDisabled(true);
+        featuredProductToolBar.addButton(addFeaturedProductButton);
+        removeFeaturedProductButton = new ToolStripButton();
+        removeFeaturedProductButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
+        removeFeaturedProductButton.setDisabled(true);
+        featuredProductToolBar.addButton(removeFeaturedProductButton);
+        featuredProductToolBar.setDisabled(false);
+        Label featuredLabel = new Label();
+        featuredLabel.setContents("Featured Products");
+        featuredLabel.setWrap(false);
+        featuredProductToolBar.addSpacer(6);
+        featuredProductToolBar.addMember(featuredLabel);
+        featuredProductToolBar.addFill();
+        featuredPStack.addMember(featuredProductToolBar);
+        featuredProductGrid = new ListGrid();
+        featuredProductGrid.setAutoFetchData(false);
+        featuredProductGrid.setShowHeader(true);
+        featuredProductGrid.setShowHeaderContextMenu(false); 
+        featuredProductGrid.setPreventDuplicates(true);
+        featuredProductGrid.setCanReorderRecords(true);
+        featuredProductGrid.setHeight100();
+        featuredProductGrid.setDisabled(true);
+        featuredProductGrid.setCanSort(false);
+        featuredProductGrid.setCellPadding(5);
+        featuredProductGrid.setCanEdit(true);
+        featuredProductGrid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
+        featuredProductGrid.setEditByCell(true);
+        featuredProductGrid.setAutoSaveEdits(true);
+        featuredProductGrid.setSaveByCell(true);
+        featuredPStack.addMember(featuredProductGrid);
+        
+        additionalContainer2.addMember(featuredPStack);
         formlayout2.addMember(additionalContainer);
+        formlayout2.addMember(additionalContainer3);
+        formlayout2.addMember(additionalContainer2);
 	}
 
 	public Canvas asCanvas() {
@@ -208,20 +369,72 @@ public class CategoryView extends AbstractView implements Instantiable, Category
 		return entityType;
 	}
 
-	public ListGrid getAllParentCategoryGrid() {
-		return allParentCategoryGrid;
+	public ListGrid getAllChildCategoryGrid() {
+		return allChildCategoryGrid;
 	}
 
-	public ToolStrip getAllParentCategoryToolBar() {
-		return allParentCategoryToolBar;
+	public ToolStrip getAllChildCategoryToolBar() {
+		return allChildCategoryToolBar;
 	}
 
-	public ToolStripButton getAddParentCategoryButton() {
-		return addParentCategoryButton;
+	public ToolStripButton getAddChildCategoryButton() {
+		return addChildCategoryButton;
 	}
 
-	public ToolStripButton getRemoveParentCategoryButton() {
-		return removeParentCategoryButton;
+	public ToolStripButton getRemoveChildCategoryButton() {
+		return removeChildCategoryButton;
+	}
+
+	public ToolStripButton getRemoveOrphanedButton() {
+		return removeOrphanedButton;
+	}
+
+	public ListGrid getOrphanedCategoryGrid() {
+		return orphanedCategoryGrid;
+	}
+
+	public ToolStripButton getInsertOrphanButton() {
+		return insertOrphanButton;
+	}
+
+	public ToolStripButton getAddDefaultParentCategoryButton() {
+		return addDefaultParentCategoryButton;
+	}
+
+	public TextItem getDefaultParentCategoryTextItem() {
+		return defaultParentCategoryTextItem;
+	}
+
+	public ToolStrip getFeaturedProductToolBar() {
+		return featuredProductToolBar;
+	}
+
+	public ToolStripButton getAddFeaturedProductButton() {
+		return addFeaturedProductButton;
+	}
+
+	public ToolStripButton getRemoveFeaturedProductButton() {
+		return removeFeaturedProductButton;
+	}
+
+	public ListGrid getFeaturedProductGrid() {
+		return featuredProductGrid;
+	}
+
+	public ToolStrip getMediaToolBar() {
+		return mediaToolBar;
+	}
+
+	public ToolStripButton getAddMediaButton() {
+		return addMediaButton;
+	}
+
+	public ToolStripButton getRemoveMediaButton() {
+		return removeMediaButton;
+	}
+
+	public ListGrid getMediaGrid() {
+		return mediaGrid;
 	}
 	
 }

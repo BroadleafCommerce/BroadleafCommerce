@@ -74,7 +74,7 @@ public class SimpleCatalogController extends AbstractController {
             rootCategory = catalogService.findCategoryById(getRootCategoryId());
         }
         if (rootCategory == null) {
-            throw new IllegalStateException("Catalog Controller configured incorrectly - root category not found: " + rootCategoryId);
+            throw new IllegalStateException("Catalog Controller configured incorrectly - rootId category not found: " + rootCategoryId);
         }
 
         String categoryId = request.getParameter("categoryId");

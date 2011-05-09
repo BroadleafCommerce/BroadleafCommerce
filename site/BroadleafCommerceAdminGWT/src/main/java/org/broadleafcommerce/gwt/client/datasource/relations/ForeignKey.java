@@ -1,8 +1,8 @@
-package org.broadleafcommerce.gwt.client.datasource;
+package org.broadleafcommerce.gwt.client.datasource.relations;
 
 import java.io.Serializable;
 
-public class ForeignKey implements Serializable {
+public class ForeignKey implements Serializable, PersistencePerspectiveItem {
 
 	private static final long serialVersionUID = 1L;
 	

@@ -2,6 +2,7 @@ package org.broadleafcommerce.gwt.server.dao;
 
 import java.io.Serializable;
 
+import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.presentation.SupportedFieldType;
 
 
@@ -21,6 +22,7 @@ public class FieldMetadata implements Serializable {
 	private String complexIdProperty;
 	private String providedForeignKeyClass;
 	private Boolean collection;
+	private MergedPropertyType mergedPropertyType;
 	
 	private FieldPresentationAttributes presentationAttributes;
 	
@@ -134,6 +136,14 @@ public class FieldMetadata implements Serializable {
 
 	public void setCollection(Boolean collection) {
 		this.collection = collection;
+	}
+
+	public MergedPropertyType getMergedPropertyType() {
+		return mergedPropertyType;
+	}
+
+	public void setMergedPropertyType(MergedPropertyType mergedPropertyType) {
+		this.mergedPropertyType = mergedPropertyType;
 	}
 
 }

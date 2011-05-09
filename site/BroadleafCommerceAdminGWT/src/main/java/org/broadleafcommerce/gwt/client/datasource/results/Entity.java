@@ -1,6 +1,8 @@
 package org.broadleafcommerce.gwt.client.datasource.results;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class Entity implements Serializable {
 
@@ -25,4 +27,22 @@ public class Entity implements Serializable {
 		this.properties = properties;
 	}
 	
+	public Property findProperty(String name) {
+		Arrays.sort(properties, new Comparator<Property>() {
+			public int compare(Property o1, Property o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		Property searchProperty = new Property();
+		searchProperty.setName(name);
+		int index = Arrays.binarySearch(properties, searchProperty, new Comparator<Property>() {
+			public int compare(Property o1, Property o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		if (index >= 0) {
+			return properties[index];
+		}
+		return null;
+	}
 }

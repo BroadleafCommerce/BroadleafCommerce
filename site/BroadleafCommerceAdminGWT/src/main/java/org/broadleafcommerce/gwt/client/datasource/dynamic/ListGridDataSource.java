@@ -1,54 +1,33 @@
 package org.broadleafcommerce.gwt.client.datasource.dynamic;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.broadleafcommerce.gwt.client.datasource.ForeignKey;
-import org.broadleafcommerce.gwt.client.datasource.JoinTable;
-import org.broadleafcommerce.gwt.client.datasource.results.RemoveType;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
+import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
 
 import com.smartgwt.client.data.DataSourceField;
-import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 
-public class ListGridDataSource extends DynamicEntityDataSource {
-
-	protected ListGrid associatedGrid;
-	
-	/**
-	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param name
-	 * @param service
-	 * @param foreignFields
-	 * @param removeType
-	 * @param additionalNonPersistentProperties
-	 */
-	public ListGridDataSource(String ceilingEntityFullyQualifiedClassname, ForeignKey[] foreignFields, String name, DynamicEntityServiceAsync service, RemoveType removeType, String[] additionalNonPersistentProperties) {
-		super(ceilingEntityFullyQualifiedClassname, foreignFields, name, service, removeType, additionalNonPersistentProperties);
-	}
+public class ListGridDataSource extends PresentationLayerAssociatedDataSource {
 
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param joinTable
 	 * @param name
+	 * @param persistencePerspective
 	 * @param service
-	 * @param removeType
-	 * @param additionalNonPersistentProperties
+	 * @param modules
 	 */
-	public ListGridDataSource(String ceilingEntityFullyQualifiedClassname, JoinTable joinTable, String name, DynamicEntityServiceAsync service, RemoveType removeType, String[] additionalNonPersistentProperties) {
-		super(ceilingEntityFullyQualifiedClassname, joinTable, name, service, removeType, additionalNonPersistentProperties);
-	}
-
-	public ListGrid getAssociatedGrid() {
-		return associatedGrid;
-	}
-
-	public void setAssociatedGrid(ListGrid associatedGrid) {
-		this.associatedGrid = associatedGrid;
+	public ListGridDataSource(String ceilingEntityFullyQualifiedClassname, String name, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, DataSourceModule[] modules) {
+		super(ceilingEntityFullyQualifiedClassname, name, persistencePerspective, service, modules);
 	}
 	
-	public void setupFields() {
+	public void setupFields(String[] fieldNames, Boolean[] canEdit) {
+		if (fieldNames.length > 0) {
+			resetFieldVisibility(fieldNames);
+		}
 		DataSourceField[] fields = getFields();
 		ListGridField[] gridFields = new ListGridField[fields.length];
         int j = 0;
@@ -65,26 +44,39 @@ public class ListGridDataSource extends DynamicEntityDataSource {
         		gridFields[j].setFrozen(true);
         	}
         	gridFields[j].setHidden(false);
+        	gridFields[j].setWidth("*");
+        	int pos = Arrays.binarySearch(fieldNames, field.getName());
+        	if (pos >= 0) {
+        		gridFields[j].setCanEdit(canEdit[pos]);
+        	}
         	j++;
         	availableSlots--;
         }
-        if (availableSlots > 0) {
-	        for (DataSourceField field : fields) {
-	        	if (!prominentFields.contains(field)) {
-	        		gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
-	        		if (field.getAttributeAsBoolean("permanentlyHidden") || availableSlots <= 0) {
-		        		gridFields[j].setHidden(true);
-		        		gridFields[j].setCanHide(false);
-		        	} else {
-		        		if (j == 0) {
-			        		gridFields[j].setFrozen(true);
-			        	}
-		        		availableSlots--;
+        for (DataSourceField field : fields) {
+        	if (!prominentFields.contains(field)) {
+        		gridFields[j] = new ListGridField(field.getName(), field.getTitle(), j==0?200:150);
+        		if (field.getAttributeAsBoolean("permanentlyHidden")) {
+        			gridFields[j].setHidden(true);
+	        		gridFields[j].setCanHide(false);
+        		} else if (field.getAttributeAsBoolean("hidden")) {
+        			gridFields[j].setHidden(true);
+        		} else if (availableSlots <= 0) {
+	        		gridFields[j].setHidden(true);
+	        	} else {
+	        		if (j == 0) {
+		        		gridFields[j].setFrozen(true);
 		        	}
-	        		j++;
+	        		gridFields[j].setWidth("*");
+	        		int pos = Arrays.binarySearch(fieldNames, field.getName());
+	            	if (pos >= 0) {
+	            		gridFields[j].setCanEdit(canEdit[pos]);
+	            	}
+	        		availableSlots--;
 	        	}
-	        }
+        		j++;
+        	}
         }
         getAssociatedGrid().setFields(gridFields);
 	}
+	
 }

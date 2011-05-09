@@ -27,6 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Index;
 import org.hibernate.envers.Audited;
 
@@ -36,7 +37,9 @@ import org.hibernate.envers.Audited;
 @Audited
 public class FeaturedProductImpl implements FeaturedProduct {
 
-    /** The id. */
+	private static final long serialVersionUID = 1L;
+
+	/** The id. */
     @Id
     @GeneratedValue(generator = "FeaturedProductId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "FeaturedProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "FeaturedProductImpl", allocationSize = 50)
@@ -46,17 +49,18 @@ public class FeaturedProductImpl implements FeaturedProduct {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "CATEGORY_ID")
     @Index(name="PRODFEATURED_CATEGORY_INDEX", columnNames={"CATEGORY_ID"})
-    protected Category category;
+    protected Category category = new CategoryImpl();
 
     @ManyToOne(targetEntity = ProductImpl.class)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="PRODFEATURED_PRODUCT_INDEX", columnNames={"PRODUCT_ID"})
-    protected Product product;
+    protected Product product = new ProductImpl();
 
     @Column(name = "SEQUENCE")
     protected Long sequence;
 
     @Column(name = "PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName="Promotion Message", largeEntry=true)
     protected String promotionMessage;
 
     public Long getId() {

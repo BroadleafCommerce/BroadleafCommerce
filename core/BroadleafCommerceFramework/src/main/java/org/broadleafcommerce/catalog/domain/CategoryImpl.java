@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,8 +41,8 @@ import javax.persistence.Transient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cache.CacheFactoryException;
-import org.broadleafcommerce.cache.Hydrated;
-import org.broadleafcommerce.cache.HydratedCacheJPAListener;
+import org.broadleafcommerce.cache.HydratedCacheManager;
+import org.broadleafcommerce.cache.HydratedCacheManagerImpl;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.presentation.AdminPresentation;
@@ -75,7 +74,6 @@ import org.hibernate.envers.Audited;
  * @author btaylor
  */
 @Entity
-@EntityListeners(HydratedCacheJPAListener.class)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -139,6 +137,7 @@ public class CategoryImpl implements Category {
     /** The all child categories. */
     @ManyToMany(targetEntity = CategoryImpl.class)
     @JoinTable(name = "BLC_CATEGORY_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID"))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})  
     @OrderBy(clause = "DISPLAY_ORDER")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
@@ -152,6 +151,15 @@ public class CategoryImpl implements Category {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected List<Category> allParentCategories = new ArrayList<Category>();
+    
+    /** The all parent categories. */	
+    @ManyToMany(targetEntity = ProductImpl.class)
+    @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "CATEGORY_ID"), inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID", nullable = true))
+    @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
+    @OrderBy(clause = "DISPLAY_ORDER")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
+    protected List<Product> allProducts = new ArrayList<Product>();
 
     /** The category images. */
     @CollectionOfElements
@@ -181,7 +189,6 @@ public class CategoryImpl implements Category {
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
     
     @Transient
-    @Hydrated(factoryMethod="createChildCategoryURLMap")
     protected Map<String, List<Category>> childCategoryURLMap;
     
     @Transient
@@ -518,7 +525,15 @@ public class CategoryImpl implements Category {
      * @see
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
+    @SuppressWarnings("unchecked")
 	public Map<String, List<Category>> getChildCategoryURLMap() {
+    	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
+    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
+    	if (hydratedItem != null) {
+    		return (Map<String, List<Category>>) hydratedItem;
+    	}
+    	childCategoryURLMap = createChildCategoryURLMap();
+    	((HydratedCacheManager) manager).addHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
         return childCategoryURLMap;
     }
     
@@ -594,7 +609,18 @@ public class CategoryImpl implements Category {
     	}
     }
 
-    /*
+    public List<Product> getAllProducts() {
+		return allProducts;
+	}
+
+	public void setAllProducts(List<Product> allProducts) {
+		this.allProducts.clear();
+    	for(Product product : allProducts){
+    		this.allProducts.add(product);
+    	}
+	}
+
+	/*
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getCategoryMedia()
      */

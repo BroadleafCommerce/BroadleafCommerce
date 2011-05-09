@@ -10,5 +10,6 @@ public enum SupportedFieldType {
 	STRING,
 	EMAIL,
 	FOREIGN_KEY,
+	ADDITIONAL_FOREIGN_KEY,
 	MONEY;
 }

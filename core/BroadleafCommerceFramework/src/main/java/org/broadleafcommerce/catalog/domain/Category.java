@@ -299,4 +299,9 @@ public interface Category extends Serializable {
      * @param featuredProducts the featured products
      */
     void setFeaturedProducts(List<FeaturedProduct> featuredProducts);
+    
+    public List<Product> getAllProducts();
+
+	public void setAllProducts(List<Product> allProducts);
+	
 }
