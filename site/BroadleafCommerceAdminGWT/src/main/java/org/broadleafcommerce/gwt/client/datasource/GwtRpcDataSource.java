@@ -49,7 +49,8 @@ public abstract class GwtRpcDataSource
      * supported by SmartClient but should be added to smartGWT) and with data
      * format <code>DSDataFormat.CUSTOM</code>.
      */
-    public GwtRpcDataSource () {
+    public GwtRpcDataSource (String name) {
+    	super(name);
         setDataProtocol (DSProtocol.CLIENTCUSTOM);
         setDataFormat (DSDataFormat.CUSTOM);
         setClientOnly (false);

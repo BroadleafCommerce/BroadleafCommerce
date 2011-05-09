@@ -28,11 +28,13 @@ import javax.persistence.TableGenerator;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_MEDIA")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Audited
 public class MediaImpl implements Media {
 
     /** The Constant serialVersionUID. */

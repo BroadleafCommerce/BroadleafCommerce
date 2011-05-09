@@ -32,8 +32,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
-import net.sf.gilead.annotations.ServerOnly;
-
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -60,7 +58,6 @@ public class AdminUserImpl implements AdminUser {
     @Column(name = "LOGIN", nullable=false)
     protected String login;
 
-    @ServerOnly
     @Column(name = "PASSWORD", nullable=false)
     protected String password;
 

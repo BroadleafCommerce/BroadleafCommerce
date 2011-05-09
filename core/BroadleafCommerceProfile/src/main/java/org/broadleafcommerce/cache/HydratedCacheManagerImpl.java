@@ -68,13 +68,12 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     	return hydratedCacheContainer.containsKey(cacheName);
     }
     
-    @SuppressWarnings("unchecked")
 	public HydrationDescriptor getHydrationDescriptor(Object entity) {
     	if (hydrationDescriptors.containsKey(entity.getClass().getName())) {
     		return hydrationDescriptors.get(entity.getClass().getName());
     	}
     	HydrationDescriptor descriptor = new HydrationDescriptor();
-    	Class topEntityClass = getTopEntityClass(entity);
+    	Class<?> topEntityClass = getTopEntityClass(entity);
     	HydrationScanner scanner = new HydrationScanner(topEntityClass, entity.getClass());
     	scanner.init();
     	descriptor.setHydratedMutators(scanner.getCacheMutators());
@@ -93,10 +92,9 @@ public class HydratedCacheManagerImpl implements CacheEventListener, HydratedCac
     	return descriptor;
     }
     
-    @SuppressWarnings("unchecked")
-	public Class getTopEntityClass(Object entity) {
-    	Class myClass = entity.getClass();
-    	Class superClass = entity.getClass().getSuperclass();
+	public Class<?> getTopEntityClass(Object entity) {
+    	Class<?> myClass = entity.getClass();
+    	Class<?> superClass = entity.getClass().getSuperclass();
     	while (superClass != null && superClass.getName().startsWith("org.broadleaf")) {
     		myClass = superClass;
     		superClass = superClass.getSuperclass();

@@ -1,4 +1,3 @@
-<%@ tag trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ attribute name="numberOfStars" required="true" description="Integer from 0 to 5; How many stars to display." %>

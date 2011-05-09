@@ -145,7 +145,7 @@ public class HydrationScanner implements ClassVisitor, FieldVisitor, AnnotationV
 			//do nothing
 		}
 		if (getMethod == null || setMethod == null) {
-			throw new RuntimeException("Unable to find a getter and setter method for the Hydrated field: " + fieldName + ". Make sure you have a getter method entitled: get" + mutatorName + "(), or is" + mutatorName + "(), or " + fieldName + "(). Make sure you have a setter method entitled: set" + mutatorName + "(..).");
+			throw new RuntimeException("Unable to find a getter and setter method for the AdminPresentation field: " + fieldName + ". Make sure you have a getter method entitled: get" + mutatorName + "(), or is" + mutatorName + "(), or " + fieldName + "(). Make sure you have a setter method entitled: set" + mutatorName + "(..).");
 		}
 		return new Method[]{getMethod, setMethod};
 	}

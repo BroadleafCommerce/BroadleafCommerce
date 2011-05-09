@@ -17,7 +17,32 @@ public class Property implements Serializable {
 	private String inheritedFromType;
 	private String value;
 	private String availableToTypes;
+	private String foreignKeyClass;
+	private String foreignKeyProperty;
+	private Boolean isCollection;
+	private String friendlyName;
+	private Boolean hidden;
+	private Integer order;
+	private String group;
+	private Boolean largeEntry;
+	private Boolean prominent;
 	
+	public String getForeignKeyClass() {
+		return foreignKeyClass;
+	}
+
+	public void setForeignKeyClass(String foreignKeyClass) {
+		this.foreignKeyClass = foreignKeyClass;
+	}
+
+	public String getForeignKeyProperty() {
+		return foreignKeyProperty;
+	}
+
+	public void setForeignKeyProperty(String foreignKeyProperty) {
+		this.foreignKeyProperty = foreignKeyProperty;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -104,6 +129,62 @@ public class Property implements Serializable {
 
 	public void setAvailableToTypes(String availableToTypes) {
 		this.availableToTypes = availableToTypes;
+	}
+
+	public String getFriendlyName() {
+		return friendlyName;
+	}
+
+	public void setFriendlyName(String friendlyName) {
+		this.friendlyName = friendlyName;
+	}
+
+	public Boolean getHidden() {
+		return hidden;
+	}
+
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
+	}
+
+	public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
+	public Boolean getLargeEntry() {
+		return largeEntry;
+	}
+
+	public void setLargeEntry(Boolean largeEntry) {
+		this.largeEntry = largeEntry;
+	}
+
+	public Boolean getProminent() {
+		return prominent;
+	}
+
+	public void setProminent(Boolean prominent) {
+		this.prominent = prominent;
+	}
+
+	public Boolean getIsCollection() {
+		return isCollection;
+	}
+
+	public void setIsCollection(Boolean isCollection) {
+		this.isCollection = isCollection;
 	}
 
 }

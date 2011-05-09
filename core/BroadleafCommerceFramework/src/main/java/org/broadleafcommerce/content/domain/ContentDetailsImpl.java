@@ -17,18 +17,14 @@ package org.broadleafcommerce.content.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.catalog.domain.CategoryImpl;
-import org.hibernate.annotations.Index;
 
 /**
  * @author btaylor
@@ -37,19 +33,16 @@ import org.hibernate.annotations.Index;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CONTENT_DETAILS")
-public class ContentDetailsImpl implements ContentDetails {
+public class ContentDetailsImpl extends ContentImpl implements ContentDetails {
+	
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
+    
     /** The Constant serialVersionUID.  */
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @Column(name = "ID")
-	@OneToOne(targetEntity = ContentImpl.class, mappedBy="ID")
-	@JoinColumn(name = "ID", unique=true, nullable=false, updatable=false)
-	@Index(name = "CONTENT_DETAILS_INDEX", columnNames={"ID"})
-	protected Integer id;
+    
     @Column(name = "CONTENT_HASH")
     protected String contentHash;
+    
     @Lob
 	@Column(name = "XML_CONTENT")
 	protected String xmlContent;
@@ -59,21 +52,6 @@ public class ContentDetailsImpl implements ContentDetails {
 	public ContentDetailsImpl(ContentDetails cnt, Integer id) {
 		this.contentHash = cnt.getContentHash();
 		this.xmlContent = cnt.getXmlContent();
-		this.id = id;
-	}
-
-
-	/**
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Integer id) {
 		this.id = id;
 	}
 

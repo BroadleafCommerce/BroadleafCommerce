@@ -59,7 +59,7 @@ import org.springframework.stereotype.Service;
 @Service("blOfferService")
 public class OfferServiceImpl implements OfferService {
 
-    private static final LRUMap EXPRESSION_CACHE = new LRUMap(100);
+    private static final LRUMap EXPRESSION_CACHE = new LRUMap(1000);
     //    private static final StringBuffer functions = new StringBuffer();
 
     // should be called outside of Offer service after Offer service is executed

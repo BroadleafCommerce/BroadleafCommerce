@@ -2,7 +2,7 @@ package org.broadleafcommerce.gwt.server.dao;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.gwt.client.datasource.results.SupportedFieldType;
+import org.broadleafcommerce.presentation.SupportedFieldType;
 
 
 public class FieldMetadata implements Serializable {
@@ -18,8 +18,11 @@ public class FieldMetadata implements Serializable {
 	private Boolean mutable;
 	private String inheritedFromType;
 	private String availableToTypes;
-	private String complexType;
 	private String complexIdProperty;
+	private String providedForeignKeyClass;
+	private Boolean collection;
+	
+	private FieldPresentationAttributes presentationAttributes;
 	
 	public SupportedFieldType getFieldType() {
 		return fieldType;
@@ -85,13 +88,13 @@ public class FieldMetadata implements Serializable {
 		this.availableToTypes = directType;
 	}
 
-	public String getComplexType() {
+	/*public String getComplexType() {
 		return complexType;
 	}
 
 	public void setComplexType(String complexType) {
 		this.complexType = complexType;
-	}
+	}*/
 
 	public String getComplexIdProperty() {
 		return complexIdProperty;
@@ -107,6 +110,30 @@ public class FieldMetadata implements Serializable {
 
 	public void setInheritedFromType(String inheritedFromType) {
 		this.inheritedFromType = inheritedFromType;
+	}
+
+	public String getProvidedForeignKeyClass() {
+		return providedForeignKeyClass;
+	}
+
+	public void setProvidedForeignKeyClass(String providedForeignKeyClass) {
+		this.providedForeignKeyClass = providedForeignKeyClass;
+	}
+
+	public FieldPresentationAttributes getPresentationAttributes() {
+		return presentationAttributes;
+	}
+
+	public void setPresentationAttributes(FieldPresentationAttributes presentationAttributes) {
+		this.presentationAttributes = presentationAttributes;
+	}
+
+	public Boolean getCollection() {
+		return collection;
+	}
+
+	public void setCollection(Boolean collection) {
+		this.collection = collection;
 	}
 
 }

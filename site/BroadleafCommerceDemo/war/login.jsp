@@ -32,7 +32,7 @@
    </head>
    <body onload="centerObj()">
    		<form action="j_spring_security_check" method="post">
-   		<div style="position:absolute; left: 0px; top: 0px; width: 450px; height: 170px; background-image: url(resources/images/admin_login.jpg)" id="login">
+   		<div style="position:absolute; left: 0px; top: 0px; width: 450px; height: 170px; background-image: url(org.broadleafcommerce.gwt.admin/admin/images/admin_login.jpg)" id="login">
  			<div style="position: relative; left: 200px; top: 40px">
  					<c:if test="${not empty param.login_error}">
     					<p style="font-family:'Arial', Arial, sans-serif; font-style: normal; font-size: 12px; color: red"><c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/></p>

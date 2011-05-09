@@ -51,6 +51,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.envers.Audited;
 
 /**
  * The Class SkuImpl is the default implementation of {@link Sku}. A SKU is a
@@ -73,6 +74,7 @@ import org.hibernate.annotations.MapKey;
 @Table(name = "BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Searchable
+@Audited
 public class SkuImpl implements Sku {
 
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);
@@ -139,6 +141,7 @@ public class SkuImpl implements Sku {
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Deprecated
     protected Map<String, String> skuImages = new HashMap<String, String>();
 
     /** The sku media. */
@@ -424,6 +427,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#getSkuImages()
      */
+    @Deprecated
     public Map<String, String> getSkuImages() {
         return skuImages;
     }
@@ -433,6 +437,7 @@ public class SkuImpl implements Sku {
      * @see
      * org.broadleafcommerce.catalog.domain.Sku#getSkuImage(java.lang.String)
      */
+    @Deprecated
     public String getSkuImage(String imageKey) {
         return skuImages.get(imageKey);
     }
@@ -441,6 +446,7 @@ public class SkuImpl implements Sku {
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Sku#setSkuImages(java.util.Map)
      */
+    @Deprecated
     public void setSkuImages(Map<String, String> skuImages) {
         this.skuImages = skuImages;
     }

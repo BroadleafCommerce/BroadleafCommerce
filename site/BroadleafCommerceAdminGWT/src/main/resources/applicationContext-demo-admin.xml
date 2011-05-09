@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/jee
+		http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+	
+	<!--bean id="persistenceUtil" class="net.sf.gilead.core.hibernate.jpa.HibernateJpaUtil">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="proxyStore" class="net.sf.gilead.core.store.stateful.HttpSessionProxyStore">
+		<property name="persistenceUtil" ref="persistenceUtil" />
+	</bean>
+
+	<bean id="persistentBeanManager" class="net.sf.gilead.core.PersistentBeanManager">
+		<property name="proxyStore" ref="proxyStore" />
+		<property name="persistenceUtil" ref="persistenceUtil" />
+	</bean-->
+	
+	<aop:config>
+		<aop:pointcut id="blRemoteServiceOperation" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.inspect(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blRemoteServiceOperation2" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.fetch(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation2"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blRemoteServiceOperation3" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.add(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation3"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blRemoteServiceOperation4" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.update(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation4"/>
+	</aop:config>
+	
+	<aop:config>
+		<aop:pointcut id="blRemoteServiceOperation5" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.remove(..))"/>
+	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation5"/>
+	</aop:config>
+	
+	<bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
+	<bean id="persistenceUnitInfo" factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
+
+</beans>

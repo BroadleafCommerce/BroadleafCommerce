@@ -53,8 +53,9 @@
 				<artifactId>maven-jetty-plugin</artifactId>
 				<version>6.1.22</version>
 				<configuration>
+					<webAppSourceDirectory>war</webAppSourceDirectory>
 					<contextPath>/broadleafdemo</contextPath>
-					<scanIntervalSeconds>0</scanIntervalSeconds>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<stopPort>9966</stopPort>
           			<stopKey>foo</stopKey>
 					<connectors>
@@ -84,16 +85,6 @@
 		</plugins>
 	</build>
 	<dependencies>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-framework-web</artifactId>
-			<exclusions>
-				<exclusion>
-					<groupId>cobertura</groupId>
-					<artifactId>cobertura</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-usps</artifactId>
@@ -176,5 +167,17 @@
 			<groupId>javax.annotation</groupId>
 			<artifactId>jsr250-api</artifactId>
 		</dependency>
+		<dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>2.0.3</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+            <version>2.0.3</version>
+            <scope>provided</scope>
+        </dependency>
 	</dependencies>
 </project>

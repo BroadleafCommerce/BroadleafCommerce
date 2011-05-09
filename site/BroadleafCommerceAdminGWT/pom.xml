@@ -76,6 +76,10 @@
 			<artifactId>gwt-user</artifactId>
 		</dependency>
 		<dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-dev</artifactId>
+        </dependency>
+		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
@@ -117,6 +121,10 @@
 		<dependency>
 			<groupId>org.gwtwidgets</groupId>
 			<artifactId>gwt-sl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.transmorph</groupId>
+			<artifactId>transmorph</artifactId>
 		</dependency>
 	</dependencies>
 </project>

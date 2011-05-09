@@ -60,6 +60,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
+import org.hibernate.envers.Audited;
 
 /**
  * The Class ProductImpl is the default implementation of {@link Product}. A
@@ -83,6 +84,7 @@ import org.hibernate.annotations.MapKey;
 @Table(name = "BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
+@Audited
 public class ProductImpl implements Product {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);
@@ -160,6 +162,7 @@ public class ProductImpl implements Product {
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Deprecated
     protected Map<String, String> productImages = new HashMap<String, String>();
 
     /** The product media. */
@@ -355,6 +358,7 @@ public class ProductImpl implements Product {
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Product#getProductImages()
      */
+    @Deprecated
     public Map<String, String> getProductImages() {
         return productImages;
     }
@@ -365,6 +369,7 @@ public class ProductImpl implements Product {
      * org.broadleafcommerce.catalog.domain.Product#getProductImage(java.lang
      * .String)
      */
+    @Deprecated
     public String getProductImage(String imageKey) {
         return productImages.get(imageKey);
     }
@@ -375,6 +380,7 @@ public class ProductImpl implements Product {
      * org.broadleafcommerce.catalog.domain.Product#setProductImages(java.util
      * .Map)
      */
+    @Deprecated
     public void setProductImages(Map<String, String> productImages) {
         this.productImages.clear();
 //        for(String key : productImages.keySet()){

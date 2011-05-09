@@ -43,15 +43,17 @@
 								<property name="usps" location="../module/BroadleafCommerceUSPS" />
 								<property name="cybersource" location="../module/BroadleafCommerceCyberSource" />
 								<path id="test.path">
-									<pathelement location="${framework}/target/instrumented" />
-									<pathelement location="${frameworkWeb}/target/instrumented" />
 									<pathelement location="${profile}/target/instrumented" />
 									<pathelement location="${profileWeb}/target/instrumented" />
+									<pathelement location="${framework}/target/instrumented" />
+									<pathelement location="${frameworkWeb}/target/instrumented" />
 									<pathelement location="${usps}/target/instrumented" />
 									<pathelement location="${cybersource}/target/instrumented" />
 									<path refid="maven.test.classpath" />
 									<pathelement location="../../BroadleafCommerceConfig/src" />
 								</path>
+								<property name="myproperty" refid="test.path"/>
+								<echo message="${myproperty}"/>
 								<taskdef resource="testngtasks" classpath="testng.jar" classpathref="test.path" />
 								<taskdef classpathref="test.path" resource="tasks.properties" />
 								<copy file="${framework}/target/instrumented/cobertura.ser" tofile="target/instrumented/cobertura.ser" />
@@ -195,19 +197,19 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-framework-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-framework</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-profile</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-profile-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-framework-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-framework</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
