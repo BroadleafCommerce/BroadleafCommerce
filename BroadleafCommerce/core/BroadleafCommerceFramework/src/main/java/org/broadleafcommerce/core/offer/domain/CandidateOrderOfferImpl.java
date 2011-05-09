@@ -89,7 +89,7 @@ public class CandidateOrderOfferImpl extends CandidateQualifiedOfferImpl impleme
         discountedPrice = null;  // price needs to be recalculated
     }
 
-    /*public Money getDiscountedPrice() {
+    public Money getDiscountedPrice() {
         if (discountedPrice == null) {
             computeDiscountedPriceAndAmount();
         }
@@ -101,7 +101,7 @@ public class CandidateOrderOfferImpl extends CandidateQualifiedOfferImpl impleme
             computeDiscountedPriceAndAmount();
         }
         return discountAmount == null ? null : new Money(discountAmount);
-    }*/
+    }
 
     public Order getOrder() {
         return order;
@@ -112,17 +112,17 @@ public class CandidateOrderOfferImpl extends CandidateQualifiedOfferImpl impleme
         discountedPrice = null;  // price needs to be recalculated
     }
 
-	/*protected void computeDiscountedPriceAndAmount() {
+	protected void computeDiscountedPriceAndAmount() {
         if (offer != null && order != null){
             if (order.getSubTotal() != null) {
                 Money priceToUse = order.getSubTotal();
                 Money discountAmount = new Money(0);
                 if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                    discountAmount = offer.getValue();
+                    discountAmount = new Money(offer.getValue());
                 } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                    discountAmount = priceToUse.subtract(offer.getValue());
+                    discountAmount = priceToUse.subtract(new Money(offer.getValue()));
                 } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                    discountAmount = priceToUse.multiply(offer.getValue().getAmount().divide(new BigDecimal("100")));
+                    discountAmount = priceToUse.multiply(offer.getValue().divide(new BigDecimal("100")));
                 }
                 if (discountAmount.greaterThan(priceToUse)) {
                     discountAmount = priceToUse;
@@ -132,7 +132,7 @@ public class CandidateOrderOfferImpl extends CandidateQualifiedOfferImpl impleme
                 this.discountAmount = discountAmount.getAmount();
             }
         }
-    }*/
+    }
 
     @Override
     public int hashCode() {

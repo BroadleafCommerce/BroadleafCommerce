@@ -8,20 +8,16 @@ public interface OfferItemCriteria extends Serializable {
 
 	public void setId(Long id);
 
-	public Integer getReceiveQuantity();
+	public Integer getQuantity();
 
-	public void setReceiveQuantity(Integer receiveQuantity);
-
-	public Integer getRequiresQuantity();
-
-	public void setRequiresQuantity(Integer requiresQuantity);
+	public void setQuantity(Integer quantity);
 
 	public String getOrderItemMatchRule();
 
 	public void setOrderItemMatchRule(String orderItemMatchRule);
 
-	public OfferImpl getOffer();
+	public Offer getOffer();
 
-	public void setOffer(OfferImpl offer);
+	public void setOffer(Offer offer);
 	
 }

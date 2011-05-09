@@ -18,7 +18,9 @@ package org.broadleafcommerce.core.offer.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,8 +33,9 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -68,7 +71,7 @@ public class OfferImpl implements Offer {
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
-    @AdminPresentation(friendlyName="Offer Description", order=2, group="Description", largeEntry=true, prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName="Offer Description", securityLevel="PERMISSION_EDIT_OFFER_DESCRIPTION", order=2, group="Description", largeEntry=true, prominent=true, groupOrder=1)
     protected String description;
 
     @Column(name = "OFFER_TYPE", nullable=false)
@@ -109,19 +112,12 @@ public class OfferImpl implements Offer {
     @AdminPresentation(friendlyName="Apply To Sale Price", group="Application", groupOrder=4)
     protected boolean applyToSalePrice;
 
-    @Lob
     @Column(name = "APPLIES_TO_RULES")
-    @AdminPresentation(friendlyName="Offer Order Rules", group="Application", largeEntry=true, groupOrder=4)
+    @Deprecated
     protected String appliesToOrderRules;
-    
-    @Lob
-    @Column(name = "APPLIES_TO_FG_RULES")
-    @AdminPresentation(friendlyName="Offer Fulfillment Group Rules", group="Application", largeEntry=true, groupOrder=4)
-    protected String appliesToFulfillmentGroupRules;
 
-    @Lob
     @Column(name = "APPLIES_WHEN_RULES")
-    @AdminPresentation(friendlyName="Offer Customer Rules", group="Application", largeEntry=true, groupOrder=4)
+    @Deprecated
     protected String appliesToCustomerRules;
 
     @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
@@ -167,6 +163,16 @@ public class OfferImpl implements Offer {
     @Column(name = "TOTALITARIAN_OFFER")
     @AdminPresentation(friendlyName="Totalitarian Offer", group="Application", groupOrder=4, hidden=true)
     protected Boolean totalitarianOffer;
+    
+    @ManyToMany(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
+    @JoinTable(name = "BLC_OFFER_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "OFFER_RULE_ID", referencedColumnName = "OFFER_RULE_ID"))
+    @MapKeyColumn(name = "MAP_KEY", nullable = false)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
+    
+    @Column(name = "USE_NEW_FORMAT")
+    @AdminPresentation(friendlyName="Treat As New Format", group="Application", groupOrder=4)
+    protected Boolean treatAsNewFormat;
 
     public Long getId() {
         return id;
@@ -295,29 +301,25 @@ public class OfferImpl implements Offer {
         this.applyToSalePrice=applyToSalePrice;
     }
 
+    @Deprecated
     public String getAppliesToOrderRules() {
         return appliesToOrderRules;
     }
 
+    @Deprecated
     public void setAppliesToOrderRules(String appliesToOrderRules) {
         this.appliesToOrderRules = appliesToOrderRules;
     }
 
+    @Deprecated
     public String getAppliesToCustomerRules() {
         return appliesToCustomerRules;
     }
 
+    @Deprecated
     public void setAppliesToCustomerRules(String appliesToCustomerRules) {
         this.appliesToCustomerRules = appliesToCustomerRules;
     }
-
-    public String getAppliesToFulfillmentGroupRules() {
-		return appliesToFulfillmentGroupRules;
-	}
-
-	public void setAppliesToFulfillmentGroupRules(String appliesToFulfillmentGroupRules) {
-		this.appliesToFulfillmentGroupRules = appliesToFulfillmentGroupRules;
-	}
 
 	@Deprecated
     public boolean isApplyDiscountToMarkedItems() {
@@ -404,12 +406,29 @@ public class OfferImpl implements Offer {
 		this.totalitarianOffer = totalitarianOffer;
 	}
 
+	public Map<String, OfferRule> getOfferMatchRules() {
+		if (offerMatchRules == null) {
+			offerMatchRules = new HashMap<String, OfferRule>();
+		}
+		return offerMatchRules;
+	}
+
+	public void setOfferMatchRules(Map<String, OfferRule> offerMatchRules) {
+		this.offerMatchRules = offerMatchRules;
+	}
+
+	public Boolean getTreatAsNewFormat() {
+		return treatAsNewFormat;
+	}
+
+	public void setTreatAsNewFormat(Boolean treatAsNewFormat) {
+		this.treatAsNewFormat = treatAsNewFormat;
+	}
+
 	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((appliesToCustomerRules == null) ? 0 : appliesToCustomerRules.hashCode());
-        result = prime * result + ((appliesToOrderRules == null) ? 0 : appliesToOrderRules.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -430,17 +449,7 @@ public class OfferImpl implements Offer {
         if (id != null && other.id != null) {
             return id.equals(other.id);
         }
-
-        if (appliesToCustomerRules == null) {
-            if (other.appliesToCustomerRules != null)
-                return false;
-        } else if (!appliesToCustomerRules.equals(other.appliesToCustomerRules))
-            return false;
-        if (appliesToOrderRules == null) {
-            if (other.appliesToOrderRules != null)
-                return false;
-        } else if (!appliesToOrderRules.equals(other.appliesToOrderRules))
-            return false;
+        
         if (name == null) {
             if (other.name != null)
                 return false;

@@ -14,6 +14,8 @@ import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
+import org.broadleafcommerce.core.offer.domain.OfferRule;
+import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.gwt.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -29,6 +31,7 @@ import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.gwt.server.service.module.InspectHelper;
 import org.broadleafcommerce.gwt.server.service.module.RecordHelper;
+import org.hibernate.tool.hbm2x.StringUtils;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
@@ -68,6 +71,10 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
 			Map<String, FieldMetadata> mergedProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
 			allMergedProperties.put(MergedPropertyType.PRIMARY, mergedProperties);
+			/*
+			 * Add a fake property to hold the fulfillment group rules. This property is the same type as appliesToOrderRules
+			 */
+			mergedProperties.put("appliesToFulfillmentGroupRules", mergedProperties.get("appliesToOrderRules"));
 			
 			PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
 			Class<?>[] offerCodeEntityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(OfferCode.class);
@@ -98,6 +105,26 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			PersistentEntityCriteria queryCriteria = ctoConverter.convert(cto, Offer.class.getName());
 			List<Serializable> records = dynamicEntityDao.query(queryCriteria, Offer.class);
 			Entity[] entities = helper.getRecords(offerProperties, records, null, null);
+			
+			//populate the rules from the new map associated with Offer
+			for (int j=0;j<entities.length;j++) {
+				Offer offer = (Offer) records.get(j);
+				OfferRule orderRule = offer.getOfferMatchRules().get(OfferRuleType.ORDER.getType());
+				if (orderRule != null) {
+					entities[j].findProperty("appliesToOrderRules").setValue(orderRule.getMatchRule());
+				}
+				OfferRule customerRule = offer.getOfferMatchRules().get(OfferRuleType.CUSTOMER.getType());
+				if (customerRule != null) {
+					entities[j].findProperty("appliesToCustomerRules").setValue(customerRule.getMatchRule());
+				}
+				OfferRule fgRule = offer.getOfferMatchRules().get(OfferRuleType.FULFILLMENT_GROUP.getType());
+				if (fgRule != null) {
+					Property prop = new Property();
+					prop.setName("appliesToFulfillmentGroupRules");
+					prop.setValue(fgRule.getMatchRule());
+					entities[j].addProperty(prop);
+				}
+			}
 			
 			PersistencePerspective offerCodePersistencePerspective = new PersistencePerspective(null, new String[]{}, new ForeignKey[]{new ForeignKey("offer", EntityImplementations.OFFER, null)});
 			Class<?>[] offerCodeEntityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(OfferCode.class);
@@ -137,6 +164,11 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(Offer.class);
 			Map<String, FieldMetadata> offerProperties = helper.getSimpleMergedProperties(Offer.class.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
 			offerInstance = (Offer) helper.createPopulatedInstance(offerInstance, entity, offerProperties, false);
+			
+			addRule(entity, offerInstance, "appliesToOrderRules", OfferRuleType.ORDER);
+			addRule(entity, offerInstance, "appliesToCustomerRules", OfferRuleType.CUSTOMER);
+			addRule(entity, offerInstance, "appliesToFulfillmentGroupRules", OfferRuleType.FULFILLMENT_GROUP);
+			
 			dynamicEntityDao.persist(offerInstance);
 			
 			OfferCode offerCode = null;
@@ -198,6 +230,11 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			Object primaryKey = helper.getPrimaryKey(entity, offerProperties);
 			Offer offerInstance = (Offer) dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), primaryKey);
 			offerInstance = (Offer) helper.createPopulatedInstance(offerInstance, entity, offerProperties, false);
+			
+			updateRule(entity, offerInstance, "appliesToOrderRules", OfferRuleType.ORDER);
+			updateRule(entity, offerInstance, "appliesToCustomerRules", OfferRuleType.CUSTOMER);
+			updateRule(entity, offerInstance, "appliesToFulfillmentGroupRules", OfferRuleType.FULFILLMENT_GROUP);
+			
 			dynamicEntityDao.merge(offerInstance);
 			
 			Property offerCodeId = entity.findProperty("offerCode.id");
@@ -238,6 +275,29 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 		} catch (Exception e) {
 			LOG.error("Unable to update entity for " + entity.getType()[0], e);
 			throw new ServiceException("Unable to update entity for " + entity.getType()[0], e);
+		}
+	}
+	
+	protected void addRule(Entity entity, Offer offerInstance, String propertyName, OfferRuleType type) {
+		Property ruleProperty = entity.findProperty(propertyName);
+		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+			OfferRule rule = (OfferRule) entityConfiguration.createEntityInstance(OfferRule.class.getName());
+			rule.setMatchRule(ruleProperty.getValue());
+			offerInstance.getOfferMatchRules().put(type.getType(), rule);
+		}
+	}
+
+	protected void updateRule(Entity entity, Offer offerInstance, String propertyName, OfferRuleType type) {
+		Property ruleProperty = entity.findProperty(propertyName);
+		if (ruleProperty != null && !StringUtils.isEmpty(ruleProperty.getValue())) {
+			OfferRule rule = offerInstance.getOfferMatchRules().get(type.getType());
+			if (rule == null) {
+				rule = (OfferRule) entityConfiguration.createEntityInstance(OfferRule.class.getName());
+			}
+			rule.setMatchRule(ruleProperty.getValue());
+			offerInstance.getOfferMatchRules().put(type.getType(), rule);
+		} else {
+			offerInstance.getOfferMatchRules().remove(type.getType());
 		}
 	}
 

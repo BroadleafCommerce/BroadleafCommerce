@@ -44,7 +44,7 @@
                 		</bean>
                 	</key>
                     <bean class="org.hibernate.jmx.StatisticsService">
-                        <property name="statisticsEnabled" value="true" />
+                        <property name="statisticsEnabled" value="false" />
                         <property name="sessionFactory">
                             <util:property-path
                                 path="entityManagerFactory.sessionFactory" />

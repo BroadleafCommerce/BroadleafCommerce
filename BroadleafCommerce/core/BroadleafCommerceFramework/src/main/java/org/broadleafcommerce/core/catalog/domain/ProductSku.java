@@ -7,7 +7,7 @@ package org.broadleafcommerce.core.catalog.domain;
  * @author jfischer
  *
  */
-public interface ProductSku {
+public interface ProductSku extends Product {
 
 	/**
 	 * Retrieve the sku

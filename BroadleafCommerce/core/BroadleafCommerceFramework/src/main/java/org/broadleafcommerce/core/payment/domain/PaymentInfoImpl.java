@@ -90,7 +90,7 @@ public class PaymentInfoImpl implements PaymentInfo {
 
     @Column(name = "PAYMENT_TYPE", nullable = false)
     @Index(name="ORDERPAYMENT_TYPE_INDEX", columnNames={"PAYMENT_TYPE"})
-    @AdminPresentation(friendlyName="Payment Type", order=2, group="Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.profile.payment.service.type.PaymentInfoType")
+    @AdminPresentation(friendlyName="Payment Type", order=2, group="Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.payment.service.type.PaymentInfoType")
     protected String type;
     
     @OneToMany(mappedBy = "paymentInfo", targetEntity = AmountItemImpl.class, cascade = {CascadeType.ALL})

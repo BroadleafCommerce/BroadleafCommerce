@@ -15,16 +15,25 @@
  */
 package org.broadleafcommerce.gwt.server.security.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -40,14 +49,23 @@ public class AdminPermissionImpl implements AdminPermission {
     @GeneratedValue(generator = "AdminPermissionId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminPermissionId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminPermissionImpl", allocationSize = 50)
     @Column(name = "ADMIN_PERMISSION_ID")
+    @AdminPresentation(friendlyName="Admin Permission ID", group="Primary Key", hidden=true)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINPERM_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName="Name", order=1, group="Permission", prominent=true)
     protected String name;
 
     @Column(name = "DESCRIPTION", nullable=false)
+    @AdminPresentation(friendlyName="Description", order=2, group="Permission", prominent=true)
     protected String description;
+    
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
+    @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @BatchSize(size = 50)
+    protected Set<AdminRole> allRoles= new HashSet<AdminRole>();
 
     public Long getId() {
         return id;
@@ -73,5 +91,12 @@ public class AdminPermissionImpl implements AdminPermission {
         this.description = description;
     }
 
+	public Set<AdminRole> getAllRoles() {
+		return allRoles;
+	}
+
+	public void setAllRoles(Set<AdminRole> allRoles) {
+		this.allRoles = allRoles;
+	}
 
 }

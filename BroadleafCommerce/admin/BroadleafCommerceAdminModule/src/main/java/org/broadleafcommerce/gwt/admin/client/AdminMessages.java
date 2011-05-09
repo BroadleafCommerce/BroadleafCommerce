@@ -129,5 +129,10 @@ public interface AdminMessages extends Messages {
 	public String fgSectionViewTitle();
 	public String adminModuleTitle();
 	public String mvelTranslationProblem();
+	public String userManagementMainTitle();
+	public String userListTitle();
+	public String userDetailsTitle();
+	public String userRolesTitle();
+	public String newAdminUserTitle();
 	
 }

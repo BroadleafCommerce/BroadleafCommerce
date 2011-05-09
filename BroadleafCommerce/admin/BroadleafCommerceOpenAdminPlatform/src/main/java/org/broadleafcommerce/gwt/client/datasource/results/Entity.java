@@ -63,4 +63,14 @@ public class Entity implements Serializable {
 		}
 		return null;
 	}
+	
+	public void addProperty(Property property) {
+		Property[] allProps = getProperties();
+		Property[] newProps = new Property[allProps.length + 1];
+		for (int j=0;j<allProps.length;j++) {
+			newProps[j] = allProps[j];
+		}
+		newProps[newProps.length - 1] = property;
+		setProperties(newProps);
+	}
 }

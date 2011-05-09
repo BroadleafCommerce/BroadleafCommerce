@@ -5,24 +5,35 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.core.offer.dao.OfferDao;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateQualifiedOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
-import org.broadleafcommerce.core.offer.domain.OfferItemCriteria;
-import org.broadleafcommerce.core.offer.service.candidate.CandidatePromotionItems;
-import org.broadleafcommerce.core.offer.service.candidate.OrderItemPriceComparator;
+import org.broadleafcommerce.core.offer.domain.OfferRule;
+import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
+import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
+import org.broadleafcommerce.core.offer.service.discount.ItemOfferComparator;
+import org.broadleafcommerce.core.offer.service.discount.OrderItemPriceComparator;
+import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.offer.service.type.OfferType;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.springframework.stereotype.Service;
 
 @Service("blOrderOfferProcessor")
-public class OrderOfferProcessorImpl extends BaseProcessor implements OrderOfferProcessor {
+public class OrderOfferProcessorImpl extends AbstractBaseProcessor implements OrderOfferProcessor {
+	
+	private static final Log LOG = LogFactory.getLog(OrderOfferProcessorImpl.class);
 
 	@Resource(name="blOfferDao")
     protected OfferDao offerDao;
@@ -31,6 +42,10 @@ public class OrderOfferProcessorImpl extends BaseProcessor implements OrderOffer
 	 * @see org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor#filterOrderLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
 	 */
 	public void filterOrderLevelOffer(Order order, List<CandidateOrderOffer> qualifiedOrderOffers, List<OrderItem> discreteOrderItems, Offer offer) {
+		if (offer.getDiscountType().getType().equals(OfferDiscountType.FIX_PRICE.getType())) {
+			LOG.warn("Offers of type ORDER may not have a discount type of FIX_PRICE. Ignoring order offer (name="+offer.getName()+")");
+			return;
+		}
 		boolean orderLevelQualification = false;
 		//Order Qualification
 		orderQualification: {
@@ -54,9 +69,9 @@ public class OrderOfferProcessorImpl extends BaseProcessor implements OrderOffer
 		//Item Qualification - new for 1.5!
 		if (orderLevelQualification) {
 			CandidatePromotionItems candidates = couldOfferApplyToOrderItems(offer, discreteOrderItems);
-			if (candidates.isMatchedCandidate()) {
+			if (candidates.isMatchedQualifier()) {
 				CandidateQualifiedOffer candidateOffer = createCandidateOrderOffer(order, qualifiedOrderOffers, offer);
-				candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateItemsMap());
+				candidateOffer.getCandidateQualifiersMap().putAll(candidates.getCandidateQualifiersMap());
 			}
 		}
 	}
@@ -69,7 +84,7 @@ public class OrderOfferProcessorImpl extends BaseProcessor implements OrderOffer
      * @param order
      * @return true if offer can be applied, otherwise false
      */
-    protected boolean couldOfferApplyToOrder(Offer offer, Order order) {
+    public boolean couldOfferApplyToOrder(Offer offer, Order order) {
         return couldOfferApplyToOrder(offer, order, null, null);
     }
 
@@ -111,11 +126,19 @@ public class OrderOfferProcessorImpl extends BaseProcessor implements OrderOffer
      */
     protected boolean couldOfferApplyToOrder(Offer offer, Order order, OrderItem discreteOrderItem, FulfillmentGroup fulfillmentGroup) {
         boolean appliesToItem = false;
-
+        String rule = null;
         if (offer.getAppliesToOrderRules() != null && offer.getAppliesToOrderRules().trim().length() != 0) {
+        	rule = offer.getAppliesToOrderRules();
+        } else {
+        	OfferRule orderRule = offer.getOfferMatchRules().get(OfferRuleType.ORDER.getType());
+        	if (orderRule != null) {
+        		rule = orderRule.getMatchRule();
+        	}
+        }
+
+        if (rule != null) {
 
             HashMap<String, Object> vars = new HashMap<String, Object>();
-            //vars.put("doMark", Boolean.FALSE); // We never want to mark offers when we are checking if they could apply.
             vars.put("order", order);
             vars.put("offer", offer);
             if (fulfillmentGroup != null) {
@@ -124,7 +147,7 @@ public class OrderOfferProcessorImpl extends BaseProcessor implements OrderOffer
             if (discreteOrderItem != null) {
                 vars.put("discreteOrderItem", discreteOrderItem);
             }
-            Boolean expressionOutcome = executeExpression(offer.getAppliesToOrderRules(), vars);
+            Boolean expressionOutcome = executeExpression(rule, vars);
             if (expressionOutcome != null && expressionOutcome) {
                 appliesToItem = true;
             }
@@ -144,103 +167,155 @@ public class OrderOfferProcessorImpl extends BaseProcessor implements OrderOffer
 		qualifiedOrderOffers.add(candidateOffer);
 		
 		return candidateOffer;
-	}
+    }
+    
+    public List<CandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<CandidateOrderOffer> candidateOffers) {
+        List<CandidateOrderOffer> remainingCandidateOffers = new ArrayList<CandidateOrderOffer>();
+        int offerCount = 0;
+        for (CandidateOrderOffer candidateOffer : candidateOffers) {
+            if (offerCount == 0) {
+                remainingCandidateOffers.add(candidateOffer);
+            } else {
+                if (candidateOffer.getOffer().isCombinableWithOtherOffers()) {
+                    remainingCandidateOffers.add(candidateOffer);
+                }
+            }
+            offerCount++;
+        }
+        return remainingCandidateOffers;
+    }
     
     /**
-	 * We were not able to meet all of the ItemCriteria for a promotion, but some of the items were
-	 * marked as qualifiers or targets.  This method removes those items from being used as targets or
-	 * qualifiers so they are eligible for other promotions.
-	 * @param chargeableItems
-	 */
-	protected void clearAllNonFinalizedQuantities(List<OrderItem> chargeableItems) {
-		for(OrderItem chargeableItem : chargeableItems) {
-			chargeableItem.clearAllNonFinalizedQuantities();
-		}
-	}
-	
-	protected void finalizeQuantities(List<OrderItem> chargeableItems) {
-		for(OrderItem chargeableItem : chargeableItems) {
-			chargeableItem.finalizeQuantities();
-		}
-	}
-	
-	protected void applyItemQualifiersAndTargets(List<OrderItem> discreteOrderItems, CandidateItemOffer itemOffer) {
-		Offer promotion = itemOffer.getOffer();
-		OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(promotion);
-		boolean matchFound = false;
-		do {
-			boolean atLeastOneCriteriaMatched = false;
-			for (OfferItemCriteria itemCriteria : itemOffer.getCandidateQualifiersMap().keySet()) {
-				List<OrderItem> chargeableItems = itemOffer.getCandidateQualifiersMap().get(itemCriteria);
-				
-				// Sort the items so that the highest priced ones are at the top
-				Collections.sort(chargeableItems, priceComparator);
-				// Calculate the number of qualifiers needed that will not receive the promotion.  
-				// These will be reserved first before the target is assigned.
-				int extraQualifiersNeeded = itemCriteria.getRequiresQuantity() - itemCriteria.getReceiveQuantity();
-				int receiveQtyNeeded = itemCriteria.getReceiveQuantity();
-				
-				for (OrderItem chargeableItem : chargeableItems) {
-					
-					// Mark Qualifiers
-					if (extraQualifiersNeeded > 0) {
-						int itemQtyAvailableToBeUsedAsQualifier = chargeableItem.getQuantityAvailableToBeUsedAsQualifier(promotion);
-						if (itemQtyAvailableToBeUsedAsQualifier > 0) {
-							int qtyToMarkAsQualifier = Math.min(extraQualifiersNeeded, itemQtyAvailableToBeUsedAsQualifier);
-							extraQualifiersNeeded = extraQualifiersNeeded - qtyToMarkAsQualifier;
-							atLeastOneCriteriaMatched = true;
-							chargeableItem.addPromotionQualifier(itemOffer, itemCriteria, qtyToMarkAsQualifier);
-						}
-					}
-					
-					// Mark Targets
-					if (receiveQtyNeeded > 0) {
-						int itemQtyAvailableToBeUsedAsTarget = chargeableItem.getQuantityAvailableToBeUsedAsTarget(promotion);
-						if (itemQtyAvailableToBeUsedAsTarget > 0) {
-							int qtyToMarkAsTarget = Math.min(receiveQtyNeeded, itemQtyAvailableToBeUsedAsTarget);
-							receiveQtyNeeded = receiveQtyNeeded - qtyToMarkAsTarget;
-							atLeastOneCriteriaMatched = true;
-							chargeableItem.addPromotionDiscount(itemOffer, itemCriteria, qtyToMarkAsTarget);
-						}
-					}
-					
-					if (receiveQtyNeeded == 0 && extraQualifiersNeeded == 0) {
-						break;
-					}
-				}
-				
-				if (receiveQtyNeeded != 0 && extraQualifiersNeeded != 0) {
-					// This ItemCriteria did not match.  Therefore, we need to clear all non-finalized quantities.
-					clearAllNonFinalizedQuantities(chargeableItems);
-					atLeastOneCriteriaMatched = false;
-					break;
-				}
-			}
-			
-			// If we made it through the itemCriteria loop, then a match was found
-			if (atLeastOneCriteriaMatched) {
-				matchFound = true;
-				finalizeQuantities(discreteOrderItems);
-			}
-		} while (matchFound);
-		
-		Iterator<OrderItem> chargeableItemsIterator = discreteOrderItems.iterator();
-		List<OrderItem> splitChargeableItems = new ArrayList<OrderItem>();
-		
-		while (chargeableItemsIterator.hasNext()) {
-			OrderItem chargeableItem = chargeableItemsIterator.next();
-			List<OrderItem> splitItems = chargeableItem.split();
-			if (splitItems != null && splitItems.size() > 0) {
-				// Remove this item from the list
-				chargeableItemsIterator.remove();
-				splitChargeableItems.addAll(splitItems);
-			} 
-		}
-		
-		// Add the split items back to the list
-		discreteOrderItems.addAll(splitChargeableItems);
-	}
+     * Private method that takes a list of sorted CandidateOrderOffers and determines if each offer can be
+     * applied based on the restrictions (stackable and/or combinable) on that offer.  OrderAdjustments
+     * are create on the Order for each applied CandidateOrderOffer.  An offer with stackable equals false
+     * cannot be applied to an Order that already contains an OrderAdjustment.  An offer with combinable
+     * equals false cannot be applied to the Order if the Order already contains an OrderAdjustment.
+     *
+     * @param orderOffers a sorted list of CandidateOrderOffer
+     * @param order the Order to apply the CandidateOrderOffers
+     * @return true if order offer applied; otherwise false
+     */
+    public boolean applyAllOrderOffers(List<CandidateOrderOffer> orderOffers, Order order) {
+        // If order offer is not combinable, first verify order adjustment is zero, if zero, compare item discount total vs this offer's total
+        boolean orderOffersApplied = false;
+        Iterator<CandidateOrderOffer> orderOfferIterator = orderOffers.iterator();
+        while(orderOfferIterator.hasNext()) {
+        	CandidateOrderOffer orderOffer = orderOfferIterator.next();
+        	if (orderOffer.getOffer().getTreatAsNewFormat() == null || !orderOffer.getOffer().getTreatAsNewFormat()) {
+        		if ((orderOffer.getOffer().isStackable()) || !order.isHasOrderAdjustments()) {
+        			boolean alreadyContainsNotCombinableOfferAtAnyLevel = order.isNotCombinableOfferAppliedAtAnyLevel();
+                    applyOrderOffer(orderOffer);
+                    orderOffersApplied = true;
+                    if (!orderOffer.getOffer().isCombinableWithOtherOffers() || alreadyContainsNotCombinableOfferAtAnyLevel) {
+                    	orderOffersApplied = compareAndAdjustOrderAndItemOffers(order, orderOffersApplied);
+                    	if (orderOffersApplied) {
+                    		break;
+                    	} else {
+                    		orderOfferIterator.remove();
+                    	}
+                    }
+                }
+        	} else {
+        		if (!order.containsNotStackableOrderOffer() || !order.isHasOrderAdjustments()) {
+        			boolean alreadyContainsTotalitarianOffer = order.isTotalitarianOfferApplied();
+        			applyOrderOffer(orderOffer);
+                    orderOffersApplied = true;
+                	if (
+                		(orderOffer.getOffer().isTotalitarianOffer() != null && orderOffer.getOffer().isTotalitarianOffer()) ||
+                		alreadyContainsTotalitarianOffer
+                	) {
+                		orderOffersApplied = compareAndAdjustOrderAndItemOffers(order, orderOffersApplied);
+                		if (orderOffersApplied) {
+                    		break;
+                    	} else {
+                    		orderOfferIterator.remove();
+                    	}
+                	} else if (!orderOffer.getOffer().isCombinableWithOtherOffers()) {
+                		break;
+                	}
+        		}
+        	}
+        }
+        return orderOffersApplied;
+    }
 
+	protected boolean compareAndAdjustOrderAndItemOffers(Order order, boolean orderOffersApplied) {
+		if (order.getAdjustmentPrice().greaterThanOrEqual(order.calculateOrderItemsCurrentPrice())) {
+			// item offer is better; remove not combinable order offer and process other order offers
+			order.removeAllOrderAdjustments();
+		    orderOffersApplied = false;
+		} else {
+			// totalitarian order offer is better; remove all item offers
+			order.removeAllItemAdjustments();
+			order.getSplitItems().clear();
+			order.getSplitItems().addAll(order.getOrderItems());
+			mergeSplitItems(order);
+		}
+		return orderOffersApplied;
+	}
+    
+    
+    /**
+     * Private method used by applyAllOrderOffers to create an OrderAdjustment from a CandidateOrderOffer
+     * and associates the OrderAdjustment to the Order.
+     *
+     * @param orderOffer a CandidateOrderOffer to apply to an Order
+     */
+    protected void applyOrderOffer(CandidateOrderOffer orderOffer) {
+        OrderAdjustment orderAdjustment = offerDao.createOrderAdjustment();
+        orderAdjustment.init(orderOffer.getOrder(), orderOffer.getOffer(), orderOffer.getOffer().getName());
+        //add to adjustment
+        orderOffer.getOrder().addOrderAdjustments(orderAdjustment);
+    }
+    
+    protected void mergeSplitItems(Order order) {
+		//If adjustments are removed - merge split items back together before adding to the cart
+		Map<String, List<OrderItem>> splitMap = new HashMap<String, List<OrderItem>>();
+		for (OrderItem splitItem : order.getSplitItems()) {
+			if (!splitMap.containsKey(splitItem.getName())) {
+				List<OrderItem> mySplits = new ArrayList<OrderItem>();
+				splitMap.put(splitItem.getName(), mySplits);
+			}
+			splitMap.get(splitItem.getName()).add(splitItem);
+		}
+		Iterator<OrderItem> finalItems = order.getOrderItems().iterator();
+		while(finalItems.hasNext()) {
+			OrderItem nextItem = finalItems.next();
+			List<OrderItem> mySplits = splitMap.get(nextItem.getName());
+			if (mySplits != null && mySplits.size() > 0) {
+				OrderItem cloneItem = nextItem.clone();
+				cloneItem.clearAllDiscount();
+				cloneItem.clearAllQualifiers();
+				cloneItem.removeAllAdjustments();
+				cloneItem.setQuantity(0);
+				Iterator<OrderItem> splitItemIterator = mySplits.iterator();
+				while(splitItemIterator.hasNext()) {
+					OrderItem splitItem = splitItemIterator.next();
+					if (!splitItem.isHasOrderItemAdjustments()) {
+						cloneItem.setQuantity(cloneItem.getQuantity() + splitItem.getQuantity());
+						splitItemIterator.remove();
+					}
+				}
+				if (cloneItem.getQuantity() > 0) {
+					mySplits.add(cloneItem);
+				}
+				finalItems.remove();
+			}
+		}
+		for (String key : splitMap.keySet()) {
+			List<OrderItem> mySplits = splitMap.get(key);
+			if (mySplits != null && mySplits.size() > 0) {
+				order.getOrderItems().addAll(mySplits);
+			}
+		}
+	}
+    
+    public void calculateOrderTotal(Order order) {
+		order.assignOrderItemsFinalPrice();
+		order.setSubTotal(order.calculateOrderItemsFinalPrice());
+	}
+    
 	public OfferDao getOfferDao() {
 		return offerDao;
 	}

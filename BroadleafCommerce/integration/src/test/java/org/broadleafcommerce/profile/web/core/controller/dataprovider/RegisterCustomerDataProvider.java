@@ -34,7 +34,7 @@ public class RegisterCustomerDataProvider {
         ChallengeQuestion question = new ChallengeQuestionImpl();
         question.setId(1L);
         customer.setChallengeQuestion(question);
-        customer.setChallengeAnswer("Challenge Answer");
+        customer.setChallengeAnswer("Challenge CandidateItemOfferAnswer");
         RegisterCustomerForm registerCustomer = new RegisterCustomerForm();
         registerCustomer.setCustomer(customer);
         registerCustomer.setPassword("TestPassword");

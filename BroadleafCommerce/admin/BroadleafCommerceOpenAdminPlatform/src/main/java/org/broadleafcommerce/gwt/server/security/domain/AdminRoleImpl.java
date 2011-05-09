@@ -32,6 +32,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -48,23 +49,26 @@ public class AdminRoleImpl implements AdminRole {
     @GeneratedValue(generator = "AdminRoleId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "AdminRoleId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "AdminRoleImpl", allocationSize = 50)
     @Column(name = "ADMIN_ROLE_ID")
+    @AdminPresentation(friendlyName="Admin Role ID", group="Primary Key", hidden=true)
     protected Long id;
 
     @Column(name = "NAME", nullable=false)
     @Index(name="ADMINROLE_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName="Name", order=1, group="Role", prominent=true)
     protected String name;
 
     @Column(name = "DESCRIPTION", nullable=false)
+    @AdminPresentation(friendlyName="Description", order=2, group="Role", prominent=true)
     protected String description;
 
     /** All users that have this role */
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminUserImpl.class)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminUserImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected Set<AdminUser> allUsers = new HashSet<AdminUser>();
 
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = AdminPermissionImpl.class)
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminPermissionImpl.class)
     @JoinTable(name = "BLC_ADMIN_ROLE_PERMISSION_XREF", joinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_PERMISSION_ID", referencedColumnName = "ADMIN_PERMISSION_ID"))
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)

@@ -46,6 +46,7 @@ import javax.persistence.Transient;
 
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOfferImpl;
+import org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.core.offer.domain.OfferCode;
 import org.broadleafcommerce.core.offer.domain.OfferCodeImpl;
@@ -54,6 +55,7 @@ import org.broadleafcommerce.core.offer.domain.OfferInfo;
 import org.broadleafcommerce.core.offer.domain.OfferInfoImpl;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustment;
 import org.broadleafcommerce.core.offer.domain.OrderAdjustmentImpl;
+import org.broadleafcommerce.core.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.core.order.service.type.OrderStatus;
 import org.broadleafcommerce.core.payment.domain.PaymentInfo;
 import org.broadleafcommerce.core.payment.domain.PaymentInfoImpl;
@@ -191,10 +193,14 @@ public class OrderImpl implements Order {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected Map<Offer, OfferInfo> additionalOfferInformation = new HashMap<Offer, OfferInfo>();
 
-    @Column(name = "TOTALITARIAN_OFFER_APPLIED")
+    @Transient
     protected boolean totalitarianOfferApplied = false;
     
     @Transient
+    protected boolean notCombinableOfferAppliedAtAnyLevel = false;
+    
+    @Transient
+    @Deprecated
     protected boolean markedForOffer;
 
     @Transient
@@ -202,6 +208,9 @@ public class OrderImpl implements Order {
     
     @Transient
     protected boolean hasOrderAdjustments = false;
+    
+    @Transient
+    protected List<OrderItem> splitItems = new ArrayList<OrderItem>();
 
     public Long getId() {
         return id;
@@ -230,8 +239,8 @@ public class OrderImpl implements Order {
     public Money calculateOrderItemsCurrentPrice() {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
-            Money currentItemPrice = orderItem.getCurrentPrice();
-            calculatedSubTotal = calculatedSubTotal.add(new Money(currentItemPrice.doubleValue() * orderItem.getQuantity()));
+            Money currentPrice = orderItem.getCurrentPrice();
+            calculatedSubTotal = calculatedSubTotal.add(currentPrice.multiply(orderItem.getQuantity()));
         }
         return calculatedSubTotal;
     }
@@ -239,8 +248,17 @@ public class OrderImpl implements Order {
     public Money calculateOrderItemsFinalPrice() {
         Money calculatedSubTotal = new Money();
         for (OrderItem orderItem : orderItems) {
-            Money currentItemPrice = orderItem.getPrice();
-            calculatedSubTotal = calculatedSubTotal.add(new Money(currentItemPrice.doubleValue() * orderItem.getQuantity()));
+            Money price = orderItem.getPrice();
+            calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
+        }
+        return calculatedSubTotal;
+    }
+    
+    public Money calculateOrderItemsPriceWithoutAdjustments() {
+        Money calculatedSubTotal = new Money();
+        for (OrderItem orderItem : orderItems) {
+            Money price = orderItem.getPriceBeforeAdjustments(true);
+            calculatedSubTotal = calculatedSubTotal.add(price.multiply(orderItem.getQuantity()));
         }
         return calculatedSubTotal;
     }
@@ -340,7 +358,11 @@ public class OrderImpl implements Order {
             }
         }
 
-        if (getFulfillmentGroups() != null) {
+        removeAllCandidateFulfillmentGroupOffers();
+    }
+    
+    public void removeAllCandidateFulfillmentGroupOffers() {
+    	if (getFulfillmentGroups() != null) {
             for (FulfillmentGroup fg : getFulfillmentGroups()) {
                 fg.removeAllCandidateOffers();
             }
@@ -353,10 +375,12 @@ public class OrderImpl implements Order {
         }
     }
 
+    @Deprecated
     public boolean isMarkedForOffer() {
         return markedForOffer;
     }
 
+    @Deprecated
     public void setMarkedForOffer(boolean markedForOffer) {
         this.markedForOffer = markedForOffer;
     }
@@ -455,7 +479,55 @@ public class OrderImpl implements Order {
         if (!orderAdjustment.getOffer().isCombinableWithOtherOffers()) {
         	notCombinableOfferApplied = true;
         }
+        resetTotalitarianOfferApplied();
         hasOrderAdjustments = true;
+    }
+    
+    public void resetTotalitarianOfferApplied() {
+    	totalitarianOfferApplied = false;
+    	notCombinableOfferAppliedAtAnyLevel = false;
+    	for (OrderAdjustment adjustment : orderAdjustments) {
+    		if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
+    			totalitarianOfferApplied = true;
+    			break;
+    		}
+    		if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
+    			notCombinableOfferAppliedAtAnyLevel = true;
+    			break;
+    		}
+    	}
+    	if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
+    		check: {
+		    	for (OrderItem orderItem : orderItems) {
+		    		for (OrderItemAdjustment adjustment : orderItem.getOrderItemAdjustments()) {
+		    			if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
+		    				totalitarianOfferApplied = true;
+		    				break check;
+		    			}
+		    			if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
+		        			notCombinableOfferAppliedAtAnyLevel = true;
+		        			break check;
+		        		}
+		    		}
+		    	}
+    		}
+    	}
+    	if (!totalitarianOfferApplied || !notCombinableOfferAppliedAtAnyLevel) {
+    		check: {
+		    	for (FulfillmentGroup fg : fulfillmentGroups) {
+		    		for (FulfillmentGroupAdjustment adjustment : fg.getFulfillmentGroupAdjustments()) {
+		    			if (adjustment.getOffer().isTotalitarianOffer() != null && adjustment.getOffer().isTotalitarianOffer()) {
+		    				totalitarianOfferApplied = true;
+		    				break check;
+		    			}
+		    			if (!adjustment.getOffer().isCombinableWithOtherOffers()) {
+		        			notCombinableOfferAppliedAtAnyLevel = true;
+		        			break check;
+		        		}
+		    		}
+		    	}
+    		}
+    	}
     }
 
     public void removeAllAdjustments() {
@@ -471,12 +543,14 @@ public class OrderImpl implements Order {
         adjustmentPrice = null;
     	notCombinableOfferApplied = false;
         hasOrderAdjustments = false;
+        resetTotalitarianOfferApplied();
    }
 
     public void removeAllItemAdjustments() {
         for (OrderItem orderItem: orderItems) {
             orderItem.removeAllAdjustments();
         }
+        splitItems.clear();
     }
 
     public void removeAllFulfillmentAdjustments() {
@@ -509,6 +583,19 @@ public class OrderImpl implements Order {
             }
         }
         return isContainsNotStackableOrderOffer;
+    }
+    
+    public boolean containsNotStackableFulfillmentGroupOffer() {
+        boolean isContainsNotStackableFulfillmentGroupOffer = false;
+        for (FulfillmentGroup fg : fulfillmentGroups) {
+        	for (FulfillmentGroupAdjustment fgAdjustment : fg.getFulfillmentGroupAdjustments()) {
+        		if (!fgAdjustment.getOffer().isStackable()) {
+        			isContainsNotStackableFulfillmentGroupOffer = true;
+        			break;
+        		}
+        	}
+        }
+        return isContainsNotStackableFulfillmentGroupOffer;
     }
 
     public List<OrderItem> getDiscreteOrderItems() {
@@ -636,6 +723,22 @@ public class OrderImpl implements Order {
 
 	public void setTotalitarianOfferApplied(boolean totalitarianOfferApplied) {
 		this.totalitarianOfferApplied = totalitarianOfferApplied;
+	}
+
+	public boolean isNotCombinableOfferAppliedAtAnyLevel() {
+		return notCombinableOfferAppliedAtAnyLevel;
+	}
+
+	public void setNotCombinableOfferAppliedAtAnyLevel(boolean notCombinableOfferAppliedAtAnyLevel) {
+		this.notCombinableOfferAppliedAtAnyLevel = notCombinableOfferAppliedAtAnyLevel;
+	}
+
+	public List<OrderItem> getSplitItems() {
+		return splitItems;
+	}
+
+	public void setSplitItems(List<OrderItem> splitItems) {
+		this.splitItems = splitItems;
 	}
 
 	public boolean equals(Object obj) {

@@ -10,6 +10,7 @@ public class FieldPresentationAttributes implements Serializable {
 	
 	private String name;
 	private String friendlyName;
+	private String securityLevel;
 	private Integer order;
 	private Boolean hidden;
 	private String group;
@@ -37,6 +38,14 @@ public class FieldPresentationAttributes implements Serializable {
 		this.friendlyName = friendlyName;
 	}
 	
+	public String getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(String securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+
 	public Integer getOrder() {
 		return order;
 	}

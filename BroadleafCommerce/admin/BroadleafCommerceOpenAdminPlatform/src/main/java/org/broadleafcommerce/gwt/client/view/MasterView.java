@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 
 import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.Module;
+import org.broadleafcommerce.gwt.client.security.SecurityManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -112,7 +113,9 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
 	        tab.setAttribute("token", page);
 	        tab.setID(page);
 	        topTabSet.setShowPaneContainerEdges(false);
-	        topTabSet.addTab(tab);
+	        if (SecurityManager.getInstance().isUserAuthorizedToViewSection(pages.get(page)[0])){
+	        	topTabSet.addTab(tab);
+	        }
         }
         topTabSet.addTabSelectedHandler(new TabSelectedHandler() {
 			public void onTabSelected(TabSelectedEvent event) {

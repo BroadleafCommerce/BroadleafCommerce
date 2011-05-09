@@ -1,8 +1,10 @@
 package org.broadleafcommerce.gwt.client;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.broadleafcommerce.gwt.client.reflection.ModuleFactory;
+import org.broadleafcommerce.gwt.client.security.SecurityManager;
 
 import com.google.gwt.core.client.EntryPoint;
 
@@ -37,12 +39,15 @@ public abstract class AbstractModule implements EntryPoint, Module {
 		String sectionViewKey, 
 		String sectionViewClass,
 		String sectionPresenterKey, 
-		String sectionPresenterClass
+		String sectionPresenterClass,
+		List<String> sectionRoles,
+		List<String> sectionPermissions
 	) {
 		pages.put(sectionTitle, new String[]{sectionViewKey, sectionPresenterKey});
 		ModuleFactory moduleFactory = ModuleFactory.getInstance();
 		moduleFactory.put(sectionViewKey, sectionViewClass);
 		moduleFactory.put(sectionPresenterKey, sectionPresenterClass);
+		SecurityManager.getInstance().registerSection(sectionViewKey, sectionRoles, sectionPermissions);
 	}
 	
 	public void removeSection(

@@ -11,6 +11,7 @@ import java.util.Map;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.datasource.relations.MapStructure;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.gwt.client.security.SecurityManager;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
@@ -40,7 +41,13 @@ public class FormBuilder {
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
 		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
 		DataSourceField[] fields = dataSource.getFields();
+		Boolean originalEdit = canEdit;
         for (DataSourceField field : fields) {
+        	
+        	if (field.getAttribute("securityLevel") != null && field.getAttribute("uniqueID") != null && !SecurityManager.getInstance().isUserAuthorizedToEditField(field.getAttribute("uniqueID"))){
+        		canEdit = false;
+        	}
+        	
         	String fieldType = field.getAttribute("fieldType");
         	if (fieldType != null && !field.getHidden()) {
 	    		String group = field.getAttribute("formGroup");
@@ -70,6 +77,8 @@ public class FormBuilder {
 		        	setupField(showDisabledState, canEdit, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        	}
         	}
+        	
+        	canEdit = originalEdit;
         }
         
         groupFields(form, sections, sectionNames);

@@ -2,7 +2,7 @@
 <suite name="BroadleafCommerce Test Suite" verbose="2" parallel="false">
 	<test name="commerce-integrationtest">
         <packages>
-        	<!--<package name="org.broadleafcommerce.core.catalog.dao"></package>
+        	<package name="org.broadleafcommerce.core.catalog.dao"></package>
         	<package name="org.broadleafcommerce.core.catalog.service"></package>
         	<package name="org.broadleafcommerce.core.checkout.service"></package>
         	<package name="org.broadleafcommerce.profile.email.service"></package>
@@ -20,7 +20,7 @@
         	<package name="org.broadleafcommerce.taglib"></package>
         	<package name="org.broadleafcommerce.test"></package>
         	<package name="org.broadleafcommerce.vendor"></package>
-        	<package name="org.broadleafcommerce.profile.time"></package>-->
+        	<package name="org.broadleafcommerce.profile.time"></package>
         </packages>
     </test>
 </suite>

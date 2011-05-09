@@ -3,6 +3,7 @@ package org.broadleafcommerce.gwt.client.datasource.dynamic.module;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.gwt.client.datasource.results.PolymorphicEntity;
 import org.broadleafcommerce.gwt.client.datasource.results.Property;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
+import org.broadleafcommerce.gwt.client.security.SecurityManager;
 import org.broadleafcommerce.gwt.client.service.AbstractCallback;
 import org.broadleafcommerce.gwt.client.service.AppServices;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
@@ -473,6 +475,12 @@ public class BasicEntityModule implements DataSourceModule {
 				properties.add(property);
 			}
 		}
+		
+		Property fullyQualifiedName = new Property();
+		fullyQualifiedName.setName("ceilingEntityFullyQualifiedClassname");
+		fullyQualifiedName.setValue(ceilingEntityFullyQualifiedClassname);
+		properties.add(fullyQualifiedName);
+		
 		Property[] props = new Property[properties.size()];
 		props = properties.toArray(props);
 		entity.setProperties(props);
@@ -556,6 +564,24 @@ public class BasicEntityModule implements DataSourceModule {
     }
 	
 	protected void filterProperties(ClassMetadata metadata, MergedPropertyType[] includeTypes, Boolean overrideFieldSort) throws IllegalStateException {
+		if (BLCMain.isLogDebugEnabled("classmetadata")) {
+			Map<String, List<String>> props = new HashMap<String, List<String>>();
+			for (Property property : metadata.getProperties()) {
+				String type = property.getMetadata().getInheritedFromType();
+				List<String> myProps = props.get(type);
+				if (myProps == null) {
+					props.put(type, new ArrayList<String>());
+					myProps = props.get(type);
+				}
+				myProps.add(property.getName());
+			}
+			for (String key: props.keySet()) {
+				List<String> myProps = props.get(key);
+				for (String prop : myProps) {
+					BLCMain.logDebug(key + " : " + prop, "classmetadata");
+				}
+			}
+		}
 		//sort properties based on their display name
 		Property[] properties = metadata.getProperties();
 		if (overrideFieldSort) {
@@ -594,6 +620,7 @@ public class BasicEntityModule implements DataSourceModule {
 				if (friendlyName == null) {
 					friendlyName = property.getName();
 				}
+				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
 				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
 				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
@@ -713,6 +740,13 @@ public class BasicEntityModule implements DataSourceModule {
 				} else if (field.getAttribute("permanentlyHidden")==null){
 					field.setHidden(false);
 					field.setAttribute("permanentlyHidden", false);
+				}
+
+				if (securityLevel != null && !"".equals(securityLevel)){
+					String uniqueID = ceilingEntityFullyQualifiedClassname + field.getName();
+					SecurityManager.getInstance().registerField(uniqueID, securityLevel);
+					field.setAttribute("uniqueID", uniqueID);
+					field.setAttribute("securityLevel", securityLevel);
 				}
 				if (group != null) {
 					field.setAttribute("formGroup", group);

@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.relations.operations.OperationType;
 import org.broadleafcommerce.gwt.client.datasource.results.ClassMetadata;
@@ -22,6 +25,7 @@ import org.broadleafcommerce.gwt.client.datasource.results.Property;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityService;
 import org.broadleafcommerce.gwt.client.service.ServiceException;
 import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
+import org.broadleafcommerce.gwt.server.security.remote.AdminSecurityServiceRemote;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.gwt.server.service.module.InspectHelper;
 import org.broadleafcommerce.gwt.server.service.module.RemoteServiceModule;
@@ -31,8 +35,11 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 public class DynamicEntityRemoteService implements DynamicEntityService, InspectHelper {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
-
+	
 	protected DynamicEntityDao dynamicEntityDao;
+	
+	@Resource(name="blAdminSecurityRemoteService")
+	protected AdminSecurityServiceRemote adminRemoteSecurityService;
 	
 	protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
 	protected RemoteServiceModule[] modules;
@@ -157,21 +164,39 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Inspect
 	}
 
 	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+		adminRemoteSecurityService.securityCheck(ceilingEntityFullyQualifiedClassname, EntityOperationType.FETCH);
+		
 		RemoteServiceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getFetchType());
 		return myModule.fetch(ceilingEntityFullyQualifiedClassname, cto, persistencePerspective, customCriteria);
 	}
 
 	public Entity add(String ceilingEntityFullyQualifiedClassname, Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+		adminRemoteSecurityService.securityCheck(ceilingEntityFullyQualifiedClassname, EntityOperationType.ADD);
+		
 		RemoteServiceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getAddType());
 		return myModule.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria);
 	}
 	
 	public Entity update(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+		for (Property p : entity.getProperties()){
+			if (p.getName().equals("ceilingEntityFullyQualifiedClassname")){
+				adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.UPDATE);
+				break;
+			}
+		}
+		
 		RemoteServiceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getUpdateType());
 		return myModule.update(entity, persistencePerspective, customCriteria);
 	}
 	
 	public void remove(Entity entity, PersistencePerspective persistencePerspective, String[] customCriteria) throws ServiceException {
+		for (Property p : entity.getProperties()){
+			if (p.getName().equals("ceilingEntityFullyQualifiedClassname")){
+				adminRemoteSecurityService.securityCheck(p.getValue(), EntityOperationType.REMOVE);
+				break;
+			}
+		}
+		
 		RemoteServiceModule myModule = getCompatibleModule(persistencePerspective.getOperationTypes().getRemoveType());
 		myModule.remove(entity, persistencePerspective, customCriteria);
 	}

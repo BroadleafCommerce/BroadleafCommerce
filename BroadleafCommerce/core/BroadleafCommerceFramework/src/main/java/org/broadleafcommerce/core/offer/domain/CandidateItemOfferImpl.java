@@ -35,7 +35,6 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
-import org.broadleafcommerce.core.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.domain.OrderItemImpl;
 import org.broadleafcommerce.money.Money;
@@ -68,15 +67,16 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
     protected Offer offer;
 
     @Column(name = "DISCOUNTED_PRICE")
+    @Deprecated
     private BigDecimal discountedPrice;
-
-    @Transient
-    private BigDecimal discountAmount;
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = OrderItemImpl.class)
     @JoinTable(name = "BLC_QUALIFIER_ITEM_XREF", joinColumns = @JoinColumn(name = "CANDIDATE_ITEM_OFFER_ID", referencedColumnName = "CANDIDATE_ITEM_OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "ORDER_ITEM_ID", referencedColumnName = "ORDER_ITEM_ID"))
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
     protected List<OrderItem> candidateQualifierItems = new ArrayList<OrderItem>();
+    
+    @Transient
+    protected Money potentialSavings; 
 
     public Long getId() {
         return id;
@@ -92,27 +92,11 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
 
     public void setOrderItem(OrderItem orderItem) {
         this.orderItem = orderItem;
-        discountedPrice = null;  // price needs to be recalculated
     }
 
     public void setOffer(Offer offer) {
         this.offer = offer;
-        discountedPrice = null;  // price needs to be recalculated
     }
-
-    /*public Money getDiscountedPrice() {
-        if (discountedPrice == null) {
-            computeDiscountedPriceAndAmount();
-        }
-        return discountedPrice == null ? null : new Money(discountedPrice);
-    }
-
-    public Money getDiscountAmount() {
-        if (discountAmount == null) {
-            computeDiscountedPriceAndAmount();
-        }
-        return discountAmount == null ? null : new Money(discountAmount);
-    }*/
 
     public int getPriority() {
         return offer.getPriority();
@@ -129,31 +113,73 @@ public class CandidateItemOfferImpl extends CandidateQualifiedOfferImpl implemen
 	public void setCandidateQualifierItems(List<OrderItem> candidateQualifierItems) {
 		this.candidateQualifierItems = candidateQualifierItems;
 	}
+	
+	public Money getPotentialSavings() {
+		if (potentialSavings == null) {
+			potentialSavings = calculatePotentialSavings();
+		}
+		return potentialSavings;
+	}
 
-	/*protected void computeDiscountedPriceAndAmount() {
-        if (offer != null && orderItem != null){
+	/**
+	 * This method determines how much the customer might save using this promotion for the
+	 * purpose of sorting promotions with the same priority. The assumption is that any possible
+	 * target specified for BOGO style offers are of equal or lesser value. We are using
+	 * a calculation based on the qualifiers here strictly for rough comparative purposes.
+	 *  
+	 * If two promotions have the same priority, the one with the highest potential savings
+	 * will be used as the tie-breaker to determine the order to apply promotions.
+	 * 
+	 * This method makes a good approximation of the promotion value as determining the exact value
+	 * would require all permutations of promotions to be run resulting in a costly 
+	 * operation.
+	 * 
+	 * @return
+	 */
+	protected Money calculatePotentialSavings() {
+		Money savings = new Money(0);
+		int maxUses = calculateMaximumNumberOfUses();
+		int appliedCount = 0;
+		
+		for (OrderItem chgItem : candidateTargets) {
+			int qtyToReceiveSavings = Math.min(chgItem.getQuantity(), maxUses);
+			savings = calculateSavingsForOrderItem(chgItem, qtyToReceiveSavings);
 
-            Money priceToUse = orderItem.getRetailPrice();
-            Money discountAmount = new Money(0);
-            if ((offer.getApplyDiscountToSalePrice()) && (orderItem.getSalePrice() != null)) {
-                priceToUse = orderItem.getSalePrice();
-            }
+			appliedCount = appliedCount + qtyToReceiveSavings;
+			if (appliedCount >= maxUses) {
+				return savings;
+			}
+		}
+		
+		return savings;
+	}
+	
+	/**
+	 * Determines the maximum number of times this promotion can be used based on the
+	 * ItemCriteria and promotion's maxQty setting.
+	 */
+	protected int calculateMaximumNumberOfUses() {		
+		int maxMatchesFound = 9999; // set arbitrarily high / algorithm will adjust down	
+		
+		int numberOfUsesForThisItemCriteria = calculateMaxUsesForItemCriteria(getOffer().getTargetItemCriteria(), getOffer());
+		maxMatchesFound = Math.min(maxMatchesFound, numberOfUsesForThisItemCriteria);
 
-            if (offer.getDiscountType().equals(OfferDiscountType.AMOUNT_OFF)) {
-                discountAmount = offer.getValue();
-            } else if (offer.getDiscountType().equals(OfferDiscountType.FIX_PRICE)) {
-                discountAmount = priceToUse.subtract(offer.getValue());
-            } else if (offer.getDiscountType().equals(OfferDiscountType.PERCENT_OFF)) {
-                discountAmount = priceToUse.multiply(offer.getValue().getAmount().divide(new BigDecimal("100")));
-            }
-            if (discountAmount.greaterThan(priceToUse)) {
-                discountAmount = priceToUse;
-            }
-            priceToUse = priceToUse.subtract(discountAmount);
-            discountedPrice = priceToUse.getAmount();
-            this.discountAmount = discountAmount.getAmount();
-        }
-    }*/
+		return Math.min(maxMatchesFound, getOffer().getMaxUses());
+	}
+	
+	protected int calculateMaxUsesForItemCriteria(OfferItemCriteria itemCriteria, Offer promotion) {
+		int numberOfTargets = 0;
+		int numberOfUsesForThisItemCriteria = 9999;
+		
+		if (candidateTargets != null && itemCriteria != null) {
+			for(OrderItem potentialTarget : candidateTargets) {
+				numberOfTargets += potentialTarget.getQuantityAvailableToBeUsedAsTarget(promotion);
+			}
+			numberOfUsesForThisItemCriteria = numberOfTargets / itemCriteria.getQuantity();
+		}
+		
+		return numberOfUsesForThisItemCriteria;
+	}
 
 	@Override
     public int hashCode() {

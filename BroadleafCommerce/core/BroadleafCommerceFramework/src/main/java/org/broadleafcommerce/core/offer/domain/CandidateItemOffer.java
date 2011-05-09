@@ -20,12 +20,10 @@ import org.broadleafcommerce.money.Money;
 
 public interface CandidateItemOffer extends CandidateQualifiedOffer {
 
-    //public Money getDiscountedPrice(); //transient, computed
-
-    //public Money getDiscountAmount();  //transient, computed
-
     public OrderItem getOrderItem();
 
     public void setOrderItem(OrderItem orderItem);
 
+    public Money getPotentialSavings();
+    
 }
