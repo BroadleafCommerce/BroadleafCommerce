@@ -5,11 +5,14 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 public class AppServices {
 
-    //public static final AdminSecurityServiceAsync SECURITY = GWT.create(AdminSecurityService.class);
+    public static final AdminSecurityServiceAsync SECURITY = GWT.create(AdminSecurityService.class);
     public static final DynamicEntityServiceAsync DYNAMIC_ENTITY = GWT.create(DynamicEntityService.class);
     static {
     	ServiceDefTarget endpoint = (ServiceDefTarget) DYNAMIC_ENTITY;
         endpoint.setServiceEntryPoint("dynamic.entity.service");
+        
+        ServiceDefTarget endpoint2 = (ServiceDefTarget) SECURITY;
+        endpoint2.setServiceEntryPoint("security.service");
     }
     
 }

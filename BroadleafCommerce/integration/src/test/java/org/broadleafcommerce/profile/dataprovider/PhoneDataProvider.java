@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.profile.dataprovider;
 
-import org.broadleafcommerce.profile.domain.Phone;
-import org.broadleafcommerce.profile.domain.PhoneImpl;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.PhoneImpl;
 import org.testng.annotations.DataProvider;
 
 public class PhoneDataProvider {

@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_1_0.xsd" version="1.0">
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd" version="2.0">
 
 	<named-query name="BC_READ_ALL_PRODUCTS" >
-		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product</query>
+		<query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product</query>
 	</named-query>
 
 	<named-query name="BC_READ_PRODUCTS_BY_NAME" >
-		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product
+		<query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product
 		WHERE product.name LIKE :name</query>
 	</named-query>
 
 	<named-query name="BC_READ_PRODUCTS_BY_SKU" >
-		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product, IN(product.allSkus) sku
+		<query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product, IN(product.allSkus) sku
 		WHERE sku.id = :skuId</query>
 	</named-query>
 	
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_SKU" >
-		<query>SELECT product FROM org.broadleafcommerce.catalog.domain.Product product, IN(product.allSkus) sku
+		<query>SELECT product FROM org.broadleafcommerce.core.catalog.domain.Product product, IN(product.allSkus) sku
 		WHERE sku.id = :skuId
 		AND product.activeStartDate &lt;= :currentDate
 		AND (product.activeEndDate &gt; :currentDate OR product.activeEndDate = null)</query>
 	</named-query>
 
 	<named-query name="BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY" >
-		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.catalog.domain.CategoryProductImpl categoryProduct
+		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductImpl categoryProduct
 		WHERE categoryProduct.categoryProductXref.category.id = :categoryId
 		AND categoryProduct.categoryProductXref.product.activeStartDate &lt;= :currentDate
 		AND (categoryProduct.categoryProductXref.product.activeEndDate &gt; :currentDate OR categoryProduct.categoryProductXref.product.activeEndDate = null)
@@ -34,7 +34,7 @@
 	</named-query>
 	
 	<named-query name="BC_READ_PRODUCTS_BY_CATEGORY" >
-		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.catalog.domain.CategoryProductImpl categoryProduct
+		<query>SELECT categoryProduct.categoryProductXref.product FROM org.broadleafcommerce.core.catalog.domain.CategoryProductImpl categoryProduct
 		WHERE categoryProduct.categoryProductXref.category.id = :categoryId
 		ORDER BY categoryProduct.displayOrder
 		</query>

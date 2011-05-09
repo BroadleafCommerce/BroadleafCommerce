@@ -12,7 +12,10 @@
            http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-           
+    
+    <context:component-scan base-package="org.broadleafcommerce.config"/>
+    <context:component-scan base-package="org.broadleafcommerce.gwt"/>
+    
     <!-- Entity mappings - override for extensibility -->
 	<bean id="org.broadleafcommerce.gwt.server.security.domain.AdminPermission" class="org.broadleafcommerce.gwt.server.security.domain.AdminPermissionImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.gwt.server.security.domain.AdminRole" class="org.broadleafcommerce.gwt.server.security.domain.AdminRoleImpl" scope="prototype"/>
@@ -29,34 +32,34 @@
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceInspectOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.inspect(..))"/>
+		<aop:pointcut id="blRemoteServiceInspectOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService.inspect(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceInspectOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceFetchOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.fetch(..))"/>
+		<aop:pointcut id="blRemoteServiceFetchOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService.fetch(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceFetchOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceAddOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.add(..))"/>
+		<aop:pointcut id="blRemoteServiceAddOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService.add(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceAddOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceUpdateOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.update(..))"/>
+		<aop:pointcut id="blRemoteServiceUpdateOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService.update(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceUpdateOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceRemoveOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.remove(..))"/>
+		<aop:pointcut id="blRemoteServiceRemoveOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService.remove(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceRemoveOperation"/>
 	</aop:config>
 	
 	<bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
 	<bean id="persistenceUnitInfo" factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
 	
-	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService">
+	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService">
 		<constructor-arg>
 			<list>
 				<bean class="org.broadleafcommerce.gwt.server.service.module.BasicEntityModule"/>

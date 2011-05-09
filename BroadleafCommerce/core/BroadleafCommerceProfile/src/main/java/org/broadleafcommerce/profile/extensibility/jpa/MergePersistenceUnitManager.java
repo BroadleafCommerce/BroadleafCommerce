@@ -1,0 +1,128 @@
+/*
+ * Copyright 2008-2009 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.broadleafcommerce.profile.extensibility.jpa;
+
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
+
+import javax.persistence.spi.PersistenceUnitInfo;
+
+import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
+import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
+import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
+import org.springframework.orm.jpa.persistenceunit.Jpa2PersistenceUnitInfoDecorator;
+import org.springframework.util.ClassUtils;
+
+/**
+ * Merges jars, class names and mapping file names from several persistence.xml files. The
+ * MergePersistenceUnitManager will continue to keep track of individual persistence unit
+ * names (including individual data sources). When a specific PersistenceUnitInfo is requested
+ * by unit name, the appropriate PersistenceUnitInfo is returned with modified jar files
+ * urls, class names and mapping file names that include the comprehensive collection of these
+ * values from all persistence.xml files. Note, only persistence units belonging to the
+ * validPersistenceUnitNames list are included in the merge.
+ * 
+ * 
+ * @author jfischer, jjacobs
+ */
+public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
+
+    private HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
+    private final boolean jpa2ApiPresent = ClassUtils.hasMethod(PersistenceUnitInfo.class, "getSharedCacheMode");
+
+    protected PersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
+        if (!mergedPus.containsKey(persistenceUnitName)) {
+        	PersistenceUnitInfo puiToStore = newPU;
+			if (jpa2ApiPresent) {
+				puiToStore = (PersistenceUnitInfo) Proxy.newProxyInstance(SmartPersistenceUnitInfo.class.getClassLoader(),
+						new Class[] {SmartPersistenceUnitInfo.class}, new Jpa2PersistenceUnitInfoDecorator(newPU));
+			}
+            mergedPus.put(persistenceUnitName, puiToStore);
+        }
+        return mergedPus.get(persistenceUnitName);
+    }
+
+    @Override
+    protected void postProcessPersistenceUnitInfo(MutablePersistenceUnitInfo newPU) {
+        super.postProcessPersistenceUnitInfo(newPU);
+        newPU.addJarFileUrl(newPU.getPersistenceUnitRootUrl());
+        String persistenceUnitName = newPU.getPersistenceUnitName();
+        MutablePersistenceUnitInfo temp;
+        PersistenceUnitInfo pui = getMergedUnit(persistenceUnitName, newPU);
+        if (pui != null && Proxy.isProxyClass(pui.getClass())) {
+			// JPA 2.0 PersistenceUnitInfo decorator with a SpringPersistenceUnitInfo as target
+			Jpa2PersistenceUnitInfoDecorator dec = (Jpa2PersistenceUnitInfoDecorator) Proxy.getInvocationHandler(pui);
+			temp = (MutablePersistenceUnitInfo) dec.getTarget();
+		}
+		else {
+			// Must be a raw JPA 1.0 SpringPersistenceUnitInfo instance
+			temp = (MutablePersistenceUnitInfo) pui;
+		}
+        //final URL persistenceUnitRootUrl = newPU.getPersistenceUnitRootUrl();
+        temp.setPersistenceUnitRootUrl(null);
+        List<String> managedClassNames = newPU.getManagedClassNames();
+        for (String managedClassName : managedClassNames){
+            if (!temp.getManagedClassNames().contains(managedClassName)) {
+                temp.addManagedClassName(managedClassName);
+            }
+        }
+        List<String> mappingFileNames = newPU.getMappingFileNames();
+        for (String mappingFileName : mappingFileNames) {
+            if (!temp.getMappingFileNames().contains(mappingFileName)) {
+                temp.addMappingFileName(mappingFileName);
+            }
+        }
+        temp.setExcludeUnlistedClasses(newPU.excludeUnlistedClasses());
+        for (URL url : newPU.getJarFileUrls()) {
+            if (!temp.getJarFileUrls().contains(url)) {
+                temp.addJarFileUrl(url);
+            }
+        }
+        temp.setJtaDataSource(newPU.getJtaDataSource());
+        temp.setNonJtaDataSource(newPU.getNonJtaDataSource());
+        if (temp.getProperties() == null) {
+        	temp.setProperties(newPU.getProperties());
+        } else {
+        	Properties props = newPU.getProperties();
+        	if (props != null) {
+        		for (Object key : props.keySet()) {
+        			temp.getProperties().setProperty((String) key, props.getProperty((String) key)); 
+        		}
+        	}
+        }
+        temp.setTransactionType(newPU.getTransactionType());
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager#obtainPersistenceUnitInfo(java.lang.String)
+     */
+    @Override
+    public PersistenceUnitInfo obtainPersistenceUnitInfo(String persistenceUnitName) {
+        return mergedPus.get(persistenceUnitName);
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager#obtainDefaultPersistenceUnitInfo()
+     */
+    @Override
+    public PersistenceUnitInfo obtainDefaultPersistenceUnitInfo() {
+        throw new IllegalStateException("Default Persistence Unit is not supported. The persistence unit name must be specified at the entity manager factory.");
+    }
+
+}

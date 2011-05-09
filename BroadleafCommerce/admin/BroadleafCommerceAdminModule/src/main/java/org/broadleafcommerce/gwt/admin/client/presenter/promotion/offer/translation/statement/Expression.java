@@ -13,7 +13,7 @@ public class Expression {
 	}
 	
 	public void setField(String field) {
-		this.field = field;
+		this.field = field.trim();
 	}
 	
 	public OperatorId getOperator() {
@@ -29,7 +29,7 @@ public class Expression {
 	}
 	
 	public void setValue(String value) {
-		this.value = value;
+		this.value = value.trim();
 	}
 	
 }

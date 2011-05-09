@@ -39,6 +39,8 @@ import javax.persistence.EntityManager;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
+import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
+import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspectiveItemType;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldPresentationAttributes;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
@@ -140,6 +142,23 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 		});
 		
 		return sortedEntities;
+	}
+	
+	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		Map<String, FieldMetadata> mergedProperties = dynamicEntityDao.getMergedProperties(
+			entityName, 
+			entityClasses, 
+			(ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY), 
+			persistencePerspective.getAdditionalNonPersistentProperties(), 
+			persistencePerspective.getAdditionalForeignKeys(),
+			MergedPropertyType.PRIMARY,
+			persistencePerspective.getPopulateToOneFields(), 
+			persistencePerspective.getIncludeFields(), 
+			persistencePerspective.getExcludeFields(),
+			null,
+			""
+		);
+		return mergedProperties;
 	}
 	
 	public Map<String, FieldMetadata> getMergedProperties(
@@ -506,6 +525,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				throw new IllegalArgumentException("Properties from entities that utilize a period character ('.') in their name are incompatible with this system. The property name in question is: (" + property.getName() + ") from the class: (" + targetClass.getName() + ")");
 			}
 		}
+		
+		iter = persistentClass.getPropertyIterator();
 		
 		buildProperties(
 			targetClass, 

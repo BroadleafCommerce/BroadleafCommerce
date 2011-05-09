@@ -1,7 +1,9 @@
 package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
@@ -30,13 +32,13 @@ public class AdvancedCriteriaToMVELTranslator {
 		MVELKEYWORDMAP.put(FilterType.CUSTOMER, "customer");
 	}
 	
-	public String createMVEL(AdvancedCriteria criteria, FilterType filterType, DataSource dataSource) {
+	public String createMVEL(AdvancedCriteria criteria, FilterType filterType, DataSource dataSource) throws IncompatibleMVELTranslationException {
 		StringBuffer sb = new StringBuffer();
 		buildMVEL(criteria, sb, filterType, dataSource, null);
 		return sb.toString();
 	}
 	
-	protected void buildMVEL(Criteria criteria, StringBuffer sb, FilterType filterType, DataSource dataSource, OperatorId groupOperator) {
+	protected void buildMVEL(Criteria criteria, StringBuffer sb, FilterType filterType, DataSource dataSource, OperatorId groupOperator) throws IncompatibleMVELTranslationException {
 		OperatorId operator = EnumUtil.getEnum(OperatorId.values(), criteria.getAttribute("operator"));
 		JavaScriptObject listJS = criteria.getAttributeAsJavaScriptObject("criteria");
 		if (sb.length() != 0 && sb.charAt(sb.length() - 1) != '(' && groupOperator != null) {
@@ -72,14 +74,14 @@ public class AdvancedCriteriaToMVELTranslator {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	protected void buildExpression(Criteria criteria, StringBuffer sb, FilterType filterType, OperatorId operator, DataSource dataSource) {
+	protected void buildExpression(Criteria criteria, StringBuffer sb, FilterType filterType, OperatorId operator, DataSource dataSource) throws IncompatibleMVELTranslationException {
 		String entityKey = MVELKEYWORDMAP.get(filterType);
 		Map values = criteria.getValues();
 		String field = (String) values.get("fieldName");
 		SupportedFieldType type = SupportedFieldType.valueOf(dataSource.getField(field).getAttribute("fieldType"));
 		SupportedFieldType secondaryType = null;
 		String secondaryTypeVal = dataSource.getField(field).getAttribute("secondaryFieldType");
-		Object value;
+		Object[] value;
 		if (secondaryTypeVal != null) {
 			secondaryType = SupportedFieldType.valueOf(secondaryTypeVal);
 		}
@@ -99,7 +101,7 @@ public class AdvancedCriteriaToMVELTranslator {
 		) {
 	        value = extractDate(criteria, operator, values, "value");
 		} else {
-			value = values.get("value");
+			value = extractBasicValues(values.get("value"));
 		}
 		switch(operator) {
 		case CONTAINS: {
@@ -171,7 +173,7 @@ public class AdvancedCriteriaToMVELTranslator {
 			break;
 		}
 		case IS_NULL: {
-			buildExpression(sb, entityKey, field, "null", type, secondaryType, "==", false, false, false, false, true);
+			buildExpression(sb, entityKey, field, new Object[]{"null"}, type, secondaryType, "==", false, false, false, false, true);
 			break;
 		}
 		case ISTARTS_WITH: {
@@ -211,7 +213,7 @@ public class AdvancedCriteriaToMVELTranslator {
 			break;
 		}
 		case NOT_NULL: {
-			buildExpression(sb, entityKey, field, "null", type, secondaryType, "!=", false, false, false, false, true);
+			buildExpression(sb, entityKey, field, new Object[]{"null"}, type, secondaryType, "!=", false, false, false, false, true);
 			break;
 		}
 		case NOT_STARTS_WITH: {
@@ -237,9 +239,9 @@ public class AdvancedCriteriaToMVELTranslator {
 				sb.append(")");
 			} else {
 				sb.append("(");
-				buildExpression(sb, entityKey, field, values.get("start"), type, secondaryType, ">", false, false, false, false, false);
+				buildExpression(sb, entityKey, field, new Object[]{values.get("start")}, type, secondaryType, ">", false, false, false, false, false);
 				sb.append("&&");
-				buildExpression(sb, entityKey, field, values.get("end"), type, secondaryType, "<", false, false, false, false, false);
+				buildExpression(sb, entityKey, field, new Object[]{values.get("end")}, type, secondaryType, "<", false, false, false, false, false);
 				sb.append(")");
 			}
 			break;
@@ -255,9 +257,9 @@ public class AdvancedCriteriaToMVELTranslator {
 				sb.append(")");
 			} else {
 				sb.append("(");
-				buildExpression(sb, entityKey, field, values.get("start"), type, secondaryType, ">=", false, false, false, false, false);
+				buildExpression(sb, entityKey, field, new Object[]{values.get("start")}, type, secondaryType, ">=", false, false, false, false, false);
 				sb.append("&&");
-				buildExpression(sb, entityKey, field, values.get("end"), type, secondaryType, "<=", false, false, false, false, false);
+				buildExpression(sb, entityKey, field, new Object[]{values.get("end")}, type, secondaryType, "<=", false, false, false, false, false);
 				sb.append(")");
 			}
 			break;
@@ -266,7 +268,7 @@ public class AdvancedCriteriaToMVELTranslator {
 	}
 
 	@SuppressWarnings({ "rawtypes", "deprecation", "unchecked" })
-	protected Object extractDate(Criteria criteria, OperatorId operator, Map values, String key) {
+	protected Object[] extractDate(Criteria criteria, OperatorId operator, Map values, String key) {
 		Object value;
 		String jsObj = JSON.encode(criteria.getJsObj());
 		JSONObject criteriaObj = JSONParser.parse(jsObj).isObject();
@@ -286,18 +288,61 @@ public class AdvancedCriteriaToMVELTranslator {
 			((Date) value).setHours(0);
 			((Date) value).setMinutes(0);
 		}
-		return value;
+		return new Object[]{value};
+	}
+	
+	protected Object[] extractBasicValues(Object value) {
+		if (value == null) {
+			return null;
+		}
+		String stringValue = value.toString().trim();
+		Object[] response = new Object[]{};
+		if (isProjection(value)) {
+			List<String> temp = new ArrayList<String>();
+			int initial = 1;
+			//assume this is a multi-value phrase
+			boolean eof = false;
+			while (!eof) {
+				int end = stringValue.indexOf(",", initial);
+				if (end == -1) {
+					eof = true;
+					end = stringValue.length() - 1;
+				}
+				temp.add(stringValue.substring(initial, end));
+				initial = end + 1;
+			}
+			response = temp.toArray(response);
+		} else {
+			response = new Object[]{value};
+		}
+		return response;
+	}
+	
+	public boolean isProjection(Object value) {
+		String stringValue = value.toString().trim();
+		return stringValue.startsWith("[") && stringValue.endsWith("]") && stringValue.indexOf(",") > 0;
 	}
 
-	protected void buildExpression(StringBuffer sb, String entityKey, String field, Object value, SupportedFieldType type, SupportedFieldType secondaryType, String operator, boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase, boolean isNegation, boolean ignoreQuotes) {
-		sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
-		sb.append(operator);
-		if (includeParenthesis) {
+	protected void buildExpression(StringBuffer sb, String entityKey, String field, Object[] value, SupportedFieldType type, SupportedFieldType secondaryType, String operator, boolean includeParenthesis, boolean isFieldComparison, boolean ignoreCase, boolean isNegation, boolean ignoreQuotes) throws IncompatibleMVELTranslationException {
+		if (operator.equals("==") && !isFieldComparison && value.length > 1) {
 			sb.append("(");
-		}
-		sb.append(formatValue(entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
-		if (includeParenthesis) {
-			sb.append(")");
+			sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+			if (ignoreCase) {
+				sb.append(" toUpperCase()");
+			}
+			sb.append(" in [");
+			sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
+			sb.append("])");
+		} else {
+			sb.append(formatField(entityKey, type, field, ignoreCase, isNegation));
+			sb.append(operator);
+			if (includeParenthesis) {
+				sb.append("(");
+			}
+			sb.append(formatValue(field, entityKey, type, secondaryType, value, isFieldComparison, ignoreCase, ignoreQuotes));
+			if (includeParenthesis) {
+				sb.append(")");
+			}
 		}
 	}
 	
@@ -334,14 +379,14 @@ public class AdvancedCriteriaToMVELTranslator {
 		return response.toString();
 	}
 	
-	protected String formatValue(String entityKey, SupportedFieldType type, SupportedFieldType secondaryType, Object value, boolean isFieldComparison, boolean ignoreCase, boolean ignoreQuotes) {
+	protected String formatValue(String fieldName, String entityKey, SupportedFieldType type, SupportedFieldType secondaryType, Object[] value, boolean isFieldComparison, boolean ignoreCase, boolean ignoreQuotes) throws IncompatibleMVELTranslationException {
 		StringBuffer response = new StringBuffer();
 		if (isFieldComparison) {
 			switch(type) {
 			case MONEY:
 				response.append(entityKey);
 				response.append(".");
-				response.append(value);
+				response.append(value[0]);
 				response.append(".getAmount()");
 				break;
 			default:
@@ -350,67 +395,92 @@ public class AdvancedCriteriaToMVELTranslator {
 				}
 				response.append(entityKey);
 				response.append(".");
-				response.append(value);
+				response.append(value[0]);
 				if (ignoreCase) {
 					response.append(")");
 				}
 				break;
 			}
 		} else {
-			switch(type) {
-			case BOOLEAN:
-				response.append(value);
-				break;
-			case DECIMAL:
-				response.append(value);
-				break;
-			case ID:
-				if (secondaryType != null && secondaryType.toString().equals(SupportedFieldType.STRING.toString())) {
+			for (int j=0;j<value.length;j++){
+				switch(type) {
+				case BOOLEAN:
+					response.append(value[j]);
+					break;
+				case DECIMAL:
+					try {
+						Double.parseDouble(value[j].toString());
+					} catch (Exception e) {
+						throw new IncompatibleMVELTranslationException("Cannot format value for the field (" + fieldName + ") based on field type. The type of field is Decimal, and you entered: (" + value[j] +")");
+					}
+					response.append(value[j]);
+					break;
+				case ID:
+					if (secondaryType != null && secondaryType.toString().equals(SupportedFieldType.STRING.toString())) {
+						if (ignoreCase) {
+							response.append("MVEL.eval(\"toUpperCase()\",");
+						}
+						if (!ignoreQuotes) {
+							response.append("\"");
+						}
+						response.append(value[j]);
+						if (!ignoreQuotes) {
+							response.append("\"");
+						}
+						if (ignoreCase) {
+							response.append(")");
+						}
+					} else {
+						try {
+							Integer.parseInt(value[j].toString());
+						} catch (Exception e) {
+							throw new IncompatibleMVELTranslationException("Cannot format value for the field (" + fieldName + ") based on field type. The type of field is Integer, and you entered: (" + value[j] +")");
+						}
+						response.append(value[j]);
+					}
+					break;
+				case INTEGER:
+					try {
+						Integer.parseInt(value[j].toString());
+					} catch (Exception e) {
+						throw new IncompatibleMVELTranslationException("Cannot format value for the field (" + fieldName + ") based on field type. The type of field is Integer, and you entered: (" + value[j] +")");
+					}
+					response.append(value[j]);
+					break;
+				case MONEY:
+					try {
+						Double.parseDouble(value[j].toString());
+					} catch (Exception e) {
+						throw new IncompatibleMVELTranslationException("Cannot format value for the field (" + fieldName + ") based on field type. The type of field is Money, and you entered: (" + value[j] +")");
+					}
+					response.append(value[j]);
+					break;
+				case DATE:
+					DateTimeFormat formatter = DateTimeFormat.getFormat("MM/dd/yy H:mm a");
+					String formattedDate = formatter.format((Date) value[0]);
+					response.append("java.text.DateFormat.getDateTimeInstance(3,3).parse(\"");
+					response.append(formattedDate);
+					response.append("\")");
+					break;
+				default:
 					if (ignoreCase) {
 						response.append("MVEL.eval(\"toUpperCase()\",");
 					}
 					if (!ignoreQuotes) {
 						response.append("\"");
 					}
-					response.append(value);
+					response.append(value[j]);
 					if (!ignoreQuotes) {
 						response.append("\"");
 					}
 					if (ignoreCase) {
 						response.append(")");
 					}
-				} else {
-					response.append(value);
+					break;
 				}
-				break;
-			case INTEGER:
-				response.append(value);
-				break;
-			case MONEY:
-				response.append(value);
-				break;
-			case DATE:
-				DateTimeFormat formatter = DateTimeFormat.getFormat("MM/dd/yy H:mm a");
-				String formattedDate = formatter.format((Date) value);
-				response.append("java.text.DateFormat.getDateTimeInstance(3,3).parse(\"");
-				response.append(formattedDate);
-				response.append("\")");
-				break;
-			default:
-				if (ignoreCase) {
-					response.append("MVEL.eval(\"toUpperCase()\",");
+				if (j < value.length - 1) {
+					response.append(",");
 				}
-				if (!ignoreQuotes) {
-					response.append("\"");
-				}
-				response.append(value);
-				if (!ignoreQuotes) {
-					response.append("\"");
-				}
-				if (ignoreCase) {
-					response.append(")");
-				}
-				break;
 			}
 		}
 		return response.toString();

@@ -13,7 +13,6 @@ import org.broadleafcommerce.gwt.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.gwt.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
 
-import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -106,7 +105,11 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 						public void onSearchItemSelected(SearchItemSelectedEvent event) {
 							display.getGrid().addData(event.getRecord(), new DSCallback() {
 								public void execute(DSResponse response, Object rawData, DSRequest request) {
-									if (response.getErrors().isEmpty()) {
+									try {
+										if (!response.getErrors().isEmpty()) {
+											//do nothing
+										}
+									} catch (Exception e) {
 										categoryPresenter.reloadParentTreeNodeRecords(true);
 									}
 								}
@@ -151,8 +154,11 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							if (response.getErrors().isEmpty()) {
-								//display.getRemoveButton().disable();
+							try {
+								if (!response.getErrors().isEmpty()) {
+									//do nothing
+								}
+							} catch (Exception e) {
 								categoryPresenter.reloadParentTreeNodeRecords(true);
 								((CategoryDisplay) categoryPresenter.getDisplay()).getRemoveOrphanedButton().disable();
 								((CategoryDisplay) categoryPresenter.getDisplay()).getInsertOrphanButton().disable();

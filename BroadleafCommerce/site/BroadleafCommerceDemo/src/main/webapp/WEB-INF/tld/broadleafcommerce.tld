@@ -9,7 +9,7 @@
 
     <tag>
         <name>category</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.CategoryTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.CategoryTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
 			<name>var</name>
@@ -25,7 +25,7 @@
     
     <tag>
         <name>googleAnalytics</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.GoogleAnalyticsTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.GoogleAnalyticsTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
 			<name>webPropertyId</name>
@@ -41,13 +41,13 @@
     
       <tag>
         <name>share</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.ShareTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.ShareTag</tag-class>
         <body-content>empty</body-content>
     </tag>
 
     <tag>
         <name>breadcrumb</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.CategoryBreadCrumbTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.CategoryBreadCrumbTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
 			<name>categoryList</name>
@@ -63,7 +63,7 @@
 
 	<tag>
         <name>categoryLink</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.CategoryLinkTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.CategoryLinkTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
 			<name>category</name>
@@ -74,7 +74,7 @@
 
 	<tag>
         <name>productLink</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.ProductLinkTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.ProductLinkTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
 			<name>product</name>
@@ -90,7 +90,7 @@
 
 	<tag>
         <name>productsForCategory</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.GetProductsByCategoryIdTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.GetProductsByCategoryIdTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
 			<name>var</name>
@@ -106,7 +106,7 @@
 
 	<tag>
         <name>searchFilter</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.SearchFilterTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.SearchFilterTag</tag-class>
         <body-content>JSP</body-content>
        	<attribute>
 			<name>products</name>
@@ -127,7 +127,7 @@
 
 	<tag>
         <name>searchFilterItem</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.SearchFilterItemTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.SearchFilterItemTag</tag-class>
         <body-content>empty</body-content>
        	<attribute>
 			<name>property</name>
@@ -152,7 +152,7 @@
     </tag>
     <tag>
         <name>displayFeaturedProducts</name>
-        <tag-class>org.broadleafcommerce.catalog.web.taglib.DisplayFeaturedProductsTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.catalog.taglib.DisplayFeaturedProductsTag</tag-class>
         <body-content>JSP</body-content>
        	<attribute>
 			<name>products</name>

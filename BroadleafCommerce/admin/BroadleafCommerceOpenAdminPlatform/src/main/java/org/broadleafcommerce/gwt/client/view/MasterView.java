@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.Module;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.http.client.UrlBuilder;
@@ -13,8 +14,11 @@ import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.VerticalAlignment;
+import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -29,6 +33,7 @@ import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.tab.events.TabSelectedEvent;
 import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class MasterView extends VLayout implements ValueChangeHandler<String> {
 	
@@ -136,6 +141,19 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         status = new Label();
         status.setWrap(false);
         bottomBar.addSpacer(6);
+        
+        ToolStripButton developerButton = new ToolStripButton();
+        developerButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/settings.png");  
+        developerButton.setShowTitle(false);
+        developerButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				SC.showConsole();
+			}
+        });
+        bottomBar.addMember(developerButton);
+        
+        bottomBar.addSpacer(6);
+        
         bottomBar.addMember(status);
         bottomBar.addFill();
         bottomBar.addMember(BLCMain.NON_MODAL_PROGRESS);

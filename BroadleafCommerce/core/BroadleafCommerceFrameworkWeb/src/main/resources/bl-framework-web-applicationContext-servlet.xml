@@ -10,15 +10,10 @@
        http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-
-	<context:component-scan base-package="org.broadleafcommerce">
-        <context:include-filter type="regex" expression=".*web.*"/>
-        <context:exclude-filter type="regex" expression=".*"/>
-    </context:component-scan>
 	
 	<aop:config/>
 	
-	<bean id="blCartControllerREST" class="org.broadleafcommerce.order.web.CartControllerREST">
+	<bean id="blCartControllerREST" class="org.broadleafcommerce.core.web.controller.order.CartControllerREST">
         <property name="cartView" value="shoppingCart/cartSummary"/>
         <property name="cartViewRedirect" value="false"/>
         <property name="addItemView" value="../currentCart.htm"/>
@@ -45,7 +40,7 @@
 
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver"/> 
 	
-	<bean class="org.broadleafcommerce.web.WrappingViewResolver">
+	<bean class="org.broadleafcommerce.core.web.WrappingViewResolver">
       <constructor-arg>
          <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
 	       <constructor-arg>

@@ -29,7 +29,7 @@ public class OfferListDataSourceFactory {
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicEntityModule(CeilingEntities.OFFER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
-			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
+			dataSource = new OfferListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);
 		} else {
 			if (cb != null) {

@@ -2,9 +2,7 @@ package org.broadleafcommerce.gwt.server.changeset.dao;
 
 import java.io.Serializable;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
@@ -19,17 +17,13 @@ import org.hibernate.envers.reader.AuditReaderImpl;
 import org.hibernate.event.EventSource;
 import org.hibernate.event.PostUpdateEvent;
 import org.hibernate.persister.entity.EntityPersister;
-import org.springframework.stereotype.Repository;
 
-@Repository("blChangeSetDao")
 public class ChangeSetDaoImpl implements ChangeSetDao {
 
 	private AuditEventListener auditEventListener = null;
 	
-	@PersistenceContext(unitName = "blPU")
     protected EntityManager em;
 	
-	@Resource(name = "blEJB3ConfigurationDao")
     protected EJB3ConfigurationDao ejb3ConfigurationDao;
 	
 	

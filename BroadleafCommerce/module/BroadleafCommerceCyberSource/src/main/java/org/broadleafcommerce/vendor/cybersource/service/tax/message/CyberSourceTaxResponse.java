@@ -18,8 +18,8 @@ package org.broadleafcommerce.vendor.cybersource.service.tax.message;
 import java.math.BigDecimal;
 
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.profile.vendor.service.message.TaxResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceResponse;
-import org.broadleafcommerce.vendor.service.message.TaxResponse;
 
 public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxResponse {
 		

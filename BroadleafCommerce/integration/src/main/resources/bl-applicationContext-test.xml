@@ -13,8 +13,11 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+	<context:component-scan base-package="org.broadleafcommerce.profile.web.controller"/>
+	<context:component-scan base-package="org.broadleafcommerce.core.web.controller"/>
+	
 	<bean id="blCacheManager"
-          class="org.broadleafcommerce.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
+          class="org.broadleafcommerce.profile.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
         <property name="shared" value="true"/>
         <property name="configLocations">
             <list>
@@ -23,7 +26,7 @@
         </property>
     </bean>
     
-    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
+    <bean id="blPersistenceUnitManager" class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
 		<property name="persistenceXmlLocations">
 			<list>
 				<value>classpath*:/META-INF/persistence-test.xml</value>
@@ -57,7 +60,7 @@
 		</property>
 	</bean>
 
-	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
+	<bean id="blConfiguration" class="org.broadleafcommerce.profile.config.RuntimeEnvironmentPropertiesConfigurer">
 		<property name="propertyLocations">
 			<set>
 				<value>classpath:config/bc/</value>
@@ -83,7 +86,7 @@
     </bean>
 
     <bean id="serviceStatusEmail"
-          class="org.broadleafcommerce.email.service.info.EmailInfo"
+          class="org.broadleafcommerce.profile.email.service.info.EmailInfo"
           parent="baseEmailInfo">
     </bean>
     
@@ -107,19 +110,19 @@
 		<property name="uspsRequestValidator">
 			<bean class="org.broadleafcommerce.vendor.usps.service.message.USPSRequestValidator">
 				<constructor-arg>
-					<bean class="org.broadleafcommerce.util.EnvironmentFactoryBean">
+					<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
 						<constructor-arg value="${usps.rate.request.validator}"/>
 					</bean>
 				</constructor-arg>
 			</bean>
 		</property>
 		<property name="uspsRequestBuilder">
-			<bean class="org.broadleafcommerce.util.EnvironmentFactoryBean">
+			<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
 				<constructor-arg value="${usps.rate.request.builder}"/>
 			</bean>
 		</property>
 		<property name="uspsResponseBuilder">
-			<bean class="org.broadleafcommerce.util.EnvironmentFactoryBean">
+			<bean class="org.broadleafcommerce.profile.util.EnvironmentFactoryBean">
 				<constructor-arg value="${usps.rate.response.builder}"/>
 			</bean>
 		</property>
@@ -152,14 +155,14 @@
 		<property name="transactionKey" value="${cybersource.transaction.key}"/>
 	</bean>
     
-    <bean id="compositeStatusHandler" class="org.broadleafcommerce.vendor.service.monitor.handler.CompositeStatusHandler">
+    <bean id="compositeStatusHandler" class="org.broadleafcommerce.profile.vendor.service.monitor.handler.CompositeStatusHandler">
     	<property name="handlers">
 	    	<list>
-	    		<bean class="org.broadleafcommerce.vendor.service.monitor.handler.LogStatusHandler"/>
-	    		<bean class="org.broadleafcommerce.vendor.service.monitor.handler.EmailStatusHandler">
+	    		<bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.LogStatusHandler"/>
+	    		<bean class="org.broadleafcommerce.profile.vendor.service.monitor.handler.EmailStatusHandler">
 	    			<property name="emailInfo" ref="serviceStatusEmail"/>
 	    			<property name="emailTarget">
-	    				<bean class="org.broadleafcommerce.email.domain.EmailTargetImpl">
+	    				<bean class="org.broadleafcommerce.profile.email.domain.EmailTargetImpl">
 	    					<property name="emailAddress" value="test@broadleafcommerce.org"/>
 	    				</bean>
 	    			</property>
@@ -168,7 +171,7 @@
 	   	</property>
     </bean>
     
-    <bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init">
+    <bean id="blServiceMonitor" class="org.broadleafcommerce.profile.vendor.service.monitor.ServiceMonitor" init-method="init">
     	<property name="defaultHandler" ref="compositeStatusHandler"/>
     	<property name="serviceHandlers">
     		<map>
@@ -183,17 +186,5 @@
 	      <tx:method name="*" propagation="REQUIRED"/>
 	    </tx:attributes>
 	</tx:advice>
-    
-    <bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
-	<bean id="persistenceUnitInfo" factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
 	
-	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService">
-		<constructor-arg>
-			<list>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.BasicEntityModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.JoinStructureModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.MapModule"/>
-			</list>
-		</constructor-arg>
-	</bean>
 </beans>

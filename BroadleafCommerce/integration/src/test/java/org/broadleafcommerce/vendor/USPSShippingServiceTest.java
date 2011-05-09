@@ -19,9 +19,9 @@ import java.math.BigDecimal;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.profile.util.UnitOfMeasureUtil;
+import org.broadleafcommerce.profile.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.test.BaseTest;
-import org.broadleafcommerce.util.UnitOfMeasureUtil;
-import org.broadleafcommerce.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationService;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItem;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;

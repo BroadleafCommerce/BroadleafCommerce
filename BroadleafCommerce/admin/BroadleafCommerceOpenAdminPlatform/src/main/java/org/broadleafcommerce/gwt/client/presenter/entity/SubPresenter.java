@@ -34,7 +34,7 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 		display.getGrid().setDataSource(dataSource);
 		dataSource.setAssociatedGrid(display.getGrid());
 		dataSource.setupGridFields(gridFields, editable);
-		((DynamicFormDisplay) display).getFormOnlyDisplay().buildFields(dataSource, true, false, true);
+		((DynamicFormDisplay) display).getFormOnlyDisplay().buildFields(dataSource, true, false, false);
 	}
 	
 	@Override
@@ -98,7 +98,7 @@ public class SubPresenter extends DynamicFormPresenter implements SubPresentable
 				if (event.getState()) {
 					display.getRemoveButton().enable();
 					((DynamicEntityDataSource) display.getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-					((DynamicFormDisplay) display).getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),false, false, true);
+					((DynamicFormDisplay) display).getFormOnlyDisplay().buildFields(display.getGrid().getDataSource(),false, false, false);
 					((DynamicFormDisplay) display).getFormOnlyDisplay().getForm().editRecord(event.getRecord());
 					((DynamicFormDisplay) display).getFormOnlyDisplay().getForm().enable();
 				} else {

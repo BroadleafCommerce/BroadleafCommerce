@@ -17,7 +17,7 @@ package org.broadleafcommerce.vendor.usps.service.message;
 
 import java.util.Stack;
 
-import org.broadleafcommerce.vendor.service.message.ShippingPriceResponse;
+import org.broadleafcommerce.profile.vendor.service.message.ShippingPriceResponse;
 
 public class USPSShippingPriceResponse implements ShippingPriceResponse {
 

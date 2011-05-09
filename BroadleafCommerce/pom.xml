@@ -241,21 +241,6 @@
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
-				<artifactId>broadleaf-cms-module</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.broadleafcommerce</groupId>
-				<artifactId>broadleaf-cms-module</artifactId>
-				<version>1.5.0-SNAPSHOT</version>
-				<type>jar</type>
-				<scope>compile</scope>
-				<classifier>sources</classifier>
-			</dependency>
-			<dependency>
-				<groupId>org.broadleafcommerce</groupId>
 				<artifactId>broadleaf-open-admin-platform</artifactId>
 				<version>1.5.0-SNAPSHOT</version>
 				<type>jar</type>

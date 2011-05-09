@@ -6,7 +6,7 @@
         overflowToDisk="true"
         timeToLiveSeconds="1"
     	timeToIdleSeconds="1">
-    	<cacheEventListenerFactory class="org.broadleafcommerce.cache.HydratedCacheEventListenerFactory"/>
+    	<cacheEventListenerFactory class="org.broadleafcommerce.profile.cache.HydratedCacheEventListenerFactory"/>
    	</defaultCache>
    	
 	<cache

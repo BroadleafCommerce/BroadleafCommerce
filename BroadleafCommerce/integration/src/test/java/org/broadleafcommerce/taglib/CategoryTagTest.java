@@ -17,8 +17,8 @@ package org.broadleafcommerce.taglib;
 
 import javax.servlet.jsp.JspException;
 
-import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.web.taglib.CategoryTag;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.web.catalog.taglib.CategoryTag;
 import org.easymock.classextension.EasyMock;
 import org.testng.annotations.Test;
 

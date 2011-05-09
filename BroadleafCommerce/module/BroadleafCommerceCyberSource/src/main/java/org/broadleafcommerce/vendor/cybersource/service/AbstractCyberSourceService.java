@@ -10,13 +10,13 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.ws.security.handler.WSHandlerConstants;
-import org.broadleafcommerce.profile.service.IdGenerationService;
+import org.broadleafcommerce.profile.core.service.IdGenerationService;
+import org.broadleafcommerce.profile.vendor.service.monitor.ServiceStatusDetectable;
+import org.broadleafcommerce.profile.vendor.service.type.ServiceStatusType;
 import org.broadleafcommerce.vendor.cybersource.service.api.ITransactionProcessorStub;
 import org.broadleafcommerce.vendor.cybersource.service.api.ReplyMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.TransactionProcessorLocator;
-import org.broadleafcommerce.vendor.service.monitor.ServiceStatusDetectable;
-import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
 public abstract class AbstractCyberSourceService implements ServiceStatusDetectable {
 

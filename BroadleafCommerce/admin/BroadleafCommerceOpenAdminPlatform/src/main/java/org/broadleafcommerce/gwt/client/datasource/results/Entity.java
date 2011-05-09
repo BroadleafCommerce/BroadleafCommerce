@@ -38,7 +38,7 @@ public class Entity implements Serializable {
 			j++;
 		}
 		for (Property property : entity.getProperties()) {
-			property.setName(prefix + "." + property.getName());
+			property.setName(prefix!=null?prefix+"."+property.getName():""+property.getName());
 			merged[j] = property;
 			j++;
 		}

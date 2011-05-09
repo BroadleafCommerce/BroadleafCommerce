@@ -1,7 +1,7 @@
 package org.broadleafcommerce.service.module;
 
-import org.broadleafcommerce.payment.domain.PaymentInfo;
-import org.broadleafcommerce.profile.domain.Address;
+import org.broadleafcommerce.core.payment.domain.PaymentInfo;
+import org.broadleafcommerce.profile.core.domain.Address;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 
 public class CyberSourceModule {

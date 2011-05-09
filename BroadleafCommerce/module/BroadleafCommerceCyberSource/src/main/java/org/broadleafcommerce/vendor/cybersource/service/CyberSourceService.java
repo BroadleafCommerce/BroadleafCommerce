@@ -1,7 +1,7 @@
 package org.broadleafcommerce.vendor.cybersource.service;
 
+import org.broadleafcommerce.profile.vendor.service.type.ServiceStatusType;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
-import org.broadleafcommerce.vendor.service.type.ServiceStatusType;
 
 public interface CyberSourceService {
 

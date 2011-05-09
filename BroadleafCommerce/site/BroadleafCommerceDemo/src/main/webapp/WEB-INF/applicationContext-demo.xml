@@ -19,7 +19,7 @@
         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <bean id="blPersistenceUnitManager"
-          class="org.broadleafcommerce.extensibility.jpa.MergePersistenceUnitManager">
+          class="org.broadleafcommerce.profile.extensibility.jpa.MergePersistenceUnitManager">
         <property name="persistenceXmlLocations">
             <list>
                 <value>classpath*:/META-INF/persistence-demo.xml</value>
@@ -42,7 +42,7 @@
 	</bean>
 	
 	<bean id="blCacheManager"
-          class="org.broadleafcommerce.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
+          class="org.broadleafcommerce.profile.extensibility.cache.ehcache.MergeEhCacheManagerFactoryBean">
         <property name="shared" value="true"/>
         <property name="configLocations">
             <list>

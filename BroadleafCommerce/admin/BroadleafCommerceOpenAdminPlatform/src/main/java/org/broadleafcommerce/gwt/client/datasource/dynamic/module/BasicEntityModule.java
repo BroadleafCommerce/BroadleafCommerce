@@ -390,7 +390,7 @@ public class BasicEntityModule implements DataSourceModule {
 	public Record updateRecord(Entity entity, Record record, Boolean updateId) {
 		String id = entity.findProperty(dataSource.getPrimaryKeyFieldName()).getValue();
 		if (updateId) {
-			id = id + "_" + loadLevelCount;
+			id = id + "_^_" + loadLevelCount;
 			loadLevelCount++;
 		}
 		for (Property property : entity.getProperties()){
@@ -660,6 +660,7 @@ public class BasicEntityModule implements DataSourceModule {
 			        break;
 				case FOREIGN_KEY:{
 					field = new DataSourceTextField(propertyName, friendlyName);
+					field.setCanEdit(mutable);
 					String dataSourceName = null;
 					ForeignKey foreignField = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
 					if (foreignField != null && foreignField.getForeignKeyClass().equals(foreignKeyClass)) {
@@ -678,6 +679,7 @@ public class BasicEntityModule implements DataSourceModule {
 					break;}
 				case ADDITIONAL_FOREIGN_KEY:{
 					field = new DataSourceTextField(propertyName, friendlyName);
+					field.setCanEdit(mutable);
 					if (hidden == null) {
 						hidden = true;
 					}

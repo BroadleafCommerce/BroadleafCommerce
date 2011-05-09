@@ -10,7 +10,7 @@
 
     <tag>
         <name>productLookup</name>
-        <tag-class>org.broadleafcommerce.layout.tags.ProductLookupTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.ProductLookupTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up a product by productId</description>
        	<attribute>
@@ -28,7 +28,7 @@
 
     <tag>
         <name>skuLookup</name>
-        <tag-class>org.broadleafcommerce.layout.tags.SkuLookupTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.SkuLookupTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up a sku by skuId</description>
        	<attribute>
@@ -46,7 +46,7 @@
 
     <tag>
         <name>orderLookup</name>
-        <tag-class>org.broadleafcommerce.layout.tags.OrderLookupTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.OrderLookupTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up an order by customerId, orderId, or orderName.  Can also provide the total quantity of items in the cart.</description>
        	<attribute>
@@ -83,7 +83,7 @@
     
     <tag>
         <name>contentDisplay</name>
-        <tag-class>org.broadleafcommerce.layout.tags.ContentDisplayTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.ContentDisplayTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up a content display by name and type</description>
        	<attribute>
@@ -111,7 +111,7 @@
     </tag>
     <tag>
         <name>contentSpecified</name>
-        <tag-class>org.broadleafcommerce.layout.tags.ContentSpecifiedTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.ContentSpecifiedTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up content by contentType and parameter map objects to evaluate MVEL expressions against</description>
        	<attribute>
@@ -144,7 +144,7 @@
     </tag>
     <tag>
         <name>contentDisplayRandom</name>
-        <tag-class>org.broadleafcommerce.layout.tags.RandomContentDisplayTag</tag-class>
+        <tag-class>org.broadleafcommerce.core.web.layout.tags.RandomContentDisplayTag</tag-class>
         <body-content>empty</body-content>
         <description>Looks up a content display by name and type</description>
        	<attribute>

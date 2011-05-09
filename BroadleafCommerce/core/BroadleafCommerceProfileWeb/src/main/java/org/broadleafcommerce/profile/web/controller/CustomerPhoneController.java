@@ -20,14 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.validator.GenericValidator;
 import org.broadleafcommerce.config.EntityConfiguration;
-import org.broadleafcommerce.profile.domain.CustomerPhone;
-import org.broadleafcommerce.profile.domain.Phone;
-import org.broadleafcommerce.profile.service.CustomerPhoneService;
-import org.broadleafcommerce.profile.web.CustomerState;
+import org.broadleafcommerce.profile.core.domain.CustomerPhone;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
 import org.broadleafcommerce.profile.web.controller.validator.CustomerPhoneValidator;
 import org.broadleafcommerce.profile.web.controller.validator.PhoneValidator;
-import org.broadleafcommerce.profile.web.model.PhoneNameForm;
-import org.broadleafcommerce.profile.web.util.PhoneFormatter;
+import org.broadleafcommerce.profile.web.core.CustomerState;
+import org.broadleafcommerce.profile.web.core.model.PhoneNameForm;
+import org.broadleafcommerce.profile.web.core.util.PhoneFormatter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -104,7 +104,7 @@ public class CustomerPhoneController {
     @ModelAttribute("phoneNameForm")
     public PhoneNameForm initPhoneNameForm(HttpServletRequest request, Model model) {
         PhoneNameForm form = new PhoneNameForm();
-        form.setPhone((Phone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.Phone"));
+        form.setPhone((Phone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.Phone"));
 
         return form;
     }
@@ -163,7 +163,7 @@ public class CustomerPhoneController {
         errors.popNestedPath();
 
         if (!errors.hasErrors()) {
-            CustomerPhone customerPhone = (CustomerPhone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.domain.CustomerPhone");
+            CustomerPhone customerPhone = (CustomerPhone) entityConfiguration.createEntityInstance("org.broadleafcommerce.profile.core.domain.CustomerPhone");
             customerPhone.setCustomer(customerState.getCustomer(request));
             customerPhone.setPhoneName(phoneNameForm.getPhoneName());
             customerPhone.setPhone(phoneNameForm.getPhone());

@@ -17,8 +17,8 @@ package org.broadleafcommerce.vendor.usps.service.message.v2;
 
 import java.math.BigDecimal;
 
-import org.broadleafcommerce.util.UnitOfMeasureUtil;
-import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.profile.util.UnitOfMeasureUtil;
+import org.broadleafcommerce.profile.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSVersionedRequestValidator;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;

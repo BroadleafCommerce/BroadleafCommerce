@@ -26,7 +26,7 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
         form.disable();
         form.setBackgroundColor("#eaeaea");
         if (dataSource != null) {
-        	buildFields(dataSource, true, false, true);
+        	buildFields(dataSource, true, false, false);
         }
         addMember(form);
         setOverflow(Overflow.AUTO);

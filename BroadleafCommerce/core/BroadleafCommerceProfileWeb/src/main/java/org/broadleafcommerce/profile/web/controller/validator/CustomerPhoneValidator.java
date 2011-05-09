@@ -19,9 +19,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.profile.domain.CustomerPhone;
-import org.broadleafcommerce.profile.domain.Phone;
-import org.broadleafcommerce.profile.service.CustomerPhoneService;
+import org.broadleafcommerce.profile.core.domain.CustomerPhone;
+import org.broadleafcommerce.profile.core.domain.Phone;
+import org.broadleafcommerce.profile.core.service.CustomerPhoneService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

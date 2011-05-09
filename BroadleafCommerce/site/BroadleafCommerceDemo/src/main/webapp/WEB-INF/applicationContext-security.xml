@@ -15,9 +15,28 @@
 				subaccountLogoutFilter, subaccountAuthenticationProcessingFilter, securityContextHolderAwareRequestFilter, 
 				subaccountExceptionTranslationFilter, sessionFixationProtectionFilter, subaccountFilterSecurityInterceptor" 
 				/> -->
-			<sec:filter-chain pattern="/css/**" filters="none"/>
-			<sec:filter-chain pattern="/images/**" filters="none"/>
-			<sec:filter-chain pattern="/js/**" filters="none"/>
+			<sec:filter-chain pattern="/css/**" filters="none" />
+			<sec:filter-chain pattern="/images/**" filters="none" />
+			<sec:filter-chain pattern="/js/**" filters="none" />
+			<sec:filter-chain pattern="/org.broadleafcommerce.gwt.demoAdmin/admin/**" filters="none" />
+			<sec:filter-chain pattern="/admin*"
+				filters="
+                	blSecurityContextPersistenceFilterWithASCTrue,
+                	blLogoutFilter,               	
+                	blAdminAuthenticationProcessingFilter,
+                	blRequestWrapperFilter,
+                	blAdminRememberMeAuthenticationFilter, 
+                	blAdminExceptionTranslationFilter,
+                	blAdminFilterSecurityInterceptor" />
+            <sec:filter-chain pattern="/admin/*"
+				filters="
+                	blSecurityContextPersistenceFilterWithASCTrue,
+                	blLogoutFilter,               	
+                	blAdminAuthenticationProcessingFilter,
+                	blRequestWrapperFilter,
+                	blAdminRememberMeAuthenticationFilter, 
+                	blAdminExceptionTranslationFilter,
+                	blAdminFilterSecurityInterceptor" />
 			<sec:filter-chain pattern="/**"
 				filters="
                 	blSecurityContextPersistenceFilterWithASCTrue,
@@ -30,19 +49,22 @@
                 	blFilterSecurityInterceptor" />
 		</sec:filter-chain-map>
 	</bean>
-	
-	<bean id="blRequestWrapperFilter" class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter"/>
+
+	<bean id="blRequestWrapperFilter"
+		class="org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter" />
 
 	<bean id="blRememberMeServices"
-		class="org.broadleafcommerce.profile.web.security.EnhancedTokenBasedRememberMeServices">
+		class="org.broadleafcommerce.profile.web.core.security.EnhancedTokenBasedRememberMeServices">
 		<property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE" />
 		<property name="userDetailsService" ref="blUserDetailsService" />
 	</bean>
 
-	<bean id="blSecurityContextPersistenceFilterWithASCTrue" class="org.springframework.security.web.context.SecurityContextPersistenceFilter">
+	<bean id="blSecurityContextPersistenceFilterWithASCTrue"
+		class="org.springframework.security.web.context.SecurityContextPersistenceFilter">
 		<property name='securityContextRepository'>
-			<bean class='org.springframework.security.web.context.HttpSessionSecurityContextRepository'>
-  				<property name='allowSessionCreation' value='true' />
+			<bean
+				class='org.springframework.security.web.context.HttpSessionSecurityContextRepository'>
+				<property name='allowSessionCreation' value='true' />
 			</bean>
 		</property>
 	</bean>
@@ -70,7 +92,7 @@
 	</bean>
 
 	<bean id="blCustomerStateFilter"
-		class="org.broadleafcommerce.profile.web.security.CustomerStateFilter" />
+		class="org.broadleafcommerce.profile.web.core.security.CustomerStateFilter" />
 
 	<bean id="blRememberMeAuthenticationProvider"
 		class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
@@ -85,16 +107,8 @@
 	                                      JOIN BLC_ROLE r ON cr.ROLE_ID = r.ROLE_ID 
 	                                      WHERE USER_NAME=?" />
 
-	<sec:authentication-manager alias="blAuthenticationManager">
-		<sec:authentication-provider
-			user-service-ref="blUserDetailsService">
-			<sec:password-encoder ref="blPasswordEncoder" />
-		</sec:authentication-provider>
-		<sec:authentication-provider ref="blRememberMeAuthenticationProvider" />
-	</sec:authentication-manager>
-
 	<bean id="broadleafAuthenticationFailureHandler"
-		class="org.broadleafcommerce.profile.web.security.BroadleafAuthenticationFailureHandler">
+		class="org.broadleafcommerce.profile.web.core.security.BroadleafAuthenticationFailureHandler">
 		<constructor-arg value="/registerCustomer/registerCustomer.htm?error=true" />
 		<property name="redirectStrategy" ref="redirectStrategy" />
 	</bean>
@@ -107,7 +121,7 @@
 	</bean>
 
 	<bean id="redirectStrategy"
-		class="org.broadleafcommerce.profile.web.security.LocalRedirectStrategy">
+		class="org.broadleafcommerce.profile.web.core.security.LocalRedirectStrategy">
 		<property name="enforcePortMatch" value="true" />
 	</bean>
 
@@ -147,32 +161,105 @@
 			</sec:filter-security-metadata-source>
 		</property>
 	</bean>
+	
+	<!-- admin section -->
+	
+	<bean id="blAdminAuthenticationProcessingFilter"
+		class="org.springframework.security.web.authentication.AuthenticationProcessingFilter">
+		<property name="authenticationManager" ref="blAuthenticationManager" />
+		<property name="authenticationFailureHandler" ref="broadleafAdminAuthenticationFailureHandler" />
+		<property name="authenticationSuccessHandler" ref="springAdminAuthenticationSuccessHandler" />
+		<property name="filterProcessesUrl" value="/admin/login_admin_post" />
+	</bean>
+	
+	<bean id="broadleafAdminAuthenticationFailureHandler"
+		class="org.broadleafcommerce.profile.web.core.security.BroadleafAuthenticationFailureHandler">
+		<constructor-arg value="/login.jsp" />
+		<property name="redirectStrategy" ref="redirectStrategy" />
+	</bean>
 
-	<!-- <sec:http auto-config="true"> <sec:http-basic /> <sec:anonymous /> 
-		<sec:form-login login-page="/login.jsp" authentication-failure-url="/login.jsp" 
-		default-target-url="/admin.html" /> <sec:logout logout-success-url="/login.jsp" 
-		/> <sec:intercept-url pattern="/login.jsp*" filters="none"/> <sec:intercept-url 
-		pattern="/resources/**" filters="none"/> <sec:intercept-url pattern="/**" 
-		access="IS_AUTHENTICATED_REMEMBERED" /> <sec:intercept-url pattern="/**" 
-		filters="none"/> </sec:http> <sec:global-method-security secured-annotations="enabled" 
-		/> <sec:authentication-manager alias="blAuthenticationManager"> <sec:authentication-provider 
-		user-service-ref="userDetailsManager"> <sec:password-encoder hash="plaintext"/> 
-		</sec:authentication-provider> </sec:authentication-manager> <sec:jdbc-user-service 
-		data-source-ref="webDS" id="blUserDetailsService" users-by-username-query="select 
-		user_name,password,true from BLC_CUSTOMER where user_name=?" authorities-by-username-query="select 
-		c.user_name,r.role_name from BLC_CUSTOMER c join blc_customer_role cr on 
-		c.customer_id = cr.customer_id join blc_role r on cr.role_id = r.role_id 
-		where user_name=?" /> <bean id="userDetailsManager" class="org.springframework.security.provisioning.JdbcUserDetailsManager"> 
-		<property name="dataSource" ref="webDS"/> <property name="authenticationManager" 
-		ref="blAuthenticationManager"/> <property name="enableGroups" value="false"/> 
-		<property name="enableAuthorities" value="true"/> <property name="usersByUsernameQuery" 
-		value="SELECT login AS username, password, 'true' as enabled FROM BLC_ADMIN_USER 
-		WHERE login = ?"/> <property name="authoritiesByUsernameQuery" value="SELECT 
+	<bean id="springAdminAuthenticationSuccessHandler"
+		class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+		<property name="redirectStrategy" ref="redirectStrategy" />
+		<property name="defaultTargetUrl" value="/admin.html" />
+		<property name="alwaysUseDefaultTargetUrl" value="false" />
+	</bean>
+	
+	<bean id="blAdminRememberMeAuthenticationFilter"
+		class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
+		<property name="rememberMeServices" ref="blAdminRememberMeServices" />
+		<property name="authenticationManager" ref="blAuthenticationManager" />
+	</bean>
+	
+	<bean id="blAdminRememberMeServices"
+		class="org.broadleafcommerce.profile.web.core.security.EnhancedTokenBasedRememberMeServices">
+		<property name="key" value="SPRING_SECURITY_REMEMBER_ME_COOKIE" />
+		<property name="userDetailsService" ref="userDetailsManager" />
+	</bean>
+	
+	<bean id="blAdminExceptionTranslationFilter"
+		class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<property name="authenticationEntryPoint">
+			<bean
+				class="org.springframework.security.web.authentication.AuthenticationProcessingFilterEntryPoint">
+				<property name="loginFormUrl" value="/login.jsp" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="blAdminFilterSecurityInterceptor"
+		class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
+		<property name="accessDecisionManager">
+			<bean class="org.springframework.security.access.vote.UnanimousBased">
+				<property name="decisionVoters">
+					<list>
+						<bean class="org.springframework.security.access.vote.RoleVoter">
+							<property name="rolePrefix" value="PERMISSION_" />
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+		<property name="authenticationManager" ref="blAuthenticationManager" />
+		<property name="securityMetadataSource">
+			<sec:filter-security-metadata-source>
+				<sec:intercept-url pattern="/admin.html*" access="PERMISSION_DEFAULT" />
+			</sec:filter-security-metadata-source>
+		</property>
+	</bean>
+	
+	<sec:global-method-security secured-annotations="enabled" />
+		
+	<sec:authentication-manager alias="blAuthenticationManager">
+		<sec:authentication-provider
+			user-service-ref="userDetailsManager">
+			<sec:password-encoder hash="plaintext" />
+		</sec:authentication-provider>
+		<sec:authentication-provider
+			user-service-ref="blUserDetailsService">
+			<sec:password-encoder ref="blPasswordEncoder" />
+		</sec:authentication-provider>
+		<sec:authentication-provider ref="blRememberMeAuthenticationProvider" />
+	</sec:authentication-manager>
+	
+	<bean id="userDetailsManager"
+		class="org.springframework.security.provisioning.JdbcUserDetailsManager">
+		<property name="dataSource" ref="webDS" />
+		<property name="authenticationManager" ref="blAuthenticationManager" />
+		<property name="enableGroups" value="false" />
+		<property name="enableAuthorities" value="true" />
+		<property name="usersByUsernameQuery"
+			value="SELECT login AS username, password, 'true' as enabled FROM BLC_ADMIN_USER 
+		WHERE login = ?" />
+		<property name="authoritiesByUsernameQuery"
+			value="SELECT 
 		DISTINCT au.login AS username, ap.name AS authority FROM BLC_ADMIN_USER au 
 		JOIN BLC_ADMIN_USER_ROLE_XREF aurx ON au.admin_user_id = aurx.admin_user_id 
 		JOIN BLC_ADMIN_ROLE ar ON aurx.admin_role_id = ar.admin_role_id JOIN BLC_ADMIN_ROLE_PERMISSION_XREF 
 		arpx ON ar.admin_role_id = arpx.admin_role_id JOIN BLC_ADMIN_PERMISSION ap 
-		ON arpx.admin_permission_id = ap.admin_permission_id WHERE au.login = ?"/> 
-		</bean> <bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" 
-		/> -->
+		ON arpx.admin_permission_id = ap.admin_permission_id WHERE au.login = ?" />
+	</bean>
+	
+	<bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
 </beans>

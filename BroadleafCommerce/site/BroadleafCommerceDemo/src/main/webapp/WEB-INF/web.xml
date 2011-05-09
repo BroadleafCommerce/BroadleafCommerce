@@ -18,6 +18,8 @@
             /WEB-INF/applicationContext-email.xml
             /WEB-INF/applicationContext-search.xml
             /WEB-INF/applicationContext-security.xml
+            classpath:/bl-open-admin-applicationContext.xml
+            classpath:/bl-admin-applicationContext.xml
         </param-value>
 	</context-param>
 
@@ -79,7 +81,7 @@
 	</listener>
 
 	<listener>
-		<listener-class>org.broadleafcommerce.extensibility.web.MergeContextLoaderListener</listener-class>
+		<listener-class>org.broadleafcommerce.profile.web.extensibility.MergeContextLoaderListener</listener-class>
 	</listener>
 	
 	<listener>

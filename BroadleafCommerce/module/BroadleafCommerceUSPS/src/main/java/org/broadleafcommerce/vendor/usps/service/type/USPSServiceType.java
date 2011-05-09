@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.order.service.type.USPSServiceMethod;
-import org.broadleafcommerce.util.BroadleafEnumerationType;
+import org.broadleafcommerce.profile.util.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of service types.

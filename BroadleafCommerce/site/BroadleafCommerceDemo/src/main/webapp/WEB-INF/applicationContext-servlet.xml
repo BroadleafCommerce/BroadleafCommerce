@@ -11,18 +11,16 @@
        http://www.springframework.org/schema/aop
        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
-	<context:component-scan base-package="org.broadleafcommerce">
-        <context:include-filter type="regex" expression=".*web.*"/>
-        <context:exclude-filter type="regex" expression=".*"/>
-    </context:component-scan>
+	<context:component-scan base-package="org.broadleafcommerce.profile.web.controller"/>
+	<context:component-scan base-package="org.broadleafcommerce.core.web.controller"/>
 	
 	<aop:config/>
 	
 	<bean id="resourceBundleExtensionPoint"
-		class="org.broadleafcommerce.profile.util.ResourceBundleExtensionPoint" />
+		class="org.broadleafcommerce.profile.core.util.ResourceBundleExtensionPoint" />
 
 	<bean id="messageSource"
-		class="org.broadleafcommerce.profile.util.BLResourceBundleMessageSource">
+		class="org.broadleafcommerce.profile.core.util.BLResourceBundleMessageSource">
 		<constructor-arg>
 			<list>
 				<value>messages</value>
@@ -53,7 +51,7 @@
 		<property name="viewName" value="catalog/store" />
 	</bean>	
 
-	<bean id="catalogController" class="org.broadleafcommerce.catalog.web.CatalogController">
+	<bean id="catalogController" class="org.broadleafcommerce.core.web.controller.catalog.CatalogController">
 		<property name="catalogService" ref="blCatalogService"/>
 		<property name="ratingService" ref="blRatingService" />
         <property name="defaultCategoryView" value="catalog/defaultCatalog"/>
@@ -62,7 +60,7 @@
         <property name="categoryTemplatePrefix" value="catalog/templates/"/>
 	</bean>
 	
-	<bean id="blCartController" class="org.broadleafcommerce.order.web.CartController">
+	<bean id="blCartController" class="org.broadleafcommerce.core.web.controller.order.CartController">
         <property name="cartView" value="shoppingCart/cartSummary"/>
         <property name="cartViewRedirect" value="false"/>
         <property name="addItemView" value="viewCart.htm"/>
@@ -71,7 +69,7 @@
         <property name="removeItemViewRedirect" value="true"/>
 	</bean>
 	
-	<bean id="checkoutController" class="org.broadleafcommerce.checkout.web.CheckoutController">
+	<bean id="checkoutController" class="org.broadleafcommerce.core.web.controller.checkout.CheckoutController">
 		<property name="checkoutView" value="checkout/checkout"/>
 	</bean>
 	

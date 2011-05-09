@@ -18,7 +18,7 @@
 		</property>
 	</bean>
     
-	<bean id="blEmailInfo" class="org.broadleafcommerce.email.service.info.EmailInfo" />
+	<bean id="blEmailInfo" class="org.broadleafcommerce.profile.email.service.info.EmailInfo" />
 	<bean id="blRegistrationEmailInfo" parent="blEmailInfo">
 		<property name="subject"><value>You have successfully registered!</value></property>
 		<property name="fromAddress"><value>demo@broadleafcommerce.com</value></property>

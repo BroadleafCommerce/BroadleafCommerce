@@ -18,7 +18,7 @@ package org.broadleafcommerce.profile.aop.test;
 import javax.annotation.Resource;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.broadleafcommerce.profile.service.CustomerService;
+import org.broadleafcommerce.profile.core.service.CustomerService;
 
 public class CustomerStateAOP {
 

@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.profile.dataprovider;
 
-import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.domain.CustomerImpl;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.domain.CustomerImpl;
 import org.testng.annotations.DataProvider;
 
 public class CustomerDataProvider {

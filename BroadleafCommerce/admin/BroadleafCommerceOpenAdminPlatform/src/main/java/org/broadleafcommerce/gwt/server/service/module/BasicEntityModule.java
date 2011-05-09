@@ -42,8 +42,8 @@ import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.client.service.ServiceException;
 import org.broadleafcommerce.gwt.server.cto.BaseCtoConverter;
 import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
-import org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
+import org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService;
 import org.broadleafcommerce.money.Money;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -94,105 +94,111 @@ public class BasicEntityModule implements RemoteServiceModule, RecordHelper, App
 			}
 			Class<?> returnType = field.getType();
 			String value = property.getValue();
-			if (value != null && mergedProperties.get(property.getName()) != null) {
-				switch(mergedProperties.get(property.getName()).getFieldType()) {
-				case BOOLEAN :
-					if (Character.class.isAssignableFrom(returnType)) {
-						fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value)?'Y':'N');
-					} else {
-						fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value));
-					}
-					break;
-				case DATE :
-					fieldManager.setFieldValue(instance, property.getName(), dateFormat.parse(value));
-					break;
-				case DECIMAL :
-					if (BigDecimal.class.isAssignableFrom(returnType)) {
-						fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
-					} else {
-						fieldManager.setFieldValue(instance, property.getName(), new Double(value));
-					}
-					break;
-				case MONEY :
-					if (BigDecimal.class.isAssignableFrom(returnType)) {
-						fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
-					} else if (Double.class.isAssignableFrom(returnType)){
-						fieldManager.setFieldValue(instance, property.getName(), new Double(value));
-					} else {
-						fieldManager.setFieldValue(instance, property.getName(), new Money(new Double(value)));
-					}
-					break;
-				case INTEGER :
-					if (int.class.isAssignableFrom(returnType) || Integer.class.isAssignableFrom(returnType)) {
-						fieldManager.setFieldValue(instance, property.getName(), Integer.valueOf(value));
-					} else if (byte.class.isAssignableFrom(returnType) || Byte.class.isAssignableFrom(returnType)) {
-						fieldManager.setFieldValue(instance, property.getName(), Byte.valueOf(value));
-					} else if (short.class.isAssignableFrom(returnType) || Short.class.isAssignableFrom(returnType)) {
-						fieldManager.setFieldValue(instance, property.getName(), Short.valueOf(value));
-					} else if (long.class.isAssignableFrom(returnType) || Long.class.isAssignableFrom(returnType)) {
-						fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
-					}
-					break;
-				default :
-					fieldManager.setFieldValue(instance, property.getName(), value);
-					break;
-				case EMAIL :
-					fieldManager.setFieldValue(instance, property.getName(), value);
-					break;
-				case FOREIGN_KEY :{
-					Serializable foreignInstance;
-					if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-						foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
-					} else {
-						foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
-					}
-					
-					if (Collection.class.isAssignableFrom(returnType)) {
-						@SuppressWarnings("rawtypes")
-						Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
-						if (!collection.contains(foreignInstance)){
-							collection.add(foreignInstance);
+			if (mergedProperties.get(property.getName()) != null) {
+				if (value != null) {
+					switch(mergedProperties.get(property.getName()).getFieldType()) {
+					case BOOLEAN :
+						if (Character.class.isAssignableFrom(returnType)) {
+							fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value)?'Y':'N');
+						} else {
+							fieldManager.setFieldValue(instance, property.getName(), Boolean.valueOf(value));
 						}
-					} else if (Map.class.isAssignableFrom(returnType)) {
-						throw new RuntimeException("Map structures are not supported for foreign key fields.");
-					} else {
-						fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
-					}
-					break;
-				}
-				case ADDITIONAL_FOREIGN_KEY :{
-					Serializable foreignInstance;
-					if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
-						foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
-					} else {
-						foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
-					}
-					
-					if (Collection.class.isAssignableFrom(returnType)) {
-						@SuppressWarnings("rawtypes")
-						Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
-						if (!collection.contains(foreignInstance)){
-							collection.add(foreignInstance);
+						break;
+					case DATE :
+						fieldManager.setFieldValue(instance, property.getName(), dateFormat.parse(value));
+						break;
+					case DECIMAL :
+						if (BigDecimal.class.isAssignableFrom(returnType)) {
+							fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
+						} else {
+							fieldManager.setFieldValue(instance, property.getName(), new Double(value));
 						}
-					} else if (Map.class.isAssignableFrom(returnType)) {
-						throw new RuntimeException("Map structures are not supported for foreign key fields.");
-					} else {
-						fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
-					}
-					break;
-				}
-				case ID :
-					if (setId) {
-						switch(mergedProperties.get(property.getName()).getSecondaryType()) {
-						case INTEGER:
+						break;
+					case MONEY :
+						if (BigDecimal.class.isAssignableFrom(returnType)) {
+							fieldManager.setFieldValue(instance, property.getName(), new BigDecimal(new Double(value)));
+						} else if (Double.class.isAssignableFrom(returnType)){
+							fieldManager.setFieldValue(instance, property.getName(), new Double(value));
+						} else {
+							fieldManager.setFieldValue(instance, property.getName(), new Money(new Double(value)));
+						}
+						break;
+					case INTEGER :
+						if (int.class.isAssignableFrom(returnType) || Integer.class.isAssignableFrom(returnType)) {
+							fieldManager.setFieldValue(instance, property.getName(), Integer.valueOf(value));
+						} else if (byte.class.isAssignableFrom(returnType) || Byte.class.isAssignableFrom(returnType)) {
+							fieldManager.setFieldValue(instance, property.getName(), Byte.valueOf(value));
+						} else if (short.class.isAssignableFrom(returnType) || Short.class.isAssignableFrom(returnType)) {
+							fieldManager.setFieldValue(instance, property.getName(), Short.valueOf(value));
+						} else if (long.class.isAssignableFrom(returnType) || Long.class.isAssignableFrom(returnType)) {
 							fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
-							break;
-						case STRING:
-							fieldManager.setFieldValue(instance, property.getName(), value);
-							break;
 						}
+						break;
+					default :
+						fieldManager.setFieldValue(instance, property.getName(), value);
+						break;
+					case EMAIL :
+						fieldManager.setFieldValue(instance, property.getName(), value);
+						break;
+					case FOREIGN_KEY :{
+						Serializable foreignInstance;
+						if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
+							foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+						} else {
+							foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+						}
+						
+						if (Collection.class.isAssignableFrom(returnType)) {
+							@SuppressWarnings("rawtypes")
+							Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+							if (!collection.contains(foreignInstance)){
+								collection.add(foreignInstance);
+							}
+						} else if (Map.class.isAssignableFrom(returnType)) {
+							throw new RuntimeException("Map structures are not supported for foreign key fields.");
+						} else {
+							fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
+						}
+						break;
 					}
-					break;
+					case ADDITIONAL_FOREIGN_KEY :{
+						Serializable foreignInstance;
+						if (SupportedFieldType.INTEGER.toString().equals(mergedProperties.get(property.getName()).getSecondaryType().toString())) {
+							foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), Long.valueOf(value));
+						} else {
+							foreignInstance = dynamicEntityDao.retrieve(Class.forName(mergedProperties.get(property.getName()).getForeignKeyClass()), value);
+						}
+						
+						if (Collection.class.isAssignableFrom(returnType)) {
+							@SuppressWarnings("rawtypes")
+							Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
+							if (!collection.contains(foreignInstance)){
+								collection.add(foreignInstance);
+							}
+						} else if (Map.class.isAssignableFrom(returnType)) {
+							throw new RuntimeException("Map structures are not supported for foreign key fields.");
+						} else {
+							fieldManager.setFieldValue(instance, property.getName(), foreignInstance);
+						}
+						break;
+					}
+					case ID :
+						if (setId) {
+							switch(mergedProperties.get(property.getName()).getSecondaryType()) {
+							case INTEGER:
+								fieldManager.setFieldValue(instance, property.getName(), Long.valueOf(value));
+								break;
+							case STRING:
+								fieldManager.setFieldValue(instance, property.getName(), value);
+								break;
+							}
+						}
+						break;
+					}
+				} else {
+					if (fieldManager.getFieldValue(instance, property.getName()) != null) {
+						fieldManager.setFieldValue(instance, property.getName(), null);
+					}
 				}
 			}
 		}
@@ -205,6 +211,26 @@ public class BasicEntityModule implements RemoteServiceModule, RecordHelper, App
 		records.add(record);
 		Entity[] productEntities = getRecords(primaryMergedProperties, records, alternateMergedProperties, pathToTargetObject);
 		return productEntities[0];
+	}
+	
+	public Entity getRecord(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, Serializable record) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, DOMException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+		Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
+		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+		Entity entity = getRecord(mergedProperties, record, null, null);
+		
+		return entity;
+	}
+	
+	public Entity[] getRecords(Class<?> ceilingEntityClass, PersistencePerspective persistencePerspective, List<Serializable> records) throws SecurityException, IllegalArgumentException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, DOMException, TransformerConfigurationException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+		Class<?>[] entityClasses = dynamicEntityDao.getAllPolymorphicEntitiesFromCeiling(ceilingEntityClass);
+		Map<String, FieldMetadata> mergedProperties = getSimpleMergedProperties(ceilingEntityClass.getName(), persistencePerspective, dynamicEntityDao, entityClasses);
+		Entity[] entities = getRecords(mergedProperties, records, null, null);
+		
+		return entities;
+	}
+	
+	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		return dynamicEntityDao.getSimpleMergedProperties(entityName, persistencePerspective, dynamicEntityDao, entityClasses);
 	}
 
 	public Entity[] getRecords(Map<String, FieldMetadata> primaryMergedProperties, List<Serializable> records, Map<String, FieldMetadata> alternateMergedProperties, String pathToTargetObject) throws ParserConfigurationException, DOMException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, TransformerFactoryConfigurationError, TransformerConfigurationException, IllegalArgumentException, TransformerException, SecurityException, ClassNotFoundException {

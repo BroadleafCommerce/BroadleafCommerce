@@ -15,10 +15,10 @@
  */
 package org.broadleafcommerce.profile.dataprovider;
 
-import org.broadleafcommerce.profile.domain.Address;
-import org.broadleafcommerce.profile.domain.AddressImpl;
-import org.broadleafcommerce.profile.domain.State;
-import org.broadleafcommerce.profile.domain.StateImpl;
+import org.broadleafcommerce.profile.core.domain.Address;
+import org.broadleafcommerce.profile.core.domain.AddressImpl;
+import org.broadleafcommerce.profile.core.domain.State;
+import org.broadleafcommerce.profile.core.domain.StateImpl;
 import org.testng.annotations.DataProvider;
 
 public class AddressDataProvider {

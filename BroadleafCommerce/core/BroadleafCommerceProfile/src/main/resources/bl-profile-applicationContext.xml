@@ -13,7 +13,11 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
-	<bean id="blConfiguration" class="org.broadleafcommerce.config.RuntimeEnvironmentPropertiesConfigurer">
+	<context:component-scan base-package="org.broadleafcommerce.profile">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.profile.web.controller.*"/>
+    </context:component-scan>
+    
+	<bean id="blConfiguration" class="org.broadleafcommerce.profile.config.RuntimeEnvironmentPropertiesConfigurer">
 		<property name="propertyLocations">
 			<set>
 				<value>classpath:config/bc/</value>
@@ -33,7 +37,7 @@
 
 	<bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
 
-	<bean id="blServerInfo" class="org.broadleafcommerce.email.service.info.ServerInfo">
+	<bean id="blServerInfo" class="org.broadleafcommerce.profile.email.service.info.ServerInfo">
 		<property name="serverName" value="localhost"/>
 		<property name="serverPort" value="8080"/>
 	</bean>
@@ -66,11 +70,11 @@
       </property>
    </bean>
 	
-	<bean id="blEmailInfo" class="org.broadleafcommerce.email.service.info.EmailInfo" />
-	<bean id="blNullEmailInfo" class="org.broadleafcommerce.email.service.info.NullEmailInfo" />
+	<bean id="blEmailInfo" class="org.broadleafcommerce.profile.email.service.info.EmailInfo" />
+	<bean id="blNullEmailInfo" class="org.broadleafcommerce.profile.email.service.info.NullEmailInfo" />
 	<bean id="blRegistrationEmailInfo" parent="blNullEmailInfo" />
 
-	<bean id="blMessageCreator" class="org.broadleafcommerce.email.service.message.MessageCreator">
+	<bean id="blMessageCreator" class="org.broadleafcommerce.profile.email.service.message.MessageCreator">
 		<constructor-arg ref="blVelocityEngine"/>
 		<constructor-arg ref="blMailSender"/>
 		<constructor-arg>
@@ -104,8 +108,10 @@
         </constructor-arg>
 	</bean>
 	
-	<bean id="blServiceMonitor" class="org.broadleafcommerce.vendor.service.monitor.ServiceMonitor" init-method="init"/>
+	<bean id="blServiceMonitor" class="org.broadleafcommerce.profile.vendor.service.monitor.ServiceMonitor" init-method="init"/>
 	
-	<bean id="springAppContext" class="org.broadleafcommerce.util.SpringAppContext"/>
+	<bean id="springAppContext" class="org.broadleafcommerce.profile.util.SpringAppContext"/>
+	
+	<bean id="blEncryptionModule" class="org.broadleafcommerce.profile.encryption.DefaultEncryptionModule"/>
 	
 </beans>

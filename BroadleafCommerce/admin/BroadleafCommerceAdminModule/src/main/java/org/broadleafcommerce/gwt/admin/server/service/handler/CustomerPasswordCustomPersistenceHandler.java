@@ -15,8 +15,8 @@ import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.gwt.server.service.module.InspectHelper;
 import org.broadleafcommerce.gwt.server.service.module.RecordHelper;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.profile.util.PasswordChange;
+import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.profile.core.util.PasswordChange;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 

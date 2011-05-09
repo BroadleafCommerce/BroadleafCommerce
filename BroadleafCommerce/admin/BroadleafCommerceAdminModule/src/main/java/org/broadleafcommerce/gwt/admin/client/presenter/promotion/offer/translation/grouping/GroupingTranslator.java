@@ -20,6 +20,7 @@ public class GroupingTranslator {
 			throw new IncompatibleMVELTranslationException("mvel expressions must resolve to a boolean result. More than one terminated statement has been detected, which does not cumulatively result in a single boolean. Multiple phrases should be strung together into a single expression using standard operators.");
 		}
 		Group topGroup = new Group();
+		topGroup.setIsTopGroup(true);
 		parseGroups(topGroup, tokens[0]);
 		
 		return topGroup;
@@ -75,12 +76,18 @@ public class GroupingTranslator {
 			
 			subgroupStartIndex = findGroupStart(segment, startPos);
 			if (subgroupStartIndex == startPos || subgroupStartIndex == startPos + 1) {
-				int subgroupEndIndex = findGroupEnd(segment, subgroupStartIndex);
-				if (subgroupStartIndex > 0 && segment.charAt(subgroupStartIndex - 1) == '!') {
-					myGroup.setOperatorType(OperatorId.NOT);
-				}
 				Group subGroup = new Group();
 				myGroup.getSubGroups().add(subGroup);
+				int subgroupEndIndex = findGroupEnd(segment, subgroupStartIndex);
+				if (subgroupStartIndex > 0 && segment.charAt(subgroupStartIndex - 1) == '!') {
+					if (myGroup.getIsTopGroup()) {
+						//This is a NOT specified at the topmost level
+						myGroup.setOperatorType(OperatorId.NOT);
+					} else {
+						//This is a NOT specified on a sub group
+						subGroup.setOperatorType(OperatorId.NOT);
+					}
+				}
 				parseGroups(subGroup, segment.substring(subgroupStartIndex+1, subgroupEndIndex-1).trim());
 				startPos = subgroupEndIndex;
 				if (startPos == segment.length()) {

@@ -3,13 +3,17 @@ package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer;
 import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OfferItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.FilterType;
+import org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.offer.ItemBuilderDisplay;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.offer.OfferDisplay;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.util.SC;
+import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class OfferPresenterExtractor {
 	
@@ -32,31 +36,51 @@ public class OfferPresenterExtractor {
 					getDisplay().removeItemBuilder(builder);
 				}
 			});
+		} else {
+			getDisplay().removeItemBuilder(builder);
 		}
 	}
 	
 	public void applyData(final Record selectedRecord) {
-		selectedRecord.setAttribute("totalitarianOffer", getDisplay().getRestrictRuleRadio().getValue().equals("YES"));
-		selectedRecord.setAttribute("deliveryType",getDisplay().getDeliveryTypeRadio().getValue());
-		
-		extractCustomerData(selectedRecord);
-		extractOrderData(selectedRecord);
-		
-		final String type = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").getValue().toString();
-		
-		extractQualifierRuleType(selectedRecord);
-		extractTargetItemData(selectedRecord, type);
-		extractTargetRuleType(selectedRecord);
-		extractFulfillmentGroupData(selectedRecord, type);
-		getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().saveData(new DSCallback() {
-			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				extractQualifierData(selectedRecord, type);
-				getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+		try {
+			selectedRecord.setAttribute("totalitarianOffer", getDisplay().getRestrictRuleRadio().getValue().equals("YES"));
+			selectedRecord.setAttribute("deliveryType",getDisplay().getDeliveryTypeRadio().getValue());
+			if (getDisplay().getDeliveryTypeRadio().getValue().equals("CODE")) {
+				selectedRecord.setAttribute("offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim());
 			}
-		});
+			
+			extractCustomerData(selectedRecord);
+			extractOrderData(selectedRecord);
+			
+			final String type = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").getValue().toString();
+			
+			extractQualifierRuleType(selectedRecord);
+			extractTargetItemData(selectedRecord, type);
+			extractTargetRuleType(selectedRecord);
+			extractFulfillmentGroupData(selectedRecord, type);
+			
+			for (FormItem formItem : getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getFields()) {
+				selectedRecord.setAttribute(formItem.getName(), formItem.getValue());
+			}
+			
+			extractQualifierData(selectedRecord, type, true);
+			
+			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().updateData(selectedRecord, new DSCallback() {
+				public void execute(DSResponse response, Object rawData, DSRequest request) {
+					try {
+						extractQualifierData(selectedRecord, type, false);
+						getDisplay().getDynamicFormDisplay().getSaveButton().disable();
+					} catch (IncompatibleMVELTranslationException e) {
+						SC.warn(e.getMessage());
+					}
+				}
+			});
+		} catch (IncompatibleMVELTranslationException e) {
+			SC.warn(e.getMessage());
+		}
 	}
 	
-	protected void extractQualifierData(final Record selectedRecord, final String type) {
+	protected void extractQualifierData(final Record selectedRecord, final String type, boolean isValidation) throws IncompatibleMVELTranslationException {
 		if ((getDisplay().getBogoRadio().getValue().equals("YES") && type.equals("ORDER_ITEM")) || getDisplay().getItemRuleRadio().equals("ITEM_RULE") && !type.equals("ORDER_ITEM")) {
 			for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
 				if (builder.getDirty()) {
@@ -67,36 +91,45 @@ public class OfferPresenterExtractor {
 					} else {
 						mvel = TRANSLATOR.createMVEL(builder.getItemFilterBuilder().getCriteria(), FilterType.ORDER_ITEM, builder.getItemFilterBuilder().getDataSource());
 					}
-					if (builder.getRecord() != null) {
-						builder.getRecord().setAttribute("requiresQuantity", quantity);
-						builder.getRecord().setAttribute("orderItemMatchRule", mvel);
-						presenter.offerItemCriteriaDataSource.updateData(builder.getRecord(), new DSCallback() {
-							public void execute(DSResponse response, Object rawData, DSRequest request) {
-								builder.setDirty(false);
-							}
-						});
-					} else {
-						final Record temp = new Record();
-						temp.setAttribute("requiresQuantity", quantity);
-						temp.setAttribute("orderItemMatchRule", mvel);
-						temp.setAttribute(OfferItemCriteriaListDataSourceFactory.foreignKeyName, presenter.entityDataSource.getPrimaryKeyValue(selectedRecord));
-						presenter.offerItemCriteriaDataSource.addData(temp, new DSCallback() {
-							public void execute(DSResponse response, Object rawData, DSRequest request) {
-								builder.setDirty(false);
-								builder.setRecord(temp);
-							}
-						});
+					if (!isValidation) {
+						if (builder.getRecord() != null) {
+							builder.getRecord().setAttribute("requiresQuantity", quantity);
+							builder.getRecord().setAttribute("receiveQuantity", 0);
+							builder.getRecord().setAttribute("orderItemMatchRule", mvel);
+							presenter.offerItemCriteriaDataSource.updateData(builder.getRecord(), new DSCallback() {
+								public void execute(DSResponse response, Object rawData, DSRequest request) {
+									builder.setDirty(false);
+								}
+							});
+						} else {
+							final Record temp = new Record();
+							temp.setAttribute("requiresQuantity", quantity);
+							temp.setAttribute("receiveQuantity", 0);
+							temp.setAttribute("orderItemMatchRule", mvel);
+							temp.setAttribute("_type", new String[]{((DynamicEntityDataSource) presenter.offerItemCriteriaDataSource).getDefaultNewEntityFullyQualifiedClassname()});
+							temp.setAttribute(OfferItemCriteriaListDataSourceFactory.foreignKeyName, presenter.entityDataSource.getPrimaryKeyValue(selectedRecord));
+							presenter.offerItemCriteriaDataSource.addData(temp, new DSCallback() {
+								public void execute(DSResponse response, Object rawData, DSRequest request) {
+									builder.setDirty(false);
+									builder.setRecord(temp);
+								}
+							});
+						}
 					}
 				}
 			}
 		} else {
-			for (final ItemBuilderDisplay builder : getDisplay().getItemBuilderViews()) {
-				removeItemQualifer(builder);
+			if (!isValidation) {
+				ItemBuilderDisplay[] displays = new ItemBuilderDisplay[]{};
+				displays = getDisplay().getItemBuilderViews().toArray(displays);
+				for (final ItemBuilderDisplay builder : displays) {
+					removeItemQualifer(builder);
+				}
 			}
 		}
 	}
 
-	protected void extractFulfillmentGroupData(final Record selectedRecord, final String type) {
+	protected void extractFulfillmentGroupData(final Record selectedRecord, final String type) throws IncompatibleMVELTranslationException {
 		if (type.equals("FULFILLMENT_GROUP")) {
 			if (getDisplay().getOrderRuleRadio().getValue().equals("FG_RULE")) {
 				if (!presenter.initializer.fgRuleIncompatible) {
@@ -105,12 +138,14 @@ public class OfferPresenterExtractor {
 					selectedRecord.setAttribute("appliesToFulfillmentGroupRules", getDisplay().getRawFGTextArea().getValue());
 				}
 			} else {
-				selectedRecord.setAttribute("appliesToFulfillmentGroupRules", "");
+				Object value = null;
+				selectedRecord.setAttribute("appliesToFulfillmentGroupRules", value);
 				getDisplay().getFulfillmentGroupFilterBuilder().clearCriteria();
 				getDisplay().getRawFGTextArea().setValue("");
 			}
 		} else {
-			selectedRecord.setAttribute("appliesToFulfillmentGroupRules", "");
+			Object value = null;
+			selectedRecord.setAttribute("appliesToFulfillmentGroupRules", value);
 			getDisplay().getFulfillmentGroupFilterBuilder().clearCriteria();
 			getDisplay().getRawFGTextArea().setValue("");
 		}
@@ -139,7 +174,7 @@ public class OfferPresenterExtractor {
 		selectedRecord.setAttribute("offerItemTargetRuleType", offerItemTargetRuleType);
 	}
 
-	protected void extractTargetItemData(final Record selectedRecord, final String type) {
+	protected void extractTargetItemData(final Record selectedRecord, final String type) throws IncompatibleMVELTranslationException {
 		if (type.equals("ORDER_ITEM")) {
 			Integer quantity = (Integer) getDisplay().getTargetItemBuilder().getItemQuantity().getValue();
 			String mvel;
@@ -149,10 +184,12 @@ public class OfferPresenterExtractor {
 				mvel = TRANSLATOR.createMVEL(getDisplay().getTargetItemBuilder().getItemFilterBuilder().getCriteria(), FilterType.ORDER_ITEM, getDisplay().getTargetItemBuilder().getItemFilterBuilder().getDataSource());
 			}
 			selectedRecord.setAttribute("targetItemCriteria.receiveQuantity", quantity);
+			selectedRecord.setAttribute("targetItemCriteria.requiresQuantity", 0);
 			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", mvel);
 		} else {
+			Object value = null;
 			selectedRecord.setAttribute("targetItemCriteria", 0);
-			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", "");
+			selectedRecord.setAttribute("targetItemCriteria.orderItemMatchRule", value);
 		}
 	}
 
@@ -179,7 +216,7 @@ public class OfferPresenterExtractor {
 		selectedRecord.setAttribute("offerItemQualifierRuleType", offerItemQualifierRuleType);
 	}
 
-	protected void extractOrderData(final Record selectedRecord) {
+	protected void extractOrderData(final Record selectedRecord) throws IncompatibleMVELTranslationException {
 		if (getDisplay().getOrderRuleRadio().getValue().equals("ORDER_RULE")) {
 			if (!presenter.initializer.orderRuleIncompatible) {
 				selectedRecord.setAttribute("appliesToOrderRules", TRANSLATOR.createMVEL(getDisplay().getOrderFilterBuilder().getCriteria(), FilterType.ORDER, getDisplay().getOrderFilterBuilder().getDataSource()));
@@ -187,13 +224,14 @@ public class OfferPresenterExtractor {
 				selectedRecord.setAttribute("appliesToOrderRules", getDisplay().getRawOrderTextArea().getValue());
 			}
 		} else {
-			selectedRecord.setAttribute("appliesToOrderRules", "");
+			Object value = null;
+			selectedRecord.setAttribute("appliesToOrderRules", value);
 			getDisplay().getOrderFilterBuilder().clearCriteria();
 			getDisplay().getRawOrderTextArea().setValue("");
 		}
 	}
 
-	protected void extractCustomerData(final Record selectedRecord) {
+	protected void extractCustomerData(final Record selectedRecord) throws IncompatibleMVELTranslationException {
 		if (getDisplay().getCustomerRuleRadio().getValue().equals("CUSTOMER_RULE")) {
 			if (!presenter.initializer.customerRuleIncompatible) {
 				selectedRecord.setAttribute("appliesToCustomerRules", TRANSLATOR.createMVEL(getDisplay().getCustomerFilterBuilder().getCriteria(), FilterType.CUSTOMER, getDisplay().getCustomerFilterBuilder().getDataSource()));
@@ -201,7 +239,8 @@ public class OfferPresenterExtractor {
 				selectedRecord.setAttribute("appliesToCustomerRules", getDisplay().getRawCustomerTextArea().getValue());
 			}
 		} else {
-			selectedRecord.setAttribute("appliesToCustomerRules", "");
+			Object value = null;
+			selectedRecord.setAttribute("appliesToCustomerRules", value);
 			getDisplay().getCustomerFilterBuilder().clearCriteria();
 			getDisplay().getRawCustomerTextArea().setValue("");
 		}

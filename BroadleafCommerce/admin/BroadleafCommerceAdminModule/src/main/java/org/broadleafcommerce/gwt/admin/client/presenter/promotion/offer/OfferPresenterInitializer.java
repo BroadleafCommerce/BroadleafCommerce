@@ -9,6 +9,7 @@ import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 
 import com.google.gwt.core.client.GWT;
+import com.smartgwt.client.data.AdvancedCriteria;
 import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -39,12 +40,16 @@ public class OfferPresenterInitializer {
 	}
 	
 	public void initItemTargets(final Record selectedRecord) {
+		getDisplay().getTargetItemBuilder().getItemFilterBuilder().clearCriteria();
 		String targetQuantity = selectedRecord.getAttribute("targetItemCriteria.receiveQuantity");
 		if (targetQuantity != null) {
-			getDisplay().getTargetItemBuilder().getItemQuantity().setValue(targetQuantity);
+			getDisplay().getTargetItemBuilder().getItemQuantity().setValue(Integer.parseInt(targetQuantity));
 			String itemTargetRules = selectedRecord.getAttribute("targetItemCriteria.orderItemMatchRule");
 			try {
-				getDisplay().getTargetItemBuilder().getItemFilterBuilder().setCriteria(TRANSLATOR.createAdvancedCriteria(itemTargetRules, getDisplay().getTargetItemBuilder().getItemFilterBuilder().getDataSource()));
+				AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(itemTargetRules, getDisplay().getTargetItemBuilder().getItemFilterBuilder().getDataSource());
+				if (myCriteria != null) {
+					getDisplay().getTargetItemBuilder().getItemFilterBuilder().setCriteria(myCriteria);
+				}
 			} catch (IncompatibleMVELTranslationException e) {
 				GWT.log("Could not translate MVEL", e);
 				BLCMain.MASTERVIEW.getStatus().setContents(AdminModule.ADMINMESSAGES.mvelTranslationProblem());
@@ -78,19 +83,22 @@ public class OfferPresenterInitializer {
 		getDisplay().getRestrictRuleRadio().setValue(isTotalitarianOffer?"YES":"NO");
 		String deliveryType = selectedRecord.getAttribute("deliveryType");
 		getDisplay().getDeliveryTypeRadio().setValue(deliveryType);
-		initDeliveryType(deliveryType);
+		initDeliveryType(deliveryType, selectedRecord);
 	}
 
 	public void initCustomerCriteria(final Record selectedRecord) {
 		customerRuleIncompatible = false;
+		getDisplay().getCustomerFilterBuilder().clearCriteria();
 		String customerRules = selectedRecord.getAttribute("appliesToCustomerRules");
 		String customerRule = customerRules==null?"ALL":"CUSTOMER_RULE";
-		if (customerRules == null) {
-			getDisplay().getCustomerRuleRadio().setValue(customerRule);
-		} else {
+		getDisplay().getCustomerRuleRadio().setValue(customerRule);
+		if (customerRules != null) {
 			getDisplay().getCustomerRuleRadio().setValue(customerRule);
 			try {
-				getDisplay().getCustomerFilterBuilder().setCriteria(TRANSLATOR.createAdvancedCriteria(customerRules, getDisplay().getCustomerFilterBuilder().getDataSource()));
+				AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(customerRules, getDisplay().getCustomerFilterBuilder().getDataSource());
+				if (myCriteria != null) {
+					getDisplay().getCustomerFilterBuilder().setCriteria(myCriteria);
+				}
 			} catch (IncompatibleMVELTranslationException e) {
 				customerRuleIncompatible = true;
 				GWT.log("Could not translate MVEL", e);
@@ -98,19 +106,22 @@ public class OfferPresenterInitializer {
 				getDisplay().getRawCustomerTextArea().setValue(customerRules);
 			}
 		}
-		initCustomerRule(customerRule);
+		initCustomerRule(customerRule, selectedRecord);
 	}
 	
 	public void initFGCriteria(final Record selectedRecord) {
 		fgRuleIncompatible = false;
+		getDisplay().getFulfillmentGroupFilterBuilder().clearCriteria();
 		String fgRules = selectedRecord.getAttribute("appliesToFulfillmentGroupRules");
 		String fgRule = fgRules==null?"ALL":"FG_RULE";
-		if (fgRules == null) {
-			getDisplay().getFgRuleRadio().setValue(fgRule);
-		} else {
+		getDisplay().getFgRuleRadio().setValue(fgRule);
+		if (fgRules != null) {
 			getDisplay().getFgRuleRadio().setValue(fgRule);
 			try {
-				getDisplay().getFulfillmentGroupFilterBuilder().setCriteria(TRANSLATOR.createAdvancedCriteria(fgRules, getDisplay().getFulfillmentGroupFilterBuilder().getDataSource()));
+				AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(fgRules, getDisplay().getFulfillmentGroupFilterBuilder().getDataSource());
+				if (myCriteria != null) {
+					getDisplay().getFulfillmentGroupFilterBuilder().setCriteria(myCriteria);
+				}
 			} catch (IncompatibleMVELTranslationException e) {
 				fgRuleIncompatible = true;
 				GWT.log("Could not translate MVEL", e);
@@ -123,19 +134,21 @@ public class OfferPresenterInitializer {
 			combinable = false;
 		}
 		getDisplay().getFgCombineRuleRadio().setValue(combinable?"YES":"NO");
-		initFGRule(fgRule);
+		initFGRule(fgRule, selectedRecord);
 	}
 
 	public void initOrderCriteria(final Record selectedRecord) {
 		orderRuleIncompatible = false;
+		getDisplay().getOrderFilterBuilder().clearCriteria();
 		String orderRules = selectedRecord.getAttribute("appliesToOrderRules");
 		String orderRule = orderRules==null?"NONE":"ORDER_RULE";
-		if (orderRules == null) {
-			getDisplay().getOrderRuleRadio().setValue(orderRule);
-		} else {
-			getDisplay().getOrderRuleRadio().setValue(orderRule);
+		getDisplay().getOrderRuleRadio().setValue(orderRule);
+		if (orderRules != null) {
 			try {
-				getDisplay().getOrderFilterBuilder().setCriteria(TRANSLATOR.createAdvancedCriteria(orderRules, getDisplay().getOrderFilterBuilder().getDataSource()));
+				AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(orderRules, getDisplay().getOrderFilterBuilder().getDataSource());
+				if (myCriteria != null) {
+					getDisplay().getOrderFilterBuilder().setCriteria(myCriteria);
+				}
 			} catch (IncompatibleMVELTranslationException e) {
 				orderRuleIncompatible = true;
 				GWT.log("Could not translate MVEL", e);
@@ -148,7 +161,7 @@ public class OfferPresenterInitializer {
 			combinable = false;
 		}
 		getDisplay().getOrderCombineRuleRadio().setValue(combinable?"YES":"NO");
-		initOrderRule(orderRule);
+		initOrderRule(orderRule, selectedRecord);
 	}
 
 	public void initItemQualifiers(final Record selectedRecord, final String type) {
@@ -158,7 +171,7 @@ public class OfferPresenterInitializer {
 				boolean isItemQualifierCriteria = false;
 				if (response.getTotalRows() > 0) {
 					for (Record record : response.getData()) {
-						if (record.getAttributeAsInt("requiresQuantity") > 0) {
+						if (Integer.parseInt(record.getAttribute("requiresQuantity")) > 0) {
 							isItemQualifierCriteria = true;
 							break;
 						}
@@ -175,15 +188,22 @@ public class OfferPresenterInitializer {
 					getDisplay().getItemRuleRadio().setValue("YES");
 					getDisplay().removeAllItemBuilders();
 					for (Record record : response.getData()) {
-						if (record.getAttributeAsInt("requiresQuantity") > 0) {
+						if (Integer.parseInt(record.getAttribute("requiresQuantity")) > 0) {
 							final ItemBuilderDisplay display = getDisplay().addItemBuilder(orderItemDataSource);
+							presenter.bindItemBuilderEvents(display);
+							display.getItemFilterBuilder().clearCriteria();
 							display.setRecord(record);
-							display.getItemQuantity().setValue(record.getAttributeAsInt("requiresQuantity"));
+							display.getItemQuantity().setValue(Integer.parseInt(record.getAttribute("requiresQuantity")));
 							try {
-								display.getItemFilterBuilder().setCriteria(
-									TRANSLATOR.createAdvancedCriteria(record.getAttribute("orderItemMatchRule"), offerItemCriteriaDataSource)
-								);
+								display.getItemFilterBuilder().setVisible(true);
+								display.getRawItemForm().setVisible(false);
+								AdvancedCriteria myCriteria = TRANSLATOR.createAdvancedCriteria(record.getAttribute("orderItemMatchRule"), orderItemDataSource);
+								if (myCriteria != null) {
+									display.getItemFilterBuilder().setCriteria(myCriteria);
+								}
 							} catch (IncompatibleMVELTranslationException e) {
+								GWT.log("Could not translate MVEL", e);
+								BLCMain.MASTERVIEW.getStatus().setContents(AdminModule.ADMINMESSAGES.mvelTranslationProblem());
 								display.setIncompatibleMVEL(true);
 								display.getItemFilterBuilder().setVisible(false);
 								display.getRawItemForm().setVisible(true);
@@ -205,7 +225,7 @@ public class OfferPresenterInitializer {
 					getDisplay().getBogoRadio().setValue("NO");
 					getDisplay().getItemRuleRadio().setValue("NO");
 					getDisplay().removeAllItemBuilders();
-					getDisplay().addItemBuilder(orderItemDataSource);
+					presenter.bindItemBuilderEvents(getDisplay().addItemBuilder(orderItemDataSource));
 				}
 			}
 		});
@@ -226,6 +246,17 @@ public class OfferPresenterInitializer {
 			getDisplay().getQualifyForAnotherPromoRadio().setValue("YES");
 			getDisplay().getReceiveFromAnotherPromoRadio().setValue("YES");
 		}
+	}
+	
+	public void disable() {
+		getDisplay().getItemQualificationSectionView().setVisible(false);
+		getDisplay().getFgSectionView().setVisible(false);
+		getDisplay().getBogoQuestionLayout().setVisible(false);
+		getDisplay().getItemTargetSectionView().setVisible(false);
+		getDisplay().getRequiredItemsLayout().setVisible(false);
+		getDisplay().getOrderItemLayout().setVisible(false);
+		getDisplay().getOrderCombineForm().setVisible(false);
+		getDisplay().getOrderCombineLabel().setVisible(false);
 	}
 	
 	public void initSectionBasedOnType(String sectionType, Record selectedRecord) {
@@ -266,19 +297,27 @@ public class OfferPresenterInitializer {
 		}
 	}
 	
-	public void initDeliveryType(String deliveryType) {
+	public void initDeliveryType(String deliveryType, Record selectedRecord) {
 		if (deliveryType.equals("CODE")) {
 			getDisplay().getCodeField().enable();
+			getDisplay().getCodeField().setValue(selectedRecord.getAttribute("offerCode.offerCode"));
 		} else {
 			getDisplay().getCodeField().disable();
+			getDisplay().getCodeField().setValue("");
 		}
 	}
 	
-	public void initCustomerRule(String customerRule) {
+	public void initCustomerRule(String customerRule, Record selectedRecord) {
 		if (customerRule.equals("CUSTOMER_RULE")) {
+			String customerRules = selectedRecord.getAttribute("appliesToCustomerRules");
+			if (customerRules == null || customerRules.trim().equals("")) {
+				customerRuleIncompatible = false;
+			}
 			if (customerRuleIncompatible) {
 				getDisplay().getRawCustomerForm().setVisible(true);
+				getDisplay().getCustomerFilterBuilder().setVisible(false);
 			} else {
+				getDisplay().getRawCustomerForm().setVisible(false);
 				getDisplay().getCustomerFilterBuilder().setVisible(true);
 			}
 		} else {
@@ -287,11 +326,17 @@ public class OfferPresenterInitializer {
 		}
 	}
 	
-	public void initOrderRule(String orderRule) {
+	public void initOrderRule(String orderRule, Record selectedRecord) {
 		if (orderRule.equals("ORDER_RULE")) {
+			String orderRules = selectedRecord.getAttribute("appliesToOrderRules");
+			if (orderRules == null || orderRules.trim().equals("")) {
+				orderRuleIncompatible = false;
+			}
 			if (orderRuleIncompatible) {
 				getDisplay().getRawOrderForm().setVisible(true);
+				getDisplay().getOrderFilterBuilder().setVisible(false);
 			} else {
+				getDisplay().getRawOrderForm().setVisible(false);
 				getDisplay().getOrderFilterBuilder().setVisible(true);
 			}
 		} else {
@@ -300,11 +345,17 @@ public class OfferPresenterInitializer {
 		}
 	}
 	
-	public void initFGRule(String fgRule) {
+	public void initFGRule(String fgRule, Record selectedRecord) {
 		if (fgRule.equals("FG_RULE")) {
+			String fgRules = selectedRecord.getAttribute("appliesToFulfillmentGroupRules");
+			if (fgRules == null || fgRules.trim().equals("")) {
+				fgRuleIncompatible = false;
+			}
 			if (fgRuleIncompatible) {
 				getDisplay().getRawFGForm().setVisible(true);
+				getDisplay().getFulfillmentGroupFilterBuilder().setVisible(false);
 			} else {
+				getDisplay().getRawFGForm().setVisible(false);
 				getDisplay().getFulfillmentGroupFilterBuilder().setVisible(true);
 			}
 		} else {

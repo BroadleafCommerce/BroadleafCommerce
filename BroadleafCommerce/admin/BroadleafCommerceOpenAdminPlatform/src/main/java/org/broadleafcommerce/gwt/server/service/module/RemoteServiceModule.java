@@ -11,8 +11,8 @@ import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.gwt.client.datasource.results.Property;
 import org.broadleafcommerce.gwt.client.service.ServiceException;
-import org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
+import org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 

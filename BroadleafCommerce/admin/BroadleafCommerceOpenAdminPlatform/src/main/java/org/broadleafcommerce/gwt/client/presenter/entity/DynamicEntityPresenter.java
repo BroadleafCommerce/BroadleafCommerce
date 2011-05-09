@@ -101,7 +101,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 						} else {
 							formPresenter.setStartState();
 							((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
-							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), true, true, true);
+							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), true, true, false);
 							display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
 							display.getListDisplay().getRemoveButton().enable();
 						}
@@ -117,8 +117,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         });
 		cellSavedHandlerRegistration = display.getListDisplay().getGrid().addCellSavedHandler(new CellSavedHandler() {
 			public void onCellSaved(CellSavedEvent event) {
-				formPresenter.setStartState();
-				display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(event.getRecord());
+				display.getListDisplay().getGrid().deselectAllRecords();
+				display.getListDisplay().getGrid().selectRecord(event.getRecord());
 			}
         });
 	}
