@@ -70,7 +70,7 @@ public class CategoryXref implements Serializable {
         protected Category category;
         
         @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
-        @JoinColumn(name = "SUB_CATEGORY_ID", referencedColumnName = "CATEGORY_ID")
+        @JoinColumn(name = "SUB_CATEGORY_ID")
         protected Category subCategory;
 
         public Category getCategory() {

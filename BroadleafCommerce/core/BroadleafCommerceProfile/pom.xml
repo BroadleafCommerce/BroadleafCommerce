@@ -120,8 +120,8 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>ejb3-persistence</artifactId>
+			<groupId>org.hibernate.javax.persistence</groupId> 
+			<artifactId>hibernate-jpa-2.0-api</artifactId> 
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -139,13 +139,25 @@
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-annotations</artifactId>
-		</dependency>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency-->
 		<dependency>
 			<groupId>commons-validator</groupId>
 			<artifactId>commons-validator</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>xml-apis</artifactId>
+					<groupId>xml-apis</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -160,7 +172,7 @@
 			<artifactId>hibernate-tools</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>hibernate</groupId>
+			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 		</dependency>
 		<dependency>
@@ -171,10 +183,10 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-jmx</artifactId>
-		</dependency>
+		</dependency-->
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>jsr250-api</artifactId>
@@ -232,14 +244,6 @@
 			<artifactId>ant</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>asm</groupId>
 			<artifactId>asm-commons</artifactId>
 		</dependency>
@@ -268,6 +272,10 @@
 			<artifactId>easymockclassextension</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-envers</artifactId>
+		</dependency>
+		<!--dependency>
 			<groupId>net.sf.gilead</groupId>
 			<artifactId>gilead4gwt</artifactId>
 			<exclusions>
@@ -276,6 +284,6 @@
 					<artifactId>spring</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency-->
 	</dependencies>
 </project>

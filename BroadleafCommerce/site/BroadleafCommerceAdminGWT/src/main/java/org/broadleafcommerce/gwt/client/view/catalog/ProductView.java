@@ -3,21 +3,23 @@ package org.broadleafcommerce.gwt.client.view.catalog;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import org.broadleafcommerce.gwt.client.datasource.DynamicEntityDataSource;
-import org.broadleafcommerce.gwt.client.view.DynamicListDisplay;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.gwt.client.view.dynamic.DynamicListDisplay;
 
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.ListGridEditEvent;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.SelectionStyle;
+import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-import com.smartgwt.client.widgets.form.fields.MiniDateRangeItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.layout.VLayout;
+import com.smartgwt.client.widgets.tab.Tab;
+import com.smartgwt.client.widgets.tab.TabSet;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 import com.smartgwt.client.widgets.tree.TreeGridField;
@@ -39,9 +41,9 @@ public class ProductView extends VLayout implements DynamicListDisplay<ListGrid>
 	private ToolStripButton saveFormButton;
 	private ToolStripButton refreshButton;
 	private DynamicForm dynamicForm;
+	private TabSet topTabSet;
     
-	public ProductView(final DataSource dataSource) {
-		super();
+	public void build(final DataSource dataSource) {
         setHeight100();
         setWidth("50%");
         ToolStrip topBar = new ToolStrip();
@@ -49,7 +51,7 @@ public class ProductView extends VLayout implements DynamicListDisplay<ListGrid>
         topBar.setWidth100();
         topBar.addSpacer(6);
         addButton = new ToolStripButton();  
-        addButton.setIcon("../org.broadleafcommerce.gwt.admin/sc/skins/Enterprise/images/headerIcons/plus.png");   
+        addButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/plus.png");   
         addButton.setDisabled(true);
         topBar.addButton(addButton);
         HashMap<String, String> polymorphicEntities = ((DynamicEntityDataSource) dataSource).getPolymorphicEntities();
@@ -59,14 +61,15 @@ public class ProductView extends VLayout implements DynamicListDisplay<ListGrid>
             
             LinkedHashMap<String, String> valueMap = new LinkedHashMap<String, String>();  
             for (String name : polymorphicEntities.keySet()) {
-            	valueMap.put(polymorphicEntities.get(name), name); 
+            	valueMap.put(name, polymorphicEntities.get(name)); 
             }
             entityType.setValueMap(valueMap);  
-            entityType.setDefaultValue(((DynamicEntityDataSource) dataSource).getCeilingEntityFullyQualifiedClassname()); 
+            entityType.setDefaultValue(valueMap.keySet().iterator().next()); 
+            entityType.setDisabled(true);
             topBar.addFormItem(entityType);
         }
         removeButton = new ToolStripButton(); 
-        removeButton.setIcon("../org.broadleafcommerce.gwt.admin/sc/skins/Enterprise/images/headerIcons/minus.png"); 
+        removeButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/minus.png"); 
         removeButton.setDisabled(true);
         topBar.addButton(removeButton);
         addMember(topBar);
@@ -77,32 +80,42 @@ public class ProductView extends VLayout implements DynamicListDisplay<ListGrid>
         listGrid.setCanEdit(true);
         listGrid.setEditEvent(ListGridEditEvent.DOUBLECLICK);
         listGrid.setEditByCell(true);
-        listGrid.setAutoSaveEdits(false);
+        listGrid.setAutoSaveEdits(true);
+        listGrid.setSaveByCell(true);
         listGrid.setDataSource(dataSource);
         listGrid.setAutoFetchData(false);
         listGrid.setShowFilterEditor(true);
         name.setFrozen(true);
-        listGrid.setFields(name,activeStartDate,activeEndDate,model,manufacturer,isFeaturedProduct);
+        listGrid.setFields(name, activeStartDate, activeEndDate, model,manufacturer,isFeaturedProduct);
         listGrid.setShowResizeBar(true);
         addMember(listGrid);
         
-        VLayout formlayout = new VLayout();
+        topTabSet = new TabSet();  
+        topTabSet.setTabBarPosition(Side.TOP);  
+        topTabSet.setWidth100();
+        topTabSet.setHeight(215); 
+        topTabSet.setOverflow(Overflow.AUTO);
         
+        Tab productTab = new Tab("Product");
+        topTabSet.addTab(productTab);
+        
+        VLayout formlayout = new VLayout();
+        formlayout.setLayoutMargin(0);
+        formlayout.setMargin(0);
+        formlayout.setPadding(0);
         formToolBar = new ToolStrip();
         formToolBar.setHeight(20);
         formToolBar.setWidth100();
         formToolBar.addSpacer(6);
         saveFormButton = new ToolStripButton();  
-        saveFormButton.setIcon("../org.broadleafcommerce.gwt.admin/sc/skins/Enterprise/images/headerIcons/save.png");   
+        saveFormButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/save.png");   
         formToolBar.addButton(saveFormButton);
         saveFormButton.setDisabled(true);
         refreshButton = new ToolStripButton();  
-        refreshButton.setIcon("../org.broadleafcommerce.gwt.admin/sc/skins/Enterprise/images/headerIcons/refresh.png");   
+        refreshButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/refresh.png");   
         formToolBar.addButton(refreshButton);
         formToolBar.setDisabled(true);
         formlayout.addMember(formToolBar);
-        
-        formlayout.setHeight(200);
         formlayout.setBackgroundColor("#eaeaea");
         dynamicForm = new DynamicForm(); 
         dynamicForm.setHeight(175);
@@ -112,10 +125,16 @@ public class ProductView extends VLayout implements DynamicListDisplay<ListGrid>
         dynamicForm.setPadding(10);
         dynamicForm.disable();
         dynamicForm.setBackgroundColor("#eaeaea");
-        formlayout.addMember(dynamicForm);
-        formlayout.setOverflow(Overflow.AUTO);
-        addMember(formlayout);
         
+        formlayout.addMember(dynamicForm);
+        productTab.setPane(formlayout);
+        
+        //Tab skuTab = new Tab("Sku");
+        //topTabSet.addTab(skuTab);
+        //skuTab.setPane(skuView);
+        
+        topTabSet.setShowPaneContainerEdges(false);
+        addMember(topTabSet);
 	}
 
 	public Canvas asCanvas() {
@@ -152,5 +171,9 @@ public class ProductView extends VLayout implements DynamicListDisplay<ListGrid>
 	
 	public SelectItem getEntityType() {
 		return entityType;
+	}
+
+	public TabSet getTopTabSet() {
+		return topTabSet;
 	}
 }

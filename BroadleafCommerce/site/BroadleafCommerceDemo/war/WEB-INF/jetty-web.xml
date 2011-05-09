@@ -3,6 +3,6 @@
 
 <Configure class="org.mortbay.jetty.webapp.WebAppContext">
 
-  <Set name="contextPath">/broadleafadmin</Set>
+  <Set name="contextPath">/broadleafdemo</Set>
 
 </Configure>

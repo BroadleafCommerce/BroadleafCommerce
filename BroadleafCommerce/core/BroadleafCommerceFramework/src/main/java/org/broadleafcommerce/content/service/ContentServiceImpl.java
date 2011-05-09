@@ -70,7 +70,7 @@ import org.xml.sax.InputSource;
 @Service("blContentService")
 public class ContentServiceImpl implements ContentService {
     private static final Log LOG = LogFactory.getLog(ContentServiceImpl.class);
-    private static final LRUMap EXPRESSION_CACHE = new LRUMap(100);
+    private static final LRUMap EXPRESSION_CACHE = new LRUMap(1000);
     
     //To sort content by priority
     public class ContentComparator implements Comparator<org.broadleafcommerce.content.domain.Content> {

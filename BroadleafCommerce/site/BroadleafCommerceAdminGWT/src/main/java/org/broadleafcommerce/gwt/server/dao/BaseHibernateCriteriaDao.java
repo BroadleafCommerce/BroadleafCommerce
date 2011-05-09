@@ -71,10 +71,10 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
         int rowCount = 0;
         
         Object firstResult = projectionResults.get(0);
-        if (projectionResults.size() != 1 || !Integer.class.isAssignableFrom(firstResult.getClass())) {
+        if (projectionResults.size() != 1 || !Long.class.isAssignableFrom(firstResult.getClass())) {
             LOG.warn("rowCount projection for the given criteria did not result a single integer value, returning zero - did you add unnecessary paging constraints to the criteria?");
         } else {
-            rowCount = Integer.class.cast(firstResult).intValue();
+            rowCount = Long.class.cast(firstResult).intValue();
         }
         
         return rowCount;

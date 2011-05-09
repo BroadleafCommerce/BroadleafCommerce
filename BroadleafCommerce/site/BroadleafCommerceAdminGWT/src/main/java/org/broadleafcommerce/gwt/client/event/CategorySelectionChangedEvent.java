@@ -1,6 +1,7 @@
 package org.broadleafcommerce.gwt.client.event;
 
 import com.google.gwt.event.shared.GwtEvent;
+import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class CategorySelectionChangedEvent extends GwtEvent<CategorySelectionChangedEventHandler> {
@@ -8,9 +9,11 @@ public class CategorySelectionChangedEvent extends GwtEvent<CategorySelectionCha
 	public static Type<CategorySelectionChangedEventHandler> TYPE = new Type<CategorySelectionChangedEventHandler>();
 
 	private ListGridRecord record;
+	private DataSource dataSource;
 
-	public CategorySelectionChangedEvent(ListGridRecord record) {
+	public CategorySelectionChangedEvent(ListGridRecord record, DataSource dataSource) {
 		this.record = record;
+		this.dataSource = dataSource;
 	}
 
 	@Override
@@ -25,6 +28,10 @@ public class CategorySelectionChangedEvent extends GwtEvent<CategorySelectionCha
 
 	public ListGridRecord getRecord() {
 		return record;
+	}
+	
+	public DataSource getDataSource() {
+		return dataSource;
 	}
 
 }

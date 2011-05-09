@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,15 +39,14 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Transient;
 
-import net.sf.gilead.annotations.ServerOnly;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.cache.CacheFactoryException;
-import org.broadleafcommerce.cache.HydratedCacheManager;
-import org.broadleafcommerce.cache.HydratedCacheManagerImpl;
+import org.broadleafcommerce.cache.Hydrated;
+import org.broadleafcommerce.cache.HydratedCacheJPAListener;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.util.DateUtil;
 import org.broadleafcommerce.util.UrlUtil;
 import org.hibernate.annotations.BatchSize;
@@ -57,6 +57,7 @@ import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
 import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.OrderBy;
+import org.hibernate.envers.Audited;
 
 /**
  * The Class CategoryImpl is the default implementation of {@link Category}. A
@@ -74,9 +75,11 @@ import org.hibernate.annotations.OrderBy;
  * @author btaylor
  */
 @Entity
+@EntityListeners(HydratedCacheJPAListener.class)
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Audited
 public class CategoryImpl implements Category {
 
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);
@@ -93,15 +96,18 @@ public class CategoryImpl implements Category {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName="Name", order=1, group="Description", prominent=true)
     protected String name;
 
     /** The url. */
     @Column(name = "URL")
+    @AdminPresentation(friendlyName="Url", order=2, group="Description")
     protected String url;
 
     /** The url key. */
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
+    @AdminPresentation(friendlyName="Url Key", order=3, group="Description")
     protected String urlKey;
 
     /** The default parent category. */
@@ -112,18 +118,22 @@ public class CategoryImpl implements Category {
 
     /** The description. */
     @Column(name = "DESCRIPTION")
+    @AdminPresentation(friendlyName="Description", order=5, group="Description", largeEntry=true)
     protected String description;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
+    @AdminPresentation(friendlyName="Active Start Date", order=7, group="Active Date Range")
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
+    @AdminPresentation(friendlyName="Active End Date", order=8, group="Active Date Range")
     protected Date activeEndDate;
 
     /** The display template. */
     @Column(name = "DISPLAY_TEMPLATE")
+    @AdminPresentation(friendlyName="Display Template", order=4, group="Description")
     protected String displayTemplate;
 
     /** The all child categories. */
@@ -150,6 +160,7 @@ public class CategoryImpl implements Category {
     @Column(name = "URL")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
+    @Deprecated
     protected Map<String, String> categoryImages = new HashMap<String, String>();
 
     @ManyToMany(targetEntity = MediaImpl.class)
@@ -162,6 +173,7 @@ public class CategoryImpl implements Category {
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
+    @AdminPresentation(friendlyName="Long Description", order=6, group="Description", largeEntry=true)
     protected String longDescription;
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})
@@ -169,11 +181,10 @@ public class CategoryImpl implements Category {
     protected List<FeaturedProduct> featuredProducts = new ArrayList<FeaturedProduct>();
     
     @Transient
-    @ServerOnly
+    @Hydrated(factoryMethod="createChildCategoryURLMap")
     protected Map<String, List<Category>> childCategoryURLMap;
     
     @Transient
-    @ServerOnly
     protected List<Category> childCategories = new ArrayList<Category>();
 
     /*
@@ -451,6 +462,7 @@ public class CategoryImpl implements Category {
      * (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.Category#getCategoryImages()
      */
+    @Deprecated
     public Map<String, String> getCategoryImages() {
         return categoryImages;
     }
@@ -461,6 +473,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#getCategoryImage(java.lang
      * .String)
      */
+    @Deprecated
     public String getCategoryImage(final String imageKey) {
         return categoryImages.get(imageKey);
     }
@@ -471,6 +484,7 @@ public class CategoryImpl implements Category {
      * org.broadleafcommerce.catalog.domain.Category#setCategoryImages(java.
      * util.Map)
      */
+    @Deprecated
     public void setCategoryImages(final Map<String, String> categoryImages) {
     	this.categoryImages.clear();
 //    	for(String key : categoryImages.keySet()){
@@ -504,15 +518,7 @@ public class CategoryImpl implements Category {
      * @see
      * org.broadleafcommerce.catalog.domain.Category#getChildCategoryURLMap()
      */
-    @SuppressWarnings("unchecked")
 	public Map<String, List<Category>> getChildCategoryURLMap() {
-    	HydratedCacheManagerImpl manager = HydratedCacheManagerImpl.getInstance();
-    	Object hydratedItem = ((HydratedCacheManager) manager).getHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap");
-    	if (hydratedItem != null) {
-    		return (Map<String, List<Category>>) hydratedItem;
-    	}
-    	childCategoryURLMap = createChildCategoryURLMap();
-    	((HydratedCacheManager) manager).addHydratedCacheElementItem(CategoryImpl.class.getName(), getId(), "childCategoryURLMap", childCategoryURLMap);
         return childCategoryURLMap;
     }
     
@@ -607,7 +613,7 @@ public class CategoryImpl implements Category {
     	}
     }
 
-    @Override
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

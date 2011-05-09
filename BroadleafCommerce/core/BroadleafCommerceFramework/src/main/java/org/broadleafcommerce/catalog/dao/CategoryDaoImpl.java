@@ -24,8 +24,6 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
 import org.springframework.stereotype.Repository;
 

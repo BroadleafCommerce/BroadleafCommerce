@@ -17,7 +17,6 @@ package org.broadleafcommerce.gwt.server;
 
 import javax.annotation.Resource;
 
-import org.broadleafcommerce.gwt.client.service.security.AdminSecurityService;
 import org.broadleafcommerce.security.domain.AdminUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -26,7 +25,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 @Service("blAdminSecurityRemoteService")
-public class AdminSecurityServiceRemote implements AdminSecurityService {
+public class AdminSecurityServiceRemote  {
 	
 	private static final String ANONYMOUS_USER_NAME = "roleAnonymous";
 	

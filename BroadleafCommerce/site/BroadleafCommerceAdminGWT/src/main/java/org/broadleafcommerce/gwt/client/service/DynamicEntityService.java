@@ -1,7 +1,10 @@
 package org.broadleafcommerce.gwt.client.service;
 
+import org.broadleafcommerce.gwt.client.datasource.JoinTable;
+import org.broadleafcommerce.gwt.client.datasource.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.results.DynamicResultSet;
 import org.broadleafcommerce.gwt.client.datasource.results.Entity;
+import org.broadleafcommerce.gwt.client.datasource.results.RemoveType;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -10,16 +13,18 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("dynamic.entity.service")
 public interface DynamicEntityService extends RemoteService {
     
-	DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, String[] optionalFields) throws ServiceException;
+	public DynamicResultSet inspect(String ceilingEntityFullyQualifiedClassname, ForeignKey[] foreignFields, String[] additionalNonPersistentProperties) throws ServiceException;
 	
-    DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, String[] optionalFields) throws ServiceException;
+	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, ForeignKey[] foreignFields, CriteriaTransferObject cto, String[] additionalNonPersistentProperties) throws ServiceException;
     
-    DynamicResultSet create(String targetEntityFullyQualifiedClassname, String[] optionalFields) throws ServiceException;
+	public DynamicResultSet fetch(String ceilingEntityFullyQualifiedClassname, JoinTable joinTable, CriteriaTransferObject cto, String[] additionalNonPersistentProperties) throws ServiceException;
     
-    Entity add(Entity entity, String[] optionalFields) throws ServiceException;
+    public DynamicResultSet create(String targetEntityFullyQualifiedClassname, ForeignKey[] foreignFields, String[] additionalNonPersistentProperties) throws ServiceException;
     
-    Entity update(Entity entity, String[] optionalFields) throws ServiceException;
+    public Entity add(Entity entity, ForeignKey[] foreignFields, String[] additionalNonPersistentProperties) throws ServiceException;
     
-    void remove(Entity entity) throws ServiceException;
+    public Entity update(Entity entity, ForeignKey[] foreignFields, String[] additionalNonPersistentProperties) throws ServiceException;
+    
+    public void remove(Entity entity, ForeignKey[] foreignFields, RemoveType removeType, String[] additionalNonPersistentProperties) throws ServiceException;
     
 }

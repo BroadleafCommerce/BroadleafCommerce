@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.extensibility.jpa;
 
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,9 @@ import javax.persistence.spi.PersistenceUnitInfo;
 
 import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
 import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
+import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
+import org.springframework.orm.jpa.persistenceunit.Jpa2PersistenceUnitInfoDecorator;
+import org.springframework.util.ClassUtils;
 
 /**
  * Merges jars, class names and mapping file names from several persistence.xml files. The
@@ -39,11 +43,17 @@ import org.springframework.orm.jpa.persistenceunit.MutablePersistenceUnitInfo;
  */
 public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 
-    private HashMap<String, MutablePersistenceUnitInfo> mergedPus = new HashMap<String, MutablePersistenceUnitInfo>();
+    private HashMap<String, PersistenceUnitInfo> mergedPus = new HashMap<String, PersistenceUnitInfo>();
+    private final boolean jpa2ApiPresent = ClassUtils.hasMethod(PersistenceUnitInfo.class, "getSharedCacheMode");
 
-    protected MutablePersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
+    protected PersistenceUnitInfo getMergedUnit(String persistenceUnitName, MutablePersistenceUnitInfo newPU) {
         if (!mergedPus.containsKey(persistenceUnitName)) {
-            mergedPus.put(persistenceUnitName, newPU);
+        	PersistenceUnitInfo puiToStore = newPU;
+			if (jpa2ApiPresent) {
+				puiToStore = (PersistenceUnitInfo) Proxy.newProxyInstance(SmartPersistenceUnitInfo.class.getClassLoader(),
+						new Class[] {SmartPersistenceUnitInfo.class}, new Jpa2PersistenceUnitInfoDecorator(newPU));
+			}
+            mergedPus.put(persistenceUnitName, puiToStore);
         }
         return mergedPus.get(persistenceUnitName);
     }
@@ -53,9 +63,19 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
         super.postProcessPersistenceUnitInfo(newPU);
         newPU.addJarFileUrl(newPU.getPersistenceUnitRootUrl());
         String persistenceUnitName = newPU.getPersistenceUnitName();
-        MutablePersistenceUnitInfo temp = getMergedUnit(persistenceUnitName, newPU);
-        final URL persistenceUnitRootUrl = newPU.getPersistenceUnitRootUrl();
-        temp.setPersistenceUnitRootUrl(persistenceUnitRootUrl);
+        MutablePersistenceUnitInfo temp;
+        PersistenceUnitInfo pui = getMergedUnit(persistenceUnitName, newPU);
+        if (pui != null && Proxy.isProxyClass(pui.getClass())) {
+			// JPA 2.0 PersistenceUnitInfo decorator with a SpringPersistenceUnitInfo as target
+			Jpa2PersistenceUnitInfoDecorator dec = (Jpa2PersistenceUnitInfoDecorator) Proxy.getInvocationHandler(pui);
+			temp = (MutablePersistenceUnitInfo) dec.getTarget();
+		}
+		else {
+			// Must be a raw JPA 1.0 SpringPersistenceUnitInfo instance
+			temp = (MutablePersistenceUnitInfo) pui;
+		}
+        //final URL persistenceUnitRootUrl = newPU.getPersistenceUnitRootUrl();
+        temp.setPersistenceUnitRootUrl(null);
         List<String> managedClassNames = newPU.getManagedClassNames();
         for (String managedClassName : managedClassNames){
             if (!temp.getManagedClassNames().contains(managedClassName)) {

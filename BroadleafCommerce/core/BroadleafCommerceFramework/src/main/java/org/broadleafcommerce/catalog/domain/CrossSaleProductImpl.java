@@ -28,10 +28,12 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.hibernate.annotations.Index;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_CROSS_SALE")
+@Audited
 public class CrossSaleProductImpl implements RelatedProduct {
 
     @Id
