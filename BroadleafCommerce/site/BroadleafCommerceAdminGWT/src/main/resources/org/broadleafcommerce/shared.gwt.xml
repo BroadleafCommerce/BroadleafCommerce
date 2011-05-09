@@ -1,0 +1,18 @@
+<module>
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.ChangeListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.ClickListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.FocusListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.FormHandlerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.KeyboardListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.LoadListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.MouseListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.MouseWheelListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.PopupListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.ScrollListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.TabListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.TableListenerCollection" />
+    <extend-configuration-property name="rpc.blacklist" value="com.google.gwt.user.client.ui.TreeListenerCollection" />
+    <inherits name="com.google.gwt.user.User" />
+   	<source path="payment" includes="*.java domain/Amount*.java domain/Payment*.java service/type/*.java" excludes="dao/* service/*"/>
+   	<source path="util" includes="DateUtil.java UrlUtil.java *Type.java domain/*.java"/>
+</module>

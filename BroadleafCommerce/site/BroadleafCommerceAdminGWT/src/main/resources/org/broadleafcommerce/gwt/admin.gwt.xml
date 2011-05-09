@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+   <!-- http://code.google.com/webtoolkit/doc/latest/DevGuideOrganizingProjects.html#DevGuideModuleXml -->
+   <inherits name="com.google.gwt.user.User" />
+   <inherits name="com.smartgwt.SmartGwt"/>
+   <inherits name="com.smartgwt.tools.SmartGwtTools"/>
+   <inherits name="net.sf.gilead.Gilead4Gwt"/>
+   <inherits name="net.sf.gilead.emul.java5.ejb3.Ejb3" />
+   <inherits name="net.zschech.gwt.math.Math" />
+   <super-source path="override" />
+   <inherits name="org.broadleafcommerce.Profile" />
+   <inherits name="org.broadleafcommerce.Framework" />
+   <inherits name="org.broadleafcommerce.shared" />
+   <inherits name="com.anasoft.os.daofusion.cto.daofusion" />
+   <inherits name="com.gwtincubator.security.IncubatorSecurity" />
+   <inherits name="com.google.gwt.i18n.I18N"/>
+
+   <entry-point class="org.broadleafcommerce.gwt.client.Main" />
+   <source path="client" />
+   <!--
+   <set-property name="user.agent" value="gecko1_8" />
+   -->
+</module>
