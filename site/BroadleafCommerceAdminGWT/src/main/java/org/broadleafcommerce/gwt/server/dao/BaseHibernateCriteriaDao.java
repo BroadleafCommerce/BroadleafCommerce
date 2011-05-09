@@ -39,7 +39,7 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
 	
 	private static final Log LOG = LogFactory.getLog(BaseHibernateCriteriaDao.class);
 	
-	protected Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<? extends Serializable> entityClass) {
+	protected Criteria getCriteria(PersistentEntityCriteria entityCriteria, Class<?> entityClass) {
 		Criteria criteria = ((HibernateEntityManager) getEntityManager()).getSession().createCriteria(entityClass);
         entityCriteria.apply(criteria);
         
@@ -47,7 +47,7 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
     }
 	
 	@SuppressWarnings("unchecked")
-	public List<T> query(PersistentEntityCriteria entityCriteria, Class<? extends Serializable> targetEntityClass) {
+	public List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass) {
 		return getCriteria(entityCriteria, targetEntityClass).list();
 	}
 	
@@ -55,7 +55,7 @@ public abstract class BaseHibernateCriteriaDao<T extends Serializable> implement
 		return query(entityCriteria, getEntityClass());
 	}
 	
-	public int count(PersistentEntityCriteria entityCriteria, Class<? extends Serializable> targetEntityClass) {
+	public int count(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass) {
         Criteria criteria = getCriteria(entityCriteria, targetEntityClass);
         return rowCount(criteria);
 	}

@@ -15,14 +15,9 @@
  */
 package org.broadleafcommerce.gwt.client.service.catalog;
 
-import java.util.Date;
-import java.util.List;
-
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.Product;
 import org.broadleafcommerce.catalog.domain.Sku;
-import org.broadleafcommerce.gwt.security.SecurityUserRoles;
-import org.springframework.security.access.annotation.Secured;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -30,41 +25,19 @@ import com.gwtincubator.security.exception.ApplicationSecurityException;
 
 @RemoteServiceRelativePath("catalog.service")
 public interface CatalogService extends RemoteService {
-
-	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public Product saveProduct(Product product) throws ApplicationSecurityException;    
-
-	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public Product findProductById(Long productId) throws ApplicationSecurityException;
-
-	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public List<Product> findProductsByName(String searchName) throws ApplicationSecurityException;
-
-	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public List<Product> findActiveProductsByCategory(Category category, Date currentDate) throws ApplicationSecurityException;
-
+	
 	//@Secured({ SecurityUserRoles.MERCHANDISER })
     public Category saveCategory(Category category) throws ApplicationSecurityException;
     
 	//@Secured({ SecurityUserRoles.MERCHANDISER })
     public void removeCategory(Category category) throws ApplicationSecurityException;
+    
+    public Category createCategory() throws ApplicationSecurityException;
 
 	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public Category findCategoryById(Long categoryId) throws ApplicationSecurityException;
-
-	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public Category findCategoryByName(String categoryName) throws ApplicationSecurityException;
-
-	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public List<Product> findProductsForCategory(Category category) throws ApplicationSecurityException;
+    public Product saveProduct(Product product) throws ApplicationSecurityException;    
 
 	//@Secured({ SecurityUserRoles.MERCHANDISER })
     public Sku saveSku(Sku sku) throws ApplicationSecurityException;
-
-	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public List<Sku> findSkusByIds(List<Long> ids) throws ApplicationSecurityException;
-
-	//@Secured({ SecurityUserRoles.MERCHANDISER })
-    public Sku findSkuById(Long skuId) throws ApplicationSecurityException;
 
 }

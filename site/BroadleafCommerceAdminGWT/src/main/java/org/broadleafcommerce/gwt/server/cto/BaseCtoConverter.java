@@ -19,35 +19,65 @@ public class BaseCtoConverter extends NestedPropertyCriteriaBasedConverter {
         }
     };
     
-    protected void addStringLikeMapping(String mappingGroupName, String propertyId,
+    public static final FilterValueConverter<Double> DECIMAL = new FilterValueConverter<Double>() {
+        public Double convert(String stringValue) {
+        	if (stringValue == null) {
+        		return null;
+        	}
+            return Double.valueOf(stringValue);
+        }
+    };
+    
+    public void addStringLikeMapping(String mappingGroupName, String propertyId,
             AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<String>(
                 propertyId, associationPath, targetPropertyName,
                 FilterCriterionProviders.LIKE, FilterValueConverters.STRING));
     }
     
-    protected void addLongMapping(String mappingGroupName, String propertyId,
+    public void addDecimalMapping(String mappingGroupName, String propertyId,
+            AssociationPath associationPath, String targetPropertyName) {
+        addMapping(mappingGroupName, new FilterAndSortMapping<Double>(
+                propertyId, associationPath, targetPropertyName,
+                FilterCriterionProviders.BETWEEN, DECIMAL));
+    }
+    
+    public void addLongMapping(String mappingGroupName, String propertyId,
+            AssociationPath associationPath, String targetPropertyName) {
+        addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
+                propertyId, associationPath, targetPropertyName,
+                FilterCriterionProviders.BETWEEN, FilterValueConverters.LONG));
+    }
+    
+    public void addLongEQMapping(String mappingGroupName, String propertyId,
             AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
                 FilterCriterionProviders.EQ, FilterValueConverters.LONG));
     }
     
-    protected void addNullMapping(String mappingGroupName, String propertyId,
+    public void addNullMapping(String mappingGroupName, String propertyId,
             AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(
                 propertyId, associationPath, targetPropertyName,
                 FilterCriterionProviders.ISNULL, NULL_AWARE_LONG));
     }
     
-    protected void addDateMapping(String mappingGroupName, String propertyId,
+    public void addBooleanMapping(String mappingGroupName, String propertyId,
+            AssociationPath associationPath, String targetPropertyName) {
+        addMapping(mappingGroupName, new FilterAndSortMapping<Boolean>(
+                propertyId, associationPath, targetPropertyName,
+                FilterCriterionProviders.EQ, FilterValueConverters.BOOLEAN));
+    }
+    
+    public void addDateMapping(String mappingGroupName, String propertyId,
             AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Date>(
                 propertyId, associationPath, targetPropertyName,
-                FilterCriterionProviders.LE, new FilterValueConverters.DateConverter("MM/dd/yyyy")));
+                FilterCriterionProviders.BETWEEN, new FilterValueConverters.DateConverter("MM/dd/yyyy")));
     }
     
-    protected void addCollectionSizeEqMapping(String mappingGroupName, String propertyId,
+    public void addCollectionSizeEqMapping(String mappingGroupName, String propertyId,
             AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Integer>(
                 propertyId, associationPath, targetPropertyName,

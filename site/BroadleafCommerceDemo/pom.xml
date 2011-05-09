@@ -13,8 +13,41 @@
 	<version>1.5.0-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 	<build>
+		<outputDirectory>war/WEB-INF/classes</outputDirectory>
 		<finalName>broadleafdemo</finalName>
 		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>gwt-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compile</goal>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<style>DETAILED</style>
+					<modules>
+						<!-- This is the module that maven will search for and execute during 
+							builds and launches. -->
+						<module>org.broadleafcommerce.gwt.admin</module>
+					</modules>
+					<inplace>true</inplace>
+					<warSourceDirectory>war</warSourceDirectory>
+					<debugPort>8001</debugPort>
+					<!-- This is the html file that is the starting point for the application -->
+					<runTarget>admin.html</runTarget>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<warSourceDirectory>war</warSourceDirectory>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>maven-jetty-plugin</artifactId>
@@ -64,6 +97,49 @@
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
 			<artifactId>broadleaf-usps</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>cobertura</groupId>
+					<artifactId>cobertura</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-admin-gwt</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>cobertura</groupId>
+					<artifactId>cobertura</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-profile</artifactId>
+			<classifier>sources</classifier>
+			<exclusions>
+				<exclusion>
+					<groupId>cobertura</groupId>
+					<artifactId>cobertura</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-admin-gwt</artifactId>
+			<classifier>sources</classifier>
+			<exclusions>
+				<exclusion>
+					<groupId>cobertura</groupId>
+					<artifactId>cobertura</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-framework</artifactId>
+			<classifier>sources</classifier>
 			<exclusions>
 				<exclusion>
 					<groupId>cobertura</groupId>

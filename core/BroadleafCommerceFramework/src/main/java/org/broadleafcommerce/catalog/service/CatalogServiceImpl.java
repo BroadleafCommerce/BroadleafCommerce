@@ -120,4 +120,8 @@ public class CatalogServiceImpl implements CatalogService {
         }
         return null;
     }
+    
+    public Category createCategory() {
+    	return categoryDao.create();
+    }
 }

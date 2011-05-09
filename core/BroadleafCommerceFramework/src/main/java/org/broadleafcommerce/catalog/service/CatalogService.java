@@ -57,4 +57,6 @@ public interface CatalogService {
 
     public Map<String, List<Category>> getChildCategoryURLMapByCategoryId(Long categoryId);
 
+    public Category createCategory();
+    
 }
