@@ -18,6 +18,7 @@ package org.broadleafcommerce.profile.domain;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -29,11 +30,13 @@ import javax.persistence.UniqueConstraint;
 
 import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.profile.domain.listener.AuditableListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
 @Entity
+@EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CUSTOMER", uniqueConstraints = @UniqueConstraint(columnNames = { "USER_NAME" }))
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
@@ -72,10 +75,11 @@ public class CustomerImpl implements Customer {
     @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
     @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
+    @AdminPresentation(friendlyName="Challenge Question", group="Customer")
     protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
-    @AdminPresentation(friendlyName="Challenge Answer", group="Customer")
+    @AdminPresentation(friendlyName="Challenge Answer", group="Customer", hidden=true)
     protected String challengeAnswer;
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
@@ -83,11 +87,11 @@ public class CustomerImpl implements Customer {
     protected boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
-    @AdminPresentation(friendlyName="Receive Email", group="Customer")
+    @AdminPresentation(friendlyName="Customer Receive Email", group="Customer")
     protected boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
-    @AdminPresentation(friendlyName="Registered", group="Customer")
+    @AdminPresentation(friendlyName="Customer Registered", group="Customer")
     protected boolean registered = false;
 
     @Transient

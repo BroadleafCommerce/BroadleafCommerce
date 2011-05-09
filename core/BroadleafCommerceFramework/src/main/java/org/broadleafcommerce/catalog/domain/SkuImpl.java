@@ -89,62 +89,63 @@ public class SkuImpl implements Sku {
     @TableGenerator(name = "SkuId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "SkuImpl", allocationSize = 50)
     @Column(name = "SKU_ID")
     @SearchableId
+    @AdminPresentation(friendlyName="Sku ID", group="Primary Key", hidden=true)
     protected Long id;
 
     /** The sale price. */
     @Column(name = "SALE_PRICE")
-    @AdminPresentation(friendlyName="Sale Price", order=9, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Sku Sale Price", order=9, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     /** The retail price. */
     @Column(name = "RETAIL_PRICE", nullable=false)
-    @AdminPresentation(friendlyName="Retail Price", order=10, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Sku Retail Price", order=10, group="Price", prominent=true, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @SearchableProperty
     @Index(name="SKU_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Name", order=1, group="Sku Description", prominent=true, columnWidth="25%")
+    @AdminPresentation(friendlyName="Sku Name", order=1, group="Sku Description", prominent=true, columnWidth="25%")
     protected String name;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description", order=2, group="Sku Description", largeEntry=true)
+    @AdminPresentation(friendlyName="Sku Description", order=2, group="Sku Description", largeEntry=true)
     protected String description;
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName="Large Description", order=3, group="Sku Description", largeEntry=true)
+    @AdminPresentation(friendlyName="Sku Large Description", order=3, group="Sku Description", largeEntry=true)
     protected String longDescription;
 
     /** The taxable. */
     @Column(name = "TAXABLE_FLAG")
     @Index(name="SKU_TAXABLE_INDEX", columnNames={"TAXABLE_FLAG"})
-    @AdminPresentation(friendlyName="Taxable", order=4, group="Sku Description")
+    @AdminPresentation(friendlyName="Sku Taxable", order=4, group="Sku Description")
     protected Character taxable;
 
     /** The discountable. */
     @Column(name = "DISCOUNTABLE_FLAG")
     @Index(name="SKU_DISCOUNTABLE_INDEX", columnNames={"DISCOUNTABLE_FLAG"})
-    @AdminPresentation(friendlyName="Discountable", order=5, group="Sku Description")
+    @AdminPresentation(friendlyName="Sku Discountable", order=5, group="Sku Description")
     protected Character discountable;
 
     /** The available. */
     @Column(name = "AVAILABLE_FLAG")
     @Index(name="SKU_AVAILABLE_INDEX", columnNames={"AVAILABLE_FLAG"})
-    @AdminPresentation(friendlyName="Available", order=6, group="Sku Description")
+    @AdminPresentation(friendlyName="Sku Available", order=6, group="Sku Description")
     protected Character available;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
     @Index(name="SKU_ACTIVE_INDEX", columnNames={"ACTIVE_START_DATE","ACTIVE_END_DATE"})
-    @AdminPresentation(friendlyName="Start Date", order=7, group="Sku Description")
+    @AdminPresentation(friendlyName="Sku Start Date", order=7, group="Sku Description")
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName="End Date", order=8, group="Sku Description")
+    @AdminPresentation(friendlyName="Sku End Date", order=8, group="Sku Description")
     protected Date activeEndDate;
 
     /** The sku images. */

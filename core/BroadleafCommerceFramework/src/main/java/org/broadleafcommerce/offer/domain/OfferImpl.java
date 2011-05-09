@@ -31,6 +31,8 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.offer.service.type.OfferType;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -52,60 +54,78 @@ public class OfferImpl implements Offer {
 
     @Column(name = "OFFER_NAME", nullable=false)
     @Index(name="OFFER_NAME_INDEX", columnNames={"OFFER_NAME"})
+    @AdminPresentation(friendlyName="Offer Name", order=1, group="Description", prominent=true)
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
+    @AdminPresentation(friendlyName="Offer Description", order=2, group="Description", largeEntry=true, prominent=true)
     protected String description;
 
     @Column(name = "OFFER_TYPE", nullable=false)
     @Index(name="OFFER_TYPE_INDEX", columnNames={"OFFER_TYPE"})
+    @AdminPresentation(friendlyName="Offer Type", order=3, group="Description", prominent=true, fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.offer.service.type.OfferType")
     protected String type;
 
     @Column(name = "OFFER_DISCOUNT_TYPE")
     @Index(name="OFFER_DISCOUNT_INDEX", columnNames={"OFFER_DISCOUNT_TYPE"})
+    @AdminPresentation(friendlyName="Offer Discount Type", order=4, group="Amount", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.offer.service.type.OfferDiscountType")
     protected String discountType;
 
     @Column(name = "OFFER_VALUE", nullable=false)
+    @AdminPresentation(friendlyName="Offer Value", order=5, group="Amount", prominent=true)
     protected BigDecimal value;
 
     @Column(name = "OFFER_PRIORITY")
+    @AdminPresentation(friendlyName="Offer Priority", group="Description")
     protected int priority;
 
     @Column(name = "START_DATE")
+    @AdminPresentation(friendlyName="Offer Start Date", group="Activity Range", order=1)
     protected Date startDate;
 
     @Column(name = "END_DATE")
+    @AdminPresentation(friendlyName="Offer End Date", group="Activity Range", order=2)
     protected Date endDate;
 
     @Column(name = "STACKABLE")
+    @AdminPresentation(friendlyName="Offer Stackable", group="Application")
     protected boolean stackable;
 
     @Column(name = "TARGET_SYSTEM")
+    @AdminPresentation(friendlyName="Offer Target System", group="Description")
     protected String targetSystem;
 
     @Column(name = "APPLY_TO_SALE_PRICE")
+    @AdminPresentation(friendlyName="Apply To Sale Price", group="Application")
     protected boolean applyToSalePrice;
 
     @Column(name = "APPLIES_TO_RULES")
+    @AdminPresentation(friendlyName="Offer Order Rules", group="Application", largeEntry=true)
     protected String appliesToOrderRules;
 
     @Column(name = "APPLIES_WHEN_RULES")
+    @AdminPresentation(friendlyName="Offer Customer Rules", group="Application", largeEntry=true)
     protected String appliesToCustomerRules;
 
     @Column(name = "APPLY_OFFER_TO_MARKED_ITEMS")
+    @AdminPresentation(friendlyName="Apply To Marked Items", group="Application")
     protected boolean applyDiscountToMarkedItems;
 
     @Column(name = "COMBINABLE_WITH_OTHER_OFFERS")
+    @AdminPresentation(friendlyName="Offer Combinable", group="Application")
     protected boolean combinableWithOtherOffers;  // no offers can be applied on top of this offer; if false, stackable has to be false also
 
     @Column(name = "OFFER_DELIVERY_TYPE", nullable=false)
+    @AdminPresentation(friendlyName="Offer Delivery Type", group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.offer.service.type.OfferDeliveryType")
     @Index(name="OFFER_DELIVERY_INDEX", columnNames={"OFFER_DELIVERY_TYPE"})
     protected String deliveryType;
 
     @Column(name = "MAX_USES")
+    @AdminPresentation(friendlyName="Offer Max Uses", order=7, group="Description")
     protected int maxUses;
 
     @Column(name = "USES")
+    @AdminPresentation(friendlyName="Offer Current Uses", order=6, group="Description")
     protected int uses;
 
     public Long getId() {

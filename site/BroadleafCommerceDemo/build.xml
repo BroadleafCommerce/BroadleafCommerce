@@ -84,10 +84,16 @@
 			<fileset dir="../../module/BroadleafCommerceCyberSource/src/main/resources">
 				<include name="**/*.*"/>
 			</fileset>
-			<fileset dir="../BroadleafCommerceAdminGWT/src/main/java">
+			<fileset dir="../../admin/BroadleafCommerceAdminSite/src/main/java">
 				<include name="**/*.*"/>
 			</fileset>
-			<fileset dir="../BroadleafCommerceAdminGWT/src/main/resources">
+			<fileset dir="../../admin/BroadleafCommerceAdminSite/src/main/resources">
+				<include name="**/*.*"/>
+			</fileset>
+			<fileset dir="../../admin/BroadleafCommerceOpenAdminPlatform/src/main/java">
+				<include name="**/*.*"/>
+			</fileset>
+			<fileset dir="../../admin/BroadleafCommerceOpenAdminPlatform/src/main/resources">
 				<include name="**/*.*"/>
 			</fileset>
 		</copy>
@@ -120,7 +126,7 @@
 	
 	<target name="jetty-demo-jrebel">
 		<delete dir="war/WEB-INF/lib"/>
-		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=1024M -Xmx1024M -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path}">
+		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs=" -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=1024M -Xmx1024M -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
 			<arg value="clean"/>
 			<arg value="compile"/>
 			<arg value="war:inplace"/>

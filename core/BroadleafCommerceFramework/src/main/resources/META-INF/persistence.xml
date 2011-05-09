@@ -34,6 +34,7 @@
         <class>org.broadleafcommerce.catalog.domain.FeaturedProductImpl</class>
         <class>org.broadleafcommerce.catalog.domain.ProductAttributeImpl</class>
         <class>org.broadleafcommerce.catalog.domain.ProductImpl</class>
+        <class>org.broadleafcommerce.catalog.domain.ProductSkuImpl</class>
         <class>org.broadleafcommerce.catalog.domain.SkuAttributeImpl</class>
         <class>org.broadleafcommerce.catalog.domain.SkuImpl</class>
         <class>org.broadleafcommerce.catalog.domain.UpSaleProductImpl</class>

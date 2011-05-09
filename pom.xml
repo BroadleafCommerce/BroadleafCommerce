@@ -32,11 +32,6 @@
 					<version>2.3</version>
 				</plugin>
 				<plugin>
-					<groupId>org.sonatype.flexmojos</groupId>
-					<artifactId>flexmojos-maven-plugin</artifactId>
-					<version>3.2.0</version>
-				</plugin>
-				<plugin>
 				  	<groupId>org.zeroturnaround</groupId>
 				  	<artifactId>javarebel-maven-plugin</artifactId>
 				  	<version>1.0.5</version>
@@ -75,11 +70,6 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>gilead</id>
-			<name>gilead</name>
-			<url>https://gilead.svn.sourceforge.net/svnroot/gilead/gilead/maven-repo</url>
-		</repository>
-		<repository>
 			<id>smartgwt</id>
 			<name>smartgwt</name>
 			<url>http://www.smartclient.com/maven2</url>
@@ -106,7 +96,8 @@
 		<module>core</module>
 		<module>integration</module>
 		<module>site</module>
-	</modules>
+    	<module>admin</module>
+  </modules>
 	<dependencies>
 	</dependencies>
 	<reporting>
@@ -134,17 +125,6 @@
 	  </snapshotRepository>
 	</distributionManagement>
 	<profiles>
-		<profile>
-			<id>flex.skip</id>
-			<activation>
-		      <property>
-		        <name>flex.skip</name>
-		      </property>
-		    </activation>
-			<properties>
-				<flex.skip>true</flex.skip>
-			</properties>
-		</profile>
 		<profile>
 			<id>distribution.enable</id>
 			<activation>
@@ -246,14 +226,29 @@
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
-				<artifactId>broadleaf-admin-gwt</artifactId>
+				<artifactId>broadleaf-admin-site</artifactId>
 				<version>1.5.0-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.broadleafcommerce</groupId>
-				<artifactId>broadleaf-admin-gwt</artifactId>
+				<artifactId>broadleaf-admin-site</artifactId>
+				<version>1.5.0-SNAPSHOT</version>
+				<type>jar</type>
+				<scope>compile</scope>
+				<classifier>sources</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.broadleafcommerce</groupId>
+				<artifactId>broadleaf-open-admin-platform</artifactId>
+				<version>1.5.0-SNAPSHOT</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.broadleafcommerce</groupId>
+				<artifactId>broadleaf-open-admin-platform</artifactId>
 				<version>1.5.0-SNAPSHOT</version>
 				<type>jar</type>
 				<scope>compile</scope>
@@ -300,13 +295,6 @@
 				<type>jar</type>
 				<scope>compile</scope>
 			</dependency>
-			<!--dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-annotations</artifactId>
-				<version>3.5.6-Final</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency-->
 			<dependency>
 				<groupId>commons-validator</groupId>
 				<artifactId>commons-validator</artifactId>
@@ -358,13 +346,6 @@
 				<type>jar</type>
 				<scope>runtime</scope>
 			</dependency>
-			<!--dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-jmx</artifactId>
-				<version>3.5.6-Final</version>
-				<type>jar</type>
-				<scope>runtime</scope>
-			</dependency-->
 			<dependency>
 				<groupId>javax.annotation</groupId>
 				<artifactId>jsr250-api</artifactId>
@@ -896,42 +877,6 @@
                 <type>jar</type>
                 <scope>compile</scope>
             </dependency>
-            <!--dependency>
-                <groupId>net.sf.gilead</groupId>
-                <artifactId>gilead4gwt</artifactId>
-                <type>jar</type>
-                <version>1.3.2</version>
-                <exclusions>
-	        	<exclusion>
-	                <artifactId>org.springframework</artifactId>
-	                <groupId>spring</groupId>
-	            </exclusion>
-	            <exclusion>
-	                <groupId>org.hibernate</groupId>
-	                <artifactId>hibernate</artifactId>
-	            </exclusion>
-	            <exclusion>
-	                <artifactId>jboss-ejb3-core</artifactId>
-	                <groupId>org.jboss.ejb3</groupId>
-	            </exclusion>
-	            <exclusion>
-	                <artifactId>jboss-jpa-deployers</artifactId>
-	                <groupId>org.jboss.jpa</groupId>
-	            </exclusion>
-	            <exclusion>
-					<artifactId>javassist</artifactId>
-					<groupId>jboss</groupId>
-				</exclusion>
-	            <exclusion>
-	            	<artifactId>cglib</artifactId>
-	            	<groupId>cglib</groupId>
-	            </exclusion>
-	            <exclusion>
-	            	<artifactId>org.hibernate</artifactId>
-	            	<groupId>ejb3-persistence</groupId>
-	            </exclusion>
-			</exclusions>
-            </dependency-->
             <dependency>
                 <groupId>javassist</groupId>
                 <artifactId>javassist</artifactId>
@@ -985,18 +930,6 @@
 				<groupId>org.gwtwidgets</groupId>
 				<artifactId>gwt-sl</artifactId>
 				<version>1.1</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.metawidget</groupId>
-				<artifactId>metawidget</artifactId>
-				<version>1.0</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.metawidget</groupId>
-				<artifactId>metawidget-gwt</artifactId>
-				<version>1.0</version>
 				<scope>compile</scope>
 			</dependency>
 		</dependencies>

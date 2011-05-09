@@ -22,11 +22,11 @@ public class OtherProductImpl extends ProductSkuImpl implements OtherProduct {
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "COMPANY_NUMBER")
-	@AdminPresentation(friendlyName="Company Number", order=3, group="Description", prominent=false)
+	@AdminPresentation(friendlyName="Company Number", order=3, group="My Special Descriptions", prominent=false)
 	protected Long companyNumber;
 	
 	@Column(name = "RELEASE_DATE")
-	@AdminPresentation(friendlyName="Release Date", order=4, group="Description", prominent=false)
+	@AdminPresentation(friendlyName="Release Date", order=4, group="My Special Descriptions", prominent=false)
 	protected Date releaseDate;
 	
 	public Long getCompanyNumber() {

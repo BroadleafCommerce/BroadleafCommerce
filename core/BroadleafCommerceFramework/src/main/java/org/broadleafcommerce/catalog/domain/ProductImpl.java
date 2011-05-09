@@ -98,46 +98,47 @@ public class ProductImpl implements Product {
     @TableGenerator(name = "ProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "ProductImpl", allocationSize = 50)
     @Column(name = "PRODUCT_ID")
     @SearchableId
+    @AdminPresentation(friendlyName="Product ID", group="Primary Key", hidden=true)
     protected Long id;
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @SearchableProperty(name="productName")
     @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Name", order=1, group="Product Description", prominent=true, columnWidth="25%")
+    @AdminPresentation(friendlyName="Product Name", order=1, group="Product Description", prominent=true, columnWidth="25%")
     protected String name;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description", order=2, group="Product Description", prominent=true, largeEntry=true)
+    @AdminPresentation(friendlyName="Product Description", order=2, group="Product Description", prominent=true, largeEntry=true)
     protected String description;
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
     @SearchableProperty(name="productDescription")
-    @AdminPresentation(friendlyName="Long Description", order=3, group="Product Description", prominent=false, largeEntry=true)
+    @AdminPresentation(friendlyName="Product Long Description", order=3, group="Product Description", prominent=false, largeEntry=true)
     protected String longDescription;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName="Active Start Date", order=8, group="Active Date Range")
+    @AdminPresentation(friendlyName="Product Active Start Date", order=8, group="Active Date Range")
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName="Active End Date", order=9, group="Active Date Range")
+    @AdminPresentation(friendlyName="Product Active End Date", order=9, group="Active Date Range")
     protected Date activeEndDate;
 
     /** The product model number */
     @Column(name = "MODEL")
     @SearchableProperty(name="productModel")
-    @AdminPresentation(friendlyName="Model", order=4, group="Product Description", prominent=true)
+    @AdminPresentation(friendlyName="Product Model", order=4, group="Product Description", prominent=true)
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
     @SearchableProperty(name="productManufacturer")
-    @AdminPresentation(friendlyName="Manufacturer", order=5, group="Product Description", prominent=true)
+    @AdminPresentation(friendlyName="Product Manufacturer", order=5, group="Product Description", prominent=true)
     protected String manufacturer;
 
     /** The product dimensions **/
@@ -185,7 +186,7 @@ public class ProductImpl implements Product {
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName="Default Category", order=6, group="Product Description")
+    @AdminPresentation(friendlyName="Product Default Category", order=6, group="Product Description")
     protected Category defaultCategory;
 
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -196,11 +197,11 @@ public class ProductImpl implements Product {
     protected List<Category> allParentCategories = new ArrayList<Category>();
 
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
-    @AdminPresentation(friendlyName="Featured Product", order=6, group="Product Description", prominent=false)
+    @AdminPresentation(friendlyName="Is Featured Product", order=6, group="Product Description", prominent=false)
     protected boolean isFeaturedProduct = false;
 
     @Column(name = "IS_MACHINE_SORTABLE")
-    @AdminPresentation(friendlyName="Machine Sortable", order=7, group="Product Description", prominent=false)
+    @AdminPresentation(friendlyName="Is Product Machine Sortable", order=7, group="Product Description", prominent=false)
     protected boolean isMachineSortable = true;
     
     @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})

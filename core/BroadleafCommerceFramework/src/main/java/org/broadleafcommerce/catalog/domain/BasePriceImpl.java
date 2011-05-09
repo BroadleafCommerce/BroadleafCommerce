@@ -21,6 +21,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,6 +35,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.profile.domain.listener.AuditableListener;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Index;
 
@@ -41,6 +43,7 @@ import org.hibernate.annotations.Index;
  * The Class BasePriceImpl.
  */
 @Entity
+@EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BASE_PRICE")
 public class BasePriceImpl implements BasePrice {

@@ -20,6 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+
 /**
  * 
  * @author jfischer
@@ -99,4 +100,11 @@ public @interface AdminPresentation {
 	 * @return Broadleaf enumeration class name
 	 */
 	String broadleafEnumeration() default "";
+	
+	/**
+	 * Explicityly specify whether or not this field is mutable.
+	 * 
+	 * @return whether or not this field is read only
+	 */
+	boolean readOnly() default false;
 }

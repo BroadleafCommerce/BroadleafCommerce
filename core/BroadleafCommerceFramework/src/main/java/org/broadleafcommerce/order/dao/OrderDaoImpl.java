@@ -27,7 +27,6 @@ import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.profile.dao.CustomerDao;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
-import org.broadleafcommerce.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 @Repository("blOrderDao")
@@ -48,9 +47,6 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     public Order save(final Order order) {
-        if (order.getAuditable() != null) {
-            order.getAuditable().setDateUpdated(SystemTime.asDate());
-        }
         return em.merge(order);
     }
 
@@ -80,13 +76,13 @@ public class OrderDaoImpl implements OrderDao {
         return query.getResultList();
     }
 
-    @SuppressWarnings("unchecked")
     public Order readCartForCustomer(final Customer customer) {
         Order order = null;
         final Query query = em.createNamedQuery("BC_READ_ORDERS_BY_CUSTOMER_ID_AND_NAME_NULL");
         query.setParameter("customerId", customer.getId());
         query.setParameter("orderStatus", OrderStatus.IN_PROCESS.getType());
-        final List temp = query.getResultList();
+        @SuppressWarnings("rawtypes")
+		final List temp = query.getResultList();
         if (temp != null && !temp.isEmpty()) {
             order = (Order) temp.get(0);
         }
@@ -115,7 +111,6 @@ public class OrderDaoImpl implements OrderDao {
 
     public Order create() {
         final Order order = ((Order) entityConfiguration.createEntityInstance("org.broadleafcommerce.order.domain.Order"));
-        order.getAuditable().setDateCreated(SystemTime.asDate());
 
         return order;
     }

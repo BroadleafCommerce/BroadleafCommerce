@@ -17,6 +17,9 @@ package org.broadleafcommerce.offer.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
+import org.broadleafcommerce.order.domain.Order;
 
 public interface OfferCode extends Serializable {
 
@@ -48,6 +51,8 @@ public interface OfferCode extends Serializable {
 
     public void setUses(int uses) ;
 
+    public List<Order> getOrders();
 
+	public void setOrders(List<Order> orders);
 
 }

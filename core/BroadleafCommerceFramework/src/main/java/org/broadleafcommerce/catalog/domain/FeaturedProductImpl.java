@@ -60,7 +60,7 @@ public class FeaturedProductImpl implements FeaturedProduct {
     protected Long sequence;
 
     @Column(name = "PROMOTION_MESSAGE")
-    @AdminPresentation(friendlyName="Promotion Message", largeEntry=true)
+    @AdminPresentation(friendlyName="Featured Product Promotion Message", largeEntry=true)
     protected String promotionMessage;
 
     public Long getId() {
