@@ -62,7 +62,7 @@
         <property name="categoryTemplatePrefix" value="catalog/templates/"/>
 	</bean>
 	
-	<bean id="blCartController" class="org.broadleafcommerce.order.web.DemoCartController">
+	<bean id="blCartController" class="org.broadleafcommerce.order.web.CartController">
         <property name="cartView" value="shoppingCart/cartSummary"/>
         <property name="cartViewRedirect" value="false"/>
         <property name="addItemView" value="viewCart.htm"/>

@@ -252,34 +252,55 @@ public class OfferServiceImpl implements OfferService {
             List<DiscreteOrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
             for (Offer offer : filteredOffers) {
                 if(offer.getType().equals(OfferType.ORDER)){
-                    if (couldOfferApplyToOrder(offer, order)) {
-                        CandidateOrderOffer candidateOffer = offerDao.createCandidateOrderOffer();
-                        candidateOffer.setOrder(order);
-                        candidateOffer.setOffer(offer);
-                        // Why do we add offers here when we set the sorted list later
-                        order.addCandidateOrderOffer(candidateOffer);
-                        qualifiedOrderOffers.add(candidateOffer);
+                	checkSubItems: {
+	                    if (couldOfferApplyToOrder(offer, order)) {
+	                        createCandidateOrderOffer(order, qualifiedOrderOffers, offer);
+	                        break checkSubItems;
+	                    }
+	                    for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+	                        if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
+	                        	createCandidateOrderOffer(order, qualifiedOrderOffers, offer);
+	                        	break checkSubItems;
+	                        }
+	                    }
+	                    for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+	                        if(couldOfferApplyToOrder(offer, order, fulfillmentGroup)) {
+	                        	createCandidateOrderOffer(order, qualifiedOrderOffers, offer);
+	                        	break checkSubItems;
+	                        }
+	                    }
                     }
                 } else if(offer.getType().equals(OfferType.ORDER_ITEM)){
                     for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
-                        if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
-                            CandidateItemOffer candidateOffer = offerDao.createCandidateItemOffer();
-                            candidateOffer.setOrderItem(discreteOrderItem);
-                            candidateOffer.setOffer(offer);
-                            discreteOrderItem.addCandidateItemOffer(candidateOffer);
-                            qualifiedItemOffers.add(candidateOffer);
-                        }
+                    	checkSubItems: {
+	                    	if(couldOfferApplyToOrder(offer, order, discreteOrderItem)) {
+	                            createCandidateItemOffer(qualifiedItemOffers, offer, discreteOrderItem);
+	                            break checkSubItems;
+	                        }
+	                    	for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
+	                            if(couldOfferApplyToOrder(offer, order, discreteOrderItem, fulfillmentGroup)) {
+	                            	createCandidateItemOffer(qualifiedItemOffers, offer, discreteOrderItem);
+	                            	break checkSubItems;
+	                            }
+	                        }
+                    	}
                     }
                 } else if(offer.getType().equals(OfferType.FULFILLMENT_GROUP)){
                     // TODO: Handle Offer calculation for offer type of fullfillment group
                     // how to verify if offer applies for fulfillment?
                     for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
-                        if(couldOfferApplyToOrder(offer, order, fulfillmentGroup)) {
-                            CandidateFulfillmentGroupOffer candidateOffer = offerDao.createCandidateFulfillmentGroupOffer();
-                            candidateOffer.setFulfillmentGroup(fulfillmentGroup);
-                            candidateOffer.setOffer(offer);
-                            fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
-                        }
+                    	checkSubItems: {
+	                        if(couldOfferApplyToOrder(offer, order, fulfillmentGroup)) {
+	                            createCandidateFulfillmentGroupOffer(offer, fulfillmentGroup);
+	                            break checkSubItems;
+	                        }
+	                        for (DiscreteOrderItem discreteOrderItem : discreteOrderItems) {
+	                        	if(couldOfferApplyToOrder(offer, order, discreteOrderItem, fulfillmentGroup)) {
+	                        		createCandidateFulfillmentGroupOffer(offer, fulfillmentGroup);
+	                        		break checkSubItems;
+	                            }
+	                        }
+                    	}
                     }
                 }
             }
@@ -328,6 +349,30 @@ public class OfferServiceImpl implements OfferService {
             }
         }
     }
+
+	protected void createCandidateFulfillmentGroupOffer(Offer offer, FulfillmentGroup fulfillmentGroup) {
+		CandidateFulfillmentGroupOffer candidateOffer = offerDao.createCandidateFulfillmentGroupOffer();
+		candidateOffer.setFulfillmentGroup(fulfillmentGroup);
+		candidateOffer.setOffer(offer);
+		fulfillmentGroup.addCandidateFulfillmentGroupOffer(candidateOffer);
+	}
+
+	protected void createCandidateItemOffer(List<CandidateItemOffer> qualifiedItemOffers, Offer offer, DiscreteOrderItem discreteOrderItem) {
+		CandidateItemOffer candidateOffer = offerDao.createCandidateItemOffer();
+		candidateOffer.setOrderItem(discreteOrderItem);
+		candidateOffer.setOffer(offer);
+		discreteOrderItem.addCandidateItemOffer(candidateOffer);
+		qualifiedItemOffers.add(candidateOffer);
+	}
+
+	protected void createCandidateOrderOffer(Order order, List<CandidateOrderOffer> qualifiedOrderOffers, Offer offer) {
+		CandidateOrderOffer candidateOffer = offerDao.createCandidateOrderOffer();
+		candidateOffer.setOrder(order);
+		candidateOffer.setOffer(offer);
+		// Why do we add offers here when we set the sorted list later
+		order.addCandidateOrderOffer(candidateOffer);
+		qualifiedOrderOffers.add(candidateOffer);
+	}
 
     protected List<CandidateOrderOffer> removeTrailingNotCombinableOrderOffers(List<CandidateOrderOffer> candidateOffers) {
         List<CandidateOrderOffer> remainingCandidateOffers = new ArrayList<CandidateOrderOffer>();

@@ -102,7 +102,7 @@
 							<form:select  id="shipping"  cssClass="shipMethod" path="fulfillmentGroup.method">
 								<form:options items="${fulfillmentGroups}" itemValue="method" itemLabel="method" />
 							</form:select>
-							<input type="hidden" value="Update Shipping" name="updateShipping"  id="shippingButton"/>
+							<input type="hidden" name="updateShipping"  id="shippingButton"/>
 						</td>
 						<td style="text-align:right">Shipping:</td>
 						<td style="text-align:right"><span class="price">$${currentCartOrder.totalShipping}</span></td>
@@ -113,7 +113,7 @@
 						<td style="text-align:right"><span class="price">$${currentCartOrder.total }</span></td>
 					</tr>
 					<tr class="totals">
-						<td colspan="6" style="text-align:right"><a href="<c:url value="/store" />">Continue Shopping</a>  <button type="submit" name="checkout" id="checkout">Proceed to Checkout &raquo;</button>
+						<td colspan="6" style="text-align:right"><a href="<c:url value="/store" />">Continue Shopping</a>  <button type="submit" name="checkout" id="checkout" value="Proceed to Checkout">Proceed to Checkout &raquo;</button>
 						</td>
 					</tr>
 			</form:form>

@@ -48,11 +48,11 @@ public class PhoneImpl implements Phone {
     protected String phoneNumber;
 
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName="Default", order=2, group="Phone")
+    @AdminPresentation(friendlyName="Default Phone", order=2, group="Phone")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName="Active", order=3, group="Phone")
+    @AdminPresentation(friendlyName="Active Phone", order=3, group="Phone")
     protected boolean isActive = true;
 
     public Long getId() {

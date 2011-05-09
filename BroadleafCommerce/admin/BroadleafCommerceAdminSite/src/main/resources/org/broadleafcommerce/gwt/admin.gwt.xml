@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="org.broadleafcommerce.gwt.openadmin" />
+	
+	<source path="client" />
+	<!-- <set-property name="user.agent" value="gecko1_8" /> -->
+</module>

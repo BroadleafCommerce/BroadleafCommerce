@@ -15,7 +15,8 @@
    });
    
    $("#shipping").change(function () {
-	  document.cartForm.submit();
+	   document.getElementById("shippingButton").value="performUpdate";
+	   document.cartForm.submit();
    });
    
  });

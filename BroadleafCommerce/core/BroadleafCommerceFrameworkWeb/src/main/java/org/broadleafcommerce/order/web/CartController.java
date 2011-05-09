@@ -276,7 +276,7 @@ public class CartController {
         return "redirect:/checkout/checkout.htm";
     }
 
-    @RequestMapping(params="updateShipping", method = RequestMethod.POST)
+    @RequestMapping(params="updateShipping=performUpdate", method = RequestMethod.POST)
     public String updateShipping (@ModelAttribute(value="cartSummary") CartSummary cartSummary, ModelMap model, HttpServletRequest request) throws PricingException {
         Order currentCartOrder = retrieveCartOrder(request, model);
         cartSummary = createFulfillmentGroup(cartSummary, cartSummary.getFulfillmentGroup().getMethod(), cartSummary.getFulfillmentGroup().getService(), currentCartOrder);

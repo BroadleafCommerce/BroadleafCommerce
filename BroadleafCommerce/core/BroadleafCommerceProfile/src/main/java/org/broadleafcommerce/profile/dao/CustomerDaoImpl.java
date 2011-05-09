@@ -24,7 +24,6 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.util.EntityConfiguration;
-import org.broadleafcommerce.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 @Repository("blCustomerDao")
@@ -57,14 +56,12 @@ public class CustomerDaoImpl implements CustomerDao {
 
     public Customer save(Customer customer) {
         if (customer.getAuditable() != null) {
-            customer.getAuditable().setDateUpdated(SystemTime.asDate());
         }
         return em.merge(customer);
     }
 
     public Customer create() {
         Customer customer =  (Customer) entityConfiguration.createEntityInstance(Customer.class.getName());
-        customer.getAuditable().setDateCreated(SystemTime.asDate());
         return customer;
     }
 

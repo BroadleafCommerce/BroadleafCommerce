@@ -17,10 +17,8 @@ package org.broadleafcommerce.order;
 
 import java.math.BigDecimal;
 
-import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.order.domain.OrderImpl;
 import org.broadleafcommerce.order.service.type.OrderStatus;
-import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.money.Money;
 import org.testng.annotations.DataProvider;
 
@@ -29,9 +27,6 @@ public class OrderDataProvider {
     @DataProvider(name = "basicOrder")
     public static Object[][] provideBasicSalesOrder() {
         OrderImpl so = new OrderImpl();
-        Auditable auditable = new Auditable();
-        auditable.setDateCreated(SystemTime.asDate());
-        so.setAuditable(auditable);
         so.setStatus(OrderStatus.IN_PROCESS);
         so.setTotal(new Money(BigDecimal.valueOf(1000)));
         return new Object[][] { { so } };

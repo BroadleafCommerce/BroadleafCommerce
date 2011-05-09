@@ -14,7 +14,6 @@ import org.broadleafcommerce.catalog.domain.ProductImpl;
 import org.broadleafcommerce.catalog.domain.Sku;
 import org.broadleafcommerce.catalog.domain.SkuImpl;
 import org.broadleafcommerce.catalog.service.CatalogService;
-import org.broadleafcommerce.common.domain.Auditable;
 import org.broadleafcommerce.order.dao.OrderDao;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
@@ -36,7 +35,6 @@ import org.broadleafcommerce.profile.service.CountryService;
 import org.broadleafcommerce.profile.service.CustomerAddressService;
 import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.service.StateService;
-import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.util.money.Money;
 
 public abstract class CommonSetupBaseTest extends BaseTest {
@@ -152,9 +150,6 @@ public abstract class CommonSetupBaseTest extends BaseTest {
     public Customer createCustomerWithBasicOrderAndAddresses() {
     	Customer customer = createCustomerWithAddresses();
         Order order = new OrderImpl();
-        Auditable auditable = new Auditable();
-        auditable.setDateCreated(SystemTime.asDate());
-        order.setAuditable(auditable);
         order.setStatus(OrderStatus.IN_PROCESS);
         order.setTotal(new Money(BigDecimal.valueOf(1000)));
         

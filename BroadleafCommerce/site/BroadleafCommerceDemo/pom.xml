@@ -32,7 +32,7 @@
 					<modules>
 						<!-- This is the module that maven will search for and execute during 
 							builds and launches. -->
-						<module>org.broadleafcommerce.gwt.admin</module>
+						<module>org.broadleafcommerce.gwt.demoAdmin</module>
 					</modules>
 					<inplace>true</inplace>
 					<warSourceDirectory>war</warSourceDirectory>
@@ -87,7 +87,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-usps</artifactId>
+			<artifactId>broadleaf-framework-web</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>cobertura</groupId>
@@ -97,7 +97,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-admin-gwt</artifactId>
+			<artifactId>broadleaf-usps</artifactId>
 			<exclusions>
 				<exclusion>
 					<groupId>cobertura</groupId>
@@ -118,7 +118,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-admin-gwt</artifactId>
+			<artifactId>broadleaf-admin-site</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>cobertura</groupId>
+					<artifactId>cobertura</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-admin-site</artifactId>
 			<classifier>sources</classifier>
 			<exclusions>
 				<exclusion>
@@ -129,7 +139,17 @@
 		</dependency>
 		<dependency>
 			<groupId>org.broadleafcommerce</groupId>
-			<artifactId>broadleaf-framework</artifactId>
+			<artifactId>broadleaf-open-admin-platform</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>cobertura</groupId>
+					<artifactId>cobertura</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.broadleafcommerce</groupId>
+			<artifactId>broadleaf-open-admin-platform</artifactId>
 			<classifier>sources</classifier>
 			<exclusions>
 				<exclusion>

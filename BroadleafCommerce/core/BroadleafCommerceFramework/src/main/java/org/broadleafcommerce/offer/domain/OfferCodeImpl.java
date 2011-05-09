@@ -15,25 +15,36 @@
  */
 package org.broadleafcommerce.offer.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.order.domain.Order;
+import org.broadleafcommerce.order.domain.OrderImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_OFFER_CODE")
 @Inheritance(strategy=InheritanceType.JOINED)
+@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
 public class OfferCodeImpl implements OfferCode {
 
     public static final long serialVersionUID = 1L;
@@ -47,23 +58,34 @@ public class OfferCodeImpl implements OfferCode {
     @ManyToOne(targetEntity = OfferImpl.class, optional=false)
     @JoinColumn(name = "OFFER_ID")
     @Index(name="OFFERCODE_OFFER_INDEX", columnNames={"OFFER_ID"})
+    @AdminPresentation(friendlyName="Offer", group="Description")
     protected Offer offer;
 
     @Column(name = "OFFER_CODE", nullable=false)
     @Index(name="OFFERCODE_CODE_INDEX", columnNames={"OFFER_CODE"})
+    @AdminPresentation(friendlyName="Offer Code", order=1, group="Description", prominent=true)
     protected String offerCode;
 
     @Column(name = "START_DATE")
+    @AdminPresentation(friendlyName="Code Start Date", order=1, group="Activity Range")
     protected Date startDate;
 
     @Column(name = "END_DATE")
+    @AdminPresentation(friendlyName="Code End Date", order=2, group="Activity Range")
     protected Date endDate;
 
     @Column(name = "MAX_USES")
+    @AdminPresentation(friendlyName="Code Max Uses", order=2, group="Description", prominent=true)
     protected int maxUses;
 
     @Column(name = "USES")
+    @AdminPresentation(friendlyName="Code Uses", order=3, group="Description", prominent=true)
     protected int uses;
+    
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = OrderImpl.class)
+    @JoinTable(name = "BLC_ORDER_OFFER_CODE_XREF", joinColumns = @JoinColumn(name = "OFFER_CODE_ID", referencedColumnName = "OFFER_CODE_ID"), inverseJoinColumns = @JoinColumn(name = "ORDER_ID", referencedColumnName = "ORDER_ID"))
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    protected List<Order> orders = new ArrayList<Order>();
 
     public Long getId() {
         return id;
@@ -121,7 +143,15 @@ public class OfferCodeImpl implements OfferCode {
         this.endDate = endDate;
     }
 
-    @Override
+    public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

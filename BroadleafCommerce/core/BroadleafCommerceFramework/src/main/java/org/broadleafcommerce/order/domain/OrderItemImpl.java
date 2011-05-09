@@ -78,23 +78,23 @@ public class OrderItemImpl implements OrderItem {
     protected Order order;
 
     @Column(name = "RETAIL_PRICE")
-    @AdminPresentation(friendlyName="Retail Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Item Retail Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE")
-    @AdminPresentation(friendlyName="Sale Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Item Sale Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     @Column(name = "PRICE")
-    @AdminPresentation(friendlyName="Price", order=4, group="Pricing", fieldType=SupportedFieldType.MONEY)
+    @AdminPresentation(friendlyName="Item Price", order=4, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal price;
 
     @Column(name = "QUANTITY", nullable=false)
-    @AdminPresentation(friendlyName="Quantity", order=5, group="Pricing")
+    @AdminPresentation(friendlyName="Item Quantity", order=5, group="Pricing")
     protected int quantity;
     
     @Column(name = "NAME")
-    @AdminPresentation(friendlyName="Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="Item Name", order=1, group="Description", prominent=true)
     protected String name;
 
     @Transient
@@ -133,7 +133,7 @@ public class OrderItemImpl implements OrderItem {
 
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
-    @AdminPresentation(friendlyName="Order Item Type", order=6, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.order.service.type.OrderItemType")
+    @AdminPresentation(friendlyName="Item Type", order=6, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.order.service.type.OrderItemType")
     protected String orderItemType;
 
     public Money getRetailPrice() {

@@ -32,6 +32,7 @@ import javax.persistence.TableGenerator;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
 import org.broadleafcommerce.order.domain.Order;
 import org.broadleafcommerce.order.domain.OrderImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -62,9 +63,11 @@ public class OrderAdjustmentImpl implements OrderAdjustment {
     protected Offer offer;
 
     @Column(name = "ADJUSTMENT_REASON", nullable=false)
+    @AdminPresentation(friendlyName="Order Adjustment Reason", order=1, group="Description")
     protected String reason;
 
     @Column(name = "ADJUSTMENT_VALUE", nullable=false)
+    @AdminPresentation(friendlyName="Order Adjustment Value", order=2, group="Description")
     protected BigDecimal value;
 
     public void init(Order order, Offer offer, String reason){

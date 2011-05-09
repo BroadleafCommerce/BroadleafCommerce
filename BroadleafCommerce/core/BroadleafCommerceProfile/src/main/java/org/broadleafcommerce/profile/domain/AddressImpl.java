@@ -99,11 +99,11 @@ public class AddressImpl implements Address {
     protected String companyName;
 
     @Column(name = "IS_DEFAULT")
-    @AdminPresentation(friendlyName="Default", order=18, group="Address")
+    @AdminPresentation(friendlyName="Default Address", order=18, group="Address")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
-    @AdminPresentation(friendlyName="Active", order=19, group="Address")
+    @AdminPresentation(friendlyName="Active Address", order=19, group="Address")
     protected boolean isActive = true;
 
     @Column(name = "FIRST_NAME")

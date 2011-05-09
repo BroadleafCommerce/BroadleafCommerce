@@ -89,50 +89,51 @@ public class CategoryImpl implements Category {
     @GeneratedValue(generator = "CategoryId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "CategoryId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CategoryImpl", allocationSize = 50)
     @Column(name = "CATEGORY_ID")
+    @AdminPresentation(friendlyName="Category ID", group="Primary Key", hidden=true)
     protected Long id;
 
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="CATEGORY_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Name", order=1, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="Category Name", order=1, group="Description", prominent=true)
     protected String name;
 
     /** The url. */
     @Column(name = "URL")
-    @AdminPresentation(friendlyName="Url", order=2, group="Description")
+    @AdminPresentation(friendlyName="Category Url", order=2, group="Description")
     protected String url;
 
     /** The url key. */
     @Column(name = "URL_KEY")
     @Index(name="CATEGORY_URLKEY_INDEX", columnNames={"URL_KEY"})
-    @AdminPresentation(friendlyName="Url Key", order=3, group="Description")
+    @AdminPresentation(friendlyName="Category Url Key", order=3, group="Description")
     protected String urlKey;
 
     /** The default parent category. */
     @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_PARENT_CATEGORY_ID")
     @Index(name="CATEGORY_PARENT_INDEX", columnNames={"DEFAULT_PARENT_CATEGORY_ID"})
-    @AdminPresentation(friendlyName="Default Parent Category", order=7, group="Description")
+    @AdminPresentation(friendlyName="Category Default Parent", order=7, group="Description")
     protected Category defaultParentCategory;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description", order=5, group="Description", largeEntry=true)
+    @AdminPresentation(friendlyName="Category Description", order=5, group="Description", largeEntry=true)
     protected String description;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName="Active Start Date", order=7, group="Active Date Range")
+    @AdminPresentation(friendlyName="Category Active Start Date", order=7, group="Active Date Range")
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName="Active End Date", order=8, group="Active Date Range")
+    @AdminPresentation(friendlyName="Category Active End Date", order=8, group="Active Date Range")
     protected Date activeEndDate;
 
     /** The display template. */
     @Column(name = "DISPLAY_TEMPLATE")
-    @AdminPresentation(friendlyName="Display Template", order=4, group="Description")
+    @AdminPresentation(friendlyName="Category Display Template", order=4, group="Description")
     protected String displayTemplate;
 
     /** The all child categories. */
@@ -182,7 +183,7 @@ public class CategoryImpl implements Category {
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
-    @AdminPresentation(friendlyName="Long Description", order=6, group="Description", largeEntry=true)
+    @AdminPresentation(friendlyName="Category Long Description", order=6, group="Description", largeEntry=true)
     protected String longDescription;
 
     @OneToMany(mappedBy = "category", targetEntity = FeaturedProductImpl.class, cascade = {CascadeType.ALL})

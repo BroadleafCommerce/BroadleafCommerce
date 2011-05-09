@@ -1,0 +1,111 @@
+package org.broadleafcommerce.gwt.client.datasource.results;
+
+import java.io.Serializable;
+
+import org.broadleafcommerce.presentation.SupportedFieldType;
+
+public class FieldPresentationAttributes implements Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
+	private String name;
+	private String friendlyName;
+	private Integer order;
+	private Boolean hidden;
+	private String group;
+	private SupportedFieldType explicitFieldType;
+	private Boolean largeEntry;
+	private Boolean prominent;
+	private String columnWidth;
+	private String broadleafEnumeration;
+	private Boolean readOnly;
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getFriendlyName() {
+		return friendlyName;
+	}
+	
+	public void setFriendlyName(String friendlyName) {
+		this.friendlyName = friendlyName;
+	}
+	
+	public Integer getOrder() {
+		return order;
+	}
+	
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+	
+	public Boolean isHidden() {
+		return hidden;
+	}
+	
+	public void setHidden(Boolean hidden) {
+		this.hidden = hidden;
+	}
+
+	public SupportedFieldType getExplicitFieldType() {
+		return explicitFieldType;
+	}
+
+	public void setExplicitFieldType(SupportedFieldType fieldType) {
+		this.explicitFieldType = fieldType;
+	}
+
+	public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
+	public Boolean isLargeEntry() {
+		return largeEntry;
+	}
+
+	public void setLargeEntry(Boolean largeEntry) {
+		this.largeEntry = largeEntry;
+	}
+
+	public Boolean isProminent() {
+		return prominent;
+	}
+
+	public void setProminent(Boolean prominent) {
+		this.prominent = prominent;
+	}
+
+	public String getColumnWidth() {
+		return columnWidth;
+	}
+
+	public void setColumnWidth(String columnWidth) {
+		this.columnWidth = columnWidth;
+	}
+
+	public String getBroadleafEnumeration() {
+		return broadleafEnumeration;
+	}
+
+	public void setBroadleafEnumeration(String broadleafEnumeration) {
+		this.broadleafEnumeration = broadleafEnumeration;
+	}
+
+	public Boolean getReadOnly() {
+		return readOnly;
+	}
+
+	public void setReadOnly(Boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+}
