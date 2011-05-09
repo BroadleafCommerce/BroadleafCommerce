@@ -3,6 +3,7 @@ package org.broadleafcommerce.gwt.admin.client.presenter.customer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.admin.client.datasource.customer.ChallengeQuestionListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.customer.CustomerListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.view.customer.CustomerDisplay;
@@ -37,9 +38,9 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	@Override
 	protected void addClicked() {
 		Map<String, Object> initialValues = new HashMap<String, Object>();
-		initialValues.put("username", "Untitled");
+		initialValues.put("username", AdminModule.ADMINMESSAGES.usernameDefault());
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-		BLCMain.ENTITY_ADD.editNewRecord("Create New Customer", (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
+		BLCMain.ENTITY_ADD.editNewRecord(AdminModule.ADMINMESSAGES.newCustomerTitle(), (DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource(), initialValues, new NewItemCreatedEventHandler() {
 			public void onNewItemCreated(NewItemCreatedEvent event) {
 				Criteria myCriteria = new Criteria();
 				myCriteria.addCriteria("username", event.getRecord().getAttribute("username"));
@@ -84,7 +85,7 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 								getFormItemCallbackHandlerManager().addSearchFormItemCallback(
 									"challengeQuestion", 
 									challengeQuestionSearchView, 
-									"Search For A Challenge Question", 
+									AdminModule.ADMINMESSAGES.challengeQuestionSearchPrompt(), 
 									display.getDynamicFormDisplay()
 								);
 								CustomerPresenter.super.go(container);

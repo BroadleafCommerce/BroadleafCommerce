@@ -1,5 +1,6 @@
 package org.broadleafcommerce.gwt.admin.client.view.customer;
 
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.relations.operations.OperationType;
@@ -40,7 +41,6 @@ public class PasswordUpdateDialog extends Window {
 		this.setHeight(300);
 		this.setCanDragResize(true);
 		this.setOverflow(Overflow.VISIBLE);
-		//this.setLayoutRightMargin(20);
 		
 		VStack stack = new VStack();
 		stack.setWidth100();
@@ -52,7 +52,7 @@ public class PasswordUpdateDialog extends Window {
         stack.addMember(dynamicForm);
         addItem(stack);
         
-        IButton saveButton = new IButton("Save");  
+        IButton saveButton = new IButton(AdminModule.ADMINMESSAGES.saveButtonTitle());  
         saveButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
             	if (dynamicForm.validate()) {
@@ -85,7 +85,7 @@ public class PasswordUpdateDialog extends Window {
             }  
         });  
 
-        IButton cancelButton = new IButton("Cancel");  
+        IButton cancelButton = new IButton(AdminModule.ADMINMESSAGES.cancelButtonTitle());  
         cancelButton.addClickHandler(new ClickHandler() {  
             public void onClick(ClickEvent event) {  
             	hide();
@@ -107,7 +107,7 @@ public class PasswordUpdateDialog extends Window {
 	
 	public void updatePassword(Record associatedRecord) {
 		this.associatedRecord = associatedRecord;
-		setTitle("Update Customer Password");
+		setTitle(AdminModule.ADMINMESSAGES.updateCustomerPasswordTitle());
 		buildFields(dynamicForm);
         dynamicForm.setWrapItemTitles(false);
         centerInPage();
@@ -117,22 +117,22 @@ public class PasswordUpdateDialog extends Window {
 	public void buildFields(DynamicForm dynamicForm) {
 		MatchesFieldValidator validator = new MatchesFieldValidator();  
         validator.setOtherField("password2");  
-        validator.setErrorMessage("Passwords do not match");
+        validator.setErrorMessage(AdminModule.ADMINMESSAGES.passwordNotMatchError());
         
 		FormItem password1 = new PasswordItem("password1");
-		password1.setTitle("Password");
+		password1.setTitle(AdminModule.ADMINMESSAGES.passwordPrompt());
 		password1.setWidth("100%");
 		password1.setRequired(true);
 		password1.setValidators(validator); 
 		
 		FormItem password2 = new PasswordItem("password2");
-		password2.setTitle("Password Again");
+		password2.setTitle(AdminModule.ADMINMESSAGES.passwordAgainPrompt());
 		password2.setWidth("100%");
 		password2.setRequired(true);
 		
 		FormItem changeRequired = new BooleanItem();
 		changeRequired.setName("changeRequired");
-		changeRequired.setTitle("Password Change Required");
+		changeRequired.setTitle(AdminModule.ADMINMESSAGES.passwordChangeRequiredTitle());
 		changeRequired.setWidth("100%");
 		changeRequired.setValue(false);
 	        	

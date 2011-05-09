@@ -1,5 +1,6 @@
 package org.broadleafcommerce.gwt.admin.client.view.customer;
 
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.client.reflection.Instantiable;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListView;
@@ -32,15 +33,15 @@ public class CustomerView extends HLayout implements Instantiable, CustomerDispl
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView("Customers", entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(AdminModule.ADMINMESSAGES.customerListTitle(), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
         
-        dynamicFormDisplay = new DynamicFormView("Customer Details", entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.customerDetailsTitle(), entityDataSource);
         dynamicFormDisplay.setWidth("50%");
         ToolStrip toolbar = dynamicFormDisplay.getToolbar();
         toolbar.addFill();
         Label label = new Label();
-        label.setContents("Update Password");
+        label.setContents(AdminModule.ADMINMESSAGES.updatePasswordPrompt());
         label.setWrap(false);
         toolbar.addMember(label);
         

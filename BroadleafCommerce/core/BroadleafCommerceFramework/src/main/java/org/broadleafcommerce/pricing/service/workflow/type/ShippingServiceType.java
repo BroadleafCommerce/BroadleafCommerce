@@ -19,35 +19,39 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of shipping service types.
  * 
  * @author jfischer
  *
  */
-public class ShippingServiceType implements Serializable {
+public class ShippingServiceType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, ShippingServiceType> TYPES = new HashMap<String, ShippingServiceType>();
 
-    public static final ShippingServiceType BANDED_SHIPPING = new ShippingServiceType("BANDED_SHIPPING");
-    public static final ShippingServiceType USPS = new ShippingServiceType("USPS");
-    public static final ShippingServiceType FED_EX = new ShippingServiceType("FED_EX");
-    public static final ShippingServiceType UPS = new ShippingServiceType("UPS");
-    public static final ShippingServiceType DHL = new ShippingServiceType("DHL");
+    public static final ShippingServiceType BANDED_SHIPPING = new ShippingServiceType("BANDED_SHIPPING", "Banded Shipping");
+    public static final ShippingServiceType USPS = new ShippingServiceType("USPS", "United States Postal Service");
+    public static final ShippingServiceType FED_EX = new ShippingServiceType("FED_EX", "Federal Express");
+    public static final ShippingServiceType UPS = new ShippingServiceType("UPS", "United Parcel Service");
+    public static final ShippingServiceType DHL = new ShippingServiceType("DHL", "DHL");
 
     public static ShippingServiceType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public ShippingServiceType() {
         //do nothing
     }
 
-    public ShippingServiceType(final String type) {
+    public ShippingServiceType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -55,7 +59,11 @@ public class ShippingServiceType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

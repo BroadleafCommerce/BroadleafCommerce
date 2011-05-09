@@ -24,10 +24,10 @@ import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.gwt.client.datasource.results.PolymorphicEntity;
 import org.broadleafcommerce.gwt.client.datasource.results.Property;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.client.service.AbstractCallback;
 import org.broadleafcommerce.gwt.client.service.AppServices;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
@@ -544,11 +544,11 @@ public class BasicEntityModule implements DataSourceModule {
     }
     
     protected OperatorId[] getBasicNumericOperators() {
-    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD};
+    	return new OperatorId[]{OperatorId.EQUALS, OperatorId.GREATER_OR_EQUAL, OperatorId.GREATER_THAN, OperatorId.NOT_EQUAL, OperatorId.LESS_OR_EQUAL, OperatorId.LESS_THAN, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.GREATER_OR_EQUAL_FIELD, OperatorId.GREATER_THAN_FIELD, OperatorId.LESS_OR_EQUAL_FIELD, OperatorId.LESS_THAN_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET};
     }
     
     protected OperatorId[] getBasicTextOperators() {
-    	return new OperatorId[]{OperatorId.ENDS_WITH, OperatorId.EQUALS, OperatorId.NOT_CONTAINS, OperatorId.NOT_ENDS_WITH, OperatorId.NOT_EQUAL, OperatorId.NOT_STARTS_WITH, OperatorId.STARTS_WITH, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.CONTAINS};
+    	return new OperatorId[]{OperatorId.CONTAINS, OperatorId.NOT_CONTAINS, OperatorId.STARTS_WITH, OperatorId.ENDS_WITH, OperatorId.NOT_STARTS_WITH, OperatorId.NOT_ENDS_WITH, OperatorId.EQUALS, OperatorId.NOT_EQUAL, OperatorId.NOT_NULL, OperatorId.EQUALS_FIELD, OperatorId.NOT_EQUAL_FIELD, OperatorId.IN_SET, OperatorId.NOT_IN_SET};
     }
     
     protected OperatorId[] getBasicEnumerationOperators() {
@@ -579,6 +579,7 @@ public class BasicEntityModule implements DataSourceModule {
 				String rawName = property.getName();
 				String propertyName = rawName;
 				String fieldType = property.getMetadata().getFieldType()==null?null:property.getMetadata().getFieldType().toString();
+				String secondaryFieldType = property.getMetadata().getSecondaryType()==null?null:property.getMetadata().getSecondaryType().toString();
 				Long length = property.getMetadata().getLength()==null?null:property.getMetadata().getLength().longValue();
 				Boolean required = property.getMetadata().getRequired();
 				if (required == null) {
@@ -595,11 +596,13 @@ public class BasicEntityModule implements DataSourceModule {
 				}
 				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
 				String group = property.getMetadata().getPresentationAttributes().getGroup();
+				Integer groupOrder = property.getMetadata().getPresentationAttributes().getGroupOrder();
 				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
 				Boolean prominent = property.getMetadata().getPresentationAttributes().isProminent();
 				Integer order = property.getMetadata().getPresentationAttributes().getOrder();
 				String columnWidth = property.getMetadata().getPresentationAttributes().getColumnWidth();
-				String[] enumerationValues = property.getMetadata().getEnumerationValues();
+				String[][] enumerationValues = property.getMetadata().getEnumerationValues();
+				String enumerationClass = property.getMetadata().getEnumerationClass();
 				if (mutable) {
 					Boolean isReadOnly = property.getMetadata().getPresentationAttributes().getReadOnly();
 					if (isReadOnly != null) {
@@ -616,44 +619,44 @@ public class BasicEntityModule implements DataSourceModule {
 					field.setCanEdit(false);
 					hidden = true;
 					field.setRequired(required);
-					field.setValidOperators(getBasicIdOperators());
+					//field.setValidOperators(getBasicIdOperators());
 					break;
 				case BOOLEAN:
 					field = new DataSourceBooleanField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
-					field.setValidOperators(getBasicBooleanOperators());
+					//field.setValidOperators(getBasicBooleanOperators());
 					break;
 				case DATE:
 					field = new DataSourceDateTimeField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
 					field.setRequired(required);
-					field.setValidOperators(getBasicDateOperators());
+					//field.setValidOperators(getBasicDateOperators());
 					break;
 				case INTEGER:
 					field = new DataSourceIntegerField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
 					field.setRequired(required);
-					field.setValidOperators(getBasicNumericOperators());
+					//field.setValidOperators(getBasicNumericOperators());
 					break;
 				case DECIMAL:
 					field = new DataSourceFloatField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
 					field.setRequired(required);
-					field.setValidOperators(getBasicNumericOperators());
+					//field.setValidOperators(getBasicNumericOperators());
 					break;
 				case EMAIL:
 					field = new DataSourceTextField(propertyName, friendlyName);
 			        field.setValidators(Validators.EMAIL);
 			        field.setCanEdit(mutable);
 			        field.setRequired(required);
-			        field.setValidOperators(getBasicTextOperators());
+			        //field.setValidOperators(getBasicTextOperators());
 			        break;
 				case MONEY:
 					field = new DataSourceFloatField(propertyName, friendlyName);
 			        field.setValidators(Validators.USCURRENCY);
 			        field.setCanEdit(mutable);
 			        field.setRequired(required);
-			        field.setValidOperators(getBasicNumericOperators());
+			        //field.setValidOperators(getBasicNumericOperators());
 			        break;
 				case FOREIGN_KEY:{
 					field = new DataSourceTextField(propertyName, friendlyName);
@@ -671,7 +674,7 @@ public class BasicEntityModule implements DataSourceModule {
 						hidden = true;
 					}
 					field.setRequired(required);
-					field.setValidOperators(getBasicNumericOperators());
+					//field.setValidOperators(getBasicNumericOperators());
 					break;}
 				case ADDITIONAL_FOREIGN_KEY:{
 					field = new DataSourceTextField(propertyName, friendlyName);
@@ -679,24 +682,24 @@ public class BasicEntityModule implements DataSourceModule {
 						hidden = true;
 					}
 					field.setRequired(required);
-					field.setValidOperators(getBasicNumericOperators());
+					//field.setValidOperators(getBasicNumericOperators());
 					break;}
 				case BROADLEAF_ENUMERATION:
 					field = new DataSourceEnumField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
 					field.setRequired(required);
 					LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-	        		for (String value : enumerationValues) {
-	        			valueMap.put(value, value);
-	        		}
+					for (int j=0; j<enumerationValues.length; j++) {
+						valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
+					}
 	        		field.setValueMap(valueMap);
-	        		field.setValidOperators(getBasicEnumerationOperators());
+	        		//field.setValidOperators(getBasicEnumerationOperators());
 					break;
 				default:
 					field = new DataSourceTextField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
 					field.setRequired(required);
-					field.setValidOperators(getBasicTextOperators());
+					//field.setValidOperators(getBasicTextOperators());
 					break;
 				}
 				if (fieldType.equals(SupportedFieldType.ID.toString())) {
@@ -711,6 +714,9 @@ public class BasicEntityModule implements DataSourceModule {
 				}
 				if (group != null) {
 					field.setAttribute("formGroup", group);
+				}
+				if (groupOrder != null) {
+					field.setAttribute("formGroupOrder", groupOrder);
 				}
 				if (largeEntry != null) {
 					field.setAttribute("largeEntry", largeEntry);
@@ -730,9 +736,13 @@ public class BasicEntityModule implements DataSourceModule {
 				if (enumerationValues != null) {
 					field.setAttribute("enumerationValues", enumerationValues);
 				}
+				if (enumerationClass != null) {
+					field.setAttribute("enumerationClass", enumerationClass);
+				}
 				field.setAttribute("inheritedFromType", inheritedFromType);
 				field.setAttribute("availableToTypes", availableToTypes);
 				field.setAttribute("fieldType", fieldType);
+				field.setAttribute("secondaryFieldType", secondaryFieldType);
 				field.setAttribute("mergedPropertyType", mergedPropertyType);
 				field.setAttribute("rawName", rawName);
 				dataSource.addField(field);

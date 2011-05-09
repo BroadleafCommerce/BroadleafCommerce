@@ -19,12 +19,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of container shape types.
  * 
  * @author jfischer
  */
-public class ContainerShapeType implements Serializable {
+public class ContainerShapeType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,12 +37,14 @@ public class ContainerShapeType implements Serializable {
     }
 
     private String type;
+    private String friendlyType;
 
     public ContainerShapeType() {
         //do nothing
     }
 
-    public ContainerShapeType(final String type) {
+    public ContainerShapeType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -48,7 +52,11 @@ public class ContainerShapeType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

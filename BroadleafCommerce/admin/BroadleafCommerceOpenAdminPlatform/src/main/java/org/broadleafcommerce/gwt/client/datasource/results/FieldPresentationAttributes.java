@@ -2,7 +2,7 @@ package org.broadleafcommerce.gwt.client.datasource.results;
 
 import java.io.Serializable;
 
-import org.broadleafcommerce.presentation.SupportedFieldType;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 
 public class FieldPresentationAttributes implements Serializable {
 	
@@ -13,6 +13,7 @@ public class FieldPresentationAttributes implements Serializable {
 	private Integer order;
 	private Boolean hidden;
 	private String group;
+	private Integer groupOrder;
 	private SupportedFieldType explicitFieldType;
 	private Boolean largeEntry;
 	private Boolean prominent;
@@ -106,6 +107,14 @@ public class FieldPresentationAttributes implements Serializable {
 
 	public void setReadOnly(Boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+
+	public Integer getGroupOrder() {
+		return groupOrder;
+	}
+
+	public void setGroupOrder(Integer groupOrder) {
+		this.groupOrder = groupOrder;
 	}
 
 }

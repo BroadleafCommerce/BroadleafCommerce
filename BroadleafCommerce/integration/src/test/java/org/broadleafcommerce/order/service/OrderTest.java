@@ -334,7 +334,7 @@ public class OrderTest extends OrderBaseTest {
      * "addFulfillmentGroupToOrderFirst" }) public void
      * removeFulFillmentGroupForOrderFirst() { int beforeRemove =
      * orderService.findFulfillmentGroupsForOrder(order).size();
-     * FulfillmentGroup fulfillmentGroup = em.find(FulfillmentGroupImpl.class,
+     * FulfillmentGroup fulfillmentGroup = entityManager.find(FulfillmentGroupImpl.class,
      * fulfillmentGroupId); orderService.removeFulfillmentGroupFromOrder(order,
      * fulfillmentGroup); int afterRemove =
      * orderService.findFulfillmentGroupsForOrder(order).size(); assert

@@ -19,31 +19,35 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of offer types.
  *
  */
-public class OfferType implements Serializable
-{
+public class OfferType implements Serializable, BroadleafEnumerationType {
+	
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferType> TYPES = new HashMap<String, OfferType>();
 
-    public static final OfferType ORDER = new OfferType("ORDER");
-    public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP");
-    public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM");
+    public static final OfferType ORDER = new OfferType("ORDER", "Order");
+    public static final OfferType FULFILLMENT_GROUP = new OfferType("FULFILLMENT_GROUP", "Fulfillment Group");
+    public static final OfferType ORDER_ITEM = new OfferType("ORDER_ITEM", "Order Item");
 
     public static OfferType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public OfferType() {
         //do nothing
     }
 
-    public OfferType(final String type) {
+    public OfferType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -58,7 +62,11 @@ public class OfferType implements Serializable
         return type;
     }
 
-    @Override
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

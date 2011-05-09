@@ -19,37 +19,41 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of payment transaction types.
  * 
  * @author jfischer
  *
  */
-public class TransactionType implements Serializable {
+public class TransactionType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, TransactionType> TYPES = new HashMap<String, TransactionType>();
 
-    public static final TransactionType AUTHORIZE = new TransactionType("AUTHORIZE");
-    public static final TransactionType DEBIT = new TransactionType("DEBIT");
-    public static final TransactionType AUTHORIZEANDDEBIT = new TransactionType("AUTHORIZEANDDEBIT");
-    public static final TransactionType CREDIT = new TransactionType("CREDIT");
-    public static final TransactionType VOIDPAYMENT = new TransactionType("VOIDPAYMENT");
-    public static final TransactionType BALANCE = new TransactionType("BALANCE");
-    public static final TransactionType REVERSEAUTHORIZE = new TransactionType("REVERSEAUTHORIZE");
+    public static final TransactionType AUTHORIZE = new TransactionType("AUTHORIZE", "Authorize");
+    public static final TransactionType DEBIT = new TransactionType("DEBIT", "Debit");
+    public static final TransactionType AUTHORIZEANDDEBIT = new TransactionType("AUTHORIZEANDDEBIT", "Authorize and Debit");
+    public static final TransactionType CREDIT = new TransactionType("CREDIT", "Credit");
+    public static final TransactionType VOIDPAYMENT = new TransactionType("VOIDPAYMENT", "Void Payment");
+    public static final TransactionType BALANCE = new TransactionType("BALANCE", "Balance");
+    public static final TransactionType REVERSEAUTHORIZE = new TransactionType("REVERSEAUTHORIZE", "Reverse Authorize");
 
     public static TransactionType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public TransactionType() {
         //do nothing
     }
 
-    public TransactionType(final String type) {
+    public TransactionType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -57,7 +61,11 @@ public class TransactionType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

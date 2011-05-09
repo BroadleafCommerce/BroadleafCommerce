@@ -19,35 +19,39 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of transaction types.
  * 
  * @author jfischer
  */
-public class CyberSourceTransactionType implements Serializable {
+public class CyberSourceTransactionType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, CyberSourceTransactionType> TYPES = new HashMap<String, CyberSourceTransactionType>();
 
-    public static final CyberSourceTransactionType AUTHORIZE  = new CyberSourceTransactionType("AUTHORIZE");
-    public static final CyberSourceTransactionType CAPTURE = new CyberSourceTransactionType("CAPTURE");
-    public static final CyberSourceTransactionType AUTHORIZEANDCAPTURE  = new CyberSourceTransactionType("AUTHORIZEANDCAPTURE");
-    public static final CyberSourceTransactionType CREDIT = new CyberSourceTransactionType("CREDIT");
-    public static final CyberSourceTransactionType VOIDTRANSACTION = new CyberSourceTransactionType("VOIDTRANSACTION");
-    public static final CyberSourceTransactionType REVERSEAUTHORIZE = new CyberSourceTransactionType("REVERSEAUTHORIZE");
+    public static final CyberSourceTransactionType AUTHORIZE  = new CyberSourceTransactionType("AUTHORIZE", "Authorize");
+    public static final CyberSourceTransactionType CAPTURE = new CyberSourceTransactionType("CAPTURE", "Capture");
+    public static final CyberSourceTransactionType AUTHORIZEANDCAPTURE  = new CyberSourceTransactionType("AUTHORIZEANDCAPTURE", "Authorize and Capture");
+    public static final CyberSourceTransactionType CREDIT = new CyberSourceTransactionType("CREDIT", "Credit");
+    public static final CyberSourceTransactionType VOIDTRANSACTION = new CyberSourceTransactionType("VOIDTRANSACTION", "Void Transaction");
+    public static final CyberSourceTransactionType REVERSEAUTHORIZE = new CyberSourceTransactionType("REVERSEAUTHORIZE", "Reverse Authorize");
 
     public static CyberSourceTransactionType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public CyberSourceTransactionType() {
         //do nothing
     }
 
-    public CyberSourceTransactionType(final String type) {
+    public CyberSourceTransactionType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -55,7 +59,11 @@ public class CyberSourceTransactionType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

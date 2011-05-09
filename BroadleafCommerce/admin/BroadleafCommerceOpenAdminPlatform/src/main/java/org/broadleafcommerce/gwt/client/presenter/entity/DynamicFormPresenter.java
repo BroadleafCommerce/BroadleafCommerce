@@ -2,6 +2,7 @@ package org.broadleafcommerce.gwt.client.presenter.entity;
 
 import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.events.ItemChangedEvent;
@@ -10,6 +11,8 @@ import com.smartgwt.client.widgets.form.events.ItemChangedHandler;
 public class DynamicFormPresenter {
 
 	protected DynamicFormDisplay display;
+	protected HandlerRegistration saveButtonHandlerRegistration;
+	protected HandlerRegistration refreshButtonHandlerRegistration;
 	
 	public DynamicFormPresenter(DynamicFormDisplay display) {
 		this.display = display;
@@ -35,7 +38,7 @@ public class DynamicFormPresenter {
 	}
 	
 	public void bind() {
-		display.getSaveButton().addClickHandler(new ClickHandler() {
+		saveButtonHandlerRegistration=display.getSaveButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					display.getFormOnlyDisplay().getForm().saveData();
@@ -43,7 +46,7 @@ public class DynamicFormPresenter {
 				}
 			}
         });
-		display.getRefreshButton().addClickHandler(new ClickHandler() {
+		refreshButtonHandlerRegistration=display.getRefreshButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
 					display.getFormOnlyDisplay().getForm().reset();
@@ -57,4 +60,13 @@ public class DynamicFormPresenter {
 			}
 		});
 	}
+
+	public HandlerRegistration getSaveButtonHandlerRegistration() {
+		return saveButtonHandlerRegistration;
+	}
+
+	public HandlerRegistration getRefreshButtonHandlerRegistration() {
+		return refreshButtonHandlerRegistration;
+	}
+	
 }

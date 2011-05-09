@@ -1,5 +1,6 @@
 package org.broadleafcommerce.gwt.admin.client.view.order;
 
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.client.reflection.Instantiable;
 import org.broadleafcommerce.gwt.client.view.TabSet;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
@@ -44,7 +45,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView("Orders", entityDataSource, false, false);
+		listDisplay = new DynamicEntityListView(AdminModule.ADMINMESSAGES.ordersListTitle(), entityDataSource, false, false);
         leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet();  
@@ -54,36 +55,36 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         topTabSet.setHeight100();
         topTabSet.setPaneMargin(0);
         
-        Tab detailsTab = new Tab("Details");
-        dynamicFormDisplay = new DynamicFormView("Order Details", entityDataSource);
-        orderAdjustmentDisplay = new GridStructureView("Order Adjustments", false, false);
+        Tab detailsTab = new Tab(AdminModule.ADMINMESSAGES.orderDetailsTabTitle());
+        dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.orderDetailsTitle(), entityDataSource);
+        orderAdjustmentDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.orderAdjustmentsTitle(), false, false);
         ((FormOnlyView) ((DynamicFormView) dynamicFormDisplay).getFormOnlyDisplay()).addMember(orderAdjustmentDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
         
-        Tab orderItemsTab = new Tab("Order Items"); 
-        orderItemsDisplay = new OrderItemView("Order Items", false, false);
+        Tab orderItemsTab = new Tab(AdminModule.ADMINMESSAGES.orderItemsTabTitle()); 
+        orderItemsDisplay = new OrderItemView(AdminModule.ADMINMESSAGES.orderItemsListTitle(), false, false);
         orderItemsTab.setPane(orderItemsDisplay);
-        orderItemAdjustmentDisplay = new GridStructureView("Order Item Adjustments", false, false);
+        orderItemAdjustmentDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.orderItemAdjustmentsListTitle(), false, false);
         ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemAdjustmentDisplay);
         topTabSet.addTab(orderItemsTab);
         
-        Tab fgTab = new Tab("Fulfillment Groups"); 
-        fulfillmentGroupDisplay = new SubItemView("Fulfillment Groups", false, false);
-        fulfillmentGroupAdjustmentDisplay = new GridStructureView("Fulfillment Group Adjustments", false, false);
+        Tab fgTab = new Tab(AdminModule.ADMINMESSAGES.fgTabTitle()); 
+        fulfillmentGroupDisplay = new SubItemView(AdminModule.ADMINMESSAGES.fgListTitle(), false, false);
+        fulfillmentGroupAdjustmentDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.fgAdjustmentsListTitle(), false, false);
         ((FormOnlyView) ((SubItemView) fulfillmentGroupDisplay).getFormOnlyDisplay()).addMember(fulfillmentGroupAdjustmentDisplay);
         fgTab.setPane(fulfillmentGroupDisplay);
         topTabSet.addTab(fgTab);
         
-        Tab paymentInfoTab = new Tab("Payment Infos"); 
-        paymentInfoDisplay = new SubItemView("Payment Infos", false, false);
-        additionalAttributesDisplay = new GridStructureView("Additional Attributes", false, false);
+        Tab paymentInfoTab = new Tab(AdminModule.ADMINMESSAGES.paymentInfoTabTitle()); 
+        paymentInfoDisplay = new SubItemView(AdminModule.ADMINMESSAGES.paymentInfoListTitle(), false, false);
+        additionalAttributesDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.additionalAttributesListTitle(), false, false);
         ((FormOnlyView) ((SubItemView) paymentInfoDisplay).getFormOnlyDisplay()).addMember(additionalAttributesDisplay);
         paymentInfoTab.setPane(paymentInfoDisplay);
         topTabSet.addTab(paymentInfoTab);
         
-        Tab offerCodesTab = new Tab("Offer Codes"); 
-        offerCodeDisplay = new SubItemView("Offer Codes", false, false);
+        Tab offerCodesTab = new Tab(AdminModule.ADMINMESSAGES.offerCodeTabTitle()); 
+        offerCodeDisplay = new SubItemView(AdminModule.ADMINMESSAGES.offerCodeListTitle(), false, false);
         offerCodesTab.setPane(offerCodeDisplay);
         topTabSet.addTab(offerCodesTab);
         

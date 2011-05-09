@@ -22,7 +22,6 @@
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="false">
 			<arg value="gwt:run"/>
-			<arg value="-o"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=1024M -Xmx1024M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.gwt.workaround.JDTCompiler15"/>
 		</artifact:mvn>
 	</target>
@@ -32,58 +31,15 @@
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="gwt:debug"/>
-			<arg value="-o"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=1024M -Xmx1024M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.gwt.workaround.JDTCompiler15"/>
 		</artifact:mvn>
 	</target>
 	
 	<!-- start the integrated gwt development server in debug mode inplace with the current codebase - add jrebel instrumentation -->
 	<target name="gwt-debug-jrebel">
-		<delete dir="war/WEB-INF/lib"/>
+		<delete dir="target/broadleafdemo/WEB-INF/lib"/>
 		<!-- Make sure all the latest core java files are available to GWT for development mode compilation -->
-		<copy todir="war/WEB-INF/classes">
-			<fileset dir="../../core/BroadleafCommerceProfile/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../core/BroadleafCommerceProfile/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../core/BroadleafCommerceProfileWeb/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../core/BroadleafCommerceProfileWeb/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../core/BroadleafCommerceFramework/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../core/BroadleafCommerceFramework/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../core/BroadleafCommerceFrameworkWeb/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../core/BroadleafCommerceFrameworkWeb/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../module/BroadleafCommerceUSPSSchemas/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../module/BroadleafCommerceUSPSSchemas/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../module/BroadleafCommerceUSPS/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../module/BroadleafCommerceCyberSourceAPI/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../module/BroadleafCommerceCyberSource/src/main/java">
-				<include name="**/*.*"/>
-			</fileset>
-			<fileset dir="../../module/BroadleafCommerceCyberSource/src/main/resources">
-				<include name="**/*.*"/>
-			</fileset>
+		<copy todir="target/broadleafdemo/WEB-INF/classes">
 			<fileset dir="../../admin/BroadleafCommerceAdminModule/src/main/java">
 				<include name="**/*.*"/>
 			</fileset>
@@ -105,7 +61,6 @@
 		</copy>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="gwt:debug"/>
-			<arg value="-o"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=1024M -Xmx1024M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.gwt.workaround.JDTCompiler15 -noverify -javaagent:${jrebel.path}"/>
 		</artifact:mvn>
 	</target>
@@ -115,7 +70,6 @@
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true">
 			<arg value="gwt:debug"/>
-			<arg value="-o"/>
 			<arg value="-Dgwt.extraJvmArgs=-XX:MaxPermSize=1024M -Xmx1024M -Dlogs.dir=${logs.dir} -Dbuild.compiler=org.broadleafcommerce.gwt.workaround.JDTCompiler15 -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty"/>
 		</artifact:mvn>
 	</target>
@@ -123,9 +77,8 @@
 	<target name="jetty-demo" depends="start-db">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs="-XX:MaxPermSize=1024M -Xmx1024M">
-			<arg value="clean"/>
 			<arg value="compile"/>
-			<arg value="war:inplace"/>
+			<arg value="war:exploded"/>
 			<arg value="jetty:run"/>
 		</artifact:mvn>
 	</target>
@@ -133,9 +86,8 @@
 	<target name="jetty-demo-jrebel">
 		<delete dir="war/WEB-INF/lib"/>
 		<artifact:mvn mavenHome="${maven.home}" fork="true" jvmargs=" -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n -XX:MaxPermSize=1024M -Xmx1024M -Dlogs.dir=${logs.dir} -noverify -javaagent:${jrebel.path} -agentpath:${yourkit.agent.path}libyjpagent.jnilib=builtinprobes=none,delay=10000,sessionname=Jetty">
-			<arg value="clean"/>
 			<arg value="compile"/>
-			<arg value="war:inplace"/>
+			<arg value="war:exploded"/>
 			<arg value="jetty:run"/>
 		</artifact:mvn>
 	</target>

@@ -17,10 +17,12 @@ package org.broadleafcommerce.offer.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.service.type.OfferDeliveryType;
 import org.broadleafcommerce.offer.service.type.OfferDiscountType;
+import org.broadleafcommerce.offer.service.type.OfferItemRestrictionRuleType;
 import org.broadleafcommerce.offer.service.type.OfferType;
 
 public interface Offer extends Serializable {
@@ -81,9 +83,19 @@ public interface Offer extends Serializable {
 
     public void setAppliesToCustomerRules(String appliesToCustomerRules);
 
+    @Deprecated
     public boolean isApplyDiscountToMarkedItems();
 
+    @Deprecated
     public void setApplyDiscountToMarkedItems(boolean applyDiscountToMarkedItems);
+    
+    public OfferItemRestrictionRuleType getOfferItemQualifierRuleType();
+
+    public void setOfferItemQualifierRuleType(OfferItemRestrictionRuleType restrictionRuleType);
+    
+    public OfferItemRestrictionRuleType getOfferItemTargetRuleType();
+
+    public void setOfferItemTargetRuleType(OfferItemRestrictionRuleType restrictionRuleType);
 
     public boolean isCombinableWithOtherOffers();
 
@@ -101,4 +113,20 @@ public interface Offer extends Serializable {
 
     public void setUses(int uses) ;
 
+    public List<OfferItemCriteria> getQualifyingItemCriteria();
+
+	public void setQualifyingItemCriteria(List<OfferItemCriteria> qualifyingItemCriteria);
+
+	public OfferItemCriteria getTargetItemCriteria();
+
+	public void setTargetItemCriteria(OfferItemCriteria targetItemCriteria);
+	
+	public Boolean isTotalitarianOffer();
+
+	public void setTotalitarianOffer(Boolean totalitarianOffer);
+	
+	public String getAppliesToFulfillmentGroupRules();
+
+	public void setAppliesToFulfillmentGroupRules(String appliesToFulfillmentGroupRules);
+	
 }

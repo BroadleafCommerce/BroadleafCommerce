@@ -2,7 +2,6 @@
 <module>
 	<!-- http://code.google.com/webtoolkit/doc/latest/DevGuideOrganizingProjects.html#DevGuideModuleXml -->
 	<inherits name="com.google.gwt.user.User" />
-	<inherits name="org.broadleafcommerce.Profile" />
 	<inherits name="com.smartgwt.debug.SmartGwtDebug" />
 	<inherits name="com.smartgwt.tools.SmartGwtTools" />
 	<inherits name="net.zschech.gwt.math.Math" />
@@ -16,4 +15,6 @@
 		<when-type-assignable
 			class="org.broadleafcommerce.gwt.client.reflection.FactoryWrapper" />
 	</generate-with>
+	
+	<entry-point class="org.broadleafcommerce.gwt.client.BLCMain" />
 </module>

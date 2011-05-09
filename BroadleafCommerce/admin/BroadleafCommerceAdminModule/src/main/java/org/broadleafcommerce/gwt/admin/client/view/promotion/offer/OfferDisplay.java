@@ -6,14 +6,16 @@ import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEditDisplay;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
 
+import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.widgets.Button;
 import com.smartgwt.client.widgets.ImgButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FilterBuilder;
-import com.smartgwt.client.widgets.form.fields.IntegerItem;
 import com.smartgwt.client.widgets.form.fields.RadioGroupItem;
+import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public interface OfferDisplay extends DynamicEditDisplay {
@@ -27,8 +29,6 @@ public interface OfferDisplay extends DynamicEditDisplay {
 	public ImgButton getHelpButtonType();
 	
 	public RadioGroupItem getDeliveryTypeRadio();
-	
-	public IntegerItem getMaxUseField();
 	
 	public TextItem getCodeField();
 	
@@ -44,7 +44,7 @@ public interface OfferDisplay extends DynamicEditDisplay {
 	
 	public DynamicForm getStepFGForm();
 	
-	public Label getStepItemLabel();
+	public Label getRequiredItemsLabel();
 	
 	public Button getAddItemButton();
 	
@@ -53,5 +53,101 @@ public interface OfferDisplay extends DynamicEditDisplay {
 	public List<ItemBuilderDisplay> getItemBuilderViews();
 	
 	public ImgButton getHelpButtonBogo();
+
+	public RadioGroupItem getBogoRadio();
+
+	public Label getTargetItemsLabel();
+
+	public Label getBogoQuestionLabel();
+
+	public void setHelpButtonBogo(ImgButton helpButtonBogo);
+	
+	public ItemBuilderDisplay getTargetItemBuilder();
+	
+	public DynamicForm getStepBogoForm();
+	
+	public VLayout getBogoQuestionLayout();
+	
+	public VLayout getFgQuestionLayout();
+	
+	public RadioGroupItem getOrderRuleRadio();
+
+	public FilterBuilder getOrderFilterBuilder();
+	
+	public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource);
+	
+	public void removeItemBuilder(ItemBuilderDisplay itemBuilder);
+	
+	public VLayout getRequiredItemsLayout();
+	
+	public VLayout getTargetItemsLayout();
+	
+	public VLayout getNewItemBuilderLayout();
+	
+	public VLayout getOrderItemLayout();
+	
+	public SectionView getFgSectionView();
+	
+	public RadioGroupItem getReceiveFromAnotherPromoRadio();
+	
+	public SectionView getItemTargetSectionView();
+	
+	public RadioGroupItem getQualifyForAnotherPromoRadio();
+	
+	public RadioGroupItem getReceiveFromAnotherPromoTargetRadio();
+
+	public RadioGroupItem getQualifyForAnotherPromoTargetRadio();
+	
+	public VLayout getAdvancedItemCriteriaTarget();
+
+	public VLayout getAdvancedItemCriteria();
+	
+	public Label getOrderCombineLabel();
+
+	public DynamicForm getOrderCombineForm();
+
+	public RadioGroupItem getOrderCombineRuleRadio();
+
+	public RadioGroupItem getFgCombineRuleRadio();
+	
+	public RadioGroupItem getRestrictRuleRadio();
+
+	public SectionView getRestrictionSectionView();
+	
+	public DynamicForm getRawCustomerForm();
+
+	public TextAreaItem getRawCustomerTextArea();
+	
+	public DynamicForm getRawOrderForm();
+
+	public TextAreaItem getRawOrderTextArea();
+	
+	public void removeAllItemBuilders();
+	
+	public DynamicForm getRawFGForm();
+
+	public TextAreaItem getRawFGTextArea();
+	
+	public SectionView getItemQualificationSectionView();
+	
+	public DynamicForm getRestrictForm();
+	
+	public DynamicForm getCustomerObtainForm();
+	
+	public DynamicForm getWhichCustomerForm();
+	
+	public DynamicForm getOrderForm();
+	
+	public DynamicForm getReceiveFromAnotherPromoForm();
+	
+	public DynamicForm getQualifyForAnotherPromoForm();
+	
+	public DynamicForm getReceiveFromAnotherPromoTargetForm();
+	
+	public DynamicForm getQualifyForAnotherPromoTargetForm();
+	
+	public DynamicForm getStepFGCombineForm();
+	
+	public DynamicForm getStepItemForm();
 	
 }

@@ -55,5 +55,6 @@
 	<bean id="org.broadleafcommerce.util.domain.CodeType" class="org.broadleafcommerce.util.domain.CodeTypeImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.content.domain.Content" class="org.broadleafcommerce.content.domain.ContentImpl" scope="prototype" />
 	<bean id="org.broadleafcommerce.content.domain.ContentDetails" class="org.broadleafcommerce.content.domain.ContentDetailsImpl" scope="prototype" />
+	<bean id="org.broadleafcommerce.offer.domain.OfferItemCriteria" class="org.broadleafcommerce.offer.domain.OfferItemCriteriaImpl" scope="prototype" />
 	
 </beans>

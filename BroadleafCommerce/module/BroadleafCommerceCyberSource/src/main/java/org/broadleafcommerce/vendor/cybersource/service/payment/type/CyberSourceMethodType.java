@@ -19,32 +19,36 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of transaction types.
  * 
  * @author jfischer
  */
-public class CyberSourceMethodType implements Serializable {
+public class CyberSourceMethodType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, CyberSourceMethodType> TYPES = new HashMap<String, CyberSourceMethodType>();
 
-    public static final CyberSourceMethodType CREDITCARD  = new CyberSourceMethodType("CREDITCARD");
-    public static final CyberSourceMethodType BANKACCOUNT = new CyberSourceMethodType("BANKACCOUNT");
-    public static final CyberSourceMethodType PAYPAL = new CyberSourceMethodType("PAYPAL");
+    public static final CyberSourceMethodType CREDITCARD  = new CyberSourceMethodType("CREDITCARD", "Credit Card");
+    public static final CyberSourceMethodType BANKACCOUNT = new CyberSourceMethodType("BANKACCOUNT", "Bank Account");
+    public static final CyberSourceMethodType PAYPAL = new CyberSourceMethodType("PAYPAL", "PayPal");
 
     public static CyberSourceMethodType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public CyberSourceMethodType() {
         //do nothing
     }
 
-    public CyberSourceMethodType(final String type) {
+    public CyberSourceMethodType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -52,7 +56,11 @@ public class CyberSourceMethodType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

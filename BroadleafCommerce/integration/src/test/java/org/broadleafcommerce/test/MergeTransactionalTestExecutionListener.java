@@ -59,7 +59,7 @@ import org.springframework.util.ReflectionUtils;
  * <p>
  * Changes to the database during a test run with &#064;Transactional will be
  * run within a transaction that will, by default, be automatically
- * <em>rolled back</em> after completion of the test; whereas, changes to the
+ * <entityManager>rolled back</entityManager> after completion of the test; whereas, changes to the
  * database during a test run with &#064;NotTransactional will <strong>not</strong>
  * be run within a transaction. Similarly, test methods that are not annotated
  * with either &#064;Transactional (at the class or method level) or
@@ -75,7 +75,7 @@ import org.springframework.util.ReflectionUtils;
  * </p>
  * <p>
  * When executing transactional tests, it is sometimes useful to be able execute
- * certain <em>set up</em> or <em>tear down</em> code outside of a
+ * certain <entityManager>set up</entityManager> or <entityManager>tear down</entityManager> code outside of a
  * transaction. <code>TransactionalTestExecutionListener</code> provides such
  * support for methods annotated with
  * {@link BeforeTransaction @BeforeTransaction} and
@@ -271,7 +271,7 @@ public class MergeTransactionalTestExecutionListener extends AbstractTestExecuti
 	}
 
 	/**
-	 * Immediately force a <em>commit</em> or <em>rollback</em> of the
+	 * Immediately force a <entityManager>commit</entityManager> or <entityManager>rollback</entityManager> of the
 	 * transaction for the supplied {@link TestContext test context}, according
 	 * to the commit and rollback flags.
 	 * @param testContext the current test context
@@ -321,7 +321,7 @@ public class MergeTransactionalTestExecutionListener extends AbstractTestExecuti
 	 * supplied {@link TestContext test context}.
 	 * @param testContext the test context for which the default rollback flag
 	 * should be retrieved
-	 * @return the <em>default rollback</em> flag for the supplied test context
+	 * @return the <entityManager>default rollback</entityManager> flag for the supplied test context
 	 * @throws Exception if an error occurs while determining the default rollback flag
 	 */
 	protected final boolean isDefaultRollback(TestContext testContext) throws Exception {
@@ -335,7 +335,7 @@ public class MergeTransactionalTestExecutionListener extends AbstractTestExecuti
 	 * possible method-level override via the {@link Rollback} annotation.
 	 * @param testContext the test context for which the rollback flag
 	 * should be retrieved
-	 * @return the <em>rollback</em> flag for the supplied test context
+	 * @return the <entityManager>rollback</entityManager> flag for the supplied test context
 	 * @throws Exception if an error occurs while determining the rollback flag
 	 */
 	protected final boolean isRollback(TestContext testContext) throws Exception {
@@ -381,7 +381,7 @@ public class MergeTransactionalTestExecutionListener extends AbstractTestExecuti
 	/**
 	 * Gets all methods in the supplied {@link Class class} and its superclasses
 	 * which are annotated with the supplied <code>annotationType</code> but
-	 * which are not <em>shadowed</em> by methods overridden in subclasses.
+	 * which are not <entityManager>shadowed</entityManager> by methods overridden in subclasses.
 	 * <p>Note: This code has been borrowed from
 	 * {@link org.junit.internal.runners.TestClass#getAnnotatedMethods(Class)}
 	 * and adapted.
@@ -404,7 +404,7 @@ public class MergeTransactionalTestExecutionListener extends AbstractTestExecuti
 	}
 
 	/**
-	 * Determines if the supplied {@link Method method} is <em>shadowed</em>
+	 * Determines if the supplied {@link Method method} is <entityManager>shadowed</entityManager>
 	 * by a method in supplied {@link List list} of previous methods.
 	 * <p>Note: This code has been borrowed from
 	 * {@link org.junit.internal.runners.TestClass#isShadowed(Method,List)}.
@@ -424,7 +424,7 @@ public class MergeTransactionalTestExecutionListener extends AbstractTestExecuti
 
 	/**
 	 * Determines if the supplied {@link Method current method} is
-	 * <em>shadowed</em> by a {@link Method previous method}.
+	 * <entityManager>shadowed</entityManager> by a {@link Method previous method}.
 	 * <p>Note: This code has been borrowed from
 	 * {@link org.junit.internal.runners.TestClass#isShadowed(Method,Method)}.
 	 * @param current the current method
@@ -452,7 +452,7 @@ public class MergeTransactionalTestExecutionListener extends AbstractTestExecuti
 	 * specified {@link Class class} which may optionally declare or inherit a
 	 * {@link TransactionConfiguration @TransactionConfiguration}. If a
 	 * {@link TransactionConfiguration} annotation is not present for the
-	 * supplied class, the <em>default values</em> for attributes defined in
+	 * supplied class, the <entityManager>default values</entityManager> for attributes defined in
 	 * {@link TransactionConfiguration} will be used instead.
 	 * @param clazz the Class object corresponding to the test class for which
 	 * the configuration attributes should be retrieved

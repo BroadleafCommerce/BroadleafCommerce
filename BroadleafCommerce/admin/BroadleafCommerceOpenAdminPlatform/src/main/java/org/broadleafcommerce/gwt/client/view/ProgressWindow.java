@@ -1,5 +1,7 @@
 package org.broadleafcommerce.gwt.client.view;
 
+import org.broadleafcommerce.gwt.client.BLCMain;
+
 import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.widgets.Window;
 
@@ -13,7 +15,7 @@ public class ProgressWindow extends Window {
     	setShowMinimizeButton(false);  
     	setIsModal(true);   
     	centerInPage();
-    	setTitle("Contacting Server");
+    	setTitle(BLCMain.OPENADMINMESSAGES.contactingServerTitle());
     	setShowCloseButton(false);
     	simpleProgress = new SimpleProgress(24);    
     	addItem(simpleProgress);

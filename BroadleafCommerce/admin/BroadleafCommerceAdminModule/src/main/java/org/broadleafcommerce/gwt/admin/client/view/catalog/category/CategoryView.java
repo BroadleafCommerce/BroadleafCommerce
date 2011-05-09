@@ -1,5 +1,6 @@
 package org.broadleafcommerce.gwt.admin.client.view.catalog.category;
 
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.client.reflection.Instantiable;
 import org.broadleafcommerce.gwt.client.view.TabSet;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
@@ -48,7 +49,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
 		
-		listDisplay = new DynamicEntityTreeView("Categories", entityDataSource);
+		listDisplay = new DynamicEntityTreeView(AdminModule.ADMINMESSAGES.categoryListTitle(), entityDataSource);
 		listDisplay.setShowResizeBar(true);
         leftVerticalLayout.addMember(listDisplay);
         
@@ -68,7 +69,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         abandonedCategoryTopBar.addButton(removeOrphanedButton);
         abandonedCategoryTopBar.addSpacer(6);
         Label abandonedLabel = new Label();
-        abandonedLabel.setContents("Orphaned Categories");
+        abandonedLabel.setContents(AdminModule.ADMINMESSAGES.orphanCategoryListTitle());
         abandonedLabel.setWrap(false);
         abandonedCategoryTopBar.addMember(abandonedLabel);
         abandonedCategoryVerticalLayout.addMember(abandonedCategoryTopBar);
@@ -91,14 +92,14 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         
         Tab detailsTab = new Tab("Details");
         
-        dynamicFormDisplay = new DynamicFormView("Category Details", entityDataSource);
+        dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.categoryDetailsTitle(), entityDataSource);
         
-        allCategoriesDisplay = new GridStructureView("All Child Categories", true, false);
+        allCategoriesDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.allChildCategoriesListTitle(), true, false);
         
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(allCategoriesDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         
-        Tab featuredTab = new Tab("Products"); 
+        Tab featuredTab = new Tab(AdminModule.ADMINMESSAGES.productsTabTitle()); 
         
         VLayout featuredLayout = new VLayout();
         featuredLayout.setHeight100();
@@ -106,15 +107,15 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         featuredLayout.setBackgroundColor("#eaeaea");
         featuredLayout.setOverflow(Overflow.AUTO);
         
-        featuredDisplay = new GridStructureView("Featured Products", true, true);
+        featuredDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.featuredProductsListTitle(), true, true);
         featuredLayout.addMember(featuredDisplay);
         
-        allProductsDisplay = new GridStructureView("All Products", true, false);
+        allProductsDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.allProductsListTitle(), true, false);
         featuredLayout.addMember(allProductsDisplay);
         
         featuredTab.setPane(featuredLayout);
         
-        Tab mediaTab = new Tab("Media"); 
+        Tab mediaTab = new Tab(AdminModule.ADMINMESSAGES.mediaTabTitle()); 
         
         VLayout mediaLayout = new VLayout();
         mediaLayout.setHeight100();
@@ -122,7 +123,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         mediaLayout.setBackgroundColor("#eaeaea");
         mediaLayout.setOverflow(Overflow.AUTO);
         
-        mediaDisplay = new GridStructureView("Media", false, true);
+        mediaDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.mediaListTitle(), false, true);
         mediaLayout.addMember(mediaDisplay);
         
         mediaTab.setPane(mediaLayout);

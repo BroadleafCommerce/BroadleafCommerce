@@ -13,6 +13,7 @@ import org.broadleafcommerce.gwt.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.gwt.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
 
+import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DSCallback;
 import com.smartgwt.client.data.DSRequest;
 import com.smartgwt.client.data.DSResponse;
@@ -89,11 +90,9 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 		String id = associatedDataSource.getPrimaryKeyValue(associatedRecord);
 		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				if (response.getErrors().isEmpty()) {
-					setStartState();
-					if (cb != null) {
-						cb.execute(response, rawData, request);
-					}
+				setStartState();
+				if (cb != null) {
+					cb.execute(response, rawData, request);
 				}
 			}
 		});
@@ -133,9 +132,7 @@ public class AllChildCategoriesPresenter implements SubPresentable {
 				record.setAttribute(joinStructure.getSortField(), newIndex);
 				display.getGrid().updateData(record, new DSCallback() {
 					public void execute(DSResponse response, Object rawData, DSRequest request) {
-						if (response.getErrors().isEmpty()) {
-							categoryPresenter.reloadParentTreeNodeRecords(false);
-						}
+						categoryPresenter.reloadParentTreeNodeRecords(false);
 					}
 				});
 			}

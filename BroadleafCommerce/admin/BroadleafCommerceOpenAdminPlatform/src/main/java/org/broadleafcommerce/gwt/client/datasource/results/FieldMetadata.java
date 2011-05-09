@@ -3,7 +3,7 @@ package org.broadleafcommerce.gwt.client.datasource.results;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.broadleafcommerce.presentation.SupportedFieldType;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 
 
 public class FieldMetadata implements Serializable {
@@ -26,7 +26,8 @@ public class FieldMetadata implements Serializable {
 	private Boolean collection;
 	private MergedPropertyType mergedPropertyType;
 	//private String prefix;
-	private String[] enumerationValues;
+	private String[][] enumerationValues;
+	private String enumerationClass;
 	
 	private FieldPresentationAttributes presentationAttributes = new FieldPresentationAttributes();
 	
@@ -167,11 +168,11 @@ public class FieldMetadata implements Serializable {
 //		this.prefix = prefix;
 //	}
 
-	public String[] getEnumerationValues() {
+	public String[][] getEnumerationValues() {
 		return enumerationValues;
 	}
 
-	public void setEnumerationValues(String[] enumerationValues) {
+	public void setEnumerationValues(String[][] enumerationValues) {
 		this.enumerationValues = enumerationValues;
 	}
 
@@ -181,6 +182,14 @@ public class FieldMetadata implements Serializable {
 
 	public void setForeignKeyDisplayValueProperty(String foreignKeyDisplayValueProperty) {
 		this.foreignKeyDisplayValueProperty = foreignKeyDisplayValueProperty;
+	}
+
+	public String getEnumerationClass() {
+		return enumerationClass;
+	}
+
+	public void setEnumerationClass(String enumerationClass) {
+		this.enumerationClass = enumerationClass;
 	}
 
 }

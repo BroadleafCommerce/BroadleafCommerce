@@ -26,16 +26,16 @@ public class USPSContainerSizeType extends ContainerSizeType {
 
     private static final long serialVersionUID = 1L;
 
-    public static final USPSContainerSizeType REGULAR  = new USPSContainerSizeType("REGULAR");
-    public static final USPSContainerSizeType LARGE = new USPSContainerSizeType("LARGE");
-    public static final USPSContainerSizeType OVERSIZE = new USPSContainerSizeType("OVERSIZE");
+    public static final USPSContainerSizeType REGULAR  = new USPSContainerSizeType("REGULAR", "Regular");
+    public static final USPSContainerSizeType LARGE = new USPSContainerSizeType("LARGE", "Large");
+    public static final USPSContainerSizeType OVERSIZE = new USPSContainerSizeType("OVERSIZE", "Oversize");
 
     public USPSContainerSizeType() {
         //do nothing
     }
 
-    public USPSContainerSizeType(final String type) {
-        super(type);
+    public USPSContainerSizeType(final String type, final String friendlyType) {
+        super(type, friendlyType);
     }
 
 }

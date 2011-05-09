@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.broadleafcommerce.util.BroadleafEnumerationType;
+
 /**
  * An extendible enumeration of delivery types.
  *
@@ -28,27 +30,29 @@ import java.util.Map;
  * CODE - a offer code must be supplied in order to receive this offer
  *
  */
-public class OfferDeliveryType implements Serializable
-{
+public class OfferDeliveryType implements Serializable, BroadleafEnumerationType {
+	
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, OfferDeliveryType> TYPES = new HashMap<String, OfferDeliveryType>();
 
-    public static final OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC");
-    public static final OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL");
-    public static final OfferDeliveryType CODE = new OfferDeliveryType("CODE");
+    public static final OfferDeliveryType AUTOMATIC = new OfferDeliveryType("AUTOMATIC", "Automatic");
+    public static final OfferDeliveryType MANUAL = new OfferDeliveryType("MANUAL", "Manual");
+    public static final OfferDeliveryType CODE = new OfferDeliveryType("CODE", "Code");
 
     public static OfferDeliveryType getInstance(final String type) {
         return TYPES.get(type);
     }
 
     private String type;
+    private String friendlyType;
 
     public OfferDeliveryType() {
         //do nothing
     }
 
-    public OfferDeliveryType(final String type) {
+    public OfferDeliveryType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -63,7 +67,11 @@ public class OfferDeliveryType implements Serializable
         return type;
     }
 
-    @Override
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

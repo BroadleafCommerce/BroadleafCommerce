@@ -1,5 +1,6 @@
 package org.broadleafcommerce.gwt.admin.client.view.catalog.product;
 
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.client.reflection.Instantiable;
 import org.broadleafcommerce.gwt.client.view.TabSet;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
@@ -39,7 +40,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
 		leftVerticalLayout.setWidth("50%");
 		leftVerticalLayout.setShowResizeBar(true);
         
-		listDisplay = new DynamicEntityListView("Products", entityDataSource);
+		listDisplay = new DynamicEntityListView(AdminModule.ADMINMESSAGES.productsListTitle(), entityDataSource);
         leftVerticalLayout.addMember(listDisplay);
         
         TabSet topTabSet = new TabSet();  
@@ -51,8 +52,8 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         
         Tab detailsTab = new Tab("Details");
         
-        dynamicFormDisplay = new DynamicFormView("Product Details", entityDataSource);
-        attributesDisplay = new GridStructureView("Product Attributes", false, true);
+        dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.productDetailsTitle(), entityDataSource);
+        attributesDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.productAttributesTitle(), false, true);
         ((FormOnlyView) dynamicFormDisplay.getFormOnlyDisplay()).addMember(attributesDisplay);
         detailsTab.setPane(dynamicFormDisplay);
         
@@ -64,15 +65,15 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         crossLayout.setBackgroundColor("#eaeaea");
         crossLayout.setOverflow(Overflow.AUTO);
         
-        crossSaleDisplay = new GridStructureView("Cross Sale Products", true, true);
+        crossSaleDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.crossSaleProductsTitle(), true, true);
         crossLayout.addMember(crossSaleDisplay);
         
-        upSaleDisplay = new GridStructureView("UpSale Products", true, true);
+        upSaleDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.upsaleProductsTitle(), true, true);
         crossLayout.addMember(upSaleDisplay);
         
         crossSaleTab.setPane(crossLayout);
         
-        Tab mediaTab = new Tab("Media"); 
+        Tab mediaTab = new Tab(AdminModule.ADMINMESSAGES.mediaTabTitle()); 
         
         VLayout mediaLayout = new VLayout();
         mediaLayout.setHeight100();
@@ -80,7 +81,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         mediaLayout.setBackgroundColor("#eaeaea");
         mediaLayout.setOverflow(Overflow.AUTO);
         
-        mediaDisplay = new GridStructureView("Media", false, true);
+        mediaDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.mediaListTitle(), false, true);
         mediaLayout.addMember(mediaDisplay);
         
         mediaTab.setPane(mediaLayout);
@@ -93,7 +94,7 @@ public class OneToOneProductSkuView extends HLayout implements Instantiable, One
         categoriesLayout.setBackgroundColor("#eaeaea");
         categoriesLayout.setOverflow(Overflow.AUTO);
         
-        allCategoriesDisplay = new GridStructureView("All Parent Categories", false, false);
+        allCategoriesDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.allParentCategoriesListTitle(), false, false);
         categoriesLayout.addMember(allCategoriesDisplay);
         
         categoriesTab.setPane(categoriesLayout);

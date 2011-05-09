@@ -1,6 +1,10 @@
 package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.grouping;
 
+import java.util.Stack;
+
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.IncompatibleMVELTranslationException;
+
+import com.smartgwt.client.types.OperatorId;
 
 public class GroupingTranslator {
 
@@ -10,9 +14,10 @@ public class GroupingTranslator {
 	public static final String SPACECHAR = " ";
 	
 	public Group createGroups(String mvel) throws IncompatibleMVELTranslationException {
+		mvel = stripWhiteSpace(mvel);
 		String[] tokens = mvel.trim().split(STATEMENTENDCHAR);
 		if (tokens.length > 1) {
-			throw new IncompatibleMVELTranslationException("mvel expressions must resolve to a boolean result. More than one terminated statement has been detected, which does not cumulatively result in a single boolean. Multiple phrases should be strung together into a single expression using standard comparison operators.");
+			throw new IncompatibleMVELTranslationException("mvel expressions must resolve to a boolean result. More than one terminated statement has been detected, which does not cumulatively result in a single boolean. Multiple phrases should be strung together into a single expression using standard operators.");
 		}
 		Group topGroup = new Group();
 		parseGroups(topGroup, tokens[0]);
@@ -20,73 +25,149 @@ public class GroupingTranslator {
 		return topGroup;
 	}
 	
+	protected int findGroupStart(String segment, int startPos) {
+		int startIndex = -1;
+		boolean eof = false;
+		while (!eof) {
+			startIndex = segment.indexOf(GROUPSTARTCHAR, startPos);
+			if (startIndex <= 0) {
+				eof = true;
+				continue;
+			}
+			char preChar = segment.charAt(startIndex-1);
+			if (preChar == '!' || preChar == '&' || preChar == '|') {
+				eof = true;
+				continue;
+			}
+			startPos = startIndex + 1;
+		}
+		return startIndex;
+	}
+	
+	protected int findGroupEnd(String segment, int subgroupStartIndex) throws IncompatibleMVELTranslationException {
+		Stack<Integer> leftParenPos = new Stack<Integer>();
+		char[] characters = segment.toCharArray();
+		for (int j=subgroupStartIndex;j<characters.length;j++) {
+			if (characters[j]=='(') {
+				leftParenPos.push(j);
+				continue;
+			}
+			if (characters[j]==')') {
+				leftParenPos.pop();
+				if(leftParenPos.isEmpty()) {
+					return j + 1;
+				}
+			}
+		}
+		throw new IncompatibleMVELTranslationException("Unable to find an end parenthesis for the group started at (" + segment.substring(subgroupStartIndex) + ")");
+	}
+	
+	protected String stripWhiteSpace(String mvel) {
+		return mvel.replaceAll("[\\t\\n\\r]", "");
+	}
+	
 	protected void parseGroups(Group myGroup, String segment) throws IncompatibleMVELTranslationException {
 		boolean eol = false;
 		int startPos = 0;
-		if (segment.startsWith(GROUPSTARTCHAR)) {
-			startPos = 1;
-		}
 		while (!eol) {
-			int subgroupStartIndex = segment.indexOf(GROUPSTARTCHAR, startPos);
-			if (subgroupStartIndex >= 0) {
-				compilePhrases(segment.substring(startPos, subgroupStartIndex).trim(), myGroup);
-				int subgroupEndIndex = findGroupEndIndex(segment, subgroupStartIndex);
+			int subgroupStartIndex = -1;
+			boolean isNegation = false;
+			
+			subgroupStartIndex = findGroupStart(segment, startPos);
+			if (subgroupStartIndex == startPos || subgroupStartIndex == startPos + 1) {
+				int subgroupEndIndex = findGroupEnd(segment, subgroupStartIndex);
+				if (subgroupStartIndex > 0 && segment.charAt(subgroupStartIndex - 1) == '!') {
+					myGroup.setOperatorType(OperatorId.NOT);
+				}
 				Group subGroup = new Group();
-				myGroup.setSubGroup(subGroup);
-				parseGroups(subGroup, segment.substring(subgroupStartIndex, subgroupEndIndex).trim());
-				if (segment.endsWith(GROUPENDCHAR)) {
+				myGroup.getSubGroups().add(subGroup);
+				parseGroups(subGroup, segment.substring(subgroupStartIndex+1, subgroupEndIndex-1).trim());
+				startPos = subgroupEndIndex;
+				if (startPos == segment.length()) {
 					eol = true;
 				} else {
-					startPos = subgroupEndIndex + 1;
+					boolean isAnd = false;
+					boolean isOr = false;
+					if (segment.charAt(startPos) == '&') {
+						isAnd = true;
+					} else if (segment.charAt(startPos) == '|') {
+						isOr = true;
+					}
+					if (myGroup.getOperatorType() == null) {
+						setGroupOperator(segment, myGroup, isAnd, isOr, false);
+					}
+					if (isAnd || isOr) {
+						startPos += 2;
+					}
 				}
+				continue;
 			} else {
-				segment = segment.substring(startPos, segment.length());
-				if (segment.startsWith(GROUPENDCHAR)) {
-					segment = segment.substring(1, segment.length());
+				if (subgroupStartIndex < 0) {
+					compilePhrases(segment.substring(startPos, segment.length()).trim(), myGroup, isNegation);
+					eol = true;
+					continue;
 				}
-				if (segment.endsWith(GROUPENDCHAR)) {
-					segment = segment.substring(0, segment.length()-1);
-				}
-				compilePhrases(segment.trim(), myGroup);
-				eol = true;
+				String temp = segment.substring(startPos, subgroupStartIndex);
+				compilePhrases(temp.trim(), myGroup, isNegation);
+				startPos = subgroupStartIndex;
+				continue;
 			}
 		}
 	}
 	
-	protected void compilePhrases(String segment, Group myGroup) {
-		String[] tokens = segment.split(SPACECHAR);
-		Phrase temp = new Phrase(null);
-		myGroup.getPhrases().add(temp);
+	protected void compilePhrases(String segment, Group myGroup, boolean isNegation) throws IncompatibleMVELTranslationException {
+		if (segment.trim().length() == 0) {
+			return;
+		}
+		String[] andTokens = segment.split("&&");
+		String[] orTokens = segment.split("\\|\\|");
+		if (andTokens.length > 1 && orTokens.length > 1) {
+			throw new IncompatibleMVELTranslationException("Segments that mix logical operators are not compatible with the rules builder: (" + segment + ")");
+		}
+		boolean isAnd = false;
+		boolean isOr = false;
+		boolean isNot = false;
+		if (andTokens.length > 1 || segment.indexOf("&&") >= 0) {
+			isAnd = true;
+		} else if (orTokens.length > 1 || segment.indexOf("||") >= 0) {
+			isOr = true;
+		}
+		if (isAnd && isNegation) {
+			isNot = true;
+		}
+		if (!isAnd && !isOr && !isNot) {
+			isAnd = true;
+		}
+		setGroupOperator(segment, myGroup, isAnd, isOr, isNot);
+		String[] tokens;
+		if (isAnd || isNot) {
+			tokens = andTokens;
+		} else {
+			tokens = orTokens;
+		}
 		for (String token : tokens) {
-			if (temp.isComplete()) {
-				temp = new Phrase(temp);
-				myGroup.getPhrases().add(temp);
+			if (token.length() > 0) {
+				myGroup.getPhrases().add(token);
 			}
-			temp.setContent(token);
-		}
-		Phrase lastPhrase = myGroup.getPhrases().get(myGroup.getPhrases().size() - 1);
-		if (!lastPhrase.isComplete()) {
-			lastPhrase.operatorType = OperatorType.AND;
 		}
 	}
-	
-	protected int findGroupEndIndex(String segment, int subgroupStartIndex) throws IncompatibleMVELTranslationException {
-		int subgroupEndIndex = subgroupStartIndex;
-		boolean eol = false;
-		while (!eol) {
-			subgroupEndIndex = segment.indexOf(GROUPENDCHAR, subgroupStartIndex);
-			if (subgroupEndIndex < 0) {
-				throw new IncompatibleMVELTranslationException("Unable to find an end parenthesis for the group started at (" + segment.substring(subgroupStartIndex) + ")");
-			} else {
-				subgroupStartIndex = segment.indexOf(GROUPSTARTCHAR, subgroupStartIndex + 1);
-				if (subgroupStartIndex < 0 || subgroupStartIndex > subgroupEndIndex) {
-					eol = true;
-				} else {
-					subgroupStartIndex = subgroupEndIndex + 1;
-				}
+
+	protected void setGroupOperator(String segment, Group myGroup, boolean isAnd, boolean isOr, boolean isNot) throws IncompatibleMVELTranslationException {
+		if (myGroup.getOperatorType() == null) {
+			if (isAnd) {
+				myGroup.setOperatorType(OperatorId.AND);
+			} else if (isOr) {
+				myGroup.setOperatorType(OperatorId.OR);
+			} else if (isNot) {
+				myGroup.setOperatorType(OperatorId.NOT);
+			}
+		} else {
+			if (
+				(isOr && !myGroup.getOperatorType().toString().equals(OperatorId.OR.toString()))
+			) {
+				throw new IncompatibleMVELTranslationException("Segment logical operator is not compatible with the group logical operator: (" + segment + ")");
 			}
 		}
-		return subgroupEndIndex + 1;
 	}
 	
 }

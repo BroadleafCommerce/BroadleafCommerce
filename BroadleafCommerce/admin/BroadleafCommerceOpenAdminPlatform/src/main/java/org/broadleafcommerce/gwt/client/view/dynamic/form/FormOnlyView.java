@@ -16,7 +16,6 @@ public class FormOnlyView extends VLayout implements FormOnlyDisplay {
 	public FormOnlyView(DataSource dataSource) {
 		super();
 		
-		//setHeight100();
         setWidth100();
         setBackgroundColor("#eaeaea");
         form = new DynamicForm(); 

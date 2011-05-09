@@ -22,6 +22,10 @@ public class OfferListDataSourceFactory {
 			OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.setPopulateToOneFields(true);
+			persistencePerspective.setExcludeFields(new String[] {
+				"applyDiscountToMarkedItems",
+				"targetItemCriteria.offer"
+			});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicEntityModule(CeilingEntities.OFFER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

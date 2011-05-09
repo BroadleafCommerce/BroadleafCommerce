@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSourceField;

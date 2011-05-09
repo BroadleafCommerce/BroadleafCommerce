@@ -86,11 +86,9 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 		String id = abstractDynamicDataSource.getPrimaryKeyValue(associatedRecord);
 		((PresentationLayerAssociatedDataSource) display.getGrid().getDataSource()).loadAssociatedGridBasedOnRelationship(id, new DSCallback() {
 			public void execute(DSResponse response, Object rawData, DSRequest request) {
-				if (response.getErrors().isEmpty()) {
-					setStartState();
-					if (cb != null) {
-						cb.execute(response, rawData, request);
-					}
+				setStartState();
+				if (cb != null) {
+					cb.execute(response, rawData, request);
 				}
 			}
 		});
@@ -129,9 +127,7 @@ public class OrderItemPresenter extends DynamicFormPresenter implements SubPrese
 				if (event.isLeftButtonDown()) {
 					display.getGrid().removeData(display.getGrid().getSelectedRecord(), new DSCallback() {
 						public void execute(DSResponse response, Object rawData, DSRequest request) {
-							if (response.getErrors().isEmpty()) {
-								display.getRemoveButton().disable();
-							}
+							display.getRemoveButton().disable();
 						}
 					});
 				}

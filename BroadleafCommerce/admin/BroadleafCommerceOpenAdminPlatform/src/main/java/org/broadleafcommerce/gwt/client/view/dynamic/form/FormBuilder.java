@@ -10,12 +10,13 @@ import java.util.Map;
 
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.datasource.relations.MapStructure;
-import org.broadleafcommerce.presentation.SupportedFieldType;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.DateDisplayFormat;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemValueFormatter;
 import com.smartgwt.client.widgets.form.fields.BooleanItem;
@@ -38,12 +39,17 @@ public class FormBuilder {
 	public static void buildForm(final DataSource dataSource, DynamicForm form, Boolean showDisabledState, Boolean canEdit, Boolean showId) {
 		form.setDataSource(dataSource);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
-		List<String> sectionNames = new ArrayList<String>();
+		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
 		DataSourceField[] fields = dataSource.getFields();
         for (DataSourceField field : fields) {
         	String fieldType = field.getAttribute("fieldType");
         	if (fieldType != null && !field.getHidden()) {
 	    		String group = field.getAttribute("formGroup");
+	    		String temp = field.getAttribute("formGroupOrder");
+	    		Integer groupOrder = null;
+	    		if (temp != null) {
+	    			groupOrder = Integer.valueOf(temp);
+	    		}
 	        	if (group == null) {
 	        		if (fieldType.equals(SupportedFieldType.ID.toString())) {
 	        			group = "Primary Key";
@@ -62,7 +68,7 @@ public class FormBuilder {
 		        		canEdit = false;
 		        		showDisabledState = false;
 		        	}
-		        	setupField(showDisabledState, canEdit, sections, sectionNames, field, group, formItem, displayFormItem);
+		        	setupField(showDisabledState, canEdit, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        	}
         	}
         }
@@ -73,18 +79,19 @@ public class FormBuilder {
 	public static void buildMapForm(DataSource dataSource, DynamicForm form, MapStructure mapStructure, LinkedHashMap<String, String> mapKeys, Boolean showId) {
 		form.setDataSource(dataSource);
 		Map<String, List<FormItem>> sections = new HashMap<String, List<FormItem>>();
-		List<String> sectionNames = new ArrayList<String>();
+		Map<String, Integer> sectionNames = new HashMap<String, Integer>();
 		DataSourceField[] fields = dataSource.getFields();
         for (DataSourceField field : fields) {
         	String fieldType = field.getAttribute("fieldType");
         	if (fieldType != null && !field.getHidden()) {
 	    		String group = field.getAttribute("formGroup");
+	    		String temp = field.getAttribute("formGroupOrder");
+	    		Integer groupOrder = null;
+	    		if (temp != null) {
+	    			groupOrder = Integer.valueOf(temp);
+	    		}
 	        	if (group == null) {
-	        		if (fieldType.equals(SupportedFieldType.ID.toString())) {
-	        			group = "Primary Key";
-	        		} else {
-	        			group = "General";
-	        		}
+	        		group = "General";
 	        	}
 	        	FormItem formItem;
 	        	FormItem displayFormItem = null;
@@ -94,7 +101,7 @@ public class FormBuilder {
 	        		((SelectItem) formItem).setValueMap(mapKeys);
 	        		((SelectItem) formItem).setMultiple(false);
 	        		((SelectItem) formItem).setDefaultToFirstOption(true);
-	        		setupField(null, null, sections, sectionNames, field, group, formItem, displayFormItem);
+	        		setupField(null, null, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        	} else {
 	        		if (!fieldType.equals(SupportedFieldType.ID.toString()) || (fieldType.equals(SupportedFieldType.ID.toString()) && showId)) {
 			        	Boolean largeEntry = field.getAttributeAsBoolean("largeEntry");
@@ -103,7 +110,7 @@ public class FormBuilder {
 			        	}
 			        	formItem = buildField(dataSource, field, fieldType, largeEntry);
 			        	displayFormItem = buildDisplayField(field, fieldType);
-			        	setupField(null, null, sections, sectionNames, field, group, formItem, displayFormItem);
+			        	setupField(null, null, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
 	        		}
 	        	}
         	}
@@ -112,12 +119,12 @@ public class FormBuilder {
         groupFields(form, sections, sectionNames);
 	}
 
-	protected static void groupFields(DynamicForm form, Map<String, List<FormItem>> sections, List<String> sectionNames) {
+	protected static void groupFields(DynamicForm form, Map<String, List<FormItem>> sections, final Map<String, Integer> sectionNames) {
 		if (sections.size() > 1) {
         	int j=0;
         	List<FormItem> allItems = new ArrayList<FormItem>();
         	String[] groups = new String[sectionNames.size()];
-        	groups = sectionNames.toArray(groups);
+        	groups = sectionNames.keySet().toArray(groups);
         	Arrays.sort(groups, new Comparator<String>() {
 				public int compare(String o1, String o2) {
 					if (o1.equals(o2)) {
@@ -126,12 +133,19 @@ public class FormBuilder {
 						return 1;
 					} else if (o2.equals("General")) {
 						return -1;
-					} else if (o1.equals("Primary Key")) {
-						return 1;
-					} else if (o2.equals("Primary Key")) {
-						return -1;
 					} else {
-						return 0;
+						Integer groupOrder1 = sectionNames.get(o1);
+						Integer groupOrder2 = sectionNames.get(o2);
+						if (groupOrder1 == null && groupOrder2 == null) {
+							return 0;
+						}
+						if (groupOrder1 == null) {
+							return -1;
+						}
+						if (groupOrder2 == null) {
+							return 1;
+						}
+						return groupOrder1.compareTo(groupOrder2);
 					}
 				}
         	});
@@ -162,17 +176,16 @@ public class FormBuilder {
         }
 	}
 
-	protected static void setupField(Boolean showDisabledState, Boolean canEdit, Map<String, List<FormItem>> sections, List<String> sectionNames, DataSourceField field, String group, final FormItem formItem, final FormItem displayFormItem) {
+	protected static void setupField(Boolean showDisabledState, Boolean canEdit, Map<String, List<FormItem>> sections, Map<String, Integer> sectionNames, DataSourceField field, String group, Integer groupOrder, final FormItem formItem, final FormItem displayFormItem) {
 		formItem.setName(field.getName());
 		formItem.setTitle(field.getTitle());
-		//formItem.setWrapTitle(false);
 		formItem.setRequired(field.getRequired());
 		if (!sections.containsKey(group)) {
 			List<FormItem> temp = new ArrayList<FormItem>();
 			sections.put(group, temp);  
 		}
-		if (!sectionNames.contains(group)) {
-			sectionNames.add(group);
+		if (!sectionNames.containsKey(group)) {
+			sectionNames.put(group, groupOrder);
 		}
 		List<FormItem> temp = sections.get(group);
 		if (showDisabledState != null) {
@@ -216,24 +229,20 @@ public class FormBuilder {
 					return String.valueOf(value);
 				}
 			});
-			//formItem.setWidth("250");
 			break;
 		case DATE:
 			formItem = new DateTimeItem();
-			//formItem.setWidth("250");
+			((DateTimeItem) formItem).setDateFormatter(DateDisplayFormat.TOUSSHORTDATE);
 			break;
 		case DECIMAL:
 			formItem = new FloatItem();
-			//formItem.setWidth("250");
 			break;
 		case EMAIL:
 			formItem = new TextItem();
 			((TextItem)formItem).setLength(field.getLength());
-			//formItem.setWidth("250");
 			break;
 		case INTEGER:
 			formItem = new IntegerItem();
-			//formItem.setWidth("250");
 			break;
 		case MONEY:
 			formItem = new FloatItem();
@@ -242,7 +251,6 @@ public class FormBuilder {
 					return value==null?"":NumberFormat.getFormat("0.00").format(NumberFormat.getFormat("0.00").parse(String.valueOf(value)));
 				}
 			});
-			//formItem.setWidth("250");
 			break;
 		case FOREIGN_KEY:
 			formItem = new SearchFormItem();
@@ -257,7 +265,6 @@ public class FormBuilder {
 					return response;
 				}
 			});
-			//formItem.setWidth("250");
 			break;
 		case ADDITIONAL_FOREIGN_KEY:
 			formItem = new SearchFormItem();
@@ -272,31 +279,18 @@ public class FormBuilder {
 					return response;
 				}
 			});
-			//formItem.setWidth("250");
 			break;
 		case BROADLEAF_ENUMERATION:
 			formItem = new SelectItem();
 			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-			String[] enumerationValues = field.getAttributeAsStringArray("enumerationValues");
-			for (String value : enumerationValues) {
-				String shortName;
-				String longName;
-				int pos = value.indexOf(",");
-				if (pos >= 0) {
-					shortName = value.substring(0, pos);
-					longName = value.substring(pos + 1, value.length());
-				} else {
-					shortName = value;
-					longName = value;
-				}
-				valueMap.put(shortName, longName);
+			String[][] enumerationValues = (String[][]) field.getAttributeAsObject("enumerationValues");
+			for (int j=0; j<enumerationValues.length; j++) {
+				valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
 			}
 			formItem.setValueMap(valueMap);
-			//formItem.setWidth("250");
 			break;
 		case EMPTY_ENUMERATION:
 			formItem = new SelectItem();
-			//formItem.setWidth("250");
 			break;
 		case ID:
 			formItem = new TextItem();
@@ -311,7 +305,6 @@ public class FormBuilder {
 			if (!largeEntry) {
 				formItem = new TextItem();
 				((TextItem)formItem).setLength(field.getLength());
-				//formItem.setWidth("250");
 			} else {
 				formItem = new TextAreaItem();
 				((TextAreaItem)formItem).setLength(field.getLength());

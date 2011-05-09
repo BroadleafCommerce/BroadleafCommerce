@@ -23,9 +23,9 @@ import org.broadleafcommerce.gwt.client.datasource.results.Entity;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.gwt.client.datasource.results.Property;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.client.service.ServiceException;
 import org.broadleafcommerce.gwt.server.cto.BaseCtoConverter;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.hibernate.mapping.PersistentClass;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;

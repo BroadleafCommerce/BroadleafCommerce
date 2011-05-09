@@ -20,33 +20,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.order.service.type.USPSServiceMethod;
+import org.broadleafcommerce.util.BroadleafEnumerationType;
 
 /**
  * An extendible enumeration of service types.
  * 
  * @author jfischer
  */
-public class USPSServiceType implements Serializable {
+public class USPSServiceType implements Serializable, BroadleafEnumerationType {
 
     private static final long serialVersionUID = 1L;
 
     private static final Map<String, USPSServiceType> TYPES = new HashMap<String, USPSServiceType>();
 
-    public static final USPSServiceType ALL  = new USPSServiceType("ALL");
-    public static final USPSServiceType ONLINE = new USPSServiceType("ONLINE");
-    public static final USPSServiceType FIRSTCLASS = new USPSServiceType("FIRST CLASS");
-    public static final USPSServiceType PRIORITY = new USPSServiceType("PRIORITY");
-    public static final USPSServiceType PRIORITYCOMMERCIAL = new USPSServiceType("PRIORITY COMMERCIAL");
-    public static final USPSServiceType EXPRESS = new USPSServiceType("EXPRESS");
-    public static final USPSServiceType EXPRESS_SH = new USPSServiceType("EXPRESS SH");
-    public static final USPSServiceType EXPRESS_HFP = new USPSServiceType("EXPRESS HFP");
-    public static final USPSServiceType EXPRESSCOMMERCIAL = new USPSServiceType("EXPRESS COMMERCIAL");
-    public static final USPSServiceType EXPRESS_SH_COMMERCIAL = new USPSServiceType("EXPRESS SH COMMERCIAL");
-    public static final USPSServiceType EXPRESS_HFP_COMMERCIAL = new USPSServiceType("EXPRESS HFP COMMERCIAL");
-    public static final USPSServiceType BPM = new USPSServiceType("BPM");
-    public static final USPSServiceType PARCEL = new USPSServiceType("PARCEL");
-    public static final USPSServiceType MEDIA = new USPSServiceType("MEDIA");
-    public static final USPSServiceType LIBRARY = new USPSServiceType("LIBRARY");
+    public static final USPSServiceType ALL  = new USPSServiceType("ALL", "All");
+    public static final USPSServiceType ONLINE = new USPSServiceType("ONLINE", "Online");
+    public static final USPSServiceType FIRSTCLASS = new USPSServiceType("FIRST CLASS", "First Class");
+    public static final USPSServiceType PRIORITY = new USPSServiceType("PRIORITY", "Priority");
+    public static final USPSServiceType PRIORITYCOMMERCIAL = new USPSServiceType("PRIORITY COMMERCIAL", "Priority Commercial");
+    public static final USPSServiceType EXPRESS = new USPSServiceType("EXPRESS", "Express");
+    public static final USPSServiceType EXPRESS_SH = new USPSServiceType("EXPRESS SH", "Express SH");
+    public static final USPSServiceType EXPRESS_HFP = new USPSServiceType("EXPRESS HFP", "Express HFP");
+    public static final USPSServiceType EXPRESSCOMMERCIAL = new USPSServiceType("EXPRESS COMMERCIAL", "Express Commercial");
+    public static final USPSServiceType EXPRESS_SH_COMMERCIAL = new USPSServiceType("EXPRESS SH COMMERCIAL", "Express SH Commercial");
+    public static final USPSServiceType EXPRESS_HFP_COMMERCIAL = new USPSServiceType("EXPRESS HFP COMMERCIAL", "Express HFP Commercial");
+    public static final USPSServiceType BPM = new USPSServiceType("BPM", "BPM");
+    public static final USPSServiceType PARCEL = new USPSServiceType("PARCEL", "Parcel");
+    public static final USPSServiceType MEDIA = new USPSServiceType("MEDIA", "Media");
+    public static final USPSServiceType LIBRARY = new USPSServiceType("LIBRARY", "Library");
 
     public static USPSServiceType getInstance(final String type) {
         return TYPES.get(type);
@@ -104,12 +105,14 @@ public class USPSServiceType implements Serializable {
     }
 
     private String type;
+    private String friendlyType;
 
     public USPSServiceType() {
         //do nothing
     }
 
-    public USPSServiceType(final String type) {
+    public USPSServiceType(final String type, final String friendlyType) {
+    	this.friendlyType = friendlyType;
         setType(type);
     }
 
@@ -117,7 +120,11 @@ public class USPSServiceType implements Serializable {
         return type;
     }
 
-    private void setType(final String type) {
+    public String getFriendlyType() {
+		return friendlyType;
+	}
+
+	private void setType(final String type) {
         this.type = type;
         if (!TYPES.containsKey(type)) {
             TYPES.put(type, this);

@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -26,16 +24,13 @@ import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.gwt.server.service.module.InspectHelper;
 import org.broadleafcommerce.gwt.server.service.module.RemoteServiceModule;
-import org.springframework.stereotype.Service;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 
-@Service("blDynamicEntityRemoteService")
 public class DynamicEntityRemoteService implements DynamicEntityService, InspectHelper {
 	
 	private static final Log LOG = LogFactory.getLog(DynamicEntityRemoteService.class);
 
-	@Resource(name="blDynamicEntityDao")
 	protected DynamicEntityDao dynamicEntityDao;
 	
 	protected List<CustomPersistenceHandler> customPersistenceHandlers = new ArrayList<CustomPersistenceHandler>();
@@ -209,6 +204,14 @@ public class DynamicEntityRemoteService implements DynamicEntityService, Inspect
 
 	public void setMetadataOverrides(Map<String, FieldMetadata> metadataOverrides) {
 		this.metadataOverrides = metadataOverrides;
+	}
+
+	public DynamicEntityDao getDynamicEntityDao() {
+		return dynamicEntityDao;
+	}
+
+	public void setDynamicEntityDao(DynamicEntityDao dynamicEntityDao) {
+		this.dynamicEntityDao = dynamicEntityDao;
 	}
 
 }

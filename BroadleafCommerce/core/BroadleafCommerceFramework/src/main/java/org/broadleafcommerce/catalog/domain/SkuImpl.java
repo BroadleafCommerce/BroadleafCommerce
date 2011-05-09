@@ -38,11 +38,11 @@ import javax.persistence.TableGenerator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.media.domain.Media;
 import org.broadleafcommerce.media.domain.MediaImpl;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.util.DateUtil;
 import org.compass.annotations.Searchable;
 import org.compass.annotations.SearchableId;

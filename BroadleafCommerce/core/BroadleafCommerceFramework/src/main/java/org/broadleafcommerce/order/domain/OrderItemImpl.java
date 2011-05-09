@@ -37,6 +37,7 @@ import javax.persistence.Transient;
 
 import org.broadleafcommerce.catalog.domain.Category;
 import org.broadleafcommerce.catalog.domain.CategoryImpl;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.offer.domain.CandidateItemOfferImpl;
@@ -44,7 +45,6 @@ import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.order.service.type.OrderItemType;
 import org.broadleafcommerce.presentation.AdminPresentation;
-import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
