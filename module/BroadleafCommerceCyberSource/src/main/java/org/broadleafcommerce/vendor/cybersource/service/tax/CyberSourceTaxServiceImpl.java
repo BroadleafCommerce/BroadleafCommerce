@@ -27,6 +27,9 @@ import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.profile.vendor.service.cache.ServiceResponseCacheable;
+import org.broadleafcommerce.profile.vendor.service.exception.TaxException;
+import org.broadleafcommerce.profile.vendor.service.exception.TaxHostException;
 import org.broadleafcommerce.vendor.cybersource.service.AbstractCyberSourceService;
 import org.broadleafcommerce.vendor.cybersource.service.api.BillTo;
 import org.broadleafcommerce.vendor.cybersource.service.api.Item;
@@ -43,9 +46,6 @@ import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceT
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
-import org.broadleafcommerce.vendor.service.cache.ServiceResponseCacheable;
-import org.broadleafcommerce.vendor.service.exception.TaxException;
-import org.broadleafcommerce.vendor.service.exception.TaxHostException;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 

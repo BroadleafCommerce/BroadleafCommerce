@@ -13,13 +13,17 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
+	<context:component-scan base-package="org.broadleafcommerce.core">
+        <context:exclude-filter type="regex" expression="org.broadleafcommerce.core.web.controller.*"/>
+    </context:component-scan>
+	
 	<bean id="exporter" class="org.springframework.jmx.export.MBeanExporter">
 	    <property name="autodetect" value="true"/>
 	    <property name="assembler" ref="blAssembler"/>
 	    <property name="namingStrategy" ref="blNamingStrategy"/>
 	</bean>
 	
-	<bean id="blAttributeSource" class="org.broadleafcommerce.jmx.AnnotationJmxAttributeSource">
+	<bean id="blAttributeSource" class="org.broadleafcommerce.profile.jmx.AnnotationJmxAttributeSource">
         <constructor-arg>
             <bean class="org.springframework.jndi.JndiObjectFactoryBean">
 	        	<property name="jndiName">
@@ -30,22 +34,22 @@
         </constructor-arg>
     </bean>
 	
-	<bean id="blAssembler" class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
+	<bean id="blAssembler" class="org.broadleafcommerce.profile.jmx.MetadataMBeanInfoAssembler">
 	    <property name="attributeSource" ref="blAttributeSource"/>
 	</bean>
 	
-	<bean id="blNamingStrategy" class="org.broadleafcommerce.jmx.MetadataNamingStrategy">
+	<bean id="blNamingStrategy" class="org.broadleafcommerce.profile.jmx.MetadataNamingStrategy">
 	    <property name="attributeSource" ref="blAttributeSource"/>
 	</bean>
 
-	<bean id="blAccountNumberMask" class="org.broadleafcommerce.payment.AccountNumberMask">
+	<bean id="blAccountNumberMask" class="org.broadleafcommerce.profile.payment.AccountNumberMask">
 		<constructor-arg>
 			<list>
-				<bean class="org.broadleafcommerce.payment.UnmaskRange">
+				<bean class="org.broadleafcommerce.profile.payment.UnmaskRange">
 					<constructor-arg value="0"/>
 					<constructor-arg value="0"/>
 				</bean>
-				<bean class="org.broadleafcommerce.payment.UnmaskRange">
+				<bean class="org.broadleafcommerce.profile.payment.UnmaskRange">
 					<constructor-arg value="1"/>
 					<constructor-arg value="4"/>
 				</bean>

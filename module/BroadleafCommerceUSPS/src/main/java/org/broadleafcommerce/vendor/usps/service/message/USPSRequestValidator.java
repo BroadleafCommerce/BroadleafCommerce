@@ -15,8 +15,8 @@
  */
 package org.broadleafcommerce.vendor.usps.service.message;
 
-import org.broadleafcommerce.util.WeightUnitOfMeasureType;
-import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.profile.util.WeightUnitOfMeasureType;
+import org.broadleafcommerce.profile.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShippingPriceErrorCode;
 
 public class USPSRequestValidator {

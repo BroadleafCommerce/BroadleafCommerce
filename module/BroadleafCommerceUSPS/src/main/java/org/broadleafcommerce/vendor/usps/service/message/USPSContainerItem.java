@@ -20,14 +20,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.util.WeightUnitOfMeasureType;
+import org.broadleafcommerce.profile.util.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.profile.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;
+import org.broadleafcommerce.vendor.usps.service.type.USPSServiceResponseType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSServiceType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSShipDateOptionType;
-import org.broadleafcommerce.vendor.usps.service.type.USPSServiceResponseType;
 
 public class USPSContainerItem implements USPSContainerItemRequest, USPSContainerItemResponse {
 

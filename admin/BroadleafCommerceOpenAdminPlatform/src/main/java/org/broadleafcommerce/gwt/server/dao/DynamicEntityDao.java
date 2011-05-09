@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
+import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.hibernate.mapping.PersistentClass;
@@ -39,5 +40,7 @@ public interface DynamicEntityDao extends BaseCriteriaDao<Serializable> {
 	public EntityManager getEntityManager();
 	
 	public PersistentClass getPersistentClass(String targetClassName);
+	
+	public Map<String, FieldMetadata> getSimpleMergedProperties(String entityName, PersistencePerspective persistencePerspective, DynamicEntityDao dynamicEntityDao, Class<?>[] entityClasses) throws ClassNotFoundException, SecurityException, IllegalArgumentException, NoSuchMethodException, IllegalAccessException, InvocationTargetException;
 	
 }

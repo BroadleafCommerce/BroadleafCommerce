@@ -9,7 +9,7 @@
         http://www.compass-project.org/schema/spring-core-config
 		http://www.compass-project.org/schema/spring-compass-core-config-2.2.xsd">
 	
-	<bean class="org.broadleafcommerce.util.ApplicationContextHolder" />
+	<bean class="org.broadleafcommerce.core.util.ApplicationContextHolder" />
 		
     <compass:compass name="compass" txManager="blTransactionManager">
     	<compass:connection>
@@ -26,7 +26,7 @@
 
     		<compass:analyzerFilter name="synonymFilter" type="synonym">
     			<compass:setting name="lookup"
-    				value="org.broadleafcommerce.search.service.SearchSynonymProvider" />
+    				value="org.broadleafcommerce.core.search.service.SearchSynonymProvider" />
     		</compass:analyzerFilter>
 
 			-->
@@ -34,7 +34,7 @@
     	<compass:osem />
     	<compass:mappings>
     		<compass:scan
-    			basePackage="org.broadleafcommerce.catalog.domain" />
+    			basePackage="org.broadleafcommerce.core.catalog.domain" />
     	</compass:mappings>
     </compass:compass>
 
@@ -42,11 +42,11 @@
     
     <compass:context />
     
-	<bean id="compassSearchController" class="org.broadleafcommerce.search.web.SearchController">
+	<bean id="compassSearchController" class="org.broadleafcommerce.core.web.controller.search.SearchController">
 		<property name="searchService" ref="blcSearchService"/>
 	</bean>
 	
-	<bean id="blcSearchService" class="org.broadleafcommerce.search.service.SearchServiceCompassImpl">
+	<bean id="blcSearchService" class="org.broadleafcommerce.core.search.service.SearchServiceCompassImpl">
 		<property name="catalogService" ref="blCatalogService" />
 	    <property name="searchInterceptDao" ref="blSearchInterceptDao" />
 	    <property name="searchSynonymDao" ref="blSearchSynonymDao" />

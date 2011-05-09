@@ -22,8 +22,8 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
-import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.web.taglib.CategoryBreadCrumbTag;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.web.catalog.taglib.CategoryBreadCrumbTag;
 import org.easymock.classextension.EasyMock;
 import org.testng.annotations.Test;
 

@@ -2,7 +2,6 @@
 <module>
 	<inherits name="com.google.gwt.user.User" />
 	<inherits name="org.broadleafcommerce.gwt.admin.module" />
-	<inherits name="org.broadleafcommerce.gwt.cms.module" />
 	
 	<extend-property name="locale" values="en_US"/>
 	

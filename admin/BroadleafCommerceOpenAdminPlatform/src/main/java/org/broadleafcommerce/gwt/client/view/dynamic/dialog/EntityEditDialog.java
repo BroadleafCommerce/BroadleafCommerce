@@ -124,7 +124,7 @@ public class EntityEditDialog extends Window {
 		//dynamicForm.setDataSource(dataSource); 
 		buildFields(dataSource, dynamicForm);
         dynamicForm.editNewRecord(initialValues);
-        dynamicForm.setWrapItemTitles(false);
+        //dynamicForm.setWrapItemTitles(false);
         centerInPage();
 		show();
 	}

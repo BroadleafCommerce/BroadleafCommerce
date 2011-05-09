@@ -20,7 +20,7 @@ import javax.servlet.jsp.PageContext;
 
 import junit.framework.TestCase;
 
-import org.broadleafcommerce.catalog.service.CatalogService;
+import org.broadleafcommerce.core.catalog.service.CatalogService;
 import org.easymock.classextension.EasyMock;
 
 abstract public class BaseTagLibTest extends TestCase {

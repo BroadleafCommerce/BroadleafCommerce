@@ -41,7 +41,7 @@ public abstract class AbstractDynamicDataSource extends GwtRpcDataSource {
 	
 	public String stripDuplicateAllowSpecialCharacters(String string) {
     	if (string != null) {
-			int index = string.indexOf("_");
+			int index = string.indexOf("_^_");
 	        if (index >= 0) {
 	        	string = string.substring(0,index);
 	        }

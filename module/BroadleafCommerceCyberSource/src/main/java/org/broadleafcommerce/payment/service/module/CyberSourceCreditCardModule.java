@@ -2,15 +2,16 @@ package org.broadleafcommerce.payment.service.module;
 
 import java.util.Currency;
 
+import org.broadleafcommerce.core.payment.domain.CreditCardPaymentInfo;
+import org.broadleafcommerce.core.payment.domain.PaymentResponseItem;
+import org.broadleafcommerce.core.payment.domain.PaymentResponseItemImpl;
+import org.broadleafcommerce.core.payment.service.PaymentContext;
+import org.broadleafcommerce.core.payment.service.exception.PaymentException;
+import org.broadleafcommerce.core.payment.service.module.PaymentModule;
+import org.broadleafcommerce.core.payment.service.type.PaymentInfoType;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.payment.domain.CreditCardPaymentInfo;
-import org.broadleafcommerce.payment.domain.PaymentResponseItem;
-import org.broadleafcommerce.payment.domain.PaymentResponseItemImpl;
-import org.broadleafcommerce.payment.service.PaymentContext;
-import org.broadleafcommerce.payment.service.exception.PaymentException;
-import org.broadleafcommerce.payment.service.type.PaymentInfoType;
+import org.broadleafcommerce.profile.time.SystemTime;
 import org.broadleafcommerce.service.module.CyberSourceModule;
-import org.broadleafcommerce.time.SystemTime;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
@@ -147,7 +148,7 @@ public class CyberSourceCreditCardModule extends CyberSourceModule implements Pa
         CyberSourceCardResponse response;
 		try {
 			response = (CyberSourceCardResponse) service.process(cardRequest);
-		} catch (org.broadleafcommerce.vendor.service.exception.PaymentException e) {
+		} catch (org.broadleafcommerce.profile.vendor.service.exception.PaymentException e) {
 			throw new PaymentException(e);
 		}
 		

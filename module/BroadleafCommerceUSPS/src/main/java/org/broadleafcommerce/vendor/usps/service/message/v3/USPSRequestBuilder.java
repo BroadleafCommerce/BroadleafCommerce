@@ -24,7 +24,7 @@ import noNamespace.RequestPackageV3Type;
 import noNamespace.ShipDateV3Type;
 
 import org.apache.xmlbeans.XmlTokenSource;
-import org.broadleafcommerce.util.UnitOfMeasureUtil;
+import org.broadleafcommerce.profile.util.UnitOfMeasureUtil;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSShippingPriceRequest;
 

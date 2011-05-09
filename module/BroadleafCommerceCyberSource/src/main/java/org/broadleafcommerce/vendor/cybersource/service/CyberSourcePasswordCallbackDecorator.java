@@ -21,7 +21,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.broadleafcommerce.util.SpringAppContext;
+import org.broadleafcommerce.profile.util.SpringAppContext;
 
 public class CyberSourcePasswordCallbackDecorator implements CallbackHandler {
 

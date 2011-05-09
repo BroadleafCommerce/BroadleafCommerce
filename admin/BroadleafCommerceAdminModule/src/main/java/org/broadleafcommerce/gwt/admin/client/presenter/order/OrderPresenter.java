@@ -84,7 +84,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 						} else {
 							formPresenter.setStartState();
 							((DynamicEntityDataSource) display.getListDisplay().getGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(selectedRecord.getAttributeAsStringArray("_type"));
-							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, true);
+							display.getDynamicFormDisplay().getFormOnlyDisplay().buildFields(display.getListDisplay().getGrid().getDataSource(), false, false, false);
 							display.getDynamicFormDisplay().getFormOnlyDisplay().getForm().editRecord(selectedRecord);
 							display.getListDisplay().getRemoveButton().enable();
 						}

@@ -9,7 +9,7 @@ public class Validators {
 		EMAIL.setErrorMessage("Invalid email address");  
 	}
 
-	public static final RegExpValidator USCURRENCY = new RegExpValidator("^(\\d{1,3}(\\,\\d{3})*|(\\d+))(\\.\\d{2})?$");  
+	public static final RegExpValidator USCURRENCY = new RegExpValidator("^\\d+(\\.\\d{1,2})?$");  
 	{
 		USCURRENCY.setErrorMessage("Invalid currency amount");
 	}

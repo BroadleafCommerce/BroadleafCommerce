@@ -67,6 +67,9 @@ public class FieldManager {
             }
         }
         
+        if (field != null) {
+        	field.setAccessible(true);
+        }
         return field;
 	}
 	
@@ -82,6 +85,8 @@ public class FieldManager {
             value = field.get(value);
             if (value != null) {
                 componentClass = value.getClass();
+            } else {
+            	break;
             }
         }
 

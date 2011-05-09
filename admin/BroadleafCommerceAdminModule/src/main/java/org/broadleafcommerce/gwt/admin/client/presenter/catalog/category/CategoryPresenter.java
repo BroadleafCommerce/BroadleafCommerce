@@ -107,6 +107,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 					if (getDisplay().getOrphanedCategoryGrid().getSelectedRecord() != null) {
 						getDisplay().getInsertOrphanButton().enable();
 					}
+					allChildCategoriesPresenter.enable();
 					allChildCategoriesPresenter.setStartState();
 					mediaPresenter.load(selectedRecord, dataSource, null);
 				}

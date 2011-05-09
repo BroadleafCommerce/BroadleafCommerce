@@ -16,7 +16,6 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.types.DateDisplayFormat;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemValueFormatter;
 import com.smartgwt.client.widgets.form.fields.BooleanItem;
@@ -194,6 +193,9 @@ public class FormBuilder {
 		if (canEdit != null) {
 			formItem.setDisabled(!canEdit);
 		}
+		if (!field.getCanEdit()) {
+			formItem.setDisabled(true);
+		}
 		temp.add(formItem);
 		if (displayFormItem != null) {
 			temp.add(displayFormItem);
@@ -215,7 +217,7 @@ public class FormBuilder {
 		return displayFormItem;
 	}
 
-	protected static FormItem buildField(final DataSource dataSource, DataSourceField field, String fieldType, Boolean largeEntry) {
+	protected static FormItem buildField(final DataSource dataSource, final DataSourceField field, String fieldType, Boolean largeEntry) {
 		final FormItem formItem;
 		switch(SupportedFieldType.valueOf(fieldType)){
 		case BOOLEAN:
@@ -232,7 +234,6 @@ public class FormBuilder {
 			break;
 		case DATE:
 			formItem = new DateTimeItem();
-			((DateTimeItem) formItem).setDateFormatter(DateDisplayFormat.TOUSSHORTDATE);
 			break;
 		case DECIMAL:
 			formItem = new FloatItem();

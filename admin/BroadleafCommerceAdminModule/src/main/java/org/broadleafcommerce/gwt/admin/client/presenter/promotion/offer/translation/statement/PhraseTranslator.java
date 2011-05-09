@@ -27,8 +27,10 @@ public class PhraseTranslator {
 		String operator = components[1];
 		String value = components[2];
 		
+		boolean isIgnoreCase = false;
 		String caseInsensitivityKey = "MVEL.eval(\"toUpperCase()\",";
 		if (field.startsWith(caseInsensitivityKey)) {
+			isIgnoreCase = true;
 			field = field.substring(caseInsensitivityKey.length(), field.length()-1);
 		}
 		String dateFormatKey = "java.text.DateFormat.getDateTimeInstance(3,3).parse(";
@@ -39,12 +41,10 @@ public class PhraseTranslator {
 		if (entityKeyIndex < 0) {
 			throw new IncompatibleMVELTranslationException("Could not identify a valid property field value in the expression: ("+phrase+")");
 		}
-		boolean isIgnoreCase = false;
-		String entityKey = field.substring(0, entityKeyIndex);
 		if (value.startsWith(caseInsensitivityKey)) {
-			isIgnoreCase = true;
 			value = value.substring(caseInsensitivityKey.length(), value.length()-1);
 		}
+		String entityKey = field.substring(0, entityKeyIndex);
 		boolean isFieldComparison = false;
 		if (value.startsWith("\"") && value.endsWith("\"")) {
 			value = value.substring(1, value.length()-1);
@@ -90,18 +90,44 @@ public class PhraseTranslator {
 		}
 		if (components.length != 3) {
 			//may be a special expression
-			for (String key : SPECIALCASES) {
-				if (components[0].indexOf(key) >= 0) {
-					String[] temp = extractSpecialComponents(components, key);
-					components = temp;
-					break;
+			try {
+				for (String key : SPECIALCASES) {
+					if (components[0].indexOf(key) >= 0) {
+						String[] temp = extractSpecialComponents(components, key);
+						components = temp;
+						break;
+					}
 				}
+			} catch (Exception e) {
+				//do nothing
 			}
 			if (components.length != 3) {
-				throw new IncompatibleMVELTranslationException("Could not parse the MVEL expression to a compatible form for the rules builder (" + phrase + ")");
+				//may be a projection
+				try {
+					String[] temp = extractProjection(components);
+					components = temp;
+				} catch (Exception e1) {
+					//do nothing
+				}
+				
+				if (components.length != 3) {
+					throw new IncompatibleMVELTranslationException("Could not parse the MVEL expression to a compatible form for the rules builder (" + phrase + ")");
+				}
 			}
 		}
 		return components;
+	}
+	
+	protected String[] extractProjection(String[] components) {
+		String[] temp = new String[3];
+		int startsWithIndex = components[0].indexOf("in");
+		temp[0] = components[0].substring(0, startsWithIndex-1).trim();
+		if (temp[0].endsWith("toUpperCase()")) {
+			temp[0] = temp[0].substring(0, temp[0].lastIndexOf("toUpperCase()")).trim();
+		}
+		temp[1] = "==";
+		temp[2] = components[0].substring(components[0].indexOf("["), components[0].indexOf("]") + 1);
+		return temp;
 	}
 
 	protected String[] extractSpecialComponents(String[] components, String key) {

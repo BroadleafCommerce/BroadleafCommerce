@@ -15,10 +15,10 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.tax;
 
+import org.broadleafcommerce.profile.vendor.service.exception.TaxException;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceService;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
-import org.broadleafcommerce.vendor.service.exception.TaxException;
 
 public interface CyberSourceTaxService extends CyberSourceService {
 

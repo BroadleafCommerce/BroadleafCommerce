@@ -26,6 +26,9 @@ public class MVELToAdvancedCriteriaTranslator {
 	protected PhraseTranslator phraseTranslator = new PhraseTranslator();
 
 	public AdvancedCriteria createAdvancedCriteria(String mvel, DataSource dataSource) throws IncompatibleMVELTranslationException {
+		if (mvel == null || mvel.length() == 0) {
+			return null;
+		}
 		Group group = groupingTranslator.createGroups(mvel);
 		return createAdvancedCriteria(null, group, dataSource);
 	}
@@ -38,7 +41,7 @@ public class MVELToAdvancedCriteriaTranslator {
 		OperatorId operator = group.getOperatorType();
 		myCriteria.setAttribute("operator", operator);
 		List<Criterion> myCriteriaList = new ArrayList<Criterion>();
-		if (group.getOperatorType().getValue().equals(OperatorId.NOT.getValue())) {
+		if (group.getOperatorType().getValue().equals(OperatorId.NOT.getValue()) && group.getIsTopGroup()) {
 			group = group.getSubGroups().get(0);
 			group.setOperatorType(operator);
 		}
@@ -84,25 +87,6 @@ public class MVELToAdvancedCriteriaTranslator {
 	protected AdvancedCriteria createCriteria(Expression expression, SupportedFieldType type, SupportedFieldType secondaryType) throws NumberFormatException, IllegalArgumentException {
 		AdvancedCriteria criteria;
 		switch(type) {
-		case ID:
-			if (secondaryType != null && secondaryType.toString().equals(SupportedFieldType.STRING)) {
-				criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), expression.getValue());
-			} else {
-				criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), Integer.parseInt(expression.getValue()));
-			}
-			break;
-		case BOOLEAN:
-			criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), Boolean.parseBoolean(expression.getValue()));
-			break;
-		case DECIMAL:
-			criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), Float.parseFloat(expression.getValue()));
-			break;
-		case MONEY:
-			criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), Float.parseFloat(expression.getValue()));
-			break;
-		case INTEGER:
-			criteria = new AdvancedCriteria(expression.getField(), expression.getOperator(), Integer.parseInt(expression.getValue()));
-			break;
 		case DATE:
 			DateTimeFormat formatter = DateTimeFormat.getFormat("MM/dd/yy H:mm a");
 			Date parsedDate = formatter.parse(expression.getValue());
@@ -113,6 +97,11 @@ public class MVELToAdvancedCriteriaTranslator {
 			break;
 		}
 		return criteria;
+	}
+	
+	public boolean isProjection(Object value) {
+		String stringValue = value.toString().trim();
+		return stringValue.startsWith("[") && stringValue.endsWith("]") && stringValue.indexOf(",") > 0;
 	}
 	
 	protected void postProcessCriteria(AdvancedCriteria parentCriteria, OperatorId groupOperator, List<Criterion> myCriteriaList, int count, Criterion temp, SupportedFieldType type) {
@@ -165,6 +154,18 @@ public class MVELToAdvancedCriteriaTranslator {
 		        	parentCriteria.setAttribute("criteria", JSOHelper.createJavaScriptArray());
 		        }
 		        parentCriteria.appendToCriterionList(myCriteriaList.remove(count-1));
+			}
+		} else if (
+			isProjection(temp.getAttribute("value"))
+		) {
+			if (parentCriteria != null) {
+				JavaScriptObject listJS = parentCriteria.getAttributeAsJavaScriptObject("criteria");
+		        if (!JSOHelper.isArray(listJS)) {
+		        	parentCriteria.setAttribute("criteria", JSOHelper.createJavaScriptArray());
+		        }
+		        parentCriteria.appendToCriterionList(temp);
+			} else {
+				myCriteriaList.add(temp);
 			}
 		} else {
 			myCriteriaList.add(temp);

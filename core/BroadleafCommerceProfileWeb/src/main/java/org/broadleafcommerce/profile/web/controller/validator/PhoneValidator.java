@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.profile.web.controller.validator;
 
-import org.broadleafcommerce.profile.domain.Phone;
+import org.broadleafcommerce.profile.core.domain.Phone;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;

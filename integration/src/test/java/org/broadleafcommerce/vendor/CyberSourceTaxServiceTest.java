@@ -21,6 +21,7 @@ import java.util.Locale;
 import javax.annotation.Resource;
 
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.profile.vendor.service.cache.ServiceResponseCacheable;
 import org.broadleafcommerce.test.BaseTest;
 import org.broadleafcommerce.vendor.cybersource.service.CyberSourceServiceManager;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
@@ -28,7 +29,6 @@ import org.broadleafcommerce.vendor.cybersource.service.tax.CyberSourceTaxServic
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxItemRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
-import org.broadleafcommerce.vendor.service.cache.ServiceResponseCacheable;
 import org.springframework.test.annotation.Rollback;
 import org.testng.annotations.Test;
 

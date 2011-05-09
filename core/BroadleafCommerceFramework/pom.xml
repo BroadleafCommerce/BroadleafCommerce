@@ -117,6 +117,10 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+					<relativePath>../../</relativePath>
+					<rootPath>$${rebel.root}</rootPath>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -140,6 +144,18 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymockclassextension</artifactId>
 		</dependency>
 	</dependencies>
 </project>

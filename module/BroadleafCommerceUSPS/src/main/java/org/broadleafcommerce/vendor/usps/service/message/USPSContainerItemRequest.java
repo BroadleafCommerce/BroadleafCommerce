@@ -18,8 +18,8 @@ package org.broadleafcommerce.vendor.usps.service.message;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
-import org.broadleafcommerce.util.WeightUnitOfMeasureType;
+import org.broadleafcommerce.profile.util.DimensionUnitOfMeasureType;
+import org.broadleafcommerce.profile.util.WeightUnitOfMeasureType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType;
 import org.broadleafcommerce.vendor.usps.service.type.USPSFirstClassType;

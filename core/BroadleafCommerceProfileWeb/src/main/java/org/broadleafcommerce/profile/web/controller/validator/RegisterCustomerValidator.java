@@ -18,9 +18,9 @@ package org.broadleafcommerce.profile.web.controller.validator;
 import javax.annotation.Resource;
 
 import org.apache.commons.validator.GenericValidator;
-import org.broadleafcommerce.profile.domain.Customer;
-import org.broadleafcommerce.profile.service.CustomerService;
-import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
+import org.broadleafcommerce.profile.core.domain.Customer;
+import org.broadleafcommerce.profile.core.service.CustomerService;
+import org.broadleafcommerce.profile.web.core.form.RegisterCustomerForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;

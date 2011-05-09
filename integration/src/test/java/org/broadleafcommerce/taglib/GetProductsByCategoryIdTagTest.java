@@ -21,9 +21,9 @@ import java.util.List;
 
 import javax.servlet.jsp.JspException;
 
-import org.broadleafcommerce.catalog.domain.Category;
-import org.broadleafcommerce.catalog.domain.Product;
-import org.broadleafcommerce.catalog.web.taglib.GetProductsByCategoryIdTag;
+import org.broadleafcommerce.core.catalog.domain.Category;
+import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.web.catalog.taglib.GetProductsByCategoryIdTag;
 import org.easymock.classextension.EasyMock;
 import org.testng.annotations.Test;
 

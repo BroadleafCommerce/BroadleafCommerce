@@ -8,15 +8,15 @@
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 	
 	<bean id="blOrderState"
-          class="org.broadleafcommerce.order.web.OrderState" scope="request"/>
+          class="org.broadleafcommerce.core.web.order.OrderState" scope="request"/>
 
     <bean id="orderStateAOP"
-          class="org.broadleafcommerce.order.web.OrderStateAOP"/>
+          class="org.broadleafcommerce.core.web.order.OrderStateAOP"/>
 
     <aop:config>
         <aop:aspect id="orderStateAspect" ref="orderStateAOP">
             <aop:pointcut id="orderRetrievalMethod"
-                          expression="execution(* org.broadleafcommerce.order.dao.OrderDao.readCartForCustomer(org.broadleafcommerce.profile.domain.Customer))"/>
+                          expression="execution(* org.broadleafcommerce.core.order.dao.OrderDao.readCartForCustomer(org.broadleafcommerce.profile.core.domain.Customer))"/>
             <aop:around method="processOrderRetrieval" pointcut-ref="orderRetrievalMethod"/>
         </aop:aspect>
     </aop:config>

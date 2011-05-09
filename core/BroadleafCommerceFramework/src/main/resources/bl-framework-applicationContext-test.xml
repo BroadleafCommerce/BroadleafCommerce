@@ -22,7 +22,7 @@
         <property name="autodetect" value="false" />
         <property name="assembler">
             <bean id="jmxAssembler"
-                class="org.broadleafcommerce.jmx.MetadataMBeanInfoAssembler">
+                class="org.broadleafcommerce.profile.jmx.MetadataMBeanInfoAssembler">
                 <property name="attributeSource">
                     <bean
                         class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />

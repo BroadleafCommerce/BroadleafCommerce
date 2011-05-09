@@ -6,7 +6,7 @@
         maxElementsInMemory="100000"
         eternal="true"
         overflowToDisk="true">
-    	<cacheEventListenerFactory class="org.broadleafcommerce.cache.HydratedCacheEventListenerFactory"/>
+    	<cacheEventListenerFactory class="org.broadleafcommerce.profile.cache.HydratedCacheEventListenerFactory"/>
    	</defaultCache>
         
     <cache

@@ -91,6 +91,8 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		itemFilterBuilder = new FilterBuilder();  
 		itemFilterBuilder.setDataSource(itemDataSource);
 		itemFilterBuilder.setLayoutBottomMargin(10);
+		itemFilterBuilder.setAllowEmpty(true);
+		itemFilterBuilder.setValidateOnChange(false);
 		builderLayout.addMember(itemFilterBuilder);
 		
 		rawItemForm = new DynamicForm();

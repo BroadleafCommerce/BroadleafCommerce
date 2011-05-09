@@ -18,8 +18,8 @@ package org.broadleafcommerce.layout;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.broadleafcommerce.core.web.PaginationCommandObject;
 import org.broadleafcommerce.test.BaseTest;
-import org.broadleafcommerce.web.PaginationCommandObject;
 import org.testng.annotations.Test;
 
 public class PaginationCommandObjectTest extends BaseTest {

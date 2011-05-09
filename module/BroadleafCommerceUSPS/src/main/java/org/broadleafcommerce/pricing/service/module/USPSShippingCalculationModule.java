@@ -22,9 +22,10 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
+import org.broadleafcommerce.core.pricing.service.module.ShippingModule;
 import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.order.domain.FulfillmentGroup;
-import org.broadleafcommerce.vendor.service.exception.ShippingPriceException;
+import org.broadleafcommerce.profile.vendor.service.exception.ShippingPriceException;
 import org.broadleafcommerce.vendor.usps.service.USPSShippingCalculationService;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemRequest;
 import org.broadleafcommerce.vendor.usps.service.message.USPSContainerItemResponse;

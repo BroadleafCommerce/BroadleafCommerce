@@ -2,7 +2,7 @@ package com.other.domain;
 
 import java.util.Date;
 
-import org.broadleafcommerce.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.Product;
 
 public interface OtherProduct extends Product {
 	

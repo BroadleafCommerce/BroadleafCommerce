@@ -242,6 +242,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         customerFilterBuilder.setDataSource(customerDataSource);
         customerFilterBuilder.setVisible(false);
         customerFilterBuilder.setLayoutBottomMargin(10);
+        customerFilterBuilder.setAllowEmpty(true);
+        customerFilterBuilder.setValidateOnChange(false);
         customerLayout.addMember(customerFilterBuilder);
         customerLayout.setLayoutBottomMargin(10);
         
@@ -287,6 +289,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         orderFilterBuilder.setDataSource(orderDataSource);
         orderFilterBuilder.setVisible(false);
         orderFilterBuilder.setLayoutBottomMargin(10);
+        orderFilterBuilder.setAllowEmpty(true);
+        orderFilterBuilder.setValidateOnChange(false);
         orderSectionLayout.addMember(orderFilterBuilder);
         
         orderCombineLabel = new Label(AdminModule.ADMINMESSAGES.orderCombineLabel());
@@ -527,6 +531,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fulfillmentGroupFilterBuilder = new FilterBuilder();  
         fulfillmentGroupFilterBuilder.setDataSource(fulfillmentGroupDataSource);
         fulfillmentGroupFilterBuilder.setVisible(false);
+        fulfillmentGroupFilterBuilder.setAllowEmpty(true);
+        fulfillmentGroupFilterBuilder.setValidateOnChange(false);
         fgQuestionLayout.addMember(fulfillmentGroupFilterBuilder);
         fgQuestionLayout.setLayoutBottomMargin(10);
         
@@ -575,6 +581,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	public ItemBuilderDisplay addItemBuilder(DataSource orderItemDataSource) {
 		ItemBuilderDisplay builder = new ItemBuilderView(orderItemDataSource, true, false);
 		builder.enable();
+		builder.setDirty(true);
 		itemBuilderContainerLayout.addMember((ItemBuilderView) builder);
 		itemBuilderViews.add(builder);
 		return builder;
