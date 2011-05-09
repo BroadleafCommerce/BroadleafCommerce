@@ -1,6 +1,6 @@
 package org.broadleafcommerce.gwt.client.datasource.dynamic.module;
 
-import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.gwt.client.datasource.relations.operations.OperationType;
 import org.broadleafcommerce.gwt.client.datasource.results.DynamicResultSet;
 import org.broadleafcommerce.gwt.client.datasource.results.Entity;
@@ -17,15 +17,15 @@ public interface DataSourceModule {
 	
 	public boolean isCompatible(OperationType operationType);
 	
-	public void buildFields(final AsyncCallback<DataSource> cb);
+	public void buildFields(final String[] customCriteria, final AsyncCallback<DataSource> cb);
 	
-	public void executeFetch(final String requestId, final DSRequest request, final DSResponse response);
+	public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb);
 	
-	public void executeAdd(final String requestId, final DSRequest request, final DSResponse response);
+	public void executeAdd(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb);
 	
-	public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response);
+	public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb);
 	
-	public void executeRemove(final String requestId, final DSRequest request, final DSResponse response);
+	public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb);
 	
 	public String getLinkedValue();
 
@@ -37,10 +37,10 @@ public interface DataSourceModule {
 	
 	public Record updateRecord(Entity entity, Record record, Boolean updateId);
 	
-	public Record buildRecord(Entity entity);
+	public Record buildRecord(Entity entity, Boolean updateId);
 	
 	public TreeNode[] buildRecords(DynamicResultSet result, String[] filterOutIds);
 	
-	public void setDataSource(DynamicEntityDataSource dataSource);
+	public void setDataSource(AbstractDynamicDataSource dataSource);
 	
 }

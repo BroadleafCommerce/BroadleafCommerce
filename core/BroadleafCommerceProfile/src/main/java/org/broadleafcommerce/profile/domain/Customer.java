@@ -49,9 +49,9 @@ public interface Customer extends Serializable {
 
     public void setEmailAddress(String emailAddress);
 
-    public Long getChallengeQuestionId();
+    public ChallengeQuestion getChallengeQuestion();
 
-    public void setChallengeQuestionId(Long challengeQuestionId);
+	public void setChallengeQuestion(ChallengeQuestion challengeQuestion);
 
     public String getChallengeAnswer();
 

@@ -22,10 +22,6 @@ import org.broadleafcommerce.util.money.Money;
 
 public interface BundleOrderItem extends OrderItem {
 
-    String getName();
-
-    void setName(String name);
-
     List<DiscreteOrderItem> getDiscreteOrderItems();
 
     void setDiscreteOrderItems(List<DiscreteOrderItem> discreteOrderItems);

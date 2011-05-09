@@ -33,8 +33,6 @@ public interface DiscreteOrderItem extends OrderItem {
 
     void setBundleOrderItem(BundleOrderItem bundleOrderItem);
 
-    String getName();
-
     Money getTaxablePrice();
 
 }

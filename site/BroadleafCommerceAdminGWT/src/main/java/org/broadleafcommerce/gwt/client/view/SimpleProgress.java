@@ -28,13 +28,13 @@ public class SimpleProgress extends Progressbar {
                     schedule(5 + (int) (50 * Math.random())); 
             }  
         };
-        hide();
+        setOpacity(50);
 	}
 	
 	public void startProgress() {
 		isActive = true;
-		show();
-		barValue = 0;  
+		barValue = 50;  
+		setOpacity(100);
         setPercentDone(barValue);
         timer.schedule(50);
 	}
@@ -42,8 +42,8 @@ public class SimpleProgress extends Progressbar {
 	public void stopProgress() {
 		isActive = false;
 		timer.cancel();
-		setPercentDone(100);
-		hide();
+		setPercentDone(0);
+		setOpacity(50);
 	}
 	
 	public Boolean isActive() {

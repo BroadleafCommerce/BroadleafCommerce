@@ -27,8 +27,11 @@ import org.broadleafcommerce.profile.service.CustomerService;
 import org.broadleafcommerce.profile.service.LoginService;
 import org.broadleafcommerce.profile.web.controller.validator.RegisterCustomerValidator;
 import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
+import org.springframework.beans.propertyeditors.CustomNumberEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -128,6 +131,11 @@ public class RegisterCustomerController {
 
     public void setDisplayRegistrationFormView(String displayRegistrationFormView) {
         this.displayRegistrationFormView = displayRegistrationFormView;
+    }
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(ChallengeQuestion.class, new CustomChallengeQuestionEditor(challengeQuestionService));
     }
 
 }

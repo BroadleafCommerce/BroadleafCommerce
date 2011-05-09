@@ -11,7 +11,6 @@ public class OperationTypes implements Serializable {
 	private OperationType addType = OperationType.ENTITY;
 	private OperationType updateType = OperationType.ENTITY;
 	private OperationType inspectType = OperationType.ENTITY;
-	private OperationType miscType = OperationType.ENTITY;
 	
 	public OperationTypes() {
 		//do nothing
@@ -63,14 +62,6 @@ public class OperationTypes implements Serializable {
 
 	public void setInspectType(OperationType inspectType) {
 		this.inspectType = inspectType;
-	}
-
-	public OperationType getMiscType() {
-		return miscType;
-	}
-
-	public void setMiscType(OperationType miscType) {
-		this.miscType = miscType;
 	}
 	
 }

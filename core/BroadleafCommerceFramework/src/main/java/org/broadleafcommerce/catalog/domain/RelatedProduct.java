@@ -15,7 +15,10 @@
  */
 package org.broadleafcommerce.catalog.domain;
 
-public interface RelatedProduct {
+import java.io.Serializable;
+
+public interface RelatedProduct extends Serializable {
+	
     public Long getId();
 
     public Product getProduct();

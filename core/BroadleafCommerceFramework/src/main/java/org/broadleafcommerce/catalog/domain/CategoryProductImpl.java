@@ -50,8 +50,8 @@ public class CategoryProductImpl implements Serializable {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
-      @EmbeddedId
-      CategoryProductXrefPk categoryProductXref;
+    @EmbeddedId
+    CategoryProductXrefPk categoryProductXref = new CategoryProductXrefPk();
 
     public CategoryProductXrefPk getCategoryProductXref() {
 		return categoryProductXref;
@@ -63,19 +63,19 @@ public class CategoryProductImpl implements Serializable {
 
 	/** The display order. */
     @Column(name = "DISPLAY_ORDER")
-    protected Integer displayOrder;
+    protected Long displayOrder;
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.CategoryProduct#getDisplayOrder()
      */
-    public Integer getDisplayOrder() {
+    public Long getDisplayOrder() {
         return displayOrder;
     }
 
     /* (non-Javadoc)
      * @see org.broadleafcommerce.catalog.domain.CategoryProduct#setDisplayOrder(java.lang.Integer)
      */
-    public void setDisplayOrder(Integer displayOrder) {
+    public void setDisplayOrder(Long displayOrder) {
         this.displayOrder = displayOrder;
     }
     
@@ -85,12 +85,12 @@ public class CategoryProductImpl implements Serializable {
         
         @ManyToOne(targetEntity = CategoryImpl.class, optional=false)
         @JoinColumn(name = "CATEGORY_ID")
-        protected Category category;
+        protected Category category = new CategoryImpl();
         
         /** The product. */
         @ManyToOne(targetEntity = ProductImpl.class, optional=false)
         @JoinColumn(name = "PRODUCT_ID")
-        protected Product product;
+        protected Product product = new ProductImpl();
 
 		public Category getCategory() {
 			return category;

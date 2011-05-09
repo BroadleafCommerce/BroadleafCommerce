@@ -21,11 +21,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
@@ -46,35 +49,45 @@ public class CustomerImpl implements Customer {
     protected Auditable auditable = new Auditable();
 
     @Column(name = "USER_NAME")
+    @AdminPresentation(friendlyName="UserName", order=1, group="Customer", prominent=true)
     protected String username;
 
     @Column(name = "PASSWORD")
+    @AdminPresentation(friendlyName="Password", group="Customer", hidden=true)
     protected String password;
 
     @Column(name = "FIRST_NAME")
+    @AdminPresentation(friendlyName="First Name", order=2, group="Customer", prominent=true)
     protected String firstName;
 
     @Column(name = "LAST_NAME")
+    @AdminPresentation(friendlyName="Last Name", order=3, group="Customer", prominent=true)
     protected String lastName;
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name="CUSTOMER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
+    @AdminPresentation(friendlyName="Email Address", order=4, group="Customer")
     protected String emailAddress;
 
-    @Column(name = "CHALLENGE_QUESTION_ID")
+    @ManyToOne(targetEntity = ChallengeQuestionImpl.class)
+    @JoinColumn(name = "CHALLENGE_QUESTION_ID")
     @Index(name="CUSTOMER_CHALLENGE_INDEX", columnNames={"CHALLENGE_QUESTION_ID"})
-    protected Long challengeQuestionId;
+    protected ChallengeQuestion challengeQuestion;
 
     @Column(name = "CHALLENGE_ANSWER")
+    @AdminPresentation(friendlyName="Challenge Answer", group="Customer")
     protected String challengeAnswer;
 
     @Column(name = "PASSWORD_CHANGE_REQUIRED")
+    @AdminPresentation(friendlyName="Password Change Required", group="Customer")
     protected boolean passwordChangeRequired = false;
 
     @Column(name = "RECEIVE_EMAIL")
+    @AdminPresentation(friendlyName="Receive Email", group="Customer")
     protected boolean receiveEmail = true;
 
     @Column(name = "IS_REGISTERED")
+    @AdminPresentation(friendlyName="Registered", group="Customer")
     protected boolean registered = false;
 
     @Transient
@@ -148,15 +161,15 @@ public class CustomerImpl implements Customer {
         this.emailAddress = emailAddress;
     }
 
-    public Long getChallengeQuestionId() {
-        return challengeQuestionId;
-    }
+    public ChallengeQuestion getChallengeQuestion() {
+		return challengeQuestion;
+	}
 
-    public void setChallengeQuestionId(Long challengeQuestionId) {
-        this.challengeQuestionId = challengeQuestionId;
-    }
+	public void setChallengeQuestion(ChallengeQuestion challengeQuestion) {
+		this.challengeQuestion = challengeQuestion;
+	}
 
-    public String getChallengeAnswer() {
+	public String getChallengeAnswer() {
         return challengeAnswer;
     }
 

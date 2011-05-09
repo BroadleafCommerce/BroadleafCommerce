@@ -16,6 +16,8 @@
 package org.broadleafcommerce.profile.web.controller.dataprovider;
 
 import org.broadleafcommerce.common.domain.Auditable;
+import org.broadleafcommerce.profile.domain.ChallengeQuestion;
+import org.broadleafcommerce.profile.domain.ChallengeQuestionImpl;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.profile.web.form.RegisterCustomerForm;
@@ -34,7 +36,9 @@ public class RegisterCustomerDataProvider {
         customer.setFirstName("TestFirstName");
         customer.setLastName("TestLastName");
         customer.setUsername("TestCase");
-        customer.setChallengeQuestionId(1L);
+        ChallengeQuestion question = new ChallengeQuestionImpl();
+        question.setId(1L);
+        customer.setChallengeQuestion(question);
         customer.setChallengeAnswer("Challenge Answer");
         RegisterCustomerForm registerCustomer = new RegisterCustomerForm();
         registerCustomer.setCustomer(customer);

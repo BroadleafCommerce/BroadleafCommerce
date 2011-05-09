@@ -1,8 +1,8 @@
 package org.broadleafcommerce.gwt.client.datasource.dynamic.module;
 
 import org.broadleafcommerce.gwt.client.Main;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.EntityOperationType;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.EntityServiceAsyncCallback;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.gwt.client.datasource.relations.MapStructure;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspectiveItemType;
@@ -36,22 +36,16 @@ public class ComplexValueMapStructureModule extends BasicEntityModule {
 
 	protected ListGrid associatedGrid;
 	
-	/**
-	 * @param ceilingEntityFullyQualifiedClassname
-	 * @param persistencePerspective
-	 * @param dataSource
-	 * @param service
-	 */
 	public ComplexValueMapStructureModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, ListGrid associatedGrid) {
 		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
 		this.associatedGrid = associatedGrid;
 	}
-	
+
 	@Override
-	public void executeFetch(final String requestId, DSRequest request, final DSResponse response) {
+	public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		CriteriaTransferObject criteriaTransferObject = getCto(request);
 		final String parentCategoryId = criteriaTransferObject.get("id").getFilterValues()[0];
-		service.fetch(ceilingEntityFullyQualifiedClassname, criteriaTransferObject, persistencePerspective, null, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+		service.fetch(ceilingEntityFullyQualifiedClassname, criteriaTransferObject, persistencePerspective, customCriteria, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				TreeNode[] recordList = buildRecords(result, null);
@@ -62,14 +56,16 @@ public class ComplexValueMapStructureModule extends BasicEntityModule {
 				}
 				response.setData(recordList);
 				response.setTotalRows(result.getTotalRecords());
-				
+				if (cb != null) {
+					cb.onSuccess(dataSource);
+				}
 				dataSource.processResponse(requestId, response);
 			}
 		});
 	}	
 	
 	@Override
-	public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response) {
+	public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
         Entity tempEntity = buildEntity(temp);
@@ -81,25 +77,56 @@ public class ComplexValueMapStructureModule extends BasicEntityModule {
         String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
-            	String type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttribute("type");
+            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("type");
             	entity.setType(type);
             }
         }
-		service.update(entity, persistencePerspective, null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+		service.update(entity, persistencePerspective, customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
 				ListGridRecord myRecord = (ListGridRecord) updateRecord(result, (Record) temp, false);
 				ListGridRecord[] recordList = new ListGridRecord[]{myRecord};
 				response.setData(recordList);
 				response.setTotalRows(1);
+				/*
+				 * An update can result in the removal of a value, which would make the cache out-of-sync
+				 * with the database. Refresh the cache to make sure the display values are accurate.
+				 */
 				response.setInvalidateCache(true);
+				if (cb != null) {
+					cb.onSuccess(dataSource);
+				}
 				dataSource.processResponse(requestId, response);
+			}
+			
+			@Override
+			protected void onSecurityException(ApplicationSecurityException exception) {
+				super.onSecurityException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onOtherException(Throwable exception) {
+				super.onOtherException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+				super.onError(opType, requestId, request, response, caught);
+				if (cb != null) {
+					cb.onFailure(caught);
+				}
 			}
 		});
 	}
 	
 	@Override
-	public void executeRemove(final String requestId, final DSRequest request, final DSResponse response) {
+	public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		JavaScriptObject data = request.getData();
         final ListGridRecord temp = new ListGridRecord(data);
         Entity tempEntity = buildEntity(temp);
@@ -111,40 +138,100 @@ public class ComplexValueMapStructureModule extends BasicEntityModule {
         String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
-            	String type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttribute("type");
+            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("type");
             	entity.setType(type);
             }
         }
-        service.remove(entity, persistencePerspective, null, new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
+        service.remove(entity, persistencePerspective, customCriteria, new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);
+				if (cb != null) {
+					cb.onSuccess(dataSource);
+				}
 				dataSource.processResponse(requestId, response);
+			}
+			
+			@Override
+			protected void onSecurityException(ApplicationSecurityException exception) {
+				super.onSecurityException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onOtherException(Throwable exception) {
+				super.onOtherException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+				super.onError(opType, requestId, request, response, caught);
+				if (cb != null) {
+					cb.onFailure(caught);
+				}
 			}
 		});
 	}
 	
 	@Override
-	public void executeAdd(final String requestId, final DSRequest request, final DSResponse response) {
+	public void executeAdd(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		Main.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record);
-        service.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
+        service.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
-				TreeNode record = (TreeNode) buildRecord(result);
+				TreeNode record = (TreeNode) buildRecord(result, false);
 				TreeNode[] recordList = new TreeNode[]{record};
 				response.setData(recordList);
+				/*
+				 * If the key is a duplicate, it can result in the deletion of the old value
+				 * and the creation of a new value, which can result in a new id for the retured
+				 * value. Therefore, we need to invalidate the cache to make sure the displayed
+				 * values are correct.
+				 */
 				response.setInvalidateCache(true);
+				if (cb != null) {
+					cb.onSuccess(dataSource);
+				}
 				dataSource.processResponse(requestId, response);
+			}
+			
+			@Override
+			protected void onSecurityException(ApplicationSecurityException exception) {
+				super.onSecurityException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onOtherException(Throwable exception) {
+				super.onOtherException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+				super.onError(opType, requestId, request, response, caught);
+				if (cb != null) {
+					cb.onFailure(caught);
+				}
 			}
 		});
 	}
 
 	@Override
-	public void buildFields(final AsyncCallback<DataSource> cb) {
+	public void buildFields(final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		Main.NON_MODAL_PROGRESS.startProgress();
-		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, new AbstractCallback<DynamicResultSet>() {
+		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, customCriteria, metadataOverrides, new AbstractCallback<DynamicResultSet>() {
 			
 			@Override
 			protected void onOtherException(Throwable exception) {

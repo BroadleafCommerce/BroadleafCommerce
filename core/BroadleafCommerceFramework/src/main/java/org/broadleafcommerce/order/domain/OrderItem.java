@@ -127,4 +127,8 @@ public interface OrderItem extends Serializable {
 	
 	public boolean updatePrices();
 	
+	public String getName();
+
+	public void setName(String name);
+	
 }

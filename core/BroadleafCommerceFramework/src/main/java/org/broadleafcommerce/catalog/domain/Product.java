@@ -152,10 +152,11 @@ public interface Product extends Serializable {
     
     /**
      * Returns a map of key/value pairs that associate the image name (key) with the URL to the image (value)
-     * for display purposes.
+     * for display purposes. This method is deprecated. Use getProductMedia instead.
      *
      * @return a map of product images
      */
+    @Deprecated
     Map<String, String> getProductImages();
 
     /**
@@ -165,13 +166,15 @@ public interface Product extends Serializable {
      *
      * @return a URL to the image associated witht he key passed in.
      */
+    @Deprecated
     String getProductImage(String imageKey);
 
     /**
-     * Sets the product images map.
+     * Sets the product images map. This method is deprecated. Use setProductMedia instead.
      *
      * @param productImages - a map of product images
      */
+    @Deprecated
     void setProductImages(Map<String, String> productImages);
 
     /**
@@ -361,4 +364,9 @@ public interface Product extends Serializable {
     String getPromoMessage();
     
     void setPromoMessage(String promoMessage);
+    
+    List<ProductAttribute> getProductAttributes();
+
+	void setProductAttributes(List<ProductAttribute> productAttributes);
+	
 }

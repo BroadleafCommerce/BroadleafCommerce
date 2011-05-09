@@ -27,7 +27,7 @@
 	<bean id="org.broadleafcommerce.payment.domain.PaymentInfo" class="org.broadleafcommerce.payment.domain.PaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.PaymentResponseItem" class="org.broadleafcommerce.payment.domain.PaymentResponseItemImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.PaymentLog" class="org.broadleafcommerce.payment.domain.PaymentLogImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductImpl" scope="prototype"/>
+	<bean id="org.broadleafcommerce.catalog.domain.Product" class="org.broadleafcommerce.catalog.domain.ProductSkuImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.catalog.domain.Sku" class="org.broadleafcommerce.catalog.domain.SkuImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.BankAccountPaymentInfo" class="org.broadleafcommerce.payment.domain.BankAccountPaymentInfoImpl" scope="prototype"/>
 	<bean id="org.broadleafcommerce.payment.domain.CreditCardPaymentInfo" class="org.broadleafcommerce.payment.domain.CreditCardPaymentInfoImpl" scope="prototype"/>

@@ -25,6 +25,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -43,6 +44,7 @@ public class ChallengeQuestionImpl implements ChallengeQuestion {
     protected Long id;
 
     @Column(name = "QUESTION", nullable=false)
+    @AdminPresentation(friendlyName="Challenge Question", group="Customer")
     protected String question;
 
     public Long getId() {

@@ -2,7 +2,7 @@
 <module>
 	<!-- http://code.google.com/webtoolkit/doc/latest/DevGuideOrganizingProjects.html#DevGuideModuleXml -->
 	<inherits name="com.google.gwt.user.User" />
-	<inherits name="com.smartgwt.SmartGwt" />
+	<inherits name="com.smartgwt.debug.SmartGwtDebug" />
 	<inherits name="com.smartgwt.tools.SmartGwtTools" />
 	<!--inherits name="net.sf.gilead.Gilead4Gwt" /-->
 	<!--inherits name="net.sf.gilead.emul.java5.ejb3.Ejb3" /-->
