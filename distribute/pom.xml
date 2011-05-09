@@ -4,11 +4,11 @@
   <parent>
     <artifactId>BroadleafCommerce</artifactId>
     <groupId>org.broadleafcommerce</groupId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-M1-SNAPSHOT</version>
   </parent>
   <groupId>org.broadleafcommerce</groupId>
   <artifactId>distribute</artifactId>
-  <version>1.5.0-SNAPSHOT</version>
+  <version>1.5.0-M1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>distribute</name>
   <url>http://maven.apache.org</url>
