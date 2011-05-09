@@ -138,19 +138,9 @@ public class OrderServiceImpl implements OrderService {
         return fg;
     }
     
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
-    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true);
-    }
-
-    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
-        if (orderId == null || skuId == null || quantity == null) {
-            return null;
-        }
-
-        Order order = findOrderById(orderId);
-        Sku sku = skuDao.readSkuById(skuId);
-
-        Product product;
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity) {
+    	Sku sku = skuDao.readSkuById(skuId);
+    	Product product;
         if (productId != null) {
             product = productDao.readProductById(productId);
         } else {
@@ -162,12 +152,27 @@ public class OrderServiceImpl implements OrderService {
         } else {
             category = null;
         }
-
+        
         DiscreteOrderItemRequest itemRequest = new DiscreteOrderItemRequest();
         itemRequest.setCategory(category);
         itemRequest.setProduct(product);
         itemRequest.setQuantity(quantity);
         itemRequest.setSku(sku);
+        
+        return itemRequest;
+    }
+    
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity) throws PricingException {
+    	return addSkuToOrder(orderId, skuId, productId, categoryId, quantity, true);
+    }
+
+    public OrderItem addSkuToOrder(Long orderId, Long skuId, Long productId, Long categoryId, Integer quantity, boolean priceOrder) throws PricingException {
+        if (orderId == null || skuId == null || quantity == null) {
+            return null;
+        }
+
+        Order order = findOrderById(orderId);
+        DiscreteOrderItemRequest itemRequest = createDiscreteOrderItemRequest(skuId, productId, categoryId, quantity);
 
         return addDiscreteItemToOrder(order, itemRequest, priceOrder);
     }

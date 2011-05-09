@@ -22,6 +22,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -38,6 +39,7 @@ public class CountryImpl implements Country {
     protected String abbreviation;
 
     @Column(name = "NAME", nullable=false)
+    @AdminPresentation(friendlyName="Country", order=12, group="Address")
     protected String name;
 
     public String getAbbreviation() {

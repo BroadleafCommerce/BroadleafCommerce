@@ -29,10 +29,17 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
 		this.rootName = rootName;
 	}
 
-	public void setupFields(String[] fieldNames, Boolean[] canEdit, String initialFieldWidth, String otherFieldWidth) {
-		if (fieldNames.length > 0) {
-			resetFieldVisibility(fieldNames);
+	public void setupGridFields(String[] fieldNames, Boolean[] canEdit, String initialFieldWidth, String otherFieldWidth) {
+		if (fieldNames != null && fieldNames.length > 0) {
+			resetProminence(fieldNames);
 		}
+		
+		String[] sortedFieldNames = new String[fieldNames.length];
+		for (int j=0;j<fieldNames.length;j++) {
+			sortedFieldNames[j] = fieldNames[j];
+		}
+		Arrays.sort(sortedFieldNames);
+		
 		DataSourceField[] fields = getFields();
         TreeGridField[] gridFields = new TreeGridField[fields.length];
         int j = 0;
@@ -44,17 +51,26 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         }
         int availableSlots = 4;
         for (DataSourceField field : prominentFields) {
+        	String columnWidth = field.getAttribute("columnWidth");
         	gridFields[j] = new TreeGridField(field.getName(), field.getTitle(), j==0?200:150);
         	if (j == 0) {
-        		gridFields[j].setFrozen(true);
-        		if (initialFieldWidth != null) {
+        		if (fieldNames == null || fieldNames.length == 0) {
+        			gridFields[j].setFrozen(true);
+        		}
+        		if (columnWidth != null) {
+        			gridFields[j].setWidth(columnWidth);
+        		} else if (initialFieldWidth != null) {
         			gridFields[j].setWidth(initialFieldWidth);
         		}
         	} else {
-        		gridFields[j].setWidth(otherFieldWidth);
+        		if (columnWidth != null) {
+        			gridFields[j].setWidth(columnWidth);
+        		} else {
+        			gridFields[j].setWidth(otherFieldWidth);
+        		}
         	}
         	gridFields[j].setHidden(false);
-        	int pos = Arrays.binarySearch(fieldNames, field.getName());
+        	int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
         	if (pos >= 0) {
         		gridFields[j].setCanEdit(canEdit[pos]);
         	}
@@ -63,6 +79,7 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         }
         for (DataSourceField field : fields) {
         	if (!prominentFields.contains(field)) {
+        		String columnWidth = field.getAttribute("columnWidth");
         		gridFields[j] = new TreeGridField(field.getName(), field.getTitle(), j==0?200:150);
         		if (field.getAttributeAsBoolean("permanentlyHidden")) {
         			gridFields[j].setHidden(true);
@@ -73,14 +90,22 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
 	        		gridFields[j].setHidden(true);
 	        	} else {
 	        		if (j == 0) {
-	            		gridFields[j].setFrozen(true);
-	            		if (initialFieldWidth != null) {
+	        			if (fieldNames == null || fieldNames.length == 0) {
+	            			gridFields[j].setFrozen(true);
+	            		}
+	            		if (columnWidth != null) {
+	            			gridFields[j].setWidth(columnWidth);
+	            		} else if (initialFieldWidth != null) {
 	            			gridFields[j].setWidth(initialFieldWidth);
 	            		}
 	            	} else {
-	            		gridFields[j].setWidth(otherFieldWidth);
+	            		if (columnWidth != null) {
+	            			gridFields[j].setWidth(columnWidth);
+	            		} else {
+	            			gridFields[j].setWidth(otherFieldWidth);
+	            		}
 	            	}
-	        		int pos = Arrays.binarySearch(fieldNames, field.getName());
+	        		int pos = Arrays.binarySearch(sortedFieldNames, field.getName());
 	            	if (pos >= 0) {
 	            		gridFields[j].setCanEdit(canEdit[pos]);
 	            	}
@@ -90,6 +115,13 @@ public class TreeGridDataSource extends PresentationLayerAssociatedDataSource {
         	}
         }
         getAssociatedGrid().setFields(gridFields);
+        if (fieldNames != null && fieldNames.length > 0) {
+        	int pos = 0;
+        	for (String fieldName : fieldNames) {
+        		getAssociatedGrid().reorderField(getAssociatedGrid().getFieldNum(fieldName), pos);
+        		pos++;
+        	}
+        }
 	}
 	
 	@Override

@@ -23,6 +23,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
+
 @Embeddable
 public class Auditable implements Serializable {
 
@@ -30,16 +32,20 @@ public class Auditable implements Serializable {
 
     @Column(name = "DATE_CREATED", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @AdminPresentation(friendlyName="Date Created", group="Audit")
     protected Date dateCreated;
 
     @Column(name = "CREATED_BY", updatable = false)
+    @AdminPresentation(friendlyName="Created By", group="Audit", hidden=true)
     protected Long createdBy;
 
     @Column(name = "DATE_UPDATED")
     @Temporal(TemporalType.TIMESTAMP)
+    @AdminPresentation(friendlyName="Date Updated", group="Audit")
     protected Date dateUpdated;
 
     @Column(name = "UPDATED_BY")
+    @AdminPresentation(friendlyName="Updated By", group="Audit", hidden=true)
     protected Long updatedBy;
 
     public Date getDateCreated() {

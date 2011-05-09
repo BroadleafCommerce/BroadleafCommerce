@@ -32,46 +32,48 @@
 	</bean-->
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceOperation" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.inspect(..))"/>
+		<aop:pointcut id="blRemoteServiceOperation" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.inspect(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceOperation2" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.fetch(..))"/>
+		<aop:pointcut id="blRemoteServiceOperation2" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.fetch(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation2"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceOperation3" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.add(..))"/>
+		<aop:pointcut id="blRemoteServiceOperation3" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.add(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation3"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceOperation4" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.update(..))"/>
+		<aop:pointcut id="blRemoteServiceOperation4" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.update(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation4"/>
 	</aop:config>
 	
 	<aop:config>
-		<aop:pointcut id="blRemoteServiceOperation5" expression="execution(* org.broadleafcommerce.gwt.server.DynamicEntityRemoteService.remove(..))"/>
+		<aop:pointcut id="blRemoteServiceOperation5" expression="execution(* org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService.remove(..))"/>
 	    <aop:advisor advice-ref="blTxAdvice" pointcut-ref="blRemoteServiceOperation5"/>
 	</aop:config>
 	
 	<bean id="sessionFactory" factory-bean="entityManagerFactory" factory-method="getSessionFactory" />
 	<bean id="persistenceUnitInfo" factory-bean="entityManagerFactory" factory-method="getPersistenceUnitInfo" />
 	
-	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.DynamicEntityRemoteService">
+	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.service.DynamicEntityRemoteService">
 		<constructor-arg>
 			<list>
-				<bean class="org.broadleafcommerce.gwt.server.module.BasicEntityModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.module.JoinTableModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.module.MapModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.BasicEntityModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.JoinStructureModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.MapModule"/>
 			</list>
 		</constructor-arg>
 		<property name="customPersistenceHandlers">
 			<list>
-				<bean class="org.broadleafcommerce.gwt.server.CategoryCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.handler.CategoryCustomPersistenceHandler"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.handler.OneToOneProductSkuCustomPersistenceHandler"/>
 			</list>
 		</property>
 	</bean>
 
+	<bean id="blFieldManager" class="org.broadleafcommerce.gwt.server.service.module.FieldManager" scope="prototype"/>
 </beans>

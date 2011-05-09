@@ -3,7 +3,7 @@ package org.broadleafcommerce.gwt.client.view;
 import java.util.HashMap;
 import java.util.Stack;
 
-import org.broadleafcommerce.gwt.client.presenter.Presenter;
+import org.broadleafcommerce.gwt.client.presenter.dynamic.entity.EntityPresenter;
 import org.broadleafcommerce.gwt.client.reflection.ModuleFactory;
 
 public class UIFactory extends HashMap<String, Display> {
@@ -14,17 +14,19 @@ public class UIFactory extends HashMap<String, Display> {
 	private Stack<String> keyStack = new Stack<String>();
 
 	public Display getView(String value) {
-		return getView(value, true);
+		return getView(value, true, true);
 	}
 	
-	public Display getView(String value, boolean clearCurrentView) {
+	public Display getView(String value, boolean clearCurrentView, boolean storeView) {
 		if (clearCurrentView) {
 			clearCurrentView();
 		}
 		Display view;
 		if (!containsKey(value)) {
 			view = (Display) ModuleFactory.getInstance().createItem(value);
-			put(value, view);
+			if (storeView) {
+				put(value, view);
+			}
 		} else {
 			view = get(value);
 		}
@@ -34,13 +36,13 @@ public class UIFactory extends HashMap<String, Display> {
 		return view;
 	}
 	
-	public Presenter getPresenter(String value) {
-		return (Presenter) ModuleFactory.getInstance().createItem(value);
+	public EntityPresenter getPresenter(String value) {
+		return (EntityPresenter) ModuleFactory.getInstance().createItem(value);
 	}
 	
 	public void clearCurrentView() {
 		for (Display display : currentView) {
-			display.clear();
+			display.destroy();
 		}
 		currentView.clear();
 		keyStack.clear();

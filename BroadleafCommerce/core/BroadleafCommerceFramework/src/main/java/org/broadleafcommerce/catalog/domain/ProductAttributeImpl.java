@@ -27,7 +27,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Index;
+import org.hibernate.envers.Audited;
 
 /**
  * The Class ProductAttributeImpl.
@@ -35,6 +37,7 @@ import org.hibernate.annotations.Index;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_ATTRIBUTE")
+@Audited
 public class ProductAttributeImpl implements ProductAttribute {
 
     /** The Constant serialVersionUID. */
@@ -56,14 +59,17 @@ public class ProductAttributeImpl implements ProductAttribute {
     /** The name. */
     @Column(name = "NAME", nullable=false)
     @Index(name="PRODUCTATTRIBUTE_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName="Name", order=1, group="Description", prominent=true)
     protected String name;
 
     /** The value. */
     @Column(name = "VALUE", nullable=false)
+    @AdminPresentation(friendlyName="Value", order=2, group="Description", prominent=true)
     protected String value;
 
     /** The searchable. */
     @Column(name = "SEARCHABLE")
+    @AdminPresentation(friendlyName="Searchable", order=3, group="Description", prominent=true)
     protected Boolean searchable;
 
     /* (non-Javadoc)

@@ -40,7 +40,7 @@ import org.hibernate.annotations.NotFoundAction;
 public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrderItem {
 
     private static final long serialVersionUID = 1L;
-
+    
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)
     @JoinColumn(name = "SKU_ID", nullable = false)
     @Index(name="DISCRETE_SKU_INDEX", columnNames={"SKU_ID"})
@@ -69,6 +69,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         if (sku.getSalePrice() != null) {
             this.salePrice = sku.getSalePrice().getAmount();
         }
+        setName(sku.getName());
     }
 
     public Money getTaxablePrice() {
@@ -95,11 +96,16 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
         this.bundleOrderItem = bundleOrderItem;
     }
 
-    public String getName() {
-        return getSku().getName();
-    }
-    
-    @Override
+	@Override
+	public String getName() {
+		String name = super.getName();
+		if (name == null) {
+			return sku.getName();
+		}
+		return name;
+	}
+
+	@Override
     public boolean updatePrices() {
         boolean updated = false;
         //use the sku prices - the retail and sale prices could be null

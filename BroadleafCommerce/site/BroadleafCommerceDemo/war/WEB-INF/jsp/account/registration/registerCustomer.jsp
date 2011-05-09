@@ -44,7 +44,7 @@
 	    		</tr>
 				<tr>
 					<td style="text-align:right"><label for="challengeQuestion">* Challenge Question</b></label></td>
-					<td><form:select id="challengeQuestions" path="customer.challengeQuestionId">
+					<td><form:select id="challengeQuestions" path="customer.challengeQuestion">
           				<form:options items="${challengeQuestions}" itemLabel="question" itemValue="id"/>
        				</form:select> </td>				
 	    		</tr>

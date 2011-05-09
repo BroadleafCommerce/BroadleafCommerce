@@ -27,6 +27,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Index;
 import org.hibernate.envers.Audited;
 
@@ -36,7 +37,9 @@ import org.hibernate.envers.Audited;
 @Audited
 public class CrossSaleProductImpl implements RelatedProduct {
 
-    @Id
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @GeneratedValue(generator = "CrossSaleProductId", strategy = GenerationType.TABLE)
     @TableGenerator(name = "CrossSaleProductId", table = "SEQUENCE_GENERATOR", pkColumnName = "ID_NAME", valueColumnName = "ID_VAL", pkColumnValue = "CrossSaleProductImpl", allocationSize = 50)
     @Column(name = "CROSS_SALE_PRODUCT_ID")
@@ -45,14 +48,15 @@ public class CrossSaleProductImpl implements RelatedProduct {
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "PRODUCT_ID")
     @Index(name="CROSSSALE_INDEX", columnNames={"PRODUCT_ID"})
-    private Product product;
+    private Product product = new ProductImpl();
 
     @ManyToOne(targetEntity = ProductImpl.class, optional=false)
     @JoinColumn(name = "RELATED_SALE_PRODUCT_ID", referencedColumnName = "PRODUCT_ID")
     @Index(name="CROSSSALE_RELATED_INDEX", columnNames={"RELATED_SALE_PRODUCT_ID"})
-    private Product relatedSaleProduct;
+    private Product relatedSaleProduct = new ProductImpl();
 
     @Column(name = "PROMOTION_MESSAGE")
+    @AdminPresentation(friendlyName="Promotion Message", largeEntry=true)
     private String promotionMessage;
 
     @Column(name = "SEQUENCE")

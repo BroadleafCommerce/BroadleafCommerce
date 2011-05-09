@@ -41,7 +41,7 @@ public @interface AdminPresentation {
 	 * 
 	 * @return the display order
 	 */
-	int order() default -1;
+	int order() default 99999;
 	
 	/**
 	 * Whether or not the field should be hidden in the GUI
@@ -91,4 +91,12 @@ public @interface AdminPresentation {
 	 * @return the space utilized in grids for this field
 	 */
 	String columnWidth() default "*";
+	
+	/**
+	 * For fields with a SupportedFieldType of BROADLEAF_ENUMERATION,
+	 * you must specify the fully qualified class name of the Broadleaf Enumeration here.
+	 * 
+	 * @return Broadleaf enumeration class name
+	 */
+	String broadleafEnumeration() default "";
 }

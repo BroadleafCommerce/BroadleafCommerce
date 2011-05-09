@@ -41,6 +41,8 @@ import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustment;
 import org.broadleafcommerce.offer.domain.FulfillmentGroupAdjustmentImpl;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupStatusType;
 import org.broadleafcommerce.order.service.type.FulfillmentGroupType;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.profile.domain.Address;
 import org.broadleafcommerce.profile.domain.AddressImpl;
 import org.broadleafcommerce.profile.domain.Phone;
@@ -72,6 +74,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "REFERENCE_NUMBER")
     @Index(name="FG_REFERENCE_INDEX", columnNames={"REFERENCE_NUMBER"})
+    @AdminPresentation(friendlyName="Reference Number", order=1, group="Description", prominent=true)
     protected String referenceNumber;
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupItemImpl.class, cascade = CascadeType.ALL)
@@ -91,28 +94,34 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
 
     @Column(name = "METHOD")
     @Index(name="FG_METHOD_INDEX", columnNames={"METHOD"})
+    @AdminPresentation(friendlyName="Shipping Method", order=2, group="Description", prominent=true)
     protected String method;
     
     @Column(name = "SERVICE")
     @Index(name="FG_SERVICE_INDEX", columnNames={"SERVICE"})
+    @AdminPresentation(friendlyName="Shipping Service", order=3, group="Description", prominent=true)
     protected String service;
 
     //TODO change column name to RETAIL_SHIPPING_PRICE
     @Column(name = "RETAIL_PRICE")
+    @AdminPresentation(friendlyName="Retail Shipping Price", order=1, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailShippingPrice;
 
     //TODO change column name to SALE_SHIPPING_PRICE
     @Column(name = "SALE_PRICE")
+    @AdminPresentation(friendlyName="Sale Shipping Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal saleShippingPrice;
 
     //TODO change column name to SHIPPING_PRICE
     @Column(name = "PRICE")
+    @AdminPresentation(friendlyName="Shipping Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal shippingPrice;
 
     @Transient
     protected BigDecimal adjustmentPrice;  // retailPrice with adjustments
 
     @Column(name = "TYPE")
+    @AdminPresentation(friendlyName="Fulfillment Group Type", order=4, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.order.service.type.FulfillmentGroupType")
     protected String type = FulfillmentGroupType.SHIPPING.getType();
 
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = CandidateFulfillmentGroupOfferImpl.class, cascade = {CascadeType.ALL})
@@ -126,28 +135,36 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected List<FulfillmentGroupAdjustment> fulfillmentGroupAdjustments = new ArrayList<FulfillmentGroupAdjustment>();
 
     @Column(name = "CITY_TAX")
+    @AdminPresentation(friendlyName="City Tax", order=4, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal cityTax;
 
     @Column(name = "COUNTY_TAX")
+    @AdminPresentation(friendlyName="County Tax", order=5, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal countyTax;
 
     @Column(name = "STATE_TAX")
+    @AdminPresentation(friendlyName="State Tax", order=6, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal stateTax;
     
     @Column(name = "DISTRICT_TAX")
+    @AdminPresentation(friendlyName="District Tax", order=7, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal districtTax;
 
     @Column(name = "COUNTRY_TAX")
+    @AdminPresentation(friendlyName="Country Tax", order=8, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal countryTax;
 
     @Column(name = "TOTAL_TAX")
+    @AdminPresentation(friendlyName="Total Tax", order=9, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Column(name = "DELIVERY_INSTRUCTION")
+    @AdminPresentation(friendlyName="Delivery Instruction", order=4, group="Description")
     protected String deliveryInstruction;
 
     @Column(name = "IS_PRIMARY")
     @Index(name="FG_PRIMARY_INDEX", columnNames={"IS_PRIMARY"})
+    @AdminPresentation(friendlyName="Primary Fulfillment Group", order=5, group="Description")
     protected boolean primary = false;
 
     @ManyToOne(targetEntity = PersonalMessageImpl.class)
@@ -156,13 +173,16 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected PersonalMessage personalMessage;
 
     @Column(name = "MERCHANDISE_TOTAL")
+    @AdminPresentation(friendlyName="Merchandise Total", order=10, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal merchandiseTotal;
 
     @Column(name = "TOTAL")
+    @AdminPresentation(friendlyName="Total", order=11, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal total;
 
     @Column(name = "STATUS")
     @Index(name="FG_STATUS_INDEX", columnNames={"STATUS"})
+    @AdminPresentation(friendlyName="Status", order=6, group="Description")
     protected String status;
     
     @OneToMany(mappedBy = "fulfillmentGroup", targetEntity = FulfillmentGroupFeeImpl.class, cascade = { CascadeType.ALL })
@@ -171,6 +191,7 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     protected List<FulfillmentGroupFee> fulfillmentGroupFees = new ArrayList<FulfillmentGroupFee>();
     
     @Column(name = "SHIPPING_PRICE_TAXABLE")
+    @AdminPresentation(friendlyName="Shipping Price Taxable", order=7, group="Pricing")
     protected Boolean isShippingPriceTaxable = Boolean.FALSE;
 
     public Long getId() {

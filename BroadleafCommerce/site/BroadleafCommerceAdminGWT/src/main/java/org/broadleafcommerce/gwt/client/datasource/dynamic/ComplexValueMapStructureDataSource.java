@@ -31,7 +31,7 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
 	}
 	
 	@Override
-	public void setupFields(String[] fieldNames, Boolean[] canEdit) {
+	public void setupGridFields(String[] fieldNames, Boolean[] canEdit) {
 		if (fieldNames.length > 0) {
 			resetFieldVisibility(fieldNames);
 		}
@@ -56,7 +56,9 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         		gridFields[j].setEditorType(selectItem);
         	}
         	if (j == 0) {
-        		gridFields[j].setFrozen(true);
+        		if (fieldNames == null || fieldNames.length == 0) {
+        			gridFields[j].setFrozen(true);
+        		}
         	}
         	gridFields[j].setHidden(false);
         	gridFields[j].setWidth("*");
@@ -87,7 +89,9 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
 	        		gridFields[j].setHidden(true);
 	        	} else {
 	        		if (j == 0) {
-		        		gridFields[j].setFrozen(true);
+	        			if (fieldNames == null || fieldNames.length == 0) {
+	            			gridFields[j].setFrozen(true);
+	            		}
 		        	}
 	        		gridFields[j].setWidth("*");
 	        		int pos = Arrays.binarySearch(fieldNames, field.getName());
@@ -100,5 +104,13 @@ public class ComplexValueMapStructureDataSource extends ListGridDataSource {
         	}
         }
         getAssociatedGrid().setFields(gridFields);
+        if (fieldNames != null && fieldNames.length > 0) {
+        	int pos = 0;
+        	for (String fieldName : fieldNames) {
+        		int originalPos = getAssociatedGrid().getFieldNum(fieldName);
+        		getAssociatedGrid().reorderField(originalPos, pos);
+        		pos++;
+        	}
+        }
 	}
 }

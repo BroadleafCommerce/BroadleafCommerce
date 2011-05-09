@@ -11,7 +11,7 @@ public class DataSourceFactory {
 
 	public static void createDataSource(String ceilingEntityFullyQualifiedClassname, String name, DynamicEntityServiceAsync service, PersistencePerspective persistencePerspective, AsyncCallback<DataSource> cb, DataSourceModule[] modules) {
 		DynamicEntityDataSource dataSource = new DynamicEntityDataSource(ceilingEntityFullyQualifiedClassname, name, persistencePerspective, service, modules);
-		dataSource.buildFields(cb);
+		dataSource.buildFields(null, cb);
 	}
 	
 }

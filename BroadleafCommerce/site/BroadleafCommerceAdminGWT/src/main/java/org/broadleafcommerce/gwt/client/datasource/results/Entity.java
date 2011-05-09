@@ -8,23 +8,39 @@ public class Entity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private String type;
+	private String[] type;
 	private Property[] properties;
 	
-	public String getType() {
+	public String[] getType() {
 		return type;
 	}
-	
-	public void setType(String type) {
+
+	public void setType(String[] type) {
+		Arrays.sort(type);
 		this.type = type;
 	}
-	
+
 	public Property[] getProperties() {
 		return properties;
 	}
 	
 	public void setProperties(Property[] properties) {
 		this.properties = properties;
+	}
+	
+	public void mergeProperties(String prefix, Entity entity) {
+		int j = 0;
+		Property[] merged = new Property[properties.length + entity.getProperties().length];
+		for (Property property : properties) {
+			merged[j] = property;
+			j++;
+		}
+		for (Property property : entity.getProperties()) {
+			property.setName(prefix + "." + property.getName());
+			merged[j] = property;
+			j++;
+		}
+		properties = merged;
 	}
 	
 	public Property findProperty(String name) {

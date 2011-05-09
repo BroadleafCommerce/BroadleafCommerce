@@ -1,22 +1,15 @@
 package org.broadleafcommerce.gwt.client.view.catalog;
 
-import org.broadleafcommerce.gwt.client.view.dynamic.DynamicListDisplay;
+import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEditDisplay;
+import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
+import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
+import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureView;
 
-import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.grid.ListGrid;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
 import com.smartgwt.client.widgets.toolbar.ToolStripButton;
-import com.smartgwt.client.widgets.tree.TreeGrid;
 
-public interface CategoryDisplay extends DynamicListDisplay<TreeGrid> {
-
-	public ListGrid getAllChildCategoryGrid();
-
-	public ToolStrip getAllChildCategoryToolBar();
-	
-	public ToolStripButton getAddChildCategoryButton();
-	
-	public ToolStripButton getRemoveChildCategoryButton();
+public interface CategoryDisplay extends DynamicEditDisplay {
 	
 	public ToolStripButton getRemoveOrphanedButton();
 
@@ -24,24 +17,16 @@ public interface CategoryDisplay extends DynamicListDisplay<TreeGrid> {
 	
 	public ToolStripButton getInsertOrphanButton();
 	
-	public ToolStripButton getAddDefaultParentCategoryButton();
-
-	public TextItem getDefaultParentCategoryTextItem();
+	public DynamicEntityListDisplay getListDisplay();
 	
-	public ToolStrip getFeaturedProductToolBar();
+	public GridStructureDisplay getMediaDisplay();
 
-	public ToolStripButton getAddFeaturedProductButton();
-
-	public ToolStripButton getRemoveFeaturedProductButton();
-
-	public ListGrid getFeaturedProductGrid();
+	public DynamicFormDisplay getDynamicFormDisplay();
 	
-	public ToolStrip getMediaToolBar();
-
-	public ToolStripButton getAddMediaButton();
-
-	public ToolStripButton getRemoveMediaButton();
-
-	public ListGrid getMediaGrid();
+	public GridStructureDisplay getFeaturedDisplay();
+	
+	public GridStructureDisplay getAllCategoriesDisplay();
+	
+	public GridStructureView getAllProductsDisplay();
 	
 }

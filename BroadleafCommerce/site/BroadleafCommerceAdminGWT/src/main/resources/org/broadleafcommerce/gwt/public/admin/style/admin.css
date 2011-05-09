@@ -6,3 +6,7 @@
     background-color:#b8d0ff;
     color:black;
 }
+
+.editRowDisabled {
+	background-color: #f3f3f3;	
+}

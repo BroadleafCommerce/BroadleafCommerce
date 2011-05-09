@@ -18,7 +18,7 @@
 	
 	<aop:config/>
 	
-	<bean id="cartControllerREST" class="org.broadleafcommerce.order.web.CartControllerREST">
+	<bean id="blCartControllerREST" class="org.broadleafcommerce.order.web.CartControllerREST">
         <property name="cartView" value="shoppingCart/cartSummary"/>
         <property name="cartViewRedirect" value="false"/>
         <property name="addItemView" value="../currentCart.htm"/>
@@ -33,7 +33,7 @@
 		<property name="alwaysUseFullPath" value="true" />
 		<property name="mappings">
 			<props>
-				<prop key="/basket/*">cartControllerREST</prop>
+				<prop key="/basket/*">blCartControllerREST</prop>
 			</props>
 		</property>
 	</bean>

@@ -42,6 +42,8 @@ import org.broadleafcommerce.offer.domain.CandidateItemOfferImpl;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustment;
 import org.broadleafcommerce.offer.domain.OrderItemAdjustmentImpl;
 import org.broadleafcommerce.order.service.type.OrderItemType;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.util.money.Money;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -76,16 +78,24 @@ public class OrderItemImpl implements OrderItem {
     protected Order order;
 
     @Column(name = "RETAIL_PRICE")
+    @AdminPresentation(friendlyName="Retail Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailPrice;
 
     @Column(name = "SALE_PRICE")
+    @AdminPresentation(friendlyName="Sale Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal salePrice;
 
     @Column(name = "PRICE")
+    @AdminPresentation(friendlyName="Price", order=4, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal price;
 
     @Column(name = "QUANTITY", nullable=false)
+    @AdminPresentation(friendlyName="Quantity", order=5, group="Pricing")
     protected int quantity;
+    
+    @Column(name = "NAME")
+    @AdminPresentation(friendlyName="Name", order=1, group="Description", prominent=true)
+    protected String name;
 
     @Transient
     protected BigDecimal adjustmentPrice; // retailPrice with adjustments
@@ -123,6 +133,7 @@ public class OrderItemImpl implements OrderItem {
 
     @Column(name = "ORDER_ITEM_TYPE")
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
+    @AdminPresentation(friendlyName="Order Item Type", order=6, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.order.service.type.OrderItemType")
     protected String orderItemType;
 
     public Money getRetailPrice() {
@@ -258,7 +269,15 @@ public class OrderItemImpl implements OrderItem {
         this.id = id;
     }
 
-    public boolean isInCategory(String categoryName) {
+    public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public boolean isInCategory(String categoryName) {
         Category currentCategory = category;
         if (currentCategory != null) {
             if (currentCategory.getName().equals(categoryName)) {

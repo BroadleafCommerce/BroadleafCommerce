@@ -29,6 +29,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.domain.listener.TemporalTimestampListener;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -50,64 +51,83 @@ public class AddressImpl implements Address {
     protected Long id;
 
     @Column(name = "ADDRESS_LINE1", nullable = false)
+    @AdminPresentation(friendlyName="Address #1", order=6, group="Address")
     protected String addressLine1;
 
     @Column(name = "ADDRESS_LINE2")
+    @AdminPresentation(friendlyName="Address #2", order=7, group="Address")
     protected String addressLine2;
 
     @Column(name = "CITY", nullable = false)
+    @AdminPresentation(friendlyName="City", order=8, group="Address")
     protected String city;
 
     @Column(name = "POSTAL_CODE", nullable = false)
+    @AdminPresentation(friendlyName="Postal Code", order=14, group="Address")
     protected String postalCode;
 
     @Column(name = "COUNTY")
+    @AdminPresentation(friendlyName="County", order=11, group="Address")
     protected String county;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = StateImpl.class, optional = false)
     @JoinColumn(name = "STATE_PROV_REGION")
     @Index(name="ADDRESS_STATE_INDEX", columnNames={"STATE_PROV_REGION"})
+    @AdminPresentation(friendlyName="State", order=9, group="Address")
     protected State state;
 
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = CountryImpl.class, optional = false)
     @JoinColumn(name = "COUNTRY")
     @Index(name="ADDRESS_COUNTRY_INDEX", columnNames={"COUNTRY"})
+    @AdminPresentation(friendlyName="Country", order=12, group="Address")
     protected Country country;
 
     @Column(name = "TOKENIZED_ADDRESS")
+    @AdminPresentation(friendlyName="Tokenized Address", order=15, group="Address")
     protected String tokenizedAddress;
 
     @Column(name = "STANDARDIZED")
+    @AdminPresentation(friendlyName="Standardized", order=16, group="Address")
     protected Boolean standardized = Boolean.FALSE;
 
     @Column(name = "ZIP_FOUR")
+    @AdminPresentation(friendlyName="Four Digit Zip", order=17, group="Address")
     protected String zipFour;
 
     @Column(name = "COMPANY_NAME")
+    @AdminPresentation(friendlyName="Company Name", order=3, group="Address")
     protected String companyName;
 
     @Column(name = "IS_DEFAULT")
+    @AdminPresentation(friendlyName="Default", order=18, group="Address")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
+    @AdminPresentation(friendlyName="Active", order=19, group="Address")
     protected boolean isActive = true;
 
     @Column(name = "FIRST_NAME")
+    @AdminPresentation(friendlyName="First Name", order=1, group="Address")
     protected String firstName;
 
     @Column(name = "LAST_NAME")
+    @AdminPresentation(friendlyName="Last Name", order=2, group="Address")
     protected String lastName;
 
     @Column(name = "PRIMARY_PHONE")
+    @AdminPresentation(friendlyName="Primary Phone", order=4, group="Address")
     protected String primaryPhone;
 
     @Column(name = "SECONDARY_PHONE")
+    @AdminPresentation(friendlyName="Secondary Phone", order=5, group="Address")
     protected String secondaryPhone;
 
     @Column(name = "IS_BUSINESS")
+    @AdminPresentation(friendlyName="Business Address", order=20, group="Address")
     protected boolean isBusiness = false;
 
     @Column(name = "VERIFICATION_LEVEL")
+    @AdminPresentation(friendlyName="Verification Level", order=21, group="Address")
     protected String verificationLevel;
 
     public Long getId() {

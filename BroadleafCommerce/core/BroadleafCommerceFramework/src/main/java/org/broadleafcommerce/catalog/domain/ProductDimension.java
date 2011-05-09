@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.util.DimensionUnitOfMeasureType;
 import org.broadleafcommerce.vendor.service.type.ContainerShapeType;
 import org.broadleafcommerce.vendor.service.type.ContainerSizeType;
@@ -31,35 +33,32 @@ public class ProductDimension implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "WIDTH")
+    @AdminPresentation(friendlyName="Width", order=10, group="Dimension")
     protected BigDecimal width;
 
     @Column(name = "HEIGHT")
+    @AdminPresentation(friendlyName="Height", order=11, group="Dimension")
     protected BigDecimal height;
 
     @Column(name = "DEPTH")
+    @AdminPresentation(friendlyName="Depth", order=12, group="Dimension")
     protected BigDecimal depth;
 
     @Column(name = "GIRTH")
+    @AdminPresentation(friendlyName="Girth", order=13, group="Dimension")
     protected BigDecimal girth;
 
     @Column(name = "CONTAINER_SIZE")
+    @AdminPresentation(friendlyName="Container Size", order=14, group="Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.vendor.usps.service.type.USPSContainerSizeType")
     protected String size;
 
     @Column(name = "CONTAINER_SHAPE")
+    @AdminPresentation(friendlyName="Container Shape", order=15, group="Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.vendor.usps.service.type.USPSContainerShapeType")
     protected String container;
 
     @Column(name = "DIMENSION_UNIT_OF_MEASURE")
+    @AdminPresentation(friendlyName="Units", order=16, group="Dimension", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.util.DimensionUnitOfMeasureType")
     protected String dimensionUnitOfMeasure;
-
-    public DimensionUnitOfMeasureType getDimensionUnitOfMeasure() {
-        return DimensionUnitOfMeasureType.getInstance(dimensionUnitOfMeasure);
-    }
-
-    public void setDimensionUnitOfMeasure(final DimensionUnitOfMeasureType dimensionUnitOfMeasure) {
-    	if (dimensionUnitOfMeasure != null) {
-    		this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
-    	}
-    }
 
     public BigDecimal getWidth() {
         return width;
@@ -122,4 +121,13 @@ public class ProductDimension implements Serializable {
     	}
     }
 
+    public DimensionUnitOfMeasureType getDimensionUnitOfMeasure() {
+        return DimensionUnitOfMeasureType.getInstance(dimensionUnitOfMeasure);
+    }
+
+    public void setDimensionUnitOfMeasure(final DimensionUnitOfMeasureType dimensionUnitOfMeasure) {
+    	if (dimensionUnitOfMeasure != null) {
+    		this.dimensionUnitOfMeasure = dimensionUnitOfMeasure.getType();
+    	}
+    }
 }

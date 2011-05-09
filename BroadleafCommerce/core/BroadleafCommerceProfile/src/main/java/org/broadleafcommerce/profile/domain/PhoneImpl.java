@@ -25,6 +25,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -43,12 +44,15 @@ public class PhoneImpl implements Phone {
     protected Long id;
 
     @Column(name = "PHONE_NUMBER", nullable=false)
+    @AdminPresentation(friendlyName="Phone Number", order=1, group="Phone")
     protected String phoneNumber;
 
     @Column(name = "IS_DEFAULT")
+    @AdminPresentation(friendlyName="Default", order=2, group="Phone")
     protected boolean isDefault = false;
 
     @Column(name = "IS_ACTIVE")
+    @AdminPresentation(friendlyName="Active", order=3, group="Phone")
     protected boolean isActive = true;
 
     public Long getId() {

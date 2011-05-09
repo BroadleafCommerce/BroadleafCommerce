@@ -65,6 +65,13 @@ public class BaseCtoConverter extends NestedPropertyCriteriaBasedConverter {
                 FilterCriterionProviders.EQ, FilterValueConverters.LONG));
     }
     
+    public void addStringEQMapping(String mappingGroupName, String propertyId,
+            AssociationPath associationPath, String targetPropertyName) {
+        addMapping(mappingGroupName, new FilterAndSortMapping<String>(
+                propertyId, associationPath, targetPropertyName,
+                FilterCriterionProviders.EQ, FilterValueConverters.STRING));
+    }
+    
     public void addNullMapping(String mappingGroupName, String propertyId,
             AssociationPath associationPath, String targetPropertyName) {
         addMapping(mappingGroupName, new FilterAndSortMapping<Long>(

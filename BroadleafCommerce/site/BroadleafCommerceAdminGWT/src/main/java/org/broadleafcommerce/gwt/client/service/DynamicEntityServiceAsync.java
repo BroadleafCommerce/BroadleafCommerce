@@ -1,8 +1,11 @@
 package org.broadleafcommerce.gwt.client.service;
 
+import java.util.Map;
+
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.results.DynamicResultSet;
 import org.broadleafcommerce.gwt.client.datasource.results.Entity;
+import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -12,7 +15,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public interface DynamicEntityServiceAsync {
     
-	void inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, AsyncCallback<DynamicResultSet> cb);
+	void inspect(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, String[] customCriteria, Map<String, FieldMetadata> metadataOverrides, AsyncCallback<DynamicResultSet> cb);
 	
 	void fetch(String ceilingEntityFullyQualifiedClassname, CriteriaTransferObject cto, PersistencePerspective persistencePerspective, String[] customCriteria, AsyncCallback<DynamicResultSet> cb);
     

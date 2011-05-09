@@ -2,15 +2,16 @@ package org.broadleafcommerce.gwt.client.datasource.dynamic.module;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.broadleafcommerce.gwt.client.Main;
 import org.broadleafcommerce.gwt.client.datasource.Validators;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.EntityOperationType;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.EntityServiceAsyncCallback;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.AbstractDynamicDataSource;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspectiveItemType;
@@ -18,6 +19,7 @@ import org.broadleafcommerce.gwt.client.datasource.relations.operations.Operatio
 import org.broadleafcommerce.gwt.client.datasource.results.ClassMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.DynamicResultSet;
 import org.broadleafcommerce.gwt.client.datasource.results.Entity;
+import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.gwt.client.datasource.results.PolymorphicEntity;
 import org.broadleafcommerce.gwt.client.datasource.results.Property;
@@ -47,6 +49,7 @@ import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.SortSpecifier;
 import com.smartgwt.client.data.fields.DataSourceBooleanField;
 import com.smartgwt.client.data.fields.DataSourceDateTimeField;
+import com.smartgwt.client.data.fields.DataSourceEnumField;
 import com.smartgwt.client.data.fields.DataSourceFloatField;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
@@ -62,17 +65,23 @@ public class BasicEntityModule implements DataSourceModule {
 	protected final DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy.MM.dd HH:mm:ss");
 	
 	protected ForeignKey currentForeignKey;
-	protected DynamicEntityDataSource dataSource;
+	protected AbstractDynamicDataSource dataSource;
 	protected String linkedValue;
 	protected DynamicEntityServiceAsync service;
 	protected final String ceilingEntityFullyQualifiedClassname;
 	protected PersistencePerspective persistencePerspective;
 	protected Long loadLevelCount = 0L;
+	protected Map<String, FieldMetadata> metadataOverrides;
 	
 	public BasicEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+		this(ceilingEntityFullyQualifiedClassname, persistencePerspective, service, null);
+	}
+	
+	public BasicEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
 		this.service = service;
 		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
 		this.persistencePerspective = persistencePerspective;
+		this.metadataOverrides = metadataOverrides;
 	}
 	
 	/**
@@ -192,37 +201,91 @@ public class BasicEntityModule implements DataSourceModule {
     	return OperationType.ENTITY.equals(operationType) || OperationType.FOREIGNKEY.equals(operationType);
     }
     
-    public void executeFetch(final String requestId, final DSRequest request, final DSResponse response) {
+    public void executeFetch(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		Main.NON_MODAL_PROGRESS.startProgress();
 		CriteriaTransferObject cto = getCto(request);
-		service.fetch(ceilingEntityFullyQualifiedClassname, cto, persistencePerspective, null, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
+		service.fetch(ceilingEntityFullyQualifiedClassname, cto, persistencePerspective, customCriteria, new EntityServiceAsyncCallback<DynamicResultSet>(EntityOperationType.FETCH, requestId, request, response, dataSource) {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				TreeNode[] recordList = buildRecords(result, null);
 				response.setData(recordList);
 				response.setTotalRows(result.getTotalRecords());
+				if (cb != null) {
+					cb.onSuccess(dataSource);
+				}
 				dataSource.processResponse(requestId, response);
+			}
+			
+			@Override
+			protected void onSecurityException(ApplicationSecurityException exception) {
+				super.onSecurityException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onOtherException(Throwable exception) {
+				super.onOtherException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+				super.onError(opType, requestId, request, response, caught);
+				if (cb != null) {
+					cb.onFailure(caught);
+				}
 			}
 		});
 	}
     
-    public void executeAdd(final String requestId, final DSRequest request, final DSResponse response) {
+    public void executeAdd(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		Main.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record);
-        service.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
+        service.add(ceilingEntityFullyQualifiedClassname, entity, persistencePerspective, customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.ADD, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(result);
-				TreeNode record = (TreeNode) buildRecord(result);
+				TreeNode record = (TreeNode) buildRecord(result, false);
 				TreeNode[] recordList = new TreeNode[]{record};
 				response.setData(recordList);
+				if (cb != null) {
+					cb.onSuccess(dataSource);
+				}
 				dataSource.processResponse(requestId, response);
+			}
+			
+			@Override
+			protected void onSecurityException(ApplicationSecurityException exception) {
+				super.onSecurityException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onOtherException(Throwable exception) {
+				super.onOtherException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+				super.onError(opType, requestId, request, response, caught);
+				if (cb != null) {
+					cb.onFailure(caught);
+				}
 			}
 		});
 	}
     
-    public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response) {
+    public void executeUpdate(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		Main.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         final TreeNode record = new TreeNode(data);
@@ -230,67 +293,144 @@ public class BasicEntityModule implements DataSourceModule {
 		String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
-            	String type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttribute("type");
+            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("type");
             	entity.setType(type);
             }
         }
-        service.update(entity, persistencePerspective, null, new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
+        service.update(entity, persistencePerspective, customCriteria, new EntityServiceAsyncCallback<Entity>(EntityOperationType.UPDATE, requestId, request, response, dataSource) {
 			public void onSuccess(Entity result) {
 				super.onSuccess(null);
+				if (cb != null) {
+					cb.onSuccess(dataSource);
+				}
 				dataSource.processResponse(requestId, response);
+			}
+			
+			@Override
+			protected void onSecurityException(ApplicationSecurityException exception) {
+				super.onSecurityException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onOtherException(Throwable exception) {
+				super.onOtherException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+				super.onError(opType, requestId, request, response, caught);
+				if (cb != null) {
+					cb.onFailure(caught);
+				}
 			}
 		});
 	}
     
-    public void executeRemove(final String requestId, final DSRequest request, final DSResponse response) {
-		Main.NON_MODAL_PROGRESS.startProgress();
+    public void executeRemove(final String requestId, final DSRequest request, final DSResponse response, final String[] customCriteria, final AsyncCallback<DataSource> cb) {
+    	Main.NON_MODAL_PROGRESS.startProgress();
 		JavaScriptObject data = request.getData();
         TreeNode record = new TreeNode(data);
         Entity entity = buildEntity(record);
 		String componentId = request.getComponentId();
         if (componentId != null) {
             if (entity.getType() == null) {
-            	String type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttribute("type");
+            	String[] type = ((ListGrid) Canvas.getById(componentId)).getSelectedRecord().getAttributeAsStringArray("type");
             	entity.setType(type);
             }
         }
-        service.remove(entity, persistencePerspective, null, new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
+        service.remove(entity, persistencePerspective, customCriteria, new EntityServiceAsyncCallback<Void>(EntityOperationType.REMOVE, requestId, request, response, dataSource) {
 			public void onSuccess(Void item) {
 				super.onSuccess(null);
+				if (cb != null) {
+					cb.onSuccess(dataSource);
+				}
 				dataSource.processResponse(requestId, response);
 			}
+
+			@Override
+			protected void onSecurityException(ApplicationSecurityException exception) {
+				super.onSecurityException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onOtherException(Throwable exception) {
+				super.onOtherException(exception);
+				if (cb != null) {
+					cb.onFailure(exception);
+				}
+			}
+
+			@Override
+			protected void onError(EntityOperationType opType, String requestId, DSRequest request, DSResponse response, Throwable caught) {
+				super.onError(opType, requestId, request, response, caught);
+				if (cb != null) {
+					cb.onFailure(caught);
+				}
+			}
+			
 		});
-	}
+    }
     
-    public Record buildRecord(Entity entity) {
+    public Record buildRecord(Entity entity, Boolean updateId) {
 		TreeNode record = new TreeNode();
-		return updateRecord(entity, record, true);
+		return updateRecord(entity, record, updateId);
 	}
 
 	public Record updateRecord(Entity entity, Record record, Boolean updateId) {
+		String id = entity.findProperty("id").getValue();
+		if (updateId) {
+			id = id + "_" + loadLevelCount;
+			loadLevelCount++;
+		}
 		for (Property property : entity.getProperties()){
 			String attributeName = property.getName();
-			if (property.getValue() != null && dataSource.getField(attributeName).getType().equals(FieldType.DATETIME)) {
+			if (
+				property.getValue() != null && 
+				dataSource.getField(attributeName).getType().equals(FieldType.DATETIME)
+			) {
 				record.setAttribute(attributeName, formatter.parse(property.getValue()));
-			} else if (dataSource.getField(attributeName).getType().equals(FieldType.BOOLEAN) && property.getValue() == null && dataSource.getField(attributeName).getRequired()) {
-				record.setAttribute(attributeName, false);
-			} else if (property.getType() != null && SupportedFieldType.valueOf(property.getType()).equals(SupportedFieldType.FOREIGN_KEY)) {
+			} else if (
+				dataSource.getField(attributeName).getType().equals(FieldType.BOOLEAN)
+			) {
+				if (property.getValue() == null) {
+					record.setAttribute(attributeName, false);
+				} else {
+					String lower = property.getValue().toLowerCase();
+					if (lower.equals("y") || lower.equals("yes") || lower.equals("true") || lower.equals("1")) {
+						record.setAttribute(attributeName, true);
+					} else {
+						record.setAttribute(attributeName, false);
+					}
+				}
+			} else if (
+				property.getMetadata() != null && property.getMetadata().getFieldType() != null &&
+				property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
+			) {
 				record.setAttribute(attributeName, linkedValue);
 			} else {
 				String propertyValue;
 				if (property.getName().equals("id")) {
-					if (updateId) {
-						propertyValue = property.getValue() + "_" + loadLevelCount;
-						loadLevelCount++;
-						record.setAttribute("id", propertyValue);
-					}
+					record.setAttribute("id", id);
 				} else {
 					propertyValue = property.getValue();
 					record.setAttribute(attributeName, propertyValue);
 				}
 			}
+			if (property.getDisplayValue() != null) {
+				record.setAttribute("__display_"+attributeName, property.getDisplayValue());
+				//dataSource.getFormItemCallbackHandlerManager().setDisplayValue(attributeName, id, property.getDisplayValue());
+			}
 		}
-		String entityType = entity.getType();
+		String[] entityType = entity.getType();
 		record.setAttribute("type", entityType);
 		return record;
 	}
@@ -300,7 +440,7 @@ public class BasicEntityModule implements DataSourceModule {
 		int decrement = 0;
 		for (Entity entity : result.getRecords()){
 			if (filterOutIds == null || (filterOutIds != null && Arrays.binarySearch(filterOutIds, entity.findProperty("id").getValue()) < 0)) {
-				TreeNode record = (TreeNode) buildRecord(entity);
+				TreeNode record = (TreeNode) buildRecord(entity, false);
 				recordList.add(record);
 			} else {
 				decrement++;
@@ -314,7 +454,7 @@ public class BasicEntityModule implements DataSourceModule {
     
     public Entity buildEntity(Record record) {
 		Entity entity = new Entity();
-		entity.setType(record.getAttribute("type"));
+		entity.setType(record.getAttributeAsStringArray("type"));
 		List<Property> properties = new ArrayList<Property>();
 		String[] attributes = record.getAttributes();
 		for (String attribute : attributes) {
@@ -338,8 +478,8 @@ public class BasicEntityModule implements DataSourceModule {
 		return entity;
 	}
     
-    public void buildFields(final AsyncCallback<DataSource> cb) {
-		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, new AbstractCallback<DynamicResultSet>() {
+    public void buildFields(final String[] customCriteria, final AsyncCallback<DataSource> cb) {
+		AppServices.DYNAMIC_ENTITY.inspect(ceilingEntityFullyQualifiedClassname, persistencePerspective, customCriteria, metadataOverrides, new AbstractCallback<DynamicResultSet>() {
 			
 			@Override
 			protected void onOtherException(Throwable exception) {
@@ -356,12 +496,13 @@ public class BasicEntityModule implements DataSourceModule {
 			public void onSuccess(DynamicResultSet result) {
 				super.onSuccess(result);
 				ClassMetadata metadata = result.getClassMetaData();
-				filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINTABLE});
+				filterProperties(metadata, new MergedPropertyType[]{MergedPropertyType.PRIMARY, MergedPropertyType.JOINSTRUCTURE});
 				
 				//Add a hidden field to store the polymorphic type for this entity
 				DataSourceField typeField = new DataSourceTextField("type");
 				typeField.setCanEdit(false);
 				typeField.setHidden(true);
+				typeField.setAttribute("permanentlyHidden", true);
 				dataSource.addField(typeField);
 				
 				for (PolymorphicEntity polymorphicEntity : metadata.getPolymorphicEntities()){
@@ -379,38 +520,43 @@ public class BasicEntityModule implements DataSourceModule {
 	
 	protected void filterProperties(ClassMetadata metadata, MergedPropertyType[] includeTypes) throws IllegalStateException {
 		for (Property property : metadata.getProperties()) {
-			String mergedPropertyType = property.getMergedPropertyType();
+			String mergedPropertyType = property.getMetadata().getMergedPropertyType().toString();
 			if (Arrays.binarySearch(includeTypes, MergedPropertyType.valueOf(mergedPropertyType)) >= 0) {
 				String rawName = property.getName();
 				String propertyName = rawName;
-				String fieldType = property.getType();
-				Long length = property.getLength();
-				Boolean required = property.getRequired();
+				String fieldType = property.getMetadata().getFieldType()==null?null:property.getMetadata().getFieldType().toString();
+				Long length = property.getMetadata().getLength()==null?null:property.getMetadata().getLength().longValue();
+				Boolean required = property.getMetadata().getRequired();
 				if (required == null) {
 					required = false;
 				}
-				Boolean mutable = property.getMutable();
-				String inheritedFromType = property.getInheritedFromType();
-				String availableToTypes = property.getAvailableToTypes();
-				String foreignKeyClass = property.getForeignKeyClass();
-				String foreignKeyProperty = property.getForeignKeyProperty();
-				String friendlyName = property.getFriendlyName();
+				Boolean mutable = property.getMetadata().getMutable();
+				String inheritedFromType = property.getMetadata().getInheritedFromType();
+				String[] availableToTypes = property.getMetadata().getAvailableToTypes();
+				String foreignKeyClass = property.getMetadata().getForeignKeyClass();
+				String foreignKeyProperty = property.getMetadata().getForeignKeyProperty();
+				String friendlyName = property.getMetadata().getPresentationAttributes().getFriendlyName();
 				if (friendlyName == null) {
 					friendlyName = property.getName();
 				}
-				Boolean hidden = property.getHidden();
-				String group = property.getGroup();
-				Boolean largeEntry = property.getLargeEntry();
-				Boolean prominent = property.getProminent();
-				Integer order = property.getOrder();
+				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
+				String group = property.getMetadata().getPresentationAttributes().getGroup();
+				Boolean largeEntry = property.getMetadata().getPresentationAttributes().isLargeEntry();
+				Boolean prominent = property.getMetadata().getPresentationAttributes().isProminent();
+				Integer order = property.getMetadata().getPresentationAttributes().getOrder();
+				String columnWidth = property.getMetadata().getPresentationAttributes().getColumnWidth();
+				String[] enumerationValues = property.getMetadata().getEnumerationValues();
 				DataSourceField field;
 				switch(SupportedFieldType.valueOf(fieldType)){
 				case ID:
-					field = new DataSourceTextField("id");
+					if (propertyName.indexOf(".") >= 0) {
+						field = new DataSourceTextField(propertyName);
+					} else {
+						field = new DataSourceTextField("id");
+						field.setPrimaryKey(true);
+					}
 					field.setCanEdit(false);
-					field.setPrimaryKey(true);
-					field.setHidden(true);
-					field.setAttribute("permanentlyHidden", true);
+					hidden = true;
 					field.setRequired(required);
 					break;
 				case BOOLEAN:
@@ -444,7 +590,7 @@ public class BasicEntityModule implements DataSourceModule {
 			        field.setCanEdit(mutable);
 			        field.setRequired(required);
 			        break;
-				case FOREIGN_KEY:
+				case FOREIGN_KEY:{
 					field = new DataSourceTextField(propertyName, friendlyName);
 					String dataSourceName = null;
 					ForeignKey foreignField = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
@@ -456,16 +602,27 @@ public class BasicEntityModule implements DataSourceModule {
 					} else {
 						field.setForeignKey(dataSourceName+"."+foreignKeyProperty);
 					}
-					//field.setForeignKey(foreignKeyProperty);
-					field.setHidden(true);
-					field.setAttribute("permanentlyHidden", true);
+					if (hidden == null) {
+						hidden = true;
+					}
 					field.setRequired(required);
-					break;
-				case ADDITIONAL_FOREIGN_KEY:
+					break;}
+				case ADDITIONAL_FOREIGN_KEY:{
 					field = new DataSourceTextField(propertyName, friendlyName);
-					field.setHidden(true);
-					field.setAttribute("permanentlyHidden", true);
+					if (hidden == null) {
+						hidden = true;
+					}
 					field.setRequired(required);
+					break;}
+				case BROADLEAF_ENUMERATION:
+					field = new DataSourceEnumField(propertyName, friendlyName);
+					field.setCanEdit(mutable);
+					field.setRequired(required);
+					LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+	        		for (String value : enumerationValues) {
+	        			valueMap.put(value, value);
+	        		}
+	        		field.setValueMap(valueMap);
 					break;
 				default:
 					field = new DataSourceTextField(propertyName, friendlyName);
@@ -476,6 +633,9 @@ public class BasicEntityModule implements DataSourceModule {
 				if (hidden != null) {
 					field.setHidden(hidden);
 					field.setAttribute("permanentlyHidden", hidden);
+				} else if (field.getAttribute("permanentlyHidden")==null){
+					field.setHidden(false);
+					field.setAttribute("permanentlyHidden", false);
 				}
 				if (group != null) {
 					field.setAttribute("formGroup", group);
@@ -492,6 +652,12 @@ public class BasicEntityModule implements DataSourceModule {
 				if (length != null) {
 					field.setLength(length.intValue());
 				}
+				if (columnWidth != null) {
+					field.setAttribute("columnWidth", columnWidth);
+				}
+				if (enumerationValues != null) {
+					field.setAttribute("enumerationValues", enumerationValues);
+				}
 				field.setAttribute("inheritedFromType", inheritedFromType);
 				field.setAttribute("availableToTypes", availableToTypes);
 				field.setAttribute("fieldType", fieldType);
@@ -502,7 +668,7 @@ public class BasicEntityModule implements DataSourceModule {
 		}
 	}
 
-	public void setDataSource(DynamicEntityDataSource dataSource) {
+	public void setDataSource(AbstractDynamicDataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 }

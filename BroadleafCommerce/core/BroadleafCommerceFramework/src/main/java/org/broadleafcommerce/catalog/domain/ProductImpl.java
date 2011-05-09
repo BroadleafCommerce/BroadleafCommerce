@@ -35,8 +35,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
@@ -104,39 +104,40 @@ public class ProductImpl implements Product {
     @Column(name = "NAME", nullable=false)
     @SearchableProperty(name="productName")
     @Index(name="PRODUCT_NAME_INDEX", columnNames={"NAME"})
-    @AdminPresentation(friendlyName="Name", order=1, group="Description", prominent=true, columnWidth="15%")
+    @AdminPresentation(friendlyName="Name", order=1, group="Product Description", prominent=true, columnWidth="25%")
     protected String name;
 
     /** The description. */
     @Column(name = "DESCRIPTION")
-    @AdminPresentation(friendlyName="Description", order=2, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="Description", order=2, group="Product Description", prominent=true, largeEntry=true)
     protected String description;
 
     /** The long description. */
     @Column(name = "LONG_DESCRIPTION")
     @SearchableProperty(name="productDescription")
+    @AdminPresentation(friendlyName="Long Description", order=3, group="Product Description", prominent=false, largeEntry=true)
     protected String longDescription;
 
     /** The active start date. */
     @Column(name = "ACTIVE_START_DATE")
-    @AdminPresentation(friendlyName="Active Start Date", order=5, group="Active Date Range")
+    @AdminPresentation(friendlyName="Active Start Date", order=8, group="Active Date Range")
     protected Date activeStartDate;
 
     /** The active end date. */
     @Column(name = "ACTIVE_END_DATE")
-    @AdminPresentation(friendlyName="Active End Date", order=6, group="Active Date Range")
+    @AdminPresentation(friendlyName="Active End Date", order=9, group="Active Date Range")
     protected Date activeEndDate;
 
     /** The product model number */
     @Column(name = "MODEL")
     @SearchableProperty(name="productModel")
-    @AdminPresentation(friendlyName="Model", order=3, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="Model", order=4, group="Product Description", prominent=true)
     protected String model;
 
     /** The manufacture name */
     @Column(name = "MANUFACTURE")
     @SearchableProperty(name="productManufacturer")
-    @AdminPresentation(friendlyName="Manufacturer", order=4, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="Manufacturer", order=5, group="Product Description", prominent=true)
     protected String manufacturer;
 
     /** The product dimensions **/
@@ -181,12 +182,13 @@ public class ProductImpl implements Product {
     protected Map<String, Media> productMedia = new HashMap<String , Media>();
 
     /** The default category. */
-    @OneToOne(targetEntity = CategoryImpl.class)
+    @ManyToOne(targetEntity = CategoryImpl.class)
     @JoinColumn(name = "DEFAULT_CATEGORY_ID")
     @Index(name="PRODUCT_CATEGORY_INDEX", columnNames={"DEFAULT_CATEGORY_ID"})
+    @AdminPresentation(friendlyName="Default Category", order=6, group="Product Description")
     protected Category defaultCategory;
 
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = CategoryImpl.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "BLC_CATEGORY_PRODUCT_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "CATEGORY_ID", nullable=true))
     @Cascade(value={org.hibernate.annotations.CascadeType.MERGE, org.hibernate.annotations.CascadeType.PERSIST})    
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
@@ -194,10 +196,17 @@ public class ProductImpl implements Product {
     protected List<Category> allParentCategories = new ArrayList<Category>();
 
     @Column(name = "IS_FEATURED_PRODUCT", nullable=false)
+    @AdminPresentation(friendlyName="Featured Product", order=6, group="Product Description", prominent=false)
     protected boolean isFeaturedProduct = false;
 
     @Column(name = "IS_MACHINE_SORTABLE")
+    @AdminPresentation(friendlyName="Machine Sortable", order=7, group="Product Description", prominent=false)
     protected boolean isMachineSortable = true;
+    
+    @OneToMany(mappedBy = "product", targetEntity = ProductAttributeImpl.class, cascade = {CascadeType.ALL})
+    @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
+    @BatchSize(size = 50)
+    protected List<ProductAttribute> productAttributes  = new ArrayList<ProductAttribute>();
 
     /** The skus. */
     @Transient
@@ -564,7 +573,15 @@ public class ProductImpl implements Product {
         this.weight = weight;
     }
 
-    @Override
+    public List<ProductAttribute> getProductAttributes() {
+		return productAttributes;
+	}
+
+	public void setProductAttributes(List<ProductAttribute> productAttributes) {
+		this.productAttributes = productAttributes;
+	}
+
+	@Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

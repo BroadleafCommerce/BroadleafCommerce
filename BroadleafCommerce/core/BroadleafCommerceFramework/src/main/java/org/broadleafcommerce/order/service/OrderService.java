@@ -135,4 +135,7 @@ public interface OrderService {
     public Order findOrderByOrderNumber (String orderNumber);
 
     public void removePaymentsFromOrder(Order order, PaymentInfoType paymentInfoType);
+    
+    public DiscreteOrderItemRequest createDiscreteOrderItemRequest(Long skuId, Long productId, Long categoryId, Integer quantity);
+    
 }

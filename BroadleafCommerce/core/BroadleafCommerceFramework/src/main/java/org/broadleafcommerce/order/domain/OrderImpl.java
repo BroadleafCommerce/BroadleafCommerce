@@ -57,6 +57,8 @@ import org.broadleafcommerce.offer.domain.OrderAdjustmentImpl;
 import org.broadleafcommerce.order.service.type.OrderStatus;
 import org.broadleafcommerce.payment.domain.PaymentInfo;
 import org.broadleafcommerce.payment.domain.PaymentInfoImpl;
+import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.SupportedFieldType;
 import org.broadleafcommerce.profile.domain.Customer;
 import org.broadleafcommerce.profile.domain.CustomerImpl;
 import org.broadleafcommerce.util.money.Money;
@@ -85,6 +87,7 @@ public class OrderImpl implements Order {
 
     @Column(name = "NAME")
     @Index(name="ORDER_NAME_INDEX", columnNames={"NAME"})
+    @AdminPresentation(friendlyName="Name", group="Order", order=1, prominent=true)
     protected String name;
 
     @ManyToOne(targetEntity = CustomerImpl.class, optional=false)
@@ -94,44 +97,57 @@ public class OrderImpl implements Order {
 
     @Column(name = "ORDER_STATUS")
     @Index(name="ORDER_STATUS_INDEX", columnNames={"ORDER_STATUS"})
+    @AdminPresentation(friendlyName="Status", group="Order", order=2, prominent=true)
     protected String status;
 
     @Column(name = "CITY_TAX")
+    @AdminPresentation(friendlyName="City Tax", group="Order", order=4, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal cityTax;
 
     @Column(name = "COUNTY_TAX")
+    @AdminPresentation(friendlyName="County Tax", group="Order", order=5, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal countyTax;
 
     @Column(name = "STATE_TAX")
+    @AdminPresentation(friendlyName="State Tax", group="Order", order=6, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal stateTax;
     
     @Column(name = "DISTRICT_TAX")
+    @AdminPresentation(friendlyName="District Tax", group="Order", order=7, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal districtTax;
 
     @Column(name = "COUNTRY_TAX")
+    @AdminPresentation(friendlyName="Country Tax", group="Order", order=8, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal countryTax;
 
     @Column(name = "TOTAL_TAX")
+    @AdminPresentation(friendlyName="Total Tax", group="Order", order=9, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalTax;
 
     @Column(name = "TOTAL_SHIPPING")
+    @AdminPresentation(friendlyName="Total Shipping", group="Order", order=10, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal totalShipping;
 
     @Column(name = "ORDER_SUBTOTAL")
+    @AdminPresentation(friendlyName="Subtotal", group="Order", order=3, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal subTotal;
 
     @Column(name = "ORDER_TOTAL")
+    @AdminPresentation(friendlyName="Total", group="Order", order=11, fieldType=SupportedFieldType.MONEY)
     protected BigDecimal total;
 
     @Column(name = "SUBMIT_DATE")
+    @AdminPresentation(friendlyName="Submit Date", group="Order", order=12)
     protected Date submitDate;
 
     @Column(name = "ORDER_NUMBER")
     @Index(name="ORDER_NUMBER_INDEX", columnNames={"ORDER_NUMBER"})
+    @AdminPresentation(friendlyName="Order Number", group="Order", order=3, prominent=true)
     private String orderNumber;
 
     @Column(name = "EMAIL_ADDRESS")
     @Index(name="ORDER_EMAIL_INDEX", columnNames={"EMAIL_ADDRESS"})
+    @AdminPresentation(friendlyName="Email Address", group="Order", order=13)
     protected String emailAddress;
 
     @Transient
