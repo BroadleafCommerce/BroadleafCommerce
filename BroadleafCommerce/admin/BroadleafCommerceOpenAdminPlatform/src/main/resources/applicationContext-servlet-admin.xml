@@ -9,12 +9,15 @@
     
     <aop:config/>
     
-    <bean id="urlMapping" class="com.gwtincubator.security.server.GWTSecuredHandler">
+    <bean id="urlMapping" class="org.broadleafcommerce.gwt.security.CompatibleGWTSecuredHandler">
         <property name="mappings">
             <map>
                 <entry key="/**/security.service" value-ref="blAdminSecurityRemoteService" />
                 <entry key="/**/dynamic.entity.service" value-ref="blDynamicEntityRemoteService" />
             </map>
+        </property>
+        <property name="serviceExporterFactory">
+            <bean class="org.broadleafcommerce.gwt.security.CompatibleGWTSecuredRPCServiceExporterFactory"/>
         </property>
     </bean>
 	

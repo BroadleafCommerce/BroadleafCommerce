@@ -13,25 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.core.service;
+package org.broadleafcommerce.gwt.security;
 
-import java.util.List;
+import org.gwtwidgets.server.spring.RPCServiceExporter;
+import org.gwtwidgets.server.spring.RPCServiceExporterFactory;
 
-import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
-import org.broadleafcommerce.profile.core.domain.User;
-import org.broadleafcommerce.profile.core.domain.UserRole;
+/**
+ * 
+ * @author jfischer
+ */
+public class CompatibleGWTSecuredRPCServiceExporterFactory implements RPCServiceExporterFactory {
 
-public interface UserService {
-
-    public User saveUser(User user);
-
-    public User readUserByUsername(String username);
-
-    public List<UserRole> readUserRolesByUserId(Long userId);
-
-    public User readUserByEmail(String emailAddress);
-
-    public User changePassword(PasswordChange passwordChange);
-
-    public User readUserById(Long userId);
+	public RPCServiceExporter create() {
+		CompatibleGWTSecuredRPCServiceExporter exporter = new CompatibleGWTSecuredRPCServiceExporter();
+		return exporter;
+	}
 }

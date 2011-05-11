@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.broadleafcommerce.gwt.client.AbstractModule;
 import org.broadleafcommerce.gwt.client.BLCMain;
+import org.broadleafcommerce.gwt.client.validation.ValidationFactoryManager;
 
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.widgets.ImgButton;
@@ -15,6 +16,8 @@ public class AdminModule extends AbstractModule {
 	public static final AdminMessages ADMINMESSAGES = GWT.create(AdminMessages.class);
 	
 	public void onModuleLoad() {
+		ValidationFactoryManager.getInstance().getConstants().add(AdminModule.ADMINMESSAGES);
+		
 		setModuleTitle(AdminModule.ADMINMESSAGES.adminModuleTitle());
 		setModuleKey("BLCAdmin");
 		

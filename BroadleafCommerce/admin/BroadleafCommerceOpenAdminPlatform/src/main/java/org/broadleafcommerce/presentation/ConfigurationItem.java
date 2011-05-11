@@ -13,25 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.profile.core.service;
+package org.broadleafcommerce.presentation;
 
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
-import org.broadleafcommerce.profile.core.domain.User;
-import org.broadleafcommerce.profile.core.domain.UserRole;
 
-public interface UserService {
-
-    public User saveUser(User user);
-
-    public User readUserByUsername(String username);
-
-    public List<UserRole> readUserRolesByUserId(Long userId);
-
-    public User readUserByEmail(String emailAddress);
-
-    public User changePassword(PasswordChange passwordChange);
-
-    public User readUserById(Long userId);
+/**
+ * 
+ * @author jfischer
+ *
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+public @interface ConfigurationItem {
+	
+	/**
+	 * The name of the validation configuration item
+	 * 
+	 * @return the config item name
+	 */
+	String itemName();
+	
+	/**
+	 * The value for the validation configuration item
+	 * 
+	 * @return the config item value
+	 */
+	String itemValue();
 }

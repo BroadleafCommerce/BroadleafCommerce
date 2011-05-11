@@ -48,6 +48,8 @@ import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.server.changeset.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.ConfigurationItem;
+import org.broadleafcommerce.presentation.ValidationConfiguration;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -424,6 +426,17 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				attr.setColumnWidth(annot.columnWidth());
 				attr.setBroadleafEnumeration(annot.broadleafEnumeration());
 				attr.setReadOnly(annot.readOnly());
+				if (annot.validationConfigurations().length != 0) {
+					ValidationConfiguration[] configurations = annot.validationConfigurations();
+					for (ValidationConfiguration configuration : configurations) {
+						ConfigurationItem[] items = configuration.configurationItems();
+						Map<String, String> itemMap = new HashMap<String, String>();
+						for (ConfigurationItem item : items) {
+							itemMap.put(item.itemName(), item.itemValue());
+						}
+						attr.getValidationConfigurations().put(configuration.validationImplementation(), itemMap);
+					}
+				}
 				attributes.put(field.getName(), attr);
 			}
 		}
@@ -663,6 +676,8 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 				returnedClass.equals(Calendar.class) || returnedClass.equals(Date.class) || returnedClass.equals(Timestamp.class)
 		) {
 			fields.put(propertyName, getFieldMetadata(prefix, propertyName, propertyIterator, SupportedFieldType.DATE, type, targetClass, presentationAttribute, mergedPropertyType, metadataOverrides));
+		} else if (explicitType != null && explicitType.equals(SupportedFieldType.PASSWORD)) {
+			fields.put(propertyName, getFieldMetadata(prefix, propertyName, propertyIterator, SupportedFieldType.PASSWORD, type, targetClass, presentationAttribute, mergedPropertyType, metadataOverrides));
 		} else if (
 				(explicitType != null && explicitType.equals(SupportedFieldType.STRING)) || returnedClass.equals(String.class)
 		) {

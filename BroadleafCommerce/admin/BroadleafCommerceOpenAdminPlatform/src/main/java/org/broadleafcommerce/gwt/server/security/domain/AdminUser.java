@@ -30,4 +30,6 @@ public interface AdminUser extends Serializable {
     public void setEmail(String email);
     public Set<AdminRole> getAllRoles();
     public void setAllRoles(Set<AdminRole> allRoles);
+    public String getUnencodedPassword();
+    public void setUnencodedPassword(String unencodedPassword);
 }

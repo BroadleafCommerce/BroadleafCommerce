@@ -144,7 +144,7 @@ public class CategoryPresenter extends DynamicEntityPresenter implements Instant
 		getDisplay().getRemoveOrphanedButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					SC.confirm(AdminModule.ADMINMESSAGES.confirmDelete(getDisplay().getOrphanedCategoryGrid().getSelectedRecord().getAttribute("name")), new BooleanCallback() {
+					SC.confirm(AdminModule.ADMINMESSAGES.confirmDelete(), new BooleanCallback() {
 						public void execute(Boolean value) {
 							if (value) {
 								getDisplay().getOrphanedCategoryGrid().removeSelectedData();

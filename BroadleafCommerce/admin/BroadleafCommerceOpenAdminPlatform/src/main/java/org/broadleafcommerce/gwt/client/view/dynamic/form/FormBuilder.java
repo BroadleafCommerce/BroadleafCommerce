@@ -7,16 +7,21 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.datasource.relations.MapStructure;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.client.security.SecurityManager;
+import org.broadleafcommerce.gwt.client.validation.ValidationFactoryManager;
 
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.events.FetchDataEvent;
+import com.smartgwt.client.widgets.events.FetchDataHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemValueFormatter;
 import com.smartgwt.client.widgets.form.fields.BooleanItem;
@@ -25,10 +30,12 @@ import com.smartgwt.client.widgets.form.fields.FloatItem;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.IntegerItem;
+import com.smartgwt.client.widgets.form.fields.PasswordItem;
 import com.smartgwt.client.widgets.form.fields.SectionItem;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.TextAreaItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
+import com.smartgwt.client.widgets.form.validator.Validator;
 
 public class FormBuilder {
 	
@@ -75,6 +82,7 @@ public class FormBuilder {
 		        		showDisabledState = false;
 		        	}
 		        	setupField(showDisabledState, canEdit, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem);
+		        	checkForPasswordField(showDisabledState, canEdit, sections, sectionNames, field, group, groupOrder, formItem, displayFormItem, form);
 	        	}
         	}
         	
@@ -211,6 +219,64 @@ public class FormBuilder {
 		}
 	}
 	
+	protected static void checkForPasswordField(Boolean showDisabledState, Boolean canEdit, Map<String, List<FormItem>> sections, Map<String, Integer> sectionNames, DataSourceField field, String group, Integer groupOrder, final FormItem formItem, final FormItem displayFormItem, DynamicForm form) {
+		if (formItem.getClass().getName().equals(PasswordItem.class.getName())) {
+			if (field.getValidators() != null && field.getValidators().length > 0) {
+				for (Validator validator : field.getValidators()) {
+					if (validator.getAttribute("type").equals("matchesField") && validator.getAttribute("otherField") != null) {
+						String otherFieldName = validator.getAttribute("otherField");
+						final FormItem otherItem = new PasswordItem();
+						form.addFetchDataHandler(new FetchDataHandler() {
+							public void onFilterData(FetchDataEvent event) {
+								otherItem.setValue(formItem.getValue());
+							}
+						});
+						((PasswordItem) otherItem).setLength(((PasswordItem) formItem).getLength());
+						otherItem.setName(otherFieldName);
+						String title = field.getAttribute("friendlyName") +" Repeat";
+						//check to see if we have an i18N version of the new title
+						List<ConstantsWithLookup> constants = ValidationFactoryManager.getInstance().getConstants();
+						for (ConstantsWithLookup constant : constants) {
+							try {
+								String val = constant.getString(title);
+								if (val != null) {
+									title = val;
+									break;
+								}
+							} catch (MissingResourceException e) {
+								//do nothing
+							}
+						}
+						otherItem.setTitle(title);
+						otherItem.setRequired(field.getRequired());
+						if (!sections.containsKey(group)) {
+							List<FormItem> temp = new ArrayList<FormItem>();
+							sections.put(group, temp);  
+						}
+						if (!sectionNames.containsKey(group)) {
+							sectionNames.put(group, groupOrder);
+						}
+						List<FormItem> temp = sections.get(group);
+						if (showDisabledState != null) {
+							otherItem.setShowDisabled(showDisabledState);
+						}
+						if (canEdit != null) {
+							otherItem.setDisabled(!canEdit);
+						}
+						if (!field.getCanEdit()) {
+							otherItem.setDisabled(true);
+						}
+						temp.add(otherItem);
+						if (displayFormItem != null) {
+							temp.add(displayFormItem);
+						}
+						break;
+					}
+				}
+			}
+		}
+	}
+	
 	protected static FormItem buildDisplayField(DataSourceField field, String fieldType) {
 		FormItem displayFormItem = null;
 		switch(SupportedFieldType.valueOf(fieldType)){
@@ -310,6 +376,10 @@ public class FormBuilder {
 					return value==null?"":((DynamicEntityDataSource) dataSource).stripDuplicateAllowSpecialCharacters(String.valueOf(value));
 				}
 			});
+			break;
+		case PASSWORD:
+			formItem = new PasswordItem();
+			((PasswordItem) formItem).setLength(field.getLength());
 			break;
 		default:
 			if (!largeEntry) {

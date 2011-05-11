@@ -20,6 +20,7 @@ import java.util.List;
 import org.broadleafcommerce.gwt.server.security.domain.AdminPermission;
 import org.broadleafcommerce.gwt.server.security.domain.AdminRole;
 import org.broadleafcommerce.gwt.server.security.domain.AdminUser;
+import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
 
 public interface AdminSecurityService {
 
@@ -38,5 +39,6 @@ public interface AdminSecurityService {
     public AdminPermission readAdminPermissionById(Long id);
     public AdminPermission saveAdminPermission(AdminPermission permission);
     public void deleteAdminPermission(AdminPermission permission);
-
+    public AdminUser changePassword(PasswordChange passwordChange);
+    
 }

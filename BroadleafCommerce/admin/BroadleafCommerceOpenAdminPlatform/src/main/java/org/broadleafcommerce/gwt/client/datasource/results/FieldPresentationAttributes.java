@@ -1,6 +1,8 @@
 package org.broadleafcommerce.gwt.client.datasource.results;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 
@@ -21,6 +23,7 @@ public class FieldPresentationAttributes implements Serializable {
 	private String columnWidth;
 	private String broadleafEnumeration;
 	private Boolean readOnly;
+	private Map<String, Map<String, String>> validationConfigurations = new HashMap<String, Map<String, String>>();
 	
 	public String getName() {
 		return name;
@@ -124,6 +127,15 @@ public class FieldPresentationAttributes implements Serializable {
 
 	public void setGroupOrder(Integer groupOrder) {
 		this.groupOrder = groupOrder;
+	}
+
+	public Map<String, Map<String, String>> getValidationConfigurations() {
+		return validationConfigurations;
+	}
+
+	public void setValidationConfigurations(
+			Map<String, Map<String, String>> validationConfigurations) {
+		this.validationConfigurations = validationConfigurations;
 	}
 
 }

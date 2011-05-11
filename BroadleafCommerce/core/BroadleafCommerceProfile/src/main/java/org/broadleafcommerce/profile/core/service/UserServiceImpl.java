@@ -19,10 +19,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
 import org.broadleafcommerce.profile.core.dao.UserDao;
 import org.broadleafcommerce.profile.core.domain.User;
 import org.broadleafcommerce.profile.core.domain.UserRole;
-import org.broadleafcommerce.profile.core.util.PasswordChange;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.Authentication;

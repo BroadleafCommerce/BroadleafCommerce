@@ -2,6 +2,6 @@ package org.broadleafcommerce.gwt.client.reflection;
 
 public interface Factory {
 
-	Instantiable newInstance(String className);
+	Object newInstance(String className);
 
 }

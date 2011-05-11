@@ -31,8 +31,11 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
+import javax.persistence.Transient;
 
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.ValidationConfiguration;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -63,13 +66,23 @@ public class AdminUserImpl implements AdminUser {
     protected String login;
 
     @Column(name = "PASSWORD", nullable=false)
-    @AdminPresentation(friendlyName="Password", order=3, group="User", prominent=true)
+    @AdminPresentation(
+		friendlyName="Password", 
+		order=3, 
+		group="User", 
+		fieldType=SupportedFieldType.PASSWORD, 
+		validationConfigurations={
+			@ValidationConfiguration(
+				validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator"
+			)
+		}
+    )
     protected String password;
 
     @Column(name = "EMAIL", nullable=false)
     @Index(name="ADMINPERM_EMAIL_INDEX", columnNames={"EMAIL"})
     @AdminPresentation(friendlyName="Email Address", order=4, group="User")
-    protected String email;
+    protected String email; 
 
     /** All roles that this user has */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
@@ -77,6 +90,17 @@ public class AdminUserImpl implements AdminUser {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
+    
+    @Transient
+    protected String unencodedPassword;
+    
+    public String getUnencodedPassword() {
+        return unencodedPassword;
+    }
+
+    public void setUnencodedPassword(String unencodedPassword) {
+        this.unencodedPassword = unencodedPassword;
+    }
 
     public Long getId() {
         return id;

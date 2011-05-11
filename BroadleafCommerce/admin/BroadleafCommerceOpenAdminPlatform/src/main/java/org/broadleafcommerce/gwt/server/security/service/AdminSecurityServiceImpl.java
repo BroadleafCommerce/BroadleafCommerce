@@ -25,6 +25,11 @@ import org.broadleafcommerce.gwt.server.security.dao.AdminUserDao;
 import org.broadleafcommerce.gwt.server.security.domain.AdminPermission;
 import org.broadleafcommerce.gwt.server.security.domain.AdminRole;
 import org.broadleafcommerce.gwt.server.security.domain.AdminUser;
+import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service("blAdminSecurityService")
@@ -38,6 +43,9 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
 
     @Resource(name = "blAdminPermissionDao")
     AdminPermissionDao adminPermissionDao;
+    
+    @Resource(name="blPasswordEncoder")
+    protected PasswordEncoder passwordEncoder;
 
     public void deleteAdminPermission(AdminPermission permission) {
         adminPermissionDao.deleteAdminPermission(permission);
@@ -72,7 +80,21 @@ public class AdminSecurityServiceImpl implements AdminSecurityService {
     }
 
     public AdminUser saveAdminUser(AdminUser user) {
+    	if (user.getUnencodedPassword() != null) {
+            user.setPassword(passwordEncoder.encodePassword(user.getUnencodedPassword(), null));
+        }
         return adminUserDao.saveAdminUser(user);
+    }
+    
+    public AdminUser changePassword(PasswordChange passwordChange) {
+    	AdminUser user = readAdminUserByUserName(passwordChange.getUsername());
+        user.setUnencodedPassword(passwordChange.getNewPassword());
+        user = saveAdminUser(user);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(passwordChange.getUsername(), passwordChange.getNewPassword(), auth.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authRequest);
+        auth.setAuthenticated(false);
+        return user;
     }
 
     public AdminUser readAdminUserByUserName(String userName) {

@@ -133,7 +133,6 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         
         hStack.addMember(stack);
         hStack.setOverflow(Overflow.AUTO);
-        hStack.setShowResizeBar(true);
         
         addMember(hStack);
 	}

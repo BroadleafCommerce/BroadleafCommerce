@@ -39,8 +39,7 @@ import org.springframework.util.ClassUtils;
  * names (including individual data sources). When a specific PersistenceUnitInfo is requested
  * by unit name, the appropriate PersistenceUnitInfo is returned with modified jar files
  * urls, class names and mapping file names that include the comprehensive collection of these
- * values from all persistence.xml files. Note, only persistence units belonging to the
- * validPersistenceUnitNames list are included in the merge.
+ * values from all persistence.xml files.
  * 
  * 
  * @author jfischer, jjacobs
@@ -63,9 +62,7 @@ public class MergePersistenceUnitManager extends DefaultPersistenceUnitManager {
 				try {
 					puiToStore.addTransformer(transformer);
 				} catch (IllegalStateException e) {
-					if (LOG.isDebugEnabled()) {
-						LOG.debug("Spring reported that a LoadTimeWeaver is not registered. As a result, the Broadleaf Commerce SingleTableInheritanceClassTransformer is not being registered with the persistence unit. This is only impactful if you are trying to provide SingleTable inheritance strategy overrides for Broadleaf Commerce entity hierarchies.");
-					}
+					LOG.warn("A BroadleafClassTransformer is configured for this persistence unit, but Spring reported a problem (likely that a LoadTimeWeaver is not registered). As a result, the Broadleaf Commerce ClassTransformer ("+transformer.getClass().getName()+") is not being registered with the persistence unit.", e);
 				}
 			}
             mergedPus.put(persistenceUnitName, puiToStore);

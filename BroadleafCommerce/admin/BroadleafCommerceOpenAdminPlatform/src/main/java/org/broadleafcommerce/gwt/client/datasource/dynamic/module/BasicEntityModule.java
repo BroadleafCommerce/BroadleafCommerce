@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 import java.util.Set;
 
 import org.broadleafcommerce.gwt.client.BLCMain;
-import org.broadleafcommerce.gwt.client.datasource.Validators;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
@@ -30,11 +30,13 @@ import org.broadleafcommerce.gwt.client.security.SecurityManager;
 import org.broadleafcommerce.gwt.client.service.AbstractCallback;
 import org.broadleafcommerce.gwt.client.service.AppServices;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.gwt.client.validation.ValidationFactoryManager;
 
 import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
 import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.json.client.JSONArray;
 import com.google.gwt.json.client.JSONObject;
@@ -55,12 +57,15 @@ import com.smartgwt.client.data.fields.DataSourceDateTimeField;
 import com.smartgwt.client.data.fields.DataSourceEnumField;
 import com.smartgwt.client.data.fields.DataSourceFloatField;
 import com.smartgwt.client.data.fields.DataSourceIntegerField;
+import com.smartgwt.client.data.fields.DataSourcePasswordField;
 import com.smartgwt.client.data.fields.DataSourceTextField;
 import com.smartgwt.client.types.FieldType;
 import com.smartgwt.client.types.OperatorId;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.util.JSON;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.form.validator.MatchesFieldValidator;
+import com.smartgwt.client.widgets.form.validator.Validator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.tree.TreeNode;
 
@@ -416,6 +421,19 @@ public class BasicEntityModule implements DataSourceModule {
 					}
 				}
 			} else if (
+				dataSource.getField(attributeName).getAttributeAsString("fieldType").equals(SupportedFieldType.PASSWORD.toString())
+			) {
+				String propertyValue = property.getValue();
+				record.setAttribute(attributeName, propertyValue);
+				if (dataSource.getField(attributeName).getValidators() != null && dataSource.getField(attributeName).getValidators().length > 0) {
+					for (Validator validator : dataSource.getField(attributeName).getValidators()) {
+						if (validator.getAttribute("type").equals("matchesField") && validator.getAttribute("otherField") != null) {
+							record.setAttribute(validator.getAttribute("otherField"), propertyValue);
+							break;
+						}
+					}
+				}
+			} else if (
 				property.getMetadata() != null && property.getMetadata().getFieldType() != null &&
 				property.getMetadata().getFieldType().equals(SupportedFieldType.FOREIGN_KEY)
 			) {
@@ -619,6 +637,20 @@ public class BasicEntityModule implements DataSourceModule {
 				String friendlyName = property.getMetadata().getPresentationAttributes().getFriendlyName();
 				if (friendlyName == null) {
 					friendlyName = property.getName();
+				} else {
+					//check if the friendly name is an i18N key
+					List<ConstantsWithLookup> constants = ValidationFactoryManager.getInstance().getConstants();
+					for (ConstantsWithLookup constant : constants) {
+						try {
+							String val = constant.getString(friendlyName);
+							if (val != null) {
+								friendlyName = val;
+								break;
+							}
+						} catch (MissingResourceException e) {
+							//do nothing
+						}
+					}
 				}
 				String securityLevel = property.getMetadata().getPresentationAttributes().getSecurityLevel();
 				Boolean hidden = property.getMetadata().getPresentationAttributes().isHidden();
@@ -673,14 +705,12 @@ public class BasicEntityModule implements DataSourceModule {
 					break;
 				case EMAIL:
 					field = new DataSourceTextField(propertyName, friendlyName);
-			        field.setValidators(Validators.EMAIL);
 			        field.setCanEdit(mutable);
 			        field.setRequired(required);
 			        //field.setValidOperators(getBasicTextOperators());
 			        break;
 				case MONEY:
 					field = new DataSourceFloatField(propertyName, friendlyName);
-			        field.setValidators(Validators.USCURRENCY);
 			        field.setCanEdit(mutable);
 			        field.setRequired(required);
 			        //field.setValidOperators(getBasicNumericOperators());
@@ -724,12 +754,22 @@ public class BasicEntityModule implements DataSourceModule {
 	        		field.setValueMap(valueMap);
 	        		//field.setValidOperators(getBasicEnumerationOperators());
 					break;
+				case PASSWORD:
+					field = new DataSourcePasswordField(propertyName, friendlyName);
+					field.setCanEdit(mutable);
+					field.setRequired(required);
+					//field.setValidOperators(getBasicTextOperators());
+					break;
 				default:
 					field = new DataSourceTextField(propertyName, friendlyName);
 					field.setCanEdit(mutable);
 					field.setRequired(required);
 					//field.setValidOperators(getBasicTextOperators());
 					break;
+				}
+				field.setAttribute("friendlyName", friendlyName);
+				if (property.getMetadata().getPresentationAttributes().getValidationConfigurations().size() > 0) {
+					field.setValidators(ValidationFactoryManager.getInstance().createValidators(property.getMetadata().getPresentationAttributes().getValidationConfigurations(), propertyName));
 				}
 				if (fieldType.equals(SupportedFieldType.ID.toString())) {
 					field.setHidden(true);

@@ -21,7 +21,7 @@ public class AdminUserListDataSourceFactory {
 		if (dataSource == null) {
 			OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
-			persistencePerspective.setPopulateToOneFields(true);
+			persistencePerspective.setPopulateToOneFields(false);
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new BasicEntityModule(CeilingEntities.ADMIN_USER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

@@ -15,9 +15,9 @@
  */
 package org.broadleafcommerce.profile.core.service;
 
+import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.core.service.listener.PostRegistrationObserver;
-import org.broadleafcommerce.profile.core.util.PasswordChange;
 
 public interface CustomerService {
 
