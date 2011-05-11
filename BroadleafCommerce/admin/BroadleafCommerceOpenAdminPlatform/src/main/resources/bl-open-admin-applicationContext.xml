@@ -18,10 +18,13 @@
     
     <bean id="blPasswordEncoder" class="org.springframework.security.authentication.encoding.PlaintextPasswordEncoder"/>
     
-    <!-- Entity mappings - override for extensibility -->
-	<bean id="org.broadleafcommerce.gwt.server.security.domain.AdminPermission" class="org.broadleafcommerce.gwt.server.security.domain.AdminPermissionImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.gwt.server.security.domain.AdminRole" class="org.broadleafcommerce.gwt.server.security.domain.AdminRoleImpl" scope="prototype"/>
-	<bean id="org.broadleafcommerce.gwt.server.security.domain.AdminUser" class="org.broadleafcommerce.gwt.server.security.domain.AdminUserImpl" scope="prototype"/>
+    <bean id="blEntityConfiguration" class="org.broadleafcommerce.config.EntityConfiguration">
+		<property name="entityContexts">
+			<list>
+				<value>classpath:bl-open-admin-applicationContext-entity.xml</value>
+			</list>
+		</property>
+	</bean>
 	
 	<aop:config>
 		<aop:pointcut id="blAdminSecurityServiceSaveOperation" expression="execution(* org.broadleafcommerce.gwt.server.security.service.AdminSecurityService.save*(..))"/>

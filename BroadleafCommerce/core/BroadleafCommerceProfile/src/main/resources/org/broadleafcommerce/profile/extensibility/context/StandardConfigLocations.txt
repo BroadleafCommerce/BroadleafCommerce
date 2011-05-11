@@ -6,8 +6,6 @@ bl-framework-applicationContext-persistence.xml
 #persistence xml files should appear first to ensure that entity managers are loaded first
 bl-profile-applicationContext.xml
 bl-framework-applicationContext.xml
-bl-profile-applicationContext-entity.xml
-bl-framework-applicationContext-entity.xml
 bl-framework-applicationContext-workflow.xml
 bl-framework-web-applicationContext.xml
 bl-framework-applicationContext-test.xml

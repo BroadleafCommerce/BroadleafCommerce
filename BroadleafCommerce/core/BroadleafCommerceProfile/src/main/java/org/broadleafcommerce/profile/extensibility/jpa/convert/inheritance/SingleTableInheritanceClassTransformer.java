@@ -75,14 +75,14 @@ public class SingleTableInheritanceClassTransformer implements BroadleafClassTra
 			return classfileBuffer;
 		}
 		String convertedClassName = className.replace('/', '.');
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Converting " + convertedClassName + " to a SingleTable inheritance strategy."); 
-		}
 		SingleTableInheritanceInfo key = new SingleTableInheritanceInfo();
 		key.setClassName(convertedClassName);
 		int pos = infos.indexOf(key);
 		if (pos >= 0) {
 			try {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("Converting " + convertedClassName + " to a SingleTable inheritance strategy."); 
+				}
 				SingleTableInheritanceInfo myInfo = infos.get(pos);
 				ClassFile classFile = new ClassFile(new DataInputStream(new ByteArrayInputStream(classfileBuffer)));
 				ConstPool constantPool = classFile.getConstPool();

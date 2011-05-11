@@ -17,17 +17,18 @@ package org.broadleafcommerce.config;
 
 import java.util.HashMap;
 
-import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 @Component("blEntityConfiguration")
-public class EntityConfiguration implements ApplicationContextAware {
+public class EntityConfiguration {
 
     private final HashMap<String, Class<?>> entityMap = new HashMap<String, Class<?>>();
 
     private ApplicationContext applicationcontext;
+    private Resource[] entityContexts;
 
     public Class<?> lookupEntityClass(String beanId) {
         Class<?> clazz = null;
@@ -45,7 +46,13 @@ public class EntityConfiguration implements ApplicationContextAware {
         return applicationcontext.getBean(beanId);
     }
 
-    public void setApplicationContext(ApplicationContext applicationcontext) throws BeansException {
-        this.applicationcontext = applicationcontext;
-    }
+	public Resource[] getEntityContexts() {
+		return entityContexts;
+	}
+
+	public void setEntityContexts(Resource[] entityContexts) {
+		this.entityContexts = entityContexts;
+		applicationcontext = new GenericXmlApplicationContext(entityContexts);
+	}
+
 }
