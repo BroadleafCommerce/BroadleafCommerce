@@ -1,18 +1,18 @@
 package org.broadleafcommerce.gwt.admin.client;
 
+import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.i18n.client.LocalizableResource.DefaultLocale;
 import com.google.gwt.i18n.client.LocalizableResource.Generate;
-import com.google.gwt.i18n.client.Messages;
 
 @Generate(format = "com.google.gwt.i18n.rebind.format.PropertiesFormat")
 @DefaultLocale("en_US")
-public interface AdminMessages extends Messages {
+public interface AdminMessages extends ConstantsWithLookup {
 
 	public String promotionsTitle();
 	public String blcProjectPage();
 	public String defaultCategoryName();
 	public String newCategoryTitle();
-	public String confirmDelete(String entityName);
+	public String confirmDelete();
 	public String defaultProductName();
 	public String newProductTitle();
 	public String categorySearchTitle();

@@ -33,8 +33,11 @@ import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 public @interface AdminPresentation {
 	
 	/**
-	 * The friendly name to present to a user for this field in a GUI
+	 * The friendly name to present to a user for this field in a GUI. If supporting i18N,
+	 * the friendly name may be a key to retrieve a localized friendly name using
+	 * the GWT support for i18N.
 	 * 
+	 * @see AdminMessages
 	 * @return the friendly name
 	 */
 	String friendlyName();
@@ -126,4 +129,11 @@ public @interface AdminPresentation {
 	 * @return whether or not this field is read only
 	 */
 	boolean readOnly() default false;
+	
+	/**
+	 * Specify the validation to use for this field in the admin, if any
+	 * 
+	 * @return the configuration for the validation
+	 */
+	ValidationConfiguration[] validationConfigurations() default {};
 }

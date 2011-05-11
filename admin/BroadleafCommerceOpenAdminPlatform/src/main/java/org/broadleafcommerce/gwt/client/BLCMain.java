@@ -59,7 +59,7 @@ public class BLCMain implements EntryPoint {
         }); 
 	}
 
-	public void onModuleLoad() {	    	
+	public void onModuleLoad() {	
 		if (!GWT.isScript()) { 
 		    KeyIdentifier debugKey = new KeyIdentifier(); 
 		    debugKey.setCtrlKey(true); 

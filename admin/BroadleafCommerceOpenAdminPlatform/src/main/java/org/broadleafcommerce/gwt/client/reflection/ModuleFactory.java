@@ -28,11 +28,11 @@ public class ModuleFactory extends HashMap<String, String> {
 		return super.put(key, fullyQualifiedClassName);
 	}
 	
-	public Instantiable createItem(String name) {
+	public Object createItem(String name) {
 		if (!containsKey(name)) {
 			throw new RuntimeException(name + " is not a member of the view factory's library. A key and a fully qualified view class name must be added before createItem is called.");
 		}
-		Instantiable response = factory.newInstance(get(name));
+		Object response = factory.newInstance(get(name));
 		if (response == null) {
 			throw new RuntimeException("Unable to instantiate the item from the Factory using classname: (" + get(name) + "). Are you sure this classname is correct?");
 		}

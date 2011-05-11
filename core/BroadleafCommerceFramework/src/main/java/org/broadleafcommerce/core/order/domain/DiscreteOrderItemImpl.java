@@ -33,7 +33,9 @@ import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductImpl;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.broadleafcommerce.core.catalog.domain.SkuImpl;
+import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.presentation.AdminPresentation;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -52,9 +54,11 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     private static final long serialVersionUID = 1L;
     
     @Column(name="BASE_RETAIL_PRICE")
+    @AdminPresentation(friendlyName="Base Retail Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal baseRetailPrice;
     
     @Column(name="BASE_SALE_PRICE")
+    @AdminPresentation(friendlyName="Base Sale Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal baseSalePrice;
     
     @ManyToOne(targetEntity = SkuImpl.class, optional=false)

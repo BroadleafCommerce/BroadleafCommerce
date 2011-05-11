@@ -14,6 +14,9 @@ import com.google.gwt.user.rebind.SourceWriter;
 
 public class FactoryGenerator extends Generator {
 
+	public static final String INSTANTIABLE_TYPE = "org.broadleafcommerce.gwt.client.reflection.Instantiable";
+	public static final String VALIDATOR_TYPE = "com.smartgwt.client.widgets.form.validator.Validator";
+	
 	public String generate(TreeLogger logger, GeneratorContext context, String typeName) throws UnableToCompleteException {
 		logger.log(TreeLogger.INFO, "Generating source for " + typeName, null);
 		TypeOracle typeOracle = context.getTypeOracle();
@@ -25,33 +28,35 @@ public class FactoryGenerator extends Generator {
 		}
 		try {
 			logger.log(TreeLogger.INFO, "Generating source for " + clazz.getQualifiedSourceName(), null);
-			JClassType reflectableType = typeOracle.getType("org.broadleafcommerce.gwt.client.reflection.Instantiable");
+			JClassType[] reflectableTypes = {typeOracle.getType(INSTANTIABLE_TYPE), typeOracle.getType(VALIDATOR_TYPE)};
 			SourceWriter sourceWriter = getSourceWriter(clazz, context, logger);
 			if (sourceWriter != null) {
-				sourceWriter.println("public "
-				+ reflectableType.getQualifiedSourceName()
-				+ " newInstance(String className) {");
-				JClassType[] types = typeOracle.getTypes();
-				int count = 0;
-				for (int i = 0; i < types.length; i++) {
-					if (types[i].isInterface() == null
-					&& types[i].isAssignableTo(reflectableType)) {
-						if (count == 0) {
-							sourceWriter.println("   if(\""
-							+ types[i].getQualifiedSourceName()
-							+ "\".equals(className)) {"
-							+ " return new "
-							+ types[i].getQualifiedSourceName() + "();"
-							+ "}");
-						} else {
-							sourceWriter.println("   else if(\""
-							+ types[i].getQualifiedSourceName()
-							+ "\".equals(className)) {"
-							+ " return new "
-							+ types[i].getQualifiedSourceName() + "();"
-							+ "}");
+				sourceWriter.println("public java.lang.Object newInstance(String className) {");
+				for (JClassType reflectableType : reflectableTypes) {
+					JClassType[] types = typeOracle.getTypes();
+					int count = 0;
+					for (int i = 0; i < types.length; i++) {
+						if (types[i].isInterface() == null
+						&& !types[i].isAbstract()
+						&& types[i].isAssignableTo(reflectableType)) {
+							logger.log(TreeLogger.INFO, "Emitting instantiation code for: " + types[i].getQualifiedSourceName(), null);
+							if (count == 0) {
+								sourceWriter.println("   if(\""
+								+ types[i].getQualifiedSourceName()
+								+ "\".equals(className)) {"
+								+ " return new "
+								+ types[i].getQualifiedSourceName() + "();"
+								+ "}");
+							} else {
+								sourceWriter.println("   else if(\""
+								+ types[i].getQualifiedSourceName()
+								+ "\".equals(className)) {"
+								+ " return new "
+								+ types[i].getQualifiedSourceName() + "();"
+								+ "}");
+							}
+							count++;
 						}
-						count++;
 					}
 				}
 				sourceWriter.println("return null;");

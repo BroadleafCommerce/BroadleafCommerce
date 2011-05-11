@@ -741,7 +741,8 @@ public class BasicEntityModule implements RemoteServiceModule, RecordHelper, App
 					}
 					if (SupportedFieldType.FOREIGN_KEY.equals(mergedProperties.get(originalPropertyName).getFieldType())) {
 						String value = property.getValue();
-						Serializable foreignInstance = dynamicEntityDao.retrieve(Class.forName(entity.getType()[0]), Long.valueOf(value));
+						ForeignKey foreignKey = (ForeignKey) persistencePerspective.getPersistencePerspectiveItems().get(PersistencePerspectiveItemType.FOREIGNKEY);
+						Serializable foreignInstance = dynamicEntityDao.retrieve(Class.forName(foreignKey.getForeignKeyClass()), Long.valueOf(value));
 						Collection collection = (Collection) fieldManager.getFieldValue(instance, property.getName());
 						collection.remove(foreignInstance);
 						break;

@@ -8,6 +8,7 @@ public enum SupportedFieldType {
 	INTEGER,
 	DECIMAL,
 	STRING,
+	PASSWORD,
 	EMAIL,
 	FOREIGN_KEY,
 	ADDITIONAL_FOREIGN_KEY,
