@@ -90,7 +90,7 @@ public class MergeXmlConfigResource {
             if (LOG.isDebugEnabled()) {
             	try {
 					byte[] itemArray = buildArrayFromStream(response);
-					LOG.debug("merged sources - stage["+j+"]" + serialize(new ByteArrayInputStream(itemArray)));
+					//LOG.debug("merged sources - stage["+j+"]" + serialize(new ByteArrayInputStream(itemArray)));
 					response = new ByteArrayInputStream(itemArray);
 				} catch (IOException e) {
 					throw new MergeException(e);
