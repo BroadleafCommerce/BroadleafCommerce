@@ -6,7 +6,6 @@ import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.broadleafcommerce.core.offer.domain.Offer;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.results.DynamicResultSet;
 import org.broadleafcommerce.gwt.client.datasource.results.Entity;
@@ -14,8 +13,8 @@ import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.service.ServiceException;
 import org.broadleafcommerce.gwt.server.dao.DynamicEntityDao;
 import org.broadleafcommerce.gwt.server.security.domain.AdminUser;
+import org.broadleafcommerce.gwt.server.security.domain.AdminUserImpl;
 import org.broadleafcommerce.gwt.server.security.service.AdminSecurityService;
-import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
 import org.broadleafcommerce.gwt.server.service.handler.CustomPersistenceHandler;
 import org.broadleafcommerce.gwt.server.service.module.InspectHelper;
 import org.broadleafcommerce.gwt.server.service.module.RecordHelper;
@@ -34,7 +33,7 @@ public class AdminUserCustomPersistenceHandler implements CustomPersistenceHandl
 	}
 
 	public Boolean canHandleAdd(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
-		return ceilingEntityFullyQualifiedClassname.equals(AdminUser.class.getName());
+		return ceilingEntityFullyQualifiedClassname.equals(AdminUserImpl.class.getName());
 	}
 
 	public Boolean canHandleRemove(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
@@ -42,7 +41,7 @@ public class AdminUserCustomPersistenceHandler implements CustomPersistenceHandl
 	}
 
 	public Boolean canHandleUpdate(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {
-		return ceilingEntityFullyQualifiedClassname.equals(AdminUser.class.getName());
+		return ceilingEntityFullyQualifiedClassname.equals(AdminUserImpl.class.getName());
 	}
 
 	public Boolean canHandleInspect(String ceilingEntityFullyQualifiedClassname, String[] customCriteria) {

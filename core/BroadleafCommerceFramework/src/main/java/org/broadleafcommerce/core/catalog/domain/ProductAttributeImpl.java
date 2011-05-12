@@ -37,7 +37,6 @@ import org.hibernate.envers.Audited;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_ATTRIBUTE")
-@Audited
 public class ProductAttributeImpl implements ProductAttribute {
 
     /** The Constant serialVersionUID. */

@@ -35,6 +35,7 @@ import javax.persistence.Transient;
 
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.broadleafcommerce.presentation.ConfigurationItem;
 import org.broadleafcommerce.presentation.ValidationConfiguration;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
@@ -73,7 +74,8 @@ public class AdminUserImpl implements AdminUser {
 		fieldType=SupportedFieldType.PASSWORD, 
 		validationConfigurations={
 			@ValidationConfiguration(
-				validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator"
+				validationImplementation="com.smartgwt.client.widgets.form.validator.MatchesFieldValidator",
+				configurationItems={@ConfigurationItem(itemName="errorMessageKey", itemValue="passwordNotMatchError")}
 			)
 		}
     )

@@ -34,7 +34,6 @@ import org.hibernate.envers.Audited;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_CROSS_SALE")
-@Audited
 public class CrossSaleProductImpl implements RelatedProduct {
 
 	private static final long serialVersionUID = 1L;

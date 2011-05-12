@@ -657,7 +657,6 @@ public class OrderImpl implements Order {
     }
 
     public String getFulfillmentStatus() {
-        // TODO Auto-generated method stub
         return null;
     }
 

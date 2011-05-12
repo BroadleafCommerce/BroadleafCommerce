@@ -8,6 +8,7 @@ public class AdminUser implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	protected String userName;
 	protected List<String> roles = new ArrayList<String>();
 	protected List<String> permissions = new ArrayList<String>();
 	
@@ -25,6 +26,14 @@ public class AdminUser implements Serializable {
 	
 	public void setPermissions(List<String> permissions) {
 		this.permissions = permissions;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 }

@@ -29,7 +29,6 @@ public class Mod43CheckDigitUtil {
                     valid = true;
                 }
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -50,7 +49,6 @@ public class Mod43CheckDigitUtil {
         try {
             System.out.println(generateCheckDigit("TEACH000012345"));
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         System.out.println(isValidCheckedValue("TEACH000012345B"));

@@ -25,7 +25,6 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
@@ -674,13 +673,10 @@ public class BasicEntityModule implements RemoteServiceModule, RecordHelper, App
 				throw new RuntimeException("Could not find a primary key property in the passed entity with type: " + entity.getType());
 			}
 			Object primaryKey = null;
-			for (Property property : entity.getProperties()) {
-				if (property.getName().equals(idProperty)) {
-					if (!StringUtils.isEmpty(property.getValue())) {
-						primaryKey = property.getValue();
-					}
-					break;
-				}
+			try {
+				primaryKey = getPrimaryKey(entity, mergedProperties);
+			} catch (Exception e) {
+				//do nothing
 			}
 			if (primaryKey == null) {
 				Serializable instance = (Serializable) Class.forName(entity.getType()[0]).newInstance();

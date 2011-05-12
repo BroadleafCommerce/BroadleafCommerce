@@ -21,10 +21,8 @@ public class AdminRoleListDataSourceFactory {
 	public static ListGridDataSource dataSource = null;
 	
 	public static void createDataSource(String name, AsyncCallback<DataSource> cb) {
-		//TODO change to use foreignField or join Structure
-		//e.g. OrderItemListDataSourceFactory
 		if (dataSource == null) {
-			OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.FOREIGNKEY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
+			OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.FOREIGNKEY, OperationType.FOREIGNKEY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ADMIN_USER, null));
 			persistencePerspective.setPopulateToOneFields(true);

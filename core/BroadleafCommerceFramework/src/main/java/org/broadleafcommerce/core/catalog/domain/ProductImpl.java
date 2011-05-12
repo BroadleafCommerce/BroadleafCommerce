@@ -85,7 +85,6 @@ import org.hibernate.envers.Audited;
 @Table(name = "BLC_PRODUCT")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Searchable(alias="product", supportUnmarshall=SupportUnmarshall.FALSE)
-@Audited
 public class ProductImpl implements Product {
 
     private static final Log LOG = LogFactory.getLog(ProductImpl.class);

@@ -1,9 +1,7 @@
 package org.broadleafcommerce.gwt.admin.client.presenter.user;
 
-import java.util.Map;
-
+import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.admin.client.view.user.UserRoleDisplay;
-import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
@@ -21,7 +19,6 @@ import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
-import com.smartgwt.client.widgets.tree.TreeNode;
 
 public class UserRolePresenter implements SubPresentable {
 
@@ -100,12 +97,9 @@ public class UserRolePresenter implements SubPresentable {
 		display.getAddButton().addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				if (event.isLeftButtonDown()) {
-					searchDialog.search("All Roles", new SearchItemSelectedEventHandler() {
-						@SuppressWarnings({ "rawtypes", "unchecked" })
+					searchDialog.search(AdminModule.ADMINMESSAGES.userRolesTitle(), new SearchItemSelectedEventHandler() {
 						public void onSearchItemSelected(SearchItemSelectedEvent event) {
-							Map initialValues = ((DynamicEntityDataSource) display.getGrid().getDataSource()).extractRecordValues((TreeNode) event.getRecord());
-							initialValues.put("backup_id", ((DynamicEntityDataSource) display.getGrid().getDataSource()).getPrimaryKeyValue(event.getRecord()));
-							BLCMain.ENTITY_ADD.editNewRecord("Edit Roles", (DynamicEntityDataSource) display.getGrid().getDataSource(), initialValues, null, "200", null, null);
+							display.getGrid().addData(event.getRecord());
 						}
 					});
 				}
@@ -125,10 +119,7 @@ public class UserRolePresenter implements SubPresentable {
 		display.getExpansionGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
 				if (event.getState()) {
-					//display.getRemoveButton().enable();
 					((DynamicEntityDataSource) display.getExpansionGrid().getDataSource()).resetPermanentFieldVisibilityBasedOnType(event.getSelectedRecord().getAttributeAsStringArray("_type"));
-				} else {
-					//display.getRemoveButton().disable();
 				}
 			}
 		});

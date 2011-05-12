@@ -42,10 +42,6 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 	
 	private List<SecurityConfig> securityConfigs;
 	
-	public void setupSecurity(List<SecurityConfig> securityConfigs) {
-		this.securityConfigs = securityConfigs;
-	}
-	
 	public org.broadleafcommerce.gwt.client.security.AdminUser getAdminUser() {
 		SecurityContext ctx = SecurityContextHolder.getContext();
         if (ctx != null) {
@@ -61,6 +57,7 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
                 		response.getPermissions().add(permission.getName());
                 	}
                 }
+                response.setUserName(adminUser.getLogin());
                 return response;
             }
         }
@@ -69,7 +66,6 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 	}
 	
 	public void securityCheck(String ceilingEntityFullyQualifiedName, EntityOperationType  operationType) throws ServiceException {
-		
 		if (securityConfigs != null) {
 			for (SecurityConfig sc : securityConfigs){
 				if (ceilingEntityFullyQualifiedName != null && 
@@ -79,10 +75,18 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 					
 					boolean authorized = false;
 					org.broadleafcommerce.gwt.client.security.AdminUser adminUser = getAdminUser();
-					for (String permission : sc.getPermissions()){
-						if (adminUser.getPermissions() != null && adminUser.getPermissions().contains(permission)){
-							authorized = true;
-							break;
+					checkAuthorization: {
+						for (String role : sc.getRoles()) {
+							if (adminUser.getRoles() != null && adminUser.getRoles().contains(role)) {
+								authorized = true;
+								break checkAuthorization;
+							}
+						}
+						for (String permission : sc.getPermissions()){
+							if (adminUser.getPermissions() != null && adminUser.getPermissions().contains(permission)){
+								authorized = true;
+								break checkAuthorization;
+							}
 						}
 					}
 					
@@ -94,7 +98,14 @@ public class AdminSecurityServiceRemote implements AdminSecurityService  {
 				}
 			}	
 		}
-		
+	}
+
+	public List<SecurityConfig> getSecurityConfigs() {
+		return securityConfigs;
+	}
+
+	public void setSecurityConfigs(List<SecurityConfig> securityConfigs) {
+		this.securityConfigs = securityConfigs;
 	}
 
 }

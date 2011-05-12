@@ -15,16 +15,9 @@
  */
 package org.broadleafcommerce.taglib;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import javax.servlet.jsp.JspException;
 
-import org.broadleafcommerce.core.catalog.domain.Category;
-import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.web.catalog.taglib.GetProductsByCategoryIdTag;
-import org.easymock.classextension.EasyMock;
 import org.testng.annotations.Test;
 
 public class GetProductsByCategoryIdTagTest extends BaseTagLibTest {

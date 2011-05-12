@@ -79,7 +79,6 @@ import org.hibernate.envers.Audited;
 @Table(name = "BLC_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Searchable
-@Audited
 public class SkuImpl implements Sku {
 
     private static final Log LOG = LogFactory.getLog(SkuImpl.class);

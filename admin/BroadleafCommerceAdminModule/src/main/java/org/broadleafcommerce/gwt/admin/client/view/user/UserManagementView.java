@@ -8,23 +8,18 @@ import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListView;
 import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormView;
 
-import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.types.Side;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
-import com.smartgwt.client.widgets.toolbar.ToolStrip;
-import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public class UserManagementView extends HLayout implements Instantiable, UserManagementDisplay {
 	
 	protected DynamicFormView dynamicFormDisplay;
 	protected DynamicEntityListView listDisplay;
-	protected ToolStripButton updateLoginButton;
 	protected UserRoleView userRolesDisplay;
     
 	public UserManagementView() {
@@ -50,12 +45,6 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         
         Tab detailsTab = new Tab(AdminModule.ADMINMESSAGES.userDetailsTitle());
         dynamicFormDisplay = new DynamicFormView(AdminModule.ADMINMESSAGES.userDetailsTitle(), entityDataSource);
-        ToolStrip toolbar = dynamicFormDisplay.getToolbar();
-        toolbar.addFill();
-        Label label = new Label();
-        label.setContents(AdminModule.ADMINMESSAGES.updatePasswordPrompt());
-        label.setWrap(false);
-        toolbar.addMember(label);
         
         detailsTab.setPane(dynamicFormDisplay);
         topTabSet.addTab(detailsTab);
@@ -64,12 +53,6 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
         userRolesDisplay = new UserRoleView(AdminModule.ADMINMESSAGES.userRolesTitle(), false, false);
         userRolesTab.setPane(userRolesDisplay);
         topTabSet.addTab(userRolesTab);
-
-        updateLoginButton = new ToolStripButton();  
-        updateLoginButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/settings.png");   
-        updateLoginButton.setDisabled(true);
-        toolbar.addButton(updateLoginButton);
-        toolbar.addSpacer(6);
         
         addMember(leftVerticalLayout);
         addMember(topTabSet);
@@ -85,10 +68,6 @@ public class UserManagementView extends HLayout implements Instantiable, UserMan
 	
 	public DynamicEntityListDisplay getListDisplay() {
 		return listDisplay;
-	}
-
-	public ToolStripButton getUpdateLoginButton() {
-		return updateLoginButton;
 	}
 
 	public UserRoleView getUserRolesDisplay() {

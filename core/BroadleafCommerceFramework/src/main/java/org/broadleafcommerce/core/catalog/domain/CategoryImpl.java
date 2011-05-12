@@ -77,7 +77,6 @@ import org.hibernate.envers.Audited;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Audited
 public class CategoryImpl implements Category {
 
     private static final Log LOG = LogFactory.getLog(CategoryImpl.class);

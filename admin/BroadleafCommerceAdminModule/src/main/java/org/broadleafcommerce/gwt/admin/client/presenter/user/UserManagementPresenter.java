@@ -26,8 +26,6 @@ import com.smartgwt.client.data.Criteria;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.Canvas;
-import com.smartgwt.client.widgets.events.ClickEvent;
-import com.smartgwt.client.widgets.events.ClickHandler;
 
 public class UserManagementPresenter extends DynamicEntityPresenter implements Instantiable {
 	
@@ -37,7 +35,6 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
-		getDisplay().getUpdateLoginButton().enable();
 		userRolePresenter.load(selectedRecord, (AbstractDynamicDataSource) display.getListDisplay().getGrid().getDataSource(), null);
 	}
 	
@@ -56,15 +53,7 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	
 	@Override
 	public void bind() {
-		//TODO change
 		super.bind();
-		getDisplay().getUpdateLoginButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					passwordUpdateDialog.updatePassword(display.getListDisplay().getGrid().getSelectedRecord());
-				}
-			}
-		});
 	}
 
 	@Override

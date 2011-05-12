@@ -45,7 +45,6 @@ import org.broadleafcommerce.gwt.client.datasource.results.FieldMetadata;
 import org.broadleafcommerce.gwt.client.datasource.results.FieldPresentationAttributes;
 import org.broadleafcommerce.gwt.client.datasource.results.MergedPropertyType;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
-import org.broadleafcommerce.gwt.server.changeset.dao.EJB3ConfigurationDao;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.presentation.ConfigurationItem;
@@ -372,11 +371,6 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 			fieldMetadata.setPresentationAttributes(presentationAttribute);
 		}
 		fieldMetadata.setMergedPropertyType(mergedPropertyType);
-		/*
-		 * TODO incorporate support for an annotation override that will allow
-		 * developers to change the admin presentation annotation attributes in
-		 * their entity class overrides
-		 */
 		if (SupportedFieldType.BROADLEAF_ENUMERATION.equals(type)) {
 			Map<String, String> enumVals = new HashMap<String, String>();
 			Class<?> broadleafEnumeration = Class.forName(presentationAttribute.getBroadleafEnumeration());
@@ -619,7 +613,7 @@ public class DynamicEntityDaoImpl extends BaseHibernateCriteriaDao<Serializable>
 					continue;
 				}
 				/*
-				 * TODO currently we do not support ManyToOne fields whose class type is the same
+				 * Currently we do not support ManyToOne fields whose class type is the same
 				 * as the target type, since this forms an infinite loop and will cause a stack overflow.
 				 */
 				if (
