@@ -9,5 +9,7 @@ import com.google.gwt.i18n.client.LocalizableResource.Generate;
 public interface OpenAdminMessages extends ConstantsWithLookup {
 
 	public String contactingServerTitle();
-
+	public String currentUser();
+	public String logout();
+	
 }

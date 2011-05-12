@@ -102,17 +102,14 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
     @AdminPresentation(friendlyName="Shipping Service", order=3, group="Description", prominent=true)
     protected String service;
 
-    //TODO change column name to RETAIL_SHIPPING_PRICE
     @Column(name = "RETAIL_PRICE")
     @AdminPresentation(friendlyName="Retail Shipping Price", order=1, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal retailShippingPrice;
 
-    //TODO change column name to SALE_SHIPPING_PRICE
     @Column(name = "SALE_PRICE")
     @AdminPresentation(friendlyName="Sale Shipping Price", order=2, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal saleShippingPrice;
 
-    //TODO change column name to SHIPPING_PRICE
     @Column(name = "PRICE")
     @AdminPresentation(friendlyName="Shipping Price", order=3, group="Pricing", fieldType=SupportedFieldType.MONEY)
     protected BigDecimal shippingPrice;

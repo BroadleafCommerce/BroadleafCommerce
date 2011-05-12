@@ -17,6 +17,7 @@ import com.smartgwt.client.types.Side;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.IButton;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
@@ -61,7 +62,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         HStack moduleStack = new HStack(10);
         moduleStack.setWidth100();
         moduleStack.setHeight(20);
-        moduleStack.setAlign(Alignment.CENTER);
+        moduleStack.setAlign(Alignment.RIGHT);
         moduleStack.setLayoutBottomMargin(10);
         temp.addMember(moduleStack);
         if (modules.size() > 1) {
@@ -103,6 +104,25 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         moduleTitle.setWrap(false);
         moduleTitle.setStyleName("label-bold");
         moduleStack.addMember(moduleTitle);
+        HStack spacer = new HStack();
+        spacer.setWidth(30);
+        moduleStack.addMember(spacer);
+        Label userName = new Label(BLCMain.OPENADMINMESSAGES.currentUser() + ": <B>" + SecurityManager.USER.getUserName() + "</B>");
+        userName.setWrap(false);
+        userName.setStyleName("label-bold");
+        moduleStack.addMember(userName);
+        IButton logout = new IButton();
+        logout.setTitle(BLCMain.OPENADMINMESSAGES.logout());
+        logout.setWidth(60);
+        logout.addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+            public void onClick(ClickEvent event) {
+                com.google.gwt.user.client.Window.open("adminLogout.htm", "_self", null);
+            }
+        });
+        moduleStack.addMember(logout);
+        HStack spacer2 = new HStack();
+        spacer2.setWidth(30);
+        moduleStack.addMember(spacer2);
         
         topTabSet = new TabSet();  
         topTabSet.setTabBarPosition(Side.TOP);  
@@ -129,6 +149,7 @@ public class MasterView extends VLayout implements ValueChangeHandler<String> {
         topBar.addMember(temp);
         
         topBar.addFill();
+
         addMember(topBar);
         setWidth100();
         setHeight100();

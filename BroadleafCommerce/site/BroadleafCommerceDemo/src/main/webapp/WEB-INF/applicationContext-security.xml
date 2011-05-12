@@ -8,6 +8,447 @@
     	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     	http://www.springframework.org/schema/security
     	http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+    	
+    <bean id="blAdminSecurityRemoteService" class="org.broadleafcommerce.gwt.server.security.remote.AdminSecurityServiceRemote">
+		<property name="securityConfigs">
+			<list>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.catalog.domain.Category"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_MERCHANDISE_MANAGER</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.catalog.domain.Product"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_MERCHANDISE_MANAGER</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.catalog.domain.Sku"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_MERCHANDISE_MANAGER</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.catalog.domain.ProductAttribute"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_MERCHANDISE_MANAGER</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.Order"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.Order"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.OrderItem"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.OrderItem"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.FulfillmentGroup"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.FulfillmentGroup"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.profile.core.domain.Country"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.profile.core.domain.Country"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.profile.core.domain.State"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.profile.core.domain.State"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.payment.domain.PaymentInfo"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.payment.domain.PaymentInfo"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OfferCode"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OfferCode"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OrderAdjustment"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OrderAdjustment"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OrderItemAdjustment"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OrderItemAdjustment"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment"/>
+					<property name="requiredTypes">
+						<list>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<!-- omit roles and permissions to restrict all access for these operation types -->
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.profile.core.domain.Customer"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.profile.core.domain.ChallengeQuestion"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.Offer"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_PROMOTION_MANAGER</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OfferItemCriteria"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_PROMOTION_MANAGER</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.gwt.server.security.domain.AdminUser"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.gwt.server.security.domain.AdminRole"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
+					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.gwt.server.security.domain.AdminPermission"/>
+					<property name="requiredTypes">
+						<list>
+							<value>FETCH</value>
+							<value>ADD</value>
+							<value>UPDATE</value>
+							<value>REMOVE</value>
+						</list>
+					</property>
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="springSecurityFilterChain" class="org.springframework.security.web.FilterChainProxy">
 		<sec:filter-chain-map path-type="ant">
@@ -22,7 +463,7 @@
 			<sec:filter-chain pattern="/admin*"
 				filters="
                 	blSecurityContextPersistenceFilterWithASCTrue,
-                	blLogoutFilter,               	
+                	blAdminLogoutFilter,               	
                 	blAdminAuthenticationProcessingFilter,
                 	blRequestWrapperFilter,
                 	blAdminRememberMeAuthenticationFilter, 
@@ -31,7 +472,16 @@
             <sec:filter-chain pattern="/admin/*"
 				filters="
                 	blSecurityContextPersistenceFilterWithASCTrue,
-                	blLogoutFilter,               	
+                	blAdminLogoutFilter,               	
+                	blAdminAuthenticationProcessingFilter,
+                	blRequestWrapperFilter,
+                	blAdminRememberMeAuthenticationFilter, 
+                	blAdminExceptionTranslationFilter,
+                	blAdminFilterSecurityInterceptor" />
+            <sec:filter-chain pattern="/dynamic.entity.service"
+				filters="
+                	blSecurityContextPersistenceFilterWithASCTrue,
+                	blAdminLogoutFilter,               	
                 	blAdminAuthenticationProcessingFilter,
                 	blRequestWrapperFilter,
                 	blAdminRememberMeAuthenticationFilter, 
@@ -73,6 +523,22 @@
 		class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">
 		<property name="rememberMeServices" ref="blRememberMeServices" />
 		<property name="authenticationManager" ref="blAuthenticationManager" />
+	</bean>
+	
+	<bean id="blAdminLogoutFilter" class="org.springframework.security.web.authentication.logout.LogoutFilter">
+		<constructor-arg>
+			<bean class="org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler">
+				<property name="defaultTargetUrl" value="/login.jsp"/>
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+				<ref local="blRememberMeServices" />
+				<bean
+					class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler" />
+			</list>
+		</constructor-arg>
+		<property name="filterProcessesUrl" value="/adminLogout.htm" />
 	</bean>
 
 	<bean id="blLogoutFilter"
@@ -209,26 +675,27 @@
 	
 	<bean id="blAdminFilterSecurityInterceptor"
 		class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
-		<property name="accessDecisionManager">
-			<bean class="org.springframework.security.access.vote.UnanimousBased">
-				<property name="decisionVoters">
-					<list>
-						<bean class="org.springframework.security.access.vote.RoleVoter">
-							<property name="rolePrefix" value="PERMISSION_" />
-						</bean>
-					</list>
-				</property>
-			</bean>
-		</property>
+		<property name="accessDecisionManager" ref="blAccessDecisionManager"/>
 		<property name="authenticationManager" ref="blAuthenticationManager" />
 		<property name="securityMetadataSource">
 			<sec:filter-security-metadata-source>
 				<sec:intercept-url pattern="/admin.html*" access="PERMISSION_DEFAULT" />
+				<sec:intercept-url pattern="/dynamic.entity.service" access="PERMISSION_DEFAULT" />
 			</sec:filter-security-metadata-source>
 		</property>
 	</bean>
 	
-	<sec:global-method-security secured-annotations="enabled" />
+	<bean id="blAccessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+		<property name="decisionVoters">
+			<list>
+				<bean class="org.springframework.security.access.vote.RoleVoter">
+					<property name="rolePrefix" value="PERMISSION_" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<sec:global-method-security access-decision-manager-ref="blAccessDecisionManager" secured-annotations="enabled" />
 		
 	<sec:authentication-manager alias="blAuthenticationManager">
 		<sec:authentication-provider
@@ -259,7 +726,5 @@
 		arpx ON ar.admin_role_id = arpx.admin_role_id JOIN BLC_ADMIN_PERMISSION ap 
 		ON arpx.admin_permission_id = ap.admin_permission_id WHERE au.login = ?" />
 	</bean>
-	
-	<bean id="passwordEncoder"
-		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
+
 </beans>

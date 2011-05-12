@@ -18,7 +18,6 @@ import org.hibernate.envers.Audited;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_SKU")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Audited
 public class ProductSkuImpl extends ProductImpl implements ProductSku {
 
 	private static final Log LOG = LogFactory.getLog(ProductSkuImpl.class);

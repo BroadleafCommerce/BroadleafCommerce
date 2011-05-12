@@ -1,4 +1,4 @@
-package org.broadleafcommerce.gwt.server.changeset.dao;
+package org.broadleafcommerce.gwt.server.dao;
 
 import org.hibernate.ejb.Ejb3Configuration;
 

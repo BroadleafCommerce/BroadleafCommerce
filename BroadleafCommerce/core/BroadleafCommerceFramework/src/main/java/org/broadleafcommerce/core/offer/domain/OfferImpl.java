@@ -71,7 +71,7 @@ public class OfferImpl implements Offer {
     protected String name;
 
     @Column(name = "OFFER_DESCRIPTION")
-    @AdminPresentation(friendlyName="Offer Description", securityLevel="PERMISSION_EDIT_OFFER_DESCRIPTION", order=2, group="Description", largeEntry=true, prominent=true, groupOrder=1)
+    @AdminPresentation(friendlyName="Offer Description", order=2, group="Description", largeEntry=true, prominent=true, groupOrder=1)
     protected String description;
 
     @Column(name = "OFFER_TYPE", nullable=false)

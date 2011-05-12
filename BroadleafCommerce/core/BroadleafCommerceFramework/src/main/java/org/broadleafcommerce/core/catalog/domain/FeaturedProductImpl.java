@@ -34,7 +34,6 @@ import org.hibernate.envers.Audited;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_FEATURED")
-@Audited
 public class FeaturedProductImpl implements FeaturedProduct {
 
 	private static final long serialVersionUID = 1L;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.MissingResourceException;
 
 import org.broadleafcommerce.gwt.client.BLCMain;
 
@@ -72,6 +73,19 @@ public class ValidationFactoryManager extends ArrayList<ValidationFactory> {
 
 	public void setDefaultFactory(ValidationFactory defaultFactory) {
 		this.defaultFactory = defaultFactory;
+	}
+	
+	public String getConstantValue(String key) {
+		String response = null;
+		for (ConstantsWithLookup constant : constants) {
+			try {
+				response = constant.getString(key);
+				break;
+			} catch (MissingResourceException e) {
+				//do nothing
+			}
+		}
+		return response;
 	}
 
 	public List<ConstantsWithLookup> getConstants() {

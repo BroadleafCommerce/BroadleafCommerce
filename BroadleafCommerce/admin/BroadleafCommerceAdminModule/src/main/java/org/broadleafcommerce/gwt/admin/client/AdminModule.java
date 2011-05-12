@@ -23,6 +23,7 @@ public class AdminModule extends AbstractModule {
 		
 		List<String> categoryRoles = new ArrayList<String>();
 		categoryRoles.add("ROLE_ADMIN");
+		categoryRoles.add("ROLE_MERCHANDISE_MANAGER");
 		setSection(
 			AdminModule.ADMINMESSAGES.categoryMainTitle(),
 			"category",
@@ -34,6 +35,7 @@ public class AdminModule extends AbstractModule {
 		);
 		List<String> productRoles = new ArrayList<String>();
 		productRoles.add("ROLE_ADMIN");
+		productRoles.add("ROLE_MERCHANDISE_MANAGER");
 		setSection( 
 			AdminModule.ADMINMESSAGES.productMainTitle(),
 			"product",
@@ -46,6 +48,7 @@ public class AdminModule extends AbstractModule {
 		
 		List<String> orderRoles = new ArrayList<String>();
 		orderRoles.add("ROLE_ADMIN");
+		orderRoles.add("ROLE_CUSTOMER_SERVICE_REP");
 		setSection(
 			AdminModule.ADMINMESSAGES.orderMainTitle(),
 			"order",
@@ -58,6 +61,7 @@ public class AdminModule extends AbstractModule {
 		
 		List<String> customerRoles = new ArrayList<String>();
 		customerRoles.add("ROLE_ADMIN");
+		customerRoles.add("ROLE_CUSTOMER_SERVICE_REP");
 		setSection(
 			AdminModule.ADMINMESSAGES.customerMainTitle(),
 			"customer",
@@ -68,16 +72,17 @@ public class AdminModule extends AbstractModule {
 			null
 		);
 		
-		List<String> offerPermissions = new ArrayList<String>();
-		offerPermissions.add("PERMISSION_VIEW_OFFER_SECTION");
+		List<String> offerRoles = new ArrayList<String>();
+		offerRoles.add("ROLE_ADMIN");
+		offerRoles.add("ROLE_PROMOTION_MANAGER");
 		setSection(
 			AdminModule.ADMINMESSAGES.promotionMainTitle(),
 			"offer",
 			"org.broadleafcommerce.gwt.admin.client.view.promotion.offer.OfferView",
 			"offerPresenter",
 			"org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.OfferPresenter",
-			null,
-			offerPermissions
+			offerRoles,
+			null
 		);
 		
 		List<String> userManagementRoles = new ArrayList<String>();
