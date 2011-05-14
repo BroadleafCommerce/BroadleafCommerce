@@ -57,19 +57,19 @@ public class UserManagementPresenter extends DynamicEntityPresenter implements I
 	}
 
 	public void setup() {
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("adminUserDS", new AdminUserListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminUserDS", new AdminUserListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"name", "login", "email"}, new Boolean[]{true, true, true});
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminRoleDS", new AdminRoleListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				roleSearchView = new EntitySearchDialog((ListGridDataSource) result);
 				library.put("adminRoleDS", result);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("adminPermissionDS", new AdminPermissionListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				userRolePresenter = new UserRolePresenter((UserRoleDisplay) getDisplay().getUserRolesDisplay(), roleSearchView);
 				userRolePresenter.setDataSource((ListGridDataSource) library.get("adminRoleDS"), new String[]{"name", "description"}, new Boolean[]{false, false});

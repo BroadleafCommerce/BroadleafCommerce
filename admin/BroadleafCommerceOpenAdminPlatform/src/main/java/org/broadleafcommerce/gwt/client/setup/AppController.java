@@ -75,9 +75,9 @@ public class AppController implements ValueChangeHandler<String> {
 			EntityPresenter presenter = uiFactory.getPresenter(presenterKey);
 			presenter.setDisplay(view);
 			presenter.setEventBus(eventBus);
-			presenter.getPresenterSetupManager().setCanvas(container);
+			presenter.getPresenterSequenceSetupManager().setCanvas(container);
 			presenter.setup();
-			presenter.getPresenterSetupManager().launch();
+			presenter.getPresenterSequenceSetupManager().launch();
 		}
 	}
 }

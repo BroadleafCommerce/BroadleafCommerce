@@ -62,14 +62,14 @@ public class CustomerPresenter extends DynamicEntityPresenter implements Instant
 	}
 
 	public void setup() {
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("customerDS", new CustomerListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("customerDS", new CustomerListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"username", "firstName", "lastName", "emailAddress"}, new Boolean[]{true, true, true, true});
 				library.put("customerDS", top);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("challengeQuestionDS", new ChallengeQuestionListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				((ListGridDataSource) result).resetPermanentFieldVisibility(
 						"question"

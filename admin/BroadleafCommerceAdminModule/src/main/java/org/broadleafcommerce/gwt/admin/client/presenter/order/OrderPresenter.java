@@ -130,19 +130,19 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 
 	public void setup() {
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("orderDS", new OrderListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderDS", new OrderListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				setupDisplayItems(top);
 				((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "name", "orderNumber", "status"}, new Boolean[]{false, false, false, false, false});
 				library.put("orderDS", top);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemDS", new OrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemDS", new OrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				library.put("orderItemDS", result);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleOrderItemDS", new BundledOrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleOrderItemDS", new BundledOrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				orderItemPresenter = new OrderItemPresenter(((OrderDisplay) getDisplay()).getOrderItemsDisplay());
 				orderItemPresenter.setDataSource((ListGridDataSource) library.get("orderItemDS"), new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
@@ -150,7 +150,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				orderItemPresenter.setReadOnly(true);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				((ListGridDataSource) result).resetPermanentFieldVisibility(
 					"abbreviation",
@@ -167,7 +167,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				library.put("countrySearchView", countrySearchView);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("stateDS", new StateListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("stateDS", new StateListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				((ListGridDataSource) result).resetPermanentFieldVisibility(
 					"abbreviation",
@@ -184,14 +184,14 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				library.put("stateSearchView", stateSearchView);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupDS", new FulfillmentGroupListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupDS", new FulfillmentGroupListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				fulfillmentGroupPresenter = new SubPresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay());
 				fulfillmentGroupPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "method", "service", "shippingPrice", "status", "address.postalCode"}, new Boolean[]{false, false, false, false, false, false});
 				fulfillmentGroupPresenter.setReadOnly(true);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentInfoDS", new PaymentInfoListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentInfoDS", new PaymentInfoListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				paymentInfoPresenter = new SubPresenter(((OrderDisplay) getDisplay()).getPaymentInfoDisplay());
 				paymentInfoPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "type", "amount"}, new Boolean[]{false, false, false});
@@ -213,7 +213,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentAdditionalAttributesDS", new PaymentAdditionalAttributesDataSourceFactory(this), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentAdditionalAttributesDS", new PaymentAdditionalAttributesDataSourceFactory(this), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				Map<String, Object> initialValues = new HashMap<String, Object>();
 				initialValues.put("key", AdminModule.ADMINMESSAGES.paymentAttributeKeyDefault());
@@ -223,28 +223,28 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				additionalPaymentAttributesPresenter.setReadOnly(true);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCodeDS", new OfferCodeListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCodeDS", new OfferCodeListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				offerCodePresenter = new SubPresenter(((OrderDisplay) getDisplay()).getOfferCodeDisplay());
 				offerCodePresenter.setDataSource((ListGridDataSource) result, new String[]{"offerCode", "startDate", "endDate", "offer.name", "offer.type", "offer.value"}, new Boolean[]{false, false, false, false, false, false});
 				offerCodePresenter.setReadOnly(true);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("orderAdjustmentDS", new OrderAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderAdjustmentDS", new OrderAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				orderAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newOrderAdjustmentTitle());
 				orderAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.name", "offer.type"}, new Boolean[]{false, false, false, false});
 				orderAdjustmentPresenter.setReadOnly(true);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemAdjustmentDS", new OrderItemAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemAdjustmentDS", new OrderItemAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderItemAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newOrderItemAdjustmentTitle());
 				orderItemAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
 				orderItemAdjustmentPresenter.setReadOnly(true);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupAdjustmentDS", new FulfillmentGroupAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupAdjustmentDS", new FulfillmentGroupAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newFGAdjustmentTitle());
 				fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
