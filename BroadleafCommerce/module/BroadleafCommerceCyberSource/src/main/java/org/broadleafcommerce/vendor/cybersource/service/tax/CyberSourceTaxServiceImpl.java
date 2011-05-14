@@ -18,6 +18,7 @@ package org.broadleafcommerce.vendor.cybersource.service.tax;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Comparator;
 
 import net.sf.ehcache.Cache;
@@ -46,8 +47,6 @@ import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceT
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
-
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implements CyberSourceTaxService, ServiceResponseCacheable {
 	

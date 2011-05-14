@@ -218,6 +218,7 @@
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
+			<type>pom</type>
 		</dependency>
 		<dependency>
 			<groupId>cobertura</groupId>
