@@ -35,7 +35,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 	protected HandlerRegistration addClickHandlerRegistration;
 	protected HandlerRegistration entityTypeChangedHandlerRegistration;
 	protected HandlerRegistration cellSavedHandlerRegistration;
-	protected PresenterSequenceSetupManager presenterSetupManager = new PresenterSequenceSetupManager(this);
+	protected PresenterSequenceSetupManager presenterSequenceSetupManager = new PresenterSequenceSetupManager(this);
 	
 	protected Boolean disabled = false;
 	
@@ -190,8 +190,8 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 		return cellSavedHandlerRegistration;
 	}
 
-	public PresenterSequenceSetupManager getPresenterSetupManager() {
-		return presenterSetupManager;
+	public PresenterSequenceSetupManager getPresenterSequenceSetupManager() {
+		return presenterSequenceSetupManager;
 	}
 
 	public Boolean getLoaded() {

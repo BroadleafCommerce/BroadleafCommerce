@@ -426,29 +426,29 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 	}
 
 	public void setup() {
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("offerDS", new OfferListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerDS", new OfferListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource top) {
 				entityDataSource = (ListGridDataSource) top;
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderDS", new OrderListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderDS", new OrderListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				library.put("offerOrderDS", result);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderItemDS", new OrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerOrderItemDS", new OrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				orderItemDataSource = (ListGridDataSource) result;
 				((DynamicEntityDataSource) result).permanentlyShowFields("product.id", "category.id", "sku.id");
 				library.put("offerOrderItemDS", result);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("offerFGDS", new FulfillmentGroupListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerFGDS", new FulfillmentGroupListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				library.put("offerFGDS", result);
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCustomerDS", new CustomerListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCustomerDS", new CustomerListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				((DynamicEntityDataSource) result).permanentlyShowFields("id");
 				((ListGridDataSource) entityDataSource).permanentlyHideFields("appliesToOrderRules", "appliesToCustomerRules", "appliesToFulfillmentGroupRules", "id");
@@ -457,7 +457,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 				((ListGridDataSource) entityDataSource).setupGridFields(new String[]{"name"}, new Boolean[]{true});
 			}
 		}));
-		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("offerItemCriteriaDS", new OfferItemCriteriaListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("offerItemCriteriaDS", new OfferItemCriteriaListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
 			public void onSetupSuccess(DataSource result) {
 				offerItemCriteriaDataSource = (DynamicEntityDataSource) result;
 				initializer = new OfferPresenterInitializer(OfferPresenter.this, offerItemCriteriaDataSource, orderItemDataSource);

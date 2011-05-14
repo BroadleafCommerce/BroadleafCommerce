@@ -20,7 +20,7 @@ public interface EntityPresenter {
 
 	public void setDisplay(Display display);
 
-	public PresenterSequenceSetupManager getPresenterSetupManager();
+	public PresenterSequenceSetupManager getPresenterSequenceSetupManager();
 	
 	public Boolean getLoaded();
 	
