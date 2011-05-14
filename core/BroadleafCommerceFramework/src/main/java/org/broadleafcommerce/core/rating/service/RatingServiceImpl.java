@@ -33,7 +33,6 @@ import org.broadleafcommerce.core.rating.domain.RatingSummaryImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
 import org.broadleafcommerce.core.rating.domain.ReviewDetailImpl;
 import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
-import org.broadleafcommerce.core.rating.domain.ReviewFeedbackImpl;
 import org.broadleafcommerce.core.rating.service.type.RatingSortType;
 import org.broadleafcommerce.core.rating.service.type.RatingType;
 import org.broadleafcommerce.profile.core.domain.Customer;
@@ -57,7 +56,10 @@ public class RatingServiceImpl implements RatingService {
         ReviewDetail reviewDetail = reviewDetailDao.readReviewDetailById(reviewId);
 
         if (reviewDetail != null) {
-            ReviewFeedback reviewFeedback = new ReviewFeedbackImpl(customer, helpful, reviewDetail);
+        	ReviewFeedback reviewFeedback = reviewDetailDao.createFeedback();
+        	reviewFeedback.setCustomer(customer);
+        	reviewFeedback.setIsHelpful(helpful);
+        	reviewFeedback.setReviewDetail(reviewDetail);
             reviewDetail.getReviewFeedback().add(reviewFeedback);
             reviewDetailDao.saveReviewDetail(reviewDetail);
         }

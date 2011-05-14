@@ -50,7 +50,7 @@ import org.hibernate.annotations.Index;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU_AVAILABILITY")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blInventoryElements")
 public class SkuAvailabilityImpl implements SkuAvailability {
 
     /** The Constant serialVersionUID. */

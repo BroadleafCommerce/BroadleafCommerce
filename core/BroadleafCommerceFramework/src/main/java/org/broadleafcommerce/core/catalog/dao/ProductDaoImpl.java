@@ -25,6 +25,8 @@ import javax.persistence.Query;
 
 import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductSku;
+import org.broadleafcommerce.profile.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
 @Repository("blProductDao")
@@ -37,6 +39,10 @@ public class ProductDaoImpl implements ProductDao {
     protected EntityConfiguration entityConfiguration;
 
     protected String queryCacheableKey = "org.hibernate.cacheable";
+    
+    protected Long currentDateResolution = 10000L;
+    
+    protected Date currentDate = SystemTime.asDate();
 
     public Product save(Product product) {
         return em.merge(product);
@@ -56,9 +62,18 @@ public class ProductDaoImpl implements ProductDao {
 
     @SuppressWarnings("unchecked")
     public List<Product> readActiveProductsByCategory(Long categoryId, Date currentDate) {
+    	Date myDate;
+    	synchronized(this.currentDate) {
+	    	if (currentDate.getTime() - this.currentDate.getTime() > currentDateResolution) {
+	    		this.currentDate = currentDate;
+	    		myDate = currentDate;
+	    	} else {
+	    		myDate = this.currentDate;
+	    	}
+    	}
         Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_CATEGORY");
         query.setParameter("categoryId", categoryId);
-        query.setParameter("currentDate", currentDate);
+        query.setParameter("currentDate", myDate);
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
@@ -80,10 +95,45 @@ public class ProductDaoImpl implements ProductDao {
     }
     
     @SuppressWarnings("unchecked")
+    public List<ProductSku> readProductsBySkuOneToOne(Long skuId) {
+        Query query = em.createNamedQuery("BC_READ_PRODUCTS_BY_SKU_ONE_TO_ONE");
+        query.setParameter("skuId", skuId);
+        query.setHint(getQueryCacheableKey(), true);
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
     public List<Product> readActiveProductsBySku(Long skuId, Date currentDate) {
+    	Date myDate;
+    	synchronized(this.currentDate) {
+	    	if (currentDate.getTime() - this.currentDate.getTime() > currentDateResolution) {
+	    		this.currentDate = currentDate;
+	    		myDate = currentDate;
+	    	} else {
+	    		myDate = this.currentDate;
+	    	}
+    	}
         Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU");
         query.setParameter("skuId", skuId);
-        query.setParameter("currentDate", currentDate);
+        query.setParameter("currentDate", myDate);
+        query.setHint(getQueryCacheableKey(), true);
+        return query.getResultList();
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<ProductSku> readActiveProductsBySkuOneToOne(Long skuId, Date currentDate) {
+    	Date myDate;
+    	synchronized(this.currentDate) {
+	    	if (currentDate.getTime() - this.currentDate.getTime() > currentDateResolution) {
+	    		this.currentDate = currentDate;
+	    		myDate = currentDate;
+	    	} else {
+	    		myDate = this.currentDate;
+	    	}
+    	}
+        Query query = em.createNamedQuery("BC_READ_ACTIVE_PRODUCTS_BY_SKU_ONE_TO_ONE");
+        query.setParameter("skuId", skuId);
+        query.setParameter("currentDate", myDate);
         query.setHint(getQueryCacheableKey(), true);
         return query.getResultList();
     }
@@ -102,4 +152,13 @@ public class ProductDaoImpl implements ProductDao {
     public void setQueryCacheableKey(String queryCacheableKey) {
         this.queryCacheableKey = queryCacheableKey;
     }
+
+	public Long getCurrentDateResolution() {
+		return currentDateResolution;
+	}
+
+	public void setCurrentDateResolution(Long currentDateResolution) {
+		this.currentDateResolution = currentDateResolution;
+	}
+    
 }

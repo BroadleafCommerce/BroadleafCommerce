@@ -34,7 +34,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_MEDIA")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class MediaImpl implements Media {
 
     /** The Constant serialVersionUID. */

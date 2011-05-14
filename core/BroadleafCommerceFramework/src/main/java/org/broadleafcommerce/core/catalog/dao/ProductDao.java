@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
+import org.broadleafcommerce.core.catalog.domain.ProductSku;
 
 public interface ProductDao {
 
@@ -35,6 +36,10 @@ public interface ProductDao {
     public List<Product> readProductsBySku(Long skuId);
     
     public List<Product> readActiveProductsBySku(Long skuId, Date currentDate);
+    
+    public List<ProductSku> readProductsBySkuOneToOne(Long skuId);
+    
+    public List<ProductSku> readActiveProductsBySkuOneToOne(Long skuId, Date currentDate);
     
     public void delete(Product product);
 
