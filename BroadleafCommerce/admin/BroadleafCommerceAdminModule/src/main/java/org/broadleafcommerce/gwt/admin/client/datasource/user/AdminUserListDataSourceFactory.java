@@ -1,6 +1,7 @@
 package org.broadleafcommerce.gwt.admin.client.datasource.user;
 
 import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
@@ -13,13 +14,13 @@ import org.broadleafcommerce.gwt.client.service.AppServices;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 
-public class AdminUserListDataSourceFactory {
+public class AdminUserListDataSourceFactory implements DataSourceFactory {
 	
 	public static ListGridDataSource dataSource = null;
 	
-	public static void createDataSource(String name, AsyncCallback<DataSource> cb) {
+	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
-			OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
+			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.setPopulateToOneFields(false);
 			DataSourceModule[] modules = new DataSourceModule[]{

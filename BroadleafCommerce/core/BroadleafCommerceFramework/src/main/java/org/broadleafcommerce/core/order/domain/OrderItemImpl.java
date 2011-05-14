@@ -545,9 +545,6 @@ public class OrderItemImpl implements OrderItem {
 		PromotionDiscount pd = new PromotionDiscount();
 		pd.setPromotion(promotion);
 		
-		int qtyToReceiveSavings = pd.getQuantity();
-		pd.setDiscountAmount(candidatePromotion.calculateSavingsForOrderItem(this, qtyToReceiveSavings));
-		
 		promotionDiscounts.add(pd);
 		return pd;
 	}
@@ -660,7 +657,6 @@ public class OrderItemImpl implements OrderItem {
 					if (pd.getQuantity() > firstItemQty) {
 						PromotionDiscount pd1 = pd.copy();
 						pd1.resetQty(firstItemQty);
-						pd1.resetDiscountAmount(this);
 						firstItem.getPromotionDiscounts().add(pd1);
 						
 						PromotionDiscount pd2 = pd.copy();

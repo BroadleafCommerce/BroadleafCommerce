@@ -3,6 +3,7 @@ package org.broadleafcommerce.gwt.admin.client.datasource.order;
 import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.gwt.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.module.OrderItemEntityModule;
+import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
@@ -15,14 +16,14 @@ import org.broadleafcommerce.gwt.client.service.AppServices;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DataSource;
 
-public class OrderItemListDataSourceFactory {
+public class OrderItemListDataSourceFactory implements DataSourceFactory {
 
 	public static final String foreignKeyName = "order";
 	public static ListGridDataSource dataSource = null;
 	
-	public static void createDataSource(String name, AsyncCallback<DataSource> cb) {
+	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
-			OperationTypes operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
+			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.ORDER, null));
 			persistencePerspective.setPopulateToOneFields(true);

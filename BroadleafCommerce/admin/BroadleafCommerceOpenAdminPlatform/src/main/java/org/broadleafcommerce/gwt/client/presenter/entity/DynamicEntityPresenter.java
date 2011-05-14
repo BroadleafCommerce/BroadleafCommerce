@@ -3,6 +3,7 @@ package org.broadleafcommerce.gwt.client.presenter.entity;
 import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
+import org.broadleafcommerce.gwt.client.setup.PresenterSequenceSetupManager;
 import org.broadleafcommerce.gwt.client.view.Display;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEditDisplay;
 
@@ -34,6 +35,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 	protected HandlerRegistration addClickHandlerRegistration;
 	protected HandlerRegistration entityTypeChangedHandlerRegistration;
 	protected HandlerRegistration cellSavedHandlerRegistration;
+	protected PresenterSequenceSetupManager presenterSetupManager = new PresenterSequenceSetupManager(this);
 	
 	protected Boolean disabled = false;
 	
@@ -123,7 +125,7 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
         });
 	}
 	
-	public void go(Canvas container) {
+	public void postSetup(Canvas container) {
 		if (containsDisplay(container)) {
 			display.show();
 		} else {
@@ -186,6 +188,14 @@ public abstract class DynamicEntityPresenter extends AbstractEntityPresenter {
 
 	public HandlerRegistration getCellSavedHandlerRegistration() {
 		return cellSavedHandlerRegistration;
+	}
+
+	public PresenterSequenceSetupManager getPresenterSetupManager() {
+		return presenterSetupManager;
+	}
+
+	public Boolean getLoaded() {
+		return loaded;
 	}
 
 }

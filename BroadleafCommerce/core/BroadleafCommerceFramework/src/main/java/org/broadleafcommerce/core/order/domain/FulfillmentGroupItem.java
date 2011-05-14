@@ -37,7 +37,6 @@ public interface FulfillmentGroupItem extends Serializable {
 
     void setQuantity(int quantity);
 
-    //TODO refactor these price method names to reflect that they represent shipping prices
     Money getRetailPrice();
 
     void setRetailPrice(Money retailPrice);
