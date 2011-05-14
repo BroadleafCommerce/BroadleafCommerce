@@ -17,7 +17,7 @@ public abstract class AsyncCallbackAdapter implements AsyncCallback<DataSource> 
 		//override to custom handle failures
 	}
 
-	public void onSuccess(DataSource dataSource) {
+	public final void onSuccess(DataSource dataSource) {
 		onSetupSuccess(dataSource);
 		manager.next();
 	}
