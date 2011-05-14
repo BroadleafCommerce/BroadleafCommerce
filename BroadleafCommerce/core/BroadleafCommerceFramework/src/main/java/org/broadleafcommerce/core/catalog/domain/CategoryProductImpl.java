@@ -26,6 +26,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 /**
  * The Class CategoryProductImpl is the default implmentation of {@link Category}.
  * This entity is only used for executing a named query.
@@ -45,6 +48,7 @@ import javax.persistence.Table;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_CATEGORY_PRODUCT_XREF")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class CategoryProductImpl implements Serializable {
 
     /** The Constant serialVersionUID. */

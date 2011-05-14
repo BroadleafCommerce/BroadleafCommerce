@@ -28,12 +28,14 @@ import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
-import org.hibernate.envers.Audited;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_FEATURED")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class FeaturedProductImpl implements FeaturedProduct {
 
 	private static final long serialVersionUID = 1L;

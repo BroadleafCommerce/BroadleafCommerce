@@ -19,9 +19,13 @@ import org.broadleafcommerce.profile.core.domain.Customer;
 
 public interface ReviewFeedback {
 
-    Long getId();
-    Customer getCustomer();
-    Boolean isHelpful();
-    ReviewDetail getReviewDetail();
+	public Long getId();
+    public Customer getCustomer();
+    public ReviewDetail getReviewDetail();
+	public Boolean getIsHelpful();
+	public void setIsHelpful(Boolean isHelpful);
+	public void setId(Long id);
+	public void setCustomer(Customer customer);
+	public void setReviewDetail(ReviewDetail reviewDetail);
 
 }

@@ -21,6 +21,7 @@ import javax.persistence.PersistenceContext;
 
 import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
+import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
 import org.springframework.stereotype.Repository;
 
 @Repository("blReviewDetailDao")
@@ -42,4 +43,11 @@ public class ReviewDetailDaoImpl implements ReviewDetailDao {
         return em.merge(reviewDetail);
     }
 
+	public ReviewDetail create() {
+		return (ReviewDetail) entityConfiguration.createEntityInstance(ReviewDetail.class.getName());
+	}
+
+	public ReviewFeedback createFeedback() {
+		return (ReviewFeedback) entityConfiguration.createEntityInstance(ReviewFeedback.class.getName());
+	}
 }

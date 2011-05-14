@@ -34,7 +34,7 @@ import org.hibernate.annotations.Index;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SHIPPING_RATE")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class ShippingRateImpl implements ShippingRate {
 
     private static final long serialVersionUID = 1L;

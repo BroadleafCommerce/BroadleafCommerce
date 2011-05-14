@@ -30,7 +30,7 @@ import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_SEARCH_SYNONYM")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SearchSynonymImpl implements SearchSynonym {
 	
     @Id

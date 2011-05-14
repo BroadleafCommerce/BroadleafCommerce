@@ -12,12 +12,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.envers.Audited;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_PRODUCT_SKU")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class ProductSkuImpl extends ProductImpl implements ProductSku {
 
 	private static final Log LOG = LogFactory.getLog(ProductSkuImpl.class);
@@ -26,7 +25,7 @@ public class ProductSkuImpl extends ProductImpl implements ProductSku {
     
     @OneToOne(optional = true, targetEntity = SkuImpl.class)
     @JoinTable(name = "BLC_PRODUCT_SKU_ONE_XREF", joinColumns = @JoinColumn(name = "PRODUCT_ID", referencedColumnName = "PRODUCT_ID"), inverseJoinColumns = @JoinColumn(name = "SKU_ID", referencedColumnName = "SKU_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Sku sku;
 
 	/* (non-Javadoc)

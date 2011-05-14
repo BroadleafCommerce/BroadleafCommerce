@@ -81,7 +81,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @JoinTable(name = "BLC_ORDER_ITEM_ADD_ATTR", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
     @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "VALUE")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
     @BatchSize(size = 50)
 	protected Map<String, String> additionalAttributes;
     
@@ -89,7 +89,7 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @JoinTable(name = "BLC_ORDER_ITEM_ADD_FEE", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
     @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "VALUE")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
     @BatchSize(size = 50)
 	protected Map<String, BigDecimal> additionalFees;
 

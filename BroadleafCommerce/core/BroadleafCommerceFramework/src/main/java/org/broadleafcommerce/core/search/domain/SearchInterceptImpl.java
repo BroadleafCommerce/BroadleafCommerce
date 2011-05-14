@@ -29,7 +29,7 @@ import org.hibernate.annotations.Index;
 
 @Entity
 @Table(name = "BLC_SEARCH_INTERCEPT")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class SearchInterceptImpl implements SearchIntercept {
 	
     @Id

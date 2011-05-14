@@ -45,7 +45,7 @@ import org.hibernate.annotations.Index;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_ADMIN_USER")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class AdminUserImpl implements AdminUser {
 	
 	private static final long serialVersionUID = 1L;
@@ -89,7 +89,7 @@ public class AdminUserImpl implements AdminUser {
     /** All roles that this user has */
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = AdminRoleImpl.class)
     @JoinTable(name = "BLC_ADMIN_USER_ROLE_XREF", joinColumns = @JoinColumn(name = "ADMIN_USER_ID", referencedColumnName = "ADMIN_USER_ID"), inverseJoinColumns = @JoinColumn(name = "ADMIN_ROLE_ID", referencedColumnName = "ADMIN_ROLE_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @BatchSize(size = 50)
     protected Set<AdminRole> allRoles = new HashSet<AdminRole>();
     

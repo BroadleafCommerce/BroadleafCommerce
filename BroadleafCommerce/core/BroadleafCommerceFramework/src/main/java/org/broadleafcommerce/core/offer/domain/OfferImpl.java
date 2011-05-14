@@ -53,7 +53,7 @@ import org.hibernate.annotations.Index;
 @Entity
 @Table(name = "BLC_OFFER")
 @Inheritance(strategy=InheritanceType.JOINED)
-@Cache(usage=CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class OfferImpl implements Offer {
 
     public static final long serialVersionUID = 1L;
@@ -152,7 +152,7 @@ public class OfferImpl implements Offer {
     
     @OneToMany(fetch = FetchType.LAZY, targetEntity = OfferItemCriteriaImpl.class)
     @JoinTable(name = "BLC_QUALIFIER_CRITERIA_OFFER_XREF", joinColumns = @JoinColumn(name = "OFFER_ID", referencedColumnName = "OFFER_ID"), inverseJoinColumns = @JoinColumn(name = "OFFER_ITEM_CRITERIA_ID", referencedColumnName = "OFFER_ITEM_CRITERIA_ID"))
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected List<OfferItemCriteria> qualifyingItemCriteria = new ArrayList<OfferItemCriteria>();
     
     @ManyToOne(targetEntity = OfferItemCriteriaImpl.class, cascade={CascadeType.ALL})
@@ -167,7 +167,7 @@ public class OfferImpl implements Offer {
     @ManyToMany(targetEntity = OfferRuleImpl.class, cascade = {CascadeType.ALL})
     @JoinTable(name = "BLC_OFFER_RULE_MAP", inverseJoinColumns = @JoinColumn(name = "OFFER_RULE_ID", referencedColumnName = "OFFER_RULE_ID"))
     @MapKeyColumn(name = "MAP_KEY", nullable = false)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region="blOrderElements")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     Map<String, OfferRule> offerMatchRules = new HashMap<String, OfferRule>();
     
     @Column(name = "USE_NEW_FORMAT")

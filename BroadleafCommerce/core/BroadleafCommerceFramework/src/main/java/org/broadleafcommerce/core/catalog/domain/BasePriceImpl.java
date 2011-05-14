@@ -37,6 +37,8 @@ import javax.persistence.TemporalType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.profile.common.domain.Auditable;
 import org.broadleafcommerce.profile.core.domain.listener.AuditableListener;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
 /**
@@ -46,6 +48,7 @@ import org.hibernate.annotations.Index;
 @EntityListeners(value = { AuditableListener.class })
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_BASE_PRICE")
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 public class BasePriceImpl implements BasePrice {
 
     /** The Constant serialVersionUID. */

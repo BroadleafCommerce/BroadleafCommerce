@@ -16,10 +16,13 @@
 package org.broadleafcommerce.core.rating.dao;
 
 import org.broadleafcommerce.core.rating.domain.ReviewDetail;
+import org.broadleafcommerce.core.rating.domain.ReviewFeedback;
 
 public interface ReviewDetailDao {
 
     ReviewDetail readReviewDetailById(Long reviewId);
     ReviewDetail saveReviewDetail(ReviewDetail reviewDetail);
+    ReviewDetail create();
+    ReviewFeedback createFeedback();
 
 }

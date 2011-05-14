@@ -59,23 +59,32 @@ public class ReviewFeedbackImpl implements ReviewFeedback {
         return id;
     }
 
-    public ReviewFeedbackImpl(Customer customer, Boolean isHelpful, ReviewDetail reviewDetail) {
-        super();
-        this.customer = customer;
-        this.isHelpful = isHelpful;
-        this.reviewDetail = reviewDetail;
-    }
-
     public Customer getCustomer() {
         return customer;
-    }
-
-    public Boolean isHelpful() {
-        return isHelpful;
     }
 
     public ReviewDetail getReviewDetail() {
         return reviewDetail;
     }
+
+	public Boolean getIsHelpful() {
+		return isHelpful;
+	}
+
+	public void setIsHelpful(Boolean isHelpful) {
+		this.isHelpful = isHelpful;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public void setReviewDetail(ReviewDetail reviewDetail) {
+		this.reviewDetail = reviewDetail;
+	}
 
 }

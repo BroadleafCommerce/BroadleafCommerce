@@ -77,7 +77,7 @@ import org.hibernate.envers.Audited;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "BLC_SKU")
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
 @Searchable
 public class SkuImpl implements Sku {
 
@@ -155,7 +155,7 @@ public class SkuImpl implements Sku {
     @JoinTable(name = "BLC_SKU_IMAGE", joinColumns = @JoinColumn(name = "SKU_ID"))
     @org.hibernate.annotations.MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
     @Column(name = "URL")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     @Deprecated
     protected Map<String, String> skuImages = new HashMap<String, String>();
 
@@ -165,7 +165,7 @@ public class SkuImpl implements Sku {
     @MapKey(columns = {@Column(name = "MAP_KEY", nullable = false)})
     //@MapKeyManyToMany(joinColumns = {@JoinColumn(name = "MAP_KEY")}, targetEntity=java.lang.String.class)
     @Cascade(value={org.hibernate.annotations.CascadeType.ALL, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blStandardElements")
     protected Map<String, Media> skuMedia = new HashMap<String , Media>();
 
 
