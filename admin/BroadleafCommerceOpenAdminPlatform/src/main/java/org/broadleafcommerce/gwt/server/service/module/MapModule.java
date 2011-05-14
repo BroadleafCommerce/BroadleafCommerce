@@ -349,9 +349,6 @@ public class MapModule extends BasicEntityModule {
 			PersistentClass persistentClass = dynamicEntityDao.getPersistentClass(mapStructure.getValueClassName());
 			Map<String, FieldMetadata> valueMergedProperties;
 			if (persistentClass == null) {
-				/*
-				 * TODO test simple map structures whose value is not a persistent class
-				 */
 				valueMergedProperties = dynamicEntityDao.getPropertiesForPrimitiveClass(
 					((SimpleValueMapStructure) mapStructure).getValuePropertyName(), 
 					((SimpleValueMapStructure) mapStructure).getValuePropertyFriendlyName(),

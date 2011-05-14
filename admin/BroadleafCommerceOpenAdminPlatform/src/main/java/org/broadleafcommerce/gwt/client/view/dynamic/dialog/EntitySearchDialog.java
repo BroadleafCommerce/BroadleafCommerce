@@ -1,9 +1,9 @@
 package org.broadleafcommerce.gwt.client.view.dynamic.dialog;
 
-import org.broadleafcommerce.gwt.client.AppController;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.gwt.client.event.SearchItemSelectedEvent;
 import org.broadleafcommerce.gwt.client.event.SearchItemSelectedEventHandler;
+import org.broadleafcommerce.gwt.client.setup.AppController;
 
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;

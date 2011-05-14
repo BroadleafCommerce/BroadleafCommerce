@@ -6,6 +6,7 @@ import org.broadleafcommerce.gwt.client.security.AdminUser;
 import org.broadleafcommerce.gwt.client.security.SecurityManager;
 import org.broadleafcommerce.gwt.client.service.AbstractCallback;
 import org.broadleafcommerce.gwt.client.service.AppServices;
+import org.broadleafcommerce.gwt.client.setup.AppController;
 import org.broadleafcommerce.gwt.client.view.MasterView;
 import org.broadleafcommerce.gwt.client.view.ProgressWindow;
 import org.broadleafcommerce.gwt.client.view.SimpleProgress;

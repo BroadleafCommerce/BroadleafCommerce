@@ -19,7 +19,6 @@ public class PromotionDiscount implements Serializable{
     private CandidateItemOffer candidateItemOffer;
 	private Offer promotion;
 	private OfferItemCriteria itemCriteria;
-	private Money discountAmount;
 	private int quantity;
 	private int finalizedQuantity;
 
@@ -38,15 +37,6 @@ public class PromotionDiscount implements Serializable{
 	
 	public void setItemCriteria(OfferItemCriteria itemCriteria) {
 		this.itemCriteria = itemCriteria;
-	}
-	
-	//TODO this discountAmount field never appears to be used.
-	public Money getDiscountAmount() {
-		return discountAmount;
-	}
-	
-	public void setDiscountAmount(Money discountAmount) {
-		this.discountAmount = discountAmount;
 	}
 
 	public int getQuantity() {
@@ -83,7 +73,6 @@ public class PromotionDiscount implements Serializable{
 		pd.setPromotion(promotion);
 		pd.setQuantity(quantity);
 		pd.setFinalizedQuantity(finalizedQuantity);
-		pd.setDiscountAmount(discountAmount);
 		pd.setCandidateItemOffer(candidateItemOffer);
 		return pd;
 	}
@@ -91,10 +80,6 @@ public class PromotionDiscount implements Serializable{
 	public void resetQty(int qty) {
 		quantity = qty;
 		finalizedQuantity = qty;
-	}
-	
-	public void resetDiscountAmount(OrderItem orderItem) {
-		this.discountAmount = candidateItemOffer.calculateSavingsForOrderItem(orderItem, quantity);
 	}
 	
 }

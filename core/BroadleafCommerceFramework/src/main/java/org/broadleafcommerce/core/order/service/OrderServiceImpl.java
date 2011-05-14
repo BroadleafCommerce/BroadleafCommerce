@@ -465,10 +465,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public Order confirmOrder(Order order) {
-        // TODO Other actions needed to complete order
-        // (such as calling something to make sure the order is fulfilled
-        // somehow).
-        // Code below is only a start.
         return orderDao.submitOrder(order);
     }
 

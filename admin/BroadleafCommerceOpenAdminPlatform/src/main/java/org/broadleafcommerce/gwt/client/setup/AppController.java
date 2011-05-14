@@ -1,4 +1,4 @@
-package org.broadleafcommerce.gwt.client;
+package org.broadleafcommerce.gwt.client.setup;
 
 import java.util.HashMap;
 
@@ -75,7 +75,9 @@ public class AppController implements ValueChangeHandler<String> {
 			EntityPresenter presenter = uiFactory.getPresenter(presenterKey);
 			presenter.setDisplay(view);
 			presenter.setEventBus(eventBus);
-			presenter.go(container);
+			presenter.getPresenterSetupManager().setCanvas(container);
+			presenter.setup();
+			presenter.getPresenterSetupManager().launch();
 		}
 	}
 }

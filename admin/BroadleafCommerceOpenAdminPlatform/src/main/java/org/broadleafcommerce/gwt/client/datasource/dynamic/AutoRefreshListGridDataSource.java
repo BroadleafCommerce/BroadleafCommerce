@@ -1,9 +1,9 @@
 package org.broadleafcommerce.gwt.client.datasource.dynamic;
 
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.AsyncCallbackAdapter;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
+import org.broadleafcommerce.gwt.client.setup.AsyncCallbackAdapter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.smartgwt.client.data.DSRequest;
@@ -25,7 +25,7 @@ public class AutoRefreshListGridDataSource extends ListGridDataSource {
 	@Override
 	protected void executeAdd(String requestId, DSRequest request, final DSResponse response, String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		super.executeAdd(requestId, request, response, customCriteria, new AsyncCallbackAdapter() {
-			public void onSuccess(DataSource arg0) {
+			public void onSetupSuccess(DataSource arg0) {
 				response.setInvalidateCache(true);
 				if (cb != null) {
 					cb.onSuccess(arg0);
@@ -45,7 +45,7 @@ public class AutoRefreshListGridDataSource extends ListGridDataSource {
 	@Override
 	protected void executeUpdate(String requestId, DSRequest request, final DSResponse response, String[] customCriteria, final AsyncCallback<DataSource> cb) {
 		super.executeUpdate(requestId, request, response, customCriteria, new AsyncCallbackAdapter() {
-			public void onSuccess(DataSource arg0) {
+			public void onSetupSuccess(DataSource arg0) {
 				response.setInvalidateCache(true);
 				if (cb != null) {
 					cb.onSuccess(arg0);

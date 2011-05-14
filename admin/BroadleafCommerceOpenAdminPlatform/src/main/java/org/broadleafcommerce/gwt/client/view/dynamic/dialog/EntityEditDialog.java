@@ -2,10 +2,10 @@ package org.broadleafcommerce.gwt.client.view.dynamic.dialog;
 
 import java.util.Map;
 
-import org.broadleafcommerce.gwt.client.AppController;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.event.NewItemCreatedEvent;
 import org.broadleafcommerce.gwt.client.event.NewItemCreatedEventHandler;
+import org.broadleafcommerce.gwt.client.setup.AppController;
 import org.broadleafcommerce.gwt.client.view.dynamic.form.FormBuilder;
 
 import com.smartgwt.client.data.DSCallback;

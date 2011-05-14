@@ -17,25 +17,23 @@ import org.broadleafcommerce.gwt.admin.client.datasource.order.PaymentAdditional
 import org.broadleafcommerce.gwt.admin.client.datasource.order.PaymentInfoListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.StateListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.view.order.OrderDisplay;
-import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.AbstractDynamicDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.AsyncCallbackAdapter;
 import org.broadleafcommerce.gwt.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.gwt.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.gwt.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.gwt.client.presenter.structure.CreateBasedListStructurePresenter;
 import org.broadleafcommerce.gwt.client.presenter.structure.MapStructurePresenter;
 import org.broadleafcommerce.gwt.client.reflection.Instantiable;
+import org.broadleafcommerce.gwt.client.setup.AsyncCallbackAdapter;
+import org.broadleafcommerce.gwt.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.gwt.client.view.dynamic.dialog.EntitySearchDialog;
 import org.broadleafcommerce.gwt.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
 
-import com.google.gwt.user.client.Timer;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionChangedHandler;
 import com.smartgwt.client.widgets.grid.events.SelectionEvent;
@@ -50,6 +48,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 	protected SubPresentable orderAdjustmentPresenter;
 	protected SubPresentable orderItemAdjustmentPresenter;
 	protected SubPresentable fulfillmentGroupAdjustmentPresenter;
+	protected HashMap<String, Object> library = new HashMap<String, Object>();
 	
 	@Override
 	protected void changeSelection(final Record selectedRecord) {
@@ -117,26 +116,6 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				}
 			}
 		});
-		/*((OrderDisplay) display).getPaymentInfoDisplay().getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					Map<String, Object> initialValues = new HashMap<String, Object>();
-					initialValues.put("order", display.getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
-					initialValues.put("_type", new String[]{((DynamicEntityDataSource) ((OrderDisplay) display).getPaymentInfoDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-					AdminModule.ENTITY_ADD.editNewRecord("Create New Payment Info", (DynamicEntityDataSource) ((OrderDisplay) display).getPaymentInfoDisplay().getGrid().getDataSource(), initialValues, null, "90%", null, null);
-				}
-			}
-        });
-		((OrderDisplay) display).getOfferCodeDisplay().getAddButton().addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				if (event.isLeftButtonDown()) {
-					Map<String, Object> initialValues = new HashMap<String, Object>();
-					initialValues.put("orders", display.getListDisplay().getGrid().getSelectedRecord().getAttribute("id"));
-					initialValues.put("_type", new String[]{((DynamicEntityDataSource) ((OrderDisplay) display).getOfferCodeDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
-					AdminModule.ENTITY_ADD.editNewRecord("Create Offer Code", (DynamicEntityDataSource) ((OrderDisplay) display).getOfferCodeDisplay().getGrid().getDataSource(), initialValues, null, "90%", null, null);
-				}
-			}
-        });*/
 		setReadOnly(true);
 	}
 	
@@ -150,146 +129,128 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		//do nothing
 	}
 
-	@Override
-	public void go(final Canvas container) {
-		BLCMain.MODAL_PROGRESS.startProgress(new Timer() {
-			public void run() {
-				if (loaded) {
-					OrderPresenter.super.go(container);
-					return;
-				}
-				OrderListDataSourceFactory.createDataSource("orderDS", new AsyncCallbackAdapter() {
-					public void onSuccess(final DataSource top) {
-						setupDisplayItems(top);
-						((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "name", "orderNumber", "status"}, new Boolean[]{false, false, false, false, false});
-						
-						OrderItemListDataSourceFactory.createDataSource("orderItemDS", new AsyncCallbackAdapter() {
-							public void onSuccess(final DataSource orderItemDS) {
-								BundledOrderItemListDataSourceFactory.createDataSource("bundleOrderItemDS", new AsyncCallbackAdapter() {
-									public void onSuccess(DataSource bundleOrderItemDS) {
-										orderItemPresenter = new OrderItemPresenter(((OrderDisplay) getDisplay()).getOrderItemsDisplay());
-										orderItemPresenter.setDataSource((ListGridDataSource) orderItemDS, new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
-										((OrderItemPresenter) orderItemPresenter).setExpansionDataSource((ListGridDataSource) bundleOrderItemDS, new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
-										orderItemPresenter.setReadOnly(true);
-										
-										CountryListDataSourceFactory.createDataSource("countryDS", new AsyncCallbackAdapter() {
-											public void onSuccess(final DataSource countryDS) {
-												((ListGridDataSource) countryDS).resetPermanentFieldVisibility(
-													"abbreviation",
-													"name"
-												);
-												final EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) countryDS);
-												
-												((DynamicEntityDataSource) top).
-												getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-													"address.country", 
-													countrySearchView, 
-													AdminModule.ADMINMESSAGES.countrySearchPrompt(), 
-													(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
-												);
-												
-												StateListDataSourceFactory.createDataSource("stateDS", new AsyncCallbackAdapter() {
-													public void onSuccess(final DataSource stateDS) {
-														((ListGridDataSource) stateDS).resetPermanentFieldVisibility(
-															"abbreviation",
-															"name"
-														);
-														final EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) stateDS);
-														((DynamicEntityDataSource) top).
-														getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-															"address.state", 
-															stateSearchView, 
-															AdminModule.ADMINMESSAGES.stateSearchPrompt(), 
-															(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
-														);
-															
-														FulfillmentGroupListDataSourceFactory.createDataSource("fulfillmentGroupDS", new AsyncCallbackAdapter() {
-															public void onSuccess(DataSource fgDS) {
-																fulfillmentGroupPresenter = new SubPresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay());
-																fulfillmentGroupPresenter.setDataSource((ListGridDataSource) fgDS, new String[]{"referenceNumber", "method", "service", "shippingPrice", "status", "address.postalCode"}, new Boolean[]{false, false, false, false, false, false});
-																fulfillmentGroupPresenter.setReadOnly(true);
-																
-																PaymentInfoListDataSourceFactory.createDataSource("paymentInfoDS", new AsyncCallbackAdapter() {
-																	public void onSuccess(final DataSource paymentInfoDS) {
-																		paymentInfoPresenter = new SubPresenter(((OrderDisplay) getDisplay()).getPaymentInfoDisplay());
-																		paymentInfoPresenter.setDataSource((ListGridDataSource) paymentInfoDS, new String[]{"referenceNumber", "type", "amount"}, new Boolean[]{false, false, false});
-																		paymentInfoPresenter.setReadOnly(true);
-																		
-																		((DynamicEntityDataSource) paymentInfoDS).
-																		getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-																			"address.country", 
-																			countrySearchView, 
-																			AdminModule.ADMINMESSAGES.countrySearchPrompt(), 
-																			(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
-																		);
-																		((DynamicEntityDataSource) paymentInfoDS).
-																		getFormItemCallbackHandlerManager().addSearchFormItemCallback(
-																			"address.state", 
-																			stateSearchView, 
-																			AdminModule.ADMINMESSAGES.stateSearchPrompt(), 
-																			(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
-																		);
-																		
-																		PaymentAdditionalAttributesDataSourceFactory.createDataSource("paymentAdditionalAttributesDS", ((OrderDisplay) getDisplay()).getAdditionalAttributesDisplay().getGrid(), new AsyncCallbackAdapter() {
-																			public void onSuccess(DataSource attributeDS) {
-																				Map<String, Object> initialValues = new HashMap<String, Object>();
-																				initialValues.put("key", AdminModule.ADMINMESSAGES.paymentAttributeKeyDefault());
-																				initialValues.put("value", AdminModule.ADMINMESSAGES.paymentAttributeValueDefault());
-																				additionalPaymentAttributesPresenter = new MapStructurePresenter(((OrderDisplay) getDisplay()).getAdditionalAttributesDisplay(), new MapStructureEntityEditDialog(), AdminModule.ADMINMESSAGES.newAttributeTitle(), initialValues);
-																				additionalPaymentAttributesPresenter.setDataSource((ListGridDataSource) attributeDS, new String[]{"key", "value"}, new Boolean[]{true, true});
-																				additionalPaymentAttributesPresenter.setReadOnly(true);
-																				
-																				OfferCodeListDataSourceFactory.createDataSource("offerCodeDS", new AsyncCallbackAdapter() {
-																					public void onSuccess(DataSource attributeDS) {
-																						offerCodePresenter = new SubPresenter(((OrderDisplay) getDisplay()).getOfferCodeDisplay());
-																						offerCodePresenter.setDataSource((ListGridDataSource) attributeDS, new String[]{"offerCode", "startDate", "endDate", "offer.name", "offer.type", "offer.value"}, new Boolean[]{false, false, false, false, false, false});
-																						offerCodePresenter.setReadOnly(true);
-																						
-																						OrderAdjustmentListDataSourceFactory.createDataSource("orderAdjustmentDS", new AsyncCallbackAdapter() {
-																							public void onSuccess(DataSource orderAdjustmentDS) {
-																								orderAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newOrderAdjustmentTitle());
-																								orderAdjustmentPresenter.setDataSource((ListGridDataSource) orderAdjustmentDS, new String[]{"reason", "value", "offer.name", "offer.type"}, new Boolean[]{false, false, false, false});
-																								orderAdjustmentPresenter.setReadOnly(true);
-																								
-																								OrderItemAdjustmentListDataSourceFactory.createDataSource("orderItemAdjustmentDS", new AsyncCallbackAdapter() {
-																									public void onSuccess(DataSource orderItemAdjustmentDS) {
-																										orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderItemAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newOrderItemAdjustmentTitle());
-																										orderItemAdjustmentPresenter.setDataSource((ListGridDataSource) orderItemAdjustmentDS, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
-																										orderItemAdjustmentPresenter.setReadOnly(true);
-																										
-																										FulfillmentGroupAdjustmentListDataSourceFactory.createDataSource("fulfillmentGroupAdjustmentDS", new AsyncCallbackAdapter() {
-																											public void onSuccess(DataSource fulfillmentGroupAdjustmentDS) {
-																												fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newFGAdjustmentTitle());
-																												fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) fulfillmentGroupAdjustmentDS, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
-																												fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
-																						
-																												OrderPresenter.super.go(container);
-																											}
-																										});
-																									}
-																								});
-																							}
-																						});
-																					}
-																				});
-																			}
-																		});
-																	}
-																});
-															}
-														});
-													}
-												});
-											}
-										});
-									}
-								});
-							}
-						});
-					}
-				});
+	public void setup() {
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("orderDS", new OrderListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource top) {
+				setupDisplayItems(top);
+				((ListGridDataSource) top).setupGridFields(new String[]{"customer.firstName", "customer.lastName", "name", "orderNumber", "status"}, new Boolean[]{false, false, false, false, false});
+				library.put("orderDS", top);
 			}
-		});
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemDS", new OrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				library.put("orderItemDS", result);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("bundleOrderItemDS", new BundledOrderItemListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				orderItemPresenter = new OrderItemPresenter(((OrderDisplay) getDisplay()).getOrderItemsDisplay());
+				orderItemPresenter.setDataSource((ListGridDataSource) library.get("orderItemDS"), new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
+				((OrderItemPresenter) orderItemPresenter).setExpansionDataSource((ListGridDataSource) result, new String[]{"name", "quantity", "price", "retailPrice", "salePrice"}, new Boolean[]{false, false, false, false, false});
+				orderItemPresenter.setReadOnly(true);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("countryDS", new CountryListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				((ListGridDataSource) result).resetPermanentFieldVisibility(
+					"abbreviation",
+					"name"
+				);
+				EntitySearchDialog countrySearchView = new EntitySearchDialog((ListGridDataSource) result);
+				((DynamicEntityDataSource) library.get("orderDS")).
+				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+					"address.country", 
+					countrySearchView, 
+					AdminModule.ADMINMESSAGES.countrySearchPrompt(), 
+					(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
+				);
+				library.put("countrySearchView", countrySearchView);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("stateDS", new StateListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				((ListGridDataSource) result).resetPermanentFieldVisibility(
+					"abbreviation",
+					"name"
+				);
+				EntitySearchDialog stateSearchView = new EntitySearchDialog((ListGridDataSource) result);
+				((DynamicEntityDataSource) library.get("orderDS")).
+				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+					"address.state", 
+					stateSearchView, 
+					AdminModule.ADMINMESSAGES.stateSearchPrompt(), 
+					(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
+				);
+				library.put("stateSearchView", stateSearchView);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupDS", new FulfillmentGroupListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				fulfillmentGroupPresenter = new SubPresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay());
+				fulfillmentGroupPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "method", "service", "shippingPrice", "status", "address.postalCode"}, new Boolean[]{false, false, false, false, false, false});
+				fulfillmentGroupPresenter.setReadOnly(true);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentInfoDS", new PaymentInfoListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				paymentInfoPresenter = new SubPresenter(((OrderDisplay) getDisplay()).getPaymentInfoDisplay());
+				paymentInfoPresenter.setDataSource((ListGridDataSource) result, new String[]{"referenceNumber", "type", "amount"}, new Boolean[]{false, false, false});
+				paymentInfoPresenter.setReadOnly(true);
+				
+				((DynamicEntityDataSource) result).
+				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+					"address.country", 
+					(EntitySearchDialog) library.get("countrySearchView"), 
+					AdminModule.ADMINMESSAGES.countrySearchPrompt(), 
+					(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
+				);
+				((DynamicEntityDataSource) result).
+				getFormItemCallbackHandlerManager().addSearchFormItemCallback(
+					"address.state", 
+					(EntitySearchDialog) library.get("stateSearchView"), 
+					AdminModule.ADMINMESSAGES.stateSearchPrompt(), 
+					(DynamicFormDisplay) ((OrderDisplay) getDisplay()).getFulfillmentGroupDisplay()
+				);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("paymentAdditionalAttributesDS", new PaymentAdditionalAttributesDataSourceFactory(this), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				Map<String, Object> initialValues = new HashMap<String, Object>();
+				initialValues.put("key", AdminModule.ADMINMESSAGES.paymentAttributeKeyDefault());
+				initialValues.put("value", AdminModule.ADMINMESSAGES.paymentAttributeValueDefault());
+				additionalPaymentAttributesPresenter = new MapStructurePresenter(((OrderDisplay) getDisplay()).getAdditionalAttributesDisplay(), new MapStructureEntityEditDialog(), AdminModule.ADMINMESSAGES.newAttributeTitle(), initialValues);
+				additionalPaymentAttributesPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "value"}, new Boolean[]{true, true});
+				additionalPaymentAttributesPresenter.setReadOnly(true);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("offerCodeDS", new OfferCodeListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				offerCodePresenter = new SubPresenter(((OrderDisplay) getDisplay()).getOfferCodeDisplay());
+				offerCodePresenter.setDataSource((ListGridDataSource) result, new String[]{"offerCode", "startDate", "endDate", "offer.name", "offer.type", "offer.value"}, new Boolean[]{false, false, false, false, false, false});
+				offerCodePresenter.setReadOnly(true);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("orderAdjustmentDS", new OrderAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				orderAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newOrderAdjustmentTitle());
+				orderAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.name", "offer.type"}, new Boolean[]{false, false, false, false});
+				orderAdjustmentPresenter.setReadOnly(true);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemAdjustmentDS", new OrderItemAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				orderItemAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getOrderItemAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newOrderItemAdjustmentTitle());
+				orderItemAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
+				orderItemAdjustmentPresenter.setReadOnly(true);
+			}
+		}));
+		getPresenterSetupManager().addOrReplaceItem(new PresenterSetupItem("fulfillmentGroupAdjustmentDS", new FulfillmentGroupAdjustmentListDataSourceFactory(), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newFGAdjustmentTitle());
+				fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
+				fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
+			}
+		}));
 	}
 	
 }
