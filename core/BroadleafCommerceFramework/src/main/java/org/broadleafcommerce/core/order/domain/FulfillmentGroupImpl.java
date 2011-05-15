@@ -219,8 +219,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return fulfillmentGroupItems;
     }
     
-    public List<OrderItem> getDiscreteOrderItems() {
-    	List<OrderItem> discreteOrderItems = new ArrayList<OrderItem>();
+    public List<DiscreteOrderItem> getDiscreteOrderItems() {
+    	List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
         	OrderItem orderItem = fgItem.getOrderItem();
             if (orderItem instanceof BundleOrderItemImpl) {
@@ -236,8 +236,8 @@ public class FulfillmentGroupImpl implements FulfillmentGroup {
         return discreteOrderItems;
     }
     
-    public List<OrderItem> getDiscountableDiscreteOrderItems() {
-        List<OrderItem> discreteOrderItems = new ArrayList<OrderItem>();
+    public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems() {
+        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (FulfillmentGroupItem fgItem : fulfillmentGroupItems) {
         	OrderItem orderItem = fgItem.getOrderItem();
             if (orderItem instanceof BundleOrderItemImpl) {

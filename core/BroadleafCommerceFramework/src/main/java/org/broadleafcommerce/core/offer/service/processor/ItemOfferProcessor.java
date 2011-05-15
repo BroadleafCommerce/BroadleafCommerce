@@ -5,6 +5,7 @@ import java.util.List;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
 import org.broadleafcommerce.core.offer.domain.CandidateOrderOffer;
 import org.broadleafcommerce.core.offer.domain.Offer;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 
@@ -19,7 +20,7 @@ public interface ItemOfferProcessor extends OrderOfferProcessor {
 	 * @param discreteOrderItems the order items to evaluate
 	 * @param offer the offer in question
 	 */
-	public void filterItemLevelOffer(Order order, List<CandidateItemOffer> qualifiedItemOffers, List<OrderItem> discreteOrderItems, Offer offer);
+	public void filterItemLevelOffer(Order order, List<CandidateItemOffer> qualifiedItemOffers, List<DiscreteOrderItem> discreteOrderItems, Offer offer);
 
 	/**
 	 * Private method that takes a list of sorted CandidateItemOffers and determines if each offer can be
@@ -32,10 +33,10 @@ public interface ItemOfferProcessor extends OrderOfferProcessor {
 	 * @param itemOffers a sorted list of CandidateItemOffer
 	 * @return true if an OrderItemOffer was applied, otherwise false 
 	 */
-	public boolean applyAllItemOffers(List<CandidateItemOffer> itemOffers, List<OrderItem> discreteOrderItems, Order order);
+	public boolean applyAllItemOffers(List<CandidateItemOffer> itemOffers, List<DiscreteOrderItem> discreteOrderItems, Order order);
 	
-	public void applyAndCompareOrderAndItemOffers(Order order, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers, List<OrderItem> discreteOrderItems);
+	public void applyAndCompareOrderAndItemOffers(Order order, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers, List<DiscreteOrderItem> discreteOrderItems);
 	
-	public List<OrderItem> filterOffers(Order order, List<Offer> filteredOffers, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers);
+	public List<DiscreteOrderItem> filterOffers(Order order, List<Offer> filteredOffers, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers);
 
 }

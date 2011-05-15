@@ -34,8 +34,8 @@ import org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferP
 import org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor;
 import org.broadleafcommerce.core.offer.service.processor.OrderOfferProcessor;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
-import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 import org.broadleafcommerce.profile.core.domain.Customer;
 import org.broadleafcommerce.profile.time.SystemTime;
@@ -222,7 +222,7 @@ public class OfferServiceImpl implements OfferService {
             List<CandidateOrderOffer> qualifiedOrderOffers = new ArrayList<CandidateOrderOffer>();
             List<CandidateItemOffer> qualifiedItemOffers = new ArrayList<CandidateItemOffer>();
             
-            List<OrderItem> discreteOrderItems = itemOfferProcessor.filterOffers(order, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
+            List<DiscreteOrderItem> discreteOrderItems = itemOfferProcessor.filterOffers(order, filteredOffers, qualifiedOrderOffers, qualifiedItemOffers);
 
             if ((qualifiedItemOffers.isEmpty()) && (qualifiedOrderOffers.isEmpty())) {
                 orderOfferProcessor.calculateOrderTotal(order);

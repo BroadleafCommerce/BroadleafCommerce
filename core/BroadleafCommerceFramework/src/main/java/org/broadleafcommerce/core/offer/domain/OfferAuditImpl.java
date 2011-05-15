@@ -35,7 +35,7 @@ import org.broadleafcommerce.money.Money;
 import org.hibernate.annotations.Index;
 
 @Entity
-@Table(name = "OFFER_AUDIT")
+@Table(name = "BLC_OFFER_AUDIT")
 @Inheritance(strategy=InheritanceType.JOINED)
 public class OfferAuditImpl implements OfferAudit {
 

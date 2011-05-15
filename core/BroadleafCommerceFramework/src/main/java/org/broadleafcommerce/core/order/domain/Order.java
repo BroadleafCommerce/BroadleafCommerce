@@ -192,9 +192,9 @@ public interface Order extends Serializable {
 
     public boolean containsNotStackableOrderOffer();
 
-    public List<OrderItem> getDiscreteOrderItems();
+    public List<DiscreteOrderItem> getDiscreteOrderItems();
 
-    public List<OrderItem> getDiscountableDiscreteOrderItems();
+    public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems();
 
     public List<OfferCode> getAddedOfferCodes();
 

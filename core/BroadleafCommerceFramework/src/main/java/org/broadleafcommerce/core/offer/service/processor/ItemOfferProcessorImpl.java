@@ -17,6 +17,7 @@ import org.broadleafcommerce.core.offer.service.discount.ItemOfferComparator;
 import org.broadleafcommerce.core.offer.service.discount.OrderItemPriceComparator;
 import org.broadleafcommerce.core.offer.service.discount.PromotionDiscount;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -35,7 +36,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#filterItemLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
 	 */
-	public void filterItemLevelOffer(Order order, List<CandidateItemOffer> qualifiedItemOffers, List<OrderItem> discreteOrderItems, Offer offer) {
+	public void filterItemLevelOffer(Order order, List<CandidateItemOffer> qualifiedItemOffers, List<DiscreteOrderItem> discreteOrderItems, Offer offer) {
 		boolean isNewFormat = (offer.getQualifyingItemCriteria() != null && offer.getQualifyingItemCriteria().size() > 0) || offer.getTargetItemCriteria() != null;
 		boolean itemLevelQualification = false;
 		boolean offerCreated = false;
@@ -112,7 +113,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
     /* (non-Javadoc)
      * @see org.broadleafcommerce.core.offer.service.processor.ItemOfferProcessor#applyAllItemOffers(java.util.List, java.util.List)
      */
-    public boolean applyAllItemOffers(List<CandidateItemOffer> itemOffers, List<OrderItem> discreteOrderItems, Order order) {
+    public boolean applyAllItemOffers(List<CandidateItemOffer> itemOffers, List<DiscreteOrderItem> discreteOrderItems, Order order) {
         // Iterate through the collection of CandiateItemOffers. Remember that each one is an offer that may apply to a
         // particular OrderItem.  Multiple CandidateItemOffers may contain a reference to the same OrderItem object.
         // The same offer may be applied to different Order Items
@@ -144,7 +145,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         return itemOffersApplied;
     }
 
-	protected int applyAdjustments(List<OrderItem> discreteOrderItems, Order order, int appliedItemOffersCount, CandidateItemOffer itemOffer, int beforeCount) {
+	protected int applyAdjustments(List<DiscreteOrderItem> discreteOrderItems, Order order, int appliedItemOffersCount, CandidateItemOffer itemOffer, int beforeCount) {
 		boolean notCombinableOfferApplied = false;
 		boolean offerApplied = false;
 		for (OrderItem targetItem : order.getSplitItems()) {
@@ -220,7 +221,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		return appliedItemOffersCount;
 	}
 
-	protected int checkLegacyAdjustments(List<OrderItem> discreteOrderItems, int appliedItemOffersCount) {
+	protected int checkLegacyAdjustments(List<DiscreteOrderItem> discreteOrderItems, int appliedItemOffersCount) {
 		if (appliedItemOffersCount > 0) {
 		    // compare adjustment price to sales price and remove adjustments if sales price is better
 		    for (OrderItem discreteOrderItem : discreteOrderItems) {
@@ -240,7 +241,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		return appliedItemOffersCount;
 	}
 
-	protected int applyLegacyAdjustments(List<OrderItem> discreteOrderItems, int appliedItemOffersCount, CandidateItemOffer itemOffer, int beforeCount, OrderItem orderItem) {
+	protected int applyLegacyAdjustments(List<DiscreteOrderItem> discreteOrderItems, int appliedItemOffersCount, CandidateItemOffer itemOffer, int beforeCount, OrderItem orderItem) {
 		//legacy promotion
 		if (!orderItem.isNotCombinableOfferApplied()) {
 		    if ((itemOffer.getOffer().isCombinableWithOtherOffers() && itemOffer.getOffer().isStackable()) || !orderItem.isHasOrderItemAdjustments()) {
@@ -264,7 +265,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 		return appliedItemOffersCount;
 	}
     
-    protected void applyItemQualifiersAndTargets(List<OrderItem> discreteOrderItems, CandidateItemOffer itemOffer, Order order) {
+    protected void applyItemQualifiersAndTargets(List<DiscreteOrderItem> discreteOrderItems, CandidateItemOffer itemOffer, Order order) {
 		Offer promotion = itemOffer.getOffer();
 		OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(promotion);
 		boolean matchFound = false;
@@ -387,10 +388,10 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
         orderItem.addOrderItemAdjustment(itemAdjustment); //This is how we can tell if an item has been discounted
     }
     
-    public List<OrderItem> filterOffers(Order order, List<Offer> filteredOffers, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers) {
+    public List<DiscreteOrderItem> filterOffers(Order order, List<Offer> filteredOffers, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers) {
 		// set order subtotal price to total item price without adjustments
 		order.setSubTotal(order.calculateOrderItemsCurrentPrice());
-		List<OrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
+		List<DiscreteOrderItem> discreteOrderItems = order.getDiscountableDiscreteOrderItems();
 		for (Offer offer : filteredOffers) {
 			OrderItemPriceComparator priceComparator = new OrderItemPriceComparator(offer);
 			// Sort the items so that the highest priced ones are at the top
@@ -406,7 +407,7 @@ public class ItemOfferProcessorImpl extends OrderOfferProcessorImpl implements I
 	}
     
     @SuppressWarnings("unchecked")
-	public void applyAndCompareOrderAndItemOffers(Order order, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers, List<OrderItem> discreteOrderItems) {
+	public void applyAndCompareOrderAndItemOffers(Order order, List<CandidateOrderOffer> qualifiedOrderOffers, List<CandidateItemOffer> qualifiedItemOffers, List<DiscreteOrderItem> discreteOrderItems) {
 		if (!qualifiedItemOffers.isEmpty()) {
 		    // Sort order item offers by priority and total discount
 			Collections.sort(qualifiedItemOffers, ItemOfferComparator.INSTANCE);
