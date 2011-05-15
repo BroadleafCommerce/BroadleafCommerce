@@ -20,6 +20,11 @@ import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSource
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
 import org.broadleafcommerce.profile.vendor.service.message.PaymentResponse;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourcePaymentResponse extends CyberSourceResponse implements PaymentResponse {
 		
 	private static final long serialVersionUID = 1L;

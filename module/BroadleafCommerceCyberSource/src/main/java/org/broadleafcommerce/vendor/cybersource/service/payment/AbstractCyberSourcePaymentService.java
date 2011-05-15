@@ -20,6 +20,11 @@ import org.broadleafcommerce.vendor.cybersource.service.api.PurchaseTotals;
 import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;
 import org.broadleafcommerce.vendor.cybersource.service.payment.message.CyberSourcePaymentRequest;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public abstract class AbstractCyberSourcePaymentService extends AbstractCyberSourceService {
 	
 	protected RequestMessage buildRequestMessage(CyberSourcePaymentRequest paymentRequest) {

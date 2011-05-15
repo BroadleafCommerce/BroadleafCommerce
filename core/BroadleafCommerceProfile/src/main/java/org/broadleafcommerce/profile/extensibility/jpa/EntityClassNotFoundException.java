@@ -15,6 +15,11 @@
  */
 package org.broadleafcommerce.profile.extensibility.jpa;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class EntityClassNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;

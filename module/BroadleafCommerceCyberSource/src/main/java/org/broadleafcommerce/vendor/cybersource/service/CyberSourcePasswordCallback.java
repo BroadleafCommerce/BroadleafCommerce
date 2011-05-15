@@ -25,6 +25,8 @@ import org.apache.ws.security.WSPasswordCallback;
 
 /**
  * Sample password callback for the client
+ * 
+ * @author jfischer
  */
 public class CyberSourcePasswordCallback implements CallbackHandler {
 

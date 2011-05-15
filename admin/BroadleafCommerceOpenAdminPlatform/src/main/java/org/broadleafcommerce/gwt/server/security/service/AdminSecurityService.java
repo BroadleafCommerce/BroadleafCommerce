@@ -22,6 +22,11 @@ import org.broadleafcommerce.gwt.server.security.domain.AdminRole;
 import org.broadleafcommerce.gwt.server.security.domain.AdminUser;
 import org.broadleafcommerce.gwt.server.security.util.PasswordChange;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public interface AdminSecurityService {
 
     public List<AdminUser> readAllAdminUsers();

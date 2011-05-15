@@ -26,6 +26,11 @@ import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.gwt.server.security.domain.AdminUser;
 import org.springframework.stereotype.Repository;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 @Repository("blAdminUserDao")
 public class AdminUserDaoImpl implements AdminUserDao {
 

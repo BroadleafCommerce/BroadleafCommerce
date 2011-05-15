@@ -18,6 +18,11 @@ package org.broadleafcommerce.vendor.cybersource.service.tax.message;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceTaxItemRequest extends CyberSourceItemRequest {
 
 	private static final long serialVersionUID = 1L;

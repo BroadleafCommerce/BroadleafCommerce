@@ -18,6 +18,11 @@ import org.broadleafcommerce.vendor.cybersource.service.api.ReplyMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.RequestMessage;
 import org.broadleafcommerce.vendor.cybersource.service.api.TransactionProcessorLocator;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public abstract class AbstractCyberSourceService implements ServiceStatusDetectable {
 
 	protected String merchantId;

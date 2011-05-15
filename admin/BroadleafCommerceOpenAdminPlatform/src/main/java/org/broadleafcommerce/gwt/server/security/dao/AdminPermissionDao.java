@@ -19,6 +19,11 @@ import java.util.List;
 
 import org.broadleafcommerce.gwt.server.security.domain.AdminPermission;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public interface AdminPermissionDao {
     public List<AdminPermission> readAllAdminPermissions();
     public AdminPermission readAdminPermissionById(Long id);

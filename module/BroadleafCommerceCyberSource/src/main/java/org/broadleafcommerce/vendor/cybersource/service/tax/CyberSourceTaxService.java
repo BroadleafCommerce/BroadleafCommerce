@@ -20,6 +20,11 @@ import org.broadleafcommerce.vendor.cybersource.service.CyberSourceService;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxRequest;
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public interface CyberSourceTaxService extends CyberSourceService {
 
 	public CyberSourceTaxResponse process(CyberSourceTaxRequest taxRequest) throws TaxException;

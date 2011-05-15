@@ -26,6 +26,11 @@ import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.gwt.server.security.domain.AdminRole;
 import org.springframework.stereotype.Repository;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 @Repository("blAdminRoleDao")
 public class AdminRoleDaoImpl implements AdminRoleDao {
 

@@ -15,6 +15,11 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.message;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceBillingRequest  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;

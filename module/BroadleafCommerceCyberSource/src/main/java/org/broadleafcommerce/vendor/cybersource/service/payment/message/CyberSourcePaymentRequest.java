@@ -26,7 +26,11 @@ import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSource
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 
-
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public abstract class CyberSourcePaymentRequest extends CyberSourceRequest {
 	
 	private static final long serialVersionUID = 1L;

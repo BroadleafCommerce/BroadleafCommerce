@@ -17,7 +17,11 @@ package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceMethodType;
 
-
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceCardRequest extends CyberSourcePaymentRequest {
 	
 	private static final long serialVersionUID = 1L;

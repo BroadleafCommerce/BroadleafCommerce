@@ -18,6 +18,11 @@ package org.broadleafcommerce.gwt.server.security.domain;
 import java.io.Serializable;
 import java.util.Set;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public interface AdminUser extends Serializable {
     public Long getId();
     public String getName();

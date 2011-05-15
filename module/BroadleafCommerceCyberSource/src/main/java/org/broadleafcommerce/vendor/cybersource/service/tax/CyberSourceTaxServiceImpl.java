@@ -48,6 +48,11 @@ import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceT
 import org.broadleafcommerce.vendor.cybersource.service.tax.message.CyberSourceTaxResponse;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceTaxServiceImpl extends AbstractCyberSourceService implements CyberSourceTaxService, ServiceResponseCacheable {
 	
 	private static final Log LOG = LogFactory.getLog(CyberSourceTaxServiceImpl.class);

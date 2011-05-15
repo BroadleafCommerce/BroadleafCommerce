@@ -15,6 +15,11 @@
  */
 package org.broadleafcommerce.gwt.security;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class SecurityUserRoles {
 
 	public static final String MERCHANDISER = "ROLE_MERCHANDISER";

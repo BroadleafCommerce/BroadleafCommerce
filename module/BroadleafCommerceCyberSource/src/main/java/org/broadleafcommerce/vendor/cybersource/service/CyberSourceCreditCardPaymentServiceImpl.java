@@ -51,6 +51,11 @@ import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSource
 import org.broadleafcommerce.vendor.cybersource.service.payment.type.CyberSourceTransactionType;
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceCreditCardPaymentServiceImpl extends AbstractCyberSourcePaymentService implements CyberSourcePaymentService {
 	
 	private static final Log LOG = LogFactory.getLog(CyberSourceCreditCardPaymentServiceImpl.class);
