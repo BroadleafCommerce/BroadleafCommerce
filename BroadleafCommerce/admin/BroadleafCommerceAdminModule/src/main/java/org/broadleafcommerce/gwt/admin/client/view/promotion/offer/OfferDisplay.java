@@ -150,4 +150,6 @@ public interface OfferDisplay extends DynamicEditDisplay {
 	
 	public DynamicForm getStepItemForm();
 	
+	public ToolStripButton getCloneButton();
+	
 }

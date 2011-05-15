@@ -9,7 +9,9 @@ import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.widgets.Label;
-import com.smartgwt.client.widgets.form.fields.SelectItem;
+import com.smartgwt.client.widgets.form.fields.ComboBoxItem;
+import com.smartgwt.client.widgets.form.fields.events.FocusEvent;
+import com.smartgwt.client.widgets.form.fields.events.FocusHandler;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.toolbar.ToolStrip;
@@ -20,7 +22,7 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 	
 	protected ToolStripButton addButton;
 	protected ToolStripButton removeButton;
-	protected SelectItem entityType = new SelectItem();
+	protected ComboBoxItem entityType = new ComboBoxItem();
 	protected TreeGrid grid;
 	protected ToolStrip toolBar;
 	
@@ -55,6 +57,11 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
             }
             entityType.setValueMap(valueMap);  
             entityType.setDefaultValue(((DynamicEntityDataSource) dataSource).getDefaultNewEntityFullyQualifiedClassname()); 
+            entityType.addFocusHandler(new FocusHandler() {
+				public void onFocus(FocusEvent event) {
+					((ComboBoxItem) event.getItem()).selectValue();
+				}
+            });
             toolBar.addFormItem(entityType);
         }
         addMember(toolBar);
@@ -87,7 +94,7 @@ public class DynamicEntityTreeView extends VLayout implements DynamicEntityListD
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityTreeDisplay#getEntityType()
 	 */
-	public SelectItem getEntityType() {
+	public ComboBoxItem getEntityType() {
 		return entityType;
 	}
 

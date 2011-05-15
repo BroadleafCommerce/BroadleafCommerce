@@ -134,5 +134,6 @@ public interface AdminMessages extends ConstantsWithLookup {
 	public String userDetailsTitle();
 	public String userRolesTitle();
 	public String newAdminUserTitle();
+	public String clonePromotionHelp();
 	
 }

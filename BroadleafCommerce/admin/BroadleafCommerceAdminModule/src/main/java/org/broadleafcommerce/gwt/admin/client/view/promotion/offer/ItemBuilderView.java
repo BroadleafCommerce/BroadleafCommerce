@@ -2,6 +2,8 @@ package org.broadleafcommerce.gwt.admin.client.view.promotion.offer;
 
 import java.util.LinkedHashMap;
 
+import org.broadleafcommerce.gwt.client.datasource.dynamic.FieldDataSourceWrapper;
+
 import com.google.gwt.core.client.GWT;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.Record;
@@ -90,6 +92,7 @@ public class ItemBuilderView extends HLayout implements ItemBuilderDisplay {
 		builderLayout.setAlign(VerticalAlignment.TOP);
 		itemFilterBuilder = new FilterBuilder();  
 		itemFilterBuilder.setDataSource(itemDataSource);
+		itemFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(itemDataSource));
 		itemFilterBuilder.setLayoutBottomMargin(10);
 		itemFilterBuilder.setAllowEmpty(true);
 		itemFilterBuilder.setValidateOnChange(false);
