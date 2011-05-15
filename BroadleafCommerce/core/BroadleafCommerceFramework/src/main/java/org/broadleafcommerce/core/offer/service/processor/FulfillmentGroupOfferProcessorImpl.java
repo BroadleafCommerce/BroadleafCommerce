@@ -15,6 +15,7 @@ import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.discount.FulfillmentGroupOfferPotential;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.FulfillmentGroup;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
@@ -27,7 +28,7 @@ public class FulfillmentGroupOfferProcessorImpl extends OrderOfferProcessorImpl 
 	/* (non-Javadoc)
 	 * @see org.broadleafcommerce.core.offer.service.processor.FulfillmentGroupOfferProcessor#filterFulfillmentGroupLevelOffer(org.broadleafcommerce.core.order.domain.Order, java.util.List, java.util.List, org.broadleafcommerce.core.offer.domain.Offer)
 	 */
-	public void filterFulfillmentGroupLevelOffer(Order order, List<CandidateFulfillmentGroupOffer> qualifiedFGOffers, List<OrderItem> discreteOrderItems, Offer offer) {
+	public void filterFulfillmentGroupLevelOffer(Order order, List<CandidateFulfillmentGroupOffer> qualifiedFGOffers, List<DiscreteOrderItem> discreteOrderItems, Offer offer) {
 		for (FulfillmentGroup fulfillmentGroup : order.getFulfillmentGroups()) {
 			boolean fgLevelQualification = false;
 			fgQualification: {

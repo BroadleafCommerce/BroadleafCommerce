@@ -14,6 +14,7 @@ import org.broadleafcommerce.core.offer.domain.OfferRule;
 import org.broadleafcommerce.core.offer.service.discount.CandidatePromotionItems;
 import org.broadleafcommerce.core.offer.service.type.OfferRuleType;
 import org.broadleafcommerce.core.offer.service.type.OfferType;
+import org.broadleafcommerce.core.order.domain.DiscreteOrderItem;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.core.order.service.type.FulfillmentGroupType;
@@ -26,7 +27,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 
 	private static final LRUMap EXPRESSION_CACHE = new LRUMap(1000);
 	
-	protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<OrderItem> discreteOrderItems) {
+	protected CandidatePromotionItems couldOfferApplyToOrderItems(Offer offer, List<DiscreteOrderItem> discreteOrderItems) {
     	CandidatePromotionItems candidates = new CandidatePromotionItems();
     	if (offer.getQualifyingItemCriteria() == null || offer.getQualifyingItemCriteria().size() == 0) {
     		candidates.setMatchedQualifier(true);
@@ -49,7 +50,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
     	return candidates;
     }
 	
-	protected void checkForItemRequirements(CandidatePromotionItems candidates, OfferItemCriteria criteria, List<OrderItem> discreteOrderItems, boolean isQualifier) {
+	protected void checkForItemRequirements(CandidatePromotionItems candidates, OfferItemCriteria criteria, List<DiscreteOrderItem> discreteOrderItems, boolean isQualifier) {
 		boolean matchFound = false;
 		int criteriaQuantity = criteria.getQuantity();
 		
@@ -131,7 +132,7 @@ public abstract class AbstractBaseProcessor implements BaseProcessor {
 		}
 	}
 	
-	protected void finalizeQuantities(List<OrderItem> chargeableItems) {
+	protected void finalizeQuantities(List<DiscreteOrderItem> chargeableItems) {
 		for(OrderItem chargeableItem : chargeableItems) {
 			chargeableItem.finalizeQuantities();
 		}

@@ -598,8 +598,8 @@ public class OrderImpl implements Order {
         return isContainsNotStackableFulfillmentGroupOffer;
     }
 
-    public List<OrderItem> getDiscreteOrderItems() {
-        List<OrderItem> discreteOrderItems = new ArrayList<OrderItem>();
+    public List<DiscreteOrderItem> getDiscreteOrderItems() {
+        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
             if (orderItem instanceof BundleOrderItemImpl) {
                 BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
@@ -614,8 +614,8 @@ public class OrderImpl implements Order {
         return discreteOrderItems;
     }
 
-    public List<OrderItem> getDiscountableDiscreteOrderItems() {
-        List<OrderItem> discreteOrderItems = new ArrayList<OrderItem>();
+    public List<DiscreteOrderItem> getDiscountableDiscreteOrderItems() {
+        List<DiscreteOrderItem> discreteOrderItems = new ArrayList<DiscreteOrderItem>();
         for (OrderItem orderItem : orderItems) {
             if (orderItem instanceof BundleOrderItemImpl) {
                 BundleOrderItemImpl bundleOrderItem = (BundleOrderItemImpl)orderItem;
