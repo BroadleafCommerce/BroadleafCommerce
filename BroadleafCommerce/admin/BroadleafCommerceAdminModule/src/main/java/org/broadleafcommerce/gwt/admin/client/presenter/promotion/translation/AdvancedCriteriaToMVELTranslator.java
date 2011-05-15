@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation;
+package org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation;
 
 import java.util.ArrayList;
 import java.util.Date;

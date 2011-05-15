@@ -13,43 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.statement;
-
-import com.smartgwt.client.types.OperatorId;
+package org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class Expression {
-
-	protected String field;
-	protected OperatorId operator;
-	protected String value;
-	
-	public String getField() {
-		return field;
-	}
-	
-	public void setField(String field) {
-		this.field = field.trim();
-	}
-	
-	public OperatorId getOperator() {
-		return operator;
-	}
-	
-	public void setOperator(OperatorId operator) {
-		this.operator = operator;
-	}
-	
-	public String getValue() {
-		return value;
-	}
-	
-	public void setValue(String value) {
-		this.value = value.trim();
-	}
-	
+public enum FilterType {
+ORDER,
+ORDER_ITEM,
+FULFILLMENT_GROUP,
+CUSTOMER
 }

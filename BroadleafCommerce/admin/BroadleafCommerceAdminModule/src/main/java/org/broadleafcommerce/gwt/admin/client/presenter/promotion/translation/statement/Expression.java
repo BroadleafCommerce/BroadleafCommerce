@@ -13,41 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation;
+package org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.statement;
+
+import com.smartgwt.client.types.OperatorId;
 
 /**
  * 
  * @author jfischer
  *
  */
-public class IncompatibleMVELTranslationException extends Exception {
+public class Expression {
 
-	private static final long serialVersionUID = 1L;
-
-	public IncompatibleMVELTranslationException() {
-		super();
+	protected String field;
+	protected OperatorId operator;
+	protected String value;
+	
+	public String getField() {
+		return field;
 	}
-
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public IncompatibleMVELTranslationException(String message, Throwable cause) {
-		super(message, cause);
+	
+	public void setField(String field) {
+		this.field = field.trim();
 	}
-
-	/**
-	 * @param message
-	 */
-	public IncompatibleMVELTranslationException(String message) {
-		super(message);
+	
+	public OperatorId getOperator() {
+		return operator;
 	}
-
-	/**
-	 * @param cause
-	 */
-	public IncompatibleMVELTranslationException(Throwable cause) {
-		super(cause);
+	
+	public void setOperator(OperatorId operator) {
+		this.operator = operator;
 	}
-
+	
+	public String getValue() {
+		return value;
+	}
+	
+	public void setValue(String value) {
+		this.value = value.trim();
+	}
+	
 }

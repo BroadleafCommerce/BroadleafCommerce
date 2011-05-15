@@ -13,16 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation;
+package org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation;
 
 /**
  * 
  * @author jfischer
  *
  */
-public enum FilterType {
-ORDER,
-ORDER_ITEM,
-FULFILLMENT_GROUP,
-CUSTOMER
+public class IncompatibleMVELTranslationException extends Exception {
+
+	private static final long serialVersionUID = 1L;
+
+	public IncompatibleMVELTranslationException() {
+		super();
+	}
+
+	/**
+	 * @param message
+	 * @param cause
+	 */
+	public IncompatibleMVELTranslationException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	/**
+	 * @param message
+	 */
+	public IncompatibleMVELTranslationException(String message) {
+		super(message);
+	}
+
+	/**
+	 * @param cause
+	 */
+	public IncompatibleMVELTranslationException(Throwable cause) {
+		super(cause);
+	}
+
 }
