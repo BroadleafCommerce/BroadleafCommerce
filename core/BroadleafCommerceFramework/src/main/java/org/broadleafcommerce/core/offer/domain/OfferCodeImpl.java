@@ -80,7 +80,8 @@ public class OfferCodeImpl implements OfferCode {
     protected int maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName="Code Uses", order=3, group="Description", prominent=true)
+    @AdminPresentation(friendlyName="Code Uses", hidden=true)
+    @Deprecated
     protected int uses;
     
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = OrderImpl.class)
@@ -120,10 +121,12 @@ public class OfferCodeImpl implements OfferCode {
         this.maxUses = maxUses;
     }
 
+    @Deprecated
     public int getUses() {
         return uses;
     }
 
+    @Deprecated
     public void setUses(int uses) {
         this.uses = uses;
     }

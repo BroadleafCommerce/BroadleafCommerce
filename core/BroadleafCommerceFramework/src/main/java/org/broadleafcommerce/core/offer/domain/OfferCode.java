@@ -47,8 +47,10 @@ public interface OfferCode extends Serializable {
 
     public void setMaxUses(int maxUses) ;
 
+    @Deprecated
     public int getUses() ;
 
+    @Deprecated
     public void setUses(int uses) ;
 
     public List<Order> getOrders();

@@ -139,7 +139,8 @@ public class OfferImpl implements Offer {
     protected int maxUses;
 
     @Column(name = "USES")
-    @AdminPresentation(friendlyName="Offer Current Uses", order=6, group="Description", groupOrder=1, readOnly=true)
+    @AdminPresentation(friendlyName="Offer Current Uses", hidden=true)
+    @Deprecated
     protected int uses;
     
     @Column(name = "OFFER_ITEM_QUALIFIER_RULE")
@@ -374,10 +375,12 @@ public class OfferImpl implements Offer {
         this.maxUses = maxUses;
     }
 
+    @Deprecated
     public int getUses() {
         return uses;
     }
 
+    @Deprecated
     public void setUses(int uses) {
         this.uses = uses;
     }
