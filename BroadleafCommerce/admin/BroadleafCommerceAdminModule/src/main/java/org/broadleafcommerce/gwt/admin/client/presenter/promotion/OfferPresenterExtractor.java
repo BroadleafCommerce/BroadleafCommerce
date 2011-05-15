@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.gwt.admin.client.presenter.promotion;
 
-import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OfferItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.gwt.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.AdvancedCriteriaToMVELTranslator;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.FilterType;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
@@ -69,10 +69,10 @@ public class OfferPresenterExtractor {
 				selectedRecord.setAttribute("offerCode.offerCode", getDisplay().getCodeField().getValue().toString().trim());
 			}
 			
-			extractCustomerData(selectedRecord);
-			extractOrderData(selectedRecord);
-			
 			final String type = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("type").getValue().toString();
+			
+			extractCustomerData(selectedRecord);
+			extractOrderData(selectedRecord, type);
 			
 			extractQualifierRuleType(selectedRecord);
 			extractTargetItemData(selectedRecord, type);
@@ -146,6 +146,9 @@ public class OfferPresenterExtractor {
 				}
 			}
 		}
+		if (type.equals("ORDER_ITEM")) {
+			selectedRecord.setAttribute("combinableWithOtherOffers", getDisplay().getOrderItemCombineRuleRadio().getValue().equals("YES"));
+		}
 	}
 
 	protected void extractFulfillmentGroupData(final Record selectedRecord, final String type) throws IncompatibleMVELTranslationException {
@@ -162,6 +165,7 @@ public class OfferPresenterExtractor {
 				getDisplay().getFulfillmentGroupFilterBuilder().clearCriteria();
 				getDisplay().getRawFGTextArea().setValue("");
 			}
+			selectedRecord.setAttribute("combinableWithOtherOffers", getDisplay().getFgCombineRuleRadio().getValue().equals("YES"));
 		} else {
 			Object value = null;
 			selectedRecord.setAttribute("appliesToFulfillmentGroupRules", value);
@@ -235,7 +239,7 @@ public class OfferPresenterExtractor {
 		selectedRecord.setAttribute("offerItemQualifierRuleType", offerItemQualifierRuleType);
 	}
 
-	protected void extractOrderData(final Record selectedRecord) throws IncompatibleMVELTranslationException {
+	protected void extractOrderData(final Record selectedRecord, String type) throws IncompatibleMVELTranslationException {
 		if (getDisplay().getOrderRuleRadio().getValue().equals("ORDER_RULE")) {
 			if (!presenter.initializer.orderRuleIncompatible) {
 				selectedRecord.setAttribute("appliesToOrderRules", TRANSLATOR.createMVEL(getDisplay().getOrderFilterBuilder().getCriteria(), FilterType.ORDER, getDisplay().getOrderFilterBuilder().getDataSource()));
@@ -247,6 +251,9 @@ public class OfferPresenterExtractor {
 			selectedRecord.setAttribute("appliesToOrderRules", value);
 			getDisplay().getOrderFilterBuilder().clearCriteria();
 			getDisplay().getRawOrderTextArea().setValue("");
+		}
+		if (type.equals("ORDER")) {
+			selectedRecord.setAttribute("combinableWithOtherOffers", getDisplay().getOrderCombineRuleRadio().getValue().equals("YES"));
 		}
 	}
 

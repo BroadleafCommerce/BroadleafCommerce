@@ -70,7 +70,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	protected DynamicForm qualifyForAnotherPromoForm;
 	protected DynamicForm receiveFromAnotherPromoTargetForm;
 	protected DynamicForm qualifyForAnotherPromoTargetForm;
-	protected DynamicForm stepFGCombineForm;
+	protected DynamicForm fgCombineForm;
+	protected DynamicForm orderItemCombineForm;
 	
 	protected VLayout itemBuilderContainerLayout;
 	protected DynamicFormView dynamicFormDisplay;
@@ -115,6 +116,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	protected RadioGroupItem restrictRuleRadio;
 	protected SectionView restrictionSectionView;
 	protected SectionView itemQualificationSectionView;
+	protected Label orderItemCombineLabel;
+	protected RadioGroupItem orderItemCombineRuleRadio;
 	
 	protected TextAreaItem rawCustomerTextArea;
 	protected TextAreaItem rawOrderTextArea;
@@ -353,6 +356,28 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         
         VStack itemSectionLayout = new VStack();
         itemSectionLayout.setLayoutLeftMargin(10);
+        
+        orderItemCombineLabel = new Label(AdminModule.ADMINMESSAGES.orderItemCombineLabel());
+        orderItemCombineLabel.setVisible(false);
+        orderItemCombineLabel.setWrap(false);
+        orderItemCombineLabel.setHeight(30);
+        orderItemCombineLabel.setBackgroundColor("#eaeaea");
+        orderItemCombineLabel.setStyleName("label-bold");
+        itemSectionLayout.addMember(orderItemCombineLabel);
+        
+        orderItemCombineForm = new DynamicForm();
+        orderItemCombineForm.setVisible(false);
+        orderItemCombineRuleRadio = new RadioGroupItem();   
+        orderItemCombineRuleRadio.setShowTitle(false);
+        orderItemCombineRuleRadio.setWrap(false);
+        orderItemCombineRuleRadio.setDefaultValue("YES");
+        LinkedHashMap<String, String> orderItemCombineMap = new LinkedHashMap<String, String>();
+        orderItemCombineMap.put("YES", AdminModule.ADMINMESSAGES.yesRadioChoice());
+        orderItemCombineMap.put("NO", AdminModule.ADMINMESSAGES.noRadioChoice());
+        orderItemCombineRuleRadio.setValueMap(orderItemCombineMap);
+        orderItemCombineForm.setFields(orderItemCombineRuleRadio);
+        itemSectionLayout.addMember(orderItemCombineForm);
+        
         bogoQuestionLayout = new VLayout();
         bogoQuestionLayout.setVisible(false);
         HStack hStackBogo = new HStack(10);
@@ -542,6 +567,26 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         
         fgQuestionLayout = new VLayout();
         fgQuestionLayout.setLayoutLeftMargin(10);
+        
+        Label fgCombineLabel = new Label(AdminModule.ADMINMESSAGES.fgCombineLabel());
+        fgCombineLabel.setWrap(false);
+        fgCombineLabel.setHeight(30);
+        fgCombineLabel.setBackgroundColor("#eaeaea");
+        fgCombineLabel.setStyleName("label-bold");
+        fgQuestionLayout.addMember(fgCombineLabel);
+        
+        fgCombineForm = new DynamicForm();
+        fgCombineRuleRadio = new RadioGroupItem();   
+        fgCombineRuleRadio.setShowTitle(false);
+        fgCombineRuleRadio.setWrap(false);
+        fgCombineRuleRadio.setDefaultValue("NO");
+        LinkedHashMap<String, String> valueMapCombineFG = new LinkedHashMap<String, String>();
+        valueMapCombineFG.put("YES", AdminModule.ADMINMESSAGES.yesRadioChoice());
+        valueMapCombineFG.put("NO", AdminModule.ADMINMESSAGES.noRadioChoice());
+        fgCombineRuleRadio.setValueMap(valueMapCombineFG);
+        fgCombineForm.setFields(fgCombineRuleRadio);
+        fgQuestionLayout.addMember(fgCombineForm);
+        
         stepFGLabel = new Label(AdminModule.ADMINMESSAGES.stepFGLabel());
         stepFGLabel.setWrap(false);
         stepFGLabel.setHeight(30);
@@ -579,25 +624,6 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         rawFGForm.setFields(rawFGTextArea);
         
         fgQuestionLayout.addMember(rawFGForm);
-        
-        Label fgCombineLabel = new Label(AdminModule.ADMINMESSAGES.fgCombineLabel());
-        fgCombineLabel.setWrap(false);
-        fgCombineLabel.setHeight(30);
-        fgCombineLabel.setBackgroundColor("#eaeaea");
-        fgCombineLabel.setStyleName("label-bold");
-        fgQuestionLayout.addMember(fgCombineLabel);
-        
-        stepFGCombineForm = new DynamicForm();
-        fgCombineRuleRadio = new RadioGroupItem();   
-        fgCombineRuleRadio.setShowTitle(false);
-        fgCombineRuleRadio.setWrap(false);
-        fgCombineRuleRadio.setDefaultValue("NO");
-        LinkedHashMap<String, String> valueMapCombineFG = new LinkedHashMap<String, String>();
-        valueMapCombineFG.put("YES", AdminModule.ADMINMESSAGES.yesRadioChoice());
-        valueMapCombineFG.put("NO", AdminModule.ADMINMESSAGES.noRadioChoice());
-        fgCombineRuleRadio.setValueMap(valueMapCombineFG);
-        stepFGCombineForm.setFields(fgCombineRuleRadio);
-        fgQuestionLayout.addMember(stepFGCombineForm);
         
         fgSectionView = new SectionView(AdminModule.ADMINMESSAGES.fgSectionViewTitle());  
         fgSectionView.setVisible(false);
@@ -876,8 +902,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 		return qualifyForAnotherPromoTargetForm;
 	}
 
-	public DynamicForm getStepFGCombineForm() {
-		return stepFGCombineForm;
+	public DynamicForm getFGCombineForm() {
+		return fgCombineForm;
 	}
 
 	public DynamicForm getStepItemForm() {
@@ -886,6 +912,18 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
 	public ToolStripButton getCloneButton() {
 		return cloneButton;
+	}
+
+	public DynamicForm getOrderItemCombineForm() {
+		return orderItemCombineForm;
+	}
+
+	public RadioGroupItem getOrderItemCombineRuleRadio() {
+		return orderItemCombineRuleRadio;
+	}
+
+	public Label getOrderItemCombineLabel() {
+		return orderItemCombineLabel;
 	}
 	
 }

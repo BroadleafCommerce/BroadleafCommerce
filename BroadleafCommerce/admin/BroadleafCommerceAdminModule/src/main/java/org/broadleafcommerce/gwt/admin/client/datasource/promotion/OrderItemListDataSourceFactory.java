@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer;
+package org.broadleafcommerce.gwt.admin.client.datasource.promotion;
 
 import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
+import org.broadleafcommerce.gwt.admin.client.datasource.order.module.OrderItemEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -34,8 +34,9 @@ import com.smartgwt.client.data.DataSource;
  * @author jfischer
  *
  */
-public class CustomerListDataSourceFactory implements DataSourceFactory {
-	
+public class OrderItemListDataSourceFactory implements DataSourceFactory {
+
+	public static final String foreignKeyName = "order";
 	public static ListGridDataSource dataSource = null;
 	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
@@ -43,9 +44,27 @@ public class CustomerListDataSourceFactory implements DataSourceFactory {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.setPopulateToOneFields(true);
-			persistencePerspective.setExcludeFields(new String[]{"password", "challengeAnswer", "passwordChangeRequired", "challengeQuestion", "firstName", "lastName", "emailAddress", "auditable.dateCreated", "auditable.dateUpdated"});
+			persistencePerspective.setExcludeFields(
+				new String[]{
+					"order",
+					"giftWrapOrderItem", 
+					"bundleOrderItem",  
+					"product.defaultCategory",
+					"product.name",
+					"product.description",
+					"product.longDescription",
+					"product.activeStartDate",
+					"product.activeEndDate",
+					"product.sku",
+					"sku.name",
+					"sku.salePrice",
+					"sku.retailPrice",
+					"category.activeEndDate",
+					"category.activeStartDate"
+				}
+			);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicEntityModule(CeilingEntities.CUSTOMER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new OrderItemEntityModule(CeilingEntities.ORDER_ITEM, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, true, cb);

@@ -98,9 +98,9 @@ public class AdminModule extends AbstractModule {
 		setSection(
 			AdminModule.ADMINMESSAGES.promotionMainTitle(),
 			"offer",
-			"org.broadleafcommerce.gwt.admin.client.view.promotion.offer.OfferView",
+			"org.broadleafcommerce.gwt.admin.client.view.promotion.OfferView",
 			"offerPresenter",
-			"org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.OfferPresenter",
+			"org.broadleafcommerce.gwt.admin.client.presenter.promotion.OfferPresenter",
 			offerRoles,
 			null
 		);
