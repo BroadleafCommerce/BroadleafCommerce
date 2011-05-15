@@ -20,12 +20,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.broadleafcommerce.gwt.admin.client.AdminModule;
-import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.CustomerListDataSourceFactory;
-import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.FulfillmentGroupListDataSourceFactory;
-import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OfferItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OfferListDataSourceFactory;
-import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OrderItemListDataSourceFactory;
-import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OrderListDataSourceFactory;
+import org.broadleafcommerce.gwt.admin.client.datasource.promotion.CustomerListDataSourceFactory;
+import org.broadleafcommerce.gwt.admin.client.datasource.promotion.FulfillmentGroupListDataSourceFactory;
+import org.broadleafcommerce.gwt.admin.client.datasource.promotion.OfferItemCriteriaListDataSourceFactory;
+import org.broadleafcommerce.gwt.admin.client.datasource.promotion.OfferListDataSourceFactory;
+import org.broadleafcommerce.gwt.admin.client.datasource.promotion.OrderItemListDataSourceFactory;
+import org.broadleafcommerce.gwt.admin.client.datasource.promotion.OrderListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.ItemBuilderDisplay;
 import org.broadleafcommerce.gwt.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.gwt.client.BLCMain;
@@ -100,6 +100,27 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 				initializer.initSectionBasedOnType(eventValue, selectedRecord);
 			}
 		});
+		getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").addChangedHandler(new ChangedHandler() {
+			public void onChanged(ChangedEvent event) {
+				String eventValue = event.getValue().toString();
+				//FIX_PRICE promotions cannot combine with other promotions of the same type
+				if (eventValue.equals("FIX_PRICE")) {
+					getDisplay().getOrderCombineForm().disable();
+					getDisplay().getFGCombineForm().disable();
+					getDisplay().getOrderItemCombineForm().disable();
+					getDisplay().getOrderCombineRuleRadio().setValue("NO");
+					getDisplay().getFgCombineRuleRadio().setValue("NO");
+					getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
+				} else {
+					getDisplay().getOrderCombineForm().enable();
+					getDisplay().getFGCombineForm().enable();
+					getDisplay().getOrderItemCombineForm().enable();
+					getDisplay().getOrderCombineRuleRadio().setValue("YES");
+					getDisplay().getFgCombineRuleRadio().setValue("YES");
+					getDisplay().getOrderItemCombineRuleRadio().setValue("YES");
+				}
+			}
+		});
 		FormItem endDate = getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("endDate");
 		if (endDate != null) {
 			endDate.addChangedHandler(new ChangedHandler() {
@@ -125,6 +146,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 		initialValues.put("treatAsNewFormat", true);
 		initialValues.put("deliveryType", "AUTOMATIC");
 		initialValues.put("discountType", "PERCENT_OFF");
+		initialValues.put("combinableWithOtherOffers", true);
 		initialValues.put("_type", new String[]{((DynamicEntityDataSource) getDisplay().getListDisplay().getGrid().getDataSource()).getDefaultNewEntityFullyQualifiedClassname()});
 		getDisplay().getListDisplay().getGrid().startEditingNew(initialValues);
 	}
@@ -148,6 +170,11 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 			}
 		});
 		getDisplay().getOrderCombineForm().addItemChangedHandler(new ItemChangedHandler() {
+			public void onItemChanged(ItemChangedEvent event) {
+				getDisplay().getDynamicFormDisplay().getSaveButton().enable();
+			}
+		});
+		getDisplay().getOrderItemCombineForm().addItemChangedHandler(new ItemChangedHandler() {
 			public void onItemChanged(ItemChangedEvent event) {
 				getDisplay().getDynamicFormDisplay().getSaveButton().enable();
 			}
@@ -207,7 +234,7 @@ public class OfferPresenter extends DynamicEntityPresenter implements Instantiab
 				getDisplay().getDynamicFormDisplay().getSaveButton().enable();
 			}
 		});
-		getDisplay().getStepFGCombineForm().addItemChangedHandler(new ItemChangedHandler() {
+		getDisplay().getFGCombineForm().addItemChangedHandler(new ItemChangedHandler() {
 			public void onItemChanged(ItemChangedEvent event) {
 				getDisplay().getDynamicFormDisplay().getSaveButton().enable();
 			}

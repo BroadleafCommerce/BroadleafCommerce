@@ -15,6 +15,8 @@
  */
 package org.broadleafcommerce.gwt.admin.client.presenter.promotion;
 
+import java.util.LinkedHashMap;
+
 import org.broadleafcommerce.gwt.admin.client.AdminModule;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
 import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.MVELToAdvancedCriteriaTranslator;
@@ -151,7 +153,7 @@ public class OfferPresenterInitializer {
 		}
 		Boolean combinable = selectedRecord.getAttributeAsBoolean("combinableWithOtherOffers");
 		if (combinable == null) {
-			combinable = false;
+			combinable = true;
 		}
 		getDisplay().getFgCombineRuleRadio().setValue(combinable?"YES":"NO");
 		initFGRule(fgRule, selectedRecord);
@@ -178,7 +180,7 @@ public class OfferPresenterInitializer {
 		}
 		Boolean combinable = selectedRecord.getAttributeAsBoolean("combinableWithOtherOffers");
 		if (combinable == null) {
-			combinable = false;
+			combinable = true;
 		}
 		getDisplay().getOrderCombineRuleRadio().setValue(combinable?"YES":"NO");
 		initOrderRule(orderRule, selectedRecord);
@@ -266,6 +268,12 @@ public class OfferPresenterInitializer {
 			getDisplay().getQualifyForAnotherPromoRadio().setValue("YES");
 			getDisplay().getReceiveFromAnotherPromoRadio().setValue("YES");
 		}
+		
+		Boolean combinable = selectedRecord.getAttributeAsBoolean("combinableWithOtherOffers");
+		if (combinable == null) {
+			combinable = true;
+		}
+		getDisplay().getOrderItemCombineRuleRadio().setValue(combinable?"YES":"NO");
 	}
 	
 	public void disable() {
@@ -291,18 +299,50 @@ public class OfferPresenterInitializer {
 			getDisplay().getItemTargetSectionView().setVisible(true);
 			getDisplay().getOrderItemLayout().setVisible(false);
 			getDisplay().getRequiredItemsLayout().setVisible(false);
+			getDisplay().getOrderItemCombineForm().setVisible(true);
+			getDisplay().getOrderItemCombineLabel().setVisible(true);
 		} else {
 			getDisplay().getBogoQuestionLayout().setVisible(false);
 			getDisplay().getItemTargetSectionView().setVisible(false);
 			getDisplay().getRequiredItemsLayout().setVisible(true);
 			getDisplay().getOrderItemLayout().setVisible(true);
+			getDisplay().getOrderItemCombineForm().setVisible(false);
+			getDisplay().getOrderItemCombineLabel().setVisible(false);
 		}
 		if (sectionType.equals("ORDER")) {
 			getDisplay().getOrderCombineForm().setVisible(true);
 			getDisplay().getOrderCombineLabel().setVisible(true);
+			
+			//Order promotions cannot have a discount type of "FIX_PRICE", since it would not be correct to set the order total to a fixed amount
+			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+			String[][] enumerationValues = (String[][]) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().getField("discountType").getAttributeAsObject("enumerationValues");
+			for (int j=0; j<enumerationValues.length; j++) {
+				if (!enumerationValues[j][0].equals("FIX_PRICE")) {
+					valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
+				}
+			}
+			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValueMap(valueMap);
+			if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
+				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValue("PERCENT_OFF");
+				getDisplay().getOrderCombineForm().enable();
+				getDisplay().getFGCombineForm().enable();
+				getDisplay().getOrderItemCombineForm().enable();
+				getDisplay().getOrderCombineRuleRadio().setValue("YES");
+				getDisplay().getFgCombineRuleRadio().setValue("YES");
+				getDisplay().getOrderItemCombineRuleRadio().setValue("YES");
+			}
 		} else {
 			getDisplay().getOrderCombineForm().setVisible(false);
 			getDisplay().getOrderCombineLabel().setVisible(false);
+			
+			//reset the discount types to display all discount types, in case we had previously hidden the "FIX_PRICE" option
+			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+			String[][] enumerationValues = (String[][]) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().getField("discountType").getAttributeAsObject("enumerationValues");
+			for (int j=0; j<enumerationValues.length; j++) {
+				valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
+			}
+			
+			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValueMap(valueMap);
 		}
 		
 		initBasicItems(selectedRecord);
