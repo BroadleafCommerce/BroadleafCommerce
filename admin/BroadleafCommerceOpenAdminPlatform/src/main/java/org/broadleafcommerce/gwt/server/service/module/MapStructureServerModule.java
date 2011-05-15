@@ -51,9 +51,9 @@ import com.anasoft.os.daofusion.cto.client.CriteriaTransferObject;
  * @author jfischer
  *
  */
-public class MapModule extends BasicEntityModule {
+public class MapStructureServerModule extends BasicServerEntityModule {
 
-	private static final Log LOG = LogFactory.getLog(MapModule.class);
+	private static final Log LOG = LogFactory.getLog(MapStructureServerModule.class);
 	
 	public boolean isCompatible(OperationType operationType) {
 		return OperationType.MAPSTRUCTURE.equals(operationType);

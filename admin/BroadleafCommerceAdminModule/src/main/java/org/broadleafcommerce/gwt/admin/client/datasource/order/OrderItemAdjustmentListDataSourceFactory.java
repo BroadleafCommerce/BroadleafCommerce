@@ -19,7 +19,7 @@ import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.gwt.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicEntityModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -57,7 +57,7 @@ public class OrderItemAdjustmentListDataSourceFactory implements DataSourceFacto
 				}	
 			);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicEntityModule(CeilingEntities.ORDER_ITEM_ADJUSTMENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new BasicClientEntityModule(CeilingEntities.ORDER_ITEM_ADJUSTMENT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);

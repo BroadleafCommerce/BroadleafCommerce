@@ -255,6 +255,11 @@ public class OfferCustomPersistenceHandler implements CustomPersistenceHandler {
 			updateRule(entity, offerInstance, "appliesToCustomerRules", OfferRuleType.CUSTOMER);
 			updateRule(entity, offerInstance, "appliesToFulfillmentGroupRules", OfferRuleType.FULFILLMENT_GROUP);
 			
+			if (!entity.findProperty("type").getValue().equals("ORDER_ITEM") && offerInstance.getTargetItemCriteria() != null) {
+				offerInstance.getTargetItemCriteria().setOffer(null);
+				offerInstance.setTargetItemCriteria(null);
+			}
+			
 			dynamicEntityDao.merge(offerInstance);
 			
 			Property offerCodeId = entity.findProperty("offerCode.id");

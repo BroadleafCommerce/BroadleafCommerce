@@ -55,11 +55,11 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  * @author jfischer
  *
  */
-public class MapStructureModule extends BasicEntityModule {
+public class MapStructureClientModule extends BasicClientEntityModule {
 
 	protected ListGrid associatedGrid;
 	
-	public MapStructureModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, ListGrid associatedGrid) {
+	public MapStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, ListGrid associatedGrid) {
 		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
 		this.associatedGrid = associatedGrid;
 	}

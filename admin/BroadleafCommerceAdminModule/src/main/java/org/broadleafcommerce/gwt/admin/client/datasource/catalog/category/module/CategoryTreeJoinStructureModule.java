@@ -15,7 +15,7 @@
  */
 package org.broadleafcommerce.gwt.admin.client.datasource.catalog.category.module;
 
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.JoinStructureModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.JoinStructureClientModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.results.Entity;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
@@ -27,7 +27,7 @@ import com.smartgwt.client.data.Record;
  * @author jfischer
  *
  */
-public class CategoryTreeJoinStructureModule extends JoinStructureModule {
+public class CategoryTreeJoinStructureModule extends JoinStructureClientModule {
 
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname

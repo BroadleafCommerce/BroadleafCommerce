@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.PresentationLayerAssociatedDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicEntityModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -41,7 +41,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  * @author jfischer
  *
  */
-public class CategoryTreeEntityModule extends BasicEntityModule {
+public class CategoryTreeEntityModule extends BasicClientEntityModule {
 
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname

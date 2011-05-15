@@ -45,9 +45,9 @@ import com.anasoft.os.daofusion.cto.client.FilterAndSortCriteria;
  * @author jfischer
  *
  */
-public class JoinStructureModule extends BasicEntityModule {
+public class JoinStructureServerModule extends BasicServerEntityModule {
 	
-	private static final Log LOG = LogFactory.getLog(JoinStructureModule.class);
+	private static final Log LOG = LogFactory.getLog(JoinStructureServerModule.class);
 	
 	public boolean isCompatible(OperationType operationType) {
 		return OperationType.JOINSTRUCTURE.equals(operationType);

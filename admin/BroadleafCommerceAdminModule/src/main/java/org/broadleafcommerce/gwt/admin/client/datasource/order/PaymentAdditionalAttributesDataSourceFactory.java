@@ -22,7 +22,7 @@ import org.broadleafcommerce.gwt.admin.client.view.order.OrderDisplay;
 import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.MapStructureModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.MapStructureClientModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspectiveItemType;
@@ -57,7 +57,7 @@ public class PaymentAdditionalAttributesDataSourceFactory implements DataSourceF
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.PAYMENT_INFO, null));
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new MapStructureModule(CeilingEntities.PAYMENT_INFO, persistencePerspective, AppServices.DYNAMIC_ENTITY, ((OrderDisplay) presenter.getDisplay()).getAdditionalAttributesDisplay().getGrid())
+				new MapStructureClientModule(CeilingEntities.PAYMENT_INFO, persistencePerspective, AppServices.DYNAMIC_ENTITY, ((OrderDisplay) presenter.getDisplay()).getAdditionalAttributesDisplay().getGrid())
 			};
 			dataSource = new ListGridDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);

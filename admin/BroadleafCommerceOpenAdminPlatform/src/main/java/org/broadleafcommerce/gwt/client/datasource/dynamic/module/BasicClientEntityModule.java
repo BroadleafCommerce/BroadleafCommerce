@@ -88,7 +88,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  * @author jfischer
  *
  */
-public class BasicEntityModule implements DataSourceModule {
+public class BasicClientEntityModule implements DataSourceModule {
 
 	protected final DateTimeFormat formatter = DateTimeFormat.getFormat("yyyy.MM.dd HH:mm:ss");
 	
@@ -101,11 +101,11 @@ public class BasicEntityModule implements DataSourceModule {
 	protected Long loadLevelCount = 0L;
 	protected Map<String, FieldMetadata> metadataOverrides;
 	
-	public BasicEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+	public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
 		this(ceilingEntityFullyQualifiedClassname, persistencePerspective, service, null);
 	}
 	
-	public BasicEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
+	public BasicClientEntityModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service, Map<String, FieldMetadata> metadataOverrides) {
 		this.service = service;
 		this.ceilingEntityFullyQualifiedClassname = ceilingEntityFullyQualifiedClassname;
 		this.persistencePerspective = persistencePerspective;

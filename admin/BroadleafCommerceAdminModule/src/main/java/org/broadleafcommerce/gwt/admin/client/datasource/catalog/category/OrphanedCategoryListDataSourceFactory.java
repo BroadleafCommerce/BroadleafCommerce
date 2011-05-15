@@ -18,7 +18,7 @@ package org.broadleafcommerce.gwt.admin.client.datasource.catalog.category;
 import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.gwt.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicEntityModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKeyRestrictionType;
@@ -47,7 +47,7 @@ public class OrphanedCategoryListDataSourceFactory implements DataSourceFactory 
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey(foreignKeyName, EntityImplementations.CATEGORY, null, ForeignKeyRestrictionType.COLLECTION_SIZE_EQ));
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicEntityModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new BasicClientEntityModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new OrphanedCategoryListDataSource((String) additionalItems[0], name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);

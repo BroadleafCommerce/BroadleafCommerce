@@ -75,9 +75,9 @@ import com.anasoft.os.daofusion.cto.server.CriteriaTransferObjectCountWrapper;
  * @author jfischer
  *
  */
-public class BasicEntityModule implements RemoteServiceModule, RecordHelper, ApplicationContextAware {
+public class BasicServerEntityModule implements RemoteServiceModule, RecordHelper, ApplicationContextAware {
 
-	private static final Log LOG = LogFactory.getLog(BasicEntityModule.class);
+	private static final Log LOG = LogFactory.getLog(BasicServerEntityModule.class);
 	
 	protected SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
 	protected DecimalFormat decimalFormat = new DecimalFormat("0.########");
@@ -215,7 +215,7 @@ public class BasicEntityModule implements RemoteServiceModule, RecordHelper, App
 						break;
 					}
 				} else {
-					if (fieldManager.getFieldValue(instance, property.getName()) != null) {
+					if (fieldManager.getFieldValue(instance, property.getName()) != null && (!mergedProperties.get(property.getName()).getFieldType().equals(SupportedFieldType.ID) || setId)) {
 						fieldManager.setFieldValue(instance, property.getName(), null);
 					}
 				}

@@ -67,9 +67,9 @@
 	<bean id="blDynamicEntityRemoteService" class="org.broadleafcommerce.gwt.server.service.remote.DynamicEntityRemoteService">
 		<constructor-arg>
 			<list>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.BasicEntityModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.JoinStructureModule"/>
-				<bean class="org.broadleafcommerce.gwt.server.service.module.MapModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.BasicServerEntityModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.JoinStructureServerModule"/>
+				<bean class="org.broadleafcommerce.gwt.server.service.module.MapStructureServerModule"/>
 			</list>
 		</constructor-arg>
 		<property name="dynamicEntityDao" ref="blDynamicEntityDao" />

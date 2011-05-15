@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.broadleafcommerce.gwt.client.BLCMain;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicEntityModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityOperationType;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.operation.EntityServiceAsyncCallback;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -49,7 +49,7 @@ import com.smartgwt.client.widgets.tree.TreeNode;
  * @author jfischer
  *
  */
-public class ProductSkuBasicEntityModule extends BasicEntityModule {
+public class ProductSkuBasicEntityModule extends BasicClientEntityModule {
 
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname
