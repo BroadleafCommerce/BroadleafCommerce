@@ -24,7 +24,7 @@ import org.broadleafcommerce.gwt.admin.client.view.catalog.category.CategoryDisp
 import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ComplexValueMapStructureDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.MapStructureModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.MapStructureClientModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.MapStructure;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -60,7 +60,7 @@ public class MediaMapDataSourceFactory implements DataSourceFactory {
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.FOREIGNKEY, new ForeignKey("id", EntityImplementations.CATEGORY, null));
 			persistencePerspective.addPersistencePerspectiveItem(PersistencePerspectiveItemType.MAPSTRUCTURE, MAPSTRUCTURE);
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new MapStructureModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY, ((CategoryDisplay) presenter.getDisplay()).getMediaDisplay().getGrid())
+				new MapStructureClientModule(CeilingEntities.CATEGORY, persistencePerspective, AppServices.DYNAMIC_ENTITY, ((CategoryDisplay) presenter.getDisplay()).getMediaDisplay().getGrid())
 			};
 			dataSource = new ComplexValueMapStructureDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules, (LinkedHashMap<String, String>) additionalItems[0]);
 			dataSource.buildFields(null, false, cb);

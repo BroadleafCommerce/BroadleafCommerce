@@ -36,7 +36,7 @@ import com.smartgwt.client.data.Record;
  * @author jfischer
  *
  */
-public class JoinStructureModule extends BasicEntityModule {
+public class JoinStructureClientModule extends BasicClientEntityModule {
 	
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname
@@ -44,7 +44,7 @@ public class JoinStructureModule extends BasicEntityModule {
 	 * @param dataSource
 	 * @param service
 	 */
-	public JoinStructureModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
+	public JoinStructureClientModule(String ceilingEntityFullyQualifiedClassname, PersistencePerspective persistencePerspective, DynamicEntityServiceAsync service) {
 		super(ceilingEntityFullyQualifiedClassname, persistencePerspective, service);
 	}
 

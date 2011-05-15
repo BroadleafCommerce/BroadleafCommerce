@@ -61,6 +61,76 @@ public class OfferPresenterInitializer {
 		return presenter.getDisplay();
 	}
 	
+	public void initSectionBasedOnType(String sectionType, Record selectedRecord) {
+		getDisplay().getItemQualificationSectionView().setVisible(true);
+		if (sectionType.equals("FULFILLMENT_GROUP")) {
+			getDisplay().getFgSectionView().setVisible(true);
+		} else {
+			getDisplay().getFgSectionView().setVisible(false);
+		}
+		if (sectionType.equals("ORDER_ITEM")) {
+			getDisplay().getBogoQuestionLayout().setVisible(true);
+			getDisplay().getItemTargetSectionView().setVisible(true);
+			getDisplay().getOrderItemLayout().setVisible(false);
+			getDisplay().getRequiredItemsLayout().setVisible(false);
+			getDisplay().getOrderItemCombineForm().setVisible(true);
+			getDisplay().getOrderItemCombineLabel().setVisible(true);
+		} else {
+			getDisplay().getBogoQuestionLayout().setVisible(false);
+			getDisplay().getItemTargetSectionView().setVisible(false);
+			getDisplay().getRequiredItemsLayout().setVisible(true);
+			getDisplay().getOrderItemLayout().setVisible(true);
+			getDisplay().getOrderItemCombineForm().setVisible(false);
+			getDisplay().getOrderItemCombineLabel().setVisible(false);
+		}
+		if (sectionType.equals("ORDER")) {
+			getDisplay().getOrderCombineForm().setVisible(true);
+			getDisplay().getOrderCombineLabel().setVisible(true);
+			
+			//Order promotions cannot have a discount type of "FIX_PRICE", since it would not be correct to set the order total to a fixed amount
+			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+			String[][] enumerationValues = (String[][]) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().getField("discountType").getAttributeAsObject("enumerationValues");
+			for (int j=0; j<enumerationValues.length; j++) {
+				if (!enumerationValues[j][0].equals("FIX_PRICE")) {
+					valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
+				}
+			}
+			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValueMap(valueMap);
+			if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
+				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValue("PERCENT_OFF");
+				getDisplay().getOrderCombineForm().enable();
+				getDisplay().getFGCombineForm().enable();
+				getDisplay().getOrderItemCombineForm().enable();
+				getDisplay().getOrderCombineRuleRadio().setValue("YES");
+				getDisplay().getFgCombineRuleRadio().setValue("YES");
+				getDisplay().getOrderItemCombineRuleRadio().setValue("YES");
+			}
+		} else {
+			getDisplay().getOrderCombineForm().setVisible(false);
+			getDisplay().getOrderCombineLabel().setVisible(false);
+			
+			//reset the discount types to display all discount types, in case we had previously hidden the "FIX_PRICE" option
+			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
+			String[][] enumerationValues = (String[][]) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().getField("discountType").getAttributeAsObject("enumerationValues");
+			for (int j=0; j<enumerationValues.length; j++) {
+				valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
+			}
+			
+			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValueMap(valueMap);
+		}
+		
+		initBasicItems(selectedRecord);
+		initCustomerCriteria(selectedRecord);
+		initOrderCriteria(selectedRecord);
+		initItemQualifiers(selectedRecord, sectionType);
+		
+		if (sectionType.equals("ORDER_ITEM")) {
+			initItemTargets(selectedRecord);
+		} else if (sectionType.equals("FULFILLMENT_GROUP")) {
+			initFGCriteria(selectedRecord);
+		}
+	}
+	
 	public void initItemTargets(final Record selectedRecord) {
 		getDisplay().getTargetItemBuilder().getItemFilterBuilder().clearCriteria();
 		String targetQuantity = selectedRecord.getAttribute("targetItemCriteria.quantity");
@@ -156,6 +226,16 @@ public class OfferPresenterInitializer {
 			combinable = true;
 		}
 		getDisplay().getFgCombineRuleRadio().setValue(combinable?"YES":"NO");
+		
+		if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
+			getDisplay().getOrderCombineForm().disable();
+			getDisplay().getFGCombineForm().disable();
+			getDisplay().getOrderItemCombineForm().disable();
+			getDisplay().getOrderCombineRuleRadio().setValue("NO");
+			getDisplay().getFgCombineRuleRadio().setValue("NO");
+			getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
+		}
+		
 		initFGRule(fgRule, selectedRecord);
 	}
 
@@ -274,6 +354,15 @@ public class OfferPresenterInitializer {
 			combinable = true;
 		}
 		getDisplay().getOrderItemCombineRuleRadio().setValue(combinable?"YES":"NO");
+		
+		if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
+			getDisplay().getOrderCombineForm().disable();
+			getDisplay().getFGCombineForm().disable();
+			getDisplay().getOrderItemCombineForm().disable();
+			getDisplay().getOrderCombineRuleRadio().setValue("NO");
+			getDisplay().getFgCombineRuleRadio().setValue("NO");
+			getDisplay().getOrderItemCombineRuleRadio().setValue("NO");
+		}
 	}
 	
 	public void disable() {
@@ -285,76 +374,6 @@ public class OfferPresenterInitializer {
 		getDisplay().getOrderItemLayout().setVisible(false);
 		getDisplay().getOrderCombineForm().setVisible(false);
 		getDisplay().getOrderCombineLabel().setVisible(false);
-	}
-	
-	public void initSectionBasedOnType(String sectionType, Record selectedRecord) {
-		getDisplay().getItemQualificationSectionView().setVisible(true);
-		if (sectionType.equals("FULFILLMENT_GROUP")) {
-			getDisplay().getFgSectionView().setVisible(true);
-		} else {
-			getDisplay().getFgSectionView().setVisible(false);
-		}
-		if (sectionType.equals("ORDER_ITEM")) {
-			getDisplay().getBogoQuestionLayout().setVisible(true);
-			getDisplay().getItemTargetSectionView().setVisible(true);
-			getDisplay().getOrderItemLayout().setVisible(false);
-			getDisplay().getRequiredItemsLayout().setVisible(false);
-			getDisplay().getOrderItemCombineForm().setVisible(true);
-			getDisplay().getOrderItemCombineLabel().setVisible(true);
-		} else {
-			getDisplay().getBogoQuestionLayout().setVisible(false);
-			getDisplay().getItemTargetSectionView().setVisible(false);
-			getDisplay().getRequiredItemsLayout().setVisible(true);
-			getDisplay().getOrderItemLayout().setVisible(true);
-			getDisplay().getOrderItemCombineForm().setVisible(false);
-			getDisplay().getOrderItemCombineLabel().setVisible(false);
-		}
-		if (sectionType.equals("ORDER")) {
-			getDisplay().getOrderCombineForm().setVisible(true);
-			getDisplay().getOrderCombineLabel().setVisible(true);
-			
-			//Order promotions cannot have a discount type of "FIX_PRICE", since it would not be correct to set the order total to a fixed amount
-			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-			String[][] enumerationValues = (String[][]) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().getField("discountType").getAttributeAsObject("enumerationValues");
-			for (int j=0; j<enumerationValues.length; j++) {
-				if (!enumerationValues[j][0].equals("FIX_PRICE")) {
-					valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
-				}
-			}
-			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValueMap(valueMap);
-			if (getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").getValue().equals("FIX_PRICE")) {
-				getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValue("PERCENT_OFF");
-				getDisplay().getOrderCombineForm().enable();
-				getDisplay().getFGCombineForm().enable();
-				getDisplay().getOrderItemCombineForm().enable();
-				getDisplay().getOrderCombineRuleRadio().setValue("YES");
-				getDisplay().getFgCombineRuleRadio().setValue("YES");
-				getDisplay().getOrderItemCombineRuleRadio().setValue("YES");
-			}
-		} else {
-			getDisplay().getOrderCombineForm().setVisible(false);
-			getDisplay().getOrderCombineLabel().setVisible(false);
-			
-			//reset the discount types to display all discount types, in case we had previously hidden the "FIX_PRICE" option
-			LinkedHashMap<String,String> valueMap = new LinkedHashMap<String,String>();
-			String[][] enumerationValues = (String[][]) getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getDataSource().getField("discountType").getAttributeAsObject("enumerationValues");
-			for (int j=0; j<enumerationValues.length; j++) {
-				valueMap.put(enumerationValues[j][0], enumerationValues[j][1]);
-			}
-			
-			getDisplay().getDynamicFormDisplay().getFormOnlyDisplay().getForm().getField("discountType").setValueMap(valueMap);
-		}
-		
-		initBasicItems(selectedRecord);
-		initCustomerCriteria(selectedRecord);
-		initOrderCriteria(selectedRecord);
-		initItemQualifiers(selectedRecord, sectionType);
-		
-		if (sectionType.equals("ORDER_ITEM")) {
-			initItemTargets(selectedRecord);
-		} else if (sectionType.equals("FULFILLMENT_GROUP")) {
-			initFGCriteria(selectedRecord);
-		}
 	}
 	
 	public void initDeliveryType(String deliveryType, Record selectedRecord) {

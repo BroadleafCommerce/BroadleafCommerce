@@ -18,7 +18,7 @@ package org.broadleafcommerce.gwt.admin.client.datasource.promotion;
 import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
 import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicEntityModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.module.DataSourceModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.ForeignKey;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
@@ -48,7 +48,7 @@ public class OfferListDataSourceFactory implements DataSourceFactory {
 				"targetItemCriteria.offer"
 			});
 			DataSourceModule[] modules = new DataSourceModule[]{
-				new BasicEntityModule(CeilingEntities.OFFER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
+				new BasicClientEntityModule(CeilingEntities.OFFER, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};
 			dataSource = new OfferListDataSource(name, persistencePerspective, AppServices.DYNAMIC_ENTITY, modules);
 			dataSource.buildFields(null, false, cb);

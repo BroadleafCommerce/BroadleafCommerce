@@ -18,7 +18,7 @@ package org.broadleafcommerce.gwt.admin.client.datasource.order.module;
 import java.util.Arrays;
 
 import org.broadleafcommerce.gwt.admin.client.datasource.EntityImplementations;
-import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicEntityModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.module.BasicClientEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.relations.PersistencePerspective;
 import org.broadleafcommerce.gwt.client.datasource.results.Entity;
 import org.broadleafcommerce.gwt.client.service.DynamicEntityServiceAsync;
@@ -31,7 +31,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
  * @author jfischer
  *
  */
-public class OrderItemEntityModule extends BasicEntityModule {
+public class OrderItemEntityModule extends BasicClientEntityModule {
 
 	/**
 	 * @param ceilingEntityFullyQualifiedClassname
