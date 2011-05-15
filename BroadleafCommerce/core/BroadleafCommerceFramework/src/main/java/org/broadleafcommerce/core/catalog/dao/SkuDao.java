@@ -32,4 +32,7 @@ public interface SkuDao {
     public List<Sku> readSkusById(List<Long> ids);
     
     public void delete(Sku sku);    
+    
+    public Sku create();
+    
 }

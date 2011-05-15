@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductSku;
+import org.broadleafcommerce.core.catalog.service.type.ProductType;
 
 public interface ProductDao {
 
@@ -42,5 +43,7 @@ public interface ProductDao {
     public List<ProductSku> readActiveProductsBySkuOneToOne(Long skuId, Date currentDate);
     
     public void delete(Product product);
+    
+    public Product create(final ProductType productType);
 
 }

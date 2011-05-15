@@ -22,6 +22,7 @@ import java.util.Map;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.type.ProductType;
 
 public interface CatalogService {
 
@@ -58,5 +59,9 @@ public interface CatalogService {
     public Map<String, List<Category>> getChildCategoryURLMapByCategoryId(Long categoryId);
 
     public Category createCategory();
+    
+    public Sku createSku();
+    
+    public Product createProduct(ProductType productType);
     
 }

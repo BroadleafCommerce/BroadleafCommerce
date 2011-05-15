@@ -23,6 +23,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.broadleafcommerce.config.EntityConfiguration;
+import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Sku;
 import org.springframework.stereotype.Repository;
 
@@ -68,4 +69,8 @@ public class SkuDaoImpl implements SkuDao {
         em.remove(sku);    	
     }
     
+    public Sku create() {
+        final Sku sku =  ((Sku) entityConfiguration.createEntityInstance(Sku.class.getName()));
+        return sku;
+    }
 }

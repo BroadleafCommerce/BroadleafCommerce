@@ -26,6 +26,8 @@ import javax.persistence.Query;
 import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.ProductSku;
+import org.broadleafcommerce.core.catalog.service.type.ProductType;
+import org.broadleafcommerce.core.order.domain.OrderItem;
 import org.broadleafcommerce.profile.time.SystemTime;
 import org.springframework.stereotype.Repository;
 
@@ -143,6 +145,11 @@ public class ProductDaoImpl implements ProductDao {
     		product = readProductById(product.getId());
     	}
         em.remove(product);    	
+    }
+    
+    public Product create(final ProductType productType) {
+        Product item = (Product) entityConfiguration.createEntityInstance(productType.getType());
+        return item;
     }
     
     public String getQueryCacheableKey() {
