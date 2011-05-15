@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.broadleafcommerce.gwt.admin.client.AdminModule;
+import org.broadleafcommerce.gwt.client.datasource.dynamic.FieldDataSourceWrapper;
 import org.broadleafcommerce.gwt.client.reflection.Instantiable;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListView;
@@ -99,6 +100,8 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 	protected TextAreaItem rawOrderTextArea;
 	protected TextAreaItem rawFGTextArea;
 	
+	protected ToolStripButton cloneButton;
+	
 	public OfferView() {
 		setHeight100();
 		setWidth100();
@@ -116,6 +119,13 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 		leftVerticalLayout.setShowResizeBar(true);
         
 		listDisplay = new DynamicEntityListView(AdminModule.ADMINMESSAGES.promotionsListTitle(), entityDataSource, false, false);
+		//listDisplay.getToolBar().addFill();
+		cloneButton = new ToolStripButton();  
+		cloneButton.setDisabled(true);
+		cloneButton.setIcon(GWT.getModuleBaseURL()+"sc/skins/Enterprise/images/headerIcons/double_arrow_right.png"); 
+		cloneButton.setPrompt(AdminModule.ADMINMESSAGES.clonePromotionHelp());
+		//listDisplay.getToolBar().addButton(cloneButton);
+        //listDisplay.getToolBar().addSpacer(6);
         leftVerticalLayout.addMember(listDisplay);
         
         VLayout rightVerticalLayout = new VLayout();
@@ -240,6 +250,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         
         customerFilterBuilder = new FilterBuilder();  
         customerFilterBuilder.setDataSource(customerDataSource);
+        customerFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(customerDataSource));
         customerFilterBuilder.setVisible(false);
         customerFilterBuilder.setLayoutBottomMargin(10);
         customerFilterBuilder.setAllowEmpty(true);
@@ -287,6 +298,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         
         orderFilterBuilder = new FilterBuilder();  
         orderFilterBuilder.setDataSource(orderDataSource);
+        orderFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(orderDataSource));
         orderFilterBuilder.setVisible(false);
         orderFilterBuilder.setLayoutBottomMargin(10);
         orderFilterBuilder.setAllowEmpty(true);
@@ -530,6 +542,7 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
         fgQuestionLayout.addMember(stepFGForm);
         fulfillmentGroupFilterBuilder = new FilterBuilder();  
         fulfillmentGroupFilterBuilder.setDataSource(fulfillmentGroupDataSource);
+        fulfillmentGroupFilterBuilder.setFieldDataSource(new FieldDataSourceWrapper(fulfillmentGroupDataSource));
         fulfillmentGroupFilterBuilder.setVisible(false);
         fulfillmentGroupFilterBuilder.setAllowEmpty(true);
         fulfillmentGroupFilterBuilder.setValidateOnChange(false);
@@ -849,6 +862,10 @@ public class OfferView extends HLayout implements Instantiable, OfferDisplay {
 
 	public DynamicForm getStepItemForm() {
 		return stepItemForm;
+	}
+
+	public ToolStripButton getCloneButton() {
+		return cloneButton;
 	}
 	
 }
