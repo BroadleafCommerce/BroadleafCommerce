@@ -27,6 +27,7 @@ import org.broadleafcommerce.core.catalog.dao.SkuDao;
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.catalog.domain.Product;
 import org.broadleafcommerce.core.catalog.domain.Sku;
+import org.broadleafcommerce.core.catalog.service.type.ProductType;
 import org.springframework.stereotype.Service;
 
 @Service("blCatalogService")
@@ -123,5 +124,13 @@ public class CatalogServiceImpl implements CatalogService {
     
     public Category createCategory() {
     	return categoryDao.create();
+    }
+    
+    public Sku createSku() {
+    	return skuDao.create();
+    }
+    
+    public Product createProduct(ProductType productType) {
+    	return productDao.create(productType);
     }
 }
