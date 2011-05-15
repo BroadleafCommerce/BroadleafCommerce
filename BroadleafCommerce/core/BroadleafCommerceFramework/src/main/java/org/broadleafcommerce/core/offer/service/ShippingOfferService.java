@@ -18,6 +18,11 @@ package org.broadleafcommerce.core.offer.service;
 import org.broadleafcommerce.core.order.domain.Order;
 import org.broadleafcommerce.core.pricing.service.exception.PricingException;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public interface ShippingOfferService {
 	
     public void reviewOffers(Order order) throws PricingException;

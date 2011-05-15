@@ -25,6 +25,11 @@ import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.presentation.AdminPresentation;
 import org.broadleafcommerce.profile.util.WeightUnitOfMeasureType;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 @Embeddable
 public class ProductWeight implements Serializable {
 

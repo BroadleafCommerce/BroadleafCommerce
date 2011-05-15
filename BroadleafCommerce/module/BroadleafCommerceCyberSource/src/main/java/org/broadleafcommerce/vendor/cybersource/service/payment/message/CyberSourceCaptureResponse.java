@@ -17,6 +17,11 @@ package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 
 import org.broadleafcommerce.money.Money;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceCaptureResponse implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;

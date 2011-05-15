@@ -15,7 +15,11 @@
  */
 package org.broadleafcommerce.vendor.cybersource.service.payment.message;
 
-
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceCardResponse extends CyberSourcePaymentResponse {
 	
 	private static final long serialVersionUID = 1L;

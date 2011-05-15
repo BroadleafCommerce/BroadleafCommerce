@@ -26,6 +26,11 @@ import org.broadleafcommerce.config.EntityConfiguration;
 import org.broadleafcommerce.gwt.server.security.domain.AdminPermission;
 import org.springframework.stereotype.Repository;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 @Repository("blAdminPermissionDao")
 public class AdminPermissionDaoImpl implements AdminPermissionDao {
 	

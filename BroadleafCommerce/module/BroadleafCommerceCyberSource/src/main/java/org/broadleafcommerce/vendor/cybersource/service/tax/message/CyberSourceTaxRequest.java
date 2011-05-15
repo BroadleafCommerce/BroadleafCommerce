@@ -1,14 +1,3 @@
-package org.broadleafcommerce.vendor.cybersource.service.tax.message;
-
-import java.util.List;
-
-import org.broadleafcommerce.money.Money;
-import org.broadleafcommerce.vendor.cybersource.service.message.AutoNumberMemberIdList;
-import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
-import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
-import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
-import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
-
 /*
  * Copyright 2008-2009 the original author or authors.
  *
@@ -23,6 +12,22 @@ import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceT
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ */
+package org.broadleafcommerce.vendor.cybersource.service.tax.message;
+
+import java.util.List;
+
+import org.broadleafcommerce.money.Money;
+import org.broadleafcommerce.vendor.cybersource.service.message.AutoNumberMemberIdList;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceBillingRequest;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceItemRequest;
+import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceRequest;
+import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
+
+/**
+ * 
+ * @author jfischer
+ *
  */
 public class CyberSourceTaxRequest extends CyberSourceRequest {
 

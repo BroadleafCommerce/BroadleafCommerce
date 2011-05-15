@@ -22,7 +22,11 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-
+/**
+ * 
+ * @author jfischer
+ *
+ */
 @Entity
 @Table(name = "BLC_ADMIN_USER_PERMISSION_XREF")
 public class AdminUserPermissionXref {

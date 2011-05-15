@@ -17,6 +17,11 @@ package org.broadleafcommerce.vendor.cybersource.service.message;
 
 import org.broadleafcommerce.vendor.cybersource.service.type.CyberSourceServiceType;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceResponse implements java.io.Serializable {
 
 private static final long serialVersionUID = 1L;

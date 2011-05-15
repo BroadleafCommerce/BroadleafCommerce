@@ -19,6 +19,11 @@ import java.util.List;
 
 import org.broadleafcommerce.gwt.server.security.domain.AdminRole;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public interface AdminRoleDao {
     public List<AdminRole> readAllAdminRoles();
     public AdminRole readAdminRoleById(Long id);

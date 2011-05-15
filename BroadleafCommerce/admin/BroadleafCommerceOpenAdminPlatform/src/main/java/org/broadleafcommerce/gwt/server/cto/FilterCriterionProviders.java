@@ -26,6 +26,8 @@ import com.anasoft.os.daofusion.criteria.SimpleFilterCriterionProvider.FilterDat
 /**
  * Utility class providing common {@link FilterCriterionProvider}
  * implementations.
+ * 
+ * @author jfischer
  */
 public final class FilterCriterionProviders {
     

@@ -21,6 +21,11 @@ import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.profile.vendor.service.message.TaxResponse;
 import org.broadleafcommerce.vendor.cybersource.service.message.CyberSourceResponse;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class CyberSourceTaxResponse extends CyberSourceResponse implements TaxResponse {
 		
 	private static final long serialVersionUID = 1L;

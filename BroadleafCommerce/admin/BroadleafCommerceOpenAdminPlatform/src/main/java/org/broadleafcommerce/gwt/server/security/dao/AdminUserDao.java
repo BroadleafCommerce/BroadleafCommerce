@@ -19,6 +19,11 @@ import java.util.List;
 
 import org.broadleafcommerce.gwt.server.security.domain.AdminUser;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public interface AdminUserDao {
     public List<AdminUser> readAllAdminUsers();
     public AdminUser readAdminUserById(Long id);

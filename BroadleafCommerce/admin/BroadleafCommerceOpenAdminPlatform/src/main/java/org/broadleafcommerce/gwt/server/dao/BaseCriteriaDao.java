@@ -22,6 +22,12 @@ import javax.persistence.EntityManager;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
 
+/**
+ * 
+ * @author jfischer
+ *
+ * @param <T>
+ */
 public interface BaseCriteriaDao<T extends Serializable> {
 
 	public abstract List<T> query(PersistentEntityCriteria entityCriteria, Class<?> targetEntityClass);

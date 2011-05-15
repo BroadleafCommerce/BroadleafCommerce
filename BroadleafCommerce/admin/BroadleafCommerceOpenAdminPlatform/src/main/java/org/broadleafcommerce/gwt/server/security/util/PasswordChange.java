@@ -17,6 +17,11 @@ package org.broadleafcommerce.gwt.server.security.util;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * @author jfischer
+ *
+ */
 public class PasswordChange implements Serializable {
 
     private static final long serialVersionUID = 1L;
