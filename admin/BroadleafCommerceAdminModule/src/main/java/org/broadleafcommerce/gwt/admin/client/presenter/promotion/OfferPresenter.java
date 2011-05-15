@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer;
+package org.broadleafcommerce.gwt.admin.client.presenter.promotion;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -26,8 +26,8 @@ import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OfferIt
 import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OfferListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OrderItemListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OrderListDataSourceFactory;
-import org.broadleafcommerce.gwt.admin.client.view.promotion.offer.ItemBuilderDisplay;
-import org.broadleafcommerce.gwt.admin.client.view.promotion.offer.OfferDisplay;
+import org.broadleafcommerce.gwt.admin.client.view.promotion.ItemBuilderDisplay;
+import org.broadleafcommerce.gwt.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;

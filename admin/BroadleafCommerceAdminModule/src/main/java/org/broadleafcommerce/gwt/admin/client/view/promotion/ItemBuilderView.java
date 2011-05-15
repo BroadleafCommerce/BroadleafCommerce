@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.view.promotion.offer;
+package org.broadleafcommerce.gwt.admin.client.view.promotion;
 
 import java.util.LinkedHashMap;
 

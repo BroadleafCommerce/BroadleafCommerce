@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer;
+package org.broadleafcommerce.gwt.admin.client.presenter.promotion;
 
 import org.broadleafcommerce.gwt.admin.client.datasource.promotion.offer.OfferItemCriteriaListDataSourceFactory;
-import org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.AdvancedCriteriaToMVELTranslator;
-import org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.FilterType;
-import org.broadleafcommerce.gwt.admin.client.presenter.promotion.offer.translation.IncompatibleMVELTranslationException;
-import org.broadleafcommerce.gwt.admin.client.view.promotion.offer.ItemBuilderDisplay;
-import org.broadleafcommerce.gwt.admin.client.view.promotion.offer.OfferDisplay;
+import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.AdvancedCriteriaToMVELTranslator;
+import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.FilterType;
+import org.broadleafcommerce.gwt.admin.client.presenter.promotion.translation.IncompatibleMVELTranslationException;
+import org.broadleafcommerce.gwt.admin.client.view.promotion.ItemBuilderDisplay;
+import org.broadleafcommerce.gwt.admin.client.view.promotion.OfferDisplay;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 
 import com.smartgwt.client.data.DSCallback;
