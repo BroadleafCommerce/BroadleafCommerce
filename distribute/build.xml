@@ -129,6 +129,7 @@
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/src" />
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/src">
 			<fileset dir="${releaseParentDir}">
+				<include name="admin/**/*.*" />
 				<include name="site/**/*.*" />
 				<include name="integration/**/*.*" />
 				<include name="distribute/**/*.*" />
@@ -150,6 +151,12 @@
 			<arg value="source:jar" />
 		</artifact:mvn>
 		<copy todir="${maven.build.dir}/${maven.build.finalName}/dist">
+			<fileset dir="${releaseParentDir}/admin/BroadleafCommerceAdminModule/target">
+				<include name="*sources.jar" />
+			</fileset>
+			<fileset dir="${releaseParentDir}/admin/BroadleafCommerceOpenAdminPlatform/target">
+				<include name="*sources.jar" />
+			</fileset>
 			<fileset dir="${releaseParentDir}/core/BroadleafCommerceFramework/target">
 				<include name="*sources.jar" />
 			</fileset>
@@ -196,6 +203,7 @@
 		<artifact:dependencies filesetId="frameworkDeps" pomRefId="frameworkPom" useScope="runtime" />
 		<artifact:dependencies filesetId="frameworkWebDeps" pomRefId="frameworkWebPom" useScope="runtime" />
 		<artifact:dependencies filesetId="demoDeps" pomRefId="demoPom" useScope="runtime"/>
+		<artifact:dependencies filesetId="demoDeps2" pomRefId="demoPom" useScope="compile"/>
 		<artifact:dependencies filesetId="adminDeps" pomRefId="adminModulePom" useScope="runtime"/>
 		<artifact:dependencies filesetId="adminDeps2" pomRefId="adminModulePom" useScope="compile"/>
 		<artifact:dependencies filesetId="openAdminDeps" pomRefId="openAdminModulePom" useScope="runtime"/>
@@ -218,36 +226,32 @@
 		<path id="build.admin.runtime.classpath">
 			<fileset refid="adminDeps"/>
 		</path>
+		<path id="build.demo.runtime.classpath">
+			<fileset refid="demoDeps"/>
+		</path>
+		<path id="build.demo.compile.classpath">
+			<fileset refid="demoDeps2"/>
+		</path>
 	</target>
 
-	<target name="build-dependencies">
+	<target name="build-dependencies" depends="setup">
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib" />
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/framework" />
-		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/admin" />
+		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/demo" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/usps" />
 		<mkdir dir="${maven.build.dir}/${maven.build.finalName}/lib/cybersource" />
-		<taskdef name="licenseCopy" classname="org.broadleafcommerce.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
-		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/framework" licenseDir="${releaseParentDir}/doc/dependency-licenses">
+		<taskdef name="licenseCopy" classname="org.broadleafcommerce.profile.util.DependencyLicenseCopy" classpathref="build.runtime.classpath" />
+		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/framework_and_admin" licenseDir="${releaseParentDir}/doc/dependency-licenses">
 			<restrict>
-				<fileset refid="frameworkWebDeps" />
+				<union>
+					<fileset refid="frameworkWebDeps" />
+					<fileset refid="openAdminDeps" />
+				</union>
 				<rsel:not>
 					<rsel:name name="org/broadleafcommerce*.jar" />
 				</rsel:not>
-			</restrict>
-		</licenseCopy>
-		<licenseCopy todir="${maven.build.dir}/${maven.build.finalName}/lib/admin" licenseDir="${releaseParentDir}/doc/dependency-licenses">
-			<restrict>
-				<difference>
-					<fileset refid="adminDeps" />
-					<intersect>
-						<fileset refid="adminDeps" />
-						<fileset refid="openAdminDeps" />
-						<fileset refid="frameworkWebDeps" />
-					</intersect>
-				</difference>
 				<rsel:not>
-					<rsel:name name="org/broadleafcommerce*.jar" />
+					<rsel:name name="**/*cobertura*.jar" />
 				</rsel:not>
 			</restrict>
 		</licenseCopy>
@@ -313,6 +317,27 @@
 				<fileset refid="frameworkDeps" />
 				<rsel:not>
 					<rsel:name name="org/broadleafcommerce*.jar" />
+				</rsel:not>
+				<rsel:not>
+					<rsel:name name="**/spring-security*.jar" />
+				</rsel:not>
+				<rsel:not>
+					<rsel:name name="**/spring-orm*.jar" />
+				</rsel:not>
+				<rsel:not>
+					<rsel:name name="**/*gwt*.jar" />
+				</rsel:not>				
+				<rsel:not>
+					<rsel:name name="**/daofusion-core*.jar" />
+				</rsel:not>						
+				<rsel:not>
+					<rsel:name name="**/*security*.jar" />
+				</rsel:not>	
+				<rsel:not>
+					<rsel:name name="**/*transmorph*.jar" />
+				</rsel:not>
+				<rsel:not>
+					<rsel:name name="**/*cobertura*.jar" />
 				</rsel:not>
 			</restrict>
 		</path>
@@ -399,13 +424,7 @@
 		
 		<path id="admin-dependencies">
 			<restrict>
-				<difference>
-					<fileset refid="adminDeps" />
-					<intersect>
-						<fileset refid="adminDeps" />
-						<fileset refid="frameworkWebDeps" />
-					</intersect>
-				</difference>
+				<fileset refid="openAdminDeps" />
 				<rsel:not>
 					<rsel:name name="org/broadleafcommerce*.jar" />
 				</rsel:not>
@@ -437,7 +456,6 @@
 				<include name="jetty.xml" />
 			</fileset>
 		</copy>
-		<move file="${maven.build.dir}/${maven.build.finalName}/demo/broadleaf-admin.war" tofile="${maven.build.dir}/${maven.build.finalName}/demo/broadleafadmin.war" />
 		<move file="${maven.build.dir}/${maven.build.finalName}/demo/broadleaf-demo.war" tofile="${maven.build.dir}/${maven.build.finalName}/demo/broadleafdemo.war" />
 	</target>
 

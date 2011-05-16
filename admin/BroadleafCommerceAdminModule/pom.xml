@@ -64,44 +64,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
-			<artifactId>gwt-servlet</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gwt-math</groupId>
-			<artifactId>gwt-math</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-user</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-		</dependency>
-		<dependency>
-            <groupId>com.smartgwt</groupId>
-            <artifactId>smartgwt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.smartgwt</groupId>
-            <artifactId>smartgwt-skins</artifactId>
-        </dependency>
-        <dependency>
-			<groupId>com.anasoft.os</groupId>
-			<artifactId>daofusion-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.anasoft.os</groupId>
-			<artifactId>daofusion-core</artifactId>
-			<classifier>sources</classifier>
-		</dependency>
-		<dependency>
-			<groupId>gwt.incubator</groupId>
-			<artifactId>security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.zschech</groupId>
-			<artifactId>gwt-math</artifactId>
 		</dependency>
 	</dependencies>
 </project>
