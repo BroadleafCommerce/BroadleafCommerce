@@ -24,6 +24,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipException;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -47,10 +48,10 @@ public class HibernateToolTask extends Task {
 	public HibernateToolTask() {
 		super();
 	}
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private List configurationTasks = new ArrayList();
 	private File destDir;
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	private List generators = new ArrayList();
 	private Path classPath;
 	private boolean combinePersistenceUnits = true;
@@ -98,7 +99,6 @@ public class HibernateToolTask extends Task {
 		return classPath;
     }
 
-	@SuppressWarnings("unchecked")
 	public void execute() {
 		AntClassLoader loader;
 		MergeClassPathXMLApplicationContext mergeContext;
@@ -119,6 +119,7 @@ public class HibernateToolTask extends Task {
 			for (Object configuration : configurationTasks) {
 				JPAConfigurationTask configurationTask = (JPAConfigurationTask) configuration;
 				log("Executing Hibernate Tool with a " + configurationTask.getDescription());
+				@SuppressWarnings("rawtypes")
 				Iterator iterator = generators.iterator();
 				while (iterator.hasNext()) {
 					generatorTask = (ExporterTask) iterator.next();

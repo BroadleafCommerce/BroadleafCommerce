@@ -908,13 +908,6 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.google.code.gson</groupId>
-				<artifactId>gson</artifactId>
-				<version>1.4</version>
-				<type>jar</type>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
 				<groupId>javassist</groupId>
 				<artifactId>javassist</artifactId>
 				<version>3.8.0.GA</version>

@@ -18,7 +18,7 @@ Run the Demo and Admin Applications:
    * Wait until you see the 'Started SelectChannelConnector@0.0.0.0:8080' message in the console before attempting to access the demo or admin in a browser.
 
 At this point, you should be able to access the demo application using your favorite web browser. Open the site at http://localhost:8080/broadleafdemo.
-You should also be able to access the admin application. Open the admin site at http://localhost:8080/broadleafadmin. You can log onto the Admin Tool with the username 'admin' and password 'blc_admin'.
+You should also be able to access the admin application. Open the admin site at http://localhost:8080/broadleafdemo/admin.html. You can log onto the Admin Tool with the username 'admin' and password 'admin'.
 
 Stop the Demo and Admin Applications:
   * Execute the following command at the 'demo' directory of the Broadleaf Commerce distribution.
@@ -37,6 +37,7 @@ Service Layer
 Internal Dependencies:
  * broadleaf-framework.jar
  * broadleaf-profile.jar
+ * broadleaf-open-admin-platform.jar
  
 External Dependencies
  * %%service-dependencies%%
@@ -68,12 +69,22 @@ External Dependencies:
 Demo Additional Dependencies:
  * %%demo-dependencies%%
  
-Admin Additional Dependencies:
+Admin
+Internal Dependencies:
+ * broadleaf-framework.jar
+ * broadleaf-profile.jar
+ * broadleaf-profile-sources.jar
+ * broadleaf-open-admin-platform.jar
+ * broadleaf-open-admin-platform-sources.jar
+ * broadleaf-admin-module.jar
+ * broadleaf-admin-module-sources.jar
+ 
+External Dependencies:
  * %%admin-dependencies%%
 
 The following represents the general considerations that will need to be addressed to launch a custom application on top of Broadleaf Commerce:
 
- * Review the data model (http://www.broadleafcommerce.org/confluence/display/core/Data+Model). We have made every effort to create a rich data model that should cover most, if not all, of our user's needs. However, should you encounter a situation where you need to extend/override the Broadleaf Commerce data model, you will need to refer to the Entity Extension Guide (http://www.broadleafcommerce.org/confluence/display/core/Extending+Entities).
+ * We have made every effort to create a rich data model that should cover most, if not all, of our user's needs. However, should you encounter a situation where you need to extend/override the Broadleaf Commerce data model, you will need to refer to the Entity Extension Guide (http://www.broadleafcommerce.org/confluence/display/core/Extending+Entities).
  * Broadleaf Commerce is a Spring-based framework. Your application will need to use Spring as well to interact with Broadleaf Commerce. As a result, you will need to merge the Spring configuration for your application with that of Broadleaf Commerce. Thankfully, this is easy to do, but there are some guidelines. Refer to the Merge Configuration (http://www.broadleafcommerce.org/confluence/display/core/Merge+Configuration).
  * Broadleaf Commerce will also work with most modern database platforms for which a valid JDBC driver exists. We include ddl creation scripts for a handful of major database platforms in the sql directory of our distributions.
  * Broadleaf Commerce requires at least some minimal entity manager configuration to work with your database. Refer to the Persistence Configuration (http://www.broadleafcommerce.org/confluence/display/core/Persistence+Configuration).

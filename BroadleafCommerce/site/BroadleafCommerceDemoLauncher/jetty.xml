@@ -55,13 +55,6 @@
         <Arg>/broadleafdemo</Arg>
         <Set name="ConfigurationClasses"><Ref id="plusConfig"/></Set>
     </New>
-    
-    <New class="org.mortbay.jetty.webapp.WebAppContext">
-        <Arg><Ref id="Contexts"/></Arg>
-        <Arg>broadleafadmin.war</Arg>
-        <Arg>/broadleafadmin</Arg>
-        <Set name="ConfigurationClasses"><Ref id="plusConfig"/></Set>
-    </New>
 
     <!-- =========================================================== -->
     <!-- extra options                                               -->
