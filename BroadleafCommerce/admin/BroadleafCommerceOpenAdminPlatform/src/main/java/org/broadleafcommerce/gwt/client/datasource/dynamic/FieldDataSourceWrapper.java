@@ -24,6 +24,8 @@ import com.smartgwt.client.data.DSResponse;
 import com.smartgwt.client.data.DataSource;
 import com.smartgwt.client.data.DataSourceField;
 import com.smartgwt.client.data.Record;
+import com.smartgwt.client.types.DSDataFormat;
+import com.smartgwt.client.types.DSProtocol;
 
 /**
  * 
@@ -36,7 +38,9 @@ public class FieldDataSourceWrapper extends DataSource {
 
 	public FieldDataSourceWrapper(DataSource delegate) {
 		this.delegate = delegate;
-		setClientOnly(true);
+		setDataProtocol (DSProtocol.CLIENTCUSTOM);
+        setDataFormat (DSDataFormat.CUSTOM);
+        setClientOnly (false);
 	}
 
 	@Override
