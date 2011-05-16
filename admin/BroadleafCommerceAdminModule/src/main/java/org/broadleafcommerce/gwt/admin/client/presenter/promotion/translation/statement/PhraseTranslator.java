@@ -35,10 +35,10 @@ public class PhraseTranslator {
 	private static final String[] STANDARDOPERATORS = {
 		"==",
 		"!=",
-		"<",
 		"<=",
-		">",
-		">="
+		"<",
+		">=",
+		">"
 	};
 	
 	public Expression createExpression(String phrase) throws IncompatibleMVELTranslationException {
