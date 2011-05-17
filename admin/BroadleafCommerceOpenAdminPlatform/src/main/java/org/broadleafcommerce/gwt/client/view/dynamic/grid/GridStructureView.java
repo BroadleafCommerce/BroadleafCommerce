@@ -88,6 +88,7 @@ public class GridStructureView extends HStack implements GridStructureDisplay {
         grid.setAutoSaveEdits(true);
         grid.setSaveByCell(true);
         grid.setAlternateRecordStyles(true);
+        grid.setCanGroupBy(false);
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");
         }

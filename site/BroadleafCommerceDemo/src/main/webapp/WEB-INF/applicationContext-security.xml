@@ -85,31 +85,9 @@
 					<property name="requiredTypes">
 						<list>
 							<value>FETCH</value>
-						</list>
-					</property>
-					<property name="roles">
-						<list>
-							<value>ROLE_ADMIN</value>
-							<value>ROLE_CUSTOMER_SERVICE_REP</value>
-						</list>
-					</property>
-				</bean>
-				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
-					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.Order"/>
-					<property name="requiredTypes">
-						<list>
 							<value>ADD</value>
 							<value>UPDATE</value>
 							<value>REMOVE</value>
-						</list>
-					</property>
-					<!-- omit roles and permissions to restrict all access for these operation types -->
-				</bean>
-				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
-					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.OrderItem"/>
-					<property name="requiredTypes">
-						<list>
-							<value>FETCH</value>
 						</list>
 					</property>
 					<property name="roles">
@@ -123,18 +101,10 @@
 					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.OrderItem"/>
 					<property name="requiredTypes">
 						<list>
+							<value>FETCH</value>
 							<value>ADD</value>
 							<value>UPDATE</value>
 							<value>REMOVE</value>
-						</list>
-					</property>
-					<!-- omit roles and permissions to restrict all access for these operation types -->
-				</bean>
-				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
-					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.FulfillmentGroup"/>
-					<property name="requiredTypes">
-						<list>
-							<value>FETCH</value>
 						</list>
 					</property>
 					<property name="roles">
@@ -148,12 +118,18 @@
 					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.order.domain.FulfillmentGroup"/>
 					<property name="requiredTypes">
 						<list>
+							<value>FETCH</value>
 							<value>ADD</value>
 							<value>UPDATE</value>
 							<value>REMOVE</value>
 						</list>
 					</property>
-					<!-- omit roles and permissions to restrict all access for these operation types -->
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
 				</bean>
 				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
 					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.profile.core.domain.Country"/>
@@ -210,31 +186,9 @@
 					<property name="requiredTypes">
 						<list>
 							<value>FETCH</value>
-						</list>
-					</property>
-					<property name="roles">
-						<list>
-							<value>ROLE_ADMIN</value>
-							<value>ROLE_CUSTOMER_SERVICE_REP</value>
-						</list>
-					</property>
-				</bean>
-				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
-					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.payment.domain.PaymentInfo"/>
-					<property name="requiredTypes">
-						<list>
 							<value>ADD</value>
 							<value>UPDATE</value>
 							<value>REMOVE</value>
-						</list>
-					</property>
-					<!-- omit roles and permissions to restrict all access for these operation types -->
-				</bean>
-				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
-					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OfferCode"/>
-					<property name="requiredTypes">
-						<list>
-							<value>FETCH</value>
 						</list>
 					</property>
 					<property name="roles">
@@ -248,18 +202,10 @@
 					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OfferCode"/>
 					<property name="requiredTypes">
 						<list>
+							<value>FETCH</value>
 							<value>ADD</value>
 							<value>UPDATE</value>
 							<value>REMOVE</value>
-						</list>
-					</property>
-					<!-- omit roles and permissions to restrict all access for these operation types -->
-				</bean>
-				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
-					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OrderAdjustment"/>
-					<property name="requiredTypes">
-						<list>
-							<value>FETCH</value>
 						</list>
 					</property>
 					<property name="roles">
@@ -273,18 +219,10 @@
 					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OrderAdjustment"/>
 					<property name="requiredTypes">
 						<list>
+							<value>FETCH</value>
 							<value>ADD</value>
 							<value>UPDATE</value>
 							<value>REMOVE</value>
-						</list>
-					</property>
-					<!-- omit roles and permissions to restrict all access for these operation types -->
-				</bean>
-				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
-					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OrderItemAdjustment"/>
-					<property name="requiredTypes">
-						<list>
-							<value>FETCH</value>
 						</list>
 					</property>
 					<property name="roles">
@@ -298,18 +236,10 @@
 					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.OrderItemAdjustment"/>
 					<property name="requiredTypes">
 						<list>
+							<value>FETCH</value>
 							<value>ADD</value>
 							<value>UPDATE</value>
 							<value>REMOVE</value>
-						</list>
-					</property>
-					<!-- omit roles and permissions to restrict all access for these operation types -->
-				</bean>
-				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
-					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment"/>
-					<property name="requiredTypes">
-						<list>
-							<value>FETCH</value>
 						</list>
 					</property>
 					<property name="roles">
@@ -323,12 +253,18 @@
 					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.core.offer.domain.FulfillmentGroupAdjustment"/>
 					<property name="requiredTypes">
 						<list>
+							<value>FETCH</value>
 							<value>ADD</value>
 							<value>UPDATE</value>
 							<value>REMOVE</value>
 						</list>
 					</property>
-					<!-- omit roles and permissions to restrict all access for these operation types -->
+					<property name="roles">
+						<list>
+							<value>ROLE_ADMIN</value>
+							<value>ROLE_CUSTOMER_SERVICE_REP</value>
+						</list>
+					</property>
 				</bean>
 				<bean class="org.broadleafcommerce.gwt.security.SecurityConfig">
 					<property name="ceilingEntityFullyQualifiedName" value="org.broadleafcommerce.profile.core.domain.Customer"/>

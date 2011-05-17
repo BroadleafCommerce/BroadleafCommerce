@@ -20,6 +20,7 @@ import org.broadleafcommerce.gwt.client.view.dynamic.DynamicEntityListDisplay;
 import org.broadleafcommerce.gwt.client.view.dynamic.SubItemDisplay;
 import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
 import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureDisplay;
+import org.broadleafcommerce.gwt.client.view.dynamic.grid.GridStructureView;
 
 /**
  * 
@@ -47,5 +48,7 @@ public interface OrderDisplay extends DynamicEditDisplay {
 	public GridStructureDisplay getOrderItemAdjustmentDisplay();
 	
 	public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay();
+	
+	public GridStructureView getOrderItemFeeDisplay();
 	
 }

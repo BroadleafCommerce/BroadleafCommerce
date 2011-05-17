@@ -15,7 +15,6 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 import org.broadleafcommerce.core.catalog.domain.Product;
@@ -41,10 +40,6 @@ public interface DiscreteOrderItem extends OrderItem {
     public Map<String, String> getAdditionalAttributes();
 
 	public void setAdditionalAttributes(Map<String, String> additionalAttributes);
-	
-	public Map<String, BigDecimal> getAdditionalFees();
-
-	public void setAdditionalFees(Map<String, BigDecimal> additionalFees);
 
 	public Money getBaseRetailPrice();
 

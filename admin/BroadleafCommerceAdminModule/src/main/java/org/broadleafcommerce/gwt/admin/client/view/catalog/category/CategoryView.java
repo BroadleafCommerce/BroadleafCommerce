@@ -99,6 +99,7 @@ public class CategoryView extends HLayout implements Instantiable, CategoryDispl
         orphanedCategoryGrid.setDrawAheadRatio(4);
         orphanedCategoryGrid.setCanSort(false);
         orphanedCategoryGrid.setCellPadding(5);
+        orphanedCategoryGrid.setCanGroupBy(false);
         abandonedCategoryVerticalLayout.addMember(orphanedCategoryGrid);
         
         leftVerticalLayout.addMember(abandonedCategoryVerticalLayout);

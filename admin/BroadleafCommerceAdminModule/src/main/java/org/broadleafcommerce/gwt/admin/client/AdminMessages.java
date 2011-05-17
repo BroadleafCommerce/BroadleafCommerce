@@ -100,6 +100,7 @@ public interface AdminMessages extends ConstantsWithLookup {
 	public String orderItemsTabTitle();
 	public String orderItemsListTitle();
 	public String orderItemAdjustmentsListTitle();
+	public String orderItemFeeListTitle();
 	public String fgTabTitle();
 	public String fgListTitle();
 	public String fgAdjustmentsListTitle();

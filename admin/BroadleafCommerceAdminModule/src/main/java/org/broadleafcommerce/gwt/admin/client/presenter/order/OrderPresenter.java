@@ -26,6 +26,7 @@ import org.broadleafcommerce.gwt.admin.client.datasource.order.FulfillmentGroupL
 import org.broadleafcommerce.gwt.admin.client.datasource.order.OfferCodeListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.OrderAdjustmentListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.OrderItemAdjustmentListDataSourceFactory;
+import org.broadleafcommerce.gwt.admin.client.datasource.order.OrderItemFeesDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.OrderItemListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.OrderListDataSourceFactory;
 import org.broadleafcommerce.gwt.admin.client.datasource.order.PaymentAdditionalAttributesDataSourceFactory;
@@ -39,12 +40,11 @@ import org.broadleafcommerce.gwt.client.presenter.entity.DynamicEntityPresenter;
 import org.broadleafcommerce.gwt.client.presenter.entity.SubPresentable;
 import org.broadleafcommerce.gwt.client.presenter.entity.SubPresenter;
 import org.broadleafcommerce.gwt.client.presenter.structure.CreateBasedListStructurePresenter;
-import org.broadleafcommerce.gwt.client.presenter.structure.MapStructurePresenter;
+import org.broadleafcommerce.gwt.client.presenter.structure.SimpleMapStructurePresenter;
 import org.broadleafcommerce.gwt.client.reflection.Instantiable;
 import org.broadleafcommerce.gwt.client.setup.AsyncCallbackAdapter;
 import org.broadleafcommerce.gwt.client.setup.PresenterSetupItem;
 import org.broadleafcommerce.gwt.client.view.dynamic.dialog.EntitySearchDialog;
-import org.broadleafcommerce.gwt.client.view.dynamic.dialog.MapStructureEntityEditDialog;
 import org.broadleafcommerce.gwt.client.view.dynamic.form.DynamicFormDisplay;
 
 import com.smartgwt.client.data.DataSource;
@@ -68,6 +68,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 	protected SubPresentable orderAdjustmentPresenter;
 	protected SubPresentable orderItemAdjustmentPresenter;
 	protected SubPresentable fulfillmentGroupAdjustmentPresenter;
+	protected SubPresentable feesPresenter;
 	protected HashMap<String, Object> library = new HashMap<String, Object>();
 	
 	@Override
@@ -90,6 +91,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 		orderAdjustmentPresenter.bind();
 		orderItemAdjustmentPresenter.bind();
 		fulfillmentGroupAdjustmentPresenter.bind();
+		feesPresenter.bind();
 		selectionChangedHandlerRegistration.removeHandler();
 		display.getListDisplay().getGrid().addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
@@ -125,6 +127,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				ListGridRecord selectedRecord = event.getSelectedRecord();
 				if (event.getState()) {
 					orderItemAdjustmentPresenter.load(selectedRecord, (AbstractDynamicDataSource) getDisplay().getOrderItemsDisplay().getGrid().getDataSource(), null);
+					feesPresenter.load(selectedRecord, (AbstractDynamicDataSource) getDisplay().getOrderItemsDisplay().getGrid().getDataSource(), null);
 				}
 			}
 		});
@@ -238,7 +241,7 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				Map<String, Object> initialValues = new HashMap<String, Object>();
 				initialValues.put("key", AdminModule.ADMINMESSAGES.paymentAttributeKeyDefault());
 				initialValues.put("value", AdminModule.ADMINMESSAGES.paymentAttributeValueDefault());
-				additionalPaymentAttributesPresenter = new MapStructurePresenter(((OrderDisplay) getDisplay()).getAdditionalAttributesDisplay(), new MapStructureEntityEditDialog(), AdminModule.ADMINMESSAGES.newAttributeTitle(), initialValues);
+				additionalPaymentAttributesPresenter = new SimpleMapStructurePresenter(((OrderDisplay) getDisplay()).getAdditionalAttributesDisplay(), initialValues);
 				additionalPaymentAttributesPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "value"}, new Boolean[]{true, true});
 				additionalPaymentAttributesPresenter.setReadOnly(true);
 			}
@@ -269,6 +272,13 @@ public class OrderPresenter extends DynamicEntityPresenter implements Instantiab
 				fulfillmentGroupAdjustmentPresenter = new CreateBasedListStructurePresenter(((OrderDisplay) getDisplay()).getFulfillmentGroupAdjustmentDisplay(), AdminModule.ADMINMESSAGES.newFGAdjustmentTitle());
 				fulfillmentGroupAdjustmentPresenter.setDataSource((ListGridDataSource) result, new String[]{"reason", "value", "offer.type"}, new Boolean[]{false, false, false});
 				fulfillmentGroupAdjustmentPresenter.setReadOnly(true);
+			}
+		}));
+		getPresenterSequenceSetupManager().addOrReplaceItem(new PresenterSetupItem("orderItemAdditionalFeesDS", new OrderItemFeesDataSourceFactory(this), null, new Object[]{}, new AsyncCallbackAdapter() {
+			public void onSetupSuccess(DataSource result) {
+				feesPresenter = new SimpleMapStructurePresenter(getDisplay().getOrderItemFeeDisplay(), null);
+				feesPresenter.setDataSource((ListGridDataSource) result, new String[]{"key", "value"}, new Boolean[]{false, false});
+				feesPresenter.setReadOnly(true);
 			}
 		}));
 	}

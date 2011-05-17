@@ -115,6 +115,7 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         }
         expansionGrid.setVisibility(Visibility.HIDDEN);
         expansionGrid.setHeight(100);
+        expansionGrid.setCanGroupBy(false);
         expansionGrid.draw();
         
         grid = new ListGrid() {
@@ -146,6 +147,7 @@ public class UserRoleView extends VLayout implements UserRoleDisplay {
         grid.setAlternateRecordStyles(true);
         grid.setCanExpandMultipleRecords(false);
         grid.setCanExpandRecords(true);
+        grid.setCanGroupBy(false);
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");
         }

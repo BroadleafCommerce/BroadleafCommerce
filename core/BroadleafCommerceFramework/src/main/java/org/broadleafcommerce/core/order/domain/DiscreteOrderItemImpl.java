@@ -16,7 +16,6 @@
 package org.broadleafcommerce.core.order.domain;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.Column;
@@ -84,14 +83,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
     @BatchSize(size = 50)
 	protected Map<String, String> additionalAttributes;
-    
-    @CollectionOfElements
-    @JoinTable(name = "BLC_ORDER_ITEM_ADD_FEE", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
-    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
-    @Column(name = "VALUE")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
-    @BatchSize(size = 50)
-	protected Map<String, BigDecimal> additionalFees;
 
     public Sku getSku() {
         return sku;
@@ -168,14 +159,6 @@ public class DiscreteOrderItemImpl extends OrderItemImpl implements DiscreteOrde
 
 	public void setAdditionalAttributes(Map<String, String> additionalAttributes) {
 		this.additionalAttributes = additionalAttributes;
-	}
-
-	public Map<String, BigDecimal> getAdditionalFees() {
-		return additionalFees==null?new HashMap<String, BigDecimal>():additionalFees;
-	}
-
-	public void setAdditionalFees(Map<String, BigDecimal> additionalFees) {
-		this.additionalFees = additionalFees;
 	}
 
 	public Money getBaseRetailPrice() {

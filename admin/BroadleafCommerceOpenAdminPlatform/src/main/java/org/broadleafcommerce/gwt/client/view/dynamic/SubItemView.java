@@ -108,6 +108,7 @@ public class SubItemView extends VLayout implements SubItemDisplay {
         grid.setAutoSaveEdits(true);
         grid.setSaveByCell(true);
         grid.setAlternateRecordStyles(true);
+        grid.setCanGroupBy(false);
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");
         }

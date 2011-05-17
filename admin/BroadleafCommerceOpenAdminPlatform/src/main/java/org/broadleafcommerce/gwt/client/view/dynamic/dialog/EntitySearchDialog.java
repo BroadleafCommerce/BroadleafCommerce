@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.gwt.client.view.dynamic.dialog;
 
+import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
 import org.broadleafcommerce.gwt.client.event.SearchItemSelectedEvent;
 import org.broadleafcommerce.gwt.client.event.SearchItemSelectedEventHandler;
@@ -68,6 +69,8 @@ public class EntitySearchDialog extends Window {
         searchGrid.setDrawAllMaxCells(20);
         searchGrid.setShowFilterEditor(true);
         searchGrid.setHeight(230);
+        searchGrid.setEmptyMessage(BLCMain.OPENADMINMESSAGES.emptyMessage());
+        searchGrid.setCanGroupBy(false);
         
         searchGrid.addSelectionChangedHandler(new SelectionChangedHandler() {
 			public void onSelectionChanged(SelectionEvent event) {
