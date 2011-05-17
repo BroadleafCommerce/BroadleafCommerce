@@ -64,13 +64,4 @@ public class AllProductsDataSourceFactory implements DataSourceFactory {
 		}
 	}
 
-	/*public void createDataSource(String name, AsyncCallback<DataSource> cb) {
-		OperationTypes operationTypes = new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY);
-		createDataSource(name, operationTypes, cb);
-	}
-	
-	public void createDataSource(String name, OperationTypes operationTypes, AsyncCallback<DataSource> cb) {
-		
-	}*/
-
 }

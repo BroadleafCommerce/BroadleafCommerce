@@ -47,15 +47,6 @@ public class CategoryListDataSourceFactory implements DataSourceFactory {
 	public static final String sortField = "displayOrder";
 	public static ListGridDataSource dataSource = null;
 	
-	/*public void createDataSource(String name, AsyncCallback<DataSource> cb) {
-		OperationTypes operationTypes = new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY);
-		createDataSource(name, operationTypes, cb);
-	}
-	
-	public void createDataSource(String name, OperationTypes operationTypes, AsyncCallback<DataSource> cb) {
-		
-	}*/
-
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(CategoryTreeDataSourceFactory.defaultParentCategoryForeignKey, EntityImplementations.CATEGORY, null)});

@@ -22,7 +22,6 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -320,11 +319,11 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 				);
 			}
 			
-			if (!entity.findProperty("priorKey").getValue().equals(entity.findProperty(mapStructure.getKeyPropertyName()).getValue())) {
-				map.remove(entity.findProperty("priorKey").getValue());
-			}
 			if (persistentClass != null) {
 				Serializable valueInstance = (Serializable) map.get(entity.findProperty("priorKey").getValue());
+				if (!entity.findProperty("priorKey").getValue().equals(entity.findProperty(mapStructure.getKeyPropertyName()).getValue())) {
+					map.remove(entity.findProperty("priorKey").getValue());
+				}
 				valueInstance = createPopulatedInstance(valueInstance, entity, valueMergedProperties, false);
 				/*
 				 * TODO this map manipulation code currently assumes the key value is a String. This should be widened to accept
