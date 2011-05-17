@@ -16,7 +16,6 @@
 package org.broadleafcommerce.gwt.admin.client.datasource.catalog.product;
 
 import org.broadleafcommerce.gwt.admin.client.datasource.CeilingEntities;
-import org.broadleafcommerce.gwt.admin.client.datasource.EntityImplementations;
 import org.broadleafcommerce.gwt.admin.client.datasource.catalog.product.module.ProductSkuBasicEntityModule;
 import org.broadleafcommerce.gwt.client.datasource.DataSourceFactory;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.ListGridDataSource;
@@ -42,8 +41,9 @@ public class OneToOneProductSkuDataSourceFactory implements DataSourceFactory {
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY, OperationType.ENTITY);
-			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(ParentCategoryListDataSourceFactory.defaultCategoryForeignKey, EntityImplementations.CATEGORY, null)});
+			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{});
 			persistencePerspective.setPopulateToOneFields(true);
+			persistencePerspective.setExcludeFields(new String[]{ParentCategoryListDataSourceFactory.defaultCategoryForeignKey});
 			DataSourceModule[] modules = new DataSourceModule[]{
 				new ProductSkuBasicEntityModule(CeilingEntities.PRODUCT, persistencePerspective, AppServices.DYNAMIC_ENTITY)
 			};

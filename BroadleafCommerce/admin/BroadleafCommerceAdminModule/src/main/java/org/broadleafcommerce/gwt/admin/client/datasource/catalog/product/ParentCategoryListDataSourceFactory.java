@@ -48,11 +48,6 @@ public class ParentCategoryListDataSourceFactory implements DataSourceFactory {
 	public static final String sortField = "displayOrder";
 	public static ListGridDataSource dataSource = null;
 	
-	/*public static void createDataSource(String name, AsyncCallback<DataSource> cb) {
-		OperationTypes operationTypes = new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY);
-		createDataSource(name, operationTypes, cb);
-	}*/
-	
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			PersistencePerspective persistencePerspective = new PersistencePerspective(operationTypes, new String[]{}, new ForeignKey[]{new ForeignKey(defaultCategoryForeignKey, EntityImplementations.CATEGORY, null)});

@@ -49,11 +49,6 @@ public class FeaturedProductListDataSourceFactory implements DataSourceFactory {
 	public static ListGridDataSource dataSource = null;
 	
 	
-	/*public void createDataSource(String name, OperationTypes operationTypes, AsyncCallback<DataSource> cb) {
-		createDataSource(name, cb);
-	}*/
-
-
 	public void createDataSource(String name, OperationTypes operationTypes, Object[] additionalItems, AsyncCallback<DataSource> cb) {
 		if (dataSource == null) {
 			operationTypes = new OperationTypes(OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.JOINSTRUCTURE, OperationType.ENTITY);
@@ -71,9 +66,5 @@ public class FeaturedProductListDataSourceFactory implements DataSourceFactory {
 			}
 		}
 	}
-
-	/*public void createDataSource(String name, AsyncCallback<DataSource> cb) {
-		
-	}*/
 
 }
