@@ -16,7 +16,9 @@
 package org.broadleafcommerce.core.order.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.broadleafcommerce.core.catalog.domain.Category;
 import org.broadleafcommerce.core.offer.domain.CandidateItemOffer;
@@ -164,5 +166,9 @@ public interface OrderItem extends Serializable {
 	public void clearAllDiscount();
 	
 	public void clearAllQualifiers();
+	
+	public Map<String, BigDecimal> getAdditionalFees();
+
+	public void setAdditionalFees(Map<String, BigDecimal> additionalFees);
 	
 }

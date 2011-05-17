@@ -38,6 +38,9 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
 	}
 	
 	public MapStructure(String keyClassName, String keyPropertyName, String keyPropertyFriendlyName, String valueClassName, String mapProperty, Boolean deleteValueEntity) {
+		if (!keyClassName.equals(String.class.getName())) {
+			throw new RuntimeException("keyClass of java.lang.String is currently the only type supported");
+		}
 		this.keyClassName = keyClassName;
 		this.valueClassName = valueClassName;
 		this.mapProperty = mapProperty;
@@ -51,6 +54,9 @@ public class MapStructure implements Serializable, PersistencePerspectiveItem {
 	}
 	
 	public void setKeyClassName(String keyClassName) {
+		if (!keyClassName.equals(String.class.getName())) {
+			throw new RuntimeException("keyClass of java.lang.String is currently the only type supported");
+		}
 		this.keyClassName = keyClassName;
 	}
 	

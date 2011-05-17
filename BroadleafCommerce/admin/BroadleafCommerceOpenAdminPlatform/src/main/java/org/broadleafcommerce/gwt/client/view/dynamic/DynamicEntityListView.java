@@ -18,6 +18,7 @@ package org.broadleafcommerce.gwt.client.view.dynamic;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import org.broadleafcommerce.gwt.client.BLCMain;
 import org.broadleafcommerce.gwt.client.datasource.dynamic.DynamicEntityDataSource;
 
 import com.google.gwt.core.client.GWT;
@@ -104,7 +105,9 @@ public class DynamicEntityListView extends VLayout implements DynamicEntityListD
         grid.setCanSort(true);
         grid.setCanResizeFields(true);
         grid.setShowFilterEditor(true);
+        grid.setCanGroupBy(false);
         grid.setDataPageSize(10);
+        grid.setEmptyMessage(BLCMain.OPENADMINMESSAGES.emptyMessage());
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");
         }

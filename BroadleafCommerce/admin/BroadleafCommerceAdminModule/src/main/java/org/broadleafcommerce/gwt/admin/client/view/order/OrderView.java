@@ -52,6 +52,7 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 	protected SubItemView offerCodeDisplay;
 	protected GridStructureView orderAdjustmentDisplay;
 	protected GridStructureView orderItemAdjustmentDisplay;
+	protected GridStructureView orderItemFeeDisplay;
 	protected GridStructureView fulfillmentGroupAdjustmentDisplay;
     
 	public OrderView() {
@@ -85,6 +86,8 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
         Tab orderItemsTab = new Tab(AdminModule.ADMINMESSAGES.orderItemsTabTitle()); 
         orderItemsDisplay = new OrderItemView(AdminModule.ADMINMESSAGES.orderItemsListTitle(), false, false);
         orderItemsTab.setPane(orderItemsDisplay);
+        orderItemFeeDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.orderItemFeeListTitle(), false, false);
+        ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemFeeDisplay);
         orderItemAdjustmentDisplay = new GridStructureView(AdminModule.ADMINMESSAGES.orderItemAdjustmentsListTitle(), false, false);
         ((FormOnlyView) orderItemsDisplay.getFormOnlyDisplay()).addMember(orderItemAdjustmentDisplay);
         topTabSet.addTab(orderItemsTab);
@@ -154,5 +157,9 @@ public class OrderView extends HLayout implements Instantiable, OrderDisplay {
 	
 	public GridStructureDisplay getFulfillmentGroupAdjustmentDisplay() {
 		return fulfillmentGroupAdjustmentDisplay;
+	}
+
+	public GridStructureView getOrderItemFeeDisplay() {
+		return orderItemFeeDisplay;
 	}
 }

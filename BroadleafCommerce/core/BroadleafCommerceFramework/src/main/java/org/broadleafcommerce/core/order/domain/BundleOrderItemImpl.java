@@ -15,6 +15,7 @@
  */
 package org.broadleafcommerce.core.order.domain;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +91,9 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
             Money itemRetailPrice = discreteOrderItem.getRetailPrice();
             bundleRetailPrice = bundleRetailPrice.add(new Money(itemRetailPrice.doubleValue() * discreteOrderItem.getQuantity()));
         }
+        for (BigDecimal fee : getAdditionalFees().values()) {
+        	bundleRetailPrice = bundleRetailPrice.add(new Money(fee));
+        }
         return bundleRetailPrice;
     }
 
@@ -107,6 +111,9 @@ public class BundleOrderItemImpl extends OrderItemImpl implements BundleOrderIte
                     itemSalePrice = discreteOrderItem.getRetailPrice();
                 }
                 bundleSalePrice = bundleSalePrice.add(new Money(itemSalePrice.doubleValue() * discreteOrderItem.getQuantity()));
+            }
+            for (BigDecimal fee : getAdditionalFees().values()) {
+            	bundleSalePrice = bundleSalePrice.add(new Money(fee));
             }
         }
         return bundleSalePrice;

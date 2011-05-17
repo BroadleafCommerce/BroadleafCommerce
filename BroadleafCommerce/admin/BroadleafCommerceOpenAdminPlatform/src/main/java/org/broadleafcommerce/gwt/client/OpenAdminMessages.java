@@ -31,5 +31,6 @@ public interface OpenAdminMessages extends ConstantsWithLookup {
 	public String contactingServerTitle();
 	public String currentUser();
 	public String logout();
+	public String emptyMessage();
 	
 }

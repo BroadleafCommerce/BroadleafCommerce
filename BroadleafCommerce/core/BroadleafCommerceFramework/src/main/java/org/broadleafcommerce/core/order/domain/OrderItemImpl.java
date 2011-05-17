@@ -18,8 +18,10 @@ package org.broadleafcommerce.core.order.domain;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -51,10 +54,13 @@ import org.broadleafcommerce.core.order.service.type.OrderItemType;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.money.Money;
 import org.broadleafcommerce.presentation.AdminPresentation;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Index;
+import org.hibernate.annotations.MapKey;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -148,6 +154,14 @@ public class OrderItemImpl implements OrderItem {
     @Index(name="ORDERITEM_TYPE_INDEX", columnNames={"ORDER_ITEM_TYPE"})
     @AdminPresentation(friendlyName="Item Type", order=6, group="Description", fieldType=SupportedFieldType.BROADLEAF_ENUMERATION, broadleafEnumeration="org.broadleafcommerce.core.order.service.type.OrderItemType")
     protected String orderItemType;
+    
+    @CollectionOfElements
+    @JoinTable(name = "BLC_ORDER_ITEM_ADD_FEE", joinColumns = @JoinColumn(name = "ORDER_ITEM_ID"))
+    @MapKey(columns = { @Column(name = "NAME", length = 5, nullable = false) })
+    @Column(name = "VALUE")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region="blOrderElements")
+    @BatchSize(size = 50)
+	protected Map<String, BigDecimal> additionalFees;
 
     public Money getRetailPrice() {
         return retailPrice == null ? null : new Money(retailPrice);
@@ -411,6 +425,14 @@ public class OrderItemImpl implements OrderItem {
 
 	public boolean isHasOrderItemAdjustments() {
 		return hasOrderItemAdjustments;
+	}
+	
+	public Map<String, BigDecimal> getAdditionalFees() {
+		return additionalFees==null?new HashMap<String, BigDecimal>():additionalFees;
+	}
+
+	public void setAdditionalFees(Map<String, BigDecimal> additionalFees) {
+		this.additionalFees = additionalFees;
 	}
 	
 	public boolean updatePrices() {

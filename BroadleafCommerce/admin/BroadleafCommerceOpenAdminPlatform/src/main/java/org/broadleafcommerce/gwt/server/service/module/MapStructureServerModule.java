@@ -19,8 +19,10 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,7 @@ import org.broadleafcommerce.gwt.client.datasource.results.Property;
 import org.broadleafcommerce.gwt.client.presentation.SupportedFieldType;
 import org.broadleafcommerce.gwt.client.service.ServiceException;
 import org.broadleafcommerce.gwt.server.cto.BaseCtoConverter;
+import org.broadleafcommerce.money.Money;
 import org.hibernate.mapping.PersistentClass;
 
 import com.anasoft.os.daofusion.criteria.PersistentEntityCriteria;
@@ -245,7 +248,10 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 				 */
 				map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), valueInstance); 
 			} else {
-				map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), entity.findProperty(((SimpleValueMapStructure) mapStructure).getValuePropertyName()).getValue());
+				String propertyName = ((SimpleValueMapStructure) mapStructure).getValuePropertyName();
+				String value = entity.findProperty(propertyName).getValue();
+				Object convertedPrimitive = convertPrimitiveBasedOnType(propertyName, value, valueMergedProperties);
+				map.put(entity.findProperty(mapStructure.getKeyPropertyName()).getValue(), convertedPrimitive);
 			}
 			
 			instance = dynamicEntityDao.merge(instance);
@@ -254,6 +260,23 @@ public class MapStructureServerModule extends BasicServerEntityModule {
 		} catch (Exception e) {
 			LOG.error("Problem editing entity", e);
 			throw new ServiceException("Problem updating entity : " + e.getMessage(), e);
+		}
+	}
+	
+	protected Object convertPrimitiveBasedOnType(String valuePropertyName, String value, Map<String, FieldMetadata> valueMergedProperties) throws ParseException {
+		switch(valueMergedProperties.get(valuePropertyName).getFieldType()) {
+		case BOOLEAN :
+			return Boolean.parseBoolean(value);
+		case DATE :
+			return dateFormat.parse(value);
+		case DECIMAL :
+			return new BigDecimal(value);
+		case MONEY :
+			return new Money(value);
+		case INTEGER :
+			return Integer.parseInt(value);
+		default :
+			return value;
 		}
 	}
 	

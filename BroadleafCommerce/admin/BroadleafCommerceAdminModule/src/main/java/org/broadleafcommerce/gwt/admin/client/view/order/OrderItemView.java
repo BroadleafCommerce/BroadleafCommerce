@@ -110,6 +110,7 @@ public class OrderItemView extends VLayout implements OrderItemDisplay {
         expansionGrid.setAutoSaveEdits(true);
         expansionGrid.setSaveByCell(true);
         expansionGrid.setAlternateRecordStyles(true);
+        expansionGrid.setCanGroupBy(false);
         if (!canEdit) {
         	expansionGrid.setAlternateBodyStyleName("editRowDisabled");
         }
@@ -146,6 +147,7 @@ public class OrderItemView extends VLayout implements OrderItemDisplay {
         grid.setAlternateRecordStyles(true);
         grid.setCanExpandMultipleRecords(false);
         grid.setCanExpandRecords(true);
+        grid.setCanGroupBy(false);
         if (!canEdit) {
         	grid.setAlternateBodyStyleName("editRowDisabled");
         }
